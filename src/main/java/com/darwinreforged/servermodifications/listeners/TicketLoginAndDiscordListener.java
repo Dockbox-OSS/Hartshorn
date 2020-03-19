@@ -139,11 +139,6 @@ public class TicketLoginAndDiscordListener {
 					.name("mmctickets-s-sendStaffNotifications")
 					.submit(this.plugin);
 		}
-
-		// Send update notification to players with permission
-		if (player.hasPermission(TicketPermissions.NOTIFY)) {
-			plugin.updatechecker.startUpdateCheckPlayer(player);
-		}
 	}
 
 	@Listener

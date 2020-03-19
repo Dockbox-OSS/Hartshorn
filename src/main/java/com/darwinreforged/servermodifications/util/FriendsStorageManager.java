@@ -1,5 +1,6 @@
 package com.darwinreforged.servermodifications.util;
 
+import com.darwinreforged.servermodifications.objects.FriendsStorage;
 import com.darwinreforged.servermodifications.plugins.FriendsPlugin;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -20,7 +21,6 @@ public class FriendsStorageManager {
 		if (!folder.exists()) folder.mkdir();
 	}
 
-	//put this stuff in a try catch so i dont need a try catch everytime i call the methods
 	public static FriendsStorage load(UUID uuid) {
 		storage = new File(folder, uuid + ".yml");
 		FileReader reader;

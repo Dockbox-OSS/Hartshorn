@@ -6,7 +6,6 @@ import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.util.TicketUpdateChecker;
 import com.darwinreforged.servermodifications.util.TicketUtil;
 import com.darwinreforged.servermodifications.util.config.TicketConfig;
 import com.darwinreforged.servermodifications.util.database.DataStoreManager;
@@ -66,8 +65,6 @@ public class TicketPlugin {
     private ArrayList<String> waitTimer;
     private DataStoreManager dataStoreManager;
 
-    public TicketUpdateChecker updatechecker;
-
     public TicketPlugin() {
     }
 
@@ -103,11 +100,6 @@ public class TicketPlugin {
         getLogger().info("PlayerData loaded: " + getDataStore().getPlayerData().size());
 
         this.waitTimer = new ArrayList<String>();
-
-        updatechecker =
-                new TicketUpdateChecker(
-                        this, Sponge.getPluginManager().getPlugin("mmctickets").get().getVersion().get());
-        updatechecker.startUpdateCheck();
 
         // start ticket nag timer
         nagTimer();

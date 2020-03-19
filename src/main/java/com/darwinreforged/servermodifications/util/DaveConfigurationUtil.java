@@ -11,16 +11,15 @@ import java.util.Properties;
 public class DaveConfigurationUtil {
 
     private Properties properties;
-    private ThreadLocal<InputStream> inputStream = new ThreadLocal<>();
-    private Reader stream;
     private File file;
 
     public DaveConfigurationUtil(File file) {
         try {
             this.file = file;
             properties = new Properties();
+            ThreadLocal<InputStream> inputStream = new ThreadLocal<>();
             inputStream.set(new FileInputStream(file));
-            stream = new InputStreamReader(inputStream.get());
+            Reader stream = new InputStreamReader(inputStream.get());
             properties.load(stream);
         } catch (IOException e) {
             DavePluginWrapper.getLogger().error(e.getMessage());

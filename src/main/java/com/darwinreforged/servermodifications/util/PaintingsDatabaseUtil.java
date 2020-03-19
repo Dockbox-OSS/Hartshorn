@@ -15,8 +15,8 @@ import java.util.ArrayList;
 
 public class PaintingsDatabaseUtil {
 	private static Path root;
-	 
     private static SqlService sql;
+
 	public PaintingsDatabaseUtil(SqlService sqlP, Path rootP) throws SQLException{
     	sql = sqlP;
     	root = rootP;

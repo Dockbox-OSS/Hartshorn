@@ -32,40 +32,39 @@ public class LayerheightPlaceEventListener {
 				if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
 					ItemStack item = player.getItemInHand(HandTypes.MAIN_HAND).get();
 					if (item.get(Keys.DISPLAY_NAME).isPresent()) {
-						String name = item.get(Keys.DISPLAY_NAME).get().toPlain();;
+						String name = item.get(Keys.DISPLAY_NAME).get().toPlain();
 						if (name.toLowerCase().contains("layer height tool")) {
-						BlockSnapshot block = transaction.getFinal(); 
-						Location<World> loc = block.getLocation().get();
-						com.intellectualcrafters.plot.object.Location plotLoc = new com.intellectualcrafters.plot.object.Location();
-						plotLoc.setX(loc.getBlockX());
-						plotLoc.setY(loc.getBlockY());
-						plotLoc.setZ(loc.getBlockZ());
-						plotLoc.setWorld(player.getLocation().getExtent().getName());
-						if (Plot.getPlot(plotLoc) != null) {
-							Plot plot = Plot.getPlot(plotLoc);
-							if (plot.isAdded(player.getUniqueId()) || player.hasPermission("plots.admin.build.other")) {
-								Text name2 = item.get(Keys.DISPLAY_NAME).get();
-								String temp = name2.toPlain();
-								temp = temp.replaceAll("Layer Height Tool: ", "");
-								temp = temp.replaceAll(" ", "");
-								int height = Integer.parseInt(temp);
-								BlockState state = BlockTypes.SNOW_LAYER.getDefaultState();
-								Optional<ImmutableLayeredData> data = state.get(ImmutableLayeredData.class);
-								if (data.isPresent()) {
-									LayeredData snowData = data.get().asMutable();
-									snowData.set(Keys.LAYER, height);
-									BlockState newState = state.with(snowData.asImmutable()).get();
-									loc.setBlock(newState);
+							BlockSnapshot block = transaction.getFinal();
+							Location<World> loc = block.getLocation().get();
+							com.intellectualcrafters.plot.object.Location plotLoc = new com.intellectualcrafters.plot.object.Location();
+							plotLoc.setX(loc.getBlockX());
+							plotLoc.setY(loc.getBlockY());
+							plotLoc.setZ(loc.getBlockZ());
+							plotLoc.setWorld(player.getLocation().getExtent().getName());
+							if (Plot.getPlot(plotLoc) != null) {
+								Plot plot = Plot.getPlot(plotLoc);
+								if (plot.isAdded(player.getUniqueId()) || player.hasPermission("plots.admin.build.other")) {
+									Text name2 = item.get(Keys.DISPLAY_NAME).get();
+									String temp = name2.toPlain();
+									temp = temp.replaceAll("Layer Height Tool: ", "");
+									temp = temp.replaceAll(" ", "");
+									int height = Integer.parseInt(temp);
+									BlockState state = BlockTypes.SNOW_LAYER.getDefaultState();
+									Optional<ImmutableLayeredData> data = state.get(ImmutableLayeredData.class);
+									if (data.isPresent()) {
+										LayeredData snowData = data.get().asMutable();
+										snowData.set(Keys.LAYER, height);
+										BlockState newState = state.with(snowData.asImmutable()).get();
+										loc.setBlock(newState);
+									}
 								}
+							} else {
+								player.sendMessage(Text.of("Not in a plot"));
+								event.setCancelled(true);
 							}
-						}
-						else {
-							player.sendMessage(Text.of("Not in a plot"));
-							event.setCancelled(true);
 						}
 					}
 				}
-			   }
 			}
 		}
 	}

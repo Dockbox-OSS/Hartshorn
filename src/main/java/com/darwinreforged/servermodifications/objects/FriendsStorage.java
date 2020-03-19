@@ -1,14 +1,16 @@
-package com.darwinreforged.servermodifications.util;
+package com.darwinreforged.servermodifications.objects;
+
+import com.darwinreforged.servermodifications.util.FriendsStorageManager;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class FriendsStorage {
-	public boolean toggledTeleportsOff;
+    public boolean toggledTeleportsOff;
 
-	public void toggle() {
-		toggledTeleportsOff = !toggledTeleportsOff;
-	}
+    public void toggle() {
+        toggledTeleportsOff = !toggledTeleportsOff;
+    }
 	public FriendsStorage(UUID uuid) {
 		setPlayer(uuid);	
 	}

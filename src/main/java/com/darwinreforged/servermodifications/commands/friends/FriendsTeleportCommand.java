@@ -1,8 +1,7 @@
 package com.darwinreforged.servermodifications.commands.friends;
 
-import com.darwinreforged.servermodifications.util.FriendsStorage;
+import com.darwinreforged.servermodifications.objects.FriendsStorage;
 import com.darwinreforged.servermodifications.util.FriendsUtil;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;

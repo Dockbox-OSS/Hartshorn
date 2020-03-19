@@ -20,7 +20,7 @@ public class PlayerWeatherLightningUtil
 
     private static Task lightningTask;
 
-    public static int highestBlockAtXZ(int x, int z, World world, Player player) {
+    public static int highestBlockAtXZ(int x, int z, World world) {
         final int MAX_BUILD_HEIGHT = 256;
 
         BlockRay<World> blockRay = BlockRay.from(world, new Vector3d(x, MAX_BUILD_HEIGHT, z))
@@ -64,7 +64,7 @@ public class PlayerWeatherLightningUtil
         //2 * MAX_DISTANCE - MAX_DISTANCE will choose a random int from -MAX_DISTANCE to +MAX_DISTANCE
         int xPos = position.getFloorX() + random.nextInt(2 * MAX_DISTANCE) - MAX_DISTANCE;
         int zPos = position.getFloorZ() + random.nextInt(2 * MAX_DISTANCE) - MAX_DISTANCE;
-        int yPos = highestBlockAtXZ(xPos, zPos, world, player);
+        int yPos = highestBlockAtXZ(xPos, zPos, world);
 
         if (yPos == -1) return Optional.empty(); //No block was found
 

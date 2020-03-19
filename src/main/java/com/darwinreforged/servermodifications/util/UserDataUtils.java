@@ -22,7 +22,7 @@ public class UserDataUtils {
 
   @Nullable
   static Text getIP(CommandSource source, User user, CoreUserDataModule userDataModule) {
-    @Nullable String ip;
+    @Nullable String ip = null;
     ip = user.getPlayer().get().getConnection().getAddress().getAddress().toString();
     if (ip == null) {
         ip = userDataModule.getLastIp().get();
@@ -69,20 +69,16 @@ public class UserDataUtils {
   static Text getLocation(CommandSource source, User user, CoreUserDataModule userDataModule) {
     if (user.isOnline()) {
       return getLocationString(
-          "command.seen.currentlocation", user.getPlayer().get().getLocation(), source);
+              "command.seen.currentlocation", user.getPlayer().get().getLocation(), source);
     }
 
     Optional<WorldProperties> wp =
-        user.getWorldUniqueId().map(x -> Sponge.getServer().getWorldProperties(x).orElse(null));
-    if (wp.isPresent()) {
-      return getLocationString("command.seen.lastlocation", wp.get(), user.getPosition(), source);
-    }
+            user.getWorldUniqueId().map(x -> Sponge.getServer().getWorldProperties(x).orElse(null));
+    return wp.map(worldProperties -> getLocationString("command.seen.lastlocation", worldProperties, user.getPosition(), source)).orElseGet(() -> userDataModule
+            .getLogoutLocation()
+            .map(worldLocation -> getLocationString("command.seen.lastlocation", worldLocation, source))
+            .orElse(null));
 
-    // TODO: Remove - this is a fallback
-    return userDataModule
-        .getLogoutLocation()
-        .map(worldLocation -> getLocationString("command.seen.lastlocation", worldLocation, source))
-        .orElse(null);
   }
 
   static Text getLocationString(String key, Location<World> lw, CommandSource source) {

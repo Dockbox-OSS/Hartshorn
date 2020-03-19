@@ -1,5 +1,6 @@
 package com.darwinreforged.servermodifications.util;
 
+import com.darwinreforged.servermodifications.objects.FriendsStorage;
 import com.darwinreforged.servermodifications.plugins.FriendsPlugin;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
