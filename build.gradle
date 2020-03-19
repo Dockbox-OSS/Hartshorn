@@ -1,0 +1,60 @@
+buildscript {
+    repositories {
+        maven {
+            name = 'forge'
+            url = 'https://files.minecraftforge.net/maven'
+        }
+    }
+
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
+
+plugins {
+    id 'org.spongepowered.plugin' version '0.9.0'
+    id 'net.minecrell.vanillagradle.server' version '2.2-6'
+}
+
+group = 'com.darwinreforged'
+version = '0.1.1-alpha'
+description = 'Common source for several Darwin Reforged plugins'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+minecraft {
+    version = '1.12.2'
+    mappings = 'stable_39'
+}
+
+repositories {
+    maven { url "https://repo.maven.apache.org/maven2" }
+    maven { url 'https://jitpack.io' }
+    maven { url "https://mvnrepository.com/artifact/org.projectlombok/lombok" }
+    maven { url "https://repo.spongepowered.org/maven" }
+    maven { url 'https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn' }
+    maven { url 'https://maven.sk89q.com/repo/' }
+    maven { url 'http://repo.drnaylor.co.uk/artifactory/list/minecraft' }
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.guava:guava:23.0'
+    annotationProcessor 'org.spongepowered:spongeapi:7.1.0'
+    compileOnly 'org.spongepowered:spongeapi:7.1.0'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version:'1.18.0'
+    compileOnly ("com.sk89q.worldedit:worldedit-core:6.1.4-SNAPSHOT") { transitive = false }
+    compileOnly ("com.sk89q.worldedit:worldedit-sponge:6.1.7-SNAPSHOT")
+    compile 'com.boydti:fawe-api:latest'
+    compile group: 'com.zaxxer', name: 'HikariCP', version:'3.1.0'
+    compile 'com.github.rojo8399:PlaceholderAPI:master-SNAPSHOT'
+    compile "com.github.SimonFlash.TeslaPowered:TeslaLibs:1.1.6"
+    compile fileTree(dir: 'libs', include: '*.jar')
+}
+
+sponge.plugin.id = pluginId
