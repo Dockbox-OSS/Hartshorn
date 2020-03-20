@@ -2,7 +2,7 @@ package com.darwinreforged.servermodifications.listeners;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 import com.darwinreforged.servermodifications.plugins.DavePluginWrapper;
-import com.darwinreforged.servermodifications.util.DaveMessageParser;
+import com.darwinreforged.servermodifications.util.plugins.DaveRawUtils;
 import com.magitechserver.magibridge.DiscordHandler;
 import com.magitechserver.magibridge.api.DiscordEvent;
 import org.spongepowered.api.Sponge;
@@ -81,7 +81,7 @@ public class DaveChatListeners {
 
         @Override
         public void run() {
-            Map.Entry trigger = DaveMessageParser.getAssociatedTrigger(message);
+            Map.Entry trigger = DaveRawUtils.getAssociatedTrigger(message);
 
             LocalDateTime timeOfLastTriggered = timeSinceTrigger.get(trigger);
             long secondsSinceLastResponse = 10;
@@ -90,7 +90,7 @@ public class DaveChatListeners {
 
             if (trigger != null && secondsSinceLastResponse >= 10) {
                 String unparsedResponse = trigger.getValue().toString().replaceAll("&", "§");
-                String[] potentialResponses = DaveMessageParser.parsePlaceHolders(message, unparsedResponse, playername).split("<:>");
+                String[] potentialResponses = DaveRawUtils.parsePlaceHolders(message, unparsedResponse, playername).split("<:>");
 
                 int index = new Random().nextInt(potentialResponses.length);
                 String response = potentialResponses.length > 1 ? potentialResponses[index] : potentialResponses[0];
@@ -103,7 +103,7 @@ public class DaveChatListeners {
                     if (partial.startsWith("/") || partial.startsWith("*/"))
                         executeCommand(partial);
                     else if (partial.startsWith("[") && partial.endsWith("]"))
-                        printResponse(DaveMessageParser.parseWebsiteLink(partial), true, important);
+                        printResponse(DaveRawUtils.parseWebsiteLink(partial), true, important);
                     else
                         printResponse(partial, false, important);
                 });

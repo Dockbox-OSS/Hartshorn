@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.plugins;
 
 import com.darwinreforged.servermodifications.listeners.DaveChatListeners;
-import com.darwinreforged.servermodifications.util.DaveConfigurationUtil;
+import com.darwinreforged.servermodifications.util.todo.DaveConfigurationUtil;
 import com.google.inject.Inject;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

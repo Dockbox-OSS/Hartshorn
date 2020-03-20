@@ -4,8 +4,8 @@ import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
 import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.util.TicketUtil;
-import com.darwinreforged.servermodifications.util.config.TicketConfig;
+import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
+import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
 import com.magitechserver.magibridge.MagiBridge;
@@ -142,13 +142,6 @@ public class TicketOpenCommand implements CommandExecutor {
             TicketUtil.notifyOnlineStaffOpen(
                 TicketMessages.getTicketOpen(player.getName(), ticketID), ticketID);
           }
-          if (TicketConfig.titleNotification) {
-            TicketUtil.notifyOnlineStaffTitle(
-                TicketMessages.getTicketTitleNotification(player.getName(), ticketID));
-          }
-          if (TicketConfig.soundNotification) {
-            TicketUtil.notifyOnlineStaffSound();
-          }
           EmbedBuilder embedBuilder = new EmbedBuilder();
           embedBuilder.setColor(Color.YELLOW);
           embedBuilder.setTitle("New submission");
@@ -227,13 +220,6 @@ public class TicketOpenCommand implements CommandExecutor {
         src.sendMessage(TicketMessages.getTicketOpenUser(ticketID));
         if (TicketConfig.staffNotification) {
           TicketUtil.notifyOnlineStaffOpen(TicketMessages.getTicketOpen("Console", ticketID), ticketID);
-        }
-        if (TicketConfig.titleNotification) {
-          TicketUtil.notifyOnlineStaffTitle(
-              TicketMessages.getTicketTitleNotification("Console", ticketID));
-        }
-        if (TicketConfig.soundNotification) {
-          TicketUtil.notifyOnlineStaffSound();
         }
       } catch (Exception e) {
         src.sendMessage(TicketMessages.getErrorGen("Data was not saved correctly."));

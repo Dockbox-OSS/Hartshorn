@@ -1,5 +1,6 @@
-package com.darwinreforged.servermodifications.util;
+package com.darwinreforged.servermodifications.util.todo;
 
+import com.darwinreforged.servermodifications.util.PluginUtils;
 import org.spongepowered.api.Sponge;
 import org.yaml.snakeyaml.Yaml;
 
@@ -41,7 +42,7 @@ public class FileManager {
 
 
     public Path getDataDirectory(Object plugin) {
-        String pluginId = CommonUtils.getPluginId(plugin);
+        String pluginId = PluginUtils.getPluginId(plugin);
         return Sponge.getGame().getSavesDirectory().resolve("data/" + pluginId);
     }
 
@@ -51,7 +52,7 @@ public class FileManager {
 
     public File getYamlConfigFile(Object plugin) {
         Path path = getConfigDirectory(plugin);
-        String pluginId = CommonUtils.getPluginId(plugin);
+        String pluginId = PluginUtils.getPluginId(plugin);
         File file = new File(path.toFile(), String.format("%s.yml", pluginId));
         if (!file.exists()) {
             try {

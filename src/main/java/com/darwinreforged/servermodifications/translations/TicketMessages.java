@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.translations;
 
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.util.config.TicketConfig;
+import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;

@@ -2,14 +2,13 @@ package com.darwinreforged.servermodifications.plugins;
 
 import com.darwinreforged.servermodifications.listeners.PaintingsDiscordListener;
 import com.darwinreforged.servermodifications.objects.PaintingSubmission;
-import com.darwinreforged.servermodifications.util.PaintingsDatabaseUtil;
+import com.darwinreforged.servermodifications.util.todo.PaintingsDatabaseUtil;
 import com.google.inject.Inject;
 import com.magitechserver.magibridge.MagiBridge;
 import net.dv8tion.jda.core.EmbedBuilder;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;

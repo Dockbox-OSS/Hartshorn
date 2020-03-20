@@ -4,7 +4,9 @@ import com.boydti.fawe.Fawe;
 import com.boydti.fawe.FaweAPI;
 import com.darwinreforged.servermodifications.enums.brushtooltips.Brush;
 import com.darwinreforged.servermodifications.enums.brushtooltips.Brushes;
-import com.darwinreforged.servermodifications.util.BrushTooltipUtil;
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
+import com.darwinreforged.servermodifications.util.plugins.BrushTooltipUtil;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
@@ -147,16 +149,11 @@ public class BrushTooltipListener {
                                     .isBefore(LocalDateTime.now())) {
 
                                 Text.Builder commandBuilder = Text.builder();
-                                commandBuilder.append(Text.of(TextColors.DARK_AQUA, command));
+                                commandBuilder.append(Text.of(command));
                                 commandBuilder.onClick(TextActions.suggestCommand(command));
 
-                                player.sendMessage(
-                                        Text.of(
-                                                TextColors.GRAY,
-                                                "[] ",
-                                                TextColors.AQUA,
-                                                "It seems you are holding a brush tool but it is not set. To suggest it, click this command : ",
-                                                commandBuilder.build()));
+                                // After
+                                PlayerUtils.sendMessage(player, Text.of(Translations.HOLDING_UNSET_TOOL.s(), commandBuilder.build()));
                             }
                             lastMessage.put(player, LocalDateTime.now());
                         }

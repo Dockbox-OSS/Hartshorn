@@ -1,7 +1,7 @@
-package com.darwinreforged.servermodifications.util.database;
+package com.darwinreforged.servermodifications.util.todo.database;
 
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.util.config.TicketConfig;
+import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;

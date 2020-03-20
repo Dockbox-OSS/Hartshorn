@@ -2,8 +2,8 @@ package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
 import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.util.config.TicketConfig;
-import com.darwinreforged.servermodifications.util.database.DataStoreManager;
+import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
+import com.darwinreforged.servermodifications.util.todo.database.DataStoreManager;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;

@@ -1,4 +1,4 @@
-package com.darwinreforged.servermodifications.util;
+package com.darwinreforged.servermodifications.util.plugins;
 
 import com.darwinreforged.servermodifications.enums.brushtooltips.Argument;
 import com.darwinreforged.servermodifications.enums.brushtooltips.Brush;

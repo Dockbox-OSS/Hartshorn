@@ -1,6 +1,7 @@
 package com.darwinreforged.servermodifications.commands.weather;
 
-import com.darwinreforged.servermodifications.util.PlayerWeatherCoreUtil;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
+import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherCoreUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -31,7 +32,7 @@ public class PlayerWeatherCommand implements CommandExecutor {
       switch(weather)
       {
         case UNKNOWN:
-          PlayerWeatherCoreUtil.sendMessage(
+          PlayerUtils.sendMessage(
                   player,
                   "That weather type is unknown. If you feel this is an error, "
                           + "feel free to let a staff member know");
@@ -63,11 +64,11 @@ public class PlayerWeatherCommand implements CommandExecutor {
           PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid, PlayerWeatherCoreUtil.Weather.RAINING);
           break;
       }
-      PlayerWeatherCoreUtil.sendMessage(player, "Personal Weather set to: " + weather.getDisplayName());
+      PlayerUtils.sendMessage(player, "Personal Weather set to: " + weather.getDisplayName());
       return CommandResult.success();
 
     } else {
-      PlayerWeatherCoreUtil.sendMessage(player, "Valid weather types: rain, rainy, raining, snowing, snow, lightning, thunder, storm, lightningstorm, thunderstorm, reset, clear, sunny, undo");
+      PlayerUtils.sendMessage(player, "Valid weather types: rain, rainy, raining, snowing, snow, lightning, thunder, storm, lightningstorm, thunderstorm, reset, clear, sunny, undo");
     }
 
     return CommandResult.empty();

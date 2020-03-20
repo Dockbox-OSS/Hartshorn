@@ -4,7 +4,9 @@ import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
 import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.util.TicketUtil;
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
+import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import com.google.common.collect.Lists;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -49,13 +51,13 @@ public class TicketReadSelfCommand implements CommandExecutor {
             List<Text> contents = new ArrayList<>();
             for (TicketData ticket : tickets) {
                 if (ticket.getPlayerUUID().equals(player.getUniqueId())) {
-                    String online = TicketUtil.isUserOnline(ticket.getPlayerUUID());
+                    String online = PlayerUtils.isUserOnline(ticket.getPlayerUUID()) ? "&b" : "&3";
                     Text.Builder send = Text.builder();
                     String status = "";
                     if (ticket.getStatus() == Open) status = "&bOpen &b- ";
                     if (ticket.getStatus() == Held) status = "&3Held &b- ";
                     if (ticket.getStatus() == Closed) status = "&bClosed &b- ";
-                    send.append(plugin.fromLegacy(status + "&3#" + ticket.getTicketID() + " " + TicketUtil.getTimeAgo(ticket.getTimestamp()) + " by " + online + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()) + " &3on " + TicketUtil.checkTicketServer(ticket.getServer()) + " &3- &7" + TicketUtil.shortenMessage(ticket.getMessage())));
+                    send.append(plugin.fromLegacy(status + "&3#" + ticket.getTicketID() + " " + TicketUtil.getTimeAgo(ticket.getTimestamp()) + " by " + online + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()) + " &3on " + TicketUtil.getServerFormatted(ticket.getServer()) + " &3- &7" + Translations.shorten(ticket.getMessage())));
                     send.onClick(TextActions.runCommand("/ticket read " + ticket.getTicketID()));
                     send.onHover(TextActions.showText(plugin.fromLegacy("Click here to get more details for ticket #" + ticket.getTicketID())));
                     contents.add(send.build());

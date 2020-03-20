@@ -23,7 +23,9 @@ public class Servermodifications {
     @Inject
     private Logger logger;
 
-    public Servermodifications() {    }
+    public Servermodifications() {
+
+    }
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {

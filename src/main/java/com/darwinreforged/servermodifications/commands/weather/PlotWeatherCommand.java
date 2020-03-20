@@ -1,10 +1,11 @@
 package com.darwinreforged.servermodifications.commands.weather;
 
-import com.darwinreforged.servermodifications.util.PlayerWeatherCoreUtil;
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
+import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherCoreUtil;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotPlayer;
-
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -44,10 +45,9 @@ public class PlotWeatherCommand implements CommandExecutor {
               break;
 
             case UNKNOWN:
-              PlayerWeatherCoreUtil.sendMessage(
+              PlayerUtils.sendMessage(
                   player,
-                  "That weather type is unknown. If you feel this is an error, "
-                      + "feel free to let a staff member know");
+                      Translations.UNKNOWN_WEATHER_TYPE.s());
               broadcast = false;
               break;
 
@@ -64,17 +64,17 @@ public class PlotWeatherCommand implements CommandExecutor {
               break;
           }
 
-          if (broadcast) PlayerWeatherCoreUtil.sendMessage(player, "Plot weather set to: " + weatherValue.getDisplayName());
+          if (broadcast) PlayerUtils.sendMessage(player, Translations.PLOT_WEATHER_SET.f(weatherValue.getDisplayName()));
         }
         else {
-          PlayerWeatherCoreUtil.sendMessage(player, "You must be the owner of the plot to execute this command");
+          PlayerUtils.sendMessage(player, "You must be the owner of the plot to execute this command");
         }
       } else {
-        PlayerWeatherCoreUtil.sendMessage(player, "You must be in a plot when executing this command");
+        PlayerUtils.sendMessage(player, "You must be in a plot when executing this command");
       }
 
     } else {
-      PlayerWeatherCoreUtil.sendMessage(player, "You must enter a weather type");
+      PlayerUtils.sendMessage(player, "You must enter a weather type");
     }
 
     return CommandResult.success();

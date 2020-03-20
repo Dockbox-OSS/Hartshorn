@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.listeners;
 
 import com.darwinreforged.servermodifications.plugins.PlayerWeatherPlugin;
-import com.darwinreforged.servermodifications.util.PlayerWeatherCoreUtil;
+import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherCoreUtil;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
 import com.plotsquared.sponge.events.PlayerEnterPlotEvent;

@@ -1,12 +1,11 @@
-package com.darwinreforged.servermodifications.util;
+package com.darwinreforged.servermodifications.util.plugins;
 
 import com.darwinreforged.servermodifications.plugins.PlayerWeatherPlugin;
+import com.darwinreforged.servermodifications.util.LocationUtils;
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.util.blockray.BlockRay;
-import org.spongepowered.api.util.blockray.BlockRayHit;
 import org.spongepowered.api.world.World;
 
 import java.util.Optional;
@@ -19,27 +18,6 @@ public class PlayerWeatherLightningUtil
 {
 
     private static Task lightningTask;
-
-    public static int highestBlockAtXZ(int x, int z, World world) {
-        final int MAX_BUILD_HEIGHT = 256;
-
-        BlockRay<World> blockRay = BlockRay.from(world, new Vector3d(x, MAX_BUILD_HEIGHT, z))
-                //.filter seems to skip everything ???
-                .to(new Vector3d(x, 0, z))
-                .build();
-
-
-        while (blockRay.hasNext())
-        {
-            BlockRayHit<World> hit = blockRay.next();
-            //Air has a y and z value of 0
-            if (hit.getPosition().getFloorY() != 0) {
-                return hit.getBlockY();
-            }
-        }
-        //End block wasn't found (May have been been air all the way down to the void)
-        return -1;
-    }
 
     public static Optional<Vector3d> determineLightningPosition(UUID uuid)
     {
@@ -64,7 +42,7 @@ public class PlayerWeatherLightningUtil
         //2 * MAX_DISTANCE - MAX_DISTANCE will choose a random int from -MAX_DISTANCE to +MAX_DISTANCE
         int xPos = position.getFloorX() + random.nextInt(2 * MAX_DISTANCE) - MAX_DISTANCE;
         int zPos = position.getFloorZ() + random.nextInt(2 * MAX_DISTANCE) - MAX_DISTANCE;
-        int yPos = highestBlockAtXZ(xPos, zPos, world);
+        int yPos = LocationUtils.getHighestPoint(xPos, zPos, world);
 
         if (yPos == -1) return Optional.empty(); //No block was found
 

@@ -1,17 +1,17 @@
-package com.darwinreforged.servermodifications.util;
+package com.darwinreforged.servermodifications.util.plugins;
 
 import com.darwinreforged.servermodifications.plugins.DavePluginWrapper;
 import com.magitechserver.magibridge.MagiBridge;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
-public class DaveMessageParser {
+public class DaveRawUtils {
 
-    public static Map.Entry getAssociatedTrigger(String message) {
-        for (Map.Entry<Object, Object> entry : DavePluginWrapper.getMessagesProperties().entrySet()) {
+    public static Entry<?,?> getAssociatedTrigger(String message) {
+        for (Entry<Object, Object> entry : DavePluginWrapper.getMessagesProperties().entrySet()) {
             String fullTrigger = entry.getKey().toString().replaceFirst("<!important>", "");
 
             for (String trigger : fullTrigger.split("<>")) {

@@ -1,6 +1,6 @@
 package com.darwinreforged.servermodifications.objects;
 
-import com.darwinreforged.servermodifications.util.FriendsStorageManager;
+import com.darwinreforged.servermodifications.util.todo.FriendsStorageManager;
 
 import java.util.ArrayList;
 import java.util.UUID;

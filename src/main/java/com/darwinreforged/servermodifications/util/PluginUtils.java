@@ -4,18 +4,17 @@ import com.darwinreforged.servermodifications.objects.InternalPluginContainer;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
-class CommonUtils {
+public class PluginUtils {
 
-    static String getPluginId(Object plugin) {
+    public static String getPluginId(Object plugin) {
         PluginContainer container = getPlugin(plugin);
         String pluginId = container.getId();
 
-        if (pluginId == null) throw new RuntimeException("Object is not a plugin");
+        if (pluginId == null || pluginId.isEmpty()) throw new RuntimeException("Object is not a plugin");
         else return pluginId;
     }
 
-    static PluginContainer getPlugin(Object plugin) {
-        String pluginId = null;
+    public static PluginContainer getPlugin(Object plugin) {
         if (plugin instanceof PluginContainer) {
             return (PluginContainer) plugin;
         } else {

@@ -1,4 +1,4 @@
-package com.darwinreforged.servermodifications.util.config;
+package com.darwinreforged.servermodifications.util.todo.config;
 
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
@@ -53,6 +53,7 @@ public class TicketConfig {
     public static String mysqlPrefix;
     public static String server;
 
+    // TODO : What even.. split this up ASAP
 
     private void configCheck() throws IOException, ObjectMappingException {
         if (!plugin.defaultConf.toFile().exists()) {

@@ -1,4 +1,4 @@
-package com.darwinreforged.servermodifications.util;
+package com.darwinreforged.servermodifications.util.todo;
 
 import com.darwinreforged.servermodifications.plugins.DavePluginWrapper;
 

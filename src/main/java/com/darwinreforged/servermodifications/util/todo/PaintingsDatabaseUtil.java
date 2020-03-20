@@ -1,5 +1,4 @@
-package com.darwinreforged.servermodifications.util;
-
+package com.darwinreforged.servermodifications.util.todo;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.sql.SqlService;
@@ -40,7 +39,6 @@ public class PaintingsDatabaseUtil {
         	try {
 				file.createNewFile();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
             Connection conn = getDataSource(uri).getConnection();

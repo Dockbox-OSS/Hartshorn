@@ -3,13 +3,11 @@ package com.darwinreforged.servermodifications.plugins;
 import com.darwinreforged.servermodifications.commands.weather.PlayerWeatherCommand;
 import com.darwinreforged.servermodifications.commands.weather.PlotWeatherCommand;
 import com.darwinreforged.servermodifications.listeners.WeatherPlayerActionListeners;
-import com.darwinreforged.servermodifications.util.PlayerWeatherCoreUtil;
-import com.darwinreforged.servermodifications.util.PlayerWeatherLightningUtil;
-import com.darwinreforged.servermodifications.util.PlayerWeatherPacketInterceptor;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
+import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherLightningUtil;
+import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherCoreUtil;
 import com.google.inject.Inject;
-import eu.crushedpixel.sponge.packetgate.api.listener.PacketListener;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
-import net.minecraft.network.play.server.SPacketSpawnGlobalEntity;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -54,11 +52,6 @@ public class PlayerWeatherPlugin {
       initialiseCommand();
       Sponge.getEventManager().registerListeners(this, new WeatherPlayerActionListeners());
 
-      PacketGate packetGate = packetGateOptional.get();
-      packetGate.registerListener(new PlayerWeatherPacketInterceptor(),
-              PacketListener.ListenerPriority.FIRST,
-              SPacketSpawnGlobalEntity.class);
-
       logger.info("Weather Plugin successfull initialised");
     } else {
       logger.error(
@@ -100,7 +93,7 @@ public class PlayerWeatherPlugin {
                   // If true, this prevents any packets from being intercepted.
                   Player player = (Player) src;
                   PlayerWeatherCoreUtil.globalWeatherOff = !PlayerWeatherCoreUtil.globalWeatherOff;
-                  PlayerWeatherCoreUtil.sendMessage(player, "Using global weather : " + (PlayerWeatherCoreUtil.globalWeatherOff ? "OFF" : "ON"));
+                  PlayerUtils.sendMessage(player, "Using global weather : " + (PlayerWeatherCoreUtil.globalWeatherOff ? "OFF" : "ON"));
 
 
                   for (UUID uuid : PlayerWeatherCoreUtil.getPlayerWeatherUUIDs())
@@ -134,11 +127,11 @@ public class PlayerWeatherPlugin {
                         (src, args) -> {
                             if (!(src instanceof Player)) return CommandResult.success();
                             Player player = (Player) src;
-                            PlayerWeatherCoreUtil.sendMessage(player, "Current Weather Type: " +
+                            PlayerUtils.sendMessage(player, "Current Weather Type: " +
                                     PlayerWeatherCoreUtil.getPlayersWeather(player.getUniqueId()));
-                            PlayerWeatherCoreUtil.sendMessage(player, "Is Lightning Player: " +
+                            PlayerUtils.sendMessage(player, "Is Lightning Player: " +
                                     PlayerWeatherCoreUtil.lightningPlayersContains(player.getUniqueId()));
-                            PlayerWeatherCoreUtil.sendMessage(player, PlayerWeatherLightningUtil.lightningSchedulerStatus());
+                            PlayerUtils.sendMessage(player, PlayerWeatherLightningUtil.lightningSchedulerStatus());
                             return CommandResult.success();
                         }
                     ).build();

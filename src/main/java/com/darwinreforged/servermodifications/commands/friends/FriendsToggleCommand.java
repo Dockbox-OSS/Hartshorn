@@ -1,14 +1,14 @@
 package com.darwinreforged.servermodifications.commands.friends;
 
 import com.darwinreforged.servermodifications.objects.FriendsStorage;
-import com.darwinreforged.servermodifications.util.FriendsUtil;
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
+import com.darwinreforged.servermodifications.util.todo.FriendsUtil;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 public class FriendsToggleCommand  implements CommandExecutor {
 
@@ -17,7 +17,7 @@ public class FriendsToggleCommand  implements CommandExecutor {
         Player source = (Player) src;
         FriendsStorage sourceStorage = FriendsUtil.getData(source.getUniqueId());
         sourceStorage.toggle();
-        source.sendMessage(Text.of(TextColors.GRAY, "[] ", TextColors.AQUA, "Accept teleports from friends : ", sourceStorage.toggledTeleportsOff ? "Off" : "On"));
+        PlayerUtils.sendMessage(source, Translations.ACCEPTING_TP.f(sourceStorage.toggledTeleportsOff ? "Off" : "On"));
         return CommandResult.success();
     }
 }

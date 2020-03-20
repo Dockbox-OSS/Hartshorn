@@ -4,8 +4,10 @@ import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
 import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.util.TicketUtil;
-import com.darwinreforged.servermodifications.util.config.TicketConfig;
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
+import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
+import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import org.spongepowered.api.Sponge;
@@ -62,10 +64,10 @@ public class TicketReadCommand implements CommandExecutor {
                     int totalTickets = 0;
                     for (TicketData ticket : tickets) {
                         if (TicketConfig.hideOffline) {
-                            if (TicketUtil.checkUserOnline(
+                            if (PlayerUtils.isUserOnline(
                                     TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()))) {
                                 if (ticket.getStatus() == Claimed || ticket.getStatus() == Open) {
-                                    String online = TicketUtil.isUserOnline(ticket.getPlayerUUID());
+                                    String online = PlayerUtils.isUserOnline(ticket.getPlayerUUID()) ? "&b" : "&3";
                                     totalTickets++;
                                     Text.Builder send = Text.builder();
                                     String status = "";
@@ -81,9 +83,9 @@ public class TicketReadCommand implements CommandExecutor {
                                                             + online
                                                             + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID())
                                                             + " &3on "
-                                                            + TicketUtil.checkTicketServer(ticket.getServer())
+                                                            + TicketUtil.getServerFormatted(ticket.getServer())
                                                             + " &3- &7"
-                                                            + TicketUtil.shortenMessage(ticket.getMessage())));
+                                                            + Translations.shorten(ticket.getMessage())));
                                     send.onClick(TextActions.runCommand("/ticket read " + ticket.getTicketID()));
                                     send.onHover(
                                             TextActions.showText(
@@ -95,7 +97,7 @@ public class TicketReadCommand implements CommandExecutor {
                             }
                         } else {
                             if (ticket.getStatus() == Claimed || ticket.getStatus() == Open) {
-                                String online = TicketUtil.isUserOnline(ticket.getPlayerUUID());
+                                String online = PlayerUtils.isUserOnline(ticket.getPlayerUUID()) ? "&b" : "&3";
                                 totalTickets++;
                                 Text.Builder send = Text.builder();
                                 String status = "";
@@ -111,9 +113,9 @@ public class TicketReadCommand implements CommandExecutor {
                                                         + online
                                                         + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID())
                                                         + " &3on "
-                                                        + TicketUtil.checkTicketServer(ticket.getServer())
+                                                        + TicketUtil.getServerFormatted(ticket.getServer())
                                                         + " &3- &7"
-                                                        + TicketUtil.shortenMessage(ticket.getMessage())));
+                                                        + Translations.shorten(ticket.getMessage())));
                                 send.onClick(TextActions.runCommand("/ticket read " + ticket.getTicketID()));
                                 send.onHover(
                                         TextActions.showText(
@@ -162,7 +164,7 @@ public class TicketReadCommand implements CommandExecutor {
                                 throw new CommandException(TicketMessages.getErrorTicketOwner());
                             }
                             ticketStatus = TicketUtil.getTicketStatusColour(ticket.getStatus());
-                            String online = TicketUtil.isUserOnline(ticket.getPlayerUUID());
+                            String online = PlayerUtils.isUserOnline(ticket.getPlayerUUID()) ? "&b" : "&3";
                             Optional<World> worldOptional = Sponge.getServer().getWorld(ticket.getWorld());
 
                             Text.Builder action = Text.builder();
@@ -438,7 +440,7 @@ public class TicketReadCommand implements CommandExecutor {
 
                             contents.add(
                                     plugin.fromLegacy(
-                                            "&bServer: " + TicketUtil.checkTicketServer(ticket.getServer())));
+                                            "&bServer: " + TicketUtil.getServerFormatted(ticket.getServer())));
                             if (!ticket
                                     .getPlayerUUID()
                                     .toString()
