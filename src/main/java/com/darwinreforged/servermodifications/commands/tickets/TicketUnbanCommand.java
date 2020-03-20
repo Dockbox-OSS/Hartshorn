@@ -2,7 +2,7 @@ package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
+import com.darwinreforged.servermodifications.translations.Translations;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -30,18 +30,18 @@ public class TicketUnbanCommand implements CommandExecutor {
 		for (TicketPlayerData pData : playerData) {
 			if (pData.getPlayerUUID().equals(user.getUniqueId())) {
 				if (pData.getBannedStatus() == 0) {
-					throw new CommandException(TicketMessages.getErrorNotBanned(user.getName()));
+					throw new CommandException(Translations.TICKET_ERROR_NOT_BANNED.ft(user.getName()));
 				}
 				pData.setBannedStatus(0);
 				try {
 					plugin.getDataStore().updatePlayerData(pData);
 				} catch (Exception e) {
 					e.printStackTrace();
-					throw new CommandException(TicketMessages.getErrorUnbanUser(user.getName()));
+					throw new CommandException(Translations.TICKET_ERROR_UNBAN_USER.ft(user.getName()));
 				}
 				return CommandResult.success();
 			}
 		}
-		throw new CommandException(TicketMessages.getErrorUserNotExist(user.getName()));
+		throw new CommandException(Translations.TICKET_ERROR_USER_NOT_EXIST.ft(user.getName()));
 	}
 }

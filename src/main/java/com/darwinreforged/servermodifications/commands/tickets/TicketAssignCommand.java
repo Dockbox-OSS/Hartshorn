@@ -3,7 +3,8 @@ package com.darwinreforged.servermodifications.commands.tickets;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -36,15 +37,15 @@ public class TicketAssignCommand implements CommandExecutor {
         final List<TicketData> tickets = new ArrayList<TicketData>(plugin.getDataStore().getTicketData());
 
         if (tickets.isEmpty()) {
-            throw new CommandException(TicketMessages.getErrorGen("Tickets list is empty."));
+            throw new CommandException(Translations.UNKNOWN_ERROR.ft("Tickets list is empty."));
         } else {
             for (TicketData ticket : tickets) {
                 if (ticket.getTicketID() == ticketID) {
                     if (ticket.getStatus() == Closed) {
-                        src.sendMessage(TicketMessages.getErrorTicketAlreadyClosed());
+                        PlayerUtils.tell(src, Translations.TICKET_ERROR_ALREADY_CLOSED.s());
                     }
                     if (ticket.getStatus() == Claimed && !src.hasPermission(TicketPermissions.CLAIMED_TICKET_BYPASS)) {
-                        throw new CommandException(TicketMessages.getErrorTicketClaim(ticket.getTicketID(), TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
+                        throw new CommandException(Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
                     }
                     ticket.setStatus(Claimed);
                     ticket.setStaffUUID(user.getUniqueId().toString());
@@ -52,21 +53,21 @@ public class TicketAssignCommand implements CommandExecutor {
                     try {
                         plugin.getDataStore().updateTicketData(ticket);
                     } catch (Exception e) {
-                        src.sendMessage(TicketMessages.getErrorGen("Unable to assign " + user.getName() + " to ticket"));
+                        PlayerUtils.tell(src, Translations.UNKNOWN_ERROR.ft("Unable to assign " + user.getName() + " to ticket"));
                         e.printStackTrace();
                     }
 
-                    TicketUtil.notifyOnlineStaff(TicketMessages.getTicketAssign(TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID()), ticket.getTicketID()));
+                    PlayerUtils.broadcastForPermission(Translations.TICKET_ASSIGN.f(TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID()), ticket.getTicketID()), TicketPermissions.STAFF);
 
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {
                         Player ticketPlayer = ticketPlayerOP.get();
-                        ticketPlayer.sendMessage(TicketMessages.getTicketAssignUser(ticket.getTicketID(), TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
+                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_ASSIGN_USER.f(ticket.getTicketID(), TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
                     }
                     return CommandResult.success();
                 }
             }
-            throw new CommandException(TicketMessages.getTicketNotExist(ticketID));
+            throw new CommandException(Translations.TICKET_NOT_EXIST.ft(ticketID));
         }
     }
 }

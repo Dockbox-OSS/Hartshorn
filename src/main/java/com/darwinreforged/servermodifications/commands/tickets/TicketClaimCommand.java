@@ -44,7 +44,7 @@ public class TicketClaimCommand implements CommandExecutor {
         }
 
         if (tickets.isEmpty()) {
-            throw new CommandException(TicketMessages.getErrorGen("Tickets list is empty."));
+            throw new CommandException(Translations.UNKNOWN_ERROR.ft("Tickets list is empty."));
         } else {
             for (TicketData ticket : tickets) {
                 if (ticket.getTicketID() == ticketID) {
@@ -69,7 +69,7 @@ public class TicketClaimCommand implements CommandExecutor {
                     try {
                         plugin.getDataStore().updateTicketData(ticket);
                     } catch (Exception e) {
-                        src.sendMessage(TicketMessages.getErrorGen("Unable to claim ticket"));
+                        src.sendMessage(Translations.UNKNOWN_ERROR.ft("Unable to claim ticket"));
                         e.printStackTrace();
                     }
 

@@ -33,12 +33,12 @@ public class TicketTeleportCommand implements CommandExecutor {
         final List<TicketData> tickets = new ArrayList<TicketData>(plugin.getDataStore().getTicketData());
 
         if (!(src instanceof Player)) {
-            throw new CommandException(TicketMessages.getErrorGen("Only players can use this command"));
+            throw new CommandException(Translations.UNKNOWN_ERROR.ft("Only players can use this command"));
         }
         Player player = (Player) src;
 
         if (tickets.isEmpty()) {
-            throw new CommandException(TicketMessages.getErrorGen("Tickets list is empty."));
+            throw new CommandException(Translations.UNKNOWN_ERROR.ft("Tickets list is empty."));
         } else {
             boolean ticketExist = false;
             for (TicketData ticket : tickets) {

@@ -29,7 +29,7 @@ public class TicketUtil {
     }
 
     public static String getTicketStatusColour(TicketStatus ticketIDStatus) {
-        return Translations.valueOf("TICKET_" + ticketIDStatus.toString().toUpperCase()).s();
+        return Translations.valueOf("TICKET_STATUS_" + ticketIDStatus.toString().toUpperCase()).s();
     }
 
     public static void notifyOnlineStaff(Text message) {

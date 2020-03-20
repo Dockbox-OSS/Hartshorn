@@ -2,6 +2,8 @@ package com.darwinreforged.servermodifications.plugins;
 
 import com.darwinreforged.servermodifications.listeners.PaintingsDiscordListener;
 import com.darwinreforged.servermodifications.objects.PaintingSubmission;
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.PaintingsDatabaseUtil;
 import com.google.inject.Inject;
 import com.magitechserver.magibridge.MagiBridge;
@@ -25,7 +27,6 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.service.sql.SqlService;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
@@ -162,14 +163,14 @@ public class PaintingsPlugin {
         String url = commandContext.<String>getOne("URL").get();
 
         if (!url.endsWith(".png")) {
-            cmdSource.sendMessage(Text.of(TextColors.DARK_GRAY, "[] ", TextColors.RED, "URLs have to end with .png, please make sure to upload an image rather than a webpage including it."));
+            PlayerUtils.tell(cmdSource, Translations.PNG_URL_REQUIRED.s());
             return CommandResult.success();
         }
 
         int mapsX = commandContext.<Integer>getOne("MapsX").orElse(1);
         int mapsY = commandContext.<Integer>getOne("MapsY").orElse(1);
         if (mapsX > 3 || mapsY > 3) {
-            player.sendMessage(Text.of(TextColors.RED, "Error --- maximum size of 3x3"));
+            PlayerUtils.tell(player, Translations.PAINTING_TOO_BIG.s());
             return CommandResult.success();
         }
 
@@ -184,7 +185,7 @@ public class PaintingsPlugin {
             embed.setImage(url);
 
             MagiBridge.jda.getTextChannelById("555462653917790228").sendMessage(embed.build()).queue();
-            player.sendMessage(Text.of("You are exempt from needing permission, check your list of paintings."));
+            PlayerUtils.tell(player, Translations.PAINTING_EXEMPT.s());
         } else {
 
             String uri = "jdbc:sqlite:" + staticRoots + "/DarwinPaintings.db";
@@ -215,7 +216,7 @@ public class PaintingsPlugin {
 
                 MagiBridge.jda.getTextChannelById("555462653917790228").sendMessage(embed.build()).queue();
             }
-            player.sendMessage(Text.of(TextColors.GRAY, "[] ", TextColors.AQUA, "Submitted a new request, once accepted the painting will be automatically uploaded"));
+            PlayerUtils.tell(player, Translations.PAINTING_SUBMITTED.s());
             conn.close();
         }
         return CommandResult.success();

@@ -43,7 +43,7 @@ public class TicketUnclaimCommand implements CommandExecutor {
         }
 
         if (tickets.isEmpty()) {
-            throw new CommandException(TicketMessages.getErrorGen("Tickets list is empty."));
+            throw new CommandException(Translations.UNKNOWN_ERROR.ft("Tickets list is empty."));
         } else {
             for (TicketData ticket : tickets) {
                 if (ticket.getTicketID() == ticketID) {
@@ -68,7 +68,7 @@ public class TicketUnclaimCommand implements CommandExecutor {
                     try {
                         plugin.getDataStore().updateTicketData(ticket);
                     } catch (Exception e) {
-                        src.sendMessage(TicketMessages.getErrorGen("Unable to unclaim ticket"));
+                        src.sendMessage(Translations.UNKNOWN_ERROR.ft("Unable to unclaim ticket"));
                         e.printStackTrace();
                     }
 

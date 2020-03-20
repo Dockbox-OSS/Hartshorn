@@ -37,15 +37,15 @@ public class TicketReadSelfCommand implements CommandExecutor {
         final List<TicketData> tickets = new ArrayList<TicketData>(plugin.getDataStore().getTicketData());
 
         if (!src.hasPermission(TicketPermissions.COMMAND_TICKET_READ_SELF)) {
-            throw new CommandException(TicketMessages.getErrorPermission(TicketPermissions.COMMAND_TICKET_READ_SELF));
+            throw new CommandException(Translations.TICKET_ERROR_PERMISSION.ft(TicketPermissions.COMMAND_TICKET_READ_SELF));
         }
         if (!(src instanceof Player)) {
-            throw new CommandException(TicketMessages.getErrorGen("Console users cannot use this command."));
+            throw new CommandException(Translations.UNKNOWN_ERROR.ft("Console users cannot use this command."));
         }
         Player player = (Player) src;
 
         if (tickets.isEmpty()) {
-            throw new CommandException(TicketMessages.getErrorGen("Tickets list is empty."));
+            throw new CommandException(Translations.UNKNOWN_ERROR.ft("Tickets list is empty."));
         } else {
             PaginationService paginationService = Sponge.getServiceManager().provide(PaginationService.class).get();
             List<Text> contents = new ArrayList<>();

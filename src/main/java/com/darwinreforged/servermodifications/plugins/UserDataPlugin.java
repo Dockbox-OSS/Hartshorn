@@ -1,5 +1,7 @@
 package com.darwinreforged.servermodifications.plugins;
 
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;
@@ -71,36 +73,16 @@ public class UserDataPlugin {
           PlotPlayer plotPlayer = UUIDHandler.getPlayer(user.getUniqueId());
           boolean showPlots = plotPlayer != null;
 
-          Text header =
-              Text.of(
-                  TextColors.AQUA,
-                  TextStyles.STRIKETHROUGH,
-                  "-------- ",
-                  TextStyles.RESET,
-                  TextColors.DARK_AQUA,
-                  user.getName(),
-                  TextColors.AQUA,
-                  TextStyles.STRIKETHROUGH,
-                  "--------");
-
           src.sendMessage(
-              Text.of(
-                  header,
-                  getPlotSquaredText(plotPlayer, showPlots),
-                  getNucleusText(user, src),
-                  getLuckpermsText(user)
-                  // ,                  getActiveTimeText(user)
+                  Text.of(
+                          Translations.USER_DATA_HEADER.f(username),
+                          getPlotSquaredText(plotPlayer, showPlots),
+                          getNucleusText(user, src),
+                          getLuckpermsText(user)
                   ));
 
         } else {
-          src.sendMessage(
-              Text.of(
-                  TextColors.DARK_GRAY,
-                  "[] ",
-                  TextColors.RED,
-                  "Could not collect data for ",
-                  TextColors.DARK_RED,
-                  username));
+          PlayerUtils.tell(src, Translations.USER_DATA_FAILED_COLLECT.f(username));
         }
       }
       return CommandResult.success();

@@ -39,7 +39,7 @@ public class TicketReadHeldCommand implements CommandExecutor {
         }
 
         if (tickets.isEmpty()) {
-            throw new CommandException(TicketMessages.getErrorGen("Tickets list is empty."));
+            throw new CommandException(Translations.UNKNOWN_ERROR.ft("Tickets list is empty."));
         } else {
             PaginationService paginationService = Sponge.getServiceManager().provide(PaginationService.class).get();
             List<Text> contents = new ArrayList<>();

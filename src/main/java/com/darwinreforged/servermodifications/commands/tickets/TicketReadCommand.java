@@ -54,7 +54,7 @@ public class TicketReadCommand implements CommandExecutor {
         }
 
         if (tickets.isEmpty()) {
-            throw new CommandException(TicketMessages.getErrorGen("Tickets list is empty."));
+            throw new CommandException(Translations.UNKNOWN_ERROR.ft("Tickets list is empty."));
         } else {
             if (!ticketIDOp.isPresent()) {
                 if (src.hasPermission(TicketPermissions.COMMAND_TICKET_READ_ALL)) {
@@ -143,10 +143,10 @@ public class TicketReadCommand implements CommandExecutor {
                     return CommandResult.success();
                 } else {
                     if (src.hasPermission(TicketPermissions.COMMAND_TICKET_READ_SELF)) {
-                        throw new CommandException(TicketMessages.getErrorIncorrectUsage("/check self or /check #"));
+                        throw new CommandException(Translations.TICKET_ERROR_INCORRECT_USAGE.t());
                     } else {
                         throw new CommandException(
-                                TicketMessages.getErrorPermission(TicketPermissions.COMMAND_TICKET_READ_ALL));
+                                Translations.TICKET_ERROR_PERMISSION.ft(TicketPermissions.COMMAND_TICKET_READ_ALL));
                     }
                 }
             } else {
@@ -464,7 +464,7 @@ public class TicketReadCommand implements CommandExecutor {
                     return CommandResult.success();
                 } else {
                     throw new CommandException(
-                            TicketMessages.getErrorPermission(TicketPermissions.COMMAND_TICKET_READ_SELF));
+                            Translations.TICKET_ERROR_PERMISSION.ft(TicketPermissions.COMMAND_TICKET_READ_SELF));
                 }
             }
         }

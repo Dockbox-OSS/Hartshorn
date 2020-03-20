@@ -4,6 +4,7 @@ import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
 import com.darwinreforged.servermodifications.translations.TicketMessages;
+import com.darwinreforged.servermodifications.translations.Translations;
 import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.intellectualcrafters.plot.object.Location;
@@ -43,7 +44,7 @@ public class TicketOpenCommand implements CommandExecutor {
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     String message = args.<String>getOne("message").get();
     /*if (!(src instanceof Player)) {
-        throw new CommandException(TicketMessages.getErrorGen("Only players can run this command"));
+        throw new CommandException(Translations.UNKNOWN_ERROR.ft("Only players can run this command"));
     }*/
 
     if (src instanceof Player) {
@@ -70,7 +71,7 @@ public class TicketOpenCommand implements CommandExecutor {
       if (plot != null && !plot.getOwners().contains(player.getUniqueId())) plot = null;
 
       if (TicketConfig.server.isEmpty()) {
-        throw new CommandException(TicketMessages.getErrorGen("Server name inside config is not set"));
+        throw new CommandException(Translations.UNKNOWN_ERROR.ft("Server name inside config is not set"));
       }
       if (plugin.getWaitTimer().contains(src.getName())) {
         throw new CommandException(TicketMessages.getTicketTooFast(TicketConfig.delayTimer));
@@ -113,7 +114,7 @@ public class TicketOpenCommand implements CommandExecutor {
               new ArrayList<>(plugin.getDataStore().getPlayerData());
       for (TicketPlayerData pData : playerData) {
         if (pData.getPlayerName().equals(src.getName()) && pData.getBannedStatus() == 1) {
-          throw new CommandException(TicketMessages.getErrorBanned());
+          throw new CommandException(Translations.TICKET_ERROR_BANNED.t());
         }
       }
 
@@ -160,7 +161,7 @@ public class TicketOpenCommand implements CommandExecutor {
                     plugin.getDataStore().addTicketData(ticketData);
                   });
         } catch (Exception e) {
-          player.sendMessage(TicketMessages.getErrorGen("Data was not saved correctly."));
+          player.sendMessage(Translations.UNKNOWN_ERROR.ft("Data was not saved correctly."));
           e.printStackTrace();
         }
       } else {
@@ -189,7 +190,7 @@ public class TicketOpenCommand implements CommandExecutor {
       return CommandResult.success();
     } else {
       if (TicketConfig.server.isEmpty()) {
-        throw new CommandException(TicketMessages.getErrorGen("Server name inside config is not set"));
+        throw new CommandException(Translations.UNKNOWN_ERROR.ft("Server name inside config is not set"));
       }
 
       final List<TicketData> tickets =
@@ -222,7 +223,7 @@ public class TicketOpenCommand implements CommandExecutor {
           TicketUtil.notifyOnlineStaffOpen(TicketMessages.getTicketOpen("Console", ticketID), ticketID);
         }
       } catch (Exception e) {
-        src.sendMessage(TicketMessages.getErrorGen("Data was not saved correctly."));
+        src.sendMessage(Translations.UNKNOWN_ERROR.ft("Data was not saved correctly."));
         e.printStackTrace();
       }
 

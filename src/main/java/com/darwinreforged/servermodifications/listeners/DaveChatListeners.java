@@ -57,8 +57,6 @@ public class DaveChatListeners {
             if (player instanceof CommandSource) {
                 Executor.beforeExecution(playername, event.getMessage().toPlain(), botPrefix, color, player);
                 Sponge.getScheduler().createTaskBuilder().execute(new Executor()).delayTicks(5).submit(DavePluginWrapper.getSingleton());
-            } else {
-                Sponge.getServer().getConsole().sendMessage(Text.of("Tried to execute Chat trigger from non-player source, how did you even do this?"));
             }
     }
 

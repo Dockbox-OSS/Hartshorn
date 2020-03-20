@@ -31,7 +31,7 @@ public class TicketReloadCommand implements CommandExecutor {
             plugin.loadDataStore();
         } catch (IOException | ObjectMappingException e) {
             e.printStackTrace();
-            throw new CommandException(TicketMessages.getErrorGen("Unable to load data."));
+            throw new CommandException(Translations.UNKNOWN_ERROR.ft("Unable to load data."));
         }
         src.sendMessage(plugin.fromLegacy("&bTicket and Player data reloaded."));
         return CommandResult.success();

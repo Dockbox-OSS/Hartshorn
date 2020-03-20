@@ -126,13 +126,6 @@ public class TicketPlugin {
     }
 
     private void loadCommands() {
-        // /stafflist
-        CommandSpec staffList =
-                CommandSpec.builder()
-                        .description(Text.of("List online staff members"))
-                        .executor(new TicketStaffCommand(this))
-                        .build();
-
         // /ticket read self
         CommandSpec readSelf =
                 CommandSpec.builder()
@@ -316,7 +309,6 @@ public class TicketPlugin {
         cmdManager.register(this, ticketOpen, "modreq");
         cmdManager.register(this, ticketRead, "check");
         cmdManager.register(this, ticketBase, "ticket");
-        cmdManager.register(this, staffList, "stafflist");
     }
 
     public Logger getLogger() {

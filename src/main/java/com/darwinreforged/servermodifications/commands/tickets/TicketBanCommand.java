@@ -3,6 +3,7 @@ package com.darwinreforged.servermodifications.commands.tickets;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
 import com.darwinreforged.servermodifications.translations.TicketMessages;
+import com.darwinreforged.servermodifications.translations.Translations;
 import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -29,25 +30,25 @@ public class TicketBanCommand implements CommandExecutor {
         final List<TicketPlayerData> playerData = new ArrayList<TicketPlayerData>(plugin.getDataStore().getPlayerData());
 
         if (!user.getPlayer().isPresent()) {
-            throw new CommandException(TicketMessages.getErrorGen("Unable to get player"));
+            throw new CommandException(Translations.UNKNOWN_ERROR.ft("Unable to get player"));
         } else {
             for (TicketPlayerData pData : playerData) {
                 TicketUtil.checkPlayerData(plugin, user.getPlayer().get());
                 if (pData.getPlayerUUID().equals(user.getUniqueId())) {
                     if (pData.getBannedStatus() == 1) {
-                        throw new CommandException(TicketMessages.getErrorBannedAlready(user.getName()));
+                        throw new CommandException(Translations.TICKET_ERROR_BANNED_ALREADY.ft(user.getName()));
                     }
                     pData.setBannedStatus(1);
                     try {
                         plugin.getDataStore().updatePlayerData(pData);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        throw new CommandException(TicketMessages.getErrorBanUser(user.getName()));
+                        throw new CommandException(Translations.TICKET_ERROR_BAN_USER.ft(user.getName()));
                     }
                     return CommandResult.success();
                 }
             }
         }
-        throw new CommandException(TicketMessages.getErrorUserNotExist(user.getName()));
+        throw new CommandException(Translations.TICKET_ERROR_USER_NOT_EXIST.ft(user.getName()));
     }
 }

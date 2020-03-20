@@ -4,6 +4,8 @@ import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
 import com.darwinreforged.servermodifications.translations.TicketMessages;
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import com.magitechserver.magibridge.MagiBridge;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -52,27 +54,27 @@ public class TicketCloseCommand implements CommandExecutor {
     }
 
     if (tickets.isEmpty()) {
-      throw new CommandException(TicketMessages.getErrorGen("Tickets list is empty."));
+      throw new CommandException(Translations.UNKNOWN_ERROR.ft("Tickets list is empty."));
     } else {
       for (TicketData ticket : tickets) {
         if (ticket.getTicketID() == ticketID) {
           if (ticket.getPlayerUUID().equals(uuid)
               && !src.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_SELF)) {
             throw new CommandException(
-                TicketMessages.getErrorPermission(TicketPermissions.COMMAND_TICKET_CLOSE_SELF));
+                    Translations.TICKET_ERROR_PERMISSION.ft(TicketPermissions.COMMAND_TICKET_CLOSE_SELF));
           }
           if (!ticket.getPlayerUUID().equals(uuid)
               && !src.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_ALL)) {
-            throw new CommandException(TicketMessages.getErrorTicketOwner());
+            throw new CommandException(Translations.TICKET_ERROR_OWNER.t());
           }
           if (ticket.getStatus() == Closed) {
-            throw new CommandException(TicketMessages.getErrorTicketAlreadyClosed());
+            throw new CommandException(Translations.TICKET_ERROR_ALREADY_CLOSED.t());
           }
           if (ticket.getStatus() == Claimed
               && !ticket.getStaffUUID().equals(uuid)
               && !src.hasPermission(TicketPermissions.CLAIMED_TICKET_BYPASS)) {
             throw new CommandException(
-                TicketMessages.getErrorTicketClaim(
+                Translations.TICKET_ERROR_CLAIM.ft(
                     ticket.getTicketID(),
                     TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
           }
@@ -83,7 +85,7 @@ public class TicketCloseCommand implements CommandExecutor {
           ticket.setStatus(Closed);
           ticket.setStaffUUID(uuid.toString());
 
-          TicketUtil.notifyOnlineStaff(TicketMessages.getTicketClose(ticketID, src.getName()));
+          PlayerUtils.broadcastForPermission(Translations.TICKET_CLOSE.f(ticketID, src.getName()), TicketPermissions.STAFF);
           Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
           if (ticketPlayerOP.isPresent()) {
             Player ticketPlayer = ticketPlayerOP.get();
@@ -144,13 +146,13 @@ public class TicketCloseCommand implements CommandExecutor {
           try {
             plugin.getDataStore().updateTicketData(ticket);
           } catch (Exception e) {
-            src.sendMessage(TicketMessages.getErrorGen("Unable to close ticket"));
+            src.sendMessage(Translations.UNKNOWN_ERROR.ft("Unable to close ticket"));
             e.printStackTrace();
           }
           return CommandResult.success();
         }
       }
-      throw new CommandException(TicketMessages.getTicketNotExist(ticketID));
+      throw new CommandException(Translations.TICKET_NOT_EXIST.ft(ticketID));
     }
   }
 }

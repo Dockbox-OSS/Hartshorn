@@ -51,15 +51,18 @@ public class FriendsAddCommand implements CommandExecutor {
         //if not give the target a friend request and a message;
         else {
             targetStorage.addRequest(source.getUniqueId());
-            source.sendMessage(Text.of(TextColors.GRAY, "[] ", TextColors.AQUA, "A friend request was sent to ", TextColors.DARK_AQUA, target.getName()));
+            PlayerUtils.tell(source, Translations.REQUEST_SENT.f(target.getName()));
+
             if (target.isOnline()) {
                 Player targetM = Sponge.getServer().getPlayer(target.getName()).get();
-                targetM.sendMessage(Text.of(TextColors.GRAY, "[] ", TextColors.DARK_AQUA, source.getName(), TextColors.AQUA, " has requested to befriend you."));
+                PlayerUtils.tell(targetM, Translations.REQUEST_RECEIVED.f(source.getName()));
+
                 Text.Builder accept = Text.builder();
                 accept.append(Text.of(TextColors.WHITE, TextStyles.UNDERLINE, "Accept")).onClick(TextActions.runCommand("/friend add " + source.getName())).onHover(TextActions.showText(Text.of("Click me to accept this request"))).build();
                 Text.Builder reject = Text.builder();
                 reject.append(Text.of(TextColors.WHITE, TextStyles.UNDERLINE, "Deny")).onClick(TextActions.runCommand("/friend remove " + source.getName())).onHover(TextActions.showText(Text.of("Click me to reject this request"))).build();
-                targetM.sendMessage(Text.of(accept.build(), Text.of(" - "), reject.build()));
+
+                PlayerUtils.tell(targetM, Text.of(accept.build(), Text.of(" - "), reject.build()));
             }
         }
 
