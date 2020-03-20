@@ -4,6 +4,7 @@ import com.darwinreforged.servermodifications.translations.Translations;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import io.github.nucleuspowered.nucleus.modules.core.datamodules.CoreUserDataModule;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
@@ -37,47 +38,47 @@ public class PlayerUtils {
     /*
      Regular sendMessage
      */
-    public static void sendMessage(Player player, Text text, boolean addPrefix) {
+    public static void tell(CommandSource player, Text text, boolean addPrefix) {
         text = Text.builder().append(text).append(Text.of(addPrefix ? Translations.PREFIX.s() : "")).build();
         player.sendMessage(text);
     }
 
-    public static void sendMessage(Player player, Text text) {
-        sendMessage(player, text, true);
+    public static void tell(CommandSource player, Text text) {
+        tell(player, text, true);
     }
 
-    public static void sendMessage(Player player, String message, boolean addPrefix) {
-        sendMessage(player, Text.of(Translations.PREFIX.s(), message, addPrefix));
+    public static void tell(CommandSource player, String message, boolean addPrefix) {
+        tell(player, Text.of(Translations.PREFIX.s(), message, addPrefix));
     }
 
-    public static void sendMessage(Player player, String message) {
-        sendMessage(player, Text.of(Translations.PREFIX.s(), message));
+    public static void tell(CommandSource player, String message) {
+        tell(player, Text.of(Translations.PREFIX.s(), message));
     }
 
     /*
      sendMessage if single player has permission
      */
-    public static void sendMessageIfHasPermission(Player player, Text text, String permission, boolean addPrefix) {
-        if (player.hasPermission(permission)) sendMessage(player, text, addPrefix);
+    public static void tellIfHasPermission(CommandSource player, Text text, String permission, boolean addPrefix) {
+        if (player.hasPermission(permission)) tell(player, text, addPrefix);
     }
 
-    public static void sendMessageIfHasPermission(Player player, Text text, String permission) {
-        sendMessageIfHasPermission(player, text, permission, true);
+    public static void tellIfHasPermission(CommandSource player, Text text, String permission) {
+        tellIfHasPermission(player, text, permission, true);
     }
 
-    public static void sendMessageIfHasPermission(Player player, String message, String permission, boolean addPrefix) {
-        sendMessageIfHasPermission(player, Text.of(message), permission, addPrefix);
+    public static void tellIfHasPermission(CommandSource player, String message, String permission, boolean addPrefix) {
+        tellIfHasPermission(player, Text.of(message), permission, addPrefix);
     }
 
-    public static void sendMessageIfHasPermission(Player player, String message, String permission) {
-        sendMessageIfHasPermission(player, message, permission, true);
+    public static void tellIfHasPermission(CommandSource player, String message, String permission) {
+        tellIfHasPermission(player, message, permission, true);
     }
 
     /*
      sendMessage if online player(s) has/have permission
      */
     public static void broadcastForPermission(Text text, String permission, boolean addPrefix) {
-        Sponge.getServer().getOnlinePlayers().forEach(p -> sendMessageIfHasPermission(p, text, permission, addPrefix));
+        Sponge.getServer().getOnlinePlayers().forEach(p -> tellIfHasPermission(p, text, permission, addPrefix));
     }
 
     public static void broadcastForPermission(Text text, String permission) {
@@ -90,6 +91,25 @@ public class PlayerUtils {
 
     public static void broadcastForPermission(String message, String permission) {
         broadcastForPermission(Text.of(message), permission, true);
+    }
+
+    /*
+     Public broadcast
+     */
+    public static void broadcast(Text text, boolean addPrefix) {
+        Sponge.getServer().getBroadcastChannel().send(Text.of((addPrefix ? Translations.PREFIX : ""), text));
+    }
+
+    public static void broadcast(Text text) {
+        broadcast(text, true);
+    }
+
+    public static void broadcast(String message, boolean addPrefix) {
+        broadcast(Text.of(message), addPrefix);
+    }
+
+    public static void broadcast(String message) {
+        broadcast(Text.of(message), true);
     }
 
     /*

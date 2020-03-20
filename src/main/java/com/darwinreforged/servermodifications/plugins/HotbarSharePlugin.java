@@ -1,7 +1,8 @@
 package com.darwinreforged.servermodifications.plugins;
 
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -97,16 +98,13 @@ public class HotbarSharePlugin {
 
                 Long id = System.currentTimeMillis();
                 HotbarSharePlugin.sharedBars.put(id, new HotbarShare(itemStackList, player.getName()));
-                Text text =
-                        Text.of(TextColors.GRAY, "[] ",
-                                TextColors.DARK_AQUA, player.getName(), TextColors.AQUA, " shared their hotbar ");
 
                 Text buttonView =
                         Text.builder()
                                 .append(
                                         Text.of(
                                                 TextColors.DARK_AQUA,
-                                                "[",
+                                                " [",
                                                 TextColors.AQUA,
                                                 "View",
                                                 TextColors.DARK_AQUA,
@@ -129,13 +127,11 @@ public class HotbarSharePlugin {
                                 .onHover(TextActions.showText(Text.of("Load hotbar")))
                                 .build();
 
-                player.sendMessage(Text.of(TextColors.GRAY, "[] ", TextColors.DARK_AQUA, "You shared your hotbar with ", TextColors.AQUA, shareWith == null ? "everyone" : shareWith.getName()));
-                if (shareWith != null) shareWith.sendMessage(Text.of(text, buttonView, buttonLoad));
+                PlayerUtils.tell(player, Translations.SHARED_HOTBAR_WITH.f(shareWith == null ? "everyone" : shareWith.getName()));
+                if (shareWith != null)
+                    PlayerUtils.tell(shareWith, Text.of(Translations.PLAYER_SHARED_HOTBAR.f(player.getName()), buttonView, buttonLoad));
                 else
-                    Sponge.getServer()
-                            .getOnlinePlayers()
-                            .forEach(
-                                    onLinePlayer -> onLinePlayer.sendMessage(Text.of(text, buttonView, buttonLoad)));
+                    PlayerUtils.broadcast(Text.of(Translations.PLAYER_SHARED_HOTBAR.f(player.getName()), buttonView, buttonLoad));
             }
             return CommandResult.success();
         }
@@ -169,7 +165,7 @@ public class HotbarSharePlugin {
             if (player.getInventory().query(Hotbar.class).canFit(offerable))
                 player.getInventory().query(Hotbar.class).offer(offerable);
             else
-                player.sendMessage(Text.of(TextColors.GRAY, "[] ", TextColors.AQUA, "Your hotbar is full, please clear one or more slots."));
+                PlayerUtils.tell(player, Translations.FULL_HOTBAR.s());
         }
     }
 
@@ -180,7 +176,8 @@ public class HotbarSharePlugin {
         public CommandResult execute(CommandSource src, CommandContext args) {
             Long id = (Long) args.getOne("id").get();
             List<ItemStack> hotbar = HotbarSharePlugin.sharedBars.get(id).getHotbar();
-            src.sendMessage(Text.of(TextColors.DARK_AQUA, "====== ", TextColors.AQUA, HotbarSharePlugin.sharedBars.get(id).getSharedBy(), "'s Hotbar ", TextColors.DARK_AQUA, "======"));
+            PlayerUtils.tell(src, Translations.HOTBAR_SHARE_HEADER.f(HotbarSharePlugin.sharedBars.get(id).getSharedBy()));
+
             for (int i = 0; i < hotbar.size(); i++) {
                 ItemStack stack = hotbar.get(i);
                 Text displayName =
@@ -196,26 +193,34 @@ public class HotbarSharePlugin {
                 List<String> lore = new ArrayList<>();
                 optionalLore.ifPresent(data -> data.forEach(line -> lore.add(String.format("   %s", line.toPlain()))));
 
-                Text itemRow =
-                        Text.of(
-                                TextColors.DARK_AQUA,
-                                "#",
-                                i + 1,
-                                " : ",
-                                TextColors.AQUA,
-                                displayName
-                        );
+                Text itemRow = Text.of(Translations.HOTBAR_SHARE_INDEX.f(i + 1, displayName));
+
                 Text loadButton =
                         Text.builder()
                                 .append(Text.of(TextColors.GRAY, "[", TextColors.AQUA, "Get", TextColors.GRAY, "]"))
                                 .onClick(TextActions.runCommand("/hbload load " + id + " " + i))
                                 .onHover(TextActions.showText(Text.of(TextColors.AQUA, "Get '", displayName, "'")))
                                 .build();
-                src.sendMessage(Text.of(itemRow, " ", loadButton,
-                        enchantmentData.isPresent() ? Text.of(TextColors.DARK_AQUA, "\n  Enchanted : ", (enchantmentDisplays.size() > 1 ? "\n" : ""), TextColors.AQUA, String.join("\n ", enchantmentDisplays), TextColors.DARK_AQUA) : "",
-                        optionalLore.isPresent() ? Text.of(TextColors.DARK_AQUA, "\n  Lore : ", TextColors.AQUA, (lore.size() > 1 ? "\n" : ""), String.join("\n", lore)) : ""));
+
+                PlayerUtils.tell(src, Text.of(itemRow, " ", loadButton,
+
+                        enchantmentData.isPresent() ? Text.of(
+                                Translations.HOTBAR_SHARE_ENCHANTED.s(),
+                                (enchantmentDisplays.size() > 1 ? "\n" : ""),
+                                TextColors.AQUA,
+                                String.join("\n ", enchantmentDisplays),
+                                TextColors.DARK_AQUA)
+                                : "",
+
+                        optionalLore.isPresent() ? Text.of(
+                                Translations.HOTBAR_SHARE_LORE.s(),
+                                TextColors.AQUA,
+                                (lore.size() > 1 ? "\n" : ""),
+                                String.join("\n", lore))
+                                : ""
+                ), false);
             }
-            src.sendMessage(Text.of(TextColors.DARK_AQUA, "====== ", TextColors.AQUA, HotbarSharePlugin.sharedBars.get(id).getSharedBy(), "'s Hotbar ", TextColors.DARK_AQUA, "======"));
+            PlayerUtils.tell(src, Translations.HOTBAR_SHARE_HEADER.f(HotbarSharePlugin.sharedBars.get(id).getSharedBy()));
             return CommandResult.success();
         }
 

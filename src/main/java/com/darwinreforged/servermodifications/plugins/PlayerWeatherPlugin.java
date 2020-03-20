@@ -93,7 +93,7 @@ public class PlayerWeatherPlugin {
                   // If true, this prevents any packets from being intercepted.
                   Player player = (Player) src;
                   PlayerWeatherCoreUtil.globalWeatherOff = !PlayerWeatherCoreUtil.globalWeatherOff;
-                  PlayerUtils.sendMessage(player, "Using global weather : " + (PlayerWeatherCoreUtil.globalWeatherOff ? "OFF" : "ON"));
+                  PlayerUtils.tell(player, "Using global weather : " + (PlayerWeatherCoreUtil.globalWeatherOff ? "OFF" : "ON"));
 
 
                   for (UUID uuid : PlayerWeatherCoreUtil.getPlayerWeatherUUIDs())
@@ -127,11 +127,11 @@ public class PlayerWeatherPlugin {
                         (src, args) -> {
                             if (!(src instanceof Player)) return CommandResult.success();
                             Player player = (Player) src;
-                            PlayerUtils.sendMessage(player, "Current Weather Type: " +
+                            PlayerUtils.tell(player, "Current Weather Type: " +
                                     PlayerWeatherCoreUtil.getPlayersWeather(player.getUniqueId()));
-                            PlayerUtils.sendMessage(player, "Is Lightning Player: " +
+                            PlayerUtils.tell(player, "Is Lightning Player: " +
                                     PlayerWeatherCoreUtil.lightningPlayersContains(player.getUniqueId()));
-                            PlayerUtils.sendMessage(player, PlayerWeatherLightningUtil.lightningSchedulerStatus());
+                            PlayerUtils.tell(player, PlayerWeatherLightningUtil.lightningSchedulerStatus());
                             return CommandResult.success();
                         }
                     ).build();

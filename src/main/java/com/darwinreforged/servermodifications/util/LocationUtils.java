@@ -1,9 +1,7 @@
 package com.darwinreforged.servermodifications.util;
 
 import com.flowpowered.math.vector.Vector3d;
-import com.intellectualcrafters.plot.PS;
 import com.intellectualcrafters.plot.object.Plot;
-import com.intellectualcrafters.plot.object.PlotArea;
 import com.sk89q.worldedit.Vector2D;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.util.blockray.BlockRay;
@@ -63,17 +61,8 @@ public class LocationUtils {
         return new com.intellectualcrafters.plot.object.Location(world.getName(), locX, locY, locZ);
     }
 
-    public static Plot getPlotFromP2Loc(com.intellectualcrafters.plot.object.Location location) {
-        PS instance = PS.get();
-        if (instance != null) {
-            PlotArea plotArea = instance.getApplicablePlotArea(location);
-            if (plotArea != null) return plotArea.getPlot(location);
-        }
-        return null;
-    }
-
     public static Plot getPlotFromSpongeLoc(org.spongepowered.api.world.Location<World> spongeLocation) {
         com.intellectualcrafters.plot.object.Location p2Location = convertSpongeToPlotsLoc(spongeLocation);
-        return getPlotFromP2Loc(p2Location);
+        return Plot.getPlot(p2Location);
     }
 }

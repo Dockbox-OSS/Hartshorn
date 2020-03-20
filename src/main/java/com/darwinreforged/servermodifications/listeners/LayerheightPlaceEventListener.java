@@ -1,5 +1,7 @@
 package com.darwinreforged.servermodifications.listeners;
 
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.intellectualcrafters.plot.object.Plot;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
@@ -59,7 +61,7 @@ public class LayerheightPlaceEventListener {
 									}
 								}
 							} else {
-								player.sendMessage(Text.of("Not in a plot"));
+								PlayerUtils.tell(player, Translations.OUTSIDE_PLOT.s());
 								event.setCancelled(true);
 							}
 						}

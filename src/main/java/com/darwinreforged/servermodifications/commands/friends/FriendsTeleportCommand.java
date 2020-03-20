@@ -1,14 +1,14 @@
 package com.darwinreforged.servermodifications.commands.friends;
 
 import com.darwinreforged.servermodifications.objects.FriendsStorage;
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.FriendsUtil;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 public class FriendsTeleportCommand implements CommandExecutor {
 
@@ -26,10 +26,10 @@ public class FriendsTeleportCommand implements CommandExecutor {
         if (targetStorage.isFriend(source.getUniqueId())) {
             if (!targetStorage.toggledTeleportsOff) {
                 source.setLocationAndRotation(target.getLocation(), target.getRotation());
-                target.sendMessage(Text.of(TextColors.GRAY, "[] ", TextColors.AQUA, source.getName(), TextColors.DARK_AQUA, " teleported to your location."));
+                PlayerUtils.tell(target, Translations.FRIEND_TELEPORTED.f(source.getName()));
             }
         } else {
-            source.sendMessage(Text.of(TextColors.GRAY, "[] ", TextColors.RED, "You are not friends with that user so you cannot teleport to them."));
+            PlayerUtils.tell(source, Translations.NO_TP_NOT_FRIENDS.s());
         }
         return CommandResult.success();
     }

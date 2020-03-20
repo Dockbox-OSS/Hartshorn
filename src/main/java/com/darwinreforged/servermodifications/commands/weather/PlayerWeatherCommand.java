@@ -32,7 +32,7 @@ public class PlayerWeatherCommand implements CommandExecutor {
       switch(weather)
       {
         case UNKNOWN:
-          PlayerUtils.sendMessage(
+          PlayerUtils.tell(
                   player,
                   "That weather type is unknown. If you feel this is an error, "
                           + "feel free to let a staff member know");
@@ -64,11 +64,11 @@ public class PlayerWeatherCommand implements CommandExecutor {
           PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid, PlayerWeatherCoreUtil.Weather.RAINING);
           break;
       }
-      PlayerUtils.sendMessage(player, "Personal Weather set to: " + weather.getDisplayName());
+      PlayerUtils.tell(player, "Personal Weather set to: " + weather.getDisplayName());
       return CommandResult.success();
 
     } else {
-      PlayerUtils.sendMessage(player, "Valid weather types: rain, rainy, raining, snowing, snow, lightning, thunder, storm, lightningstorm, thunderstorm, reset, clear, sunny, undo");
+      PlayerUtils.tell(player, "Valid weather types: rain, rainy, raining, snowing, snow, lightning, thunder, storm, lightningstorm, thunderstorm, reset, clear, sunny, undo");
     }
 
     return CommandResult.empty();

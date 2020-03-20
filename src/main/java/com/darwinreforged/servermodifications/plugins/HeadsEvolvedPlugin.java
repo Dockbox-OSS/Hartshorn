@@ -2,6 +2,8 @@ package com.darwinreforged.servermodifications.plugins;
 
 import com.darwinreforged.servermodifications.objects.HeadsEvolvedChestInterface;
 import com.darwinreforged.servermodifications.objects.HeadsEvolvedHead;
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.HeadsEvolvedConfigUtil;
 import com.google.gson.*;
 import com.google.inject.Inject;
@@ -21,7 +23,6 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.plugin.meta.util.NonnullByDefault;
 
 import java.io.*;
@@ -181,8 +182,7 @@ public class HeadsEvolvedPlugin {
                 try {
                     new HeadsEvolvedChestInterface(player);
                 } catch (InstantiationException e) {
-                    player.sendMessage(
-                            Text.of(TextColors.GRAY, "// ", TextColors.RED, "Failed to open Head Database GUI"));
+                    PlayerUtils.tell(player, Translations.OPEN_GUI_ERROR.s());
                 }
             }
             return CommandResult.success();

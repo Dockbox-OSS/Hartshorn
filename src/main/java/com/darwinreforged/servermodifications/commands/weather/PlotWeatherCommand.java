@@ -12,7 +12,6 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
 
 import java.util.Optional;
 
@@ -21,7 +20,7 @@ public class PlotWeatherCommand implements CommandExecutor {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (!(src instanceof Player)) {
-      src.sendMessage(Text.of("This command can only be executed by players"));
+      PlayerUtils.tell(src, Translations.PLAYER_ONLY_COMMAND.s());
       return CommandResult.success();
     }
 
@@ -45,7 +44,7 @@ public class PlotWeatherCommand implements CommandExecutor {
               break;
 
             case UNKNOWN:
-              PlayerUtils.sendMessage(
+              PlayerUtils.tell(
                   player,
                       Translations.UNKNOWN_WEATHER_TYPE.s());
               broadcast = false;
@@ -64,17 +63,17 @@ public class PlotWeatherCommand implements CommandExecutor {
               break;
           }
 
-          if (broadcast) PlayerUtils.sendMessage(player, Translations.PLOT_WEATHER_SET.f(weatherValue.getDisplayName()));
+          if (broadcast) PlayerUtils.tell(player, Translations.PLOT_WEATHER_SET.f(weatherValue.getDisplayName()));
         }
         else {
-          PlayerUtils.sendMessage(player, "You must be the owner of the plot to execute this command");
+          PlayerUtils.tell(player, "You must be the owner of the plot to execute this command");
         }
       } else {
-        PlayerUtils.sendMessage(player, "You must be in a plot when executing this command");
+        PlayerUtils.tell(player, "You must be in a plot when executing this command");
       }
 
     } else {
-      PlayerUtils.sendMessage(player, "You must enter a weather type");
+      PlayerUtils.tell(player, "You must enter a weather type");
     }
 
     return CommandResult.success();

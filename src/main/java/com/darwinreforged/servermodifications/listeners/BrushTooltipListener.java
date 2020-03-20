@@ -153,7 +153,7 @@ public class BrushTooltipListener {
                                 commandBuilder.onClick(TextActions.suggestCommand(command));
 
                                 // After
-                                PlayerUtils.sendMessage(player, Text.of(Translations.HOLDING_UNSET_TOOL.s(), commandBuilder.build()));
+                                PlayerUtils.tell(player, Text.of(Translations.HOLDING_UNSET_TOOL.s(), commandBuilder.build()));
                             }
                             lastMessage.put(player, LocalDateTime.now());
                         }

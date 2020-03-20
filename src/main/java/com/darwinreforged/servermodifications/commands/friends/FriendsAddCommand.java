@@ -1,6 +1,8 @@
 package com.darwinreforged.servermodifications.commands.friends;
 
 import com.darwinreforged.servermodifications.objects.FriendsStorage;
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.FriendsStorageManager;
 import com.darwinreforged.servermodifications.util.todo.FriendsUtil;
 import org.spongepowered.api.Sponge;
@@ -33,7 +35,7 @@ public class FriendsAddCommand implements CommandExecutor {
         }
 
         if (sourceStorage.getFriends().contains(target.getUniqueId())) {
-            source.sendMessage(Text.of(TextColors.GRAY, "[] ", TextColors.RED, " You are already friends with that player"));
+            PlayerUtils.tell(source, Translations.ALREADY_FRIENDS.f(target.getName()));
             return CommandResult.success();
         }
 
@@ -41,12 +43,10 @@ public class FriendsAddCommand implements CommandExecutor {
         if (sourceStorage.getRequests().contains(target.getUniqueId())) {
             sourceStorage.addFriend(target.getUniqueId());
             targetStorage.addFriend(source.getUniqueId());
-            if (target.isOnline()) {
-                Sponge.getServer().getPlayer(target.getName()).get().sendMessage(Text.of(TextColors.GRAY, "[] ", TextColors.AQUA, "You are now friends with ", TextColors.DARK_AQUA, source.getName()));
-            }
-            if (source.isOnline()) {
-                Sponge.getServer().getPlayer(source.getName()).get().sendMessage(Text.of(TextColors.GRAY, "[] ", TextColors.AQUA, "You are now friends with ", TextColors.DARK_AQUA, target.getName()));
-            }
+            if (target.isOnline() && target.getPlayer().isPresent())
+                PlayerUtils.tell(target.getPlayer().get(), Translations.FRIEND_ADDED.f(source.getName()));
+            if (source.isOnline() && source.getPlayer().isPresent())
+                PlayerUtils.tell(source.getPlayer().get(), Translations.FRIEND_ADDED.f(target.getName()));
         }
         //if not give the target a friend request and a message;
         else {

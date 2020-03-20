@@ -157,7 +157,7 @@ public class PlayerWeatherCoreUtil {
 
     if (globalWeatherOff && weather != Weather.RESET){
       Optional<Player> optionalPlayer = Sponge.getServer().getPlayer(uuid);
-      optionalPlayer.ifPresent(player -> PlayerUtils.sendMessage(player, "Sorry, but pweather is currently disabled"));
+      optionalPlayer.ifPresent(player -> PlayerUtils.tell(player, "Sorry, but pweather is currently disabled"));
       return;
     }
 

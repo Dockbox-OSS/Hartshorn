@@ -17,7 +17,7 @@ public class FriendsToggleCommand  implements CommandExecutor {
         Player source = (Player) src;
         FriendsStorage sourceStorage = FriendsUtil.getData(source.getUniqueId());
         sourceStorage.toggle();
-        PlayerUtils.sendMessage(source, Translations.ACCEPTING_TP.f(sourceStorage.toggledTeleportsOff ? "Off" : "On"));
+        PlayerUtils.tell(source, Translations.ACCEPTING_TP.f(sourceStorage.toggledTeleportsOff ? "Off" : "On"));
         return CommandResult.success();
     }
 }

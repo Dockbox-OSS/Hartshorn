@@ -2,6 +2,8 @@ package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.api.service.NucleusMailService;
@@ -11,8 +13,6 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,13 +49,9 @@ public class TicketRejectCommand implements CommandExecutor {
                                             + playerName
                                             + " *plaintell "
                                             + playerName
-                                            + " &8[] &cYour application was reviewed but was not yet approved, make sure to read the given feedback on your plot, and apply again once ready!");
-                    src.sendMessage(
-                            Text.of(
-                                    TextColors.GRAY,
-                                    "[] ",
-                                    TextColors.AQUA,
-                                    "Rejected and closed ticket #" + ticket.getTicketID()));
+                                            + Translations.REJECTED_TICKET_TARGET.s());
+
+                    PlayerUtils.tell(src, Translations.REJECTED_TICKET_SOURCE.f(ticket.getTicketID()));
                 }
             }
         }
