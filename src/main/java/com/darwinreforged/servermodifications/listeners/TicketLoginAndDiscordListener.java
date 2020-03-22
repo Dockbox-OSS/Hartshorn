@@ -180,21 +180,20 @@ public class TicketLoginAndDiscordListener {
 												.count();
 
 						for (String regex :
-								new String[] { "(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r" })
+								new String[]{"(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r"})
 							age = age.replaceAll(regex, "");
 
-						body += "Player : " + playerName;
-						body += "\nSubmitted : " + age;
-						body += "\nLocation : " + location;
-						body += "\nPlot : " + ticketData.getMessage();
-						body += "\nSubmission : #" + ticketNum;
-						body +=
-								"\nComments/score : "
-										+ (ticketData.getComment().length() == 0 ? "None" : ticketData.getComment());
+						body = Translations.TICKET_DISCORD_DETAILS_BODY.f(
+								playerName,
+								age,
+								location,
+								ticketData.getMessage(),
+								ticketNum,
+								(ticketData.getComment().length() == 0 ? "None" : ticketData.getComment()));
 
 						embed.setColor(Color.CYAN);
 
-						embed.setTitle("Ticket : #" + ticketData.getTicketID());
+						embed.setTitle(Translations.TICKET_DISCORD_DETAILS_TITLE.f(ticketData.getTicketID()));
 						embed.addField("", body, true);
 
 						message.setEmbed(embed.build());
@@ -205,7 +204,7 @@ public class TicketLoginAndDiscordListener {
 					} else {
 						MagiBridge.jda
 								.getTextChannelById("525424273318215681")
-								.sendMessage(":no_entry: **Unable to find ticket**")
+								.sendMessage(Translations.TICKET_DISCORD_DETAIL_NOT_FOUND.s())
 								.queue();
 					}
 				} else {
@@ -232,8 +231,7 @@ public class TicketLoginAndDiscordListener {
 												})
 											age = age.replaceAll(regex, "");
 
-										String body =
-												MessageFormat.format("By : {0}\nSubmitted : {1}", playerName, age);
+										String body = Translations.TICKET_DISCORD_ROW_BODY.f(playerName, age);
 										embed.addField(title, body, true);
 									});
 
@@ -241,7 +239,7 @@ public class TicketLoginAndDiscordListener {
 					else if (amount.get() >= 7) embed.setColor(Color.PINK);
 					else embed.setColor(Color.YELLOW);
 
-					embed.setTitle("Open tickets (" + amount.get() + ")");
+					embed.setTitle(Translations.TICKET_DISCORD_ROW_TITLE.f(amount.get()));
 					message.setEmbed(embed.build());
 					MagiBridge.jda
 							.getTextChannelById("525424273318215681")

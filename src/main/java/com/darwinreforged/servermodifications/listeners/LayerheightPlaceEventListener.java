@@ -35,7 +35,7 @@ public class LayerheightPlaceEventListener {
 					ItemStack item = player.getItemInHand(HandTypes.MAIN_HAND).get();
 					if (item.get(Keys.DISPLAY_NAME).isPresent()) {
 						String name = item.get(Keys.DISPLAY_NAME).get().toPlain();
-						if (name.toLowerCase().contains("layer height tool")) {
+						if (name.toLowerCase().contains(Translations.HEIGHTTOOL_NAME.p().toLowerCase())) {
 							BlockSnapshot block = transaction.getFinal();
 							Location<World> loc = block.getLocation().get();
 							com.intellectualcrafters.plot.object.Location plotLoc = new com.intellectualcrafters.plot.object.Location();
@@ -48,7 +48,8 @@ public class LayerheightPlaceEventListener {
 								if (plot.isAdded(player.getUniqueId()) || player.hasPermission("plots.admin.build.other")) {
 									Text name2 = item.get(Keys.DISPLAY_NAME).get();
 									String temp = name2.toPlain();
-									temp = temp.replaceAll("Layer Height Tool: ", "");
+									String plainLayerHeightDisplayName = Translations.HEIGHTTOOL_NAME.p();
+									temp = temp.replaceAll(plainLayerHeightDisplayName, "");
 									temp = temp.replaceAll(" ", "");
 									int height = Integer.parseInt(temp);
 									BlockState state = BlockTypes.SNOW_LAYER.getDefaultState();

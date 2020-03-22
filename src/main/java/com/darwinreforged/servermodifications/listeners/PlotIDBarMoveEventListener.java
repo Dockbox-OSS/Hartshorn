@@ -2,6 +2,7 @@ package com.darwinreforged.servermodifications.listeners;
 
 import com.darwinreforged.servermodifications.objects.PlotIDBarPlayer;
 import com.darwinreforged.servermodifications.plugins.PlotIDBarPlugin;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
@@ -137,10 +138,9 @@ public class PlotIDBarMoveEventListener {
         try {
             actualowner = PlotIDBarPlugin.getUser(owner.iterator().next()).get().getName();
         } catch (Exception e) {
-            // TODO: handle exception
-            actualowner = "Unowned";
+            actualowner = Translations.UNOWNED.s();
         }
-        if (actualowner.equals("Unowned")) {
+        if (actualowner.equals(Translations.UNOWNED.s())) {
 
             if (barP.getIDBar() != null) {
                 ServerBossBar oldBar1 = barP.getIDBar();
@@ -183,15 +183,15 @@ public class PlotIDBarMoveEventListener {
         }
         if (somenumber == 2) {
             if (trusted.size() > 2) {
-                members = firstTrusted + ", " + secondTrusted + " and " + (trusted.size() - 2) + " others";
+                members = Translations.PID_USERS_TRUSTED_MORE.f(firstTrusted, secondTrusted, (trusted.size() - 2));
             } else {
-                members = firstTrusted + ", " + secondTrusted;
+                members = Translations.PID_USERS_TRUSTED.f(firstTrusted, secondTrusted);
             }
         }
 
         for (UUID uuid : trusted) {
             if (!PlotIDBarPlugin.getUser(uuid).isPresent()) {
-                members = "Everyone";
+                members = Translations.EVERYONE.s();
                 break;
             }
         }
@@ -200,29 +200,18 @@ public class PlotIDBarMoveEventListener {
 
         Text IDM;
         if (isWorld) {
-            IDM = Text.of(
-                    TextColors.DARK_AQUA,
-                    "World ID : ",
-                    TextColors.AQUA,
-                    ID);
+            IDM = Translations.PID_WORLD_FORMAT.ft(ID);
         } else {
-
-            IDM = Text.of(
-                    TextColors.DARK_AQUA,
-                    "Plot ID : ",
-                    TextColors.AQUA,
-                    worldname,
-                    ", ",
-                    TextColors.AQUA,
-                    ID);
+            IDM = Translations.PID_PLOT_FORMAT.ft(worldname, ID);
         }
-        Text OwnerName = Text.of(TextColors.DARK_AQUA, "Owner : ", TextColors.AQUA, actualowner);
+
+        Text OwnerName = Translations.PID_OWNER_FORMAT.ft(actualowner);
 
         if (!plot.getAlias().isEmpty()) {
             IDM = Text.of(plot.getAlias().replaceAll("&", "§").replaceAll("_", " "));
         }
 
-        Text separator = Text.of(TextColors.WHITE, " |-=-| ");
+        Text separator = Translations.PID_BAR_SEPARATOR.t();
 
         boolean hideOwner = plot.getFlag(Flags.HIDE_OWNER).or(false);
 
@@ -236,10 +225,7 @@ public class PlotIDBarMoveEventListener {
                         .build();
         bossBarB =
                 ServerBossBar.builder()
-                        .name(
-                                Text.of(
-                                        TextColors.DARK_AQUA,
-                                        Text.of(TextColors.DARK_AQUA, "Members : ", TextColors.AQUA, members)))
+                        .name(Translations.PID_BAR_MEMBERS.ft(members))
                         .percent(1f)
                         .color(BossBarColors.BLUE)
                         .overlay(BossBarOverlays.PROGRESS)

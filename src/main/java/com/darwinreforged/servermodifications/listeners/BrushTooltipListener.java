@@ -109,15 +109,7 @@ public class BrushTooltipListener {
                 ItemStack itemInHand = optionalInHand.get();
                 itemInHand.offer(
                         Keys.DISPLAY_NAME,
-                        Text.of(
-                                TextColors.AQUA,
-                                "Replacer ",
-                                TextColors.GRAY,
-                                '[',
-                                TextColors.DARK_AQUA,
-                                event.getArguments().split(" ")[0],
-                                TextColors.GRAY,
-                                ']'));
+                        Translations.REPLACER_TOOL_DISPLAY_NAME.ft(event.getArguments().split(" ")[0]));
                 List<Text> lore = new ArrayList<>();
                 lore.add(Text.of(TextColors.GRAY, "//x " + event.getArguments().split(" ")[0]));
                 itemInHand.offer(Keys.ITEM_LORE, lore);

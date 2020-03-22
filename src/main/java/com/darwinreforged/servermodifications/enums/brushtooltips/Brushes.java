@@ -1,17 +1,19 @@
 package com.darwinreforged.servermodifications.enums.brushtooltips;
 
+import com.darwinreforged.servermodifications.resources.Translations;
+
 public enum Brushes {
     COPYPASTE(
-            "Copy paste",
+            Translations.BRUSH_NAME_COPYPASTE.s(),
             "copypaste",
             Arguments.DEPTH.at(0),
             Flags.RANDOM_ROTATION.getFlag(),
             Flags.AUTO_VIEW.getFlag()),
 
-    COMMAND("Commands", "command", Arguments.COMMAND_RADIUS.at(0), Arguments.COMMANDS.at(1)),
+    COMMAND(Translations.BRUSH_NAME_COMMAND.s(), "command", Arguments.COMMAND_RADIUS.at(0), Arguments.COMMANDS.at(1)),
 
     POPULATE_SCHEMATIC(
-            "Populate Schematic",
+            Translations.BRUSH_NAME_POPULATE_SCHEMATIC.s(),
             "populateschematic",
             Arguments.MASK.at(0),
             Arguments.SOURCE.at(1),
@@ -20,7 +22,7 @@ public enum Brushes {
             Flags.RANDOM_ROTATION.getFlag()),
 
     SCATTER_COMMAND(
-            "Commands scatter",
+            Translations.BRUSH_NAME_SCATTER_COMMAND.s(),
             "scmd",
             Arguments.SCATTER_RADIUS.at(0),
             Arguments.POINTS.at(1),
@@ -28,26 +30,26 @@ public enum Brushes {
             Arguments.COMMANDS.at(3)),
 
     SHATTER(
-            "Shatter",
+            Translations.BRUSH_NAME_SHATTER.s(),
             "shatter",
             Arguments.PATTERN.at(0),
             Arguments.RADIUS.at(1),
             Arguments.COUNT.at(2)),
 
-    ERODE("Erode", "erode", Arguments.RADIUS.at(0)),
+    ERODE(Translations.BRUSH_NAME_ERODE.s(), "erode", Arguments.RADIUS.at(0)),
 
     SPHERE(
-            "Sphere",
+            Translations.BRUSH_NAME_SPHERE.s(),
             "sphere",
             Arguments.PATTERN.at(0),
             Arguments.RADIUS.at(1),
             Flags.HOLLOW.getFlag(),
             Flags.FALLING.getFlag()),
 
-    PULL("Pull", "pull", Arguments.RADIUS.at(0)),
+    PULL(Translations.BRUSH_NAME_PULL.s(), "pull", Arguments.RADIUS.at(0)),
 
     STENCIL(
-            "Stencil",
+            Translations.BRUSH_NAME_STENCIL.s(),
             "stencil",
             Arguments.PATTERN.at(0),
             Arguments.RADIUS.at(1),
@@ -58,18 +60,18 @@ public enum Brushes {
             Flags.RANDOM_ROTATION.getFlag()),
 
     RECURSIVE(
-            "Recursive",
+            Translations.BRUSH_NAME_RECURSIVE.s(),
             "recursive",
             Arguments.PATTERN_TO.at(0),
             Arguments.RADIUS.at(1),
             Flags.DEPTH_FIRST.getFlag()),
 
-    SPLINE("Spline", "spline", Arguments.PATTERN.at(0)),
+    SPLINE(Translations.BRUSH_NAME_SPLINE.s(), "spline", Arguments.PATTERN.at(0)),
 
-    SWEEP("Sweep", "sweep", Arguments.COPIES.at(0)),
+    SWEEP(Translations.BRUSH_NAME_SWEEP.s(), "sweep", Arguments.COPIES.at(0)),
 
     CATENARY(
-            "Catenary",
+            Translations.BRUSH_NAME_CATENARY.s(),
             "catenary",
             Arguments.PATTERN.at(0),
             Arguments.LENGTHFACTOR.at(1),
@@ -78,7 +80,7 @@ public enum Brushes {
             Flags.SELECT_AFTER.getFlag()),
 
     LINE(
-            "Line",
+            Translations.BRUSH_NAME_LINE.s(),
             "line",
             Arguments.PATTERN.at(0),
             Arguments.RADIUS.at(1),
@@ -87,7 +89,7 @@ public enum Brushes {
             Flags.FLAT_LINE.getFlag()),
 
     SURFACE_SPLINE(
-            "Surface Spline",
+            Translations.BRUSH_NAME_SURFACE_SPLINE.s(),
             "sspl",
             Arguments.PATTERN.at(0),
             Arguments.SIZE.at(1),
@@ -96,12 +98,12 @@ public enum Brushes {
             Arguments.CONTINUITY.at(4),
             Arguments.QUALITY.at(5)),
 
-    BLENDBALL("Blend Ball", "blendball", Arguments.RADIUS.at(0)),
+    BLENDBALL(Translations.BRUSH_NAME_BLENDBALL.s(), "blendball", Arguments.RADIUS.at(0)),
 
-    CIRCLE("Circle", "circle", Arguments.PATTERN.at(0), Arguments.RADIUS.at(1)),
+    CIRCLE(Translations.BRUSH_NAME_CIRCLE.s(), "circle", Arguments.PATTERN.at(0), Arguments.RADIUS.at(1)),
 
     ROCK(
-            "Rock",
+            Translations.BRUSH_NAME_ROCK.s(),
             "rock",
             Arguments.PATTERN.at(0),
             Arguments.RADIUS.at(1),
@@ -111,7 +113,7 @@ public enum Brushes {
             Flags.HOLLOW.getFlag()),
 
     HEIGHT(
-            "Height",
+            Translations.BRUSH_NAME_HEIGHT.s(),
             "height",
             Arguments.RADIUS.at(0),
             Arguments.SOURCE.at(1),
@@ -123,7 +125,7 @@ public enum Brushes {
             Flags.DISABLE_SMOOTHING.getFlag()),
 
     FLATTEN(
-            "Flatten",
+            Translations.BRUSH_NAME_FLATTEN.s(),
             "flatten",
             Arguments.RADIUS.at(0),
             Arguments.SOURCE.at(1),
@@ -134,10 +136,10 @@ public enum Brushes {
             Flags.SNOW_LAYERS.getFlag(),
             Flags.DISABLE_SMOOTHING.getFlag()),
 
-    LAYER("Layer", "layer", Arguments.RADIUS.at(0), Arguments.PATTERN.at(1)),
+    LAYER(Translations.BRUSH_NAME_LAYER.s(), "layer", Arguments.RADIUS.at(0), Arguments.PATTERN.at(1)),
 
     CYLINDER(
-            "Cylinder",
+            Translations.BRUSH_NAME_CYLINDER.s(),
             "cylinder",
             Arguments.PATTERN.at(0),
             Arguments.RADIUS.at(1),
@@ -145,21 +147,21 @@ public enum Brushes {
             Flags.HOLLOW.getFlag()),
 
     SURFACE(
-            "Surface",
+            Translations.BRUSH_NAME_SURFACE.s(),
             "surface",
             Arguments.PATTERN.at(0),
             Arguments.RADIUS.at(1),
             Flags.MAX_SATURATION.getFlag(),
             Flags.RANDOM_ROTATION.getFlag()),
 
-    EXTINGUISHER("Extinguisher", "ex", Arguments.RADIUS.at(0)),
+    EXTINGUISHER(Translations.BRUSH_NAME_EXTINGUISHER.s(), "ex", Arguments.RADIUS.at(0)),
 
-    GRAVITY("Gravity", "gravity", Arguments.RADIUS.at(0), Flags.HOLLOW.getFlag()),
+    GRAVITY(Translations.BRUSH_NAME_GRAVITY.s(), "gravity", Arguments.RADIUS.at(0), Flags.HOLLOW.getFlag()),
 
-    CLIPBOARD("Clipboard", "clipboard", Flags.NO_AIR.getFlag(), Flags.RELATIVE_LOC.getFlag()),
+    CLIPBOARD(Translations.BRUSH_NAME_CLIPBOARD.s(), "clipboard", Flags.NO_AIR.getFlag(), Flags.RELATIVE_LOC.getFlag()),
 
     SPLATTER(
-            "Splatter",
+            Translations.BRUSH_NAME_SPLATTER.s(),
             "splatter",
             Arguments.PATTERN.at(0),
             Arguments.RADIUS.at(1),
@@ -168,7 +170,7 @@ public enum Brushes {
             Arguments.SOLID.at(4)),
 
     CLIFF(
-            "Cliff",
+            Translations.BRUSH_NAME_CLIFF.s(),
             "cliff",
             Arguments.RADIUS.at(0),
             Arguments.SOURCE.at(1),
@@ -180,14 +182,14 @@ public enum Brushes {
             Flags.DISABLE_SMOOTHING.getFlag()),
 
     SMOOTH(
-            "Smooth",
+            Translations.BRUSH_NAME_SMOOTH.s(),
             "smooth",
             Arguments.SIZE.at(0),
             Arguments.ITERATIONS.at(1),
             Flags.NATURAL_OCCURRING.getFlag()),
 
     SCATTER(
-            "Scatter",
+            Translations.BRUSH_NAME_SCATTER.s(),
             "scatter",
             Arguments.PATTERN.at(0),
             Arguments.RADIUS.at(1),

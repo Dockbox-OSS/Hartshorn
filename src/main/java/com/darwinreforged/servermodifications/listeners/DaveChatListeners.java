@@ -2,6 +2,7 @@ package com.darwinreforged.servermodifications.listeners;
 
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 import com.darwinreforged.servermodifications.plugins.DavePluginWrapper;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.plugins.DaveRawUtils;
 import com.magitechserver.magibridge.DiscordHandler;
 import com.magitechserver.magibridge.api.DiscordEvent;
@@ -12,7 +13,6 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.text.format.TextColors;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -114,9 +114,9 @@ public class DaveChatListeners {
         private void printResponse(String response, boolean link, boolean important) {
             Text.Builder message = Text.builder().append(Text.of(botPrefix, color));
             if (link) try {
-                message.append(Text.of("Here's a useful link, ", TextColors.AQUA, response))
+                message.append(Translations.DAVE_LINK_SUGGESTION.ft(response))
                         .onClick(TextActions.openUrl(new URL(response)))
-                        .onHover(TextActions.showText(Text.of("Click to open : ", TextColors.AQUA, response)));
+                        .onHover(TextActions.showText(Translations.DAVE_LINK_SUGGESTION_HOVER.ft(response)));
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -132,7 +132,7 @@ public class DaveChatListeners {
             for (String regex : new String[]{"(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r"})
                 discordMessage = discordMessage.replaceAll(regex, "");
 
-            DiscordHandler.sendMessageToChannel(discordChannel, "**Dave** ≫ " + discordMessage);
+            DiscordHandler.sendMessageToChannel(discordChannel, Translations.DAVE_DISCORD_FORMAT.f(discordMessage));
         }
 
         private void executeCommand(String command) {

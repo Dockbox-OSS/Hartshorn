@@ -18,6 +18,7 @@ public enum Translations {
     PLAYER_ONLY_COMMAND("$4This command can only be executed by players"),
     PLOTS1_NAME("Plots1"),
     PLOTS2_NAME("Plots2"),
+    PLOTS500_NAME("Plots500"),
     MASTERPLOTS_NAME("MasterPlots"),
     MEMBER_RANK_DISPLAY("Member"),
     EXPERT_RANK_DISPLAY("Expert"),
@@ -34,8 +35,10 @@ public enum Translations {
     CONSOLE("Console"),
     ONLINE_PLAYER("$1{0}"),
     OFFLINE_PLAYER("$2{0}"),
-    
-//    Time differences
+    UNOWNED("Unowned"),
+    EVERYONE("Everyone"),
+
+    //    Time differences
     TIME_DAYS_AGO("$1{0} $2days ago"),
     TIME_YESTERDAY("$1Yesterday"),
     TIME_HOURS_AGO("$1{0} $2hours ago"),
@@ -174,6 +177,11 @@ public enum Translations {
     TICKET_OPEN_PREFIX("$1Open - "),
     TICKET_CLOSED_PREFIX("$1Closed - "),
     TICKET_HELD_PREFIX("$2Held $1- "),
+    TICKET_DISCORD_DETAILS_BODY("Player : {0}\nSubmitted : {1}\nLocation : {2}\nPlot : {3}\nSubmission : #{4}\nComments : {5}"),
+    TICKET_DISCORD_DETAILS_TITLE("Ticket : #{0}"),
+    TICKET_DISCORD_DETAIL_NOT_FOUND(":no_entry: **Unable to find ticket**"),
+    TICKET_DISCORD_ROW_BODY("By : {0}\nSubmitted : {1}"),
+    TICKET_DISCORD_ROW_TITLE("Open tickets ({0})"),
 
     //    BrushToolTips
     HOLDING_UNSET_TOOL("$4It seems you are holding a brush tool but it is not set. To suggest it, click this command : $2"),
@@ -206,6 +214,51 @@ public enum Translations {
     BRUSH_DESCRIPTION_ITERATIONS("Iterations"),
     BRUSH_DESCRIPTION_DISTANCE("Distance"),
     BRUSH_DESCRIPTION_HEIGHT("Height"),
+    BRUSH_NAME_COPYPASTE("Copy paste"),
+    BRUSH_NAME_COMMAND("Commands"),
+    BRUSH_NAME_POPULATE_SCHEMATIC("Populate Schematic"),
+    BRUSH_NAME_SCATTER_COMMAND("Commands scatter"),
+    BRUSH_NAME_SHATTER("Shatter"),
+    BRUSH_NAME_ERODE("Erode"),
+    BRUSH_NAME_SPHERE("Sphere"),
+    BRUSH_NAME_PULL("Pull"),
+    BRUSH_NAME_STENCIL("Stencil"),
+    BRUSH_NAME_RECURSIVE("Recursive"),
+    BRUSH_NAME_SPLINE("Spline"),
+    BRUSH_NAME_SWEEP("Sweep"),
+    BRUSH_NAME_CATENARY("Catenary"),
+    BRUSH_NAME_LINE("Line"),
+    BRUSH_NAME_SURFACE_SPLINE("Surface Spline"),
+    BRUSH_NAME_BLENDBALL("Blend Ball"),
+    BRUSH_NAME_CIRCLE("Circle"),
+    BRUSH_NAME_ROCK("Rock"),
+    BRUSH_NAME_HEIGHT("Height"),
+    BRUSH_NAME_FLATTEN("Flatten"),
+    BRUSH_NAME_LAYER("Layer"),
+    BRUSH_NAME_CYLINDER("Cylinder"),
+    BRUSH_NAME_SURFACE("Surface"),
+    BRUSH_NAME_EXTINGUISHER("Extinguisher"),
+    BRUSH_NAME_GRAVITY("Gravity"),
+    BRUSH_NAME_CLIPBOARD("Clipboard"),
+    BRUSH_NAME_SPLATTER("Splatter"),
+    BRUSH_NAME_CLIFF("Cliff"),
+    BRUSH_NAME_SMOOTH("Smooth"),
+    BRUSH_NAME_SCATTER("Scatter"),
+    BRUSH_FLAG_DESCRIPTION_AUTO_VIEW("Auto view"),
+    BRUSH_FLAG_DESCRIPTION_RANDOM_ROTATION("Random rotation"),
+    BRUSH_FLAG_DESCRIPTION_HOLLOW("Hollow"),
+    BRUSH_FLAG_DESCRIPTION_FALLING("Falling"),
+    BRUSH_FLAG_DESCRIPTION_FLAT_LINE("Flat line"),
+    BRUSH_FLAG_DESCRIPTION_MAX_SATURATION("Maximum saturation"),
+    BRUSH_FLAG_DESCRIPTION_DEPTH_FIRST("Depth first"),
+    BRUSH_FLAG_DESCRIPTION_SNOW_LAYERS("Snow layers"),
+    BRUSH_FLAG_DESCRIPTION_DISABLE_SMOOTHING("Smoothing disabled"),
+    BRUSH_FLAG_DESCRIPTION_NO_AIR("No air"),
+    BRUSH_FLAG_DESCRIPTION_RELATIVE_LOC("Relative location"),
+    BRUSH_FLAG_DESCRIPTION_NATURAL_OCCURRING("Naturally occurring"),
+    BRUSH_FLAG_DESCRIPTION_SELECT_AFTER("Select after drawing"),
+    BRUSH_FLAG_DESCRIPTION_OVERLAY("Overlay"),
+    REPLACER_TOOL_DISPLAY_NAME("$1Replacer $3[$2{0}$3]"),
 
     //    Friends
     ACCEPTING_TP("$2Accept teleports from friends : $1{0}"),
@@ -254,13 +307,41 @@ public enum Translations {
     PAINTING_TOO_BIG("$4Paintings can have a maximum size of 3x3"),
     PAINTING_EXEMPT("You are exempt from needing permission, check your list of paintings"),
     PAINTING_SUBMITTED("Submitted a new request, once accepted the painting will be automatically uploaded"),
+    PAINTING_STATUS_SUBMITTED("Submitted"),
+    PAINTING_STATUS_REJECTED("Rejected"),
+    PAINTING_STATUS_APPROVED("Approved"),
+    PAINTING_DISCORD_TITLE("Submissions"),
+    PAINTING_DISCORD_FIELD_TITLE("Submission ID : #{0}"),
+    PAINTING_DISCORD_FIELD_VALUE("Submitted by : {0}\nStatus : {1}"),
+    PAINTING_SUBMISSION_NOT_FOUND("Cannot find submission : {0}"),
+    PAINTING_SUBMISSION_LIST("Submission IDs : {0}"),
+    PAINTING_APPROVING("Approving Submission : {0}"),
+    PAINTING_REJECTING("Rejecting Submission : {0}"),
+    PAINTING_CANNOT_UPDATE_STATUS("Cannot {0} this submission (#{1}). Are you sure it exists?"),
 
     //    UserData
     USER_DATA_HEADER("$1§m------- §r$2{0} $1§m-------"),
     USER_DATA_FAILED_COLLECT("$4Could not collect data for {0}"),
 
-//    MultiCommand
+    //    MultiCommand
     MULTI_CMD_PERFORMING("Performing command : $2{0}"),
+
+    //    Dave
+    DAVE_LINK_SUGGESTION("Here's a useful link, $1{0}"),
+    DAVE_LINK_SUGGESTION_HOVER("$2Click to open $1{0}"),
+    DAVE_DISCORD_FORMAT("**Dave** ≫ {0}"),
+
+    //    Plot ID Bar
+    PID_USERS_TRUSTED_MORE("{0}, {1} and {2} others"),
+    PID_USERS_TRUSTED("{0}, {1}"),
+    PID_WORLD_FORMAT("$2World ID : $1{0}"),
+    PID_PLOT_FORMAT("$2Plot ID : $1{0}, {1}"),
+    PID_OWNER_FORMAT("$2Owner : $1{0}"),
+    PID_BAR_SEPARATOR(" &f|-=-| "),
+    PID_BAR_MEMBERS("$2Members : $1{0}"),
+
+//    Trust Limiter
+    TRUST_LIMIT_AUTO_CLEANED("$1Automatically removed $2{0} $1from this plot because their rank is too low.")
     ;
 
     private String s;
@@ -322,5 +403,13 @@ public enum Translations {
 
     public Text t() {
         return TextSerializers.FORMATTING_CODE.deserializeUnchecked(s());
+    }
+
+    public String p() {
+        String copy = s();
+        copy = copy.replaceAll("§", "&");
+        for (String regex : new String[]{"(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r"})
+            copy = copy.replaceAll(regex, "");
+        return copy;
     }
 }
