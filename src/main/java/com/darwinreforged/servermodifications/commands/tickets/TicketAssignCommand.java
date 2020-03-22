@@ -3,9 +3,8 @@ package com.darwinreforged.servermodifications.commands.tickets;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
-import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -45,7 +44,7 @@ public class TicketAssignCommand implements CommandExecutor {
                         PlayerUtils.tell(src, Translations.TICKET_ERROR_ALREADY_CLOSED.s());
                     }
                     if (ticket.getStatus() == Claimed && !src.hasPermission(TicketPermissions.CLAIMED_TICKET_BYPASS)) {
-                        throw new CommandException(Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
+                        throw new CommandException(Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
                     }
                     ticket.setStatus(Claimed);
                     ticket.setStaffUUID(user.getUniqueId().toString());
@@ -57,12 +56,12 @@ public class TicketAssignCommand implements CommandExecutor {
                         e.printStackTrace();
                     }
 
-                    PlayerUtils.broadcastForPermission(Translations.TICKET_ASSIGN.f(TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID()), ticket.getTicketID()), TicketPermissions.STAFF);
+                    PlayerUtils.broadcastForPermission(Translations.TICKET_ASSIGN.f(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID())), ticket.getTicketID()), TicketPermissions.STAFF);
 
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {
                         Player ticketPlayer = ticketPlayerOP.get();
-                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_ASSIGN_USER.f(ticket.getTicketID(), TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
+                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_ASSIGN_USER.f(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
                     }
                     return CommandResult.success();
                 }

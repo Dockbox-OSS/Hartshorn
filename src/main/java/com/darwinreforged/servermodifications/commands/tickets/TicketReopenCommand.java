@@ -1,9 +1,10 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
+import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.magitechserver.magibridge.MagiBridge;
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.spongepowered.api.Sponge;
@@ -15,6 +16,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.awt.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,13 +45,11 @@ public class TicketReopenCommand implements CommandExecutor {
             for (TicketData ticket : tickets) {
                 if (ticket.getTicketID() == ticketID) {
                     if (ticket.getStatus() == Claimed || ticket.getStatus() == Open) {
-                        throw new CommandException(TicketMessages.getErrorTicketNotClosed(ticketID));
+                        throw new CommandException(Translations.TICKET_ERROR_NOT_CLOSED.ft(ticket.getTicketID()));
                     }
                     if (ticket.getStatus() == Claimed) {
                         throw new CommandException(
-                                TicketMessages.getErrorTicketClaim(
-                                        ticket.getTicketID(),
-                                        TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
+                                Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
                     }
                     ticket.setStatus(Open);
                     ticket.setStaffUUID(UUID.fromString("00000000-0000-0000-0000-000000000000").toString());
@@ -59,27 +59,25 @@ public class TicketReopenCommand implements CommandExecutor {
                     try {
                         plugin.getDataStore().updateTicketData(ticket);
                     } catch (Exception e) {
-                        src.sendMessage(Translations.UNKNOWN_ERROR.ft("Unable to reopen ticket"));
+                        PlayerUtils.tell(src, Translations.UNKNOWN_ERROR.ft("Unable to reopen ticket"));
                         e.printStackTrace();
                     }
 
-                    TicketUtil.notifyOnlineStaff(
-                            TicketMessages.getTicketReopen(src.getName(), ticket.getTicketID()));
+                    PlayerUtils.broadcastForPermission(Translations.TICKET_REOPEN.ft(src.getName(), ticket.getTicketID()), TicketPermissions.STAFF);
 
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {
                         Player ticketPlayer = ticketPlayerOP.get();
-                        ticketPlayer.sendMessage(
-                                TicketMessages.getTicketReopenUser(src.getName(), ticket.getTicketID()));
+                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_REOPEN_USER.ft(src.getName(), ticket.getTicketID()));
                     }
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setColor(Color.YELLOW);
-                    embedBuilder.setTitle("New submission");
+                    embedBuilder.setTitle(Translations.SUBMISSION_NEW.s());
                     embedBuilder.addField(
-                            "Submitted by : " + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()),
-                            "ID assigned : " + ticketID + "\nPlot : " + ticket.getMessage(),
+                            Translations.TICKET_DISCORD_SUBMITTED_BY.f(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID()))),
+                            Translations.TICKET_DISCORD_NEW_COMBINED.f(ticketID, ticket.getMessage(), LocalDateTime.now().toString()),
                             false);
-                    embedBuilder.setThumbnail("https://app.buildersrefuge.com/img/created.png");
+                    embedBuilder.setThumbnail(Translations.TICKET_DISCORD_RESOURCE_NEW.s());
 
                     MagiBridge.jda
                             .getTextChannelById("525424284731047946")
@@ -89,7 +87,7 @@ public class TicketReopenCommand implements CommandExecutor {
                     return CommandResult.success();
                 }
             }
-            throw new CommandException(TicketMessages.getTicketNotExist(ticketID));
+            throw new CommandException(Translations.TICKET_NOT_EXIST.ft(ticketID));
         }
     }
 }

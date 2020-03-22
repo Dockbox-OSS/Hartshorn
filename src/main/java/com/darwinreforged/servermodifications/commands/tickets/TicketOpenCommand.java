@@ -2,10 +2,10 @@ package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
+import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.translations.Translations;
-import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -18,10 +18,9 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 import java.awt.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -74,7 +73,7 @@ public class TicketOpenCommand implements CommandExecutor {
         throw new CommandException(Translations.UNKNOWN_ERROR.ft("Server name inside config is not set"));
       }
       if (plugin.getWaitTimer().contains(src.getName())) {
-        throw new CommandException(TicketMessages.getTicketTooFast(TicketConfig.delayTimer));
+        throw new CommandException(Translations.TICKET_TOO_FAST.ft(TicketConfig.delayTimer));
       }
       final List<TicketData> tickets =
           new ArrayList<TicketData>(plugin.getDataStore().getTicketData());
@@ -101,13 +100,13 @@ public class TicketOpenCommand implements CommandExecutor {
       }
 
       if (duplicate) {
-        throw new CommandException(TicketMessages.getTicketDuplicate());
+        throw new CommandException(Translations.TICKET_DUPLICATE.t());
       }
       if (totalTickets >= TicketConfig.maxTickets) {
-        throw new CommandException(TicketMessages.getTicketTooMany());
+        throw new CommandException(Translations.TICKET_TOO_MANY.t());
       }
       if (message.split("\\s+").length < TicketConfig.minWords) {
-        throw new CommandException(TicketMessages.getTicketTooShort(TicketConfig.minWords));
+        throw new CommandException(Translations.TICKET_TOO_SHORT.ft(TicketConfig.minWords));
       }
 
       final List<TicketPlayerData> playerData =
@@ -121,56 +120,47 @@ public class TicketOpenCommand implements CommandExecutor {
       if (plot != null) {
         try {
           TicketData ticketData =
-              new TicketData(
-                  ticketID,
-                  String.valueOf(uuid),
-                  UUID.fromString("00000000-0000-0000-0000-000000000000").toString(),
-                  "",
-                  System.currentTimeMillis() / 1000,
-                  player.getWorld().getName(),
-                  player.getLocation().getBlockX(),
-                  player.getLocation().getBlockY(),
-                  player.getLocation().getBlockZ(),
-                  player.getHeadRotation().getX(),
-                  player.getHeadRotation().getY(),
-                  message,
-                  Open,
-                  0,
-                  TicketConfig.server);
+                  new TicketData(
+                          ticketID,
+                          String.valueOf(uuid),
+                          UUID.fromString("00000000-0000-0000-0000-000000000000").toString(),
+                          "",
+                          System.currentTimeMillis() / 1000,
+                          player.getWorld().getName(),
+                          player.getLocation().getBlockX(),
+                          player.getLocation().getBlockY(),
+                          player.getLocation().getBlockZ(),
+                          player.getHeadRotation().getX(),
+                          player.getHeadRotation().getY(),
+                          message,
+                          Open,
+                          0,
+                          TicketConfig.server);
 
-          player.sendMessage(TicketMessages.getTicketOpenUser(ticketID));
-          if (TicketConfig.staffNotification) {
-            TicketUtil.notifyOnlineStaffOpen(
-                TicketMessages.getTicketOpen(player.getName(), ticketID), ticketID);
-          }
+          PlayerUtils.tell(player, Translations.TICKET_OPEN_USER.ft(ticketID));
+          if (TicketConfig.staffNotification)
+            PlayerUtils.broadcastForPermission(Translations.TICKET_OPEN.ft(player.getName(), ticketID), TicketPermissions.STAFF);
           EmbedBuilder embedBuilder = new EmbedBuilder();
           embedBuilder.setColor(Color.YELLOW);
-          embedBuilder.setTitle("New submission");
+          embedBuilder.setTitle(Translations.SUBMISSION_NEW.s());
           embedBuilder.addField(
-              "Submitted by : " + player.getName(),
-              "ID assigned : " + ticketID + "\nPlot : " + message,
-              false);
-          embedBuilder.setThumbnail("https://app.buildersrefuge.com/img/created.png");
+                  Translations.TICKET_DISCORD_SUBMITTED_BY.f(player.getName()),
+                  Translations.TICKET_DISCORD_NEW_COMBINED.f(ticketID, message, LocalDateTime.now().toString()),
+                  false);
+          embedBuilder.setThumbnail(Translations.TICKET_DISCORD_RESOURCE_NEW.s());
           MagiBridge.jda
-              .getTextChannelById("525424284731047946")
+                  .getTextChannelById("525424284731047946")
               .sendMessage(embedBuilder.build())
               .queue(
                   msg -> {
-                    plugin.getLogger().warn("Ticket opened, Discord ID assigned : " + msg.getId());
                     ticketData.setDiscordMessage(msg.getId());
                     plugin.getDataStore().addTicketData(ticketData);
                   });
         } catch (Exception e) {
-          player.sendMessage(Translations.UNKNOWN_ERROR.ft("Data was not saved correctly."));
-          e.printStackTrace();
+          throw new CommandException(Translations.UNKNOWN_ERROR.ft("Data was not saved correctly."));
         }
       } else {
-        src.sendMessage(
-            Text.of(
-                TextColors.DARK_GRAY,
-                "[] ",
-                TextColors.RED,
-                "You can only open a submission while standing inside your own plot!"));
+        PlayerUtils.tell(src, Translations.TICKET_ERROR_SUBMIT_OUTSIDE_PLOT.t());
       }
       plugin.getWaitTimer().add(src.getName());
 
@@ -218,12 +208,12 @@ public class TicketOpenCommand implements CommandExecutor {
                     0,
                     TicketConfig.server));
 
-        src.sendMessage(TicketMessages.getTicketOpenUser(ticketID));
+        PlayerUtils.tell(src, Translations.TICKET_OPEN_USER.ft(ticketID));
         if (TicketConfig.staffNotification) {
-          TicketUtil.notifyOnlineStaffOpen(TicketMessages.getTicketOpen("Console", ticketID), ticketID);
+          PlayerUtils.broadcastForPermission(Translations.TICKET_OPEN.ft(Translations.CONSOLE.s(), ticketID), TicketPermissions.STAFF);
         }
       } catch (Exception e) {
-        src.sendMessage(Translations.UNKNOWN_ERROR.ft("Data was not saved correctly."));
+        PlayerUtils.tell(src, Translations.UNKNOWN_ERROR.ft("Data was not saved correctly."));
         e.printStackTrace();
       }
 

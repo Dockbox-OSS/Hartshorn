@@ -1,7 +1,8 @@
-package com.darwinreforged.servermodifications.translations;
+package com.darwinreforged.servermodifications.resources;
 
 import com.intellectualcrafters.plot.util.StringMan;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -15,6 +16,24 @@ public enum Translations {
     COLOR_MINOR("7"),
     COLOR_ERROR("c"),
     PLAYER_ONLY_COMMAND("$4This command can only be executed by players"),
+    PLOTS1_NAME("Plots1"),
+    PLOTS2_NAME("Plots2"),
+    MASTERPLOTS_NAME("MasterPlots"),
+    MEMBER_RANK_DISPLAY("Member"),
+    EXPERT_RANK_DISPLAY("Expert"),
+    MASTER_ARCHITECTURE_DISPLAY("Mastered Skill Architecture"),
+    MASTER_NATURE_DISPLAY("Mastered Skill Nature"),
+    MASTER_BOTH_DISPLAY("both Mastered Skills"),
+    MASTER_RANK_DISPLAY("Master"),
+    DEFAULT_SEPARATOR(" - "),
+    DEFAULT_PADDING(" $1- "),
+    DEFAULT_ON("On"),
+    DEFAULT_OFF("Off"),
+    UNKNOWN("Unknown"),
+    NONE("None"),
+    CONSOLE("Console"),
+    ONLINE_PLAYER("$1{0}"),
+    OFFLINE_PLAYER("$2{0}"),
     
 //    Time differences
     TIME_DAYS_AGO("$1{0} $2days ago"),
@@ -27,6 +46,7 @@ public enum Translations {
     TIME_JUST_NOW("$1Just now"),
 
 //    Tickets
+    // STATUS_ not used directly but using valueOf, DO NOT REMOVE
     TICKET_STATUS_OPEN("$2Open"),
     TICKET_STATUS_HELD("$2Held"),
     TICKET_STATUS_CLAIMED("$2Claimed"),
@@ -37,8 +57,6 @@ public enum Translations {
     TICKET_CLAIM_BUTTON_HOVER("$1Click here to claim this ticket."),
     TICKET_UNCLAIM_BUTTON("$1[$2Unclaim$1]"),
     TICKET_UNCLAIM_BUTTON_HOVER("$1Click here to unclaim this ticket."),
-    TICKET_CLOSE_BUTTON("$1[$2Approve$1]"),
-    TICKET_CLOSE_BUTTON_HOVER("$1Click here to approve and close this ticket."),
     TICKET_REOPEN_BUTTON("$1[$2Reopen$1]"),
     TICKET_REOPEN_BUTTON_HOVER("$1Click here to reopen this ticket."),
     TICKET_COMMENT_BUTTON("$1[$2Comment$1]"),
@@ -80,7 +98,6 @@ public enum Translations {
     TICKET_DUPLICATE("$1Your ticket has not been opened because it was detected as a duplicate."),
     TICKET_OPEN("$1A new ticket has been opened by {0}, id assigned #{1}."),
     TICKET_OPEN_USER("$2You opened a ticket, it has been assigned ID #{0}. A staff member should be with you soon."),
-    TICKET_TITLE_NOTIFICATION("A new ticket has been opened by {0}, id assigned #{1}."),
     TICKET_TELEPORT_HOVER("Click here to teleport to this tickets location."),
     TICKET_READ_NONE_OPEN("$2There are no open tickets."),
     TICKET_READ_NONE_SELF("$2You have no open tickets."),
@@ -100,14 +117,95 @@ public enum Translations {
     TICKET_TOO_SHORT("$1Your ticket needs to contain at least {0} words."),
     TICKET_TOO_MANY("$1You have too many open tickets, please wait before opening more."),
     TICKET_TOO_FAST("$1You need to wait {0} seconds before attempting to open another ticket."),
-    TICKET_STAFF_LIST_SEPERATOR("$1, "),
-    TICKET_STAFF_LIST_TITLE("$2Online Staff"),
-    TICKET_STAFF_LIST_EMPTY("$1There are no staff members online."),
-    TICKET_STAFF_LIST_PADDING("="),
-    TICKET_PLUGIN_OUTDATED("$1You are not running the latest recommended build! Recommended build is: $2{0}"),
+    PROMOTE_MEMBER_BUTTON("$3[&bPromote - Member$3]"),
+    PROMOTE_BUTTON_HOVER("Promote to {0} and close ticket"),
+    PROMOTE_EXPERT_BUTTON("$3[&ePromote - Expert$3]"),
+    PROMOTE_MASTER_ARCHITECTURE_BUTTON("$3[$1Promote - MS Arch$3]"),
+    PROMOTE_MASTER_NATURE_BUTTON("$3[$1Promote - MS Nature$3]"),
+    PROMOTE_MASTER_BOTH_BUTTON("$3[$1Promote - MS Both$3]"),
+    TICKET_MORE_INFO("Click here to get more details for ticket #{0}"),
+    CLOSED_TICKETS_TITLE("$2Closed Tickets"),
+    HELD_TICKETS_TITLE("$2Held Tickets"),
+    SELF_TICKETS_TITLE("$2Your Tickets"),
+    TICKET_ROW_SINGLE("{5} $2#{0} {1} by {2} $2on {3} $2- $3{4}"),
+    TICKET_HELP_TITLE("$2Tickets Help"),
+    TICKET_SYNTAX_HINT("$3[] = required  () = optional"),
+    NOT_PERMITTED_CMD_USE("$4You are not allowed to use this command"),
+    TICKET_OPEN_TITLE("$2{0} Open Tickets"),
+    TICKET_CLAIMED_BY("$1Claimed by: $3{0}"),
+    TICKET_HANDLED_BY("$1Handled by: $3{0}"),
+    TICKET_COMMENT_CONTENT("$1Comment: $3{0}"),
+    TICKET_OPENED_BY("$1Opened by: {0} $2| Submission #{1}"),
+    TICKET_OPENED_WHEN("$1When: {0}"),
+    TICKET_OPENED_SERVER("$1Server: "),
+    TICKET_MESSAGE_LONG("$3{0}"),
+    TICKET_SINGLE_TITLE("$2Ticket #{0} $1- $2{1}"),
+    TICKET_RELOAD_SUCCESS("$1Ticket and Player data reloaded"),
+    SUBMISSION_REJECTED("Submission rejected"),
+    SUBMISSION_APPROVED("Submission approved"),
+    SUBMISSION_ON_HOLD("Submission on hold"),
+    SUBMISSION_NEW("New submission"),
+    TICKET_DISCORD_SUBMITTED_BY("Submitted by : {0}"),
+    TICKET_DISCORD_CLOSED_COMBINED("ID : #{0}\nPlot : {1}\nClosed by : {2}\nComments : {3}\nTime closed : {4}\nTime opened : {5}"),
+    TICKET_DISCORD_NEW_COMBINED("ID : #{0}\nPlot : {1}\nTime opened : {2}"),
+    TICKET_DISCORD_RESOURCE_REJECTED("https://app.buildersrefuge.com/img/rejected.png"),
+    TICKET_DISCORD_RESOURCE_APPROVED("https://app.buildersrefuge.com/img/approved.png"),
+    TICKET_DISCORD_RESOURCE_HELD("https://icon-library.net/images/stop-sign-icon-png/stop-sign-icon-png-8.jpg"),
+    TICKET_DISCORD_RESOURCE_NEW("https://app.buildersrefuge.com/img/created.png"),
+    TICKET_DISCORD_PROMOTED_TO("\nPromoted to : {0}"),
+    COMMAND_HELP_COMMENT("$2{0} $3- $1{1}"),
+    COMMAND_HELP_COMMENT_ARGS("$2{0} $1{1} $3- $1{2}"),
+    TICKET_COMMAND_STAFFLIST("Display a list of online staff members."),
+    TICKET_COMMAND_OPEN("Open a ticket."),
+    TICKET_COMMAND_CLOSE("Close an open ticket."),
+    TICKET_COMMAND_ASSIGN("Assign an open ticket to a specified user."),
+    TICKET_COMMAND_HOLD("Put an open ticket on hold."),
+    TICKET_COMMAND_CHECK("Display a list of open tickets / Give more detail of a ticketID."),
+    TICKET_COMMAND_REOPEN("Reopen a closed ticket."),
+    TICKET_COMMAND_TP("Teleport to where a ticket was created."),
+    TICKET_COMMAND_CLAIM("Claim an open ticket to let people know you are working on it."),
+    TICKET_COMMAND_UNCLAIM("Unclaim a claimed ticket"),
+    TICKET_COMMAND_BAN("Ban a player from opening new tickets"),
+    TICKET_COMMAND_UNBAN("Unban a player from opening new tickets"),
+    TICKET_COMMAND_COMMENT("Put a comment on a ticket"),
+    TICKET_COMMAND_RELOAD("Reload ticket and player data."),
+    TICKET_ERROR_SUBMIT_OUTSIDE_PLOT("$4You can only open a submission while standing inside your own plot!"),
+    TICKET_CLAIMED_PREFIX("$1Claimed - "),
+    TICKET_OPEN_PREFIX("$1Open - "),
+    TICKET_CLOSED_PREFIX("$1Closed - "),
+    TICKET_HELD_PREFIX("$2Held $1- "),
 
     //    BrushToolTips
     HOLDING_UNSET_TOOL("$4It seems you are holding a brush tool but it is not set. To suggest it, click this command : $2"),
+    BRUSH_DESCRIPTION_DEPTH("Depth"),
+    BRUSH_DESCRIPTION_RADIUS("Radius"),
+    BRUSH_DESCRIPTION_COMMANDS("Commands"),
+    BRUSH_DESCRIPTION_MASK("Mask"),
+    BRUSH_DESCRIPTION_SOURCE("Source"),
+    BRUSH_DESCRIPTION_POINTS("Points"),
+    BRUSH_DESCRIPTION_COMMAND_RADIUS("Radius"),
+    BRUSH_DESCRIPTION_SCATTER_RADIUS("Radius"),
+    BRUSH_DESCRIPTION_PATTERN("Pattern"),
+    BRUSH_DESCRIPTION_COUNT("Count"),
+    BRUSH_DESCRIPTION_ROTATION("Rotation"),
+    BRUSH_DESCRIPTION_YSCALE("Y-scale"),
+    BRUSH_DESCRIPTION_PATTERN_TO("To pattern"),
+    BRUSH_DESCRIPTION_COPIES("Copies"),
+    BRUSH_DESCRIPTION_LENGTHFACTOR("Length factor"),
+    BRUSH_DESCRIPTION_SIZE("Radius"),
+    BRUSH_DESCRIPTION_TENSION("Tension"),
+    BRUSH_DESCRIPTION_BIAS("Bias"),
+    BRUSH_DESCRIPTION_CONTINUITY("Continuity"),
+    BRUSH_DESCRIPTION_QUALITY("Quality"),
+    BRUSH_DESCRIPTION_ROUNDNESS("Roundness"),
+    BRUSH_DESCRIPTION_FREQUENCY("Frequency"),
+    BRUSH_DESCRIPTION_AMPLITUDE("Amplitude"),
+    BRUSH_DESCRIPTION_SEEDS("Seeds"),
+    BRUSH_DESCRIPTION_RECURSION("Recursion"),
+    BRUSH_DESCRIPTION_SOLID("Solid"),
+    BRUSH_DESCRIPTION_ITERATIONS("Iterations"),
+    BRUSH_DESCRIPTION_DISTANCE("Distance"),
+    BRUSH_DESCRIPTION_HEIGHT("Height"),
 
     //    Friends
     ACCEPTING_TP("$2Accept teleports from friends : $1{0}"),
@@ -118,10 +216,18 @@ public enum Translations {
     REQUEST_SENT("$1A friend request was sent to $2{0}"),
     REQUEST_RECEIVED("$2{0} $1has requested to befriend you"),
     FRIEND_REMOVED("$3{0} $1was removed as friend"),
+    FRIEND_ACCEPT_BUTTON("&f&mAccept"),
+    FRIEND_ACCEPT_BUTTON_HOVER("$1Click to accept request from {0}"),
+    FRIEND_DENY_BUTTON("&f&mDeny"),
+    FRIEND_DENY_BUTTON_HOVER("$1Click to deny request from {0}"),
+    FRIEND_ROW_REQUEST("$1{0} $2- Request"),
+    FRIEND_LIST_TITLE("$1Friends"),
 
     //    WeatherPlugin
     UNKNOWN_WEATHER_TYPE("$4That weather type is unknown"),
     PLOT_WEATHER_SET("$2Plot weather set to: $1{0}"),
+    WEATHER_ERROR_NO_OWNER("You must be the owner of the plot to execute this command"),
+    WEATHER_ERROR_NO_WEATHER_TYPE("You must enter a weather type"),
 
     //    HeadsEvolved
     OPEN_GUI_ERROR("$4Failed to open Head Database GUI"),
@@ -154,7 +260,7 @@ public enum Translations {
     USER_DATA_FAILED_COLLECT("$4Could not collect data for {0}"),
 
 //    MultiCommand
-    MULTI_CMD_PERFORMING("Performing command : $2{0}")
+    MULTI_CMD_PERFORMING("Performing command : $2{0}"),
     ;
 
     private String s;
@@ -211,10 +317,10 @@ public enum Translations {
     }
 
     public Text ft(final Object... args) {
-        return Text.of(f(args));
+        return TextSerializers.FORMATTING_CODE.deserializeUnchecked(f(args));
     }
 
     public Text t() {
-        return Text.of(s());
+        return TextSerializers.FORMATTING_CODE.deserializeUnchecked(s());
     }
 }

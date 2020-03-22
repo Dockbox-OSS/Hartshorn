@@ -1,7 +1,8 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.darwinreforged.servermodifications.util.todo.database.DataStoreManager;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
@@ -26,14 +27,13 @@ public class TicketReloadCommand implements CommandExecutor {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         try {
             plugin.config = new TicketConfig(this.plugin);
-            plugin.messages = new TicketMessages(this.plugin);
             plugin.setDataStoreManager(new DataStoreManager(this.plugin));
             plugin.loadDataStore();
         } catch (IOException | ObjectMappingException e) {
             e.printStackTrace();
             throw new CommandException(Translations.UNKNOWN_ERROR.ft("Unable to load data."));
         }
-        src.sendMessage(plugin.fromLegacy("&bTicket and Player data reloaded."));
+        PlayerUtils.tell(src, Translations.TICKET_RELOAD_SUCCESS.t());
         return CommandResult.success();
     }
 }

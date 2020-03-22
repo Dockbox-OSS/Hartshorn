@@ -2,6 +2,7 @@ package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.resources.Translations;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -10,7 +11,6 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,61 +29,68 @@ public class TicketCommand implements CommandExecutor {
         return CommandResult.success();
     }
 
+    // TODO : Split command syntax to Commands in .resources
     void showHelp(CommandSource sender) {
         PaginationService paginationService = Sponge.getServiceManager().provide(PaginationService.class).get();
 
         List<Text> contents = new ArrayList<>();
+
         if (sender.hasPermission(TicketPermissions.COMMAND_STAFFLIST))
-            contents.add(formatHelp("/stafflist", "Display a list of online staff members."));
+            contents.add(Translations.COMMAND_HELP_COMMENT.ft("/stafflist", Translations.TICKET_COMMAND_STAFFLIST.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_OPEN))
-            contents.add(formatHelp("/ticket", "open [reason for opening]", "Open a ticket."));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "open [reason for opening]", Translations.TICKET_COMMAND_OPEN.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_ALL) || sender.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_SELF))
-            contents.add(formatHelp("/ticket", "close [ticketID] (comment)", "Close an open ticket."));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "close [ticketID] (comment)", Translations.TICKET_COMMAND_CLOSE.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_ASSIGN))
-            contents.add(formatHelp("/ticket", "assign [ticketID] [user]", "Assign an open ticket to a specified user."));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "assign [ticketID] [user]", Translations.TICKET_COMMAND_ASSIGN.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_HOLD))
-            contents.add(formatHelp("/ticket", "hold [ticketID]", "Put an open ticket on hold."));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "hold [ticketID]", Translations.TICKET_COMMAND_HOLD.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_READ_ALL) || sender.hasPermission(TicketPermissions.COMMAND_TICKET_READ_SELF))
-            contents.add(formatHelp("/ticket", "check (ticketID)", "Display a list of open tickets / Give more detail of a ticketID."));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "check (ticketID)", Translations.TICKET_COMMAND_CHECK.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_REOPEN))
-            contents.add(formatHelp("/ticket", "reopen", "Reopen's a closed ticket."));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "reopen", Translations.TICKET_COMMAND_REOPEN.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_TELEPORT))
-            contents.add(formatHelp("/ticket", "tp [ticketID]", "Teleport to where a ticket was created."));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "tp [ticketID]", Translations.TICKET_COMMAND_TP.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_CLAIM))
-            contents.add(formatHelp("/ticket", "claim [ticketID]", "Claim an open ticket to let people know you are working on it."));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "claim [ticketID]", Translations.TICKET_COMMAND_CLAIM.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_UNCLAIM))
-            contents.add(formatHelp("/ticket", "unclaim [ticketID]", "Unclaim a claimed ticket"));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "unclaim [ticketID]", Translations.TICKET_COMMAND_UNCLAIM.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_BAN))
-            contents.add(formatHelp("/ticket", "ban [playername]", "Ban a player from opening new tickets"));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "ban [playername]", Translations.TICKET_COMMAND_BAN.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_BAN))
-            contents.add(formatHelp("/ticket", "unban [playername]", "Unban a player from opening new tickets"));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "unban [playername]", Translations.TICKET_COMMAND_UNBAN.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_COMMENT))
-            contents.add(formatHelp("/ticket", "comment [ticketID] [comment]", "put a comment on a ticket"));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "comment [ticketID] [comment]", Translations.TICKET_COMMAND_COMMENT.s()));
+
         if (sender.hasPermission(TicketPermissions.COMMAND_RELOAD))
-            contents.add(formatHelp("/ticket", "reload", "Reload ticket and player data."));
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "reload", Translations.TICKET_COMMAND_RELOAD.s()));
 
 
         if (!contents.isEmpty()) {
             paginationService.builder()
-                    .title(plugin.fromLegacy("&3MMCTickets Help"))
+                    .title(Translations.TICKET_HELP_TITLE.t())
                     .contents(contents)
-                    .header(plugin.fromLegacy("&3[] = required  () = optional"))
-                    .padding(Text.of("="))
+                    .header(Translations.TICKET_SYNTAX_HINT.t())
+                    .padding(Translations.DEFAULT_PADDING.t())
                     .sendTo(sender);
         } else {
             paginationService.builder()
-                    .title(plugin.fromLegacy("&3MMCTickets Help"))
-                    .contents(plugin.fromLegacy("&3You currently do not have any permissions for this plugin."))
-                    .padding(Text.of("="))
+                    .title(Translations.TICKET_HELP_TITLE.t())
+                    .contents(Translations.NOT_PERMITTED_CMD_USE.t())
+                    .padding(Translations.DEFAULT_PADDING.t())
                     .sendTo(sender);
         }
-    }
-
-    public Text formatHelp(String command, String comment) {
-        return TextSerializers.FORMATTING_CODE.deserializeUnchecked("&3" + command + " &8- &7" + comment);
-    }
-
-    public Text formatHelp(String command, String args, String comment) {
-        return TextSerializers.FORMATTING_CODE.deserializeUnchecked("&3" + command + " &b" + args + " &8- &7" + comment);
     }
 }

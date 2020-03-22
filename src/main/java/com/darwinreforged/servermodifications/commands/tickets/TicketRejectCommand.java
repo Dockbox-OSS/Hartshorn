@@ -2,9 +2,8 @@ package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
-import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import io.github.nucleuspowered.nucleus.Nucleus;
 import io.github.nucleuspowered.nucleus.api.service.NucleusMailService;
 import org.spongepowered.api.Sponge;
@@ -41,7 +40,7 @@ public class TicketRejectCommand implements CommandExecutor {
                         tickets.stream().filter(t -> t.getTicketID() == ticketIDOp.get()).findFirst();
                 if (ticketOpt.isPresent()) {
                     TicketData ticket = ticketOpt.get();
-                    String playerName = TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID());
+                    String playerName = PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID()));
                     Sponge.getCommandManager()
                             .process(
                                     Sponge.getServer().getConsole(),

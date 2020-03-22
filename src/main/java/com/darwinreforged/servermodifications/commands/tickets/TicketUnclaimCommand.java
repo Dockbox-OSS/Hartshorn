@@ -3,8 +3,8 @@ package com.darwinreforged.servermodifications.commands.tickets;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.magitechserver.magibridge.MagiBridge;
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.spongepowered.api.Sponge;
@@ -16,6 +16,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.awt.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,15 +52,13 @@ public class TicketUnclaimCommand implements CommandExecutor {
                             && ticket.getStatus() == Claimed
                             && !src.hasPermission(TicketPermissions.CLAIMED_TICKET_BYPASS)) {
                         throw new CommandException(
-								TicketMessages.getErrorTicketUnclaim(
-                                        ticket.getTicketID(),
-										TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
+                                Translations.TICKET_ERROR_UNCLAIM.ft(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
                     }
                     if (ticket.getStatus() == Open) {
-                        throw new CommandException(TicketMessages.getTicketNotClaimed(ticket.getTicketID()));
+                        throw new CommandException(Translations.TICKET_NOT_CLAIMED.ft(ticket.getTicketID()));
                     }
                     if (ticket.getStatus() == Closed || ticket.getStatus() == Held) {
-                        throw new CommandException(TicketMessages.getTicketNotOpen(ticketID));
+                        throw new CommandException(Translations.TICKET_NOT_OPEN.ft(ticketID));
                     }
 
                     ticket.setStaffUUID(UUID.fromString("00000000-0000-0000-0000-000000000000").toString());
@@ -68,25 +67,24 @@ public class TicketUnclaimCommand implements CommandExecutor {
                     try {
                         plugin.getDataStore().updateTicketData(ticket);
                     } catch (Exception e) {
-                        src.sendMessage(Translations.UNKNOWN_ERROR.ft("Unable to unclaim ticket"));
+                        PlayerUtils.tell(src, Translations.UNKNOWN_ERROR.ft("Unable to unclaim ticket"));
                         e.printStackTrace();
                     }
 
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {
                         Player ticketPlayer = ticketPlayerOP.get();
-                        ticketPlayer.sendMessage(
-								TicketMessages.getTicketUnclaimUser(src.getName(), ticket.getTicketID()));
+                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_UNCLAIM_USER.ft(src.getName(), ticket.getTicketID()));
                     }
 
-					TicketUtil.notifyOnlineStaff(
-							TicketMessages.getTicketUnclaim(src.getName(), ticket.getTicketID()));
+                    PlayerUtils.broadcastForPermission(Translations.TICKET_UNCLAIM.ft(src.getName(), ticket.getTicketID()), TicketPermissions.STAFF);
+
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setColor(Color.YELLOW);
-                    embedBuilder.setTitle("New submission");
+                    embedBuilder.setTitle(Translations.SUBMISSION_NEW.s());
                     embedBuilder.addField(
-                            "Submitted by : " + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()),
-                            "ID assigned : " + ticketID + "\nPlot : " + ticket.getMessage(),
+                            Translations.TICKET_DISCORD_SUBMITTED_BY.f(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID()))),
+                            Translations.TICKET_DISCORD_NEW_COMBINED.f(ticketID, ticket.getMessage(), LocalDateTime.now().toString()),
                             false);
                     embedBuilder.setThumbnail("https://app.buildersrefuge.com/img/created.png");
 
@@ -97,7 +95,7 @@ public class TicketUnclaimCommand implements CommandExecutor {
                     return CommandResult.success();
                 }
             }
-            throw new CommandException(TicketMessages.getTicketNotExist(ticketID));
+            throw new CommandException(Translations.TICKET_NOT_EXIST.ft(ticketID));
         }
     }
 }

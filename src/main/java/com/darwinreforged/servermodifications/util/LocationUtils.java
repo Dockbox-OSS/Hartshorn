@@ -10,6 +10,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class LocationUtils {
 
@@ -45,8 +46,16 @@ public class LocationUtils {
         return -1;
     }
 
+    public static Optional<World> getWorld(UUID uuid) {
+        return Sponge.getServer().loadWorld(uuid);
+    }
+
+    public static Optional<World> getWorld(String name) {
+        return Sponge.getServer().loadWorld(name);
+    }
+
     public static org.spongepowered.api.world.Location<World> convertPlotsToSpongeLoc(com.intellectualcrafters.plot.object.Location p2Location) {
-        Optional<World> worldOptional = Sponge.getServer().getWorld(p2Location.getWorld());
+        Optional<World> worldOptional = LocationUtils.getWorld(p2Location.getWorld());
         World world = null;
         if (worldOptional.isPresent()) world = worldOptional.get();
         if (world == null) return null;

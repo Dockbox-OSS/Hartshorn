@@ -8,6 +8,7 @@ import com.plotsquared.sponge.events.PlayerEnterPlotEvent;
 import com.plotsquared.sponge.events.PlayerLeavePlotEvent;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Join;
@@ -18,12 +19,14 @@ import java.util.concurrent.TimeUnit;
 
 public class WeatherPlayerActionListeners {
 
-  @Listener
+  @Listener(order = Order.LATE)
   public void onPlotEnter(PlayerEnterPlotEvent event) {
     if (PlayerWeatherCoreUtil.globalWeatherOff) return;
 
     Player player = event.getPlayer();
     UUID uuid = player.getUniqueId();
+    if (PlayerWeatherCoreUtil.toggledPlayersContains(uuid)) return;
+
     Plot plot = event.getPlot();
 
     int weatherType = plot.getFlag(Flags.WEATHER, 0);
@@ -35,10 +38,14 @@ public class WeatherPlayerActionListeners {
 
     if (plot.getWorldName().replaceAll(",", ";").equals(plot.getId().toString())) {
       Task.builder()
-          .delay(500, TimeUnit.MILLISECONDS)
-          .execute(() -> determinePacketToSend(uuid, playersWeather, plotWeather))
-          .name("WeatherTask")
-          .submit(PlayerWeatherPlugin.instance);
+              .delay(500, TimeUnit.MILLISECONDS)
+              .execute(() -> determinePacketToSend(uuid, playersWeather, plotWeather))
+              .name("WeatherTask")
+              .submit(PlayerWeatherPlugin.getPlugin());
+    }
+    else
+    {
+      determinePacketToSend(uuid, playersWeather, plotWeather);
     }
   }
 
@@ -67,13 +74,13 @@ public class WeatherPlayerActionListeners {
 
     switch (PlayerWeatherCoreUtil.getPlayersWeather(uuid)) {
       case RAINING:
-        PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid, PlayerWeatherCoreUtil.Weather.RAINING);
+        PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid,PlayerWeatherCoreUtil.Weather.RAINING);
         break;
       case LIGHTNING:
         PlayerWeatherCoreUtil.addLightningPlayer(uuid);
         break;
       case LIGHTNINGSTORM:
-        PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid, PlayerWeatherCoreUtil.Weather.RAINING);
+        PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid,PlayerWeatherCoreUtil.Weather.RAINING);
         PlayerWeatherCoreUtil.addLightningPlayer(uuid);
         break;
     }
@@ -84,45 +91,38 @@ public class WeatherPlayerActionListeners {
     PlayerWeatherCoreUtil.removeLightningPlayer(player.getUniqueId());
   }
 
-  private void determinePacketToSend(UUID uuid, PlayerWeatherCoreUtil.Weather from, PlayerWeatherCoreUtil.Weather to) {
+  private void determinePacketToSend(UUID uuid, PlayerWeatherCoreUtil.Weather from, PlayerWeatherCoreUtil.Weather  to) {
     // No need to send any weather packets
     if (from == to) return;
 
     switch (to) {
       case RESET:
-        PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid, PlayerWeatherCoreUtil.Weather.RESET);
-        if (PlayerWeatherCoreUtil.lightningPlayersContains(uuid)) {
-          PlayerWeatherCoreUtil.removeLightningPlayer(uuid);
-        }
+        PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid,PlayerWeatherCoreUtil.Weather.RESET);
+        PlayerWeatherCoreUtil.removeLightningPlayer(uuid);
         break;
 
       case RAINING:
-        if (from != PlayerWeatherCoreUtil.Weather.LIGHTNINGSTORM) {
-          PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid, PlayerWeatherCoreUtil.Weather.RAINING);
+        if (from !=PlayerWeatherCoreUtil.Weather.LIGHTNINGSTORM) {
+          PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid,PlayerWeatherCoreUtil.Weather.RAINING);
         }
-        if (PlayerWeatherCoreUtil.lightningPlayersContains(uuid)) {
-          PlayerWeatherCoreUtil.removeLightningPlayer(uuid);
-        }
+        PlayerWeatherCoreUtil.removeLightningPlayer(uuid);
+
         break;
 
       case LIGHTNING:
         // You only need to send a clear packet if its raining
-        if (from != PlayerWeatherCoreUtil.Weather.RESET) {
-          PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid, PlayerWeatherCoreUtil.Weather.RESET);
+        if (from !=PlayerWeatherCoreUtil.Weather.RESET) {
+          PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid,PlayerWeatherCoreUtil.Weather.RESET);
         }
-        if (!PlayerWeatherCoreUtil.lightningPlayersContains(uuid)) {
-          PlayerWeatherCoreUtil.addLightningPlayer(uuid);
-        }
+        PlayerWeatherCoreUtil.addLightningPlayer(uuid);
         break;
 
       case LIGHTNINGSTORM:
         // You only need to send a raining packet if its clear
-        if (from != PlayerWeatherCoreUtil.Weather.RAINING) {
-          PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid, PlayerWeatherCoreUtil.Weather.RAINING);
+        if (from !=PlayerWeatherCoreUtil.Weather.RAINING) {
+          PlayerWeatherCoreUtil.sendPlayerWeatherPacket(uuid,PlayerWeatherCoreUtil.Weather.RAINING);
         }
-        if (!PlayerWeatherCoreUtil.lightningPlayersContains(uuid)) {
-          PlayerWeatherCoreUtil.addLightningPlayer(uuid);
-        }
+        PlayerWeatherCoreUtil.addLightningPlayer(uuid);
         break;
     }
   }

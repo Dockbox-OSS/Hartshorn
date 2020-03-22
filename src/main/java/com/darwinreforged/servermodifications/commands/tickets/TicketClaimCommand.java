@@ -3,8 +3,8 @@ package com.darwinreforged.servermodifications.commands.tickets;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.magitechserver.magibridge.MagiBridge;
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.spongepowered.api.Sponge;
@@ -52,15 +52,13 @@ public class TicketClaimCommand implements CommandExecutor {
                             && ticket.getStatus() == Claimed
                             && !src.hasPermission(TicketPermissions.CLAIMED_TICKET_BYPASS)) {
                         throw new CommandException(
-                                TicketMessages.getErrorTicketClaim(
-                                        ticket.getTicketID(),
-                                        TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
+                                Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
                     }
                     if (ticket.getStaffUUID().equals(uuid) && ticket.getStatus() == Claimed) {
-                        throw new CommandException(TicketMessages.getErrorTicketClaim(ticket.getTicketID(), "you"));
+                        throw new CommandException(Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), "you"));
                     }
                     if (ticket.getStatus() == Closed || ticket.getStatus() == Held) {
-                        throw new CommandException(TicketMessages.getTicketNotOpen(ticketID));
+                        throw new CommandException(Translations.TICKET_NOT_OPEN.ft(ticketID));
                     }
 
                     ticket.setStaffUUID(uuid.toString());
@@ -69,25 +67,23 @@ public class TicketClaimCommand implements CommandExecutor {
                     try {
                         plugin.getDataStore().updateTicketData(ticket);
                     } catch (Exception e) {
-                        src.sendMessage(Translations.UNKNOWN_ERROR.ft("Unable to claim ticket"));
+                        PlayerUtils.tell(src, Translations.UNKNOWN_ERROR.ft("Unable to claim ticket"));
                         e.printStackTrace();
                     }
 
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {
                         Player ticketPlayer = ticketPlayerOP.get();
-                        ticketPlayer.sendMessage(
-                                TicketMessages.getTicketClaimUser(src.getName(), ticket.getTicketID()));
+                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_CLAIM_USER.ft(src.getName(), ticket.getTicketID()));
                     }
 
-                    TicketUtil.notifyOnlineStaff(
-                            TicketMessages.getTicketClaim(src.getName(), ticket.getTicketID()));
+                    PlayerUtils.broadcastForPermission(Translations.TICKET_CLAIM.ft(src.getName(), ticket.getTicketID()), TicketPermissions.STAFF);
 
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setColor(Color.GREEN);
                     embedBuilder.setTitle("Submission claimed");
                     embedBuilder.addField(
-                            "Submitted by : " + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()),
+                            "Submitted by : " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID())),
                             "ID : #"
                                     + ticketID
                                     + "\nPlot : "
@@ -112,7 +108,7 @@ public class TicketClaimCommand implements CommandExecutor {
                     return CommandResult.success();
                 }
             }
-            throw new CommandException(TicketMessages.getTicketNotExist(ticketID));
+            throw new CommandException(Translations.TICKET_NOT_EXIST.ft(ticketID));
         }
     }
 }

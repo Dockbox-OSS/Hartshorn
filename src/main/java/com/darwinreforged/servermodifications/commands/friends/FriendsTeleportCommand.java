@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.commands.friends;
 
 import com.darwinreforged.servermodifications.objects.FriendsStorage;
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.FriendsUtil;
 import org.spongepowered.api.command.CommandResult;

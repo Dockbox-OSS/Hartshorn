@@ -1,9 +1,11 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
+import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
+import com.darwinreforged.servermodifications.util.TimeUtils;
 import com.magitechserver.magibridge.MagiBridge;
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.spongepowered.api.Sponge;
@@ -15,7 +17,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.awt.*;
-import java.text.MessageFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,16 +51,13 @@ public class TicketHoldCommand implements CommandExecutor {
             for (TicketData ticket : tickets) {
                 if (ticket.getTicketID() == ticketID) {
                     if (ticket.getStatus() == Closed) {
-                        src.sendMessage(TicketMessages.getErrorTicketAlreadyClosed());
+                        PlayerUtils.tell(src, Translations.TICKET_ERROR_ALREADY_CLOSED.t());
                     }
                     if (ticket.getStatus() == Held) {
-                        src.sendMessage(TicketMessages.getErrorTicketlreadyHold());
+                        PlayerUtils.tell(src, Translations.TICKET_ERROR_ALREADY_HOLD.t());
                     }
                     if (ticket.getStatus() == Claimed && !ticket.getStaffUUID().equals(uuid)) {
-                        src.sendMessage(
-                                TicketMessages.getErrorTicketClaim(
-                                        ticket.getTicketID(),
-                                        TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
+                        PlayerUtils.tell(src, Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils.getNameFromUUID(ticket.getStaffUUID())));
                     }
                     ticket.setStatus(Held);
                     ticket.setStaffUUID(UUID.fromString("00000000-0000-0000-0000-000000000000").toString());
@@ -66,33 +65,33 @@ public class TicketHoldCommand implements CommandExecutor {
                     try {
                         plugin.getDataStore().updateTicketData(ticket);
                     } catch (Exception e) {
-                        src.sendMessage(Translations.UNKNOWN_ERROR.ft("Unable to put ticket on hold"));
+                        PlayerUtils.tell(src, Translations.UNKNOWN_ERROR.ft("Unable to put ticket on hold"));
                         e.printStackTrace();
                     }
 
-					TicketUtil.notifyOnlineStaff(TicketMessages.getTicketHold(ticket.getTicketID(), src.getName()));
+                    PlayerUtils.broadcastForPermission(Translations.TICKET_HOLD.ft(ticket.getTicketID(), src.getName()), TicketPermissions.STAFF);
 
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {
                         Player ticketPlayer = ticketPlayerOP.get();
-                        ticketPlayer.sendMessage(
-                                TicketMessages.getTicketHoldUser(ticket.getTicketID(), src.getName()));
+                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_HOLD_USER.ft(ticket.getTicketID(), src.getName()));
                     }
 
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setColor(Color.PINK);
-                    embedBuilder.setTitle("Submission on hold");
+                    embedBuilder.setTitle(Translations.SUBMISSION_ON_HOLD.s());
                     embedBuilder.addField(
-                            "Submitted by : " + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()),
-                            MessageFormat.format(
-                                    "ID : #{0}\nPlot : {1}\nClosed by : {2}\nScore : {3}\n",
+                            Translations.TICKET_DISCORD_SUBMITTED_BY.f(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID()))),
+                            Translations.TICKET_DISCORD_CLOSED_COMBINED.f(
                                     ticketID,
                                     ticket.getMessage(),
                                     src.getName(),
-                                    ticket.getComment().length() == 0 ? "None" : ticket.getComment()),
+                                    ticket.getComment().length() == 0 ? Translations.NONE.s() : ticket.getComment(),
+                                    LocalDateTime.now().toString(),
+                                    TimeUtils.localDateTimeFromMillis(ticket.getTimestamp()).toString()),
                             false);
                     embedBuilder.setThumbnail(
-                            "https://icon-library.net/images/stop-sign-icon-png/stop-sign-icon-png-8.jpg");
+                            Translations.TICKET_DISCORD_RESOURCE_HELD.s());
 
                     MagiBridge.jda
                             .getTextChannelById("525424284731047946")
@@ -101,7 +100,7 @@ public class TicketHoldCommand implements CommandExecutor {
                     return CommandResult.success();
                 }
             }
-            throw new CommandException(TicketMessages.getTicketNotExist(ticketID));
+            throw new CommandException(Translations.TICKET_NOT_EXIST.ft(ticketID));
         }
     }
 }

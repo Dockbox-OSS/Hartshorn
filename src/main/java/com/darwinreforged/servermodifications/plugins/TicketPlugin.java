@@ -5,8 +5,8 @@ import com.darwinreforged.servermodifications.listeners.TicketLoginAndDiscordLis
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.darwinreforged.servermodifications.util.todo.database.DataStoreManager;
 import com.darwinreforged.servermodifications.util.todo.database.IDataStore;
@@ -28,7 +28,6 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -58,7 +57,6 @@ public class TicketPlugin {
     public Path ConfigDir;
 
     public TicketConfig config;
-    public TicketMessages messages;
 
     private CommandManager cmdManager = Sponge.getCommandManager();
 
@@ -78,7 +76,6 @@ public class TicketPlugin {
                 .registerType(TypeToken.of(TicketPlayerData.class), new TicketPlayerData.TicketPlayerDataSerializer());
 
         config = new TicketConfig(this);
-        messages = new TicketMessages(this);
         loadCommands();
     }
 
@@ -108,7 +105,6 @@ public class TicketPlugin {
     @Listener
     public void onPluginReload(GameReloadEvent event) throws IOException, ObjectMappingException {
         this.config = new TicketConfig(this);
-        this.messages = new TicketMessages(this);
         dataStoreManager = new DataStoreManager(this);
         loadDataStore();
     }
@@ -324,38 +320,32 @@ public class TicketPlugin {
             Sponge.getScheduler()
                     .createSyncExecutor(this)
                     .scheduleWithFixedDelay(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    final List<TicketData> tickets =
-                                            new ArrayList<TicketData>(getDataStore().getTicketData());
-                                    int openTickets = 0;
-                                    int heldTickets = 0;
-                                    for (TicketData ticket : tickets) {
-                                        if (ticket.getStatus() == Open || ticket.getStatus() == Claimed) {
-                                            openTickets++;
-                                        }
-                                        if (ticket.getStatus() == Held) {
-                                            heldTickets++;
-                                        }
+                            () -> {
+                                final List<TicketData> tickets =
+                                        new ArrayList<>(getDataStore().getTicketData());
+                                int openTickets = 0;
+                                int heldTickets = 0;
+                                for (TicketData ticket : tickets) {
+                                    if (ticket.getStatus() == Open || ticket.getStatus() == Claimed) {
+                                        openTickets++;
                                     }
-                                    if (TicketConfig.nagHeld) {
-                                        if (heldTickets > 0) {
-                                            if (openTickets > 0) {
-                                                TicketUtil.notifyOnlineStaff(
-                                                        TicketMessages.getTicketUnresolvedHeld(openTickets, heldTickets, "check"));
-                                            }
-                                        } else {
-                                            if (openTickets > 0) {
-                                                TicketUtil.notifyOnlineStaff(
-                                                        TicketMessages.getTicketUnresolved(openTickets, "check"));
-                                            }
+                                    if (ticket.getStatus() == Held) {
+                                        heldTickets++;
+                                    }
+                                }
+                                if (TicketConfig.nagHeld) {
+                                    if (heldTickets > 0) {
+                                        if (openTickets > 0) {
+                                            PlayerUtils.broadcastForPermission(Translations.TICKET_UNRESOLVED_HELD.ft(openTickets, heldTickets, "check"), TicketPermissions.STAFF);
                                         }
                                     } else {
                                         if (openTickets > 0) {
-                                            TicketUtil.notifyOnlineStaff(
-                                                    TicketMessages.getTicketUnresolved(openTickets, "check"));
+                                            PlayerUtils.broadcastForPermission(Translations.TICKET_UNRESOLVED.ft(openTickets, "check"), TicketPermissions.STAFF);
                                         }
+                                    }
+                                } else {
+                                    if (openTickets > 0) {
+                                        PlayerUtils.broadcastForPermission(Translations.TICKET_UNRESOLVED.ft(openTickets, "check"), TicketPermissions.STAFF);
                                     }
                                 }
                             },
@@ -367,10 +357,6 @@ public class TicketPlugin {
 
     public ArrayList<String> getWaitTimer() {
         return this.waitTimer;
-    }
-
-    public Text fromLegacy(String legacy) {
-        return TextSerializers.FORMATTING_CODE.deserializeUnchecked(legacy);
     }
 
     @Deprecated

@@ -1,6 +1,5 @@
 package com.darwinreforged.servermodifications.util.plugins;
 
-import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.flowpowered.math.vector.Vector3d;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
@@ -8,9 +7,12 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.network.play.server.SPacketChangeGameState;
 import net.minecraft.network.play.server.SPacketSpawnGlobalEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.util.*;
 
@@ -89,6 +91,7 @@ public class PlayerWeatherCoreUtil {
 
   private static HashMap<UUID, Weather> playerWeather = new HashMap<>();
   private static ArrayList<UUID> lightningPlayers = new ArrayList<>();
+  private static ArrayList<UUID> toggledPlayers = new ArrayList<>();
 
   public static boolean globalWeatherOff = false;
 
@@ -144,6 +147,20 @@ public class PlayerWeatherCoreUtil {
     }
   }
 
+  public static boolean toggledPlayersContains(UUID uuid) {
+    return toggledPlayers.contains(uuid);
+  }
+
+  public static void removeToggledPlayer(UUID uuid) {
+    toggledPlayers.remove(uuid);
+  }
+
+  public static void addToggledPlayer(UUID uuid) {
+    if (!toggledPlayers.contains(uuid)) {
+      toggledPlayers.add(uuid);
+    }
+  }
+
   public static boolean lightningPlayersContains(UUID uuid) {
     return lightningPlayers.contains(uuid);
   }
@@ -152,12 +169,16 @@ public class PlayerWeatherCoreUtil {
     return lightningPlayers;
   }
 
+  public static void sendPlayerWeatherPacket(UUID uuid, Weather weather)
+  {
+    sendPlayerWeatherPacket(uuid, weather, false);
+  }
 
-  public static void sendPlayerWeatherPacket(UUID uuid, Weather weather) {
+  public static void sendPlayerWeatherPacket(UUID uuid, Weather weather, boolean overide) {
 
-    if (globalWeatherOff && weather != Weather.RESET){
+    if (globalWeatherOff && !overide){
       Optional<Player> optionalPlayer = Sponge.getServer().getPlayer(uuid);
-      optionalPlayer.ifPresent(player -> PlayerUtils.tell(player, "Sorry, but pweather is currently disabled"));
+      optionalPlayer.ifPresent(player -> sendMessage(player, "Sorry, but pweather is currently disabled"));
       return;
     }
 
@@ -188,12 +209,12 @@ public class PlayerWeatherCoreUtil {
 
             MinecraftServer minecraftServer = FMLCommonHandler.instance().getMinecraftServerInstance();
             if (minecraftServer == null) return;
-            net.minecraft.world.World forgeWorld = minecraftServer.getPlayerList().getPlayerByUUID(uuid).world;
-
+            PlayerList playerList = minecraftServer.getPlayerList();
+            //net.minecraft.world.World forgeWorld = minecraftServer.getPlayerList().getPlayerByUUID(uuid).world;
+            net.minecraft.world.World forgeWorld = playerList.getPlayerByUUID(uuid).world;
             if (optionalLightningPosition.isPresent() && forgeWorld != null)
             {
               Vector3d lightningPosition = optionalLightningPosition.get();
-
               EntityLightningBolt lightningBolt = new EntityLightningBolt(forgeWorld,
                       lightningPosition.getX(), lightningPosition.getY(), lightningPosition.getZ(), false);
 
@@ -202,5 +223,14 @@ public class PlayerWeatherCoreUtil {
         }
       }
     }
+  }
+
+  public static void sendMessage(Player player, String message) {
+    player.sendMessage(
+            Text.of(
+                    TextColors.GRAY,
+                    "[] ",
+                    TextColors.AQUA,
+                    message));
   }
 }

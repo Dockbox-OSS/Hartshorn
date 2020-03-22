@@ -3,10 +3,9 @@ package com.darwinreforged.servermodifications.commands.tickets;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
-import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
+import com.darwinreforged.servermodifications.util.TimeUtils;
 import com.magitechserver.magibridge.MagiBridge;
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.spongepowered.api.Sponge;
@@ -18,7 +17,6 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.awt.*;
-import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +74,7 @@ public class TicketCloseCommand implements CommandExecutor {
             throw new CommandException(
                 Translations.TICKET_ERROR_CLAIM.ft(
                     ticket.getTicketID(),
-                    TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
+                    PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
           }
           if (commentOP.isPresent()) {
             String comment = commentOP.get();
@@ -89,8 +87,7 @@ public class TicketCloseCommand implements CommandExecutor {
           Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
           if (ticketPlayerOP.isPresent()) {
             Player ticketPlayer = ticketPlayerOP.get();
-            ticketPlayer.sendMessage(
-                TicketMessages.getTicketCloseUser(ticket.getTicketID(), src.getName()));
+            PlayerUtils.tell(ticketPlayer, Translations.TICKET_CLOSE_USER.ft(ticket.getTicketID(), src.getName()));
             ticket.setNotified(1);
           } else {
             plugin.getDataStore().getNotifications().add(ticket.getPlayerUUID());
@@ -99,43 +96,39 @@ public class TicketCloseCommand implements CommandExecutor {
           embedBuilder.setColor(Color.PINK);
 
           String rank;
-          switch (ticket.getWorld()) {
-            case "Plots1":
-              rank = "Member";
-              break;
-            case "Plots2":
-              rank = "Expert";
-              break;
-            case "MasterPlots":
-              rank = "Mastered Skill";
-              break;
-            default:
-              rank = "Unknown";
+          if (Translations.PLOTS1_NAME.s().equals(ticket.getWorld())) {
+            rank = Translations.MEMBER_RANK_DISPLAY.s();
+          } else if (Translations.PLOTS2_NAME.s().equals(ticket.getWorld())) {
+            rank = Translations.EXPERT_RANK_DISPLAY.s();
+          } else if (Translations.MASTERPLOTS_NAME.s().equals(ticket.getWorld())) {
+            rank = Translations.MASTER_RANK_DISPLAY.s();
+          } else {
+            rank = Translations.UNKNOWN.s();
           }
 
           if (rejected.isPresent()) {
-            embedBuilder.setTitle("Submission rejected");
+            embedBuilder.setTitle(Translations.SUBMISSION_REJECTED.s());
           } else {
-            embedBuilder.setTitle("Submission approved");
+            embedBuilder.setTitle(Translations.SUBMISSION_APPROVED.s());
           }
 
           embedBuilder.addField(
-              "Submitted by : " + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()),
-              MessageFormat.format(
-                      "ID : #{0}\nPlot : {1}\nClosed by : {2}\nComments : {3}\nTime closed : {4}",
+              Translations.TICKET_DISCORD_SUBMITTED_BY.f(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID()))),
+              Translations.TICKET_DISCORD_CLOSED_COMBINED.f(
                       ticketID,
                       ticket.getMessage(),
                       src.getName(),
-                      ticket.getComment().length() == 0 ? "None" : ticket.getComment(),
-                      LocalDateTime.now().toString())
-                  + (rejected.isPresent() ? "" : "\nPromoted to : " + rank),
+                      ticket.getComment().length() == 0 ? Translations.NONE.s() : ticket.getComment(),
+                      LocalDateTime.now().toString(),
+                      TimeUtils.localDateTimeFromMillis(ticket.getTimestamp()).toString())
+                  + (rejected.isPresent() ? "" : Translations.TICKET_DISCORD_PROMOTED_TO.f(rank)),
               false);
           if (rejected.isPresent()) {
             embedBuilder.setColor(Color.RED);
-            embedBuilder.setThumbnail("https://app.buildersrefuge.com/img/rejected.png");
+            embedBuilder.setThumbnail(Translations.TICKET_DISCORD_RESOURCE_REJECTED.s());
           } else {
             embedBuilder.setColor(Color.GREEN);
-            embedBuilder.setThumbnail("https://app.buildersrefuge.com/img/approved.png");
+            embedBuilder.setThumbnail(Translations.TICKET_DISCORD_RESOURCE_APPROVED.s());
           }
 
           MagiBridge.jda
@@ -146,7 +139,7 @@ public class TicketCloseCommand implements CommandExecutor {
           try {
             plugin.getDataStore().updateTicketData(ticket);
           } catch (Exception e) {
-            src.sendMessage(Translations.UNKNOWN_ERROR.ft("Unable to close ticket"));
+            PlayerUtils.tell(src, Translations.UNKNOWN_ERROR.ft("Unable to close ticket"));
             e.printStackTrace();
           }
           return CommandResult.success();

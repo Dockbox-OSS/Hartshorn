@@ -1,6 +1,6 @@
 package com.darwinreforged.servermodifications.util;
 
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import io.github.nucleuspowered.nucleus.modules.core.datamodules.CoreUserDataModule;
 import org.spongepowered.api.Sponge;
@@ -10,6 +10,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -35,11 +36,17 @@ public class PlayerUtils {
         return isUserOnline(player.getUniqueId());
     }
 
+    public static Text getPlayerOnlineDisplay(UUID uuid) {
+        String displayName = PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(uuid));
+        if (isUserOnline(uuid)) return Translations.ONLINE_PLAYER.ft(displayName);
+        return Translations.OFFLINE_PLAYER.ft(displayName);
+    }
+
     /*
      Regular sendMessage
      */
     public static void tell(CommandSource player, Text text, boolean addPrefix) {
-        text = Text.builder().append(text).append(Text.of(addPrefix ? Translations.PREFIX.s() : "")).build();
+        text = Text.builder().append(text).append(TextSerializers.FORMATTING_CODE.deserializeUnchecked(addPrefix ? Translations.PREFIX.s() : "")).build();
         player.sendMessage(text);
     }
 
@@ -48,11 +55,11 @@ public class PlayerUtils {
     }
 
     public static void tell(CommandSource player, String message, boolean addPrefix) {
-        tell(player, Text.of(Translations.PREFIX.s(), message, addPrefix));
+        tell(player, TextSerializers.FORMATTING_CODE.deserializeUnchecked(String.format("%s%s", Translations.PREFIX.s(), message)), addPrefix);
     }
 
     public static void tell(CommandSource player, String message) {
-        tell(player, Text.of(Translations.PREFIX.s(), message));
+        tell(player, TextSerializers.FORMATTING_CODE.deserializeUnchecked(String.format("%s%s", Translations.PREFIX.s(), message)));
     }
 
     /*
@@ -67,7 +74,7 @@ public class PlayerUtils {
     }
 
     public static void tellIfHasPermission(CommandSource player, String message, String permission, boolean addPrefix) {
-        tellIfHasPermission(player, Text.of(message), permission, addPrefix);
+        tellIfHasPermission(player, TextSerializers.FORMATTING_CODE.deserializeUnchecked(message), permission, addPrefix);
     }
 
     public static void tellIfHasPermission(CommandSource player, String message, String permission) {
@@ -86,18 +93,18 @@ public class PlayerUtils {
     }
 
     public static void broadcastForPermission(String message, String permission, boolean addPrefix) {
-        broadcastForPermission(Text.of(message), permission, addPrefix);
+        broadcastForPermission(TextSerializers.FORMATTING_CODE.deserializeUnchecked(message), permission, addPrefix);
     }
 
     public static void broadcastForPermission(String message, String permission) {
-        broadcastForPermission(Text.of(message), permission, true);
+        broadcastForPermission(TextSerializers.FORMATTING_CODE.deserializeUnchecked(message), permission, true);
     }
 
     /*
      Public broadcast
      */
     public static void broadcast(Text text, boolean addPrefix) {
-        Sponge.getServer().getBroadcastChannel().send(Text.of((addPrefix ? Translations.PREFIX : ""), text));
+        Sponge.getServer().getBroadcastChannel().send(Text.of((TextSerializers.FORMATTING_CODE.deserializeUnchecked(addPrefix ? Translations.PREFIX.s() : "")), text));
     }
 
     public static void broadcast(Text text) {
@@ -105,11 +112,11 @@ public class PlayerUtils {
     }
 
     public static void broadcast(String message, boolean addPrefix) {
-        broadcast(Text.of(message), addPrefix);
+        broadcast(TextSerializers.FORMATTING_CODE.deserializeUnchecked(message), addPrefix);
     }
 
     public static void broadcast(String message) {
-        broadcast(Text.of(message), true);
+        broadcast(TextSerializers.FORMATTING_CODE.deserializeUnchecked(message), true);
     }
 
     /*
@@ -172,11 +179,18 @@ public class PlayerUtils {
             Optional.of(user.getPlayer().get().getLocation());
 
         if (user.getWorldUniqueId().isPresent()) {
-            Optional<World> optionalWorld = Sponge.getServer().getWorld(user.getWorldUniqueId().get());
+            Optional<World> optionalWorld = LocationUtils.getWorld(user.getWorldUniqueId().get());
             if (optionalWorld.isPresent())
                 return Optional.of(new Location<>(optionalWorld.get(), user.getPosition()));
         }
 
         return Optional.empty();
+    }
+
+    /*
+     Optional safepass
+     */
+    public static String getSafely(Optional<String> stringOptional) {
+        return stringOptional.orElse("Unknown");
     }
 }

@@ -2,7 +2,7 @@ package com.darwinreforged.servermodifications.plugins;
 
 import com.darwinreforged.servermodifications.listeners.PaintingsDiscordListener;
 import com.darwinreforged.servermodifications.objects.PaintingSubmission;
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.PaintingsDatabaseUtil;
 import com.google.inject.Inject;

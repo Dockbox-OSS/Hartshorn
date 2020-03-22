@@ -2,8 +2,7 @@ package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import org.spongepowered.api.Sponge;
@@ -45,23 +44,21 @@ public class TicketReadHeldCommand implements CommandExecutor {
             List<Text> contents = new ArrayList<>();
             for (TicketData ticket : tickets) {
                 if (ticket.getStatus() == Held) {
-                    String online = PlayerUtils.isUserOnline(ticket.getPlayerUUID()) ? "&b" : "&3";
                     Text.Builder send = Text.builder();
-                    send.append(plugin.fromLegacy("&3#" + ticket.getTicketID() + " " + TicketUtil.getTimeAgo(ticket.getTimestamp()) + " by " + online + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()) + " &3on " + TicketUtil.getServerFormatted(ticket.getServer()) + " &3- &7" + Translations.shorten(ticket.getMessage())));
+                    send.append(Translations.TICKET_ROW_SINGLE.ft(ticket.getTicketID(), TicketUtil.getTimeAgo(ticket.getTimestamp()), PlayerUtils.getPlayerOnlineDisplay(ticket.getPlayerUUID()), TicketUtil.getServerFormatted(ticket.getServer()), Translations.shorten(ticket.getMessage())));
                     send.onClick(TextActions.runCommand("/ticket read " + ticket.getTicketID()));
-                    send.onHover(TextActions.showText(plugin.fromLegacy("Click here to get more details for ticket #" + ticket.getTicketID())));
+                    send.onHover(TextActions.showText(Translations.TICKET_MORE_INFO.ft(ticket.getTicketID())));
                     contents.add(send.build());
-
                 }
             }
 
             if (contents.isEmpty()) {
-                contents.add(TicketMessages.getTicketReadNoneHeld());
+                contents.add(Translations.TICKET_READ_NONE_HELD.t());
             }
             paginationService.builder()
-                    .title(plugin.fromLegacy("&3Held Tickets"))
+                    .title(Translations.HELD_TICKETS_TITLE.t())
                     .contents(contents)
-                    .padding(Text.of("-"))
+                    .padding(Translations.DEFAULT_PADDING.t())
                     .sendTo(src);
         }
         return CommandResult.success();

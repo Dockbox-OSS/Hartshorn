@@ -1,6 +1,6 @@
 package com.darwinreforged.servermodifications.plugins;
 
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;

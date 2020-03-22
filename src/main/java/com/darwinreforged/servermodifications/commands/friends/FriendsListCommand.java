@@ -1,6 +1,8 @@
 package com.darwinreforged.servermodifications.commands.friends;
 
 import com.darwinreforged.servermodifications.objects.FriendsStorage;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.FriendsUtil;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -11,7 +13,6 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.format.TextStyles;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -40,13 +41,13 @@ public class FriendsListCommand implements CommandExecutor {
         }
         for (UUID id : temp2) {
             if (FriendsUtil.getUser(id).isPresent()) {
-                contents.add(Text.of(TextColors.AQUA, FriendsUtil.getUser(id).get().getName(), TextColors.DARK_AQUA, " - Request"));
+                contents.add(Translations.FRIEND_ROW_REQUEST.ft(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(id))));
             }
         }
         PaginationList.builder()
-                .title(Text.of(TextColors.AQUA, "Friends"))
+                .title(Translations.FRIEND_LIST_TITLE.t())
                 .contents(contents)
-                .padding(Text.of(TextColors.DARK_AQUA, TextStyles.STRIKETHROUGH, "="))
+                .padding(Translations.DEFAULT_PADDING.t())
                 .sendTo(source);
         return CommandResult.success();
     }

@@ -5,7 +5,8 @@ import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.objects.TicketStatus;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import com.magitechserver.magibridge.MagiBridge;
 import com.magitechserver.magibridge.api.DiscordEvent;
@@ -90,15 +91,11 @@ public class TicketLoginAndDiscordListener {
 			Sponge.getScheduler()
 					.createTaskBuilder()
 					.execute(
-							new Runnable() {
-								public void run () {
-									if (finalTotalTickets < 2) {
-										player.sendMessage(TicketMessages.getTicketCloseOffline());
-									} else {
-										player.sendMessage(
-												TicketMessages.getTicketCloseOfflineMulti(finalTotalTickets, "check self"));
-									}
-								}
+							() -> {
+								if (finalTotalTickets < 2)
+									PlayerUtils.tell(player, Translations.TICKET_CLOSE_OFFLINE.t());
+								else
+									PlayerUtils.tell(player, Translations.TICKET_CLOSE_OFFLINE_MULTI.ft(finalTotalTickets, "check self"));
 							})
 					.delay(5, TimeUnit.SECONDS)
 					.name("mmctickets-s-sendUserNotifications")
@@ -120,20 +117,13 @@ public class TicketLoginAndDiscordListener {
 			Sponge.getScheduler()
 					.createTaskBuilder()
 					.execute(
-							new Runnable() {
-								public void run () {
+							() -> {
 
-									if (finalOpen == 0) {
-										player.sendMessage(TicketMessages.getTicketReadNone());
-									}
-									if (finalOpen > 0 && finalHeld == 0) {
-										player.sendMessage(TicketMessages.getTicketUnresolved(finalOpen, "check"));
-									}
-									if (finalOpen > 0 && finalHeld > 0) {
-										player.sendMessage(
-												TicketMessages.getTicketUnresolvedHeld(finalOpen, finalHeld, "check"));
-									}
-								}
+								if (finalOpen == 0) PlayerUtils.tell(player, Translations.TICKET_READ_NONE_OPEN.t());
+								if (finalOpen > 0 && finalHeld == 0)
+									PlayerUtils.tell(player, Translations.TICKET_UNRESOLVED.ft(finalOpen, "check"));
+								if (finalOpen > 0 && finalHeld > 0)
+									PlayerUtils.tell(player, Translations.TICKET_UNRESOLVED_HELD.ft(finalOpen, finalHeld, "check"));
 							})
 					.delay(3, TimeUnit.SECONDS)
 					.name("mmctickets-s-sendStaffNotifications")
@@ -167,8 +157,7 @@ public class TicketLoginAndDiscordListener {
 						EmbedBuilder embed = new EmbedBuilder();
 
 						String body = "";
-						String playerName =
-								TicketUtil.getPlayerNameFromData(plugin, ticketData.getPlayerUUID());
+						String playerName = PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticketData.getPlayerUUID()));
 						String age = TicketUtil.getTimeAgo(ticketData.getTimestamp());
 						String location =
 								ticketData.getWorld()
@@ -230,7 +219,7 @@ public class TicketLoginAndDiscordListener {
 									ticket -> {
 										amount.getAndIncrement();
 										String playerName =
-												TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID());
+												PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID()));
 										String age = TicketUtil.getTimeAgo(ticket.getTimestamp());
 
 										String title =

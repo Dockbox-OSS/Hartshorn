@@ -3,10 +3,11 @@ package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.LocationUtils;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.flowpowered.math.vector.Vector3d;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -45,18 +46,18 @@ public class TicketTeleportCommand implements CommandExecutor {
                 if (ticket.getTicketID() == ticketID) {
                     if (ticket.getServer().equalsIgnoreCase(TicketConfig.server)) {
                         ticketExist = true;
-                        World world = Sponge.getServer().getWorld(ticket.getWorld()).get();
+                        World world = LocationUtils.getWorld(ticket.getWorld()).get();
                         Location loc = new Location(world, ticket.getX(), ticket.getY(), ticket.getZ());
                         Vector3d vect = new Vector3d(ticket.getPitch(), ticket.getYaw(), 0);
                         player.setLocationAndRotation(loc, vect);
-                        player.sendMessage(TicketMessages.getTeleportToTicket(ticketID));
+                        PlayerUtils.tell(player, Translations.TICKET_TELEPORT.ft(ticketID));
                     } else {
-                        throw new CommandException(TicketMessages.getErrorTicketServer(ticketID));
+                        throw new CommandException(Translations.TICKET_ERROR_SERVER.ft(ticketID));
                     }
                 }
             }
             if (!ticketExist) {
-                throw new CommandException(TicketMessages.getTicketNotExist(ticketID));
+                throw new CommandException(Translations.TICKET_NOT_EXIST.ft(ticketID));
             }
             return CommandResult.success();
         }

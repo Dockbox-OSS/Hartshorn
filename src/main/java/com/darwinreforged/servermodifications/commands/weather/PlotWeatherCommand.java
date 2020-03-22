@@ -1,6 +1,6 @@
 package com.darwinreforged.servermodifications.commands.weather;
 
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherCoreUtil;
 import com.intellectualcrafters.plot.flag.Flags;
@@ -20,7 +20,7 @@ public class PlotWeatherCommand implements CommandExecutor {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (!(src instanceof Player)) {
-      PlayerUtils.tell(src, Translations.PLAYER_ONLY_COMMAND.s());
+      PlayerUtils.tell(src, Translations.UNKNOWN_ERROR.ft("This command can only be executed by players"));
       return CommandResult.success();
     }
 
@@ -41,12 +41,15 @@ public class PlotWeatherCommand implements CommandExecutor {
           switch (weatherValue) {
             case RESET:
               plot.setFlag(Flags.WEATHER, PlayerWeatherCoreUtil.Weather.RESET.getValue());
+              PlayerWeatherCoreUtil.sendPlayerWeatherPacket(player.getUniqueId(), PlayerWeatherCoreUtil.Weather.RESET);
+              if (PlayerWeatherCoreUtil.playerWeatherContains(player.getUniqueId()))
+                PlayerWeatherCoreUtil.removePlayerWeather(player.getUniqueId());
+              PlayerWeatherCoreUtil.removeLightningPlayer(player.getUniqueId());
               break;
 
             case UNKNOWN:
-              PlayerUtils.tell(
-                  player,
-                      Translations.UNKNOWN_WEATHER_TYPE.s());
+              PlayerUtils.tell(player, Translations.UNKNOWN_WEATHER_TYPE.t());
+
               broadcast = false;
               break;
 
@@ -62,18 +65,17 @@ public class PlotWeatherCommand implements CommandExecutor {
               plot.setFlag(Flags.WEATHER, PlayerWeatherCoreUtil.Weather.LIGHTNINGSTORM.getValue());
               break;
           }
-
-          if (broadcast) PlayerUtils.tell(player, Translations.PLOT_WEATHER_SET.f(weatherValue.getDisplayName()));
+          if (broadcast) PlayerUtils.tell(player, Translations.PLOT_WEATHER_SET.ft(weatherValue.getDisplayName()));
         }
         else {
-          PlayerUtils.tell(player, "You must be the owner of the plot to execute this command");
+          PlayerUtils.tell(player, Translations.WEATHER_ERROR_NO_OWNER.t());
         }
       } else {
-        PlayerUtils.tell(player, "You must be in a plot when executing this command");
+        PlayerUtils.tell(player, Translations.OUTSIDE_PLOT.t());
       }
 
     } else {
-      PlayerUtils.tell(player, "You must enter a weather type");
+      PlayerUtils.tell(player, Translations.WEATHER_ERROR_NO_WEATHER_TYPE.t());
     }
 
     return CommandResult.success();

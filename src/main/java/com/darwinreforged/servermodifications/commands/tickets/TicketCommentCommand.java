@@ -3,8 +3,8 @@ package com.darwinreforged.servermodifications.commands.tickets;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -53,24 +53,22 @@ public class TicketCommentCommand implements CommandExecutor {
                             && ticket.getStatus() == Claimed
                             && !src.hasPermission(TicketPermissions.CLAIMED_TICKET_BYPASS)) {
                         throw new CommandException(
-                                TicketMessages.getErrorTicketClaim(
-                                        ticket.getTicketID(),
-                                        TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
+                                Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
                     }
                     if (!ticket.getComment().isEmpty()) {
                         if (src.hasPermission(TicketPermissions.COMMAND_TICKET_EDIT_COMMENT)) {
                             Text.Builder action = Text.builder();
                             action.append(
                                     Text.builder()
-                                            .append(plugin.fromLegacy(TicketMessages.getYesButton()))
+                                            .append(Translations.TICKET_YES_BUTTON.t())
                                             .onHover(
-                                                    TextActions.showText(plugin.fromLegacy(TicketMessages.getYesButtonHover())))
+                                                    TextActions.showText(Translations.TICKET_YES_BUTTON_HOVER.t()))
                                             .onClick(
                                                     TextActions.executeCallback(
                                                             changeTicketComment(ticketID, comment, src.getName())))
                                             .build());
-                            src.sendMessage(TicketMessages.getTicketCommentedit(ticketID));
-                            src.sendMessage(action.build());
+                            PlayerUtils.tell(src, Translations.TICKET_COMMENT_EDIT.ft(ticketID));
+                            PlayerUtils.tell(src, action.build());
                             return CommandResult.success();
                         } else {
                             throw new CommandException(
@@ -82,22 +80,21 @@ public class TicketCommentCommand implements CommandExecutor {
                     try {
                         plugin.getDataStore().updateTicketData(ticket);
                     } catch (Exception e) {
-                        src.sendMessage(Translations.UNKNOWN_ERROR.ft("Unable to comment on ticket"));
+                        PlayerUtils.tell(src, Translations.UNKNOWN_ERROR.ft("Unable to comment on ticket"));
                         e.printStackTrace();
                     }
 
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {
                         Player ticketPlayer = ticketPlayerOP.get();
-                        ticketPlayer.sendMessage(
-                                TicketMessages.getTicketComment(ticket.getTicketID(), src.getName()));
+                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_COMMENT.ft(ticket.getTicketID(), src.getName()));
                     }
 
-                    src.sendMessage(TicketMessages.getTicketCommentUser(ticket.getTicketID()));
+                    PlayerUtils.tell(src, Translations.TICKET_COMMENT_USER.ft(ticket.getTicketID()));
                     return CommandResult.success();
                 }
             }
-            throw new CommandException(TicketMessages.getTicketNotExist(ticketID));
+            throw new CommandException(Translations.TICKET_NOT_EXIST.ft(ticketID));
         }
     }
 
@@ -112,17 +109,17 @@ public class TicketCommentCommand implements CommandExecutor {
                     try {
                         plugin.getDataStore().updateTicketData(ticket);
                     } catch (Exception e) {
-                        consumer.sendMessage(Translations.UNKNOWN_ERROR.ft("Unable to comment on ticket"));
+                        PlayerUtils.tell(consumer, Translations.UNKNOWN_ERROR.ft("Unable to comment on ticket"));
                         e.printStackTrace();
                     }
 
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {
                         Player ticketPlayer = ticketPlayerOP.get();
-                        ticketPlayer.sendMessage(TicketMessages.getTicketComment(ticket.getTicketID(), name));
+                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_COMMENT.ft(ticket.getTicketID(), name));
                     }
 
-                    consumer.sendMessage(TicketMessages.getTicketCommentUser(ticket.getTicketID()));
+                    PlayerUtils.tell(consumer, Translations.TICKET_COMMENT_USER.ft(ticket.getTicketID()));
                 }
             }
         };

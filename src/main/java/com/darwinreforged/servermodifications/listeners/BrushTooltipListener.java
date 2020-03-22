@@ -4,7 +4,7 @@ import com.boydti.fawe.Fawe;
 import com.boydti.fawe.FaweAPI;
 import com.darwinreforged.servermodifications.enums.brushtooltips.Brush;
 import com.darwinreforged.servermodifications.enums.brushtooltips.Brushes;
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.BrushTooltipUtil;
 import org.spongepowered.api.data.key.Keys;

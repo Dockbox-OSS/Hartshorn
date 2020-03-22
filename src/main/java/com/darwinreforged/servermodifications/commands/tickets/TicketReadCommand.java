@@ -3,8 +3,8 @@ package com.darwinreforged.servermodifications.commands.tickets;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
 import com.darwinreforged.servermodifications.plugins.TicketPlugin;
-import com.darwinreforged.servermodifications.translations.TicketMessages;
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.LocationUtils;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
@@ -61,73 +61,18 @@ public class TicketReadCommand implements CommandExecutor {
                     PaginationService paginationService =
                             Sponge.getServiceManager().provide(PaginationService.class).get();
                     List<Text> contents = new ArrayList<>();
-                    int totalTickets = 0;
                     for (TicketData ticket : tickets) {
                         if (TicketConfig.hideOffline) {
                             if (PlayerUtils.isUserOnline(
-                                    TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()))) {
-                                if (ticket.getStatus() == Claimed || ticket.getStatus() == Open) {
-                                    String online = PlayerUtils.isUserOnline(ticket.getPlayerUUID()) ? "&b" : "&3";
-                                    totalTickets++;
-                                    Text.Builder send = Text.builder();
-                                    String status = "";
-                                    if (ticket.getStatus() == Claimed) status = "&bClaimed - ";
-                                    send.append(
-                                            plugin.fromLegacy(
-                                                    status
-                                                            + "&3#"
-                                                            + ticket.getTicketID()
-                                                            + " "
-                                                            + TicketUtil.getTimeAgo(ticket.getTimestamp())
-                                                            + " by "
-                                                            + online
-                                                            + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID())
-                                                            + " &3on "
-                                                            + TicketUtil.getServerFormatted(ticket.getServer())
-                                                            + " &3- &7"
-                                                            + Translations.shorten(ticket.getMessage())));
-                                    send.onClick(TextActions.runCommand("/ticket read " + ticket.getTicketID()));
-                                    send.onHover(
-                                            TextActions.showText(
-                                                    plugin.fromLegacy(
-                                                            "Click here to get more details for ticket #"
-                                                                    + ticket.getTicketID())));
-                                    contents.add(send.build());
-                                }
-                            }
+                                    PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID()))))
+                                contents = getContentsForClaimedTicket(contents, ticket);
                         } else {
-                            if (ticket.getStatus() == Claimed || ticket.getStatus() == Open) {
-                                String online = PlayerUtils.isUserOnline(ticket.getPlayerUUID()) ? "&b" : "&3";
-                                totalTickets++;
-                                Text.Builder send = Text.builder();
-                                String status = "";
-                                if (ticket.getStatus() == Claimed) status = "&bClaimed - ";
-                                send.append(
-                                        plugin.fromLegacy(
-                                                status
-                                                        + "&3#"
-                                                        + ticket.getTicketID()
-                                                        + " "
-                                                        + TicketUtil.getTimeAgo(ticket.getTimestamp())
-                                                        + " by "
-                                                        + online
-                                                        + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID())
-                                                        + " &3on "
-                                                        + TicketUtil.getServerFormatted(ticket.getServer())
-                                                        + " &3- &7"
-                                                        + Translations.shorten(ticket.getMessage())));
-                                send.onClick(TextActions.runCommand("/ticket read " + ticket.getTicketID()));
-                                send.onHover(
-                                        TextActions.showText(
-                                                plugin.fromLegacy(
-                                                        "Click here to get more details for ticket #" + ticket.getTicketID())));
-                                contents.add(send.build());
-                            }
+                            contents = getContentsForClaimedTicket(contents, ticket);
                         }
                     }
 
                     if (contents.isEmpty()) {
-                        contents.add(TicketMessages.getTicketReadNone());
+                        contents.add(Translations.TICKET_READ_NONE_OPEN.t());
                     }
                     int ticketsPer = 5;
                     if (TicketConfig.ticketsPerPage > 0) {
@@ -135,9 +80,9 @@ public class TicketReadCommand implements CommandExecutor {
                     }
                     paginationService
                             .builder()
-                            .title(plugin.fromLegacy("&3" + totalTickets + " Open Tickets"))
+                            .title(Translations.TICKET_OPEN_TITLE.ft(tickets.size()))
                             .contents(contents)
-                            .padding(Text.of("-"))
+                            .padding(Translations.DEFAULT_PADDING.t())
                             .linesPerPage(ticketsPer + 2)
                             .sendTo(src);
                     return CommandResult.success();
@@ -161,11 +106,11 @@ public class TicketReadCommand implements CommandExecutor {
                         if (ticket.getTicketID() == ticketID) {
                             if (!ticket.getPlayerUUID().equals(uuid)
                                     && !src.hasPermission(TicketPermissions.COMMAND_TICKET_READ_ALL)) {
-                                throw new CommandException(TicketMessages.getErrorTicketOwner());
+                                throw new CommandException(Translations.TICKET_ERROR_OWNER.t());
                             }
                             ticketStatus = TicketUtil.getTicketStatusColour(ticket.getStatus());
                             String online = PlayerUtils.isUserOnline(ticket.getPlayerUUID()) ? "&b" : "&3";
-                            Optional<World> worldOptional = Sponge.getServer().getWorld(ticket.getWorld());
+                            Optional<World> worldOptional = LocationUtils.getWorld(ticket.getWorld());
 
                             Text.Builder action = Text.builder();
 
@@ -174,27 +119,25 @@ public class TicketReadCommand implements CommandExecutor {
                                         && src.hasPermission(TicketPermissions.COMMAND_TICKET_CLAIM)) {
                                     action.append(
                                             Text.builder()
-                                                    .append(plugin.fromLegacy(TicketMessages.getClaimButton()))
+                                                    .append(Translations.TICKET_CLAIM_BUTTON.t())
                                                     .onHover(
-                                                            TextActions.showText(
-                                                                    plugin.fromLegacy(TicketMessages.getClaimButtonHover())))
+                                                            TextActions.showText(Translations.TICKET_CLAIM_BUTTON_HOVER.t()))
                                                     .onClick(TextActions.runCommand("/ticket claim " + ticket.getTicketID()))
                                                     .build());
-                                    action.append(plugin.fromLegacy(" "));
+                                    action.append(Text.of(" "));
                                 }
                                 if (ticket.getStatus() == Claimed) {
                                     if (ticket.getStaffUUID().equals(uuid)
                                             && src.hasPermission(TicketPermissions.COMMAND_TICKET_UNCLAIM)) {
                                         action.append(
                                                 Text.builder()
-                                                        .append(plugin.fromLegacy(TicketMessages.getUnclaimButton()))
+                                                        .append(Translations.TICKET_UNCLAIM_BUTTON.t())
                                                         .onHover(
-                                                                TextActions.showText(
-                                                                        plugin.fromLegacy(TicketMessages.getUnclaimButtonHover())))
+                                                                TextActions.showText(Translations.TICKET_UNCLAIM_BUTTON_HOVER.t()))
                                                         .onClick(
                                                                 TextActions.runCommand("/ticket unclaim " + ticket.getTicketID()))
                                                         .build());
-                                        action.append(plugin.fromLegacy(" "));
+                                        action.append(Text.of(" "));
                                     }
                                 }
                                 if ((ticket.getStatus() == Open
@@ -202,26 +145,24 @@ public class TicketReadCommand implements CommandExecutor {
                                         && src.hasPermission(TicketPermissions.COMMAND_TICKET_HOLD)) {
                                     action.append(
                                             Text.builder()
-                                                    .append(plugin.fromLegacy(TicketMessages.getHoldButton()))
+                                                    .append(Translations.TICKET_HOLD_BUTTON.t())
                                                     .onHover(
-                                                            TextActions.showText(
-                                                                    plugin.fromLegacy(TicketMessages.getHoldButtonHover())))
+                                                            TextActions.showText(Translations.TICKET_HOLD_BUTTON_HOVER.t()))
                                                     .onClick(TextActions.runCommand("/ticket hold " + ticket.getTicketID()))
                                                     .build());
-                                    action.append(plugin.fromLegacy(" "));
+                                    action.append(Text.of(" "));
                                 }
                             }
                             if (ticket.getStatus() == Held || ticket.getStatus() == Closed) {
                                 if (src.hasPermission(TicketPermissions.COMMAND_TICKET_REOPEN)) {
                                     action.append(
                                             Text.builder()
-                                                    .append(plugin.fromLegacy(TicketMessages.getReopenButton()))
+                                                    .append(Translations.TICKET_REOPEN_BUTTON.t())
                                                     .onHover(
-                                                            TextActions.showText(
-                                                                    plugin.fromLegacy(TicketMessages.getReopenButtonHover())))
+                                                            TextActions.showText(Translations.TICKET_REOPEN_BUTTON_HOVER.t()))
                                                     .onClick(TextActions.runCommand("/ticket reopen " + ticket.getTicketID()))
                                                     .build());
-                                    action.append(plugin.fromLegacy(" "));
+                                    action.append(Text.of(" "));
                                 }
                             }
                             if (ticket.getStatus() == Held
@@ -233,95 +174,45 @@ public class TicketReadCommand implements CommandExecutor {
                                     if (src.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_ALL)
                                             || src.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_SELF)) {
 
-                                        if (ticket.getWorld().equals("Plots1")) {
+                                        if (ticket.getWorld().equals(Translations.PLOTS1_NAME.s())) {
                                             action.append(
                                                     Text.builder()
-                                                            .append(
-                                                                    Text.of(
-                                                                            TextColors.GRAY,
-                                                                            "[",
-                                                                            TextColors.GREEN,
-                                                                            "Promote - Member",
-                                                                            TextColors.GRAY,
-                                                                            "]"))
-                                                            .onHover(
-                                                                    TextActions.showText(
-                                                                            Text.of(
-                                                                                    TextColors.AQUA, "Promote to Member and close ticket")))
-                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|promote " + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()) + " Member"))
+                                                            .append(Translations.PROMOTE_MEMBER_BUTTON.t())
+                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER.ft(Translations.MEMBER_RANK_DISPLAY.s())))
+                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|promote " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID())) + " Member"))
                                                             .build());
-                                        } else if (ticket.getWorld().equals("Plots2")) {
+                                        } else if (ticket.getWorld().equals(Translations.PLOTS2_NAME.s())) {
                                             action.append(
                                                     Text.builder()
-                                                            .append(
-                                                                    Text.of(
-                                                                            TextColors.GRAY,
-                                                                            "[",
-                                                                            TextColors.YELLOW,
-                                                                            "Promote - Expert",
-                                                                            TextColors.GRAY,
-                                                                            "]"))
-                                                            .onHover(
-                                                                    TextActions.showText(
-                                                                            Text.of(
-                                                                                    TextColors.AQUA, "Promote to Expert and close ticket")))
-                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|promote " + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()) + " Expert"))
+                                                            .append(Translations.PROMOTE_EXPERT_BUTTON.t())
+                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER.ft(Translations.EXPERT_RANK_DISPLAY.s())))
+                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|promote " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID())) + " Expert"))
                                                             .build());
-                                        } else if (ticket.getWorld().equals("MasterPlots")) {
+                                        } else if (ticket.getWorld().equals(Translations.MASTERPLOTS_NAME.s())) {
                                             action.append(Text.NEW_LINE);
                                             action.append(
                                                     Text.builder()
-                                                            .append(
-                                                                    Text.of(
-                                                                            TextColors.GRAY,
-                                                                            "[",
-                                                                            TextColors.AQUA,
-                                                                            "Promote - MS:Nature",
-                                                                            TextColors.GRAY,
-                                                                            "]"))
-                                                            .onHover(
-                                                                    TextActions.showText(
-                                                                            Text.of(
-                                                                                    TextColors.AQUA, "Promote to Mastered Skill Nature and close ticket")))
-                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|master " + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()) + " nat"))
+                                                            .append(Translations.PROMOTE_MASTER_NATURE_BUTTON.t())
+                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER.ft(Translations.MASTER_NATURE_DISPLAY.s())))
+                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|master " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID())) + " nat"))
                                                             .build());
-                                            action.append(plugin.fromLegacy(" "));
+                                            action.append(Text.of(" "));
                                             action.append(
                                                     Text.builder()
-                                                            .append(
-                                                                    Text.of(
-                                                                            TextColors.GRAY,
-                                                                            "[",
-                                                                            TextColors.AQUA,
-                                                                            "Promote - MS:Architecture",
-                                                                            TextColors.GRAY,
-                                                                            "]"))
-                                                            .onHover(
-                                                                    TextActions.showText(
-                                                                            Text.of(
-                                                                                    TextColors.AQUA, "Promote to Mastered Skill Architecture and close ticket")))
-                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|master " + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()) + " arch"))
+                                                            .append(Translations.PROMOTE_MASTER_ARCHITECTURE_BUTTON.t())
+                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER.ft(Translations.MASTER_ARCHITECTURE_DISPLAY.s())))
+                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|master " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID())) + " arch"))
                                                             .build());
-                                            action.append(plugin.fromLegacy(" "));
+                                            action.append(Text.of(" "));
                                             action.append(
                                                     Text.builder()
-                                                            .append(
-                                                                    Text.of(
-                                                                            TextColors.GRAY,
-                                                                            "[",
-                                                                            TextColors.AQUA,
-                                                                            "Promote - MS:Both",
-                                                                            TextColors.GRAY,
-                                                                            "]"))
-                                                            .onHover(
-                                                                    TextActions.showText(
-                                                                            Text.of(
-                                                                                    TextColors.AQUA, "Promote to both Mastered Skills and close ticket")))
-                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|master " + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID()) + " all"))
+                                                            .append(Translations.PROMOTE_MASTER_BOTH_BUTTON.t())
+                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER.ft(Translations.MASTER_BOTH_DISPLAY.s())))
+                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|master " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID())) + " all"))
                                                             .build());
                                             action.append(Text.NEW_LINE);
                                         }
-                                        action.append(plugin.fromLegacy(" "));
+                                        action.append(Text.of(" "));
                                     }
                                 }
                             }
@@ -338,14 +229,13 @@ public class TicketReadCommand implements CommandExecutor {
                                                 || src.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_SELF)) {
                                             action.append(
                                                     Text.builder()
-                                                            .append(plugin.fromLegacy(TicketMessages.getRejectButton()))
+                                                            .append(Translations.TICKET_REJECT_BUTTON.t())
                                                             .onHover(
-                                                                    TextActions.showText(
-                                                                            plugin.fromLegacy(TicketMessages.getRejectButtonHover())))
+                                                                    TextActions.showText(Translations.TICKET_REJECT_BUTTON_HOVER.t()))
                                                             .onClick(
                                                                     TextActions.runCommand("/ticket reject " + ticket.getTicketID()))
                                                             .build());
-                                            action.append(plugin.fromLegacy(" "));
+                                            action.append(Text.of(" "));
                                         }
                                     }
                                 }
@@ -356,10 +246,8 @@ public class TicketReadCommand implements CommandExecutor {
                                         || ticket.getStatus() == Claimed && ticket.getStaffUUID().equals(uuid)) {
                                     action.append(
                                             Text.builder()
-                                                    .append(plugin.fromLegacy(TicketMessages.getCommentButton()))
-                                                    .onHover(
-                                                            TextActions.showText(
-                                                                    plugin.fromLegacy(TicketMessages.getCommentButtonHover())))
+                                                    .append(Translations.TICKET_COMMENT_BUTTON.t())
+                                                    .onHover(TextActions.showText(Translations.TICKET_COMMENT_BUTTON_HOVER.t()))
                                                     .onClick(
                                                             TextActions.suggestCommand(
                                                                     "/ticket comment " + ticket.getTicketID() + " "))
@@ -378,7 +266,7 @@ public class TicketReadCommand implements CommandExecutor {
                                             "]"));
                             if (src.hasPermission(TicketPermissions.COMMAND_TICKET_TELEPORT)
                                     && ticket.getServer().equalsIgnoreCase(TicketConfig.server)) {
-                                send.onHover(TextActions.showText(TicketMessages.getTicketOnHoverTeleportTo()));
+                                send.onHover(TextActions.showText(Translations.TICKET_TELEPORT_HOVER.t()));
                                 worldOptional.ifPresent(
                                         world ->
                                                 send.onClick(
@@ -402,17 +290,13 @@ public class TicketReadCommand implements CommandExecutor {
                                     .equals("00000000-0000-0000-0000-000000000000")) {
                                 if (ticket.getStatus() == Claimed)
                                     contents.add(
-                                            plugin.fromLegacy(
-                                                    "&bClaimed by: &7"
-                                                            + TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
+                                            Translations.TICKET_CLAIMED_BY.ft(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
                                 else if (ticket.getStatus() == Closed)
                                     contents.add(
-                                            plugin.fromLegacy(
-                                                    "&bHandled by: &7"
-                                                            + TicketUtil.getPlayerNameFromData(plugin, ticket.getStaffUUID())));
+                                            Translations.TICKET_HANDLED_BY.ft(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
                             }
                             if (!ticket.getComment().isEmpty()) {
-                                contents.add(plugin.fromLegacy("&bComment: &7" + ticket.getComment()));
+                                contents.add(Translations.TICKET_COMMENT_CONTENT.ft(ticket.getComment()));
                             }
 
                             int ticketNum =
@@ -426,40 +310,29 @@ public class TicketReadCommand implements CommandExecutor {
                                                                             && t.getMessage().equals(ticket.getMessage()))
                                                     .count();
 
-                            contents.add(
-                                    Text.of(
-                                            plugin.fromLegacy(
-                                                    "&bOpened by: "
-                                                            + online
-                                                            + TicketUtil.getPlayerNameFromData(plugin, ticket.getPlayerUUID())),
-                                            TextColors.DARK_AQUA,
-                                            " | Submission : #" + ticketNum));
+                            contents.add(Translations.TICKET_OPENED_BY.ft(PlayerUtils.getPlayerOnlineDisplay(ticket.getPlayerUUID()), ticketNum));
+                            contents.add(Translations.TICKET_OPENED_WHEN.ft(TicketUtil.getTimeAgo(ticket.getTimestamp())));
+                            contents.add(Translations.TICKET_OPENED_SERVER.ft(TicketUtil.getServerFormatted(ticket.getServer())));
 
-                            contents.add(
-                                    plugin.fromLegacy("&bWhen: " + TicketUtil.getTimeAgo(ticket.getTimestamp())));
-
-                            contents.add(
-                                    plugin.fromLegacy(
-                                            "&bServer: " + TicketUtil.getServerFormatted(ticket.getServer())));
                             if (!ticket
                                     .getPlayerUUID()
                                     .toString()
                                     .equals("00000000-0000-0000-0000-000000000000")) {
                                 contents.add(send.build());
                             }
-                            contents.add(plugin.fromLegacy("&7" + ticket.getMessage()));
+                            contents.add(Translations.TICKET_MESSAGE_LONG.ft(ticket.getMessage()));
                         }
                     }
 
                     if (contents.isEmpty()) {
-                        throw new CommandException(TicketMessages.getTicketNotExist(ticketID));
+                        throw new CommandException(Translations.TICKET_NOT_EXIST.ft(ticketID));
                     }
 
                     paginationService
                             .builder()
-                            .title(plugin.fromLegacy("&3Request #" + ticketID + " &b- &3" + ticketStatus))
+                            .title(Translations.TICKET_SINGLE_TITLE.ft(ticketID, ticketStatus))
                             .contents(contents)
-                            .padding(plugin.fromLegacy("&b-"))
+                            .padding(Translations.DEFAULT_PADDING.t())
                             .sendTo(src);
                     return CommandResult.success();
                 } else {
@@ -468,6 +341,20 @@ public class TicketReadCommand implements CommandExecutor {
                 }
             }
         }
+    }
+
+    public static List<Text> getContentsForClaimedTicket(List<Text> contents, TicketData ticket) {
+        if (ticket.getStatus() == Claimed || ticket.getStatus() == Open) {
+            Text.Builder send = Text.builder();
+            String status = "";
+            if (ticket.getStatus() == Claimed) status = Translations.TICKET_CLAIMED_PREFIX.s();
+            send.append(Translations.TICKET_ROW_SINGLE.ft(ticket.getTicketID(), TicketUtil.getTimeAgo(ticket.getTimestamp()), PlayerUtils.getPlayerOnlineDisplay(ticket.getPlayerUUID()), TicketUtil.getServerFormatted(ticket.getServer()), Translations.shorten(ticket.getMessage()), status));
+            send.onClick(TextActions.runCommand("/ticket read " + ticket.getTicketID()));
+            send.onHover(
+                    TextActions.showText(Translations.TICKET_MORE_INFO.ft(ticket.getTicketID())));
+            contents.add(send.build());
+        }
+        return contents;
     }
 
     private Consumer<CommandSource> teleportTo(
@@ -482,7 +369,7 @@ public class TicketReadCommand implements CommandExecutor {
 
             Vector3d playerRotation = new Vector3d(pitch, yaw, 0);
             player.setLocationAndRotation(location, playerRotation);
-            player.sendMessage(TicketMessages.getTeleportToTicket(ticketID));
+            PlayerUtils.tell(player, Translations.TICKET_TELEPORT.ft(ticketID));
         };
     }
 }

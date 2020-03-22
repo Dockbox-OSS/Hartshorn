@@ -1,6 +1,6 @@
 package com.darwinreforged.servermodifications.listeners;
 
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.intellectualcrafters.plot.object.Plot;
 import org.spongepowered.api.block.BlockSnapshot;

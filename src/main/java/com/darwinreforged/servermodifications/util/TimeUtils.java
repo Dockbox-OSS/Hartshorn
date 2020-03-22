@@ -1,11 +1,18 @@
 package com.darwinreforged.servermodifications.util;
 
 import com.darwinreforged.servermodifications.objects.TimeDifference;
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.concurrent.TimeUnit;
 
 public class TimeUtils {
+
+    public static LocalDateTime localDateTimeFromMillis(long millis) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
+    }
 
     public static TimeDifference getDifferenceFromSeconds(long seconds) {
         return getDifferenceFromMillis(seconds * 1000);

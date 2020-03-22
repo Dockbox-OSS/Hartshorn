@@ -2,7 +2,7 @@ package com.darwinreforged.servermodifications.plugins;
 
 import com.darwinreforged.servermodifications.objects.HeadsEvolvedChestInterface;
 import com.darwinreforged.servermodifications.objects.HeadsEvolvedHead;
-import com.darwinreforged.servermodifications.translations.Translations;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.HeadsEvolvedConfigUtil;
 import com.google.gson.*;
