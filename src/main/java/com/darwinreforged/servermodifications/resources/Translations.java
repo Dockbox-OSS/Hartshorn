@@ -354,35 +354,8 @@ public enum Translations {
         return parseColors(this.s);
     }
 
-    public static String format(String m, Object... args) {
-        if (args.length == 0) return m;
-        Map<String, String> map = new LinkedHashMap<>();
-        if (args.length > 0) {
-            for (int i = args.length - 1; i >= 0; i--) {
-                String arg = "" + args[i];
-                if (arg == null || arg.isEmpty()) map.put(String.format("{%d}", i), "");
-                if (i == 0) map.put("%s", arg);
-            }
-        }
-        m = StringMan.replaceFromMap(m, map);
-        return parseColors(m);
-    }
-
-    private static String parseColors(String m) {
-        return m
-                .replaceAll("\\$1", '§' + COLOR_PRIMARY.s)
-                .replaceAll("\\$2", '§' + COLOR_SECONDARY.s)
-                .replaceAll("\\$3", '§' + COLOR_MINOR.s)
-                .replaceAll("\\$4", '§' + COLOR_ERROR.s);
-    }
-
     public String f(final Object... args) {
         return format(this.s, args);
-    }
-
-    public static String shorten(String m, int maxChars) {
-        if (m.length() > maxChars) m = String.format("%s...", m.substring(0, maxChars));
-        return m;
     }
 
     public static String shorten(String m) {
@@ -405,6 +378,37 @@ public enum Translations {
         return TextSerializers.FORMATTING_CODE.deserializeUnchecked(s());
     }
 
+    // Format value placeholders and colors
+    public static String format(String m, Object... args) {
+        if (args.length == 0) return m;
+        Map<String, String> map = new LinkedHashMap<>();
+        if (args.length > 0) {
+            for (int i = args.length - 1; i >= 0; i--) {
+                String arg = "" + args[i];
+                if (arg == null || arg.isEmpty()) map.put(String.format("{%d}", i), "");
+                else map.put("%s" + i, arg);
+                if (i == 0) map.put("%s", arg);
+            }
+        }
+        m = StringMan.replaceFromMap(m, map);
+        return parseColors(m);
+    }
+
+    // Format only integrated colors (Text serializing is done in their respective methods only)
+    private static String parseColors(String m) {
+        return m
+                .replaceAll("\\$1", String.format("§%s", COLOR_PRIMARY.s))
+                .replaceAll("\\$2", String.format("§%s", COLOR_SECONDARY.s))
+                .replaceAll("\\$3", String.format("§%s", COLOR_MINOR.s))
+                .replaceAll("\\$4", String.format("§%s", COLOR_ERROR.s));
+    }
+
+    // Shorten the value
+    public static String shorten(String m, int maxChars) {
+        return (m.length() > maxChars) ? String.format("%s...", m.substring(0, maxChars)) : m;
+    }
+
+    // Plain-ify the value, removing integrated, native, and legacy color codes. Keeps value placeholders
     public String p() {
         String copy = s();
         copy = copy.replaceAll("§", "&");
