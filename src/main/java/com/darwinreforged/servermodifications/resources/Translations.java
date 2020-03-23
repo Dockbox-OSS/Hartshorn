@@ -292,7 +292,7 @@ public enum Translations {
     LIGHTNING_SCHEDULE_ACTIVE("Lightning schedular active with {0} players"),
     LIGHTNING_SCHEDULE_INACTIVE("Lightning schedular inactive with {0} players"),
 
-    //    HeadsEvolved
+    //    HeadDatabase
     OPEN_GUI_ERROR("$4Failed to open Head Database GUI"),
     HEADS_EVOLVED_API_URL("https://minecraft-heads.com/scripts/api.php?tags=true&cat="),
     HEADS_EVOLVED_FAILED_LOAD("$4Failed to load {0} heads"),

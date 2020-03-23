@@ -11,9 +11,9 @@ import java.util.Map;
 
 public class FileManager {
 
-    private final Yaml yaml = new Yaml();
+    private static final Yaml yaml = new Yaml();
 
-    public void writeYaml(Map<String, Object> data, File file) {
+    public static void writeYaml(Map<String, Object> data, File file) {
         try {
             FileWriter writer = new FileWriter(file);
             yaml.dump(data, writer);
@@ -26,7 +26,7 @@ public class FileManager {
         writeYaml(data, getYamlConfigFile(plugin));
     }
 
-    public Map<String, Object> getYamlData(File file) {
+    public static Map<String, Object> getYamlData(File file) {
         try {
             FileReader reader = new FileReader(file);
             return yaml.loadAs(reader, Map.class);
@@ -36,21 +36,21 @@ public class FileManager {
         return new HashMap<>();
     }
 
-    public Map<String, Object> getYamlData(Object plugin) {
+    public static Map<String, Object> getYamlData(Object plugin) {
         return getYamlData(getYamlConfigFile(plugin));
     }
 
 
-    public Path getDataDirectory(Object plugin) {
+    public static Path getDataDirectory(Object plugin) {
         String pluginId = PluginUtils.getPluginId(plugin);
         return Sponge.getGame().getSavesDirectory().resolve("data/" + pluginId);
     }
 
-    public Path getConfigDirectory(Object plugin) {
+    public static Path getConfigDirectory(Object plugin) {
         return Sponge.getConfigManager().getPluginConfig(plugin).getConfigPath();
     }
 
-    public File getYamlConfigFile(Object plugin) {
+    public static  File getYamlConfigFile(Object plugin) {
         Path path = getConfigDirectory(plugin);
         String pluginId = PluginUtils.getPluginId(plugin);
         File file = new File(path.toFile(), String.format("%s.yml", pluginId));

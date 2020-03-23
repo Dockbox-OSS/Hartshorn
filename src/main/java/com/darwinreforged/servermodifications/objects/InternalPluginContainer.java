@@ -1,15 +1,9 @@
 package com.darwinreforged.servermodifications.objects;
 
-import org.slf4j.Logger;
-import org.spongepowered.api.asset.Asset;
-import org.spongepowered.api.plugin.Plugin;
+import com.darwinreforged.servermodifications.modules.DarwinModule;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.plugin.meta.PluginDependency;
 
-import java.nio.file.Path;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public class InternalPluginContainer implements PluginContainer {
 
@@ -17,7 +11,7 @@ public class InternalPluginContainer implements PluginContainer {
     private String version;
     private String name;
 
-    public InternalPluginContainer(Plugin plugin) {
+    public InternalPluginContainer(DarwinModule plugin) {
         this.id = plugin.id();
         this.version = plugin.version();
         this.name = plugin.version();

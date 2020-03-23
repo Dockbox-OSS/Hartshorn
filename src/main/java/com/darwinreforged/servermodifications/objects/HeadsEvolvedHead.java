@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class HeadsEvolvedHead {
+public class HeadDatabaseHead {
   public enum Category {
     ALPHABET,
     ANIMALS,
@@ -18,7 +18,7 @@ public class HeadsEvolvedHead {
     PLANTS
   }
 
-  private static Set<HeadsEvolvedHead> HeadsEvolvedHeadSet = new HashSet<>();
+  private static Set<HeadDatabaseHead> HeadDatabaseHeadSet = new HashSet<>();
 
   private String name;
   private String uuid;
@@ -26,17 +26,17 @@ public class HeadsEvolvedHead {
   private Category category;
   private String[] tags;
 
-  public HeadsEvolvedHead(String name, String uuid, String value, String tags, Category category) {
+  public HeadDatabaseHead(String name, String uuid, String value, String tags, Category category) {
     this.name = name;
     this.uuid = uuid;
     this.value = value;
     this.category = category;
     this.tags = tags.split(",");
-    HeadsEvolvedHeadSet.add(this);
+    HeadDatabaseHeadSet.add(this);
   }
 
-  public static Set<HeadsEvolvedHead> getHeadsEvolvedHeadSet() {
-    return HeadsEvolvedHeadSet;
+  public static Set<HeadDatabaseHead> getHeadDatabaseHeadSet() {
+    return HeadDatabaseHeadSet;
   }
 
   public String getName() {
@@ -59,12 +59,12 @@ public class HeadsEvolvedHead {
     return category;
   }
 
-  public static HeadsEvolvedHead getFirstFromCategory(Category category) {
-    return (HeadsEvolvedHead) getByCategory(category).toArray()[0];
+  public static HeadDatabaseHead getFirstFromCategory(Category category) {
+    return (HeadDatabaseHead) getByCategory(category).toArray()[0];
   }
 
-  public static Set<HeadsEvolvedHead> getByNameAndTag(String query) {
-    return HeadsEvolvedHeadSet.stream()
+  public static Set<HeadDatabaseHead> getByNameAndTag(String query) {
+    return HeadDatabaseHeadSet.stream()
         .filter(
             object -> {
               for (String tag : object.getTags()) {
@@ -76,14 +76,14 @@ public class HeadsEvolvedHead {
         .collect(Collectors.toSet());
   }
 
-  public static Set<HeadsEvolvedHead> getByCategory(Category category) {
-    return HeadsEvolvedHeadSet.stream()
+  public static Set<HeadDatabaseHead> getByCategory(Category category) {
+    return HeadDatabaseHeadSet.stream()
         .filter(object -> object.getCategory() == category)
         .collect(Collectors.toSet());
   }
 
-  public static Set<HeadsEvolvedHead> getByNameIncludes(String name) {
-    return HeadsEvolvedHeadSet.stream()
+  public static Set<HeadDatabaseHead> getByNameIncludes(String name) {
+    return HeadDatabaseHeadSet.stream()
         .filter(object -> object.getName().toLowerCase().contains(name.toLowerCase()))
         .collect(Collectors.toSet());
   }

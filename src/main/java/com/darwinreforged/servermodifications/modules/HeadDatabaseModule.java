@@ -1,13 +1,13 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
-import com.darwinreforged.servermodifications.objects.HeadsEvolvedChestInterface;
-import com.darwinreforged.servermodifications.objects.HeadsEvolvedHead;
+import com.darwinreforged.servermodifications.DarwinServer;
+import com.darwinreforged.servermodifications.objects.HeadDatabaseChestInterface;
+import com.darwinreforged.servermodifications.objects.HeadDatabaseHead;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
-import com.darwinreforged.servermodifications.util.todo.HeadsEvolvedConfigUtil;
+import com.darwinreforged.servermodifications.util.todo.FileManager;
+import com.darwinreforged.servermodifications.util.todo.HeadDatabaseConfigUtil;
 import com.google.gson.*;
-import com.google.inject.Inject;
-import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -16,57 +16,44 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.plugin.meta.util.NonnullByDefault;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.Set;
 
-@Plugin(
-        id = "headsevolved",
-        name = "HeadsEvolved",
+@DarwinModule(
+        id = "headdb",
+        name = "HeadDatabase",
         version = "1.0.6",
         description = "Stores custom heads for Darwin Reforged")
-public class HeadsEvolvedPlugin {
+public class HeadDatabaseModule implements PluginModule {
 
-    private static HeadsEvolvedPlugin singleton;
-
-    public HeadsEvolvedPlugin() {
+    public HeadDatabaseModule() {
     }
 
-    @Listener
+    @Override
     public void onServerFinishLoad(GameInitializationEvent event) {
         Sponge.getCommandManager().register(this, hdbMain, "hdb");
     }
 
-    HeadsEvolvedConfigUtil handle;
+    HeadDatabaseConfigUtil handle;
 
-    @Inject
-    public Logger logger;
-
-    @Inject
-    @ConfigDir(sharedRoot = false)
-    private Path root;
-
-    @Listener
+    @Override
     public void onServerStart(GameStartedServerEvent event) {
-        singleton = this;
         try {
             collectHeadsFromAPI();
         } catch (IOException e) {
-            HeadsEvolvedPlugin.getSingleton().logger.debug("Failed to get heads.");
+            DarwinServer.getLogger().debug("Failed to get heads.");
         }
-        File configFile = new File(root.toFile(), "headsevolved.conf");
-        handle = new HeadsEvolvedConfigUtil(configFile);
+
+        File configFile = new File(FileManager.getConfigDirectory(this).toFile(), "HeadDatabase.conf");
+        handle = new HeadDatabaseConfigUtil(configFile);
     }
 
     static String[] uuidBlacklist = {
@@ -75,10 +62,10 @@ public class HeadsEvolvedPlugin {
 
     private void collectHeadsFromAPI() throws IOException {
         int totalHeads = 0;
-        for (HeadsEvolvedHead.Category cat : HeadsEvolvedHead.Category.values()) {
+        for (HeadDatabaseHead.Category cat : HeadDatabaseHead.Category.values()) {
             String connectionLine = Translations.HEADS_EVOLVED_API_URL.f(cat.toString().toLowerCase().replaceAll("_", "-"));
             JsonArray array = readJsonFromUrl(connectionLine);
-            HeadsEvolvedPlugin.getSingleton().logger.debug(cat.toString() + " : " + array.size());
+            DarwinServer.getLogger().debug(cat.toString() + " : " + array.size());
 
             for (Object head : array) {
                 if (head instanceof JsonObject) {
@@ -96,14 +83,14 @@ public class HeadsEvolvedPlugin {
                     for (String blackedUUID : uuidBlacklist) if (blackedUUID.equals(uuid)) doAdd = false;
 
                     if (doAdd) {
-                        new HeadsEvolvedHead(name, uuid, value, tags, cat);
+                        new HeadDatabaseHead(name, uuid, value, tags, cat);
                         totalHeads++;
                     }
                 }
             }
         }
 
-        HeadsEvolvedPlugin.getSingleton().logger.debug("\nCollected : " + totalHeads + " heads from MinecraftHeadDB");
+        DarwinServer.getLogger().debug("\nCollected : " + totalHeads + " heads from MinecraftHeadDB");
     }
 
     private String readAll(Reader rd) throws IOException {
@@ -124,10 +111,6 @@ public class HeadsEvolvedPlugin {
         } finally {
             is.close();
         }
-    }
-
-    public static HeadsEvolvedPlugin getSingleton() {
-        return singleton;
     }
 
     private CommandSpec hdbOpen =
@@ -159,8 +142,8 @@ public class HeadsEvolvedPlugin {
                 Player player = (Player) src;
                 String query = args.<String>getOne("query").get();
                 if (query != "") {
-                    Set<HeadsEvolvedHead> headObjects = HeadsEvolvedHead.getByNameAndTag(query);
-                    HeadsEvolvedChestInterface.openViewForSet(headObjects, player, "$search");
+                    Set<HeadDatabaseHead> headObjects = HeadDatabaseHead.getByNameAndTag(query);
+                    HeadDatabaseChestInterface.openViewForSet(headObjects, player, "$search");
                 }
             }
             return CommandResult.success();
@@ -175,7 +158,7 @@ public class HeadsEvolvedPlugin {
             if (src instanceof Player) {
                 Player player = (Player) src;
                 try {
-                    new HeadsEvolvedChestInterface(player);
+                    new HeadDatabaseChestInterface(player);
                 } catch (InstantiationException e) {
                     PlayerUtils.tell(player, Translations.OPEN_GUI_ERROR.s());
                 }

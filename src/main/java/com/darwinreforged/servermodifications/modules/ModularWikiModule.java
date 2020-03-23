@@ -1,11 +1,11 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
+import com.darwinreforged.servermodifications.util.todo.FileManager;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import com.google.inject.Inject;
-import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -14,11 +14,10 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
@@ -27,11 +26,10 @@ import org.spongepowered.api.text.format.TextStyles;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
 
-@Plugin(
+@DarwinModule(
         id = "modularwiki",
         name = "Modular Wiki",
         description = "Configuration based wiki plugin for Darwin Reforged",
@@ -40,14 +38,7 @@ import java.util.Optional;
         },
         version = "0.1.7"
 )
-public class ModularWikiPlugin implements CommandExecutor {
-
-    @Inject
-    private Logger logger;
-
-    @Inject
-    @ConfigDir(sharedRoot = false)
-    private Path root;
+public class ModularWikiModule implements CommandPluginModule {
 
     public static WikiObject[] wikiObjects;
 
@@ -73,7 +64,7 @@ public class ModularWikiPlugin implements CommandExecutor {
 
     public static Text defaultBreakLine = Translations.WIKI_BREAKLINE.ft("Wiki");
 
-    public ModularWikiPlugin() {
+    public ModularWikiModule() {
     }
 
     public static Text getBreakLine(String tag) {
@@ -81,6 +72,11 @@ public class ModularWikiPlugin implements CommandExecutor {
                 TextColors.DARK_AQUA, TextStyles.STRIKETHROUGH, "============",
                 TextStyles.RESET, TextColors.AQUA, String.format(" %s ", tag),
                 TextColors.DARK_AQUA, TextStyles.STRIKETHROUGH, "============");
+    }
+
+    @Override
+    public void onServerFinishLoad(GameInitializationEvent event) {
+        // Do nothing
     }
 
     @Listener
@@ -93,25 +89,25 @@ public class ModularWikiPlugin implements CommandExecutor {
     }
 
     public boolean init() {
-        File configurationFile = new File(this.root.toFile(), "wiki.conf");
+        File configurationFile = new File(FileManager.getConfigDirectory(this).toFile(), "wiki.conf");
         if (!configurationFile.exists()) {
             try {
                 configurationFile.getParentFile().mkdirs();
                 if (!configurationFile.createNewFile())
                     throw new IOException("Failed to create configuration file, do I have permission?");
             } catch (IOException e) {
-                this.logger.error(e.getMessage());
+                DarwinServer.getLogger().error(e.getMessage());
                 return false;
             }
         }
 
 
         try (JsonReader reader = new JsonReader(new FileReader(configurationFile))) {
-            ModularWikiPlugin.wikiObjects = new Gson().fromJson(reader, WikiObject[].class);
+            ModularWikiModule.wikiObjects = new Gson().fromJson(reader, WikiObject[].class);
             return true;
         } catch (IOException e) {
-            this.logger.error(e.getMessage());
-            this.logger.warn("Could not read configuration file, ModularWiki command will not be registered");
+            DarwinServer.getLogger().error(e.getMessage());
+            DarwinServer.getLogger().warn("Could not read configuration file, ModularWiki command will not be registered");
             return false;
         }
     }
@@ -130,10 +126,10 @@ public class ModularWikiPlugin implements CommandExecutor {
             if (src instanceof Player) {
                 Player pl = (Player) src;
 
-                if (ModularWikiPlugin.wikiObjects != null) {
+                if (ModularWikiModule.wikiObjects != null) {
                     if (optionalEntry.isPresent()) {
                         // Specific entry
-                        Optional<WikiObject> optionalWikiObject = Arrays.stream(ModularWikiPlugin.wikiObjects)
+                        Optional<WikiObject> optionalWikiObject = Arrays.stream(ModularWikiModule.wikiObjects)
                                 .filter(wikiObject -> wikiObject.id.equals(optionalEntry.get()))
                                 .findFirst();
                         if (optionalWikiObject.isPresent()) {
@@ -158,7 +154,7 @@ public class ModularWikiPlugin implements CommandExecutor {
                                         .onClick(TextActions.suggestCommand(String.format("/modularwiki:wikishare %s", wikiObject.id)))
                                         .build();
                                 PlayerUtils.tell(pl, Translations.WIKI_BREAKLINE.ft(wikiObject.name));
-                                PlayerUtils.tell(pl, Text.of(multiLineDescriptionBuilder.build(), "\n", shareButton, ModularWikiPlugin.getBreakLine(wikiObject.name)));
+                                PlayerUtils.tell(pl, Text.of(multiLineDescriptionBuilder.build(), "\n", shareButton, ModularWikiModule.getBreakLine(wikiObject.name)));
                             } else {
                                 PlayerUtils.tell(pl, Translations.WIKI_NOT_ALLOWED.ft(wikiObject.permission));
                             }
@@ -170,7 +166,7 @@ public class ModularWikiPlugin implements CommandExecutor {
                         // List all entries
                         Text.Builder multiLineEntryBuilder = Text.builder();
 
-                        Arrays.asList(ModularWikiPlugin.wikiObjects).forEach(wikiObject -> {
+                        Arrays.asList(ModularWikiModule.wikiObjects).forEach(wikiObject -> {
                             if (wikiObject.permission == null || pl.hasPermission(wikiObject.permission) && !wikiObject.hide) {
                                 Text singleEntryText = Text.builder()
                                         .append(Translations.WIKI_LIST_ROW.ft(wikiObject.name))
@@ -180,7 +176,7 @@ public class ModularWikiPlugin implements CommandExecutor {
                                 multiLineEntryBuilder.append(singleEntryText);
                             }
                         });
-                        PlayerUtils.tell(pl, Text.of(ModularWikiPlugin.defaultBreakLine, multiLineEntryBuilder.build(), "\n", ModularWikiPlugin.defaultBreakLine), false);
+                        PlayerUtils.tell(pl, Text.of(ModularWikiModule.defaultBreakLine, multiLineEntryBuilder.build(), "\n", ModularWikiModule.defaultBreakLine), false);
                     }
                 } else {
                     PlayerUtils.tell(pl, Translations.WIKI_NO_ENTRIES.t());
@@ -214,7 +210,7 @@ public class ModularWikiPlugin implements CommandExecutor {
             String entry = (String) args.getOne("entry").orElse(null);
             Player player = (Player) args.getOne("pl").orElse(null);
             if (entry != null && player != null) {
-                WikiObject wikiObject = Arrays.stream(ModularWikiPlugin.wikiObjects).filter(wikiObj -> wikiObj.id.equals(entry)).findFirst().orElse(null);
+                WikiObject wikiObject = Arrays.stream(ModularWikiModule.wikiObjects).filter(wikiObj -> wikiObj.id.equals(entry)).findFirst().orElse(null);
                 if (wikiObject != null) {
                     Text shareMessage = Translations.WIKI_SHARED_USER.ft(src.getName(), wikiObject.name);
 

@@ -7,11 +7,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class HeadsEvolvedConfigUtil {
+public class HeadDatabaseConfigUtil {
 
   private ItemStack[] storedJson;
 
-  public HeadsEvolvedConfigUtil(File file) {
+  public HeadDatabaseConfigUtil(File file) {
     if (!file.exists()) {
       file.getParentFile().mkdirs();
       try {

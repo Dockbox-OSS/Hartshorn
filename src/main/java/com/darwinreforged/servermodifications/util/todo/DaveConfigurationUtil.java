@@ -1,6 +1,6 @@
 package com.darwinreforged.servermodifications.util.todo;
 
-import com.darwinreforged.servermodifications.plugins.DavePluginWrapper;
+import com.darwinreforged.servermodifications.DarwinServer;
 
 import java.io.*;
 import java.util.Arrays;
@@ -22,8 +22,8 @@ public class DaveConfigurationUtil {
             Reader stream = new InputStreamReader(inputStream.get());
             properties.load(stream);
         } catch (IOException e) {
-            DavePluginWrapper.getLogger().error(e.getMessage());
-            Arrays.stream(e.getStackTrace()).forEach(el -> DavePluginWrapper.getLogger().error(el.toString()));
+            DarwinServer.getLogger().error(e.getMessage());
+            Arrays.stream(e.getStackTrace()).forEach(el -> DarwinServer.getLogger().error(el.toString()));
         }
     }
 
@@ -47,8 +47,8 @@ public class DaveConfigurationUtil {
         try {
             properties.store(new FileOutputStream(file), null);
         } catch (IOException e) {
-            DavePluginWrapper.getLogger().error(e.getMessage());
-            Arrays.stream(e.getStackTrace()).forEach(el -> DavePluginWrapper.getLogger().error(el.toString()));
+            DarwinServer.getLogger().error(e.getMessage());
+            Arrays.stream(e.getStackTrace()).forEach(el -> DarwinServer.getLogger().error(el.toString()));
         }
     }
 

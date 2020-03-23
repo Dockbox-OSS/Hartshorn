@@ -39,25 +39,25 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class HeadsEvolvedChestInterface {
+public class HeadDatabaseChestInterface {
 
   private static PluginContainer container =
-      Sponge.getPluginManager().getPlugin("headsevolved").orElse(null);
+      Sponge.getPluginManager().getPlugin("HeadDatabase").orElse(null);
 
-  public HeadsEvolvedChestInterface(Player player) throws InstantiationException {
+  public HeadDatabaseChestInterface(Player player) throws InstantiationException {
     Layout.Builder builder = new Layout.Builder().dimension(InventoryDimension.of(9, 6));
 
-    setMenuItem(builder, HeadsEvolvedHead.Category.ALPHABET, 20);
-    setMenuItem(builder, HeadsEvolvedHead.Category.ANIMALS, 21);
-    setMenuItem(builder, HeadsEvolvedHead.Category.BLOCKS, 22);
-    setMenuItem(builder, HeadsEvolvedHead.Category.DECORATION, 23);
-    setMenuItem(builder, HeadsEvolvedHead.Category.FOOD_DRINKS, 24);
+    setMenuItem(builder, HeadDatabaseHead.Category.ALPHABET, 20);
+    setMenuItem(builder, HeadDatabaseHead.Category.ANIMALS, 21);
+    setMenuItem(builder, HeadDatabaseHead.Category.BLOCKS, 22);
+    setMenuItem(builder, HeadDatabaseHead.Category.DECORATION, 23);
+    setMenuItem(builder, HeadDatabaseHead.Category.FOOD_DRINKS, 24);
 
-    setMenuItem(builder, HeadsEvolvedHead.Category.HUMANS, 29);
-    setMenuItem(builder, HeadsEvolvedHead.Category.HUMANOID, 30);
-    setMenuItem(builder, HeadsEvolvedHead.Category.MISCELLANEOUS, 31);
-    setMenuItem(builder, HeadsEvolvedHead.Category.MONSTERS, 32);
-    setMenuItem(builder, HeadsEvolvedHead.Category.PLANTS, 33);
+    setMenuItem(builder, HeadDatabaseHead.Category.HUMANS, 29);
+    setMenuItem(builder, HeadDatabaseHead.Category.HUMANOID, 30);
+    setMenuItem(builder, HeadDatabaseHead.Category.MISCELLANEOUS, 31);
+    setMenuItem(builder, HeadDatabaseHead.Category.MONSTERS, 32);
+    setMenuItem(builder, HeadDatabaseHead.Category.PLANTS, 33);
 
     BlockState state =
         BlockState.builder()
@@ -83,10 +83,10 @@ public class HeadsEvolvedChestInterface {
     view.open(player);
   }
 
-  private Layout.Builder setMenuItem(Layout.Builder layout, HeadsEvolvedHead.Category category, int index)
+  private Layout.Builder setMenuItem(Layout.Builder layout, HeadDatabaseHead.Category category, int index)
       throws InstantiationException, NumberFormatException {
-    HeadsEvolvedHead headObject = HeadsEvolvedHead.getFirstFromCategory(category);
-    int size = HeadsEvolvedHead.getByCategory(category).size();
+    HeadDatabaseHead headObject = HeadDatabaseHead.getFirstFromCategory(category);
+    int size = HeadDatabaseHead.getByCategory(category).size();
     ItemStack stack =
         headObject != null ? getSkullStack(headObject) : ItemStack.of(ItemTypes.BARRIER);
     stack.offer(
@@ -102,13 +102,13 @@ public class HeadsEvolvedChestInterface {
     stack.offer(Keys.ITEM_LORE, lore);
 
     Consumer<Action.Click> action =
-        a -> openViewForSet(HeadsEvolvedHead.getByCategory(category), a.getPlayer(), category.toString());
+        a -> openViewForSet(HeadDatabaseHead.getByCategory(category), a.getPlayer(), category.toString());
     Element element = Element.of(stack, action);
     layout.set(element, index);
     return layout;
   }
 
-  public static void openViewForSet(Set<HeadsEvolvedHead> headObjects, Player player, String category) {
+  public static void openViewForSet(Set<HeadDatabaseHead> headObjects, Player player, String category) {
     List<Text> lore =
         new ArrayList<Text>() {
           {
@@ -130,7 +130,7 @@ public class HeadsEvolvedChestInterface {
     Consumer<Action.Click> backAction =
         a -> {
           try {
-            new HeadsEvolvedChestInterface(a.getPlayer());
+            new HeadDatabaseChestInterface(a.getPlayer());
           } catch (InstantiationException e) {
             e.printStackTrace();
           }
@@ -158,7 +158,7 @@ public class HeadsEvolvedChestInterface {
 
     int incorrectSkulls = 0;
     ArrayList<Element> elements = new ArrayList<>();
-    for (HeadsEvolvedHead headObject : headObjects) {
+    for (HeadDatabaseHead headObject : headObjects) {
       try {
         ItemStack stack = getSkullStack(headObject);
 
@@ -186,7 +186,7 @@ public class HeadsEvolvedChestInterface {
     page.open(player);
   }
 
-  private static ItemStack getSkullStack(HeadsEvolvedHead object)
+  private static ItemStack getSkullStack(HeadDatabaseHead object)
       throws InstantiationException, NumberFormatException {
     UUID uuid = UUID.fromString(object.getUuid());
 

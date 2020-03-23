@@ -28,11 +28,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-/*
-SOURCE API CLASS : com.sk89q.worldedit.command.BrushOptionsCommands.primary() || .secondary()
-*/
-
-// Event Handler to register to WorldEdit native
 public class BrushTooltipListener {
 
     private static HashMap<Player, LocalDateTime> lastMessage = new HashMap<>();

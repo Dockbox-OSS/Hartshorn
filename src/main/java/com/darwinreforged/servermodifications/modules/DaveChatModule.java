@@ -1,24 +1,20 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
 import com.darwinreforged.servermodifications.listeners.DaveChatListeners;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.DaveConfigurationUtil;
-import com.google.inject.Inject;
+import com.darwinreforged.servermodifications.util.todo.FileManager;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 
 import java.io.File;
@@ -26,17 +22,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
-@Plugin(id = "dave", name = "Darwin Chat Bot (Dave)", version = "2.0.1", description = "Read chat, send players a message if it picks up a configured message")
-public class DavePlugin {
+@DarwinModule(id = "dave", name = "Darwin Chat Bot (Dave)", version = "2.0.1", description = "Read chat, send players a message if it picks up a configured message")
+public class DaveChatModule implements PluginModule {
 
-    @Inject
-    private Logger logger;
-
-    public DavePlugin() {
-    }
-
-    public Logger getLogger() {
-        return logger;
+    public DaveChatModule() {
     }
 
     private Properties settingsProperties = new Properties();
@@ -53,21 +42,15 @@ public class DavePlugin {
         return messagesProperties;
     }
 
-    @Inject
-    @ConfigDir(sharedRoot = false)
-    private Path root;
-
-    @Listener
+    @Override
     public void onServerFinishLoad(GameInitializationEvent event) {
         Sponge.getEventManager().registerListeners(this, new DaveChatListeners());
         Sponge.getCommandManager().register(this, daveMain, "dave");
     }
 
-    @Listener
+    @Override
     public void onServerStart(GameStartedServerEvent event) {
-        DavePluginWrapper.setSingleton(this);
         setupConfigurations();
-
     }
 
     private void setupConfigurations() {
@@ -91,7 +74,8 @@ public class DavePlugin {
 
     private DaveConfigurationUtil setupNewConfiguration(String child, DaveConfigurationUtil handler, Properties properties, Map<String, String> entries) {
         properties.clear();
-        File propertyFile = new File(root.toFile(), child);
+        Path propertyFilePath = FileManager.getConfigDirectory(this);
+        File propertyFile = new File(propertyFilePath.toFile(), child);
         boolean fileExisted = true;
 
         if (!propertyFile.exists()) {
