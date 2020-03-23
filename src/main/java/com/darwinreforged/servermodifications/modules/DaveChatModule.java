@@ -1,6 +1,8 @@
 package com.darwinreforged.servermodifications.modules;
 
 import com.darwinreforged.servermodifications.listeners.DaveChatListeners;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.DaveConfigurationUtil;
@@ -22,8 +24,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
-@DarwinModule(id = "dave", name = "Darwin Chat Bot (Dave)", version = "2.0.1", description = "Read chat, send players a message if it picks up a configured message")
-public class DaveChatModule implements PluginModule {
+@ModuleInfo(id = "dave", name = "Darwin Chat Bot (Dave)", version = "2.0.1", description = "Read chat, send players a message if it picks up a configured message")
+public class DaveChatModule extends PluginModule {
 
     public DaveChatModule() {
     }

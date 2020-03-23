@@ -13,7 +13,7 @@ import java.util.Random;
 public class DaveRawUtils {
 
     public static Entry<?,?> getAssociatedTrigger(String message) {
-        Optional<DaveChatModule> chatModuleOptional = DarwinServer.getInstance(DaveChatModule.class);
+        Optional<DaveChatModule> chatModuleOptional = DarwinServer.getModule(DaveChatModule.class);
         if (chatModuleOptional.isPresent()) {
             for (Entry<Object, Object> entry : chatModuleOptional.get().getMessagesProperties().entrySet()) {
                 String fullTrigger = entry.getKey().toString().replaceFirst("<!important>", "");

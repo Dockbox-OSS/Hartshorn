@@ -1,65 +1,52 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.commands.weather.PlayerWeatherCommand;
 import com.darwinreforged.servermodifications.commands.weather.PlotWeatherCommand;
 import com.darwinreforged.servermodifications.listeners.WeatherPlayerActionListeners;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
-import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherLightningUtil;
 import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherCoreUtil;
-import com.google.inject.Inject;
+import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherLightningUtil;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
-import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Plugin(
-    id = "weatherplugin",
-    name = "Weatherplugin",
-    description = "A plugin which sets personal and plot weather",
-    dependencies = {@Dependency(id = "packetgate")},version = "1.1")
-public class PlayerWeatherPlugin {
+@ModuleInfo(
+        id = "weatherplugin",
+        name = "Weatherplugin",
+        description = "A plugin which sets personal and plot weather",
+        dependencies = {@Dependency(id = "packetgate")}, version = "1.1")
+public class PlayerWeatherModule extends PluginModule {
 
-  @Inject private Logger logger;
-  public static PlayerWeatherPlugin instance;
-
-  private static PlayerWeatherPlugin plugin;
-
-    public PlayerWeatherPlugin() {
+    public PlayerWeatherModule() {
     }
 
-    public static PlayerWeatherPlugin getPlugin(){
-      return plugin;
-  }
+    @Override
+    public void onServerStart(GameStartedServerEvent event) {
+        Optional<PacketGate> packetGateOptional = Sponge.getServiceManager().provide(PacketGate.class);
+        if (packetGateOptional.isPresent()) {
+            DarwinServer.getLogger().info("packetGate is present");
 
-  @Listener
-  public void onServerStart(GameStartedServerEvent event) {
-      PlayerWeatherPlugin.instance = this;
-    Optional<PacketGate> packetGateOptional = Sponge.getServiceManager().provide(PacketGate.class);
-    if (packetGateOptional.isPresent()) {
-      logger.info("packetGate is present");
+            initialiseCommand();
+            Sponge.getEventManager().registerListeners(this, new WeatherPlayerActionListeners());
 
-      initialiseCommand();
-      Sponge.getEventManager().registerListeners(this, new WeatherPlayerActionListeners());
-
-      logger.info("Weather Plugin successfull initialised");
+            DarwinServer.getLogger().info("Weather Plugin successfull initialised");
     } else {
-      logger.error(
-          "PacketGate is not installed. This is required for Weather Plugin to function correctly");
+            DarwinServer.getLogger().error(
+                    "PacketGate is not installed. This is required for Weather Plugin to function correctly");
     }
-
-    plugin = this;
   }
 
   private void initialiseCommand() {

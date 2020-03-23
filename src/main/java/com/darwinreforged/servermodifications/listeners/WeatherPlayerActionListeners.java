@@ -1,6 +1,6 @@
 package com.darwinreforged.servermodifications.listeners;
 
-import com.darwinreforged.servermodifications.plugins.PlayerWeatherPlugin;
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherCoreUtil;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
@@ -41,7 +41,7 @@ public class WeatherPlayerActionListeners {
               .delay(500, TimeUnit.MILLISECONDS)
               .execute(() -> determinePacketToSend(uuid, playersWeather, plotWeather))
               .name("WeatherTask")
-              .submit(PlayerWeatherPlugin.getPlugin());
+              .submit(DarwinServer.getServer());
     }
     else
     {

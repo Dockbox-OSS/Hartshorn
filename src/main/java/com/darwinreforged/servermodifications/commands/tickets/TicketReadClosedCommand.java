@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
@@ -24,9 +24,9 @@ import static com.darwinreforged.servermodifications.objects.TicketStatus.Closed
 
 public class TicketReadClosedCommand implements CommandExecutor {
 
-    private final TicketPlugin plugin;
+    private final TicketModule plugin;
 
-    public TicketReadClosedCommand(TicketPlugin plugin) {
+    public TicketReadClosedCommand(TicketModule plugin) {
         this.plugin = plugin;
     }
 

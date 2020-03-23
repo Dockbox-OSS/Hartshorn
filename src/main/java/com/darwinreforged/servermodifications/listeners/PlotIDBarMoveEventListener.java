@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.listeners;
 
 import com.darwinreforged.servermodifications.objects.PlotIDBarPlayer;
-import com.darwinreforged.servermodifications.plugins.PlotIDBarPlugin;
+import com.darwinreforged.servermodifications.modules.PlotIdBarModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.flag.Flags;
@@ -62,7 +62,7 @@ public class PlotIDBarMoveEventListener {
                 oldBar2.removePlayer(player);
             }
             barP.setLastPlot("");
-            PlotIDBarPlugin.allPlayers.put(player.getUniqueId(), barP);
+            PlotIdBarModule.allPlayers.put(player.getUniqueId(), barP);
             doBar(plot, player);
         } else {
             renderBar(player);
@@ -84,7 +84,7 @@ public class PlotIDBarMoveEventListener {
             oldBar2.removePlayer(player);
         }
         barP.setLastPlot("");
-        PlotIDBarPlugin.allPlayers.put(player.getUniqueId(), barP);
+        PlotIdBarModule.allPlayers.put(player.getUniqueId(), barP);
     }
 
     private void check(MoveEntityEvent event, Player player) {
@@ -136,7 +136,7 @@ public class PlotIDBarMoveEventListener {
             }
         }
         try {
-            actualowner = PlotIDBarPlugin.getUser(owner.iterator().next()).get().getName();
+            actualowner = PlotIdBarModule.getUser(owner.iterator().next()).get().getName();
         } catch (Exception e) {
             actualowner = Translations.UNOWNED.s();
         }
@@ -151,7 +151,7 @@ public class PlotIDBarMoveEventListener {
                 oldBar2.removePlayer(player);
             }
             barP.setLastPlot("");
-            PlotIDBarPlugin.allPlayers.put(player.getUniqueId(), barP);
+            PlotIdBarModule.allPlayers.put(player.getUniqueId(), barP);
 
             return;
         }
@@ -162,15 +162,15 @@ public class PlotIDBarMoveEventListener {
         String firstTrusted = null, secondTrusted = null, thirdTrusted = null;
         int somenumber = 0;
         if (trustedArray.length > 0 && trustedArray[0] != null) {
-            if (PlotIDBarPlugin.getUser(UUID.fromString(trustedArray[0].toString())).isPresent()) {
-                firstTrusted = PlotIDBarPlugin.getUser(UUID.fromString(trustedArray[0].toString())).get().getName();
+            if (PlotIdBarModule.getUser(UUID.fromString(trustedArray[0].toString())).isPresent()) {
+                firstTrusted = PlotIdBarModule.getUser(UUID.fromString(trustedArray[0].toString())).get().getName();
                 somenumber += 1;
                 //	System.out.println(firstTrusted);
             }
         }
         if (trustedArray.length > 1 && trustedArray[1] != null) {
-            if (PlotIDBarPlugin.getUser(UUID.fromString(trustedArray[1].toString())).isPresent()) {
-                secondTrusted = PlotIDBarPlugin.getUser(UUID.fromString(trustedArray[1].toString())).get().getName();
+            if (PlotIdBarModule.getUser(UUID.fromString(trustedArray[1].toString())).isPresent()) {
+                secondTrusted = PlotIdBarModule.getUser(UUID.fromString(trustedArray[1].toString())).get().getName();
                 somenumber += 1;
                 // System.out.println(secondTrusted);
             }
@@ -190,7 +190,7 @@ public class PlotIDBarMoveEventListener {
         }
 
         for (UUID uuid : trusted) {
-            if (!PlotIDBarPlugin.getUser(uuid).isPresent()) {
+            if (!PlotIdBarModule.getUser(uuid).isPresent()) {
                 members = Translations.EVERYONE.s();
                 break;
             }
@@ -270,11 +270,11 @@ public class PlotIDBarMoveEventListener {
                     barP.setLastPlot(worldname + plot.getId());
                 }
             }
-            PlotIDBarPlugin.allPlayers.put(player.getUniqueId(), barP);
+            PlotIdBarModule.allPlayers.put(player.getUniqueId(), barP);
         } else {
             if (bossBarA != barP.getIDBar()) {
                 barP.setLastPlot(worldname + plot.getId());
-                PlotIDBarPlugin.allPlayers.put(player.getUniqueId(), barP);
+                PlotIdBarModule.allPlayers.put(player.getUniqueId(), barP);
             }
         }
     }

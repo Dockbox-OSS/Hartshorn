@@ -1,6 +1,8 @@
 package com.darwinreforged.servermodifications.modules;
 
 import com.darwinreforged.servermodifications.DarwinServer;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.objects.HeadDatabaseChestInterface;
 import com.darwinreforged.servermodifications.objects.HeadDatabaseHead;
 import com.darwinreforged.servermodifications.resources.Translations;
@@ -27,12 +29,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
-@DarwinModule(
+@ModuleInfo(
         id = "headdb",
         name = "HeadDatabase",
         version = "1.0.6",
         description = "Stores custom heads for Darwin Reforged")
-public class HeadDatabaseModule implements PluginModule {
+public class HeadDatabaseModule extends PluginModule {
 
     public HeadDatabaseModule() {
     }

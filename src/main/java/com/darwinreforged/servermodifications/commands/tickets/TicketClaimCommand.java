@@ -2,7 +2,7 @@ package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.magitechserver.magibridge.MagiBridge;
@@ -25,9 +25,9 @@ import static com.darwinreforged.servermodifications.objects.TicketStatus.*;
 
 public class TicketClaimCommand implements CommandExecutor {
 
-    private final TicketPlugin plugin;
+    private final TicketModule plugin;
 
-    public TicketClaimCommand(TicketPlugin plugin) {
+    public TicketClaimCommand(TicketModule plugin) {
         this.plugin = plugin;
     }
 

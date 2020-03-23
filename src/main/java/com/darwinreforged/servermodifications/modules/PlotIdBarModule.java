@@ -1,18 +1,18 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.listeners.PlotIDBarMoveEventListener;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.objects.PlotIDBarPlayer;
 import com.darwinreforged.servermodifications.objects.PlotIDBarRootConfig;
 import com.darwinreforged.servermodifications.objects.PlotIDToggled;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
-import com.google.inject.Inject;
+import com.darwinreforged.servermodifications.util.todo.FileManager;
 import ninja.leaping.configurate.SimpleConfigurationNode;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMapper;
-import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -20,13 +20,10 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
-import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 
@@ -35,30 +32,27 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
 
-@Plugin(id = "plotidbossbar", name = "Darwin PlotID boss bar", version = "1.0", description = "Plot ID boss bar")
-public class PlotIDBarPlugin {
-    public PlotIDBarPlugin() {
+@ModuleInfo(id = "plotidbossbar", name = "Darwin PlotID boss bar", version = "1.0", description = "Plot ID boss bar")
+public class PlotIdBarModule extends PluginModule {
+    public PlotIdBarModule() {
     }
 
-    @Listener
-    public void onServerFinishLoad(GameStartedServerEvent event) {
+    @Override
+    public void onServerFinishLoad(GameInitializationEvent event) {
         Sponge.getEventManager().registerListeners(this, new PlotIDBarMoveEventListener());
         Sponge.getCommandManager().register(this, toggle, "toggle");
-        plugin = this;
     }
 
-    Object plugin;
     public static ArrayList<UUID> toggledID = new ArrayList<>();
     public static ArrayList<UUID> toggledMembers = new ArrayList<>();
     public static HashMap<UUID, PlotIDBarPlayer> allPlayers = new HashMap<>();
 
-    @Listener
+    @Override
     public void onServerStart(GameStartedServerEvent event) {
-        File file = new File(root.toFile(), "toggled.conf");
+        File file = new File(FileManager.getConfigDirectory(this).toFile(), "toggled.conf");
 
         if (!file.exists()) {
             PlotIDToggled plotIDToggled = new PlotIDToggled();
@@ -67,7 +61,7 @@ public class PlotIDBarPlugin {
             config.getCategories().add(plotIDToggled);
             saveConfig(config, file.toPath());
         }
-        rootConfig = loadConfig(file.toPath());
+        PlotIDBarRootConfig rootConfig = loadConfig(file.toPath());
         for (PlotIDToggled plotIDToggled : rootConfig.getCategories()) {
             toggledID = (ArrayList<UUID>) plotIDToggled.getToggledID();
             toggledMembers = (ArrayList<UUID>) plotIDToggled.getToggledMem();
@@ -91,7 +85,6 @@ public class PlotIDBarPlugin {
 
     private PlotIDBarRootConfig loadConfig(Path path) {
         try {
-            logger.info("Loading config...");
             ObjectMapper<PlotIDBarRootConfig> mapper = ObjectMapper.forClass(PlotIDBarRootConfig.class);
             HoconConfigurationLoader hcl = HoconConfigurationLoader.builder().setPath(path).build();
             return mapper.bind(new PlotIDBarRootConfig()).populate(hcl.load());
@@ -99,45 +92,6 @@ public class PlotIDBarPlugin {
             throw new RuntimeException("Could not load file " + path, e);
         }
     }
-
-    public class clearOfflines implements Runnable {
-        public void run() {
-            ArrayList<Player> offlinePlayers = new ArrayList<Player>();
-            for (Entry<UUID, PlotIDBarPlayer> barP : allPlayers.entrySet()) {
-                if (!barP.getValue().getPlayer().isOnline()) {
-                    offlinePlayers.add(barP.getValue().getPlayer());
-                }
-            }
-            for (Player player : offlinePlayers) {
-                allPlayers.remove(player.getUniqueId());
-            }
-            offlinePlayers.clear();
-        }
-    }
-
-    private PlotIDBarRootConfig rootConfig;
-
-    @Inject
-    private Logger logger;
-
-    @Inject
-    @ConfigDir(sharedRoot = false)
-    private Path root;
-
-
-    @Inject
-    @DefaultConfig(sharedRoot = false)
-    private ConfigurationLoader<CommentedConfigurationNode> configManager;
-
-
-    @Inject
-    @DefaultConfig(sharedRoot = false)
-    private Path defaultConfig;
-
-    @Inject
-    @ConfigDir(sharedRoot = false)
-
-    private Path privateConfigDir;
 
     public static Optional<User> getUser(UUID owner) {
         Optional<UserStorageService> userStorage = Sponge.getServiceManager().provide(UserStorageService.class);
@@ -166,24 +120,27 @@ public class PlotIDBarPlugin {
         @Override
         public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
             Player player = (Player) src;
-            File file = new File(root.toFile(), "toggled.conf");
-            PlotIDBarPlayer barP = new PlotIDBarPlayer(player);
-            if (toggledID.contains(player.getUniqueId())) {
-                toggledID.remove(player.getUniqueId());
-                PlayerUtils.tell(player, Translations.PID_TOGGLE_BAR.ft(Translations.DEFAULT_ON));
-                barP.setBarBool(false);
-            } else {
-                toggledID.add(player.getUniqueId());
-                PlayerUtils.tell(player, Translations.PID_TOGGLE_BAR.ft(Translations.DEFAULT_OFF));
-                barP.setBarBool(true);
+            Optional<PlotIdBarModule> moduleOptional = DarwinServer.getModule(PlotIdBarModule.class);
+            if (moduleOptional.isPresent()) {
+                File file = new File(FileManager.getConfigDirectory(moduleOptional.get()).toFile(), "toggled.conf");
+                PlotIDBarPlayer barP = new PlotIDBarPlayer(player);
+                if (toggledID.contains(player.getUniqueId())) {
+                    toggledID.remove(player.getUniqueId());
+                    PlayerUtils.tell(player, Translations.PID_TOGGLE_BAR.ft(Translations.DEFAULT_ON));
+                    barP.setBarBool(false);
+                } else {
+                    toggledID.add(player.getUniqueId());
+                    PlayerUtils.tell(player, Translations.PID_TOGGLE_BAR.ft(Translations.DEFAULT_OFF));
+                    barP.setBarBool(true);
+                }
+                allPlayers.put(player.getUniqueId(), barP);
+                PlotIDToggled plotIDToggled = new PlotIDToggled();
+                PlotIDBarRootConfig config = new PlotIDBarRootConfig();
+                plotIDToggled.setToggledID(toggledID);
+                plotIDToggled.setToggledMem(toggledMembers);
+                config.getCategories().add(plotIDToggled);
+                saveConfig(config, file.toPath());
             }
-            allPlayers.put(player.getUniqueId(), barP);
-            PlotIDToggled plotIDToggled = new PlotIDToggled();
-            PlotIDBarRootConfig config = new PlotIDBarRootConfig();
-            plotIDToggled.setToggledID(toggledID);
-            plotIDToggled.setToggledMem(toggledMembers);
-            config.getCategories().add(plotIDToggled);
-            saveConfig(config, file.toPath());
             return CommandResult.success();
         }
     }
@@ -192,25 +149,28 @@ public class PlotIDBarPlugin {
     public class TogglePlotMembers implements CommandExecutor {
         @Override
         public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-            File file = new File(root.toFile(), "toggled.conf");
-            Player player = (Player) src;
-            PlotIDBarPlayer barP = new PlotIDBarPlayer(player);
-            if (toggledMembers.contains(player.getUniqueId())) {
-                toggledMembers.remove(player.getUniqueId());
-                PlayerUtils.tell(player, Translations.PID_TOGGLE_MEMBERS.ft(Translations.DEFAULT_ON));
-                barP.setMembersBool(false);
-            } else {
-                toggledMembers.add(player.getUniqueId());
-                PlayerUtils.tell(player, Translations.PID_TOGGLE_MEMBERS.ft(Translations.DEFAULT_OFF));
-                barP.setMembersBool(true);
+            Optional<PlotIdBarModule> moduleOptional = DarwinServer.getModule(PlotIdBarModule.class);
+            if (moduleOptional.isPresent()) {
+                File file = new File(FileManager.getConfigDirectory(moduleOptional.get()).toFile(), "toggled.conf");
+                Player player = (Player) src;
+                PlotIDBarPlayer barP = new PlotIDBarPlayer(player);
+                if (toggledMembers.contains(player.getUniqueId())) {
+                    toggledMembers.remove(player.getUniqueId());
+                    PlayerUtils.tell(player, Translations.PID_TOGGLE_MEMBERS.ft(Translations.DEFAULT_ON));
+                    barP.setMembersBool(false);
+                } else {
+                    toggledMembers.add(player.getUniqueId());
+                    PlayerUtils.tell(player, Translations.PID_TOGGLE_MEMBERS.ft(Translations.DEFAULT_OFF));
+                    barP.setMembersBool(true);
+                }
+                allPlayers.put(player.getUniqueId(), barP);
+                PlotIDToggled plotIDToggled = new PlotIDToggled();
+                PlotIDBarRootConfig config = new PlotIDBarRootConfig();
+                plotIDToggled.setToggledID(toggledID);
+                plotIDToggled.setToggledMem(toggledMembers);
+                config.getCategories().add(plotIDToggled);
+                saveConfig(config, file.toPath());
             }
-            allPlayers.put(player.getUniqueId(), barP);
-            PlotIDToggled plotIDToggled = new PlotIDToggled();
-            PlotIDBarRootConfig config = new PlotIDBarRootConfig();
-            plotIDToggled.setToggledID(toggledID);
-            plotIDToggled.setToggledMem(toggledMembers);
-            config.getCategories().add(plotIDToggled);
-            saveConfig(config, file.toPath());
             return CommandResult.success();
         }
     }

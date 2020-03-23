@@ -1,4 +1,4 @@
-package com.darwinreforged.servermodifications.modules;
+package com.darwinreforged.servermodifications.modules.root;
 
 import org.spongepowered.api.plugin.Dependency;
 
@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface DarwinModule {
+public @interface ModuleInfo {
     String id();
     String name() default "";
     String version() default "";

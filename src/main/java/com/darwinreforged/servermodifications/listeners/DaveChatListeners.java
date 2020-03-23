@@ -29,7 +29,7 @@ public class DaveChatListeners {
     private String color;
 
     private void beforeEach() {
-        Optional<DaveChatModule> chatModuleOptional = DarwinServer.getInstance(DaveChatModule.class);
+        Optional<DaveChatModule> chatModuleOptional = DarwinServer.getModule(DaveChatModule.class);
         if (chatModuleOptional.isPresent()) {
             botPrefix = chatModuleOptional.get().getSettingsProperties().getProperty("prefix").replaceAll("&", "§");
             color = chatModuleOptional.get().getSettingsProperties().getProperty("messageColor").replaceAll("&", "§");
@@ -124,12 +124,12 @@ public class DaveChatListeners {
             }
             else message.append(Text.of(response));
 
-            DarwinServer.getInstance(DaveChatModule.class).ifPresent(dave -> Sponge.getServer().getOnlinePlayers()
+            DarwinServer.getModule(DaveChatModule.class).ifPresent(dave -> Sponge.getServer().getOnlinePlayers()
                     .stream().filter(player1 -> !dave.getPlayerWhoMutedDave()
                             .contains(player1.getName()) || important)
                     .forEach(player1 -> PlayerUtils.tell(player1, message.build())));
 
-            Optional<DaveChatModule> chatModuleOptional = DarwinServer.getInstance(DaveChatModule.class);
+            Optional<DaveChatModule> chatModuleOptional = DarwinServer.getModule(DaveChatModule.class);
             if (chatModuleOptional.isPresent()) {
                 String discordChannel = chatModuleOptional.get().getSettingsProperties().getProperty("discordChannel");
 

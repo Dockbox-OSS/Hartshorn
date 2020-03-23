@@ -1,6 +1,6 @@
 package com.darwinreforged.servermodifications.util;
 
-import com.darwinreforged.servermodifications.modules.DarwinModule;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.objects.InternalPluginContainer;
 import org.spongepowered.api.plugin.PluginContainer;
 
@@ -18,7 +18,7 @@ public class PluginUtils {
         if (plugin instanceof PluginContainer) {
             return (PluginContainer) plugin;
         } else {
-            DarwinModule pluginAnn = plugin.getClass().getAnnotation(DarwinModule.class);
+            ModuleInfo pluginAnn = plugin.getClass().getAnnotation(ModuleInfo.class);
             return new InternalPluginContainer(pluginAnn);
         }
     }

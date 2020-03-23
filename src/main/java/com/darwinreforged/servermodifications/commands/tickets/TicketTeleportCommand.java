@@ -2,7 +2,7 @@ package com.darwinreforged.servermodifications.commands.tickets;
 
 
 import com.darwinreforged.servermodifications.objects.TicketData;
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.LocationUtils;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
@@ -22,9 +22,9 @@ import java.util.List;
 
 public class TicketTeleportCommand implements CommandExecutor {
 
-    private final TicketPlugin plugin;
+    private final TicketModule plugin;
 
-    public TicketTeleportCommand(TicketPlugin plugin) {
+    public TicketTeleportCommand(TicketModule plugin) {
         this.plugin = plugin;
     }
 

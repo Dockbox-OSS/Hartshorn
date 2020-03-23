@@ -2,7 +2,7 @@ package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.TimeUtils;
@@ -26,9 +26,9 @@ import java.util.UUID;
 import static com.darwinreforged.servermodifications.objects.TicketStatus.*;
 
 public class TicketHoldCommand implements CommandExecutor {
-    private final TicketPlugin plugin;
+    private final TicketModule plugin;
 
-    public TicketHoldCommand(TicketPlugin plugin) {
+    public TicketHoldCommand(TicketModule plugin) {
         this.plugin = plugin;
     }
 

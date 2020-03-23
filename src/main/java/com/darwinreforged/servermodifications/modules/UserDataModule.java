@@ -1,5 +1,7 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -21,7 +23,6 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
@@ -34,15 +35,15 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-@Plugin(
+@ModuleInfo(
     id = "userdata",
     name = "UserData",
     version = "0.0.1",
     description = "Collect user data from several plugins and display them to the executing player",
     authors = {"DiggyNevs"})
-public class UserDataPlugin {
+public class UserDataModule extends PluginModule {
 
-  public UserDataPlugin() {
+  public UserDataModule() {
   }
 
   @Listener

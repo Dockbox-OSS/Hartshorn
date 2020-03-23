@@ -1,5 +1,7 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import org.spongepowered.api.Sponge;
@@ -12,13 +14,11 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.item.EnchantmentData;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.Slot;
 import org.spongepowered.api.item.inventory.entity.Hotbar;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
@@ -28,13 +28,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-@Plugin(
+@ModuleInfo(
         id = "hotbarshare",
         name = "Hotbar Sharing",
         version = "1.0.2",
         description = "Allows the user to share their hotbar with one or multiple players, storing all custom data of the items",
         authors = {"DiggyNevs"})
-public class HotbarSharePlugin {
+public class HotbarShareModule extends PluginModule {
 
     private static final HashMap<Long, HotbarShare> sharedBars = new HashMap<>();
 
@@ -64,10 +64,10 @@ public class HotbarSharePlugin {
                     .executor(new ShareCommand())
                     .build();
 
-    public HotbarSharePlugin() {
+    public HotbarShareModule() {
     }
 
-    @Listener
+    @Override
     public void onServerStart(GameStartedServerEvent event) {
         Sponge.getCommandManager().register(this, hbl, "hbload");
         Sponge.getCommandManager().register(this, hbshare, "shareinv");
@@ -95,7 +95,7 @@ public class HotbarSharePlugin {
                 });
 
                 Long id = System.currentTimeMillis();
-                HotbarSharePlugin.sharedBars.put(id, new HotbarShare(itemStackList, player.getName()));
+                HotbarShareModule.sharedBars.put(id, new HotbarShare(itemStackList, player.getName()));
 
                 Text buttonView =
                         Text.builder()
@@ -127,7 +127,7 @@ public class HotbarSharePlugin {
         public CommandResult execute(CommandSource src, CommandContext args) {
             if (src instanceof Player) {
                 Long id = (Long) args.getOne("id").get();
-                List<ItemStack> hotbar = HotbarSharePlugin.sharedBars.get(id).getHotbar();
+                List<ItemStack> hotbar = HotbarShareModule.sharedBars.get(id).getHotbar();
                 if (args.getOne("SlotIndex").isPresent()) {
                     // Only set one slot, offers to hotbar
                     Integer slotIndex = (Integer) args.getOne("SlotIndex").get();
@@ -159,8 +159,8 @@ public class HotbarSharePlugin {
         @Override
         public CommandResult execute(CommandSource src, CommandContext args) {
             Long id = (Long) args.getOne("id").get();
-            List<ItemStack> hotbar = HotbarSharePlugin.sharedBars.get(id).getHotbar();
-            PlayerUtils.tell(src, Translations.HOTBAR_SHARE_HEADER.f(HotbarSharePlugin.sharedBars.get(id).getSharedBy()));
+            List<ItemStack> hotbar = HotbarShareModule.sharedBars.get(id).getHotbar();
+            PlayerUtils.tell(src, Translations.HOTBAR_SHARE_HEADER.f(HotbarShareModule.sharedBars.get(id).getSharedBy()));
 
             for (int i = 0; i < hotbar.size(); i++) {
                 ItemStack stack = hotbar.get(i);
@@ -204,7 +204,7 @@ public class HotbarSharePlugin {
                                 : ""
                 ), false);
             }
-            PlayerUtils.tell(src, Translations.HOTBAR_SHARE_HEADER.f(HotbarSharePlugin.sharedBars.get(id).getSharedBy()));
+            PlayerUtils.tell(src, Translations.HOTBAR_SHARE_HEADER.f(HotbarShareModule.sharedBars.get(id).getSharedBy()));
             return CommandResult.success();
         }
 

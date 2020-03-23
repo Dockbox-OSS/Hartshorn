@@ -1,6 +1,6 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
@@ -17,9 +17,9 @@ import java.io.IOException;
 
 public class TicketReloadCommand implements CommandExecutor {
 
-    private final TicketPlugin plugin;
+    private final TicketModule plugin;
 
-    public TicketReloadCommand(TicketPlugin plugin) {
+    public TicketReloadCommand(TicketModule plugin) {
         this.plugin = plugin;
     }
 

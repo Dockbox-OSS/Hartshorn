@@ -1,6 +1,6 @@
 package com.darwinreforged.servermodifications.objects;
 
-import com.darwinreforged.servermodifications.modules.DarwinModule;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import java.util.Optional;
@@ -11,7 +11,7 @@ public class InternalPluginContainer implements PluginContainer {
     private String version;
     private String name;
 
-    public InternalPluginContainer(DarwinModule plugin) {
+    public InternalPluginContainer(ModuleInfo plugin) {
         this.id = plugin.id();
         this.version = plugin.version();
         this.name = plugin.version();

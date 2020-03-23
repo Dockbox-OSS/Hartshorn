@@ -1,7 +1,9 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
 import com.darwinreforged.servermodifications.adapters.SchemBrushAdapter;
 import com.darwinreforged.servermodifications.adapters.SchemBrushAdapterFactory;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.google.common.reflect.TypeToken;
@@ -43,7 +45,6 @@ import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.plugin.Dependency;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 
 import java.io.*;
@@ -58,14 +59,14 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 
-@Plugin(id = "schematicbrush", name = "schematicbrush", version = "1.1.2", dependencies = @Dependency(id = "worldedit"), description = "Sponge implementation of Schematic Brush")
-public class SchematicBrushPlugin {
+@ModuleInfo(id = "schematicbrush", name = "schematicbrush", version = "1.1.2", dependencies = @Dependency(id = "worldedit"), description = "Sponge implementation of Schematic Brush")
+public class SchematicBrushModule extends PluginModule {
 
     final Pattern uuidRegexp = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
 
     public static final int DEFAULT_WEIGHT = -1;
 
-    public SchematicBrushPlugin() {
+    public SchematicBrushModule() {
     }
 
     public enum Flip {

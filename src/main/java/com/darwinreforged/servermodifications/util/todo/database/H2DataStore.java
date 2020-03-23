@@ -1,11 +1,14 @@
 package com.darwinreforged.servermodifications.util.todo.database;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.objects.TicketStatus;
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.modules.TicketModule;
+import com.darwinreforged.servermodifications.util.todo.FileManager;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.github.nucleuspowered.relocate.uk.co.drnaylor.quickstart.exceptions.MissingDependencyException;
 
 import java.io.File;
 import java.sql.*;
@@ -16,11 +19,9 @@ import java.util.UUID;
 
 public final class H2DataStore implements IDataStore {
 
-    private final TicketPlugin plugin;
     private final Optional<HikariDataSource> dataSource;
 
-    public H2DataStore(TicketPlugin plugin) {
-        this.plugin = plugin;
+    public H2DataStore() {
         this.dataSource = getDataSource();
     }
 
@@ -32,7 +33,7 @@ public final class H2DataStore implements IDataStore {
     @Override
     public boolean load() {
         if (!dataSource.isPresent()) {
-            plugin.getLogger().error("Selected datastore: 'H2' is not avaiable please select another datastore.");
+            DarwinServer.getLogger().error("Selected datastore: 'H2' is not avaiable please select another datastore.");
             return false;
         }
         try (Connection connection = getConnection()) {
@@ -63,7 +64,7 @@ public final class H2DataStore implements IDataStore {
 
             getConnection().commit();
         } catch (SQLException ex) {
-            plugin.getLogger().error("Unable to create tables", ex);
+            DarwinServer.getLogger().error("Unable to create tables", ex);
             return false;
         }
         return true;
@@ -98,7 +99,7 @@ public final class H2DataStore implements IDataStore {
             }
             return ticketList;
         } catch (SQLException ex) {
-            plugin.getLogger().info("H2: Couldn't read ticketdata from H2 database.", ex);
+            DarwinServer.getLogger().info("H2: Couldn't read ticketdata from H2 database.", ex);
             return new ArrayList<>();
         }
     }
@@ -119,7 +120,7 @@ public final class H2DataStore implements IDataStore {
             }
             return playerList;
         } catch (SQLException ex) {
-            plugin.getLogger().info("H2: Couldn't read playerdata from H2 database.", ex);
+            DarwinServer.getLogger().info("H2: Couldn't read playerdata from H2 database.", ex);
             return new ArrayList<>();
         }
     }
@@ -172,7 +173,7 @@ public final class H2DataStore implements IDataStore {
             statement.setString(16, ticketData.getDiscordMessage());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
-            plugin.getLogger().error("H2: Error adding ticketdata", ex);
+            DarwinServer.getLogger().error("H2: Error adding ticketdata", ex);
         }
         return false;
     }
@@ -186,7 +187,7 @@ public final class H2DataStore implements IDataStore {
             statement.setInt(3, playerData.getBannedStatus());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
-            plugin.getLogger().error("H2: Error adding playerdata", ex);
+            DarwinServer.getLogger().error("H2: Error adding playerdata", ex);
         }
         return false;
     }
@@ -213,7 +214,7 @@ public final class H2DataStore implements IDataStore {
             statement.setString(16, ticketData.getDiscordMessage());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
-            plugin.getLogger().error("H2: Error updating ticketdata", ex);
+            DarwinServer.getLogger().error("H2: Error updating ticketdata", ex);
         }
         return false;
     }
@@ -227,7 +228,7 @@ public final class H2DataStore implements IDataStore {
             statement.setInt(3, playerData.getBannedStatus());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
-            plugin.getLogger().error("H2: Error updating playerdata", ex);
+            DarwinServer.getLogger().error("H2: Error updating playerdata", ex);
         }
         return false;
     }
@@ -238,7 +239,7 @@ public final class H2DataStore implements IDataStore {
             ResultSet rs = md.getColumns(null, null, tableName, columnName);
             return rs.next();
         } catch (SQLException ex) {
-            plugin.getLogger().error("H2: Error checking if column exists.", ex);
+            DarwinServer.getLogger().error("H2: Error checking if column exists.", ex);
         }
         return false;
     }
@@ -247,13 +248,15 @@ public final class H2DataStore implements IDataStore {
         try {
             HikariDataSource ds = new HikariDataSource();
             ds.setDriverClassName("org.h2.Driver");
-            ds.setJdbcUrl("jdbc:h2://" + new File(plugin.ConfigDir.toFile(), TicketConfig.databaseFile).getAbsolutePath());
+            Optional<TicketModule> moduleOptional = DarwinServer.getModule(TicketModule.class);
+            if (!moduleOptional.isPresent()) throw new MissingDependencyException("Missing ticket module");
+            ds.setJdbcUrl("jdbc:h2://" + new File(FileManager.getConfigDirectory(moduleOptional.get()).toFile(), TicketConfig.databaseFile).getAbsolutePath());
             ds.setConnectionTimeout(1000);
             ds.setLoginTimeout(5);
             ds.setAutoCommit(true);
             return Optional.ofNullable(ds);
-        } catch (SQLException ex) {
-            plugin.getLogger().error("H2: Failed to get datastore.", ex);
+        } catch (SQLException | MissingDependencyException ex) {
+            DarwinServer.getLogger().error("H2: Failed to get datastore.", ex);
             return Optional.empty();
         }
     }

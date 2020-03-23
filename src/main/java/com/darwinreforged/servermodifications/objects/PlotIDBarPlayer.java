@@ -1,5 +1,5 @@
 package com.darwinreforged.servermodifications.objects;
-import com.darwinreforged.servermodifications.plugins.PlotIDBarPlugin;
+import com.darwinreforged.servermodifications.modules.PlotIdBarModule;
 import org.spongepowered.api.boss.ServerBossBar;
 import org.spongepowered.api.entity.living.player.Player;
 
@@ -72,21 +72,21 @@ public class PlotIDBarPlayer {
 	}
 	public PlotIDBarPlayer(Player player) {
 
-		if (PlotIDBarPlugin.allPlayers.containsKey(player.getUniqueId())) {
-		this.setIDBar(PlotIDBarPlugin.allPlayers.get(player.getUniqueId()).getIDBar());
-		this.setMemBar(PlotIDBarPlugin.allPlayers.get(player.getUniqueId()).getMemBar());
-		this.setBarBool(PlotIDBarPlugin.allPlayers.get(player.getUniqueId()).getBarBool());
-		this.setMembersBool(PlotIDBarPlugin.allPlayers.get(player.getUniqueId()).getMembersBool());
-		this.setLastPlot(PlotIDBarPlugin.allPlayers.get(player.getUniqueId()).getLastPlot());
-		this.setPlotTime(PlotIDBarPlugin.allPlayers.get(player.getUniqueId()).getPlotTime());
-		this.setPlayer(PlotIDBarPlugin.allPlayers.get(player.getUniqueId()).getPlayer());
+		if (PlotIdBarModule.allPlayers.containsKey(player.getUniqueId())) {
+		this.setIDBar(PlotIdBarModule.allPlayers.get(player.getUniqueId()).getIDBar());
+		this.setMemBar(PlotIdBarModule.allPlayers.get(player.getUniqueId()).getMemBar());
+		this.setBarBool(PlotIdBarModule.allPlayers.get(player.getUniqueId()).getBarBool());
+		this.setMembersBool(PlotIdBarModule.allPlayers.get(player.getUniqueId()).getMembersBool());
+		this.setLastPlot(PlotIdBarModule.allPlayers.get(player.getUniqueId()).getLastPlot());
+		this.setPlotTime(PlotIdBarModule.allPlayers.get(player.getUniqueId()).getPlotTime());
+		this.setPlayer(PlotIdBarModule.allPlayers.get(player.getUniqueId()).getPlayer());
 		}
 		else {
 			this.setPlayer(player);
-			if (PlotIDBarPlugin.toggledID.contains(player.getUniqueId())) {
+			if (PlotIdBarModule.toggledID.contains(player.getUniqueId())) {
 				this.setBarBool(true);
 			}
-			if (PlotIDBarPlugin.toggledMembers.contains(player.getUniqueId())) {
+			if (PlotIdBarModule.toggledMembers.contains(player.getUniqueId())) {
 				this.setMembersBool(true);
 			}
 		}

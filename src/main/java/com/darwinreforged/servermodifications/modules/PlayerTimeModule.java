@@ -1,8 +1,10 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModuleNative;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
-import com.google.inject.Inject;
 import eu.crushedpixel.sponge.packetgate.api.event.PacketEvent;
 import eu.crushedpixel.sponge.packetgate.api.listener.PacketListenerAdapter;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
@@ -10,7 +12,6 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketTimeUpdate;
-import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -18,8 +19,8 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
 
@@ -29,15 +30,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-@Plugin(id = "personaltime", name = "Personal Time", description = "Allows players to set their own personal time of day", version = "1.0-PRERELEASE-1", dependencies = @Dependency(id = "packetgate"))
-public class PlayerTimePlugin extends PacketListenerAdapter {
-
-    @Inject
-    private Logger logger;
+@ModuleInfo(id = "personaltime", name = "Personal Time", description = "Allows players to set their own personal time of day", version = "1.0-PRERELEASE-1", dependencies = @Dependency(id = "packetgate"))
+public class PlayerTimeModule extends PacketListenerAdapter implements PluginModuleNative {
 
     private Map<UUID, Long> timeOffsets; // <Player UUID, time offset in ticks>
 
-    public PlayerTimePlugin() {
+    public PlayerTimeModule() {
     }
 
     @Listener
@@ -48,9 +46,9 @@ public class PlayerTimePlugin extends PacketListenerAdapter {
             PacketGate packetGate = packetGateOptional.get();
             packetGate.registerListener(this, ListenerPriority.DEFAULT, SPacketTimeUpdate.class);
             initializeCommands();
-            logger.info("Personal Time has successfully initialized");
+            DarwinServer.getLogger().info("Personal Time has successfully initialized");
         } else {
-            logger.error("PacketGate is not installed. Personal Time depends on PacketGate in order to work");
+            DarwinServer.getLogger().error("PacketGate is not installed. Personal Time depends on PacketGate in order to work");
         }
     }
 
@@ -184,7 +182,7 @@ public class PlayerTimePlugin extends PacketListenerAdapter {
         try {
             packet.writePacketData(packetBuffer);
         } catch (IOException e) {
-            logger.error("Failed to read packet buffer");
+            DarwinServer.getLogger().error("Failed to read packet buffer");
             return;
         }
 
@@ -199,5 +197,15 @@ public class PlayerTimePlugin extends PacketListenerAdapter {
         }
 
         packetEvent.setPacket(new SPacketTimeUpdate(totalWorldTime, personalWorldTime, true));
+    }
+
+
+    // Unused, but required by contract due to use of Native Plugin Module
+    @Override
+    public void onServerFinishLoad(GameInitializationEvent event) {
+    }
+
+    @Override
+    public void onServerStart(GameStartedServerEvent event) {
     }
 }

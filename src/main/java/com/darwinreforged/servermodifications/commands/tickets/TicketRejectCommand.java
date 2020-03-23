@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import io.github.nucleuspowered.nucleus.Nucleus;
@@ -19,9 +19,9 @@ import java.util.Optional;
 
 public class TicketRejectCommand implements CommandExecutor {
 
-    private final TicketPlugin plugin;
+    private final TicketModule plugin;
 
-    public TicketRejectCommand(TicketPlugin plugin) {
+    public TicketRejectCommand(TicketModule plugin) {
         this.plugin = plugin;
     }
 

@@ -1,9 +1,11 @@
 package com.darwinreforged.servermodifications;
 
-import com.darwinreforged.servermodifications.modules.PluginModule;
+import com.darwinreforged.servermodifications.modules.root.DisabledModule;
+import com.darwinreforged.servermodifications.modules.root.PluginModuleNative;
 import com.google.inject.Inject;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -30,7 +32,7 @@ import java.util.Set;
 )
 public class DarwinServer {
 
-    private static final Map<Class<? extends PluginModule>, PluginModule> MODULES = new HashMap<>();
+    private static final Map<Class<? extends PluginModuleNative>, PluginModuleNative> MODULES = new HashMap<>();
 
     @Inject
     private Logger logger;
@@ -40,12 +42,18 @@ public class DarwinServer {
     public DarwinServer() {
         DarwinServer.server = this;
         Reflections reflections = new Reflections("com.darwinreforged.servermodifications.modules");
-        Set<Class<? extends PluginModule>> pluginModules = reflections.getSubTypesOf(PluginModule.class);
+        Set<Class<? extends PluginModuleNative>> pluginModules = reflections.getSubTypesOf(PluginModuleNative.class);
         pluginModules.forEach(clazz -> {
             try {
-                Constructor<? extends PluginModule> constructor = clazz.getDeclaredConstructor();
-                PluginModule instance = constructor.newInstance();
-                MODULES.put(clazz, instance);
+                DisabledModule disabledModule = clazz.getAnnotation(DisabledModule.class);
+                if (disabledModule != null)
+                    logger.warn(String.format("Disabled plugin : %s for reason '%s'", clazz.getSimpleName(), disabledModule.value()));
+                else {
+                    Constructor<? extends PluginModuleNative> constructor = clazz.getDeclaredConstructor();
+                    PluginModuleNative instance = constructor.newInstance();
+                    Sponge.getEventManager().registerListeners(this, instance);
+                    MODULES.put(clazz, instance);
+                }
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 logger.error(String.format("Failed to instantiate module of type '%s'", clazz.getSimpleName()));
             }
@@ -63,7 +71,7 @@ public class DarwinServer {
     }
 
     @SuppressWarnings("unchecked")
-    public static <I> Optional<I> getInstance(Class<I> clazz) {
+    public static <I> Optional<I> getModule(Class<I> clazz) {
         return Optional.ofNullable((I) DarwinServer.MODULES.getOrDefault(clazz, null));
     }
 

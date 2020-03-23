@@ -1,12 +1,12 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
-import com.google.inject.Inject;
-import org.slf4j.Logger;
+import com.darwinreforged.servermodifications.DarwinServer;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
+import com.darwinreforged.servermodifications.util.todo.FileManager;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.yaml.snakeyaml.Yaml;
 
@@ -20,31 +20,30 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Plugin(id = "spongeplugindata", name = "Sponge Plugin Data", version = "0.0.2", description = "Collects and stores plugin data", authors = {"DiggyNevs"})
-public class SpongePluginDataPlugin {
-
-    @Inject
-    private Logger logger;
+@ModuleInfo(id = "spongeplugindata", name = "Sponge Plugin Data", version = "0.0.2", description = "Collects and stores plugin data", authors = {"DiggyNevs"})
+public class SpongePluginDataModule extends PluginModule {
 
     private Map<String, Map<String, Object>> data = new HashMap<>();
-    private static final File dataFile = Sponge.getGame().getSavesDirectory().resolve("data/spongeplugindata/plugin_data.yml").toFile();
+    private static File dataFile;
 
-    public SpongePluginDataPlugin() {
+    public SpongePluginDataModule() {
+        dataFile = new File(FileManager.getDataDirectory(this).toFile(), "plugin_data.yml");
+        dataFile.getParentFile().mkdirs();
     }
 
-    @Listener
+    @Override
     public void onServerStart(GameStartedServerEvent event) {
         if (!dataFile.exists()) {
             try {
                 dataFile.mkdirs();
                 dataFile.createNewFile();
             } catch (IOException e) {
-                logger.error(e.getMessage());
+                DarwinServer.getLogger().error(e.getMessage());
             }
         }
     }
 
-    @Listener
+    @Override
     public void onServerFinishLoad(GameInitializationEvent event) {
         Sponge.getPluginManager().getPlugins().forEach(this::registerPlugin);
         try {

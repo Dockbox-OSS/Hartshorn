@@ -1,17 +1,16 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
 import com.darwinreforged.servermodifications.commands.MultiCommandExecutor;
-import com.google.inject.Inject;
-import org.slf4j.Logger;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 
-@Plugin(
+@ModuleInfo(
         id = "multicommand",
         name = "Multi Command",
         version = "0.1.1",
@@ -20,24 +19,13 @@ import org.spongepowered.api.text.Text;
                 "DiggyNevs"
         }
 )
-public class MultiCommandPlugin {
+public class MultiCommandModule extends PluginModule {
 
-    @Inject
-    private Logger logger;
-
-    static MultiCommandPlugin instance;
-
-    public static MultiCommandPlugin getInstance() {
-        return instance;
-    }
-
-    public MultiCommandPlugin() {
+    public MultiCommandModule() {
     }
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        MultiCommandPlugin.instance = this;
-
         CommandSpec multiCommand = CommandSpec.builder()
                 .permission("mc.use")
                 .executor(new MultiCommandExecutor())

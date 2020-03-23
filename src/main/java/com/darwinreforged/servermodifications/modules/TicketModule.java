@@ -1,7 +1,11 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.commands.tickets.*;
 import com.darwinreforged.servermodifications.listeners.TicketLoginAndDiscordListener;
+import com.darwinreforged.servermodifications.modules.root.DisabledModule;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
@@ -14,19 +18,16 @@ import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
-import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameAboutToStartServerEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
@@ -38,23 +39,18 @@ import java.util.concurrent.TimeUnit;
 import static com.darwinreforged.servermodifications.objects.TicketStatus.*;
 
 
-@Plugin(
+@ModuleInfo(
         id = "mmctickets",
         name = "MMCTickets",
         version = "2.0.7",
         description = "A real time ticket system")
-public class TicketPlugin {
+@DisabledModule("Injection dependency")
+public class TicketModule extends PluginModule {
 
-    @Inject
-    private Logger logger;
-
+    // TODO : Remove injection requirement
     @Inject
     @DefaultConfig(sharedRoot = false)
     public Path defaultConf;
-
-    @Inject
-    @ConfigDir(sharedRoot = false)
-    public Path ConfigDir;
 
     public TicketConfig config;
 
@@ -63,7 +59,7 @@ public class TicketPlugin {
     private ArrayList<String> waitTimer;
     private DataStoreManager dataStoreManager;
 
-    public TicketPlugin() {
+    public TicketModule() {
     }
 
     @Listener
@@ -81,20 +77,20 @@ public class TicketPlugin {
 
     @Listener
     public void onServerAboutStart(GameAboutToStartServerEvent event) {
-        dataStoreManager = new DataStoreManager(this);
+        dataStoreManager = new DataStoreManager();
         if (dataStoreManager.load()) {
-            getLogger().info("MMCTickets datastore Loaded");
+            DarwinServer.getLogger().info("MMCTickets datastore Loaded");
         } else {
-            getLogger().error("Unable to load a datastore please check your Console/Config!");
+            DarwinServer.getLogger().error("Unable to load a datastore please check your Console/Config!");
         }
     }
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        getLogger().info("MMCTickets Loaded");
-        getLogger().info("Tickets loaded: " + getDataStore().getTicketData().size());
-        getLogger().info("Notifications loaded: " + getDataStore().getNotifications().size());
-        getLogger().info("PlayerData loaded: " + getDataStore().getPlayerData().size());
+        DarwinServer.getLogger().info("MMCTickets Loaded");
+        DarwinServer.getLogger().info("Tickets loaded: " + getDataStore().getTicketData().size());
+        DarwinServer.getLogger().info("Notifications loaded: " + getDataStore().getNotifications().size());
+        DarwinServer.getLogger().info("PlayerData loaded: " + getDataStore().getPlayerData().size());
 
         this.waitTimer = new ArrayList<String>();
 
@@ -105,15 +101,15 @@ public class TicketPlugin {
     @Listener
     public void onPluginReload(GameReloadEvent event) throws IOException, ObjectMappingException {
         this.config = new TicketConfig(this);
-        dataStoreManager = new DataStoreManager(this);
+        dataStoreManager = new DataStoreManager();
         loadDataStore();
     }
 
     public void loadDataStore() {
         if (dataStoreManager.load()) {
-            getLogger().info("MMCTickets datastore Loaded");
+            DarwinServer.getLogger().info("MMCTickets datastore Loaded");
         } else {
-            getLogger().error("Unable to load a datastore please check your Console/Config!");
+            DarwinServer.getLogger().error("Unable to load a datastore please check your Console/Config!");
         }
     }
 
@@ -305,10 +301,6 @@ public class TicketPlugin {
         cmdManager.register(this, ticketOpen, "modreq");
         cmdManager.register(this, ticketRead, "check");
         cmdManager.register(this, ticketBase, "ticket");
-    }
-
-    public Logger getLogger() {
-        return logger;
     }
 
     public IDataStore getDataStore() {

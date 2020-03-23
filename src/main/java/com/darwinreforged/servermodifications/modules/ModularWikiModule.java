@@ -1,6 +1,8 @@
 package com.darwinreforged.servermodifications.modules;
 
 import com.darwinreforged.servermodifications.DarwinServer;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.FileManager;
@@ -16,7 +18,6 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -29,7 +30,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
-@DarwinModule(
+@ModuleInfo(
         id = "modularwiki",
         name = "Modular Wiki",
         description = "Configuration based wiki plugin for Darwin Reforged",
@@ -38,7 +39,7 @@ import java.util.Optional;
         },
         version = "0.1.7"
 )
-public class ModularWikiModule implements CommandPluginModule {
+public class ModularWikiModule extends PluginModule implements CommandExecutor {
 
     public static WikiObject[] wikiObjects;
 
@@ -72,11 +73,6 @@ public class ModularWikiModule implements CommandPluginModule {
                 TextColors.DARK_AQUA, TextStyles.STRIKETHROUGH, "============",
                 TextStyles.RESET, TextColors.AQUA, String.format(" %s ", tag),
                 TextColors.DARK_AQUA, TextStyles.STRIKETHROUGH, "============");
-    }
-
-    @Override
-    public void onServerFinishLoad(GameInitializationEvent event) {
-        // Do nothing
     }
 
     @Listener

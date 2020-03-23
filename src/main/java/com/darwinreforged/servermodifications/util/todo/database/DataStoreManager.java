@@ -1,6 +1,6 @@
 package com.darwinreforged.servermodifications.util.todo.database;
 
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 
 import java.lang.reflect.InvocationTargetException;
@@ -8,16 +8,14 @@ import java.util.*;
 
 public final class DataStoreManager {
 
-	private final TicketPlugin plugin;
-
 	private final Map<String, Class<? extends IDataStore>> dataStores = new HashMap<>();
 	private IDataStore dataStore;
 
-	public DataStoreManager ( TicketPlugin plugin ) {
-		this.plugin = plugin;
+	public DataStoreManager() {
+
 	}
 
-	public boolean load () {
+	public boolean load() {
 		if (getDataStore() != null) {
 			clearDataStores();
 		}
@@ -26,15 +24,15 @@ public final class DataStoreManager {
 		switch (TicketConfig.storageEngine.toUpperCase()) {
 			case "MYSQL":
 				setDataStoreInstance("MYSQL");
-				plugin.getLogger().info("Loading datastore: MySQL");
+				DarwinServer.getLogger().info("Loading datastore: MySQL");
 				return getDataStore().load();
 			case "H2":
 				setDataStoreInstance("H2");
-				plugin.getLogger().info("Loading datastore: H2 ");
+				DarwinServer.getLogger().info("Loading datastore: H2 ");
 				return getDataStore().load();
 			default:
-				plugin.getLogger().error("Unable to determine selected datastore.");
-				plugin.getLogger().info("Available datastores: " + getAvailableDataStores().toString());
+				DarwinServer.getLogger().error("Unable to determine selected datastore.");
+				DarwinServer.getLogger().info("Available datastores: " + getAvailableDataStores().toString());
 				return false;
 		}
 	}
@@ -83,7 +81,7 @@ public final class DataStoreManager {
 	 */
 	private void setDataStoreInstance ( String dataStoreId ) {
 		try {
-			dataStore = dataStores.get(dataStoreId).getConstructor(TicketPlugin.class).newInstance(this.plugin);
+			dataStore = dataStores.get(dataStoreId).getConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | NoSuchMethodException | InvocationTargetException | SecurityException e) {
 			throw new RuntimeException("Couldn't instantiate data store " + dataStoreId + " " + e);
 		}

@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.permissions.TicketPermissions;
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -17,9 +17,9 @@ import java.util.List;
 
 public class TicketCommand implements CommandExecutor {
 
-    private final TicketPlugin plugin;
+    private final TicketModule plugin;
 
-    public TicketCommand(TicketPlugin instance) {
+    public TicketCommand(TicketModule instance) {
         plugin = instance;
     }
 

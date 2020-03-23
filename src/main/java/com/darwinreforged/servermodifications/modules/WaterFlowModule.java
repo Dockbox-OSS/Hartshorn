@@ -1,5 +1,7 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.intellectualcrafters.plot.object.Plot;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.property.block.MatterProperty;
@@ -8,16 +10,15 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.util.Optional;
 
-@Plugin(id = "zdarwinwater", name = "ca.coulis.zdarwinwater.ZDarwinWater", version = "1.0", description = "Change flowing water to static water")
-public class WaterFlowPlugin {
+@ModuleInfo(id = "zdarwinwater", name = "ca.coulis.zdarwinwater.ZDarwinWater", version = "1.0", description = "Change flowing water to static water")
+public class WaterFlowModule extends PluginModule {
 
-    public WaterFlowPlugin() {
+    public WaterFlowModule() {
     }
 
     @Listener(order = Order.PRE)

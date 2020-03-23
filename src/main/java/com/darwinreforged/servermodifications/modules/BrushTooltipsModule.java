@@ -1,6 +1,8 @@
 package com.darwinreforged.servermodifications.modules;
 
 import com.darwinreforged.servermodifications.listeners.BrushTooltipListener;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -12,13 +14,13 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.text.Text;
 
-@DarwinModule(
+@ModuleInfo(
         id = "brushtooltips",
         name = "Brush Tooltips",
         version = "0.1.10b",
         description =
                 "Show tooltips on WorldEdit brushes, FAWE integration enabled")
-public class BrushTooltipsModule implements PluginModule {
+public class BrushTooltipsModule extends PluginModule {
 
     public BrushTooltipsModule() {
     }
