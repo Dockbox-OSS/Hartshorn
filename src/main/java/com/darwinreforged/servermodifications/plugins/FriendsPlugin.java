@@ -53,35 +53,29 @@ public class FriendsPlugin {
     }
 
     CommandSpec teleportCommand = CommandSpec.builder()
-            .description(Text.of("Main command for Darwin Friends"))
             .permission("DarwinFriends.use")
             .arguments(GenericArguments.player(Text.of("online player")))
             .executor(new FriendsTeleportCommand())
             .build();
     CommandSpec listCommand = CommandSpec.builder()
-            .description(Text.of("Main command for Darwin Friends"))
             .permission("DarwinFriends.use")
             .executor(new FriendsListCommand())
             .build();
     CommandSpec toggleCommand = CommandSpec.builder()
-            .description(Text.of("Main command for Darwin Friends"))
             .permission("DarwinFriends.use")
             .executor(new FriendsToggleCommand())
             .build();
     CommandSpec addCommand = CommandSpec.builder()
-            .description(Text.of("Main command for Darwin Friends"))
             .permission("DarwinFriends.use")
             .arguments(GenericArguments.player(Text.of("online player")))
             .executor(new FriendsAddCommand())
             .build();
     CommandSpec removeCommand = CommandSpec.builder()
-            .description(Text.of("Main command for Darwin Friends"))
             .permission("DarwinFriends.use")
             .arguments(GenericArguments.user(Text.of("online/offline player")))
             .executor(new FriendsRemoveCommand())
             .build();
     CommandSpec friendsCommand = CommandSpec.builder()
-            .description(Text.of("Main command for Darwin Friends"))
             .permission("DarwinFriends.use")
             .child(addCommand, "add")
             .child(removeCommand, "remove")

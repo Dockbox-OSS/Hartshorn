@@ -1,5 +1,7 @@
 package com.darwinreforged.servermodifications.util.plugins;
 
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.flowpowered.math.vector.Vector3d;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
@@ -11,8 +13,6 @@ import net.minecraft.server.management.PlayerList;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 import java.util.*;
 
@@ -178,7 +178,7 @@ public class PlayerWeatherCoreUtil {
 
     if (globalWeatherOff && !overide){
       Optional<Player> optionalPlayer = Sponge.getServer().getPlayer(uuid);
-      optionalPlayer.ifPresent(player -> sendMessage(player, "Sorry, but pweather is currently disabled"));
+      PlayerUtils.tellIfPresent(optionalPlayer, Translations.WEATHER_DISABLED_USER.t());
       return;
     }
 
@@ -223,14 +223,5 @@ public class PlayerWeatherCoreUtil {
         }
       }
     }
-  }
-
-  public static void sendMessage(Player player, String message) {
-    player.sendMessage(
-            Text.of(
-                    TextColors.GRAY,
-                    "[] ",
-                    TextColors.AQUA,
-                    message));
   }
 }

@@ -3,6 +3,7 @@ package com.darwinreforged.servermodifications.plugins;
 import com.darwinreforged.servermodifications.commands.weather.PlayerWeatherCommand;
 import com.darwinreforged.servermodifications.commands.weather.PlotWeatherCommand;
 import com.darwinreforged.servermodifications.listeners.WeatherPlayerActionListeners;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherLightningUtil;
 import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherCoreUtil;
@@ -86,14 +87,14 @@ public class PlayerWeatherPlugin {
             .executor(
                 (src, args) -> {
                   if (!(src instanceof Player)) {
-                    src.sendMessage(Text.of("This command can only be executed by a player"));
+                      PlayerUtils.tell(src, Translations.PLAYER_ONLY_COMMAND.t());
                     return CommandResult.success();
                   }
 
                   // If true, this prevents any packets from being intercepted.
                   Player player = (Player) src;
                   PlayerWeatherCoreUtil.globalWeatherOff = !PlayerWeatherCoreUtil.globalWeatherOff;
-                  PlayerUtils.tell(player, "Using global weather : " + (PlayerWeatherCoreUtil.globalWeatherOff ? "OFF" : "ON"));
+                  PlayerUtils.tell(player, Translations.WEATHER_USING_GLOBAL.ft(PlayerWeatherCoreUtil.globalWeatherOff ? Translations.DEFAULT_OFF.s() : Translations.DEFAULT_ON.s()));
 
 
                   for (UUID uuid : PlayerWeatherCoreUtil.getPlayerWeatherUUIDs())
@@ -127,11 +128,11 @@ public class PlayerWeatherPlugin {
                         (src, args) -> {
                             if (!(src instanceof Player)) return CommandResult.success();
                             Player player = (Player) src;
-                            PlayerUtils.tell(player, "Current Weather Type: " +
-                                    PlayerWeatherCoreUtil.getPlayersWeather(player.getUniqueId()));
-                            PlayerUtils.tell(player, "Is Lightning Player: " +
-                                    PlayerWeatherCoreUtil.lightningPlayersContains(player.getUniqueId()));
-                            PlayerUtils.tell(player, PlayerWeatherLightningUtil.lightningSchedulerStatus());
+                            PlayerUtils.tell(player, Translations.WEATHER_DEBUG.ft(
+                                    PlayerWeatherCoreUtil.getPlayersWeather(player.getUniqueId()),
+                                    PlayerWeatherCoreUtil.lightningPlayersContains(player.getUniqueId()),
+                                    PlayerWeatherLightningUtil.lightningSchedulerStatus()
+                            ));
                             return CommandResult.success();
                         }
                     ).build();

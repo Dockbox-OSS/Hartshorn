@@ -1,6 +1,8 @@
 package com.darwinreforged.servermodifications.plugins;
 
 import com.darwinreforged.servermodifications.listeners.DaveChatListeners;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.DaveConfigurationUtil;
 import com.google.inject.Inject;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +20,6 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class DavePlugin {
     public void onServerStart(GameStartedServerEvent event) {
         DavePluginWrapper.setSingleton(this);
         setupConfigurations();
-        logger.info("Loaded Dave and associated configurations");
+
     }
 
     private void setupConfigurations() {
@@ -147,13 +148,13 @@ public class DavePlugin {
                 String name = src.getName();
                 if (!playerWhoMutedDave.contains(name)) {
                     playerWhoMutedDave.add(name);
-                    src.sendMessage(Text.of(" §8// §c Muted Dave, note that important triggers will always show"));
+                    PlayerUtils.tell(src, Translations.DAVE_MUTED.t());
                     String currentList = settingsHandle.get("muted");
                     String newList = currentList + "," + name;
                     settingsHandle.set("muted", newList);
                 } else {
                     playerWhoMutedDave.remove(name);
-                    src.sendMessage(Text.of(" §8// §c Unmuted Dave"));
+                    PlayerUtils.tell(src, Translations.DAVE_UNMUTED.t());
                     String currentList = settingsHandle.get("muted");
                     String newList = currentList.replace("," + name, "");
                     settingsHandle.set("muted", newList);
@@ -168,7 +169,7 @@ public class DavePlugin {
         @Override
         public CommandResult execute(CommandSource src, CommandContext args) {
             setupConfigurations();
-            src.sendMessage(Text.of(settingsProperties.getProperty("prefix").replaceAll("&", "§"), TextColors.WHITE, " : Reloaded Dave without breaking stuff, whoo!"));
+            PlayerUtils.tell(src, Translations.DAVE_RELOADED_USER.ft(settingsProperties.getProperty("prefix")), false);
             return CommandResult.success();
         }
     }

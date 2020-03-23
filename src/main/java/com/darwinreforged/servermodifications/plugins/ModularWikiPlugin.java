@@ -1,5 +1,7 @@
 package com.darwinreforged.servermodifications.plugins;
 
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.google.inject.Inject;
@@ -69,7 +71,7 @@ public class ModularWikiPlugin implements CommandExecutor {
                     .arguments(GenericArguments.string(Text.of("entry")), GenericArguments.player(Text.of("pl")))
                     .build();
 
-    public static Text defaultBreakLine = getBreakLine("Wiki");
+    public static Text defaultBreakLine = Translations.WIKI_BREAKLINE.ft("Wiki");
 
     public ModularWikiPlugin() {
     }
@@ -114,13 +116,9 @@ public class ModularWikiPlugin implements CommandExecutor {
         }
     }
 
-    private static void tellPlayer(String message, CommandSource pl) {
-        pl.sendMessage(Text.of(TextColors.GRAY, "[] ", TextColors.AQUA, message));
-    }
-
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        ModularWikiPlugin.tellPlayer((this.init() ? "Successfully reloaded wiki" : "Failed to reload wiki, see console for more information"), src);
+        PlayerUtils.tell(src, (this.init() ? Translations.WIKI_RELOADED_USER_SUCCESS.t() : Translations.WIKI_RELOADED_USER_FAILURE.t()));
         return CommandResult.success();
     }
 
@@ -148,23 +146,24 @@ public class ModularWikiPlugin implements CommandExecutor {
                                         Text.Builder singleLineBuilder = Text.builder();
                                         singleLineBuilder
                                                 .append(Text.of("\n", TextColors.WHITE, partialLines[1]))
-                                                .onHover(TextActions.showText(Text.of(TextColors.AQUA, String.format("Open entry '%s'", partialLines[0]))))
+                                                .onHover(TextActions.showText(Translations.WIKI_OPEN_ENTRY_HOVER.ft(partialLines[0])))
                                                 .onClick(TextActions.runCommand(String.format("/modularwiki:wiki %s", partialLines[0])));
 
                                         multiLineDescriptionBuilder.append(singleLineBuilder.build());
                                     } else multiLineDescriptionBuilder.append(Text.of("\n", TextColors.WHITE, line));
                                 });
                                 Text shareButton = Text.builder()
-                                        .append(Text.of("\n", TextColors.DARK_AQUA, "[", TextColors.AQUA, String.format("Share '%s'", wikiObject.name), TextColors.DARK_AQUA, "]"))
-                                        .onHover(TextActions.showText(Text.of(TextColors.AQUA, "Share wiki with another player")))
+                                        .append(Translations.WIKI_SHARE_BUTTON.ft(wikiObject.name))
+                                        .onHover(TextActions.showText(Translations.WIKI_SHARE_BUTTON_HOVER.t()))
                                         .onClick(TextActions.suggestCommand(String.format("/modularwiki:wikishare %s", wikiObject.id)))
                                         .build();
-                                pl.sendMessage(Text.of(ModularWikiPlugin.getBreakLine(wikiObject.name), multiLineDescriptionBuilder.build(), "\n", shareButton, ModularWikiPlugin.getBreakLine(wikiObject.name)));
+                                PlayerUtils.tell(pl, Translations.WIKI_BREAKLINE.ft(wikiObject.name));
+                                PlayerUtils.tell(pl, Text.of(multiLineDescriptionBuilder.build(), "\n", shareButton, ModularWikiPlugin.getBreakLine(wikiObject.name)));
                             } else {
-                                ModularWikiPlugin.tellPlayer(String.format("You do not have permission to view this wiki '%s'", wikiObject.permission), pl);
+                                PlayerUtils.tell(pl, Translations.WIKI_NOT_ALLOWED.ft(wikiObject.permission));
                             }
                         } else {
-                            ModularWikiPlugin.tellPlayer(String.format("No wiki entries were found for requested value '%s'", optionalEntry.get()), pl);
+                            PlayerUtils.tell(pl, Translations.WIKI_NOT_FOUND.ft(optionalEntry.get()));
                         }
 
                     } else {
@@ -174,17 +173,17 @@ public class ModularWikiPlugin implements CommandExecutor {
                         Arrays.asList(ModularWikiPlugin.wikiObjects).forEach(wikiObject -> {
                             if (wikiObject.permission == null || pl.hasPermission(wikiObject.permission) && !wikiObject.hide) {
                                 Text singleEntryText = Text.builder()
-                                        .append(Text.of(TextColors.GRAY, "\n - ", TextColors.AQUA, wikiObject.name, TextColors.DARK_AQUA, " [View]"))
+                                        .append(Translations.WIKI_LIST_ROW.ft(wikiObject.name))
                                         .onClick(TextActions.runCommand("/modularwiki:wiki " + wikiObject.id))
-                                        .onHover(TextActions.showText(Text.of(TextColors.AQUA, "More information about ", wikiObject.name)))
+                                        .onHover(TextActions.showText(Translations.WIKI_LIST_ROW_HOVER.ft(wikiObject.name)))
                                         .build();
                                 multiLineEntryBuilder.append(singleEntryText);
                             }
                         });
-                        pl.sendMessage(Text.of(ModularWikiPlugin.defaultBreakLine, multiLineEntryBuilder.build(), "\n", ModularWikiPlugin.defaultBreakLine));
+                        PlayerUtils.tell(pl, Text.of(ModularWikiPlugin.defaultBreakLine, multiLineEntryBuilder.build(), "\n", ModularWikiPlugin.defaultBreakLine), false);
                     }
                 } else {
-                    ModularWikiPlugin.tellPlayer("No wiki entries were found", pl);
+                    PlayerUtils.tell(pl, Translations.WIKI_NO_ENTRIES.t());
                 }
             }
             return CommandResult.success();
@@ -217,16 +216,17 @@ public class ModularWikiPlugin implements CommandExecutor {
             if (entry != null && player != null) {
                 WikiObject wikiObject = Arrays.stream(ModularWikiPlugin.wikiObjects).filter(wikiObj -> wikiObj.id.equals(entry)).findFirst().orElse(null);
                 if (wikiObject != null) {
-                    Text shareMessage = Text.of(TextColors.GRAY, "[] ", TextColors.DARK_AQUA, src.getName(), TextColors.AQUA, String.format(" shared the '%s' wiki with you ", wikiObject.name));
+                    Text shareMessage = Translations.WIKI_SHARED_USER.ft(src.getName(), wikiObject.name);
+
                     Text viewButton = Text.builder()
-                            .append(Text.of(TextColors.DARK_AQUA, "[", TextColors.AQUA, "View", TextColors.DARK_AQUA, "]"))
-                            .onHover(TextActions.showText(Text.of(TextColors.AQUA, String.format("View entry '%s'", entry))))
+                            .append(Translations.WIKI_VIEW_BUTTON.t())
+                            .onHover(TextActions.showText(Translations.WIKI_VIEW_BUTTON_HOVER.ft(entry)))
                             .onClick(TextActions.runCommand(String.format("/modularwiki:wiki %s", entry))).build();
 
-                    player.sendMessage(Text.of(shareMessage, viewButton));
+                    PlayerUtils.tell(player, Text.of(shareMessage, viewButton));
                 } else
-                    ModularWikiPlugin.tellPlayer(String.format("No wiki entries were found for requested value '%s'", entry), src);
-            } else ModularWikiPlugin.tellPlayer("Could not share entry", src);
+                    PlayerUtils.tell(src, Translations.WIKI_NOT_FOUND.ft(entry));
+            } else PlayerUtils.tell(src, Translations.WIKI_SHARE_FAILED.t());
             return CommandResult.success();
         }
 

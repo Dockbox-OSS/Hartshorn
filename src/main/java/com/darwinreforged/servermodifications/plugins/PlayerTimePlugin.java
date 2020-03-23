@@ -1,5 +1,7 @@
 package com.darwinreforged.servermodifications.plugins;
 
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.google.inject.Inject;
 import eu.crushedpixel.sponge.packetgate.api.event.PacketEvent;
 import eu.crushedpixel.sponge.packetgate.api.listener.PacketListenerAdapter;
@@ -19,7 +21,6 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.World;
 
 import java.io.IOException;
@@ -55,12 +56,11 @@ public class PlayerTimePlugin extends PacketListenerAdapter {
 
     private void initializeCommands() {
         CommandSpec personalTimeSetCommand = CommandSpec.builder()
-                .description(Text.of("Set your personal time"))
                 .permission("personaltime.command.set")
                 .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("time"))))
                 .executor((src, args) -> {
                     if (!(src instanceof Player)) {
-                        src.sendMessage(Text.of("This command may only be executed by a player"));
+                        PlayerUtils.tell(src, Translations.PLAYER_ONLY_COMMAND.t());
                         return CommandResult.empty();
                     }
                     Player player = (Player) src;
@@ -79,11 +79,11 @@ public class PlayerTimePlugin extends PacketListenerAdapter {
                             try {
                                 intTime = Integer.parseInt(time);
                             } catch (NumberFormatException e) {
-                                sendMessage(player, "'" + time + "' is not a valid number");
+                                PlayerUtils.tell(player, Translations.PTIME_INVALID_NUMBER.ft(time));
                                 return CommandResult.empty();
                             }
                             if (intTime < 0) {
-                                sendMessage(player, "The number you have entered (" + time + ") is too small, it must be at least 0");
+                                PlayerUtils.tell(player, Translations.PTIME_NUMBER_TOO_SMALL.ft(time));
                                 return CommandResult.empty();
                             }
                             setPersonalTime(player, intTime);
@@ -95,11 +95,10 @@ public class PlayerTimePlugin extends PacketListenerAdapter {
                 .build();
 
         CommandSpec personalTimeResetCommand = CommandSpec.builder()
-                .description(Text.of("Reset your personal time"))
                 .permission("personaltime.command.reset")
                 .executor((src, args) -> {
                     if (!(src instanceof Player)) {
-                        src.sendMessage(Text.of("This command may only be executed by a player"));
+                        PlayerUtils.tell(src, Translations.PLAYER_ONLY_COMMAND.t());
                         return CommandResult.empty();
                     }
                     Player player = (Player) src;
@@ -109,27 +108,25 @@ public class PlayerTimePlugin extends PacketListenerAdapter {
                 .build();
 
         CommandSpec personalTimeStatusCommand = CommandSpec.builder()
-                .description(Text.of("Get the status of your personal time"))
                 .permission("personaltime.command.status")
                 .executor((src, args) -> {
                     if (!(src instanceof Player)) {
-                        src.sendMessage(Text.of("This command may only be executed by a player"));
+                        PlayerUtils.tell(src, Translations.PLAYER_ONLY_COMMAND.t());
                         return CommandResult.empty();
                     }
                     Player player = (Player) src;
                     timeOffsets.putIfAbsent(player.getUniqueId(), 0L);
                     long ticksAhead = timeOffsets.get(player.getUniqueId());
                     if (ticksAhead == 0) {
-                        sendMessage(player, "Your time is currently in sync with the server's");
+                        PlayerUtils.tell(player, Translations.PTIME_IN_SYNC.t());
                     } else {
-                        sendMessage(player, "Your time is currently running " + ticksAhead + " ticks ahead of the server's");
+                        PlayerUtils.tell(player, Translations.PTIME_AHEAD.ft(ticksAhead));
                     }
                     return CommandResult.success();
                 })
                 .build();
 
         CommandSpec personalTimeCommand = CommandSpec.builder()
-                .description(Text.of("The one command for PersonalTime"))
                 .permission("personaltime.command")
                 .child(personalTimeSetCommand, "set")
                 .child(personalTimeResetCommand, "reset")
@@ -137,10 +134,6 @@ public class PlayerTimePlugin extends PacketListenerAdapter {
                 .build();
 
         Sponge.getCommandManager().register(this, personalTimeCommand, "personaltime", "ptime");
-    }
-
-    private void sendMessage(Player player, String text) {
-        player.sendMessage(Text.of(TextColors.GREEN, "[", TextColors.RED, "PersonalTime", TextColors.GREEN, "] ", TextColors.YELLOW, text));
     }
 
     private String ticksToRealTime(long ticks) {
@@ -171,13 +164,10 @@ public class PlayerTimePlugin extends PacketListenerAdapter {
         long desiredPersonalTime = (long) Math.ceil(worldTime / 24000.0f) * 24000 + ticks; // Fast forward to the next '0' time and add the desired number of ticks
         long timeOffset = desiredPersonalTime - worldTime;
         timeOffsets.put(player.getUniqueId(), timeOffset);
-
-        sendMessage(player, "Set time to " + ticks + " (" + ticksToRealTime(ticks % 24000) + ")");
     }
 
     private void resetPersonalTime(Player player) {
         timeOffsets.put(player.getUniqueId(), 0L);
-        sendMessage(player, "Your time is now synchronized with the server's");
     }
 
     @Override

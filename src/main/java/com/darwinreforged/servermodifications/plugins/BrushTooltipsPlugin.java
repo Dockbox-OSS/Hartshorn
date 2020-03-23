@@ -36,8 +36,6 @@ public class BrushTooltipsPlugin {
 
     @Listener
     public void onServerFinishLoad(GameInitializationEvent event) {
-        // Register our listener to WorldEdit (native) through FAWE
-        System.out.println("Does this even trigger");
         Sponge.getEventManager().registerListeners(this, new BrushTooltipListener());
         Sponge.getCommandManager().register(this, btMain, "bt");
     }
@@ -46,7 +44,6 @@ public class BrushTooltipsPlugin {
     public void onServerStart(GameStartedServerEvent event) {
         BrushTooltipListener.brushAliases.put("s", "sphere");
         BrushTooltipListener.brushAliases.put("c", "cylinder");
-        logger.info("Loaded Brush Tooltips");
     }
 
     private CommandSpec btRefresh = CommandSpec.builder()
@@ -56,7 +53,7 @@ public class BrushTooltipsPlugin {
             .build();
 
     private CommandSpec btMain = CommandSpec.builder()
-            .description(Text.of("Main Dave command"))
+            .description(Text.of("Main BT command"))
             .child(btRefresh)
             .build();
 

@@ -2,11 +2,11 @@ package com.darwinreforged.servermodifications.util.plugins;
 
 import com.darwinreforged.servermodifications.enums.brushtooltips.Argument;
 import com.darwinreforged.servermodifications.enums.brushtooltips.Brush;
+import com.darwinreforged.servermodifications.resources.Translations;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.util.Tuple;
 
 import java.util.ArrayList;
@@ -32,14 +32,7 @@ public class BrushTooltipUtil {
 
         if (flags.isEmpty()) return new Tuple<>(Text.EMPTY, arguments);
         else {
-            Text flagLabel =
-                    Text.of(
-                            TextColors.GRAY,
-                            "[] ",
-                            TextColors.DARK_AQUA,
-                            "Flags : ",
-                            TextColors.AQUA,
-                            String.join(", ", flags));
+            Text flagLabel = Translations.BRUSH_TOOLTIP_LORE_FLAGS.ft(String.join(", ", flags));
             return new Tuple<>(flagLabel, parsedArguments.toArray(new String[0]));
         }
     }
@@ -56,17 +49,7 @@ public class BrushTooltipUtil {
                 if ("Radius".equals(argument.getDescription()))
                     radius = Integer.parseInt(arguments[argument.getIndex() + 1]);
                 else
-                    argumentLore.add(
-                            Text.of(
-                                    TextColors.GRAY,
-                                    "[] ",
-                                    TextColors.AQUA,
-                                    description,
-                                    TextColors.GRAY,
-                                    ": '",
-                                    TextColors.DARK_AQUA,
-                                    value,
-                                    '\''));
+                    argumentLore.add(Translations.BRUSH_TOOLTIP_LORE_ARGUMENT.ft(description, value));
             }
         }
 
@@ -81,20 +64,11 @@ public class BrushTooltipUtil {
             Brush brush,
             String command) {
         String brushTitle = brush.getDisplayName();
-        Text itemDisplayName =
-                Text.of(
-                        TextColors.AQUA,
-                        brushTitle,
-                        TextColors.GRAY,
-                        " [",
-                        TextColors.DARK_AQUA,
-                        radius,
-                        TextColors.GRAY,
-                        ']');
+        Text itemDisplayName = Translations.BRUSH_TOOLTIP_DISPLAY_NAME.ft(brushTitle, radius);
         itemStack.offer(Keys.DISPLAY_NAME, itemDisplayName);
 
         List<Text> lore = new ArrayList<>();
-        Text line = Text.of(TextColors.DARK_GRAY, TextStyles.UNDERLINE, "-------------");
+        Text line = Translations.BRUSH_TOOLTIP_LORE_SEPARATOR.t();
 
         lore.add(line);
         lore.addAll(arguments);

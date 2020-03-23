@@ -27,7 +27,7 @@ import org.spongepowered.plugin.meta.util.NonnullByDefault;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -63,13 +63,11 @@ public class HeadsEvolvedPlugin {
         try {
             collectHeadsFromAPI();
         } catch (IOException e) {
-            HeadsEvolvedPlugin.getSingleton().logger.debug("Failed to get head.");
+            HeadsEvolvedPlugin.getSingleton().logger.debug("Failed to get heads.");
         }
         File configFile = new File(root.toFile(), "headsevolved.conf");
         handle = new HeadsEvolvedConfigUtil(configFile);
     }
-
-    static String apiLine = "https://minecraft-heads.com/scripts/api.php?tags=true&cat=";
 
     static String[] uuidBlacklist = {
             "c7299fa8d44b "
@@ -78,7 +76,7 @@ public class HeadsEvolvedPlugin {
     private void collectHeadsFromAPI() throws IOException {
         int totalHeads = 0;
         for (HeadsEvolvedHead.Category cat : HeadsEvolvedHead.Category.values()) {
-            String connectionLine = apiLine + cat.toString().toLowerCase().replaceAll("_", "-");
+            String connectionLine = Translations.HEADS_EVOLVED_API_URL.f(cat.toString().toLowerCase().replaceAll("_", "-"));
             JsonArray array = readJsonFromUrl(connectionLine);
             HeadsEvolvedPlugin.getSingleton().logger.debug(cat.toString() + " : " + array.size());
 
@@ -120,7 +118,7 @@ public class HeadsEvolvedPlugin {
     public JsonArray readJsonFromUrl(String url) throws IOException {
         InputStream is = new URL(url).openStream();
         try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String jsonText = readAll(rd);
             return (JsonArray) new JsonParser().parse(jsonText);
         } finally {
@@ -134,14 +132,12 @@ public class HeadsEvolvedPlugin {
 
     private CommandSpec hdbOpen =
             CommandSpec.builder()
-                    .description(Text.of("Opens Head Evo GUI"))
                     .permission("he.open")
                     .executor(new openInventory())
                     .build();
 
     private CommandSpec hdbSearch =
             CommandSpec.builder()
-                    .description(Text.of("Searches for heads with matching tags or name"))
                     .permission("he.open")
                     .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("query"))))
                     .executor(new searchHeads())
@@ -149,7 +145,6 @@ public class HeadsEvolvedPlugin {
 
     private CommandSpec hdbMain =
             CommandSpec.builder()
-                    .description(Text.of("Main command"))
                     .permission("he.open")
                     .child(hdbOpen, "open")
                     .child(hdbSearch, "find", "search")

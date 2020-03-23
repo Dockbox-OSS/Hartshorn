@@ -101,6 +101,17 @@ public class PlayerUtils {
     }
 
     /*
+     sendMessage if present
+     */
+    public static void tellIfPresent(Optional<Player> player, Text message) {
+        player.ifPresent(presentPlayer -> tell(presentPlayer, message, true));
+    }
+
+    public static void tellIfPresent(Optional<Player> player, Text message, boolean addPrefix) {
+        player.ifPresent(presentPlayer -> tell(presentPlayer, message, addPrefix));
+    }
+
+    /*
      Public broadcast
      */
     public static void broadcast(Text text, boolean addPrefix) {

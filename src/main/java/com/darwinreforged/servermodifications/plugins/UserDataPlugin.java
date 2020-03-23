@@ -73,13 +73,12 @@ public class UserDataPlugin {
           PlotPlayer plotPlayer = UUIDHandler.getPlayer(user.getUniqueId());
           boolean showPlots = plotPlayer != null;
 
-          src.sendMessage(
-                  Text.of(
-                          Translations.USER_DATA_HEADER.f(username),
-                          getPlotSquaredText(plotPlayer, showPlots),
-                          getNucleusText(user, src),
-                          getLuckpermsText(user)
-                  ));
+          PlayerUtils.tell(src, Text.of(
+                  Translations.USER_DATA_HEADER.f(username),
+                  getPlotSquaredText(plotPlayer, showPlots),
+                  getNucleusText(user, src),
+                  getLuckpermsText(user)
+          ));
 
         } else {
           PlayerUtils.tell(src, Translations.USER_DATA_FAILED_COLLECT.f(username));
@@ -108,29 +107,13 @@ public class UserDataPlugin {
                 });
 
         return builder
-            .append(Text.of(TextColors.DARK_AQUA, "Worlds: ", TextColors.AQUA, worlds))
-            .append(Text.NEW_LINE)
-            .append(Text.of(TextColors.DARK_AQUA, "Plots: ", TextColors.AQUA, plots))
+                .append(Translations.PLAYER_DATA_PLOTSQUARED.ft(worlds, plots))
             .build();
       } else {
         return builder
-            .append(
-                Text.of(TextColors.GRAY, TextStyles.ITALIC, "Not available if player is offline"))
+                .append(Translations.DATA_UNAVAILABLE_OFFLINE_PLAYER.t())
             .build();
       }
-    }
-
-    private static String timeConversion(int totalSeconds) {
-
-      final int MINUTES_IN_AN_HOUR = 60;
-      final int SECONDS_IN_A_MINUTE = 60;
-
-      int seconds = totalSeconds % SECONDS_IN_A_MINUTE;
-      int totalMinutes = totalSeconds / SECONDS_IN_A_MINUTE;
-      int minutes = totalMinutes % MINUTES_IN_AN_HOUR;
-      int hours = totalMinutes / MINUTES_IN_AN_HOUR;
-
-      return hours + " hours, " + minutes + " minutes, " + seconds + " seconds";
     }
 
     private Text getLuckpermsText(User player) {
@@ -138,22 +121,12 @@ public class UserDataPlugin {
 
       if (user != null) {
         return Text.builder()
-            .append(Text.NEW_LINE)
-            .append(Text.of(TextColors.AQUA, TextStyles.UNDERLINE, "⋙ LuckPerms"))
-            .append(Text.NEW_LINE)
-            .append(
-                Text.of(
-                    TextColors.DARK_AQUA,
-                    "Primary group: ",
-                    TextColors.AQUA,
-                    user.getPrimaryGroup()))
-            .append(Text.NEW_LINE)
-            .append(
-                Text.of(
-                    TextColors.DARK_AQUA,
-                    "Prefix: ",
-                    TextColors.AQUA,
-                    user.getCachedData().getMetaData(Contexts.global()).getPrefix()))
+                .append(Text.NEW_LINE)
+                .append(Text.of(TextColors.AQUA, TextStyles.UNDERLINE, "⋙ LuckPerms"))
+                .append(Text.NEW_LINE)
+                .append(Translations.PLAYER_DATA_LUCKPERMS.ft(
+                        user.getPrimaryGroup(),
+                        user.getCachedData().getMetaData(Contexts.global()).getPrefix()))
             .build();
       }
       return Text.EMPTY;
@@ -167,14 +140,7 @@ public class UserDataPlugin {
       String ip = core.getLastIp().get();
       if (Arrays.stream(ip.split("\\."))
           .anyMatch(x -> Integer.parseInt(x.replaceAll("\\\\", "").replaceAll("/", "")) > 255)) {
-        src.sendMessage(
-            Text.of(
-                TextColors.DARK_GRAY,
-                "[] ",
-                TextColors.RED,
-                "Could not collect data for ",
-                TextColors.DARK_RED,
-                player.getName()));
+        PlayerUtils.tell(src, Translations.PLAYER_DATA_COLLECT_ERROR.ft(player.getName()));
       }
 
       UserStorageService uss =
@@ -186,49 +152,21 @@ public class UserDataPlugin {
               .map(Optional::get)
               .collect(Collectors.toList());
       List<String> usernames = users.stream().map(User::getName).collect(Collectors.toList());
-      String alts = usernames.isEmpty() ? "None" : String.join(", ", usernames);
+      String alts = usernames.isEmpty() ? Translations.NONE.s() : String.join(", ", usernames);
 
       return Text.builder()
-          .append(Text.NEW_LINE)
-          .append(Text.of(TextColors.AQUA, TextStyles.UNDERLINE, "⋙ Nucleus"))
-          .append(Text.NEW_LINE)
-          .append(
-              Text.of(
-                  TextColors.DARK_AQUA,
-                  "First joined: ",
-                  TextColors.AQUA,
-                  core.getFirstJoin().get()))
-          .append(Text.NEW_LINE)
-          .append(
-              Text.of(
-                  TextColors.DARK_AQUA, "Last known IP: ", TextColors.AQUA, core.getLastIp().get()))
-          .append(Text.NEW_LINE)
-          .append(
-              Text.of(
-                  TextColors.DARK_AQUA,
-                  "Last known name: ",
-                  TextColors.AQUA,
-                  core.getLastKnownName().get()))
-          .append(Text.NEW_LINE)
-          .append(
-              Text.of(
-                  TextColors.DARK_AQUA, "Last login: ", TextColors.AQUA, core.getLastLogin().get()))
-          .append(Text.NEW_LINE)
-          .append(
-              Text.of(
-                  TextColors.DARK_AQUA,
-                  "Last logout: ",
-                  TextColors.AQUA,
-                  core.getLastLogout().get()))
-          .append(Text.NEW_LINE)
-          .append(
-              Text.of(
-                  TextColors.DARK_AQUA,
-                  "Last seen: ",
-                  TextColors.AQUA,
-                  WorldUtil.IMP.getLastSeen(Collections.singleton(player.getUniqueId()))))
-          .append(Text.NEW_LINE)
-          .append(Text.of(TextColors.DARK_AQUA, "Alt accounts: ", TextColors.AQUA, alts))
+              .append(Text.NEW_LINE)
+              .append(Text.of(TextColors.AQUA, TextStyles.UNDERLINE, "⋙ Nucleus"))
+              .append(Text.NEW_LINE)
+              .append(Translations.PLAYER_DATA_NUCLEUS.ft(
+                      core.getFirstJoin().get(),
+                      core.getLastIp().get(),
+                      core.getLastKnownName().get(),
+                      core.getLastLogin().get(),
+                      core.getLastLogout().get(),
+                      WorldUtil.IMP.getLastSeen(Collections.singleton(player.getUniqueId())),
+                      alts
+              ))
           .build();
     }
   }

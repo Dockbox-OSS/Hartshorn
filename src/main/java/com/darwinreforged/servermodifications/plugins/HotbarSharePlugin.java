@@ -52,7 +52,6 @@ public class HotbarSharePlugin {
 
     private CommandSpec hbl =
             CommandSpec.builder()
-                    .description(Text.of("Loads hotbar from #hotbar action"))
                     .permission("hb.load")
                     .child(hblView, "view")
                     .child(hblLoad, "load")
@@ -60,7 +59,6 @@ public class HotbarSharePlugin {
 
     private CommandSpec hbshare =
             CommandSpec.builder()
-                    .description(Text.of("Shared hotbar"))
                     .permission("hb.share")
                     .arguments(GenericArguments.optional(GenericArguments.player(Text.of("PlayerName"))))
                     .executor(new ShareCommand())
@@ -101,30 +99,16 @@ public class HotbarSharePlugin {
 
                 Text buttonView =
                         Text.builder()
-                                .append(
-                                        Text.of(
-                                                TextColors.DARK_AQUA,
-                                                " [",
-                                                TextColors.AQUA,
-                                                "View",
-                                                TextColors.DARK_AQUA,
-                                                "]"))
+                                .append(Translations.HOTBAR_VIEW_BUTTON.t())
                                 .onClick(TextActions.runCommand("/hbload view " + id))
-                                .onHover(TextActions.showText(Text.of("View hotbar")))
+                                .onHover(TextActions.showText(Translations.HOTBAR_VIEW_BUTTON_HOVER.t()))
                                 .build();
 
                 Text buttonLoad =
                         Text.builder()
-                                .append(
-                                        Text.of(
-                                                TextColors.DARK_AQUA,
-                                                "[",
-                                                TextColors.AQUA,
-                                                "Load",
-                                                TextColors.DARK_AQUA,
-                                                "]"))
+                                .append(Translations.HOTBAR_LOAD_BUTTON.t())
                                 .onClick(TextActions.runCommand("/hbload load " + id))
-                                .onHover(TextActions.showText(Text.of("Load hotbar")))
+                                .onHover(TextActions.showText(Translations.HOTBAR_LOAD_BUTTON_HOVER.t()))
                                 .build();
 
                 PlayerUtils.tell(player, Translations.SHARED_HOTBAR_WITH.f(shareWith == null ? "everyone" : shareWith.getName()));

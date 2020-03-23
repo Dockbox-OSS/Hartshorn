@@ -3,6 +3,7 @@ package com.darwinreforged.servermodifications.listeners;
 import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
 import com.darwinreforged.servermodifications.plugins.DavePluginWrapper;
 import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.DaveRawUtils;
 import com.magitechserver.magibridge.DiscordHandler;
 import com.magitechserver.magibridge.api.DiscordEvent;
@@ -124,7 +125,7 @@ public class DaveChatListeners {
             Sponge.getServer().getOnlinePlayers()
                     .stream().filter(player1 -> !DavePluginWrapper.getMutedPlayers()
                     .contains(player1.getName()) || important)
-                    .forEach(player1 -> player1.sendMessage(message.build()));
+                    .forEach(player1 -> PlayerUtils.tell(player1, message.build()));
 
             String discordChannel = DavePluginWrapper.getSettingsProperties().getProperty("discordChannel");
 

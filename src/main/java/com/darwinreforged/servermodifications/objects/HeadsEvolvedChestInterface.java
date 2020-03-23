@@ -1,5 +1,7 @@
 package com.darwinreforged.servermodifications.objects;
 
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.mcsimonflash.sponge.teslalibs.inventory.Action;
 import com.mcsimonflash.sponge.teslalibs.inventory.Element;
 import com.mcsimonflash.sponge.teslalibs.inventory.Layout;
@@ -165,7 +167,6 @@ public class HeadsEvolvedChestInterface {
               Inventory inventory = a.getPlayer().getInventory();
               Hotbar hotbar = inventory.query(Hotbar.class);
               if (!(hotbar.offer(stack) == InventoryTransactionResult.successNoTransactions())) {
-                System.out.println(hotbar.offer(stack).toString());
                 inventory.offer(stack);
               }
             };
@@ -174,17 +175,13 @@ public class HeadsEvolvedChestInterface {
       } catch (NumberFormatException | InstantiationException ex) {
         ex.printStackTrace();
         incorrectSkulls++;
-        System.out.println("Incorrect head UUID : '" + headObject.getUuid() + "'");
       }
     }
 
     page.define(elements);
 
     if (incorrectSkulls > 0)
-      player.sendMessage(
-          Text.of(
-              TextColors.RED,
-              "Failed to load " + incorrectSkulls + " heads, please report this to EthereaI_"));
+      PlayerUtils.tell(player, Translations.HEADS_EVOLVED_FAILED_LOAD.ft(incorrectSkulls));
 
     page.open(player);
   }

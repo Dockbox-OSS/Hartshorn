@@ -1,6 +1,7 @@
 package com.darwinreforged.servermodifications.util.plugins;
 
 import com.darwinreforged.servermodifications.plugins.PlayerWeatherPlugin;
+import com.darwinreforged.servermodifications.resources.Translations;
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -93,9 +94,9 @@ public class PlayerWeatherLightningUtil
     }
 
     public static String lightningSchedulerStatus(){
-        if (lightningTask != null) return "Lightning scheduler active with: "
-                + PlayerWeatherCoreUtil.getLightningPlayers().size() + " players";
-        return "Lightning scheduler inactive with: " + PlayerWeatherCoreUtil.getLightningPlayers().size() + " players";
+        int players = PlayerWeatherCoreUtil.getLightningPlayers().size();
+        if (lightningTask != null) return Translations.LIGHTNING_SCHEDULE_ACTIVE.f(players);
+        return Translations.LIGHTNING_SCHEDULE_INACTIVE.f(players);
     }
 
     private static void lightningMethod(){

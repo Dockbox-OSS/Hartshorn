@@ -4,6 +4,8 @@ import com.darwinreforged.servermodifications.listeners.PlotIDBarMoveEventListen
 import com.darwinreforged.servermodifications.objects.PlotIDBarPlayer;
 import com.darwinreforged.servermodifications.objects.PlotIDBarRootConfig;
 import com.darwinreforged.servermodifications.objects.PlotIDToggled;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.SimpleConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -25,10 +27,8 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Plugin(id = "plotidbossbar", name = "Darwin PlotID boss bar", version = "1.0", description = "Plot ID boss bar")
 public class PlotIDBarPlugin {
@@ -59,10 +58,6 @@ public class PlotIDBarPlugin {
 
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        Task removeOffline = Task.builder().execute(new clearOfflines())
-                .delayTicks(1)
-                .interval(1, TimeUnit.MINUTES)
-                .name("Remove offline players from my map").submit(this);
         File file = new File(root.toFile(), "toggled.conf");
 
         if (!file.exists()) {
@@ -108,7 +103,6 @@ public class PlotIDBarPlugin {
     public class clearOfflines implements Runnable {
         public void run() {
             ArrayList<Player> offlinePlayers = new ArrayList<Player>();
-            Sponge.getServer().getConsole().sendMessage(Text.of(TextColors.DARK_PURPLE, "Clearing offline players from PlotID maps"));
             for (Entry<UUID, PlotIDBarPlayer> barP : allPlayers.entrySet()) {
                 if (!barP.getValue().getPlayer().isOnline()) {
                     offlinePlayers.add(barP.getValue().getPlayer());
@@ -116,7 +110,6 @@ public class PlotIDBarPlugin {
             }
             for (Player player : offlinePlayers) {
                 allPlayers.remove(player.getUniqueId());
-                Sponge.getServer().getConsole().sendMessage(Text.of(TextColors.DARK_PURPLE, "Clearing ", player.getName()));
             }
             offlinePlayers.clear();
         }
@@ -177,11 +170,11 @@ public class PlotIDBarPlugin {
             PlotIDBarPlayer barP = new PlotIDBarPlayer(player);
             if (toggledID.contains(player.getUniqueId())) {
                 toggledID.remove(player.getUniqueId());
-                player.sendMessage(Text.of(TextColors.WHITE, "Updating PlotID Bar Preference to ", TextColors.RED, "on"));
+                PlayerUtils.tell(player, Translations.PID_TOGGLE_BAR.ft(Translations.DEFAULT_ON));
                 barP.setBarBool(false);
             } else {
                 toggledID.add(player.getUniqueId());
-                player.sendMessage(Text.of(TextColors.WHITE, "Updating PlotID Bar Preference to ", TextColors.RED, "off"));
+                PlayerUtils.tell(player, Translations.PID_TOGGLE_BAR.ft(Translations.DEFAULT_OFF));
                 barP.setBarBool(true);
             }
             allPlayers.put(player.getUniqueId(), barP);
@@ -204,11 +197,11 @@ public class PlotIDBarPlugin {
             PlotIDBarPlayer barP = new PlotIDBarPlayer(player);
             if (toggledMembers.contains(player.getUniqueId())) {
                 toggledMembers.remove(player.getUniqueId());
-                player.sendMessage(Text.of(TextColors.WHITE, "Updating PlotID Members Preference to ", TextColors.RED, "on"));
+                PlayerUtils.tell(player, Translations.PID_TOGGLE_MEMBERS.ft(Translations.DEFAULT_ON));
                 barP.setMembersBool(false);
             } else {
                 toggledMembers.add(player.getUniqueId());
-                player.sendMessage(Text.of(TextColors.WHITE, "Updating PlotID Members Preference to ", TextColors.RED, "off"));
+                PlayerUtils.tell(player, Translations.PID_TOGGLE_MEMBERS.ft(Translations.DEFAULT_OFF));
                 barP.setMembersBool(true);
             }
             allPlayers.put(player.getUniqueId(), barP);

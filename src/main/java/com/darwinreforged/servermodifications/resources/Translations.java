@@ -9,13 +9,14 @@ import java.util.Map;
 
 public enum Translations {
 
-//    Default formats
+    //    Default formats
     PREFIX("$3[] $1"),
     COLOR_PRIMARY("b"),
     COLOR_SECONDARY("3"),
     COLOR_MINOR("7"),
     COLOR_ERROR("c"),
     PLAYER_ONLY_COMMAND("$4This command can only be executed by players"),
+    COMMAND_NO_PERMISSION("$4You do not have permission to use this command"),
     PLOTS1_NAME("Plots1"),
     PLOTS2_NAME("Plots2"),
     PLOTS500_NAME("Plots500"),
@@ -259,6 +260,10 @@ public enum Translations {
     BRUSH_FLAG_DESCRIPTION_SELECT_AFTER("Select after drawing"),
     BRUSH_FLAG_DESCRIPTION_OVERLAY("Overlay"),
     REPLACER_TOOL_DISPLAY_NAME("$1Replacer $3[$2{0}$3]"),
+    BRUSH_TOOLTIP_LORE_FLAGS("$3[] $2Flags : $1{0}"),
+    BRUSH_TOOLTIP_LORE_ARGUMENT("$3[] $2{0} : $1'{1}'"),
+    BRUSH_TOOLTIP_DISPLAY_NAME("$1{0} $3[$2{1}$3]"),
+    BRUSH_TOOLTIP_LORE_SEPARATOR("&8&m-------------"),
 
     //    Friends
     ACCEPTING_TP("$2Accept teleports from friends : $1{0}"),
@@ -281,9 +286,16 @@ public enum Translations {
     PLOT_WEATHER_SET("$2Plot weather set to: $1{0}"),
     WEATHER_ERROR_NO_OWNER("You must be the owner of the plot to execute this command"),
     WEATHER_ERROR_NO_WEATHER_TYPE("You must enter a weather type"),
+    WEATHER_USING_GLOBAL("Using global weather : {0}"),
+    WEATHER_DEBUG("Current Weather Type: {0}\nIs Lightning Player: {1}\n{2}"),
+    WEATHER_DISABLED_USER("$4Sorry, but pweather is currently disabled"),
+    LIGHTNING_SCHEDULE_ACTIVE("Lightning schedular active with {0} players"),
+    LIGHTNING_SCHEDULE_INACTIVE("Lightning schedular inactive with {0} players"),
 
     //    HeadsEvolved
     OPEN_GUI_ERROR("$4Failed to open Head Database GUI"),
+    HEADS_EVOLVED_API_URL("https://minecraft-heads.com/scripts/api.php?tags=true&cat="),
+    HEADS_EVOLVED_FAILED_LOAD("$4Failed to load {0} heads"),
 
     //    Layerheight
     HEIGHT_TOO_HIGH("$4Height cannot be above 8"),
@@ -301,6 +313,10 @@ public enum Translations {
     HOTBAR_SHARE_INDEX("$2#{0} : $1{1}"),
     HOTBAR_SHARE_ENCHANTED("$2  Enchanted : "),
     HOTBAR_SHARE_LORE("$2  Lore : "),
+    HOTBAR_VIEW_BUTTON("$2[$1View$2]"),
+    HOTBAR_VIEW_BUTTON_HOVER("View hotbar"),
+    HOTBAR_LOAD_BUTTON("$2[$1Load$2]"),
+    HOTBAR_LOAD_BUTTON_HOVER("Load hotbar"),
 
     //    Paintings
     PNG_URL_REQUIRED("$4URLs have to end with .png, please make sure to upload an image rather than a webpage including it"),
@@ -319,6 +335,12 @@ public enum Translations {
     PAINTING_REJECTING("Rejecting Submission : {0}"),
     PAINTING_CANNOT_UPDATE_STATUS("Cannot {0} this submission (#{1}). Are you sure it exists?"),
 
+    PAINTING_NEW_SUBMISSION_TITLE("New submission : #{0}"),
+    PAINTING_NEW_EXEMPT_SUBMISSION_TITLE("New exempt submission : #{0}"),
+    PAINTING_SUBMISSION_AUTHOR("Submitted by : {0}"),
+    PAINTING_SUBMISSION_SIZE_TITLE("Size"),
+    PAINTING_SUBMISSION_SIZE_VALUE("X: {0}\nY: {1}"),
+
     //    UserData
     USER_DATA_HEADER("$1§m------- §r$2{0} $1§m-------"),
     USER_DATA_FAILED_COLLECT("$4Could not collect data for {0}"),
@@ -330,6 +352,9 @@ public enum Translations {
     DAVE_LINK_SUGGESTION("Here's a useful link, $1{0}"),
     DAVE_LINK_SUGGESTION_HOVER("$2Click to open $1{0}"),
     DAVE_DISCORD_FORMAT("**Dave** ≫ {0}"),
+    DAVE_MUTED("Muted Dave, note that important triggers will always show"),
+    DAVE_UNMUTED("Unmuted Dave"),
+    DAVE_RELOADED_USER("{0} &f: Reloaded Dave without breaking stuff, whoo!"),
 
     //    Plot ID Bar
     PID_USERS_TRUSTED_MORE("{0}, {1} and {2} others"),
@@ -339,10 +364,79 @@ public enum Translations {
     PID_OWNER_FORMAT("$2Owner : $1{0}"),
     PID_BAR_SEPARATOR(" &f|-=-| "),
     PID_BAR_MEMBERS("$2Members : $1{0}"),
+    PID_TOGGLE_BAR("Updated PlotID Bar preference to $2{0}"),
+    PID_TOGGLE_MEMBERS("Updated PlotID Members preference to $2{0}"),
 
-//    Trust Limiter
-    TRUST_LIMIT_AUTO_CLEANED("$1Automatically removed $2{0} $1from this plot because their rank is too low.")
-    ;
+    //    Trust Limiter
+    TRUST_LIMIT_AUTO_CLEANED("$1Automatically removed $2{0} $1from this plot because their rank is too low."),
+
+    //    Wiki
+    WIKI_BREAKLINE("$2&m============&r $1{0} $2&m============"),
+    WIKI_NOT_ALLOWED("$4You do not have permission to view this wiki '{0}'"),
+    WIKI_NOT_FOUND("No wiki entries were found for the requested value '{0}'"),
+    WIKI_LIST_ROW("\n $3- $1{0} $2[View]"),
+    WIKI_SHARE_BUTTON("$2[Share '{0}']$2]"),
+    WIKI_SHARE_BUTTON_HOVER("$1Share wiki with another player"),
+    WIKI_VIEW_BUTTON("$2[$1View$2]"),
+    WIKI_VIEW_BUTTON_HOVER("$1View entry '{0}'"),
+    WIKI_LIST_ROW_HOVER("$1More information about {0}"),
+    WIKI_NO_ENTRIES("$1No wiki entries were found"),
+    WIKI_SHARED_USER("$2{0} $1shared the '{1}' wiki with you"),
+    WIKI_RELOADED_USER_SUCCESS("Successfully reloaded wiki"),
+    WIKI_RELOADED_USER_FAILURE("Failed to reload wiki, see console for more information"),
+    WIKI_OPEN_ENTRY_HOVER("Open entry '{0}'"),
+    WIKI_SHARE_FAILED("Could not share entry"),
+
+    //    PlayerTime
+    PTIME_INVALID_NUMBER("'{0}' is not a valid number"),
+    PTIME_NUMBER_TOO_SMALL("The number you have entered ({0}) is too small, it must be at least 0"),
+    PTIME_IN_SYNC("Your time is currently in sync with the server's time"),
+    PTIME_AHEAD("Your time is currently running {0} ticks ahead of the server"),
+
+    //    Schematic Brush
+    SCHEMATIC_EMPTY("Schematic is empty"),
+    SCHEMATIC_APPLIED_CLIPBOARD("Applied '{0}', flip={1}, rot={2}, place={3}"),
+    SCHEMATIC_SET_NOT_ALLOWED("Not permitted to use schematic sets"),
+    SCHEMATIC_SET_NOT_FOUND("Schematic set '{0}' not found"),
+    SCHEMATIC_INVALID_DEFINITION("Invalid schematic definition: {0}"),
+    SCHEMATIC_INVALID_FILENAME("Invalid filename pattern: {0} - {1}"),
+    SCHEMATIC_BAD_OFFSET_Y("Bad y-offset value: {0}"),
+    SCHEMATIC_BAD_PLACE_CENTER("Bad place value ({0}) - using CENTER"),
+    SCHEMATIC_BRUSH_SET("Schematic brush set"),
+    COULD_NOT_DETECT_WORLDEDIT("Could not detect a supported version of WorldEdit"),
+    SCHEMATIC_PATTERN_REQUIRED("Schematic brush requires &set-id or one or more schematic patterns"),
+    SCHEMATIC_SET_LIST_ROW("{0}: desc='{1}'"),
+    SCHEMATIC_SET_LIST_COUNT("{0} sets returned"),
+    SCHEMATIC_SET_ID_MISSING("Missing set ID"),
+    SCHEMATIC_SET_ALREADY_DEFINED("Set '{0}' already defined"),
+    SCHEMATIC_SET_NOT_DEFINED("Set '{0}' not defined"),
+    SCHEMATIC_SET_INVALID("Schematic '{0}' invalid - ignored"),
+    SCHEMATIC_SET_CREATED("Set '{0}' created"),
+    SCHEMATIC_SET_DELETED("Set '{0}' deleted"),
+    SCHEMATIC_SET_UPDATED("Set '{0}' updated"),
+    SCHEMATIC_REMOVED_SET("Schematic '{0}' removed"),
+    SCHEMATIC_NOT_FOUND_SET("Schematic '{0}' not found in set"),
+    SCHEMATIC_SET_DESCRIPTION("Description: {0}"),
+    SCHEMATIC_DESCRIPTION("Schematic: {0} ({1})"),
+    SCHEMATIC_SET_WEIGHT_TOO_HIGH("Warning: total weights exceed 100 - schematics without weights will never be selected"),
+    SCHEMATIC_INVALID_FORMAT("Invalid format: {0}"),
+    SCHEMATIC_LIST_PAGINATION_FOOTER("Page {0} of {1} ({2} files)"),
+    SCHEMATIC_FILE_NOT_FOUND("Schematic '{0}' file not found"),
+    SCHEMATIC_FORMAT_NOT_FOUND("Schematic '{0}' format not found"),
+    SCHEMATIC_READ_ERROR("$1Error reading schematic '{0}' - {1}"),
+
+    //    Player Data
+    DATA_UNAVAILABLE_OFFLINE_PLAYER("$3&oNot available if player is offline"),
+    PLAYER_DATA_PLOTSQUARED("$2Worlds: $1{0}\n$2Plots: $1{1}"),
+    PLAYER_DATA_LUCKPERMS("$2Primary group: $1{0}\n$2Prefix: $1{1}"),
+    PLAYER_DATA_NUCLEUS("$2First joined: $1{0}\n" +
+            "$2Last known IP: $1{1}\n" +
+            "$2Last known name: $1{2}\n" +
+            "$2Last login: $1{3}\n" +
+            "$2Last logout: $1{4}\n" +
+            "$2Last seen: $1{5}\n" +
+            "$2Alt accounts: $1{6}"),
+    PLAYER_DATA_COLLECT_ERROR("$4Could not collect data for {0}");
 
     private String s;
 

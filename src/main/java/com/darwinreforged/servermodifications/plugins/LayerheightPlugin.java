@@ -25,7 +25,6 @@ public class LayerheightPlugin {
 	}
 	//pls update
     CommandSpec layerHeightMain = CommandSpec.builder()
-    	    .description(Text.of("Sets a layer height name for a block."))
     	    .permission("layerHeight.use")
     	    .arguments(GenericArguments.integer(Text.of("1 to 8")))
     	    .executor(new LayerheightCommand())

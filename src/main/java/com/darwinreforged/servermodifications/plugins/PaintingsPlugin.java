@@ -15,7 +15,6 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
@@ -85,7 +84,7 @@ public class PaintingsPlugin {
                     System.out.println(submission.getID());
                     System.out.println(submission.getPlayerUUID());
                     System.out.println(submission.getStatus());
-                    if (submission.getStatus().equals("Submitted")) {
+                    if (submission.getStatus().equals(Translations.PAINTING_STATUS_SUBMITTED.s())) {
                         submissions.put(id, submission);
                     }
                 }
@@ -109,7 +108,6 @@ public class PaintingsPlugin {
 
     CommandSpec addPainting = CommandSpec.builder()
             .description(Text.of("Upload painting from web"))
-            .extendedDescription(Text.of("Enter URL of a picture, map(s) containing painting will be generated"))
             .arguments(
                     GenericArguments.string(Text.of("Name")),
                     GenericArguments.string(Text.of("URL")),
@@ -130,30 +128,12 @@ public class PaintingsPlugin {
                 return null;
             })
             .build();
-    CommandSpec listPainting = CommandSpec.builder()
-            .description(Text.of("Upload painting from web"))
-            .extendedDescription(Text.of("Enter URL of a picture, map(s) containing painting will be generated"))
-            .permission("paintings.use")
-            .executor(new listCmd())
-            .build();
     CommandSpec painting = CommandSpec.builder()
             .description(Text.of("Upload painting from web"))
-            .extendedDescription(Text.of("Enter URL of a picture, map(s) containing painting will be generated"))
             .child(addPainting, "add")
             //.child(listPainting, "list")
             .permission("paintings.use")
             .build();
-
-    public class listCmd implements CommandExecutor {
-        @Override
-        public CommandResult execute ( CommandSource src, CommandContext args ) {
-            Player player = (Player) src;
-            Sponge.getCommandManager().process(player, "paintingslist " + "this broke");
-
-            return CommandResult.success();
-
-        }
-    }
 
     @Nonnull
     private CommandResult cmdUpldPainting ( CommandSource cmdSource, CommandContext commandContext ) throws SQLException {
@@ -178,9 +158,9 @@ public class PaintingsPlugin {
         if (player.hasPermission("paintings.exempt")) {
             Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "uploadpainting " + player.getName() + " " + command);
             EmbedBuilder embed = new EmbedBuilder();
-            embed.setTitle("New exempt submission : #" + id);
-            embed.setAuthor("Submitted by : " + player.getName());
-            embed.addField("Size", "X: " + mapsX + "\nY: " + mapsY, false);
+            embed.setTitle(Translations.PAINTING_NEW_EXEMPT_SUBMISSION_TITLE.f(id));
+            embed.setAuthor(Translations.PAINTING_SUBMISSION_AUTHOR.f(player.getName()));
+            embed.addField(Translations.PAINTING_SUBMISSION_SIZE_TITLE.s(), Translations.PAINTING_SUBMISSION_SIZE_VALUE.f(mapsX, mapsY), false);
             embed.setColor(Color.CYAN);
             embed.setImage(url);
 
@@ -196,21 +176,21 @@ public class PaintingsPlugin {
             {
                 stmt.setString(1, playeruuid);
                 stmt.setString(2, command);
-                stmt.setString(3, "Submitted");
+                stmt.setString(3, Translations.PAINTING_STATUS_SUBMITTED.s());
                 id += 1;
                 //stmt.executeQuery();
                 PaintingSubmission submission = new PaintingSubmission();
                 submission.setCommand(command);
                 submission.setPlayerUUID(UUID.fromString(playeruuid));
                 submission.setID(id);
-                submission.setStatus("Submitted");
+                submission.setStatus(Translations.PAINTING_STATUS_SUBMITTED.s());
                 submissions.put(id, submission);
                 stmt.execute();
 
                 EmbedBuilder embed = new EmbedBuilder();
-                embed.setTitle("New submission : #" + id);
-                embed.setAuthor("Submitted by : " + player.getName());
-                embed.addField("Size", "X: " + mapsX + "\nY: " + mapsY, false);
+                embed.setTitle(Translations.PAINTING_NEW_SUBMISSION_TITLE.f(id));
+                embed.setAuthor(Translations.PAINTING_SUBMISSION_AUTHOR.f(player.getName()));
+                embed.addField(Translations.PAINTING_SUBMISSION_SIZE_TITLE.s(), Translations.PAINTING_SUBMISSION_SIZE_VALUE.f(mapsX, mapsY), false);
                 embed.setColor(Color.YELLOW);
                 embed.setImage(url);
 

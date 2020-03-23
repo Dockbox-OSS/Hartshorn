@@ -2,6 +2,8 @@ package com.darwinreforged.servermodifications.plugins;
 
 import com.darwinreforged.servermodifications.adapters.SchemBrushAdapter;
 import com.darwinreforged.servermodifications.adapters.SchemBrushAdapterFactory;
+import com.darwinreforged.servermodifications.resources.Translations;
+import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -46,7 +48,7 @@ import org.spongepowered.api.text.Text;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -255,7 +257,7 @@ public class SchematicBrushPlugin {
             try {
                 cliph = sess.getClipboard();
             } catch (EmptyClipboardException e) {
-                player.printError("Schematic is empty");
+                PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()), Translations.SCHEMATIC_EMPTY.t());
                 return;
             }
             AffineTransform trans = new AffineTransform();
@@ -302,7 +304,9 @@ public class SchematicBrushPlugin {
                     .ignoreAirBlocks(skipair);
             Operations.completeLegacy(pb.build());
             schfilename = schfilename.contains("/") ? "..." + schfilename.substring(schfilename.lastIndexOf("/") - 5, schfilename.length()) : schfilename;
-            player.print("Applied '" + schfilename + "', flip=" + flip.name() + ", rot=" + rot.deg + ", place=" + place.name());
+
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_APPLIED_CLIPBOARD.ft(schfilename, flip.name(), rot.deg, place.name()));
         }
     }
 
@@ -371,7 +375,7 @@ public class SchematicBrushPlugin {
 
     private CommandResult handleSCHBRCommand(CommandSource commandSource, CommandContext commandContext) {
         if (!(commandSource instanceof org.spongepowered.api.entity.living.player.Player)) {
-            commandSource.sendMessage(Text.of("This can only be used by players"));
+            PlayerUtils.tell(commandSource, Translations.PLAYER_ONLY_COMMAND.t());
             return CommandResult.empty();
         }
 
@@ -379,7 +383,7 @@ public class SchematicBrushPlugin {
         org.spongepowered.api.entity.living.player.Player player0 = (org.spongepowered.api.entity.living.player.Player) commandSource;
         Optional<Player> playerOptional = schemBrushAdapter.wrapPlayer(player0);
         if (!playerOptional.isPresent()) {
-            player0.sendMessage(Text.of("Could not detect a supported version of WorldEdit"));
+            PlayerUtils.tell(player0, Translations.COULD_NOT_DETECT_WORLDEDIT.t());
             return CommandResult.empty();
         }
 
@@ -387,7 +391,7 @@ public class SchematicBrushPlugin {
 
         // Test for command access
         if (!player.hasPermission("schematicbrush.brush.use")) {
-            player0.sendMessage(Text.of("You do not have access to this command"));
+            PlayerUtils.tell(player0, Translations.COMMAND_NO_PERMISSION.t());
             return CommandResult.empty();
         }
 
@@ -402,13 +406,15 @@ public class SchematicBrushPlugin {
         String[] args = argv.get().split(" ");
         if (args[0].startsWith("&")) {  // If set ID
             if (!player.hasPermission("schematicbrush.set.use")) {
-                player.printError("Not permitted to use schematic sets");
+                PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                        Translations.SCHEMATIC_SET_NOT_ALLOWED.t());
                 return CommandResult.empty();
             }
             setid = args[0].substring(1);
             ss = sets.get(setid);
             if (ss == null) {
-                player.print("Schematic set '" + setid + "' not found");
+                PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                        Translations.SCHEMATIC_SET_NOT_FOUND.ft(setid));
                 return CommandResult.empty();
             }
         } else {
@@ -418,7 +424,8 @@ public class SchematicBrushPlugin {
                 } else {
                     SchematicDef sd = parseSchematic(player, args[i]);
                     if (sd == null) {
-                        player.print("Invalid schematic definition: " + args[i]);
+                        PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                                Translations.SCHEMATIC_INVALID_DEFINITION.ft(args[i]));
                         return CommandResult.empty();
                     }
                     defs.add(sd);
@@ -441,14 +448,16 @@ public class SchematicBrushPlugin {
                     try {
                         yoff = Integer.parseInt(offval);
                     } catch (NumberFormatException nfx) {
-                        player.printError("Bad y-offset value: " + offval);
+                        PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                                Translations.SCHEMATIC_BAD_OFFSET_Y.ft(offval));
                     }
                 } else if (args[i].startsWith("-place:")) {
                     String pval = args[i].substring(args[i].indexOf(':') + 1).toUpperCase();
                     place = Placement.valueOf(pval);
                     if (place == null) {
                         place = Placement.CENTER;
-                        player.printError("Bad place value (" + pval + ") - using CENTER");
+                        PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                                Translations.SCHEMATIC_BAD_PLACE_CENTER.ft(pval));
                     }
                 }
             }
@@ -468,7 +477,8 @@ public class SchematicBrushPlugin {
         try {
             tool = session.getBrushTool(player.getItemInHand());
             tool.setBrush(sbi, "schematicbrush.brush.use");
-            player.print("Schematic brush set");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_BRUSH_SET.t());
         } catch (InvalidToolBindException e) {
             player.print(e.getMessage());
         }
@@ -478,7 +488,7 @@ public class SchematicBrushPlugin {
 
     private CommandResult handleSCHSETCommand(CommandSource commandSource, CommandContext commandContext) {
         if (!(commandSource instanceof org.spongepowered.api.entity.living.player.Player)) {
-            commandSource.sendMessage(Text.of("This can only be used by players"));
+            PlayerUtils.tell(commandSource, Translations.PLAYER_ONLY_COMMAND.t());
             return CommandResult.empty();
         }
 
@@ -486,7 +496,7 @@ public class SchematicBrushPlugin {
         org.spongepowered.api.entity.living.player.Player player0 = (org.spongepowered.api.entity.living.player.Player) commandSource;
         Optional<Player> playerOptional = schemBrushAdapter.wrapPlayer(player0);
         if (!playerOptional.isPresent()) {
-            player0.sendMessage(Text.of("Could not detect a supported version of WorldEdit"));
+            PlayerUtils.tell(player0, Translations.COULD_NOT_DETECT_WORLDEDIT.t());
             return CommandResult.empty();
         }
 
@@ -494,20 +504,22 @@ public class SchematicBrushPlugin {
 
         // Test for command access
         if (!player.hasPermission("schematicbrush.brush.use")) {
-            player0.sendMessage(Text.of("You do not have access to this command"));
+            PlayerUtils.tell(player0, Translations.COMMAND_NO_PERMISSION.t());
             return CommandResult.empty();
         }
 
         Optional<String> argv = commandContext.getOne("args");
 
         if (!argv.isPresent()) {
-            player.print("Schematic brush requires &set-id or one or more schematic patterns");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_PATTERN_REQUIRED.t());
             return CommandResult.empty();
         }
         String[] args = argv.get().split(" ");
 
         if (!player.hasPermission("schematicbrush.set." + args[0])) {
-            player.print("You do not have access to this command");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.COMMAND_NO_PERMISSION.t());
             return CommandResult.empty();
         }
         if (args[0].equals("list")) {
@@ -541,22 +553,26 @@ public class SchematicBrushPlugin {
                 continue;
             }
             SchematicSet ss = sets.get(k);
-            player.print(ss.name + ": desc='" + ss.desc + "'");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_LIST_ROW.ft(ss.name, ss.desc));
             cnt++;
         }
-        player.print(cnt + " sets returned");
+        PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                Translations.SCHEMATIC_SET_LIST_COUNT.ft(cnt));
 
         return CommandResult.success();
     }
 
     private CommandResult handleSCHSETCreate(Actor player, String[] args) {
         if (args.length < 2) {
-            player.print("Missing set ID");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_ID_MISSING.t());
             return CommandResult.success();
         }
         String setid = args[1];
         if (sets.containsKey(setid)) {  // Existing ID?
-            player.print("Set '" + setid + "' already defined");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_ALREADY_DEFINED.ft(setid));
             return CommandResult.success();
         }
         SchematicSet ss = new SchematicSet(setid, "", null);
@@ -565,45 +581,52 @@ public class SchematicBrushPlugin {
         for (int i = 2; i < args.length; i++) {
             SchematicDef def = parseSchematic(player, args[i]);
             if (def == null) {
-                player.print("Schematic '" + args[i] + "' invalid - ignored");
+                PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                        Translations.SCHEMATIC_SET_INVALID.ft(args[i]));
             } else {
                 ss.schematics.add(def);
             }
         }
         saveSchematicSets();
 
-        player.print("Set '" + setid + "' created");
+        PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                Translations.SCHEMATIC_SET_CREATED.ft(setid));
 
         return CommandResult.success();
     }
 
     private CommandResult handleSCHSETDelete(Actor player, String[] args) {
         if (args.length < 2) {
-            player.print("Missing set ID");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_ID_MISSING.t());
             return CommandResult.empty();
         }
         String setid = args[1];
         if (!sets.containsKey(setid)) {  // Existing ID?
-            player.print("Set '" + setid + "' not defined");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_NOT_DEFINED.ft(setid));
             return CommandResult.empty();
         }
         sets.remove(setid);
 
         saveSchematicSets();
 
-        player.print("Set '" + setid + "' deleted");
+        PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                Translations.SCHEMATIC_SET_DELETED.ft(setid));
 
         return CommandResult.empty();
     }
 
     private CommandResult handleSCHSETAppend(Actor player, String[] args) {
         if (args.length < 2) {
-            player.print("Missing set ID");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_ID_MISSING.t());
             return CommandResult.empty();
         }
         String setid = args[1];
         if (!sets.containsKey(setid)) {  // Existing ID?
-            player.print("Set '" + setid + "' not defined");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_NOT_DEFINED.ft(setid));
             return CommandResult.empty();
         }
         SchematicSet ss = sets.get(setid);
@@ -611,26 +634,30 @@ public class SchematicBrushPlugin {
         for (int i = 2; i < args.length; i++) {
             SchematicDef def = parseSchematic(player, args[i]);
             if (def == null) {
-                player.print("Schematic '" + args[i] + "' invalid - ignored");
+                PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                        Translations.SCHEMATIC_SET_INVALID.ft(args[i]));
             } else {
                 ss.schematics.add(def);
             }
         }
         saveSchematicSets();
 
-        player.print("Set '" + setid + "' updated");
+        PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                Translations.SCHEMATIC_SET_UPDATED.ft(setid));
 
         return CommandResult.empty();
     }
 
     private CommandResult handleSCHSETRemove(Actor player, String[] args) {
         if (args.length < 2) {
-            player.print("Missing set ID");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_ID_MISSING.t());
             return CommandResult.empty();
         }
         String setid = args[1];
         if (!sets.containsKey(setid)) {  // Existing ID?
-            player.print("Set '" + setid + "' not defined");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_NOT_DEFINED.ft(setid));
             return CommandResult.empty();
         }
         SchematicSet ss = sets.get(setid);
@@ -638,32 +665,38 @@ public class SchematicBrushPlugin {
         for (int i = 2; i < args.length; i++) {
             SchematicDef def = parseSchematic(player, args[i]);
             if (def == null) {
-                player.print("Schematic '" + args[i] + "' invalid - ignored");
+                PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                        Translations.SCHEMATIC_SET_INVALID.ft(args[i]));
             } else {  // Now look for match
                 int idx = ss.schematics.indexOf(def);
                 if (idx >= 0) {
                     ss.schematics.remove(idx);
-                    player.print("Schematic '" + args[i] + "' removed");
+                    PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                            Translations.SCHEMATIC_REMOVED_SET.ft(args[i]));
                 } else {
-                    player.print("Schematic '" + args[i] + "' not found in set");
+                    PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                            Translations.SCHEMATIC_NOT_FOUND_SET.ft(args[i]));
                 }
             }
         }
         saveSchematicSets();
 
-        player.print("Set '" + setid + "' updated");
+        PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                Translations.SCHEMATIC_SET_UPDATED.ft(setid));
 
         return CommandResult.empty();
     }
 
     private CommandResult handleSCHSETSetDesc(Actor player, String[] args) {
         if (args.length < 2) {
-            player.print("Missing set ID");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_ID_MISSING.t());
             return CommandResult.empty();
         }
         String setid = args[1];
         if (!sets.containsKey(setid)) {  // Existing ID?
-            player.print("Set '" + setid + "' not defined");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_NOT_DEFINED.ft(setid));
             return CommandResult.empty();
         }
         SchematicSet ss = sets.get(setid);
@@ -679,23 +712,27 @@ public class SchematicBrushPlugin {
 
         saveSchematicSets();
 
-        player.print("Set '" + setid + "' updated");
+        PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                Translations.SCHEMATIC_SET_UPDATED.ft(setid));
 
         return CommandResult.empty();
     }
 
     private CommandResult handleSCHSETGet(Actor player, String[] args) {
         if (args.length < 2) {
-            player.print("Missing set ID");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_ID_MISSING.t());
             return CommandResult.empty();
         }
         String setid = args[1];
         if (!sets.containsKey(setid)) {  // Existing ID?
-            player.print("Set '" + setid + "' not defined");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_NOT_DEFINED.ft(setid));
             return CommandResult.empty();
         }
         SchematicSet ss = sets.get(setid);
-        player.print("Description: " + ss.desc);
+        PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                Translations.SCHEMATIC_SET_DESCRIPTION.ft(ss.desc), false);
         for (SchematicDef sd : ss.schematics) {
             String det = sd.name;
             if (sd.format != null) {
@@ -713,10 +750,13 @@ public class SchematicBrushPlugin {
             if (sd.weight > 0) {
                 det += ", weight=" + sd.weight;
             }
-            player.print("Schematic: " + sd.toString() + " (" + det + ")");
+
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_DESCRIPTION.ft(sd.toString(), det));
         }
         if ((ss.getTotalWeights() > 100) && (ss.getEqualWeightCount() > 0)) {
-            player.print("Warning: total weights exceed 100 - schematics without weights will never be selected");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_SET_WEIGHT_TOO_HIGH.t());
         }
 
         return CommandResult.empty();
@@ -735,7 +775,7 @@ public class SchematicBrushPlugin {
 
     private CommandResult handleSCHLISTCommand(CommandSource commandSource, CommandContext commandContext) {
         if (!(commandSource instanceof org.spongepowered.api.entity.living.player.Player)) {
-            commandSource.sendMessage(Text.of("This can only be used by players"));
+            PlayerUtils.tell(commandSource, Translations.PLAYER_ONLY_COMMAND.t());
             return CommandResult.empty();
         }
 
@@ -743,27 +783,29 @@ public class SchematicBrushPlugin {
         org.spongepowered.api.entity.living.player.Player player0 = (org.spongepowered.api.entity.living.player.Player) commandSource;
         Optional<Player> playerOptional = schemBrushAdapter.wrapPlayer(player0);
         if (!playerOptional.isPresent()) {
-            player0.sendMessage(Text.of("Could not detect a supported version of WorldEdit"));
+            PlayerUtils.tell(player0, Translations.COULD_NOT_DETECT_WORLDEDIT.t());
             return CommandResult.empty();
         }
 
         Player player = playerOptional.get();
         // Test for command access
         if (!player.hasPermission("schematicbrush.brush.use")) {
-            player0.sendMessage(Text.of("You do not have access to this command"));
+            PlayerUtils.tell(player0, Translations.COMMAND_NO_PERMISSION.t());
             return CommandResult.empty();
         }
 
         Optional<String> argv = commandContext.getOne("args");
 
         if (!argv.isPresent()) {
-            player.print("Schematic brush requires &set-id or one or more schematic patterns");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_PATTERN_REQUIRED.t());
             return CommandResult.empty();
         }
         String[] args = argv.get().split(" ");
         // Test for command access
         if (!player.hasPermission("schematicbrush.list")) {
-            player.print("You do not have access to this command");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.COMMAND_NO_PERMISSION.t());
             return CommandResult.empty();
         }
         int page = 1;
@@ -777,7 +819,8 @@ public class SchematicBrushPlugin {
         }
         File dir = getDirectoryForFormat(fmt);  // Get directory for extension
         if (dir == null) {
-            player.print("Invalid format: " + fmt);
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_INVALID_FORMAT.ft(fmt));
             return CommandResult.empty();
         }
         final Pattern p = Pattern.compile(".*\\." + fmt);
@@ -786,7 +829,8 @@ public class SchematicBrushPlugin {
         int cnt = (files.size() + LINES_PER_PAGE - 1) / LINES_PER_PAGE;  // Number of pages
         if (page < 1) page = 1;
         if (page > cnt) page = cnt;
-        player.print("Page " + page + " of " + cnt + " (" + files.size() + " files)");
+        PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                Translations.SCHEMATIC_LIST_PAGINATION_FOOTER.ft(page, cnt, files.size()));
         for (int i = (page - 1) * LINES_PER_PAGE; (i < (page * LINES_PER_PAGE)) && (i < files.size()); i++) {
             player.print(files.get(i));
         }
@@ -971,7 +1015,8 @@ public class SchematicBrushPlugin {
                     return null;
                 }
             } catch (PatternSyntaxException x) {
-                player.printError("Invalid filename pattern - " + fname + " - " + x.getMessage());
+                PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                        Translations.SCHEMATIC_INVALID_FILENAME.ft(fname, x.getMessage()));
                 return null;
             }
         }
@@ -981,12 +1026,14 @@ public class SchematicBrushPlugin {
     private String loadSchematicIntoClipboard(Player player, LocalSession sess, String fname, String format, int[] bottomY) {
         File dir = getDirectoryForFormat(format);
         if (dir == null) {
-            player.printError("Schematic '" + fname + "' invalid format - " + format);
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_INVALID_FORMAT.ft(format));
             return null;
         }
         String name = resolveName(player, dir, fname, format);
         if (name == null) {
-            player.printError("Schematic '" + fname + "' file not found");
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_FILE_NOT_FOUND.ft(fname));
             return null;
         }
         File f;
@@ -994,7 +1041,8 @@ public class SchematicBrushPlugin {
         try {
             f = WorldEdit.getInstance().getSafeOpenFile(null, dir, name, format);
             if (!f.exists()) {
-                player.printError("Schematic '" + name + "' file not found");
+                PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                        Translations.SCHEMATIC_FILE_NOT_FOUND.ft(fname));
                 return null;
             }
             // Figure out format to use
@@ -1002,11 +1050,13 @@ public class SchematicBrushPlugin {
                 ClipboardFormat fmt = ClipboardFormat.findByFile(f);
 
                 if (fmt == null) {
-                    player.printError("Schematic '" + name + "' format not found");
+                    PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                            Translations.SCHEMATIC_FORMAT_NOT_FOUND.ft(name));
                     return null;
                 }
                 if (!fmt.isFormat(f)) {
-                    player.printError("Schematic '" + name + "' is not correct format (" + fmt + ")");
+                    PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                            Translations.SCHEMATIC_INVALID_FORMAT.ft(fmt));
                     return null;
                 }
                 String filePath = f.getCanonicalPath();
@@ -1055,7 +1105,8 @@ public class SchematicBrushPlugin {
         } catch (FilenameException e1) {
             player.printError(e1.getMessage());
         } catch (IOException e) {
-            player.printError("Error reading schematic '" + name + "' - " + e.getMessage());
+            PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
+                    Translations.SCHEMATIC_READ_ERROR.ft(name, e.getMessage()));
         }
 
         return (rslt) ? name : null;
@@ -1064,7 +1115,7 @@ public class SchematicBrushPlugin {
     private Clipboard loadBOD2File(File f) throws IOException {
         Clipboard cc = null;
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f), Charset.forName("US-ASCII")));
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f), StandardCharsets.US_ASCII));
         try {
             Map<String, String> properties = new HashMap<String, String>();
             Map<Vector, int[]> blocks = new HashMap<Vector, int[]>();
