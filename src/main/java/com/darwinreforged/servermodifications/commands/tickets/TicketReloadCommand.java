@@ -27,7 +27,7 @@ public class TicketReloadCommand implements CommandExecutor {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         try {
             plugin.config = new TicketConfig(this.plugin);
-            plugin.setDataStoreManager(new DataStoreManager(this.plugin));
+            plugin.setDataStoreManager(new DataStoreManager());
             plugin.loadDataStore();
         } catch (IOException | ObjectMappingException e) {
             e.printStackTrace();

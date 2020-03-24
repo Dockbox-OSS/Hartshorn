@@ -4,16 +4,19 @@ buildscript {
             name = 'forge'
             url = 'https://files.minecraftforge.net/maven'
         }
+        jcenter()
     }
 
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
     }
 }
 
 plugins {
     id 'org.spongepowered.plugin' version '0.9.0'
     id 'net.minecrell.vanillagradle.server' version '2.2-6'
+    id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
 
 group = 'com.darwinreforged'
@@ -26,9 +29,8 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-minecraft {
-    version = '1.12.2'
-    mappings = 'stable_39'
+configurations {
+    compile.extendsFrom shadow
 }
 
 repositories {
@@ -41,20 +43,38 @@ repositories {
     maven { url 'http://repo.drnaylor.co.uk/artifactory/list/minecraft' }
     jcenter()
     mavenCentral()
+    maven {
+        url 'https://repo.codemc.org/repository/maven-public'
+    }
+}
+
+minecraft {
+    version = '1.12.2'
+    mappings = 'stable_39'
+    runDir = 'run'
 }
 
 dependencies {
     implementation 'com.google.guava:guava:23.0'
     annotationProcessor 'org.spongepowered:spongeapi:7.1.0'
     compileOnly 'org.spongepowered:spongeapi:7.1.0'
-    compileOnly group: 'org.projectlombok', name: 'lombok', version:'1.18.0'
-    compileOnly ("com.sk89q.worldedit:worldedit-core:6.1.4-SNAPSHOT") { transitive = false }
-    compileOnly ("com.sk89q.worldedit:worldedit-sponge:6.1.7-SNAPSHOT")
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.0'
+    compileOnly("com.sk89q.worldedit:worldedit-core:6.1.4-SNAPSHOT") { transitive = false }
+    compileOnly("com.sk89q.worldedit:worldedit-sponge:6.1.7-SNAPSHOT")
     compile 'com.boydti:fawe-api:latest'
-    compile group: 'com.zaxxer', name: 'HikariCP', version:'3.1.0'
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '3.1.0'
     compile 'com.github.rojo8399:PlaceholderAPI:master-SNAPSHOT'
     compile "com.github.SimonFlash.TeslaPowered:TeslaLibs:1.1.6"
     compile fileTree(dir: 'libs', include: '*.jar')
+    shadow group: 'org.reflections', name: 'reflections', version: '0.9.12'
+}
+
+jar.enabled = false
+build.dependsOn shadowJar
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+    classifier = null
 }
 
 sponge.plugin.id = pluginId

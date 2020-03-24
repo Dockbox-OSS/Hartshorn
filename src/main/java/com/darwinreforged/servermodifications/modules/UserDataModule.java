@@ -1,7 +1,9 @@
 package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.intellectualcrafters.plot.object.PlotPlayer;
@@ -49,13 +51,13 @@ public class UserDataModule extends PluginModule {
   @Listener
   public void onServerStart(GameStartedServerEvent event) {
     CommandSpec spec =
-        CommandSpec.builder()
-            .arguments(GenericArguments.string(Text.of("player")))
-            .permission("darwin.playerdata")
+            CommandSpec.builder()
+                    .arguments(GenericArguments.string(Text.of("player")))
+                    .permission(Permissions.PLAYER_DATA.p())
             .executor(new UserDataExecutor())
             .build();
 
-    Sponge.getCommandManager().register(this, spec, "data");
+    DarwinServer.registerCommand(spec, "data");
   }
 
   private static class UserDataExecutor implements CommandExecutor {

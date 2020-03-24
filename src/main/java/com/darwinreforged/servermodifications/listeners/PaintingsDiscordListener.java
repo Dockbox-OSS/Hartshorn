@@ -1,9 +1,11 @@
 package com.darwinreforged.servermodifications.listeners;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.objects.PaintingSubmission;
-import com.darwinreforged.servermodifications.plugins.PaintingsPlugin;
+import com.darwinreforged.servermodifications.modules.PaintingsModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
+import com.darwinreforged.servermodifications.util.todo.FileManager;
 import com.magitechserver.magibridge.DiscordHandler;
 import com.magitechserver.magibridge.MagiBridge;
 import com.magitechserver.magibridge.api.DiscordEvent;
@@ -12,11 +14,13 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 
 import java.awt.*;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class PaintingsDiscordListener {
@@ -27,19 +31,21 @@ public class PaintingsDiscordListener {
    public void onDiscordChat ( DiscordEvent.MessageEvent event ) throws SQLException {
       String playername = event.getMember().getEffectiveName();
       String message = event.getRawMessage().toLowerCase();
-      String uri = "jdbc:sqlite:" + PaintingsPlugin.staticRoots + "/DarwinPaintings.db";
-
+      Path dataPath = FileManager.getDataDirectory(DarwinServer.getModule(PaintingsModule.class).get());
+      String uri = "jdbc:sqlite:" + dataPath + "/DarwinPaintings.db";
+      HashMap<Integer, PaintingSubmission> submissionHashMap = DarwinServer.getModule(PaintingsModule.class).get().submissions;
+      
       if ((!playername.equals("DR")) && event.getChannel().getId().equals(CHANNEL_ID)) {
-         Connection conn = PaintingsPlugin.getDataSource(uri).getConnection();
+         Connection conn = DarwinServer.getModule(PaintingsModule.class).get().getDataSource(uri).getConnection();
          if (message.startsWith("!approve")) {
             message = message.replaceAll("!approve", "");
             int id = Integer.parseInt(message.replaceAll(" ", ""));
 
-            if (PaintingsPlugin.submissions.containsKey(id) && PaintingsPlugin.submissions.get(id).getStatus().equals(Translations.PAINTING_STATUS_SUBMITTED.s())) {
-               PaintingSubmission submission = PaintingsPlugin.submissions.get(id);
-               Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "mail send " + PaintingsPlugin.getUser(submission.getPlayerUUID()).get().getName() + " your submission of " + submission.getCommand() + " was approved, use /paintingslist to obtain it.");
-               Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "uploadpainting " + PaintingsPlugin.getUser(submission.getPlayerUUID()).get().getName() + " " + submission.getCommand());
-               PaintingsPlugin.submissions.remove(id);
+            if (submissionHashMap.containsKey(id) && submissionHashMap.get(id).getStatus().equals(Translations.PAINTING_STATUS_SUBMITTED.s())) {
+               PaintingSubmission submission = submissionHashMap.get(id);
+               Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "mail send " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(submission.getPlayerUUID())) + " your submission of " + submission.getCommand() + " was approved, use /paintingslist to obtain it.");
+               Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "uploadpainting " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(submission.getPlayerUUID())) + " " + submission.getCommand());
+               submissionHashMap.remove(id);
                String query2 = "UPDATE Submissions set Status = 'Approved' where id = '" + id + "'";
                PreparedStatement stmt2 = conn.prepareStatement(query2);
                stmt2.executeUpdate();
@@ -53,10 +59,10 @@ public class PaintingsDiscordListener {
             message = message.replaceAll("!reject", "");
             int id = Integer.parseInt(message.replaceAll(" ", ""));
 
-            if (PaintingsPlugin.submissions.containsKey(id) && PaintingsPlugin.submissions.get(id).getStatus().equals(Translations.PAINTING_STATUS_SUBMITTED.s())) {
-               PaintingSubmission submission = PaintingsPlugin.submissions.get(id);
-               Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "mail send " + PaintingsPlugin.getUser(submission.getPlayerUUID()).get().getName() + " your submission of " + submission.getCommand() + " was rejected.");
-               PaintingsPlugin.submissions.remove(id);
+            if (submissionHashMap.containsKey(id) && submissionHashMap.get(id).getStatus().equals(Translations.PAINTING_STATUS_SUBMITTED.s())) {
+               PaintingSubmission submission = submissionHashMap.get(id);
+               Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "mail send " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(submission.getPlayerUUID())) + " your submission of " + submission.getCommand() + " was rejected.");
+               submissionHashMap.remove(id);
                String query2 = "UPDATE Submissions set Status = 'Rejected' where id = '" + id + "'";
                PreparedStatement stmt2 = conn.prepareStatement(query2);
                stmt2.executeUpdate();
@@ -66,7 +72,7 @@ public class PaintingsDiscordListener {
                DiscordHandler.sendMessageToChannel(CHANNEL_ID, Translations.PAINTING_CANNOT_UPDATE_STATUS.f("reject", id));
             }
          } else if (message.startsWith("!list")) {
-            DiscordHandler.sendMessageToChannel(CHANNEL_ID, Translations.PAINTING_SUBMISSION_LIST.f(PaintingsPlugin.submissions.keySet()));
+            DiscordHandler.sendMessageToChannel(CHANNEL_ID, Translations.PAINTING_SUBMISSION_LIST.f(submissionHashMap.keySet()));
          } else if (message.startsWith("!info")) {
             message = message.replaceAll("!info ", "");
             int id = Integer.parseInt(message.replaceAll(" ", ""));

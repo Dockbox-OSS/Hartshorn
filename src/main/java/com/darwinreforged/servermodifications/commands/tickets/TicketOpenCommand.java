@@ -2,7 +2,7 @@ package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
@@ -139,7 +139,7 @@ public class TicketOpenCommand implements CommandExecutor {
 
           PlayerUtils.tell(player, Translations.TICKET_OPEN_USER.ft(ticketID));
           if (TicketConfig.staffNotification)
-            PlayerUtils.broadcastForPermission(Translations.TICKET_OPEN.ft(player.getName(), ticketID), TicketPermissions.STAFF);
+            PlayerUtils.broadcastForPermission(Translations.TICKET_OPEN.ft(player.getName(), ticketID), Permissions.TICKET_STAFF.p());
           EmbedBuilder embedBuilder = new EmbedBuilder();
           embedBuilder.setColor(Color.YELLOW);
           embedBuilder.setTitle(Translations.SUBMISSION_NEW.s());
@@ -210,7 +210,7 @@ public class TicketOpenCommand implements CommandExecutor {
 
         PlayerUtils.tell(src, Translations.TICKET_OPEN_USER.ft(ticketID));
         if (TicketConfig.staffNotification) {
-          PlayerUtils.broadcastForPermission(Translations.TICKET_OPEN.ft(Translations.CONSOLE.s(), ticketID), TicketPermissions.STAFF);
+          PlayerUtils.broadcastForPermission(Translations.TICKET_OPEN.ft(Translations.CONSOLE.s(), ticketID), Permissions.TICKET_STAFF.p());
         }
       } catch (Exception e) {
         PlayerUtils.tell(src, Translations.UNKNOWN_ERROR.ft("Data was not saved correctly."));

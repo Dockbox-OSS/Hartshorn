@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
@@ -43,7 +43,7 @@ public class TicketAssignCommand implements CommandExecutor {
                     if (ticket.getStatus() == Closed) {
                         PlayerUtils.tell(src, Translations.TICKET_ERROR_ALREADY_CLOSED.s());
                     }
-                    if (ticket.getStatus() == Claimed && !src.hasPermission(TicketPermissions.CLAIMED_TICKET_BYPASS)) {
+                    if (ticket.getStatus() == Claimed && !src.hasPermission(Permissions.CLAIMED_TICKET_BYPASS.p())) {
                         throw new CommandException(Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
                     }
                     ticket.setStatus(Claimed);
@@ -56,7 +56,7 @@ public class TicketAssignCommand implements CommandExecutor {
                         e.printStackTrace();
                     }
 
-                    PlayerUtils.broadcastForPermission(Translations.TICKET_ASSIGN.f(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID())), ticket.getTicketID()), TicketPermissions.STAFF);
+                    PlayerUtils.broadcastForPermission(Translations.TICKET_ASSIGN.f(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID())), ticket.getTicketID()), Permissions.TICKET_STAFF.p());
 
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {

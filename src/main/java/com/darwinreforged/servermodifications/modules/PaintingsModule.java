@@ -1,28 +1,27 @@
-package com.darwinreforged.servermodifications.plugins;
+package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.listeners.PaintingsDiscordListener;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.objects.PaintingSubmission;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
+import com.darwinreforged.servermodifications.util.todo.FileManager;
 import com.darwinreforged.servermodifications.util.todo.PaintingsDatabaseUtil;
-import com.google.inject.Inject;
 import com.magitechserver.magibridge.MagiBridge;
 import net.dv8tion.jda.core.EmbedBuilder;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.service.sql.SqlService;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
@@ -35,39 +34,30 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-@Plugin (id = "darwinpaintings", name = "Darwin paintings approval", version = "1.0", description = "Approve a painting before uploading it")
-public class PaintingsPlugin {
-    @Inject
-    @ConfigDir (sharedRoot = false)
-    public Path root;
+@ModuleInfo(id = "darwinpaintings", name = "Darwin paintings approval", version = "1.0", description = "Approve a painting before uploading it")
+public class PaintingsModule extends PluginModule {
 
-    public static Path staticRoots;
-    @Inject
-    @DefaultConfig (sharedRoot = false)
-    private ConfigurationLoader<CommentedConfigurationNode> configManager;
     public static SqlService sql;
 
     private int id;
     public static HashMap<Integer, PaintingSubmission> submissions = new HashMap<>();
 
-    public PaintingsPlugin() {
+    public PaintingsModule() {
     }
 
     @Listener
     public void onServerFinishLoad ( GameStartingServerEvent event ) throws SQLException {
-        Sponge.getCommandManager().register(this, painting, "paintings");
-        Sponge.getEventManager().registerListeners(this, new PaintingsDiscordListener());
-        staticRoots = root;
-        PaintingsDatabaseUtil dbCreate = new PaintingsDatabaseUtil(sql, staticRoots);
+        DarwinServer.registerCommand(painting, "paintings");
+        DarwinServer.registerListener(new PaintingsDiscordListener());
+        Path dataPath = FileManager.getDataDirectory(DarwinServer.getModule(PaintingsModule.class).get());
+        new PaintingsDatabaseUtil(sql, dataPath);
 
-        String uri = "jdbc:sqlite:" + staticRoots + "/DarwinPaintings.db";
-        ArrayList<String> queries = new ArrayList<>();
-        String query = "SELECT * from Submissions where Status = 'Submitted'";
+        String uri = "jdbc:sqlite:" + dataPath + "/DarwinPaintings.db";
+        String query = String.format("SELECT * from Submissions where Status = '%s'", Translations.PAINTING_STATUS_SUBMITTED.s());
         Connection conn = getDataSource(uri).getConnection();
         PreparedStatement stmt = conn.prepareStatement(query);
         {
@@ -113,11 +103,7 @@ public class PaintingsPlugin {
                     GenericArguments.string(Text.of("URL")),
                     GenericArguments.optional(GenericArguments.seq(GenericArguments.integer(Text.of("MapsX")), GenericArguments.integer(Text.of("MapsY")))))
 
-            // GenericArguments.optional(GenericArguments.enumValue(Text.of("ScaleMode"), ScaleMode.class), ScaleMode.Lanczos3)/*,
-            //GenericArguments.optional(GenericArguments.enumValue(Text.of("UnsharpenMode"), UnsharpenMask.class), UnsharpenMask.None))
-            //GenericArguments.optional(GenericArguments.enumValue(Text.of("DitherMode"), DitherMode.class), DitherMode.FloydSteinberg),
-            // GenericArguments.optional(GenericArguments.doubleNum(Text.of("ColorBleedReductionPercent")), 0.0d))
-            .permission("paintings.add")
+            .permission(Permissions.ADD_PAINTING.p())
             .executor(( src, args ) -> {
                 try {
                     return cmdUpldPainting(src, args);
@@ -132,7 +118,7 @@ public class PaintingsPlugin {
             .description(Text.of("Upload painting from web"))
             .child(addPainting, "add")
             //.child(listPainting, "list")
-            .permission("paintings.use")
+            .permission(Permissions.USE_PAINTING.p())
             .build();
 
     @Nonnull
@@ -155,7 +141,7 @@ public class PaintingsPlugin {
         }
 
         String command = name + " " + url + " " + mapsX + " " + mapsY;
-        if (player.hasPermission("paintings.exempt")) {
+        if (player.hasPermission(Permissions.PAINTING_EXEMPT.p())) {
             Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "uploadpainting " + player.getName() + " " + command);
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle(Translations.PAINTING_NEW_EXEMPT_SUBMISSION_TITLE.f(id));
@@ -167,9 +153,8 @@ public class PaintingsPlugin {
             MagiBridge.jda.getTextChannelById("555462653917790228").sendMessage(embed.build()).queue();
             PlayerUtils.tell(player, Translations.PAINTING_EXEMPT.s());
         } else {
-
-            String uri = "jdbc:sqlite:" + staticRoots + "/DarwinPaintings.db";
-            ArrayList<String> queries = new ArrayList<>();
+            Path dataPath = FileManager.getDataDirectory(DarwinServer.getModule(PaintingsModule.class).get());
+            String uri = "jdbc:sqlite:" + dataPath + "/DarwinPaintings.db";
             String query = "Insert into submissions (PlayerUUID, Command, Status) values (?, ?, ?)";
             Connection conn = getDataSource(uri).getConnection();
             PreparedStatement stmt = conn.prepareStatement(query);

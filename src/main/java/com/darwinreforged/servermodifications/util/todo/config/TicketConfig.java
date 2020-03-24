@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.util.todo.config;
 
 import com.darwinreforged.servermodifications.DarwinServer;
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.modules.TicketModule;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
@@ -90,7 +90,7 @@ public class TicketConfig {
         nagTimer = check(config.getNode("ticket", "user", "nag"), 5, "If above 0 (minutes), nag the online staff members about open tickets.").getInt();
         nagHeld = check(config.getNode("ticket", "user", "nag-held"), true, "If true, the nag feature will mention tickets on hold. ").getBoolean();
 
-        checkForUpdate = check(config.getNode("update", "check"), true, "If true, will notify at startup and if a player with \"" + TicketPermissions.STAFF + "\" logs in, if there is an update available.").getBoolean();
+        checkForUpdate = check(config.getNode("update", "check"), true, "If true, will notify at startup and if a player with \"" + Permissions.TICKET_STAFF.p() + "\" logs in, if there is an update available.").getBoolean();
 
         //Database
         storageEngine = check(config.getNode("storage", "storage-engine"), "h2", "The stoage engine that should be used, Allowed values: h2 or mysql").getString();

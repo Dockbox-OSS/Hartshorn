@@ -7,6 +7,7 @@ import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.objects.PlotIDBarPlayer;
 import com.darwinreforged.servermodifications.objects.PlotIDBarRootConfig;
 import com.darwinreforged.servermodifications.objects.PlotIDToggled;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.FileManager;
@@ -42,8 +43,8 @@ public class PlotIdBarModule extends PluginModule {
 
     @Override
     public void onServerFinishLoad(GameInitializationEvent event) {
-        Sponge.getEventManager().registerListeners(this, new PlotIDBarMoveEventListener());
-        Sponge.getCommandManager().register(this, toggle, "toggle");
+        DarwinServer.registerListener(new PlotIDBarMoveEventListener());
+        DarwinServer.registerCommand(toggle, "toggle");
     }
 
     public static ArrayList<UUID> toggledID = new ArrayList<>();
@@ -100,18 +101,18 @@ public class PlotIdBarModule extends PluginModule {
 
     CommandSpec plotmemtoggle = CommandSpec.builder()
             .description(Text.of("Toggle for Plot members"))
-            .permission("DarwinPlotID.Toggle")
+            .permission(Permissions.TOGGLE_PID_BAR.p())
             .executor(new TogglePlotMembers())
             .build();
     CommandSpec plotidtoggle = CommandSpec.builder()
             .description(Text.of("Toggle for Plot ID"))
-            .permission("DarwinPlotID.Toggle")
+            .permission(Permissions.TOGGLE_PID_BAR.p())
             .executor(new TogglePlotID())
             .build();
 
     CommandSpec toggle = CommandSpec.builder()
             .description(Text.of("Toggle main command"))
-            .permission("DarwinPlotID.Toggle")
+            .permission(Permissions.TOGGLE_PID_BAR.p())
             .child(plotidtoggle, "id", "bar")
             .child(plotmemtoggle, "member")
             .build();
@@ -126,11 +127,11 @@ public class PlotIdBarModule extends PluginModule {
                 PlotIDBarPlayer barP = new PlotIDBarPlayer(player);
                 if (toggledID.contains(player.getUniqueId())) {
                     toggledID.remove(player.getUniqueId());
-                    PlayerUtils.tell(player, Translations.PID_TOGGLE_BAR.ft(Translations.DEFAULT_ON));
+                    PlayerUtils.tell(player, Translations.PID_TOGGLE_BAR.ft(Translations.DEFAULT_ON.s()));
                     barP.setBarBool(false);
                 } else {
                     toggledID.add(player.getUniqueId());
-                    PlayerUtils.tell(player, Translations.PID_TOGGLE_BAR.ft(Translations.DEFAULT_OFF));
+                    PlayerUtils.tell(player, Translations.PID_TOGGLE_BAR.ft(Translations.DEFAULT_OFF.s()));
                     barP.setBarBool(true);
                 }
                 allPlayers.put(player.getUniqueId(), barP);
@@ -156,11 +157,11 @@ public class PlotIdBarModule extends PluginModule {
                 PlotIDBarPlayer barP = new PlotIDBarPlayer(player);
                 if (toggledMembers.contains(player.getUniqueId())) {
                     toggledMembers.remove(player.getUniqueId());
-                    PlayerUtils.tell(player, Translations.PID_TOGGLE_MEMBERS.ft(Translations.DEFAULT_ON));
+                    PlayerUtils.tell(player, Translations.PID_TOGGLE_MEMBERS.ft(Translations.DEFAULT_ON.s()));
                     barP.setMembersBool(false);
                 } else {
                     toggledMembers.add(player.getUniqueId());
-                    PlayerUtils.tell(player, Translations.PID_TOGGLE_MEMBERS.ft(Translations.DEFAULT_OFF));
+                    PlayerUtils.tell(player, Translations.PID_TOGGLE_MEMBERS.ft(Translations.DEFAULT_OFF.s()));
                     barP.setMembersBool(true);
                 }
                 allPlayers.put(player.getUniqueId(), barP);

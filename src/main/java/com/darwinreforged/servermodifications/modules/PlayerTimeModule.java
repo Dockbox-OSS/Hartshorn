@@ -3,6 +3,7 @@ package com.darwinreforged.servermodifications.modules;
 import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModuleNative;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import eu.crushedpixel.sponge.packetgate.api.event.PacketEvent;
@@ -17,7 +18,6 @@ import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
@@ -38,8 +38,8 @@ public class PlayerTimeModule extends PacketListenerAdapter implements PluginMod
     public PlayerTimeModule() {
     }
 
-    @Listener
-    public void onInitializationEvent(GameInitializationEvent event) {
+    @Override
+    public void onServerFinishLoad(GameInitializationEvent event) {
         timeOffsets = new HashMap<>();
         Optional<PacketGate> packetGateOptional = Sponge.getServiceManager().provide(PacketGate.class);
         if (packetGateOptional.isPresent()) {
@@ -54,7 +54,7 @@ public class PlayerTimeModule extends PacketListenerAdapter implements PluginMod
 
     private void initializeCommands() {
         CommandSpec personalTimeSetCommand = CommandSpec.builder()
-                .permission("personaltime.command.set")
+                .permission(Permissions.PTIME_SET.p())
                 .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("time"))))
                 .executor((src, args) -> {
                     if (!(src instanceof Player)) {
@@ -93,7 +93,7 @@ public class PlayerTimeModule extends PacketListenerAdapter implements PluginMod
                 .build();
 
         CommandSpec personalTimeResetCommand = CommandSpec.builder()
-                .permission("personaltime.command.reset")
+                .permission(Permissions.PTIME_RESET.p())
                 .executor((src, args) -> {
                     if (!(src instanceof Player)) {
                         PlayerUtils.tell(src, Translations.PLAYER_ONLY_COMMAND.t());
@@ -106,7 +106,7 @@ public class PlayerTimeModule extends PacketListenerAdapter implements PluginMod
                 .build();
 
         CommandSpec personalTimeStatusCommand = CommandSpec.builder()
-                .permission("personaltime.command.status")
+                .permission(Permissions.PTIME_STATUS.p())
                 .executor((src, args) -> {
                     if (!(src instanceof Player)) {
                         PlayerUtils.tell(src, Translations.PLAYER_ONLY_COMMAND.t());
@@ -125,13 +125,13 @@ public class PlayerTimeModule extends PacketListenerAdapter implements PluginMod
                 .build();
 
         CommandSpec personalTimeCommand = CommandSpec.builder()
-                .permission("personaltime.command")
+                .permission(Permissions.PTIME_USE.p())
                 .child(personalTimeSetCommand, "set")
                 .child(personalTimeResetCommand, "reset")
                 .child(personalTimeStatusCommand, "status")
                 .build();
 
-        Sponge.getCommandManager().register(this, personalTimeCommand, "personaltime", "ptime");
+        DarwinServer.registerCommand(personalTimeCommand, "personaltime", "ptime");
     }
 
     private String ticksToRealTime(long ticks) {
@@ -201,10 +201,6 @@ public class PlayerTimeModule extends PacketListenerAdapter implements PluginMod
 
 
     // Unused, but required by contract due to use of Native Plugin Module
-    @Override
-    public void onServerFinishLoad(GameInitializationEvent event) {
-    }
-
     @Override
     public void onServerStart(GameStartedServerEvent event) {
     }

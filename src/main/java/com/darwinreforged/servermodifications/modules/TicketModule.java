@@ -8,7 +8,7 @@ import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
@@ -64,7 +64,7 @@ public class TicketModule extends PluginModule {
 
     @Listener
     public void Init(GameInitializationEvent event) throws IOException, ObjectMappingException {
-        Sponge.getEventManager().registerListeners(this, new TicketLoginAndDiscordListener(this));
+        DarwinServer.registerListener(new TicketLoginAndDiscordListener(this));
 
         TypeSerializers.getDefaultSerializers()
                 .registerType(TypeToken.of(TicketData.class), new TicketData.TicketSerializer());
@@ -130,7 +130,7 @@ public class TicketModule extends PluginModule {
                 CommandSpec.builder()
                         .description(Text.of("Display a list of all closed tickets"))
                         .executor(new TicketReadClosedCommand(this))
-                        .permission(TicketPermissions.COMMAND_TICKET_READ_ALL)
+                        .permission(Permissions.COMMAND_TICKET_READ_ALL.p())
                         .build();
 
         // /ticket read held
@@ -138,7 +138,7 @@ public class TicketModule extends PluginModule {
                 CommandSpec.builder()
                         .description(Text.of("Display a list of all held tickets"))
                         .executor(new TicketReadHeldCommand(this))
-                        .permission(TicketPermissions.COMMAND_TICKET_READ_ALL)
+                        .permission(Permissions.COMMAND_TICKET_READ_ALL.p())
                         .build();
 
         // /ticket read (ticketID)
@@ -169,7 +169,7 @@ public class TicketModule extends PluginModule {
                         .description(Text.of("Open a ticket"))
                         .executor(new TicketOpenCommand(this))
                         .arguments(GenericArguments.remainingJoinedStrings(Text.of("message")))
-                        .permission(TicketPermissions.COMMAND_TICKET_OPEN)
+                        .permission(Permissions.COMMAND_TICKET_OPEN.p())
                         .build();
 
         // /ticket ban (username)
@@ -178,7 +178,7 @@ public class TicketModule extends PluginModule {
                         .description(Text.of("Ban a player from being able to create new tickets"))
                         .executor(new TicketBanCommand(this))
                         .arguments(GenericArguments.user(Text.of("playername")))
-                        .permission(TicketPermissions.COMMAND_TICKET_BAN)
+                        .permission(Permissions.COMMAND_TICKET_BAN.p())
                         .build();
 
         // /ticket unban (username)
@@ -187,7 +187,7 @@ public class TicketModule extends PluginModule {
                         .description(Text.of("Unban a player from being able to create new tickets"))
                         .executor(new TicketUnbanCommand(this))
                         .arguments(GenericArguments.user(Text.of("playername")))
-                        .permission(TicketPermissions.COMMAND_TICKET_BAN)
+                        .permission(Permissions.COMMAND_TICKET_BAN.p())
                         .build();
 
         // /ticket reload
@@ -195,7 +195,7 @@ public class TicketModule extends PluginModule {
                 CommandSpec.builder()
                         .description(Text.of("Reload ticket and player data."))
                         .executor(new TicketReloadCommand(this))
-                        .permission(TicketPermissions.COMMAND_RELOAD)
+                        .permission(Permissions.COMMAND_TICKET_RELOAD.p())
                         .build();
 
         // /ticket claim (ticketID)
@@ -204,7 +204,7 @@ public class TicketModule extends PluginModule {
                         .description(Text.of("Claim a ticket"))
                         .executor(new TicketClaimCommand(this))
                         .arguments(GenericArguments.integer(Text.of("ticketID")))
-                        .permission(TicketPermissions.COMMAND_TICKET_CLAIM)
+                        .permission(Permissions.COMMAND_TICKET_CLAIM.p())
                         .build();
 
         // /ticket unclaim (ticketID)
@@ -213,7 +213,7 @@ public class TicketModule extends PluginModule {
                         .description(Text.of("Unclaim a ticket"))
                         .executor(new TicketUnclaimCommand(this))
                         .arguments(GenericArguments.integer(Text.of("ticketID")))
-                        .permission(TicketPermissions.COMMAND_TICKET_UNCLAIM)
+                        .permission(Permissions.COMMAND_TICKET_UNCLAIM.p())
                         .build();
 
         // /ticket reopen (ticketID)
@@ -222,7 +222,7 @@ public class TicketModule extends PluginModule {
                         .description(Text.of("Reopen a ticket"))
                         .executor(new TicketReopenCommand(this))
                         .arguments(GenericArguments.integer(Text.of("ticketID")))
-                        .permission(TicketPermissions.COMMAND_TICKET_REOPEN)
+                        .permission(Permissions.COMMAND_TICKET_REOPEN.p())
                         .build();
 
         // /ticket assign (ticketID) (player)
@@ -233,7 +233,7 @@ public class TicketModule extends PluginModule {
                         .arguments(
                                 GenericArguments.integer(Text.of("ticketID")),
                                 GenericArguments.user(Text.of("player")))
-                        .permission(TicketPermissions.COMMAND_TICKET_ASSIGN)
+                        .permission(Permissions.COMMAND_TICKET_ASSIGN.p())
                         .build();
 
         // /ticket hold (ticketID)
@@ -242,7 +242,7 @@ public class TicketModule extends PluginModule {
                         .description(Text.of("Put a ticket on hold"))
                         .executor(new TicketHoldCommand(this))
                         .arguments(GenericArguments.integer(Text.of("ticketID")))
-                        .permission(TicketPermissions.COMMAND_TICKET_HOLD)
+                        .permission(Permissions.COMMAND_TICKET_HOLD.p())
                         .build();
 
         // /ticket comment (ticketID) (comment)
@@ -253,7 +253,7 @@ public class TicketModule extends PluginModule {
                         .arguments(
                                 GenericArguments.integer(Text.of("ticketID")),
                                 GenericArguments.remainingJoinedStrings(Text.of("comment")))
-                        .permission(TicketPermissions.COMMAND_TICKET_COMMENT)
+                        .permission(Permissions.COMMAND_TICKET_COMMENT.p())
                         .build();
 
         // /ticket teleport (ticketID)
@@ -262,7 +262,7 @@ public class TicketModule extends PluginModule {
                         .description(Text.of("Teleport to a ticket"))
                         .executor(new TicketTeleportCommand(this))
                         .arguments(GenericArguments.integer(Text.of("ticketID")))
-                        .permission(TicketPermissions.COMMAND_TICKET_TELEPORT)
+                        .permission(Permissions.COMMAND_TICKET_TELEPORT.p())
                         .build();
 
         // /ticket reject (ticketID)
@@ -274,7 +274,7 @@ public class TicketModule extends PluginModule {
                                 GenericArguments.integer(Text.of("ticketID")),
                                 GenericArguments.optional(
                                         GenericArguments.remainingJoinedStrings(Text.of("comment"))))
-                        .permission(TicketPermissions.COMMAND_TICKET_CLOSE_ALL)
+                        .permission(Permissions.COMMAND_TICKET_CLOSE_ALL.p())
                         .build();
 
         // /ticket
@@ -328,16 +328,16 @@ public class TicketModule extends PluginModule {
                                 if (TicketConfig.nagHeld) {
                                     if (heldTickets > 0) {
                                         if (openTickets > 0) {
-                                            PlayerUtils.broadcastForPermission(Translations.TICKET_UNRESOLVED_HELD.ft(openTickets, heldTickets, "check"), TicketPermissions.STAFF);
+                                            PlayerUtils.broadcastForPermission(Translations.TICKET_UNRESOLVED_HELD.ft(openTickets, heldTickets, "check"), Permissions.TICKET_STAFF.p());
                                         }
                                     } else {
                                         if (openTickets > 0) {
-                                            PlayerUtils.broadcastForPermission(Translations.TICKET_UNRESOLVED.ft(openTickets, "check"), TicketPermissions.STAFF);
+                                            PlayerUtils.broadcastForPermission(Translations.TICKET_UNRESOLVED.ft(openTickets, "check"), Permissions.TICKET_STAFF.p());
                                         }
                                     }
                                 } else {
                                     if (openTickets > 0) {
-                                        PlayerUtils.broadcastForPermission(Translations.TICKET_UNRESOLVED.ft(openTickets, "check"), TicketPermissions.STAFF);
+                                        PlayerUtils.broadcastForPermission(Translations.TICKET_UNRESOLVED.ft(openTickets, "check"), Permissions.TICKET_STAFF.p());
                                     }
                                 }
                             },

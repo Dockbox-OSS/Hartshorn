@@ -5,12 +5,12 @@ import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.objects.HeadDatabaseChestInterface;
 import com.darwinreforged.servermodifications.objects.HeadDatabaseHead;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.FileManager;
 import com.darwinreforged.servermodifications.util.todo.HeadDatabaseConfigUtil;
 import com.google.gson.*;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -41,7 +41,7 @@ public class HeadDatabaseModule extends PluginModule {
 
     @Override
     public void onServerFinishLoad(GameInitializationEvent event) {
-        Sponge.getCommandManager().register(this, hdbMain, "hdb");
+        DarwinServer.registerCommand(hdbMain, "hdb");
     }
 
     HeadDatabaseConfigUtil handle;
@@ -105,32 +105,31 @@ public class HeadDatabaseModule extends PluginModule {
     }
 
     public JsonArray readJsonFromUrl(String url) throws IOException {
-        InputStream is = new URL(url).openStream();
-        try {
+        try (InputStream is = new URL(url).openStream()) {
+            System.out.println("Requesting from : " + url);
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String jsonText = readAll(rd);
+            System.out.println("Got result : " + jsonText);
             return (JsonArray) new JsonParser().parse(jsonText);
-        } finally {
-            is.close();
         }
     }
 
     private CommandSpec hdbOpen =
             CommandSpec.builder()
-                    .permission("he.open")
+                    .permission(Permissions.HEADS_OPEN.p())
                     .executor(new openInventory())
                     .build();
 
     private CommandSpec hdbSearch =
             CommandSpec.builder()
-                    .permission("he.open")
+                    .permission(Permissions.HEADS_SEARCH.p())
                     .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("query"))))
                     .executor(new searchHeads())
                     .build();
 
     private CommandSpec hdbMain =
             CommandSpec.builder()
-                    .permission("he.open")
+                    .permission(Permissions.HEADS_MAIN.p())
                     .child(hdbOpen, "open")
                     .child(hdbSearch, "find", "search")
                     .build();

@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
@@ -63,7 +63,7 @@ public class TicketReopenCommand implements CommandExecutor {
                         e.printStackTrace();
                     }
 
-                    PlayerUtils.broadcastForPermission(Translations.TICKET_REOPEN.ft(src.getName(), ticket.getTicketID()), TicketPermissions.STAFF);
+                    PlayerUtils.broadcastForPermission(Translations.TICKET_REOPEN.ft(src.getName(), ticket.getTicketID()), Permissions.TICKET_STAFF.p());
 
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {

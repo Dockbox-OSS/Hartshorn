@@ -7,4 +7,8 @@ public interface PluginModuleNative {
     void onServerFinishLoad(GameInitializationEvent event);
 
     void onServerStart(GameStartedServerEvent event);
+
+
+    class External extends PluginModule {}
+    class Internal extends PluginModule {}
 }

@@ -3,7 +3,7 @@ package com.darwinreforged.servermodifications.listeners;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.objects.TicketStatus;
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
@@ -103,7 +103,7 @@ public class TicketLoginAndDiscordListener {
 		}
 
 		// Notify staff of the current open tickets when they login
-		if (player.hasPermission(TicketPermissions.STAFF)) {
+		if (player.hasPermission(Permissions.TICKET_STAFF.p())) {
 			final List<TicketData> tickets =
 					new ArrayList<TicketData>(plugin.getDataStore().getTicketData());
 			int openTickets = 0;

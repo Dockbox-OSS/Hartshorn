@@ -1,9 +1,10 @@
 package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.commands.MultiCommandExecutor;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
-import org.spongepowered.api.Sponge;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.event.Listener;
@@ -27,12 +28,12 @@ public class MultiCommandModule extends PluginModule {
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
         CommandSpec multiCommand = CommandSpec.builder()
-                .permission("mc.use")
+                .permission(Permissions.MULTI_CMD_USE.p())
                 .executor(new MultiCommandExecutor())
                 .arguments(GenericArguments.remainingJoinedStrings(Text.of("commands")))
                 .build();
 
-        Sponge.getCommandManager().register(this, multiCommand, "multi", "/multi");
+        DarwinServer.registerCommand(multiCommand, "multi");
     }
 
 

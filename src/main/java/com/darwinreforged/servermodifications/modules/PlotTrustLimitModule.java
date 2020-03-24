@@ -1,5 +1,6 @@
 package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.listeners.PlotTrustLimitPlotActionListener;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
@@ -28,6 +29,6 @@ public class PlotTrustLimitModule extends PluginModule {
     @Listener
     public void onServerFinishLoad(GameInitializationEvent event) {
         userStorageService = Sponge.getServiceManager().provide(UserStorageService.class).get();
-        Sponge.getEventManager().registerListeners(this, new PlotTrustLimitPlotActionListener());
+        DarwinServer.registerListener(new PlotTrustLimitPlotActionListener());
     }
 }

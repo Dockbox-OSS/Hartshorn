@@ -20,7 +20,6 @@ public class PaintingsDatabaseUtil {
     	sql = sqlP;
     	root = rootP;
     	create();
-    	
     }
 	public DataSource getDataSource(String jdbcUrl) throws SQLException {
         if (sql == null) {

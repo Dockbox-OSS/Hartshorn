@@ -1,14 +1,15 @@
 package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.listeners.DaveChatListeners;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.DaveConfigurationUtil;
 import com.darwinreforged.servermodifications.util.todo.FileManager;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -46,8 +47,8 @@ public class DaveChatModule extends PluginModule {
 
     @Override
     public void onServerFinishLoad(GameInitializationEvent event) {
-        Sponge.getEventManager().registerListeners(this, new DaveChatListeners());
-        Sponge.getCommandManager().register(this, daveMain, "dave");
+        DarwinServer.registerListener(new DaveChatListeners());
+        DarwinServer.registerCommand(daveMain, "dave");
     }
 
     @Override
@@ -104,13 +105,13 @@ public class DaveChatModule extends PluginModule {
 
     private CommandSpec daveReload = CommandSpec.builder()
             .description(Text.of("Reload Daves config"))
-            .permission("dave.reload")
+            .permission(Permissions.DAVE_RELOAD.p())
             .executor(new reloadDave())
             .build();
 
     private CommandSpec daveMute = CommandSpec.builder()
             .description(Text.of("Mutes Dave"))
-            .permission("dave.mute")
+            .permission(Permissions.DAVE_MUTE.p())
             .executor(new muteDave())
             .build();
 

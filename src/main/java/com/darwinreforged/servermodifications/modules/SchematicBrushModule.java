@@ -1,9 +1,11 @@
 package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.adapters.SchemBrushAdapter;
 import com.darwinreforged.servermodifications.adapters.SchemBrushAdapterFactory;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.google.common.reflect.TypeToken;
@@ -35,7 +37,6 @@ import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.util.io.file.FilenameException;
 import com.sk89q.worldedit.world.registry.WorldData;
 import org.slf4j.Logger;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -357,22 +358,21 @@ public class SchematicBrushModule extends PluginModule {
         loadSchematicSets();
 
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        DarwinServer.registerCommand(CommandSpec.builder()
                 .arguments(GenericArguments.remainingJoinedStrings(Text.of("args")))
                 .executor(this::handleSCHBRCommand)
                 .build(), "/schbr");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        DarwinServer.registerCommand(CommandSpec.builder()
                 .arguments(GenericArguments.remainingJoinedStrings(Text.of("args")))
                 .executor(this::handleSCHSETCommand)
                 .build(), "/schset");
 
-        Sponge.getCommandManager().register(this, CommandSpec.builder()
+        DarwinServer.registerCommand(CommandSpec.builder()
                 .arguments(GenericArguments.remainingJoinedStrings(Text.of("args")))
                 .executor(this::handleSCHLISTCommand)
                 .build(), "/schlist");
     }
-
 
     private CommandResult handleSCHBRCommand(CommandSource commandSource, CommandContext commandContext) {
         if (!(commandSource instanceof org.spongepowered.api.entity.living.player.Player)) {
@@ -391,7 +391,7 @@ public class SchematicBrushModule extends PluginModule {
         Player player = playerOptional.get();
 
         // Test for command access
-        if (!player.hasPermission("schematicbrush.brush.use")) {
+        if (!player.hasPermission(Permissions.SCHEMATIC_BRUSH_SET_USE.p())) {
             PlayerUtils.tell(player0, Translations.COMMAND_NO_PERMISSION.t());
             return CommandResult.empty();
         }
@@ -406,7 +406,7 @@ public class SchematicBrushModule extends PluginModule {
         SchematicSet ss = null;
         String[] args = argv.get().split(" ");
         if (args[0].startsWith("&")) {  // If set ID
-            if (!player.hasPermission("schematicbrush.set.use")) {
+            if (!player.hasPermission(Permissions.SCHEMATIC_BRUSH_SET_USE.p())) {
                 PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
                         Translations.SCHEMATIC_SET_NOT_ALLOWED.t());
                 return CommandResult.empty();
@@ -477,7 +477,7 @@ public class SchematicBrushModule extends PluginModule {
         BrushTool tool;
         try {
             tool = session.getBrushTool(player.getItemInHand());
-            tool.setBrush(sbi, "schematicbrush.brush.use");
+            tool.setBrush(sbi, Permissions.SCHEMATIC_BRUSH_SET_USE.p());
             PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
                     Translations.SCHEMATIC_BRUSH_SET.t());
         } catch (InvalidToolBindException e) {
@@ -504,7 +504,7 @@ public class SchematicBrushModule extends PluginModule {
         Player player = playerOptional.get();
 
         // Test for command access
-        if (!player.hasPermission("schematicbrush.brush.use")) {
+        if (!player.hasPermission(Permissions.SCHEMATIC_BRUSH_SET_USE.p())) {
             PlayerUtils.tell(player0, Translations.COMMAND_NO_PERMISSION.t());
             return CommandResult.empty();
         }
@@ -518,7 +518,7 @@ public class SchematicBrushModule extends PluginModule {
         }
         String[] args = argv.get().split(" ");
 
-        if (!player.hasPermission("schematicbrush.set." + args[0])) {
+        if (!player.hasPermission(Permissions.SCHEMATIC_BRUSH_SET.f(args[0]))) {
             PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
                     Translations.COMMAND_NO_PERMISSION.t());
             return CommandResult.empty();
@@ -790,7 +790,7 @@ public class SchematicBrushModule extends PluginModule {
 
         Player player = playerOptional.get();
         // Test for command access
-        if (!player.hasPermission("schematicbrush.brush.use")) {
+        if (!player.hasPermission(Permissions.SCHEMATIC_BRUSH_SET_USE.p())) {
             PlayerUtils.tell(player0, Translations.COMMAND_NO_PERMISSION.t());
             return CommandResult.empty();
         }
@@ -804,7 +804,7 @@ public class SchematicBrushModule extends PluginModule {
         }
         String[] args = argv.get().split(" ");
         // Test for command access
-        if (!player.hasPermission("schematicbrush.list")) {
+        if (!player.hasPermission(Permissions.SCHEMATIC_BRUSH_LIST.p())) {
             PlayerUtils.tellIfPresent(PlayerUtils.getPlayerFromUUID(player.getUniqueId()),
                     Translations.COMMAND_NO_PERMISSION.t());
             return CommandResult.empty();

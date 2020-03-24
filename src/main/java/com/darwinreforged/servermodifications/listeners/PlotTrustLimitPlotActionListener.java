@@ -2,6 +2,7 @@ package com.darwinreforged.servermodifications.listeners;
 
 import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.modules.PlotTrustLimitModule;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.plotsquared.sponge.events.PlayerPlotHelperEvent;
@@ -35,9 +36,9 @@ public class PlotTrustLimitPlotActionListener {
         // Only check if the user exists, if it doesn't you can't add them anyway
         if (user.isPresent()
                 // If the user doesn't have the ptl.unlocked node / Member role
-                && !user.get().hasPermission("ptl.unlocked")
+                && !user.get().hasPermission(Permissions.TRUSTLIMIT_UNLOCKED.p())
                 // If the initiator isn't a staff member
-                && !event.getInitiator().hasPermission("darwin.staff")
+                && !event.getInitiator().hasPermission(Permissions.DARWIN_STAFF.p())
                 // And only on Plots2/Plots500/P2 managed worlds
                 && (event.getPlot().getWorldName().equals(Translations.PLOTS2_NAME.s())
                 || event.getPlot().getWorldName().equals(Translations.PLOTS500_NAME.s())

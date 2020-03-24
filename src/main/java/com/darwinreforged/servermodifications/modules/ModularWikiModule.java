@@ -3,12 +3,12 @@ package com.darwinreforged.servermodifications.modules;
 import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.FileManager;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -45,20 +45,20 @@ public class ModularWikiModule extends PluginModule implements CommandExecutor {
 
     private CommandSpec wikiCommandSpec =
             CommandSpec.builder()
-                    .permission("modwiki.use")
+                    .permission(Permissions.MODWIKI_USE.p())
                     .executor(new WikiCommand())
                     .arguments(GenericArguments.optional(GenericArguments.string(Text.of("entry"))))
                     .build();
 
     private CommandSpec wikiReloadCommandSpec =
             CommandSpec.builder()
-                    .permission("modwiki.reload")
+                    .permission(Permissions.MODWIKI_RELOAD.p())
                     .executor(this)
                     .build();
 
     private CommandSpec wikiShareCommandSpec =
             CommandSpec.builder()
-                    .permission("modwiki.share")
+                    .permission(Permissions.MODWIKI_SHARE.p())
                     .executor(new WikiShareCommand())
                     .arguments(GenericArguments.string(Text.of("entry")), GenericArguments.player(Text.of("pl")))
                     .build();
@@ -78,9 +78,9 @@ public class ModularWikiModule extends PluginModule implements CommandExecutor {
     @Listener
     public void onServerStart(GameStartedServerEvent event) {
         if (this.init()) {
-            Sponge.getCommandManager().register(this, wikiCommandSpec, "wiki");
-            Sponge.getCommandManager().register(this, wikiReloadCommandSpec, "wikireload");
-            Sponge.getCommandManager().register(this, wikiShareCommandSpec, "wikishare");
+            DarwinServer.registerCommand(wikiCommandSpec, "wiki");
+            DarwinServer.registerCommand(wikiReloadCommandSpec, "wikireload");
+            DarwinServer.registerCommand(wikiShareCommandSpec, "wikishare");
         }
     }
 

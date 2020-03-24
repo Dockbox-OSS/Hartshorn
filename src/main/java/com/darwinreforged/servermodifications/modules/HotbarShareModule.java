@@ -1,7 +1,9 @@
 package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import org.spongepowered.api.Sponge;
@@ -52,14 +54,14 @@ public class HotbarShareModule extends PluginModule {
 
     private CommandSpec hbl =
             CommandSpec.builder()
-                    .permission("hb.load")
+                    .permission(Permissions.HOTBAR_LOAD.p())
                     .child(hblView, "view")
                     .child(hblLoad, "load")
                     .build();
 
     private CommandSpec hbshare =
             CommandSpec.builder()
-                    .permission("hb.share")
+                    .permission(Permissions.HOTBAR_SHARE.p())
                     .arguments(GenericArguments.optional(GenericArguments.player(Text.of("PlayerName"))))
                     .executor(new ShareCommand())
                     .build();
@@ -69,8 +71,8 @@ public class HotbarShareModule extends PluginModule {
 
     @Override
     public void onServerStart(GameStartedServerEvent event) {
-        Sponge.getCommandManager().register(this, hbl, "hbload");
-        Sponge.getCommandManager().register(this, hbshare, "shareinv");
+        DarwinServer.registerCommand(hbl, "hbload");
+        DarwinServer.registerCommand(hbshare, "shareinv");
     }
 
     public static class ShareCommand implements CommandExecutor {

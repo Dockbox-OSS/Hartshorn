@@ -1,5 +1,6 @@
 package com.darwinreforged.servermodifications.listeners;
 
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.intellectualcrafters.plot.object.Plot;
@@ -45,7 +46,7 @@ public class LayerheightPlaceEventListener {
 							plotLoc.setWorld(player.getLocation().getExtent().getName());
 							if (Plot.getPlot(plotLoc) != null) {
 								Plot plot = Plot.getPlot(plotLoc);
-								if (plot.isAdded(player.getUniqueId()) || player.hasPermission("plots.admin.build.other")) {
+								if (plot.isAdded(player.getUniqueId()) || player.hasPermission(Permissions.PLOTS_ADMIN_BUILD_OTHER.p())) {
 									Text name2 = item.get(Keys.DISPLAY_NAME).get();
 									String temp = name2.toPlain();
 									String plainLayerHeightDisplayName = Translations.HEIGHTTOOL_NAME.p();

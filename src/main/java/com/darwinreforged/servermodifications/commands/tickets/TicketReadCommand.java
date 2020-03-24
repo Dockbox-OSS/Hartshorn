@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.LocationUtils;
@@ -57,7 +57,7 @@ public class TicketReadCommand implements CommandExecutor {
             throw new CommandException(Translations.UNKNOWN_ERROR.ft("Tickets list is empty."));
         } else {
             if (!ticketIDOp.isPresent()) {
-                if (src.hasPermission(TicketPermissions.COMMAND_TICKET_READ_ALL)) {
+                if (src.hasPermission(Permissions.COMMAND_TICKET_READ_ALL.p())) {
                     PaginationService paginationService =
                             Sponge.getServiceManager().provide(PaginationService.class).get();
                     List<Text> contents = new ArrayList<>();
@@ -87,16 +87,16 @@ public class TicketReadCommand implements CommandExecutor {
                             .sendTo(src);
                     return CommandResult.success();
                 } else {
-                    if (src.hasPermission(TicketPermissions.COMMAND_TICKET_READ_SELF)) {
+                    if (src.hasPermission(Permissions.COMMAND_TICKET_READ_SELF.p())) {
                         throw new CommandException(Translations.TICKET_ERROR_INCORRECT_USAGE.t());
                     } else {
                         throw new CommandException(
-                                Translations.TICKET_ERROR_PERMISSION.ft(TicketPermissions.COMMAND_TICKET_READ_ALL));
+                                Translations.TICKET_ERROR_PERMISSION.ft(Permissions.COMMAND_TICKET_READ_ALL.p()));
                     }
                 }
             } else {
-                if (src.hasPermission(TicketPermissions.COMMAND_TICKET_READ_ALL)
-                        || (src.hasPermission(TicketPermissions.COMMAND_TICKET_READ_SELF))) {
+                if (src.hasPermission(Permissions.COMMAND_TICKET_READ_ALL.p())
+                        || (src.hasPermission(Permissions.COMMAND_TICKET_READ_SELF.p()))) {
                     PaginationService paginationService =
                             Sponge.getServiceManager().provide(PaginationService.class).get();
                     List<Text> contents = new ArrayList<>();
@@ -105,7 +105,7 @@ public class TicketReadCommand implements CommandExecutor {
                     for (TicketData ticket : tickets) {
                         if (ticket.getTicketID() == ticketID) {
                             if (!ticket.getPlayerUUID().equals(uuid)
-                                    && !src.hasPermission(TicketPermissions.COMMAND_TICKET_READ_ALL)) {
+                                    && !src.hasPermission(Permissions.COMMAND_TICKET_READ_ALL.p())) {
                                 throw new CommandException(Translations.TICKET_ERROR_OWNER.t());
                             }
                             ticketStatus = TicketUtil.getTicketStatusColour(ticket.getStatus());
@@ -116,7 +116,7 @@ public class TicketReadCommand implements CommandExecutor {
 
                             if (ticket.getStatus() == Open || ticket.getStatus() == Claimed) {
                                 if (ticket.getStatus() == Open
-                                        && src.hasPermission(TicketPermissions.COMMAND_TICKET_CLAIM)) {
+                                        && src.hasPermission(Permissions.COMMAND_TICKET_CLAIM.p())) {
                                     action.append(
                                             Text.builder()
                                                     .append(Translations.TICKET_CLAIM_BUTTON.t())
@@ -128,7 +128,7 @@ public class TicketReadCommand implements CommandExecutor {
                                 }
                                 if (ticket.getStatus() == Claimed) {
                                     if (ticket.getStaffUUID().equals(uuid)
-                                            && src.hasPermission(TicketPermissions.COMMAND_TICKET_UNCLAIM)) {
+                                            && src.hasPermission(Permissions.COMMAND_TICKET_UNCLAIM.p())) {
                                         action.append(
                                                 Text.builder()
                                                         .append(Translations.TICKET_UNCLAIM_BUTTON.t())
@@ -142,7 +142,7 @@ public class TicketReadCommand implements CommandExecutor {
                                 }
                                 if ((ticket.getStatus() == Open
                                         || ticket.getStatus() == Claimed && ticket.getStaffUUID().equals(uuid))
-                                        && src.hasPermission(TicketPermissions.COMMAND_TICKET_HOLD)) {
+                                        && src.hasPermission(Permissions.COMMAND_TICKET_HOLD.p())) {
                                     action.append(
                                             Text.builder()
                                                     .append(Translations.TICKET_HOLD_BUTTON.t())
@@ -154,7 +154,7 @@ public class TicketReadCommand implements CommandExecutor {
                                 }
                             }
                             if (ticket.getStatus() == Held || ticket.getStatus() == Closed) {
-                                if (src.hasPermission(TicketPermissions.COMMAND_TICKET_REOPEN)) {
+                                if (src.hasPermission(Permissions.COMMAND_TICKET_REOPEN.p())) {
                                     action.append(
                                             Text.builder()
                                                     .append(Translations.TICKET_REOPEN_BUTTON.t())
@@ -171,8 +171,8 @@ public class TicketReadCommand implements CommandExecutor {
                                 if ((ticket.getStatus() == Claimed && ticket.getStaffUUID().equals(uuid))
                                         || ticket.getStatus() == Open
                                         || ticket.getStatus() == Held) {
-                                    if (src.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_ALL)
-                                            || src.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_SELF)) {
+                                    if (src.hasPermission(Permissions.COMMAND_TICKET_CLOSE_ALL.p())
+                                            || src.hasPermission(Permissions.COMMAND_TICKET_CLOSE_SELF.p())) {
 
                                         if (ticket.getWorld().equals(Translations.PLOTS1_NAME.s())) {
                                             action.append(
@@ -225,8 +225,8 @@ public class TicketReadCommand implements CommandExecutor {
                                     if ((ticket.getStatus() == Claimed && ticket.getStaffUUID().equals(uuid))
                                             || ticket.getStatus() == Open
                                             || ticket.getStatus() == Held) {
-                                        if (src.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_ALL)
-                                                || src.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_SELF)) {
+                                        if (src.hasPermission(Permissions.COMMAND_TICKET_CLOSE_ALL.p())
+                                                || src.hasPermission(Permissions.COMMAND_TICKET_CLOSE_SELF.p())) {
                                             action.append(
                                                     Text.builder()
                                                             .append(Translations.TICKET_REJECT_BUTTON.t())
@@ -241,7 +241,7 @@ public class TicketReadCommand implements CommandExecutor {
                                 }
                             }
                             if (ticket.getComment().isEmpty()
-                                    && src.hasPermission(TicketPermissions.COMMAND_TICKET_COMMENT)) {
+                                    && src.hasPermission(Permissions.COMMAND_TICKET_COMMENT.p())) {
                                 if (ticket.getStatus() != Claimed
                                         || ticket.getStatus() == Claimed && ticket.getStaffUUID().equals(uuid)) {
                                     action.append(
@@ -264,7 +264,7 @@ public class TicketReadCommand implements CommandExecutor {
                                             "Teleport",
                                             TextColors.AQUA,
                                             "]"));
-                            if (src.hasPermission(TicketPermissions.COMMAND_TICKET_TELEPORT)
+                            if (src.hasPermission(Permissions.COMMAND_TICKET_TELEPORT.p())
                                     && ticket.getServer().equalsIgnoreCase(TicketConfig.server)) {
                                 send.onHover(TextActions.showText(Translations.TICKET_TELEPORT_HOVER.t()));
                                 worldOptional.ifPresent(
@@ -337,7 +337,7 @@ public class TicketReadCommand implements CommandExecutor {
                     return CommandResult.success();
                 } else {
                     throw new CommandException(
-                            Translations.TICKET_ERROR_PERMISSION.ft(TicketPermissions.COMMAND_TICKET_READ_SELF));
+                            Translations.TICKET_ERROR_PERMISSION.ft(Permissions.COMMAND_TICKET_READ_SELF.p()));
                 }
             }
         }

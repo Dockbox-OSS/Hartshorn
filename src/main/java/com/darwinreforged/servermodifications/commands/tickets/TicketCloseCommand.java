@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
@@ -57,12 +57,12 @@ public class TicketCloseCommand implements CommandExecutor {
       for (TicketData ticket : tickets) {
         if (ticket.getTicketID() == ticketID) {
           if (ticket.getPlayerUUID().equals(uuid)
-              && !src.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_SELF)) {
+              && !src.hasPermission(Permissions.COMMAND_TICKET_CLOSE_SELF.p())) {
             throw new CommandException(
-                    Translations.TICKET_ERROR_PERMISSION.ft(TicketPermissions.COMMAND_TICKET_CLOSE_SELF));
+                    Translations.TICKET_ERROR_PERMISSION.ft(Permissions.COMMAND_TICKET_CLOSE_SELF.p()));
           }
           if (!ticket.getPlayerUUID().equals(uuid)
-              && !src.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_ALL)) {
+              && !src.hasPermission(Permissions.COMMAND_TICKET_CLOSE_ALL.p())) {
             throw new CommandException(Translations.TICKET_ERROR_OWNER.t());
           }
           if (ticket.getStatus() == Closed) {
@@ -70,7 +70,7 @@ public class TicketCloseCommand implements CommandExecutor {
           }
           if (ticket.getStatus() == Claimed
               && !ticket.getStaffUUID().equals(uuid)
-              && !src.hasPermission(TicketPermissions.CLAIMED_TICKET_BYPASS)) {
+              && !src.hasPermission(Permissions.CLAIMED_TICKET_BYPASS.p())) {
             throw new CommandException(
                 Translations.TICKET_ERROR_CLAIM.ft(
                     ticket.getTicketID(),
@@ -83,7 +83,7 @@ public class TicketCloseCommand implements CommandExecutor {
           ticket.setStatus(Closed);
           ticket.setStaffUUID(uuid.toString());
 
-          PlayerUtils.broadcastForPermission(Translations.TICKET_CLOSE.f(ticketID, src.getName()), TicketPermissions.STAFF);
+          PlayerUtils.broadcastForPermission(Translations.TICKET_CLOSE.f(ticketID, src.getName()), Permissions.TICKET_STAFF.p());
           Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
           if (ticketPlayerOP.isPresent()) {
             Player ticketPlayer = ticketPlayerOP.get();

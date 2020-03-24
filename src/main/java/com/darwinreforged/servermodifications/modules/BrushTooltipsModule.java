@@ -1,8 +1,10 @@
 package com.darwinreforged.servermodifications.modules;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.listeners.BrushTooltipListener;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -27,8 +29,8 @@ public class BrushTooltipsModule extends PluginModule {
 
     @Override
     public void onServerFinishLoad(GameInitializationEvent event) {
-        Sponge.getEventManager().registerListeners(this, new BrushTooltipListener());
-        Sponge.getCommandManager().register(this, btMain, "bt");
+        DarwinServer.registerListener(new BrushTooltipListener());
+        DarwinServer.registerCommand(btMain, "bt");
     }
 
     @Override
@@ -39,12 +41,13 @@ public class BrushTooltipsModule extends PluginModule {
 
     private CommandSpec btRefresh = CommandSpec.builder()
             .description(Text.of("Refreshes BT for player"))
-            .permission("bt.refresh")
+            .permission(Permissions.BRUSH_TT_REFRESH.p())
             .executor(new BrushTooltipRefresh())
             .build();
 
     private CommandSpec btMain = CommandSpec.builder()
             .description(Text.of("Main BT command"))
+            .permission(Permissions.BRUSH_TT_USE.p())
             .child(btRefresh)
             .build();
 

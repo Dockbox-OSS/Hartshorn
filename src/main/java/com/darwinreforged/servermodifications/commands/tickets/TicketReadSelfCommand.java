@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
@@ -35,8 +35,8 @@ public class TicketReadSelfCommand implements CommandExecutor {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         final List<TicketData> tickets = new ArrayList<TicketData>(plugin.getDataStore().getTicketData());
 
-        if (!src.hasPermission(TicketPermissions.COMMAND_TICKET_READ_SELF)) {
-            throw new CommandException(Translations.TICKET_ERROR_PERMISSION.ft(TicketPermissions.COMMAND_TICKET_READ_SELF));
+        if (!src.hasPermission(Permissions.COMMAND_TICKET_READ_SELF.p())) {
+            throw new CommandException(Translations.TICKET_ERROR_PERMISSION.ft(Permissions.COMMAND_TICKET_READ_SELF.p()));
         }
         if (!(src instanceof Player)) {
             throw new CommandException(Translations.UNKNOWN_ERROR.ft("Console users cannot use this command."));

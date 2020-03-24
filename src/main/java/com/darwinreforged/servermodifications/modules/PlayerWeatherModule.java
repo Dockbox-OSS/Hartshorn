@@ -6,6 +6,7 @@ import com.darwinreforged.servermodifications.commands.weather.PlotWeatherComman
 import com.darwinreforged.servermodifications.listeners.WeatherPlayerActionListeners;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherCoreUtil;
@@ -40,7 +41,7 @@ public class PlayerWeatherModule extends PluginModule {
             DarwinServer.getLogger().info("packetGate is present");
 
             initialiseCommand();
-            Sponge.getEventManager().registerListeners(this, new WeatherPlayerActionListeners());
+            DarwinServer.registerListener(new WeatherPlayerActionListeners());
 
             DarwinServer.getLogger().info("Weather Plugin successfull initialised");
     } else {
@@ -51,25 +52,25 @@ public class PlayerWeatherModule extends PluginModule {
 
   private void initialiseCommand() {
     CommandSpec plotWeatherCommand =
-        CommandSpec.builder()
-            .description(Text.of("Set the weather of your plot"))
-            .permission("weatherplugin.command.plot")
+            CommandSpec.builder()
+                    .description(Text.of("Set the weather of your plot"))
+                    .permission(Permissions.WEATHER_PLOT.p())
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("weather"))))
             .executor(new PlotWeatherCommand())
             .build();
 
     CommandSpec playerWeatherCommand =
-        CommandSpec.builder()
-            .description(Text.of("Set your personal weather"))
-            .permission("weatherplugin.command.set")
+            CommandSpec.builder()
+                    .description(Text.of("Set your personal weather"))
+                    .permission(Permissions.WEATHER_SET.p())
             .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("weather"))))
             .executor(new PlayerWeatherCommand())
             .build();
 
     CommandSpec toggleGlobalWeatherCommand =
-        CommandSpec.builder()
-            .description(Text.of("Toggles the weather of all players personal weather"))
-            .permission("weatherplugin.command.globalweather")
+            CommandSpec.builder()
+                    .description(Text.of("Toggles the weather of all players personal weather"))
+                    .permission(Permissions.WEATHER_GLOBAL.p())
             .arguments(GenericArguments.none())
             .executor(
                 (src, args) -> {
@@ -109,7 +110,7 @@ public class PlayerWeatherModule extends PluginModule {
     CommandSpec debugCommand =
             CommandSpec.builder()
                     .description(Text.of("Prints out relevant information about player"))
-                    .permission("weatherplugin.command.debug")
+                    .permission(Permissions.WEATHER_DEBUG.p())
                     .child(toggleGlobalWeatherCommand, "toggle")
                     .executor(
                         (src, args) -> {
@@ -124,8 +125,8 @@ public class PlayerWeatherModule extends PluginModule {
                         }
                     ).build();
 
-    Sponge.getCommandManager().register(this, debugCommand, "weatherdebug", "dweather");
-    Sponge.getCommandManager().register(this, playerWeatherCommand, "weatherplugin", "pweather");
-    Sponge.getCommandManager().register(this, plotWeatherCommand, "plotweather");
+    DarwinServer.registerCommand(debugCommand, "weatherdebug", "dweather");
+    DarwinServer.registerCommand(playerWeatherCommand, "weatherplugin", "pweather");
+    DarwinServer.registerCommand(plotWeatherCommand, "plotweather");
   }
 }

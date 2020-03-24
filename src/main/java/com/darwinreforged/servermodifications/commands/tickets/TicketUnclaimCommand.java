@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
@@ -50,7 +50,7 @@ public class TicketUnclaimCommand implements CommandExecutor {
                 if (ticket.getTicketID() == ticketID) {
                     if (!ticket.getStaffUUID().equals(uuid)
                             && ticket.getStatus() == Claimed
-                            && !src.hasPermission(TicketPermissions.CLAIMED_TICKET_BYPASS)) {
+                            && !src.hasPermission(Permissions.CLAIMED_TICKET_BYPASS.p())) {
                         throw new CommandException(
                                 Translations.TICKET_ERROR_UNCLAIM.ft(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
                     }
@@ -77,7 +77,7 @@ public class TicketUnclaimCommand implements CommandExecutor {
                         PlayerUtils.tell(ticketPlayer, Translations.TICKET_UNCLAIM_USER.ft(src.getName(), ticket.getTicketID()));
                     }
 
-                    PlayerUtils.broadcastForPermission(Translations.TICKET_UNCLAIM.ft(src.getName(), ticket.getTicketID()), TicketPermissions.STAFF);
+                    PlayerUtils.broadcastForPermission(Translations.TICKET_UNCLAIM.ft(src.getName(), ticket.getTicketID()), Permissions.TICKET_STAFF.p());
 
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setColor(Color.YELLOW);

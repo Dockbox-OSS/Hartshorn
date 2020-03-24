@@ -46,7 +46,7 @@ public class PlayerUtils {
      Regular sendMessage
      */
     public static void tell(CommandSource player, Text text, boolean addPrefix) {
-        text = Text.builder().append(text).append(TextSerializers.FORMATTING_CODE.deserializeUnchecked(addPrefix ? Translations.PREFIX.s() : "")).build();
+        text = Text.builder().append(TextSerializers.FORMATTING_CODE.deserializeUnchecked(addPrefix ? Translations.PREFIX.s() : "")).append(text).build();
         player.sendMessage(text);
     }
 
@@ -55,11 +55,11 @@ public class PlayerUtils {
     }
 
     public static void tell(CommandSource player, String message, boolean addPrefix) {
-        tell(player, TextSerializers.FORMATTING_CODE.deserializeUnchecked(String.format("%s%s", Translations.PREFIX.s(), message)), addPrefix);
+        tell(player, TextSerializers.FORMATTING_CODE.deserializeUnchecked(message), addPrefix);
     }
 
     public static void tell(CommandSource player, String message) {
-        tell(player, TextSerializers.FORMATTING_CODE.deserializeUnchecked(String.format("%s%s", Translations.PREFIX.s(), message)));
+        tell(player, TextSerializers.FORMATTING_CODE.deserializeUnchecked(message));
     }
 
     /*

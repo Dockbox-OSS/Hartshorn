@@ -1,7 +1,7 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 import com.darwinreforged.servermodifications.objects.TicketData;
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
@@ -51,12 +51,12 @@ public class TicketCommentCommand implements CommandExecutor {
                 if (ticket.getTicketID() == ticketID) {
                     if (!ticket.getStaffUUID().equals(uuid)
                             && ticket.getStatus() == Claimed
-                            && !src.hasPermission(TicketPermissions.CLAIMED_TICKET_BYPASS)) {
+                            && !src.hasPermission(Permissions.CLAIMED_TICKET_BYPASS.p())) {
                         throw new CommandException(
                                 Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
                     }
                     if (!ticket.getComment().isEmpty()) {
-                        if (src.hasPermission(TicketPermissions.COMMAND_TICKET_EDIT_COMMENT)) {
+                        if (src.hasPermission(Permissions.COMMAND_TICKET_EDIT_COMMENT.p())) {
                             Text.Builder action = Text.builder();
                             action.append(
                                     Text.builder()

@@ -294,7 +294,7 @@ public enum Translations {
 
     //    HeadDatabase
     OPEN_GUI_ERROR("$4Failed to open Head Database GUI"),
-    HEADS_EVOLVED_API_URL("https://minecraft-heads.com/scripts/api.php?tags=true&cat="),
+    HEADS_EVOLVED_API_URL("https://minecraft-heads.com/scripts/api.php?tags=true&cat={0}"),
     HEADS_EVOLVED_FAILED_LOAD("$4Failed to load {0} heads"),
 
     //    Layerheight
@@ -436,7 +436,17 @@ public enum Translations {
             "$2Last logout: $1{4}\n" +
             "$2Last seen: $1{5}\n" +
             "$2Alt accounts: $1{6}"),
-    PLAYER_DATA_COLLECT_ERROR("$4Could not collect data for {0}");
+    PLAYER_DATA_COLLECT_ERROR("$4Could not collect data for {0}"),
+
+    //    Rate Limit
+    RATE_LIMIT_KICK_MESSAGE("$4You are being rate limited. To prevent spam, relogging is limited to once per minute."),
+
+    //    Darwin CMD
+    DISABLED_MODULE_ROW("$2 - &7☣ $3{0} $3- $2{1}"),
+    FAILED_MODULE_ROW("$2 - $4✕ {0}"),
+    ACTIVE_MODULE_ROW("$2 - &a✔ $1{0} $3- $2{1}"),
+    DARWIN_MODULE_TITLE("$1Modules"),
+    DARWIN_MODULE_PADDING("&m$2=");
 
     private String s;
 
@@ -480,7 +490,7 @@ public enum Translations {
             for (int i = args.length - 1; i >= 0; i--) {
                 String arg = "" + args[i];
                 if (arg == null || arg.isEmpty()) map.put(String.format("{%d}", i), "");
-                else map.put("%s" + i, arg);
+                else map.put(String.format("{%d}", i), arg);
                 if (i == 0) map.put("%s", arg);
             }
         }
@@ -490,7 +500,7 @@ public enum Translations {
 
     // Format only integrated colors (Text serializing is done in their respective methods only)
     private static String parseColors(String m) {
-        return m
+        return "§r" + m
                 .replaceAll("\\$1", String.format("§%s", COLOR_PRIMARY.s))
                 .replaceAll("\\$2", String.format("§%s", COLOR_SECONDARY.s))
                 .replaceAll("\\$3", String.format("§%s", COLOR_MINOR.s))

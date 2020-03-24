@@ -2,6 +2,7 @@ package com.darwinreforged.servermodifications.modules;
 
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.intellectualcrafters.plot.object.Plot;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.property.block.MatterProperty;
@@ -37,10 +38,10 @@ public class WaterFlowModule extends PluginModule {
 
         if (plot != null) {
             if (!plot.getTrusted().contains(player.get().getUniqueId()) && !plot.getOwners().contains(player.get().getUniqueId()) && !plot.getMembers().contains(player.get().getUniqueId()) )
-                if (!player.get().hasPermission("plots.admin.build.other"))
+                if (!player.get().hasPermission(Permissions.PLOTS_ADMIN_BUILD_OTHER.p()))
                     event.setCancelled(true);
         } else {
-            if (!player.get().hasPermission("plots.admin.build.road"))
+            if (!player.get().hasPermission(Permissions.PLOTS_ADMIN_BUILD_ROAD.p()))
                 event.setCancelled(true);
         }
     }
@@ -63,7 +64,7 @@ public class WaterFlowModule extends PluginModule {
 
         if(player.isPresent()) {
             if (!plot.getTrusted().contains(player.get().getUniqueId()) && !plot.getOwners().contains(player.get().getUniqueId()) && !plot.getMembers().contains(player.get().getUniqueId()) )
-                if (!player.get().hasPermission("plots.admin.build.other"))
+                if (!player.get().hasPermission(Permissions.PLOTS_ADMIN_BUILD_OTHER.p()))
                     event.setCancelled(true);
         }
 

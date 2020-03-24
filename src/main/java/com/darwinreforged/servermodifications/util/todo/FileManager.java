@@ -1,5 +1,8 @@
 package com.darwinreforged.servermodifications.util.todo;
 
+import com.darwinreforged.servermodifications.DarwinServer;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModuleNative;
 import com.darwinreforged.servermodifications.util.PluginUtils;
 import org.spongepowered.api.Sponge;
 import org.yaml.snakeyaml.Yaml;
@@ -8,6 +11,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class FileManager {
 
@@ -22,7 +26,7 @@ public class FileManager {
         }
     }
 
-    public void writeYaml(Map<String, Object> data, Object plugin) {
+    public static <I extends PluginModuleNative> void writeYaml(Map<String, Object> data, I plugin) {
         writeYaml(data, getYamlConfigFile(plugin));
     }
 
@@ -36,21 +40,31 @@ public class FileManager {
         return new HashMap<>();
     }
 
-    public static Map<String, Object> getYamlData(Object plugin) {
+    public static <I extends PluginModuleNative> Map<String, Object> getYamlData(I plugin) {
         return getYamlData(getYamlConfigFile(plugin));
     }
 
 
     public static Path getDataDirectory(Object plugin) {
         String pluginId = PluginUtils.getPluginId(plugin);
-        return Sponge.getGame().getSavesDirectory().resolve("data/" + pluginId);
+        return createPathIfNotExist(Sponge.getGame().getSavesDirectory().resolve("data/" + pluginId));
     }
 
-    public static Path getConfigDirectory(Object plugin) {
-        return Sponge.getConfigManager().getPluginConfig(plugin).getConfigPath();
+    private static Path createPathIfNotExist(Path path) {
+        if (!path.toFile().exists()) path.toFile().mkdirs();
+        return path;
     }
 
-    public static  File getYamlConfigFile(Object plugin) {
+    public static <I extends PluginModuleNative> Path getConfigDirectory(I plugin) {
+        Optional<ModuleInfo> infoOptional = DarwinServer.getModuleInfo(plugin.getClass());
+        Path darwinConfigPath = Sponge.getConfigManager().getPluginConfig(DarwinServer.getServer()).getConfigPath();
+
+        return createPathIfNotExist(infoOptional.map(moduleInfo -> new File(
+                darwinConfigPath.toFile(),
+                moduleInfo.id().replaceAll("\\.", "_")).toPath()).orElse(darwinConfigPath));
+    }
+
+    public static <I extends PluginModuleNative> File getYamlConfigFile(I plugin) {
         Path path = getConfigDirectory(plugin);
         String pluginId = PluginUtils.getPluginId(plugin);
         File file = new File(path.toFile(), String.format("%s.yml", pluginId));
