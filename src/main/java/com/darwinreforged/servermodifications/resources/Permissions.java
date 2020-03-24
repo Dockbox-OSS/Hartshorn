@@ -1,10 +1,15 @@
 package com.darwinreforged.servermodifications.resources;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.modules.*;
+import com.darwinreforged.servermodifications.modules.internal.ConfigModule;
 import com.darwinreforged.servermodifications.modules.root.PluginModuleNative;
+import com.darwinreforged.servermodifications.util.todo.FileManager;
 import com.intellectualcrafters.plot.util.StringMan;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -65,7 +70,7 @@ public enum Permissions {
     SCHEMATIC_BRUSH_SET(SchematicBrushModule.class, "schematicbrush.set.{0}");
 
     private final Class<? extends PluginModuleNative> module;
-    private final String permission;
+    private String permission;
 
     Permissions(Class<? extends PluginModuleNative> module, String permission) {
         this.module = module;
@@ -96,5 +101,26 @@ public enum Permissions {
 
     public Class<? extends PluginModuleNative> m() {
         return this.module;
+    }
+
+    public static void collect() {
+        DarwinServer.getModule(ConfigModule.class).ifPresent(module -> {
+            Map<String, Object> configMap;
+            File file = new File(FileManager.getConfigDirectory(module).toFile(), "permissions.yml");
+            if (!file.exists()) {
+                configMap = new HashMap<>();
+                Arrays.stream(Permissions.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.p()));
+                FileManager.writeYaml(configMap, file);
+            } else configMap = FileManager.getYamlData(file);
+
+            configMap.forEach((k, v) -> {
+                Permissions t = Permissions.valueOf(k.toUpperCase().replaceAll("\\.", "_"));
+                if (t != null) t.c(v.toString());
+            });
+        });
+    }
+
+    private void c(String s) {
+        this.permission = s;
     }
 }

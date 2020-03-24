@@ -77,7 +77,6 @@ public class DarwinServer implements CommandExecutor {
 
     @Listener(order = Order.LAST)
     public void onServerFinishLoad(GameInitializationEvent event) {
-
         DarwinServer.server = this;
 
         Reflections reflections = new Reflections("com.darwinreforged.servermodifications.modules");
@@ -115,6 +114,10 @@ public class DarwinServer implements CommandExecutor {
                     }
                 });
         logger.warn(String.format("Found %d modules and registered %s and failed %s modules", pluginModules.size(), done, failed));
+
+        logger.warn("Collecting translations from config");
+        Translations.collect();
+        Permissions.collect();
 
         logger.warn("Sending server finish load event to " + DarwinServer.MODULES.size() + " modules");
 

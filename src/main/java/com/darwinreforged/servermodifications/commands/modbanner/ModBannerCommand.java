@@ -1,5 +1,6 @@
 package com.darwinreforged.servermodifications.commands.modbanner;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.modules.ModBannerModule;
 import com.darwinreforged.servermodifications.util.todo.ModBannerHelper;
 import org.spongepowered.api.command.CommandCallable;
@@ -44,58 +45,58 @@ public class ModBannerCommand implements CommandCallable {
 	@Override
 	public CommandResult process(CommandSource source, String arguments) throws CommandException {
 		String[] args = arguments.split(" ");
-
-		switch (args[0].toLowerCase()) {
-			case "add":
-				if(source.hasPermission("modbanner.commmand.add") || source.hasPermission("modbanner.commmand.manage")){
-					if(args.length>=2){
-						ModBannerModule.instance.cfgManager.blackList.add(args[1]);
-						ModBannerModule.instance.cfgManager.save();
-						ModBannerModule.instance.reloadConfiguration();
-						source.sendMessage(ModBannerHelper.format("&a"+args[1]+" added to blacklist!"));
-					}else{
-						source.sendMessage(ModBannerHelper.format("&cPlease add the mod name /modbanner add <mod>"));
-					}
-				}
-				break;
-			case "remove":
-				if(source.hasPermission("modbanner.commmand.remove") || source.hasPermission("modbanner.commmand.manage")){
-					if(args.length>=2){
-						if(ModBannerModule.instance.cfgManager.blackList.contains(args[1])){
-							ModBannerModule.instance.cfgManager.blackList.remove(args[1]);
-							source.sendMessage(ModBannerHelper.format("&a"+args[1]+" removed from blacklist!"));
-							ModBannerModule.instance.cfgManager.save();
-							ModBannerModule.instance.reloadConfiguration();
+		DarwinServer.getModule(ModBannerModule.class).ifPresent(module -> {
+			switch (args[0].toLowerCase()) {
+				case "add":
+					if(source.hasPermission("modbanner.commmand.add") || source.hasPermission("modbanner.commmand.manage")){
+						if(args.length>=2){
+							module.cfgManager.blackList.add(args[1]);
+							module.cfgManager.save();
+							module.reloadConfiguration();
+							source.sendMessage(ModBannerHelper.format("&a"+args[1]+" added to blacklist!"));
 						}else{
-							source.sendMessage(ModBannerHelper.format("&cCan't find mod "+args[1]));
+							source.sendMessage(ModBannerHelper.format("&cPlease add the mod name /modbanner add <mod>"));
 						}
-					}else{
-						source.sendMessage(ModBannerHelper.format("&cPlease add the mod name /modbanner remove <mod>"));
 					}
-				}
-				break;
-			case "list":
-				if(source.hasPermission("modbanner.commmand.list") || source.hasPermission("modbanner.commmand.manage")){
-					List<Text> t = new ArrayList<>();
-					for(String bl : ModBannerModule.instance.cfgManager.blackList){
-						t.add(ModBannerHelper.format(bl));
+					break;
+				case "remove":
+					if(source.hasPermission("modbanner.commmand.remove") || source.hasPermission("modbanner.commmand.manage")){
+						if(args.length>=2){
+							if(module.cfgManager.blackList.contains(args[1])){
+								module.cfgManager.blackList.remove(args[1]);
+								source.sendMessage(ModBannerHelper.format("&a"+args[1]+" removed from blacklist!"));
+								module.cfgManager.save();
+								module.reloadConfiguration();
+							}else{
+								source.sendMessage(ModBannerHelper.format("&cCan't find mod "+args[1]));
+							}
+						}else{
+							source.sendMessage(ModBannerHelper.format("&cPlease add the mod name /modbanner remove <mod>"));
+						}
 					}
-					PaginationList.builder()
-					.title(ModBannerHelper.format("BlackListed Mods"))
-					.contents(t)
-					.padding(Text.of("-")).sendTo(source);
-				}
-				break;
-			case "reload":
-				if(source.hasPermission("modbanner.commmand.reload")){
-					ModBannerModule.instance.reloadConfiguration();
-					source.sendMessage(ModBannerHelper.format("&aConfiguration reloaded!"));
-				}
-				break;
-			default:
-				source.sendMessage(getHelp(source).get());
-				return CommandResult.empty();
-		}
+					break;
+				case "list":
+					if(source.hasPermission("modbanner.commmand.list") || source.hasPermission("modbanner.commmand.manage")){
+						List<Text> t = new ArrayList<>();
+						for(String bl : module.cfgManager.blackList){
+							t.add(ModBannerHelper.format(bl));
+						}
+						PaginationList.builder()
+								.title(ModBannerHelper.format("BlackListed Mods"))
+								.contents(t)
+								.padding(Text.of("-")).sendTo(source);
+					}
+					break;
+				case "reload":
+					if(source.hasPermission("modbanner.commmand.reload")){
+						module.reloadConfiguration();
+						source.sendMessage(ModBannerHelper.format("&aConfiguration reloaded!"));
+					}
+					break;
+				default:
+					source.sendMessage(getHelp(source).get());
+			}
+		});
 		
 		return CommandResult.success();
 	}

@@ -22,7 +22,7 @@ public class FileManager {
             FileWriter writer = new FileWriter(file);
             yaml.dump(data, writer);
         } catch (IOException ex) {
-      System.out.println(ex.getMessage());
+            DarwinServer.getLogger().error(ex.getMessage());
         }
     }
 
@@ -35,7 +35,7 @@ public class FileManager {
             FileReader reader = new FileReader(file);
             return yaml.loadAs(reader, Map.class);
         } catch (FileNotFoundException ex) {
-            System.out.println(ex.getMessage());
+            DarwinServer.getLogger().error(ex.getMessage());
         }
         return new HashMap<>();
     }
@@ -57,7 +57,7 @@ public class FileManager {
 
     public static <I extends PluginModuleNative> Path getConfigDirectory(I plugin) {
         Optional<ModuleInfo> infoOptional = DarwinServer.getModuleInfo(plugin.getClass());
-        Path darwinConfigPath = Sponge.getConfigManager().getPluginConfig(DarwinServer.getServer()).getConfigPath();
+        Path darwinConfigPath = Sponge.getConfigManager().getPluginConfig(DarwinServer.getServer()).getDirectory();
 
         return createPathIfNotExist(infoOptional.map(moduleInfo -> new File(
                 darwinConfigPath.toFile(),
@@ -65,15 +65,19 @@ public class FileManager {
     }
 
     public static <I extends PluginModuleNative> File getYamlConfigFile(I plugin) {
+        return getYamlConfigFile(plugin, true);
+    }
+
+    public static <I extends PluginModuleNative> File getYamlConfigFile(I plugin, boolean createIfNotExists) {
         Path path = getConfigDirectory(plugin);
         String pluginId = PluginUtils.getPluginId(plugin);
         File file = new File(path.toFile(), String.format("%s.yml", pluginId));
-        if (!file.exists()) {
+        if (!file.exists() && createIfNotExists) {
             try {
-                file.mkdirs();
+                file.getParentFile().mkdirs();
                 file.createNewFile();
             } catch (IOException ex) {
-                System.out.println(ex.getMessage());
+                DarwinServer.getLogger().error(ex.getMessage());
             }
         }
         return file;

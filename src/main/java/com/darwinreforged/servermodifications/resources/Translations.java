@@ -1,9 +1,15 @@
 package com.darwinreforged.servermodifications.resources;
 
+import com.darwinreforged.servermodifications.DarwinServer;
+import com.darwinreforged.servermodifications.modules.internal.ConfigModule;
+import com.darwinreforged.servermodifications.util.todo.FileManager;
 import com.intellectualcrafters.plot.util.StringMan;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -454,6 +460,11 @@ public enum Translations {
         this.s = s;
     }
 
+    // Unparsed
+    public String u() {
+        return s;
+    }
+
     public String s() {
         return parseColors(this.s);
     }
@@ -519,5 +530,26 @@ public enum Translations {
         for (String regex : new String[]{"(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r"})
             copy = copy.replaceAll(regex, "");
         return copy;
+    }
+
+    public static void collect() {
+        DarwinServer.getModule(ConfigModule.class).ifPresent(module -> {
+            Map<String, Object> configMap;
+            File file = new File(FileManager.getConfigDirectory(module).toFile(), "translations.yml");
+            if (!file.exists()) {
+                configMap = new HashMap<>();
+                Arrays.stream(Translations.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.u()));
+                FileManager.writeYaml(configMap, file);
+            } else configMap = FileManager.getYamlData(file);
+
+            configMap.forEach((k, v) -> {
+                Translations t = Translations.valueOf(k.toUpperCase().replaceAll("\\.", "_"));
+                if (t != null) t.c(v.toString());
+            });
+        });
+    }
+
+    private void c(String s) {
+        this.s = s;
     }
 }
