@@ -1,5 +1,6 @@
 package com.darwinreforged.servermodifications.util.plugins;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.exceptions.ReflectionException;
 import com.darwinreforged.servermodifications.exceptions.VanillaPlayerException;
 import com.darwinreforged.servermodifications.modules.ModBannerModule;
@@ -71,16 +72,17 @@ public class PlayerModsUtil {
 			setData(player.getName(), data);
 			return data;
 		} catch (IllegalArgumentException e1) {
-			throw new ReflectionException("IllegalArgumentException: "+e1.getMessage());
+			DarwinServer.getLogger().error("IllegalArgumentException: "+e1.getMessage());
 		} catch (IllegalAccessException e1) {
-			throw new ReflectionException("IllegalAccessException: "+e1.getMessage());
+			DarwinServer.getLogger().error("IllegalAccessException: "+e1.getMessage());
 		} catch (NoSuchFieldException e1) {
-			throw new ReflectionException("NoSuchFieldException: "+e1.getMessage());
+			DarwinServer.getLogger().error("NoSuchFieldException: "+e1.getMessage());
 		} catch (SecurityException e1) {
-			throw new ReflectionException("Security Exception: "+e1.getMessage());
+			DarwinServer.getLogger().error("Security Exception: "+e1.getMessage());
 		} catch (NullPointerException e1) {
-			throw new ReflectionException("NullPointerException: "+e1.getMessage());
+			DarwinServer.getLogger().error("NullPointerException: "+e1.getMessage());
 		}
+		return new ArrayList<>();
 	}
 	
 	public static void setData(String player, List<ModData> mods){

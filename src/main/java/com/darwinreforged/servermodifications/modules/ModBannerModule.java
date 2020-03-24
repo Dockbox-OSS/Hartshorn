@@ -13,7 +13,7 @@ import com.darwinreforged.servermodifications.util.todo.ModBannerCfgManager;
 import com.darwinreforged.servermodifications.util.todo.ModBannerHelper;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 
 import java.io.File;
@@ -28,23 +28,23 @@ public class ModBannerModule extends PluginModule {
 
     public static File mod_dataF;
 
-    public Path getConfigPath(){
+    public Path getConfigPath() {
         return FileManager.getYamlConfigFile(this).toPath();
     }
 
     public ModBannerCfgManager cfgManager;
 
-    @Listener
-    public void onGamePreInitializationEvent(GamePreInitializationEvent e){
-        Sponge.getCommandManager().register(this, new ModBannerCommand(), "modbanner", "modblacklist");
-        Sponge.getCommandManager().register(this, new ModsCommand(), "mods", "modinfo");
+    @Override
+    public void onServerStart(GameStartedServerEvent event) {
+        DarwinServer.registerCommand(new ModBannerCommand(), "modbanner", "modblacklist");
+        DarwinServer.registerCommand(new ModsCommand(), "mods", "modinfo");
         File d = FileManager.getDataDirectory(this).toFile();
-        if(!d.exists()){
+        if (!d.exists()) {
             d.mkdirs();
         }
         File f = new File(d, "mod_data.txt");
         mod_dataF = f;
-        if(!f.exists()){
+        if (!f.exists()) {
             try {
                 f.createNewFile();
             } catch (IOException e1) {

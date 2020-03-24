@@ -9,6 +9,7 @@ import com.google.inject.Inject;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -53,7 +54,6 @@ public class DarwinServer implements CommandExecutor {
 
     private static final Map<Class<? extends PluginModuleNative>, Tuple<PluginModuleNative, ModuleInfo>> MODULES = new HashMap<>();
     private static final List<String> FAILED_MODULES = new ArrayList<>();
-    private static final List<String> REQUESTED_COMMANDS = new ArrayList<>();
 
     @Inject
     private Logger logger;
@@ -72,7 +72,15 @@ public class DarwinServer implements CommandExecutor {
                 logger.warn(String.format("Found duplicate plugin/module id '%s'", pluginContainer.getId()));
         }));
 
-        DarwinServer.MODULES.forEach((clazz, module) -> module.getFirst().onServerStart(event));
+        DarwinServer.MODULES.forEach((clazz, module) -> {
+            try {
+                module.getFirst().onServerStart(event);
+            } catch (Exception e) {
+                getLogger().error(String.format("Caught exception from %s : %s", module.getSecond().name(), e.getMessage()));
+                DarwinServer.MODULES.remove(clazz);
+                DarwinServer.FAILED_MODULES.add(clazz.getSimpleName());
+            }
+        });
     }
 
     @Listener(order = Order.LAST)
@@ -104,13 +112,13 @@ public class DarwinServer implements CommandExecutor {
 
                             int permissionAmount = Permissions.getModulePermissions(clazz).length;
                             logger.warn(String.format("- Registered %d permissions for module of type '%s'", permissionAmount, clazz.getSimpleName()));
-                            MODULES.put(clazz, new Tuple<>(instance, moduleInfo));
+                            DarwinServer.MODULES.put(clazz, new Tuple<>(instance, moduleInfo));
                             done.getAndIncrement();
                         }
                     } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                         logger.error(String.format("- Failed to instantiate module of type '%s'", clazz.getSimpleName()));
                         failed.getAndIncrement();
-                        FAILED_MODULES.add(clazz.getSimpleName());
+                        DarwinServer.FAILED_MODULES.add(clazz.getSimpleName());
                     }
                 });
         logger.warn(String.format("Found %d modules and registered %s and failed %s modules", pluginModules.size(), done, failed));
@@ -121,7 +129,15 @@ public class DarwinServer implements CommandExecutor {
 
         logger.warn("Sending server finish load event to " + DarwinServer.MODULES.size() + " modules");
 
-        DarwinServer.MODULES.forEach((clazz, module) -> module.getFirst().onServerFinishLoad(event));
+        DarwinServer.MODULES.forEach((clazz, module) -> {
+            try {
+                module.getFirst().onServerFinishLoad(event);
+            } catch (Exception e) {
+                getLogger().error(String.format("Caught exception from %s : %s", module.getSecond().name(), e.getMessage()));
+                DarwinServer.MODULES.remove(clazz);
+                DarwinServer.FAILED_MODULES.add(clazz.getSimpleName());
+            }
+        });
 
         registerCommand(darwinCmd, "dserver");
     }
@@ -159,6 +175,14 @@ public class DarwinServer implements CommandExecutor {
     public static void registerCommand(CommandSpec commandSpec, String... alias) {
         try {
             Sponge.getCommandManager().register(getServer(), commandSpec, alias);
+        } catch (IllegalArgumentException e) {
+            getLogger().error("Attempted to register command alias(es) '" + String.join(", ", alias) + "' twice");
+        }
+    }
+
+    public static void registerCommand(CommandCallable callable, String... alias) {
+        try {
+            Sponge.getCommandManager().register(getServer(), callable, alias);
         } catch (IllegalArgumentException e) {
             getLogger().error("Attempted to register command alias(es) '" + String.join(", ", alias) + "' twice");
         }
