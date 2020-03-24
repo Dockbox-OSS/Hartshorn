@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         maven {
-            name = 'forge'
             url = 'https://files.minecraftforge.net/maven'
         }
         jcenter()
@@ -18,6 +17,7 @@ plugins {
     id 'net.minecrell.vanillagradle.server' version '2.2-6'
     id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
+apply plugin: 'eclipse'
 
 group = 'com.darwinreforged'
 version = '0.1.1-alpha'
