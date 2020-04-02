@@ -6,29 +6,34 @@ import com.darwinreforged.servermodifications.modules.root.PluginModuleNative;
 import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
-import eu.crushedpixel.sponge.packetgate.api.event.PacketEvent;
-import eu.crushedpixel.sponge.packetgate.api.listener.PacketListenerAdapter;
-import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
-import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
-import io.netty.buffer.Unpooled;
+
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketTimeUpdate;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.World;
 
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import eu.crushedpixel.sponge.packetgate.api.event.PacketEvent;
+import eu.crushedpixel.sponge.packetgate.api.listener.PacketListenerAdapter;
+import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
+import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
+import io.netty.buffer.Unpooled;
 
 @ModuleInfo(id = "personaltime", name = "Personal Time", description = "Allows players to set their own personal time of day", version = "1.0-PRERELEASE-1", dependencies = @Dependency(id = "packetgate"))
 public class PlayerTimeModule extends PacketListenerAdapter implements PluginModuleNative {
@@ -179,10 +184,13 @@ public class PlayerTimeModule extends PacketListenerAdapter implements PluginMod
 
         SPacketTimeUpdate packet = (SPacketTimeUpdate) packetEvent.getPacket();
         PacketBuffer packetBuffer = new PacketBuffer(Unpooled.buffer(16));
+        Class<? extends SPacketTimeUpdate> clazz = packet.getClass();
         try {
-            packet.writePacketData(packetBuffer);
-        } catch (IOException e) {
-            DarwinServer.getLogger().error("Failed to read packet buffer");
+            Method method = clazz.getDeclaredMethod("func_148840_b", PacketBuffer.class);
+            method.setAccessible(true);
+            method.invoke(packet, packetBuffer);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            DarwinServer.getLogger().error("Failed to read packet buffer : " + e.getMessage());
             return;
         }
 
@@ -201,7 +209,7 @@ public class PlayerTimeModule extends PacketListenerAdapter implements PluginMod
 
 
     // Unused, but required by contract due to use of Native Plugin Module
-    @Override
+    @Listener
     public void onServerStart(GameStartedServerEvent event) {
     }
 }

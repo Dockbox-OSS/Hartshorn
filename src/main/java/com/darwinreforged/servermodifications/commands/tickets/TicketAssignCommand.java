@@ -1,10 +1,11 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.resources.Permissions;
-import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -21,7 +22,8 @@ import java.util.Optional;
 import static com.darwinreforged.servermodifications.objects.TicketStatus.Claimed;
 import static com.darwinreforged.servermodifications.objects.TicketStatus.Closed;
 
-public class TicketAssignCommand implements CommandExecutor {
+public class TicketAssignCommand
+        implements CommandExecutor {
     private final TicketModule plugin;
 
     public TicketAssignCommand(TicketModule plugin) {
@@ -29,7 +31,8 @@ public class TicketAssignCommand implements CommandExecutor {
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args)
+            throws CommandException {
         final int ticketID = args.<Integer>getOne("ticketID").get();
         final User user = args.<Player>getOne("player").get();
 
@@ -44,7 +47,9 @@ public class TicketAssignCommand implements CommandExecutor {
                         PlayerUtils.tell(src, Translations.TICKET_ERROR_ALREADY_CLOSED.s());
                     }
                     if (ticket.getStatus() == Claimed && !src.hasPermission(Permissions.CLAIMED_TICKET_BYPASS.p())) {
-                        throw new CommandException(Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
+                        throw new CommandException(Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils
+                                .getSafely(PlayerUtils
+                                        .getNameFromUUID(ticket.getStaffUUID()))));
                     }
                     ticket.setStatus(Claimed);
                     ticket.setStaffUUID(user.getUniqueId().toString());
@@ -52,16 +57,22 @@ public class TicketAssignCommand implements CommandExecutor {
                     try {
                         plugin.getDataStore().updateTicketData(ticket);
                     } catch (Exception e) {
-                        PlayerUtils.tell(src, Translations.UNKNOWN_ERROR.ft("Unable to assign " + user.getName() + " to ticket"));
+                        PlayerUtils.tell(src, Translations.UNKNOWN_ERROR
+                                .ft("Unable to assign " + user.getName() + " to ticket"));
                         e.printStackTrace();
                     }
 
-                    PlayerUtils.broadcastForPermission(Translations.TICKET_ASSIGN.f(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID())), ticket.getTicketID()), Permissions.TICKET_STAFF.p());
+                    PlayerUtils.broadcastForPermission(Translations.TICKET_ASSIGN.f(PlayerUtils.getSafely(PlayerUtils
+                            .getNameFromUUID(ticket.getStaffUUID())), ticket.getTicketID()), Permissions.TICKET_STAFF
+                            .p());
 
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {
                         Player ticketPlayer = ticketPlayerOP.get();
-                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_ASSIGN_USER.f(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
+                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_ASSIGN_USER
+                                .f(ticket.getTicketID(), PlayerUtils
+                                        .getSafely(PlayerUtils
+                                                .getNameFromUUID(ticket.getStaffUUID()))));
                     }
                     return CommandResult.success();
                 }

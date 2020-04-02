@@ -1,12 +1,14 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.resources.Permissions;
-import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.magitechserver.magibridge.MagiBridge;
+
 import net.dv8tion.jda.core.EmbedBuilder;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -15,16 +17,20 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 
-import java.awt.*;
+import java.awt.Color;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.darwinreforged.servermodifications.objects.TicketStatus.*;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Claimed;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Closed;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Held;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Open;
 
-public class TicketUnclaimCommand implements CommandExecutor {
+public class TicketUnclaimCommand
+        implements CommandExecutor {
 
     private final TicketModule plugin;
 
@@ -33,7 +39,8 @@ public class TicketUnclaimCommand implements CommandExecutor {
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args)
+            throws CommandException {
         final int ticketID = args.<Integer>getOne("ticketID").get();
         final List<TicketData> tickets =
                 new ArrayList<TicketData>(plugin.getDataStore().getTicketData());
@@ -52,7 +59,9 @@ public class TicketUnclaimCommand implements CommandExecutor {
                             && ticket.getStatus() == Claimed
                             && !src.hasPermission(Permissions.CLAIMED_TICKET_BYPASS.p())) {
                         throw new CommandException(
-                                Translations.TICKET_ERROR_UNCLAIM.ft(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
+                                Translations.TICKET_ERROR_UNCLAIM.ft(ticket.getTicketID(), PlayerUtils
+                                        .getSafely(PlayerUtils
+                                                .getNameFromUUID(ticket.getStaffUUID()))));
                     }
                     if (ticket.getStatus() == Open) {
                         throw new CommandException(Translations.TICKET_NOT_CLAIMED.ft(ticket.getTicketID()));
@@ -74,17 +83,22 @@ public class TicketUnclaimCommand implements CommandExecutor {
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {
                         Player ticketPlayer = ticketPlayerOP.get();
-                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_UNCLAIM_USER.ft(src.getName(), ticket.getTicketID()));
+                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_UNCLAIM_USER
+                                .ft(src.getName(), ticket.getTicketID()));
                     }
 
-                    PlayerUtils.broadcastForPermission(Translations.TICKET_UNCLAIM.ft(src.getName(), ticket.getTicketID()), Permissions.TICKET_STAFF.p());
+                    PlayerUtils.broadcastForPermission(Translations.TICKET_UNCLAIM
+                            .ft(src.getName(), ticket.getTicketID()), Permissions.TICKET_STAFF
+                            .p());
 
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setColor(Color.YELLOW);
                     embedBuilder.setTitle(Translations.SUBMISSION_NEW.s());
                     embedBuilder.addField(
-                            Translations.TICKET_DISCORD_SUBMITTED_BY.f(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID()))),
-                            Translations.TICKET_DISCORD_NEW_COMBINED.f(ticketID, ticket.getMessage(), LocalDateTime.now().toString()),
+                            Translations.TICKET_DISCORD_SUBMITTED_BY
+                                    .f(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID()))),
+                            Translations.TICKET_DISCORD_NEW_COMBINED
+                                    .f(ticketID, ticket.getMessage(), LocalDateTime.now().toString()),
                             false);
                     embedBuilder.setThumbnail("https://app.buildersrefuge.com/img/created.png");
 

@@ -5,7 +5,7 @@ import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.darwinreforged.servermodifications.util.todo.database.DataStoreManager;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -14,8 +14,11 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 
 import java.io.IOException;
 
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 
-public class TicketReloadCommand implements CommandExecutor {
+
+public class TicketReloadCommand
+        implements CommandExecutor {
 
     private final TicketModule plugin;
 
@@ -24,7 +27,8 @@ public class TicketReloadCommand implements CommandExecutor {
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args)
+            throws CommandException {
         try {
             plugin.config = new TicketConfig(this.plugin);
             plugin.setDataStoreManager(new DataStoreManager());

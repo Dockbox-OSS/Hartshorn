@@ -5,6 +5,7 @@ import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.FriendsStorageManager;
 import com.darwinreforged.servermodifications.util.todo.FriendsUtil;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -15,7 +16,8 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 
-public class FriendsAddCommand implements CommandExecutor {
+public class FriendsAddCommand
+        implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) {
@@ -56,9 +58,15 @@ public class FriendsAddCommand implements CommandExecutor {
                 PlayerUtils.tell(targetM, Translations.REQUEST_RECEIVED.f(source.getName()));
 
                 Text.Builder accept = Text.builder();
-                accept.append(Translations.FRIEND_ACCEPT_BUTTON.t()).onClick(TextActions.runCommand("/friend add " + source.getName())).onHover(TextActions.showText(Translations.FRIEND_ACCEPT_BUTTON_HOVER.ft(source.getName()))).build();
+                accept.append(Translations.FRIEND_ACCEPT_BUTTON.t())
+                        .onClick(TextActions.runCommand("/friend add " + source.getName()))
+                        .onHover(TextActions.showText(Translations.FRIEND_ACCEPT_BUTTON_HOVER.ft(source.getName())))
+                        .build();
                 Text.Builder reject = Text.builder();
-                reject.append(Translations.FRIEND_DENY_BUTTON.t()).onClick(TextActions.runCommand("/friend remove " + source.getName())).onHover(TextActions.showText(Translations.FRIEND_DENY_BUTTON_HOVER.ft(source.getName()))).build();
+                reject.append(Translations.FRIEND_DENY_BUTTON.t())
+                        .onClick(TextActions.runCommand("/friend remove " + source.getName()))
+                        .onHover(TextActions.showText(Translations.FRIEND_DENY_BUTTON_HOVER.ft(source.getName())))
+                        .build();
 
                 PlayerUtils.tell(targetM, Text.of(accept.build(), Translations.DEFAULT_SEPARATOR.t(), reject.build()));
             }

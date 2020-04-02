@@ -1,21 +1,26 @@
 package com.darwinreforged.servermodifications.util.todo.database;
 
 import com.darwinreforged.servermodifications.DarwinServer;
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.objects.TicketStatus;
-import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.util.todo.FileManager;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.github.nucleuspowered.relocate.uk.co.drnaylor.quickstart.exceptions.MissingDependencyException;
 
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import io.github.nucleuspowered.relocate.uk.co.drnaylor.quickstart.exceptions.MissingDependencyException;
 
 public final class H2DataStore implements IDataStore {
 

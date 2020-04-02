@@ -1,7 +1,24 @@
 package com.darwinreforged.servermodifications.modules;
 
 import com.darwinreforged.servermodifications.DarwinServer;
-import com.darwinreforged.servermodifications.commands.tickets.*;
+import com.darwinreforged.servermodifications.commands.tickets.TicketAssignCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketBanCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketClaimCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketCloseCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketCommentCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketHoldCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketOpenCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketReadClosedCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketReadCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketReadHeldCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketReadSelfCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketRejectCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketReloadCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketReopenCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketTeleportCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketUnbanCommand;
+import com.darwinreforged.servermodifications.commands.tickets.TicketUnclaimCommand;
 import com.darwinreforged.servermodifications.listeners.TicketLoginAndDiscordListener;
 import com.darwinreforged.servermodifications.modules.root.DisabledModule;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
@@ -16,8 +33,7 @@ import com.darwinreforged.servermodifications.util.todo.database.DataStoreManage
 import com.darwinreforged.servermodifications.util.todo.database.IDataStore;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.command.args.GenericArguments;
@@ -36,7 +52,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.darwinreforged.servermodifications.objects.TicketStatus.*;
+import ninja.leaping.configurate.objectmapping.ObjectMappingException;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
+
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Claimed;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Held;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Open;
 
 
 @ModuleInfo(
@@ -62,17 +83,23 @@ public class TicketModule extends PluginModule {
     public TicketModule() {
     }
 
-    @Listener
-    public void Init(GameInitializationEvent event) throws IOException, ObjectMappingException {
+    @SuppressWarnings("UnstableApiUsage")
+    @Override
+    public void onServerFinishLoad(GameInitializationEvent event) {
         DarwinServer.registerListener(new TicketLoginAndDiscordListener(this));
 
         TypeSerializers.getDefaultSerializers()
                 .registerType(TypeToken.of(TicketData.class), new TicketData.TicketSerializer());
         TypeSerializers.getDefaultSerializers()
-                .registerType(TypeToken.of(TicketPlayerData.class), new TicketPlayerData.TicketPlayerDataSerializer());
+                .registerType(TypeToken
+                        .of(TicketPlayerData.class), new TicketPlayerData.TicketPlayerDataSerializer());
 
-        config = new TicketConfig(this);
-        loadCommands();
+        try {
+            config = new TicketConfig(this);
+            loadCommands();
+        } catch (IOException | ObjectMappingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Listener

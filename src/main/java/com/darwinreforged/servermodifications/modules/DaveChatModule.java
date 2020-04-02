@@ -16,6 +16,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.text.Text;
@@ -49,11 +50,12 @@ public class DaveChatModule extends PluginModule {
     public void onServerFinishLoad(GameInitializationEvent event) {
         DarwinServer.registerListener(new DaveChatListeners());
         DarwinServer.registerCommand(daveMain, "dave");
+        setupConfigurations();
     }
 
-    @Override
+    @Listener
     public void onServerStart(GameStartedServerEvent event) {
-        setupConfigurations();
+
     }
 
     private void setupConfigurations() {

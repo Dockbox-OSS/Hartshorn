@@ -1,12 +1,13 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.resources.Permissions;
-import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import com.google.common.collect.Lists;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -21,9 +22,12 @@ import org.spongepowered.api.text.action.TextActions;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.darwinreforged.servermodifications.objects.TicketStatus.*;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Closed;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Held;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Open;
 
-public class TicketReadSelfCommand implements CommandExecutor {
+public class TicketReadSelfCommand
+        implements CommandExecutor {
 
     private final TicketModule plugin;
 
@@ -32,11 +36,13 @@ public class TicketReadSelfCommand implements CommandExecutor {
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args)
+            throws CommandException {
         final List<TicketData> tickets = new ArrayList<TicketData>(plugin.getDataStore().getTicketData());
 
         if (!src.hasPermission(Permissions.COMMAND_TICKET_READ_SELF.p())) {
-            throw new CommandException(Translations.TICKET_ERROR_PERMISSION.ft(Permissions.COMMAND_TICKET_READ_SELF.p()));
+            throw new CommandException(Translations.TICKET_ERROR_PERMISSION
+                    .ft(Permissions.COMMAND_TICKET_READ_SELF.p()));
         }
         if (!(src instanceof Player)) {
             throw new CommandException(Translations.UNKNOWN_ERROR.ft("Console users cannot use this command."));
@@ -55,7 +61,11 @@ public class TicketReadSelfCommand implements CommandExecutor {
                     if (ticket.getStatus() == Open) status = Translations.TICKET_OPEN_PREFIX.s();
                     else if (ticket.getStatus() == Held) status = Translations.TICKET_HELD_PREFIX.s();
                     else if (ticket.getStatus() == Closed) status = Translations.TICKET_CLOSED_PREFIX.s();
-                    send.append(Translations.TICKET_ROW_SINGLE.ft(ticket.getTicketID(), TicketUtil.getTimeAgo(ticket.getTimestamp()), PlayerUtils.getPlayerOnlineDisplay(ticket.getPlayerUUID()), TicketUtil.getServerFormatted(ticket.getServer()), Translations.shorten(ticket.getMessage()), status));
+                    send.append(Translations.TICKET_ROW_SINGLE.ft(ticket.getTicketID(), TicketUtil
+                            .getTimeAgo(ticket.getTimestamp()), PlayerUtils
+                            .getPlayerOnlineDisplay(ticket.getPlayerUUID()), TicketUtil
+                            .getServerFormatted(ticket.getServer()), Translations
+                            .shorten(ticket.getMessage()), status));
                     send.onClick(TextActions.runCommand("/ticket read " + ticket.getTicketID()));
                     send.onHover(TextActions.showText(Translations.TICKET_MORE_INFO.ft(ticket.getTicketID())));
                     contents.add(send.build());

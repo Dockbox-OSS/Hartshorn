@@ -6,9 +6,10 @@ import com.darwinreforged.servermodifications.listeners.LayerheightPlaceEventLis
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.resources.Permissions;
+
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.text.Text;
 
 @ModuleInfo(id = "darwinlayerheight", name = "Darwin Layer Height", version = "1.0", description = "Easy to use layer heights")
@@ -17,7 +18,7 @@ public class LayerHeightModule extends PluginModule {
 	}
 
 	@Override
-	public void onServerStart(GameStartedServerEvent event) {
+	public void onServerFinishLoad(GameInitializationEvent event) {
 		DarwinServer.registerCommand(layerHeightMain, "layerheight");
 		DarwinServer.registerListener(new LayerheightPlaceEventListener());
 	}

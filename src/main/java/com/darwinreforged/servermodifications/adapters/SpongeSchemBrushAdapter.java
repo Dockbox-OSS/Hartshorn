@@ -4,7 +4,9 @@ import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 
 import java.util.Optional;
-public class SpongeSchemBrushAdapter implements SchemBrushAdapter {
+
+public class SpongeSchemBrushAdapter
+        implements SchemBrushAdapter {
 
     @Override
     public boolean isPresent() {

@@ -1,10 +1,11 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.resources.Permissions;
-import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -23,7 +24,8 @@ import java.util.function.Consumer;
 
 import static com.darwinreforged.servermodifications.objects.TicketStatus.Claimed;
 
-public class TicketCommentCommand implements CommandExecutor {
+public class TicketCommentCommand
+        implements CommandExecutor {
 
     private final TicketModule plugin;
 
@@ -32,7 +34,8 @@ public class TicketCommentCommand implements CommandExecutor {
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args)
+            throws CommandException {
         final int ticketID = args.<Integer>getOne("ticketID").get();
         final String comment = args.<String>getOne("comment").get();
 
@@ -53,7 +56,9 @@ public class TicketCommentCommand implements CommandExecutor {
                             && ticket.getStatus() == Claimed
                             && !src.hasPermission(Permissions.CLAIMED_TICKET_BYPASS.p())) {
                         throw new CommandException(
-                                Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
+                                Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils
+                                        .getSafely(PlayerUtils
+                                                .getNameFromUUID(ticket.getStaffUUID()))));
                     }
                     if (!ticket.getComment().isEmpty()) {
                         if (src.hasPermission(Permissions.COMMAND_TICKET_EDIT_COMMENT.p())) {
@@ -87,7 +92,8 @@ public class TicketCommentCommand implements CommandExecutor {
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {
                         Player ticketPlayer = ticketPlayerOP.get();
-                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_COMMENT.ft(ticket.getTicketID(), src.getName()));
+                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_COMMENT
+                                .ft(ticket.getTicketID(), src.getName()));
                     }
 
                     PlayerUtils.tell(src, Translations.TICKET_COMMENT_USER.ft(ticket.getTicketID()));

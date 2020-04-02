@@ -11,10 +11,16 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ModuleInfo {
     String id();
+
     String name() default "";
+
     String version() default "";
+
     Dependency[] dependencies() default {};
+
     String description() default "";
+
     String url() default "";
+
     String[] authors() default {};
 }

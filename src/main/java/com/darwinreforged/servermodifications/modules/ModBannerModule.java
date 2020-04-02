@@ -4,6 +4,7 @@ import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.commands.modbanner.ModBannerCommand;
 import com.darwinreforged.servermodifications.commands.modbanner.ModsCommand;
 import com.darwinreforged.servermodifications.exceptions.VanillaPlayerException;
+import com.darwinreforged.servermodifications.modules.root.DisabledModule;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.objects.ModData;
@@ -11,6 +12,7 @@ import com.darwinreforged.servermodifications.util.plugins.PlayerModsUtil;
 import com.darwinreforged.servermodifications.util.todo.FileManager;
 import com.darwinreforged.servermodifications.util.todo.ModBannerCfgManager;
 import com.darwinreforged.servermodifications.util.todo.ModBannerHelper;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -23,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@ModuleInfo(id="modbanner", name="ModBanner", version="1.1.5", description="Ban Mods")
+@DisabledModule("net.minecraftforge.fml.common.network.handshake.NetworkDispatcher.getModList notfound on dev, MCP issue? (in PlayerModsUtil)")
+@ModuleInfo(id = "modbanner", name = "ModBanner", version = "1.1.5", description = "Ban Mods")
 public class ModBannerModule extends PluginModule {
 
     public static File mod_dataF;
@@ -34,7 +37,7 @@ public class ModBannerModule extends PluginModule {
 
     public ModBannerCfgManager cfgManager;
 
-    @Override
+    @Listener
     public void onServerStart(GameStartedServerEvent event) {
         DarwinServer.registerCommand(new ModBannerCommand(), "modbanner", "modblacklist");
         DarwinServer.registerCommand(new ModsCommand(), "mods", "modinfo");

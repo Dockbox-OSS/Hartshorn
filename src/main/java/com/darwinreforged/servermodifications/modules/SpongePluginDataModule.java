@@ -5,6 +5,7 @@ import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.util.todo.FileManager;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.PluginContainer;
@@ -31,7 +32,7 @@ public class SpongePluginDataModule extends PluginModule {
         dataFile.getParentFile().mkdirs();
     }
 
-    @Override
+    @Listener
     public void onServerStart(GameStartedServerEvent event) {
         if (!dataFile.exists()) {
             try {

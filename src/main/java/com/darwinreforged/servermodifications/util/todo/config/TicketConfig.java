@@ -1,15 +1,16 @@
 package com.darwinreforged.servermodifications.util.todo.config;
 
 import com.darwinreforged.servermodifications.DarwinServer;
-import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.modules.TicketModule;
+import com.darwinreforged.servermodifications.resources.Permissions;
+
+import java.io.IOException;
+import java.util.Optional;
+
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-
-import java.io.IOException;
-import java.util.Optional;
 
 public class TicketConfig {
 

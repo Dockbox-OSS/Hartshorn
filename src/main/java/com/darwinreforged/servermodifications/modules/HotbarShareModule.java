@@ -6,7 +6,7 @@ import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
-import org.spongepowered.api.Sponge;
+
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -16,6 +16,7 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.item.EnchantmentData;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -69,7 +70,7 @@ public class HotbarShareModule extends PluginModule {
     public HotbarShareModule() {
     }
 
-    @Override
+    @Listener
     public void onServerStart(GameStartedServerEvent event) {
         DarwinServer.registerCommand(hbl, "hbload");
         DarwinServer.registerCommand(hbshare, "shareinv");

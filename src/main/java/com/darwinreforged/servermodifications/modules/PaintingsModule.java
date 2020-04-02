@@ -11,7 +11,9 @@ import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.FileManager;
 import com.darwinreforged.servermodifications.util.todo.PaintingsDatabaseUtil;
 import com.magitechserver.magibridge.MagiBridge;
+
 import net.dv8tion.jda.core.EmbedBuilder;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -26,9 +28,7 @@ import org.spongepowered.api.service.sql.SqlService;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 
-import javax.annotation.Nonnull;
-import javax.sql.DataSource;
-import java.awt.*;
+import java.awt.Color;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -37,6 +37,9 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.annotation.Nonnull;
+import javax.sql.DataSource;
 
 @ModuleInfo(id = "darwinpaintings", name = "Darwin paintings approval", version = "1.0", description = "Approve a painting before uploading it")
 public class PaintingsModule extends PluginModule {

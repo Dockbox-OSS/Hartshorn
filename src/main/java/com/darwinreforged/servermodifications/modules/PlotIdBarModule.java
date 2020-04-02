@@ -23,6 +23,7 @@ import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.service.user.UserStorageService;
@@ -51,7 +52,7 @@ public class PlotIdBarModule extends PluginModule {
     public static ArrayList<UUID> toggledMembers = new ArrayList<>();
     public static HashMap<UUID, PlotIDBarPlayer> allPlayers = new HashMap<>();
 
-    @Override
+    @Listener
     public void onServerStart(GameStartedServerEvent event) {
         File file = new File(FileManager.getConfigDirectory(this).toFile(), "toggled.conf");
 

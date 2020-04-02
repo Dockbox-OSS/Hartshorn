@@ -5,13 +5,14 @@ import com.darwinreforged.servermodifications.listeners.BrushTooltipListener;
 import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
 import com.darwinreforged.servermodifications.modules.root.PluginModule;
 import com.darwinreforged.servermodifications.resources.Permissions;
-import org.spongepowered.api.Sponge;
+
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.text.Text;
@@ -33,7 +34,7 @@ public class BrushTooltipsModule extends PluginModule {
         DarwinServer.registerCommand(btMain, "bt");
     }
 
-    @Override
+    @Listener
     public void onServerStart(GameStartedServerEvent event) {
         BrushTooltipListener.brushAliases.put("s", "sphere");
         BrushTooltipListener.brushAliases.put("c", "cylinder");

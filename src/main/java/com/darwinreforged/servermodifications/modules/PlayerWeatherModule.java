@@ -11,18 +11,20 @@ import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherCoreUtil;
 import com.darwinreforged.servermodifications.util.plugins.PlayerWeatherLightningUtil;
-import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.text.Text;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 
 @ModuleInfo(
         id = "weatherplugin",
@@ -35,7 +37,7 @@ public class PlayerWeatherModule extends PluginModule {
     }
 
     @Override
-    public void onServerStart(GameStartedServerEvent event) {
+    public void onServerFinishLoad(GameInitializationEvent event) {
         Optional<PacketGate> packetGateOptional = Sponge.getServiceManager().provide(PacketGate.class);
         if (packetGateOptional.isPresent()) {
             DarwinServer.getLogger().info("packetGate is present");
@@ -44,11 +46,11 @@ public class PlayerWeatherModule extends PluginModule {
             DarwinServer.registerListener(new WeatherPlayerActionListeners());
 
             DarwinServer.getLogger().info("Weather Plugin successfull initialised");
-    } else {
+        } else {
             DarwinServer.getLogger().error(
                     "PacketGate is not installed. This is required for Weather Plugin to function correctly");
+        }
     }
-  }
 
   private void initialiseCommand() {
     CommandSpec plotWeatherCommand =

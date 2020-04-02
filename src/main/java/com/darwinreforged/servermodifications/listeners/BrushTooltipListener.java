@@ -7,6 +7,7 @@ import com.darwinreforged.servermodifications.enums.brushtooltips.Brushes;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.plugins.BrushTooltipUtil;
+
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
@@ -26,14 +27,18 @@ import org.spongepowered.api.util.Tuple;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 public class BrushTooltipListener {
 
+    public static HashMap<String, String> brushAliases = new HashMap<>();
     private static HashMap<Player, LocalDateTime> lastMessage = new HashMap<>();
     private static HashMap<Player, List<ItemStack>> aStoredBrushes = new HashMap<>();
     private static List<String> commandAliases = Arrays.asList("brush", "br", "/brush", "/br");
-    public static HashMap<String, String> brushAliases = new HashMap<>();
 
     @Listener
     public void onInventoryInteract(TargetInventoryEvent event, @Root Player player) {
@@ -140,7 +145,8 @@ public class BrushTooltipListener {
                                 commandBuilder.onClick(TextActions.suggestCommand(command));
 
                                 // After
-                                PlayerUtils.tell(player, Text.of(Translations.HOLDING_UNSET_TOOL.s(), commandBuilder.build()));
+                                PlayerUtils.tell(player, Text.of(Translations.HOLDING_UNSET_TOOL.s(), commandBuilder
+                                        .build()));
                             }
                             lastMessage.put(player, LocalDateTime.now());
                         }

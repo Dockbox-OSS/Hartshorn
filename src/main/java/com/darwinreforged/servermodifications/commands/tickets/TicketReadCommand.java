@@ -1,8 +1,8 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.resources.Permissions;
-import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.LocationUtils;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
@@ -10,6 +10,7 @@ import com.darwinreforged.servermodifications.util.plugins.TicketUtil;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -30,9 +31,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static com.darwinreforged.servermodifications.objects.TicketStatus.*;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Claimed;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Closed;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Held;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Open;
 
-public class TicketReadCommand implements CommandExecutor {
+public class TicketReadCommand
+        implements CommandExecutor {
 
     private final TicketModule plugin;
 
@@ -41,8 +46,9 @@ public class TicketReadCommand implements CommandExecutor {
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-        final Optional<Integer> ticketIDOp = args.<Integer>getOne("ticketID");
+    public CommandResult execute(CommandSource src, CommandContext args)
+            throws CommandException {
+        final Optional<Integer> ticketIDOp = args.getOne("ticketID");
 
         final List<TicketData> tickets =
                 new ArrayList<TicketData>(plugin.getDataStore().getTicketData());
@@ -121,8 +127,10 @@ public class TicketReadCommand implements CommandExecutor {
                                             Text.builder()
                                                     .append(Translations.TICKET_CLAIM_BUTTON.t())
                                                     .onHover(
-                                                            TextActions.showText(Translations.TICKET_CLAIM_BUTTON_HOVER.t()))
-                                                    .onClick(TextActions.runCommand("/ticket claim " + ticket.getTicketID()))
+                                                            TextActions
+                                                                    .showText(Translations.TICKET_CLAIM_BUTTON_HOVER.t()))
+                                                    .onClick(TextActions
+                                                            .runCommand("/ticket claim " + ticket.getTicketID()))
                                                     .build());
                                     action.append(Text.of(" "));
                                 }
@@ -133,9 +141,12 @@ public class TicketReadCommand implements CommandExecutor {
                                                 Text.builder()
                                                         .append(Translations.TICKET_UNCLAIM_BUTTON.t())
                                                         .onHover(
-                                                                TextActions.showText(Translations.TICKET_UNCLAIM_BUTTON_HOVER.t()))
+                                                                TextActions
+                                                                        .showText(Translations.TICKET_UNCLAIM_BUTTON_HOVER
+                                                                                .t()))
                                                         .onClick(
-                                                                TextActions.runCommand("/ticket unclaim " + ticket.getTicketID()))
+                                                                TextActions
+                                                                        .runCommand("/ticket unclaim " + ticket.getTicketID()))
                                                         .build());
                                         action.append(Text.of(" "));
                                     }
@@ -159,8 +170,10 @@ public class TicketReadCommand implements CommandExecutor {
                                             Text.builder()
                                                     .append(Translations.TICKET_REOPEN_BUTTON.t())
                                                     .onHover(
-                                                            TextActions.showText(Translations.TICKET_REOPEN_BUTTON_HOVER.t()))
-                                                    .onClick(TextActions.runCommand("/ticket reopen " + ticket.getTicketID()))
+                                                            TextActions
+                                                                    .showText(Translations.TICKET_REOPEN_BUTTON_HOVER.t()))
+                                                    .onClick(TextActions
+                                                            .runCommand("/ticket reopen " + ticket.getTicketID()))
                                                     .build());
                                     action.append(Text.of(" "));
                                 }
@@ -178,37 +191,62 @@ public class TicketReadCommand implements CommandExecutor {
                                             action.append(
                                                     Text.builder()
                                                             .append(Translations.PROMOTE_MEMBER_BUTTON.t())
-                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER.ft(Translations.MEMBER_RANK_DISPLAY.s())))
-                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|promote " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID())) + " Member"))
+                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER
+                                                                    .ft(Translations.MEMBER_RANK_DISPLAY
+                                                                            .s())))
+                                                            .onClick(TextActions
+                                                                    .runCommand("/multi ticket complete " + ticket.getTicketID() + "|promote " + PlayerUtils
+                                                                            .getSafely(PlayerUtils
+                                                                                    .getNameFromUUID(ticket.getPlayerUUID())) + " Member"))
                                                             .build());
                                         } else if (ticket.getWorld().equals(Translations.PLOTS2_NAME.s())) {
                                             action.append(
                                                     Text.builder()
                                                             .append(Translations.PROMOTE_EXPERT_BUTTON.t())
-                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER.ft(Translations.EXPERT_RANK_DISPLAY.s())))
-                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|promote " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID())) + " Expert"))
+                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER
+                                                                    .ft(Translations.EXPERT_RANK_DISPLAY
+                                                                            .s())))
+                                                            .onClick(TextActions
+                                                                    .runCommand("/multi ticket complete " + ticket.getTicketID() + "|promote " + PlayerUtils
+                                                                            .getSafely(PlayerUtils
+                                                                                    .getNameFromUUID(ticket.getPlayerUUID())) + " Expert"))
                                                             .build());
                                         } else if (ticket.getWorld().equals(Translations.MASTERPLOTS_NAME.s())) {
                                             action.append(Text.NEW_LINE);
                                             action.append(
                                                     Text.builder()
                                                             .append(Translations.PROMOTE_MASTER_NATURE_BUTTON.t())
-                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER.ft(Translations.MASTER_NATURE_DISPLAY.s())))
-                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|master " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID())) + " nat"))
+                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER
+                                                                    .ft(Translations.MASTER_NATURE_DISPLAY
+                                                                            .s())))
+                                                            .onClick(TextActions
+                                                                    .runCommand("/multi ticket complete " + ticket.getTicketID() + "|master " + PlayerUtils
+                                                                            .getSafely(PlayerUtils
+                                                                                    .getNameFromUUID(ticket.getPlayerUUID())) + " nat"))
                                                             .build());
                                             action.append(Text.of(" "));
                                             action.append(
                                                     Text.builder()
                                                             .append(Translations.PROMOTE_MASTER_ARCHITECTURE_BUTTON.t())
-                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER.ft(Translations.MASTER_ARCHITECTURE_DISPLAY.s())))
-                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|master " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID())) + " arch"))
+                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER
+                                                                    .ft(Translations.MASTER_ARCHITECTURE_DISPLAY
+                                                                            .s())))
+                                                            .onClick(TextActions
+                                                                    .runCommand("/multi ticket complete " + ticket.getTicketID() + "|master " + PlayerUtils
+                                                                            .getSafely(PlayerUtils
+                                                                                    .getNameFromUUID(ticket.getPlayerUUID())) + " arch"))
                                                             .build());
                                             action.append(Text.of(" "));
                                             action.append(
                                                     Text.builder()
                                                             .append(Translations.PROMOTE_MASTER_BOTH_BUTTON.t())
-                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER.ft(Translations.MASTER_BOTH_DISPLAY.s())))
-                                                            .onClick(TextActions.runCommand("/multi ticket complete " + ticket.getTicketID() + "|master " + PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID())) + " all"))
+                                                            .onHover(TextActions.showText(Translations.PROMOTE_BUTTON_HOVER
+                                                                    .ft(Translations.MASTER_BOTH_DISPLAY
+                                                                            .s())))
+                                                            .onClick(TextActions
+                                                                    .runCommand("/multi ticket complete " + ticket.getTicketID() + "|master " + PlayerUtils
+                                                                            .getSafely(PlayerUtils
+                                                                                    .getNameFromUUID(ticket.getPlayerUUID())) + " all"))
                                                             .build());
                                             action.append(Text.NEW_LINE);
                                         }
@@ -231,9 +269,12 @@ public class TicketReadCommand implements CommandExecutor {
                                                     Text.builder()
                                                             .append(Translations.TICKET_REJECT_BUTTON.t())
                                                             .onHover(
-                                                                    TextActions.showText(Translations.TICKET_REJECT_BUTTON_HOVER.t()))
+                                                                    TextActions
+                                                                            .showText(Translations.TICKET_REJECT_BUTTON_HOVER
+                                                                                    .t()))
                                                             .onClick(
-                                                                    TextActions.runCommand("/ticket reject " + ticket.getTicketID()))
+                                                                    TextActions
+                                                                            .runCommand("/ticket reject " + ticket.getTicketID()))
                                                             .build());
                                             action.append(Text.of(" "));
                                         }
@@ -247,7 +288,8 @@ public class TicketReadCommand implements CommandExecutor {
                                     action.append(
                                             Text.builder()
                                                     .append(Translations.TICKET_COMMENT_BUTTON.t())
-                                                    .onHover(TextActions.showText(Translations.TICKET_COMMENT_BUTTON_HOVER.t()))
+                                                    .onHover(TextActions.showText(Translations.TICKET_COMMENT_BUTTON_HOVER
+                                                            .t()))
                                                     .onClick(
                                                             TextActions.suggestCommand(
                                                                     "/ticket comment " + ticket.getTicketID() + " "))
@@ -290,10 +332,12 @@ public class TicketReadCommand implements CommandExecutor {
                                     .equals("00000000-0000-0000-0000-000000000000")) {
                                 if (ticket.getStatus() == Claimed)
                                     contents.add(
-                                            Translations.TICKET_CLAIMED_BY.ft(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
+                                            Translations.TICKET_CLAIMED_BY.ft(PlayerUtils.getSafely(PlayerUtils
+                                                    .getNameFromUUID(ticket.getStaffUUID()))));
                                 else if (ticket.getStatus() == Closed)
                                     contents.add(
-                                            Translations.TICKET_HANDLED_BY.ft(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getStaffUUID()))));
+                                            Translations.TICKET_HANDLED_BY.ft(PlayerUtils.getSafely(PlayerUtils
+                                                    .getNameFromUUID(ticket.getStaffUUID()))));
                             }
                             if (!ticket.getComment().isEmpty()) {
                                 contents.add(Translations.TICKET_COMMENT_CONTENT.ft(ticket.getComment()));
@@ -307,12 +351,16 @@ public class TicketReadCommand implements CommandExecutor {
                                                                     t.getPlayerUUID()
                                                                             .toString()
                                                                             .equals(ticket.getPlayerUUID().toString())
-                                                                            && t.getMessage().equals(ticket.getMessage()))
+                                                                            && t.getMessage()
+                                                                            .equals(ticket.getMessage()))
                                                     .count();
 
-                            contents.add(Translations.TICKET_OPENED_BY.ft(PlayerUtils.getPlayerOnlineDisplay(ticket.getPlayerUUID()), ticketNum));
-                            contents.add(Translations.TICKET_OPENED_WHEN.ft(TicketUtil.getTimeAgo(ticket.getTimestamp())));
-                            contents.add(Translations.TICKET_OPENED_SERVER.ft(TicketUtil.getServerFormatted(ticket.getServer())));
+                            contents.add(Translations.TICKET_OPENED_BY.ft(PlayerUtils
+                                    .getPlayerOnlineDisplay(ticket.getPlayerUUID()), ticketNum));
+                            contents.add(Translations.TICKET_OPENED_WHEN
+                                    .ft(TicketUtil.getTimeAgo(ticket.getTimestamp())));
+                            contents.add(Translations.TICKET_OPENED_SERVER
+                                    .ft(TicketUtil.getServerFormatted(ticket.getServer())));
 
                             if (!ticket
                                     .getPlayerUUID()
@@ -348,7 +396,11 @@ public class TicketReadCommand implements CommandExecutor {
             Text.Builder send = Text.builder();
             String status = "";
             if (ticket.getStatus() == Claimed) status = Translations.TICKET_CLAIMED_PREFIX.s();
-            send.append(Translations.TICKET_ROW_SINGLE.ft(ticket.getTicketID(), TicketUtil.getTimeAgo(ticket.getTimestamp()), PlayerUtils.getPlayerOnlineDisplay(ticket.getPlayerUUID()), TicketUtil.getServerFormatted(ticket.getServer()), Translations.shorten(ticket.getMessage()), status));
+            send.append(Translations.TICKET_ROW_SINGLE
+                    .ft(ticket.getTicketID(), TicketUtil.getTimeAgo(ticket.getTimestamp()), PlayerUtils
+                            .getPlayerOnlineDisplay(ticket.getPlayerUUID()), TicketUtil
+                            .getServerFormatted(ticket.getServer()), Translations
+                            .shorten(ticket.getMessage()), status));
             send.onClick(TextActions.runCommand("/ticket read " + ticket.getTicketID()));
             send.onHover(
                     TextActions.showText(Translations.TICKET_MORE_INFO.ft(ticket.getTicketID())));

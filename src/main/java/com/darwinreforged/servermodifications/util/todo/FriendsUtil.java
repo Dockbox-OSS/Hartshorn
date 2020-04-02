@@ -1,8 +1,9 @@
 package com.darwinreforged.servermodifications.util.todo;
 
 import com.darwinreforged.servermodifications.DarwinServer;
-import com.darwinreforged.servermodifications.objects.FriendsStorage;
 import com.darwinreforged.servermodifications.modules.FriendsModule;
+import com.darwinreforged.servermodifications.objects.FriendsStorage;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.service.user.UserStorageService;

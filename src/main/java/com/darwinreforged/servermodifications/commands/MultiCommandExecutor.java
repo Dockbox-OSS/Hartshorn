@@ -3,6 +3,7 @@ package com.darwinreforged.servermodifications.commands;
 import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -16,11 +17,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class MultiCommandExecutor implements CommandExecutor {
+public class MultiCommandExecutor
+        implements CommandExecutor {
 
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args)
+            throws CommandException {
         Optional<Object> cmdOpt = args.getOne("commands");
 
         if (src instanceof Player) {

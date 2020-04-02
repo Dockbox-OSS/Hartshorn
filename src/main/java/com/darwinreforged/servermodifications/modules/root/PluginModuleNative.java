@@ -9,6 +9,11 @@ public interface PluginModuleNative {
     void onServerStart(GameStartedServerEvent event);
 
 
-    class External extends PluginModule {}
-    class Internal extends PluginModule {}
+    class External
+            extends PluginModule {
+    }
+
+    class Internal
+            extends PluginModule {
+    }
 }

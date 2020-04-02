@@ -4,13 +4,15 @@ import com.darwinreforged.servermodifications.objects.FriendsStorage;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.FriendsUtil;
+
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 
-public class FriendsTeleportCommand implements CommandExecutor {
+public class FriendsTeleportCommand
+        implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) {
