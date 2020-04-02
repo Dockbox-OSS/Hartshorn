@@ -50,7 +50,7 @@ import java.util.concurrent.atomic.AtomicInteger;
                 "simbolduc",
                 "pumbas600"
         },
-        version = "aabf015-alpha"
+        version = "ad3551d-alpha"
 )
 public class DarwinServer
         implements CommandExecutor {
