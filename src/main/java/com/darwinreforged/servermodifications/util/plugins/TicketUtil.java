@@ -1,11 +1,12 @@
 package com.darwinreforged.servermodifications.util.plugins;
 
 
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.objects.TicketStatus;
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.TimeUtils;
+
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class TicketUtil {
     }
 
     // TODO : Split dataStore to commons
-    public static void checkPlayerData(TicketPlugin plugin, Player player) {
+    public static void checkPlayerData(TicketModule plugin, Player player) {
         List<TicketPlayerData> playerData = plugin.getDataStore().getPlayerData();
         boolean exists = false;
         for (TicketPlayerData pData : playerData) {

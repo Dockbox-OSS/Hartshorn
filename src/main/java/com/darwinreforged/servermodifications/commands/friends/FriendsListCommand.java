@@ -4,6 +4,7 @@ import com.darwinreforged.servermodifications.objects.FriendsStorage;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.FriendsUtil;
+
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -17,7 +18,8 @@ import org.spongepowered.api.text.format.TextColors;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class FriendsListCommand implements CommandExecutor {
+public class FriendsListCommand
+        implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) {
@@ -33,7 +35,8 @@ public class FriendsListCommand implements CommandExecutor {
                 Text.Builder sendFriend = Text.builder();
                 sendFriend.append(Text.of(TextColors.AQUA, FriendsUtil.getUser(id).get().getName(), " "));
                 sendFriend.build();
-                sendRemove.append(Text.of(TextColors.RED, "[X]")).onClick(TextActions.runCommand("/friend remove " + FriendsUtil.getUser(id).get().getName()));
+                sendRemove.append(Text.of(TextColors.RED, "[X]"))
+                        .onClick(TextActions.runCommand("/friend remove " + FriendsUtil.getUser(id).get().getName()));
                 sendFriend.append(sendRemove.build());
                 contents.add(sendFriend.build());
                 sendFriend.removeAll();
@@ -41,7 +44,8 @@ public class FriendsListCommand implements CommandExecutor {
         }
         for (UUID id : temp2) {
             if (FriendsUtil.getUser(id).isPresent()) {
-                contents.add(Translations.FRIEND_ROW_REQUEST.ft(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(id))));
+                contents.add(Translations.FRIEND_ROW_REQUEST
+                        .ft(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(id))));
             }
         }
         PaginationList.builder()

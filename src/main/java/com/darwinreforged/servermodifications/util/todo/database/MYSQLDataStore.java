@@ -1,9 +1,9 @@
 package com.darwinreforged.servermodifications.util.todo.database;
 
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.objects.TicketData;
 import com.darwinreforged.servermodifications.objects.TicketPlayerData;
 import com.darwinreforged.servermodifications.objects.TicketStatus;
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -15,11 +15,9 @@ import java.util.UUID;
 
 public final class MYSQLDataStore implements IDataStore {
 
-    private final TicketPlugin plugin;
     private final Optional<HikariDataSource> dataSource;
 
-    public MYSQLDataStore(TicketPlugin plugin) {
-        this.plugin = plugin;
+    public MYSQLDataStore() {
         this.dataSource = getDataSource();
     }
 
@@ -31,7 +29,7 @@ public final class MYSQLDataStore implements IDataStore {
     @Override
     public boolean load() {
         if (!dataSource.isPresent()) {
-            plugin.getLogger().error("Selected datastore: 'MySQL' is not avaiable please select another datastore.");
+            DarwinServer.getLogger().error("Selected datastore: 'MySQL' is not avaiable please select another datastore.");
             return false;
         }
         try (Connection connection = getConnection()) {
@@ -61,7 +59,7 @@ public final class MYSQLDataStore implements IDataStore {
 
             getConnection().commit();
         } catch (SQLException ex) {
-            plugin.getLogger().error("MySQL: Unable to create tables", ex);
+            DarwinServer.getLogger().error("MySQL: Unable to create tables", ex);
             return false;
         }
         return true;
@@ -95,7 +93,7 @@ public final class MYSQLDataStore implements IDataStore {
             }
             return ticketList;
         } catch (SQLException ex) {
-            plugin.getLogger().info("MySQL: Couldn't read ticketdata from MySQL database.", ex);
+            DarwinServer.getLogger().info("MySQL: Couldn't read ticketdata from MySQL database.", ex);
             return new ArrayList<>();
         }
     }
@@ -116,7 +114,7 @@ public final class MYSQLDataStore implements IDataStore {
             }
             return playerList;
         } catch (SQLException ex) {
-            plugin.getLogger().info("MySQL: Couldn't read playerdata from MySQL database.", ex);
+            DarwinServer.getLogger().info("MySQL: Couldn't read playerdata from MySQL database.", ex);
             return new ArrayList<>();
         }
     }
@@ -168,7 +166,7 @@ public final class MYSQLDataStore implements IDataStore {
             statement.setString(15, ticketData.getServer());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
-            plugin.getLogger().error("MySQL: Error adding ticketdata", ex);
+            DarwinServer.getLogger().error("MySQL: Error adding ticketdata", ex);
         }
         return false;
     }
@@ -182,7 +180,7 @@ public final class MYSQLDataStore implements IDataStore {
             statement.setInt(3, playerData.getBannedStatus());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
-            plugin.getLogger().error("MySQL: Error adding playerdata", ex);
+            DarwinServer.getLogger().error("MySQL: Error adding playerdata", ex);
         }
         return false;
     }
@@ -208,7 +206,7 @@ public final class MYSQLDataStore implements IDataStore {
             statement.setString(15, ticketData.getServer());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
-            plugin.getLogger().error("MySQL: Error updating ticketdata", ex);
+            DarwinServer.getLogger().error("MySQL: Error updating ticketdata", ex);
         }
         return false;
     }
@@ -222,7 +220,7 @@ public final class MYSQLDataStore implements IDataStore {
             statement.setInt(3, playerData.getBannedStatus());
             return statement.executeUpdate() > 0;
         } catch (SQLException ex) {
-            plugin.getLogger().error("MySQL: Error updating playerdata", ex);
+            DarwinServer.getLogger().error("MySQL: Error updating playerdata", ex);
         }
         return false;
     }
@@ -233,7 +231,7 @@ public final class MYSQLDataStore implements IDataStore {
             ResultSet rs = md.getColumns(null, null, tableName, columnName);
             return rs.next();
         } catch (SQLException ex) {
-            plugin.getLogger().error("MySQL: Error checking if column exists.", ex);
+            DarwinServer.getLogger().error("MySQL: Error checking if column exists.", ex);
         }
         return false;
     }
@@ -253,7 +251,7 @@ public final class MYSQLDataStore implements IDataStore {
             ds.setAutoCommit(true);
             return Optional.ofNullable(ds);
         } catch (SQLException ex) {
-            plugin.getLogger().error("MySQL: Failed to get datastore.", ex);
+            DarwinServer.getLogger().error("MySQL: Failed to get datastore.", ex);
             return Optional.empty();
         }
     }

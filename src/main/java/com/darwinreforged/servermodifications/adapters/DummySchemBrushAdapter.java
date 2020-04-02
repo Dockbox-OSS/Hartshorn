@@ -3,7 +3,9 @@ package com.darwinreforged.servermodifications.adapters;
 import com.sk89q.worldedit.entity.Player;
 
 import java.util.Optional;
-public class DummySchemBrushAdapter implements SchemBrushAdapter {
+
+public class DummySchemBrushAdapter
+        implements SchemBrushAdapter {
     @Override
     public boolean isPresent() {
         return false;

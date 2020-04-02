@@ -1,12 +1,18 @@
 package com.darwinreforged.servermodifications.util.todo;
 
+import com.darwinreforged.servermodifications.DarwinServer;
+import com.darwinreforged.servermodifications.modules.FriendsModule;
 import com.darwinreforged.servermodifications.objects.FriendsStorage;
-import com.darwinreforged.servermodifications.plugins.FriendsPlugin;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import org.spongepowered.api.Sponge;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.UUID;
 
@@ -50,18 +56,18 @@ public class FriendsStorageManager {
 
 
 	public static void save(UUID uuid, FriendsStorage playerData) {
-		FriendsPlugin.users.put(uuid, playerData);
-		storage = new File(folder, uuid + ".yml");
-		FileWriter writer;
-		try {
-			writer = new FileWriter(storage, false);
-			writer.write(gson.toJson(playerData));
-			writer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-
+		DarwinServer.getModule(FriendsModule.class).ifPresent(module -> {
+			module.users.put(uuid, playerData);
+			storage = new File(folder, uuid + ".yml");
+			FileWriter writer;
+			try {
+				writer = new FileWriter(storage, false);
+				writer.write(gson.toJson(playerData));
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 	}
 }

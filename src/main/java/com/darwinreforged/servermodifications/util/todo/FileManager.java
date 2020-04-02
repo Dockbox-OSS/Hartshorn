@@ -1,5 +1,8 @@
 package com.darwinreforged.servermodifications.util.todo;
 
+import com.darwinreforged.servermodifications.DarwinServer;
+import com.darwinreforged.servermodifications.modules.root.ModuleInfo;
+import com.darwinreforged.servermodifications.modules.root.PluginModuleNative;
 import com.darwinreforged.servermodifications.util.PluginUtils;
 import org.spongepowered.api.Sponge;
 import org.yaml.snakeyaml.Yaml;
@@ -8,58 +11,73 @@ import java.io.*;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class FileManager {
 
-    private final Yaml yaml = new Yaml();
+    private static final Yaml yaml = new Yaml();
 
-    public void writeYaml(Map<String, Object> data, File file) {
+    public static void writeYaml(Map<String, Object> data, File file) {
         try {
             FileWriter writer = new FileWriter(file);
             yaml.dump(data, writer);
         } catch (IOException ex) {
-      System.out.println(ex.getMessage());
+            DarwinServer.getLogger().error(ex.getMessage());
         }
     }
 
-    public void writeYaml(Map<String, Object> data, Object plugin) {
+    public static <I extends PluginModuleNative> void writeYaml(Map<String, Object> data, I plugin) {
         writeYaml(data, getYamlConfigFile(plugin));
     }
 
-    public Map<String, Object> getYamlData(File file) {
+    public static Map<String, Object> getYamlData(File file) {
         try {
             FileReader reader = new FileReader(file);
             return yaml.loadAs(reader, Map.class);
         } catch (FileNotFoundException ex) {
-            System.out.println(ex.getMessage());
+            DarwinServer.getLogger().error(ex.getMessage());
         }
         return new HashMap<>();
     }
 
-    public Map<String, Object> getYamlData(Object plugin) {
+    public static <I extends PluginModuleNative> Map<String, Object> getYamlData(I plugin) {
         return getYamlData(getYamlConfigFile(plugin));
     }
 
 
-    public Path getDataDirectory(Object plugin) {
+    public static Path getDataDirectory(Object plugin) {
         String pluginId = PluginUtils.getPluginId(plugin);
-        return Sponge.getGame().getSavesDirectory().resolve("data/" + pluginId);
+        return createPathIfNotExist(Sponge.getGame().getSavesDirectory().resolve("data/" + pluginId));
     }
 
-    public Path getConfigDirectory(Object plugin) {
-        return Sponge.getConfigManager().getPluginConfig(plugin).getConfigPath();
+    private static Path createPathIfNotExist(Path path) {
+        if (!path.toFile().exists()) path.toFile().mkdirs();
+        return path;
     }
 
-    public File getYamlConfigFile(Object plugin) {
+    public static <I extends PluginModuleNative> Path getConfigDirectory(I plugin) {
+        Optional<ModuleInfo> infoOptional = DarwinServer.getModuleInfo(plugin.getClass());
+        Path darwinConfigPath = Sponge.getConfigManager().getPluginConfig(DarwinServer.getServer()).getDirectory();
+
+        return createPathIfNotExist(infoOptional.map(moduleInfo -> new File(
+                darwinConfigPath.toFile(),
+                moduleInfo.id().replaceAll("\\.", "_")).toPath()).orElse(darwinConfigPath));
+    }
+
+    public static <I extends PluginModuleNative> File getYamlConfigFile(I plugin) {
+        return getYamlConfigFile(plugin, true);
+    }
+
+    public static <I extends PluginModuleNative> File getYamlConfigFile(I plugin, boolean createIfNotExists) {
         Path path = getConfigDirectory(plugin);
         String pluginId = PluginUtils.getPluginId(plugin);
         File file = new File(path.toFile(), String.format("%s.yml", pluginId));
-        if (!file.exists()) {
+        if (!file.exists() && createIfNotExists) {
             try {
-                file.mkdirs();
+                file.getParentFile().mkdirs();
                 file.createNewFile();
             } catch (IOException ex) {
-                System.out.println(ex.getMessage());
+                DarwinServer.getLogger().error(ex.getMessage());
             }
         }
         return file;

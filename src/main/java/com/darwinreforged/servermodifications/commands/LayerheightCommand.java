@@ -2,6 +2,7 @@ package com.darwinreforged.servermodifications.commands;
 
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
+
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
@@ -13,7 +14,8 @@ import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 
-public class LayerheightCommand  implements CommandExecutor {
+public class LayerheightCommand
+        implements CommandExecutor {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) {

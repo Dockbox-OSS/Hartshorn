@@ -1,8 +1,10 @@
 package com.darwinreforged.servermodifications.listeners;
 
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.intellectualcrafters.plot.object.Plot;
+
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.BlockTypes;
@@ -23,52 +25,53 @@ import java.util.Optional;
 
 
 public class LayerheightPlaceEventListener {
-	@Listener
-	public void onBlockPlace(ChangeBlockEvent.Place event) {
-		Optional<Player> cause = event.getCause().first(Player.class);
-		Player player;
+    @Listener
+    public void onBlockPlace(ChangeBlockEvent.Place event) {
+        Optional<Player> cause = event.getCause().first(Player.class);
+        Player player;
 
-		if (cause.isPresent()) {
-			player = cause.get();
-			for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
-				if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
-					ItemStack item = player.getItemInHand(HandTypes.MAIN_HAND).get();
-					if (item.get(Keys.DISPLAY_NAME).isPresent()) {
-						String name = item.get(Keys.DISPLAY_NAME).get().toPlain();
-						if (name.toLowerCase().contains(Translations.HEIGHTTOOL_NAME.p().toLowerCase())) {
-							BlockSnapshot block = transaction.getFinal();
-							Location<World> loc = block.getLocation().get();
-							com.intellectualcrafters.plot.object.Location plotLoc = new com.intellectualcrafters.plot.object.Location();
-							plotLoc.setX(loc.getBlockX());
-							plotLoc.setY(loc.getBlockY());
-							plotLoc.setZ(loc.getBlockZ());
-							plotLoc.setWorld(player.getLocation().getExtent().getName());
-							if (Plot.getPlot(plotLoc) != null) {
-								Plot plot = Plot.getPlot(plotLoc);
-								if (plot.isAdded(player.getUniqueId()) || player.hasPermission("plots.admin.build.other")) {
-									Text name2 = item.get(Keys.DISPLAY_NAME).get();
-									String temp = name2.toPlain();
-									String plainLayerHeightDisplayName = Translations.HEIGHTTOOL_NAME.p();
-									temp = temp.replaceAll(plainLayerHeightDisplayName, "");
-									temp = temp.replaceAll(" ", "");
-									int height = Integer.parseInt(temp);
-									BlockState state = BlockTypes.SNOW_LAYER.getDefaultState();
-									Optional<ImmutableLayeredData> data = state.get(ImmutableLayeredData.class);
-									if (data.isPresent()) {
-										LayeredData snowData = data.get().asMutable();
-										snowData.set(Keys.LAYER, height);
-										BlockState newState = state.with(snowData.asImmutable()).get();
-										loc.setBlock(newState);
-									}
-								}
-							} else {
-								PlayerUtils.tell(player, Translations.OUTSIDE_PLOT.s());
-								event.setCancelled(true);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+        if (cause.isPresent()) {
+            player = cause.get();
+            for (Transaction<BlockSnapshot> transaction : event.getTransactions()) {
+                if (player.getItemInHand(HandTypes.MAIN_HAND).isPresent()) {
+                    ItemStack item = player.getItemInHand(HandTypes.MAIN_HAND).get();
+                    if (item.get(Keys.DISPLAY_NAME).isPresent()) {
+                        String name = item.get(Keys.DISPLAY_NAME).get().toPlain();
+                        if (name.toLowerCase().contains(Translations.HEIGHTTOOL_NAME.p().toLowerCase())) {
+                            BlockSnapshot block = transaction.getFinal();
+                            Location<World> loc = block.getLocation().get();
+                            com.intellectualcrafters.plot.object.Location plotLoc = new com.intellectualcrafters.plot.object.Location();
+                            plotLoc.setX(loc.getBlockX());
+                            plotLoc.setY(loc.getBlockY());
+                            plotLoc.setZ(loc.getBlockZ());
+                            plotLoc.setWorld(player.getLocation().getExtent().getName());
+                            if (Plot.getPlot(plotLoc) != null) {
+                                Plot plot = Plot.getPlot(plotLoc);
+                                if (plot.isAdded(player.getUniqueId()) || player.hasPermission(Permissions.PLOTS_ADMIN_BUILD_OTHER
+                                        .p())) {
+                                    Text name2 = item.get(Keys.DISPLAY_NAME).get();
+                                    String temp = name2.toPlain();
+                                    String plainLayerHeightDisplayName = Translations.HEIGHTTOOL_NAME.p();
+                                    temp = temp.replaceAll(plainLayerHeightDisplayName, "");
+                                    temp = temp.replaceAll(" ", "");
+                                    int height = Integer.parseInt(temp);
+                                    BlockState state = BlockTypes.SNOW_LAYER.getDefaultState();
+                                    Optional<ImmutableLayeredData> data = state.get(ImmutableLayeredData.class);
+                                    if (data.isPresent()) {
+                                        LayeredData snowData = data.get().asMutable();
+                                        snowData.set(Keys.LAYER, height);
+                                        BlockState newState = state.with(snowData.asImmutable()).get();
+                                        loc.setBlock(newState);
+                                    }
+                                }
+                            } else {
+                                PlayerUtils.tell(player, Translations.OUTSIDE_PLOT.s());
+                                event.setCancelled(true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

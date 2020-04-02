@@ -1,8 +1,9 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.modules.TicketModule;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -15,16 +16,18 @@ import org.spongepowered.api.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TicketCommand implements CommandExecutor {
+public class TicketCommand
+        implements CommandExecutor {
 
-    private final TicketPlugin plugin;
+    private final TicketModule plugin;
 
-    public TicketCommand(TicketPlugin instance) {
+    public TicketCommand(TicketModule instance) {
         plugin = instance;
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args)
+            throws CommandException {
         showHelp(src);
         return CommandResult.success();
     }
@@ -35,47 +38,63 @@ public class TicketCommand implements CommandExecutor {
 
         List<Text> contents = new ArrayList<>();
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_STAFFLIST))
+        if (sender.hasPermission(Permissions.COMMAND_STAFFLIST.p()))
             contents.add(Translations.COMMAND_HELP_COMMENT.ft("/stafflist", Translations.TICKET_COMMAND_STAFFLIST.s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_OPEN))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "open [reason for opening]", Translations.TICKET_COMMAND_OPEN.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_OPEN.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "open [reason for opening]", Translations.TICKET_COMMAND_OPEN.s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_ALL) || sender.hasPermission(TicketPermissions.COMMAND_TICKET_CLOSE_SELF))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "close [ticketID] (comment)", Translations.TICKET_COMMAND_CLOSE.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_CLOSE_ALL
+                .p()) || sender.hasPermission(Permissions.COMMAND_TICKET_CLOSE_SELF.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "close [ticketID] (comment)", Translations.TICKET_COMMAND_CLOSE.s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_ASSIGN))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "assign [ticketID] [user]", Translations.TICKET_COMMAND_ASSIGN.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_ASSIGN.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "assign [ticketID] [user]", Translations.TICKET_COMMAND_ASSIGN.s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_HOLD))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "hold [ticketID]", Translations.TICKET_COMMAND_HOLD.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_HOLD.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "hold [ticketID]", Translations.TICKET_COMMAND_HOLD.s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_READ_ALL) || sender.hasPermission(TicketPermissions.COMMAND_TICKET_READ_SELF))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "check (ticketID)", Translations.TICKET_COMMAND_CHECK.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_READ_ALL
+                .p()) || sender.hasPermission(Permissions.COMMAND_TICKET_READ_SELF.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "check (ticketID)", Translations.TICKET_COMMAND_CHECK.s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_REOPEN))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "reopen", Translations.TICKET_COMMAND_REOPEN.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_REOPEN.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "reopen", Translations.TICKET_COMMAND_REOPEN.s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_TELEPORT))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "tp [ticketID]", Translations.TICKET_COMMAND_TP.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_TELEPORT.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "tp [ticketID]", Translations.TICKET_COMMAND_TP.s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_CLAIM))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "claim [ticketID]", Translations.TICKET_COMMAND_CLAIM.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_CLAIM.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "claim [ticketID]", Translations.TICKET_COMMAND_CLAIM.s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_UNCLAIM))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "unclaim [ticketID]", Translations.TICKET_COMMAND_UNCLAIM.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_UNCLAIM.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "unclaim [ticketID]", Translations.TICKET_COMMAND_UNCLAIM.s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_BAN))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "ban [playername]", Translations.TICKET_COMMAND_BAN.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_BAN.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "ban [playername]", Translations.TICKET_COMMAND_BAN.s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_BAN))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "unban [playername]", Translations.TICKET_COMMAND_UNBAN.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_BAN.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "unban [playername]", Translations.TICKET_COMMAND_UNBAN.s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_TICKET_COMMENT))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "comment [ticketID] [comment]", Translations.TICKET_COMMAND_COMMENT.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_COMMENT.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "comment [ticketID] [comment]", Translations.TICKET_COMMAND_COMMENT
+                            .s()));
 
-        if (sender.hasPermission(TicketPermissions.COMMAND_RELOAD))
-            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS.ft("/ticket", "reload", Translations.TICKET_COMMAND_RELOAD.s()));
+        if (sender.hasPermission(Permissions.COMMAND_TICKET_RELOAD.p()))
+            contents.add(Translations.COMMAND_HELP_COMMENT_ARGS
+                    .ft("/ticket", "reload", Translations.TICKET_COMMAND_RELOAD.s()));
 
 
         if (!contents.isEmpty()) {

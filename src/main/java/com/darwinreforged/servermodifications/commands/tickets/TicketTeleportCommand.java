@@ -1,13 +1,14 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
 
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.objects.TicketData;
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.LocationUtils;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.todo.config.TicketConfig;
 import com.flowpowered.math.vector.Vector3d;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -20,16 +21,18 @@ import org.spongepowered.api.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TicketTeleportCommand implements CommandExecutor {
+public class TicketTeleportCommand
+        implements CommandExecutor {
 
-    private final TicketPlugin plugin;
+    private final TicketModule plugin;
 
-    public TicketTeleportCommand(TicketPlugin plugin) {
+    public TicketTeleportCommand(TicketModule plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args)
+            throws CommandException {
         final int ticketID = args.<Integer>getOne("ticketID").get();
         final List<TicketData> tickets = new ArrayList<TicketData>(plugin.getDataStore().getTicketData());
 

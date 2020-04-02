@@ -1,28 +1,33 @@
 package com.darwinreforged.servermodifications.util.plugins;
 
-import com.darwinreforged.servermodifications.plugins.DavePluginWrapper;
+import com.darwinreforged.servermodifications.DarwinServer;
+import com.darwinreforged.servermodifications.modules.DaveChatModule;
 import com.magitechserver.magibridge.MagiBridge;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Random;
 
 public class DaveRawUtils {
 
     public static Entry<?,?> getAssociatedTrigger(String message) {
-        for (Entry<Object, Object> entry : DavePluginWrapper.getMessagesProperties().entrySet()) {
-            String fullTrigger = entry.getKey().toString().replaceFirst("<!important>", "");
+        Optional<DaveChatModule> chatModuleOptional = DarwinServer.getModule(DaveChatModule.class);
+        if (chatModuleOptional.isPresent()) {
+            for (Entry<Object, Object> entry : chatModuleOptional.get().getMessagesProperties().entrySet()) {
+                String fullTrigger = entry.getKey().toString().replaceFirst("<!important>", "");
 
-            for (String trigger : fullTrigger.split("<>")) {
+                for (String trigger : fullTrigger.split("<>")) {
 
-                boolean containsAll = true;
+                    boolean containsAll = true;
 
-                for (String keyword : trigger.split(","))
-                    if (!message.toLowerCase().replaceAll(",", "").contains(keyword.toLowerCase()))
-                        containsAll = (false);
+                    for (String keyword : trigger.split(","))
+                        if (!message.toLowerCase().replaceAll(",", "").contains(keyword.toLowerCase()))
+                            containsAll = (false);
 
-                if (containsAll) return entry;
+                    if (containsAll) return entry;
+                }
             }
         }
 

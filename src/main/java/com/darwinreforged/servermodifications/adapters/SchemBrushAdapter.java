@@ -3,6 +3,7 @@ package com.darwinreforged.servermodifications.adapters;
 import com.sk89q.worldedit.entity.Player;
 
 import java.util.Optional;
+
 public interface SchemBrushAdapter {
 
     boolean isPresent();

@@ -1,6 +1,6 @@
 package com.darwinreforged.servermodifications.util.plugins;
 
-import com.darwinreforged.servermodifications.plugins.PlayerWeatherPlugin;
+import com.darwinreforged.servermodifications.DarwinServer;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
@@ -82,7 +82,7 @@ public class PlayerWeatherLightningUtil
                 .interval(LIGHTNING_FREQUENCY, TimeUnit.SECONDS)
 
                 .execute(PlayerWeatherLightningUtil::lightningMethod)
-                .submit(PlayerWeatherPlugin.getPlugin());
+                .submit(DarwinServer.getServer());
     }
 
     public static void stopLightningScheduler(){

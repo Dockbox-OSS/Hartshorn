@@ -1,13 +1,15 @@
 package com.darwinreforged.servermodifications.commands.tickets;
 
+import com.darwinreforged.servermodifications.modules.TicketModule;
 import com.darwinreforged.servermodifications.objects.TicketData;
-import com.darwinreforged.servermodifications.permissions.TicketPermissions;
-import com.darwinreforged.servermodifications.plugins.TicketPlugin;
+import com.darwinreforged.servermodifications.resources.Permissions;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.darwinreforged.servermodifications.util.PlayerUtils;
 import com.darwinreforged.servermodifications.util.TimeUtils;
 import com.magitechserver.magibridge.MagiBridge;
+
 import net.dv8tion.jda.core.EmbedBuilder;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -16,24 +18,28 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
 
-import java.awt.*;
+import java.awt.Color;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.darwinreforged.servermodifications.objects.TicketStatus.*;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Claimed;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Closed;
+import static com.darwinreforged.servermodifications.objects.TicketStatus.Held;
 
-public class TicketHoldCommand implements CommandExecutor {
-    private final TicketPlugin plugin;
+public class TicketHoldCommand
+        implements CommandExecutor {
+    private final TicketModule plugin;
 
-    public TicketHoldCommand(TicketPlugin plugin) {
+    public TicketHoldCommand(TicketModule plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args)
+            throws CommandException {
         final int ticketID = args.<Integer>getOne("ticketID").get();
 
         final List<TicketData> tickets =
@@ -57,7 +63,8 @@ public class TicketHoldCommand implements CommandExecutor {
                         PlayerUtils.tell(src, Translations.TICKET_ERROR_ALREADY_HOLD.t());
                     }
                     if (ticket.getStatus() == Claimed && !ticket.getStaffUUID().equals(uuid)) {
-                        PlayerUtils.tell(src, Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils.getNameFromUUID(ticket.getStaffUUID())));
+                        PlayerUtils.tell(src, Translations.TICKET_ERROR_CLAIM.ft(ticket.getTicketID(), PlayerUtils
+                                .getNameFromUUID(ticket.getStaffUUID())));
                     }
                     ticket.setStatus(Held);
                     ticket.setStaffUUID(UUID.fromString("00000000-0000-0000-0000-000000000000").toString());
@@ -69,19 +76,23 @@ public class TicketHoldCommand implements CommandExecutor {
                         e.printStackTrace();
                     }
 
-                    PlayerUtils.broadcastForPermission(Translations.TICKET_HOLD.ft(ticket.getTicketID(), src.getName()), TicketPermissions.STAFF);
+                    PlayerUtils.broadcastForPermission(Translations.TICKET_HOLD
+                            .ft(ticket.getTicketID(), src.getName()), Permissions.TICKET_STAFF
+                            .p());
 
                     Optional<Player> ticketPlayerOP = Sponge.getServer().getPlayer(ticket.getPlayerUUID());
                     if (ticketPlayerOP.isPresent()) {
                         Player ticketPlayer = ticketPlayerOP.get();
-                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_HOLD_USER.ft(ticket.getTicketID(), src.getName()));
+                        PlayerUtils.tell(ticketPlayer, Translations.TICKET_HOLD_USER
+                                .ft(ticket.getTicketID(), src.getName()));
                     }
 
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setColor(Color.PINK);
                     embedBuilder.setTitle(Translations.SUBMISSION_ON_HOLD.s());
                     embedBuilder.addField(
-                            Translations.TICKET_DISCORD_SUBMITTED_BY.f(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID()))),
+                            Translations.TICKET_DISCORD_SUBMITTED_BY
+                                    .f(PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID()))),
                             Translations.TICKET_DISCORD_CLOSED_COMBINED.f(
                                     ticketID,
                                     ticket.getMessage(),

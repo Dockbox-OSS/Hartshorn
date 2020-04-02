@@ -1,12 +1,13 @@
 package com.darwinreforged.servermodifications.listeners;
 
+import com.darwinreforged.servermodifications.modules.PlotIdBarModule;
 import com.darwinreforged.servermodifications.objects.PlotIDBarPlayer;
-import com.darwinreforged.servermodifications.plugins.PlotIDBarPlugin;
 import com.darwinreforged.servermodifications.resources.Translations;
 import com.google.common.base.Optional;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;
 import com.intellectualcrafters.plot.object.PlotId;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.boss.BossBarColors;
 import org.spongepowered.api.boss.BossBarOverlays;
@@ -29,16 +30,6 @@ public class PlotIDBarMoveEventListener {
         checkLogin(event, player2);
     }
 
-    @Listener
-    public void onMove(MoveEntityEvent event, @First Player player2) {
-        check(event, player2);
-    }
-
-    @Listener
-    public void onTeleport(MoveEntityEvent.Teleport event, @First Player player2) {
-        check(event, player2);
-    }
-
     private void checkLogin(ClientConnectionEvent.Join event, Player player) {
         com.intellectualcrafters.plot.object.Location loc =
                 new com.intellectualcrafters.plot.object.Location();
@@ -46,7 +37,7 @@ public class PlotIDBarMoveEventListener {
         loc.setY(event.getTargetEntity().getTransform().getLocation().getBlockY());
         loc.setZ(event.getTargetEntity().getTransform().getLocation().getBlockZ());
         loc.setWorld(
-                event.getTargetEntity().getTransform().getLocation().getExtent().getName().toString());
+                event.getTargetEntity().getTransform().getLocation().getExtent().getName());
         if (Plot.getPlot(loc) != null) {
             PlotIDBarPlayer barP = new PlotIDBarPlayer(player);
 
@@ -62,40 +53,7 @@ public class PlotIDBarMoveEventListener {
                 oldBar2.removePlayer(player);
             }
             barP.setLastPlot("");
-            PlotIDBarPlugin.allPlayers.put(player.getUniqueId(), barP);
-            doBar(plot, player);
-        } else {
-            renderBar(player);
-        }
-    }
-
-    private void renderBar(Player player) {
-        PlotIDBarPlayer barP = new PlotIDBarPlayer(player);
-        if (barP.hasPlotTime) {
-            Sponge.getCommandManager().process(player, "ptime reset");
-            barP.setPlotTime(false);
-        }
-        if (barP.getIDBar() != null) {
-            ServerBossBar oldBar1 = barP.getIDBar();
-            oldBar1.removePlayer(player);
-        }
-        if (barP.getMemBar() != null) {
-            ServerBossBar oldBar2 = barP.getMemBar();
-            oldBar2.removePlayer(player);
-        }
-        barP.setLastPlot("");
-        PlotIDBarPlugin.allPlayers.put(player.getUniqueId(), barP);
-    }
-
-    private void check(MoveEntityEvent event, Player player) {
-        com.intellectualcrafters.plot.object.Location loc =
-                new com.intellectualcrafters.plot.object.Location();
-        loc.setX(event.getToTransform().getLocation().getBlockX());
-        loc.setY(event.getToTransform().getLocation().getBlockY());
-        loc.setZ(event.getToTransform().getLocation().getBlockZ());
-        loc.setWorld(event.getToTransform().getLocation().getExtent().getName().toString());
-        if (Plot.getPlot(loc) != null) {
-            Plot plot = Plot.getPlot(loc);
+            PlotIdBarModule.allPlayers.put(player.getUniqueId(), barP);
             doBar(plot, player);
         } else {
             renderBar(player);
@@ -136,7 +94,7 @@ public class PlotIDBarMoveEventListener {
             }
         }
         try {
-            actualowner = PlotIDBarPlugin.getUser(owner.iterator().next()).get().getName();
+            actualowner = PlotIdBarModule.getUser(owner.iterator().next()).get().getName();
         } catch (Exception e) {
             actualowner = Translations.UNOWNED.s();
         }
@@ -151,7 +109,7 @@ public class PlotIDBarMoveEventListener {
                 oldBar2.removePlayer(player);
             }
             barP.setLastPlot("");
-            PlotIDBarPlugin.allPlayers.put(player.getUniqueId(), barP);
+            PlotIdBarModule.allPlayers.put(player.getUniqueId(), barP);
 
             return;
         }
@@ -162,15 +120,15 @@ public class PlotIDBarMoveEventListener {
         String firstTrusted = null, secondTrusted = null, thirdTrusted = null;
         int somenumber = 0;
         if (trustedArray.length > 0 && trustedArray[0] != null) {
-            if (PlotIDBarPlugin.getUser(UUID.fromString(trustedArray[0].toString())).isPresent()) {
-                firstTrusted = PlotIDBarPlugin.getUser(UUID.fromString(trustedArray[0].toString())).get().getName();
+            if (PlotIdBarModule.getUser(UUID.fromString(trustedArray[0].toString())).isPresent()) {
+                firstTrusted = PlotIdBarModule.getUser(UUID.fromString(trustedArray[0].toString())).get().getName();
                 somenumber += 1;
                 //	System.out.println(firstTrusted);
             }
         }
         if (trustedArray.length > 1 && trustedArray[1] != null) {
-            if (PlotIDBarPlugin.getUser(UUID.fromString(trustedArray[1].toString())).isPresent()) {
-                secondTrusted = PlotIDBarPlugin.getUser(UUID.fromString(trustedArray[1].toString())).get().getName();
+            if (PlotIdBarModule.getUser(UUID.fromString(trustedArray[1].toString())).isPresent()) {
+                secondTrusted = PlotIdBarModule.getUser(UUID.fromString(trustedArray[1].toString())).get().getName();
                 somenumber += 1;
                 // System.out.println(secondTrusted);
             }
@@ -190,7 +148,7 @@ public class PlotIDBarMoveEventListener {
         }
 
         for (UUID uuid : trusted) {
-            if (!PlotIDBarPlugin.getUser(uuid).isPresent()) {
+            if (!PlotIdBarModule.getUser(uuid).isPresent()) {
                 members = Translations.EVERYONE.s();
                 break;
             }
@@ -270,12 +228,55 @@ public class PlotIDBarMoveEventListener {
                     barP.setLastPlot(worldname + plot.getId());
                 }
             }
-            PlotIDBarPlugin.allPlayers.put(player.getUniqueId(), barP);
+            PlotIdBarModule.allPlayers.put(player.getUniqueId(), barP);
         } else {
             if (bossBarA != barP.getIDBar()) {
                 barP.setLastPlot(worldname + plot.getId());
-                PlotIDBarPlugin.allPlayers.put(player.getUniqueId(), barP);
+                PlotIdBarModule.allPlayers.put(player.getUniqueId(), barP);
             }
         }
+    }
+
+    private void renderBar(Player player) {
+        PlotIDBarPlayer barP = new PlotIDBarPlayer(player);
+        if (barP.hasPlotTime) {
+            Sponge.getCommandManager().process(player, "ptime reset");
+            barP.setPlotTime(false);
+        }
+        if (barP.getIDBar() != null) {
+            ServerBossBar oldBar1 = barP.getIDBar();
+            oldBar1.removePlayer(player);
+        }
+        if (barP.getMemBar() != null) {
+            ServerBossBar oldBar2 = barP.getMemBar();
+            oldBar2.removePlayer(player);
+        }
+        barP.setLastPlot("");
+        PlotIdBarModule.allPlayers.put(player.getUniqueId(), barP);
+    }
+
+    @Listener
+    public void onMove(MoveEntityEvent event, @First Player player2) {
+        check(event, player2);
+    }
+
+    private void check(MoveEntityEvent event, Player player) {
+        com.intellectualcrafters.plot.object.Location loc =
+                new com.intellectualcrafters.plot.object.Location();
+        loc.setX(event.getToTransform().getLocation().getBlockX());
+        loc.setY(event.getToTransform().getLocation().getBlockY());
+        loc.setZ(event.getToTransform().getLocation().getBlockZ());
+        loc.setWorld(event.getToTransform().getLocation().getExtent().getName());
+        if (Plot.getPlot(loc) != null) {
+            Plot plot = Plot.getPlot(loc);
+            doBar(plot, player);
+        } else {
+            renderBar(player);
+        }
+    }
+
+    @Listener
+    public void onTeleport(MoveEntityEvent.Teleport event, @First Player player2) {
+        check(event, player2);
     }
 }

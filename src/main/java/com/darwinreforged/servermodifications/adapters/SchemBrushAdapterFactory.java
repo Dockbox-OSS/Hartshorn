@@ -1,4 +1,5 @@
 package com.darwinreforged.servermodifications.adapters;
+
 public class SchemBrushAdapterFactory {
 
     public static final SchemBrushAdapter DUMMY = new DummySchemBrushAdapter();
@@ -21,7 +22,7 @@ public class SchemBrushAdapterFactory {
         try {
             Class.forName(testFor);
             Class<?> target = Class.forName(adapter);
-            return SchemBrushAdapter.class.cast(target.newInstance());
+            return (com.darwinreforged.servermodifications.adapters.SchemBrushAdapter) target.newInstance();
         } catch (Throwable t) {
             return null;
         }
