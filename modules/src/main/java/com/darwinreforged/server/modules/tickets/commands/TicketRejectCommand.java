@@ -1,0 +1,63 @@
+package com.darwinreforged.server.modules.tickets.commands;
+
+import com.darwinreforged.server.modules.tickets.TicketModule;
+import com.darwinreforged.server.modules.tickets.entities.TicketData;
+import com.darwinreforged.server.api.resources.Translations;
+import com.darwinreforged.server.api.utils.PlayerUtils;
+
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandException;
+import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.args.CommandContext;
+import org.spongepowered.api.command.spec.CommandExecutor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import io.github.nucleuspowered.nucleus.Nucleus;
+import io.github.nucleuspowered.nucleus.api.service.NucleusMailService;
+
+public class TicketRejectCommand
+        implements CommandExecutor {
+
+    private final TicketModule plugin;
+
+    public TicketRejectCommand(TicketModule plugin) {
+        this.plugin = plugin;
+    }
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args)
+            throws CommandException {
+        args.putArg("rejected", true);
+        new TicketCloseCommand(plugin).execute(src, args);
+        Optional<NucleusMailService> mailServiceOptional =
+                Nucleus.getNucleus().getInternalServiceManager().getService(NucleusMailService.class);
+        if (mailServiceOptional.isPresent()) {
+            final List<TicketData> tickets =
+                    new ArrayList<TicketData>(plugin.getDataStore().getTicketData());
+            final Optional<Integer> ticketIDOp = args.getOne("ticketID");
+            if (ticketIDOp.isPresent()) {
+                Optional<TicketData> ticketOpt =
+                        tickets.stream().filter(t -> t.getTicketID() == ticketIDOp.get()).findFirst();
+                if (ticketOpt.isPresent()) {
+                    TicketData ticket = ticketOpt.get();
+                    String playerName = PlayerUtils.getSafely(PlayerUtils.getNameFromUUID(ticket.getPlayerUUID()));
+                    Sponge.getCommandManager()
+                            .process(
+                                    Sponge.getServer().getConsole(),
+                                    "cu execute whenonline "
+                                            + playerName
+                                            + " *plaintell "
+                                            + playerName
+                                            + Translations.REJECTED_TICKET_TARGET.s());
+
+                    PlayerUtils.tell(src, Translations.REJECTED_TICKET_SOURCE.f(ticket.getTicketID()));
+                }
+            }
+        }
+        return CommandResult.success();
+    }
+}

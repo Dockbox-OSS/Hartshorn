@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "darwinServer",
+    "name": "DarwinServer",
+    "description": "",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "DiggyNevs"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

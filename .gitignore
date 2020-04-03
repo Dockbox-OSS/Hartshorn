@@ -1,6 +1,9 @@
-﻿.gradle
-build
-gradle
+.idea
+src/test
 *.iml
-*.iws
-*.ipr
+.gradle
+modules/build
+mcp/build
+api/build
+gradle
+modules/src/test
