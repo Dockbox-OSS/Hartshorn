@@ -13,6 +13,9 @@ buildscript {
 apply plugin: "net.minecraftforge.gradle.forge"
 
 archivesBaseName = modBaseName
+version = project.pluginVersion
+group = project.pluginGroup
+description = 'MCP Mixins and wrappers for API usage'
 
 minecraft {
     version = project.forgeVersion

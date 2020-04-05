@@ -2,7 +2,6 @@ package com.darwinreforged.server.mcp.protocol;
 
 import com.darwinreforged.server.mcp.entities.Entities.AbstractEntity;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketChangeGameState;
@@ -58,8 +57,9 @@ public enum Protocol {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     public static class SpawnGlobalEntity extends AbstractProtocol<SPacketSpawnGlobalEntity> {
-        public <T extends Entity> SpawnGlobalEntity(AbstractEntity<T> entity) {
+        public SpawnGlobalEntity(AbstractEntity entity) {
             this.packet = new SPacketSpawnGlobalEntity(entity.get());
         }
     }

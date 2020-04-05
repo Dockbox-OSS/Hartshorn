@@ -2,6 +2,11 @@ plugins {
     id 'org.spongepowered.plugin' version '0.9.0'
 }
 
+archivesBaseName = 'DarwinServer API'
+version = project.pluginVersion
+group = project.pluginGroup
+description = 'Common API for Darwin Server modules'
+
 dependencies {
     compileOnly 'org.spongepowered:spongeapi:7.1.0'
     compile fileTree(dir: '../common_libs', include: ['*.jar'])
