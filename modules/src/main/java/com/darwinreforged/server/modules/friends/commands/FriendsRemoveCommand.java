@@ -1,10 +1,10 @@
 package com.darwinreforged.server.modules.friends.commands;
 
-import com.darwinreforged.servermodifications.objects.FriendsStorage;
 import com.darwinreforged.server.api.resources.Translations;
 import com.darwinreforged.server.api.utils.PlayerUtils;
-import com.darwinreforged.servermodifications.util.todo.FriendsStorageManager;
-import com.darwinreforged.servermodifications.util.todo.FriendsUtil;
+import com.darwinreforged.server.modules.friends.util.FriendsStorage;
+import com.darwinreforged.server.modules.friends.util.FriendsStorageManager;
+import com.darwinreforged.server.modules.friends.util.FriendsUtil;
 
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;

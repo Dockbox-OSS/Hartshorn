@@ -6,6 +6,11 @@ import com.darwinreforged.server.api.modules.PluginModule;
 import com.darwinreforged.server.api.resources.Permissions;
 import com.darwinreforged.server.api.resources.Translations;
 import com.darwinreforged.server.api.utils.PlayerUtils;
+import com.darwinreforged.server.modules.pweather.commands.PlayerWeatherCommand;
+import com.darwinreforged.server.modules.pweather.commands.PlotWeatherCommand;
+import com.darwinreforged.server.modules.pweather.listeners.WeatherPlayerActionListeners;
+import com.darwinreforged.server.modules.pweather.utils.PlayerWeatherCoreUtil;
+import com.darwinreforged.server.modules.pweather.utils.PlayerWeatherLightningUtil;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;

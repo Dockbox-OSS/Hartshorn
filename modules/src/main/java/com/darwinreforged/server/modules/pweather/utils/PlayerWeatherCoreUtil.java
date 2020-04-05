@@ -2,13 +2,12 @@ package com.darwinreforged.server.modules.pweather.utils;
 
 import com.darwinreforged.server.api.resources.Translations;
 import com.darwinreforged.server.api.utils.PlayerUtils;
+import com.darwinreforged.server.mcp.Mixins;
 import com.darwinreforged.server.mcp.entities.Entities;
 import com.darwinreforged.server.mcp.entities.Entities.LightningBolt;
 import com.darwinreforged.server.mcp.protocol.Protocol;
 import com.darwinreforged.server.mcp.protocol.Protocol.SpawnGlobalEntity;
 import com.darwinreforged.server.mcp.reference.ForgeWorld;
-import com.darwinreforged.server.mcp.registry.MCPPacketConnection;
-import com.darwinreforged.server.mcp.registry.ProtocolGate;
 import com.flowpowered.math.vector.Vector3d;
 
 import org.spongepowered.api.Sponge;
@@ -191,39 +190,36 @@ public class PlayerWeatherCoreUtil {
     Optional<PacketGate> packetGateOptional = Sponge.getServiceManager().provide(PacketGate.class);
     if (packetGateOptional.isPresent()) {
       PacketGate packetGate = packetGateOptional.get();
-      ProtocolGate protocolGate = ProtocolGate.provide(packetGate);
-      Optional<MCPPacketConnection> optionalConnection = protocolGate.connectionByUniqueId(uuid);
+      Mixins.provide(packetGate);
 
-      if (optionalConnection.isPresent())
-      {
-        MCPPacketConnection connection = optionalConnection.get();
-        // 1: End Raining, 2: Begin Raining
-        switch (weather)
-        {
-          case RAINING:
-            // 0f is unused for start / stop raining gameChangeState packets. This is just a
-            // filler.
-            connection.sendPacket(new Protocol.ChangeGameState(2, 0f));
+      // 1: End Raining, 2: Begin Raining
+      switch (weather) {
+        case RAINING:
+          // 0f is unused for start / stop raining gameChangeState packets. This is just a
+          // filler.
+          Mixins.getUUIDPacketConnection().sendPacket(uuid, new Protocol.ChangeGameState(2, 0f));
+          return;
 
-            return;
+        case RESET:
+          // Change weather back to clear (server weather)
+          Mixins.getUUIDPacketConnection().sendPacket(uuid, new Protocol.ChangeGameState(1, 0f));
+          return;
 
-          case RESET:
-            // Change weather back to clear (server weather)
-            connection.sendPacket(new Protocol.ChangeGameState(1, 0f));
-            return;
+        case LIGHTNING:
+          Optional<Vector3d> optionalLightningPosition = PlayerWeatherLightningUtil.determineLightningPosition(uuid);
 
-          case LIGHTNING:
-            Optional<Vector3d> optionalLightningPosition = PlayerWeatherLightningUtil.determineLightningPosition(uuid);
+          ForgeWorld forgeWorld = ForgeWorld.getFromPlayer(uuid);
+          if (optionalLightningPosition.isPresent() && forgeWorld != null) {
+            Vector3d lightningPosition = optionalLightningPosition.get();
+            Entities.LightningBolt lightningBolt = new LightningBolt(
+                    forgeWorld,
+                    lightningPosition.getX(),
+                    lightningPosition.getY(),
+                    lightningPosition.getZ(),
+                    false);
 
-            ForgeWorld forgeWorld = ForgeWorld.getFromPlayer(uuid);
-            if (optionalLightningPosition.isPresent() && forgeWorld != null)
-            {
-              Vector3d lightningPosition = optionalLightningPosition.get();
-              Entities.LightningBolt lightningBolt = new LightningBolt(forgeWorld, lightningPosition.getX(), lightningPosition.getY(), lightningPosition.getZ(), false);
-
-              connection.sendPacket(new SpawnGlobalEntity(lightningBolt));
-            }
-        }
+            Mixins.getUUIDPacketConnection().sendPacket(uuid, new SpawnGlobalEntity(lightningBolt));
+          }
       }
     }
   }

@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import static com.darwinreforged.server.mcp.registry.Player.getModList;
+import static com.darwinreforged.server.mcp.entities.Entities.Player.getModList;
 
 public class PlayerModsUtil {
 	/**

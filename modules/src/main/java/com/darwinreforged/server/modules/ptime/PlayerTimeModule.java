@@ -8,7 +8,7 @@ import com.darwinreforged.server.api.resources.Translations;
 import com.darwinreforged.server.api.utils.PlayerUtils;
 import com.darwinreforged.server.mcp.protocol.Protocol;
 import com.darwinreforged.server.mcp.protocol.ProtocolBuffer;
-import com.darwinreforged.server.mcp.registry.ProtocolGate;
+import com.darwinreforged.server.mcp.protocol.ProtocolGate;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;

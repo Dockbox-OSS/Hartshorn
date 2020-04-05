@@ -69,10 +69,6 @@ public enum Protocol {
             this.packet = new SPacketTimeUpdate(totalWorldTimeIn, worldTimeIn, doDaylightCycle);
         }
 
-        public TimeUpdate(SPacketTimeUpdate sPacketTimeUpdate) {
-            super(sPacketTimeUpdate);
-        }
-
         public TimeUpdate(PacketEvent event) {
             if (event.getPacket() instanceof SPacketTimeUpdate)
                 this.packet = (SPacketTimeUpdate) event.getPacket();

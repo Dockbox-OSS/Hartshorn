@@ -14,8 +14,8 @@ repositories {
 }
 
 dependencies {
-    compile project(':mcp')
-    compile project(':api')
+    shadow project(':mcp')
+    shadow project(':api')
     compileOnly 'org.spongepowered:spongeapi:7.1.0'
     compileOnly 'com.sk89q.worldedit:worldedit-core:6.1.4-SNAPSHOT'
     compileOnly 'com.sk89q.worldedit:worldedit-sponge:6.1.7-SNAPSHOT'

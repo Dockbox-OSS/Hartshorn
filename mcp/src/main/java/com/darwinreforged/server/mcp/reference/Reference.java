@@ -1,10 +1,10 @@
 package com.darwinreforged.server.mcp.reference;
 
-public class ForgeReference<T> {
+public class Reference<T> {
 
     private final T t;
 
-    public ForgeReference(T t) {
+    public Reference(T t) {
         this.t = t;
     }
 
