@@ -1,6 +1,6 @@
 package com.darwinreforged.server.modules.tickets.database;
 
-import com.darwinreforged.server.api.DarwinServer;
+import com.darwinreforged.server.sponge.DarwinServer;
 import com.darwinreforged.server.modules.tickets.config.TicketConfig;
 import com.darwinreforged.server.modules.tickets.entities.TicketData;
 import com.darwinreforged.server.modules.tickets.entities.TicketPlayerData;

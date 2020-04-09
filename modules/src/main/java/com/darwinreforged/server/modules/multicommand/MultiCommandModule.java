@@ -1,10 +1,10 @@
 package com.darwinreforged.server.modules.multicommand;
 
 
-import com.darwinreforged.server.api.DarwinServer;
-import com.darwinreforged.server.api.modules.ModuleInfo;
-import com.darwinreforged.server.api.modules.PluginModule;
-import com.darwinreforged.server.api.resources.Permissions;
+import com.darwinreforged.server.sponge.DarwinServer;
+import com.darwinreforged.server.core.modules.ModuleInfo;
+import com.darwinreforged.server.core.modules.PluginModule;
+import com.darwinreforged.server.core.resources.Permissions;
 
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;

@@ -1,8 +1,8 @@
 package com.darwinreforged.server.modules.dave;
 
-import com.darwinreforged.server.api.DarwinServer;
-import com.darwinreforged.server.api.resources.Translations;
-import com.darwinreforged.server.api.utils.PlayerUtils;
+import com.darwinreforged.server.sponge.DarwinServer;
+import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.sponge.utils.PlayerUtils;
 import com.magitechserver.magibridge.DiscordHandler;
 import com.magitechserver.magibridge.api.DiscordEvent;
 

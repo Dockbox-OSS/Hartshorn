@@ -1,6 +1,6 @@
 package com.darwinreforged.server.modules.modbanner.util;
 
-import com.darwinreforged.server.api.DarwinServer;
+import com.darwinreforged.server.sponge.DarwinServer;
 import com.darwinreforged.server.modules.modbanner.ModBannerModule;
 import com.darwinreforged.server.modules.modbanner.ModData;
 import com.darwinreforged.server.modules.modbanner.VanillaPlayerException;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import static com.darwinreforged.server.mcp.entities.Entities.Player.getModList;
+import static com.darwinreforged.server.forge.entities.Entities.Player.getModList;
 
 public class PlayerModsUtil {
 	/**

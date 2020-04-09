@@ -1,8 +1,8 @@
 package com.darwinreforged.server.modules.plottrustlimit;
 
-import com.darwinreforged.server.api.DarwinServer;
-import com.darwinreforged.server.api.modules.ModuleInfo;
-import com.darwinreforged.server.api.modules.PluginModule;
+import com.darwinreforged.server.sponge.DarwinServer;
+import com.darwinreforged.server.core.modules.ModuleInfo;
+import com.darwinreforged.server.core.modules.PluginModule;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;

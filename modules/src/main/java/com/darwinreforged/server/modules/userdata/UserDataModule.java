@@ -1,11 +1,11 @@
 package com.darwinreforged.server.modules.userdata;
 
-import com.darwinreforged.server.api.DarwinServer;
-import com.darwinreforged.server.api.modules.ModuleInfo;
-import com.darwinreforged.server.api.modules.PluginModule;
-import com.darwinreforged.server.api.resources.Permissions;
-import com.darwinreforged.server.api.resources.Translations;
-import com.darwinreforged.server.api.utils.PlayerUtils;
+import com.darwinreforged.server.sponge.DarwinServer;
+import com.darwinreforged.server.core.modules.ModuleInfo;
+import com.darwinreforged.server.core.modules.PluginModule;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.sponge.utils.PlayerUtils;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.intellectualcrafters.plot.util.UUIDHandler;
 import com.intellectualcrafters.plot.util.WorldUtil;

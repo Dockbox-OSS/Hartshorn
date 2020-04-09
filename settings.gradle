@@ -1,3 +1,6 @@
-rootProject.name = 'darwinServer'
+rootProject.name = 'DarwinServer'
 
-include 'mcp', 'api', 'modules'
+include 'ForgeMCP'
+include 'Sponge'
+include 'Modules'
+include 'Core'

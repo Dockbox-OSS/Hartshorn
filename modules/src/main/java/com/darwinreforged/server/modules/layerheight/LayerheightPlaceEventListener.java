@@ -1,8 +1,8 @@
 package com.darwinreforged.server.modules.layerheight;
 
-import com.darwinreforged.server.api.resources.Permissions;
-import com.darwinreforged.server.api.resources.Translations;
-import com.darwinreforged.server.api.utils.PlayerUtils;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.sponge.utils.PlayerUtils;
 import com.intellectualcrafters.plot.object.Plot;
 
 import org.spongepowered.api.block.BlockSnapshot;

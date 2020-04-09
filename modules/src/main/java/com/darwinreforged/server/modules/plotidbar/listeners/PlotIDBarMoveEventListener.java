@@ -1,6 +1,6 @@
 package com.darwinreforged.server.modules.plotidbar.listeners;
 
-import com.darwinreforged.server.api.resources.Translations;
+import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.modules.plotidbar.entities.PlotIDBarPlayer;
 import com.darwinreforged.server.modules.plotidbar.PlotIdBarModule;
 import com.google.common.base.Optional;

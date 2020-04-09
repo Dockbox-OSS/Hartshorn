@@ -1,6 +1,6 @@
 package com.darwinreforged.server.modules.friends.util;
 
-import com.darwinreforged.server.api.DarwinServer;
+import com.darwinreforged.server.sponge.DarwinServer;
 import com.darwinreforged.server.modules.friends.FriendsModule;
 
 import org.spongepowered.api.Sponge;

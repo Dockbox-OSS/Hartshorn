@@ -2,8 +2,10 @@
 src/test
 *.iml
 .gradle
-modules/build
-mcp/build
-api/build
+Modules/build
+ForgeMCP/build
+Core/build
+Sponge/build
 gradle
 modules/src/test
+*.class

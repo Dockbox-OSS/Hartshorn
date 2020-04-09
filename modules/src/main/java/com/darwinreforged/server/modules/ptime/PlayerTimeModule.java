@@ -1,14 +1,14 @@
 package com.darwinreforged.server.modules.ptime;
 
-import com.darwinreforged.server.api.DarwinServer;
-import com.darwinreforged.server.api.modules.ModuleInfo;
-import com.darwinreforged.server.api.modules.PluginModuleNative;
-import com.darwinreforged.server.api.resources.Permissions;
-import com.darwinreforged.server.api.resources.Translations;
-import com.darwinreforged.server.api.utils.PlayerUtils;
-import com.darwinreforged.server.mcp.protocol.Protocol;
-import com.darwinreforged.server.mcp.protocol.ProtocolBuffer;
-import com.darwinreforged.server.mcp.protocol.ProtocolGate;
+import com.darwinreforged.server.sponge.DarwinServer;
+import com.darwinreforged.server.core.modules.ModuleInfo;
+import com.darwinreforged.server.core.modules.PluginModuleNative;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.sponge.utils.PlayerUtils;
+import com.darwinreforged.server.forge.protocol.Protocol;
+import com.darwinreforged.server.forge.protocol.ProtocolBuffer;
+import com.darwinreforged.server.forge.protocol.ProtocolGate;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;

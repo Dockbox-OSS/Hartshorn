@@ -1,8 +1,8 @@
 package com.darwinreforged.server.modules.waterflow;
 
-import com.darwinreforged.server.api.modules.ModuleInfo;
-import com.darwinreforged.server.api.modules.PluginModule;
-import com.darwinreforged.server.api.resources.Permissions;
+import com.darwinreforged.server.core.modules.ModuleInfo;
+import com.darwinreforged.server.core.modules.PluginModule;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.intellectualcrafters.plot.object.Plot;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.data.property.block.MatterProperty;

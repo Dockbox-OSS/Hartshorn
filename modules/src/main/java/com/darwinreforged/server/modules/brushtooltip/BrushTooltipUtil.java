@@ -1,6 +1,6 @@
 package com.darwinreforged.server.modules.brushtooltip;
 
-import com.darwinreforged.server.api.resources.Translations;
+import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.modules.brushtooltip.enums.Argument;
 import com.darwinreforged.server.modules.brushtooltip.enums.Brush;
 

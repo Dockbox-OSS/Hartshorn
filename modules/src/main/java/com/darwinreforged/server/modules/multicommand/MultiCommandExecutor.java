@@ -1,8 +1,8 @@
 package com.darwinreforged.server.modules.multicommand;
 
-import com.darwinreforged.server.api.DarwinServer;
-import com.darwinreforged.server.api.resources.Translations;
-import com.darwinreforged.server.api.utils.PlayerUtils;
+import com.darwinreforged.server.sponge.DarwinServer;
+import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.sponge.utils.PlayerUtils;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;

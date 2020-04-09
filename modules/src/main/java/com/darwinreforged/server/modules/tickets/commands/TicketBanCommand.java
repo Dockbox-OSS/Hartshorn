@@ -1,6 +1,6 @@
 package com.darwinreforged.server.modules.tickets.commands;
 
-import com.darwinreforged.server.api.resources.Translations;
+import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.modules.tickets.TicketModule;
 import com.darwinreforged.server.modules.tickets.entities.TicketPlayerData;
 import com.darwinreforged.server.modules.tickets.util.TicketUtil;

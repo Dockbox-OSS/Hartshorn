@@ -1,7 +1,7 @@
 package com.darwinreforged.server.modules.pweather.utils;
 
-import com.darwinreforged.server.api.DarwinServer;
-import com.darwinreforged.server.api.resources.Translations;
+import com.darwinreforged.server.sponge.DarwinServer;
+import com.darwinreforged.server.core.resources.Translations;
 import com.flowpowered.math.vector.Vector3d;
 
 import org.spongepowered.api.Sponge;

@@ -1,9 +1,9 @@
 package com.darwinreforged.server.modules.friends;
 
-import com.darwinreforged.server.api.DarwinServer;
-import com.darwinreforged.server.api.modules.ModuleInfo;
-import com.darwinreforged.server.api.modules.PluginModule;
-import com.darwinreforged.server.api.resources.Permissions;
+import com.darwinreforged.server.sponge.DarwinServer;
+import com.darwinreforged.server.core.modules.ModuleInfo;
+import com.darwinreforged.server.core.modules.PluginModule;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.modules.friends.commands.FriendsAddCommand;
 import com.darwinreforged.server.modules.friends.commands.FriendsListCommand;
 import com.darwinreforged.server.modules.friends.commands.FriendsRemoveCommand;

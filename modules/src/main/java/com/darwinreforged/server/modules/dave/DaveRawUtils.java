@@ -1,6 +1,6 @@
 package com.darwinreforged.server.modules.dave;
 
-import com.darwinreforged.server.api.DarwinServer;
+import com.darwinreforged.server.sponge.DarwinServer;
 import com.magitechserver.magibridge.MagiBridge;
 
 import org.spongepowered.api.Sponge;

@@ -1,7 +1,7 @@
 package com.darwinreforged.server.modules.pweather.commands;
 
-import com.darwinreforged.server.api.resources.Translations;
-import com.darwinreforged.server.api.utils.PlayerUtils;
+import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.sponge.utils.PlayerUtils;
 import com.darwinreforged.server.modules.pweather.utils.PlayerWeatherCoreUtil;
 
 import org.spongepowered.api.command.CommandException;

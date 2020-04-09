@@ -1,6 +1,6 @@
 package com.darwinreforged.server.modules.pweather.listeners;
 
-import com.darwinreforged.server.api.DarwinServer;
+import com.darwinreforged.server.sponge.DarwinServer;
 import com.darwinreforged.server.modules.pweather.utils.PlayerWeatherCoreUtil;
 import com.intellectualcrafters.plot.flag.Flags;
 import com.intellectualcrafters.plot.object.Plot;

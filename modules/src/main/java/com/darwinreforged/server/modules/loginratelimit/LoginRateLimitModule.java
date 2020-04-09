@@ -1,8 +1,8 @@
 package com.darwinreforged.server.modules.loginratelimit;
 
-import com.darwinreforged.server.api.modules.ModuleInfo;
-import com.darwinreforged.server.api.modules.PluginModule;
-import com.darwinreforged.server.api.resources.Translations;
+import com.darwinreforged.server.core.modules.ModuleInfo;
+import com.darwinreforged.server.core.modules.PluginModule;
+import com.darwinreforged.server.core.resources.Translations;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;

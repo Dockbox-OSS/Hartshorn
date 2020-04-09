@@ -1,7 +1,7 @@
 package com.darwinreforged.server.modules.tickets.util;
 
-import com.darwinreforged.server.api.resources.Translations;
-import com.darwinreforged.server.api.utils.TimeUtils;
+import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.sponge.utils.TimeUtils;
 import com.darwinreforged.server.modules.tickets.TicketModule;
 import com.darwinreforged.server.modules.tickets.entities.TicketPlayerData;
 import com.darwinreforged.server.modules.tickets.entities.TicketStatus;

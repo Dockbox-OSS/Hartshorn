@@ -1,9 +1,9 @@
 package com.darwinreforged.server.modules.tickets.commands;
 
-import com.darwinreforged.server.api.resources.Permissions;
-import com.darwinreforged.server.api.resources.Translations;
-import com.darwinreforged.server.api.utils.LocationUtils;
-import com.darwinreforged.server.api.utils.PlayerUtils;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.sponge.utils.LocationUtils;
+import com.darwinreforged.server.sponge.utils.PlayerUtils;
 import com.darwinreforged.server.modules.tickets.TicketModule;
 import com.darwinreforged.server.modules.tickets.config.TicketConfig;
 import com.darwinreforged.server.modules.tickets.entities.TicketData;

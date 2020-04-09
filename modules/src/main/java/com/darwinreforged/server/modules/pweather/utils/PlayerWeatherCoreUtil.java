@@ -1,13 +1,13 @@
 package com.darwinreforged.server.modules.pweather.utils;
 
-import com.darwinreforged.server.api.resources.Translations;
-import com.darwinreforged.server.api.utils.PlayerUtils;
-import com.darwinreforged.server.mcp.MCPWrapper;
-import com.darwinreforged.server.mcp.entities.Entities;
-import com.darwinreforged.server.mcp.entities.Entities.LightningBolt;
-import com.darwinreforged.server.mcp.protocol.Protocol;
-import com.darwinreforged.server.mcp.protocol.Protocol.SpawnGlobalEntity;
-import com.darwinreforged.server.mcp.reference.ForgeWorld;
+import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.sponge.utils.PlayerUtils;
+import com.darwinreforged.server.forge.MCPWrapper;
+import com.darwinreforged.server.forge.entities.Entities;
+import com.darwinreforged.server.forge.entities.Entities.LightningBolt;
+import com.darwinreforged.server.forge.protocol.Protocol;
+import com.darwinreforged.server.forge.protocol.Protocol.SpawnGlobalEntity;
+import com.darwinreforged.server.forge.reference.ForgeWorld;
 import com.flowpowered.math.vector.Vector3d;
 
 import org.spongepowered.api.Sponge;

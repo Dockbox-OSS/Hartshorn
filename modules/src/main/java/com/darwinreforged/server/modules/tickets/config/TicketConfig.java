@@ -1,7 +1,7 @@
 package com.darwinreforged.server.modules.tickets.config;
 
-import com.darwinreforged.server.api.DarwinServer;
-import com.darwinreforged.server.api.resources.Permissions;
+import com.darwinreforged.server.sponge.DarwinServer;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.modules.tickets.TicketModule;
 
 import java.io.IOException;

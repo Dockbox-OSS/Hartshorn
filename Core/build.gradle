@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+group 'com.darwinreforged'
+version '84a7a27-alpha'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile project(':ForgeMCP')
+    compile group: 'org.yaml', name: 'snakeyaml', version: '1.8'
+    compile fileTree(dir: '../common_libs', include: ['*.jar'])
+    compile 'com.google.guava:guava:21.0'
+    shadow group: 'org.reflections', name: 'reflections', version: '0.9.12'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}

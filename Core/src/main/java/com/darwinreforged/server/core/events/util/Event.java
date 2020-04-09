@@ -1,0 +1,26 @@
+package com.darwinreforged.server.core.events.test;
+
+import com.darwinreforged.server.core.entities.Target;
+
+/**
+ * Represents an event.
+ *
+ * @author Matt
+ */
+public abstract class Event {
+    private Target target;
+
+    public Event() {}
+
+    public Event(Target target) {
+        this.target = target;
+    }
+
+    public Target getTarget() {
+        return target;
+    }
+
+    public void setTarget(Target target) {
+        this.target = target;
+    }
+}
