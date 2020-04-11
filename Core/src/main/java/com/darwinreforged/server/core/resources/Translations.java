@@ -2,6 +2,7 @@ package com.darwinreforged.server.core.resources;
 
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.ConfigModule;
+import com.darwinreforged.server.core.util.FileUtils;
 import com.intellectualcrafters.plot.util.StringMan;
 
 import java.io.File;
@@ -524,12 +525,12 @@ public enum Translations {
     public static void collect() {
         DarwinServer.getServer().getModule(ConfigModule.class).ifPresent(module -> {
             Map<String, Object> configMap;
-            File file = new File(DarwinServer.getFileManager().getConfigDirectory(module).toFile(), "translations.yml");
+            File file = new File(DarwinServer.getUtilChecked(FileUtils.class).getConfigDirectory(module).toFile(), "translations.yml");
             if (!file.exists()) {
                 configMap = new HashMap<>();
                 Arrays.stream(Translations.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.u()));
-                DarwinServer.getFileManager().writeYaml(configMap, file);
-            } else configMap = DarwinServer.getFileManager().getYamlData(file);
+                DarwinServer.getUtilChecked(FileUtils.class).writeYaml(configMap, file);
+            } else configMap = DarwinServer.getUtilChecked(FileUtils.class).getYamlData(file);
 
             configMap.forEach((k, v) -> {
                 Translations t = Translations.valueOf(k.toUpperCase().replaceAll("\\.", "_"));

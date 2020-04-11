@@ -3,11 +3,13 @@ package com.darwinreforged.server.core.util;
 import com.darwinreforged.server.core.entities.AbstractVector2;
 import com.darwinreforged.server.core.entities.DarwinLocation;
 import com.darwinreforged.server.core.entities.DarwinWorld;
+import com.darwinreforged.server.core.init.AbstractUtility;
 import com.intellectualcrafters.plot.object.Location;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@AbstractUtility("Location calculations and conversion methods")
 public abstract class LocationUtils {
 
     public abstract int getHighestPoint(AbstractVector2<? extends Number> vector2, DarwinWorld world);

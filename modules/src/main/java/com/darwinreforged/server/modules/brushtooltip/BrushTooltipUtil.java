@@ -1,14 +1,9 @@
 package com.darwinreforged.server.modules.brushtooltip;
 
+import com.darwinreforged.server.core.entities.Tuple;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.modules.brushtooltip.enums.Argument;
 import com.darwinreforged.server.modules.brushtooltip.enums.Brush;
-
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.Tuple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +11,7 @@ import java.util.List;
 
 public class BrushTooltipUtil {
 
-    public static Tuple<Text, String[]> parseFlags(String[] arguments, Brush brush) {
+    public static Tuple<String, String[]> parseFlags(String[] arguments, Brush brush) {
         List<String> parsedArguments = new ArrayList<>();
         List<String> flags = new ArrayList<>();
 
@@ -31,15 +26,15 @@ public class BrushTooltipUtil {
                                                     else parsedArguments.add(argument);
                                                 }));
 
-        if (flags.isEmpty()) return new Tuple<>(Text.EMPTY, arguments);
+        if (flags.isEmpty()) return new Tuple<>("", arguments);
         else {
-            Text flagLabel = Translations.BRUSH_TOOLTIP_LORE_FLAGS.ft(String.join(", ", flags));
+            String flagLabel = Translations.BRUSH_TOOLTIP_LORE_FLAGS.f(String.join(", ", flags));
             return new Tuple<>(flagLabel, parsedArguments.toArray(new String[0]));
         }
     }
 
-    public static Tuple<List<Text>, Integer> parseArguments(String[] arguments, Brush brush) {
-        List<Text> argumentLore = new ArrayList<>();
+    public static Tuple<List<String>, Integer> parseArguments(String[] arguments, Brush brush) {
+        List<String> argumentLore = new ArrayList<>();
         int radius = -1;
 
         for (Argument argument : brush.getArguments()) {
@@ -50,7 +45,7 @@ public class BrushTooltipUtil {
                 if ("Radius".equals(argument.getDescription()))
                     radius = Integer.parseInt(arguments[argument.getIndex() + 1]);
                 else
-                    argumentLore.add(Translations.BRUSH_TOOLTIP_LORE_ARGUMENT.ft(description, value));
+                    argumentLore.add(Translations.BRUSH_TOOLTIP_LORE_ARGUMENT.f(description, value));
             }
         }
 
@@ -59,24 +54,24 @@ public class BrushTooltipUtil {
 
     public static ItemStack combineLore(
             ItemStack itemStack,
-            List<Text> arguments,
+            List<String> arguments,
             int radius,
-            Text flag,
+            String flag,
             Brush brush,
             String command) {
         String brushTitle = brush.getDisplayName();
-        Text itemDisplayName = Translations.BRUSH_TOOLTIP_DISPLAY_NAME.ft(brushTitle, radius);
+        String itemDisplayName = Translations.BRUSH_TOOLTIP_DISPLAY_NAME.f(brushTitle, radius);
         itemStack.offer(Keys.DISPLAY_NAME, itemDisplayName);
 
-        List<Text> lore = new ArrayList<>();
-        Text line = Translations.BRUSH_TOOLTIP_LORE_SEPARATOR.t();
+        List<String> lore = new ArrayList<>();
+        String line = Translations.BRUSH_TOOLTIP_LORE_SEPARATOR.s();
 
         lore.add(line);
         lore.addAll(arguments);
         lore.add(line);
         lore.add(flag);
         lore.add(line);
-        lore.add(Text.of(TextColors.GRAY, command));
+        lore.add(String.format("&7%s", command));
 
         itemStack.offer(Keys.ITEM_LORE, lore);
 

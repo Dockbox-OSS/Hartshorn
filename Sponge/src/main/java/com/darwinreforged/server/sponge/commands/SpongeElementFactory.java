@@ -1,9 +1,9 @@
 package com.darwinreforged.server.sponge.commands;
 
-import com.darwinreforged.server.core.commands.element.ElementFactory;
-import com.darwinreforged.server.core.commands.element.function.Filter;
-import com.darwinreforged.server.core.commands.element.function.Options;
-import com.darwinreforged.server.core.commands.element.function.ValueParser;
+import com.darwinreforged.server.core.util.commands.element.ElementFactory;
+import com.darwinreforged.server.core.util.commands.element.function.Filter;
+import com.darwinreforged.server.core.util.commands.element.function.Options;
+import com.darwinreforged.server.core.util.commands.element.function.ValueParser;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 

@@ -4,6 +4,7 @@ import com.darwinreforged.server.core.entities.AbstractVector2;
 import com.darwinreforged.server.core.entities.DarwinLocation;
 import com.darwinreforged.server.core.entities.DarwinWorld;
 import com.darwinreforged.server.core.entities.Vector3i;
+import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.util.LocationUtils;
 import com.flowpowered.math.vector.Vector3d;
 import com.intellectualcrafters.plot.object.Location;
@@ -16,6 +17,7 @@ import org.spongepowered.api.world.World;
 import java.util.Optional;
 import java.util.UUID;
 
+@UtilityImplementation(LocationUtils.class)
 public class SpongeLocationUtils extends LocationUtils {
 
 

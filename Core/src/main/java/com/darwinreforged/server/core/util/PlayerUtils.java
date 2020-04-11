@@ -2,10 +2,12 @@ package com.darwinreforged.server.core.util;
 
 import com.darwinreforged.server.core.entities.DarwinLocation;
 import com.darwinreforged.server.core.entities.DarwinPlayer;
+import com.darwinreforged.server.core.init.AbstractUtility;
 
 import java.util.Optional;
 
-public abstract class PlayerUtils<T> {
+@AbstractUtility("Common player action utilities")
+public abstract class PlayerUtils {
 
     public abstract void broadcast(String message);
 

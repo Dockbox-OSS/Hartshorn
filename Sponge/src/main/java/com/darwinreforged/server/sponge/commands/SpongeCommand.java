@@ -1,7 +1,7 @@
 package com.darwinreforged.server.sponge.commands;
 
-import com.darwinreforged.server.core.commands.command.Command;
-import com.darwinreforged.server.core.commands.command.CommandExecutor;
+import com.darwinreforged.server.core.util.commands.command.Command;
+import com.darwinreforged.server.core.util.commands.command.CommandExecutor;
 import com.darwinreforged.server.core.entities.DarwinPlayer;
 
 import org.spongepowered.api.command.CommandCallable;

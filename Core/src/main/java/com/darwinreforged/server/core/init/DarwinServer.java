@@ -1,14 +1,12 @@
 package com.darwinreforged.server.core.init;
 
+import com.darwinreforged.server.core.entities.Tuple;
 import com.darwinreforged.server.core.events.test.EventBus;
-import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.modules.DisabledModule;
 import com.darwinreforged.server.core.modules.ModuleInfo;
 import com.darwinreforged.server.core.modules.PluginModuleNative;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.util.PlayerUtils;
-import com.darwinreforged.server.core.util.Tuple;
 
 import org.reflections.Reflections;
 
@@ -22,37 +20,53 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class DarwinServer<T> {
+public abstract class DarwinServer {
 
     protected static final Map<Class<? extends PluginModuleNative>, Tuple<PluginModuleNative, ModuleInfo>> MODULES = new HashMap<>();
     protected static final List<String> FAILED_MODULES = new ArrayList<>();
-    protected EventBus eventBus;
-    protected static DarwinServer<?> server;
-    protected ServerType serverType;
-    protected FileManager fileManager;
-    protected PlayerUtils<T> playerUtils;
+    protected static final Map<Class<?>, Object> UTILS = new HashMap<>();
 
-    public DarwinServer(ServerType serverType, FileManager fileManager, PlayerUtils<T> playerUtils) {
-        this.serverType = serverType;
-        this.fileManager = fileManager;
-        this.playerUtils = playerUtils;
+    protected EventBus eventBus;
+    protected static DarwinServer server;
+
+    public DarwinServer(Class<? extends DarwinServer> implementation) {
+        Reflections abstrPackRef = new Reflections("com.darwinreforged.server.core.util");
+        Set<Class<?>> abstractUtils = abstrPackRef.getTypesAnnotatedWith(AbstractUtility.class);
+
+        Reflections implPackRef = new Reflections(implementation.getPackage());
+        Set<Class<?>> implCandidates = implPackRef.getTypesAnnotatedWith(UtilityImplementation.class);
+
+        abstractUtils.forEach(abstr -> {
+            Optional<Class<?>> possibleCandidate = implCandidates.parallelStream().filter(candidate -> candidate.getAnnotation(UtilityImplementation.class).value().equals(abstr)).findAny();
+            if (possibleCandidate.isPresent()) {
+                try {
+                    UTILS.put(abstr, possibleCandidate.get().newInstance());
+                } catch (InstantiationException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                throw new RuntimeException("Missing implementation for : " + abstr.getSimpleName());
+            }
+        });
         this.eventBus = new EventBus();
     }
 
-    public static ServerType getServerType() {
-        return getServer().serverType;
-    }
-
-    public static FileManager getFileManager() {
-        return getServer().fileManager;
-    }
-
-    public PlayerUtils<T> getPlayerUtils() {
-        return playerUtils;
-    }
+    public abstract ServerType getServerType();
 
     public EventBus getEventBus() {
         return eventBus;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <I> Optional<? extends I> getUtil(Class<I> clazz) {
+        Object implementation = UTILS.get(clazz);
+        if (implementation != null) return (Optional<? extends I>) Optional.of(implementation);
+        return Optional.empty();
+    }
+
+    public static <I> I getUtilChecked(Class<I> clazz) {
+        Optional<? extends I> optionalImpl = getUtil(clazz);
+        return optionalImpl.orElse(null);
     }
 
     /**
@@ -142,7 +156,7 @@ public abstract class DarwinServer<T> {
         getEventBus().subscribe(obj);
     }
 
-    public static DarwinServer<?> getServer() {
+    public static DarwinServer getServer() {
         return server;
     }
 

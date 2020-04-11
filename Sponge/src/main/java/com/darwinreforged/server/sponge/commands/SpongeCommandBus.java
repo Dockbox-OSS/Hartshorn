@@ -1,11 +1,11 @@
 package com.darwinreforged.server.sponge.commands;
 
-import com.darwinreforged.server.core.commands.CommandManager;
-import com.darwinreforged.server.core.commands.annotation.Permission;
-import com.darwinreforged.server.core.commands.command.CommandExecutor;
-import com.darwinreforged.server.core.commands.command.CommandFactory;
-import com.darwinreforged.server.core.commands.element.ElementFactory;
-import com.darwinreforged.server.core.commands.utils.MarkdownWriter;
+import com.darwinreforged.server.core.util.commands.CommandManager;
+import com.darwinreforged.server.core.util.commands.annotation.Permission;
+import com.darwinreforged.server.core.util.commands.command.CommandExecutor;
+import com.darwinreforged.server.core.util.commands.command.CommandFactory;
+import com.darwinreforged.server.core.util.commands.element.ElementFactory;
+import com.darwinreforged.server.core.util.commands.utils.MarkdownWriter;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.cause.EventContextKeys;

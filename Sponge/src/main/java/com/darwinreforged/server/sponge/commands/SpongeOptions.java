@@ -1,6 +1,6 @@
 package com.darwinreforged.server.sponge.commands;
 
-import com.darwinreforged.server.core.commands.element.function.Options;
+import com.darwinreforged.server.core.util.commands.element.function.Options;
 
 import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.Sponge;

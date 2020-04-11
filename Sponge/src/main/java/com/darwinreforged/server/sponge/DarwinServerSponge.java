@@ -1,17 +1,15 @@
 package com.darwinreforged.server.sponge;
 
-import com.darwinreforged.server.core.commands.annotation.Command;
-import com.darwinreforged.server.core.commands.annotation.Description;
-import com.darwinreforged.server.core.commands.annotation.Permission;
-import com.darwinreforged.server.core.commands.annotation.Src;
 import com.darwinreforged.server.core.entities.DarwinPlayer;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.init.ServerType;
 import com.darwinreforged.server.core.modules.DisabledModule;
 import com.darwinreforged.server.core.modules.ModuleInfo;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.sponge.files.SpongeFileManager;
-import com.darwinreforged.server.sponge.utils.SpongePlayerUtils;
+import com.darwinreforged.server.core.util.commands.annotation.Command;
+import com.darwinreforged.server.core.util.commands.annotation.Description;
+import com.darwinreforged.server.core.util.commands.annotation.Permission;
+import com.darwinreforged.server.core.util.commands.annotation.Src;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -39,10 +37,10 @@ import java.util.Optional;
         },
         version = "84a7a27-alpha"
 )
-public class DarwinServerSponge extends DarwinServer<Text> {
+public class DarwinServerSponge extends DarwinServer {
 
     public DarwinServerSponge() {
-        super(ServerType.SPONGE, new SpongeFileManager(), new SpongePlayerUtils());
+        super(DarwinServerSponge.class);
         if (server != null) throw new RuntimeException("Singleton instance already exists");
         server = this;
     }
@@ -74,5 +72,10 @@ public class DarwinServerSponge extends DarwinServer<Text> {
                     .contents(moduleContext)
                     .build().sendTo(optionalPlayer.get());
         }
+    }
+
+    @Override
+    public ServerType getServerType() {
+        return ServerType.SPONGE;
     }
 }

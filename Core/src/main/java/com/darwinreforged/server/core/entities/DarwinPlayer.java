@@ -1,6 +1,7 @@
 package com.darwinreforged.server.core.entities;
 
 import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.util.PlayerUtils;
 import com.google.common.base.Preconditions;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 
@@ -21,15 +22,15 @@ public class DarwinPlayer extends Target {
     }
 
     public boolean isOnline() {
-        return DarwinServer.getServer().getPlayerUtils().isOnline(this);
+        return DarwinServer.getUtilChecked(PlayerUtils.class).isOnline(this);
     }
 
     public void tell(String text) {
-        DarwinServer.getServer().getPlayerUtils().tell(this, text);
+        DarwinServer.getUtilChecked(PlayerUtils.class).tell(this, text);
     }
 
     public void tellPlain(String text) {
-        DarwinServer.getServer().getPlayerUtils().tellPlain(this, text);
+        DarwinServer.getUtilChecked(PlayerUtils.class).tellPlain(this, text);
     }
 
     public void tellIfPermitted(String text, String permission) {
@@ -37,15 +38,15 @@ public class DarwinPlayer extends Target {
     }
 
     public void kick() {
-        DarwinServer.getServer().getPlayerUtils().kick(this);
+        DarwinServer.getUtilChecked(PlayerUtils.class).kick(this);
     }
 
     public boolean hasPermission(String permission) {
-        return DarwinServer.getServer().getPlayerUtils().hasPermission(this, permission);
+        return DarwinServer.getUtilChecked(PlayerUtils.class).hasPermission(this, permission);
     }
 
     public Optional<DarwinLocation> getLocation() {
-        return DarwinServer.getServer().getPlayerUtils().getLocation(this);
+        return DarwinServer.getUtilChecked(PlayerUtils.class).getLocation(this);
     }
 
 }

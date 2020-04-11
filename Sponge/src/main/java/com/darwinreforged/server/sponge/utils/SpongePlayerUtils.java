@@ -4,6 +4,7 @@ import com.darwinreforged.server.core.entities.DarwinLocation;
 import com.darwinreforged.server.core.entities.DarwinPlayer;
 import com.darwinreforged.server.core.entities.DarwinWorld;
 import com.darwinreforged.server.core.entities.Vector3d;
+import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.PlayerUtils;
 
@@ -16,7 +17,8 @@ import org.spongepowered.api.world.World;
 
 import java.util.Optional;
 
-public class SpongePlayerUtils extends PlayerUtils<Text> {
+@UtilityImplementation(PlayerUtils.class)
+public class SpongePlayerUtils extends PlayerUtils {
 
     @Override
     public void broadcast(String message) {
