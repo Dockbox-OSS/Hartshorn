@@ -1,5 +1,6 @@
 package com.darwinreforged.server.modules.brushtooltip;
 
+import com.darwinreforged.server.core.entities.DarwinItem;
 import com.darwinreforged.server.core.entities.Tuple;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.modules.brushtooltip.enums.Argument;
@@ -52,8 +53,8 @@ public class BrushTooltipUtil {
         return new Tuple<>(argumentLore, radius);
     }
 
-    public static ItemStack combineLore(
-            ItemStack itemStack,
+    public static DarwinItem<?> combineLore(
+            DarwinItem<?> itemStack,
             List<String> arguments,
             int radius,
             String flag,
@@ -61,7 +62,7 @@ public class BrushTooltipUtil {
             String command) {
         String brushTitle = brush.getDisplayName();
         String itemDisplayName = Translations.BRUSH_TOOLTIP_DISPLAY_NAME.f(brushTitle, radius);
-        itemStack.offer(Keys.DISPLAY_NAME, itemDisplayName);
+        itemStack.setDisplayName(itemDisplayName);
 
         List<String> lore = new ArrayList<>();
         String line = Translations.BRUSH_TOOLTIP_LORE_SEPARATOR.s();
@@ -73,7 +74,7 @@ public class BrushTooltipUtil {
         lore.add(line);
         lore.add(String.format("&7%s", command));
 
-        itemStack.offer(Keys.ITEM_LORE, lore);
+        itemStack.setLore(lore.toArray(new String[] {}));
 
         return itemStack;
     }

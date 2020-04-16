@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.events.test;
+package com.darwinreforged.server.core.events.util;
 
 import com.darwinreforged.server.core.entities.Target;
 

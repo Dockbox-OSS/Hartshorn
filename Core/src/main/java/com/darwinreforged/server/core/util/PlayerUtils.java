@@ -1,5 +1,6 @@
 package com.darwinreforged.server.core.util;
 
+import com.darwinreforged.server.core.entities.DarwinItem;
 import com.darwinreforged.server.core.entities.DarwinLocation;
 import com.darwinreforged.server.core.entities.DarwinPlayer;
 import com.darwinreforged.server.core.init.AbstractUtility;
@@ -25,6 +26,10 @@ public abstract class PlayerUtils {
 
     public abstract Optional<DarwinLocation> getLocation(DarwinPlayer player);
 
+    public abstract DarwinItem<?> getItemInHand(DarwinPlayer player, boolean primaryHand);
 
+    public DarwinItem<?> getItemInHand(DarwinPlayer player) {
+        return getItemInHand(player, true);
+    }
 
 }

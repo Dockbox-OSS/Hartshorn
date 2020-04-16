@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.init;
 
 import com.darwinreforged.server.core.entities.Tuple;
-import com.darwinreforged.server.core.events.test.EventBus;
+import com.darwinreforged.server.core.events.util.EventBus;
 import com.darwinreforged.server.core.modules.DisabledModule;
 import com.darwinreforged.server.core.modules.ModuleInfo;
 import com.darwinreforged.server.core.modules.PluginModuleNative;

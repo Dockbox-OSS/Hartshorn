@@ -1,5 +1,6 @@
 package com.darwinreforged.server.sponge.utils;
 
+import com.darwinreforged.server.core.entities.DarwinItem;
 import com.darwinreforged.server.core.entities.DarwinLocation;
 import com.darwinreforged.server.core.entities.DarwinPlayer;
 import com.darwinreforged.server.core.entities.DarwinWorld;
@@ -9,8 +10,10 @@ import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.PlayerUtils;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -63,5 +66,12 @@ public class SpongePlayerUtils extends PlayerUtils {
             Vector3d vector3d = new Vector3d(worldLocation.getX(), worldLocation.getY(), worldLocation.getZ());
             return Optional.of(new DarwinLocation(darwinWorld, vector3d));
         }).orElse(Optional.empty());
+    }
+
+    @Override
+    public DarwinItem<?> getItemInHand(DarwinPlayer player, boolean primaryHand) {
+        Optional<ItemStack> itemStack = Sponge.getServer().getPlayer(player.getUuid())
+                .flatMap(spp -> spp.getItemInHand(primaryHand ? HandTypes.MAIN_HAND : HandTypes.OFF_HAND));
+        return itemStack.map(DarwinItem::new).orElse(null);
     }
 }

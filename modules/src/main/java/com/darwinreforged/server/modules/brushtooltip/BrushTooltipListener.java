@@ -2,27 +2,13 @@ package com.darwinreforged.server.modules.brushtooltip;
 
 import com.boydti.fawe.Fawe;
 import com.boydti.fawe.FaweAPI;
+import com.darwinreforged.server.core.entities.DarwinItem;
+import com.darwinreforged.server.core.entities.DarwinPlayer;
+import com.darwinreforged.server.core.events.InventoryInteractionEvent;
+import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.sponge.utils.PlayerUtils;
 import com.darwinreforged.server.modules.brushtooltip.enums.Brush;
 import com.darwinreforged.server.modules.brushtooltip.enums.Brushes;
-
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.type.HandTypes;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.Order;
-import org.spongepowered.api.event.action.InteractEvent;
-import org.spongepowered.api.event.command.SendCommandEvent;
-import org.spongepowered.api.event.filter.cause.Root;
-import org.spongepowered.api.event.item.inventory.TargetInventoryEvent;
-import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.text.format.TextColors;
-import org.spongepowered.api.util.Tuple;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -31,23 +17,28 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class BrushTooltipListener {
 
     public static HashMap<String, String> brushAliases = new HashMap<>();
-    private static HashMap<Player, LocalDateTime> lastMessage = new HashMap<>();
-    private static HashMap<Player, List<ItemStack>> aStoredBrushes = new HashMap<>();
+    private static HashMap<UUID, LocalDateTime> lastMessage = new HashMap<>();
+    private static HashMap<UUID, List<DarwinItem>> aStoredBrushes = new HashMap<>();
     private static List<String> commandAliases = Arrays.asList("brush", "br", "/brush", "/br");
 
+
     @Listener
-    public void onInventoryInteract(TargetInventoryEvent event, @Root Player player) {
-        updateInventoryTooltips(player);
+    public void onInventoryInteract(InventoryInteractionEvent event) {
+        if (event.getTarget() instanceof DarwinPlayer) {
+            DarwinPlayer player = (DarwinPlayer) event.getTarget();
+            updateInventoryTooltips(player);
+        }
     }
 
-    public static void updateInventoryTooltips(Player player) {
-        if (aStoredBrushes.get(player) != null)
+    public static void updateInventoryTooltips(DarwinPlayer player) {
+        if (aStoredBrushes.get(player.getUuid()) != null)
             aStoredBrushes
-                    .get(player)
+                    .get(player.getUuid())
                     .forEach(
                             stack -> {
                                 ItemType itemType = stack.getType();

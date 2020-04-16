@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.events.test;
+package com.darwinreforged.server.core.events.util;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 
