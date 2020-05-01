@@ -1,7 +1,7 @@
 package com.darwinreforged.server.modules.tickets.database;
 
 
-import com.darwinreforged.server.api.DarwinServer;
+import com.darwinreforged.server.sponge.DarwinServer;
 import com.darwinreforged.server.modules.tickets.config.TicketConfig;
 
 import java.lang.reflect.InvocationTargetException;

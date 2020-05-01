@@ -1,8 +1,7 @@
 package com.darwinreforged.server.modules.friends.util;
 
-import com.darwinreforged.servermodifications.DarwinServer;
-import com.darwinreforged.servermodifications.modules.FriendsModule;
-import com.darwinreforged.servermodifications.objects.FriendsStorage;
+import com.darwinreforged.server.sponge.DarwinServer;
+import com.darwinreforged.server.modules.friends.FriendsModule;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

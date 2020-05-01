@@ -1,7 +1,7 @@
 package com.darwinreforged.server.modules.tickets.database;
 
-import com.darwinreforged.server.api.DarwinServer;
-import com.darwinreforged.server.api.files.FileManager;
+import com.darwinreforged.server.sponge.DarwinServer;
+import com.darwinreforged.server.sponge.files.FileManager;
 import com.darwinreforged.server.modules.tickets.TicketModule;
 import com.darwinreforged.server.modules.tickets.config.TicketConfig;
 import com.darwinreforged.server.modules.tickets.entities.TicketData;

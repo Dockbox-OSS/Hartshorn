@@ -1,6 +1,6 @@
 package com.darwinreforged.server.modules.dave;
 
-import com.darwinreforged.server.api.DarwinServer;
+import com.darwinreforged.server.sponge.DarwinServer;
 
 import java.io.File;
 import java.io.FileInputStream;

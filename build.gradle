@@ -8,6 +8,10 @@ buildscript {
     }
 }
 
+version = project.pluginVersion
+group = project.pluginGroup
+description = 'Common sources for Darwin Server plugins'
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'

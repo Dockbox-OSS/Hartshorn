@@ -1,6 +1,6 @@
 package com.darwinreforged.server.modules.modbanner.commands;
 
-import com.darwinreforged.server.api.DarwinServer;
+import com.darwinreforged.server.sponge.DarwinServer;
 import com.darwinreforged.server.modules.modbanner.ModBannerModule;
 import com.darwinreforged.server.modules.modbanner.util.ModBannerHelper;
 

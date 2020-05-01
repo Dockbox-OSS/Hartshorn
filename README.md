@@ -3,7 +3,7 @@
 
 ## Project: API
 All common code is collected here and provided to modules, this includes File management, translations, permissions etc.
-Also contains the Sponge plugin (DarwinServer) which loads and handles all modules.
+Also contains the Sponge plugin (com.darwinreforged.server.core.init.DarwinServer) which loads and handles all modules.
 
 ## Project: MCP
 Provided safe wrappers for required MCP objects, to prevent other projects from requiring them and potentially having game-breaking dependency issues.

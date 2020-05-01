@@ -1,10 +1,9 @@
 package com.darwinreforged.server.modules.modbanner;
 
-import com.darwinreforged.server.api.DarwinServer;
-import com.darwinreforged.server.api.files.FileManager;
-import com.darwinreforged.server.api.modules.DisabledModule;
-import com.darwinreforged.server.api.modules.ModuleInfo;
-import com.darwinreforged.server.api.modules.PluginModule;
+import com.darwinreforged.server.sponge.DarwinServer;
+import com.darwinreforged.server.sponge.files.FileManager;
+import com.darwinreforged.server.core.modules.ModuleInfo;
+import com.darwinreforged.server.core.modules.PluginModule;
 import com.darwinreforged.server.modules.modbanner.commands.ModBannerCommand;
 import com.darwinreforged.server.modules.modbanner.commands.ModsCommand;
 import com.darwinreforged.server.modules.modbanner.util.ModBannerCfgManager;

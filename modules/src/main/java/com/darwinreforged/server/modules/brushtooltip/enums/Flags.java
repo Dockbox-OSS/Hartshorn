@@ -1,6 +1,6 @@
 package com.darwinreforged.server.modules.brushtooltip.enums;
 
-import com.darwinreforged.server.api.resources.Translations;
+import com.darwinreforged.server.core.resources.Translations;
 
 public enum Flags {
     AUTO_VIEW("-a", Translations.BRUSH_FLAG_DESCRIPTION_AUTO_VIEW.s()),
