@@ -11,6 +11,7 @@ import com.darwinreforged.server.core.util.commands.annotation.Description;
 import com.darwinreforged.server.core.util.commands.annotation.Permission;
 import com.darwinreforged.server.core.util.commands.annotation.Src;
 
+import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.plugin.Plugin;
@@ -20,6 +21,8 @@ import org.spongepowered.api.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import javax.inject.Inject;
 
 /**
  Central plugin which handles module registrations and passes early server events
@@ -38,6 +41,9 @@ import java.util.Optional;
         version = "84a7a27-alpha"
 )
 public class DarwinServerSponge extends DarwinServer {
+
+    @Inject
+    Logger log;
 
     public DarwinServerSponge() {
         super(DarwinServerSponge.class);
@@ -77,5 +83,30 @@ public class DarwinServerSponge extends DarwinServer {
     @Override
     public ServerType getServerType() {
         return ServerType.SPONGE;
+    }
+
+    @Override
+    public void trace(String s) {
+        log.trace(s);
+    }
+
+    @Override
+    public void debug(String s) {
+        log.debug(s);
+    }
+
+    @Override
+    public void info(String s) {
+        log.info(s);
+    }
+
+    @Override
+    public void warn(String s) {
+        log.warn(s);
+    }
+
+    @Override
+    public void error(String s) {
+        log.error(s);
     }
 }

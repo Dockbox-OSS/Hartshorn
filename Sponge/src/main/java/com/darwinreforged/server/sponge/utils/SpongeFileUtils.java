@@ -25,6 +25,11 @@ public class SpongeFileUtils extends FileUtils {
     }
 
     @Override
+    public Path getModuleDirectory() {
+        return Sponge.getGame().getGameDirectory().resolve("modules/").toAbsolutePath();
+    }
+
+    @Override
     public <I extends PluginModuleNative> Path getConfigDirectory(I plugin) {
         Optional<ModuleInfo> infoOptional = DarwinServer.getServer().getModuleInfo(plugin.getClass());
         Path darwinConfigPath = Sponge.getConfigManager().getPluginConfig(DarwinServer.getServer()).getDirectory();

@@ -7,18 +7,29 @@ import com.darwinreforged.server.core.modules.ModuleInfo;
 import com.darwinreforged.server.core.modules.PluginModuleNative;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.util.FileUtils;
 
 import org.reflections.Reflections;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public abstract class DarwinServer {
 
@@ -30,6 +41,79 @@ public abstract class DarwinServer {
     protected static DarwinServer server;
 
     public DarwinServer(Class<? extends DarwinServer> implementation) {
+        // Create utility implementations
+        initUtils(implementation);
+
+        // Create event bus
+        this.eventBus = new EventBus();
+
+        // Import permissions and translations
+        Translations.collect();
+        Permissions.collect();
+
+        // Create integrated modules (in server jar)
+        info("Loading integrated modules");
+        initModulePackage("com.darwinreforged.server.modules", true);
+
+        // Create external modules (outside server jar, inside modules folder)
+        info("Loading external modules");
+        initExternalModules();
+    }
+
+    private void initExternalModules() {
+        Path modDir = getUtilChecked(FileUtils.class).getModuleDirectory();
+        try {
+            URL url = modDir.toUri().toURL();
+            info(String.format("Scanning %s for additional modules", url.toString()));
+            Arrays
+                    .stream(Objects.requireNonNull(modDir.toFile().listFiles()))
+                    .filter(f -> f.getName().endsWith(".jar"))
+                    .forEach(moduleCandidate -> {
+                        try {
+                            List<String> scannableModules = getScannableModules(moduleCandidate);
+                            scannableModules.forEach(pkg -> {
+                                boolean isModFile = initModulePackage(pkg, false);
+                                if (!isModFile) warn(String.format("Found non-module file '%s'", moduleCandidate.getName()));
+                                else info(String.format("Done loading module file '%s'", moduleCandidate.getName()));
+                            });
+                        } catch (IOException | ClassNotFoundException e) {
+                            error("Failed to register potential module : " + moduleCandidate.toString());
+                            error(e.getMessage());
+                        }
+                    });
+        } catch (MalformedURLException e) {
+            error("Failed to load additional modules");
+            error(e.getMessage());
+        }
+    }
+
+    private List<String> getScannableModules(File file) throws IOException, IllegalArgumentException, ClassNotFoundException {
+        if (file != null && file.exists() && file.getName().endsWith(".jar")) {
+            List<String> scannablePackages = new ArrayList<>();
+            try (JarFile jarFile = new JarFile(file)) {
+                Enumeration<JarEntry> entries = jarFile.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    if (entry.getName().endsWith(".class")) {
+                        String name = entry.getName();
+                        name = name.substring(0, name.lastIndexOf(".class"));
+                        if (name.contains("/"))
+                            name = name.replaceAll("/", ".");
+                        if (name.contains("\\"))
+                            name = name.replaceAll("\\\\", ".");
+
+                        Class<?> clazz = Class.forName(name);
+                        String packageName = clazz.getPackage().getName();
+                        scannablePackages.add(packageName);
+                    }
+                }
+            }
+            return scannablePackages;
+        }
+        return new ArrayList<>();
+    }
+
+    private void initUtils(Class<? extends DarwinServer> implementation) {
         Reflections abstrPackRef = new Reflections("com.darwinreforged.server.core.util");
         Set<Class<?>> abstractUtils = abstrPackRef.getTypesAnnotatedWith(AbstractUtility.class);
 
@@ -48,7 +132,6 @@ public abstract class DarwinServer {
                 throw new RuntimeException("Missing implementation for : " + abstr.getSimpleName());
             }
         });
-        this.eventBus = new EventBus();
     }
 
     public abstract ServerType getServerType();
@@ -160,14 +243,17 @@ public abstract class DarwinServer {
         return server;
     }
 
-    public void initModules() {
-        Reflections reflections = new Reflections("com.darwinreforged.server.modules");
+    public boolean initModulePackage(String pkg, boolean integrated) {
+        Reflections reflections = new Reflections(pkg);
         Set<Class<? extends PluginModuleNative>> pluginModules = reflections
                 .getSubTypesOf(PluginModuleNative.class);
+        if (pluginModules.isEmpty()) return false;
+
         AtomicInteger done = new AtomicInteger();
         AtomicInteger failed = new AtomicInteger();
         pluginModules.forEach(mod -> {
             DarwinServer.ModuleRegistration result = registerModule(mod);
+            info(String.format("Found module '%s' (integrates:%s) and loaded with result : %s", mod.getCanonicalName(), integrated, result));
             switch (result) {
                 case DEPRECATED_AND_FAIL:
                 case FAILED:
@@ -182,9 +268,18 @@ public abstract class DarwinServer {
             }
         });
 
-        Translations.collect();
-        Permissions.collect();
+        return true;
     }
+
+    public abstract void trace(String s);
+
+    public abstract void debug(String s);
+
+    public abstract void info(String s);
+
+    public abstract void warn(String s);
+
+    public abstract void error(String s);
 
     /**
      Registration states during and after module registration
@@ -240,6 +335,7 @@ public abstract class DarwinServer {
         public String getContext() {
             return this.ctx;
         }
+
     }
 
 }

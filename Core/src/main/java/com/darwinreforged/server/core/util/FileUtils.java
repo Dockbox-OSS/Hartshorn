@@ -56,6 +56,8 @@ public abstract class FileUtils {
         return path;
     }
 
+    public abstract Path getModuleDirectory();
+
     public abstract <I extends PluginModuleNative> Path getConfigDirectory(I plugin);
 
     public <I extends PluginModuleNative> File getYamlConfigFile(I plugin) {
