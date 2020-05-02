@@ -1,3 +1,5 @@
+import java.time.LocalDate
+
 buildscript {
     repositories {
         jcenter()
@@ -12,13 +14,36 @@ version = project.pluginVersion
 group = project.pluginGroup
 description = 'Common sources for Darwin Server plugins'
 
-subprojects {
+subprojects { Project subProject ->
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'com.github.johnrengelman.shadow'
 
     group = project.pluginGroup
     version = project.pluginVersion
+
+    task copyArtifacts {
+        doLast {
+            def baseName = subProject.archivesBaseName
+            def version = subProject.version
+            def date = LocalDate.now().toString();
+            def DIST_DIR = "${rootDir}/dist/${date}/${version}"
+            def SRC_DIR = "${buildDir}/libs"
+
+            ant.mkdir(dir: DIST_DIR)
+            ant.copy(todir: DIST_DIR) {
+                fileset(dir: SRC_DIR,
+                        includes: "${baseName}*${version}*.jar,${baseName}*${version}*.jar")
+            }
+        }
+    }
+
+    afterEvaluate {
+        def buildTask = subProject.tasks.find { it.name == 'build' }
+        if (buildTask) {
+            buildTask.finalizedBy(copyArtifacts)
+        }
+    }
 
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'

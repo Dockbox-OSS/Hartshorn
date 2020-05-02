@@ -9,3 +9,5 @@ Sponge/build
 gradle
 modules/src/test
 *.class
+ForgeMCP/target
+dist
