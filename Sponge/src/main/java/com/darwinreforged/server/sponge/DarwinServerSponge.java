@@ -37,8 +37,7 @@ import javax.inject.Inject;
                 "TheCrunchy",
                 "simbolduc",
                 "pumbas600"
-        },
-        version = "84a7a27-alpha"
+        }
 )
 public class DarwinServerSponge extends DarwinServer {
 
@@ -76,6 +75,7 @@ public class DarwinServerSponge extends DarwinServer {
                     .title(Text.of(Translations.DARWIN_MODULE_TITLE.s()))
                     .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
                     .contents(moduleContext)
+                    .footer(Text.of(Translations.DARWIN_SERVER_VERSION.f(getVersion())))
                     .build().sendTo(optionalPlayer.get());
         }
     }

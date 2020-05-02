@@ -60,6 +60,11 @@ public abstract class DarwinServer {
         initExternalModules();
     }
 
+    public static String getVersion() {
+        String version = DarwinServer.class.getPackage().getImplementationVersion();
+        return (version == null) ? "DEVELOPMENT" : version;
+    }
+
     private void initExternalModules() {
         Path modDir = getUtilChecked(FileUtils.class).getModuleDirectory();
         try {

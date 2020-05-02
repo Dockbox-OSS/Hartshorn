@@ -450,7 +450,8 @@ public enum Translations {
     FAILED_MODULE_ROW("$2 - $4✕ {0}"),
     ACTIVE_MODULE_ROW("$2 - &a✔ $1{0} $3- $2{1}"),
     DARWIN_MODULE_TITLE("$1Modules"),
-    DARWIN_MODULE_PADDING("&m$2=");
+    DARWIN_MODULE_PADDING("&m$2="),
+    DARWIN_SERVER_VERSION("$2Darwin Server #$1{0}");
 
     private String s;
 
