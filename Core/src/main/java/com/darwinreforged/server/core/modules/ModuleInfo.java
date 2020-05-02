@@ -1,7 +1,5 @@
 package com.darwinreforged.server.core.modules;
 
-import org.spongepowered.api.plugin.Dependency;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -15,8 +13,6 @@ public @interface ModuleInfo {
     String name() default "";
 
     String version() default "";
-
-    Dependency[] dependencies() default {};
 
     String description() default "";
 
