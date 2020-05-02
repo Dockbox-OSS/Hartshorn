@@ -12,8 +12,8 @@ repositories {
 }
 
 dependencies {
-    compile project(':ForgeMCP')
-    compile group: 'org.yaml', name: 'snakeyaml', version: '1.8'
+    shadow project(':ForgeMCP')
+    compile group: 'org.yaml', name: 'snakeyaml', version: '1.26'
     compile fileTree(dir: '../common_libs', include: ['*.jar'])
     compile 'com.google.guava:guava:21.0'
     shadow group: 'org.reflections', name: 'reflections', version: '0.9.12'
