@@ -3,7 +3,6 @@ plugins {
 }
 
 group 'com.darwinreforged'
-version '84a7a27-alpha'
 
 sourceCompatibility = 1.8
 

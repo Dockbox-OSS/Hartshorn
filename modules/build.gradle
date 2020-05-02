@@ -3,7 +3,6 @@ plugins {
 }
 
 archivesBaseName = 'DarwinServer Modules'
-version = project.pluginVersion
 group = project.pluginGroup
 description = 'Functional modules to be wrapped using the DarwinServer plugin'
 

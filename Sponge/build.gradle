@@ -3,7 +3,6 @@ plugins {
 }
 
 archivesBaseName = 'DarwinServer API'
-version = project.pluginVersion
 group = project.pluginGroup
 description = 'Common API for Darwin Server modules'
 

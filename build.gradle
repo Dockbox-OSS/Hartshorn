@@ -10,7 +10,11 @@ buildscript {
     }
 }
 
-version = project.pluginVersion
+def getVersionName = { ->
+    return 'git rev-parse --verify --short HEAD'.execute().text.trim()
+}
+
+version = getVersionName()
 group = project.pluginGroup
 description = 'Common sources for Darwin Server plugins'
 
@@ -20,12 +24,13 @@ subprojects { Project subProject ->
     apply plugin: 'com.github.johnrengelman.shadow'
 
     group = project.pluginGroup
-    version = project.pluginVersion
+    version = getVersionName()
+    def baseName = subProject.archivesBaseName
+    jar.baseName = "DarwinServer-${baseName}"
 
     task copyArtifacts {
         doLast {
-            def baseName = subProject.archivesBaseName
-            def version = subProject.version
+            def version = getVersionName()
             def date = LocalDate.now().toString();
             def DIST_DIR = "${rootDir}/dist/${date}/${version}"
             def SRC_DIR = "${buildDir}/libs"
@@ -33,8 +38,9 @@ subprojects { Project subProject ->
             ant.mkdir(dir: DIST_DIR)
             ant.copy(todir: DIST_DIR) {
                 fileset(dir: SRC_DIR,
-                        includes: "${baseName}*${version}*.jar,${baseName}*${version}*.jar")
+                        includes: "DarwinServer-${baseName}*${version}*.jar")
             }
+            delete buildDir
         }
     }
 
