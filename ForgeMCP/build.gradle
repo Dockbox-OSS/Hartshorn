@@ -5,12 +5,18 @@ buildscript {
             name = "forge"
             url = "https://files.minecraftforge.net/maven"
         }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.10"
     }
 }
 apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: 'java-library'
+apply plugin: "net.ltgt.apt"
 
 archivesBaseName = modBaseName
 group = project.pluginGroup
@@ -38,7 +44,7 @@ dependencies {
     compileOnly group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
     shadow group: 'org.reflections', name: 'reflections', version: '0.9.12'
     shadow 'com.google.dagger:dagger:2.27'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.27'
+    apt 'com.google.dagger:dagger-compiler:2.27'
 }
 
 processResources {

@@ -1,5 +1,5 @@
+install: gradle wrapper --gradle-version 6.3
 language: java
-install: true
 
 os: linux
 dist: trusty
@@ -16,12 +16,9 @@ after_failure:
 
 jobs:
   include:
-    - stage: core
-      name: "Build DarwinServer-Core"
+    - stage: 1_prepare_mcp
+      name: "Prepare MCP workspace"
+      script: gradle setupCiWorkspace -p ForgeMCP
+    - stage: 2_build_core
+      name: "Build Core"
       script: gradle build -p Core
-    - stage: sponge
-      name: "Build Sponge implementation"
-      script: gradle build -p Sponge
-    - stage: modules
-      name: "Build internal modules"
-      script: gradle build -p Modules
