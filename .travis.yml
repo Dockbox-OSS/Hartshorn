@@ -22,3 +22,10 @@ jobs:
     - stage: 2_build_core
       name: "Build Core"
       script: gradle build -p Core
+    - stage: 3_build_sponge
+      name: "Build Sponge implementation"
+      script: gradle build -p Sponge
+# Disabled until reworked
+#    - stage: 4_build_modules
+#      name: "Build internal modules"
+#      script: gradle build -p Modules
