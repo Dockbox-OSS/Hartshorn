@@ -14,5 +14,14 @@ after_failure:
   - chmod +x send.sh
   - ./send.sh failure $WEBHOOK_URL
 
-script:
-  - ./gradlew build
+jobs:
+  include:
+    - stage: core
+      name: "Build DarwinServer-Core"
+      script: gradle build -p Core
+    - stage: sponge
+      name: "Build Sponge implementation"
+      script: gradle build -p Sponge
+    - stage: modules
+      name: "Build internal modules"
+      script: gradle build -p Modules
