@@ -3,11 +3,10 @@ src/test
 *.iml
 .gradle
 Modules/build
-ForgeMCP/build
 Core/build
 Sponge/build
 gradle
 modules/src/test
 *.class
-ForgeMCP/target
 dist
+.hidden
