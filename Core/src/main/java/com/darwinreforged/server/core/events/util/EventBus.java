@@ -486,10 +486,8 @@ public class EventBus {
         public void invoke(Event event) throws RuntimeException {
             try {
                 methodHandle.invoke(listener, event);
-            } catch (RuntimeException | Error e) {
-                throw e;
             } catch (Throwable e) {
-                throw new RuntimeException("Exception while invoking listener", e);
+                e.printStackTrace();
             }
         }
 

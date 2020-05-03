@@ -22,9 +22,12 @@ public class DarwinModuleData extends PluginModule {
     private final Map<String, Map<String, Object>> data = new HashMap<>();
     private static File dataFile;
 
+    public DarwinModuleData() {
+        dataFile = new File(DarwinServer.getUtilChecked(FileUtils.class).getDataDirectory(this).toFile(), "plugin_data.yml");
+    }
+
     @Listener
     public void onServerStart(ServerStartedEvent event) {
-        dataFile = new File(DarwinServer.getUtilChecked(FileUtils.class).getDataDirectory(this).toFile(), "plugin_data.yml");
         if (!dataFile.exists()) {
             try {
                 dataFile.getParentFile().mkdirs();

@@ -22,6 +22,4 @@ jobs:
     - stage: 2_build_sponge
       name: "Build Sponge implementation"
       script: gradle build -p Sponge
-    - stage: 3_build_combined
-      name: "Build all projects"
-      script: gradle build
+      
