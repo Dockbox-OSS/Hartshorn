@@ -4,9 +4,8 @@ buildscript {
     repositories {
         jcenter()
     }
-
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.2"
     }
 }
 
@@ -25,8 +24,6 @@ subprojects { Project subProject ->
 
     group = project.pluginGroup
     version = getVersionName()
-    def baseName = subProject.archivesBaseName
-    jar.baseName = "DarwinServer-${baseName}"
 
     task copyArtifacts {
         doLast {
@@ -37,8 +34,8 @@ subprojects { Project subProject ->
 
             ant.mkdir(dir: DIST_DIR)
             ant.copy(todir: DIST_DIR) {
-                fileset(dir: SRC_DIR,
-                        includes: "DarwinServer-${baseName}*${version}*.jar")
+                fileset dir: SRC_DIR,
+                        includes: "*.jar"
             }
             delete buildDir
         }
@@ -55,17 +52,21 @@ subprojects { Project subProject ->
     targetCompatibility = '1.8'
 
     repositories {
-        mavenCentral()
-    }
-
-    repositories {
+        maven {
+            name 'fastasyncworldedit'
+            url 'https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn'
+        }
+        maven {
+            name 'jitpack'
+            url 'https://jitpack.io'
+        }
         maven {
             name 'sk89q'
             url 'https://maven.sk89q.com/repo/'
         }
+        mavenCentral()
+        jcenter()
     }
 
-    dependencies {
-        compile fileTree(dir: 'common_libs', include: ['*.jar'])
-    }
+    tasks.build.dependsOn tasks.shadowJar
 }

@@ -28,9 +28,9 @@ import javax.annotation.Nullable;
 /**
  * @author dags <dags@dags.me>
  */
-class SpongeCommand extends Command implements CommandCallable {
+public class SpongeCommand extends Command implements CommandCallable {
 
-    SpongeCommand(Collection<String> aliases, Collection<CommandExecutor> executors) {
+    public SpongeCommand(Collection<String> aliases, Collection<CommandExecutor> executors) {
         super(aliases, executors);
     }
 

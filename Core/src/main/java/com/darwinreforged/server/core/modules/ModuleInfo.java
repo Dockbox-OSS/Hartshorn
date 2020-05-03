@@ -19,4 +19,6 @@ public @interface ModuleInfo {
     String url() default "";
 
     String[] authors() default {};
+
+    String source() default "";
 }

@@ -1,11 +1,15 @@
-package com.darwinreforged.server.sponge.commands;
+package com.darwinreforged.server.sponge.utils;
 
-import com.darwinreforged.server.core.util.commands.CommandManager;
+import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.init.UtilityImplementation;
+import com.darwinreforged.server.core.util.CommandUtils;
 import com.darwinreforged.server.core.util.commands.annotation.Permission;
 import com.darwinreforged.server.core.util.commands.command.CommandExecutor;
 import com.darwinreforged.server.core.util.commands.command.CommandFactory;
 import com.darwinreforged.server.core.util.commands.element.ElementFactory;
 import com.darwinreforged.server.core.util.commands.utils.MarkdownWriter;
+import com.darwinreforged.server.sponge.commands.SpongeCommand;
+import com.darwinreforged.server.sponge.commands.SpongeElementFactory;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.cause.EventContextKeys;
@@ -23,11 +27,16 @@ import java.util.Optional;
 /**
  * @author dags <dags@dags.me>
  */
-public class SpongeCommandBus extends CommandManager<SpongeCommand> {
+@UtilityImplementation(CommandUtils.class)
+public class SpongeCommandUtils extends CommandUtils<SpongeCommand> {
 
-    private final PluginContainer plugin;
+    private PluginContainer plugin;
 
-    private SpongeCommandBus(CommandManager.Builder<SpongeCommand> builder) {
+    public SpongeCommandUtils() {
+        super(SpongeCommandUtils.builder().owner(DarwinServer.getServer()));
+    }
+
+    private SpongeCommandUtils(CommandUtils.Builder<SpongeCommand> builder) {
         super(builder);
         Object owner = getOwner();
         if (owner instanceof PluginContainer) {
@@ -45,12 +54,12 @@ public class SpongeCommandBus extends CommandManager<SpongeCommand> {
 
     @Override
     public void info(String message, Object... args) {
-        plugin.getLogger().info(String.format(message, args));
+        System.out.println(String.format(message, args));
     }
 
     @Override
     public void warn(String message, Object... args) {
-        plugin.getLogger().warn(String.format(message, args));
+        System.err.println(String.format(message, args));
     }
 
     @Override
@@ -109,7 +118,7 @@ public class SpongeCommandBus extends CommandManager<SpongeCommand> {
                 .commands(SpongeCommand::new);
     }
 
-    public static SpongeCommandBus create() {
+    public static SpongeCommandUtils create() {
         Optional<PluginContainer> plugin = Sponge.getCauseStackManager().getCurrentCause().last(PluginContainer.class);
 
         if (!plugin.isPresent()) {
@@ -121,11 +130,11 @@ public class SpongeCommandBus extends CommandManager<SpongeCommand> {
         return builder().owner(container).build();
     }
 
-    public static SpongeCommandBus create(Object plugin) {
+    public static SpongeCommandUtils create(Object plugin) {
         return builder().owner(plugin).build();
     }
 
-    public static class Builder extends CommandManager.Builder<SpongeCommand> {
+    public static class Builder extends CommandUtils.Builder<SpongeCommand> {
 
         @Override
         public Builder commands(CommandFactory<SpongeCommand> command) {
@@ -145,8 +154,8 @@ public class SpongeCommandBus extends CommandManager<SpongeCommand> {
             return this;
         }
 
-        public SpongeCommandBus build() {
-            return super.build(SpongeCommandBus::new);
+        public SpongeCommandUtils build() {
+            return super.build(SpongeCommandUtils::new);
         }
     }
 }

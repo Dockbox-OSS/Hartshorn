@@ -26,7 +26,8 @@ public class SpongeFileUtils extends FileUtils {
 
     @Override
     public Path getModuleDirectory() {
-        return Sponge.getGame().getGameDirectory().resolve("modules/").toAbsolutePath();
+        Path modDir = Sponge.getGame().getGameDirectory().resolve("modules/").toAbsolutePath();
+        return createPathIfNotExist(modDir);
     }
 
     @Override

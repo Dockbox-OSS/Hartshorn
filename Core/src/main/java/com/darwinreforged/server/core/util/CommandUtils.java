@@ -1,5 +1,7 @@
-package com.darwinreforged.server.core.util.commands;
+package com.darwinreforged.server.core.util;
 
+import com.darwinreforged.server.core.init.AbstractUtility;
+import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.util.commands.command.Command;
 import com.darwinreforged.server.core.util.commands.command.CommandFactory;
 import com.darwinreforged.server.core.util.commands.command.Registrar;
@@ -15,19 +17,19 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-public abstract class CommandManager<T extends Command> {
+@AbstractUtility("Command registration and execution utilities")
+public abstract class CommandUtils<T extends Command> {
 
     private final Object owner;
     private Registrar<T> registrar;
-    private CommandManager<T> bus;
+    private CommandUtils<T> bus;
 
-    public CommandManager(Builder<T> builder) {
+    public CommandUtils(Builder<T> builder) {
         this.owner = builder.owner;
         this.registrar = Registrar.of(this, builder.elementFactory, builder.commandFactory);
     }
 
-    public CommandManager<T> getBus() {
+    public CommandUtils<T> getBus() {
         return bus;
     }
 
@@ -40,22 +42,22 @@ public abstract class CommandManager<T extends Command> {
         return "command";
     }
 
-    public CommandManager<T> registerPackage(Class<?> child) {
+    public CommandUtils<T> registerPackage(Class<?> child) {
         checkAccess();
         return registerPackage(true, child);
     }
 
-    public CommandManager<T> registerPackage(boolean recursive, Class<?> child) {
+    public CommandUtils<T> registerPackage(boolean recursive, Class<?> child) {
         checkAccess();
         return registerPackage(recursive, child.getPackage().getName());
     }
 
-    public CommandManager<T> registerPackage(String path) {
+    public CommandUtils<T> registerPackage(String path) {
         checkAccess();
         return registerPackage(true, path);
     }
 
-    public CommandManager<T> registerPackage(boolean recurse, String path) {
+    public CommandUtils<T> registerPackage(boolean recurse, String path) {
         checkAccess();
         info("Scanning package %s for commands...", path);
         try {
@@ -80,11 +82,14 @@ public abstract class CommandManager<T extends Command> {
         return this;
     }
 
-    public CommandManager<T> register(Class<?> c) {
+    public CommandUtils<T> register(Class<?> c) {
         checkAccess();
         if (isValidExecutor(c)) {
             try {
-                Object o = c.newInstance();
+                Object o;
+                if (c.isAssignableFrom(DarwinServer.class) || c.isAssignableFrom(DarwinServer.getServer().getClass())) o = DarwinServer.getServer();
+                else o = c.newInstance();
+
                 int count = registrar.register(o);
                 info("Registered %s command(s) from %s", count, o.getClass());
             } catch (IllegalAccessException | InstantiationException e) {
@@ -94,7 +99,7 @@ public abstract class CommandManager<T extends Command> {
         return this;
     }
 
-    public CommandManager<T> register(Object o) {
+    public CommandUtils<T> register(Object o) {
         checkAccess();
         if (isValidExecutor(o)) {
             int count = registrar.register(o);
@@ -188,7 +193,7 @@ public abstract class CommandManager<T extends Command> {
             return this;
         }
 
-        public <V extends CommandManager<T>> V build(Function<Builder<T>, V> function) {
+        public <V extends CommandUtils<T>> V build(Function<Builder<T>, V> function) {
             return function.apply(this);
         }
     }

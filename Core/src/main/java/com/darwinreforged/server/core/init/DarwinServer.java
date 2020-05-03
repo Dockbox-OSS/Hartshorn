@@ -1,5 +1,7 @@
 package com.darwinreforged.server.core.init;
 
+import com.darwinreforged.server.core.entities.DarwinPlayer;
+import com.darwinreforged.server.core.entities.Target;
 import com.darwinreforged.server.core.entities.Tuple;
 import com.darwinreforged.server.core.events.util.EventBus;
 import com.darwinreforged.server.core.modules.DisabledModule;
@@ -7,7 +9,9 @@ import com.darwinreforged.server.core.modules.ModuleInfo;
 import com.darwinreforged.server.core.modules.PluginModuleNative;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.util.CommandUtils;
 import com.darwinreforged.server.core.util.FileUtils;
+import com.darwinreforged.server.core.util.commands.annotation.Src;
 
 import org.reflections.Reflections;
 
@@ -27,37 +31,54 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
-public abstract class DarwinServer {
+public abstract class DarwinServer extends Target {
 
     protected static final Map<Class<? extends PluginModuleNative>, Tuple<PluginModuleNative, ModuleInfo>> MODULES = new HashMap<>();
+    protected static final Map<String, String> MODULE_SOURCES = new HashMap<>();
     protected static final List<String> FAILED_MODULES = new ArrayList<>();
     protected static final Map<Class<?>, Object> UTILS = new HashMap<>();
 
     protected EventBus eventBus;
     protected static DarwinServer server;
 
+    protected static final String MODULE_PACKAGE = "com.darwinreforged.server.modules";
+    protected static final String UTIL_PACKAGE = "com.darwinreforged.server.core.util";
+
     public DarwinServer(Class<? extends DarwinServer> implementation) {
-        // Create utility implementations
-        initUtils(implementation);
+        try {
+            if (server != null) throw new InstantiationException("Singleton instance already exists");
+            server = this;
 
-        // Create event bus
-        this.eventBus = new EventBus();
+            // Create utility implementations
+            initUtils(implementation);
 
-        // Import permissions and translations
-        Translations.collect();
-        Permissions.collect();
+            // Create event bus
+            this.eventBus = new EventBus();
 
-        // Create integrated modules (in server jar)
-        info("Loading integrated modules");
-        initModulePackage("com.darwinreforged.server.modules", true);
+            // Import permissions and translations
+            Translations.collect();
+            Permissions.collect();
 
-        // Create external modules (outside server jar, inside modules folder)
-        info("Loading external modules");
-        initExternalModules();
+            // Create integrated modules (in server jar)
+            System.out.println("Loading integrated modules");
+            initModulePackage(MODULE_PACKAGE, true);
+
+            // Create external modules (outside server jar, inside modules folder)
+            System.out.println("Loading external modules");
+            initExternalModules();
+
+            // Setting up commands
+            getUtilChecked(CommandUtils.class).registerPackage(implementation);
+            getUtilChecked(CommandUtils.class).registerPackage(MODULE_PACKAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static String getVersion() {
@@ -69,7 +90,7 @@ public abstract class DarwinServer {
         Path modDir = getUtilChecked(FileUtils.class).getModuleDirectory();
         try {
             URL url = modDir.toUri().toURL();
-            info(String.format("Scanning %s for additional modules", url.toString()));
+            System.out.println(String.format("Scanning %s for additional modules", url.toString()));
             Arrays
                     .stream(Objects.requireNonNull(modDir.toFile().listFiles()))
                     .filter(f -> f.getName().endsWith(".jar"))
@@ -77,18 +98,18 @@ public abstract class DarwinServer {
                         try {
                             List<String> scannableModules = getScannableModules(moduleCandidate);
                             scannableModules.forEach(pkg -> {
-                                boolean isModFile = initModulePackage(pkg, false);
-                                if (!isModFile) warn(String.format("Found non-module file '%s'", moduleCandidate.getName()));
-                                else info(String.format("Done loading module file '%s'", moduleCandidate.getName()));
+                                boolean isModFile = initModulePackage(pkg, false, moduleCandidate.getName());
+                                if (!isModFile) System.out.println(String.format("Found non-module file '%s'", moduleCandidate.getName()));
+                                else System.out.println(String.format("Done loading module file '%s'", moduleCandidate.getName()));
                             });
                         } catch (IOException | ClassNotFoundException e) {
-                            error("Failed to register potential module : " + moduleCandidate.toString());
-                            error(e.getMessage());
+                            System.err.println("Failed to register potential module : " + moduleCandidate.toString());
+                            System.err.println(e.getMessage());
                         }
                     });
         } catch (MalformedURLException e) {
-            error("Failed to load additional modules");
-            error(e.getMessage());
+            System.err.println("Failed to load additional modules");
+            System.err.println(e.getMessage());
         }
     }
 
@@ -119,10 +140,10 @@ public abstract class DarwinServer {
     }
 
     private void initUtils(Class<? extends DarwinServer> implementation) {
-        Reflections abstrPackRef = new Reflections("com.darwinreforged.server.core.util");
+        Reflections abstrPackRef = new Reflections(UTIL_PACKAGE);
         Set<Class<?>> abstractUtils = abstrPackRef.getTypesAnnotatedWith(AbstractUtility.class);
 
-        Reflections implPackRef = new Reflections(implementation.getPackage());
+        Reflections implPackRef = new Reflections(implementation.getPackage().getName());
         Set<Class<?>> implCandidates = implPackRef.getTypesAnnotatedWith(UtilityImplementation.class);
 
         abstractUtils.forEach(abstr -> {
@@ -211,7 +232,7 @@ public abstract class DarwinServer {
 
      @return The resulting state of the registration
      */
-    public ModuleRegistration registerModule(Class<? extends PluginModuleNative> module) {
+    public ModuleRegistration registerModule(Class<? extends PluginModuleNative> module, String source) {
         Deprecated deprecatedModule = module.getAnnotation(Deprecated.class);
 
         // Disabled module
@@ -228,6 +249,7 @@ public abstract class DarwinServer {
             if (moduleInfo == null) throw new InstantiationException("No module info was provided");
             registerListener(instance);
             DarwinServer.MODULES.put(module, new Tuple<>(instance, moduleInfo));
+            DarwinServer.MODULE_SOURCES.put(moduleInfo.id(), source);
 
             if (deprecatedModule != null) return ModuleRegistration.DEPRECATED_AND_SUCCEEDED;
             else return ModuleRegistration.SUCCEEDED;
@@ -248,7 +270,15 @@ public abstract class DarwinServer {
         return server;
     }
 
+    public static List<ModuleInfo> getAllModuleInfo() {
+        return MODULES.values().stream().map(Tuple::getSecond).collect(Collectors.toList());
+    }
+
     public boolean initModulePackage(String pkg, boolean integrated) {
+        return initModulePackage(pkg, integrated, integrated ? "Integrated" : "Unknown");
+    }
+
+    public boolean initModulePackage(String pkg, boolean integrated, String source) {
         Reflections reflections = new Reflections(pkg);
         Set<Class<? extends PluginModuleNative>> pluginModules = reflections
                 .getSubTypesOf(PluginModuleNative.class);
@@ -257,8 +287,8 @@ public abstract class DarwinServer {
         AtomicInteger done = new AtomicInteger();
         AtomicInteger failed = new AtomicInteger();
         pluginModules.forEach(mod -> {
-            DarwinServer.ModuleRegistration result = registerModule(mod);
-            info(String.format("Found module '%s' (integrates:%s) and loaded with result : %s", mod.getCanonicalName(), integrated, result));
+            DarwinServer.ModuleRegistration result = registerModule(mod, source);
+            System.out.println(String.format("Found module '%s' (integrated:%s) and loaded with result : %s", mod.getCanonicalName(), integrated, result));
             switch (result) {
                 case DEPRECATED_AND_FAIL:
                 case FAILED:
@@ -276,15 +306,17 @@ public abstract class DarwinServer {
         return true;
     }
 
-    public abstract void trace(String s);
+    public abstract void commandList(@Src DarwinPlayer player);
 
-    public abstract void debug(String s);
+    @Override
+    public UUID getUuid() {
+        return UUID.fromString("0-0-0-0");
+    }
 
-    public abstract void info(String s);
-
-    public abstract void warn(String s);
-
-    public abstract void error(String s);
+    @Override
+    public String getName() {
+        return "DarwinServerHost";
+    }
 
     /**
      Registration states during and after module registration

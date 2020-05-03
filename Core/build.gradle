@@ -10,11 +10,17 @@ repositories {
     mavenCentral()
 }
 
+archivesBaseName = 'core'
+group = project.pluginGroup
+description = 'Common API for Darwin Server modules'
+
 dependencies {
-    shadow project(':ForgeMCP')
-    compile group: 'org.yaml', name: 'snakeyaml', version: '1.26'
-    compile fileTree(dir: '../common_libs', include: ['*.jar'])
-    compile 'com.google.guava:guava:21.0'
-    shadow group: 'org.reflections', name: 'reflections', version: '0.9.12'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'org.reflections:reflections:0.9.11'
+    compileOnly 'org.yaml:snakeyaml:1.26'
+    compileOnly 'com.google.guava:guava:21.0'
+    testCompile 'junit:junit:4.12'
+}
+
+jar {
+    enabled = true
 }

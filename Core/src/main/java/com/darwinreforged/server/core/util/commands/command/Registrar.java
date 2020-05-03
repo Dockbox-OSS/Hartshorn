@@ -1,6 +1,6 @@
 package com.darwinreforged.server.core.util.commands.command;
 
-import com.darwinreforged.server.core.util.commands.CommandManager;
+import com.darwinreforged.server.core.util.CommandUtils;
 import com.darwinreforged.server.core.util.commands.annotation.processor.Processor;
 import com.darwinreforged.server.core.util.commands.element.ElementFactory;
 
@@ -17,20 +17,20 @@ import java.util.stream.Collectors;
 
 public class Registrar<T extends Command> {
 
-    private final CommandManager manager;
+    private final CommandUtils manager;
     private final Processor processor = new Processor(this);
     private final Map<String, Entry> builders = new HashMap<>();
 
     private final ElementFactory elementFactory;
     private final CommandFactory<T> commandFactory;
 
-    public Registrar(CommandManager manager, ElementFactory elementFactory, CommandFactory<T> commandFactory) {
+    public Registrar(CommandUtils manager, ElementFactory elementFactory, CommandFactory<T> commandFactory) {
         this.manager = manager;
         this.elementFactory = elementFactory;
         this.commandFactory = commandFactory;
     }
 
-    public CommandManager getManager() {
+    public CommandUtils getManager() {
         return manager;
     }
 
@@ -74,7 +74,7 @@ public class Registrar<T extends Command> {
                 .collect(Collectors.toList());
     }
 
-    public static <T extends Command> Registrar<T> of(CommandManager<T> manager, ElementFactory elementFactory, CommandFactory<T> commandFactory) {
+    public static <T extends Command> Registrar<T> of(CommandUtils<T> manager, ElementFactory elementFactory, CommandFactory<T> commandFactory) {
         return new Registrar<>(manager, elementFactory, commandFactory);
     }
 

@@ -15,7 +15,7 @@ import org.spongepowered.api.world.World;
 /**
  * @author dags <dags@dags.me>
  */
-class SpongeElementFactory extends ElementFactory {
+public class SpongeElementFactory extends ElementFactory {
 
     private SpongeElementFactory(Builder builder) {
         super(builder);

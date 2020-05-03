@@ -2,8 +2,6 @@ package com.darwinreforged.server.core.entities;
 
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.util.PlayerUtils;
-import com.google.common.base.Preconditions;
-import com.intellectualcrafters.plot.object.PlotPlayer;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -13,12 +11,6 @@ public class DarwinPlayer extends Target {
     public DarwinPlayer(UUID uuid, String name) {
         super.uuid = uuid;
         super.name = name;
-    }
-
-    public DarwinPlayer(PlotPlayer plotPlayer) {
-        Preconditions.checkNotNull(plotPlayer);
-        super.uuid = plotPlayer.getUUID();
-        super.name = plotPlayer.getName();
     }
 
     public boolean isOnline() {

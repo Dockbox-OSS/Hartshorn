@@ -1,6 +1,8 @@
 package com.darwinreforged.server.sponge;
 
 import com.darwinreforged.server.core.entities.DarwinPlayer;
+import com.darwinreforged.server.core.events.ServerInitEvent;
+import com.darwinreforged.server.core.events.ServerStartedEvent;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.init.ServerType;
 import com.darwinreforged.server.core.modules.DisabledModule;
@@ -10,10 +12,14 @@ import com.darwinreforged.server.core.util.commands.annotation.Command;
 import com.darwinreforged.server.core.util.commands.annotation.Description;
 import com.darwinreforged.server.core.util.commands.annotation.Permission;
 import com.darwinreforged.server.core.util.commands.annotation.Src;
+import com.google.inject.Inject;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
@@ -21,8 +27,6 @@ import org.spongepowered.api.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import javax.inject.Inject;
 
 /**
  Central plugin which handles module registrations and passes early server events
@@ -32,27 +36,35 @@ import javax.inject.Inject;
         name = "Darwin Server",
         description = "Custom plugins and modifications combined into a single source",
         url = "https://darwinreforged.com",
-        authors = {
-                "GuusLieben",
-                "TheCrunchy",
-                "simbolduc",
-                "pumbas600"
-        }
+        authors = {"GuusLieben"}
 )
 public class DarwinServerSponge extends DarwinServer {
 
     @Inject
-    Logger log;
+    Logger logger;
+
+    public Logger getLogger() {
+        return logger;
+    }
 
     public DarwinServerSponge() {
         super(DarwinServerSponge.class);
-        if (server != null) throw new RuntimeException("Singleton instance already exists");
-        server = this;
     }
 
+    @Listener
+    public void onServerStart(GameStartedServerEvent event) {
+        eventBus.post(new ServerStartedEvent(null));
+    }
+
+    @Listener
+    public void onServerInit(GameInitializationEvent event) {
+        eventBus.post(new ServerInitEvent(null));
+    }
+
+    @Override
     @Permission("darwin.server.admin")
     @Description("Returns active and failed modules to the player")
-    @Command("dserver plugins")
+    @Command("dserver")
     public void commandList(@Src DarwinPlayer player) {
         List<Text> moduleContext = new ArrayList<>();
         DarwinServerSponge.MODULES.forEach((clazz, ignored) -> {
@@ -83,30 +95,5 @@ public class DarwinServerSponge extends DarwinServer {
     @Override
     public ServerType getServerType() {
         return ServerType.SPONGE;
-    }
-
-    @Override
-    public void trace(String s) {
-        log.trace(s);
-    }
-
-    @Override
-    public void debug(String s) {
-        log.debug(s);
-    }
-
-    @Override
-    public void info(String s) {
-        log.info(s);
-    }
-
-    @Override
-    public void warn(String s) {
-        log.warn(s);
-    }
-
-    @Override
-    public void error(String s) {
-        log.error(s);
     }
 }
