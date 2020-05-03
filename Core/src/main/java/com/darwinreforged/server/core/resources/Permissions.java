@@ -3,7 +3,7 @@ package com.darwinreforged.server.core.resources;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.ConfigModule;
 import com.darwinreforged.server.core.util.FileUtils;
-import com.intellectualcrafters.plot.util.StringMan;
+import com.darwinreforged.server.core.util.StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -84,7 +84,7 @@ public enum Permissions {
                 if (i == 0) map.put("%s", arg);
             }
         }
-        return StringMan.replaceFromMap(p(), map);
+        return StringUtils.replaceFromMap(p(), map);
     }
 
     public String p() {

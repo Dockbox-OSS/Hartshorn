@@ -3,7 +3,7 @@ package com.darwinreforged.server.core.resources;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.ConfigModule;
 import com.darwinreforged.server.core.util.FileUtils;
-import com.intellectualcrafters.plot.util.StringMan;
+import com.darwinreforged.server.core.util.StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
@@ -496,7 +496,7 @@ public enum Translations {
                 if (i == 0) map.put("%s", arg);
             }
         }
-        m = StringMan.replaceFromMap(m, map);
+        m = StringUtils.replaceFromMap(m, map);
         return parseColors(m);
     }
 
