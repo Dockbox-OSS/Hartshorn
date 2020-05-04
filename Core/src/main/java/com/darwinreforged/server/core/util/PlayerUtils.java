@@ -6,6 +6,7 @@ import com.darwinreforged.server.core.entities.DarwinPlayer;
 import com.darwinreforged.server.core.init.AbstractUtility;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @AbstractUtility("Common player action utilities")
 public abstract class PlayerUtils {
@@ -30,6 +31,14 @@ public abstract class PlayerUtils {
 
     public DarwinItem<?> getItemInHand(DarwinPlayer player) {
         return getItemInHand(player, true);
+    }
+
+    public UUID getConsoleId() {
+        return UUID.fromString("00000010-0010-0010-0010-000000000010");
+    }
+
+    public boolean isConsole(DarwinPlayer player) {
+        return player.getUuid().equals(getConsoleId());
     }
 
 }

@@ -34,6 +34,7 @@ public class DarwinPlayer extends Target {
     }
 
     public boolean hasPermission(String permission) {
+        if (DarwinServer.getUtilChecked(PlayerUtils.class).isConsole(this)) return true; // Console
         return DarwinServer.getUtilChecked(PlayerUtils.class).hasPermission(this, permission);
     }
 
