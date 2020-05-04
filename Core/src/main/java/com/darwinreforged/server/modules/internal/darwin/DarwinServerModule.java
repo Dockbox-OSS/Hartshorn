@@ -1,4 +1,4 @@
-package com.darwinreforged.server.modules.internal;
+package com.darwinreforged.server.modules.internal.darwin;
 
 
 import com.darwinreforged.server.core.modules.ModuleInfo;

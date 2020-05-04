@@ -9,7 +9,7 @@ import com.darwinreforged.server.core.util.commands.command.CommandExecutor;
 import com.darwinreforged.server.core.util.commands.command.CommandFactory;
 import com.darwinreforged.server.core.util.commands.element.ElementFactory;
 import com.darwinreforged.server.core.util.commands.utils.MarkdownWriter;
-import com.darwinreforged.server.modules.internal.DarwinServerModule;
+import com.darwinreforged.server.modules.internal.darwin.DarwinServerModule;
 import com.darwinreforged.server.sponge.commands.SpongeCommand;
 import com.darwinreforged.server.sponge.commands.SpongeElementFactory;
 

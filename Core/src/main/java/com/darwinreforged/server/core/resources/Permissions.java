@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.resources;
 
 import com.darwinreforged.server.core.init.DarwinServer;
-import com.darwinreforged.server.modules.internal.DarwinServerModule;
+import com.darwinreforged.server.modules.internal.darwin.DarwinServerModule;
 import com.darwinreforged.server.core.util.FileUtils;
 import com.darwinreforged.server.core.util.StringUtils;
 
