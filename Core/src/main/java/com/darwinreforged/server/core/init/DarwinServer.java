@@ -265,6 +265,8 @@ public abstract class DarwinServer extends Target {
             ModuleInfo moduleInfo = module.getAnnotation(ModuleInfo.class);
             if (moduleInfo == null) throw new InstantiationException("No module info was provided");
             registerListener(instance);
+            // Do not register the same module twice
+            if (getUtil(module).isPresent()) return ModuleRegistration.SUCCEEDED;
             DarwinServer.MODULES.put(module, new Tuple<>(instance, moduleInfo));
             DarwinServer.MODULE_SOURCES.put(moduleInfo.id(), source);
 
