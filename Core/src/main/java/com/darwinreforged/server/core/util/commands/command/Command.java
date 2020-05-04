@@ -1,6 +1,7 @@
 package com.darwinreforged.server.core.util.commands.command;
 
 import com.darwinreforged.server.core.entities.DarwinPlayer;
+import com.darwinreforged.server.core.resources.Translations;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class Command {
                     exceptions.add(e);
                 }
             } else {
-                exceptions.add(new CommandException("Requires the permission %s", permission));
+                exceptions.add(new CommandException(Translations.NOT_PERMITTED_CMD_USE.f(permission)));
             }
         }
 
@@ -99,6 +100,6 @@ public class Command {
     }
 
     public boolean testPermission(DarwinPlayer source, String permission) {
-        return true;
+        return source.hasPermission(permission);
     }
 }
