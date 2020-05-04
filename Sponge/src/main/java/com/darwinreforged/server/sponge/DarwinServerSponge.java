@@ -1,13 +1,14 @@
 package com.darwinreforged.server.sponge;
 
 import com.darwinreforged.server.core.entities.DarwinPlayer;
-import com.darwinreforged.server.core.events.ServerInitEvent;
-import com.darwinreforged.server.core.events.ServerStartedEvent;
+import com.darwinreforged.server.core.events.internal.ServerInitEvent;
+import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.init.ServerType;
 import com.darwinreforged.server.core.modules.DisabledModule;
 import com.darwinreforged.server.core.modules.ModuleInfo;
 import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.util.PlayerUtils;
 import com.darwinreforged.server.core.util.commands.annotation.Command;
 import com.darwinreforged.server.core.util.commands.annotation.Description;
 import com.darwinreforged.server.core.util.commands.annotation.Permission;
@@ -16,17 +17,19 @@ import com.google.inject.Inject;
 
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.channel.MessageReceiver;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  Central plugin which handles module registrations and passes early server events
@@ -36,20 +39,19 @@ import java.util.Optional;
         name = "Darwin Server",
         description = "Custom plugins and modifications combined into a single source",
         url = "https://darwinreforged.com",
-        authors = {"GuusLieben"}
+        authors = {DarwinServer.AUTHOR}
 )
 public class DarwinServerSponge extends DarwinServer {
 
     @Inject
     Logger logger;
 
+    public DarwinServerSponge() throws InstantiationException {
+    }
+
     @Override
     public Logger getLogger() {
         return logger;
-    }
-
-    public DarwinServerSponge() throws InstantiationException {
-        super(DarwinServerSponge.class);
     }
 
     @Listener
@@ -58,7 +60,7 @@ public class DarwinServerSponge extends DarwinServer {
     }
 
     @Listener
-    public void onServerInit(GameInitializationEvent event) {
+    public void onServerInit(GameInitializationEvent event) throws IOException {
         setupPlatform();
         eventBus.post(new ServerInitEvent(null));
     }
@@ -82,16 +84,28 @@ public class DarwinServerSponge extends DarwinServer {
         });
         DarwinServerSponge.FAILED_MODULES.forEach(module -> moduleContext.add(Text.of(Translations.FAILED_MODULE_ROW.f(module))));
 
-        Optional<Player> optionalPlayer = Sponge.getServer().getPlayer(player.getUuid());
-        if (optionalPlayer.isPresent()) {
-            PaginationList.Builder builder = PaginationList.builder();
-            builder
-                    .title(Text.of(Translations.DARWIN_MODULE_TITLE.s()))
-                    .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
-                    .contents(moduleContext)
-                    .footer(Text.of(Translations.DARWIN_SERVER_VERSION.f(getVersion())))
-                    .build().sendTo(optionalPlayer.get());
-        }
+        // TODO : PaginationBuilder inside Core
+        AtomicReference<MessageReceiver> tf = new AtomicReference<>();
+        if (getUtilChecked(PlayerUtils.class).isConsole(player)) tf.set(Sponge.getServer().getConsole());
+        else Sponge.getServer().getPlayer(player.getUuid()).ifPresent(tf::set);
+
+        Text header = Text.builder()
+                .append(Text.of(Translations.DARWIN_SERVER_VERSION.f(getVersion())))
+                .append(Text.NEW_LINE)
+                .append(Text.of(Translations.DARWIN_SERVER_UPDATE.f(getLastUpdate())))
+                .append(Text.NEW_LINE)
+                .append(Text.of(Translations.DARWIN_SERVER_AUTHOR.f(AUTHOR)))
+                .append(Text.NEW_LINE)
+                .append(Text.of(Translations.DARWIN_SERVER_MODULE_HEAD.s()))
+                .build();
+
+        PaginationList.Builder builder = PaginationList.builder();
+        builder
+                .title(Text.of(Translations.DARWIN_MODULE_TITLE.s()))
+                .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
+                .contents(moduleContext)
+                .header(header)
+                .build().sendTo(tf.get());
     }
 
     @Override

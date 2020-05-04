@@ -138,7 +138,7 @@ public enum Translations {
     TICKET_ROW_SINGLE("{5} $2#{0} {1} by {2} $2on {3} $2- $3{4}"),
     TICKET_HELP_TITLE("$2Tickets Help"),
     TICKET_SYNTAX_HINT("$3[] = required  () = optional"),
-    NOT_PERMITTED_CMD_USE("$4You are not allowed to use this command"),
+    NOT_PERMITTED_CMD_USE("$4You are not allowed to use this command $3({0})"),
     TICKET_OPEN_TITLE("$2{0} Open Tickets"),
     TICKET_CLAIMED_BY("$1Claimed by: $3{0}"),
     TICKET_HANDLED_BY("$1Handled by: $3{0}"),
@@ -313,7 +313,7 @@ public enum Translations {
     SHARED_HOTBAR_WITH("You shared your hotbar with {0}"),
     PLAYER_SHARED_HOTBAR("$2{0} $1shared their hotbar"),
     FULL_HOTBAR("$4Your hotbar is full, please clear one or more slots"),
-    HOTBAR_SHARE_HEADER("$1§m------- §r$2{0}'s Hotbar $1§m-------"),
+    HOTBAR_SHARE_HEADER("$1&m------- &r$2{0}'s Hotbar $1&m-------"),
     HOTBAR_SHARE_INDEX("$2#{0} : $1{1}"),
     HOTBAR_SHARE_ENCHANTED("$2  Enchanted : "),
     HOTBAR_SHARE_LORE("$2  Lore : "),
@@ -346,7 +346,7 @@ public enum Translations {
     PAINTING_SUBMISSION_SIZE_VALUE("X: {0}\nY: {1}"),
 
     //    UserData
-    USER_DATA_HEADER("$1§m------- §r$2{0} $1§m-------"),
+    USER_DATA_HEADER("$1&m------- &r$2{0} $1&m-------"),
     USER_DATA_FAILED_COLLECT("$4Could not collect data for {0}"),
 
     //    MultiCommand
@@ -447,11 +447,14 @@ public enum Translations {
 
     //    Darwin CMD
     DISABLED_MODULE_ROW("$2 - &7☣ $3{0} $3- $2{1}"),
-    FAILED_MODULE_ROW("$2 - $4✕ {0}"),
-    ACTIVE_MODULE_ROW("$2 - &a✔ $1{0} $3- $2{1}"),
-    DARWIN_MODULE_TITLE("$1Modules"),
+    FAILED_MODULE_ROW("$2 - $4[Failed] {0}"),
+    ACTIVE_MODULE_ROW("$2 - &a[Loaded] $1{0} $3- $2{1}"),
+    DARWIN_MODULE_TITLE("$1Darwin Server Info"),
     DARWIN_MODULE_PADDING("&m$2="),
-    DARWIN_SERVER_VERSION("$2Darwin Server #$1{0}");
+    DARWIN_SERVER_VERSION("$2&lDarwin Server &r$3($1Version$3: $1{0}$3)"),
+    DARWIN_SERVER_UPDATE("$2&lLast updated&r$3: $1{0}"),
+    DARWIN_SERVER_AUTHOR("$2&lAuthor&r$3: $1{0}"),
+    DARWIN_SERVER_MODULE_HEAD("$2&lModules&r$3:");
 
     private String s;
 
@@ -500,27 +503,20 @@ public enum Translations {
         return parseColors(m);
     }
 
-    // Format only integrated colors (Text serializing is done in their respective methods only)
     private static String parseColors(String m) {
-        return "§r" + m
-                .replaceAll("\\$1", String.format("§%s", COLOR_PRIMARY.s))
-                .replaceAll("\\$2", String.format("§%s", COLOR_SECONDARY.s))
-                .replaceAll("\\$3", String.format("§%s", COLOR_MINOR.s))
-                .replaceAll("\\$4", String.format("§%s", COLOR_ERROR.s));
+        char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
+        for (char c : nativeFormats) m = m.replaceAll(String.format("&%s", c), String.format("\u00A7%s", c));
+
+        return "\u00A7r" + m
+                .replaceAll("\\$1", String.format("\u00A7%s", COLOR_PRIMARY.s))
+                .replaceAll("\\$2", String.format("\u00A7%s", COLOR_SECONDARY.s))
+                .replaceAll("\\$3", String.format("\u00A7%s", COLOR_MINOR.s))
+                .replaceAll("\\$4", String.format("\u00A7%s", COLOR_ERROR.s));
     }
 
     // Shorten the value
     public static String shorten(String m, int maxChars) {
         return (m.length() > maxChars) ? String.format("%s...", m.substring(0, maxChars)) : m;
-    }
-
-    // Plain-ify the value, removing integrated, native, and legacy color codes. Keeps value placeholders
-    public String p() {
-        String copy = s();
-        copy = copy.replaceAll("§", "&");
-        for (String regex : new String[]{"(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r"})
-            copy = copy.replaceAll(regex, "");
-        return copy;
     }
 
     public static void collect() {
