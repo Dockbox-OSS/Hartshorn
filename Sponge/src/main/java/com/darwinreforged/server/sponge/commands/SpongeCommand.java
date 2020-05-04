@@ -1,18 +1,22 @@
 package com.darwinreforged.server.sponge.commands;
 
+import com.darwinreforged.server.core.entities.DarwinPlayer;
+import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.util.PlayerUtils;
 import com.darwinreforged.server.core.util.commands.command.Command;
 import com.darwinreforged.server.core.util.commands.command.CommandExecutor;
-import com.darwinreforged.server.core.entities.DarwinPlayer;
 
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
+import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -45,8 +49,7 @@ public class SpongeCommand extends Command implements CommandCallable {
             super.processArguments(ofSource(source), arguments);
             return CommandResult.success();
         } catch (Throwable t) {
-            t.printStackTrace();
-            throw new CommandException(Text.of("Error executing command"), t);
+            throw new CommandException(TextSerializers.FORMATTING_CODE.deserialize(t.getMessage()), t);
         }
     }
 
@@ -59,6 +62,8 @@ public class SpongeCommand extends Command implements CommandCallable {
         DarwinPlayer darwinSourcePlayer;
         if (source instanceof Player)
             darwinSourcePlayer = new DarwinPlayer(((Player) source).getUniqueId(), source.getName());
+        else if (source instanceof ConsoleSource)
+            darwinSourcePlayer = new DarwinPlayer(DarwinServer.getUtilChecked(PlayerUtils.class).getConsoleId(), "Console");
         else
             darwinSourcePlayer = new DarwinPlayer(UUID.fromString("00000000-0000-0000-0000-000000000000"), source.getName());
 
