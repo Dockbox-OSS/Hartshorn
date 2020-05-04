@@ -31,8 +31,8 @@ public abstract class FileUtils {
         }
     }
 
-    public <I extends PluginModuleNative> void writeYaml(Map<String, Object> data, I plugin) {
-        writeYaml(data, getYamlConfigFile(plugin));
+    public <I extends PluginModuleNative> void writeYaml(Map<String, Object> data, I module) {
+        writeYaml(data, getYamlConfigFile(module));
     }
 
     public Map<String, Object> getYamlData(File file) {
@@ -45,11 +45,16 @@ public abstract class FileUtils {
         return new HashMap<>();
     }
 
-    public <I extends PluginModuleNative> Map<String, Object> getYamlData(I plugin) {
-        return getYamlData(getYamlConfigFile(plugin));
+    public <I extends PluginModuleNative> Map<String, Object> getYamlData(I module) {
+        return getYamlData(getYamlConfigFile(module));
     }
 
-    public abstract <I extends PluginModuleNative> Path getDataDirectory(I plugin);
+    public abstract <I extends PluginModuleNative> Path getDataDirectory(I module);
+
+    public <I extends PluginModuleNative> Path getDataDirectory(I module, String dir) {
+        Path ddir = getDataDirectory(module);
+        return createPathIfNotExist(new File(ddir.toFile(), dir).toPath());
+    }
 
     protected Path createPathIfNotExist(Path path) {
         if (!path.toFile().exists()) path.toFile().mkdirs();
@@ -58,18 +63,18 @@ public abstract class FileUtils {
 
     public abstract Path getModuleDirectory();
 
-    public abstract <I extends PluginModuleNative> Path getConfigDirectory(I plugin);
+    public abstract <I extends PluginModuleNative> Path getConfigDirectory(I module);
 
-    public <I extends PluginModuleNative> File getYamlConfigFile(I plugin) {
-        return getYamlConfigFile(plugin, true);
+    public <I extends PluginModuleNative> File getYamlConfigFile(I module) {
+        return getYamlConfigFile(module, true);
     }
 
-    public <I extends PluginModuleNative> File getYamlConfigFile(I plugin, boolean createIfNotExists) {
-        Path path = getConfigDirectory(plugin);
-        Optional<ModuleInfo> info = DarwinServer.getServer().getModuleInfo(plugin.getClass());
+    public <I extends PluginModuleNative> File getYamlConfigFile(I module, boolean createIfNotExists) {
+        Path path = getConfigDirectory(module);
+        Optional<ModuleInfo> info = DarwinServer.getServer().getModuleInfo(module.getClass());
         if (info.isPresent()) {
-            String pluginId = info.get().id();
-            File file = new File(path.toFile(), String.format("%s.yml", pluginId));
+            String moduleId = info.get().id();
+            File file = new File(path.toFile(), String.format("%s.yml", moduleId));
             if (!file.exists() && createIfNotExists) {
                 try {
                     file.getParentFile().mkdirs();
@@ -80,7 +85,7 @@ public abstract class FileUtils {
             }
             return file;
         }
-        throw new RuntimeException("No such plugin registered");
+        throw new RuntimeException("No such module registered");
     }
 
 }

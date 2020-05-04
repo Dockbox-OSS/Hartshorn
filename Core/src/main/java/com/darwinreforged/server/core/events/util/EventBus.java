@@ -1,10 +1,21 @@
 package com.darwinreforged.server.core.events.util;
 
+import com.darwinreforged.server.core.init.DarwinServer;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Represents an event bus.
@@ -43,14 +54,14 @@ public class EventBus {
      */
     @SuppressWarnings("EqualsWithItself")
     public void subscribe(Object object, MethodHandles.Lookup lookup) throws IllegalArgumentException, SecurityException {
-        if (!object.equals(object)) throw new IllegalArgumentException("Broken equals() implementation");
+        if (!object.equals(object)) return;
         if (listenerToInvokers.containsKey(object)) {
             return;  // Already registered
         }
 
         Set<InvokeWrapper> invokers = getInvokers(object, lookup);
         if(invokers.isEmpty()) {
-            throw new IllegalArgumentException("the object doesn't have any listener methods");
+            return; // Doesn't contain any listener methods
         }
         listenerToInvokers.put(object, invokers);
         for (InvokeWrapper invoker : invokers) {
@@ -82,7 +93,7 @@ public class EventBus {
      */
     @SuppressWarnings("EqualsWithItself")
     public void unsubscribe(Object object) {
-        if (!object.equals(object)) throw new IllegalArgumentException("Broken equals() implementation");
+        if (!object.equals(object)) return;
         Set<InvokeWrapper> invokers = listenerToInvokers.remove(object);
         if (invokers == null || invokers.isEmpty()) {
             return; // Not registered
@@ -99,6 +110,7 @@ public class EventBus {
      * @param event event to post
      */
     public void post(Event event) {
+        if (event.getTarget() == null) DarwinServer.getServer().getLogger().warn("Posting event of type " + event.getClass().toGenericString() + " with null target!");
         handlerRegistry.getHandler(event.getClass()).post(event);
     }
 

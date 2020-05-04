@@ -1,9 +1,9 @@
 package com.darwinreforged.server.core.resources;
 
 import com.darwinreforged.server.core.init.DarwinServer;
-import com.darwinreforged.server.core.modules.ConfigModule;
 import com.darwinreforged.server.core.util.FileUtils;
 import com.darwinreforged.server.core.util.StringUtils;
+import com.darwinreforged.server.modules.internal.DarwinServerModule;
 
 import java.io.File;
 import java.util.Arrays;
@@ -524,7 +524,7 @@ public enum Translations {
     }
 
     public static void collect() {
-        DarwinServer.getServer().getModule(ConfigModule.class).ifPresent(module -> {
+        DarwinServer.getServer().getModule(DarwinServerModule.class).ifPresent(module -> {
             Map<String, Object> configMap;
             File file = new File(DarwinServer.getUtilChecked(FileUtils.class).getConfigDirectory(module).toFile(), "translations.yml");
             if (!file.exists()) {

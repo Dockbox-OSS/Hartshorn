@@ -43,11 +43,12 @@ public class DarwinServerSponge extends DarwinServer {
     @Inject
     Logger logger;
 
+    @Override
     public Logger getLogger() {
         return logger;
     }
 
-    public DarwinServerSponge() {
+    public DarwinServerSponge() throws InstantiationException {
         super(DarwinServerSponge.class);
     }
 
@@ -58,6 +59,7 @@ public class DarwinServerSponge extends DarwinServer {
 
     @Listener
     public void onServerInit(GameInitializationEvent event) {
+        setupPlatform();
         eventBus.post(new ServerInitEvent(null));
     }
 

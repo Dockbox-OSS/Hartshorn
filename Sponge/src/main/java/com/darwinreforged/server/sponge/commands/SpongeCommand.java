@@ -45,6 +45,7 @@ public class SpongeCommand extends Command implements CommandCallable {
             super.processArguments(ofSource(source), arguments);
             return CommandResult.success();
         } catch (Throwable t) {
+            t.printStackTrace();
             throw new CommandException(Text.of("Error executing command"), t);
         }
     }

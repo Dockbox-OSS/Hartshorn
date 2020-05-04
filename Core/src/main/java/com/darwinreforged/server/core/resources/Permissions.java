@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.resources;
 
 import com.darwinreforged.server.core.init.DarwinServer;
-import com.darwinreforged.server.core.modules.ConfigModule;
+import com.darwinreforged.server.modules.internal.DarwinServerModule;
 import com.darwinreforged.server.core.util.FileUtils;
 import com.darwinreforged.server.core.util.StringUtils;
 
@@ -92,7 +92,7 @@ public enum Permissions {
     }
 
     public static void collect() {
-        DarwinServer.getServer().getModule(ConfigModule.class).ifPresent(module -> {
+        DarwinServer.getServer().getModule(DarwinServerModule.class).ifPresent(module -> {
             Map<String, Object> configMap;
             File file = new File(DarwinServer.getUtilChecked(FileUtils.class).getConfigDirectory(module).toFile(), "permissions.yml");
             if (!file.exists()) {

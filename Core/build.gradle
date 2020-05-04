@@ -18,6 +18,7 @@ dependencies {
     implementation 'org.reflections:reflections:0.9.11'
     compileOnly 'org.yaml:snakeyaml:1.26'
     compileOnly 'com.google.guava:guava:21.0'
+    compile 'org.slf4j:slf4j-api:1.7.25'
     testCompile 'junit:junit:4.12'
 }
 

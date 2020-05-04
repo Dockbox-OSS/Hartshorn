@@ -3,16 +3,17 @@ package com.darwinreforged.server.sponge.utils;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.util.CommandUtils;
+import com.darwinreforged.server.core.util.FileUtils;
 import com.darwinreforged.server.core.util.commands.annotation.Permission;
 import com.darwinreforged.server.core.util.commands.command.CommandExecutor;
 import com.darwinreforged.server.core.util.commands.command.CommandFactory;
 import com.darwinreforged.server.core.util.commands.element.ElementFactory;
 import com.darwinreforged.server.core.util.commands.utils.MarkdownWriter;
+import com.darwinreforged.server.modules.internal.DarwinServerModule;
 import com.darwinreforged.server.sponge.commands.SpongeCommand;
 import com.darwinreforged.server.sponge.commands.SpongeElementFactory;
 
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.event.cause.EventContextKeys;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.service.permission.PermissionDescription;
 import org.spongepowered.api.service.permission.PermissionService;
@@ -30,10 +31,10 @@ import java.util.Optional;
 @UtilityImplementation(CommandUtils.class)
 public class SpongeCommandUtils extends CommandUtils<SpongeCommand> {
 
-    private PluginContainer plugin;
+    private final PluginContainer plugin;
 
     public SpongeCommandUtils() {
-        super(SpongeCommandUtils.builder().owner(DarwinServer.getServer()));
+        this(SpongeCommandUtils.builder().owner(DarwinServer.getServer()));
     }
 
     private SpongeCommandUtils(CommandUtils.Builder<SpongeCommand> builder) {
@@ -90,21 +91,33 @@ public class SpongeCommandUtils extends CommandUtils<SpongeCommand> {
     }
 
     private void generateDocs(SpongeCommand command) {
-        Path commandBus = Sponge.getGame().getGameDirectory().resolve("config").resolve("commandbus");
-        Path file = commandBus.resolve(String.format("%s-%s.md", plugin.getId(), command.getAlias()));
+        Optional<DarwinServerModule> module = DarwinServer.getServer().getModule(DarwinServerModule.class);
+        module.ifPresent(darwinServerModule -> {
+            Path commandBus = DarwinServer.getUtilChecked(FileUtils.class).getDataDirectory(darwinServerModule, "commands");
+            Path file = commandBus.resolve(
+                    String.format("%s-%s.md",
+                            plugin.getId(),
+                            command.getAlias()
+                    )
+            );
 
-        try {
-            Files.createDirectories(commandBus);
-            try (Writer writer = Files.newBufferedWriter(file)) {
-                try (MarkdownWriter mdwriter = new MarkdownWriter(writer)) {
-                    mdwriter.writeHeaders();
-                    for (CommandExecutor e : command.getExecutors()) {
-                        mdwriter.writeCommand(e);
+            try {
+                Files.createDirectories(commandBus);
+                try (Writer writer = Files.newBufferedWriter(file)) {
+                    try (MarkdownWriter mdwriter = new MarkdownWriter(writer)) {
+                        mdwriter.writeHeaders();
+                        for (CommandExecutor e : command.getExecutors()) {
+                            mdwriter.writeCommand(e);
+                        }
                     }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        });
+
+        if (!module.isPresent()) {
+            DarwinServer.getServer().getLogger().error("Could not obtain config module");
         }
     }
 
@@ -116,22 +129,6 @@ public class SpongeCommandUtils extends CommandUtils<SpongeCommand> {
         return new Builder()
                 .elements(elements().build())
                 .commands(SpongeCommand::new);
-    }
-
-    public static SpongeCommandUtils create() {
-        Optional<PluginContainer> plugin = Sponge.getCauseStackManager().getCurrentCause().last(PluginContainer.class);
-
-        if (!plugin.isPresent()) {
-            plugin = Sponge.getCauseStackManager().getContext(EventContextKeys.PLUGIN);
-        }
-
-        PluginContainer container = plugin.orElseThrow(() -> new IllegalStateException("Unable to determine active PluginContainer"));
-
-        return builder().owner(container).build();
-    }
-
-    public static SpongeCommandUtils create(Object plugin) {
-        return builder().owner(plugin).build();
     }
 
     public static class Builder extends CommandUtils.Builder<SpongeCommand> {
@@ -152,10 +149,6 @@ public class SpongeCommandUtils extends CommandUtils<SpongeCommand> {
         public Builder owner(Object plugin) {
             super.owner(plugin);
             return this;
-        }
-
-        public SpongeCommandUtils build() {
-            return super.build(SpongeCommandUtils::new);
         }
     }
 }

@@ -12,8 +12,10 @@ import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.CommandUtils;
 import com.darwinreforged.server.core.util.FileUtils;
 import com.darwinreforged.server.core.util.commands.annotation.Src;
+import com.darwinreforged.server.core.util.commands.command.Command;
 
 import org.reflections.Reflections;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,35 +52,35 @@ public abstract class DarwinServer extends Target {
     protected static final String MODULE_PACKAGE = "com.darwinreforged.server.modules";
     protected static final String UTIL_PACKAGE = "com.darwinreforged.server.core.util";
 
-    public DarwinServer(Class<? extends DarwinServer> implementation) {
-        try {
-            if (server != null) throw new InstantiationException("Singleton instance already exists");
-            server = this;
+    public DarwinServer(Class<? extends DarwinServer> implementation) throws InstantiationException {
+        if (server != null) throw new InstantiationException("Singleton instance already exists");
+        server = this;
+    }
 
-            // Create utility implementations
-            initUtils(implementation);
+    @SuppressWarnings("unchecked")
+    protected void setupPlatform() {
+        // Create utility implementations
+        initUtils(server.getClass());
 
-            // Create event bus
-            this.eventBus = new EventBus();
+        // Create event bus
+        this.eventBus = new EventBus();
 
-            // Import permissions and translations
-            Translations.collect();
-            Permissions.collect();
+        // Create integrated modules (in server jar)
+        System.out.println("Loading integrated modules");
+        initModulePackage(MODULE_PACKAGE, true);
 
-            // Create integrated modules (in server jar)
-            System.out.println("Loading integrated modules");
-            initModulePackage(MODULE_PACKAGE, true);
+        // Create external modules (outside server jar, inside modules folder)
+        System.out.println("Loading external modules");
+        initExternalModules();
+        // Import permissions and translations
+        Translations.collect();
+        Permissions.collect();
 
-            // Create external modules (outside server jar, inside modules folder)
-            System.out.println("Loading external modules");
-            initExternalModules();
-
-            // Setting up commands
-            getUtilChecked(CommandUtils.class).registerPackage(implementation);
-            getUtilChecked(CommandUtils.class).registerPackage(MODULE_PACKAGE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Setting up commands
+        CommandUtils<? extends Command> cu = getUtilChecked(CommandUtils.class);
+        cu.registerPackage(server.getClass());
+        cu.registerPackage(MODULE_PACKAGE);
+        cu.submit();
     }
 
     public static String getVersion() {
@@ -199,6 +201,7 @@ public abstract class DarwinServer extends Target {
                     .getOrDefault(clazz, null);
             return Optional.ofNullable(module);
         } catch (ClassCastException e) {
+            e.printStackTrace();
             return Optional.empty();
         }
     }
@@ -317,6 +320,8 @@ public abstract class DarwinServer extends Target {
     public String getName() {
         return "DarwinServerHost";
     }
+
+    public abstract Logger getLogger();
 
     /**
      Registration states during and after module registration
