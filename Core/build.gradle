@@ -1,3 +1,5 @@
+import java.time.LocalDate
+
 plugins {
     id 'java'
 }
@@ -13,6 +15,7 @@ repositories {
 archivesBaseName = 'core'
 group = project.pluginGroup
 description = 'Common API for Darwin Server modules'
+def date = LocalDate.now().toString()
 
 dependencies {
     implementation 'org.reflections:reflections:0.9.11'
@@ -20,6 +23,24 @@ dependencies {
     compileOnly 'com.google.guava:guava:21.0'
     compile 'org.slf4j:slf4j-api:1.7.25'
     testCompile 'junit:junit:4.12'
+}
+
+processResources {
+    from('src/main/resources') {
+        include 'plugin.properties'
+        expand(
+                version: "$project.version",
+                last_update: "${date}"
+        )
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources"
+        }
+    }
 }
 
 jar {

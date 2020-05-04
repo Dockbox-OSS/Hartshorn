@@ -6,6 +6,7 @@ import com.darwinreforged.server.core.entities.Tuple;
 import com.darwinreforged.server.core.events.util.EventBus;
 import com.darwinreforged.server.core.modules.DisabledModule;
 import com.darwinreforged.server.core.modules.ModuleInfo;
+import com.darwinreforged.server.core.modules.PluginModule;
 import com.darwinreforged.server.core.modules.PluginModuleNative;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -48,17 +50,26 @@ public abstract class DarwinServer extends Target {
 
     protected EventBus eventBus;
     protected static DarwinServer server;
+    private String version;
+    private String lastUpdate;
 
     protected static final String MODULE_PACKAGE = "com.darwinreforged.server.modules";
     protected static final String UTIL_PACKAGE = "com.darwinreforged.server.core.util";
+    public static final String AUTHOR = "GuusLieben";
 
-    public DarwinServer(Class<? extends DarwinServer> implementation) throws InstantiationException {
+    public DarwinServer() throws InstantiationException {
         if (server != null) throw new InstantiationException("Singleton instance already exists");
         server = this;
     }
 
     @SuppressWarnings("unchecked")
-    protected void setupPlatform() {
+    protected void setupPlatform() throws IOException {
+        // Load plugin properties
+        Properties properties = new Properties();
+        properties.load(getClass().getResourceAsStream("/plugin.properties"));
+        version = properties.getOrDefault("version", "Unknown-dev").toString();
+        lastUpdate = properties.getOrDefault("last_update", "Unknown").toString();
+
         // Create utility implementations
         initUtils(server.getClass());
 
@@ -84,8 +95,11 @@ public abstract class DarwinServer extends Target {
     }
 
     public static String getVersion() {
-        String version = DarwinServer.class.getPackage().getImplementationVersion();
-        return (version == null) ? "DEVELOPMENT" : version;
+        return (server == null || server.version == null) ? "Unknown-dev" : server.version;
+    }
+
+    public static String getLastUpdate() {
+        return (server == null || server.lastUpdate == null) ? "Unknown" : server.lastUpdate;
     }
 
     private void initExternalModules() {
@@ -289,7 +303,7 @@ public abstract class DarwinServer extends Target {
 
         AtomicInteger done = new AtomicInteger();
         AtomicInteger failed = new AtomicInteger();
-        pluginModules.forEach(mod -> {
+        pluginModules.stream().filter(mod -> !mod.equals(PluginModule.class)).forEach(mod -> {
             DarwinServer.ModuleRegistration result = registerModule(mod, source);
             System.out.println(String.format("Found module '%s' (integrated:%s) and loaded with result : %s", mod.getCanonicalName(), integrated, result));
             switch (result) {
