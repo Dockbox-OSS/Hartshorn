@@ -39,4 +39,9 @@ public class SpongeFileUtils extends FileUtils {
                 darwinConfigPath.toFile().getParent(),
                 moduleInfo.id().replaceAll("\\.", "_")).toPath()).orElse(darwinConfigPath));
     }
+
+    @Override
+    public Path getLogDirectory() {
+        return Sponge.getGame().getGameDirectory().resolve("logs").toAbsolutePath();
+    }
 }
