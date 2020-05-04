@@ -22,4 +22,4 @@ jobs:
     - stage: 2_build_sponge
       name: "Build Sponge implementation"
       script: gradle build -p Sponge
-      
+

@@ -22,13 +22,13 @@ subprojects { Project subProject ->
     apply plugin: 'maven'
     apply plugin: 'com.github.johnrengelman.shadow'
 
+    def date = LocalDate.now().toString()
     group = project.pluginGroup
-    version = getVersionName()
+    version = "${getVersionName()}-$date"
 
     task copyArtifacts {
         doLast {
             def version = getVersionName()
-            def date = LocalDate.now().toString();
             def DIST_DIR = "${rootDir}/dist/${date}/${version}"
             def SRC_DIR = "${buildDir}/libs"
 
