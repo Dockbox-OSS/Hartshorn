@@ -36,7 +36,7 @@ public class SpongeFileUtils extends FileUtils {
         Path darwinConfigPath = Sponge.getConfigManager().getPluginConfig(DarwinServer.getServer()).getDirectory();
 
         return createPathIfNotExist(infoOptional.map(moduleInfo -> new File(
-                darwinConfigPath.toFile(),
+                darwinConfigPath.toFile().getParent(),
                 moduleInfo.id().replaceAll("\\.", "_")).toPath()).orElse(darwinConfigPath));
     }
 }
