@@ -1,7 +1,6 @@
 package com.darwinreforged.server.modules.internal.moduledata;
 
-import com.darwinreforged.server.core.events.ServerInitEvent;
-import com.darwinreforged.server.core.events.ServerStartedEvent;
+import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.ModuleInfo;
@@ -16,18 +15,17 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@ModuleInfo(id = "darwinmoduledata", name = "Sponge Plugin Data", version = "0.0.2", description = "Collects and stores plugin data", authors = {"DiggyNevs"})
+@ModuleInfo(id = "darwinmoduledata", name = "Darwin Module Data", version = "0.0.2", description = "Collects and stores plugin data", authors = {"GuusLieben"})
 public class DarwinModuleData extends PluginModule {
 
     private final Map<String, Map<String, Object>> data = new HashMap<>();
-    private static File dataFile;
 
     public DarwinModuleData() {
-        dataFile = new File(DarwinServer.getUtilChecked(FileUtils.class).getDataDirectory(this).toFile(), "plugin_data.yml");
     }
 
     @Listener
     public void onServerStart(ServerStartedEvent event) {
+        File dataFile = new File(DarwinServer.getUtilChecked(FileUtils.class).getDataDirectory(this).toFile(), "module_data.yml");
         if (!dataFile.exists()) {
             try {
                 dataFile.getParentFile().mkdirs();
@@ -36,10 +34,6 @@ public class DarwinModuleData extends PluginModule {
                 System.err.println(e.getMessage());
             }
         }
-    }
-
-    @Listener
-    public void onServerFinishLoad(ServerInitEvent event) {
         DarwinServer.getAllModuleInfo().forEach(this::registerPlugin);
         try {
             Yaml yaml = new Yaml();
