@@ -66,7 +66,7 @@ public abstract class DarwinServer extends Target {
     protected void setupPlatform() throws IOException {
         // Load plugin properties
         Properties properties = new Properties();
-        properties.load(getClass().getResourceAsStream("/plugin.properties"));
+        properties.load(getClass().getResourceAsStream("/darwin.properties"));
         version = properties.getOrDefault("version", "Unknown-dev").toString();
         lastUpdate = properties.getOrDefault("last_update", "Unknown").toString();
 

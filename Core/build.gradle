@@ -27,7 +27,7 @@ dependencies {
 
 processResources {
     from('src/main/resources') {
-        include 'plugin.properties'
+        include 'darwin.properties'
         expand(
                 version: "$project.version",
                 last_update: "${date}"
