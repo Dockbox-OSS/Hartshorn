@@ -73,7 +73,7 @@ public abstract class FileUtils {
 
     public <I extends PluginModuleNative> File getYamlConfigFile(I module, boolean createIfNotExists) {
         Path path = getConfigDirectory(module);
-        Optional<ModuleInfo> info = DarwinServer.getServer().getModuleInfo(module.getClass());
+        Optional<ModuleInfo> info = DarwinServer.getModuleInfo(module.getClass());
         if (info.isPresent()) {
             String moduleId = info.get().id();
             File file = new File(path.toFile(), String.format("%s.yml", moduleId));

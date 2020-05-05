@@ -71,18 +71,18 @@ public abstract class DarwinServer extends Target {
         lastUpdate = properties.getOrDefault("last_update", "Unknown").toString();
 
         // Create utility implementations
-        initUtils(server.getClass());
+        scanUtilities(server.getClass());
 
         // Create event bus
         this.eventBus = new EventBus();
 
         // Create integrated modules (in server jar)
         System.out.println("Loading integrated modules");
-        initModulePackage(MODULE_PACKAGE, true);
+        scanModulePackage(MODULE_PACKAGE, true);
 
         // Create external modules (outside server jar, inside modules folder)
         System.out.println("Loading external modules");
-        initExternalModules();
+        loadExternalModules();
         // Import permissions and translations
         Translations.collect();
         Permissions.collect();
@@ -102,7 +102,7 @@ public abstract class DarwinServer extends Target {
         return (server == null || server.lastUpdate == null) ? "Unknown" : server.lastUpdate;
     }
 
-    private void initExternalModules() {
+    private void loadExternalModules() {
         Path modDir = getUtilChecked(FileUtils.class).getModuleDirectory();
         try {
             URL url = modDir.toUri().toURL();
@@ -155,7 +155,7 @@ public abstract class DarwinServer extends Target {
         return new ArrayList<>();
     }
 
-    private void initUtils(Class<? extends DarwinServer> implementation) {
+    private void scanUtilities(Class<? extends DarwinServer> implementation) {
         Reflections abstrPackRef = new Reflections(UTIL_PACKAGE);
         Set<Class<?>> abstractUtils = abstrPackRef.getTypesAnnotatedWith(AbstractUtility.class);
 
@@ -204,12 +204,12 @@ public abstract class DarwinServer extends Target {
 
      @return The optional module
      */
-    public <I extends PluginModuleNative> Optional<I> getModule(Class<I> clazz) {
+    public static <I extends PluginModuleNative> Optional<I> getModule(Class<I> clazz) {
         return getModDataTuple(clazz).map(Tuple::getFirst);
     }
 
     @SuppressWarnings("unchecked")
-    private <I extends PluginModuleNative> Optional<Tuple<I, ModuleInfo>> getModDataTuple(Class<I> clazz) {
+    private static <I extends PluginModuleNative> Optional<Tuple<I, ModuleInfo>> getModDataTuple(Class<I> clazz) {
         try {
             Tuple<I, ModuleInfo> module = (Tuple<I, ModuleInfo>) MODULES
                     .getOrDefault(clazz, null);
@@ -231,7 +231,7 @@ public abstract class DarwinServer extends Target {
 
      @return The optional module info of the registered {@link PluginModuleNative} instance
      */
-    public <I extends PluginModuleNative> Optional<ModuleInfo> getModuleInfo(Class<I> clazz) {
+    public static <I extends PluginModuleNative> Optional<ModuleInfo> getModuleInfo(Class<I> clazz) {
         return getModDataTuple(clazz).map(Tuple::getSecond);
     }
 
@@ -249,7 +249,7 @@ public abstract class DarwinServer extends Target {
 
      @return The resulting state of the registration
      */
-    public ModuleRegistration registerModule(Class<? extends PluginModuleNative> module, String source) {
+    protected ModuleRegistration registerModule(Class<? extends PluginModuleNative> module, String source) {
         Deprecated deprecatedModule = module.getAnnotation(Deprecated.class);
 
         // Disabled module
@@ -293,11 +293,11 @@ public abstract class DarwinServer extends Target {
         return MODULES.values().stream().map(Tuple::getSecond).collect(Collectors.toList());
     }
 
-    public boolean initModulePackage(String pkg, boolean integrated) {
-        return initModulePackage(pkg, integrated, integrated ? "Integrated" : "Unknown");
+    public boolean scanModulePackage(String pkg, boolean integrated) {
+        return scanModulePackage(pkg, integrated, integrated ? "Integrated" : "Unknown");
     }
 
-    public boolean initModulePackage(String pkg, boolean integrated, String source) {
+    public boolean scanModulePackage(String pkg, boolean integrated, String source) {
         Reflections reflections = new Reflections(pkg);
         Set<Class<? extends PluginModuleNative>> pluginModules = reflections
                 .getSubTypesOf(PluginModuleNative.class);

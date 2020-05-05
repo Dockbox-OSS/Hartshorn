@@ -91,7 +91,7 @@ public class SpongeCommandUtils extends CommandUtils<SpongeCommand> {
     }
 
     private void generateDocs(SpongeCommand command) {
-        Optional<DarwinServerModule> module = DarwinServer.getServer().getModule(DarwinServerModule.class);
+        Optional<DarwinServerModule> module = DarwinServer.getModule(DarwinServerModule.class);
         module.ifPresent(darwinServerModule -> {
             Path commandBus = DarwinServer.getUtilChecked(FileUtils.class).getDataDirectory(darwinServerModule, "commands");
             Path file = commandBus.resolve(

@@ -92,7 +92,7 @@ public enum Permissions {
     }
 
     public static void collect() {
-        DarwinServer.getServer().getModule(DarwinServerModule.class).ifPresent(module -> {
+        DarwinServer.getModule(DarwinServerModule.class).ifPresent(module -> {
             Map<String, Object> configMap;
             File file = new File(DarwinServer.getUtilChecked(FileUtils.class).getConfigDirectory(module).toFile(), "permissions.yml");
             if (!file.exists()) {
