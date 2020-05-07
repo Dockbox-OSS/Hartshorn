@@ -76,4 +76,11 @@ public class SpongeLocationUtils extends LocationUtils {
     public int getPlayerCountInWorld(DarwinWorld world) {
         return Sponge.getServer().getWorld(world.getWorldUUID()).map(value -> value.getPlayers().size()).orElse(0);
     }
+
+    @Override
+    public void unloadWorld(DarwinWorld world) {
+        Optional<World> optionalWorld = Sponge.getServer().getWorld(world.getWorldUUID());
+        // World isn't present if already unloaded
+        optionalWorld.ifPresent(sw -> Sponge.getServer().unloadWorld(sw));
+    }
 }

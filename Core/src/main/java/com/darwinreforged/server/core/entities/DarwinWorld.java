@@ -26,4 +26,8 @@ public class DarwinWorld {
     public int getPlayerCount() {
         return DarwinServer.getUtilChecked(LocationUtils.class).getPlayerCountInWorld(this);
     }
+
+    public void unloadWorld() {
+        DarwinServer.getUtilChecked(LocationUtils.class).unloadWorld(this);
+    }
 }

@@ -30,4 +30,6 @@ public abstract class LocationUtils {
     }
 
     public abstract int getPlayerCountInWorld(DarwinWorld world);
+
+    public abstract void unloadWorld(DarwinWorld world);
 }

@@ -66,6 +66,7 @@ public enum Permissions {
     SCHEMATIC_BRUSH_SET_USE("schematicbrush.set.use"),
     SCHEMATIC_BRUSH_LIST("schematicbrush.list"),
     SCHEMATIC_BRUSH_SET("schematicbrush.set.{0}"),
+    WU_ADD("darwin.admin.worldunload"),
     ADMIN_BYPASS("darwin.admin.bypass-all");
 
     private String permission;

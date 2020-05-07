@@ -454,7 +454,10 @@ public enum Translations {
     DARWIN_SERVER_VERSION("$2&lDarwin Server &r$3($1Version$3: $1{0}$3)"),
     DARWIN_SERVER_UPDATE("$2&lLast updated&r$3: $1{0}"),
     DARWIN_SERVER_AUTHOR("$2&lAuthor&r$3: $1{0}"),
-    DARWIN_SERVER_MODULE_HEAD("$2&lModules&r$3:");
+    DARWIN_SERVER_MODULE_HEAD("$2&lModules&r$3:"),
+
+    //   World Unloader
+    WU_ADDED("$1Added $2{0} $1to the unload blacklist");
 
     private String s;
 
