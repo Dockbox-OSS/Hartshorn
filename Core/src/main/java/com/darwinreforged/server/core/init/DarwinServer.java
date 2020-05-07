@@ -189,8 +189,8 @@ public abstract class DarwinServer extends Target {
 
     public abstract ServerType getServerType();
 
-    public EventBus getEventBus() {
-        return eventBus;
+    public static EventBus getEventBus() {
+        return getServer().eventBus;
     }
 
     @SuppressWarnings("unchecked")

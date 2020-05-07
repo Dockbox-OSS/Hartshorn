@@ -2,7 +2,6 @@ package com.darwinreforged.server.sponge;
 
 import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.events.internal.ServerInitEvent;
-import com.darwinreforged.server.core.events.internal.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.init.ServerType;
@@ -20,7 +19,6 @@ import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
@@ -63,13 +61,9 @@ public class DarwinServerSponge extends DarwinServer {
     }
 
     @Listener
-    public void onServerReload(GameReloadEvent event) {
-        eventBus.post(new ServerReloadEvent(null));
-    }
-
-    @Listener
     public void onServerInit(GameInitializationEvent event) throws IOException {
         setupPlatform();
+        Sponge.getEventManager().registerListeners(this, new SpongeListener());
         eventBus.post(new ServerInitEvent(null));
     }
 
