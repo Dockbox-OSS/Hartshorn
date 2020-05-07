@@ -24,6 +24,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +42,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("UnusedReturnValue")
 public abstract class DarwinServer extends Target {
 
     protected static final Map<Class<? extends PluginModuleNative>, Tuple<PluginModuleNative, ModuleInfo>> MODULES = new HashMap<>();
@@ -107,52 +109,65 @@ public abstract class DarwinServer extends Target {
         try {
             URL url = modDir.toUri().toURL();
             System.out.println(String.format("Scanning %s for additional modules", url.toString()));
-            Arrays
-                    .stream(Objects.requireNonNull(modDir.toFile().listFiles()))
+            Arrays.stream(Objects.requireNonNull(modDir.toFile().listFiles()))
                     .filter(f -> f.getName().endsWith(".jar"))
-                    .forEach(moduleCandidate -> {
-                        try {
-                            List<String> scannableModules = getScannableModules(moduleCandidate);
-                            scannableModules.forEach(pkg -> {
-                                boolean isModFile = initModulePackage(pkg, false, moduleCandidate.getName());
-                                if (!isModFile) System.out.println(String.format("Found non-module file '%s'", moduleCandidate.getName()));
-                                else System.out.println(String.format("Done loading module file '%s'", moduleCandidate.getName()));
-                            });
-                        } catch (IOException | ClassNotFoundException e) {
-                            System.err.println("Failed to register potential module : " + moduleCandidate.toString());
-                            System.err.println(e.getMessage());
-                        }
-                    });
+                    .forEach(this::scanModulesInFile);
         } catch (MalformedURLException e) {
             System.err.println("Failed to load additional modules");
             System.err.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    private List<String> getScannableModules(File file) throws IOException, IllegalArgumentException, ClassNotFoundException {
-        if (file != null && file.exists() && file.getName().endsWith(".jar")) {
-            List<String> scannablePackages = new ArrayList<>();
-            try (JarFile jarFile = new JarFile(file)) {
+    @SuppressWarnings("unchecked")
+    private void scanModulesInFile(File moduleCandidate) {
+        if (moduleCandidate != null && moduleCandidate.exists() && moduleCandidate.getName().endsWith(".jar")) {
+            try (URLClassLoader ucl = URLClassLoader.newInstance(
+                    new URL[]{moduleCandidate.toURI().toURL()},
+                    this.getClass().getClassLoader());
+                 JarFile jarFile = new JarFile(moduleCandidate)
+            ) {
+
                 Enumeration<JarEntry> entries = jarFile.entries();
+
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
                     if (entry.getName().endsWith(".class")) {
-                        String name = entry.getName();
-                        name = name.substring(0, name.lastIndexOf(".class"));
-                        if (name.contains("/"))
-                            name = name.replaceAll("/", ".");
-                        if (name.contains("\\"))
-                            name = name.replaceAll("\\\\", ".");
+                        Class<?> clazz;
+                        String className = entry.getName().replace("/", ".").replace(".class", "");
+                        try {
+                            // Inject into classpath
+                            try {
+                                clazz = ucl.loadClass(className);
+                            } catch (ClassNotFoundException e) {
+                                clazz = Class.forName(className, true, ucl);
+                            }
 
-                        Class<?> clazz = Class.forName(name);
-                        String packageName = clazz.getPackage().getName();
-                        scannablePackages.add(packageName);
+                            // As classes are external it doesn't match Class types, generic string values are however the same
+                            if (clazz.getSuperclass().toGenericString().equals(PluginModuleNative.class.toGenericString()) || clazz.getSuperclass().toGenericString().equals(PluginModule.class.toGenericString())) {
+                                // Make sure there is a constructor applicable before accepting it
+                                clazz.newInstance();
+
+                                // Require modules to have a dedicated package
+                                if (clazz.getPackage() == null) {
+                                    System.err.printf("Found module candidate without defined package '%s' at %s%n", className, moduleCandidate.getName());
+                                    continue;
+                                }
+
+                                Class<? extends PluginModuleNative> modClass = (Class<? extends PluginModuleNative>) clazz;
+                                registerClasses(moduleCandidate.getName(), modClass);
+                            }
+                        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
+            } catch (IOException e) {
+                System.err.println("Failed to register potential module : " + moduleCandidate.toString());
+                System.err.println(e.getMessage());
+                e.printStackTrace();
             }
-            return scannablePackages;
         }
-        return new ArrayList<>();
     }
 
     private void scanUtilities(Class<? extends DarwinServer> implementation) {
@@ -294,20 +309,14 @@ public abstract class DarwinServer extends Target {
     }
 
     public boolean scanModulePackage(String pkg, boolean integrated) {
-        return scanModulePackage(pkg, integrated, integrated ? "Integrated" : "Unknown");
+        return scanModulePackage(pkg, integrated ? "Integrated" : "Unknown");
     }
 
-    public boolean scanModulePackage(String pkg, boolean integrated, String source) {
-        Reflections reflections = new Reflections(pkg);
-        Set<Class<? extends PluginModuleNative>> pluginModules = reflections
-                .getSubTypesOf(PluginModuleNative.class);
-        if (pluginModules.isEmpty()) return false;
-
+    private void registerClasses(String source, Class<? extends PluginModuleNative>... pluginModules) {
         AtomicInteger done = new AtomicInteger();
         AtomicInteger failed = new AtomicInteger();
-        pluginModules.stream().filter(mod -> !mod.equals(PluginModule.class)).forEach(mod -> {
+        Arrays.stream(pluginModules).filter(mod -> !mod.equals(PluginModule.class)).forEach(mod -> {
             DarwinServer.ModuleRegistration result = registerModule(mod, source);
-            System.out.println(String.format("Found module '%s' (integrated:%s) and loaded with result : %s", mod.getCanonicalName(), integrated, result));
             switch (result) {
                 case DEPRECATED_AND_FAIL:
                 case FAILED:
@@ -321,7 +330,17 @@ public abstract class DarwinServer extends Target {
                     break;
             }
         });
+    }
 
+    @SuppressWarnings("unchecked")
+    public boolean scanModulePackage(String packageString, String source) {
+        if ("".equals(packageString)) return false;
+        Reflections reflections = new Reflections(packageString);
+        Set<Class<? extends PluginModuleNative>> pluginModules = reflections
+                .getSubTypesOf(PluginModuleNative.class);
+        if (pluginModules.isEmpty()) return false;
+
+        registerClasses(source, pluginModules.toArray(new Class[0]));
         return true;
     }
 
