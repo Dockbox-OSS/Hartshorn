@@ -76,4 +76,15 @@ public class SpongePlayerUtils extends PlayerUtils {
                 .flatMap(spp -> spp.getItemInHand(primaryHand ? HandTypes.MAIN_HAND : HandTypes.OFF_HAND));
         return itemStack.map(DarwinItem::new).orElse(null);
     }
+
+    @Override
+    public GameModes getGameMode(DarwinPlayer player) {
+        return Sponge.getServer().getPlayer(player.getUuid()).flatMap(sp -> sp.getGameModeData().get(Keys.GAME_MODE)).map(gm -> {
+            try {
+                return Enum.valueOf(GameModes.class, gm.getName().toUpperCase());
+            } catch (NullPointerException | IllegalArgumentException e) {
+                return GameModes.UNKNOWN;
+            }
+        }).orElse(GameModes.UNKNOWN);
+    }
 }

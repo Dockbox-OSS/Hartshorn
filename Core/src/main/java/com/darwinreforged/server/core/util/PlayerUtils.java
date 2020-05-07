@@ -42,4 +42,5 @@ public abstract class PlayerUtils {
         return player.getUuid().equals(getConsoleId());
     }
 
+    public abstract GameModes getGameMode(DarwinPlayer player);
 }
