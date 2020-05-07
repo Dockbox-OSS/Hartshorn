@@ -66,13 +66,13 @@ public class Param {
         if (parameter.isAnnotationPresent(Join.class)) {
             return Type.JOIN;
         }
-        if (parameter.isAnnotationPresent(Src.class)) {
+        else if (parameter.isAnnotationPresent(Src.class)) {
             return Type.SOURCE;
         }
-        if (parameter.getType() == Flags.class) {
+        else if (parameter.getType() == Flags.class) {
             return Type.FLAG;
         }
-        if (parameter.getType() == Collection.class) {
+        else if (parameter.getType() == Collection.class) {
             return Type.ANY;
         }
         if (parameter.isVarArgs() || parameter.getType().isArray()) {
