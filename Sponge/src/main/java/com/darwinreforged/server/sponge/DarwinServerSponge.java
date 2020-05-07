@@ -8,6 +8,7 @@ import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.init.ServerType;
 import com.darwinreforged.server.core.modules.DisabledModule;
 import com.darwinreforged.server.core.modules.Module;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.PlayerUtils;
 import com.darwinreforged.server.core.util.commands.annotation.Command;
@@ -73,7 +74,7 @@ public class DarwinServerSponge extends DarwinServer {
     }
 
     @Override
-    @Permission("darwin.server.admin")
+    @Permission(Permissions.ADMIN_BYPASS)
     @Description("Returns active and failed modules to the player")
     @Command("dserver")
     public void commandList(@Src DarwinPlayer player) {

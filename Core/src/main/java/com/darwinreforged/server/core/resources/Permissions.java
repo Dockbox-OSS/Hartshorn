@@ -65,7 +65,8 @@ public enum Permissions {
     TRUSTLIMIT_UNLOCKED("ptl.unlocked"),
     SCHEMATIC_BRUSH_SET_USE("schematicbrush.set.use"),
     SCHEMATIC_BRUSH_LIST("schematicbrush.list"),
-    SCHEMATIC_BRUSH_SET("schematicbrush.set.{0}");
+    SCHEMATIC_BRUSH_SET("schematicbrush.set.{0}"),
+    ADMIN_BYPASS("darwin.admin.bypass-all");
 
     private String permission;
 
