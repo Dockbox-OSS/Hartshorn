@@ -1,5 +1,6 @@
 package com.darwinreforged.server.core.util.commands.annotation.processor;
 
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.util.commands.annotation.Command;
 import com.darwinreforged.server.core.util.commands.annotation.Description;
 import com.darwinreforged.server.core.util.commands.annotation.Flag;
@@ -187,17 +188,8 @@ public class Processor {
     private Permission getPermission(Method method, Token root, List<Token> tokens) {
         Permission permission = method.getAnnotation(Permission.class);
 
-        final String node;
         final Role role = permission == null ? EMPTY_ROLE : permission.role();
-
-        if (permission == null) {
-            node = "";
-        } else if (permission.value().isEmpty()) {
-            node = join(root, tokens, registrar.getManager().getOwnerId(), ".", "", "");
-        } else {
-            node = permission.value();
-        }
-
+        final Permissions node = permission == null ? Permissions.ADMIN_BYPASS : permission.value();
         return new Permission() {
 
             @Override
@@ -206,8 +198,8 @@ public class Processor {
             }
 
             @Override
-            public String value() {
-                return node;
+            public Permissions value() {
+                return permission.value();
             }
 
             @Override

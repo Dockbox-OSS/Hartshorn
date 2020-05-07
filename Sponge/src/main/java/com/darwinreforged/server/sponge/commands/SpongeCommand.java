@@ -73,7 +73,7 @@ public class SpongeCommand extends Command implements CommandCallable {
     @Override
     public boolean testPermission(CommandSource source) {
         for (CommandExecutor e : getExecutors()) {
-            if (testPermission(ofSource(source), e.getPermission().value())) {
+            if (testPermission(ofSource(source), e.getPermission().value().p())) {
                 return true;
             }
         }
@@ -115,7 +115,7 @@ public class SpongeCommand extends Command implements CommandCallable {
         Text.Builder builder = Text.builder();
 
         getExecutors().stream()
-                .filter(e -> testPermission(ofSource(source), e.getPermission().value()))
+                .filter(e -> testPermission(ofSource(source), e.getPermission().value().p()))
                 .sorted(Comparator.comparing(e -> e.getUsage().value()))
                 .map(e -> Text.builder("/" + e.getUsage().value())
                         .onHover(TextActions.showText(Text.of(e.getDescription().value())))

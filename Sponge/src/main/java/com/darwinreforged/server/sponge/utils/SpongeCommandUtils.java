@@ -75,13 +75,9 @@ public class SpongeCommandUtils extends CommandUtils<SpongeCommand> {
 
         for (CommandExecutor e : command.getExecutors()) {
             Permission permission = e.getPermission();
-            if (permission.value().isEmpty()) {
-                continue;
-            }
-
             PermissionDescription.Builder builder = service.newDescriptionBuilder(getOwner());
             builder.description(Text.of("Allows use of /", e.getUsage().value()));
-            builder.id(permission.value());
+            builder.id(permission.value().p());
             if (!permission.role().value().isEmpty()) {
                 builder.assign(permission.role().value(), permission.role().permit());
             }

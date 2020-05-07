@@ -1,5 +1,7 @@
 package com.darwinreforged.server.core.util.commands.annotation;
 
+import com.darwinreforged.server.core.resources.Permissions;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -11,7 +13,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 public @interface Permission {
 
-    String value() default "";
+    Permissions value();
 
     Role role() default @Role("");
 }

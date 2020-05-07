@@ -22,7 +22,7 @@ public class MarkdownWriter implements Closeable {
 
     public MarkdownWriter writeCommand(CommandExecutor executor) {
         String command = ifEmpty(executor.getUsage().value(), "undefined");
-        String permission = ifEmpty(executor.getPermission().value(), " ");
+        String permission = ifEmpty(executor.getPermission().value().p(), " ");
         String description = ifEmpty(executor.getDescription().value(), "undefined");
         return newLine().write(String.format("| `%s` | `%s` | %s |", command, permission, description));
     }

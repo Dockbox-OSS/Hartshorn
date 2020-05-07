@@ -29,7 +29,7 @@ public class Command {
         List<CommandException> exceptions = new ArrayList<>(executors.size());
 
         for (CommandExecutor executor : executors) {
-            String permission = executor.getPermission().value();
+            String permission = executor.getPermission().value().p();
             if (testPermission(source, permission)) {
                 Context context;
 
@@ -64,14 +64,14 @@ public class Command {
 
         if (!input.hasNext()) {
             for (CommandExecutor executor : executors) {
-                if (testPermission(source, executor.getPermission().value())) {
+                if (testPermission(source, executor.getPermission().value().p())) {
                     executor.getFirstSuggestion(source, input, suggestions);
                 }
             }
             Collections.sort(suggestions);
         } else {
             for (CommandExecutor executor : executors) {
-                if (testPermission(source, executor.getPermission().value())) {
+                if (testPermission(source, executor.getPermission().value().p())) {
                     executor.getSuggestions(source, input, suggestions);
                 }
             }
