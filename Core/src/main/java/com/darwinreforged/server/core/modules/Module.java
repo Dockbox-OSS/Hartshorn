@@ -10,15 +10,15 @@ import java.lang.annotation.Target;
 public @interface Module {
     String id();
 
-    String name() default "";
+    String name();
 
-    String version() default "";
+    String version() default "InDev";
 
-    String description() default "";
+    String description();
 
-    String url() default "";
+    String url() default "none";
 
-    String[] authors() default {};
+    String[] authors();
 
-    String source() default "";
+    String source() default "Unknown";
 }
