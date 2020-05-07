@@ -5,8 +5,10 @@ import com.darwinreforged.server.core.entities.DarwinLocation;
 import com.darwinreforged.server.core.entities.DarwinWorld;
 import com.darwinreforged.server.core.init.AbstractUtility;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @AbstractUtility("Location calculations and conversion methods")
 public abstract class LocationUtils {
@@ -21,4 +23,11 @@ public abstract class LocationUtils {
 
     public abstract Optional<DarwinWorld> getWorld(String name);
 
+    public abstract Collection<DarwinWorld> getAllWorlds();
+
+    public Collection<DarwinWorld> getEmptyWorlds() {
+        return getAllWorlds().stream().filter(w -> w.getPlayerCount() == 0).collect(Collectors.toList());
+    }
+
+    public abstract int getPlayerCountInWorld(DarwinWorld world);
 }

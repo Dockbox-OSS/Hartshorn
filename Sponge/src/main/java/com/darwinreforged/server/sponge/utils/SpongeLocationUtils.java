@@ -12,8 +12,10 @@ import org.spongepowered.api.util.blockray.BlockRay;
 import org.spongepowered.api.util.blockray.BlockRayHit;
 import org.spongepowered.api.world.World;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @UtilityImplementation(LocationUtils.class)
 public class SpongeLocationUtils extends LocationUtils {
@@ -61,5 +63,17 @@ public class SpongeLocationUtils extends LocationUtils {
     public Optional<DarwinWorld> getWorld(String name) {
         Optional<World> optionalWorld = Sponge.getServer().loadWorld(name);
         return optionalWorld.map(world -> new DarwinWorld(world.getUniqueId(), world.getName()));
+    }
+
+    @Override
+    public Collection<DarwinWorld> getAllWorlds() {
+        return Sponge.getServer().getWorlds().stream()
+                .map(sw -> new DarwinWorld(sw.getUniqueId(), sw.getName()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getPlayerCountInWorld(DarwinWorld world) {
+        return Sponge.getServer().getWorld(world.getWorldUUID()).map(value -> value.getPlayers().size()).orElse(0);
     }
 }

@@ -1,5 +1,8 @@
 package com.darwinreforged.server.core.entities;
 
+import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.util.LocationUtils;
+
 import java.util.UUID;
 
 public class DarwinWorld {
@@ -18,5 +21,9 @@ public class DarwinWorld {
 
     public String getName() {
         return name;
+    }
+
+    public int getPlayerCount() {
+        return DarwinServer.getUtilChecked(LocationUtils.class).getPlayerCountInWorld(this);
     }
 }
