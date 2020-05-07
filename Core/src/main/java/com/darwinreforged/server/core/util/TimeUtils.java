@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.TimeUnit;
 
-public class TimeUtils {
+public abstract class TimeUtils {
 
     public static LocalDateTime localDateTimeFromMillis(long millis) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
@@ -46,6 +46,28 @@ public class TimeUtils {
         if (difference.getSeconds() > 20) return Translations.TIME_SECONDS_AGO.f(difference.getSeconds());
 
         return Translations.TIME_JUST_NOW.s();
+    }
+
+    public abstract Scheduler schedule();
+
+    public abstract static class Scheduler {
+
+        public abstract Scheduler async();
+
+        public abstract Scheduler name(String name);
+
+        public abstract Scheduler delay(long delay, TimeUnit unit);
+
+        public abstract Scheduler delayTicks(long delay);
+
+        public abstract Scheduler interval(long delay, TimeUnit unit);
+
+        public abstract Scheduler intervalTicks(long delay);
+
+        public abstract Scheduler execute(Runnable runnable);
+
+        public abstract void submit();
+
     }
 
 }
