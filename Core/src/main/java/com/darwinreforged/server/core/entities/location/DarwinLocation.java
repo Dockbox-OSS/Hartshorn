@@ -1,4 +1,6 @@
-package com.darwinreforged.server.core.entities;
+package com.darwinreforged.server.core.entities.location;
+
+import com.darwinreforged.server.core.entities.math.AbstractVector3;
 
 public class DarwinLocation {
 

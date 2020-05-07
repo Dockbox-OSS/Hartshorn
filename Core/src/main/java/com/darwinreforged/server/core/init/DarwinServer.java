@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.init;
 
-import com.darwinreforged.server.core.entities.DarwinPlayer;
-import com.darwinreforged.server.core.entities.Target;
+import com.darwinreforged.server.core.entities.living.DarwinPlayer;
+import com.darwinreforged.server.core.entities.living.Target;
 import com.darwinreforged.server.core.entities.Tuple;
 import com.darwinreforged.server.core.events.util.EventBus;
 import com.darwinreforged.server.core.modules.DisabledModule;

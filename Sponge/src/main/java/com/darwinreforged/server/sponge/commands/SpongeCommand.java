@@ -1,6 +1,6 @@
 package com.darwinreforged.server.sponge.commands;
 
-import com.darwinreforged.server.core.entities.DarwinPlayer;
+import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.util.PlayerUtils;
 import com.darwinreforged.server.core.util.commands.command.Command;

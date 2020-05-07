@@ -1,15 +1,17 @@
 package com.darwinreforged.server.sponge.utils;
 
-import com.darwinreforged.server.core.entities.DarwinItem;
-import com.darwinreforged.server.core.entities.DarwinLocation;
-import com.darwinreforged.server.core.entities.DarwinPlayer;
-import com.darwinreforged.server.core.entities.DarwinWorld;
-import com.darwinreforged.server.core.entities.Vector3d;
+import com.darwinreforged.server.core.entities.living.DarwinPlayer;
+import com.darwinreforged.server.core.entities.living.inventory.DarwinItem;
+import com.darwinreforged.server.core.entities.living.state.GameModes;
+import com.darwinreforged.server.core.entities.location.DarwinLocation;
+import com.darwinreforged.server.core.entities.location.DarwinWorld;
+import com.darwinreforged.server.core.entities.math.Vector3d;
 import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.PlayerUtils;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;

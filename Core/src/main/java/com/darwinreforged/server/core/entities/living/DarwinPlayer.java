@@ -1,5 +1,7 @@
-package com.darwinreforged.server.core.entities;
+package com.darwinreforged.server.core.entities.living;
 
+import com.darwinreforged.server.core.entities.living.state.GameModes;
+import com.darwinreforged.server.core.entities.location.DarwinLocation;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.util.PlayerUtils;
 
@@ -40,6 +42,10 @@ public class DarwinPlayer extends Target {
 
     public Optional<DarwinLocation> getLocation() {
         return DarwinServer.getUtilChecked(PlayerUtils.class).getLocation(this);
+    }
+
+    public GameModes getGameMode() {
+        return DarwinServer.getUtilChecked(PlayerUtils.class).getGameMode(this);
     }
 
 }

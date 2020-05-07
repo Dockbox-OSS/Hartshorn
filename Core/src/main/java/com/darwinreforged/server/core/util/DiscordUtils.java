@@ -1,6 +1,6 @@
 package com.darwinreforged.server.core.util;
 
-import com.darwinreforged.server.core.entities.DiscordEmbed;
+import com.darwinreforged.server.core.entities.discord.DiscordEmbed;
 import com.darwinreforged.server.core.init.AbstractUtility;
 
 @AbstractUtility("Discord connection and messaging utilities")

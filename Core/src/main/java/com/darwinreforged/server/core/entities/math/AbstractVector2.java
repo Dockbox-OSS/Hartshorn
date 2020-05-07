@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.entities;
+package com.darwinreforged.server.core.entities.math;
 
 public class AbstractVector2<N extends Number> {
 

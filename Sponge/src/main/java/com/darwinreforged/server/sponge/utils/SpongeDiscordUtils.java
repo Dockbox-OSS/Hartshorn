@@ -1,6 +1,6 @@
 package com.darwinreforged.server.sponge.utils;
 
-import com.darwinreforged.server.core.entities.DiscordEmbed;
+import com.darwinreforged.server.core.entities.discord.DiscordEmbed;
 import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.util.DiscordUtils;
 

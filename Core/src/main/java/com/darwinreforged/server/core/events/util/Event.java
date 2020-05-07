@@ -1,6 +1,6 @@
 package com.darwinreforged.server.core.events.util;
 
-import com.darwinreforged.server.core.entities.Target;
+import com.darwinreforged.server.core.entities.living.Target;
 
 /**
  * Represents an event.

@@ -1,6 +1,6 @@
 package com.darwinreforged.server.sponge;
 
-import com.darwinreforged.server.core.entities.DarwinPlayer;
+import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.events.internal.ServerInitEvent;
 import com.darwinreforged.server.core.events.internal.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.ServerStartedEvent;

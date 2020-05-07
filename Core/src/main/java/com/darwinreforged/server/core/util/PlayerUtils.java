@@ -1,8 +1,9 @@
 package com.darwinreforged.server.core.util;
 
-import com.darwinreforged.server.core.entities.DarwinItem;
-import com.darwinreforged.server.core.entities.DarwinLocation;
-import com.darwinreforged.server.core.entities.DarwinPlayer;
+import com.darwinreforged.server.core.entities.living.inventory.DarwinItem;
+import com.darwinreforged.server.core.entities.living.state.GameModes;
+import com.darwinreforged.server.core.entities.location.DarwinLocation;
+import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.init.AbstractUtility;
 
 import java.util.Optional;

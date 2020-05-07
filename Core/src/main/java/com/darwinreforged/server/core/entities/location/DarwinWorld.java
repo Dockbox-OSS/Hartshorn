@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.entities;
+package com.darwinreforged.server.core.entities.location;
 
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.util.LocationUtils;

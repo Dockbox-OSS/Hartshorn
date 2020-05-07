@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.entities;
+package com.darwinreforged.server.core.entities.math;
 
 public class Vector3i extends AbstractVector3<Integer> {
 

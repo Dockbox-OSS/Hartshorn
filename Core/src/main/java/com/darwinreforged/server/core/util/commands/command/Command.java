@@ -1,6 +1,6 @@
 package com.darwinreforged.server.core.util.commands.command;
 
-import com.darwinreforged.server.core.entities.DarwinPlayer;
+import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.resources.Translations;
 import com.google.common.collect.ImmutableList;
 

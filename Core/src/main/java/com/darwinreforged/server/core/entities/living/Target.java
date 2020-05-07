@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.entities;
+package com.darwinreforged.server.core.entities.living;
 
 import java.util.UUID;
 

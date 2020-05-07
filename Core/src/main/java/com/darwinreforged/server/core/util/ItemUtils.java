@@ -1,6 +1,6 @@
 package com.darwinreforged.server.core.util;
 
-import com.darwinreforged.server.core.entities.DarwinItem;
+import com.darwinreforged.server.core.entities.living.inventory.DarwinItem;
 import com.darwinreforged.server.core.init.AbstractUtility;
 
 @AbstractUtility("ItemStack manipulation utilities")

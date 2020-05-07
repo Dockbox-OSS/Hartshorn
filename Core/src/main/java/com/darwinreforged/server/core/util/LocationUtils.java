@@ -1,8 +1,8 @@
 package com.darwinreforged.server.core.util;
 
-import com.darwinreforged.server.core.entities.AbstractVector2;
-import com.darwinreforged.server.core.entities.DarwinLocation;
-import com.darwinreforged.server.core.entities.DarwinWorld;
+import com.darwinreforged.server.core.entities.math.AbstractVector2;
+import com.darwinreforged.server.core.entities.location.DarwinLocation;
+import com.darwinreforged.server.core.entities.location.DarwinWorld;
 import com.darwinreforged.server.core.init.AbstractUtility;
 
 import java.util.Collection;

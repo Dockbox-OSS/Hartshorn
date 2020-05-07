@@ -1,6 +1,6 @@
 package com.darwinreforged.server.core.events;
 
-import com.darwinreforged.server.core.entities.Target;
+import com.darwinreforged.server.core.entities.living.Target;
 
 public abstract class AbstractEvent {
     private Target target;
