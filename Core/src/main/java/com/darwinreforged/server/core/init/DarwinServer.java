@@ -5,9 +5,7 @@ import com.darwinreforged.server.core.entities.Target;
 import com.darwinreforged.server.core.entities.Tuple;
 import com.darwinreforged.server.core.events.util.EventBus;
 import com.darwinreforged.server.core.modules.DisabledModule;
-import com.darwinreforged.server.core.modules.ModuleInfo;
-import com.darwinreforged.server.core.modules.PluginModule;
-import com.darwinreforged.server.core.modules.PluginModuleNative;
+import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.CommandUtils;
@@ -45,7 +43,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("UnusedReturnValue")
 public abstract class DarwinServer extends Target {
 
-    protected static final Map<Class<? extends PluginModuleNative>, Tuple<PluginModuleNative, ModuleInfo>> MODULES = new HashMap<>();
+    protected static final Map<Class<?>, Tuple<Object, Module>> MODULES = new HashMap<>();
     protected static final Map<String, String> MODULE_SOURCES = new HashMap<>();
     protected static final List<String> FAILED_MODULES = new ArrayList<>();
     protected static final Map<Class<?>, Object> UTILS = new HashMap<>();
@@ -119,7 +117,6 @@ public abstract class DarwinServer extends Target {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void scanModulesInFile(File moduleCandidate) {
         if (moduleCandidate != null && moduleCandidate.exists() && moduleCandidate.getName().endsWith(".jar")) {
             try (URLClassLoader ucl = URLClassLoader.newInstance(
@@ -144,7 +141,7 @@ public abstract class DarwinServer extends Target {
                             }
 
                             // As classes are external it doesn't match Class types, generic string values are however the same
-                            if (clazz.getSuperclass().toGenericString().equals(PluginModuleNative.class.toGenericString()) || clazz.getSuperclass().toGenericString().equals(PluginModule.class.toGenericString())) {
+                            if (clazz.isAnnotationPresent(Module.class)) {
                                 // Make sure there is a constructor applicable before accepting it
                                 clazz.newInstance();
 
@@ -154,8 +151,7 @@ public abstract class DarwinServer extends Target {
                                     continue;
                                 }
 
-                                Class<? extends PluginModuleNative> modClass = (Class<? extends PluginModuleNative>) clazz;
-                                registerClasses(moduleCandidate.getName(), modClass);
+                                registerClasses(moduleCandidate.getName(), clazz);
                             }
                         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
                             e.printStackTrace();
@@ -210,25 +206,20 @@ public abstract class DarwinServer extends Target {
     }
 
     /**
-     Obtains the instance of the provided {@link PluginModuleNative} class.
-
-     @param <I>
-     The class type extending {@link PluginModuleNative}
-     @param clazz
-     The class of type {@link I}
+     Obtains the instance of the provided Module class.
 
      @return The optional module
      */
-    public static <I extends PluginModuleNative> Optional<I> getModule(Class<I> clazz) {
+    public static <I> Optional<I> getModule(Class<I> clazz) {
         return getModDataTuple(clazz).map(Tuple::getFirst);
     }
 
     @SuppressWarnings("unchecked")
-    private static <I extends PluginModuleNative> Optional<Tuple<I, ModuleInfo>> getModDataTuple(Class<I> clazz) {
+    private static <I> Optional<Tuple<I, Module>> getModDataTuple(Class<I> clazz) {
         try {
-            Tuple<I, ModuleInfo> module = (Tuple<I, ModuleInfo>) MODULES
+            Tuple<Object, Module> module = MODULES
                     .getOrDefault(clazz, null);
-            return Optional.ofNullable(module);
+            return Optional.ofNullable((Tuple<I, Module>) module);
         } catch (ClassCastException e) {
             e.printStackTrace();
             return Optional.empty();
@@ -236,17 +227,15 @@ public abstract class DarwinServer extends Target {
     }
 
     /**
-     Obtains the instance of the provided {@link PluginModuleNative} class. If present, returns the registered @{@link
-    ModuleInfo} object of the instance.
+     Obtains the instance of the provided Module class. If present, returns the registered @{@link
+    Module} object of the instance.
 
-     @param <I>
-     The class type extending {@link PluginModuleNative}
      @param clazz
-     The class of type {@link I}
+     The class type
 
-     @return The optional module info of the registered {@link PluginModuleNative} instance
+     @return The optional module info of the registered Module instance
      */
-    public static <I extends PluginModuleNative> Optional<ModuleInfo> getModuleInfo(Class<I> clazz) {
+    public static Optional<Module> getModuleInfo(Class<?> clazz) {
         return getModDataTuple(clazz).map(Tuple::getSecond);
     }
 
@@ -264,7 +253,7 @@ public abstract class DarwinServer extends Target {
 
      @return The resulting state of the registration
      */
-    protected ModuleRegistration registerModule(Class<? extends PluginModuleNative> module, String source) {
+    protected ModuleRegistration registerModule(Class<?> module, String source) {
         Deprecated deprecatedModule = module.getAnnotation(Deprecated.class);
 
         // Disabled module
@@ -274,10 +263,10 @@ public abstract class DarwinServer extends Target {
         }
 
         try {
-            Constructor<? extends PluginModuleNative> constructor = module.getDeclaredConstructor();
-            PluginModuleNative instance = constructor.newInstance();
+            Constructor<?> constructor = module.getDeclaredConstructor();
+            Object instance = constructor.newInstance();
 
-            ModuleInfo moduleInfo = module.getAnnotation(ModuleInfo.class);
+            Module moduleInfo = module.getAnnotation(Module.class);
             if (moduleInfo == null) throw new InstantiationException("No module info was provided");
             registerListener(instance);
             // Do not register the same module twice
@@ -304,7 +293,7 @@ public abstract class DarwinServer extends Target {
         return server;
     }
 
-    public static List<ModuleInfo> getAllModuleInfo() {
+    public static List<Module> getAllModuleInfo() {
         return MODULES.values().stream().map(Tuple::getSecond).collect(Collectors.toList());
     }
 
@@ -312,10 +301,10 @@ public abstract class DarwinServer extends Target {
         return scanModulePackage(pkg, integrated ? "Integrated" : "Unknown");
     }
 
-    private void registerClasses(String source, Class<? extends PluginModuleNative>... pluginModules) {
+    private void registerClasses(String source, Class<?>... pluginModules) {
         AtomicInteger done = new AtomicInteger();
         AtomicInteger failed = new AtomicInteger();
-        Arrays.stream(pluginModules).filter(mod -> !mod.equals(PluginModule.class)).forEach(mod -> {
+        Arrays.stream(pluginModules).forEach(mod -> {
             DarwinServer.ModuleRegistration result = registerModule(mod, source);
             switch (result) {
                 case DEPRECATED_AND_FAIL:
@@ -332,12 +321,11 @@ public abstract class DarwinServer extends Target {
         });
     }
 
-    @SuppressWarnings("unchecked")
     public boolean scanModulePackage(String packageString, String source) {
         if ("".equals(packageString)) return false;
         Reflections reflections = new Reflections(packageString);
-        Set<Class<? extends PluginModuleNative>> pluginModules = reflections
-                .getSubTypesOf(PluginModuleNative.class);
+        Set<Class<?>> pluginModules = reflections
+                .getTypesAnnotatedWith(Module.class);
         if (pluginModules.isEmpty()) return false;
 
         registerClasses(source, pluginModules.toArray(new Class[0]));

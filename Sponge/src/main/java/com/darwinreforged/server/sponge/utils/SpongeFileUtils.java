@@ -2,8 +2,7 @@ package com.darwinreforged.server.sponge.utils;
 
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.init.UtilityImplementation;
-import com.darwinreforged.server.core.modules.ModuleInfo;
-import com.darwinreforged.server.core.modules.PluginModuleNative;
+import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.util.FileUtils;
 
 import org.spongepowered.api.Sponge;
@@ -15,8 +14,8 @@ import java.util.Optional;
 @UtilityImplementation(FileUtils.class)
 public class SpongeFileUtils extends FileUtils {
     @Override
-    public <I extends PluginModuleNative> Path getDataDirectory(I plugin) {
-        Optional<ModuleInfo> infoOptional = DarwinServer.getModuleInfo(plugin.getClass());
+    public Path getDataDirectory(Object plugin) {
+        Optional<Module> infoOptional = DarwinServer.getModuleInfo(plugin.getClass());
         if (infoOptional.isPresent()) {
             Path darwinDataPath = infoOptional.map(moduleInfo -> Sponge.getGame().getSavesDirectory().resolve("data/" + moduleInfo.id())).get().toAbsolutePath();
             return createPathIfNotExist(darwinDataPath);
@@ -30,9 +29,10 @@ public class SpongeFileUtils extends FileUtils {
         return createPathIfNotExist(modDir);
     }
 
+
     @Override
-    public <I extends PluginModuleNative> Path getConfigDirectory(I plugin) {
-        Optional<ModuleInfo> infoOptional = DarwinServer.getModuleInfo(plugin.getClass());
+    public Path getConfigDirectory(Object plugin) {
+        Optional<Module> infoOptional = DarwinServer.getModuleInfo(plugin.getClass());
         Path darwinConfigPath = Sponge.getConfigManager().getPluginConfig(DarwinServer.getServer()).getDirectory();
 
         return createPathIfNotExist(infoOptional.map(moduleInfo -> new File(

@@ -7,7 +7,7 @@ import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.init.ServerType;
 import com.darwinreforged.server.core.modules.DisabledModule;
-import com.darwinreforged.server.core.modules.ModuleInfo;
+import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.PlayerUtils;
 import com.darwinreforged.server.core.util.commands.annotation.Command;
@@ -79,9 +79,9 @@ public class DarwinServerSponge extends DarwinServer {
     public void commandList(@Src DarwinPlayer player) {
         List<Text> moduleContext = new ArrayList<>();
         DarwinServerSponge.MODULES.forEach((clazz, ignored) -> {
-            Optional<ModuleInfo> infoOptional = getModuleInfo(clazz);
+            Optional<Module> infoOptional = getModuleInfo(clazz);
             if (infoOptional.isPresent()) {
-                ModuleInfo info = infoOptional.get();
+                Module info = infoOptional.get();
                 String name = info.name();
                 String id = info.id();
                 boolean disabled = clazz.getAnnotation(DisabledModule.class) != null;

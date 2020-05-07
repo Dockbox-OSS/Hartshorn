@@ -2,8 +2,7 @@ package com.darwinreforged.server.core.util;
 
 import com.darwinreforged.server.core.init.AbstractUtility;
 import com.darwinreforged.server.core.init.DarwinServer;
-import com.darwinreforged.server.core.modules.ModuleInfo;
-import com.darwinreforged.server.core.modules.PluginModuleNative;
+import com.darwinreforged.server.core.modules.Module;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -31,7 +30,7 @@ public abstract class FileUtils {
         }
     }
 
-    public <I extends PluginModuleNative> void writeYaml(Map<String, Object> data, I module) {
+    public void writeYaml(Map<String, Object> data, Object module) {
         writeYaml(data, getYamlConfigFile(module));
     }
 
@@ -45,13 +44,13 @@ public abstract class FileUtils {
         return new HashMap<>();
     }
 
-    public <I extends PluginModuleNative> Map<String, Object> getYamlData(I module) {
+    public Map<String, Object> getYamlData(Object module) {
         return getYamlData(getYamlConfigFile(module));
     }
 
-    public abstract <I extends PluginModuleNative> Path getDataDirectory(I module);
+    public abstract Path getDataDirectory(Object module);
 
-    public <I extends PluginModuleNative> Path getDataDirectory(I module, String dir) {
+    public Path getDataDirectory(Object module, String dir) {
         Path ddir = getDataDirectory(module);
         return createPathIfNotExist(new File(ddir.toFile(), dir).toPath());
     }
@@ -63,17 +62,17 @@ public abstract class FileUtils {
 
     public abstract Path getModuleDirectory();
 
-    public abstract <I extends PluginModuleNative> Path getConfigDirectory(I module);
+    public abstract Path getConfigDirectory(Object module);
 
     public abstract Path getLogDirectory();
 
-    public <I extends PluginModuleNative> File getYamlConfigFile(I module) {
+    public File getYamlConfigFile(Object module) {
         return getYamlConfigFile(module, true);
     }
 
-    public <I extends PluginModuleNative> File getYamlConfigFile(I module, boolean createIfNotExists) {
+    public File getYamlConfigFile(Object module, boolean createIfNotExists) {
         Path path = getConfigDirectory(module);
-        Optional<ModuleInfo> info = DarwinServer.getModuleInfo(module.getClass());
+        Optional<Module> info = DarwinServer.getModuleInfo(module.getClass());
         if (info.isPresent()) {
             String moduleId = info.get().id();
             File file = new File(path.toFile(), String.format("%s.yml", moduleId));

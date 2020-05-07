@@ -3,8 +3,7 @@ package com.darwinreforged.server.modules.internal.moduledata;
 import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
-import com.darwinreforged.server.core.modules.ModuleInfo;
-import com.darwinreforged.server.core.modules.PluginModule;
+import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.util.FileUtils;
 
 import org.yaml.snakeyaml.Yaml;
@@ -15,8 +14,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@ModuleInfo(id = "darwinmoduledata", name = "Darwin Module Data", version = "0.0.2", description = "Collects and stores plugin data", authors = {"GuusLieben"})
-public class DarwinModuleData extends PluginModule {
+@Module(id = "darwinmoduledata", name = "Darwin Module Data", version = "0.0.2", description = "Collects and stores plugin data", authors = {"GuusLieben"})
+public class DarwinModuleData {
 
     private final Map<String, Map<String, Object>> data = new HashMap<>();
 
@@ -44,7 +43,7 @@ public class DarwinModuleData extends PluginModule {
         }
     }
 
-    private void registerPlugin(ModuleInfo module) {
+    private void registerPlugin(Module module) {
         // Data storage before Yaml conversion
         Map<String, Object> data = new HashMap<>();
 

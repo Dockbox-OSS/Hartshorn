@@ -1,10 +1,8 @@
 package com.darwinreforged.server.modules.internal.darwin;
 
 
-import com.darwinreforged.server.core.modules.ModuleInfo;
-import com.darwinreforged.server.core.modules.PluginModule;
+import com.darwinreforged.server.core.modules.Module;
 
-@ModuleInfo(id = "darwinserver", name = "Server Config Module", description = "Native module used for configurations from DarwinServer only", authors = {"GuusLieben"})
-public class DarwinServerModule
-        extends PluginModule {
+@Module(id = "darwinserver", name = "Server Config Module", description = "Native module used for configurations from DarwinServer only", authors = {"GuusLieben"})
+public class DarwinServerModule {
 }

@@ -4,8 +4,7 @@ import com.darwinreforged.server.core.events.internal.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
-import com.darwinreforged.server.core.modules.ModuleInfo;
-import com.darwinreforged.server.core.modules.PluginModule;
+import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.util.FileUtils;
 
 import org.slf4j.Logger;
@@ -24,8 +23,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@ModuleInfo(id = "logarchival", name = "Log Archival", description = "Automatically move logs to a sorted archive", authors = {"dags-", "GuusLieben"}, url = "https://github.com/dags-/Archivist")
-public class LogArchival extends PluginModule {
+@Module(id = "logarchival", name = "Log Archival", description = "Automatically move logs to a sorted archive", authors = {"dags-", "GuusLieben"}, url = "https://github.com/dags-/Archivist")
+public class LogArchival {
     private final PathMatcher filter = FileSystems.getDefault().getPathMatcher("glob:*.log.gz");
     private final Pattern datePattern = Pattern.compile("((\\d{4})-(\\d{2})-\\d{2})");
     private final Pattern namePattern = Pattern.compile("(.*?)(-(\\d+))?.log.gz");
