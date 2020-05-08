@@ -1,5 +1,6 @@
 package com.darwinreforged.server.core.util;
 
+import com.darwinreforged.server.core.init.AbstractUtility;
 import com.darwinreforged.server.core.resources.Translations;
 
 import java.time.Instant;
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.TimeUnit;
 
+@AbstractUtility("Time parsing and scheduling")
 public abstract class TimeUtils {
 
     public static LocalDateTime localDateTimeFromMillis(long millis) {
