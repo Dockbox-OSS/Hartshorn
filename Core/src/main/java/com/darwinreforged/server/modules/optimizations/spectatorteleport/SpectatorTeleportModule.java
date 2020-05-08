@@ -21,16 +21,17 @@ public class SpectatorTeleportModule {
 
     List<String> whitelistedWorlds = new ArrayList<>();
 
+    @SuppressWarnings("unchecked")
     @Listener
     public void onServerStart(ServerStartedEvent event) {
         FileUtils fileUtils = DarwinServer.getUtilChecked(FileUtils.class);
         Map<String, Object> yamlData = fileUtils.getConfigYamlData(this);
         if (yamlData.containsKey("whitelist")) {
-            String[] whitelist = (String[]) yamlData.get("whitelist");
-            whitelistedWorlds = Arrays.asList(whitelist);
+            List<String> whitelist = (List<String>) yamlData.get("whitelist");
+            whitelistedWorlds = whitelist;
         } else {
             yamlData = new HashMap<>();
-            yamlData.put("whitelist", new String[] {"SampleWorld", "Another_World"});
+            yamlData.put("whitelist", Arrays.asList("SampleWorld", "Another_World"));
             fileUtils.writeConfigYaml(yamlData, this);
         }
     }

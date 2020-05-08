@@ -10,6 +10,7 @@ import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.FileUtils;
 import com.darwinreforged.server.core.util.LocationUtils;
+import com.darwinreforged.server.core.util.PlotUtils;
 import com.darwinreforged.server.core.util.TimeUtils;
 import com.darwinreforged.server.core.util.commands.annotation.Command;
 import com.darwinreforged.server.core.util.commands.annotation.Description;
@@ -17,7 +18,6 @@ import com.darwinreforged.server.core.util.commands.annotation.Permission;
 import com.darwinreforged.server.core.util.commands.annotation.Src;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,20 +27,20 @@ import java.util.concurrent.TimeUnit;
 public class WorldUnloadModule {
 
     private FileUtils fileUtil;
+    private PlotUtils plotUtils;
     private final List<String> unloadBlacklist = new ArrayList<>();
 
+    @SuppressWarnings("unchecked")
     @Listener
     public void onServerStart(ServerStartedEvent event) {
         fileUtil = DarwinServer.getUtilChecked(FileUtils.class);
-        Map<String, Object> configData = fileUtil.getConfigYamlData(this);
-        if (configData.containsKey("blacklist")) {
-            String[] configuredBlacklist = (String[]) configData.get("blacklist");
-            unloadBlacklist.addAll(Arrays.asList(configuredBlacklist));
-        }
+        plotUtils = DarwinServer.getUtilChecked(PlotUtils.class);
+        ArrayList<String> blacklist = (ArrayList<String>) fileUtil.getConfigYamlData(this, "blacklist", ArrayList.class);
+        if (blacklist != null) unloadBlacklist.addAll(blacklist);
         refreshBlackList();
 
+        // Do not use async, certain platforms do not allow async chunk modifications
         DarwinServer.getUtilChecked(TimeUtils.class).schedule()
-                .async()
                 .interval(2, TimeUnit.MINUTES)
                 .execute(this::unloadTask)
                 .submit();
@@ -64,7 +64,7 @@ public class WorldUnloadModule {
     private void unloadTask() {
         DarwinServer.getUtilChecked(LocationUtils.class)
                 .getEmptyWorlds().stream()
-                .filter(world -> !unloadBlacklist.contains(world.getName()))
+                .filter(world -> !unloadBlacklist.contains(world.getName()) && !plotUtils.isPlotWorld(world))
                 .forEach(DarwinWorld::unloadWorld);
     }
 }

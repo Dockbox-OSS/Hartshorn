@@ -19,13 +19,14 @@ public class GoToLobbyModule {
 
     List<String> blacklist = new ArrayList<>();
 
+    @SuppressWarnings("unchecked")
     @Listener
     public void onServerStart(ServerStartedEvent event) {
         FileUtils fileUtils = DarwinServer.getUtilChecked(FileUtils.class);
         Map<String, Object> config = fileUtils.getConfigYamlData(this);
 
-        if(config.containsKey("blacklist")) blacklist = Arrays.asList((String[]) config.get("blacklist"));
-        else config.put("blacklist", new String[]{"denied_world", "worlds"});
+        if(config.containsKey("blacklist")) blacklist = (List<String>) config.get("blacklist");
+        else config.put("blacklist", Arrays.asList("denied_world", "worlds"));
         fileUtils.writeConfigYaml(config, this);
     }
 
