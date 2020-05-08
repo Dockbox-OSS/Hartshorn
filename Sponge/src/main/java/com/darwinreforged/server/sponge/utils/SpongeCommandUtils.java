@@ -55,12 +55,12 @@ public class SpongeCommandUtils extends CommandUtils<SpongeCommand> {
 
     @Override
     public void info(String message, Object... args) {
-        System.out.println(String.format(message, args));
+        DarwinServer.getLog().info(String.format(message, args));
     }
 
     @Override
     public void warn(String message, Object... args) {
-        System.err.println(String.format(message, args));
+        DarwinServer.error(String.format(message, args));
     }
 
     @Override
@@ -113,7 +113,7 @@ public class SpongeCommandUtils extends CommandUtils<SpongeCommand> {
         });
 
         if (!module.isPresent()) {
-            DarwinServer.getServer().getLogger().error("Could not obtain config module");
+            DarwinServer.getLog().error("Could not obtain config module");
         }
     }
 

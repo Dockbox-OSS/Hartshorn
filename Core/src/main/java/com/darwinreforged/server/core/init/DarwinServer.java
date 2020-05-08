@@ -1,8 +1,8 @@
 package com.darwinreforged.server.core.init;
 
+import com.darwinreforged.server.core.entities.Tuple;
 import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.entities.living.Target;
-import com.darwinreforged.server.core.entities.Tuple;
 import com.darwinreforged.server.core.events.util.EventBus;
 import com.darwinreforged.server.core.modules.DisabledModule;
 import com.darwinreforged.server.core.modules.Module;
@@ -16,6 +16,7 @@ import com.darwinreforged.server.core.util.commands.command.Command;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -49,10 +51,12 @@ public abstract class DarwinServer extends Target {
     protected static final List<String> FAILED_MODULES = new ArrayList<>();
     protected static final Map<Class<?>, Object> UTILS = new HashMap<>();
 
-    protected EventBus eventBus;
     protected static DarwinServer server;
+
+    protected EventBus eventBus;
     private String version;
     private String lastUpdate;
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     protected static final String MODULE_PACKAGE = "com.darwinreforged.server.modules";
     protected static final String UTIL_PACKAGE = "com.darwinreforged.server.core.util";
@@ -61,6 +65,10 @@ public abstract class DarwinServer extends Target {
     public DarwinServer() throws InstantiationException {
         if (server != null) throw new InstantiationException("Singleton instance already exists");
         server = this;
+    }
+
+    public static Logger getLog() {
+        return server.log;
     }
 
     @SuppressWarnings("unchecked")
@@ -78,11 +86,11 @@ public abstract class DarwinServer extends Target {
         this.eventBus = new EventBus();
 
         // Create integrated modules (in server jar)
-        System.out.println("Loading integrated modules");
+        log.info("Loading integrated modules");
         scanModulePackage(MODULE_PACKAGE, true);
 
         // Create external modules (outside server jar, inside modules folder)
-        System.out.println("Loading external modules");
+        log.info("Loading external modules");
         loadExternalModules();
         // Import permissions and translations
         Translations.collect();
@@ -107,15 +115,35 @@ public abstract class DarwinServer extends Target {
         Path modDir = getUtilChecked(FileUtils.class).getModuleDirectory();
         try {
             URL url = modDir.toUri().toURL();
-            System.out.println(String.format("Scanning %s for additional modules", url.toString()));
+            log.info(String.format("Scanning %s for additional modules", url.toString()));
             Arrays.stream(Objects.requireNonNull(modDir.toFile().listFiles()))
                     .filter(f -> f.getName().endsWith(".jar"))
                     .forEach(this::scanModulesInFile);
         } catch (MalformedURLException e) {
-            System.err.println("Failed to load additional modules");
-            System.err.println(e.getMessage());
-            e.printStackTrace();
+            error("Failed to load additional modules", e);
         }
+    }
+
+    public static void error(String message) {
+        error(message, new Exception());
+    }
+
+    public static void error(String message, Exception e) {
+        StringBuilder b = new StringBuilder();
+
+        String err = b.append(String.join("", Collections.nCopies(5, "=")))
+                .append(e.getClass().toGenericString().split("\\.")[2])
+                .append(String.join("", Collections.nCopies(5, "=")))
+                .append("\n")
+                .append(String.format(" Message -> %s%n", e.getMessage()))
+                .append(String.format(" Source -> %s%n", e.getStackTrace()[0].getClassName()))
+                .append(String.format(" Method -> %s%n", e.getStackTrace()[0].getMethodName()))
+                .append(String.format(" Line -> %d%n", e.getStackTrace()[0].getLineNumber()))
+                .append(String.format(" Additional message -> %s%n", message))
+                .append(" Stacktrace -> :\n")
+                .toString();
+        server.log.error(err);
+        e.printStackTrace();
     }
 
     private void scanModulesInFile(File moduleCandidate) {
@@ -148,7 +176,7 @@ public abstract class DarwinServer extends Target {
 
                                 // Require modules to have a dedicated package
                                 if (clazz.getPackage() == null) {
-                                    System.err.printf("Found module candidate without defined package '%s' at %s%n", className, moduleCandidate.getName());
+                                    error(String.format("Found module candidate without defined package '%s' at %s%n", className, moduleCandidate.getName()));
                                     continue;
                                 }
 
@@ -160,9 +188,7 @@ public abstract class DarwinServer extends Target {
                     }
                 }
             } catch (IOException e) {
-                System.err.println("Failed to register potential module : " + moduleCandidate.toString());
-                System.err.println(e.getMessage());
-                e.printStackTrace();
+                error("Failed to register potential module : " + moduleCandidate.toString(), e);
             }
         }
     }
@@ -196,6 +222,8 @@ public abstract class DarwinServer extends Target {
 
     @SuppressWarnings("unchecked")
     public static <I> Optional<? extends I> getUtil(Class<I> clazz) {
+        if (!clazz.isAnnotationPresent(AbstractUtility.class))
+            throw new IllegalArgumentException(String.format("Requested utility class is not annotated as such (%s)", clazz.toGenericString()));
         Object implementation = UTILS.get(clazz);
         if (implementation != null) return (Optional<? extends I>) Optional.of(implementation);
         return Optional.empty();
@@ -240,6 +268,7 @@ public abstract class DarwinServer extends Target {
         return getModDataTuple(clazz).map(Tuple::getSecond);
     }
 
+
     /**
      Register a given module and create a singleton instance of it.
 
@@ -271,7 +300,7 @@ public abstract class DarwinServer extends Target {
             if (moduleInfo == null) throw new InstantiationException("No module info was provided");
             registerListener(instance);
             // Do not register the same module twice
-            if (getUtil(module).isPresent()) return ModuleRegistration.SUCCEEDED;
+            if (getModule(module).isPresent()) return ModuleRegistration.SUCCEEDED;
             DarwinServer.MODULES.put(module, new Tuple<>(instance, moduleInfo));
             DarwinServer.MODULE_SOURCES.put(moduleInfo.id(), source);
 
@@ -344,8 +373,6 @@ public abstract class DarwinServer extends Target {
     public String getName() {
         return "DarwinServerHost";
     }
-
-    public abstract Logger getLogger();
 
     @Override
     public void execute(String cmd) {
