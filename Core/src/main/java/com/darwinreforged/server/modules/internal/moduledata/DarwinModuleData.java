@@ -25,14 +25,6 @@ public class DarwinModuleData {
     @Listener
     public void onServerStart(ServerStartedEvent event) {
         File dataFile = new File(DarwinServer.getUtilChecked(FileUtils.class).getDataDirectory(this).toFile(), "module_data.yml");
-        if (!dataFile.exists()) {
-            try {
-                dataFile.getParentFile().mkdirs();
-                dataFile.createNewFile();
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-            }
-        }
         DarwinServer.getAllModuleInfo().forEach(this::registerPlugin);
         try {
             Yaml yaml = new Yaml();
@@ -54,7 +46,7 @@ public class DarwinModuleData {
         data.put("description", module.description());
         data.put("url", module.url());
         data.put("authors", module.authors());
-        data.put("source", module.source());
+        data.put("source", DarwinServer.getModuleSource(module.id()));
 
         // Write plugin data to unique file
         this.data.put(module.id(), data);
