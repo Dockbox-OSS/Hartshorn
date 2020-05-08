@@ -446,15 +446,16 @@ public enum Translations {
     RATE_LIMIT_KICK_MESSAGE("$4You are being rate limited. To prevent spam, relogging is limited to once per minute."),
 
     //    Darwin CMD
-    DISABLED_MODULE_ROW("$2 - &7☣ $3{0} $3- $2{1}"),
+    DISABLED_MODULE_ROW("$2 - &7[Disabled] $3{0} $3- $2{1} {2}"),
     FAILED_MODULE_ROW("$2 - $4[Failed] {0}"),
-    ACTIVE_MODULE_ROW("$2 - &a[Loaded] $1{0} $3- $2{1}"),
+    ACTIVE_MODULE_ROW("$2 - &a[Loaded] $1{0} $3- $2{1} {2}"),
     DARWIN_MODULE_TITLE("$1Darwin Server Info"),
     DARWIN_MODULE_PADDING("&m$2="),
     DARWIN_SERVER_VERSION("$2&lDarwin Server &r$3($1Version$3: $1{0}$3)"),
     DARWIN_SERVER_UPDATE("$2&lLast updated&r$3: $1{0}"),
     DARWIN_SERVER_AUTHOR("$2&lAuthor&r$3: $1{0}"),
     DARWIN_SERVER_MODULE_HEAD("$2&lModules&r$3:"),
+    MODULE_SOURCE("&e[{0}]"),
 
     //   World Unloader
     WU_ADDED("$1Added $2{0} $1to the unload blacklist"),

@@ -44,15 +44,7 @@ import java.util.concurrent.atomic.AtomicReference;
 )
 public class DarwinServerSponge extends DarwinServer {
 
-    @Inject
-    Logger logger;
-
     public DarwinServerSponge() throws InstantiationException {
-    }
-
-    @Override
-    public Logger getLogger() {
-        return logger;
     }
 
     @Listener
@@ -80,8 +72,9 @@ public class DarwinServerSponge extends DarwinServer {
                 String name = info.name();
                 String id = info.id();
                 boolean disabled = clazz.getAnnotation(DisabledModule.class) != null;
-                moduleContext.add(disabled ? Text.of(Translations.DISABLED_MODULE_ROW.f(name, id))
-                        : Text.of(Translations.ACTIVE_MODULE_ROW.f(name, id)));
+                String source = Translations.MODULE_SOURCE.f(MODULE_SOURCES.get(id));
+                moduleContext.add(disabled ? Text.of(Translations.DISABLED_MODULE_ROW.f(name, id, source))
+                        : Text.of(Translations.ACTIVE_MODULE_ROW.f(name, id, source)));
             }
         });
         DarwinServerSponge.FAILED_MODULES.forEach(module -> moduleContext.add(Text.of(Translations.FAILED_MODULE_ROW.f(module))));

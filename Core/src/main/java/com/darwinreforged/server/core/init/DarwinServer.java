@@ -268,6 +268,9 @@ public abstract class DarwinServer extends Target {
         return getModDataTuple(clazz).map(Tuple::getSecond);
     }
 
+    public static String getModuleSource(String id) {
+        return DarwinServer.MODULE_SOURCES.get(id);
+    }
 
     /**
      Register a given module and create a singleton instance of it.

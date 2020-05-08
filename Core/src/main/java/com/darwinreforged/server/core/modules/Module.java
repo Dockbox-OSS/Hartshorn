@@ -19,6 +19,4 @@ public @interface Module {
     String url() default "none";
 
     String[] authors();
-
-    String source() default "Unknown";
 }
