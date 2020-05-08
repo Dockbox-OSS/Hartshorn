@@ -13,4 +13,6 @@ public abstract class Target {
     public String getName() {
         return name;
     }
+
+    public abstract void execute(String cmd);
 }

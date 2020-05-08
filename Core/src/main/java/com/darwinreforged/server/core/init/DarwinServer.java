@@ -10,6 +10,7 @@ import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.CommandUtils;
 import com.darwinreforged.server.core.util.FileUtils;
+import com.darwinreforged.server.core.util.PlayerUtils;
 import com.darwinreforged.server.core.util.commands.annotation.Src;
 import com.darwinreforged.server.core.util.commands.command.Command;
 
@@ -345,6 +346,11 @@ public abstract class DarwinServer extends Target {
     }
 
     public abstract Logger getLogger();
+
+    @Override
+    public void execute(String cmd) {
+        getUtilChecked(PlayerUtils.class).executeCmd(cmd, this);
+    }
 
     /**
      Registration states during and after module registration

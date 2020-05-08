@@ -1,10 +1,12 @@
 package com.darwinreforged.server.core.util;
 
+import com.darwinreforged.server.core.entities.living.DarwinPlayer;
+import com.darwinreforged.server.core.entities.living.Target;
 import com.darwinreforged.server.core.entities.living.inventory.DarwinItem;
 import com.darwinreforged.server.core.entities.living.state.GameModes;
 import com.darwinreforged.server.core.entities.location.DarwinLocation;
-import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.init.AbstractUtility;
+import com.darwinreforged.server.core.init.DarwinServer;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -38,9 +40,11 @@ public abstract class PlayerUtils {
         return UUID.fromString("00000010-0010-0010-0010-000000000010");
     }
 
-    public boolean isConsole(DarwinPlayer player) {
-        return player.getUuid().equals(getConsoleId());
+    public boolean isConsole(Target player) {
+        return (player.getUuid().equals(getConsoleId()) || player instanceof DarwinServer);
     }
 
     public abstract GameModes getGameMode(DarwinPlayer player);
+
+    public abstract void executeCmd(String cmd, Target target);
 }

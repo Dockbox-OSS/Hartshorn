@@ -1,11 +1,13 @@
 package com.darwinreforged.server.sponge.utils;
 
 import com.darwinreforged.server.core.entities.living.DarwinPlayer;
+import com.darwinreforged.server.core.entities.living.Target;
 import com.darwinreforged.server.core.entities.living.inventory.DarwinItem;
 import com.darwinreforged.server.core.entities.living.state.GameModes;
 import com.darwinreforged.server.core.entities.location.DarwinLocation;
 import com.darwinreforged.server.core.entities.location.DarwinWorld;
 import com.darwinreforged.server.core.entities.math.Vector3d;
+import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.PlayerUtils;
@@ -86,5 +88,17 @@ public class SpongePlayerUtils extends PlayerUtils {
                 return GameModes.UNKNOWN;
             }
         }).orElse(GameModes.UNKNOWN);
+    }
+
+    @Override
+    public void executeCmd(String cmd, Target target) {
+        if (target instanceof DarwinPlayer || target instanceof DarwinServer) {
+            if (isConsole(target))
+                Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmd);
+            else
+                Sponge.getServer().getPlayer(target.getUuid()).ifPresent(sp -> Sponge.getCommandManager().process(sp, cmd));
+        } else {
+            System.err.printf("Tried executing '%s' as non-player source (%s)%n", cmd, target.getClass());
+        }
     }
 }
