@@ -2,6 +2,7 @@ package com.darwinreforged.server.sponge;
 
 import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.events.CancellableEvent;
+import com.darwinreforged.server.core.events.internal.PlayerMoveEvent;
 import com.darwinreforged.server.core.events.internal.PlayerTeleportEvent;
 import com.darwinreforged.server.core.events.internal.ServerReloadEvent;
 import com.darwinreforged.server.core.init.DarwinServer;
@@ -23,6 +24,11 @@ public class SpongeListener {
     @Listener
     public void onPlayerTeleport(MoveEntityEvent.Teleport event, @First Player p) {
         postCancellable(new PlayerTeleportEvent(new DarwinPlayer(p.getUniqueId(), p.getName())), event);
+    }
+
+    @Listener
+    public void onPlayerMove(MoveEntityEvent event, @First Player p) {
+        postCancellable(new PlayerMoveEvent(new DarwinPlayer(p.getUniqueId(), p.getName())), event);
     }
 
     private <I extends CancellableEvent> void postCancellable(I e, Cancellable se) {
