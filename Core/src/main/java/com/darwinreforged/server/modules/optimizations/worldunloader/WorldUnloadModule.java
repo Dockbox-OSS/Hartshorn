@@ -32,7 +32,7 @@ public class WorldUnloadModule {
     @Listener
     public void onServerStart(ServerStartedEvent event) {
         fileUtil = DarwinServer.getUtilChecked(FileUtils.class);
-        Map<String, Object> configData = fileUtil.getYamlData(this);
+        Map<String, Object> configData = fileUtil.getConfigYamlData(this);
         if (configData.containsKey("blacklist")) {
             String[] configuredBlacklist = (String[]) configData.get("blacklist");
             unloadBlacklist.addAll(Arrays.asList(configuredBlacklist));
@@ -58,7 +58,7 @@ public class WorldUnloadModule {
     private void refreshBlackList() {
         Map<String, Object> configData = new HashMap<>();
         configData.put("blacklist", unloadBlacklist.toArray());
-        fileUtil.writeYaml(configData, this);
+        fileUtil.writeConfigYaml(configData, this);
     }
 
     private void unloadTask() {

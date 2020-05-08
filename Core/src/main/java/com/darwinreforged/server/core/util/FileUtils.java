@@ -30,7 +30,7 @@ public abstract class FileUtils {
         }
     }
 
-    public void writeYaml(Map<String, Object> data, Object module) {
+    public void writeConfigYaml(Map<String, Object> data, Object module) {
         writeYaml(data, getYamlConfigFile(module));
     }
 
@@ -44,7 +44,7 @@ public abstract class FileUtils {
         return new HashMap<>();
     }
 
-    public Map<String, Object> getYamlData(Object module) {
+    public Map<String, Object> getConfigYamlData(Object module) {
         return getYamlData(getYamlConfigFile(module));
     }
 
