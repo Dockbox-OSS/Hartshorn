@@ -37,7 +37,8 @@ public abstract class FileUtils {
     public Map<String, Object> getYamlData(File file) {
         try {
             FileReader reader = new FileReader(file);
-            return yaml.loadAs(reader, Map.class);
+            Map<String, Object> res = yaml.loadAs(reader, Map.class);
+            return res != null ? res : new HashMap<>();
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
@@ -46,6 +47,22 @@ public abstract class FileUtils {
 
     public Map<String, Object> getConfigYamlData(Object module) {
         return getYamlData(getYamlConfigFile(module));
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getConfigYamlData(Object module, String path, Class<T> type) {
+        Map<String, Object> values = getConfigYamlData(module);
+        if (values.containsKey(path)) {
+            Object val = values.get(path);
+            if (val.getClass().isAssignableFrom(type) || val.getClass().equals(type))
+                return (T) val;
+        }
+
+        try {
+            return type.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            return null;
+        }
     }
 
     public abstract Path getDataDirectory(Object module);
