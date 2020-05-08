@@ -46,5 +46,7 @@ public abstract class PlayerUtils {
 
     public abstract GameModes getGameMode(DarwinPlayer player);
 
+    public abstract void setGameMode(GameModes mode, DarwinPlayer player);
+
     public abstract void executeCmd(String cmd, Target target);
 }

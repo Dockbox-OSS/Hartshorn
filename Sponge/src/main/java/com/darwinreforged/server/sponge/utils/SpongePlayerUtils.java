@@ -91,6 +91,30 @@ public class SpongePlayerUtils extends PlayerUtils {
     }
 
     @Override
+    public void setGameMode(GameModes mode, DarwinPlayer player) {
+        Sponge.getServer().getPlayer(player.getUuid()).ifPresent(sp -> {
+            org.spongepowered.api.entity.living.player.gamemode.GameMode spMode;
+            switch (mode) {
+                case CREATIVE:
+                case UNKNOWN:
+                default:
+                    spMode = org.spongepowered.api.entity.living.player.gamemode.GameModes.CREATIVE;
+                    break;
+                case SURVIVAL:
+                    spMode = org.spongepowered.api.entity.living.player.gamemode.GameModes.SURVIVAL;
+                    break;
+                case SPECTATOR:
+                    spMode = org.spongepowered.api.entity.living.player.gamemode.GameModes.SPECTATOR;
+                    break;
+                case ADVENTURE:
+                    spMode = org.spongepowered.api.entity.living.player.gamemode.GameModes.ADVENTURE;
+                    break;
+            }
+            sp.getGameModeData().set(Keys.GAME_MODE, spMode);
+        });
+    }
+
+    @Override
     public void executeCmd(String cmd, Target target) {
         if (target instanceof DarwinPlayer || target instanceof DarwinServer) {
             if (isConsole(target))

@@ -53,6 +53,9 @@ public class DarwinPlayer extends Target {
         return DarwinServer.getUtilChecked(PlayerUtils.class).getGameMode(this);
     }
 
+    public void setGameMode(GameModes mode) {
+        DarwinServer.getUtilChecked(PlayerUtils.class).setGameMode(mode, this);
+    }
 
     @Override
     public void execute(String cmd) {
