@@ -457,7 +457,10 @@ public enum Translations {
     DARWIN_SERVER_MODULE_HEAD("$2&lModules&r$3:"),
 
     //   World Unloader
-    WU_ADDED("$1Added $2{0} $1to the unload blacklist");
+    WU_ADDED("$1Added $2{0} $1to the unload blacklist"),
+
+//  Spectator TP
+    SPECTATOR_TP_DISALLOWED("$3You are not allowed to teleport while in spectator mode");
 
     private String s;
 
