@@ -3,6 +3,11 @@ package com.darwinreforged.server.core.util;
 import com.darwinreforged.server.core.init.AbstractUtility;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -12,9 +17,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -22,100 +26,43 @@ import java.util.Optional;
 public abstract class FileUtils {
 
     private static final Yaml yaml = new Yaml();
+    private static final Map<String, ConnectionSource> jdbcSources = new HashMap<>();
+    private static final String JDBC_FORMAT = "jdbc:sqlite:%s";
 
-    /*
-     * Data files (SQLite)
-     */
-    public abstract SQLDataTable getSQLData(File file);
-
-    public abstract SQLDataTable getSQLData(Object module);
-
-    public File getSQLDataFile(Object module) {
-        return getSQLDataFile(module, true);
+    public <T, I> Dao<T, I> getDataDb(Class<T> object, Class<I> idType, File file) {
+        if (isConnected(file)) {
+            ConnectionSource source = jdbcSources.get(file.toString());
+            try {
+                TableUtils.createTableIfNotExists(source, object);
+                return DaoManager.createDao(source, object);
+            } catch (SQLException e) {
+                DarwinServer.error("Could not create dao for object", e);
+            }
+        }
+        return null;
     }
 
-    public File getSQLDataFile(Object module, boolean createIfNotExists) {
-        Path path = getDataDirectory(module);
+    public <T, I> Dao<T, I> getDataDb(Class<T> object, Class<I> idType, Object module) {
         Optional<Module> info = DarwinServer.getModuleInfo(module.getClass());
         if (info.isPresent()) {
-            String moduleId = info.get().id();
-            File file = new File(path.toFile(), String.format("%s.dat", moduleId));
-            return createFileIfNotExists(file, createIfNotExists);
+            String id = info.get().id();
+            File file = new File(getDataDirectory(module).toFile(), String.format("%s.dat", id));
+            return getDataDb(object, idType, file);
         }
         throw new RuntimeException("No such module registered");
     }
 
-    public abstract void writeSQLData(SQLDataTable data, File file);
-
-    public abstract void writeSQLData(SQLDataTable data, Object module);
-
-    public abstract void updateSQLData(SQLDataTable data, File file);
-
-    public abstract void updateSQLData(SQLDataTable data, Object module);
-
-    public abstract void deleteSQLData(SQLDataTable data, File file);
-
-    public abstract void deleteSQLData(SQLDataTable data, Object module);
-
-    private void ensureExists(SQLDataTable table, Object module) {
-
-    }
-
-    public static class SQLDataTable {
-        private final String table;
-        private final String[] columnNames;
-
-        // TODO : Include this in documentation
-        // Each list entry is a row, each map is the column name and its value
-        // list: [
-        // map1:
-        //   {
-        //      key: 'column'
-        //      value: 'value'
-        //   }
-        // etc..
-
-        private final List<Map<String, Object>> data;
-        final List<String> ids = new ArrayList<>();
-
-        public SQLDataTable(String table, String[] columnNames, List<Map<String, Object>> data) {
-            this.columnNames = columnNames;
-            this.table = table;
-
-            data.forEach(this::verifyData);
-            this.data = data;
-        }
-
-        public void addRow(Map<String, Object> row) {
-            verifyData(row);
-            data.add(row);
-        }
-
-        private void verifyData(Map<String, Object> row) {
-            int columns = columnNames.length;
-            if (row.size() != columns) throw new IllegalArgumentException("Row length cannot be different from amount of columns");
-            if (!row.containsKey("id")) throw new IllegalArgumentException("All rows should contain unique ID's");
-            else {
-                String id = row.get("id").toString();
-                if (ids.contains(id)) throw new IllegalArgumentException("All rows should contain unique ID's");
-                else ids.add(id);
-            }
-        }
-
-        public String getTable() {
-            return table;
-        }
-
-        public String[] getColumnNames() {
-            return columnNames;
-        }
-
-        public List<Map<String, Object>> getData() {
-            return data;
-        }
-
-        public List<String> getIds() {
-            return ids;
+    public boolean isConnected(File file) {
+        String fileAb = file.toString();
+        if (jdbcSources.containsKey(fileAb) && jdbcSources.get(fileAb) != null) return true;
+        String connStr = String.format(JDBC_FORMAT, fileAb);
+        try {
+            ConnectionSource connectionSource = new JdbcConnectionSource(connStr);
+            jdbcSources.put(fileAb, connectionSource);
+            return true;
+        } catch (SQLException e) {
+            DarwinServer.error(String.format("Failed to create connection source for '%s'", fileAb), e);
+            return false;
         }
     }
 

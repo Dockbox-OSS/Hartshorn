@@ -10,10 +10,13 @@ sourceCompatibility = 1.8
 
 repositories {
     maven {
-        name 'sqljet'
-        url 'http://maven.tmatesoft.com/content/repositories/releases'
+        name 'jitpack'
+        url 'https://jitpack.io'
     }
-    mavenCentral()
+    maven {
+        name 'sqljet'
+        url 'https://repo1.maven.org/maven2/com/j256/ormlite/'
+    }
 }
 
 archivesBaseName = 'core'
@@ -23,11 +26,12 @@ def date = LocalDate.now().toString()
 
 dependencies {
     implementation 'org.reflections:reflections:0.9.11'
-    implementation 'org.tmatesoft.sqljet:sqljet:1.1.13'
     compileOnly 'org.yaml:snakeyaml:1.26'
     compileOnly 'com.google.guava:guava:21.0'
     compile 'org.slf4j:slf4j-api:1.7.25'
     testCompile 'junit:junit:4.12'
+    implementation 'com.j256.ormlite:ormlite-core:5.1'
+    implementation 'com.j256.ormlite:ormlite-jdbc:5.1'
 }
 
 processResources {
