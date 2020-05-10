@@ -9,6 +9,10 @@ group 'com.darwinreforged'
 sourceCompatibility = 1.8
 
 repositories {
+    maven {
+        name 'sqljet'
+        url 'http://maven.tmatesoft.com/content/repositories/releases'
+    }
     mavenCentral()
 }
 
@@ -19,6 +23,7 @@ def date = LocalDate.now().toString()
 
 dependencies {
     implementation 'org.reflections:reflections:0.9.11'
+    implementation 'org.tmatesoft.sqljet:sqljet:1.1.13'
     compileOnly 'org.yaml:snakeyaml:1.26'
     compileOnly 'com.google.guava:guava:21.0'
     compile 'org.slf4j:slf4j-api:1.7.25'
