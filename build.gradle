@@ -9,6 +9,10 @@ buildscript {
     }
 }
 
+plugins {
+    id 'java-library'
+}
+
 def getVersionName = { ->
     return 'git rev-parse --verify --short HEAD'.execute().text.trim()
 }
@@ -51,22 +55,20 @@ subprojects { Project subProject ->
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
 
-    repositories {
-        maven {
-            name 'fastasyncworldedit'
-            url 'https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn'
-        }
-        maven {
-            name 'jitpack'
-            url 'https://jitpack.io'
-        }
-        maven {
-            name 'sk89q'
-            url 'https://maven.sk89q.com/repo/'
-        }
-        mavenCentral()
-        jcenter()
-    }
-
     tasks.build.dependsOn tasks.shadowJar
+}
+
+allprojects {
+    plugins.withType(JavaPlugin) {
+        repositories {
+            mavenCentral()
+            jcenter()
+        }
+
+        dependencies {
+            compile ('net.dv8tion:JDA:4.ALPHA.0_76') {
+                exclude module: 'opus-java'
+            }
+        }
+    }
 }
