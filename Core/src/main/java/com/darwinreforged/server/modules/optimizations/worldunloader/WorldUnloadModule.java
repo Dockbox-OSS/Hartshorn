@@ -2,6 +2,7 @@ package com.darwinreforged.server.modules.optimizations.worldunloader;
 
 import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.entities.location.DarwinWorld;
+import com.darwinreforged.server.core.events.internal.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
@@ -30,9 +31,18 @@ public class WorldUnloadModule {
     private PlotUtils plotUtils;
     private final List<String> unloadBlacklist = new ArrayList<>();
 
-    @SuppressWarnings("unchecked")
+    @Listener
+    public void onReload(ServerReloadEvent event) {
+        init();
+    }
+
     @Listener
     public void onServerStart(ServerStartedEvent event) {
+        init();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void init() {
         fileUtil = DarwinServer.getUtilChecked(FileUtils.class);
         plotUtils = DarwinServer.getUtilChecked(PlotUtils.class);
         ArrayList<String> blacklist = (ArrayList<String>) fileUtil.getConfigYamlData(this, "blacklist", ArrayList.class);

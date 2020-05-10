@@ -3,6 +3,7 @@ package com.darwinreforged.server.modules.optimizations.gotolobby;
 import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.entities.living.state.GameModes;
 import com.darwinreforged.server.core.events.internal.PlayerMoveEvent;
+import com.darwinreforged.server.core.events.internal.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
@@ -20,9 +21,18 @@ public class GoToLobbyModule {
 
     List<String> blacklist = new ArrayList<>();
 
-    @SuppressWarnings("unchecked")
+    @Listener
+    public void onServerReload(ServerReloadEvent event) {
+        init();
+    }
+
     @Listener
     public void onServerStart(ServerStartedEvent event) {
+        init();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void init() {
         FileUtils fileUtils = DarwinServer.getUtilChecked(FileUtils.class);
         Map<String, Object> config = fileUtils.getConfigYamlData(this);
 

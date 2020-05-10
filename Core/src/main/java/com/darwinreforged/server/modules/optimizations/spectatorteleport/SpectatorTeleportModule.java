@@ -3,6 +3,7 @@ package com.darwinreforged.server.modules.optimizations.spectatorteleport;
 import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.entities.living.state.GameModes;
 import com.darwinreforged.server.core.events.internal.PlayerTeleportEvent;
+import com.darwinreforged.server.core.events.internal.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
@@ -22,14 +23,22 @@ public class SpectatorTeleportModule {
 
     List<String> whitelistedWorlds = new ArrayList<>();
 
-    @SuppressWarnings("unchecked")
+    @Listener
+    public void onServerReload(ServerReloadEvent event) {
+        init();
+    }
+
     @Listener
     public void onServerStart(ServerStartedEvent event) {
+        init();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void init() {
         FileUtils fileUtils = DarwinServer.getUtilChecked(FileUtils.class);
         Map<String, Object> yamlData = fileUtils.getConfigYamlData(this);
         if (yamlData.containsKey("whitelist")) {
-            List<String> whitelist = (List<String>) yamlData.get("whitelist");
-            whitelistedWorlds = whitelist;
+            whitelistedWorlds = (List<String>) yamlData.get("whitelist");
         } else {
             yamlData = new HashMap<>();
             yamlData.put("whitelist", Arrays.asList("SampleWorld", "Another_World"));
