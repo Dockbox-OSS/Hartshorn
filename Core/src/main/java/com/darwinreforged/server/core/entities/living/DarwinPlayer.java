@@ -4,6 +4,7 @@ import com.darwinreforged.server.core.entities.living.state.GameModes;
 import com.darwinreforged.server.core.entities.location.DarwinLocation;
 import com.darwinreforged.server.core.entities.location.DarwinWorld;
 import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.util.PlayerUtils;
 
 import java.util.Optional;
@@ -34,6 +35,10 @@ public class DarwinPlayer extends Target {
 
     public void kick() {
         DarwinServer.getUtilChecked(PlayerUtils.class).kick(this);
+    }
+
+    public boolean hasPermission(Permissions permission) {
+        return hasPermission(permission.p());
     }
 
     public boolean hasPermission(String permission) {

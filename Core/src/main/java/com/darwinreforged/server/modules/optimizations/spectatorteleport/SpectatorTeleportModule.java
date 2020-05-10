@@ -7,6 +7,7 @@ import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.FileUtils;
 
@@ -41,7 +42,7 @@ public class SpectatorTeleportModule {
         DarwinPlayer player = (DarwinPlayer) event.getTarget();
         if (player.getGameMode().equals(GameModes.SPECTATOR)) {
             player.getWorld().ifPresent(world -> {
-                if (!whitelistedWorlds.contains(world.getName())) {
+                if (!whitelistedWorlds.contains(world.getName()) && !player.hasPermission(Permissions.ADMIN_BYPASS)) {
                     event.setCancelled(true);
                     player.tell(Translations.SPECTATOR_TP_DISALLOWED.s());
                 }

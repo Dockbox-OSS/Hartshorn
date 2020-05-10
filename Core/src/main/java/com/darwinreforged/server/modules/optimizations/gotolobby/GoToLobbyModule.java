@@ -7,6 +7,7 @@ import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.util.FileUtils;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class GoToLobbyModule {
     public void onPlayerMove(PlayerMoveEvent event) {
         DarwinPlayer player = (DarwinPlayer) event.getTarget();
         player.getWorld().ifPresent(world -> {
-            if (blacklist.contains(world.getName())) {
+            if (blacklist.contains(world.getName()) && !player.hasPermission(Permissions.ADMIN_BYPASS)) {
                 player.setGameMode(GameModes.CREATIVE);
                 player.execute("hub");
             }
