@@ -2,9 +2,9 @@ package com.darwinreforged.server.modules.optimizations.spectatorteleport;
 
 import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.entities.living.state.GameModes;
-import com.darwinreforged.server.core.events.internal.PlayerTeleportEvent;
-import com.darwinreforged.server.core.events.internal.ServerReloadEvent;
-import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
+import com.darwinreforged.server.core.events.internal.player.PlayerTeleportEvent;
+import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
+import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;

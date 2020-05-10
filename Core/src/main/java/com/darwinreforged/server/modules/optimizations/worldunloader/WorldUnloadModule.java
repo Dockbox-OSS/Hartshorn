@@ -2,8 +2,8 @@ package com.darwinreforged.server.modules.optimizations.worldunloader;
 
 import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.entities.location.DarwinWorld;
-import com.darwinreforged.server.core.events.internal.ServerReloadEvent;
-import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
+import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
+import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;

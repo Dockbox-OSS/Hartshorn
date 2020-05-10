@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.events.internal;
+package com.darwinreforged.server.core.events.internal.server;
 
 import com.darwinreforged.server.core.entities.living.Target;
 import com.darwinreforged.server.core.events.util.Event;

@@ -1,8 +1,8 @@
 package com.darwinreforged.server.sponge;
 
 import com.darwinreforged.server.core.entities.living.DarwinPlayer;
-import com.darwinreforged.server.core.events.internal.ServerInitEvent;
-import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
+import com.darwinreforged.server.core.events.internal.server.ServerInitEvent;
+import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.init.ServerType;
 import com.darwinreforged.server.core.modules.DisabledModule;
@@ -14,9 +14,7 @@ import com.darwinreforged.server.core.util.commands.annotation.Command;
 import com.darwinreforged.server.core.util.commands.annotation.Description;
 import com.darwinreforged.server.core.util.commands.annotation.Permission;
 import com.darwinreforged.server.core.util.commands.annotation.Src;
-import com.google.inject.Inject;
 
-import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
