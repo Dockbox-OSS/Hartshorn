@@ -1,14 +1,19 @@
 package com.darwinreforged.server.core.util;
 
 import com.darwinreforged.server.core.init.AbstractUtility;
+import com.darwinreforged.server.core.init.DarwinConfig;
+import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.listeners.DiscordListener;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import java.util.List;
+
+import javax.security.auth.login.LoginException;
 
 @AbstractUtility("Discord connection and messaging utilities")
 public abstract class DiscordUtils {
@@ -34,19 +39,33 @@ public abstract class DiscordUtils {
     }
 
     public TextChannel getChannel(String channel) {
-        return getJda().getTextChannelById(channel);
+        return getJdaWithFallback().getTextChannelById(channel);
     }
 
     public TextChannel getChannel(long channel) {
-        return getJda().getTextChannelById(channel);
+        return getJdaWithFallback().getTextChannelById(channel);
     }
     
     public User getUserById(long id) {
-        return getJda().getUserById(id);
+        return getJdaWithFallback().getUserById(id);
     }
     
     public User getUserById(String id) {
         return getJda().getUserById(id);
+    }
+
+    protected JDA getJdaWithFallback() {
+        JDA jda = getJda();
+        if (jda != null) return jda;
+        else {
+            try {
+                return (new JDABuilder(DarwinConfig.BOT_TOKEN.get())).build().awaitReady();
+            } catch (InterruptedException | LoginException e) {
+                DarwinServer.error("Failed to obtain JDA instance", e);
+            }
+        }
+        // We tried everything we could..
+        return null;
     }
 
     protected abstract JDA getJda();
