@@ -3,18 +3,18 @@ package com.darwinreforged.server.core.events.internal.chat;
 import com.darwinreforged.server.core.events.util.Event;
 
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Invite.Channel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 public class DiscordChatEvent extends Event {
 
     private final Member member;
     private final Message message;
     private final Guild guild;
-    private final Channel channel;
+    private final TextChannel channel;
 
-    public DiscordChatEvent(Member member, Message message, Guild guild, Channel channel) {
+    public DiscordChatEvent(Member member, Message message, Guild guild, TextChannel channel) {
         this.member = member;
         this.message = message;
         this.guild = guild;
@@ -33,7 +33,7 @@ public class DiscordChatEvent extends Event {
         return guild;
     }
 
-    public Channel getChannel() {
+    public TextChannel getChannel() {
         return channel;
     }
 }

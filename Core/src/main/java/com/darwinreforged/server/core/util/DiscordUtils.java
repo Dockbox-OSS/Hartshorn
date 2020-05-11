@@ -1,13 +1,20 @@
 package com.darwinreforged.server.core.util;
 
 import com.darwinreforged.server.core.init.AbstractUtility;
+import com.darwinreforged.server.core.listeners.DiscordListener;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
 
+import java.util.List;
+
 @AbstractUtility("Discord connection and messaging utilities")
 public abstract class DiscordUtils {
+
+    public void init(List<String> channelWhitelist) {
+        if (getJda() != null) getJda().addEventListener(new DiscordListener(channelWhitelist));
+    }
 
     public void sendToChannel(String message, String channel) {
         getChannel(channel).sendMessage(message).queue();
