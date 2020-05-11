@@ -16,7 +16,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
-import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -49,7 +48,7 @@ public class SpongeCommand extends Command implements CommandCallable {
             super.processArguments(ofSource(source), arguments);
             return CommandResult.success();
         } catch (Throwable t) {
-            throw new CommandException(TextSerializers.FORMATTING_CODE.deserialize(t.getMessage()), t);
+            throw new CommandException(Text.of(t.getMessage()), t);
         }
     }
 
