@@ -43,7 +43,10 @@ public abstract class FileUtils {
     }
 
     public <T, I> Dao<T, I> getDataDb(Class<T> object, Class<I> idType, Object module) {
-        Optional<Module> info = DarwinServer.getModuleInfo(module.getClass());
+        Optional<Module> info;
+        if (module instanceof Class) info = DarwinServer.getModuleInfo((Class<?>) module);
+        else info = DarwinServer.getModuleInfo(module.getClass());
+
         if (info.isPresent()) {
             String id = info.get().id();
             File file = new File(getDataDirectory(module).toFile(), String.format("%s.dat", id));
@@ -106,7 +109,10 @@ public abstract class FileUtils {
 
     public File getYamlConfigFile(Object module, boolean createIfNotExists) {
         Path path = getConfigDirectory(module);
-        Optional<Module> info = DarwinServer.getModuleInfo(module.getClass());
+        Optional<Module> info;
+        if (module instanceof Class) info = DarwinServer.getModuleInfo((Class<?>) module);
+        else info = DarwinServer.getModuleInfo(module.getClass());
+
         if (info.isPresent()) {
             String moduleId = info.get().id();
             File file = new File(path.toFile(), String.format("%s.yml", moduleId));
