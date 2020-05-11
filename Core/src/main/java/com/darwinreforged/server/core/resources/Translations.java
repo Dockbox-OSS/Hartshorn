@@ -533,8 +533,8 @@ public enum Translations {
             if (!file.exists()) {
                 configMap = new HashMap<>();
                 Arrays.stream(Translations.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.u()));
-                DarwinServer.getUtilChecked(FileUtils.class).writeYaml(configMap, file);
-            } else configMap = DarwinServer.getUtilChecked(FileUtils.class).getYamlData(file);
+                DarwinServer.getUtilChecked(FileUtils.class).writeYamlDataToFile(configMap, file);
+            } else configMap = DarwinServer.getUtilChecked(FileUtils.class).getYamlDataFromFile(file);
 
             configMap.forEach((k, v) -> {
                 Translations t = Translations.valueOf(k.toUpperCase().replaceAll("\\.", "_"));

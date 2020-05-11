@@ -3,18 +3,17 @@ package com.darwinreforged.server.core.util;
 import com.darwinreforged.server.core.init.AbstractUtility;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.SQLException;
@@ -25,9 +24,16 @@ import java.util.Optional;
 @AbstractUtility("Common utilities for file management and parsing")
 public abstract class FileUtils {
 
-    private static final Yaml yaml = new Yaml();
+    private final ObjectMapper mapper;
     private static final Map<String, ConnectionSource> jdbcSources = new HashMap<>();
     private static final String JDBC_FORMAT = "jdbc:sqlite:%s";
+
+    public FileUtils() {
+        YAMLFactory factory = new YAMLFactory().disable(Feature.WRITE_DOC_START_MARKER);
+        mapper = new ObjectMapper(factory);
+        mapper.findAndRegisterModules();
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    }
 
     public <T, I> Dao<T, I> getDataDb(Class<T> object, Class<I> idType, File file) {
         if (isConnected(file)) {
@@ -72,24 +78,28 @@ public abstract class FileUtils {
     /*
      * Config files (YAML)
      */
-    public Map<String, Object> getYamlData(File file) {
+    public <T> T getYamlDataFromFile(File file, Class<T> type, T defaultValue) {
         try {
-            FileReader reader = new FileReader(file);
-            Map<String, Object> res = yaml.loadAs(reader, Map.class);
-            return res != null ? res : new HashMap<>();
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
+            T res = mapper.readValue(file, type);
+            return res != null ? res : defaultValue;
+        } catch (IOException e) {
+            DarwinServer.error("Failed to get YAML data from file", e);
         }
-        return new HashMap<>();
+        return defaultValue;
     }
 
-    public Map<String, Object> getConfigYamlData(Object module) {
-        return getYamlData(getYamlConfigFile(module));
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Map<String, Object> getYamlDataFromFile(File file) {
+        return (Map<String, Object>) getYamlDataFromFile(file, Map.class, new HashMap());
+    }
+
+    public Map<String, Object> getYamlDataForConfig(Object module) {
+        return getYamlDataFromFile(getYamlConfigFile(module));
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getConfigYamlData(Object module, String path, Class<T> type) {
-        Map<String, Object> values = getConfigYamlData(module);
+    public <T> T getYamlDataForConfig(Object module, String path, Class<T> type) {
+        Map<String, Object> values = getYamlDataForConfig(module);
         if (values.containsKey(path)) {
             Object val = values.get(path);
             if (val.getClass().isAssignableFrom(type) || val.getClass().equals(type))
@@ -116,22 +126,21 @@ public abstract class FileUtils {
         if (info.isPresent()) {
             String moduleId = info.get().id();
             File file = new File(path.toFile(), String.format("%s.yml", moduleId));
-            return createFileIfNotExists(file, createIfNotExists);
+            return createIfNotExists ? createFileIfNotExists(file) : file;
         }
         throw new RuntimeException("No such module registered");
     }
 
-    public void writeYaml(Map<String, Object> data, File file) {
+    public <T> void writeYamlDataToFile(T data, File file) {
         try {
-            FileWriter writer = new FileWriter(file);
-            yaml.dump(data, writer);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            mapper.writeValue(file, data);
+        } catch (IOException e) {
+            DarwinServer.error("Failed to write YAML data to file", e);
         }
     }
 
-    public void writeConfigYaml(Map<String, Object> data, Object module) {
-        writeYaml(data, getYamlConfigFile(module));
+    public void writeYamlDataForConfig(Map<String, Object> data, Object module) {
+        writeYamlDataToFile(data, getYamlConfigFile(module));
     }
 
 
@@ -154,8 +163,8 @@ public abstract class FileUtils {
     /*
      * Path and file existence validation
      */
-    private File createFileIfNotExists(File file, boolean createIfNotExists) {
-        if (!file.exists() && createIfNotExists) {
+    public File createFileIfNotExists(File file) {
+        if (!file.exists()) {
             try {
                 file.getParentFile().mkdirs();
                 file.createNewFile();

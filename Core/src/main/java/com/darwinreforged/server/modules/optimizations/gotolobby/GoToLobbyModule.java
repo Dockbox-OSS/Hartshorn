@@ -34,11 +34,11 @@ public class GoToLobbyModule {
     @SuppressWarnings("unchecked")
     private void init() {
         FileUtils fileUtils = DarwinServer.getUtilChecked(FileUtils.class);
-        Map<String, Object> config = fileUtils.getConfigYamlData(this);
+        Map<String, Object> config = fileUtils.getYamlDataForConfig(this);
 
         if(config.containsKey("blacklist")) blacklist = (List<String>) config.get("blacklist");
         else config.put("blacklist", Arrays.asList("denied_world", "worlds"));
-        fileUtils.writeConfigYaml(config, this);
+        fileUtils.writeYamlDataForConfig(config, this);
     }
 
     @Listener

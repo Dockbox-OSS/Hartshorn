@@ -6,11 +6,7 @@ import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.util.FileUtils;
 
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,13 +22,7 @@ public class DarwinModuleData {
     public void onServerStart(ServerStartedEvent event) {
         File dataFile = new File(DarwinServer.getUtilChecked(FileUtils.class).getDataDirectory(this).toFile(), "module_data.yml");
         DarwinServer.getAllModuleInfo().forEach(this::registerPlugin);
-        try {
-            Yaml yaml = new Yaml();
-            FileWriter writer = new FileWriter(dataFile);
-            yaml.dump(data, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        DarwinServer.getUtilChecked(FileUtils.class).writeYamlDataToFile(data, dataFile);
     }
 
     private void registerPlugin(Module module) {

@@ -45,7 +45,7 @@ public class WorldUnloadModule {
     private void init() {
         fileUtil = DarwinServer.getUtilChecked(FileUtils.class);
         plotUtils = DarwinServer.getUtilChecked(PlotUtils.class);
-        ArrayList<String> blacklist = (ArrayList<String>) fileUtil.getConfigYamlData(this, "blacklist", ArrayList.class);
+        ArrayList<String> blacklist = (ArrayList<String>) fileUtil.getYamlDataForConfig(this, "blacklist", ArrayList.class);
         if (blacklist != null) unloadBlacklist.addAll(blacklist);
         refreshBlackList();
 
@@ -68,7 +68,7 @@ public class WorldUnloadModule {
     private void refreshBlackList() {
         Map<String, Object> configData = new HashMap<>();
         configData.put("blacklist", unloadBlacklist.toArray());
-        fileUtil.writeConfigYaml(configData, this);
+        fileUtil.writeYamlDataForConfig(configData, this);
     }
 
     private void unloadTask() {

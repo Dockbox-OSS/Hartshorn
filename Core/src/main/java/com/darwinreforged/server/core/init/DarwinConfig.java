@@ -19,7 +19,7 @@ public class DarwinConfig {
 
     public DarwinConfig() {
         FileUtils fu = DarwinServer.getUtilChecked(FileUtils.class);
-        Map<String, Object> config = fu.getConfigYamlData(DarwinServerModule.class);
+        Map<String, Object> config = fu.getYamlDataForConfig(DarwinServerModule.class);
         AtomicBoolean written = new AtomicBoolean(config.isEmpty());
         FLAGS.forEach((k, v) -> {
             boolean oneWritten = false;
@@ -33,7 +33,7 @@ public class DarwinConfig {
             }
             if (!oneWritten) config.put(v.key, v.value);
         });
-        if (written.get()) fu.writeConfigYaml(config, DarwinServerModule.class);
+        if (written.get()) fu.writeYamlDataForConfig(config, DarwinServerModule.class);
     }
 
     public static abstract class ConfigFlag<T> {
