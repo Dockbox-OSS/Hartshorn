@@ -6,6 +6,7 @@ import com.darwinreforged.server.core.listeners.DiscordListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.User;
 
 import java.util.List;
 
@@ -38,6 +39,14 @@ public abstract class DiscordUtils {
 
     public TextChannel getChannel(long channel) {
         return getJda().getTextChannelById(channel);
+    }
+    
+    public User getUserById(long id) {
+        return getJda().getUserById(id);
+    }
+    
+    public User getUserById(String id) {
+        return getJda().getUserById(id);
     }
 
     protected abstract JDA getJda();
