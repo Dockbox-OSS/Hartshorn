@@ -2,19 +2,15 @@ package com.darwinreforged.server.sponge;
 
 import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.events.CancellableEvent;
-import com.darwinreforged.server.core.events.internal.chat.DiscordChatEvent;
 import com.darwinreforged.server.core.events.internal.player.InventoryInteractionEvent;
 import com.darwinreforged.server.core.events.internal.player.PlayerLoggedInEvent;
 import com.darwinreforged.server.core.events.internal.player.PlayerMoveEvent;
 import com.darwinreforged.server.core.events.internal.player.PlayerTeleportEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.init.DarwinServer;
-import com.magitechserver.magibridge.api.DiscordEvent;
-
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Invite.Channel;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
+import com.magitechserver.magibridge.chat.MessageBuilder;
+import com.magitechserver.magibridge.discord.DiscordMessageBuilder;
+import com.magitechserver.magibridge.events.DiscordMessageEvent;
 
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
@@ -50,19 +46,6 @@ public class SpongeListener {
     @Listener
     public void onInventoryInteract(InteractInventoryEvent event, @First Player p) {
         postCancellable(new InventoryInteractionEvent(new DarwinPlayer(p.getUniqueId(), p.getName())), event);
-    }
-
-    // TODO
-    // This is untested and should be rewritten as soon as a non-core entity based MagiBridge build is available!
-    @Listener
-    public void onDiscordChat(DiscordEvent.MessageEvent event) {
-        Member member = (Member) event.getMember();
-        Message message = (Message) event.getMessage();
-        Guild guild = (Guild) event.getGuild();
-        Channel channel = (Channel) event.getChannel();
-
-        DiscordChatEvent de = new DiscordChatEvent(member, message, guild, channel);
-        DarwinServer.getEventBus().post(de);
     }
 
     private <I extends CancellableEvent> void postCancellable(I e, Cancellable se) {
