@@ -341,21 +341,25 @@ final class AccessHelper {
             }
         }
 
-        Set<MethodWrapper> set = new LinkedHashSet<>();
-        Class<?> current = cls;
-        do {
-            Method[] methods = current.getDeclaredMethods();
-            for (Method m : methods) {
-                // if there's already a method that is overriding the current method, add() will return false
-                set.add(new MethodWrapper(m));
-            }
-        } while ((current = current.getSuperclass()) != Object.class && current != null);
+        try {
+            Set<MethodWrapper> set = new LinkedHashSet<>();
+            Class<?> current = cls;
+            do {
+                Method[] methods = current.getDeclaredMethods();
+                for (Method m : methods) {
+                    // if there's already a method that is overriding the current method, add() will return false
+                    set.add(new MethodWrapper(m));
+                }
+            } while ((current = current.getSuperclass()) != Object.class && current != null);
 
-        // Guava equivalent:       Lists.transform(set, w -> w.method);
-        // Stream API equivalent:  set.stream().map(w -> w.method).collect(Collectors.toList());
-        List<Method> result = new ArrayList<>(set.size());
-        for (MethodWrapper methodWrapper : set) result.add(methodWrapper.method);
-        return result;
+            // Guava equivalent:       Lists.transform(set, w -> w.method);
+            // Stream API equivalent:  set.stream().map(w -> w.method).collect(Collectors.toList());
+            List<Method> result = new ArrayList<>(set.size());
+            for (MethodWrapper methodWrapper : set) result.add(methodWrapper.method);
+            return result;
+        } catch (Throwable e) {
+            return new ArrayList<>();
+        }
     }
 
     /**

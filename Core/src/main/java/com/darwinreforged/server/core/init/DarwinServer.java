@@ -9,6 +9,7 @@ import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.CommandUtils;
+import com.darwinreforged.server.core.util.DiscordUtils;
 import com.darwinreforged.server.core.util.FileUtils;
 import com.darwinreforged.server.core.util.PlayerUtils;
 import com.darwinreforged.server.core.util.commands.annotation.Src;
@@ -56,7 +57,8 @@ public abstract class DarwinServer extends Target {
     protected EventBus eventBus;
     private String version;
     private String lastUpdate;
-    private Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private DarwinConfig config;
 
     protected static final String MODULE_PACKAGE = "com.darwinreforged.server.modules";
     protected static final String UTIL_PACKAGE = "com.darwinreforged.server.core.util";
@@ -71,7 +73,7 @@ public abstract class DarwinServer extends Target {
         return server.log;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "InstantiationOfUtilityClass"})
     protected void setupPlatform() throws IOException {
         // Load plugin properties
         Properties properties = new Properties();
@@ -89,9 +91,15 @@ public abstract class DarwinServer extends Target {
         log.info("Loading integrated modules");
         scanModulePackage(MODULE_PACKAGE, true);
 
-        // Create external modules (outside server jar, inside modules folder)
-        log.info("Loading external modules");
-        loadExternalModules();
+        // Set up config
+        config = new DarwinConfig();
+
+        if (DarwinConfig.LOAD_EXTERNAL_MODULES.get()) {
+            // Create external modules (outside server jar, inside modules folder)
+            log.info("Loading external modules");
+            loadExternalModules();
+        }
+
         // Import permissions and translations
         Translations.collect();
         Permissions.collect();
@@ -101,6 +109,14 @@ public abstract class DarwinServer extends Target {
         cu.registerPackage(server.getClass());
         cu.registerPackage(MODULE_PACKAGE);
         cu.submit();
+
+        // Registering JDA Listeners
+        DiscordUtils du = getUtilChecked(DiscordUtils.class);
+        du.init(DarwinConfig.DISCORD_CHANNEL_WHITELIST.get());
+    }
+
+    public DarwinConfig getConfig() {
+        return config;
     }
 
     public static String getVersion() {
@@ -129,20 +145,22 @@ public abstract class DarwinServer extends Target {
     }
 
     public static void error(String message, Exception e) {
-        StringBuilder b = new StringBuilder();
+        if (DarwinConfig.FRIENDLY_ERRORS.get()) {
+            StringBuilder b = new StringBuilder();
 
-        String err = b.append(String.join("", Collections.nCopies(5, "=")))
-                .append(e.getClass().toGenericString().split("\\.")[2])
-                .append(String.join("", Collections.nCopies(5, "=")))
-                .append("\n")
-                .append(String.format(" Message -> %s%n", e.getMessage()))
-                .append(String.format(" Source -> %s%n", e.getStackTrace()[0].getClassName()))
-                .append(String.format(" Method -> %s%n", e.getStackTrace()[0].getMethodName()))
-                .append(String.format(" Line -> %d%n", e.getStackTrace()[0].getLineNumber()))
-                .append(String.format(" Additional message -> %s%n", message))
-                .append(" Stacktrace -> :\n")
-                .toString();
-        server.log.error(err);
+            String err = b.append(String.join("", Collections.nCopies(5, "=")))
+                    .append(e.getClass().toGenericString().split("\\.")[2])
+                    .append(String.join("", Collections.nCopies(5, "=")))
+                    .append("\n")
+                    .append(String.format(" Message -> %s%n", e.getMessage()))
+                    .append(String.format(" Source -> %s%n", e.getStackTrace()[0].getClassName()))
+                    .append(String.format(" Method -> %s%n", e.getStackTrace()[0].getMethodName()))
+                    .append(String.format(" Line -> %d%n", e.getStackTrace()[0].getLineNumber()))
+                    .append(String.format(" Additional message -> %s%n", message))
+                    .append(" Stacktrace -> :\n")
+                    .toString();
+            server.log.error(err);
+        }
         e.printStackTrace();
     }
 
