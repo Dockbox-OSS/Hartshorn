@@ -1,30 +1,27 @@
 package com.darwinreforged.server.modules.extensions.chat.dave;
 
-import com.darwinreforged.server.sponge.DarwinServer;
-import com.magitechserver.magibridge.MagiBridge;
+import com.darwinreforged.server.core.entities.living.DarwinPlayer;
+import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.util.DiscordUtils;
+import com.darwinreforged.server.core.util.PlayerUtils;
 
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
-
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Random;
 
 public class DaveRawUtils {
 
-    public static Entry<?,?> getAssociatedTrigger(String message) {
+    public static DaveTrigger getAssociatedTrigger(String message) {
         Optional<DaveChatModule> chatModuleOptional = DarwinServer.getModule(DaveChatModule.class);
         if (chatModuleOptional.isPresent()) {
-            for (Entry<Object, Object> entry : chatModuleOptional.get().getMessagesProperties().entrySet()) {
-                String fullTrigger = entry.getKey().toString().replaceFirst("<!important>", "");
-
-                for (String trigger : fullTrigger.split("<>")) {
-
+            for (DaveTrigger entry : chatModuleOptional.get().getConfigurationUtil().getTriggers()) {
+                for (String trigger : entry.getTrigger()) {
                     boolean containsAll = true;
 
                     for (String keyword : trigger.split(","))
-                        if (!message.toLowerCase().replaceAll(",", "").contains(keyword.toLowerCase()))
+                        if (!message.toLowerCase().replaceAll(",", "").contains(keyword.toLowerCase())) {
                             containsAll = (false);
+                            break;
+                        }
 
                     if (containsAll) return entry;
                 }
@@ -36,12 +33,14 @@ public class DaveRawUtils {
 
     public static String parsePlaceHolders(String message, String unparsedResponse, String playername) {
         String parsedResponse = unparsedResponse.replaceAll("<player>", playername);
+        DiscordUtils du = DarwinServer.getUtilChecked(DiscordUtils.class);
+
 
         if (parsedResponse.contains("<mention>")) {
             boolean replaced = false;
             for (String partial : message.split(" ")) {
                 if (partial.startsWith("<@") && partial.length() > 2) {
-                    String mention = MagiBridge.jda.getUserById(partial.replaceFirst("<@", "").replaceFirst(">", "")).getName();
+                    String mention = du.getUserById(partial.replaceFirst("<@", "").replaceFirst(">", "")).getName();
                     if (mention != null) {
                         parsedResponse = parsedResponse.replaceAll("<mention>", partial.replaceFirst("@", ""));
                         replaced = true;
@@ -60,8 +59,9 @@ public class DaveRawUtils {
         }
 
         if (parsedResponse.contains("<random>")) {
-            int index = new Random().nextInt(Sponge.getServer().getOnlinePlayers().size());
-            String randomPlayer = ((Player) Sponge.getServer().getOnlinePlayers().toArray()[index]).getName();
+            PlayerUtils pu = DarwinServer.getUtilChecked(PlayerUtils.class);
+            int index = new Random().nextInt(pu.getOnlinePlayers().size());
+            String randomPlayer = ((DarwinPlayer) pu.getOnlinePlayers().toArray()[index]).getName();
 
             if (randomPlayer != null) parsedResponse = parsedResponse.replaceAll("<random>", randomPlayer);
             else parsedResponse = parsedResponse.replaceAll("<random>", playername + "*");

@@ -1,35 +1,35 @@
 package com.darwinreforged.server.modules.extensions.chat.dave;
 
+import com.darwinreforged.server.core.entities.chat.ClickEvent;
+import com.darwinreforged.server.core.entities.chat.ClickEvent.ClickAction;
+import com.darwinreforged.server.core.entities.chat.HoverEvent;
+import com.darwinreforged.server.core.entities.chat.HoverEvent.HoverAction;
+import com.darwinreforged.server.core.entities.chat.Text;
+import com.darwinreforged.server.core.entities.chat.TextBuilder;
+import com.darwinreforged.server.core.entities.living.DarwinPlayer;
 import com.darwinreforged.server.core.events.internal.chat.DiscordChatEvent;
+import com.darwinreforged.server.core.events.internal.chat.SendChatMessageEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.util.DiscordUtils;
-import com.darwinreforged.server.sponge.utils.PlayerUtils;
+import com.darwinreforged.server.core.util.TimeUtils;
+import com.darwinreforged.server.core.util.PlayerUtils;
+import com.darwinreforged.server.modules.extensions.chat.dave.DaveTrigger.Response;
 
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.filter.cause.First;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
+import net.dv8tion.jda.api.entities.TextChannel;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
-import java.util.Random;
-
-import br.net.fabiozumbi12.UltimateChat.Sponge.API.SendChannelMessageEvent;
+import java.util.UUID;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 
 public class DaveChatListeners {
 
-    private String botPrefix;
+    private Text botPrefix;
     private String color;
 
     @Listener
@@ -39,35 +39,40 @@ public class DaveChatListeners {
         String message = event.getMessage().getContentRaw();
         String guild = event.getGuild().getId();
 
-        if (guild.equals("341249512586608640") && !playername.equals("DR") && !playername.equals("DR ≫ Dave") && event
+        if (guild.equals("341249512586608640") && event
                 .getChannel()
                 .getName()
                 .equals("global")) {
-            CommandSource source = Sponge.getServer().getConsole();
-            Executor.beforeExecution(playername, message, botPrefix, color, source);
-            Sponge.getScheduler().createTaskBuilder().execute(new Executor()).delayTicks(5)
-                    .submit(DarwinServer.getServer());
+            DarwinPlayer console = DarwinServer.getUtilChecked(PlayerUtils.class).getConsole();
+            Executor.beforeExecution(playername, message, botPrefix, color, console);
+            DarwinServer.getUtilChecked(TimeUtils.class).schedule()
+                    .execute(new Executor())
+                    .delayTicks(5)
+                    .submit();
         }
     }
 
     private void beforeEach() {
         Optional<DaveChatModule> chatModuleOptional = DarwinServer.getModule(DaveChatModule.class);
         if (chatModuleOptional.isPresent()) {
-            botPrefix = chatModuleOptional.get().getSettingsProperties().getProperty("prefix").replaceAll("&", "§");
-            color = chatModuleOptional.get().getSettingsProperties().getProperty("messageColor").replaceAll("&", "§");
+            botPrefix = chatModuleOptional.get().getConfigurationUtil().getPrefix();
+            color = chatModuleOptional.get().getConfigurationUtil().getMessageDefaultColor().replaceAll("&", "\u00A7");
         }
     }
 
     @Listener
-    public void onGameChat(SendChannelMessageEvent event, @First Player player) {
+    public void onGameChat(SendChatMessageEvent event) {
         beforeEach();
-        String playername = player.getName();
+        String playername = event.getTarget().getName();
+        UUID consoleId = DarwinServer.getUtilChecked(PlayerUtils.class).getConsoleId();
 
-        if (event.getChannel().getName().equalsIgnoreCase("global"))
-            if (player instanceof CommandSource) {
-                Executor.beforeExecution(playername, event.getMessage().toPlain(), botPrefix, color, player);
-                Sponge.getScheduler().createTaskBuilder().execute(new Executor()).delayTicks(5)
-                        .submit(DarwinServer.getServer());
+        if (event.isGlobalChat())
+            if (!event.getTarget().getUniqueId().equals(consoleId)) {
+                Executor.beforeExecution(playername, event.getMessage(), botPrefix, color, (DarwinPlayer) event.getTarget());
+                DarwinServer.getUtilChecked(TimeUtils.class).schedule()
+                        .execute(new Executor())
+                        .delayTicks(5)
+                        .submit();
             }
     }
 
@@ -76,12 +81,12 @@ public class DaveChatListeners {
 
         static String playername;
         static String message;
-        static String botPrefix;
+        static Text botPrefix;
         static String color;
-        static CommandSource player;
-        static HashMap<Map.Entry, LocalDateTime> timeSinceTrigger = new HashMap<>();
+        static DarwinPlayer player;
+        static HashMap<DaveTrigger, LocalDateTime> timeSinceTrigger = new HashMap<>();
 
-        static void beforeExecution(String playername1, String message1, String botPrefix1, String color1, CommandSource player1) {
+        static void beforeExecution(String playername1, String message1, Text botPrefix1, String color1, DarwinPlayer player1) {
             playername = playername1;
             message = message1;
             botPrefix = botPrefix1;
@@ -91,7 +96,7 @@ public class DaveChatListeners {
 
         @Override
         public void run() {
-            Map.Entry trigger = DaveRawUtils.getAssociatedTrigger(message);
+            DaveTrigger trigger = DaveRawUtils.getAssociatedTrigger(message);
 
             LocalDateTime timeOfLastTriggered = timeSinceTrigger.get(trigger);
             long secondsSinceLastResponse = 10;
@@ -99,24 +104,18 @@ public class DaveChatListeners {
                 secondsSinceLastResponse = timeOfLastTriggered.until(LocalDateTime.now(), SECONDS);
 
             if (trigger != null && secondsSinceLastResponse >= 10) {
-                String unparsedResponse = trigger.getValue().toString().replaceAll("&", "§");
-                String[] potentialResponses = DaveRawUtils.parsePlaceHolders(message, unparsedResponse, playername)
-                        .split("<:>");
+                List<Response> responses = trigger.getResponses();
 
-                int index = new Random().nextInt(potentialResponses.length);
-                String response = potentialResponses.length > 1 ? potentialResponses[index] : potentialResponses[0];
+                boolean important = trigger.isImportant();
 
-                String[] responseLayers = response.split("<>");
-
-                boolean important = trigger.getKey().toString().startsWith("<!important>");
-
-                Arrays.stream(responseLayers).forEach(partial -> {
-                    if (partial.startsWith("/") || partial.startsWith("*/"))
-                        executeCommand(partial);
-                    else if (partial.startsWith("[") && partial.endsWith("]"))
-                        printResponse(DaveRawUtils.parseWebsiteLink(partial), true, important);
-                    else
-                        printResponse(partial, false, important);
+                responses.forEach(response -> {
+                    if (response.getType().equals("cmd")) {
+                        executeCommand(response.getMessage());
+                    } else if (response.getType().equals("url")) {
+                        printResponse(DaveRawUtils.parseWebsiteLink(response.getMessage()), true, important);
+                    } else {
+                        printResponse(DaveRawUtils.parsePlaceHolders(message, response.getMessage(), playername), false, important);
+                    }
                 });
 
                 timeSinceTrigger.put(trigger, LocalDateTime.now());
@@ -125,39 +124,34 @@ public class DaveChatListeners {
         }
 
         private void executeCommand(String command) {
-            CommandSource executor = command.startsWith("*/") ? Sponge.getServer().getConsole() : player;
-            if (command.startsWith("*/")) command = command.replaceFirst("\\*", "");
-            Sponge.getCommandManager().process(executor, command.replaceFirst("/", ""));
+            player.execute(command.replaceFirst("/", ""));
         }
 
         private void printResponse(String response, boolean link, boolean important) {
-            Text.Builder message = Text.builder().append(Text.of(botPrefix, color));
-            if (link) try {
-                message.append(Translations.DAVE_LINK_SUGGESTION.ft(response))
-                        .onClick(TextActions.openUrl(new URL(response)))
-                        .onHover(TextActions.showText(Translations.DAVE_LINK_SUGGESTION_HOVER.ft(response)));
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
+            TextBuilder builder = TextBuilder.empty();
+            builder.append(botPrefix).append(color);
+
+            if (link) {
+                Text linkSuggestion = new Text(Translations.DAVE_LINK_SUGGESTION.f(response))
+                        .setClickEvent(new ClickEvent(ClickAction.OPEN_URL, response))
+                        .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_LINK_SUGGESTION_HOVER.f(response)));
+                builder.append(linkSuggestion);
             }
-            else message.append(Text.of(response));
 
-            DarwinServer.getServer().getModule(DaveChatModule.class).ifPresent(dave -> Sponge.getServer().getOnlinePlayers()
-                    .stream().filter(player1 -> !dave
-                            .getPlayerWhoMutedDave()
-                            .contains(player1.getName()) || important)
-                    .forEach(player1 -> PlayerUtils
-                            .tell(player1, message.build())));
+            PlayerUtils pu = DarwinServer.getUtilChecked(PlayerUtils.class);
 
-            Optional<DaveChatModule> chatModuleOptional = DarwinServer.getServer().getModule(DaveChatModule.class);
-            if (chatModuleOptional.isPresent()) {
-                String discordChannel = chatModuleOptional.get().getSettingsProperties().getProperty("discordChannel");
+            DarwinServer.getModule(DaveChatModule.class).ifPresent(dave -> {
+                pu.getOnlinePlayers().stream()
+                        .filter(op -> !dave.getPlayerWhoMutedDave().contains(op.getUniqueId()) || important)
+                        .forEach(op -> op.tell(builder.build()));
+                TextChannel discordChannel = dave.getConfigurationUtil().getChannel();
 
                 String discordMessage = response.replaceAll("§", "&");
                 for (String regex : new String[]{"(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r"})
                     discordMessage = discordMessage.replaceAll(regex, "");
 
-                DarwinServer.getUtilChecked(DiscordUtils.class).sendToChannel(Translations.DAVE_DISCORD_FORMAT.f(discordMessage), discordChannel);
-            }
+                DarwinServer.getUtilChecked(DiscordUtils.class).sendToChannel(Translations.DAVE_DISCORD_FORMAT.f(discordMessage), discordChannel.getId());
+            });
         }
     }
 }
