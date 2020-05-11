@@ -94,6 +94,10 @@ public abstract class DarwinServer extends Target {
         // Set up config
         config = new DarwinConfig();
 
+        // Registering JDA Listeners
+        DiscordUtils du = getUtilChecked(DiscordUtils.class);
+        du.init(DarwinConfig.DISCORD_CHANNEL_WHITELIST.get());
+
         if (DarwinConfig.LOAD_EXTERNAL_MODULES.get()) {
             // Create external modules (outside server jar, inside modules folder)
             log.info("Loading external modules");
@@ -109,10 +113,6 @@ public abstract class DarwinServer extends Target {
         cu.registerPackage(server.getClass());
         cu.registerPackage(MODULE_PACKAGE);
         cu.submit();
-
-        // Registering JDA Listeners
-        DiscordUtils du = getUtilChecked(DiscordUtils.class);
-        du.init(DarwinConfig.DISCORD_CHANNEL_WHITELIST.get());
     }
 
     public DarwinConfig getConfig() {
@@ -144,7 +144,7 @@ public abstract class DarwinServer extends Target {
         error(message, new Exception());
     }
 
-    public static void error(String message, Exception e) {
+    public static void error(String message, Throwable e) {
         if (DarwinConfig.FRIENDLY_ERRORS.get()) {
             StringBuilder b = new StringBuilder();
 
@@ -157,11 +157,15 @@ public abstract class DarwinServer extends Target {
                     .append(String.format(" Method -> %s%n", e.getStackTrace()[0].getMethodName()))
                     .append(String.format(" Line -> %d%n", e.getStackTrace()[0].getLineNumber()))
                     .append(String.format(" Additional message -> %s%n", message))
-                    .append(" Stacktrace -> :\n")
                     .toString();
             server.log.error(err);
         }
-        e.printStackTrace();
+        if (DarwinConfig.STACKTRACES.get()) {
+            e.printStackTrace();
+        }
+        if (!DarwinConfig.STACKTRACES.get() && !DarwinConfig.FRIENDLY_ERRORS.get()) {
+            server.log.error(e.getMessage());
+        }
     }
 
     private void scanModulesInFile(File moduleCandidate) {
@@ -384,6 +388,8 @@ public abstract class DarwinServer extends Target {
     }
 
     public abstract void commandList(@Src DarwinPlayer player);
+
+    public abstract void runAsync(Runnable runnable);
 
     @Override
     public UUID getUniqueId() {

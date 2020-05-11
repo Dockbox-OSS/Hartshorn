@@ -53,6 +53,7 @@ public class DarwinServerSponge extends DarwinServer {
     @Listener
     public void onServerInit(GameInitializationEvent event) throws IOException {
         setupPlatform();
+
         Sponge.getEventManager().registerListeners(this, new SpongeListener());
         eventBus.post(new ServerInitEvent(null));
     }
@@ -99,6 +100,11 @@ public class DarwinServerSponge extends DarwinServer {
                 .contents(moduleContext)
                 .header(header)
                 .build().sendTo(tf.get());
+    }
+
+    @Override
+    public void runAsync(Runnable runnable) {
+        Sponge.getScheduler().createAsyncExecutor(this).execute(runnable);
     }
 
     @Override

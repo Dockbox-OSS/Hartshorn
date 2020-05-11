@@ -16,6 +16,8 @@ public class DarwinConfig {
     public static final ListFlag<String> DISCORD_CHANNEL_WHITELIST = new ListFlag<>("discordChannelWhitelist", new ArrayList<>());
     public static final BooleanFlag LOAD_EXTERNAL_MODULES = new BooleanFlag("loadExternalModules", true);
     public static final BooleanFlag FRIENDLY_ERRORS = new BooleanFlag("useFriendlyErrors", true);
+    public static final BooleanFlag STACKTRACES = new BooleanFlag("useStacktraces", true);
+    public static final StringFlag BOT_TOKEN = new StringFlag("botToken", "[insert token]");
 
     public DarwinConfig() {
         FileUtils fu = DarwinServer.getUtilChecked(FileUtils.class);
