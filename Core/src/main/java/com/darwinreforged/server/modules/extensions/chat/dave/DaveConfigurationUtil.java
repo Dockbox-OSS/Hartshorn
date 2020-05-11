@@ -110,6 +110,8 @@ public class DaveConfigurationUtil {
     private static class TriggerConfig {
         private List<DaveTrigger> triggers;
 
+        public TriggerConfig() {
+        }
         public TriggerConfig(List<DaveTrigger> triggers) {
             this.triggers = triggers;
         }

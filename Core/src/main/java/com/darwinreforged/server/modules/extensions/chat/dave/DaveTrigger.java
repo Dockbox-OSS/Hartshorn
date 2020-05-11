@@ -4,9 +4,12 @@ import java.util.List;
 
 public class DaveTrigger {
 
-    private final List<String> trigger;
-    private final boolean important;
-    private final List<Response> responses;
+    private List<String> trigger;
+    private boolean important;
+    private List<Response> responses;
+
+    public DaveTrigger() {
+    }
 
     public DaveTrigger(List<String> trigger, boolean important, List<Response> responses) {
         this.trigger = trigger;
@@ -27,8 +30,11 @@ public class DaveTrigger {
     }
 
     public static class Response {
-        private final String message;
-        private final String type;
+        private String message;
+        private String type;
+
+        public Response() {
+        }
 
         public Response(String message, String type) {
             this.message = message;
