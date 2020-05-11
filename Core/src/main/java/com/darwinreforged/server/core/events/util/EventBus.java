@@ -499,7 +499,7 @@ public class EventBus {
             try {
                 methodHandle.invoke(listener, event);
             } catch (Throwable e) {
-                e.printStackTrace();
+                DarwinServer.error("Failed to invoke method", e);
             }
         }
 
