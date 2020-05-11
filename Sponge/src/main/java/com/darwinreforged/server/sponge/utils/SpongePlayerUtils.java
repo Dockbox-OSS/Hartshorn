@@ -22,49 +22,51 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @UtilityImplementation(PlayerUtils.class)
 public class SpongePlayerUtils extends PlayerUtils {
 
     @Override
-    public void broadcast(String message) {
+    public void broadcast(com.darwinreforged.server.core.entities.chat.Text message) {
         Sponge.getServer().getBroadcastChannel().send(Text.of(message));
     }
 
     @Override
-    public void broadcastIfPermitted(String message, String permission) {
+    public void broadcastIfPermitted(com.darwinreforged.server.core.entities.chat.Text message, String permission) {
         Sponge.getServer().getOnlinePlayers().parallelStream().filter(p -> p.hasPermission(permission)).forEach(p -> p.sendMessage(Text.of(message)));
     }
 
     @Override
-    public void tell(DarwinPlayer player, String message) {
-        Sponge.getServer().getPlayer(player.getUuid()).ifPresent(spp -> spp.sendMessage(Text.of(Translations.PREFIX.s(), message)));
+    public void tell(DarwinPlayer player, com.darwinreforged.server.core.entities.chat.Text message) {
+        Sponge.getServer().getPlayer(player.getUniqueId()).ifPresent(spp -> spp.sendMessage(Text.of(Translations.PREFIX.s(), message)));
     }
 
     @Override
-    public void tellPlain(DarwinPlayer player, String message) {
-        Sponge.getServer().getPlayer(player.getUuid()).ifPresent(spp -> spp.sendMessage(Text.of(message)));
+    public void tellPlain(DarwinPlayer player, com.darwinreforged.server.core.entities.chat.Text message) {
+        Sponge.getServer().getPlayer(player.getUniqueId()).ifPresent(spp -> spp.sendMessage(Text.of(message)));
     }
 
     @Override
     public boolean isOnline(DarwinPlayer player) {
-        return Sponge.getServer().getPlayer(player.getUuid()).map(User::isOnline).orElse(false);
+        return Sponge.getServer().getPlayer(player.getUniqueId()).map(User::isOnline).orElse(false);
     }
 
     @Override
     public void kick(DarwinPlayer player) {
-        Sponge.getServer().getPlayer(player.getUuid()).ifPresent(Player::kick);
+        Sponge.getServer().getPlayer(player.getUniqueId()).ifPresent(Player::kick);
     }
 
     @Override
     public boolean hasPermission(DarwinPlayer player, String permission) {
-        return Sponge.getServer().getPlayer(player.getUuid()).map(u -> u.hasPermission(permission)).orElse(false);
+        return Sponge.getServer().getPlayer(player.getUniqueId()).map(u -> u.hasPermission(permission)).orElse(false);
     }
 
     @Override
     public Optional<DarwinLocation> getLocation(DarwinPlayer player) {
-        return Sponge.getServer().getPlayer(player.getUuid()).map(p -> {
+        return Sponge.getServer().getPlayer(player.getUniqueId()).map(p -> {
             Location<World> worldLocation = p.getLocation();
             DarwinWorld darwinWorld = new DarwinWorld(worldLocation.getExtent().getUniqueId(), worldLocation.getExtent().getName());
             Vector3d vector3d = new Vector3d(worldLocation.getX(), worldLocation.getY(), worldLocation.getZ());
@@ -74,14 +76,14 @@ public class SpongePlayerUtils extends PlayerUtils {
 
     @Override
     public DarwinItem<?> getItemInHand(DarwinPlayer player, boolean primaryHand) {
-        Optional<ItemStack> itemStack = Sponge.getServer().getPlayer(player.getUuid())
+        Optional<ItemStack> itemStack = Sponge.getServer().getPlayer(player.getUniqueId())
                 .flatMap(spp -> spp.getItemInHand(primaryHand ? HandTypes.MAIN_HAND : HandTypes.OFF_HAND));
         return itemStack.map(DarwinItem::new).orElse(null);
     }
 
     @Override
     public GameModes getGameMode(DarwinPlayer player) {
-        return Sponge.getServer().getPlayer(player.getUuid()).flatMap(sp -> sp.getGameModeData().get(Keys.GAME_MODE)).map(gm -> {
+        return Sponge.getServer().getPlayer(player.getUniqueId()).flatMap(sp -> sp.getGameModeData().get(Keys.GAME_MODE)).map(gm -> {
             try {
                 return Enum.valueOf(GameModes.class, gm.getName().toUpperCase());
             } catch (NullPointerException | IllegalArgumentException e) {
@@ -92,7 +94,7 @@ public class SpongePlayerUtils extends PlayerUtils {
 
     @Override
     public void setGameMode(GameModes mode, DarwinPlayer player) {
-        Sponge.getServer().getPlayer(player.getUuid()).ifPresent(sp -> {
+        Sponge.getServer().getPlayer(player.getUniqueId()).ifPresent(sp -> {
             org.spongepowered.api.entity.living.player.gamemode.GameMode spMode;
             switch (mode) {
                 case CREATIVE:
@@ -120,9 +122,14 @@ public class SpongePlayerUtils extends PlayerUtils {
             if (isConsole(target))
                 Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmd);
             else
-                Sponge.getServer().getPlayer(target.getUuid()).ifPresent(sp -> Sponge.getCommandManager().process(sp, cmd));
+                Sponge.getServer().getPlayer(target.getUniqueId()).ifPresent(sp -> Sponge.getCommandManager().process(sp, cmd));
         } else {
             System.err.printf("Tried executing '%s' as non-player source (%s)%n", cmd, target.getClass());
         }
+    }
+
+    @Override
+    public List<DarwinPlayer> getOnlinePlayers() {
+        return Sponge.getServer().getOnlinePlayers().stream().map(sp -> new DarwinPlayer(sp.getUniqueId(), sp.getName())).collect(Collectors.toList());
     }
 }

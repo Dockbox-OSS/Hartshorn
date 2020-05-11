@@ -386,7 +386,7 @@ public abstract class DarwinServer extends Target {
     public abstract void commandList(@Src DarwinPlayer player);
 
     @Override
-    public UUID getUuid() {
+    public UUID getUniqueId() {
         return UUID.fromString("0-0-0-0");
     }
 

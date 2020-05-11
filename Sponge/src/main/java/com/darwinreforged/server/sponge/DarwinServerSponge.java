@@ -80,7 +80,7 @@ public class DarwinServerSponge extends DarwinServer {
         // TODO : PaginationBuilder inside Core
         AtomicReference<MessageReceiver> tf = new AtomicReference<>();
         if (getUtilChecked(PlayerUtils.class).isConsole(player)) tf.set(Sponge.getServer().getConsole());
-        else Sponge.getServer().getPlayer(player.getUuid()).ifPresent(tf::set);
+        else Sponge.getServer().getPlayer(player.getUniqueId()).ifPresent(tf::set);
 
         Text header = Text.builder()
                 .append(Text.of(Translations.DARWIN_SERVER_VERSION.f(getVersion())))

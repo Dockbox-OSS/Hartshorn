@@ -6,7 +6,7 @@ public abstract class Target {
     protected UUID uuid;
     protected String name;
 
-    public UUID getUuid() {
+    public UUID getUniqueId() {
         return uuid;
     }
 

@@ -1,11 +1,13 @@
 package com.darwinreforged.server.core.entities.living;
 
+import com.darwinreforged.server.core.entities.chat.LegacyText;
+import com.darwinreforged.server.core.entities.chat.Text;
 import com.darwinreforged.server.core.entities.living.state.GameModes;
 import com.darwinreforged.server.core.entities.location.DarwinLocation;
 import com.darwinreforged.server.core.entities.location.DarwinWorld;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.util.PlayerUtils;
+import com.darwinreforged.server.core.util.commands.PlayerUtils;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -22,11 +24,15 @@ public class DarwinPlayer extends Target {
     }
 
     public void tell(String text) {
-        DarwinServer.getUtilChecked(PlayerUtils.class).tell(this, text);
+        DarwinServer.getUtilChecked(PlayerUtils.class).tell(this, LegacyText.fromLegacy(text));
     }
 
     public void tellPlain(String text) {
-        DarwinServer.getUtilChecked(PlayerUtils.class).tellPlain(this, text);
+        DarwinServer.getUtilChecked(PlayerUtils.class).tellPlain(this, LegacyText.fromLegacy(text));
+    }
+
+    public void tell(Text text) {
+
     }
 
     public void tellIfPermitted(String text, String permission) {
