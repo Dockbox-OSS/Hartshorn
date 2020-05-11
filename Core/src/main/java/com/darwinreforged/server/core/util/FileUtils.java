@@ -79,6 +79,7 @@ public abstract class FileUtils {
      * Config files (YAML)
      */
     public <T> T getYamlDataFromFile(File file, Class<T> type, T defaultValue) {
+        if (!file.exists() || file.length() == 0) return defaultValue;
         try {
             T res = mapper.readValue(file, type);
             return res != null ? res : defaultValue;
@@ -133,7 +134,7 @@ public abstract class FileUtils {
 
     public <T> void writeYamlDataToFile(T data, File file) {
         try {
-            mapper.writeValue(file, data);
+            mapper.writeValue(createFileIfNotExists(file), data);
         } catch (IOException e) {
             DarwinServer.error("Failed to write YAML data to file", e);
         }
