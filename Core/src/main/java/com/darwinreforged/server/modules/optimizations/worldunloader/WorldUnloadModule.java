@@ -1,7 +1,6 @@
 package com.darwinreforged.server.modules.optimizations.worldunloader;
 
 import com.darwinreforged.server.core.entities.living.DarwinPlayer;
-import com.darwinreforged.server.core.entities.location.DarwinWorld;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
@@ -75,6 +74,6 @@ public class WorldUnloadModule {
         DarwinServer.getUtilChecked(LocationUtils.class)
                 .getEmptyWorlds().stream()
                 .filter(world -> !unloadBlacklist.contains(world.getName()) && !plotUtils.isPlotWorld(world))
-                .forEach(DarwinWorld::unloadWorld);
+                .forEach(darwinWorld -> darwinWorld.unloadWorld(false));
     }
 }

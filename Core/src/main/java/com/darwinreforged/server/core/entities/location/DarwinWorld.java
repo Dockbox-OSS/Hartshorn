@@ -28,6 +28,10 @@ public class DarwinWorld {
     }
 
     public void unloadWorld() {
-        DarwinServer.getUtilChecked(LocationUtils.class).unloadWorld(this);
+        unloadWorld(true);
+    }
+
+    public void unloadWorld(boolean keepLoaded) {
+        DarwinServer.getUtilChecked(LocationUtils.class).unloadWorld(this, keepLoaded);
     }
 }

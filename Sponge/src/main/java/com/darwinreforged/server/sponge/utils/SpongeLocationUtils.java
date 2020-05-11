@@ -11,6 +11,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.util.blockray.BlockRay;
 import org.spongepowered.api.util.blockray.BlockRayHit;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -78,9 +79,16 @@ public class SpongeLocationUtils extends LocationUtils {
     }
 
     @Override
-    public void unloadWorld(DarwinWorld world) {
+    public void unloadWorld(DarwinWorld world, boolean keepLoaded) {
         Optional<World> optionalWorld = Sponge.getServer().getWorld(world.getWorldUUID());
         // World isn't present if already unloaded
-        optionalWorld.ifPresent(sw -> Sponge.getServer().unloadWorld(sw));
+        optionalWorld.ifPresent(sw -> {
+            Sponge.getServer().unloadWorld(sw);
+            if (!keepLoaded) {
+                sw.setKeepSpawnLoaded(false);
+                Optional<WorldProperties> worldPropertiesOpt = Sponge.getServer().getWorldProperties(sw.getUniqueId());
+                worldPropertiesOpt.ifPresent(props -> props.setLoadOnStartup(false));
+            }
+        });
     }
 }
