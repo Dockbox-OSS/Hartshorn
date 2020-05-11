@@ -57,14 +57,16 @@ public class DaveConfigurationUtil {
         // Load config
         Map<String, Object> daveConfig = fu.getYamlDataForConfig(DaveChatModule.class);
         boolean updateConfig = false;
+        DiscordUtils du = DarwinServer.getUtilChecked(DiscordUtils.class);
+        String channelId;
         if (daveConfig.containsKey("channel")) {
-            DiscordUtils du = DarwinServer.getUtilChecked(DiscordUtils.class);
-            this.channel = du.getChannel(String.valueOf(daveConfig.get("channel")));
+            channelId = String.valueOf(daveConfig.get("channel"));
         } else {
-            this.channel = null;
-            daveConfig.put("channel", "123456789123456789");
+            channelId = "123456789123456789";
+            daveConfig.put("channel", channelId);
             updateConfig = true;
         }
+        this.channel = du.getChannel(channelId);
 
         if (daveConfig.containsKey("prefix")) {
             this.prefix = LegacyText.fromLegacy(String.valueOf(daveConfig.get("prefix")));
@@ -112,6 +114,7 @@ public class DaveConfigurationUtil {
 
         public TriggerConfig() {
         }
+
         public TriggerConfig(List<DaveTrigger> triggers) {
             this.triggers = triggers;
         }
