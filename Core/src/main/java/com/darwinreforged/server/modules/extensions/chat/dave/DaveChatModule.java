@@ -30,8 +30,8 @@ public class DaveChatModule {
 
     @Listener
     public void onServerInit(ServerInitEvent event) {
-        setupConfigurations();
         DarwinServer.getServer().registerListener(new DaveChatListeners());
+        setupConfigurations();
     }
 
     private void setupConfigurations() {
