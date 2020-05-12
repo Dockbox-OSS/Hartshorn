@@ -1,21 +1,20 @@
 package com.darwinreforged.server.modules.extensions.chat.dave;
 
-import com.darwinreforged.server.core.entities.living.DarwinPlayer;
+import com.darwinreforged.server.core.commands.annotations.Command;
+import com.darwinreforged.server.core.commands.annotations.Permission;
+import com.darwinreforged.server.core.types.living.DarwinPlayer;
 import com.darwinreforged.server.core.events.internal.server.ServerInitEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.util.commands.annotation.Command;
-import com.darwinreforged.server.core.util.commands.annotation.Description;
-import com.darwinreforged.server.core.util.commands.annotation.Permission;
-import com.darwinreforged.server.core.util.commands.annotation.Src;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Command(aliases = "dave", usage = "/dave [mute|reload]", desc = "Dave commands")
 @Module(id = "dave", name = "Dave", version = "2.0.1", description = "Read chat, send players a message if it picks up a configured message", authors = "GuusLieben")
 public class DaveChatModule {
 
@@ -44,24 +43,22 @@ public class DaveChatModule {
 
     private final List<UUID> playerWhoMutedDave = new ArrayList<>();
 
-    @Command("dave mute")
+    @Command(aliases = "mute", usage = "dave mute", desc = "Mutes or unmutes Dave for the executing player")
     @Permission(Permissions.DAVE_MUTE)
-    @Description("Mutes or unmutes Dave for the executing player")
-    public void mute(@Src DarwinPlayer src) {
+    public void mute(DarwinPlayer src) {
         if (!configurationUtil.getMuted().contains(src.getUniqueId())) {
             configurationUtil.getMuted().add(src.getUniqueId());
-            src.tell(Translations.DAVE_MUTED.s());
+            src.sendMessage(Translations.DAVE_MUTED.s());
         } else {
             playerWhoMutedDave.remove(src.getUniqueId());
-            src.tell(Translations.DAVE_UNMUTED.s());
+            src.sendMessage(Translations.DAVE_UNMUTED.s());
         }
     }
 
-    @Command("dave reload")
+    @Command(aliases = "reload", usage = "dave reload", desc = "Reloads Dave")
     @Permission(Permissions.DAVE_RELOAD)
-    @Description("Reloads Dave triggers and config")
-    public void reload(@Src DarwinPlayer src) {
+    public void reload(DarwinPlayer src) {
         setupConfigurations();
-        src.tell(Translations.DAVE_RELOADED_USER.f(configurationUtil.getPrefix().getText()));
+        src.sendMessage(Translations.DAVE_RELOADED_USER.f(configurationUtil.getPrefix().getText()));
     }
 }

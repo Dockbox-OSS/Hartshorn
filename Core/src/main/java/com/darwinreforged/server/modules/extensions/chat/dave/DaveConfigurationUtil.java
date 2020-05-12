@@ -1,7 +1,7 @@
 package com.darwinreforged.server.modules.extensions.chat.dave;
 
-import com.darwinreforged.server.core.entities.chat.LegacyText;
-import com.darwinreforged.server.core.entities.chat.Text;
+import com.darwinreforged.server.core.types.chat.LegacyText;
+import com.darwinreforged.server.core.types.chat.Text;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.util.DiscordUtils;
 import com.darwinreforged.server.core.util.FileUtils;

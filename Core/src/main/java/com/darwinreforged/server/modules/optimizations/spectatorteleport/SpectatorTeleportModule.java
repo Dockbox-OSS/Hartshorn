@@ -1,7 +1,7 @@
 package com.darwinreforged.server.modules.optimizations.spectatorteleport;
 
-import com.darwinreforged.server.core.entities.living.DarwinPlayer;
-import com.darwinreforged.server.core.entities.living.state.GameModes;
+import com.darwinreforged.server.core.types.living.DarwinPlayer;
+import com.darwinreforged.server.core.types.living.state.GameModes;
 import com.darwinreforged.server.core.events.internal.player.PlayerTeleportEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
@@ -51,9 +51,9 @@ public class SpectatorTeleportModule {
         DarwinPlayer player = (DarwinPlayer) event.getTarget();
         if (player.getGameMode().equals(GameModes.SPECTATOR)) {
             player.getWorld().ifPresent(world -> {
-                if (!whitelistedWorlds.contains(world.getName()) && !player.hasPermission(Permissions.ADMIN_BYPASS)) {
+                if (!whitelistedWorlds.contains(world.getName()) && player.hasPermission(Permissions.ADMIN_BYPASS)) {
                     event.setCancelled(true);
-                    player.tell(Translations.SPECTATOR_TP_DISALLOWED.s());
+                    player.sendMessage(Translations.SPECTATOR_TP_DISALLOWED.s());
                 }
             });
         }

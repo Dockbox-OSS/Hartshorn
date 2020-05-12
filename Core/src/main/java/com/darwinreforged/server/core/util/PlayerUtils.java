@@ -1,13 +1,13 @@
 package com.darwinreforged.server.core.util;
 
-import com.darwinreforged.server.core.entities.chat.Text;
-import com.darwinreforged.server.core.entities.living.DarwinPlayer;
-import com.darwinreforged.server.core.entities.living.Target;
-import com.darwinreforged.server.core.entities.living.inventory.DarwinItem;
-import com.darwinreforged.server.core.entities.living.state.GameModes;
-import com.darwinreforged.server.core.entities.location.DarwinLocation;
 import com.darwinreforged.server.core.init.AbstractUtility;
-import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.types.chat.Text;
+import com.darwinreforged.server.core.types.living.DarwinPlayer;
+import com.darwinreforged.server.core.types.living.MessageReceiver;
+import com.darwinreforged.server.core.types.living.Target;
+import com.darwinreforged.server.core.types.living.inventory.DarwinItem;
+import com.darwinreforged.server.core.types.living.state.GameModes;
+import com.darwinreforged.server.core.types.location.DarwinLocation;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,9 +20,9 @@ public abstract class PlayerUtils {
 
     public abstract void broadcastIfPermitted(Text message, String permission);
 
-    public abstract void tell(DarwinPlayer player, Text message);
+    public abstract void tell(MessageReceiver receiver, Text message);
 
-    public abstract void tellPlain(DarwinPlayer player, Text message);
+    public abstract void tellNoMarkup(MessageReceiver receiver, Text message);
 
     public abstract boolean isOnline(DarwinPlayer player);
 
@@ -42,10 +42,8 @@ public abstract class PlayerUtils {
         return UUID.fromString("00000010-0010-0010-0010-000000000010");
     }
 
-    public DarwinPlayer getConsole() { return new DarwinPlayer(getConsoleId(), "Console"); }
-
     public boolean isConsole(Target player) {
-        return (player.getUniqueId().equals(getConsoleId()) || player instanceof DarwinServer);
+        return (player.getUniqueId().equals(getConsoleId()));
     }
 
     public abstract GameModes getGameMode(DarwinPlayer player);
@@ -55,4 +53,9 @@ public abstract class PlayerUtils {
     public abstract void executeCmd(String cmd, Target target);
 
     public abstract List<DarwinPlayer> getOnlinePlayers();
+
+    public abstract Optional<DarwinPlayer> getPlayer(String player);
+
+    public abstract Optional<DarwinPlayer> getPlayer(UUID uuid);
+
 }

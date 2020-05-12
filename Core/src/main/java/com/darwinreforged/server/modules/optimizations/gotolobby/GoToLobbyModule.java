@@ -1,7 +1,7 @@
 package com.darwinreforged.server.modules.optimizations.gotolobby;
 
-import com.darwinreforged.server.core.entities.living.DarwinPlayer;
-import com.darwinreforged.server.core.entities.living.state.GameModes;
+import com.darwinreforged.server.core.types.living.DarwinPlayer;
+import com.darwinreforged.server.core.types.living.state.GameModes;
 import com.darwinreforged.server.core.events.internal.player.PlayerMoveEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
