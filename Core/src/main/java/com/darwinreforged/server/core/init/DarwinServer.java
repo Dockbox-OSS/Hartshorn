@@ -12,9 +12,6 @@ import com.darwinreforged.server.core.types.tuple.Tuple;
 import com.darwinreforged.server.core.util.CommandUtils;
 import com.darwinreforged.server.core.util.DiscordUtils;
 import com.darwinreforged.server.core.util.FileUtils;
-import com.darwinreforged.server.core.util.PlayerUtils;
-import com.darwinreforged.server.core.util.commands.annotation.Src;
-import com.darwinreforged.server.core.util.commands.command.Command;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -39,21 +36,18 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("UnusedReturnValue")
-public abstract class DarwinServer extends Target {
+public abstract class DarwinServer extends Singleton {
 
     protected static final Map<Class<?>, Tuple<Object, Module>> MODULES = new HashMap<>();
     protected static final Map<String, String> MODULE_SOURCES = new HashMap<>();
     protected static final List<String> FAILED_MODULES = new ArrayList<>();
     protected static final Map<Class<?>, Object> UTILS = new HashMap<>();
-
-    protected static DarwinServer server;
 
     protected EventBus eventBus;
     private String version;
@@ -66,15 +60,13 @@ public abstract class DarwinServer extends Target {
     public static final String AUTHOR = "GuusLieben";
 
     public DarwinServer() throws InstantiationException {
-        if (server != null) throw new InstantiationException("Singleton instance already exists");
-        server = this;
     }
 
     public static Logger getLog() {
-        return server.log;
+        return getServer().log;
     }
 
-    @SuppressWarnings({"unchecked", "InstantiationOfUtilityClass"})
+    @SuppressWarnings({"InstantiationOfUtilityClass"})
     protected void setupPlatform() throws IOException {
         // Load plugin properties
         Properties properties = new Properties();
@@ -83,7 +75,7 @@ public abstract class DarwinServer extends Target {
         lastUpdate = properties.getOrDefault("last_update", "Unknown").toString();
 
         // Create utility implementations
-        scanUtilities(server.getClass());
+        scanUtilities(getServer().getClass());
 
         // Create event bus
         this.eventBus = new EventBus();
@@ -110,10 +102,8 @@ public abstract class DarwinServer extends Target {
         Permissions.collect();
 
         // Setting up commands
-        CommandUtils<? extends Command> cu = getUtilChecked(CommandUtils.class);
-        cu.registerPackage(server.getClass());
-        cu.registerPackage(MODULE_PACKAGE);
-        cu.submit();
+        CommandUtils<?> cu = getUtilChecked(CommandUtils.class);
+        cu.getBus().register(instance.getClass());
     }
 
     public DarwinConfig getConfig() {
@@ -121,11 +111,11 @@ public abstract class DarwinServer extends Target {
     }
 
     public static String getVersion() {
-        return (server == null || server.version == null) ? "Unknown-dev" : server.version;
+        return (instance == null || getServer().version == null) ? "Unknown-dev" : getServer().version;
     }
 
     public static String getLastUpdate() {
-        return (server == null || server.lastUpdate == null) ? "Unknown" : server.lastUpdate;
+        return (instance == null || getServer().lastUpdate == null) ? "Unknown" : getServer().lastUpdate;
     }
 
     private void loadExternalModules() {
@@ -159,13 +149,13 @@ public abstract class DarwinServer extends Target {
                     .append(String.format(" Line -> %d%n", e.getStackTrace()[0].getLineNumber()))
                     .append(String.format(" Additional message -> %s%n", message))
                     .toString();
-            server.log.error(err);
+            getServer().log.error(err);
         }
         if (DarwinConfig.STACKTRACES.get()) {
             e.printStackTrace();
         }
         if (!DarwinConfig.STACKTRACES.get() && !DarwinConfig.FRIENDLY_ERRORS.get()) {
-            server.log.error(e.getMessage());
+            getServer().log.error(e.getMessage());
         }
     }
 
@@ -325,6 +315,8 @@ public abstract class DarwinServer extends Target {
             Module moduleInfo = module.getAnnotation(Module.class);
             if (moduleInfo == null) throw new InstantiationException("No module info was provided");
             registerListener(instance);
+            CommandUtils<?> cu = getUtilChecked(CommandUtils.class);
+            cu.getBus().register(instance.getClass());
             // Do not register the same module twice
             if (getModule(module).isPresent()) return ModuleRegistration.SUCCEEDED;
             DarwinServer.MODULES.put(module, new Tuple<>(instance, moduleInfo));
@@ -346,7 +338,7 @@ public abstract class DarwinServer extends Target {
     }
 
     public static DarwinServer getServer() {
-        return server;
+        return (DarwinServer) DarwinServer.instance;
     }
 
     public static List<Module> getAllModuleInfo() {
@@ -388,24 +380,9 @@ public abstract class DarwinServer extends Target {
         return true;
     }
 
-    public abstract void commandList(@Src DarwinPlayer player);
+    public abstract void commandList(CommandSender player);
 
     public abstract void runAsync(Runnable runnable);
-
-    @Override
-    public UUID getUniqueId() {
-        return UUID.fromString("0-0-0-0");
-    }
-
-    @Override
-    public String getName() {
-        return "DarwinServerHost";
-    }
-
-    @Override
-    public void execute(String cmd) {
-        getUtilChecked(PlayerUtils.class).executeCmd(cmd, this);
-    }
 
     /**
      Registration states during and after module registration
