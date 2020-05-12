@@ -1,13 +1,14 @@
 package com.darwinreforged.server.core.init;
 
-import com.darwinreforged.server.core.entities.Tuple;
-import com.darwinreforged.server.core.entities.living.DarwinPlayer;
-import com.darwinreforged.server.core.entities.living.Target;
 import com.darwinreforged.server.core.events.util.EventBus;
 import com.darwinreforged.server.core.modules.DisabledModule;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.types.internal.Singleton;
+import com.darwinreforged.server.core.types.living.CommandSender;
+import com.darwinreforged.server.core.types.living.DarwinPlayer;
+import com.darwinreforged.server.core.types.tuple.Tuple;
 import com.darwinreforged.server.core.util.CommandUtils;
 import com.darwinreforged.server.core.util.DiscordUtils;
 import com.darwinreforged.server.core.util.FileUtils;

@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.entities;
+package com.darwinreforged.server.core.types.tuple;
 
 /**
  * A tuple of objects.
@@ -22,8 +22,8 @@ public class Tuple<K, V> {
         return new Tuple<>(first, second);
     }
 
-    private final K first;
-    private final V second;
+    protected final K first;
+    protected final V second;
 
     /**
      * Creates a new {@link Tuple}.

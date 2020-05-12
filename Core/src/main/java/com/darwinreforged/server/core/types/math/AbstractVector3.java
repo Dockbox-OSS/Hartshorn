@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.entities.math;
+package com.darwinreforged.server.core.types.math;
 
 public class AbstractVector3<N extends Number> extends AbstractVector2<N> {
     N y;

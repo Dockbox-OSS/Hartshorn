@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.entities.living.state;
+package com.darwinreforged.server.core.types.living.state;
 
 public enum GameModes {
     CREATIVE,

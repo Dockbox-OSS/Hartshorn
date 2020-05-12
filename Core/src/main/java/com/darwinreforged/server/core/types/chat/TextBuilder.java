@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.entities.chat;
+package com.darwinreforged.server.core.types.chat;
 
 import java.util.ArrayList;
 import java.util.List;

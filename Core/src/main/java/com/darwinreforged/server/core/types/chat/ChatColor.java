@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.entities.chat;
+package com.darwinreforged.server.core.types.chat;
 
 public enum ChatColor {
     // Colors

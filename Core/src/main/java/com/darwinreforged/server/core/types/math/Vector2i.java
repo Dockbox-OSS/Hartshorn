@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.entities.math;
+package com.darwinreforged.server.core.types.math;
 
 public class Vector2i extends AbstractVector2<Integer> {
     public Vector2i(Integer x, Integer z) {

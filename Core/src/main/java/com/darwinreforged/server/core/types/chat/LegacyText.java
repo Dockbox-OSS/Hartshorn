@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.entities.chat;
+package com.darwinreforged.server.core.types.chat;
 /**
  * Legacy text is a conversion util which will convert a "legacy" chat string into a TextObject,
  * and a TextObject into a legacy string
