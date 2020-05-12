@@ -59,12 +59,14 @@ public abstract class DiscordUtils {
         if (jda != null) return jda;
         else {
             try {
+                DarwinServer.getLog().warn("Failed to obtain internal JDA instance, creating temporary instance..");
                 return (new JDABuilder(DarwinConfig.BOT_TOKEN.get())).build().awaitReady();
             } catch (InterruptedException | LoginException e) {
                 DarwinServer.error("Failed to obtain JDA instance", e);
             }
         }
         // We tried everything we could..
+        DarwinServer.getLog().warn("Failed to obtain JDA instance");
         return null;
     }
 
