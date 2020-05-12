@@ -1,8 +1,8 @@
 package com.darwinreforged.server.sponge.utils;
 
-import com.darwinreforged.server.core.entities.math.AbstractVector2;
-import com.darwinreforged.server.core.entities.location.DarwinLocation;
-import com.darwinreforged.server.core.entities.location.DarwinWorld;
+import com.darwinreforged.server.core.types.math.AbstractVector2;
+import com.darwinreforged.server.core.types.location.DarwinLocation;
+import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.util.LocationUtils;
 import com.flowpowered.math.vector.Vector3d;
