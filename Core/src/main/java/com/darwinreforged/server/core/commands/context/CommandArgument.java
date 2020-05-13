@@ -1,19 +1,12 @@
 package com.darwinreforged.server.core.commands.context;
 
-public class CommandArgument<T> {
+public class CommandArgument<T> extends AbstractCommandValue<T> {
 
-    private final T argument;
-    private final String key;
     private final boolean joined;
 
     public CommandArgument(T argument, boolean joined, String key) {
-        this.argument = argument;
+        super(argument, key);
         this.joined = joined;
-        this.key = key;
-    }
-
-    public T getArgument() {
-        return argument;
     }
 
     public boolean isJoined() {
@@ -39,36 +32,5 @@ public class CommandArgument<T> {
         }
         // Argument is neither a number or boolean, default to String value
         return new CommandArgument<String>(value, joined, key);
-    }
-
-    private static boolean isInteger(String s) {
-        try {
-            Integer.parseInt(s);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
-    }
-
-    private static boolean isDouble(String s) {
-        try {
-            Double.parseDouble(s);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
-    }
-
-    private static boolean isFloat(String s) {
-        try {
-            Float.parseFloat(s);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
-    }
-
-    public String getKey() {
-        return key;
     }
 }

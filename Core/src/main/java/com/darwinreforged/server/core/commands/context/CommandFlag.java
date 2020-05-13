@@ -1,21 +1,9 @@
 package com.darwinreforged.server.core.commands.context;
 
-public class CommandFlag<T> {
-
-    private final T value;
-    private final String key;
+public class CommandFlag<T> extends AbstractCommandValue<T> {
 
     public CommandFlag(T value, String key) {
-        this.value = value;
-        this.key = key;
-    }
-
-    public T getValue() {
-        return value;
-    }
-
-    public String getKey() {
-        return key;
+        super(value, key);
     }
 
     public static CommandFlag<?> valueOf(String key, String value) {
@@ -38,32 +26,5 @@ public class CommandFlag<T> {
             // Flag is neither a number or boolean, default to String value
             return new CommandFlag<String>(value, key);
         } else return new CommandFlag<Void>(null, key);
-    }
-
-    private static boolean isInteger(String s) {
-        try {
-            Integer.parseInt(s);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
-    }
-
-    private static boolean isDouble(String s) {
-        try {
-            Double.parseDouble(s);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
-    }
-
-    private static boolean isFloat(String s) {
-        try {
-            Float.parseFloat(s);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-        return true;
     }
 }
