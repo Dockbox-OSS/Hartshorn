@@ -6,7 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- The interface Command.
+ Command annotation, used to assign command aliases to methods and/or types.
+ Can only be used on Methods, and Types. Requires the declaring class to be
+ registered to a {@link com.darwinreforged.server.core.commands.CommandBus}
+ instance.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})

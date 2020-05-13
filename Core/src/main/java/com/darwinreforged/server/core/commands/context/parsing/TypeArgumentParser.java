@@ -5,21 +5,24 @@ import com.darwinreforged.server.core.commands.context.AbstractCommandValue;
 import java.util.Optional;
 
 /**
- The type Type argument parser.
+ Argument parser to parse {@link AbstractCommandValue}s to different types depending on the
+ implementation of {@link #parse(AbstractCommandValue, Class)}.
  */
 public abstract class TypeArgumentParser implements AbstractParser {
 
     /**
-     Parse optional.
+     The method used to parse {@link AbstractCommandValue<String>}s into the given
+     generic type.
 
      @param <A>
-     the type parameter
+     the generic type to convert to
      @param commandValue
-     the command value
+     the {@link AbstractCommandValue} in String format to parse.
      @param type
-     the type
+     the class instance of {@link A} to use while parsing
 
-     @return the optional
+     @return the optional type of the generic type. Should return {@link Optional#empty()} if
+     null or if the value could not be parsed.
      */
     public abstract <A> Optional<A> parse(AbstractCommandValue<String> commandValue, Class<A> type);
 
