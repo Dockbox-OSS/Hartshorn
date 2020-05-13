@@ -235,8 +235,18 @@ public class CommandBus {
             for (SingleMethodRegistration subcommand : ((ClassRegistration) registration).getSubcommands()) {
                 boolean done = false;
                 for (String subAlias : subcommand.getAliases()) {
-                    if (cmd.startsWith(alias + " " + subAlias)) {
+                    String fullCommand = alias + " " + subAlias;
+                    if (subAlias.equals("")) {
+                        unparsedCommand = cmd.replaceFirst(alias, "").split(" ");
                         registration = subcommand;
+                        // Continue to iterate in case there are still aliases left to check, if one was already found
+                        // the loop would already be broken, so we never overwrite values here
+                    } else if (cmd.startsWith(fullCommand)) {
+                        registration = subcommand;
+                        if (cmd.equals(fullCommand)) unparsedCommand = new String[0];
+                        else
+                            unparsedCommand = cmd.replaceFirst(String.format("%s %s ", alias, subAlias), "").split(" ");
+
                         done = true;
                         break;
                     }
@@ -244,22 +254,32 @@ public class CommandBus {
                 if (done) break;
             }
             // After iterating subcommands the registration should be of type SingleMethodRegistration
-            if (registration instanceof ClassRegistration)
-                return new Tuple<>(new ParseResult("Missing subcommand, this is usually caused by a faulty plugin", false), null);
+            if (registration instanceof ClassRegistration) {
+                String[] subcommands = Arrays.stream(((ClassRegistration) registration).getSubcommands())
+                        .filter(sub -> {
+                            boolean permitted = true;
+                            for (Permissions permission : sub.getPermissions()) {
+                                if (!sender.hasPermission(permission)) {
+                                    permitted = false;
+                                    break;
+                                }
+                            }
+                            return permitted;
+                        })
+                        .map(sub -> sub.getAliases()[0] + " : " + sub.getCommand().desc()).toArray(String[]::new);
+                return new Tuple<>(new ParseResult("Incorrect usage for " + registration.getAliases()[0] + ", available sub-commands : \n" + String.join("\n", subcommands), false), null);
+            }
         }
 
         Command command = registration.getCommand();
-        System.out.println("Registration for : " + cmd + " : " + registration);
         Permissions[] permissions = registration.getPermissions();
         for (Permissions permission : permissions) {
-            DarwinServer.getLog().info("Has permission (" + permission.p() + ") : " + sender.hasPermission(permission));
             if (!sender.hasPermission(permission))
                 return new Triple<>(new ParseResult(Translations.COMMAND_NO_PERMISSION.f(permission.p()), false), null, command);
         }
 
         // Wrapped by ArrayList as Arrays.asList is readonly, causing .remove(0) to throw UnsupportedOperationException
         List<String> unparsedArgs = new ArrayList<>(Arrays.asList(unparsedCommand));
-        unparsedArgs.remove(0); // Command
 
         List<String> singularFlags = Arrays.asList(command.flags());
         List<String> valueFlags = Arrays.asList(command.valueFlags());
