@@ -3,6 +3,8 @@ package com.darwinreforged.server.core.commands.registrations;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.resources.Permissions;
 
+import java.util.Optional;
+
 /**
  The type Command registration.
  */
@@ -11,6 +13,7 @@ public abstract class CommandRegistration {
     private final String[] aliases;
     private final Permissions[] permissions;
     private final Command command;
+    private Object sourceInstance;
 
     /**
      Instantiates a new Command registration.
@@ -29,6 +32,14 @@ public abstract class CommandRegistration {
         this.aliases = aliases;
         this.permissions = permissions;
         this.command = command;
+    }
+
+    public Optional<?> getSourceInstance() {
+        return Optional.ofNullable(sourceInstance);
+    }
+
+    public void setSourceInstance(Object sourceInstance) {
+        this.sourceInstance = sourceInstance;
     }
 
     /**
