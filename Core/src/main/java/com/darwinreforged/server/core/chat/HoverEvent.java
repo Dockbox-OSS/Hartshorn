@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.types.chat;
+package com.darwinreforged.server.core.chat;
 
 import com.google.gson.JsonObject;
 
@@ -74,5 +74,13 @@ public final class HoverEvent {
         String value = object.getAsJsonPrimitive("value").getAsString();
 
         return new HoverEvent(HoverAction.valueOf(action), value);
+    }
+
+    public HoverAction getHoverAction() {
+        return hoverAction;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

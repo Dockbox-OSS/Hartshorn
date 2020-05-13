@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.types.chat;
+package com.darwinreforged.server.core.chat;
 
 import com.google.gson.JsonObject;
 
@@ -87,5 +87,13 @@ public final class ClickEvent {
         String value = object.getAsJsonPrimitive("value").getAsString();
 
         return new ClickEvent(ClickAction.valueOf(action), value);
+    }
+
+    public ClickAction getClickAction() {
+        return clickAction;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

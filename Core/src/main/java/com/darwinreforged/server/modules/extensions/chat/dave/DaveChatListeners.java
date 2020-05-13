@@ -1,16 +1,16 @@
 package com.darwinreforged.server.modules.extensions.chat.dave;
 
+import com.darwinreforged.server.core.DarwinServer;
+import com.darwinreforged.server.core.chat.ClickEvent;
+import com.darwinreforged.server.core.chat.ClickEvent.ClickAction;
+import com.darwinreforged.server.core.chat.HoverEvent;
+import com.darwinreforged.server.core.chat.HoverEvent.HoverAction;
+import com.darwinreforged.server.core.chat.Text;
+import com.darwinreforged.server.core.chat.TextBuilder;
 import com.darwinreforged.server.core.events.internal.chat.DiscordChatEvent;
 import com.darwinreforged.server.core.events.internal.chat.SendChatMessageEvent;
 import com.darwinreforged.server.core.events.util.Listener;
-import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.types.chat.ClickEvent;
-import com.darwinreforged.server.core.types.chat.ClickEvent.ClickAction;
-import com.darwinreforged.server.core.types.chat.HoverEvent;
-import com.darwinreforged.server.core.types.chat.HoverEvent.HoverAction;
-import com.darwinreforged.server.core.types.chat.Text;
-import com.darwinreforged.server.core.types.chat.TextBuilder;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.living.Console;
 import com.darwinreforged.server.core.types.living.DarwinPlayer;
@@ -34,7 +34,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 public class DaveChatListeners {
 
     private Text botPrefix;
-    private String color;
+    private String botDefaultColor;
 
     /**
      On discord chat.
@@ -54,7 +54,7 @@ public class DaveChatListeners {
                 .getName()
                 .equals("global")) {
             Console console = Console.instance;
-            Executor.beforeExecution(playername, message, botPrefix, color, console);
+            Executor.beforeExecution(playername, message, botPrefix, botDefaultColor, console);
             DarwinServer.getUtilChecked(TimeUtils.class).schedule()
                     .execute(new Executor())
                     .delayTicks(5)
@@ -66,7 +66,7 @@ public class DaveChatListeners {
         Optional<DaveChatModule> chatModuleOptional = DarwinServer.getModule(DaveChatModule.class);
         if (chatModuleOptional.isPresent()) {
             botPrefix = chatModuleOptional.get().getConfigurationUtil().getPrefix();
-            color = chatModuleOptional.get().getConfigurationUtil().getMessageDefaultColor().replaceAll("&", "\u00A7");
+            botDefaultColor = chatModuleOptional.get().getConfigurationUtil().getMessageDefaultColor().replaceAll("&", "\u00A7");
         }
     }
 
@@ -83,7 +83,7 @@ public class DaveChatListeners {
 
         if (event.isGlobalChat())
             if (!(event.getTarget() instanceof Console)) {
-                Executor.beforeExecution(playername, event.getMessage(), botPrefix, color, (DarwinPlayer) event.getTarget());
+                Executor.beforeExecution(playername, event.getMessage(), botPrefix, botDefaultColor, (DarwinPlayer) event.getTarget());
                 DarwinServer.getUtilChecked(TimeUtils.class).schedule()
                         .execute(new Executor())
                         .delayTicks(5)
@@ -91,7 +91,7 @@ public class DaveChatListeners {
             }
     }
 
-    private static class Executor
+    public static class Executor
             implements Runnable {
 
         /**
@@ -150,31 +150,33 @@ public class DaveChatListeners {
             if (timeOfLastTriggered != null)
                 secondsSinceLastResponse = timeOfLastTriggered.until(LocalDateTime.now(), SECONDS);
 
-            if (trigger != null && secondsSinceLastResponse >= 10) {
-                List<Response> responses = trigger.getResponses();
-
-                boolean important = trigger.isImportant();
-
-                responses.forEach(response -> {
-                    if (response.getType().equals("cmd")) {
-                        executeCommand(response.getMessage());
-                    } else if (response.getType().equals("url")) {
-                        printResponse(DaveRawUtils.parseWebsiteLink(response.getMessage()), true, important);
-                    } else {
-                        printResponse(DaveRawUtils.parsePlaceHolders(message, response.getMessage(), playername), false, important);
-                    }
-                });
-
-                timeSinceTrigger.put(trigger, LocalDateTime.now());
-            }
+            if (trigger != null && secondsSinceLastResponse >= 10) handleTrigger(trigger);
 
         }
 
-        private void executeCommand(String command) {
+        public static void handleTrigger(DaveTrigger trigger) {
+            List<Response> responses = trigger.getResponses();
+
+            boolean important = trigger.isImportant();
+
+            responses.forEach(response -> {
+                if (response.getType().equals("cmd")) {
+                    executeCommand(response.getMessage());
+                } else if (response.getType().equals("url")) {
+                    printResponse(DaveRawUtils.parseWebsiteLink(response.getMessage()), true, important);
+                } else {
+                    printResponse(DaveRawUtils.parsePlaceHolders(message, response.getMessage(), playername), false, important);
+                }
+            });
+
+            timeSinceTrigger.put(trigger, LocalDateTime.now());
+        }
+
+        private static void executeCommand(String command) {
             sender.execute(command.replaceFirst("/", ""));
         }
 
-        private void printResponse(String response, boolean link, boolean important) {
+        private static void printResponse(String response, boolean link, boolean important) {
             TextBuilder builder = TextBuilder.empty();
             builder.append(botPrefix).append(color);
 
@@ -188,11 +190,13 @@ public class DaveChatListeners {
             PlayerUtils pu = DarwinServer.getUtilChecked(PlayerUtils.class);
 
             DarwinServer.getModule(DaveChatModule.class).ifPresent(dave -> {
+                // Regular chat module
                 pu.getOnlinePlayers().stream()
                         .filter(op -> !dave.getPlayerWhoMutedDave().contains(op.getUniqueId()) || important)
                         .forEach(op -> op.sendMessage(builder.build()));
-                TextChannel discordChannel = dave.getConfigurationUtil().getChannel();
 
+                // Discord module
+                TextChannel discordChannel = dave.getConfigurationUtil().getChannel();
                 String discordMessage = response.replaceAll("§", "&");
                 for (String regex : new String[]{"(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r"})
                     discordMessage = discordMessage.replaceAll(regex, "");

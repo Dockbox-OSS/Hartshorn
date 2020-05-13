@@ -1,8 +1,11 @@
 package com.darwinreforged.server.sponge.utils;
 
+import com.darwinreforged.server.core.chat.ClickEvent;
+import com.darwinreforged.server.core.chat.HoverEvent;
+import com.darwinreforged.server.core.chat.LegacyText;
+import com.darwinreforged.server.core.chat.Pagination;
 import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.types.chat.LegacyText;
 import com.darwinreforged.server.core.types.living.Console;
 import com.darwinreforged.server.core.types.living.DarwinPlayer;
 import com.darwinreforged.server.core.types.living.MessageReceiver;
@@ -20,10 +23,15 @@ import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
+import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,26 +45,29 @@ import me.lucko.luckperms.api.Node;
 public class SpongePlayerUtils extends PlayerUtils {
 
     @Override
-    public void broadcast(com.darwinreforged.server.core.types.chat.Text message) {
+    public void broadcast(com.darwinreforged.server.core.chat.Text message) {
         Sponge.getServer().getBroadcastChannel().send(Text.of(message));
     }
 
     @Override
-    public void broadcastIfPermitted(com.darwinreforged.server.core.types.chat.Text message, String permission) {
+    public void broadcastIfPermitted(com.darwinreforged.server.core.chat.Text message, String permission) {
         Sponge.getServer().getOnlinePlayers().parallelStream().filter(p -> p.hasPermission(permission)).forEach(p -> p.sendMessage(Text.of(LegacyText.toLegacy(message))));
     }
 
     @Override
-    public void tell(MessageReceiver receiver, com.darwinreforged.server.core.types.chat.Text message) {
+    public void tell(MessageReceiver receiver, com.darwinreforged.server.core.chat.Text message) {
         if (receiver instanceof DarwinPlayer) {
-            Sponge.getServer().getPlayer(((Target) receiver).getUniqueId()).ifPresent(spp -> spp.sendMessage(Text.of(Translations.PREFIX.s(), LegacyText.toLegacy(message))));
+            Sponge.getServer().getPlayer(((DarwinPlayer) receiver).getUniqueId())
+                    .ifPresent(spp -> spp.sendMessage(Text.of(Translations.DEFAULT_SINGLE_MESSAGE.f(LegacyText.toLegacy(message)))));
         } else if (receiver instanceof Console) {
-            Sponge.getServer().getConsole().sendMessage(Text.of(Translations.PREFIX.s(), LegacyText.toLegacy(message)));
+            Sponge.getServer().getConsole().sendMessage(Text.of(Translations.DEFAULT_SINGLE_MESSAGE.f(LegacyText.toLegacy(message))));
+        } else {
+            DarwinServer.getLog().warn("Failed to get receiver for : " + receiver);
         }
     }
 
     @Override
-    public void tellNoMarkup(MessageReceiver receiver, com.darwinreforged.server.core.types.chat.Text message) {
+    public void tellNoMarkup(MessageReceiver receiver, com.darwinreforged.server.core.chat.Text message) {
         if (receiver instanceof DarwinPlayer) {
             Sponge.getServer().getPlayer(((Target) receiver).getUniqueId()).ifPresent(spp -> spp.sendMessage(Text.of(LegacyText.toLegacy(message))));
         } else if (receiver instanceof Console) {
@@ -161,5 +172,73 @@ public class SpongePlayerUtils extends PlayerUtils {
     @Override
     public Optional<DarwinPlayer> getPlayer(UUID uuid) {
         return Sponge.getServer().getPlayer(uuid).map(sp -> new DarwinPlayer(sp.getUniqueId(), sp.getName()));
+    }
+
+    @Override
+    public void sendPagination(MessageReceiver receiver, Pagination pagination) {
+        org.spongepowered.api.text.channel.MessageReceiver spongeReceiver = null;
+        if (receiver.equals(Console.instance)) spongeReceiver = Sponge.getServer().getConsole();
+        else if (receiver instanceof DarwinPlayer)
+            spongeReceiver = Sponge.getServer().getPlayer(((DarwinPlayer) receiver).getUniqueId()).orElse(null);
+
+        if (spongeReceiver != null) {
+            PaginationList.Builder builder = PaginationList.builder();
+
+            if (pagination.getPadding() != null) builder.padding(fromAPI(pagination.getPadding()));
+            if (pagination.getLinesPerPage() > -1) builder.linesPerPage(pagination.getLinesPerPage());
+            if (pagination.getHeader() != null) builder.header(fromAPI(pagination.getHeader()));
+            if (pagination.getFooter() != null) builder.footer(fromAPI(pagination.getFooter()));
+            if (pagination.getTitle() != null) builder.title(fromAPI(pagination.getTitle()));
+            if (pagination.getContents() != null) {
+                builder.contents(
+                        pagination.getContents().stream().map(this::fromAPI).collect(Collectors.toList())
+                );
+            }
+
+            builder.build().sendTo(spongeReceiver);
+        }
+    }
+
+    private Text fromAPI(com.darwinreforged.server.core.chat.Text text) {
+        Text spT = TextSerializers.FORMATTING_CODE.deserializeUnchecked(LegacyText.toLegacy(text));
+        Text.Builder builder = spT.toBuilder();
+        if (text.getClickEvent() != null) {
+            try {
+                ClickEvent clickEvent = text.getClickEvent();
+                switch (clickEvent.getClickAction()) {
+                    case OPEN_URL:
+                        builder.onClick(TextActions.openUrl(new URL(clickEvent.getValue())));
+                        break;
+                    case RUN_COMMAND:
+                        builder.onClick(TextActions.runCommand(clickEvent.getValue()));
+                        break;
+                    case SUGGEST_COMMAND:
+                        builder.onClick(TextActions.suggestCommand(clickEvent.getValue()));
+                        break;
+                    case CHANGE_PAGE:
+                        builder.onClick(TextActions.changePage(Integer.parseInt(clickEvent.getValue())));
+                        break;
+                }
+            } catch (MalformedURLException | NumberFormatException e) {
+                builder.onClick(null);
+            }
+        }
+        if (text.getHoverEvent() != null) {
+            HoverEvent hoverEvent = text.getHoverEvent();
+            switch (hoverEvent.getHoverAction()) {
+                case SHOW_TEXT:
+                    builder.onHover(TextActions.showText(TextSerializers.FORMATTING_CODE.deserializeUnchecked(hoverEvent.getValue())));
+                    break;
+                case SHOW_ITEM:
+                    // TODO : Json > ItemStack using Jackson?
+                    DarwinServer.getLog().warn("Attempted to set showItem for text object, this is not implemented into Sponge! (yet)");
+                    break;
+                case SHOW_ENTITY:
+                    // TODO : Json > Entity using Jackson?
+                    DarwinServer.getLog().warn("Attempted to set showEntity for text object, this is not implemented into Sponge! (yet)");
+                    break;
+            }
+        }
+        return builder.build();
     }
 }

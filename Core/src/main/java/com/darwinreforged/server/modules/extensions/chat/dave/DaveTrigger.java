@@ -7,6 +7,7 @@ import java.util.List;
  */
 public class DaveTrigger {
 
+    private String id;
     private List<String> trigger;
     private boolean important;
     private List<Response> responses;
@@ -18,19 +19,30 @@ public class DaveTrigger {
     }
 
     /**
-     Instantiates a new Dave trigger.
-
+     Instantiates a new Dave trigger.@param id
      @param trigger
      the trigger
      @param important
-     the important
+ the important
      @param responses
-     the responses
+the responses
+
+
      */
-    public DaveTrigger(List<String> trigger, boolean important, List<Response> responses) {
+    public DaveTrigger(String id, List<String> trigger, boolean important, List<Response> responses) {
+        this.id = id;
         this.trigger = trigger;
         this.important = important;
         this.responses = responses;
+    }
+
+    /**
+     Gets id.
+
+     @return the id
+     */
+    public String getId() {
+        return id;
     }
 
     /**
