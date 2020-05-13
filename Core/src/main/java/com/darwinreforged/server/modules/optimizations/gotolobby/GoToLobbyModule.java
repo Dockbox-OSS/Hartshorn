@@ -1,10 +1,10 @@
 package com.darwinreforged.server.modules.optimizations.gotolobby;
 
-import com.darwinreforged.server.core.entities.living.DarwinPlayer;
-import com.darwinreforged.server.core.entities.living.state.GameModes;
-import com.darwinreforged.server.core.events.internal.PlayerMoveEvent;
-import com.darwinreforged.server.core.events.internal.ServerReloadEvent;
-import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
+import com.darwinreforged.server.core.types.living.DarwinPlayer;
+import com.darwinreforged.server.core.types.living.state.GameModes;
+import com.darwinreforged.server.core.events.internal.player.PlayerMoveEvent;
+import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
+import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
@@ -34,11 +34,11 @@ public class GoToLobbyModule {
     @SuppressWarnings("unchecked")
     private void init() {
         FileUtils fileUtils = DarwinServer.getUtilChecked(FileUtils.class);
-        Map<String, Object> config = fileUtils.getConfigYamlData(this);
+        Map<String, Object> config = fileUtils.getYamlDataForConfig(this);
 
         if(config.containsKey("blacklist")) blacklist = (List<String>) config.get("blacklist");
         else config.put("blacklist", Arrays.asList("denied_world", "worlds"));
-        fileUtils.writeConfigYaml(config, this);
+        fileUtils.writeYamlDataForConfig(config, this);
     }
 
     @Listener

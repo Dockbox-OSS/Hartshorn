@@ -1,8 +1,8 @@
 package com.darwinreforged.server.sponge.utils;
 
-import com.darwinreforged.server.core.entities.math.AbstractVector2;
-import com.darwinreforged.server.core.entities.location.DarwinLocation;
-import com.darwinreforged.server.core.entities.location.DarwinWorld;
+import com.darwinreforged.server.core.types.math.AbstractVector2;
+import com.darwinreforged.server.core.types.location.DarwinLocation;
+import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.util.LocationUtils;
 import com.flowpowered.math.vector.Vector3d;
@@ -11,6 +11,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.util.blockray.BlockRay;
 import org.spongepowered.api.util.blockray.BlockRayHit;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -78,9 +79,16 @@ public class SpongeLocationUtils extends LocationUtils {
     }
 
     @Override
-    public void unloadWorld(DarwinWorld world) {
+    public void unloadWorld(DarwinWorld world, boolean keepLoaded) {
         Optional<World> optionalWorld = Sponge.getServer().getWorld(world.getWorldUUID());
         // World isn't present if already unloaded
-        optionalWorld.ifPresent(sw -> Sponge.getServer().unloadWorld(sw));
+        optionalWorld.ifPresent(sw -> {
+            Sponge.getServer().unloadWorld(sw);
+            if (!keepLoaded) {
+                sw.setKeepSpawnLoaded(false);
+                Optional<WorldProperties> worldPropertiesOpt = Sponge.getServer().getWorldProperties(sw.getUniqueId());
+                worldPropertiesOpt.ifPresent(props -> props.setLoadOnStartup(false));
+            }
+        });
     }
 }

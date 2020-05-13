@@ -1,22 +1,19 @@
 package com.darwinreforged.server.sponge;
 
-import com.darwinreforged.server.core.entities.living.DarwinPlayer;
-import com.darwinreforged.server.core.events.internal.ServerInitEvent;
-import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
+import com.darwinreforged.server.core.commands.annotations.Command;
+import com.darwinreforged.server.core.commands.annotations.Permission;
+import com.darwinreforged.server.core.events.internal.server.ServerInitEvent;
+import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.init.ServerType;
 import com.darwinreforged.server.core.modules.DisabledModule;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.util.PlayerUtils;
-import com.darwinreforged.server.core.util.commands.annotation.Command;
-import com.darwinreforged.server.core.util.commands.annotation.Description;
-import com.darwinreforged.server.core.util.commands.annotation.Permission;
-import com.darwinreforged.server.core.util.commands.annotation.Src;
-import com.google.inject.Inject;
+import com.darwinreforged.server.core.types.living.CommandSender;
+import com.darwinreforged.server.core.types.living.Console;
+import com.darwinreforged.server.core.types.living.DarwinPlayer;
 
-import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -55,15 +52,24 @@ public class DarwinServerSponge extends DarwinServer {
     @Listener
     public void onServerInit(GameInitializationEvent event) throws IOException {
         setupPlatform();
+
         Sponge.getEventManager().registerListeners(this, new SpongeListener());
         eventBus.post(new ServerInitEvent(null));
     }
 
     @Override
+    @Command(aliases = "dserver", usage = "dserver", desc = "Returns active and failed modules to the player", min = 0)
     @Permission(Permissions.ADMIN_BYPASS)
-    @Description("Returns active and failed modules to the player")
-    @Command("dserver")
-    public void commandList(@Src DarwinPlayer player) {
+    public void commandList(CommandSender src) {
+        AtomicReference<MessageReceiver> tf = new AtomicReference<>();
+        if (src instanceof Console) {
+            tf.set(Sponge.getServer().getConsole());
+        } else if (src instanceof DarwinPlayer) {
+            Sponge.getServer().getPlayer(src.getUniqueId()).ifPresent(tf::set);
+        } else {
+            return;
+        }
+
         List<Text> moduleContext = new ArrayList<>();
         DarwinServerSponge.MODULES.forEach((clazz, ignored) -> {
             Optional<Module> infoOptional = getModuleInfo(clazz);
@@ -80,10 +86,6 @@ public class DarwinServerSponge extends DarwinServer {
         DarwinServerSponge.FAILED_MODULES.forEach(module -> moduleContext.add(Text.of(Translations.FAILED_MODULE_ROW.f(module))));
 
         // TODO : PaginationBuilder inside Core
-        AtomicReference<MessageReceiver> tf = new AtomicReference<>();
-        if (getUtilChecked(PlayerUtils.class).isConsole(player)) tf.set(Sponge.getServer().getConsole());
-        else Sponge.getServer().getPlayer(player.getUuid()).ifPresent(tf::set);
-
         Text header = Text.builder()
                 .append(Text.of(Translations.DARWIN_SERVER_VERSION.f(getVersion())))
                 .append(Text.NEW_LINE)
@@ -101,6 +103,11 @@ public class DarwinServerSponge extends DarwinServer {
                 .contents(moduleContext)
                 .header(header)
                 .build().sendTo(tf.get());
+    }
+
+    @Override
+    public void runAsync(Runnable runnable) {
+        Sponge.getScheduler().createAsyncExecutor(this).execute(runnable);
     }
 
     @Override

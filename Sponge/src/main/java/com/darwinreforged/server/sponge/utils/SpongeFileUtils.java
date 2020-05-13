@@ -15,7 +15,10 @@ import java.util.Optional;
 public class SpongeFileUtils extends FileUtils {
     @Override
     public Path getDataDirectory(Object plugin) {
-        Optional<Module> infoOptional = DarwinServer.getModuleInfo(plugin.getClass());
+        Optional<Module> infoOptional;
+        if (plugin instanceof Class) infoOptional = DarwinServer.getModuleInfo((Class<?>) plugin);
+        else infoOptional = DarwinServer.getModuleInfo(plugin.getClass());
+
         if (infoOptional.isPresent()) {
             Path darwinDataPath = infoOptional.map(moduleInfo -> Sponge.getGame().getSavesDirectory().resolve("data/" + moduleInfo.id())).get().toAbsolutePath();
             return createPathIfNotExist(darwinDataPath);
@@ -29,15 +32,20 @@ public class SpongeFileUtils extends FileUtils {
         return createPathIfNotExist(modDir);
     }
 
-
     @Override
     public Path getConfigDirectory(Object plugin) {
-        Optional<Module> infoOptional = DarwinServer.getModuleInfo(plugin.getClass());
+        Optional<Module> infoOptional;
+        if (plugin instanceof Class) infoOptional = DarwinServer.getModuleInfo((Class<?>) plugin);
+        else infoOptional = DarwinServer.getModuleInfo(plugin.getClass());
+
         Path darwinConfigPath = Sponge.getConfigManager().getPluginConfig(DarwinServer.getServer()).getDirectory();
 
-        return createPathIfNotExist(infoOptional.map(moduleInfo -> new File(
-                darwinConfigPath.toFile().getParentFile().getParent(),
-                String.format("modules/%s", moduleInfo.id().replaceAll("\\.", "_"))).toPath()).orElse(darwinConfigPath));
+        return createPathIfNotExist(infoOptional.map(moduleInfo -> {
+            if (moduleInfo.id().equals("darwinserver")) return darwinConfigPath;
+            return new File(
+                    darwinConfigPath.toFile().getParentFile().getParent(),
+                    String.format("modules/%s", moduleInfo.id().replaceAll("\\.", "_"))).toPath();
+        }).orElse(darwinConfigPath));
     }
 
     @Override

@@ -1,10 +1,10 @@
 package com.darwinreforged.server.modules.optimizations.spectatorteleport;
 
-import com.darwinreforged.server.core.entities.living.DarwinPlayer;
-import com.darwinreforged.server.core.entities.living.state.GameModes;
-import com.darwinreforged.server.core.events.internal.PlayerTeleportEvent;
-import com.darwinreforged.server.core.events.internal.ServerReloadEvent;
-import com.darwinreforged.server.core.events.internal.ServerStartedEvent;
+import com.darwinreforged.server.core.types.living.DarwinPlayer;
+import com.darwinreforged.server.core.types.living.state.GameModes;
+import com.darwinreforged.server.core.events.internal.player.PlayerTeleportEvent;
+import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
+import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
@@ -36,13 +36,13 @@ public class SpectatorTeleportModule {
     @SuppressWarnings("unchecked")
     private void init() {
         FileUtils fileUtils = DarwinServer.getUtilChecked(FileUtils.class);
-        Map<String, Object> yamlData = fileUtils.getConfigYamlData(this);
+        Map<String, Object> yamlData = fileUtils.getYamlDataForConfig(this);
         if (yamlData.containsKey("whitelist")) {
             whitelistedWorlds = (List<String>) yamlData.get("whitelist");
         } else {
             yamlData = new HashMap<>();
             yamlData.put("whitelist", Arrays.asList("SampleWorld", "Another_World"));
-            fileUtils.writeConfigYaml(yamlData, this);
+            fileUtils.writeYamlDataForConfig(yamlData, this);
         }
     }
 
@@ -51,9 +51,9 @@ public class SpectatorTeleportModule {
         DarwinPlayer player = (DarwinPlayer) event.getTarget();
         if (player.getGameMode().equals(GameModes.SPECTATOR)) {
             player.getWorld().ifPresent(world -> {
-                if (!whitelistedWorlds.contains(world.getName()) && !player.hasPermission(Permissions.ADMIN_BYPASS)) {
+                if (!whitelistedWorlds.contains(world.getName()) && player.hasPermission(Permissions.ADMIN_BYPASS)) {
                     event.setCancelled(true);
-                    player.tell(Translations.SPECTATOR_TP_DISALLOWED.s());
+                    player.sendMessage(Translations.SPECTATOR_TP_DISALLOWED.s());
                 }
             });
         }

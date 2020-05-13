@@ -20,7 +20,7 @@ public enum Translations {
     COLOR_MINOR("7"),
     COLOR_ERROR("c"),
     PLAYER_ONLY_COMMAND("$4This command can only be executed by players"),
-    COMMAND_NO_PERMISSION("$4You do not have permission to use this command"),
+    COMMAND_NO_PERMISSION("$4You do not have permission to use this command $3({0})"),
     PLOTS1_NAME("Plots1"),
     PLOTS2_NAME("Plots2"),
     PLOTS500_NAME("Plots500"),
@@ -459,9 +459,16 @@ public enum Translations {
 
     //   World Unloader
     WU_ADDED("$1Added $2{0} $1to the unload blacklist"),
+    WORLD_NOT_FOUND("$4Could not find that world!"),
 
-//  Spectator TP
-    SPECTATOR_TP_DISALLOWED("$3You are not allowed to teleport while in spectator mode");
+    //  Spectator TP
+    SPECTATOR_TP_DISALLOWED("$3You are not allowed to teleport while in spectator mode"),
+
+    //  Command usage
+    CU_TITLE("$3$2Usage for $1/{0}"),
+    CU_USAGE("$3- $1/{0}"),
+    CU_FLAGS("$3- $2Flags: $1{0}"),
+    CU_DESCRIPTION("$3- $2Summary: $1{0}");
 
     private String s;
 
@@ -533,8 +540,8 @@ public enum Translations {
             if (!file.exists()) {
                 configMap = new HashMap<>();
                 Arrays.stream(Translations.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.u()));
-                DarwinServer.getUtilChecked(FileUtils.class).writeYaml(configMap, file);
-            } else configMap = DarwinServer.getUtilChecked(FileUtils.class).getYamlData(file);
+                DarwinServer.getUtilChecked(FileUtils.class).writeYamlDataToFile(configMap, file);
+            } else configMap = DarwinServer.getUtilChecked(FileUtils.class).getYamlDataFromFile(file);
 
             configMap.forEach((k, v) -> {
                 Translations t = Translations.valueOf(k.toUpperCase().replaceAll("\\.", "_"));

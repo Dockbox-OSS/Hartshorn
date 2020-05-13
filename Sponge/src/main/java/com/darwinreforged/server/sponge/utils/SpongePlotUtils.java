@@ -1,6 +1,6 @@
 package com.darwinreforged.server.sponge.utils;
 
-import com.darwinreforged.server.core.entities.location.DarwinWorld;
+import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.util.PlotUtils;
 import com.intellectualcrafters.plot.object.Location;

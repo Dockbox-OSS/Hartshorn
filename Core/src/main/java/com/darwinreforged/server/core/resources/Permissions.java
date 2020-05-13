@@ -100,8 +100,8 @@ public enum Permissions {
             if (!file.exists()) {
                 configMap = new HashMap<>();
                 Arrays.stream(Permissions.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.p()));
-                DarwinServer.getUtilChecked(FileUtils.class).writeYaml(configMap, file);
-            } else configMap = DarwinServer.getUtilChecked(FileUtils.class).getYamlData(file);
+                DarwinServer.getUtilChecked(FileUtils.class).writeYamlDataToFile(configMap, file);
+            } else configMap = DarwinServer.getUtilChecked(FileUtils.class).getYamlDataFromFile(file);
 
             configMap.forEach((k, v) -> {
                 Permissions t = Permissions.valueOf(k.toUpperCase().replaceAll("\\.", "_"));

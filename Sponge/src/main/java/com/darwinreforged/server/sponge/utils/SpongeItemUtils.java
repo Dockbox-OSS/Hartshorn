@@ -1,6 +1,6 @@
 package com.darwinreforged.server.sponge.utils;
 
-import com.darwinreforged.server.core.entities.living.inventory.DarwinItem;
+import com.darwinreforged.server.core.types.living.inventory.DarwinItem;
 import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.util.ItemUtils;
 

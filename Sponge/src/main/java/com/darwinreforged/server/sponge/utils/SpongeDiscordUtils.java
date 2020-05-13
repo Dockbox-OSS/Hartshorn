@@ -11,6 +11,6 @@ public class SpongeDiscordUtils extends DiscordUtils {
 
     @Override
     protected JDA getJda() {
-        return (JDA) MagiBridge.jda;
+        return MagiBridge.jda;
     }
 }

@@ -10,8 +10,6 @@ dependencies {
     compile project(path: ':Core', configuration: 'shadow')
     compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     compileOnly 'org.spongepowered:spongeapi:7.1.0'
-    compileOnly 'com.sk89q.worldedit:worldedit-core:6.1.4-SNAPSHOT'
-    compileOnly 'com.sk89q.worldedit:worldedit-sponge:6.1.7-SNAPSHOT'
 }
 
 sponge.plugin.id = pluginId

@@ -110,7 +110,6 @@ public class EventBus {
      * @param event event to post
      */
     public void post(Event event) {
-        if (event.getTarget() == null) DarwinServer.getLog().warn("Posting event of type " + event.getClass().toGenericString() + " with null target!");
         handlerRegistry.getHandler(event.getClass()).post(event);
     }
 
@@ -499,7 +498,7 @@ public class EventBus {
             try {
                 methodHandle.invoke(listener, event);
             } catch (Throwable e) {
-                e.printStackTrace();
+                DarwinServer.error("Failed to invoke method", e);
             }
         }
 
