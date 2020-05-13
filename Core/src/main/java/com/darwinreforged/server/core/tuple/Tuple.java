@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.types.tuple;
+package com.darwinreforged.server.core.tuple;
 
 /**
  A tuple of objects.
