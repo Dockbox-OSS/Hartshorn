@@ -2,14 +2,32 @@ package com.darwinreforged.server.core.types.chat;
 
 import com.google.gson.JsonObject;
 
+/**
+ The type Click event.
+ */
 public final class ClickEvent {
 
+    /**
+     The enum Click action.
+     */
     public enum ClickAction {
+        /**
+         Open url click action.
+         */
         OPEN_URL,
+        /**
+         Run command click action.
+         */
         RUN_COMMAND,
+        /**
+         Suggest command click action.
+         */
         SUGGEST_COMMAND,
 
-        // For Books
+        /**
+         The Change page.
+         */
+// For Books
         CHANGE_PAGE;
 
         @Override
@@ -21,12 +39,25 @@ public final class ClickEvent {
     private ClickAction clickAction;
     private String value;
 
+    /**
+     Instantiates a new Click event.
+
+     @param clickAction
+     the click action
+     @param value
+     the value
+     */
     public ClickEvent(ClickAction clickAction, String value) {
         this.clickAction = clickAction;
         this.value = value;
     }
 
 
+    /**
+     To json json object.
+
+     @return the json object
+     */
     public JsonObject toJson() {
         JsonObject object = new JsonObject();
 
@@ -43,6 +74,14 @@ public final class ClickEvent {
     }
 
 
+    /**
+     From json click event.
+
+     @param object
+     the object
+
+     @return the click event
+     */
     public static ClickEvent fromJson(JsonObject object) {
         String action = object.getAsJsonPrimitive("action").getAsString();
         String value = object.getAsJsonPrimitive("value").getAsString();

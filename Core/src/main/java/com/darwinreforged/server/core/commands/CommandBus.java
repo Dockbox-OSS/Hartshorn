@@ -32,10 +32,22 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+/**
+ The type Command bus.
+ */
 public class CommandBus {
 
+    /**
+     The constant COMMANDS.
+     */
     protected static final Map<String, CommandRegistration> COMMANDS = new HashMap<>();
 
+    /**
+     Register.
+
+     @param obj
+     the obj
+     */
     public void register(Class<?>... obj) {
         for (Class<?> clazz : obj) {
             DarwinServer.getLog().info(String.format("\n\nScanning %s for commands", clazz.toGenericString()));

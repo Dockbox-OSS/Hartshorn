@@ -18,6 +18,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ The type Dave configuration util.
+ */
 public class DaveConfigurationUtil {
 
     private List<DaveTrigger> triggers = new ArrayList<>();
@@ -26,6 +29,9 @@ public class DaveConfigurationUtil {
     private final Text prefix;
     private final String messageDefaultColor;
 
+    /**
+     Instantiates a new Dave configuration util.
+     */
     @SuppressWarnings("unchecked")
     public DaveConfigurationUtil() {
         FileUtils fu = DarwinServer.getUtilChecked(FileUtils.class);
@@ -89,22 +95,47 @@ public class DaveConfigurationUtil {
         }
     }
 
+    /**
+     Gets triggers.
+
+     @return the triggers
+     */
     public List<DaveTrigger> getTriggers() {
         return triggers;
     }
 
+    /**
+     Gets muted.
+
+     @return the muted
+     */
     public List<UUID> getMuted() {
         return muted;
     }
 
+    /**
+     Gets channel.
+
+     @return the channel
+     */
     public TextChannel getChannel() {
         return channel;
     }
 
+    /**
+     Gets prefix.
+
+     @return the prefix
+     */
     public Text getPrefix() {
         return prefix;
     }
 
+    /**
+     Gets message default color.
+
+     @return the message default color
+     */
     public String getMessageDefaultColor() {
         return messageDefaultColor;
     }
@@ -112,17 +143,37 @@ public class DaveConfigurationUtil {
     private static class TriggerConfig {
         private List<DaveTrigger> triggers;
 
+        /**
+         Instantiates a new Trigger config.
+         */
         public TriggerConfig() {
         }
 
+        /**
+         Instantiates a new Trigger config.
+
+         @param triggers
+         the triggers
+         */
         public TriggerConfig(List<DaveTrigger> triggers) {
             this.triggers = triggers;
         }
 
+        /**
+         Gets triggers.
+
+         @return the triggers
+         */
         public List<DaveTrigger> getTriggers() {
             return triggers;
         }
 
+        /**
+         Sets triggers.
+
+         @param triggers
+         the triggers
+         */
         public void setTriggers(List<DaveTrigger> triggers) {
             this.triggers = triggers;
         }

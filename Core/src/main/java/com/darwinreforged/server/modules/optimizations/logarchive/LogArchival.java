@@ -23,6 +23,9 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ The type Log archival.
+ */
 @Module(id = "logarchival", name = "Log Archival", description = "Automatically move logs to a sorted archive", authors = {"dags-", "GuusLieben"}, url = "https://github.com/dags-/Archivist")
 public class LogArchival {
     private final PathMatcher filter = FileSystems.getDefault().getPathMatcher("glob:*.log.gz");
@@ -31,15 +34,30 @@ public class LogArchival {
     private final Logger logger = LoggerFactory.getLogger("logarchival");
     private Path logs;
 
+    /**
+     Instantiates a new Log archival.
+     */
     public LogArchival() {
     }
 
+    /**
+     On reload.
+
+     @param event
+     the event
+     */
     @Listener
     public void onReload(ServerReloadEvent event) {
         logs = DarwinServer.getUtilChecked(FileUtils.class).getLogDirectory();
         this.run();
     }
 
+    /**
+     On server start.
+
+     @param event
+     the event
+     */
     @Listener
     public void onServerStart(ServerStartedEvent event) {
         onReload(null);

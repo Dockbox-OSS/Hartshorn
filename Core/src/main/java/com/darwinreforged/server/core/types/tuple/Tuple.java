@@ -1,35 +1,50 @@
 package com.darwinreforged.server.core.types.tuple;
 
 /**
- * A tuple of objects.
- *
- * @param <K> The key
- * @param <V> The value
+ A tuple of objects.
+
+ @param <K>
+ The key
+ @param <V>
+ The value
  */
 public class Tuple<K, V> {
 
     /**
-     * Creates a new {@link Tuple} with the desired {@code first} and
-     * {@code second} objects.
-     *
-     * @param first The first object
-     * @param second The second object
-     * @param <K> The type of first object
-     * @param <V> The type of second object
-     * @return The new Tuple
+     Creates a new {@link Tuple} with the desired {@code first} and
+     {@code second} objects.
+
+     @param <K>
+     The type of first object
+     @param <V>
+     The type of second object
+     @param first
+     The first object
+     @param second
+     The second object
+
+     @return The new Tuple
      */
     public static <K, V> Tuple<K, V> of(K first, V second) {
         return new Tuple<>(first, second);
     }
 
+    /**
+     The First.
+     */
     protected final K first;
+    /**
+     The Second.
+     */
     protected final V second;
 
     /**
-     * Creates a new {@link Tuple}.
-     *
-     * @param first The first object
-     * @param second The second object
+     Creates a new {@link Tuple}.
+
+     @param first
+     The first object
+     @param second
+     The second object
      */
     public Tuple(K first, V second) {
         this.first = first;
@@ -37,18 +52,18 @@ public class Tuple<K, V> {
     }
 
     /**
-     * Gets the first object, otherwise known as "key".
-     *
-     * @return The first object
+     Gets the first object, otherwise known as "key".
+
+     @return The first object
      */
     public K getFirst() {
         return this.first;
     }
 
     /**
-     * Gets the second object, otherwise known as "value".
-     *
-     * @return The value
+     Gets the second object, otherwise known as "value".
+
+     @return The value
      */
     public V getSecond() {
         return this.second;

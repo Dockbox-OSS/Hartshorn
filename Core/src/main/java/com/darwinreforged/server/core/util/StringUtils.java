@@ -5,8 +5,21 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ The type String utils.
+ */
 public class StringUtils {
 
+    /**
+     Replace from map string.
+
+     @param string
+     the string
+     @param replacements
+     the replacements
+
+     @return the string
+     */
     public static String replaceFromMap(String string, Map<String, String> replacements) {
         StringBuilder sb = new StringBuilder(string);
         int size = string.length();

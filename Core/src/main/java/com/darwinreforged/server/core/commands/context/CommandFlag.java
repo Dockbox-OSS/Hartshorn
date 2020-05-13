@@ -1,11 +1,35 @@
 package com.darwinreforged.server.core.commands.context;
 
+/**
+ The type Command flag.
+
+ @param <T>
+ the type parameter
+ */
 public class CommandFlag<T> extends AbstractCommandValue<T> {
 
+    /**
+     Instantiates a new Command flag.
+
+     @param value
+     the value
+     @param key
+     the key
+     */
     public CommandFlag(T value, String key) {
         super(value, key);
     }
 
+    /**
+     Value of command flag.
+
+     @param key
+     the key
+     @param value
+     the value
+
+     @return the command flag
+     */
     public static CommandFlag<?> valueOf(String key, String value) {
         if (value != null) {
             // Boolean flag, by default will return false if the value is true, ignoring case. Therefore

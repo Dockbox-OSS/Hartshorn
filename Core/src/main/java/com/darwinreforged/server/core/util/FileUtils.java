@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ The type File utils.
+ */
 @AbstractUtility("Common utilities for file management and parsing")
 public abstract class FileUtils {
 
@@ -28,6 +31,9 @@ public abstract class FileUtils {
     private static final Map<String, ConnectionSource> jdbcSources = new HashMap<>();
     private static final String JDBC_FORMAT = "jdbc:sqlite:%s";
 
+    /**
+     Instantiates a new File utils.
+     */
     public FileUtils() {
         YAMLFactory factory = new YAMLFactory().disable(Feature.WRITE_DOC_START_MARKER);
         mapper = new ObjectMapper(factory);
@@ -35,6 +41,22 @@ public abstract class FileUtils {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
+    /**
+     Gets data db.
+
+     @param <T>
+     the type parameter
+     @param <I>
+     the type parameter
+     @param object
+     the object
+     @param idType
+     the id type
+     @param file
+     the file
+
+     @return the data db
+     */
     public <T, I> Dao<T, I> getDataDb(Class<T> object, Class<I> idType, File file) {
         if (isConnected(file)) {
             ConnectionSource source = jdbcSources.get(file.toString());
@@ -48,6 +70,22 @@ public abstract class FileUtils {
         return null;
     }
 
+    /**
+     Gets data db.
+
+     @param <T>
+     the type parameter
+     @param <I>
+     the type parameter
+     @param object
+     the object
+     @param idType
+     the id type
+     @param module
+     the module
+
+     @return the data db
+     */
     public <T, I> Dao<T, I> getDataDb(Class<T> object, Class<I> idType, Object module) {
         Optional<Module> info;
         if (module instanceof Class) info = DarwinServer.getModuleInfo((Class<?>) module);
@@ -61,6 +99,14 @@ public abstract class FileUtils {
         throw new RuntimeException("No such module registered");
     }
 
+    /**
+     Is connected boolean.
+
+     @param file
+     the file
+
+     @return the boolean
+     */
     public boolean isConnected(File file) {
         String fileAb = file.toString();
         if (jdbcSources.containsKey(fileAb) && jdbcSources.get(fileAb) != null) return true;
@@ -75,6 +121,20 @@ public abstract class FileUtils {
         }
     }
 
+    /**
+     Gets yaml data from file.
+
+     @param <T>
+     the type parameter
+     @param file
+     the file
+     @param type
+     the type
+     @param defaultValue
+     the default value
+
+     @return the yaml data from file
+     */
     /*
      * Config files (YAML)
      */
@@ -89,15 +149,45 @@ public abstract class FileUtils {
         return defaultValue;
     }
 
+    /**
+     Gets yaml data from file.
+
+     @param file
+     the file
+
+     @return the yaml data from file
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public Map<String, Object> getYamlDataFromFile(File file) {
         return (Map<String, Object>) getYamlDataFromFile(file, Map.class, new HashMap());
     }
 
+    /**
+     Gets yaml data for config.
+
+     @param module
+     the module
+
+     @return the yaml data for config
+     */
     public Map<String, Object> getYamlDataForConfig(Object module) {
         return getYamlDataFromFile(getYamlConfigFile(module));
     }
 
+    /**
+     Gets yaml data for config.
+
+     @param <T>
+     the type parameter
+     @param module
+     the module
+     @param path
+     the path
+     @param type
+     the type
+
+     @return the yaml data for config
+     */
     @SuppressWarnings("unchecked")
     public <T> T getYamlDataForConfig(Object module, String path, Class<T> type) {
         Map<String, Object> values = getYamlDataForConfig(module);
@@ -114,10 +204,28 @@ public abstract class FileUtils {
         }
     }
 
+    /**
+     Gets yaml config file.
+
+     @param module
+     the module
+
+     @return the yaml config file
+     */
     public File getYamlConfigFile(Object module) {
         return getYamlConfigFile(module, true);
     }
 
+    /**
+     Gets yaml config file.
+
+     @param module
+     the module
+     @param createIfNotExists
+     the create if not exists
+
+     @return the yaml config file
+     */
     public File getYamlConfigFile(Object module, boolean createIfNotExists) {
         Path path = getConfigDirectory(module);
         Optional<Module> info;
@@ -132,6 +240,16 @@ public abstract class FileUtils {
         throw new RuntimeException("No such module registered");
     }
 
+    /**
+     Write yaml data to file.
+
+     @param <T>
+     the type parameter
+     @param data
+     the data
+     @param file
+     the file
+     */
     public <T> void writeYamlDataToFile(T data, File file) {
         try {
             mapper.writeValue(createFileIfNotExists(file), data);
@@ -140,27 +258,79 @@ public abstract class FileUtils {
         }
     }
 
+    /**
+     Write yaml data for config.
+
+     @param data
+     the data
+     @param module
+     the module
+     */
     public void writeYamlDataForConfig(Map<String, Object> data, Object module) {
         writeYamlDataToFile(data, getYamlConfigFile(module));
     }
 
 
+    /**
+     Gets module directory.
+
+     @return the module directory
+     */
     /*
      * Default directories
      */
     public abstract Path getModuleDirectory();
 
+    /**
+     Gets config directory.
+
+     @param module
+     the module
+
+     @return the config directory
+     */
     public abstract Path getConfigDirectory(Object module);
 
+    /**
+     Gets log directory.
+
+     @return the log directory
+     */
     public abstract Path getLogDirectory();
 
+    /**
+     Gets data directory.
+
+     @param module
+     the module
+
+     @return the data directory
+     */
     public abstract Path getDataDirectory(Object module);
 
+    /**
+     Gets data directory.
+
+     @param module
+     the module
+     @param dir
+     the dir
+
+     @return the data directory
+     */
     public Path getDataDirectory(Object module, String dir) {
         Path ddir = getDataDirectory(module);
         return createPathIfNotExist(new File(ddir.toFile(), dir).toPath());
     }
 
+    /**
+     Create file if not exists file.
+
+     @param file
+     the file
+
+     @return the file
+     */
     /*
      * Path and file existence validation
      */
@@ -176,6 +346,14 @@ public abstract class FileUtils {
         return file;
     }
 
+    /**
+     Create path if not exist path.
+
+     @param path
+     the path
+
+     @return the path
+     */
     protected Path createPathIfNotExist(Path path) {
         if (!path.toFile().exists()) path.toFile().mkdirs();
         return path;

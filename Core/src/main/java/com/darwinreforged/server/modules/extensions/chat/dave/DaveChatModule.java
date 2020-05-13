@@ -14,19 +14,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ The type Dave chat module.
+ */
 @Command(aliases = "dave", usage = "/dave [mute|reload]", desc = "Dave commands")
 @Module(id = "dave", name = "Dave", version = "2.0.1", description = "Read chat, send players a message if it picks up a configured message", authors = "GuusLieben")
 public class DaveChatModule {
 
+    /**
+     Instantiates a new Dave chat module.
+     */
     public DaveChatModule() {
     }
 
     private DaveConfigurationUtil configurationUtil;
 
+    /**
+     Gets configuration util.
+
+     @return the configuration util
+     */
     public DaveConfigurationUtil getConfigurationUtil() {
         return configurationUtil;
     }
 
+    /**
+     On server init.
+
+     @param event
+     the event
+     */
     @Listener
     public void onServerInit(ServerInitEvent event) {
         DarwinServer.getServer().registerListener(new DaveChatListeners());
@@ -37,12 +54,23 @@ public class DaveChatModule {
         configurationUtil = new DaveConfigurationUtil();
     }
 
+    /**
+     Gets player who muted dave.
+
+     @return the player who muted dave
+     */
     public List<UUID> getPlayerWhoMutedDave() {
         return playerWhoMutedDave;
     }
 
     private final List<UUID> playerWhoMutedDave = new ArrayList<>();
 
+    /**
+     Mute.
+
+     @param src
+     the src
+     */
     @Command(aliases = "mute", usage = "dave mute", desc = "Mutes or unmutes Dave for the executing player")
     @Permission(Permissions.DAVE_MUTE)
     public void mute(DarwinPlayer src) {
@@ -55,6 +83,12 @@ public class DaveChatModule {
         }
     }
 
+    /**
+     Reload.
+
+     @param src
+     the src
+     */
     @Command(aliases = "reload", usage = "dave reload", desc = "Reloads Dave")
     @Permission(Permissions.DAVE_RELOAD)
     public void reload(DarwinPlayer src) {

@@ -11,10 +11,19 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+/**
+ The type Discord listener.
+ */
 public class DiscordListener extends ListenerAdapter {
 
     private final List<String> channelWhitelist = new ArrayList<>();
 
+    /**
+     Instantiates a new Discord listener.
+
+     @param channelWhitelist
+     the channel whitelist
+     */
     public DiscordListener(List<String> channelWhitelist) {
         this.channelWhitelist.addAll(channelWhitelist);
     }

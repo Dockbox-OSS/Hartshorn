@@ -28,11 +28,20 @@ import java.util.Optional;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 
+/**
+ The type Dave chat listeners.
+ */
 public class DaveChatListeners {
 
     private Text botPrefix;
     private String color;
 
+    /**
+     On discord chat.
+
+     @param event
+     the event
+     */
     @Listener
     public void onDiscordChat(DiscordChatEvent event) {
         beforeEach();
@@ -61,6 +70,12 @@ public class DaveChatListeners {
         }
     }
 
+    /**
+     On game chat.
+
+     @param event
+     the event
+     */
     @Listener
     public void onGameChat(SendChatMessageEvent event) {
         beforeEach();
@@ -79,13 +94,45 @@ public class DaveChatListeners {
     private static class Executor
             implements Runnable {
 
+        /**
+         The Playername.
+         */
         static String playername;
+        /**
+         The Message.
+         */
         static String message;
+        /**
+         The Bot prefix.
+         */
         static Text botPrefix;
+        /**
+         The Color.
+         */
         static String color;
+        /**
+         The Sender.
+         */
         static CommandSender sender;
+        /**
+         The Time since trigger.
+         */
         static HashMap<DaveTrigger, LocalDateTime> timeSinceTrigger = new HashMap<>();
 
+        /**
+         Before execution.
+
+         @param playername
+         the playername
+         @param message
+         the message
+         @param botPrefix
+         the bot prefix
+         @param color
+         the color
+         @param sender
+         the sender
+         */
         static void beforeExecution(String playername, String message, Text botPrefix, String color, CommandSender sender) {
             Executor.playername = playername;
             Executor.message = message;

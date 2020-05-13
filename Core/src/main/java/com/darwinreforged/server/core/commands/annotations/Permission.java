@@ -7,8 +7,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ The interface Permission.
+ */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Permission {
+    /**
+     Value permissions [ ].
+
+     @return the permissions [ ]
+     */
     Permissions[] value();
 }

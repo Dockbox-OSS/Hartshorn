@@ -18,16 +18,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ The type Spectator teleport module.
+ */
 @Module(id = "spectatorteleport", name = "Spectator Teleport", description = "Block teleportation for players who are in Spectator mode", authors = {"GuusLieben", "TheCrunchy"})
 public class SpectatorTeleportModule {
 
+    /**
+     The Whitelisted worlds.
+     */
     List<String> whitelistedWorlds = new ArrayList<>();
 
+    /**
+     On server reload.
+
+     @param event
+     the event
+     */
     @Listener
     public void onServerReload(ServerReloadEvent event) {
         init();
     }
 
+    /**
+     On server start.
+
+     @param event
+     the event
+     */
     @Listener
     public void onServerStart(ServerStartedEvent event) {
         init();
@@ -46,6 +64,12 @@ public class SpectatorTeleportModule {
         }
     }
 
+    /**
+     On teleport.
+
+     @param event
+     the event
+     */
     @Listener
     public void onTeleport(PlayerTeleportEvent event) {
         DarwinPlayer player = (DarwinPlayer) event.getTarget();

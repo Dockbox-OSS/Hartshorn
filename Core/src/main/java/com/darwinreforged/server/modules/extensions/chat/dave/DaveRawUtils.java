@@ -8,8 +8,19 @@ import com.darwinreforged.server.core.util.PlayerUtils;
 import java.util.Optional;
 import java.util.Random;
 
+/**
+ The type Dave raw utils.
+ */
 public class DaveRawUtils {
 
+    /**
+     Gets associated trigger.
+
+     @param message
+     the message
+
+     @return the associated trigger
+     */
     public static DaveTrigger getAssociatedTrigger(String message) {
         Optional<DaveChatModule> chatModuleOptional = DarwinServer.getModule(DaveChatModule.class);
         if (chatModuleOptional.isPresent()) {
@@ -31,6 +42,18 @@ public class DaveRawUtils {
         return null;
     }
 
+    /**
+     Parse place holders string.
+
+     @param message
+     the message
+     @param unparsedResponse
+     the unparsed response
+     @param playername
+     the playername
+
+     @return the string
+     */
     public static String parsePlaceHolders(String message, String unparsedResponse, String playername) {
         String parsedResponse = unparsedResponse.replaceAll("<player>", playername);
         DiscordUtils du = DarwinServer.getUtilChecked(DiscordUtils.class);
@@ -70,6 +93,14 @@ public class DaveRawUtils {
         return parsedResponse;
     }
 
+    /**
+     Parse website link string.
+
+     @param unparsedLink
+     the unparsed link
+
+     @return the string
+     */
     public static String parseWebsiteLink(String unparsedLink) {
         String parsedLink = unparsedLink.replaceAll("\\[", "").replaceAll("]", "");
         if (!parsedLink.startsWith("http://") && !parsedLink.startsWith("https://"))
