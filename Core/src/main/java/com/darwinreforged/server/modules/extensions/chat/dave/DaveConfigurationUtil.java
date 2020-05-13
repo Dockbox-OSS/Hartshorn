@@ -1,8 +1,8 @@
 package com.darwinreforged.server.modules.extensions.chat.dave;
 
-import com.darwinreforged.server.core.types.chat.LegacyText;
-import com.darwinreforged.server.core.types.chat.Text;
-import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.chat.LegacyText;
+import com.darwinreforged.server.core.chat.Text;
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.util.DiscordUtils;
 import com.darwinreforged.server.core.util.FileUtils;
 import com.darwinreforged.server.modules.extensions.chat.dave.DaveTrigger.Response;
@@ -44,7 +44,7 @@ public class DaveConfigurationUtil {
         } else {
             List<DaveTrigger> triggers = Collections.singletonList(
                     new DaveTrigger(
-                            Arrays.asList("sample,trigger", "second,trigger"),
+                            "sample_id", Arrays.asList("sample,trigger", "second,trigger"),
                             false,
                             Arrays.asList(
                                     new Response("This is a chat message", "message"),

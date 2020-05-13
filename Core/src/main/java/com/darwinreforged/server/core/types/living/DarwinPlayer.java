@@ -1,11 +1,11 @@
 package com.darwinreforged.server.core.types.living;
 
 import com.darwinreforged.server.core.commands.annotations.Command;
-import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.types.chat.LegacyText;
-import com.darwinreforged.server.core.types.chat.Text;
+import com.darwinreforged.server.core.chat.LegacyText;
+import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.types.living.state.GameModes;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
@@ -61,7 +61,7 @@ public class DarwinPlayer extends CommandSender {
     }
 
     public boolean hasPermission(Permissions permission) {
-        return !hasPermission(permission.p());
+        return hasPermission(permission.p());
     }
 
     /**

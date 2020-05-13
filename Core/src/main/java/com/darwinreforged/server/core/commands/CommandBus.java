@@ -1,5 +1,6 @@
 package com.darwinreforged.server.core.commands;
 
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.commands.annotations.Permission;
 import com.darwinreforged.server.core.commands.annotations.Source;
@@ -9,15 +10,16 @@ import com.darwinreforged.server.core.commands.context.CommandFlag;
 import com.darwinreforged.server.core.commands.registrations.ClassRegistration;
 import com.darwinreforged.server.core.commands.registrations.CommandRegistration;
 import com.darwinreforged.server.core.commands.registrations.SingleMethodRegistration;
-import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.tuple.QuadTuple;
+import com.darwinreforged.server.core.tuple.Triple;
+import com.darwinreforged.server.core.tuple.Tuple;
 import com.darwinreforged.server.core.types.internal.Singleton;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
-import com.darwinreforged.server.core.types.tuple.Triple;
-import com.darwinreforged.server.core.types.tuple.Tuple;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
@@ -29,6 +31,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -42,21 +45,22 @@ public class CommandBus {
      */
     protected static final Map<String, CommandRegistration> COMMANDS = new HashMap<>();
 
-    /**
-     Register.
+    public void register(Object... objs) {
+        for (Object obj : objs) {
+            Class<?> clazz;
+            if (obj instanceof Class) clazz = (Class<?>) obj;
+            else clazz = obj.getClass();
 
-     @param obj
-     the obj
-     */
-    public void register(Class<?>... obj) {
-        for (Class<?> clazz : obj) {
             DarwinServer.getLog().info(String.format("\n\nScanning %s for commands", clazz.toGenericString()));
             try {
                 if (clazz.isAnnotationPresent(Command.class)) {
                     ClassRegistration registration = handleClassType(clazz);
                     Arrays.stream(registration.getAliases()).forEach(alias -> {
+                        if (!(obj instanceof Class)) registration.setSourceInstance(obj);
+
                         COMMANDS.put(alias, registration);
-                        DarwinServer.getLog().info(String.format("Registered command : /%s", alias));
+                        String[] subcommands = Arrays.stream(registration.getSubcommands()).map(scmd -> scmd.getAliases()[0]).toArray(String[]::new);
+                        DarwinServer.getLog().info(String.format("Registered command : /%s %s", alias, String.join("|", subcommands)));
                     });
                 } else {
                     List<Method> methods = new ArrayList<>();
@@ -65,12 +69,11 @@ public class CommandBus {
                         if (method.isAnnotationPresent(Command.class)) methods.add(method);
                     }
                     SingleMethodRegistration[] registrations = handleSingleMethod(methods);
-                    DarwinServer.getLog().info(String.format("Found %d registrations in %s", registrations.length, clazz.toGenericString()));
                     Arrays.stream(registrations)
                             .forEach(registration -> Arrays.stream(registration.getAliases())
                                     .forEach(alias -> {
                                         COMMANDS.put(alias, registration);
-                                        DarwinServer.getLog().info("Registered command : /" + alias);
+                                        DarwinServer.getLog().info("Registered singular command : /" + alias);
                                     }));
                 }
             } catch (Throwable e) {
@@ -156,11 +159,11 @@ public class CommandBus {
         Tuple<ParseResult, CommandContext> parseRes = parseContext(cmd, sender, loc);
         if (parseRes.getFirst() == null) return false;
         if (parseRes.getFirst().isSuccess()) {
-            Triple<ParseResult, CommandContext, Method> succeededRes = (Triple<ParseResult, CommandContext, Method>) parseRes;
+            QuadTuple<ParseResult, CommandContext, Method, CommandRegistration> succeededRes = (QuadTuple<ParseResult, CommandContext, Method, CommandRegistration>) parseRes;
             Method method = succeededRes.getThird();
             List<Object> args = new ArrayList<>();
             for (Class<?> param : method.getParameterTypes()) {
-                if (param.equals(CommandSender.class) || param.isAssignableFrom(CommandSender.class)) {
+                if (param.equals(CommandSender.class) || param.isAssignableFrom(CommandSender.class) || CommandSender.class.isAssignableFrom(param)) {
                     if (sender.getClass().equals(param) || sender.getClass().isAssignableFrom(param) || param.isAssignableFrom(sender.getClass())) {
                         args.add(sender);
                     } else {
@@ -178,7 +181,7 @@ public class CommandBus {
                     args.add(null);
                 }
             }
-            String result = invoke(method, args.toArray());
+            String result = invoke(method, args.toArray(), succeededRes.getFourth());
             if (result != null) {
                 sender.explainCommand("Something went wrong while trying to execute the command", null);
             }
@@ -191,22 +194,31 @@ public class CommandBus {
         return true;
     }
 
-    private String invoke(Method method, Object[] args) {
+    private String invoke(Method method, Object[] args, CommandRegistration registration) {
         try {
             Class<?> c = method.getDeclaringClass();
             Object o;
-            if (c.equals(DarwinServer.class) || c.isAssignableFrom(DarwinServer.class) || DarwinServer.class.isAssignableFrom(c)) {
+            if (registration.getSourceInstance().isPresent()) {
+                o = registration.getSourceInstance().get();
+            } else if (c.equals(DarwinServer.class) || c.isAssignableFrom(DarwinServer.class) || DarwinServer.class.isAssignableFrom(c)) {
                 o = DarwinServer.getServer();
             } else if (c.isAssignableFrom(Singleton.class)) {
                 Field field = c.getDeclaredField("instance");
                 o = field.get(null);
             } else {
-                o = c.getConstructor().newInstance();
+                Optional<?> modOptional;
+                if (c.isAnnotationPresent(Module.class) && (modOptional = DarwinServer.getModule(c)).isPresent()) {
+                    o = modOptional.get();
+                } else {
+                    o = c.getConstructor().newInstance();
+                }
             }
             method.invoke(o, args);
             return null; // No error message to return
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException | NoSuchFieldException e) {
             DarwinServer.error("Failed to invoke command", e);
+            return e.getMessage();
+        } catch (Throwable e) {
             return e.getMessage();
         }
     }
@@ -223,8 +235,18 @@ public class CommandBus {
             for (SingleMethodRegistration subcommand : ((ClassRegistration) registration).getSubcommands()) {
                 boolean done = false;
                 for (String subAlias : subcommand.getAliases()) {
-                    if (cmd.startsWith(alias + " " + subAlias)) {
+                    String fullCommand = alias + " " + subAlias;
+                    if (subAlias.equals("")) {
+                        unparsedCommand = cmd.replaceFirst(alias, "").split(" ");
                         registration = subcommand;
+                        // Continue to iterate in case there are still aliases left to check, if one was already found
+                        // the loop would already be broken, so we never overwrite values here
+                    } else if (cmd.startsWith(fullCommand)) {
+                        registration = subcommand;
+                        if (cmd.equals(fullCommand)) unparsedCommand = new String[0];
+                        else
+                            unparsedCommand = cmd.replaceFirst(String.format("%s %s ", alias, subAlias), "").split(" ");
+
                         done = true;
                         break;
                     }
@@ -232,22 +254,32 @@ public class CommandBus {
                 if (done) break;
             }
             // After iterating subcommands the registration should be of type SingleMethodRegistration
-            if (registration instanceof ClassRegistration)
-                return new Tuple<>(new ParseResult("Missing subcommand, this is usually caused by a faulty plugin", false), null);
+            if (registration instanceof ClassRegistration) {
+                String[] subcommands = Arrays.stream(((ClassRegistration) registration).getSubcommands())
+                        .filter(sub -> {
+                            boolean permitted = true;
+                            for (Permissions permission : sub.getPermissions()) {
+                                if (!sender.hasPermission(permission)) {
+                                    permitted = false;
+                                    break;
+                                }
+                            }
+                            return permitted;
+                        })
+                        .map(sub -> sub.getAliases()[0] + " : " + sub.getCommand().desc()).toArray(String[]::new);
+                return new Tuple<>(new ParseResult("Incorrect usage for " + registration.getAliases()[0] + ", available sub-commands : \n" + String.join("\n", subcommands), false), null);
+            }
         }
 
         Command command = registration.getCommand();
-        System.out.println("Registration for : " + cmd + " : " + registration);
         Permissions[] permissions = registration.getPermissions();
         for (Permissions permission : permissions) {
-            DarwinServer.getLog().info("Has permission (" + permission.p() + ") : " + sender.hasPermission(permission));
             if (!sender.hasPermission(permission))
                 return new Triple<>(new ParseResult(Translations.COMMAND_NO_PERMISSION.f(permission.p()), false), null, command);
         }
 
         // Wrapped by ArrayList as Arrays.asList is readonly, causing .remove(0) to throw UnsupportedOperationException
         List<String> unparsedArgs = new ArrayList<>(Arrays.asList(unparsedCommand));
-        unparsedArgs.remove(0); // Command
 
         List<String> singularFlags = Arrays.asList(command.flags());
         List<String> valueFlags = Arrays.asList(command.valueFlags());
@@ -302,7 +334,7 @@ public class CommandBus {
         CommandContext ctx = new CommandContext(arguments.toArray(new CommandArgument[0]), sender, loc.getWorld(), loc, permissions, flags.toArray(new CommandFlag[0]));
         ParseResult result = new ParseResult("Succeeded", true);
         Method method = ((SingleMethodRegistration) registration).getMethod();
-        return new Triple<>(result, ctx, method);
+        return new QuadTuple<>(result, ctx, method, registration);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.darwinreforged.server.core.events.util;
 
-import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.DarwinServer;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -63,6 +63,7 @@ public class EventBus {
         if(invokers.isEmpty()) {
             return; // Doesn't contain any listener methods
         }
+        DarwinServer.getLog().info(String.format("Registered %s as event listener", object.getClass().toGenericString()));
         listenerToInvokers.put(object, invokers);
         for (InvokeWrapper invoker : invokers) {
             handlerRegistry.getHandler(invoker.eventType).subscribe(invoker);

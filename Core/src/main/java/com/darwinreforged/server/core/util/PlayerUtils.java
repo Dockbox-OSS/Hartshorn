@@ -1,7 +1,8 @@
 package com.darwinreforged.server.core.util;
 
 import com.darwinreforged.server.core.init.AbstractUtility;
-import com.darwinreforged.server.core.types.chat.Text;
+import com.darwinreforged.server.core.chat.Pagination;
+import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.types.living.DarwinPlayer;
 import com.darwinreforged.server.core.types.living.MessageReceiver;
 import com.darwinreforged.server.core.types.living.Target;
@@ -199,4 +200,13 @@ public abstract class PlayerUtils {
      */
     public abstract Optional<DarwinPlayer> getPlayer(UUID uuid);
 
+    /**
+     Send pagination.
+
+     @param receiver
+     the receiver
+     @param pagination
+     the pagination
+     */
+    public abstract void sendPagination(MessageReceiver receiver, Pagination pagination);
 }

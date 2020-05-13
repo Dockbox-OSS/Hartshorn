@@ -1,6 +1,6 @@
 package com.darwinreforged.server.core.types.location;
 
-import com.darwinreforged.server.core.types.math.AbstractVector3;
+import com.darwinreforged.server.core.math.AbstractVector3;
 
 /**
  The type Darwin location.
