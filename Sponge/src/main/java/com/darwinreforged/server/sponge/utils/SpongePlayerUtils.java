@@ -6,6 +6,7 @@ import com.darwinreforged.server.core.chat.HoverEvent;
 import com.darwinreforged.server.core.chat.LegacyText;
 import com.darwinreforged.server.core.chat.Pagination;
 import com.darwinreforged.server.core.init.UtilityImplementation;
+import com.darwinreforged.server.core.math.Vector3d;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.types.living.Console;
 import com.darwinreforged.server.core.types.living.DarwinPlayer;
@@ -15,7 +16,6 @@ import com.darwinreforged.server.core.types.living.inventory.DarwinItem;
 import com.darwinreforged.server.core.types.living.state.GameModes;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
-import com.darwinreforged.server.core.types.math.Vector3d;
 import com.darwinreforged.server.core.util.PlayerUtils;
 
 import org.spongepowered.api.Sponge;

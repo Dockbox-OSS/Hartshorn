@@ -1,6 +1,6 @@
 package com.darwinreforged.server.sponge.utils;
 
-import com.darwinreforged.server.core.types.math.AbstractVector2;
+import com.darwinreforged.server.core.math.AbstractVector2;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.darwinreforged.server.core.init.UtilityImplementation;

@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.types.math;
+package com.darwinreforged.server.core.math;
 
 /**
  The type Abstract vector 2.
