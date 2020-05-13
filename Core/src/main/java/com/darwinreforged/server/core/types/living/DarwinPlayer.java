@@ -61,7 +61,7 @@ public class DarwinPlayer extends CommandSender {
     }
 
     public boolean hasPermission(Permissions permission) {
-        return !hasPermission(permission.p());
+        return hasPermission(permission.p());
     }
 
     /**
