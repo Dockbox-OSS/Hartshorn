@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.util;
 
 import com.darwinreforged.server.core.init.AbstractUtility;
-import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

@@ -8,7 +8,7 @@ import com.darwinreforged.server.core.events.internal.player.PlayerLoggedInEvent
 import com.darwinreforged.server.core.events.internal.player.PlayerMoveEvent;
 import com.darwinreforged.server.core.events.internal.player.PlayerTeleportEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
-import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.util.CommandUtils;
 import com.darwinreforged.server.sponge.utils.SpongeCommandUtils;
 

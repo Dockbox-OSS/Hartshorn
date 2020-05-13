@@ -7,7 +7,7 @@ import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.living.DarwinPlayer;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
-import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.util.LocationUtils;
 import com.darwinreforged.server.core.util.PlayerUtils;

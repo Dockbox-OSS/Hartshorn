@@ -1,6 +1,6 @@
 package com.darwinreforged.server.sponge.utils;
 
-import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.util.TimeUtils;
 

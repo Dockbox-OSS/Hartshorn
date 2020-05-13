@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.types.living;
 
 import com.darwinreforged.server.core.commands.annotations.Command;
-import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.chat.LegacyText;

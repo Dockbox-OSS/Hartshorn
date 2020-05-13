@@ -2,7 +2,7 @@ package com.darwinreforged.server.core.util;
 
 import com.darwinreforged.server.core.init.AbstractUtility;
 import com.darwinreforged.server.core.init.DarwinConfig;
-import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.listeners.DiscordListener;
 
 import net.dv8tion.jda.api.JDA;

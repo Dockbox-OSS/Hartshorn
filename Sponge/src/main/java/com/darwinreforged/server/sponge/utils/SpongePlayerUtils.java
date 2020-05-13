@@ -1,5 +1,6 @@
 package com.darwinreforged.server.sponge.utils;
 
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.ClickEvent;
 import com.darwinreforged.server.core.chat.HoverEvent;
 import com.darwinreforged.server.core.chat.LegacyText;

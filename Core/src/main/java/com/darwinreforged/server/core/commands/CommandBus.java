@@ -1,5 +1,6 @@
 package com.darwinreforged.server.core.commands;
 
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.commands.annotations.Permission;
 import com.darwinreforged.server.core.commands.annotations.Source;
@@ -9,7 +10,6 @@ import com.darwinreforged.server.core.commands.context.CommandFlag;
 import com.darwinreforged.server.core.commands.registrations.ClassRegistration;
 import com.darwinreforged.server.core.commands.registrations.CommandRegistration;
 import com.darwinreforged.server.core.commands.registrations.SingleMethodRegistration;
-import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.types.internal.Singleton;

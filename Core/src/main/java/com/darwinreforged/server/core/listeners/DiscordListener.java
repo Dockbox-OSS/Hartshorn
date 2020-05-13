@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.listeners;
 
 import com.darwinreforged.server.core.events.internal.chat.DiscordChatEvent;
-import com.darwinreforged.server.core.init.DarwinServer;
+import com.darwinreforged.server.core.DarwinServer;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

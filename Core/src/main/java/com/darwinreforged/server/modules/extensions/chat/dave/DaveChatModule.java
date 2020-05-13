@@ -1,11 +1,18 @@
 package com.darwinreforged.server.modules.extensions.chat.dave;
 
+import com.darwinreforged.server.core.DarwinServer;
+import com.darwinreforged.server.core.chat.ClickEvent;
+import com.darwinreforged.server.core.chat.ClickEvent.ClickAction;
+import com.darwinreforged.server.core.chat.HoverEvent;
+import com.darwinreforged.server.core.chat.HoverEvent.HoverAction;
+import com.darwinreforged.server.core.chat.LegacyText;
+import com.darwinreforged.server.core.chat.Pagination.PaginationBuilder;
+import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.commands.annotations.Permission;
 import com.darwinreforged.server.core.types.living.DarwinPlayer;
 import com.darwinreforged.server.core.events.internal.server.ServerInitEvent;
 import com.darwinreforged.server.core.events.util.Listener;
-import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
