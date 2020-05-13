@@ -10,8 +10,14 @@ import com.darwinreforged.server.core.util.PlayerUtils;
 
 import java.util.Arrays;
 
+/**
+ The type Console.
+ */
 public class Console extends CommandSender {
 
+    /**
+     The constant instance.
+     */
     public static final Console instance = new Console();
 
     private Console() {}

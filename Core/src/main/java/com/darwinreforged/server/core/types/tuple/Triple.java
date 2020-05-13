@@ -1,7 +1,20 @@
 package com.darwinreforged.server.core.types.tuple;
 
+/**
+ The type Triple.
+
+ @param <K>
+ the type parameter
+ @param <V>
+ the type parameter
+ @param <C>
+ the type parameter
+ */
 public class Triple<K, V, C> extends Tuple<K, V> {
 
+    /**
+     The Third.
+     */
     protected final C third;
 
     /**
@@ -19,6 +32,11 @@ public class Triple<K, V, C> extends Tuple<K, V> {
         this.third = third;
     }
 
+    /**
+     Gets third.
+
+     @return the third
+     */
     public C getThird() {
         return third;
     }

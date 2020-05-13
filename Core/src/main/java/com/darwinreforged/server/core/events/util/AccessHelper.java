@@ -12,11 +12,10 @@ import java.util.*;
 import static java.lang.invoke.MethodHandles.Lookup;
 
 /**
- * Access helper.
- *
- * @author Andy Li
- * @since 1.3
- */
+ Access helper.
+
+ @author Andy Li
+ @since 1.3 */
 final class AccessHelper {
     /**
      * Default lookup object.
@@ -29,8 +28,8 @@ final class AccessHelper {
     private static final MethodHandle TRY_SET_ACCESSIBLE_METHODHANDLE;
 
     /**
-     * Indicate whether we should try to bypass access control using {@code setAccessible(true)}.
-     * For testing purpose only.
+     Indicate whether we should try to bypass access control using {@code setAccessible(true)}.
+     For testing purpose only.
      */
     static boolean trySuppressAccessControl = true;
 
@@ -55,12 +54,18 @@ final class AccessHelper {
     }
 
     /**
-     * Makes a direct method handle to the {@code method}.
-     *
-     * @param lookup the {@linkplain Lookup lookup object} used in method handle creation
-     * @return a method handle which can invoke the reflected method
-     * @throws SecurityException if access checking fails and cannot be bypassed
-     * @see Lookup#unreflect(Method)
+     Makes a direct method handle to the {@code method}.
+
+     @param lookup
+     the {@linkplain Lookup lookup object} used in method handle creation
+     @param method
+     the method
+
+     @return a method handle which can invoke the reflected method
+
+     @throws SecurityException
+     if access checking fails and cannot be bypassed
+     @see Lookup#unreflect(Method) Lookup#unreflect(Method)
      */
     public static MethodHandle unreflectMethodHandle(Lookup lookup, Method method) throws SecurityException {
         try {
@@ -74,14 +79,20 @@ final class AccessHelper {
     }
 
     /**
-     * Makes a direct method handle to the {@code method}.
-     *
-     * @param lookup the {@linkplain Lookup lookup object} used in method handle creation
-     * @return a method handle which can invoke the reflected method
-     * @throws IllegalAccessException if access checking fails and cannot be bypassed
-     * @see Lookup#unreflect(Method)
+     Makes a direct method handle to the {@code method}.
+
+     @param lookup
+     the {@linkplain Lookup lookup object} used in method handle creation
+     @param method
+     the method
+
+     @return a method handle which can invoke the reflected method
+
+     @throws IllegalAccessException
+     if access checking fails and cannot be bypassed
+     @see Lookup#unreflect(Method) Lookup#unreflect(Method)
      */
-    // suppress warning for when compile with Java 9+ (isAccessible() method is deprecated since Java 9)
+// suppress warning for when compile with Java 9+ (isAccessible() method is deprecated since Java 9)
     @SuppressWarnings("deprecation")
     static MethodHandle unreflectMethodHandle0(Lookup lookup, Method method) throws IllegalAccessException {
         boolean accessible = method.isAccessible();
@@ -160,6 +171,16 @@ final class AccessHelper {
         }
     }
 
+    /**
+     Narrow lookup class lookup.
+
+     @param lookup
+     the lookup
+     @param method
+     the method
+
+     @return the lookup
+     */
     static Lookup narrowLookupClass(Lookup lookup, Method method) {
         Class<?> lookupClass = lookup.lookupClass();
         Class<?> targetClass = method.getDeclaringClass();
@@ -171,12 +192,17 @@ final class AccessHelper {
     }
 
     /**
-     * Sets the {@code accessible} flag for the specified reflected object to true if possible.
-     *
-     * @return {@code true} if the {@code accessible} flag is set to {@code true};
-     *         {@code false} if access cannot be enabled.
-     * @throws UnsupportedOperationException if the current runtime doesn't have trySetAccessible() method
-     * @throws SecurityException             if the request is denied by the security manager
+     Sets the {@code accessible} flag for the specified reflected object to true if possible.
+
+     @param object
+     the object
+
+     @return {@code true} if the {@code accessible} flag is set to {@code true};         {@code false} if access cannot be enabled.
+
+     @throws UnsupportedOperationException
+     if the current runtime doesn't have trySetAccessible() method
+     @throws SecurityException
+     if the request is denied by the security manager
      */
     public static boolean trySetAccessible(AccessibleObject object)
             throws UnsupportedOperationException, SecurityException {
@@ -195,36 +221,49 @@ final class AccessHelper {
     }
 
     /**
-     * Checks if the current runtime version is Java 9 or higher.
-     *
-     * @return {@code true} if the current runtime version is at least Java 9, {@code false} otherwise
+     Checks if the current runtime version is Java 9 or higher.
+
+     @return {@code true} if the current runtime version is at least Java 9, {@code false} otherwise
      */
     public static boolean isAtLeastJava9() {
         return TRY_SET_ACCESSIBLE_METHODHANDLE != null;
     }
 
     /**
-     * Checks if two classes is in the same package.
-     *
-     * @return {@code true} if they're in the same package, {@code false} otherwise
+     Checks if two classes is in the same package.
+
+     @param cls1
+     the cls 1
+     @param cls2
+     the cls 2
+
+     @return {@code true} if they're in the same package, {@code false} otherwise
      */
     public static boolean isSamePackage(Class<?> cls1, Class<?> cls2) {
         return cls1 == cls2 || Objects.equals(cls1.getPackage().getName(), cls2.getPackage().getName());
     }
 
     /**
-     * Checks if two classes are nestmate.
-     *
-     * @return {@code true} if they're nestmate, {@code false} otherwise
+     Checks if two classes are nestmate.
+
+     @param cls1
+     the cls 1
+     @param cls2
+     the cls 2
+
+     @return {@code true} if they're nestmate, {@code false} otherwise
      */
     public static boolean isSamePackageMember(Class<?> cls1, Class<?> cls2) {
         return isSamePackage(cls1, cls2) && getOutermostEnclosingClass(cls1) == getOutermostEnclosingClass(cls2);
     }
 
     /**
-     * Returns the outermost enclosing class of the specified class.
-     *
-     * @return the outermost enclosing class
+     Returns the outermost enclosing class of the specified class.
+
+     @param cls
+     the cls
+
+     @return the outermost enclosing class
      */
     public static Class<?> getOutermostEnclosingClass(Class<?> cls) {
         Class<?> enclosingClass;
@@ -233,12 +272,20 @@ final class AccessHelper {
     }
 
     /**
-     * Returns true if an annotation for the specified type is present on the specified method or its super method.
-     *
-     * @param <T> the type of the annotation to search for
-     * @return {@code true} if present, {@code false} otherwise
-     * @throws SecurityException if a security manager denied access to the method's super method
-     * @see #getAnnotationRecursively(Method, Class)
+     Returns true if an annotation for the specified type is present on the specified method or its super method.
+
+     @param <T>
+     the type of the annotation to search for
+     @param method
+     the method
+     @param annotationClass
+     the annotation class
+
+     @return {@code true} if present, {@code false} otherwise
+
+     @throws SecurityException
+     if a security manager denied access to the method's super method
+     @see #getAnnotationRecursively(Method, Class) #getAnnotationRecursively(Method, Class)
      */
     public static <T extends Annotation> boolean isAnnotationPresentRecursively(Method method, Class<T> annotationClass)
             throws SecurityException {
@@ -246,11 +293,19 @@ final class AccessHelper {
     }
 
     /**
-     * Searches the method's annotations for the specified type recursively.
-     *
-     * @param <T> the type of the annotation to search for
-     * @return the annotation if present, {@code null} otherwise
-     * @throws SecurityException if a security manager denied access to the method's super method
+     Searches the method's annotations for the specified type recursively.
+
+     @param <T>
+     the type of the annotation to search for
+     @param method
+     the method
+     @param annotationClass
+     the annotation class
+
+     @return the annotation if present, {@code null} otherwise
+
+     @throws SecurityException
+     if a security manager denied access to the method's super method
      */
     public static <T extends Annotation> T getAnnotationRecursively(Method method, Class<T> annotationClass)
             throws SecurityException {
@@ -277,7 +332,14 @@ final class AccessHelper {
     }
 
     /**
-     * Computes all supertypes(including superclasses, interfaces, etc) of the specified class.
+     Computes all supertypes(including superclasses, interfaces, etc) of the specified class.
+
+     @param current
+     the current
+     @param set
+     the set
+
+     @return the set
      */
     static Set<Class<?>> computeAllSupertypes(Class<?> current, Set<Class<?>> set) {
         Set<Class<?>> next = new LinkedHashSet<>();
@@ -297,9 +359,15 @@ final class AccessHelper {
     }
 
     /**
-     * Returns an list containing all the methods of the specified class.
-     *
-     * @throws SecurityException if a security manager denied access
+     Returns an list containing all the methods of the specified class.
+
+     @param cls
+     the cls
+
+     @return the methods recursively
+
+     @throws SecurityException
+     if a security manager denied access
      */
     @SuppressWarnings({ "ManualArrayToCollectionCopy", "UseBulkOperation" })
     public static List<Method> getMethodsRecursively(Class<?> cls) throws SecurityException {
@@ -363,19 +431,24 @@ final class AccessHelper {
     }
 
     /**
-     * Returns the default {@linkplain Lookup lookup object}.
+     Returns the default {@linkplain Lookup lookup object}.
+
+     @return the lookup
      */
     static Lookup defaultLookup() {
         return DEFAULT_LOOKUP;
     }
 
     /**
-     * Checks if the specified {@linkplain Lookup lookup object} is the
-     * {@linkplain #defaultLookup() default lookup object}.
-     *
-     * @return {@code true} if the {@code lookup} parameter is the same object
-     *         as {@linkplain #defaultLookup() default lookup object}, {@code false} otherwise
-     * @see #defaultLookup()
+     Checks if the specified {@linkplain Lookup lookup object} is the
+     {@linkplain #defaultLookup() default lookup object}.
+
+     @param lookup
+     the lookup
+
+     @return {@code true} if the {@code lookup} parameter is the same object         as {@linkplain #defaultLookup() default lookup object}, {@code false} otherwise
+
+     @see #defaultLookup() #defaultLookup()
      */
     static boolean isDefaultLookup(Lookup lookup) {
         return lookup == DEFAULT_LOOKUP;

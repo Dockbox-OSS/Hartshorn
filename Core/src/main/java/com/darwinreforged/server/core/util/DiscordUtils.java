@@ -15,45 +15,123 @@ import java.util.List;
 
 import javax.security.auth.login.LoginException;
 
+/**
+ The type Discord utils.
+ */
 @AbstractUtility("Discord connection and messaging utilities")
 public abstract class DiscordUtils {
 
+    /**
+     Init.
+
+     @param channelWhitelist
+     the channel whitelist
+     */
     public void init(List<String> channelWhitelist) {
         if (getJda() != null) getJda().addEventListener(new DiscordListener(channelWhitelist));
     }
 
+    /**
+     Send to channel.
+
+     @param message
+     the message
+     @param channel
+     the channel
+     */
     public void sendToChannel(String message, String channel) {
         getChannel(channel).sendMessage(message).queue();
     }
 
+    /**
+     Send to channel.
+
+     @param message
+     the message
+     @param channel
+     the channel
+     */
     public void sendToChannel(String message, long channel) {
         getChannel(channel).sendMessage(message).queue();
     }
 
+    /**
+     Send to channel.
+
+     @param embed
+     the embed
+     @param channel
+     the channel
+     */
     public void sendToChannel(MessageEmbed embed, String channel) {
         getChannel(channel).sendMessage(embed).queue();
     }
 
+    /**
+     Send to channel.
+
+     @param embed
+     the embed
+     @param channel
+     the channel
+     */
     public void sendToChannel(MessageEmbed embed, long channel) {
         getChannel(channel).sendMessage(embed).queue();
     }
 
+    /**
+     Gets channel.
+
+     @param channel
+     the channel
+
+     @return the channel
+     */
     public TextChannel getChannel(String channel) {
         return getJdaWithFallback().getTextChannelById(channel);
     }
 
+    /**
+     Gets channel.
+
+     @param channel
+     the channel
+
+     @return the channel
+     */
     public TextChannel getChannel(long channel) {
         return getJdaWithFallback().getTextChannelById(channel);
     }
-    
+
+    /**
+     Gets user by id.
+
+     @param id
+     the id
+
+     @return the user by id
+     */
     public User getUserById(long id) {
         return getJdaWithFallback().getUserById(id);
     }
-    
+
+    /**
+     Gets user by id.
+
+     @param id
+     the id
+
+     @return the user by id
+     */
     public User getUserById(String id) {
         return getJda().getUserById(id);
     }
 
+    /**
+     Gets jda with fallback.
+
+     @return the jda with fallback
+     */
     protected JDA getJdaWithFallback() {
         JDA jda = getJda();
         if (jda != null) return jda;
@@ -70,5 +148,10 @@ public abstract class DiscordUtils {
         return null;
     }
 
+    /**
+     Gets jda.
+
+     @return the jda
+     */
     protected abstract JDA getJda();
 }

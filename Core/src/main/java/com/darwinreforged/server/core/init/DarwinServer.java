@@ -41,31 +41,75 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+/**
+ The type Darwin server.
+ */
 @SuppressWarnings("UnusedReturnValue")
 public abstract class DarwinServer extends Singleton {
 
+    /**
+     The constant MODULES.
+     */
     protected static final Map<Class<?>, Tuple<Object, Module>> MODULES = new HashMap<>();
+    /**
+     The constant MODULE_SOURCES.
+     */
     protected static final Map<String, String> MODULE_SOURCES = new HashMap<>();
+    /**
+     The constant FAILED_MODULES.
+     */
     protected static final List<String> FAILED_MODULES = new ArrayList<>();
+    /**
+     The constant UTILS.
+     */
     protected static final Map<Class<?>, Object> UTILS = new HashMap<>();
 
+    /**
+     The Event bus.
+     */
     protected EventBus eventBus;
     private String version;
     private String lastUpdate;
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private DarwinConfig config;
 
+    /**
+     The constant MODULE_PACKAGE.
+     */
     protected static final String MODULE_PACKAGE = "com.darwinreforged.server.modules";
+    /**
+     The constant UTIL_PACKAGE.
+     */
     protected static final String UTIL_PACKAGE = "com.darwinreforged.server.core.util";
+    /**
+     The constant AUTHOR.
+     */
     public static final String AUTHOR = "GuusLieben";
 
+    /**
+     Instantiates a new Darwin server.
+
+     @throws InstantiationException
+     the instantiation exception
+     */
     public DarwinServer() throws InstantiationException {
     }
 
+    /**
+     Gets log.
+
+     @return the log
+     */
     public static Logger getLog() {
         return getServer().log;
     }
 
+    /**
+     Sets platform.
+
+     @throws IOException
+     the io exception
+     */
     @SuppressWarnings({"InstantiationOfUtilityClass"})
     protected void setupPlatform() throws IOException {
         // Load plugin properties
@@ -106,14 +150,29 @@ public abstract class DarwinServer extends Singleton {
         cu.getBus().register(instance.getClass());
     }
 
+    /**
+     Gets config.
+
+     @return the config
+     */
     public DarwinConfig getConfig() {
         return config;
     }
 
+    /**
+     Gets version.
+
+     @return the version
+     */
     public static String getVersion() {
         return (instance == null || getServer().version == null) ? "Unknown-dev" : getServer().version;
     }
 
+    /**
+     Gets last update.
+
+     @return the last update
+     */
     public static String getLastUpdate() {
         return (instance == null || getServer().lastUpdate == null) ? "Unknown" : getServer().lastUpdate;
     }
@@ -131,10 +190,24 @@ public abstract class DarwinServer extends Singleton {
         }
     }
 
+    /**
+     Error.
+
+     @param message
+     the message
+     */
     public static void error(String message) {
         error(message, new Exception());
     }
 
+    /**
+     Error.
+
+     @param message
+     the message
+     @param e
+     the e
+     */
     public static void error(String message, Throwable e) {
         if (DarwinConfig.FRIENDLY_ERRORS.get()) {
             StringBuilder b = new StringBuilder();
@@ -227,12 +300,32 @@ public abstract class DarwinServer extends Singleton {
         });
     }
 
+    /**
+     Gets server type.
+
+     @return the server type
+     */
     public abstract ServerType getServerType();
 
+    /**
+     Gets event bus.
+
+     @return the event bus
+     */
     public static EventBus getEventBus() {
         return getServer().eventBus;
     }
 
+    /**
+     Gets util.
+
+     @param <I>
+     the type parameter
+     @param clazz
+     the clazz
+
+     @return the util
+     */
     @SuppressWarnings("unchecked")
     public static <I> Optional<? extends I> getUtil(Class<I> clazz) {
         if (!clazz.isAnnotationPresent(AbstractUtility.class))
@@ -242,6 +335,16 @@ public abstract class DarwinServer extends Singleton {
         return Optional.empty();
     }
 
+    /**
+     Gets util checked.
+
+     @param <I>
+     the type parameter
+     @param clazz
+     the clazz
+
+     @return the util checked
+     */
     public static <I> I getUtilChecked(Class<I> clazz) {
         Optional<? extends I> optionalImpl = getUtil(clazz);
         return optionalImpl.orElse(null);
@@ -249,6 +352,11 @@ public abstract class DarwinServer extends Singleton {
 
     /**
      Obtains the instance of the provided Module class.
+
+     @param <I>
+     the type parameter
+     @param clazz
+     the clazz
 
      @return The optional module
      */
@@ -270,7 +378,7 @@ public abstract class DarwinServer extends Singleton {
 
     /**
      Obtains the instance of the provided Module class. If present, returns the registered @{@link
-    Module} object of the instance.
+    Module}* object of the instance.
 
      @param clazz
      The class type
@@ -281,21 +389,29 @@ public abstract class DarwinServer extends Singleton {
         return getModDataTuple(clazz).map(Tuple::getSecond);
     }
 
+    /**
+     Gets module source.
+
+     @param id
+     the id
+
+     @return the module source
+     */
     public static String getModuleSource(String id) {
         return DarwinServer.MODULE_SOURCES.get(id);
     }
 
     /**
      Register a given module and create a singleton instance of it.
-
      <p>If a module carries the {@link DisabledModule} annotation the module will not be loaded.
      This is to be defined by the creator of the module if the module is unstable or not ready for production.</p>
-
      <p>If a module is {@link Deprecated} there will still be an attempt to register and instantiate
      it, however a different {@link ModuleRegistration} state is returned.</p>
 
      @param module
      The module to register
+     @param source
+     the source
 
      @return The resulting state of the registration
      */
@@ -333,18 +449,44 @@ public abstract class DarwinServer extends Singleton {
         }
     }
 
+    /**
+     Register listener.
+
+     @param obj
+     the obj
+     */
     public void registerListener(Object obj) {
         getEventBus().subscribe(obj);
     }
 
+    /**
+     Gets server.
+
+     @return the server
+     */
     public static DarwinServer getServer() {
         return (DarwinServer) DarwinServer.instance;
     }
 
+    /**
+     Gets all module info.
+
+     @return the all module info
+     */
     public static List<Module> getAllModuleInfo() {
         return MODULES.values().stream().map(Tuple::getSecond).collect(Collectors.toList());
     }
 
+    /**
+     Scan module package boolean.
+
+     @param pkg
+     the pkg
+     @param integrated
+     the integrated
+
+     @return the boolean
+     */
     public boolean scanModulePackage(String pkg, boolean integrated) {
         return scanModulePackage(pkg, integrated ? "Integrated" : "Unknown");
     }
@@ -369,6 +511,16 @@ public abstract class DarwinServer extends Singleton {
         });
     }
 
+    /**
+     Scan module package boolean.
+
+     @param packageString
+     the package string
+     @param source
+     the source
+
+     @return the boolean
+     */
     public boolean scanModulePackage(String packageString, String source) {
         if ("".equals(packageString)) return false;
         Reflections reflections = new Reflections(packageString);
@@ -380,8 +532,20 @@ public abstract class DarwinServer extends Singleton {
         return true;
     }
 
+    /**
+     Command list.
+
+     @param player
+     the player
+     */
     public abstract void commandList(CommandSender player);
 
+    /**
+     Run async.
+
+     @param runnable
+     the runnable
+     */
     public abstract void runAsync(Runnable runnable);
 
     /**

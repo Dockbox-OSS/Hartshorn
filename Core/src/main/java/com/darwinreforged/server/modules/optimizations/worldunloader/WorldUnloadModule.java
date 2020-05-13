@@ -25,6 +25,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+/**
+ The type World unload module.
+ */
 @Module(id = "worldunloader", name = "WorldUnloader", description = "Unload worlds with no players in them", authors = "GuusLieben")
 public class WorldUnloadModule {
 
@@ -32,11 +35,23 @@ public class WorldUnloadModule {
     private PlotUtils plotUtils;
     private final List<String> unloadBlacklist = new ArrayList<>();
 
+    /**
+     On reload.
+
+     @param event
+     the event
+     */
     @Listener
     public void onReload(ServerReloadEvent event) {
         init();
     }
 
+    /**
+     On server start.
+
+     @param event
+     the event
+     */
     @Listener
     public void onServerStart(ServerStartedEvent event) {
         init();
@@ -57,6 +72,16 @@ public class WorldUnloadModule {
                 .submit();
     }
 
+    /**
+     Add world command.
+
+     @param player
+     the player
+     @param context
+     the context
+     @param world
+     the world
+     */
     @Command(
             aliases = "wu",
             desc = "Registers the given world to be blacklisted from unloading",

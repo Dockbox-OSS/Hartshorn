@@ -18,39 +18,39 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * Represents an event bus.
- *
- * @author Matt, Andy Li
- */
+ Represents an event bus.
+
+ @author Matt, Andy Li */
 public class EventBus {
     /**
-     * Map of listener objects to listener invokers.
+     Map of listener objects to listener invokers.
      */
     protected final Map<Object, Set<InvokeWrapper>> listenerToInvokers = new HashMap<>();
 
     /**
-     * Handler registry.
+     Handler registry.
      */
     protected final HandlerRegistry handlerRegistry = new HandlerRegistry();
 
     /**
-     * Default lookup object used in {@link #subscribe(Object)}.
+     Default lookup object used in {@link #subscribe(Object)}.
      */
     protected MethodHandles.Lookup defaultLookup = AccessHelper.defaultLookup();
 
     /**
-     * Registers all listener methods on {@code object} for receiving events.
-     *
-     * @param object object whose listener methods should be registered
-     * @param lookup the {@linkplain MethodHandles.Lookup Lookup object} used in {@link MethodHandle} creation
-     * @throws IllegalArgumentException if there's an invalid listener method on the {@code object},
-     *                                  or the {@code object} doesn't have any listener methods
-     * @throws SecurityException        if a security manager denied access to the declared methods
-     *                                  of the class of the {@code object}, or the provided
-     *                                  {@linkplain MethodHandles.Lookup lookup object}
-     *                                  cannot access one of the listener method found in the class
-     * @see MethodHandles.Lookup
-     * @since 1.3
+     Registers all listener methods on {@code object} for receiving events.
+
+     @param object
+     object whose listener methods should be registered
+     @param lookup
+     the {@linkplain MethodHandles.Lookup Lookup object} used in {@link MethodHandle} creation
+
+     @throws IllegalArgumentException
+     if there's an invalid listener method on the {@code object},                                  or the {@code object} doesn't have any listener methods
+     @throws SecurityException
+     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the provided                                  {@linkplain MethodHandles.Lookup lookup object}                                  cannot access one of the listener method found in the class
+     @see MethodHandles.Lookup
+     @since 1.3
      */
     @SuppressWarnings("EqualsWithItself")
     public void subscribe(Object object, MethodHandles.Lookup lookup) throws IllegalArgumentException, SecurityException {
@@ -70,26 +70,27 @@ public class EventBus {
     }
 
     /**
-     * Registers all listener methods on {@code object} for receiving events.
-     *
-     * @param object object whose listener methods should be registered
-     * @throws IllegalArgumentException if there's an invalid listener method on the {@code object},
-     *                                  or the {@code object} doesn't have any listener methods
-     * @throws SecurityException        if a security manager denied access to the declared methods
-     *                                  of the class of the {@code object}, or the default
-     *                                  {@linkplain MethodHandles.Lookup lookup object} cannot access
-     *                                  one of the listener method found in the class
-     * @see #subscribe(Object, MethodHandles.Lookup)
-     * @see #setDefaultLookup(MethodHandles.Lookup)
+     Registers all listener methods on {@code object} for receiving events.
+
+     @param object
+     object whose listener methods should be registered
+
+     @throws IllegalArgumentException
+     if there's an invalid listener method on the {@code object},                                  or the {@code object} doesn't have any listener methods
+     @throws SecurityException
+     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the default                                  {@linkplain MethodHandles.Lookup lookup object} cannot access                                  one of the listener method found in the class
+     @see #subscribe(Object, MethodHandles.Lookup) #subscribe(Object, MethodHandles.Lookup)
+     @see #setDefaultLookup(MethodHandles.Lookup) #setDefaultLookup(MethodHandles.Lookup)
      */
     public void subscribe(Object object) throws IllegalArgumentException, SecurityException {
         subscribe(object, defaultLookup);
     }
 
     /**
-     * Unregisters all listener methods on the {@code object}.
-     *
-     * @param object object whose listener methods should be unregistered
+     Unregisters all listener methods on the {@code object}.
+
+     @param object
+     object whose listener methods should be unregistered
      */
     @SuppressWarnings("EqualsWithItself")
     public void unsubscribe(Object object) {
@@ -105,33 +106,41 @@ public class EventBus {
     }
 
     /**
-     * Posts an event to all registered listeners.
-     *
-     * @param event event to post
+     Posts an event to all registered listeners.
+
+     @param event
+     event to post
      */
     public void post(Event event) {
         handlerRegistry.getHandler(event.getClass()).post(event);
     }
 
     /**
-     * Sets default {@linkplain MethodHandles.Lookup lookup object} used in {@link #subscribe(Object)}.
-     *
-     * @param lookup new default lookup object
-     * @since 1.3
+     Sets default {@linkplain MethodHandles.Lookup lookup object} used in {@link #subscribe(Object)}.
+
+     @param lookup
+     new default lookup object
+
+     @since 1.3
      */
     public void setDefaultLookup(MethodHandles.Lookup lookup) {
         this.defaultLookup = Objects.requireNonNull(lookup);
     }
 
     /**
-     * Gets all listener methods on the {@code object}.
-     *
-     * @param lookup the {@linkplain MethodHandles.Lookup Lookup object} used in {@link MethodHandle} creation
-     * @throws IllegalArgumentException if there's an invalid listener method on the {@code object}
-     * @throws SecurityException        if a security manager denied access to the declared methods
-     *                                  of the class of the {@code object}, or the provided
-     *                                  {@linkplain MethodHandles.Lookup lookup}
-     *                                  cannot access one of the listener method found in the class
+     Gets all listener methods on the {@code object}.
+
+     @param object
+     the object
+     @param lookup
+     the {@linkplain MethodHandles.Lookup Lookup object} used in {@link MethodHandle} creation
+
+     @return the invokers
+
+     @throws IllegalArgumentException
+     if there's an invalid listener method on the {@code object}
+     @throws SecurityException
+     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the provided                                  {@linkplain MethodHandles.Lookup lookup}                                  cannot access one of the listener method found in the class
      */
     protected static Set<InvokeWrapper> getInvokers(Object object, MethodHandles.Lookup lookup)
             throws IllegalArgumentException, SecurityException {
@@ -147,9 +156,15 @@ public class EventBus {
     }
 
     /**
-     * Checks if the method is a valid listener method.
-     *
-     * @throws IllegalArgumentException if any check failed
+     Checks if the method is a valid listener method.
+
+     @param method
+     the method
+     @param checkAnnotation
+     the check annotation
+
+     @throws IllegalArgumentException
+     if any check failed
      */
     protected static void checkListenerMethod(Method method, boolean checkAnnotation) throws IllegalArgumentException {
         if (checkAnnotation && !AccessHelper.isAnnotationPresentRecursively(method, Listener.class)) {
@@ -173,9 +188,12 @@ public class EventBus {
     }
 
     /**
-     * Determines if the method is a valid listener method.
-     *
-     * @return {@code true} if it is, {@code false} otherwise
+     Determines if the method is a valid listener method.
+
+     @param method
+     the method
+
+     @return {@code true} if it is, {@code false} otherwise
      */
     public static boolean isListenerMethod(Method method) {
         if (AccessHelper.isAnnotationPresentRecursively(method, Listener.class) &&
@@ -188,7 +206,7 @@ public class EventBus {
     }
 
     /**
-     * Handler registry (for supertype event handling).
+     Handler registry (for supertype event handling).
      */
     static final class HandlerRegistry {
         /**
@@ -197,10 +215,12 @@ public class EventBus {
         private final Map<Class<? extends Event>, Handler> handlers = new HashMap<>();
 
         /**
-         * Gets or creates the {@linkplain Handler handler} for the specified event type.
-         *
-         * @param type the event type
-         * @return the handler for the event type
+         Gets or creates the {@linkplain Handler handler} for the specified event type.
+
+         @param type
+         the event type
+
+         @return the handler for the event type
          */
         public Handler getHandler(Class<? extends Event> type) {
             Handler handler = handlers.get(type);
@@ -212,12 +232,12 @@ public class EventBus {
         }
 
         /**
-         * Computes and updates the registry's handler hierarchy with the specified handler.
-         *
-         * @return {@code true} if the specified {@linkplain Handler handler} has
-         *         an association(subtype or supertype) with at least one handler
-         *         in the current registry <b>and</b> the hierarchy had been updated,
-         *         {@code false} otherwise
+         Computes and updates the registry's handler hierarchy with the specified handler.
+
+         @param subject
+         the subject
+
+         @return {@code true} if the specified {@linkplain Handler handler} has         an association(subtype or supertype) with at least one handler         in the current registry <b>and</b> the hierarchy had been updated,         {@code false} otherwise
          */
         boolean computeHierarchy(Handler subject) {
             boolean associationFound = false;
@@ -234,7 +254,7 @@ public class EventBus {
     }
 
     /**
-     * Event distribution handler.
+     Event distribution handler.
      */
     @SuppressWarnings("VolatileArrayField")
     static class Handler {
@@ -262,30 +282,43 @@ public class EventBus {
          */
         private transient volatile InvokeWrapper[] computedInvokerCache = null;
 
+        /**
+         Instantiates a new Handler.
+
+         @param eventType
+         the event type
+         */
         Handler(Class<? extends Event> eventType) { this.eventType = eventType; }
 
         /**
-         * Adds an {@linkplain InvokeWrapper invoker} to this handler.
-         *
-         * @return {@code true} if this handler did not already contain the specified invoker
+         Adds an {@linkplain InvokeWrapper invoker} to this handler.
+
+         @param invoker
+         the invoker
+
+         @return {@code true} if this handler did not already contain the specified invoker
          */
         public boolean subscribe(InvokeWrapper invoker) {
             return invalidateCache(invokers.add(invoker));
         }
 
         /**
-         * Removes the specified {@linkplain InvokeWrapper invoker} from this handler if it's present.
-         *
-         * @return {@code true} if this handler contained the specified invoker
+         Removes the specified {@linkplain InvokeWrapper invoker} from this handler if it's present.
+
+         @param invoker
+         the invoker
+
+         @return {@code true} if this handler contained the specified invoker
          */
         public boolean unsubscribe(InvokeWrapper invoker) {
             return invalidateCache(invokers.remove(invoker));
         }
 
         /**
-         * Posts an event to all registered listeners in this handler and its supertype handlers.
-         *
-         * @param event event to post
+         Posts an event to all registered listeners in this handler and its supertype handlers.
+
+         @param event
+         event to post
          */
         public void post(Event event) {
             InvokeWrapper[] cache = this.computedInvokerCache;
@@ -303,7 +336,9 @@ public class EventBus {
         }
 
         /**
-         * Computes all invokers that need to be invoked when this handler received an event.
+         Computes all invokers that need to be invoked when this handler received an event.
+
+         @return the invoke wrapper [ ]
          */
         synchronized InvokeWrapper[] computeInvokerCache() {
             SortedSet<InvokeWrapper> set;
@@ -318,10 +353,12 @@ public class EventBus {
         }
 
         /**
-         * Invalidates the {@link #computedInvokerCache} when {@code modified} is {@code true}.
-         *
-         * @param modified should we invalidate?
-         * @return same value as {@code modified}
+         Invalidates the {@link #computedInvokerCache} when {@code modified} is {@code true}.
+
+         @param modified
+         should we invalidate?
+
+         @return same value as {@code modified}
          */
         boolean invalidateCache(boolean modified) {
             if (modified) this.computedInvokerCache = null;
@@ -329,20 +366,22 @@ public class EventBus {
         }
 
         /**
-         * @return event type for this handler
+         Event type class.
+
+         @return event type for this handler
          */
         public Class<? extends Event> eventType() {
             return eventType;
         }
 
         /**
-         * Determines if the event type for this handler
-         * is a subtype of the specified {@code Class} parameter.
-         *
-         * @param cls the {@code Class} object to be checked
-         * @return {@code true} if the event type for this handler
-         *         is a subtype of the type represented by {@code cls},
-         *         {@code false} otherwise
+         Determines if the event type for this handler
+         is a subtype of the specified {@code Class} parameter.
+
+         @param cls
+         the {@code Class} object to be checked
+
+         @return {@code true} if the event type for this handler         is a subtype of the type represented by {@code cls},         {@code false} otherwise
          */
         public boolean isSubtypeOf(Class<?> cls) {
             Class<? extends Event> type = eventType();
@@ -350,39 +389,43 @@ public class EventBus {
         }
 
         /**
-         * Determines if the event type for this handler is a subtype of
-         * the event type for the specified {@code handler} parameter.
-         *
-         * @param handler the {@code Handler} object to be checked
-         * @return {@code true} if the event type for this handler is a subtype of
-         *         the event type for the {@code handler} parameter,
-         *         {@code false} otherwise
+         Determines if the event type for this handler is a subtype of
+         the event type for the specified {@code handler} parameter.
+
+         @param handler
+         the {@code Handler} object to be checked
+
+         @return {@code true} if the event type for this handler is a subtype of         the event type for the {@code handler} parameter,         {@code false} otherwise
          */
         public boolean isSubtypeOf(Handler handler) {
             return isSubtypeOf(handler.eventType());
         }
 
         /**
-         * Returns {@code true} if this hander has at least one supertype handler.
+         Returns {@code true} if this hander has at least one supertype handler.
+
+         @return the boolean
          */
         public boolean hasSupertypeHandler() {
             return !supertypeHandlers.isEmpty();
         }
 
         /**
-         * Gets an unmodifiable view of this handler's supertype handlers.
-         *
-         * @return an unmodifiable view
+         Gets an unmodifiable view of this handler's supertype handlers.
+
+         @return an unmodifiable view
          */
         public Set<Handler> getSupertypeHandlers() {
             return Collections.unmodifiableSet(supertypeHandlers);
         }
 
         /**
-         * Adds a handler as this handler's supertype handler if it isn't already present.
-         *
-         * @param handler the supertype handler to be added
-         * @return {@code true} if any modification occurred, {@code false} otherwise.
+         Adds a handler as this handler's supertype handler if it isn't already present.
+
+         @param handler
+         the supertype handler to be added
+
+         @return {@code true} if any modification occurred, {@code false} otherwise.
          */
         boolean addSupertypeHandler(Handler handler) {
             if (handler == this) return false;
@@ -408,12 +451,12 @@ public class EventBus {
     }
 
     /**
-     * Listener method invocation wrapper.
+     Listener method invocation wrapper.
      */
     static class InvokeWrapper implements Comparable<InvokeWrapper> {
         /**
-         * Compares Invokewrappers using their {@code priority} value,
-         * and only returns 0 when {@code o1.equals(o2)}.
+         Compares Invokewrappers using their {@code priority} value,
+         and only returns 0 when {@code o1.equals(o2)}.
          */
         public static final Comparator<InvokeWrapper> COMPARATOR = (o1, o2) -> {
             if (fastEqual(o1, o2)) return 0;
@@ -430,10 +473,19 @@ public class EventBus {
         };
 
         /**
-         * Constructs an InvokeWrapper.
-         *
-         * @throws SecurityException if the provided {@linkplain MethodHandles.Lookup lookup}
-         *                           cannot access the specified method
+         Constructs an InvokeWrapper.
+
+         @param instance
+         the instance
+         @param method
+         the method
+         @param lookup
+         the lookup
+
+         @return the invoke wrapper
+
+         @throws SecurityException
+         if the provided {@linkplain MethodHandles.Lookup lookup}                           cannot access the specified method
          */
         @SuppressWarnings("unchecked")
         public static InvokeWrapper create(Object instance, Method method, MethodHandles.Lookup lookup) throws SecurityException {
@@ -442,10 +494,21 @@ public class EventBus {
         }
 
         /**
-         * Constructs an InvokeWrapper with specified {@code priority} value.
-         *
-         * @throws SecurityException if the provided {@linkplain MethodHandles.Lookup lookup}
-         *                           cannot access the specified method
+         Constructs an InvokeWrapper with specified {@code priority} value.
+
+         @param instance
+         the instance
+         @param method
+         the method
+         @param priority
+         the priority
+         @param lookup
+         the lookup
+
+         @return the invoke wrapper
+
+         @throws SecurityException
+         if the provided {@linkplain MethodHandles.Lookup lookup}                           cannot access the specified method
          */
         @SuppressWarnings("unchecked")
         public static InvokeWrapper create(Object instance, Method method, int priority, MethodHandles.Lookup lookup)
@@ -480,6 +543,20 @@ public class EventBus {
          */
         private final MethodHandle methodHandle;
 
+        /**
+         Instantiates a new Invoke wrapper.
+
+         @param listener
+         the listener
+         @param eventType
+         the event type
+         @param method
+         the method
+         @param priority
+         the priority
+         @param methodHandle
+         the method handle
+         */
         InvokeWrapper(Object listener, Class<? extends Event> eventType, Method method, int priority, MethodHandle methodHandle) {
             this.listener = listener;
             this.eventType = eventType;
@@ -489,10 +566,13 @@ public class EventBus {
         }
 
         /**
-         * Invokes the listener.
-         *
-         * @param event event to post
-         * @throws RuntimeException if the underlying listener method throws an exception
+         Invokes the listener.
+
+         @param event
+         event to post
+
+         @throws RuntimeException
+         if the underlying listener method throws an exception
          */
         public void invoke(Event event) throws RuntimeException {
             try {

@@ -1,26 +1,38 @@
 package com.darwinreforged.server.core.types.chat;
+
 /**
- * Legacy text is a conversion util which will convert a "legacy" chat string into a TextObject,
- * and a TextObject into a legacy string
+ Legacy text is a conversion util which will convert a "legacy" chat string into a TextObject,
+ and a TextObject into a legacy string
  */
 public final class LegacyText {
 
+    /**
+     From legacy text.
+
+     @param legacyText
+     the legacy text
+
+     @return the text
+     */
     public static Text fromLegacy(String legacyText) {
         return LegacyText.fromLegacy(legacyText, '&');
     }
 
     /**
-     * This function takes in a legacy text string and converts it into a {@link Text}.
-     * <p>
-     * Legacy text strings use the {@link ChatColor#SECTION_SYMBOL}. Many keyboards do not have this symbol however,
-     * which is probably why it was chosen. To get around this, it is common practice to substitute
-     * the symbol for another, then translate it later. Often '&' is used, but this can differ from person
-     * to person. In case the string does not have a {@link ChatColor#SECTION_SYMBOL}, the method also checks for the
-     * {@param characterSubstitute}
-     *
-     * @param legacyText          The text to make into an object
-     * @param characterSubstitute The character substitute
-     * @return A TextObject representing the legacy text.
+     This function takes in a legacy text string and converts it into a {@link Text}.
+     <p>
+     Legacy text strings use the {@link ChatColor#SECTION_SYMBOL}. Many keyboards do not have this symbol however,
+     which is probably why it was chosen. To get around this, it is common practice to substitute
+     the symbol for another, then translate it later. Often '&' is used, but this can differ from person
+     to person. In case the string does not have a {@link ChatColor#SECTION_SYMBOL}, the method also checks for the
+     {@param characterSubstitute}
+
+     @param legacyText
+     The text to make into an object
+     @param characterSubstitute
+     The character substitute
+
+     @return A TextObject representing the legacy text.
      */
     public static Text fromLegacy(String legacyText, char characterSubstitute) {
         TextBuilder builder = TextBuilder.of("");
@@ -105,17 +117,28 @@ public final class LegacyText {
         return builder.build();
     }
 
+    /**
+     To legacy string.
+
+     @param object
+     the object
+
+     @return the string
+     */
     public static String toLegacy(Text object) {
         return LegacyText.toLegacy(object, ChatColor.SECTION_SYMBOL);
     }
 
 
     /**
-     * Takes an {@link Text} and transforms it into a legacy string.
-     *
-     * @param text     - The {@link Text} to transform to.
-     * @param charSubstitute - The substitute character to use if you do not want to use {@link ChatColor#SECTION_SYMBOL}
-     * @return A legacy string representation of a text object
+     Takes an {@link Text} and transforms it into a legacy string.
+
+     @param text
+     - The {@link Text} to transform to.
+     @param charSubstitute
+     - The substitute character to use if you do not want to use {@link ChatColor#SECTION_SYMBOL}
+
+     @return A legacy string representation of a text object
      */
     public static String toLegacy(Text text, char charSubstitute) {
         StringBuilder builder = new StringBuilder();

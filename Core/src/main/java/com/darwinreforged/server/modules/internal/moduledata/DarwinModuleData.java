@@ -10,14 +10,26 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ The type Darwin module data.
+ */
 @Module(id = "darwinmoduledata", name = "Darwin Module Data", version = "0.0.2", description = "Collects and stores plugin data", authors = {"GuusLieben"})
 public class DarwinModuleData {
 
     private final Map<String, Map<String, Object>> data = new HashMap<>();
 
+    /**
+     Instantiates a new Darwin module data.
+     */
     public DarwinModuleData() {
     }
 
+    /**
+     On server start.
+
+     @param event
+     the event
+     */
     @Listener
     public void onServerStart(ServerStartedEvent event) {
         File dataFile = new File(DarwinServer.getUtilChecked(FileUtils.class).getDataDirectory(this).toFile(), "module_data.yml");

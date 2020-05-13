@@ -8,9 +8,20 @@ import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
 
+/**
+ The type Darwin server module.
+ */
 @Module(id = "darwinserver", name = "Server Config Module", description = "Native module used for configurations from DarwinServer only", authors = {"GuusLieben"})
 public class DarwinServerModule {
 
+    /**
+     Modules.
+
+     @param commandSender
+     the command sender
+     @param ctx
+     the ctx
+     */
     @Command(
             aliases = {"dtest", "dt"}, // The aliases for the command, by default the first alias will be used as primary alias
             desc = "Darwin Server module information", // The short description for the command

@@ -5,18 +5,51 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ The interface Module.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Module {
+    /**
+     Id string.
+
+     @return the string
+     */
     String id();
 
+    /**
+     Name string.
+
+     @return the string
+     */
     String name();
 
+    /**
+     Version string.
+
+     @return the string
+     */
     String version() default "InDev";
 
+    /**
+     Description string.
+
+     @return the string
+     */
     String description();
 
+    /**
+     Url string.
+
+     @return the string
+     */
     String url() default "none";
 
+    /**
+     Authors string [ ].
+
+     @return the string [ ]
+     */
     String[] authors();
 }

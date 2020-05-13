@@ -16,16 +16,34 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ The type Go to lobby module.
+ */
 @Module(id = "gotolobby", name = "GoToLobby", description = "Send players to the lobby if they are in a disallowed world", authors = "GuusLieben")
 public class GoToLobbyModule {
 
+    /**
+     The Blacklist.
+     */
     List<String> blacklist = new ArrayList<>();
 
+    /**
+     On server reload.
+
+     @param event
+     the event
+     */
     @Listener
     public void onServerReload(ServerReloadEvent event) {
         init();
     }
 
+    /**
+     On server start.
+
+     @param event
+     the event
+     */
     @Listener
     public void onServerStart(ServerStartedEvent event) {
         init();
@@ -41,6 +59,12 @@ public class GoToLobbyModule {
         fileUtils.writeYamlDataForConfig(config, this);
     }
 
+    /**
+     On player move.
+
+     @param event
+     the event
+     */
     @Listener
     public void onPlayerMove(PlayerMoveEvent event) {
         DarwinPlayer player = (DarwinPlayer) event.getTarget();

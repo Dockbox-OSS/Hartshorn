@@ -14,21 +14,48 @@ import com.darwinreforged.server.core.util.PlayerUtils;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ The type Darwin player.
+ */
 public class DarwinPlayer extends CommandSender {
 
+    /**
+     Instantiates a new Darwin player.
+
+     @param uuid
+     the uuid
+     @param name
+     the name
+     */
     public DarwinPlayer(UUID uuid, String name) {
         super.uuid = uuid;
         super.name = name;
     }
 
+    /**
+     Is online boolean.
+
+     @return the boolean
+     */
     public boolean isOnline() {
         return DarwinServer.getUtilChecked(PlayerUtils.class).isOnline(this);
     }
 
+    /**
+     Tell if permitted.
+
+     @param text
+     the text
+     @param permission
+     the permission
+     */
     public void tellIfPermitted(String text, String permission) {
         if (hasPermission(permission)) sendMessage(text);
     }
 
+    /**
+     Kick.
+     */
     public void kick() {
         DarwinServer.getUtilChecked(PlayerUtils.class).kick(this);
     }
@@ -37,22 +64,51 @@ public class DarwinPlayer extends CommandSender {
         return !hasPermission(permission.p());
     }
 
+    /**
+     Has permission boolean.
+
+     @param permission
+     the permission
+
+     @return the boolean
+     */
     public boolean hasPermission(String permission) {
         return DarwinServer.getUtilChecked(PlayerUtils.class).hasPermission(this, permission);
     }
 
+    /**
+     Gets location.
+
+     @return the location
+     */
     public Optional<DarwinLocation> getLocation() {
         return DarwinServer.getUtilChecked(PlayerUtils.class).getLocation(this);
     }
 
+    /**
+     Gets world.
+
+     @return the world
+     */
     public Optional<DarwinWorld> getWorld() {
         return getLocation().map(DarwinLocation::getWorld);
     }
 
+    /**
+     Gets game mode.
+
+     @return the game mode
+     */
     public GameModes getGameMode() {
         return DarwinServer.getUtilChecked(PlayerUtils.class).getGameMode(this);
     }
 
+    /**
+     Sets game mode.
+
+     @param mode
+     the mode
+     */
     public void setGameMode(GameModes mode) {
         DarwinServer.getUtilChecked(PlayerUtils.class).setGameMode(mode, this);
     }
