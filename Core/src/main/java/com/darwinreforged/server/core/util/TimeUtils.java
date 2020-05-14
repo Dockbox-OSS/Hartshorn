@@ -45,7 +45,7 @@ public abstract class TimeUtils {
         LocalDateTime lastTimeout = playerRegistrationsPerModule.get(module).get(uuid);
         if (lastTimeout.isAfter(LocalDateTime.now())) return null;
 
-        long millis = lastTimeout.until(LocalDateTime.now(), ChronoUnit.MILLIS);
+        long millis = ChronoUnit.MILLIS.between(lastTimeout, LocalDateTime.now());
         return getDifferenceFromMillis(millis);
     }
 
