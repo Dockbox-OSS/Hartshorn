@@ -6,6 +6,10 @@ import com.darwinreforged.server.core.resources.Translations;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -13,6 +17,8 @@ import java.util.concurrent.TimeUnit;
  */
 @AbstractUtility("Time parsing and scheduling")
 public abstract class TimeUtils {
+
+    private static final Map<Object, Map<UUID, LocalDateTime>> playerRegistrationsPerModule = new HashMap<>();
 
     /**
      Local date time from millis local date time.
@@ -24,6 +30,23 @@ public abstract class TimeUtils {
      */
     public static LocalDateTime localDateTimeFromMillis(long millis) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
+    }
+
+    public static void registerUuidTimeout(UUID uuid, Object module) {
+        if (!playerRegistrationsPerModule.containsKey(module))
+            playerRegistrationsPerModule.put(module, new HashMap<>());
+        playerRegistrationsPerModule.get(module).put(uuid, LocalDateTime.now());
+    }
+
+    public static TimeDifference getTimeSinceLastUuidTimeout(UUID uuid, Object module) {
+        if (!playerRegistrationsPerModule.containsKey(module)) return null;
+        if (!playerRegistrationsPerModule.get(module).containsKey(uuid)) return null;
+
+        LocalDateTime lastTimeout = playerRegistrationsPerModule.get(module).get(uuid);
+        if (lastTimeout.isAfter(LocalDateTime.now())) return null;
+
+        long millis = lastTimeout.until(LocalDateTime.now(), ChronoUnit.MILLIS);
+        return getDifferenceFromMillis(millis);
     }
 
     /**
