@@ -193,7 +193,11 @@ public class DaveChatListeners {
                 // Regular chat module
                 pu.getOnlinePlayers().stream()
                         .filter(op -> !dave.getPlayerWhoMutedDave().contains(op.getUniqueId()) || important)
-                        .forEach(op -> op.sendMessage(builder.build()));
+                        .forEach(op -> {
+                            Text text = builder.build();
+                            System.out.println(text.toJson().toString());
+                            op.sendMessage(builder.build());
+                        });
 
                 // Discord module
                 TextChannel discordChannel = dave.getConfigurationUtil().getChannel();

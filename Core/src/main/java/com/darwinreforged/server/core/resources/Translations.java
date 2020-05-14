@@ -471,7 +471,10 @@ public enum Translations {
     CU_TITLE("$3$2Usage for $1{0}"),
     CU_USAGE("$3- $1/{0}"),
     CU_FLAGS("$3- $2Flags: $1{0}"),
-    CU_DESCRIPTION("$3- $2Summary: $1{0}");
+    CU_DESCRIPTION("$3- $2Summary: $1{0}"),
+
+    //  GoToLobby
+    GTL_WARPED("$1You have been teleported to the lobby as the world you were previously in is disabled");
 
     private String s;
 
