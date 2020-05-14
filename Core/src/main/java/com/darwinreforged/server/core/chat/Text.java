@@ -250,6 +250,180 @@ public final class Text {
     }
 
     /**
+     To legacy string.
+
+     @return the string
+     */
+    public String toLegacy() {
+        return toLegacy(ChatColor.SECTION_SYMBOL);
+    }
+
+    /**
+     Takes the current object and transforms it into a legacy string.
+
+     @param charSubstitute
+     - The substitute character to use if you do not want to use {@link ChatColor#SECTION_SYMBOL}
+
+     @return A legacy string representation of a text object
+     */
+    public String toLegacy(char charSubstitute) {
+        StringBuilder builder = new StringBuilder();
+
+        if (this.getColor() != null) {
+            builder.append(charSubstitute).append(this.getColor().charCode());
+        }
+
+
+        if (this.isObfuscated()) {
+            builder.append(charSubstitute).append(ChatColor.OBFUSCATED.charCode());
+        }
+
+        if (this.isBold()) {
+            builder.append(charSubstitute).append(ChatColor.BOLD.charCode());
+        }
+
+
+        if (this.isStrikethrough()) {
+            builder.append(charSubstitute).append(ChatColor.STRIKETHROUGH.charCode());
+        }
+
+
+        if (this.isUnderlined()) {
+            builder.append(charSubstitute).append(ChatColor.UNDERLINE.charCode());
+        }
+
+        if (this.isItalic()) {
+            builder.append(charSubstitute).append(ChatColor.ITALIC.charCode());
+        }
+
+        if (this.getColor() == ChatColor.RESET) {
+            builder.setLength(0);
+            builder.append(charSubstitute).append(ChatColor.RESET.charCode());
+        }
+
+        if (this.getText() != null && !this.getText().isEmpty()) {
+            builder.append(this.getText());
+        }
+
+        for (Text extra : this.getExtra()) {
+            builder.append(extra.toLegacy(charSubstitute));
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     From legacy text.
+
+     @param legacy
+     the legacy text
+
+     @return the text
+     */
+    public static Text of(String legacy) {
+        return of(legacy, '&');
+    }
+
+    /**
+     This function takes in a legacy text string and converts it into a {@link Text}.
+     <p>
+     Legacy text strings use the {@link ChatColor#SECTION_SYMBOL}. Many keyboards do not have this symbol however,
+     which is probably why it was chosen. To get around this, it is common practice to substitute
+     the symbol for another, then translate it later. Often '&' is used, but this can differ from person
+     to person. In case the string does not have a {@link ChatColor#SECTION_SYMBOL}, the method also checks for the
+     {@param characterSubstitute}
+
+     @param legacy
+     The text to make into an object
+     @param characterSubstitute
+     The character substitute
+
+     @return A TextObject representing the legacy text.
+     */
+    public static Text of(String legacy, char characterSubstitute) {
+        TextBuilder builder = TextBuilder.of("");
+        Text currentObject = new Text("");
+        StringBuilder text = new StringBuilder();
+
+        for (int i = 0; i < legacy.length(); i++) {
+            char c = legacy.charAt(i);
+
+            if (c == ChatColor.SECTION_SYMBOL || c == characterSubstitute) {
+                if ((i + 1) > legacy.length() - 1) {
+                    // do nothing.
+                    continue;
+                }
+                // peek at the next character.
+                char peek = legacy.charAt(i + 1);
+
+                if (ChatColor.isValid(peek)) {
+                    i += 1; // if valid
+                    if (text.length() > 0) {
+                        // create a new text object
+                        currentObject.setText(text.toString());
+
+                        // append the current object.
+                        builder.append(currentObject);
+
+                        // reset the current object.
+                        currentObject = new Text("");
+
+                        // reset the buffer
+                        text.setLength(0);
+                    }
+
+                    ChatColor color = ChatColor.getByCharCode(peek);
+
+                    switch (color) {
+                        case OBFUSCATED:
+                            currentObject.setObfuscated(true);
+                            break;
+                        case BOLD:
+                            currentObject.setBold(true);
+                            break;
+                        case STRIKETHROUGH:
+                            currentObject.setStrikethrough(true);
+                            break;
+                        case ITALIC:
+                            currentObject.setItalic(true);
+                            break;
+                        case UNDERLINE:
+                            currentObject.setUnderlined(true);
+                            break;
+                        case RESET:
+                            // Reset everything.
+                            currentObject.setColor(ChatColor.WHITE);
+                            currentObject.setObfuscated(false);
+                            currentObject.setBold(false);
+                            currentObject.setItalic(false);
+                            currentObject.setUnderlined(false);
+                            currentObject.setStrikethrough(false);
+                            break;
+                        default:
+                            // emulate Minecraft's behavior of dropping styles that do not yet have an object.
+                            currentObject = new Text("");
+                            currentObject.setColor(color);
+                            break;
+                    }
+
+                } else {
+                    text.append(c);
+                }
+            } else {
+                text.append(c);
+            }
+        }
+
+        // whatever we were working on when the loop exited
+        {
+            currentObject.setText(text.toString());
+            builder.append(currentObject);
+        }
+
+        return builder.build();
+    }
+
+    /**
      Gets text.
 
      @return the text

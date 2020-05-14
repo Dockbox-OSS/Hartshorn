@@ -5,7 +5,6 @@ import com.darwinreforged.server.core.chat.ClickEvent;
 import com.darwinreforged.server.core.chat.ClickEvent.ClickAction;
 import com.darwinreforged.server.core.chat.HoverEvent;
 import com.darwinreforged.server.core.chat.HoverEvent.HoverAction;
-import com.darwinreforged.server.core.chat.LegacyText;
 import com.darwinreforged.server.core.chat.Pagination.PaginationBuilder;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
@@ -126,8 +125,8 @@ public class DaveChatModule {
             triggerMessages.add(responseText);
         });
         PaginationBuilder.builder()
-                .padding(LegacyText.fromLegacy(Translations.DARWIN_MODULE_PADDING.s()))
-                .title(LegacyText.fromLegacy("&bTriggers"))
+                .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
+                .title(Text.of("&bTriggers"))
                 .contents(triggerMessages).build().sendTo(src);
     }
 

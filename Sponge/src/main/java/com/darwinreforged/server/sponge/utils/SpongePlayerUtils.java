@@ -3,7 +3,6 @@ package com.darwinreforged.server.sponge.utils;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.ClickEvent;
 import com.darwinreforged.server.core.chat.HoverEvent;
-import com.darwinreforged.server.core.chat.LegacyText;
 import com.darwinreforged.server.core.chat.Pagination;
 import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.math.Vector3d;
@@ -52,16 +51,16 @@ public class SpongePlayerUtils extends PlayerUtils {
 
     @Override
     public void broadcastIfPermitted(com.darwinreforged.server.core.chat.Text message, String permission) {
-        Sponge.getServer().getOnlinePlayers().parallelStream().filter(p -> p.hasPermission(permission)).forEach(p -> p.sendMessage(Text.of(LegacyText.toLegacy(message))));
+        Sponge.getServer().getOnlinePlayers().parallelStream().filter(p -> p.hasPermission(permission)).forEach(p -> p.sendMessage(Text.of(message.toLegacy())));
     }
 
     @Override
     public void tell(MessageReceiver receiver, com.darwinreforged.server.core.chat.Text message) {
         if (receiver instanceof DarwinPlayer) {
             Sponge.getServer().getPlayer(((DarwinPlayer) receiver).getUniqueId())
-                    .ifPresent(spp -> spp.sendMessage(Text.of(Translations.DEFAULT_SINGLE_MESSAGE.f(LegacyText.toLegacy(message)))));
+                    .ifPresent(spp -> spp.sendMessage(Text.of(Translations.DEFAULT_SINGLE_MESSAGE.f(message.toLegacy()))));
         } else if (receiver instanceof Console) {
-            Sponge.getServer().getConsole().sendMessage(Text.of(Translations.DEFAULT_SINGLE_MESSAGE.f(LegacyText.toLegacy(message))));
+            Sponge.getServer().getConsole().sendMessage(Text.of(Translations.DEFAULT_SINGLE_MESSAGE.f(message.toLegacy())));
         } else {
             DarwinServer.getLog().warn("Failed to get receiver for : " + receiver);
         }
@@ -70,9 +69,9 @@ public class SpongePlayerUtils extends PlayerUtils {
     @Override
     public void tellNoMarkup(MessageReceiver receiver, com.darwinreforged.server.core.chat.Text message) {
         if (receiver instanceof DarwinPlayer) {
-            Sponge.getServer().getPlayer(((Target) receiver).getUniqueId()).ifPresent(spp -> spp.sendMessage(Text.of(LegacyText.toLegacy(message))));
+            Sponge.getServer().getPlayer(((Target) receiver).getUniqueId()).ifPresent(spp -> spp.sendMessage(Text.of(message.toLegacy())));
         } else if (receiver instanceof Console) {
-            Sponge.getServer().getConsole().sendMessage(Text.of(LegacyText.toLegacy(message)));
+            Sponge.getServer().getConsole().sendMessage(Text.of(message.toLegacy()));
         }
     }
 
@@ -201,7 +200,7 @@ public class SpongePlayerUtils extends PlayerUtils {
     }
 
     private Text fromAPI(com.darwinreforged.server.core.chat.Text text) {
-        Text spT = TextSerializers.FORMATTING_CODE.deserializeUnchecked(LegacyText.toLegacy(text));
+        Text spT = TextSerializers.FORMATTING_CODE.deserializeUnchecked(text.toLegacy());
         Text.Builder builder = spT.toBuilder();
         if (text.getClickEvent() != null) {
             try {
