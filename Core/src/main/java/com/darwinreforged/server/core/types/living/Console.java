@@ -1,11 +1,10 @@
 package com.darwinreforged.server.core.types.living;
 
+import com.darwinreforged.server.core.DarwinServer;
+import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
-import com.darwinreforged.server.core.init.DarwinServer;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.types.chat.LegacyText;
-import com.darwinreforged.server.core.types.chat.Text;
 import com.darwinreforged.server.core.util.PlayerUtils;
 
 import java.util.Arrays;
@@ -44,7 +43,7 @@ public class Console extends CommandSender {
 
     @Override
     public void sendMessage(String message) {
-         sendMessage(LegacyText.fromLegacy(message));
+         sendMessage(Text.of(message));
     }
 
     @Override
@@ -59,12 +58,12 @@ public class Console extends CommandSender {
 
     @Override
     public void sendMessage(String message, String permission) {
-        sendMessage(LegacyText.fromLegacy(message));
+        sendMessage(Text.of(message));
     }
 
     @Override
     public void sendMessage(String message, Permissions permission) {
-        sendMessage(LegacyText.fromLegacy(message));
+        sendMessage(Text.of(message));
     }
 
     @Override

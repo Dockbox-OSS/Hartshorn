@@ -1,3 +1,5 @@
+com.darwinreforged.server.core
+com.darwinreforged.server.core.chat
 com.darwinreforged.server.core.commands
 com.darwinreforged.server.core.commands.annotations
 com.darwinreforged.server.core.commands.context
@@ -10,16 +12,15 @@ com.darwinreforged.server.core.events.internal.server
 com.darwinreforged.server.core.events.util
 com.darwinreforged.server.core.init
 com.darwinreforged.server.core.listeners
+com.darwinreforged.server.core.math
 com.darwinreforged.server.core.modules
 com.darwinreforged.server.core.resources
-com.darwinreforged.server.core.types.chat
+com.darwinreforged.server.core.tuple
 com.darwinreforged.server.core.types.internal
 com.darwinreforged.server.core.types.living
 com.darwinreforged.server.core.types.living.inventory
 com.darwinreforged.server.core.types.living.state
 com.darwinreforged.server.core.types.location
-com.darwinreforged.server.core.types.math
-com.darwinreforged.server.core.types.tuple
 com.darwinreforged.server.core.util
 com.darwinreforged.server.modules.extensions.chat.dave
 com.darwinreforged.server.modules.internal.darwin
