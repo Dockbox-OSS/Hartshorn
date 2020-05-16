@@ -9,6 +9,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -38,15 +39,15 @@ public abstract class TimeUtils {
         playerRegistrationsPerModule.get(module).put(uuid, LocalDateTime.now());
     }
 
-    public static TimeDifference getTimeSinceLastUuidTimeout(UUID uuid, Object module) {
-        if (!playerRegistrationsPerModule.containsKey(module)) return null;
-        if (!playerRegistrationsPerModule.get(module).containsKey(uuid)) return null;
+    public static Optional<TimeDifference> getTimeSinceLastUuidTimeout(UUID uuid, Object module) {
+        if (!playerRegistrationsPerModule.containsKey(module)) return Optional.empty();
+        if (!playerRegistrationsPerModule.get(module).containsKey(uuid)) return Optional.empty();
 
         LocalDateTime lastTimeout = playerRegistrationsPerModule.get(module).get(uuid);
-        if (lastTimeout.isAfter(LocalDateTime.now())) return null;
+        if (lastTimeout.isAfter(LocalDateTime.now())) return Optional.empty();
 
         long millis = ChronoUnit.MILLIS.between(lastTimeout, LocalDateTime.now());
-        return getDifferenceFromMillis(millis);
+        return Optional.ofNullable(getDifferenceFromMillis(millis));
     }
 
     /**

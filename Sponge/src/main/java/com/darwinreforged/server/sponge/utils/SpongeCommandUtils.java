@@ -1,9 +1,11 @@
 package com.darwinreforged.server.sponge.utils;
 
 import com.darwinreforged.server.core.init.UtilityImplementation;
+import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.player.PlayerManager;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.living.Console;
-import com.darwinreforged.server.core.types.living.DarwinPlayer;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.util.CommandUtils;
 import com.darwinreforged.server.core.util.LocationUtils;
@@ -32,7 +34,7 @@ public class SpongeCommandUtils extends CommandUtils<CommandSource> {
     public boolean handleCommandSend(CommandSource source, String command) {
         boolean cancel = false;
         if (source instanceof Player) {
-            DarwinPlayer player = new DarwinPlayer(((Player) source).getUniqueId(), source.getName());
+            DarwinPlayer player = PlayerManager.getPlayer(((Player) source).getUniqueId(), source.getName());
             DarwinLocation loc = player.getLocation().orElseGet(LocationUtils::getEmptyWorld);
             cancel = getBus().process(command, player, loc);
         } else if (source instanceof ConsoleSource) {

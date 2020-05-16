@@ -1,11 +1,12 @@
-package com.darwinreforged.server.core.types.living;
+package com.darwinreforged.server.core.player;
 
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
-import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.types.living.state.GameModes;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.types.living.CommandSender;
+import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.darwinreforged.server.core.util.PlayerUtils;
@@ -26,7 +27,7 @@ public class DarwinPlayer extends CommandSender {
      @param name
      the name
      */
-    public DarwinPlayer(UUID uuid, String name) {
+    DarwinPlayer(UUID uuid, String name) {
         super.uuid = uuid;
         super.name = name;
     }
@@ -110,6 +111,11 @@ public class DarwinPlayer extends CommandSender {
      */
     public void setGameMode(GameModes mode) {
         DarwinServer.getUtilChecked(PlayerUtils.class).setGameMode(mode, this);
+    }
+
+    @Override
+    public String getName(boolean lookup) {
+        return DarwinServer.getUtilChecked(PlayerUtils.class).getPlayerName(this.uuid);
     }
 
     @Override

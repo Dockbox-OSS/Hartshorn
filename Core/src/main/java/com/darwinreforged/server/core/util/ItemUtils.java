@@ -1,6 +1,6 @@
 package com.darwinreforged.server.core.util;
 
-import com.darwinreforged.server.core.types.living.inventory.DarwinItem;
+import com.darwinreforged.server.core.player.inventory.DarwinItem;
 import com.darwinreforged.server.core.init.AbstractUtility;
 
 /**

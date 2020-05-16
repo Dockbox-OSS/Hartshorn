@@ -3,8 +3,8 @@ package com.darwinreforged.server.core.types.living;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
-import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.util.PlayerUtils;
 
 import java.util.Arrays;
@@ -34,6 +34,11 @@ public class Console extends CommandSender {
     @Override
     public boolean hasPermission(Permissions permission) {
         return true;
+    }
+
+    @Override
+    public String getName(boolean lookup) {
+        return getName();
     }
 
     @Override

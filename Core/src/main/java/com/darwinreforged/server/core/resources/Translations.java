@@ -43,6 +43,7 @@ public enum Translations {
     OFFLINE_PLAYER("$2{0}"),
     UNOWNED("Unowned"),
     EVERYONE("Everyone"),
+    UNKNOWN_PLAYER("Unknown player"),
 
     //    Time differences
     TIME_DAYS_AGO("$1{0} $2days ago"),

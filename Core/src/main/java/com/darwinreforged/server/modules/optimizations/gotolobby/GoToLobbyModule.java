@@ -8,8 +8,8 @@ import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.types.living.DarwinPlayer;
-import com.darwinreforged.server.core.types.living.state.GameModes;
+import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.util.FileUtils;
 import com.darwinreforged.server.core.util.TimeDifference;
 import com.darwinreforged.server.core.util.TimeUtils;
@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  The type Go to lobby module.
@@ -71,8 +72,8 @@ public class GoToLobbyModule {
     @Listener
     public void onPlayerMove(PlayerMoveEvent event) {
         DarwinPlayer player = (DarwinPlayer) event.getTarget();
-        TimeDifference diff = TimeUtils.getTimeSinceLastUuidTimeout(player.getUniqueId(), this);
-        if (diff == null || diff.getSeconds() > 10) {
+        Optional<TimeDifference> diff = TimeUtils.getTimeSinceLastUuidTimeout(player.getUniqueId(), this);
+        if ((!diff.isPresent()) || diff.get().getSeconds() > 10) {
             player.getWorld().ifPresent(world -> {
                 if (blacklist.contains(world.getName()) && !player.hasPermission(Permissions.ADMIN_BYPASS)) {
                     player.setGameMode(GameModes.CREATIVE);

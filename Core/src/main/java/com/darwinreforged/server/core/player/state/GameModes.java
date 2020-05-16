@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.types.living.state;
+package com.darwinreforged.server.core.player.state;
 
 /**
  The enum Game modes.

@@ -3,11 +3,11 @@ package com.darwinreforged.server.core.util;
 import com.darwinreforged.server.core.init.AbstractUtility;
 import com.darwinreforged.server.core.chat.Pagination;
 import com.darwinreforged.server.core.chat.Text;
-import com.darwinreforged.server.core.types.living.DarwinPlayer;
+import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.types.living.MessageReceiver;
 import com.darwinreforged.server.core.types.living.Target;
-import com.darwinreforged.server.core.types.living.inventory.DarwinItem;
-import com.darwinreforged.server.core.types.living.state.GameModes;
+import com.darwinreforged.server.core.player.inventory.DarwinItem;
+import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 
 import java.util.List;
@@ -209,4 +209,6 @@ public abstract class PlayerUtils {
      the pagination
      */
     public abstract void sendPagination(MessageReceiver receiver, Pagination pagination);
+
+    public abstract String getPlayerName(UUID uuid);
 }

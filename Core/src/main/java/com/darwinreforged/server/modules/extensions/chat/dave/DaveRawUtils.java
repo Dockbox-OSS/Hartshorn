@@ -1,6 +1,6 @@
 package com.darwinreforged.server.modules.extensions.chat.dave;
 
-import com.darwinreforged.server.core.types.living.DarwinPlayer;
+import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.util.DiscordUtils;
 import com.darwinreforged.server.core.util.PlayerUtils;

@@ -1,15 +1,15 @@
 package com.darwinreforged.server.modules.optimizations.spectatorteleport;
 
-import com.darwinreforged.server.core.types.living.DarwinPlayer;
-import com.darwinreforged.server.core.types.living.state.GameModes;
+import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.events.internal.player.PlayerTeleportEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
-import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.util.FileUtils;
 
 import java.util.ArrayList;

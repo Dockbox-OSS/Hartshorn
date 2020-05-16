@@ -13,9 +13,9 @@ import com.darwinreforged.server.core.commands.context.CommandContext;
 import com.darwinreforged.server.core.events.internal.server.ServerInitEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.modules.Module;
-import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.types.living.DarwinPlayer;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.player.DarwinPlayer;
 
 import java.util.ArrayList;
 import java.util.List;

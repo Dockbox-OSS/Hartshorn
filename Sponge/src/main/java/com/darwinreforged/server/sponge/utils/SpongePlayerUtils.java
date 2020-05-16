@@ -6,13 +6,14 @@ import com.darwinreforged.server.core.chat.HoverEvent;
 import com.darwinreforged.server.core.chat.Pagination;
 import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.math.Vector3d;
+import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.types.living.Console;
-import com.darwinreforged.server.core.types.living.DarwinPlayer;
+import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.types.living.MessageReceiver;
 import com.darwinreforged.server.core.types.living.Target;
-import com.darwinreforged.server.core.types.living.inventory.DarwinItem;
-import com.darwinreforged.server.core.types.living.state.GameModes;
+import com.darwinreforged.server.core.player.inventory.DarwinItem;
+import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.darwinreforged.server.core.util.PlayerUtils;
@@ -161,17 +162,17 @@ public class SpongePlayerUtils extends PlayerUtils {
 
     @Override
     public List<DarwinPlayer> getOnlinePlayers() {
-        return Sponge.getServer().getOnlinePlayers().stream().map(sp -> new DarwinPlayer(sp.getUniqueId(), sp.getName())).collect(Collectors.toList());
+        return Sponge.getServer().getOnlinePlayers().stream().map(sp -> PlayerManager.getPlayer(sp.getUniqueId(), sp.getName())).collect(Collectors.toList());
     }
 
     @Override
     public Optional<DarwinPlayer> getPlayer(String player) {
-        return Sponge.getServer().getPlayer(player).map(sp -> new DarwinPlayer(sp.getUniqueId(), sp.getName()));
+        return Sponge.getServer().getPlayer(player).map(sp -> PlayerManager.getPlayer(sp.getUniqueId(), sp.getName()));
     }
 
     @Override
     public Optional<DarwinPlayer> getPlayer(UUID uuid) {
-        return Sponge.getServer().getPlayer(uuid).map(sp -> new DarwinPlayer(sp.getUniqueId(), sp.getName()));
+        return Sponge.getServer().getPlayer(uuid).map(sp -> PlayerManager.getPlayer(sp.getUniqueId(), sp.getName()));
     }
 
     @Override
@@ -197,6 +198,12 @@ public class SpongePlayerUtils extends PlayerUtils {
 
             builder.build().sendTo(spongeReceiver);
         }
+    }
+
+    @Override
+    public String getPlayerName(UUID uuid) {
+        // TODO : Replace Unknown Player with constant
+        return Sponge.getServer().getPlayer(uuid).map(Player::getName).orElse(Translations.UNKNOWN_PLAYER.s());
     }
 
     private Text fromAPI(com.darwinreforged.server.core.chat.Text text) {
@@ -230,11 +237,11 @@ public class SpongePlayerUtils extends PlayerUtils {
                     builder.onHover(TextActions.showText(TextSerializers.FORMATTING_CODE.deserializeUnchecked(hoverEvent.getValue())));
                     break;
                 case SHOW_ITEM:
-                    // TODO : Json > ItemStack using Jackson?
+                    // TODO : Convert HOCON to ItemStack
                     DarwinServer.getLog().warn("Attempted to set showItem for text object, this is not implemented into Sponge! (yet)");
                     break;
                 case SHOW_ENTITY:
-                    // TODO : Json > Entity using Jackson?
+                    // TODO : Convert HOCON to Entity
                     DarwinServer.getLog().warn("Attempted to set showEntity for text object, this is not implemented into Sponge! (yet)");
                     break;
             }

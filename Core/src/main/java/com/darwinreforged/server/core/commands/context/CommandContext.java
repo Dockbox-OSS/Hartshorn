@@ -4,7 +4,7 @@ import com.darwinreforged.server.core.commands.context.parsing.ArgumentParser;
 import com.darwinreforged.server.core.commands.context.parsing.FunctionalParser;
 import com.darwinreforged.server.core.commands.context.parsing.TypeArgumentParser;
 import com.darwinreforged.server.core.types.living.CommandSender;
-import com.darwinreforged.server.core.types.living.DarwinPlayer;
+import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.darwinreforged.server.core.DarwinServer;

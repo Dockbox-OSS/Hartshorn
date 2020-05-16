@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.types.living.inventory;
+package com.darwinreforged.server.core.player.inventory;
 
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.util.ItemUtils;
