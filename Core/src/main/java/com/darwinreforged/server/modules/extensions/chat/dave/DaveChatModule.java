@@ -117,7 +117,7 @@ public class DaveChatModule {
                 }
             });
             String fullResponse = String.join(" : ", textResponses);
-            Text responseText = new Text(fullResponse);
+            Text responseText = Text.of(fullResponse);
             ClickEvent clickEvent = new ClickEvent(ClickAction.RUN_COMMAND, "/dave run " + trigger.getId());
             HoverEvent hoverEvent = new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_TRIGGER_HOVER.s());
             responseText.setClickEvent(clickEvent);

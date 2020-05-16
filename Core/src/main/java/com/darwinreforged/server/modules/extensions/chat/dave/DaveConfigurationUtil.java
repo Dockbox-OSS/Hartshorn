@@ -76,7 +76,7 @@ public class DaveConfigurationUtil {
         if (daveConfig.containsKey("prefix")) {
             this.prefix = Text.of(String.valueOf(daveConfig.get("prefix")));
         } else {
-            this.prefix = new Text("Dave : ");
+            this.prefix = Text.of("Dave : ");
             daveConfig.put("prefix", "Dave : ");
             updateConfig = true;
         }

@@ -6,7 +6,6 @@ import com.darwinreforged.server.core.chat.ClickEvent.ClickAction;
 import com.darwinreforged.server.core.chat.HoverEvent;
 import com.darwinreforged.server.core.chat.HoverEvent.HoverAction;
 import com.darwinreforged.server.core.chat.Text;
-import com.darwinreforged.server.core.chat.TextBuilder;
 import com.darwinreforged.server.core.events.internal.chat.DiscordChatEvent;
 import com.darwinreforged.server.core.events.internal.chat.SendChatMessageEvent;
 import com.darwinreforged.server.core.events.util.Listener;
@@ -177,14 +176,14 @@ public class DaveChatListeners {
         }
 
         private static void printResponse(String response, boolean link, boolean important) {
-            TextBuilder builder = TextBuilder.empty();
-            builder.append(botPrefix).append(color);
+            Text message = botPrefix;
+            message.append(color);
 
             if (link) {
-                Text linkSuggestion = new Text(Translations.DAVE_LINK_SUGGESTION.f(response))
+                Text linkSuggestion = Text.of(Translations.DAVE_LINK_SUGGESTION.f(response))
                         .setClickEvent(new ClickEvent(ClickAction.OPEN_URL, response))
                         .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_LINK_SUGGESTION_HOVER.f(response)));
-                builder.append(linkSuggestion);
+                message.append(linkSuggestion);
             }
 
             PlayerUtils pu = DarwinServer.getUtilChecked(PlayerUtils.class);
@@ -194,9 +193,7 @@ public class DaveChatListeners {
                 pu.getOnlinePlayers().stream()
                         .filter(op -> !dave.getPlayerWhoMutedDave().contains(op.getUniqueId()) || important)
                         .forEach(op -> {
-                            Text text = builder.build();
-                            System.out.println(text.toJson().toString());
-                            op.sendMessage(builder.build());
+                            op.sendMessage(message);
                         });
 
                 // Discord module

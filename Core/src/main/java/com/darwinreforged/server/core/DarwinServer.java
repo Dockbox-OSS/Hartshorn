@@ -1,5 +1,7 @@
 package com.darwinreforged.server.core;
 
+import com.darwinreforged.server.core.chat.Pagination.PaginationBuilder;
+import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.events.util.EventBus;
 import com.darwinreforged.server.core.init.AbstractUtility;
 import com.darwinreforged.server.core.init.DarwinConfig;
@@ -535,13 +537,40 @@ public abstract class DarwinServer extends Singleton {
         return true;
     }
 
-    /**
-     Command list.
+    @Command(aliases = "dserver", usage = "dserver", desc = "Returns active and failed modules to the player", min = 0, context = "dserver")
+    @Permission(Permissions.ADMIN_BYPASS)
+    public void commandList(CommandSender src) {
+        List<Text> moduleContext = new ArrayList<>();
+        MODULES.forEach((clazz, ignored) -> {
+            Optional<Module> infoOptional = getModuleInfo(clazz);
+            if (infoOptional.isPresent()) {
+                Module info = infoOptional.get();
+                String name = info.name();
+                String id = info.id();
+                boolean disabled = clazz.getAnnotation(DisabledModule.class) != null;
+                String source = Translations.MODULE_SOURCE.f(MODULE_SOURCES.get(id));
+                moduleContext.add(disabled ? Text.of(Translations.DISABLED_MODULE_ROW.f(name, id, source))
+                        : Text.of(Translations.ACTIVE_MODULE_ROW.f(name, id, source)));
+            }
+        });
+        FAILED_MODULES.forEach(module -> moduleContext.add(Text.of(Translations.FAILED_MODULE_ROW.f(module))));
 
-     @param player
-     the player
-     */
-    public abstract void commandList(CommandSender player);
+        Text header = Text.of(Translations.DARWIN_SERVER_VERSION.f(getVersion()))
+                .append(Text.NEW_LINE)
+                .append(Text.of(Translations.DARWIN_SERVER_UPDATE.f(getLastUpdate())))
+                .append(Text.NEW_LINE)
+                .append(Text.of(Translations.DARWIN_SERVER_AUTHOR.f(AUTHOR)))
+                .append(Text.NEW_LINE)
+                .append(Text.of(Translations.DARWIN_SERVER_MODULE_HEAD.s()));
+
+        PaginationBuilder builder = PaginationBuilder.builder();
+        builder
+                .title(Text.of(Translations.DARWIN_MODULE_TITLE.s()))
+                .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
+                .contents(moduleContext)
+                .header(header)
+                .build().sendTo(src);
+    }
 
     /**
      Run async.
