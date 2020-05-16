@@ -31,7 +31,6 @@ import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author dags <dags@dags.me>
@@ -40,6 +39,7 @@ import java.util.regex.Pattern;
 public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandContext> {
 
     @Override
+    @Deprecated
     public void executeCommand(CommandSender sender, String command) {
         if (sender instanceof DarwinPlayer) {
             Sponge.getServer().getPlayer(sender.getUniqueId()).ifPresent(p -> Sponge.getCommandManager().process(p, command));
@@ -49,6 +49,7 @@ public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandConte
     }
 
     @Override
+    @Deprecated
     public boolean handleCommandSend(CommandSource source, String command) {
         boolean cancel = false;
         if (source instanceof Player) {
@@ -138,18 +139,12 @@ public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandConte
             flags.valueFlag(av.getPermissionArgument(), name);
         }
     }
+
     private static class ArgumentValue {
         CommandElement element; String permission;
         public ArgumentValue(CommandElement element, String permission) { this.element = element; this.permission = permission; }
-        //		public CommandElement getGenericArgument() { return element; }
         public CommandElement getPermissionArgument() { return permission==null?element:GenericArguments.requiringPermission(element, permission); }
-//		public Optional<String> getPermission() { return permission==null?Optional.empty():Optional.of(permission); }
     }
-
-    private static final Pattern argFinder = Pattern.compile("((?:<.+?>)|(?:\\[.+?\\])|(?:-(?:(?:-\\w+)|\\w)(?: [^ -]+)?))"); //each match is a flag or argument
-    private static final Pattern flag = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?"); //g1: name  (g2: value)
-    private static final Pattern argument = Pattern.compile("([\\[<])(.+)[\\]>]"); //g1: <[  g2: run argFinder, if nothing it's a value
-    private static final Pattern value = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?"); //g1: name  g2: if present type, other wise use g1
 
     private static ArgumentValue argValue(String valueString) {
         String type;
@@ -216,8 +211,10 @@ public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandConte
 
     private CommandExecutor buildExecutor(CommandRunner runner) {
         return (src, args) -> {
+            // TODO : Wrap runner
             DarwinServer.getLog().info("Starting command!");
-            convertContext(args);
+            com.darwinreforged.server.core.commands.context.CommandContext ctx = convertContext(args);
+            // ...
             return CommandResult.success();
         };
     }
