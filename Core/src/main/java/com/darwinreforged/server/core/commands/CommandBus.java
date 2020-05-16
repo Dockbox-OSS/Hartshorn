@@ -11,8 +11,8 @@ import com.darwinreforged.server.core.commands.registrations.ClassRegistration;
 import com.darwinreforged.server.core.commands.registrations.CommandRegistration;
 import com.darwinreforged.server.core.commands.registrations.SingleMethodRegistration;
 import com.darwinreforged.server.core.modules.Module;
-import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.tuple.QuadTuple;
 import com.darwinreforged.server.core.tuple.Triple;
 import com.darwinreforged.server.core.tuple.Tuple;
@@ -20,6 +20,7 @@ import com.darwinreforged.server.core.types.internal.Singleton;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
+import com.darwinreforged.server.core.util.CommandUtils;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
@@ -58,7 +59,9 @@ public class CommandBus {
                     Arrays.stream(registration.getAliases()).forEach(alias -> {
                         if (!(obj instanceof Class)) registration.setSourceInstance(obj);
 
-                        COMMANDS.put(alias, registration);
+                        registerCommand(registration.getCommand().context(), registration.getPermissions()[0].p(), (s, c) -> {
+                            // TODO : redirect to invoke
+                        });
                         String[] subcommands = Arrays.stream(registration.getSubcommands()).map(scmd -> scmd.getAliases()[0]).toArray(String[]::new);
                         DarwinServer.getLog().info(String.format("Registered command : /%s %s", alias, String.join("|", subcommands)));
                     });
@@ -72,7 +75,9 @@ public class CommandBus {
                     Arrays.stream(registrations)
                             .forEach(registration -> Arrays.stream(registration.getAliases())
                                     .forEach(alias -> {
-                                        COMMANDS.put(alias, registration);
+                                        registerCommand(registration.getCommand().context(), registration.getPermissions()[0].p(), (s, c) -> {
+                                            // TODO : redirect to invoke
+                                        });
                                         DarwinServer.getLog().info("Registered singular command : /" + alias);
                                     }));
                 }
@@ -223,29 +228,27 @@ public class CommandBus {
         }
     }
 
-    private Tuple<ParseResult, CommandContext> parseContext(String cmd, CommandSender sender, DarwinLocation loc) {
-        String[] unparsedCommand = cmd.split(" ");
-        if (unparsedCommand.length == 0) return new Tuple<>(new ParseResult("Command length is zero", false), null);
-
-        String alias = unparsedCommand[0];
+    private Tuple<CommandRegistration, String[]> getRegistrationAndArguments(String command, CommandSender sender) {
+        String alias = command.split(" ")[0];
         CommandRegistration registration = COMMANDS.get(alias);
-        if (registration == null) return new Tuple<>(null, null);
+        if (registration == null) return new Tuple<>(null, new String[]{"Could not find command"});
 
+        String[] arguments = new String[0];
         if (registration instanceof ClassRegistration) {
             for (SingleMethodRegistration subcommand : ((ClassRegistration) registration).getSubcommands()) {
                 boolean done = false;
                 for (String subAlias : subcommand.getAliases()) {
                     String fullCommand = alias + " " + subAlias;
                     if (subAlias.equals("")) {
-                        unparsedCommand = cmd.replaceFirst(alias, "").split(" ");
+                        arguments = command.replaceFirst(alias, "").split(" ");
                         registration = subcommand;
                         // Continue to iterate in case there are still aliases left to check, if one was already found
                         // the loop would already be broken, so we never overwrite values here
-                    } else if (cmd.startsWith(fullCommand)) {
+                    } else if (command.startsWith(fullCommand)) {
                         registration = subcommand;
-                        if (cmd.equals(fullCommand)) unparsedCommand = new String[0];
+                        if (command.equals(fullCommand)) arguments = new String[0];
                         else
-                            unparsedCommand = cmd.replaceFirst(String.format("%s %s ", alias, subAlias), "").split(" ");
+                            arguments = command.replaceFirst(String.format("%s %s ", alias, subAlias), "").split(" ");
 
                         done = true;
                         break;
@@ -267,8 +270,81 @@ public class CommandBus {
                             return permitted;
                         })
                         .map(sub -> sub.getAliases()[0] + " : " + sub.getCommand().desc()).toArray(String[]::new);
-                return new Tuple<>(new ParseResult("Incorrect usage for " + registration.getAliases()[0] + ", available sub-commands : \n" + String.join("\n", subcommands), false), null);
+                return new Tuple<>(null,
+                        new String[]{String.format("Incorrect usage for %s, available sub-commands : \n%s", registration.getAliases()[0], String.join("\n", subcommands))});
             }
+        }
+        return new Tuple<>(registration, arguments);
+    }
+
+    private Tuple<List<CommandArgument<?>>, List<CommandFlag<?>>> getArgsAndFlags(Command command, List<String> unparsedArguments) {
+        List<String> singularFlags = Arrays.asList(command.flags());
+        List<String> valueFlags = Arrays.asList(command.valueFlags());
+
+        List<CommandArgument<?>> arguments = new ArrayList<>();
+        List<CommandFlag<?>> flags = new ArrayList<>();
+
+        for (int i = 0; i < unparsedArguments.size(); i++) {
+            String unparsedArg = unparsedArguments.get(i);
+
+            if (unparsedArg.startsWith("-")) {
+                String key = unparsedArg.replaceFirst("-", "");
+                if (command.anyFlags() || singularFlags.contains(key)) {
+                    CommandFlag<?> flag = CommandFlag.valueOf(key, null);
+                    flags.add(flag);
+
+                } else if (valueFlags.contains(key)) {
+                    String value = unparsedArguments.get(i + 1);
+                    unparsedArguments.remove(i+1);
+                    CommandFlag<?> flag = CommandFlag.valueOf(key, value);
+                    flags.add(flag);
+
+                } else return null;
+
+            } else {
+                CommandArgument<?> argument;
+                boolean joined = false;
+                String currentKey = null;
+
+                if (command.args().length > 0
+                        && !command.args()[0].equals("")
+                        && command.args().length >= arguments.size() + 1
+                        && command.max() == command.args().length) {
+                    currentKey = command.args()[arguments.size()];
+                }
+
+                if (command.join() && command.max() > -1 && i == command.max() - 1) {
+                    String value = String.join(" ", unparsedArguments.subList(i, unparsedArguments.size() - 1));
+                    argument = CommandArgument.valueOf(value, true, currentKey);
+                    joined = true;
+
+                } else {
+                    argument = CommandArgument.valueOf(unparsedArg, false, currentKey);
+                }
+
+                arguments.add(argument);
+                if (joined) break;
+            }
+        }
+        return new Tuple<>(arguments, flags);
+    }
+
+    private void registerCommand(String command, String permission, CommandRunner runner) {
+        CommandUtils<?, ?> utils = DarwinServer.getUtilChecked(CommandUtils.class);
+        if (command.indexOf(' ')<0) utils.registerSingleCommand(command, permission, runner);
+        else utils.registerCommandWithSubs(command, permission, runner);
+    }
+
+    private Tuple<ParseResult, CommandContext> parseContext(String cmd, CommandSender sender, DarwinLocation loc) {
+        String[] unparsedCommand = cmd.split(" ");
+        if (unparsedCommand.length == 0) return new Tuple<>(new ParseResult("Command length is zero", false), null);
+
+        Tuple<CommandRegistration, String[]> registrationAndArgs = getRegistrationAndArguments(cmd, sender);
+
+        CommandRegistration registration = registrationAndArgs.getFirst();
+        if (registration == null || registration instanceof ClassRegistration) {
+            String error = registrationAndArgs.getSecond()[0];
+            return new Tuple<>(new ParseResult(error, false), null);
         }
 
         Command command = registration.getCommand();
@@ -279,51 +355,9 @@ public class CommandBus {
         }
 
         // Wrapped by ArrayList as Arrays.asList is readonly, causing .remove(0) to throw UnsupportedOperationException
-        List<String> unparsedArgs = new ArrayList<>(Arrays.asList(unparsedCommand));
-
-        List<String> singularFlags = Arrays.asList(command.flags());
-        List<String> valueFlags = Arrays.asList(command.valueFlags());
-        List<CommandFlag<?>> flags = new ArrayList<>();
-        List<CommandArgument<?>> arguments = new ArrayList<>();
-
-        for (int i = 0; i < unparsedArgs.size(); i++) {
-            String unparsedArg = unparsedArgs.get(i);
-
-            // Flag
-            if (unparsedArg.startsWith("-")) {
-                String key = unparsedArg.replaceFirst("-", "");
-                if (command.anyFlags() || singularFlags.contains(key)) {
-                    CommandFlag<?> flag = CommandFlag.valueOf(key, null);
-                    flags.add(flag);
-                } else if (valueFlags.contains(key)) {
-                    String value = unparsedArgs.get(i + 1);
-                    unparsedArgs.remove(i+1);
-                    CommandFlag<?> flag = CommandFlag.valueOf(key, value);
-                    flags.add(flag);
-
-                } else
-                    return new Triple<>(new ParseResult(String.format("Unknown flag '%s'", key), false), null, command);
-            } else {
-                CommandArgument<?> argument;
-                boolean joined = false;
-                String currentKey = null;
-                if (command.args().length > 0
-                        && !command.args()[0].equals("")
-                        && command.args().length >= arguments.size() + 1
-                        && command.max() == command.args().length) {
-                    currentKey = command.args()[arguments.size()];
-                }
-                if (command.join() && command.max() > -1 && i == command.max() - 1) {
-                    String value = String.join(" ", unparsedArgs.subList(i, unparsedArgs.size() - 1));
-                    argument = CommandArgument.valueOf(value, true, currentKey);
-                    joined = true;
-                } else {
-                    argument = CommandArgument.valueOf(unparsedArg, false, currentKey);
-                }
-                arguments.add(argument);
-                if (joined) break;
-            }
-        }
+        Tuple<List<CommandArgument<?>>, List<CommandFlag<?>>> argumentsAndFlags = getArgsAndFlags(command, new ArrayList<>(Arrays.asList(unparsedCommand)));
+        List<CommandArgument<?>> arguments = argumentsAndFlags.getFirst();
+        List<CommandFlag<?>> flags = argumentsAndFlags.getSecond();
 
         if (command.max() != -1 && arguments.size() > command.max() && !command.join())
             return new Triple<>(new ParseResult("Too many arguments", false), null, command);
@@ -337,4 +371,8 @@ public class CommandBus {
         return new QuadTuple<>(result, ctx, method, registration);
     }
 
+    @FunctionalInterface
+    public interface CommandRunner {
+        void run(CommandSender sender, CommandContext ctx);
+    }
 }

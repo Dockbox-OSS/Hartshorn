@@ -25,7 +25,7 @@ import java.util.UUID;
 /**
  The type Dave chat module.
  */
-@Command(aliases = "dave", usage = "/dave [mute|reload]", desc = "Dave commands")
+@Command(aliases = "dave", usage = "/dave [mute|reload]", desc = "Dave commands", context = "dave")
 @Module(id = "dave", name = "Dave", version = "2.0.1", description = "Read chat, send players a message if it picks up a configured message", authors = "GuusLieben")
 public class DaveChatModule {
 
@@ -79,7 +79,7 @@ public class DaveChatModule {
      @param src
      the src
      */
-    @Command(aliases = "mute", usage = "dave mute", desc = "Mutes or unmutes Dave for the executing player")
+    @Command(aliases = "mute", usage = "dave mute", desc = "Mutes or unmutes Dave for the executing player", context = "dave mute")
     @Permission(Permissions.DAVE_MUTE)
     public void mute(DarwinPlayer src) {
         if (!configurationUtil.getMuted().contains(src.getUniqueId())) {
@@ -97,14 +97,14 @@ public class DaveChatModule {
      @param src
      the src
      */
-    @Command(aliases = "reload", usage = "dave reload", desc = "Reloads Dave")
+    @Command(aliases = "reload", usage = "dave reload", desc = "Reloads Dave", context = "dave reload")
     @Permission(Permissions.DAVE_RELOAD)
     public void reload(DarwinPlayer src) {
         setupConfigurations();
         src.sendMessage(Translations.DAVE_RELOADED_USER.f(configurationUtil.getPrefix().getText()));
     }
 
-    @Command(aliases = "triggers", usage = "dave triggers", desc = "Lists Dave's triggers to the executing player")
+    @Command(aliases = "triggers", usage = "dave triggers", desc = "Lists Dave's triggers to the executing player", context = "dave triggers")
     @Permission(Permissions.DAVE_TRIGGERS)
     public void triggers(DarwinPlayer src) {
         List<Text> triggerMessages = new ArrayList<>();
@@ -131,12 +131,7 @@ public class DaveChatModule {
     }
 
     @Command(
-            aliases = "run",
-            usage = "dave run <triggerId>",
-            desc = "Executes a specific trigger manually",
-            min = 1,
-            max = 1
-    )
+            aliases = "run", usage = "dave run <triggerId>", desc = "Executes a specific trigger manually", min = 1, max = 1, context = "dave run <triggerId:String>")
     @Permission(Permissions.DAVE_TRIGGERS)
     public void run(DarwinPlayer src, CommandContext ctx) {
         ctx.getStringArgument(0).ifPresent(message -> {
@@ -159,11 +154,7 @@ public class DaveChatModule {
     }
 
     @Command(
-            aliases = "",
-            usage = "dave",
-            desc = "Main Dave command",
-            max = 0
-    )
+            aliases = "", usage = "dave", desc = "Main Dave command", max = 0, context = "dave")
     @Permission(Permissions.DAVE_TRIGGERS)
     public void main(DarwinPlayer src) {
         src.sendMessage("This command was performed by magic");

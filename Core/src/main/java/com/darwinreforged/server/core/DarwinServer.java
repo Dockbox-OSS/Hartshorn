@@ -2,6 +2,8 @@ package com.darwinreforged.server.core;
 
 import com.darwinreforged.server.core.chat.Pagination.PaginationBuilder;
 import com.darwinreforged.server.core.chat.Text;
+import com.darwinreforged.server.core.commands.annotations.Command;
+import com.darwinreforged.server.core.commands.annotations.Permission;
 import com.darwinreforged.server.core.events.util.EventBus;
 import com.darwinreforged.server.core.init.AbstractUtility;
 import com.darwinreforged.server.core.init.DarwinConfig;
@@ -151,8 +153,9 @@ public abstract class DarwinServer extends Singleton {
         Permissions.collect();
 
         // Setting up commands
-        CommandUtils<?> cu = getUtilChecked(CommandUtils.class);
+        CommandUtils<?, ?> cu = getUtilChecked(CommandUtils.class);
         cu.getBus().register(instance.getClass());
+        cu.getBus().register(DarwinServer.class); // For dserver command
     }
 
     /**
@@ -436,7 +439,7 @@ public abstract class DarwinServer extends Singleton {
             Module moduleInfo = module.getAnnotation(Module.class);
             if (moduleInfo == null) throw new InstantiationException("No module info was provided");
             registerListener(instance);
-            CommandUtils<?> cu = getUtilChecked(CommandUtils.class);
+            CommandUtils<?, ?> cu = getUtilChecked(CommandUtils.class);
             cu.getBus().register(instance.getClass());
             // Do not register the same module twice
             if (getModule(module).isPresent()) return ModuleRegistration.SUCCEEDED;

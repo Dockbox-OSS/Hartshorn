@@ -87,8 +87,8 @@ public class WorldUnloadModule {
             desc = "Registers the given world to be blacklisted from unloading",
             max = 1,
             args = "world",
-            usage = "wu [world]"
-    )
+            usage = "wu [world]",
+            context = "wu [world:World]")
     @Permission(Permissions.WU_ADD)
     public void addWorldCommand(DarwinPlayer player, CommandContext context, @Source DarwinWorld world) {
         String worldName;

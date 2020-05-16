@@ -124,4 +124,6 @@ public @interface Command {
      @return Argument names
      */
     String[] args() default "";
+
+    String context();
 }

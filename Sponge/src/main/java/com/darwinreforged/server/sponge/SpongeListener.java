@@ -58,11 +58,11 @@ public class SpongeListener {
 
     @Listener
     public void onCommand(SendCommandEvent event) {
-        SpongeCommandUtils cu = (SpongeCommandUtils) DarwinServer.getUtilChecked(CommandUtils.class);
-        if (event.getSource() instanceof CommandSource) {
-            boolean cancel = cu.handleCommandSend((CommandSource) event.getSource(), String.format("%s %s", event.getCommand(), event.getArguments()));
-            if (cancel) event.setCancelled(true);
-        }
+//        SpongeCommandUtils cu = (SpongeCommandUtils) DarwinServer.getUtilChecked(CommandUtils.class);
+//        if (event.getSource() instanceof CommandSource) {
+//            boolean cancel = cu.handleCommandSend((CommandSource) event.getSource(), String.format("%s %s", event.getCommand(), event.getArguments()));
+////            if (cancel) event.setCancelled(true);
+//        }
     }
 
     private <I extends CancellableEvent> void postCancellable(I e, Cancellable se) {

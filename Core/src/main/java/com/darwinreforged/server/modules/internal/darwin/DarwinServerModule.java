@@ -25,7 +25,7 @@ public class DarwinServerModule {
     @Command(
             aliases = {"dtest", "dt"}, // The aliases for the command, by default the first alias will be used as primary alias
             desc = "Darwin Server module information", // The short description for the command
-            usage = "dserver <module>", // The usage for the command, this is returned to the player if their syntax was incorrect
+            usage = "dtest <module>", // The usage for the command, this is returned to the player if their syntax was incorrect
             min = 2, // Minimum amount of arguments
             max = 5, // Maxiumum amount of arguments
             // Long description for the command
@@ -36,8 +36,9 @@ public class DarwinServerModule {
             valueFlags = {"-n", "--noise"}, // Possible flags which require a value, unaffected by anyFlags()
             parseFlags = true, // Whether or not to parse flag values to native types (bool, int, double, float, string)
             parseArgs = true, // Whether or not to parse arguments to native types (bool, int, double, float, string)
-            args = {"world", "player", "module", "plugin", "varargs"}, // Argument keys, can be used to quickly get an argument from the context
-            injectLocations = true // Will inject location parameters like World and Location (uses the location of the command source)
+            args = {"world::World", "player::Player", "module::Module", "plugin", "varargs"}, // Argument keys, can be used to quickly get an argument from the context
+            injectLocations = true, // Will inject location parameters like World and Location (uses the location of the command source)
+            context = "dtest [module:String]"
     )
     // The permissions required for the command, defaults to ADMIN_BYPASS if absent
     @Permission({Permissions.ADMIN_BYPASS, Permissions.BRUSH_TT_USE})
