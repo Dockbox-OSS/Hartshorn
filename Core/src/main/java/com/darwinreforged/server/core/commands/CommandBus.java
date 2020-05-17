@@ -58,10 +58,12 @@ public class CommandBus {
                     ClassRegistration registration = handleClassType(clazz);
                     Arrays.stream(registration.getAliases()).forEach(alias -> {
                         if (!(obj instanceof Class)) registration.setSourceInstance(obj);
-
-                        registerCommand(registration.getCommand().context(), registration.getPermissions()[0].p(), (s, c) -> {
-                            // TODO : redirect to invoke
+                        Arrays.stream(registration.getSubcommands()).forEach(subRegistration -> {
+                            registerCommand(subRegistration.getCommand().context(), subRegistration.getPermissions()[0].p(), (s, c) -> {
+                                // TODO : redirect to single method invoke
+                            });
                         });
+                        registerCommand('*' + registration.getCommand().context(), registration.getPermissions()[0].p(), (s, c) -> {});
                         String[] subcommands = Arrays.stream(registration.getSubcommands()).map(scmd -> scmd.getAliases()[0]).toArray(String[]::new);
                         DarwinServer.getLog().info(String.format("Registered command : /%s %s", alias, String.join("|", subcommands)));
                     });
@@ -76,7 +78,7 @@ public class CommandBus {
                             .forEach(registration -> Arrays.stream(registration.getAliases())
                                     .forEach(alias -> {
                                         registerCommand(registration.getCommand().context(), registration.getPermissions()[0].p(), (s, c) -> {
-                                            // TODO : redirect to invoke
+                                            // TODO : redirect to direct method invoke
                                         });
                                         DarwinServer.getLog().info("Registered singular command : /" + alias);
                                     }));
@@ -331,8 +333,8 @@ public class CommandBus {
 
     private void registerCommand(String command, String permission, CommandRunner runner) {
         CommandUtils<?, ?> utils = DarwinServer.getUtilChecked(CommandUtils.class);
-        if (command.indexOf(' ')<0) utils.registerSingleCommand(command, permission, runner);
-        else utils.registerCommandWithSubs(command, permission, runner);
+        if (command.indexOf(' ')<0 && !command.startsWith("*")) utils.registerCommandNoArgs(command, permission, runner);
+        else utils.registerCommandArgsAndOrChild(command, permission, runner);
     }
 
     private Tuple<ParseResult, CommandContext> parseContext(String cmd, CommandSender sender, DarwinLocation loc) {

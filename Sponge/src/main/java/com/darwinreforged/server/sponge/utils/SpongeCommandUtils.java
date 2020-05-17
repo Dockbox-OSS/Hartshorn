@@ -6,6 +6,7 @@ import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.tuple.Tuple;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.living.Console;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
@@ -28,15 +29,17 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 
-/**
- * @author dags <dags@dags.me>
- */
 @UtilityImplementation(CommandUtils.class)
 public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandContext> {
+
+    private static final Map<String, List<Tuple<String, CommandSpec>>> childsPerAlias = new HashMap<>();
 
     @Override
     @Deprecated
@@ -63,8 +66,32 @@ public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandConte
     }
 
     @Override
-    public void registerSingleCommand(String command, String permission, CommandRunner runner) {
+    public void registerCommandNoArgs(String command, String permission, CommandRunner runner) {
         Sponge.getCommandManager().register(DarwinServer.getServer(), CommandSpec.builder().permission(permission).executor(buildExecutor(runner)).build(), command);
+    }
+
+    @Override
+    public void registerCommandArgsAndOrChild(String command, String permission, CommandRunner runner) {
+        CommandSpec.Builder spec = CommandSpec.builder();
+        if (permission != null) spec.permission(permission);
+        else spec.permission(Permissions.ADMIN_BYPASS.p());
+
+        String part = command.split(" ")[1];
+        if (subcommand.matcher(part).matches()) {
+            spec.executor(buildExecutor(runner)).arguments(parseArguments(command.substring(command.indexOf(' ' + 1)).replaceFirst(part + ' ', "")));
+            String alias = command.substring(command.indexOf(' ') + 1);
+            childsPerAlias.putIfAbsent(alias, new ArrayList<>());
+            childsPerAlias.get(alias).add(new Tuple<>(part, spec.build()));
+
+        } else if (command.startsWith("*")) {
+            List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(command.substring(1), new ArrayList<>());
+            childs.forEach(child -> spec.child(child.getSecond(), child.getFirst()));
+            Sponge.getCommandManager().register(DarwinServer.getServer(), spec.build(), command.substring(1, command.indexOf(' ')));
+
+        } else {
+            spec.executor(buildExecutor(runner)).arguments(parseArguments(command.substring(command.indexOf(' ') + 1)));
+            Sponge.getCommandManager().register(DarwinServer.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -80,20 +107,11 @@ public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandConte
             return null;
         }
         parsedArgs.asMap().forEach(((s, o) -> {
-            DarwinServer.getLog().info("S:"+s + "  /  O:" + o.getClass().toGenericString());
+            DarwinServer.getLog().info("S:" + s + "  /  O:" + o.getClass().toGenericString());
         }));
 
         DarwinServer.getLog().info("Finished listing " + parsedArgs.asMap().size() + " args/vals");
         return null;
-    }
-
-    @Override
-    public void registerCommandWithSubs(String command, String permission, CommandRunner runner) {
-        CommandSpec.Builder spec = CommandSpec.builder();
-        if (permission != null) spec.permission(permission);
-        else spec.permission(Permissions.ADMIN_BYPASS.p());
-        spec.executor(buildExecutor(runner)).arguments(parseArguments(command.substring(command.indexOf(' ')+1)));
-        Sponge.getCommandManager().register(DarwinServer.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
     }
 
     private static CommandElement[] parseArguments(String argString) {
@@ -104,7 +122,7 @@ public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandConte
             String part = m.group();
             Matcher ma = argument.matcher(part);
             if (ma.matches()) {
-                boolean optional=ma.group(1).charAt(0) == '[';
+                boolean optional = ma.group(1).charAt(0) == '[';
                 CommandElement[] result = parseArguments(ma.group(2));
                 if (result.length==0) result = new CommandElement[]{argValue(ma.group(2)).getPermissionArgument()};
                 elements.add(optional?GenericArguments.optional(wrap(result)):wrap(result));
@@ -146,6 +164,7 @@ public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandConte
         public CommandElement getPermissionArgument() { return permission==null?element:GenericArguments.requiringPermission(element, permission); }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static ArgumentValue argValue(String valueString) {
         String type;
         String key;
@@ -194,9 +213,13 @@ public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandConte
                 return new ArgumentValue(GenericArguments.world(Text.of(key)), permission);
             default:
                 try {
-                    @SuppressWarnings("unchecked")
-                    Class<? extends CatalogType> clazz = (Class<? extends CatalogType>) Class.forName(type);
-                    return new ArgumentValue(GenericArguments.catalogedElement(Text.of(key), clazz), permission);
+                    Class<?> clazz = Class.forName(type);
+                    if (clazz.isEnum()) {
+                        Class<? extends Enum> enumType = (Class<? extends Enum>) clazz;
+                        return new ArgumentValue(GenericArguments.enumValue(Text.of(key), enumType), permission);
+                    }
+                    Class<? extends CatalogType> catalogType = (Class<? extends CatalogType>) clazz;
+                    return new ArgumentValue(GenericArguments.catalogedElement(Text.of(key), catalogType), permission);
                 } catch (Exception e) {
                     DarwinServer.error("No argument of type `"+type+"` can be read", e);
                     return null;

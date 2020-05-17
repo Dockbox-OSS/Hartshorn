@@ -15,6 +15,7 @@ public abstract class CommandUtils<S, C> {
     protected static final Pattern flag = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?"); //g1: name  (g2: value)
     protected static final Pattern argument = Pattern.compile("([\\[<])(.+)[\\]>]"); //g1: <[  g2: run argFinder, if nothing it's a value
     protected static final Pattern value = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?"); //g1: name  g2: if present type, other wise use g1
+    protected static final Pattern subcommand = Pattern.compile("[a-z]+");
 
     private static final CommandBus bus = new CommandBus();
 
@@ -22,13 +23,15 @@ public abstract class CommandUtils<S, C> {
         return bus;
     }
 
+    @Deprecated
     public abstract void executeCommand(CommandSender sender, String command);
 
+    @Deprecated
     public abstract boolean handleCommandSend(S source, String command);
 
-    public abstract void registerSingleCommand(String command, String permission, CommandRunner runner);
+    public abstract void registerCommandNoArgs(String command, String permission, CommandRunner runner);
 
     protected abstract CommandContext convertContext(C ctx);
 
-    public abstract void registerCommandWithSubs(String command, String permission, CommandRunner runner);
+    public abstract void registerCommandArgsAndOrChild(String command, String permission, CommandRunner runner);
 }
