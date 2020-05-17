@@ -1,5 +1,7 @@
 package com.darwinreforged.server.core.modules;
 
+import com.darwinreforged.server.core.resources.Dependencies;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -52,4 +54,6 @@ public @interface Module {
      @return the string [ ]
      */
     String[] authors();
+
+    Dependencies[] dependencies() default {};
 }
