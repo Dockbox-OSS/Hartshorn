@@ -47,6 +47,11 @@ public class DarwinServerSponge extends DarwinServer {
     }
 
     @Override
+    public void runOnMainThread(Runnable runnable) {
+        Sponge.getScheduler().createSyncExecutor(this).execute(runnable);
+    }
+
+    @Override
     public ServerType getServerType() {
         return ServerType.SPONGE;
     }

@@ -343,6 +343,22 @@ public abstract class DarwinServer extends Singleton {
     }
 
     /**
+     Attempt to get a utility of module safely (Optional-wrapped)
+
+     @param <I>
+     the type parameter for the utility or module
+     @param clazz
+     the utility or module type
+
+     @return the Optional instance
+     */
+    public static <I> Optional<? extends I> getSafe(Class<I> clazz) {
+        if (clazz.isAnnotationPresent(Module.class)) return getModule(clazz);
+        else if (clazz.isAnnotationPresent(Utility.class)) return getUtil(clazz);
+        else return Optional.empty();
+    }
+
+    /**
      Gets util checked.
 
      @param <I>
@@ -597,6 +613,14 @@ public abstract class DarwinServer extends Singleton {
      the runnable
      */
     public abstract void runAsync(Runnable runnable);
+
+    /**
+     Run on main thread.
+
+     @param runnable
+     the runnable
+     */
+    public abstract void runOnMainThread(Runnable runnable);
 
     /**
      Registration states during and after module registration
