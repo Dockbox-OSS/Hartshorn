@@ -3,14 +3,8 @@ package com.darwinreforged.server.sponge.implementations;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.commands.CommandBus;
 import com.darwinreforged.server.core.modules.Module;
-import com.darwinreforged.server.core.player.DarwinPlayer;
-import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.tuple.Tuple;
-import com.darwinreforged.server.core.types.living.CommandSender;
-import com.darwinreforged.server.core.types.living.Console;
-import com.darwinreforged.server.core.types.location.DarwinLocation;
-import com.darwinreforged.server.core.util.LocationUtils;
 import com.google.common.collect.Multimap;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,10 +17,8 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.CommandFlags;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
 import java.lang.reflect.Field;
@@ -48,30 +40,6 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext, 
     @Override
     protected SpongeArgumentTypeValue getArgumentValue(String type, String permission, String key) {
         return new SpongeArgumentTypeValue(type, permission, key);
-    }
-
-    @Override
-    @Deprecated
-    public void executeCommand(CommandSender sender, String command) {
-        if (sender instanceof DarwinPlayer) {
-            Sponge.getServer().getPlayer(sender.getUniqueId()).ifPresent(p -> Sponge.getCommandManager().process(p, command));
-        } else if (sender instanceof Console) {
-            Sponge.getCommandManager().process(Sponge.getServer().getConsole(), command);
-        }
-    }
-
-    @Override
-    @Deprecated
-    public boolean handleCommandSend(CommandSource source, String command) {
-        boolean cancel = false;
-        if (source instanceof Player) {
-            DarwinPlayer player = DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(((Player) source).getUniqueId(), source.getName());
-            DarwinLocation loc = player.getLocation().orElseGet(LocationUtils::getEmptyWorld);
-            cancel = super.process(command, player, loc);
-        } else if (source instanceof ConsoleSource) {
-            cancel = super.process(command, Console.instance, LocationUtils.getEmptyWorld());
-        }
-        return cancel;
     }
 
     @Override

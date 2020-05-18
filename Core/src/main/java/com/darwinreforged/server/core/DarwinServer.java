@@ -152,7 +152,7 @@ public abstract class DarwinServer extends Singleton {
         Permissions.collect();
 
         // Setting up commands
-        CommandBus<?, ?> cb = getUtilChecked(CommandBus.class);
+        CommandBus<?, ?, ?> cb = getUtilChecked(CommandBus.class);
         cb.register(instance.getClass());
         cb.register(DarwinServer.class); // For dserver command
     }
@@ -454,7 +454,7 @@ public abstract class DarwinServer extends Singleton {
             Module moduleInfo = module.getAnnotation(Module.class);
             if (moduleInfo == null) throw new InstantiationException("No module info was provided");
             registerListener(instance);
-            CommandBus<?, ?> cb = getUtilChecked(CommandBus.class);
+            CommandBus<?, ?, ?> cb = getUtilChecked(CommandBus.class);
             cb.register(instance.getClass());
             // Do not register the same module twice
             if (getModule(module).isPresent()) return ModuleRegistration.SUCCEEDED;
