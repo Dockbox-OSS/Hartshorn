@@ -38,7 +38,7 @@ public class DarwinServerModule {
             parseArgs = true, // Whether or not to parse arguments to native types (bool, int, double, float, string)
             args = {"world::World", "player::Player", "module::Module", "plugin", "varargs"}, // Argument keys, can be used to quickly get an argument from the context
             injectLocations = true, // Will inject location parameters like World and Location (uses the location of the command source)
-            context = "dtest [module:String]"
+            context = "dtest [module{String}]"
     )
     // The permissions required for the command, defaults to ADMIN_BYPASS if absent
     @Permission({Permissions.ADMIN_BYPASS, Permissions.BRUSH_TT_USE})

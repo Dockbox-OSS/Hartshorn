@@ -131,7 +131,7 @@ public class DaveChatModule {
     }
 
     @Command(
-            aliases = "run", usage = "dave run <triggerId>", desc = "Executes a specific trigger manually", min = 1, max = 1, context = "dave run <triggerId:String>")
+            aliases = "run", usage = "dave run <triggerId>", desc = "Executes a specific trigger manually", min = 1, max = 1, context = "dave run <triggerId{String}>")
     @Permission(Permissions.DAVE_TRIGGERS)
     public void run(DarwinPlayer src, CommandContext ctx) {
         ctx.getStringArgument(0).ifPresent(message -> {
