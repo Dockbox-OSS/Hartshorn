@@ -48,8 +48,8 @@ public class DarwinPlayer extends CommandSender {
      @param permission
      the permission
      */
-    public void tellIfPermitted(String text, String permission) {
-        if (hasPermission(permission)) sendMessage(text);
+    public void tellIfPermitted(String text, String permission, boolean plain) {
+        if (hasPermission(permission)) sendMessage(text, plain);
     }
 
     /**
@@ -124,58 +124,60 @@ public class DarwinPlayer extends CommandSender {
 
     @Override
     public void explainCommand(String message, Command command) {
-        sendMessage(message);
+        sendMessage(message, false);
         if (command != null) {
             boolean flagEmpty = (command.flags().length == 0 || command.flags()[0].equals(""));
-            sendMessage(Translations.CU_TITLE.f(command.aliases()[0]));
-            sendMessage(Translations.CU_USAGE.f(command.usage()));
-            if (!flagEmpty) sendMessage(Translations.CU_FLAGS.f(String.join(", ", command.flags())));
-            sendMessage(Translations.CU_DESCRIPTION.f(String.join(", ", command.desc())));
+            sendMessage(Translations.CU_TITLE.f(command.aliases()[0]), true);
+            sendMessage(Translations.CU_USAGE.f(command.usage()), true);
+            if (!flagEmpty) sendMessage(Translations.CU_FLAGS.f(String.join(", ", command.flags())), true);
+            sendMessage(Translations.CU_DESCRIPTION.f(String.join(", ", command.desc())), true);
         }
     }
 
     @Override
-    public void sendMessage(String message) {
-        sendMessage(Text.of(message));
+    public void sendMessage(String message, boolean plain) {
+        sendMessage(Text.of(message), plain);
     }
 
     @Override
-    public void sendMessage(Translations translation) {
-        sendMessage(translation.s());
+    public void sendMessage(Translations translation, boolean plain) {
+        sendMessage(translation.s(), plain);
     }
 
     @Override
-    public void sendMessage(Text text) {
-        DarwinServer.getUtilChecked(PlayerManager.class).tell(this, text);
+    public void sendMessage(Text text, boolean plain) {
+        PlayerManager man = DarwinServer.getUtilChecked(PlayerManager.class);
+        if (plain) man.tellNoMarkup(this, text);
+        else man.tell(this, text);
     }
 
     @Override
-    public void sendMessage(String message, String permission) {
-        sendMessage(Text.of(message), permission);
+    public void sendMessage(String message, String permission, boolean plain) {
+        sendMessage(Text.of(message), permission, plain);
     }
 
     @Override
-    public void sendMessage(String message, Permissions permission) {
-        sendMessage(message, permission.p());
+    public void sendMessage(String message, Permissions permission, boolean plain) {
+        sendMessage(message, permission.p(), plain);
     }
 
     @Override
-    public void sendMessage(Translations translation, String permission) {
-        sendMessage(translation.s(), permission);
+    public void sendMessage(Translations translation, String permission, boolean plain) {
+        sendMessage(translation.s(), permission, plain);
     }
 
     @Override
-    public void sendMessage(Translations translation, Permissions permission) {
-        sendMessage(translation.s(), permission.p());
+    public void sendMessage(Translations translation, Permissions permission, boolean plain) {
+        sendMessage(translation.s(), permission.p(), plain);
     }
 
     @Override
-    public void sendMessage(Text text, String permission) {
-        if (hasPermission(permission)) sendMessage(text);
+    public void sendMessage(Text text, String permission, boolean plain) {
+        if (hasPermission(permission)) sendMessage(text, plain);
     }
 
     @Override
-    public void sendMessage(Text text, Permissions permission) {
-        sendMessage(text, permission.p());
+    public void sendMessage(Text text, Permissions permission, boolean plain) {
+        sendMessage(text, permission.p(), plain);
     }
 }

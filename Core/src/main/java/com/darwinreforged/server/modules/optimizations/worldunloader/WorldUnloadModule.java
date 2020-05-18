@@ -97,13 +97,13 @@ public class WorldUnloadModule {
             Optional<DarwinWorld> worldCandidate = context.getArgumentAsWorld("world");
             if (worldCandidate.isPresent()) worldName = worldCandidate.get().getName();
             else {
-                player.sendMessage(Translations.WORLD_NOT_FOUND.s());
+                player.sendMessage(Translations.WORLD_NOT_FOUND.s(), false);
                 return;
             }
         }
         unloadBlacklist.add(worldName);
         refreshBlackList();
-        player.sendMessage(Translations.WU_ADDED.f(world));
+        player.sendMessage(Translations.WU_ADDED.f(world), false);
     }
 
     private void refreshBlackList() {

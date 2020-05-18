@@ -77,7 +77,7 @@ public class SpectatorTeleportModule {
             player.getWorld().ifPresent(world -> {
                 if (!whitelistedWorlds.contains(world.getName()) && player.hasPermission(Permissions.ADMIN_BYPASS)) {
                     event.setCancelled(true);
-                    player.sendMessage(Translations.SPECTATOR_TP_DISALLOWED.s());
+                    player.sendMessage(Translations.SPECTATOR_TP_DISALLOWED.s(), false);
                 }
             });
         }

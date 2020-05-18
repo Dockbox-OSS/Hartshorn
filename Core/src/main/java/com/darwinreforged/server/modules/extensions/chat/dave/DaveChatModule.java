@@ -84,10 +84,10 @@ public class DaveChatModule {
     public void mute(DarwinPlayer src) {
         if (!configurationUtil.getMuted().contains(src.getUniqueId())) {
             configurationUtil.getMuted().add(src.getUniqueId());
-            src.sendMessage(Translations.DAVE_MUTED.s());
+            src.sendMessage(Translations.DAVE_MUTED.s(), false);
         } else {
             playerWhoMutedDave.remove(src.getUniqueId());
-            src.sendMessage(Translations.DAVE_UNMUTED.s());
+            src.sendMessage(Translations.DAVE_UNMUTED.s(), false);
         }
     }
 
@@ -101,7 +101,7 @@ public class DaveChatModule {
     @Permission(Permissions.DAVE_RELOAD)
     public void reload(DarwinPlayer src) {
         setupConfigurations();
-        src.sendMessage(Translations.DAVE_RELOADED_USER.f(configurationUtil.getPrefix().getText()));
+        src.sendMessage(Translations.DAVE_RELOADED_USER.f(configurationUtil.getPrefix().getText()), false);
     }
 
     @Command(aliases = "triggers", usage = "dave triggers", desc = "Lists Dave's triggers to the executing player", context = "dave triggers")
@@ -149,7 +149,7 @@ public class DaveChatModule {
                 }
             }
 
-            if (!sent) src.sendMessage("Could not find trigger with Id '" + id + "'");
+            if (!sent) src.sendMessage("Could not find trigger with Id '" + id + "'", false);
         });
     }
 
@@ -157,6 +157,6 @@ public class DaveChatModule {
             aliases = "", usage = "dave", desc = "Main Dave command", max = 0, context = "dave")
     @Permission(Permissions.DAVE_TRIGGERS)
     public void main(DarwinPlayer src) {
-        src.sendMessage("This command was performed by magic");
+        src.sendMessage("This command was performed by magic", false);
     }
 }

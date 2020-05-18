@@ -77,7 +77,7 @@ public class GoToLobbyModule {
             player.getWorld().ifPresent(world -> {
                 if (blacklist.contains(world.getName()) && !player.hasPermission(Permissions.ADMIN_BYPASS)) {
                     player.setGameMode(GameModes.CREATIVE);
-                    player.sendMessage(Translations.GTL_WARPED);
+                    player.sendMessage(Translations.GTL_WARPED, false);
                     player.execute("hub");
                     TimeUtils.registerUuidTimeout(player.getUniqueId(), this);
                 }
