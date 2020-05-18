@@ -7,6 +7,7 @@ import com.darwinreforged.server.core.commands.annotations.Source;
 import com.darwinreforged.server.core.commands.context.CommandArgument;
 import com.darwinreforged.server.core.commands.context.CommandContext;
 import com.darwinreforged.server.core.commands.context.CommandFlag;
+import com.darwinreforged.server.core.commands.CommandBus.ArgumentTypeValue;
 import com.darwinreforged.server.core.commands.registrations.ClassRegistration;
 import com.darwinreforged.server.core.commands.registrations.CommandRegistration;
 import com.darwinreforged.server.core.commands.registrations.SingleMethodRegistration;
@@ -42,9 +43,9 @@ import java.util.stream.Collectors;
  The type Command bus.
  */
 @Utility("Handles command registrations and processing")
-public abstract class CommandBus<S, C, A> {
+public abstract class CommandBus<S, C, A extends ArgumentTypeValue<?>> {
 
-    protected enum Arguments {
+    public enum Arguments {
         BOOL,
         DOUBLE,
         ENTITY,
@@ -68,13 +69,13 @@ public abstract class CommandBus<S, C, A> {
         OTHER
     }
 
-    protected abstract static class ArgumentTypeValue<T> {
+    public abstract static class ArgumentTypeValue<T> {
         protected T element;
         protected String permission;
 
         public ArgumentTypeValue(Arguments argument, String permission, String key) {
             this.permission = permission;
-            if (this.element == null) this.element = parseArgument(argument, key);
+            this.element = parseArgument(argument, key);
         }
 
         protected abstract T parseArgument(Arguments argument, String key);
@@ -419,7 +420,7 @@ public abstract class CommandBus<S, C, A> {
     protected static final Pattern value = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?"); //g1: name  g2: if present type, other wise use g1
     protected static final Pattern subcommand = Pattern.compile("[a-z]+");
 
-    private A argValue(String valueString) {
+    protected A argValue(String valueString) {
         String type;
         String key;
         String permission;
@@ -431,14 +432,10 @@ public abstract class CommandBus<S, C, A> {
         permission = vm.group(3);
         if (type == null) type = key;
 
-        return new ArgumentValue(type, permission, key);
+        return getArgumentValue(type, permission, key);
     }
 
-    @Deprecated
-    public abstract void executeCommand(CommandSender sender, String command);
-
-    @Deprecated
-    public abstract boolean handleCommandSend(S source, String command);
+    protected abstract A getArgumentValue(String type, String permission, String key);
 
     public abstract void registerCommandNoArgs(String command, String permission, CommandRunner runner);
 

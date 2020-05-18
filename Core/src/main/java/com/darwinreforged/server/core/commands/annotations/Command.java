@@ -1,5 +1,7 @@
 package com.darwinreforged.server.core.commands.annotations;
 
+import com.darwinreforged.server.core.commands.CommandBus;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -8,7 +10,7 @@ import java.lang.annotation.Target;
 /**
  Command annotation, used to assign command aliases to methods and/or types.
  Can only be used on Methods, and Types. Requires the declaring class to be
- registered to a {@link com.darwinreforged.server.core.commands.CommandBus}
+ registered to a {@link CommandBus}
  instance.
  */
 @Retention(RetentionPolicy.RUNTIME)

@@ -11,8 +11,6 @@ import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.living.Console;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.util.LocationUtils;
-import com.google.common.base.Enums;
-import com.google.common.base.Optional;
 import com.google.common.collect.Multimap;
 
 import org.jetbrains.annotations.NotNull;
@@ -42,9 +40,15 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext> {
+@SuppressWarnings("unchecked")
+public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext, SpongeArgumentTypeValue> {
 
     private static final Map<String, List<Tuple<String, CommandSpec>>> childsPerAlias = new HashMap<>();
+
+    @Override
+    protected SpongeArgumentTypeValue getArgumentValue(String type, String permission, String key) {
+        return new SpongeArgumentTypeValue(type, permission, key);
+    }
 
     @Override
     @Deprecated
@@ -119,7 +123,7 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext> 
         return null;
     }
 
-    private static CommandElement[] parseArguments(String argString) {
+    private CommandElement[] parseArguments(String argString) {
         List<CommandElement> elements = new LinkedList<>();
         CommandFlags.Builder cflags = null;
         Matcher m = argFinder.matcher(argString);
@@ -145,7 +149,7 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext> 
         else return new CommandElement[]{ cflags.buildWith(wrap(elements.toArray(new CommandElement[0]))) };
     }
 
-    private static void parseFlag(CommandFlags.Builder flags, String name, String value) {
+    private void parseFlag(CommandFlags.Builder flags, String name, String value) {
         if (value == null) {
             int at;
             if ((at=name.indexOf(':'))>=0) {
@@ -155,7 +159,7 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext> 
                 flags.flag(name);
             }
         } else {
-            ArgumentValue av = argValue(value);
+            ArgumentTypeValue<CommandElement> av = argValue(value);
             if (name.indexOf(':') >= 0) {
                 DarwinServer.error("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
@@ -163,75 +167,6 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext> 
         }
     }
 
-    private static class ArgumentValue extends ArgumentTypeValue<CommandElement> {
-
-        @SuppressWarnings({"unchecked", "rawtypes", "Guava"})
-        public ArgumentValue(String type, String permission, String key) {
-            super(Arguments.OTHER, permission, key);
-            Optional<Arguments> argCandidate = Enums.getIfPresent(Arguments.class, type.toUpperCase());
-            if (!argCandidate.isPresent()) {
-                try {
-                    Class<?> clazz = Class.forName(type);
-                    if (clazz.isEnum()) {
-                        Class<? extends Enum> enumType = (Class<? extends Enum>) clazz;
-                        this.element = GenericArguments.enumValue(Text.of(key), enumType);
-                    } else throw new IllegalArgumentException("Type '" + type.toLowerCase() + "' is not supported");
-                } catch (Exception e) {
-                    DarwinServer.error("No argument of type `" + type + "` can be read", e);
-                }
-            }
-        }
-
-        @Override
-        protected CommandElement parseArgument(Arguments argument, String key) {
-            switch (argument) {
-                case BOOL:
-                    return GenericArguments.bool(Text.of(key));
-                case DOUBLE:
-                    return GenericArguments.doubleNum(Text.of(key));
-                case ENTITY:
-                    return GenericArguments.entity(Text.of(key));
-                case ENTITYORSOURCE:
-                    return GenericArguments.entityOrSource(Text.of(key));
-                case INTEGER:
-                    return GenericArguments.integer(Text.of(key));
-                case LOCATION:
-                    return GenericArguments.location(Text.of(key));
-                case LONG:
-                    return GenericArguments.longNum(Text.of(key));
-                case PLAYER:
-                    return GenericArguments.player(Text.of(key));
-                case PLAYERORSOURCE:
-                    return GenericArguments.playerOrSource(Text.of(key));
-                case MODULE:
-                    return new ModuleArgument(Text.of(key));
-                case REMAININGSTRING:
-                    return GenericArguments.remainingJoinedStrings(Text.of(key));
-                case STRING:
-                    return GenericArguments.string(Text.of(key));
-                case USER:
-                    return GenericArguments.user(Text.of(key));
-                case USERORSOURCE:
-                    return GenericArguments.userOrSource(Text.of(key));
-                case UUID:
-                    return GenericArguments.uuid(Text.of(key));
-                case VECTOR:
-                    return GenericArguments.vector3d(Text.of(key));
-                case WORLD:
-                    return GenericArguments.world(Text.of(key));
-                case EDITSESSION:
-                case MASK:
-                case PATTERN:
-                    return new FaweArgument(Text.of(key));
-                default:
-                    return null;
-            }
-        }
-
-        public CommandElement getPermissionArgument() {
-            return permission == null ? type : GenericArguments.requiringPermission(type, permission);
-        }
-    }
 
     private static CommandElement wrap(CommandElement... elements) {
         if (elements.length == 0) return GenericArguments.none();
@@ -248,7 +183,7 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext> 
         };
     }
 
-    private static class FaweArgument extends CommandElement {
+    public static class FaweArgument extends CommandElement {
 
         protected FaweArgument(@Nullable Text key) {
             super(key);
@@ -270,7 +205,7 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext> 
         }
     }
 
-    private static class ModuleArgument extends CommandElement {
+    public static class ModuleArgument extends CommandElement {
 
         protected ModuleArgument(@Nullable Text key) {
             super(key);
