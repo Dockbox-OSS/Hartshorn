@@ -69,6 +69,8 @@ public abstract class CommandBus<S, C, A extends ArgumentTypeValue<?>> {
         OTHER
     }
 
+    protected static final List<String> REGISTERED_COMMANDS = new ArrayList<>();
+
     public abstract static class ArgumentTypeValue<T> {
         protected T element;
         protected String permission;
@@ -418,7 +420,7 @@ public abstract class CommandBus<S, C, A extends ArgumentTypeValue<?>> {
     protected static final Pattern flag = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?"); //g1: name  (g2: value)
     protected static final Pattern argument = Pattern.compile("([\\[<])(.+)[\\]>]"); //g1: <[  g2: run argFinder, if nothing it's a value
     protected static final Pattern value = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?"); //g1: name  g2: if present type, other wise use g1
-    protected static final Pattern subcommand = Pattern.compile("[a-z]+");
+    protected static final Pattern subcommand = Pattern.compile("[a-z]*");
 
     protected A argValue(String valueString) {
         String type;

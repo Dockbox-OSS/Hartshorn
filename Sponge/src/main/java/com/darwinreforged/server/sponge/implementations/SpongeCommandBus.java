@@ -23,10 +23,12 @@ import org.spongepowered.api.text.Text;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -54,20 +56,51 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext, 
         else spec.permission(Permissions.ADMIN_BYPASS.p());
 
         String part = command.split(" ")[1];
+        // Child command
         if (subcommand.matcher(part).matches()) {
-            spec.executor(buildExecutor(runner)).arguments(parseArguments(command.substring(command.indexOf(' ' + 1)).replaceFirst(part + ' ', "")));
-            String alias = command.substring(command.indexOf(' ') + 1);
+            String arguments = command.substring(command.indexOf(' ') + 1)
+                    .replaceFirst(part, "");
+            if (arguments.endsWith(" ")) arguments = arguments.substring(0, arguments.length() - 2);
+
+            CommandElement[] elements = parseArguments(arguments);
+
+            Arrays.stream(elements).forEach(el -> System.out.println("Element : " + el));
+
+            elements = Arrays.stream(elements).filter(Objects::nonNull).toArray(CommandElement[]::new);
+            if (elements.length > 0) spec.executor(buildExecutor(runner)).arguments(elements);
+
+            String alias = command.substring(0, command.indexOf(' ') + 1);
+            if (part.equals("")) part = "@m";
             childsPerAlias.putIfAbsent(alias, new ArrayList<>());
             childsPerAlias.get(alias).add(new Tuple<>(part, spec.build()));
 
+            // Parent command
         } else if (command.startsWith("*")) {
-            List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(command.substring(1), new ArrayList<>());
-            childs.forEach(child -> spec.child(child.getSecond(), child.getFirst()));
-            Sponge.getCommandManager().register(DarwinServer.getServer(), spec.build(), command.substring(1, command.indexOf(' ')));
-
+            if (!REGISTERED_COMMANDS.contains(command.substring(1, command.indexOf(' ')))) {
+                List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(command.substring(1), new ArrayList<>());
+                childs.forEach(child -> {
+                    System.out.println("Registering : " + command + " child : " + child.getFirst());
+                    if (child.getFirst().equals("@m")) {
+                        System.out.println("Found main");
+                        spec.executor(child.getSecond().getExecutor());
+                    } else {
+                        System.out.println("Found non-main : '" + child.getFirst() + "'");
+                        spec.child(child.getSecond(), child.getFirst());
+                    }
+                });
+                System.out.println("Parent command : " + command.substring(1, command.indexOf(' ')));
+                Sponge.getCommandManager().register(DarwinServer.getServer(), spec.build(), command.substring(1, command.indexOf(' ')));
+                REGISTERED_COMMANDS.add(command.substring(1, command.indexOf(' ')));
+            }
+            // Single method command
         } else {
-            spec.executor(buildExecutor(runner)).arguments(parseArguments(command.substring(command.indexOf(' ') + 1)));
-            Sponge.getCommandManager().register(DarwinServer.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
+            if (!REGISTERED_COMMANDS.contains(command.substring(0, command.indexOf(' ')))) {
+                spec.executor(buildExecutor(runner)).arguments(parseArguments(command.substring(command.indexOf(' ') + 1)));
+                System.out.println("Single command : " + command.substring(0, command.indexOf(' ')));
+                Sponge.getCommandManager().register(DarwinServer.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
+                REGISTERED_COMMANDS.add(command.substring(0, command.indexOf(' ')));
+            }
+
         }
     }
 
