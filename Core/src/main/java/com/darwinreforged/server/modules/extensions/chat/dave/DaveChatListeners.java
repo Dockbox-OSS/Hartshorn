@@ -176,7 +176,7 @@ public class DaveChatListeners {
         }
 
         private static void printResponse(String response, boolean link, boolean important) {
-            Text message = botPrefix;
+            Text message = Text.of(botPrefix.getText());
             message.append(color);
 
             if (link) {
@@ -184,7 +184,7 @@ public class DaveChatListeners {
                         .setClickEvent(new ClickEvent(ClickAction.OPEN_URL, response))
                         .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_LINK_SUGGESTION_HOVER.f(response)));
                 message.append(linkSuggestion);
-            }
+            } else message.append(Text.of(response));
 
             PlayerManager pu = DarwinServer.getUtilChecked(PlayerManager.class);
 
