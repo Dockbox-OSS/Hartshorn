@@ -1,7 +1,8 @@
 package com.darwinreforged.server.core.util;
 
-import com.darwinreforged.server.core.init.AbstractUtility;
+import com.darwinreforged.server.core.internal.Utility;
 import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.types.time.TimeDifference;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 /**
  The type Time utils.
  */
-@AbstractUtility("Time parsing and scheduling")
+@Utility("Time parsing and scheduling")
 public abstract class TimeUtils {
 
     private static final Map<Object, Map<UUID, LocalDateTime>> playerRegistrationsPerModule = new HashMap<>();

@@ -1,6 +1,6 @@
-package com.darwinreforged.server.core.util;
+package com.darwinreforged.server.core.files;
 
-import com.darwinreforged.server.core.init.AbstractUtility;
+import com.darwinreforged.server.core.internal.Utility;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,8 +24,8 @@ import java.util.Optional;
 /**
  The type File utils.
  */
-@AbstractUtility("Common utilities for file management and parsing")
-public abstract class FileUtils {
+@Utility("Common utilities for file management and parsing")
+public abstract class FileManager {
 
     private final ObjectMapper mapper;
     private static final Map<String, ConnectionSource> jdbcSources = new HashMap<>();
@@ -34,7 +34,7 @@ public abstract class FileUtils {
     /**
      Instantiates a new File utils.
      */
-    public FileUtils() {
+    public FileManager() {
         YAMLFactory factory = new YAMLFactory().disable(Feature.WRITE_DOC_START_MARKER);
         mapper = new ObjectMapper(factory);
         mapper.findAndRegisterModules();

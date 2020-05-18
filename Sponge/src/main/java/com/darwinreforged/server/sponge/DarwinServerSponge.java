@@ -3,7 +3,7 @@ package com.darwinreforged.server.sponge;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.events.internal.server.ServerInitEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
-import com.darwinreforged.server.core.init.ServerType;
+import com.darwinreforged.server.core.internal.ServerType;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;

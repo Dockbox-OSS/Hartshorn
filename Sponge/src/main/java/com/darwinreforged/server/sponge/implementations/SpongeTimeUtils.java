@@ -1,7 +1,6 @@
-package com.darwinreforged.server.sponge.utils;
+package com.darwinreforged.server.sponge.implementations;
 
 import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.util.TimeUtils;
 
 import org.spongepowered.api.Sponge;
@@ -9,7 +8,6 @@ import org.spongepowered.api.scheduler.Task.Builder;
 
 import java.util.concurrent.TimeUnit;
 
-@UtilityImplementation(TimeUtils.class)
 public class SpongeTimeUtils extends TimeUtils {
 
     @Override

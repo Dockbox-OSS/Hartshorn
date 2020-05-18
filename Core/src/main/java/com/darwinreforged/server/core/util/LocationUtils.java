@@ -4,7 +4,7 @@ import com.darwinreforged.server.core.math.AbstractVector2;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.darwinreforged.server.core.math.Vector3i;
-import com.darwinreforged.server.core.init.AbstractUtility;
+import com.darwinreforged.server.core.internal.Utility;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  The type Location utils.
  */
-@AbstractUtility("Location calculations and conversion methods")
+@Utility("Location calculations and conversion methods")
 public abstract class LocationUtils {
 
     /**

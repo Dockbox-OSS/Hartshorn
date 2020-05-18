@@ -3,8 +3,8 @@ package com.darwinreforged.server.modules.internal.moduledata;
 import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.DarwinServer;
+import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.modules.Module;
-import com.darwinreforged.server.core.util.FileUtils;
 
 import java.io.File;
 import java.util.HashMap;
@@ -32,9 +32,9 @@ public class DarwinModuleData {
      */
     @Listener
     public void onServerStart(ServerStartedEvent event) {
-        File dataFile = new File(DarwinServer.getUtilChecked(FileUtils.class).getDataDirectory(this).toFile(), "module_data.yml");
+        File dataFile = new File(DarwinServer.getUtilChecked(FileManager.class).getDataDirectory(this).toFile(), "module_data.yml");
         DarwinServer.getAllModuleInfo().forEach(this::registerPlugin);
-        DarwinServer.getUtilChecked(FileUtils.class).writeYamlDataToFile(data, dataFile);
+        DarwinServer.getUtilChecked(FileManager.class).writeYamlDataToFile(data, dataFile);
     }
 
     private void registerPlugin(Module module) {

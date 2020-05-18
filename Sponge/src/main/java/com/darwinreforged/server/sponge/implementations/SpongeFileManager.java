@@ -1,9 +1,8 @@
-package com.darwinreforged.server.sponge.utils;
+package com.darwinreforged.server.sponge.implementations;
 
 import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.init.UtilityImplementation;
+import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.modules.Module;
-import com.darwinreforged.server.core.util.FileUtils;
 
 import org.spongepowered.api.Sponge;
 
@@ -11,8 +10,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
 
-@UtilityImplementation(FileUtils.class)
-public class SpongeFileUtils extends FileUtils {
+public class SpongeFileManager extends FileManager {
     @Override
     public Path getDataDirectory(Object plugin) {
         Optional<Module> infoOptional;

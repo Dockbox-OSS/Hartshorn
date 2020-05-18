@@ -1,7 +1,6 @@
-package com.darwinreforged.server.sponge.utils;
+package com.darwinreforged.server.sponge.implementations;
 
 import com.darwinreforged.server.core.player.inventory.DarwinItem;
-import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.util.ItemUtils;
 
 import org.spongepowered.api.data.key.Keys;
@@ -13,9 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@UtilityImplementation(ItemUtils.class)
 public class SpongeItemUtils extends ItemUtils<ItemStack> {
-
 
     @Override
     public ItemStack setDisplayName(String displayName, DarwinItem<ItemStack> in) {

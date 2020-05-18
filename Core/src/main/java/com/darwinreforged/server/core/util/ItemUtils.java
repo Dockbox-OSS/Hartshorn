@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.util;
 
 import com.darwinreforged.server.core.player.inventory.DarwinItem;
-import com.darwinreforged.server.core.init.AbstractUtility;
+import com.darwinreforged.server.core.internal.Utility;
 
 /**
  The type Item utils.
@@ -9,7 +9,7 @@ import com.darwinreforged.server.core.init.AbstractUtility;
  @param <I>
  the type parameter
  */
-@AbstractUtility("ItemStack manipulation utilities")
+@Utility("ItemStack manipulation utilities")
 public abstract class ItemUtils<I> {
 
     /**

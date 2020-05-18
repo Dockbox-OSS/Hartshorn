@@ -10,7 +10,7 @@ import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.util.FileUtils;
+import com.darwinreforged.server.core.files.FileManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,14 +53,14 @@ public class SpectatorTeleportModule {
 
     @SuppressWarnings("unchecked")
     private void init() {
-        FileUtils fileUtils = DarwinServer.getUtilChecked(FileUtils.class);
-        Map<String, Object> yamlData = fileUtils.getYamlDataForConfig(this);
+        FileManager fileManager = DarwinServer.getUtilChecked(FileManager.class);
+        Map<String, Object> yamlData = fileManager.getYamlDataForConfig(this);
         if (yamlData.containsKey("whitelist")) {
             whitelistedWorlds = (List<String>) yamlData.get("whitelist");
         } else {
             yamlData = new HashMap<>();
             yamlData.put("whitelist", Arrays.asList("SampleWorld", "Another_World"));
-            fileUtils.writeYamlDataForConfig(yamlData, this);
+            fileManager.writeYamlDataForConfig(yamlData, this);
         }
     }
 

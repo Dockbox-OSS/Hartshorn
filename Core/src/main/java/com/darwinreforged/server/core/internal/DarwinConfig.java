@@ -1,7 +1,7 @@
-package com.darwinreforged.server.core.init;
+package com.darwinreforged.server.core.internal;
 
 import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.util.FileUtils;
+import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.modules.internal.darwin.DarwinServerModule;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class DarwinConfig {
      Instantiates a new Darwin config.
      */
     public DarwinConfig() {
-        FileUtils fu = DarwinServer.getUtilChecked(FileUtils.class);
+        FileManager fu = DarwinServer.getUtilChecked(FileManager.class);
         Map<String, Object> config = fu.getYamlDataForConfig(DarwinServerModule.class);
         AtomicBoolean written = new AtomicBoolean(config.isEmpty());
         FLAGS.forEach((k, v) -> {

@@ -1,8 +1,8 @@
-package com.darwinreforged.server.sponge.utils;
+package com.darwinreforged.server.sponge.implementations;
 
 import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.commands.CommandBus.CommandRunner;
-import com.darwinreforged.server.core.init.UtilityImplementation;
+import com.darwinreforged.server.core.commands.CommandBus;
+import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.resources.Permissions;
@@ -10,14 +10,17 @@ import com.darwinreforged.server.core.tuple.Tuple;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.living.Console;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
-import com.darwinreforged.server.core.util.CommandUtils;
 import com.darwinreforged.server.core.util.LocationUtils;
+import com.google.common.base.Enums;
+import com.google.common.base.Optional;
 import com.google.common.collect.Multimap;
 
-import org.spongepowered.api.CatalogType;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.args.ArgumentParseException;
+import org.spongepowered.api.command.args.CommandArgs;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.CommandFlags;
@@ -35,9 +38,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
-@UtilityImplementation(CommandUtils.class)
-public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandContext> {
+import javax.annotation.Nullable;
+
+public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext> {
 
     private static final Map<String, List<Tuple<String, CommandSpec>>> childsPerAlias = new HashMap<>();
 
@@ -56,11 +61,11 @@ public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandConte
     public boolean handleCommandSend(CommandSource source, String command) {
         boolean cancel = false;
         if (source instanceof Player) {
-            DarwinPlayer player = PlayerManager.getPlayer(((Player) source).getUniqueId(), source.getName());
+            DarwinPlayer player = DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(((Player) source).getUniqueId(), source.getName());
             DarwinLocation loc = player.getLocation().orElseGet(LocationUtils::getEmptyWorld);
-            cancel = getBus().process(command, player, loc);
+            cancel = super.process(command, player, loc);
         } else if (source instanceof ConsoleSource) {
-            cancel = getBus().process(command, Console.instance, LocationUtils.getEmptyWorld());
+            cancel = super.process(command, Console.instance, LocationUtils.getEmptyWorld());
         }
         return cancel;
     }
@@ -151,85 +156,86 @@ public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandConte
             }
         } else {
             ArgumentValue av = argValue(value);
-            if (name.indexOf(':')>=0) {
-                DarwinServer.error("Flag values do not support permissions at flag `"+name+"`. Permit the value instead");
+            if (name.indexOf(':') >= 0) {
+                DarwinServer.error("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
             flags.valueFlag(av.getPermissionArgument(), name);
         }
     }
 
-    private static class ArgumentValue {
-        CommandElement element; String permission;
-        public ArgumentValue(CommandElement element, String permission) { this.element = element; this.permission = permission; }
-        public CommandElement getPermissionArgument() { return permission==null?element:GenericArguments.requiringPermission(element, permission); }
-    }
+    private static class ArgumentValue extends ArgumentTypeValue<CommandElement> {
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private static ArgumentValue argValue(String valueString) {
-        String type;
-        String key;
-        String permission;
-        Matcher vm = value.matcher(valueString);
-        if (!vm.matches()) DarwinServer.error("Unknown argument specification `"+valueString+"`, use Type or Name{Type} or Name{Type:Permission}");
-        key = vm.group(1);
-        type = vm.group(2);
-        permission = vm.group(3);
-        if (type==null) type=key;
-
-        switch(type.toLowerCase()) {
-            case "bool":
-                return new ArgumentValue(GenericArguments.bool(Text.of(key)), permission);
-            case "double":
-                return new ArgumentValue(GenericArguments.doubleNum(Text.of(key)), permission);
-            case "entity":
-                return new ArgumentValue(GenericArguments.entity(Text.of(key)), permission);
-            case "entityorsrouce":
-                return new ArgumentValue(GenericArguments.entityOrSource(Text.of(key)), permission);
-            case "integer":
-                return new ArgumentValue(GenericArguments.integer(Text.of(key)), permission);
-            case "location":
-                return new ArgumentValue(GenericArguments.location(Text.of(key)), permission);
-            case "long":
-                return new ArgumentValue(GenericArguments.longNum(Text.of(key)), permission);
-            case "player":
-                return new ArgumentValue(GenericArguments.player(Text.of(key)), permission);
-            case "playerorsource":
-                return new ArgumentValue(GenericArguments.playerOrSource(Text.of(key)), permission);
-            case "plugin":
-                return new ArgumentValue(GenericArguments.plugin(Text.of(key)), permission);
-            case "remainingstring":
-                return new ArgumentValue(GenericArguments.remainingJoinedStrings(Text.of(key)), permission);
-            case "string":
-                return new ArgumentValue(GenericArguments.string(Text.of(key)), permission);
-            case "user":
-                return new ArgumentValue(GenericArguments.user(Text.of(key)), permission);
-            case "userorsource":
-                return new ArgumentValue(GenericArguments.userOrSource(Text.of(key)), permission);
-            case "uuid":
-                return new ArgumentValue(GenericArguments.uuid(Text.of(key)), permission);
-            case "vector":
-                return new ArgumentValue(GenericArguments.vector3d(Text.of(key)), permission);
-            case "world":
-                return new ArgumentValue(GenericArguments.world(Text.of(key)), permission);
-            default:
+        @SuppressWarnings({"unchecked", "rawtypes", "Guava"})
+        public ArgumentValue(String type, String permission, String key) {
+            super(Arguments.OTHER, permission, key);
+            Optional<Arguments> argCandidate = Enums.getIfPresent(Arguments.class, type.toUpperCase());
+            if (!argCandidate.isPresent()) {
                 try {
                     Class<?> clazz = Class.forName(type);
                     if (clazz.isEnum()) {
                         Class<? extends Enum> enumType = (Class<? extends Enum>) clazz;
-                        return new ArgumentValue(GenericArguments.enumValue(Text.of(key), enumType), permission);
-                    }
-                    Class<? extends CatalogType> catalogType = (Class<? extends CatalogType>) clazz;
-                    return new ArgumentValue(GenericArguments.catalogedElement(Text.of(key), catalogType), permission);
+                        this.element = GenericArguments.enumValue(Text.of(key), enumType);
+                    } else throw new IllegalArgumentException("Type '" + type.toLowerCase() + "' is not supported");
                 } catch (Exception e) {
-                    DarwinServer.error("No argument of type `"+type+"` can be read", e);
-                    return null;
+                    DarwinServer.error("No argument of type `" + type + "` can be read", e);
                 }
+            }
+        }
+
+        @Override
+        protected CommandElement parseArgument(Arguments argument, String key) {
+            switch (argument) {
+                case BOOL:
+                    return GenericArguments.bool(Text.of(key));
+                case DOUBLE:
+                    return GenericArguments.doubleNum(Text.of(key));
+                case ENTITY:
+                    return GenericArguments.entity(Text.of(key));
+                case ENTITYORSOURCE:
+                    return GenericArguments.entityOrSource(Text.of(key));
+                case INTEGER:
+                    return GenericArguments.integer(Text.of(key));
+                case LOCATION:
+                    return GenericArguments.location(Text.of(key));
+                case LONG:
+                    return GenericArguments.longNum(Text.of(key));
+                case PLAYER:
+                    return GenericArguments.player(Text.of(key));
+                case PLAYERORSOURCE:
+                    return GenericArguments.playerOrSource(Text.of(key));
+                case MODULE:
+                    return new ModuleArgument(Text.of(key));
+                case REMAININGSTRING:
+                    return GenericArguments.remainingJoinedStrings(Text.of(key));
+                case STRING:
+                    return GenericArguments.string(Text.of(key));
+                case USER:
+                    return GenericArguments.user(Text.of(key));
+                case USERORSOURCE:
+                    return GenericArguments.userOrSource(Text.of(key));
+                case UUID:
+                    return GenericArguments.uuid(Text.of(key));
+                case VECTOR:
+                    return GenericArguments.vector3d(Text.of(key));
+                case WORLD:
+                    return GenericArguments.world(Text.of(key));
+                case EDITSESSION:
+                case MASK:
+                case PATTERN:
+                    return new FaweArgument(Text.of(key));
+                default:
+                    return null;
+            }
+        }
+
+        public CommandElement getPermissionArgument() {
+            return permission == null ? type : GenericArguments.requiringPermission(type, permission);
         }
     }
 
     private static CommandElement wrap(CommandElement... elements) {
-        if (elements.length==0) return GenericArguments.none();
-        return elements.length==1?elements[0]:GenericArguments.seq(elements);
+        if (elements.length == 0) return GenericArguments.none();
+        return elements.length == 1 ? elements[0] : GenericArguments.seq(elements);
     }
 
     private CommandExecutor buildExecutor(CommandRunner runner) {
@@ -242,5 +248,50 @@ public class SpongeCommandUtils extends CommandUtils<CommandSource, CommandConte
         };
     }
 
+    private static class FaweArgument extends CommandElement {
+
+        protected FaweArgument(@Nullable Text key) {
+            super(key);
+        }
+
+        @Nullable
+        @Override
+        protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
+            // TODO : Implement parsers for FAWE types
+            return null;
+        }
+
+        @Override
+        public @NotNull List<String> complete(
+                @NotNull CommandSource src,
+                @NotNull CommandArgs args,
+                @NotNull CommandContext context) {
+            return null;
+        }
+    }
+
+    private static class ModuleArgument extends CommandElement {
+
+        protected ModuleArgument(@Nullable Text key) {
+            super(key);
+        }
+
+        @Nullable
+        @Override
+        protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
+            String id = args.next();
+            Object module = DarwinServer.getModule(id);
+            if (module.getClass().isAnnotationPresent(Module.class)) return module;
+            return null;
+        }
+
+        @Override
+        public @NotNull List<String> complete(
+                @NotNull CommandSource src,
+                @NotNull CommandArgs args,
+                @NotNull CommandContext context) {
+            return DarwinServer.getAllModuleInfo().stream().map(Module::id).collect(Collectors.toList());
+        }
+    }
 
 }

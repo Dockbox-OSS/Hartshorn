@@ -1,8 +1,8 @@
 package com.darwinreforged.server.core.resources;
 
 import com.darwinreforged.server.core.DarwinServer;
+import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.modules.internal.darwin.DarwinServerModule;
-import com.darwinreforged.server.core.util.FileUtils;
 import com.darwinreforged.server.core.util.StringUtils;
 
 import java.io.File;
@@ -97,12 +97,12 @@ public enum Permissions {
     public static void collect() {
         DarwinServer.getModule(DarwinServerModule.class).ifPresent(module -> {
             Map<String, Object> configMap;
-            File file = new File(DarwinServer.getUtilChecked(FileUtils.class).getConfigDirectory(module).toFile(), "permissions.yml");
+            File file = new File(DarwinServer.getUtilChecked(FileManager.class).getConfigDirectory(module).toFile(), "permissions.yml");
             if (!file.exists()) {
                 configMap = new HashMap<>();
                 Arrays.stream(Permissions.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.p()));
-                DarwinServer.getUtilChecked(FileUtils.class).writeYamlDataToFile(configMap, file);
-            } else configMap = DarwinServer.getUtilChecked(FileUtils.class).getYamlDataFromFile(file);
+                DarwinServer.getUtilChecked(FileManager.class).writeYamlDataToFile(configMap, file);
+            } else configMap = DarwinServer.getUtilChecked(FileManager.class).getYamlDataFromFile(file);
 
             configMap.forEach((k, v) -> {
                 Permissions t = Permissions.valueOf(k.toUpperCase().replaceAll("\\.", "_"));

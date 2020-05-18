@@ -3,9 +3,9 @@ package com.darwinreforged.server.core.types.living;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.util.PlayerUtils;
+import com.darwinreforged.server.core.resources.Translations;
 
 import java.util.Arrays;
 
@@ -43,7 +43,7 @@ public class Console extends CommandSender {
 
     @Override
     public void execute(String cmd) {
-        DarwinServer.getUtilChecked(PlayerUtils.class).executeCmd(cmd, this);
+        DarwinServer.getUtilChecked(PlayerManager.class).executeCmd(cmd, this);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class Console extends CommandSender {
 
     @Override
     public void sendMessage(Text text) {
-        DarwinServer.getUtilChecked(PlayerUtils.class).tell(this, text);
+        DarwinServer.getUtilChecked(PlayerManager.class).tell(this, text);
     }
 
     @Override

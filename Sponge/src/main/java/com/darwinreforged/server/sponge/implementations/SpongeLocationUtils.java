@@ -1,9 +1,8 @@
-package com.darwinreforged.server.sponge.utils;
+package com.darwinreforged.server.sponge.implementations;
 
 import com.darwinreforged.server.core.math.AbstractVector2;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
-import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.util.LocationUtils;
 import com.flowpowered.math.vector.Vector3d;
 
@@ -18,9 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@UtilityImplementation(LocationUtils.class)
 public class SpongeLocationUtils extends LocationUtils {
-
 
     @Override
     public int getHighestPoint(AbstractVector2<? extends Number> vector2, DarwinWorld world) {

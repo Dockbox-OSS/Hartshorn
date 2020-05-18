@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.resources;
 
 import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.util.FileUtils;
+import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.util.StringUtils;
 import com.darwinreforged.server.modules.internal.darwin.DarwinServerModule;
 
@@ -532,12 +532,12 @@ public enum Translations {
     public static void collect() {
         DarwinServer.getModule(DarwinServerModule.class).ifPresent(module -> {
             Map<String, Object> configMap;
-            File file = new File(DarwinServer.getUtilChecked(FileUtils.class).getConfigDirectory(module).toFile(), "translations.yml");
+            File file = new File(DarwinServer.getUtilChecked(FileManager.class).getConfigDirectory(module).toFile(), "translations.yml");
             if (!file.exists()) {
                 configMap = new HashMap<>();
                 Arrays.stream(Translations.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.u()));
-                DarwinServer.getUtilChecked(FileUtils.class).writeYamlDataToFile(configMap, file);
-            } else configMap = DarwinServer.getUtilChecked(FileUtils.class).getYamlDataFromFile(file);
+                DarwinServer.getUtilChecked(FileManager.class).writeYamlDataToFile(configMap, file);
+            } else configMap = DarwinServer.getUtilChecked(FileManager.class).getYamlDataFromFile(file);
 
             configMap.forEach((k, v) -> {
                 Translations t = Translations.valueOf(k.toUpperCase().replaceAll("\\.", "_"));

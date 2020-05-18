@@ -1,13 +1,13 @@
-package com.darwinreforged.server.core.util;
+package com.darwinreforged.server.core.external;
 
 import com.darwinreforged.server.core.types.location.DarwinWorld;
-import com.darwinreforged.server.core.init.AbstractUtility;
+import com.darwinreforged.server.core.internal.Utility;
 
 /**
  The type Plot utils.
  */
-@AbstractUtility("Implementation-independent PlotSquared utilities")
-public abstract class PlotUtils {
+@Utility("Implementation-independent PlotSquared utilities")
+public abstract class PlotSquaredUtils {
 
     /**
      Is plot world boolean.

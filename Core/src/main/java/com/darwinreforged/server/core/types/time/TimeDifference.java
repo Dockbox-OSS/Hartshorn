@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.util;
+package com.darwinreforged.server.core.types.time;
 
 /**
  The type Time difference.

@@ -10,9 +10,10 @@ import com.darwinreforged.server.core.commands.context.CommandFlag;
 import com.darwinreforged.server.core.commands.registrations.ClassRegistration;
 import com.darwinreforged.server.core.commands.registrations.CommandRegistration;
 import com.darwinreforged.server.core.commands.registrations.SingleMethodRegistration;
+import com.darwinreforged.server.core.internal.Utility;
 import com.darwinreforged.server.core.modules.Module;
-import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.tuple.QuadTuple;
 import com.darwinreforged.server.core.tuple.Triple;
 import com.darwinreforged.server.core.tuple.Tuple;
@@ -20,7 +21,6 @@ import com.darwinreforged.server.core.types.internal.Singleton;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
-import com.darwinreforged.server.core.util.CommandUtils;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
@@ -34,12 +34,53 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
  The type Command bus.
  */
-public class CommandBus {
+@Utility("Handles command registrations and processing")
+public abstract class CommandBus<S, C, A> {
+
+    protected enum Arguments {
+        BOOL,
+        DOUBLE,
+        ENTITY,
+        ENTITYORSOURCE,
+        INTEGER,
+        LOCATION,
+        LONG,
+        PLAYER,
+        PLAYERORSOURCE,
+        MODULE,
+        REMAININGSTRING,
+        STRING,
+        USER,
+        USERORSOURCE,
+        UUID,
+        VECTOR,
+        WORLD,
+        EDITSESSION,
+        MASK,
+        PATTERN,
+        OTHER
+    }
+
+    protected abstract static class ArgumentTypeValue<T> {
+        protected T element;
+        protected String permission;
+
+        public ArgumentTypeValue(Arguments argument, String permission, String key) {
+            this.permission = permission;
+            if (this.element == null) this.element = parseArgument(argument, key);
+        }
+
+        protected abstract T parseArgument(Arguments argument, String key);
+
+        public abstract T getPermissionArgument();
+    }
 
     /**
      The constant COMMANDS.
@@ -332,9 +373,8 @@ public class CommandBus {
     }
 
     private void registerCommand(String command, String permission, CommandRunner runner) {
-        CommandUtils<?, ?> utils = DarwinServer.getUtilChecked(CommandUtils.class);
-        if (command.indexOf(' ')<0 && !command.startsWith("*")) utils.registerCommandNoArgs(command, permission, runner);
-        else utils.registerCommandArgsAndOrChild(command, permission, runner);
+        if (command.indexOf(' ') < 0 && !command.startsWith("*")) registerCommandNoArgs(command, permission, runner);
+        else registerCommandArgsAndOrChild(command, permission, runner);
     }
 
     private Tuple<ParseResult, CommandContext> parseContext(String cmd, CommandSender sender, DarwinLocation loc) {
@@ -372,6 +412,39 @@ public class CommandBus {
         Method method = ((SingleMethodRegistration) registration).getMethod();
         return new QuadTuple<>(result, ctx, method, registration);
     }
+
+    protected static final Pattern argFinder = Pattern.compile("((?:<.+?>)|(?:\\[.+?\\])|(?:-(?:(?:-\\w+)|\\w)(?: [^ -]+)?))"); //each match is a flag or argument
+    protected static final Pattern flag = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?"); //g1: name  (g2: value)
+    protected static final Pattern argument = Pattern.compile("([\\[<])(.+)[\\]>]"); //g1: <[  g2: run argFinder, if nothing it's a value
+    protected static final Pattern value = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?"); //g1: name  g2: if present type, other wise use g1
+    protected static final Pattern subcommand = Pattern.compile("[a-z]+");
+
+    private A argValue(String valueString) {
+        String type;
+        String key;
+        String permission;
+        Matcher vm = value.matcher(valueString);
+        if (!vm.matches())
+            DarwinServer.error("Unknown argument specification `" + valueString + "`, use Type or Name{Type} or Name{Type:Permission}");
+        key = vm.group(1);
+        type = vm.group(2);
+        permission = vm.group(3);
+        if (type == null) type = key;
+
+        return new ArgumentValue(type, permission, key);
+    }
+
+    @Deprecated
+    public abstract void executeCommand(CommandSender sender, String command);
+
+    @Deprecated
+    public abstract boolean handleCommandSend(S source, String command);
+
+    public abstract void registerCommandNoArgs(String command, String permission, CommandRunner runner);
+
+    protected abstract CommandContext convertContext(C ctx);
+
+    public abstract void registerCommandArgsAndOrChild(String command, String permission, CommandRunner runner);
 
     @FunctionalInterface
     public interface CommandRunner {

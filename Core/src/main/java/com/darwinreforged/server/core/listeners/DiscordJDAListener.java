@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 /**
  The type Discord listener.
  */
-public class DiscordListener extends ListenerAdapter {
+public class DiscordJDAListener extends ListenerAdapter {
 
     private final List<String> channelWhitelist = new ArrayList<>();
 
@@ -24,7 +24,7 @@ public class DiscordListener extends ListenerAdapter {
      @param channelWhitelist
      the channel whitelist
      */
-    public DiscordListener(List<String> channelWhitelist) {
+    public DiscordJDAListener(List<String> channelWhitelist) {
         this.channelWhitelist.addAll(channelWhitelist);
     }
 

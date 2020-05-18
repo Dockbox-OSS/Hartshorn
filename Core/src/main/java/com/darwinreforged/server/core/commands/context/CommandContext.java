@@ -1,16 +1,16 @@
 package com.darwinreforged.server.core.commands.context;
 
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.commands.context.parsing.ArgumentParser;
 import com.darwinreforged.server.core.commands.context.parsing.FunctionalParser;
 import com.darwinreforged.server.core.commands.context.parsing.TypeArgumentParser;
-import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.player.PlayerManager;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
-import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.util.LocationUtils;
-import com.darwinreforged.server.core.util.PlayerUtils;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -288,7 +288,7 @@ public class CommandContext {
      @return the argument as online player
      */
     public Optional<DarwinPlayer> getArgumentAsOnlinePlayer(int index) {
-        return getStringArgument(index).flatMap(name -> DarwinServer.getUtilChecked(PlayerUtils.class).getPlayer(name.getValue()));
+        return getStringArgument(index).flatMap(name -> DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(name.getValue()));
     }
 
     /**
@@ -300,7 +300,7 @@ public class CommandContext {
      @return the argument as online player
      */
     public Optional<DarwinPlayer> getArgumentAsOnlinePlayer(String key) {
-        return getStringArgument(key).flatMap(name -> DarwinServer.getUtilChecked(PlayerUtils.class).getPlayer(name.getValue()));
+        return getStringArgument(key).flatMap(name -> DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(name.getValue()));
     }
 
     /**

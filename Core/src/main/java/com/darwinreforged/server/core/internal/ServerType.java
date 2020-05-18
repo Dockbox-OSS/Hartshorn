@@ -1,4 +1,4 @@
-package com.darwinreforged.server.core.init;
+package com.darwinreforged.server.core.internal;
 
 /**
  The enum Server type.

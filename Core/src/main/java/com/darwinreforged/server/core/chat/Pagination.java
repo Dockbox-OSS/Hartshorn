@@ -1,8 +1,8 @@
 package com.darwinreforged.server.core.chat;
 
 import com.darwinreforged.server.core.DarwinServer;
+import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.types.living.MessageReceiver;
-import com.darwinreforged.server.core.util.PlayerUtils;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class Pagination {
     }
 
     public void sendTo(MessageReceiver receiver) {
-        DarwinServer.getUtilChecked(PlayerUtils.class).sendPagination(receiver, this);
+        DarwinServer.getUtilChecked(PlayerManager.class).sendPagination(receiver, this);
     }
 
     public Text getPadding() {

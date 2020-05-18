@@ -3,13 +3,12 @@ package com.darwinreforged.server.core.player;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
-import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.player.state.GameModes;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
-import com.darwinreforged.server.core.util.PlayerUtils;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -38,7 +37,7 @@ public class DarwinPlayer extends CommandSender {
      @return the boolean
      */
     public boolean isOnline() {
-        return DarwinServer.getUtilChecked(PlayerUtils.class).isOnline(this);
+        return DarwinServer.getUtilChecked(PlayerManager.class).isOnline(this);
     }
 
     /**
@@ -57,7 +56,7 @@ public class DarwinPlayer extends CommandSender {
      Kick.
      */
     public void kick() {
-        DarwinServer.getUtilChecked(PlayerUtils.class).kick(this);
+        DarwinServer.getUtilChecked(PlayerManager.class).kick(this);
     }
 
     public boolean hasPermission(Permissions permission) {
@@ -73,7 +72,7 @@ public class DarwinPlayer extends CommandSender {
      @return the boolean
      */
     public boolean hasPermission(String permission) {
-        return DarwinServer.getUtilChecked(PlayerUtils.class).hasPermission(this, permission);
+        return DarwinServer.getUtilChecked(PlayerManager.class).hasPermission(this, permission);
     }
 
     /**
@@ -82,7 +81,7 @@ public class DarwinPlayer extends CommandSender {
      @return the location
      */
     public Optional<DarwinLocation> getLocation() {
-        return DarwinServer.getUtilChecked(PlayerUtils.class).getLocation(this);
+        return DarwinServer.getUtilChecked(PlayerManager.class).getLocation(this);
     }
 
     /**
@@ -100,7 +99,7 @@ public class DarwinPlayer extends CommandSender {
      @return the game mode
      */
     public GameModes getGameMode() {
-        return DarwinServer.getUtilChecked(PlayerUtils.class).getGameMode(this);
+        return DarwinServer.getUtilChecked(PlayerManager.class).getGameMode(this);
     }
 
     /**
@@ -110,17 +109,17 @@ public class DarwinPlayer extends CommandSender {
      the mode
      */
     public void setGameMode(GameModes mode) {
-        DarwinServer.getUtilChecked(PlayerUtils.class).setGameMode(mode, this);
+        DarwinServer.getUtilChecked(PlayerManager.class).setGameMode(mode, this);
     }
 
     @Override
     public String getName(boolean lookup) {
-        return DarwinServer.getUtilChecked(PlayerUtils.class).getPlayerName(this.uuid);
+        return DarwinServer.getUtilChecked(PlayerManager.class).getPlayerName(this.uuid);
     }
 
     @Override
     public void execute(String cmd) {
-        DarwinServer.getUtilChecked(PlayerUtils.class).executeCmd(cmd, this);
+        DarwinServer.getUtilChecked(PlayerManager.class).executeCmd(cmd, this);
     }
 
     @Override
@@ -147,7 +146,7 @@ public class DarwinPlayer extends CommandSender {
 
     @Override
     public void sendMessage(Text text) {
-        DarwinServer.getUtilChecked(PlayerUtils.class).tell(this, text);
+        DarwinServer.getUtilChecked(PlayerManager.class).tell(this, text);
     }
 
     @Override

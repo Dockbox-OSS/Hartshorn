@@ -10,8 +10,8 @@ import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.player.state.GameModes;
-import com.darwinreforged.server.core.util.FileUtils;
-import com.darwinreforged.server.core.util.TimeDifference;
+import com.darwinreforged.server.core.files.FileManager;
+import com.darwinreforged.server.core.types.time.TimeDifference;
 import com.darwinreforged.server.core.util.TimeUtils;
 
 import java.util.ArrayList;
@@ -55,12 +55,12 @@ public class GoToLobbyModule {
 
     @SuppressWarnings("unchecked")
     private void init() {
-        FileUtils fileUtils = DarwinServer.getUtilChecked(FileUtils.class);
-        Map<String, Object> config = fileUtils.getYamlDataForConfig(this);
+        FileManager fileManager = DarwinServer.getUtilChecked(FileManager.class);
+        Map<String, Object> config = fileManager.getYamlDataForConfig(this);
 
         if(config.containsKey("blacklist")) blacklist = (List<String>) config.get("blacklist");
         else config.put("blacklist", Arrays.asList("denied_world", "worlds"));
-        fileUtils.writeYamlDataForConfig(config, this);
+        fileManager.writeYamlDataForConfig(config, this);
     }
 
     /**

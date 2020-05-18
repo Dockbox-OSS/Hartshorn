@@ -4,6 +4,8 @@ import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.commands.annotations.Permission;
 import com.darwinreforged.server.core.commands.annotations.Source;
 import com.darwinreforged.server.core.commands.context.CommandContext;
+import com.darwinreforged.server.core.external.PlotSquaredUtils;
+import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
@@ -13,9 +15,7 @@ import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.util.FileUtils;
 import com.darwinreforged.server.core.util.LocationUtils;
-import com.darwinreforged.server.core.util.PlotUtils;
 import com.darwinreforged.server.core.util.TimeUtils;
 
 import java.util.ArrayList;
@@ -31,8 +31,8 @@ import java.util.concurrent.TimeUnit;
 @Module(id = "worldunloader", name = "WorldUnloader", description = "Unload worlds with no players in them", authors = "GuusLieben")
 public class WorldUnloadModule {
 
-    private FileUtils fileUtil;
-    private PlotUtils plotUtils;
+    private FileManager fileUtil;
+    private PlotSquaredUtils plotSquaredUtils;
     private final List<String> unloadBlacklist = new ArrayList<>();
 
     /**
@@ -59,8 +59,8 @@ public class WorldUnloadModule {
 
     @SuppressWarnings("unchecked")
     private void init() {
-        fileUtil = DarwinServer.getUtilChecked(FileUtils.class);
-        plotUtils = DarwinServer.getUtilChecked(PlotUtils.class);
+        fileUtil = DarwinServer.getUtilChecked(FileManager.class);
+        plotSquaredUtils = DarwinServer.getUtilChecked(PlotSquaredUtils.class);
         ArrayList<String> blacklist = (ArrayList<String>) fileUtil.getYamlDataForConfig(this, "blacklist", ArrayList.class);
         if (blacklist != null) unloadBlacklist.addAll(blacklist);
         refreshBlackList();
@@ -115,7 +115,7 @@ public class WorldUnloadModule {
     private void unloadTask() {
         DarwinServer.getUtilChecked(LocationUtils.class)
                 .getEmptyWorlds().stream()
-                .filter(world -> !unloadBlacklist.contains(world.getName()) && !plotUtils.isPlotWorld(world))
+                .filter(world -> !unloadBlacklist.contains(world.getName()) && !plotSquaredUtils.isPlotWorld(world))
                 .forEach(darwinWorld -> darwinWorld.unloadWorld(false));
     }
 }

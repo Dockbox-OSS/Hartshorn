@@ -1,22 +1,20 @@
-package com.darwinreforged.server.sponge.utils;
+package com.darwinreforged.server.sponge.implementations;
 
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.ClickEvent;
 import com.darwinreforged.server.core.chat.HoverEvent;
 import com.darwinreforged.server.core.chat.Pagination;
-import com.darwinreforged.server.core.init.UtilityImplementation;
 import com.darwinreforged.server.core.math.Vector3d;
-import com.darwinreforged.server.core.player.PlayerManager;
-import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.types.living.Console;
 import com.darwinreforged.server.core.player.DarwinPlayer;
-import com.darwinreforged.server.core.types.living.MessageReceiver;
-import com.darwinreforged.server.core.types.living.Target;
+import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.player.inventory.DarwinItem;
 import com.darwinreforged.server.core.player.state.GameModes;
+import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.types.living.Console;
+import com.darwinreforged.server.core.types.living.MessageReceiver;
+import com.darwinreforged.server.core.types.living.Target;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
-import com.darwinreforged.server.core.util.PlayerUtils;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
@@ -42,8 +40,7 @@ import me.lucko.luckperms.LuckPerms;
 import me.lucko.luckperms.api.LuckPermsApi;
 import me.lucko.luckperms.api.Node;
 
-@UtilityImplementation(PlayerUtils.class)
-public class SpongePlayerUtils extends PlayerUtils {
+public class SpongePlayerManager extends PlayerManager {
 
     @Override
     public void broadcast(com.darwinreforged.server.core.chat.Text message) {
@@ -162,17 +159,12 @@ public class SpongePlayerUtils extends PlayerUtils {
 
     @Override
     public List<DarwinPlayer> getOnlinePlayers() {
-        return Sponge.getServer().getOnlinePlayers().stream().map(sp -> PlayerManager.getPlayer(sp.getUniqueId(), sp.getName())).collect(Collectors.toList());
+        return Sponge.getServer().getOnlinePlayers().stream().map(sp -> super.getPlayer(sp.getUniqueId(), sp.getName())).collect(Collectors.toList());
     }
 
     @Override
     public Optional<DarwinPlayer> getPlayer(String player) {
-        return Sponge.getServer().getPlayer(player).map(sp -> PlayerManager.getPlayer(sp.getUniqueId(), sp.getName()));
-    }
-
-    @Override
-    public Optional<DarwinPlayer> getPlayer(UUID uuid) {
-        return Sponge.getServer().getPlayer(uuid).map(sp -> PlayerManager.getPlayer(sp.getUniqueId(), sp.getName()));
+        return Sponge.getServer().getPlayer(player).map(sp -> super.getPlayer(sp.getUniqueId(), sp.getName()));
     }
 
     @Override

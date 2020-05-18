@@ -1,9 +1,9 @@
-package com.darwinreforged.server.core.util;
+package com.darwinreforged.server.core.chat;
 
-import com.darwinreforged.server.core.init.AbstractUtility;
-import com.darwinreforged.server.core.init.DarwinConfig;
+import com.darwinreforged.server.core.internal.Utility;
+import com.darwinreforged.server.core.internal.DarwinConfig;
 import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.listeners.DiscordListener;
+import com.darwinreforged.server.core.listeners.DiscordJDAListener;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -18,8 +18,8 @@ import javax.security.auth.login.LoginException;
 /**
  The type Discord utils.
  */
-@AbstractUtility("Discord connection and messaging utilities")
-public abstract class DiscordUtils {
+@Utility("Discord connection and messaging utilities")
+public abstract class DiscordChatManager {
 
     /**
      Init.
@@ -28,7 +28,7 @@ public abstract class DiscordUtils {
      the channel whitelist
      */
     public void init(List<String> channelWhitelist) {
-        if (getJda() != null) getJda().addEventListener(new DiscordListener(channelWhitelist));
+        if (getJda() != null) getJda().addEventListener(new DiscordJDAListener(channelWhitelist));
     }
 
     /**
