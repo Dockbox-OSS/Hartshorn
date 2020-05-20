@@ -41,7 +41,7 @@ public class DarwinServerModule {
             context = "dtest [module{String}]"
     )
     // The permissions required for the command, defaults to ADMIN_BYPASS if absent
-    @Permission({Permissions.ADMIN_BYPASS, Permissions.BRUSH_TT_USE})
+    @Permission(Permissions.BRUSH_TT_USE)
     public void modules(CommandSender commandSender, CommandContext ctx) {
         // ...
     }

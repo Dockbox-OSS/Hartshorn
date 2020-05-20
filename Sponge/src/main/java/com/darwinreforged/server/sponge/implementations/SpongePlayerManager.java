@@ -9,6 +9,7 @@ import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.player.inventory.DarwinItem;
 import com.darwinreforged.server.core.player.state.GameModes;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.types.living.Console;
 import com.darwinreforged.server.core.types.living.MessageReceiver;
@@ -36,10 +37,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import me.lucko.luckperms.LuckPerms;
-import me.lucko.luckperms.api.LuckPermsApi;
-import me.lucko.luckperms.api.Node;
-
 public class SpongePlayerManager extends PlayerManager {
 
     private static Text parseColors(String s) {
@@ -53,7 +50,8 @@ public class SpongePlayerManager extends PlayerManager {
 
     @Override
     public void broadcastIfPermitted(com.darwinreforged.server.core.chat.Text message, String permission) {
-        Sponge.getServer().getOnlinePlayers().parallelStream().filter(p -> p.hasPermission(permission)).forEach(p -> p.sendMessage(parseColors(message.getText())));
+        Sponge.getServer().getOnlinePlayers().parallelStream().filter(p -> p.hasPermission(permission) ||
+                p.hasPermission(Permissions.ADMIN_BYPASS.p())).forEach(p -> p.sendMessage(parseColors(message.getText())));
     }
 
     @Override
@@ -91,13 +89,8 @@ public class SpongePlayerManager extends PlayerManager {
 
     @Override
     public boolean hasPermission(DarwinPlayer player, String permission) {
-        LuckPermsApi api = LuckPerms.getApi();
-        Node node = api.buildNode(permission).build();
-        me.lucko.luckperms.api.User user = api.getUser(player.getUniqueId());
-        if (user != null) return user.hasPermission(node).asBoolean();
-
-        // If LuckPerms checks failed
-        return Sponge.getServer().getPlayer(player.getUniqueId()).map(u -> u.hasPermission(permission)).orElse(false);
+        if (permission.equals(Permissions.ADMIN_BYPASS.p())) DarwinServer.getLog().warn("Received direct permission check for global bypass for player '" + player.getName() + "'");
+        return Sponge.getServer().getPlayer(player.getUniqueId()).map(u -> u.hasPermission(permission) || u.hasPermission(Permissions.ADMIN_BYPASS.p())).orElse(false);
     }
 
     @Override

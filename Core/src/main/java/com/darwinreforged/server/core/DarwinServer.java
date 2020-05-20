@@ -572,7 +572,6 @@ public abstract class DarwinServer extends Singleton {
     }
 
     @Command(aliases = "dserver", usage = "dserver", desc = "Returns active and failed modules to the player", min = 0, context = "dserver")
-    @Permission(Permissions.ADMIN_BYPASS)
     public void commandList(CommandSender src) {
         List<Text> moduleContext = new ArrayList<>();
         MODULES.forEach((clazz, ignored) -> {

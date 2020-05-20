@@ -75,7 +75,7 @@ public class SpectatorTeleportModule {
         DarwinPlayer player = (DarwinPlayer) event.getTarget();
         if (player.getGameMode().equals(GameModes.SPECTATOR)) {
             player.getWorld().ifPresent(world -> {
-                if (!whitelistedWorlds.contains(world.getName()) && player.hasPermission(Permissions.ADMIN_BYPASS)) {
+                if (!whitelistedWorlds.contains(world.getName()) && player.hasPermission(Permissions.GM3TP_IGNORE)) {
                     event.setCancelled(true);
                     player.sendMessage(Translations.SPECTATOR_TP_DISALLOWED.s(), false);
                 }

@@ -75,7 +75,7 @@ public class GoToLobbyModule {
         Optional<TimeDifference> diff = TimeUtils.getTimeSinceLastUuidTimeout(player.getUniqueId(), this);
         if ((!diff.isPresent()) || diff.get().getSeconds() > 10) {
             player.getWorld().ifPresent(world -> {
-                if (blacklist.contains(world.getName()) && !player.hasPermission(Permissions.ADMIN_BYPASS)) {
+                if (blacklist.contains(world.getName()) && !player.hasPermission(Permissions.GTL_IGNORE)) {
                     player.setGameMode(GameModes.CREATIVE);
                     player.sendMessage(Translations.GTL_WARPED, false);
                     player.execute("hub");
