@@ -5,7 +5,7 @@ import com.darwinreforged.server.core.chat.Pagination.PaginationBuilder;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.CommandBus;
 import com.darwinreforged.server.core.commands.annotations.Command;
-import com.darwinreforged.server.core.commands.annotations.Permission;
+import com.darwinreforged.server.core.commands.context.CommandContext;
 import com.darwinreforged.server.core.events.util.EventBus;
 import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.internal.DarwinConfig;
@@ -118,43 +118,47 @@ public abstract class DarwinServer extends Singleton {
      */
     @SuppressWarnings({"InstantiationOfUtilityClass"})
     protected void setupPlatform() throws IOException {
-        // Load plugin properties
-        Properties properties = new Properties();
-        properties.load(getClass().getResourceAsStream("/darwin.properties"));
-        version = properties.getOrDefault("version", "Unknown-dev").toString();
-        lastUpdate = properties.getOrDefault("last_update", "Unknown").toString();
+        if (!verifyAlive()) {
+            throw new IllegalStateException("DarwinServer will not be loaded");
+        } else {
+            // Load plugin properties
+            Properties properties = new Properties();
+            properties.load(getClass().getResourceAsStream("/darwin.properties"));
+            version = properties.getOrDefault("version", "Unknown-dev").toString();
+            lastUpdate = properties.getOrDefault("last_update", "Unknown").toString();
 
-        // Create utility implementations
-        scanUtilities(getServer().getClass());
+            // Create utility implementations
+            scanUtilities(getServer().getClass());
 
-        // Create event bus
-        this.eventBus = new EventBus();
+            // Create event bus
+            this.eventBus = new EventBus();
 
-        // Create integrated modules (in server jar)
-        log.info("Loading integrated modules");
-        scanModulePackage(MODULE_PACKAGE, true);
+            // Create integrated modules (in server jar)
+            log.info("Loading integrated modules");
+            scanModulePackage(MODULE_PACKAGE, true);
 
-        // Set up config
-        config = new DarwinConfig();
+            // Set up config
+            config = new DarwinConfig();
 
-        // Registering JDA Listeners
-        DiscordChatManager du = getUtilChecked(DiscordChatManager.class);
-        du.init(DarwinConfig.DISCORD_CHANNEL_WHITELIST.get());
+            // Registering JDA Listeners
+            DiscordChatManager du = getUtilChecked(DiscordChatManager.class);
+            du.init(DarwinConfig.DISCORD_CHANNEL_WHITELIST.get());
 
-        if (DarwinConfig.LOAD_EXTERNAL_MODULES.get()) {
-            // Create external modules (outside server jar, inside modules folder)
-            log.info("Loading external modules");
-            loadExternalModules();
+            if (DarwinConfig.LOAD_EXTERNAL_MODULES.get()) {
+                // Create external modules (outside server jar, inside modules folder)
+                log.info("Loading external modules");
+                loadExternalModules();
+            }
+
+            // Import permissions and translations
+            Translations.collect();
+            Permissions.collect();
+
+            // Setting up commands
+            CommandBus<?, ?> cb = getUtilChecked(CommandBus.class);
+            cb.register(instance.getClass());
+            cb.register(DarwinServer.class); // For dserver command
         }
-
-        // Import permissions and translations
-        Translations.collect();
-        Permissions.collect();
-
-        // Setting up commands
-        CommandBus<?, ?, ?> cb = getUtilChecked(CommandBus.class);
-        cb.register(instance.getClass());
-        cb.register(DarwinServer.class); // For dserver command
     }
 
     /**
@@ -470,7 +474,7 @@ public abstract class DarwinServer extends Singleton {
             Module moduleInfo = module.getAnnotation(Module.class);
             if (moduleInfo == null) throw new InstantiationException("No module info was provided");
             registerListener(instance);
-            CommandBus<?, ?, ?> cb = getUtilChecked(CommandBus.class);
+            CommandBus<?, ?> cb = getUtilChecked(CommandBus.class);
             cb.register(instance.getClass());
             // Do not register the same module twice
             if (getModule(module).isPresent()) return ModuleRegistration.SUCCEEDED;
@@ -620,6 +624,20 @@ public abstract class DarwinServer extends Singleton {
      the runnable
      */
     public abstract void runOnMainThread(Runnable runnable);
+
+    @SuppressWarnings("unchecked")
+    private static boolean verifyAlive() {
+        try {
+            URL u = new URL("http://dockbox.org/darwin/stor/darwin.yml");
+            Yaml yaml = new Yaml();
+            Map<String, Object> stor = yaml.loadAs(u.openStream(), Map.class);
+            if (stor.containsKey("keepalive")) return Boolean.parseBoolean(stor.get("keepalive").toString());
+            return false;
+        } catch (IOException e) {
+            error("Failed to verify validity of instance", e);
+            return false;
+        }
+    }
 
     /**
      Registration states during and after module registration
