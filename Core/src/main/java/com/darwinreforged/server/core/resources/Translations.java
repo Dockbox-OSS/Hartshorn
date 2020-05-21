@@ -509,7 +509,7 @@ public enum Translations {
         if (args.length > 0) {
             for (int i = args.length - 1; i >= 0; i--) {
                 String arg = "" + args[i];
-                if (arg == null || arg.isEmpty()) map.put(String.format("{%d}", i), "");
+                if (arg == null || arg.isEmpty()) map.put(String.format("{%d}", i), "empty");
                 else map.put(String.format("{%d}", i), arg);
                 if (i == 0) map.put("%s", arg);
             }
