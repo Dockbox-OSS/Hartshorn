@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public class SpongePlayerManager extends PlayerManager {
 
     private static Text parseColors(String s) {
-        return TextSerializers.FORMATTING_CODE.deserializeUnchecked(s);
+        return Text.of(s.replaceAll("&", "\u00A7"));
     }
 
     @Override
@@ -57,8 +57,6 @@ public class SpongePlayerManager extends PlayerManager {
     @Override
     public void tell(MessageReceiver receiver, com.darwinreforged.server.core.chat.Text message) {
         if (receiver instanceof DarwinPlayer) {
-            System.out.println("Legacy === " + message.toLegacy().replaceAll("&", "SECTION"));
-            System.out.println("Text === " + message.getText().replace("\u00A7", "SECTION"));
             Sponge.getServer().getPlayer(((DarwinPlayer) receiver).getUniqueId())
                     .ifPresent(spp -> spp.sendMessage(parseColors(Translations.DEFAULT_SINGLE_MESSAGE.f(message.getText()))));
         } else if (receiver instanceof Console) {
@@ -152,7 +150,7 @@ public class SpongePlayerManager extends PlayerManager {
         } else if (target instanceof Console) {
             Sponge.getCommandManager().process(Sponge.getServer().getConsole(), cmd);
         } else {
-            System.err.printf("Tried executing '%s' as non-player source (%s)%n", cmd, target.getClass());
+            DarwinServer.getLog().warn(String.format("Tried executing '%s' as non-player source (%s)%n", cmd, target.getClass()));
         }
     }
 
@@ -193,7 +191,6 @@ public class SpongePlayerManager extends PlayerManager {
 
     @Override
     public String getPlayerName(UUID uuid) {
-        // TODO : Replace Unknown Player with constant
         return Sponge.getServer().getPlayer(uuid).map(Player::getName).orElse(Translations.UNKNOWN_PLAYER.s());
     }
 
