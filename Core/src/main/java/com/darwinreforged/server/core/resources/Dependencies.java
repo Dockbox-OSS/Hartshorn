@@ -1,9 +1,12 @@
 package com.darwinreforged.server.core.resources;
 
+import com.boydti.fawe.Fawe;
+import com.sk89q.worldedit.WorldEdit;
+
 public enum Dependencies implements Dependency {
     // TODO? Convert to getclass of types?
-    FASTASYNCWORLDEDIT("com.boydti.fawe.FAWE"),
-    NATIVE_WORLDEDIT("com.sk89q.worldedit.WorldEdit"),
+    FASTASYNCWORLDEDIT(Fawe.class.toGenericString()),
+    NATIVE_WORLDEDIT(WorldEdit.class.toGenericString()),
     PLOTSQUARED("com.intellectualcrafters.plot.PS"),
     MULTICHAT("xyz.olivermartin.multichat.local.common.MultiChatLocal"),
     VOXELSNIPER("com.thevoxelbox.voxelsniper.VoxelSniper");
