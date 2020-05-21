@@ -22,6 +22,7 @@ import com.darwinreforged.server.core.types.living.CommandSender;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -575,8 +576,8 @@ public abstract class DarwinServer extends Singleton {
         return true;
     }
 
-    @Command(aliases = "dserver", usage = "dserver", desc = "Returns active and failed modules to the player", min = 0, context = "dserver")
-    public void commandList(CommandSender src) {
+    @Command(aliases = "dserver", usage = "dserver <module>", desc = "Returns active and failed modules to the player", min = 0, context = "dserver <module{Module}>")
+    public void commandList(CommandSender src, CommandContext ctx) {
         List<Text> moduleContext = new ArrayList<>();
         MODULES.forEach((clazz, ignored) -> {
             Optional<Module> infoOptional = getModuleInfo(clazz);
