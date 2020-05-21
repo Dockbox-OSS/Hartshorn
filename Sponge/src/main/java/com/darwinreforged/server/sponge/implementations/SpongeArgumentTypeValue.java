@@ -3,6 +3,8 @@ package com.darwinreforged.server.sponge.implementations;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.commands.CommandBus.ArgumentTypeValue;
 import com.darwinreforged.server.core.commands.CommandBus.Arguments;
+import com.darwinreforged.server.sponge.implementations.SpongeCommandBus.FaweArgument;
+import com.darwinreforged.server.sponge.implementations.SpongeCommandBus.FaweArgument.FaweTypes;
 import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 
@@ -13,8 +15,8 @@ import org.spongepowered.api.text.Text;
 public class SpongeArgumentTypeValue extends ArgumentTypeValue<CommandElement> {
 
     @SuppressWarnings({"unchecked", "rawtypes", "Guava"})
-    public SpongeArgumentTypeValue(String type, String permission, String key) {
-        super(Arguments.OTHER, permission, key);
+    public SpongeArgumentTypeValue(String type, String permission, String key) throws IllegalArgumentException {
+        super(Arguments.valueOf(type.toUpperCase()), permission, key);
         Optional<Arguments> argCandidate = Enums.getIfPresent(Arguments.class, type.toUpperCase());
         if (!argCandidate.isPresent()) {
             try {
@@ -67,15 +69,20 @@ public class SpongeArgumentTypeValue extends ArgumentTypeValue<CommandElement> {
             case WORLD:
                 return GenericArguments.world(Text.of(key));
             case EDITSESSION:
+                return new FaweArgument(Text.of(key), FaweTypes.EDIT_SESSION);
             case MASK:
+                return new FaweArgument(Text.of(key), FaweTypes.MASK);
             case PATTERN:
-                return new com.darwinreforged.server.sponge.implementations.SpongeCommandBus.FaweArgument(Text.of(key));
+                return new FaweArgument(Text.of(key), FaweTypes.PATTERN);
+            case REGION:
+                return new FaweArgument(Text.of(key), FaweTypes.REGION);
+            case OTHER:
             default:
                 return null;
         }
     }
 
-    public CommandElement getPermissionArgument() {
+    public CommandElement getArgument() {
         return permission == null ? super.element : GenericArguments.requiringPermission(element, permission);
     }
 }

@@ -1,11 +1,17 @@
 package com.darwinreforged.server.sponge.implementations;
 
+import com.boydti.fawe.object.FawePlayer;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.commands.CommandBus;
 import com.darwinreforged.server.core.modules.Module;
+import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.tuple.Tuple;
+import com.darwinreforged.server.core.types.living.Console;
 import com.google.common.collect.Multimap;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.extension.input.ParserContext;
 
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -17,9 +23,12 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.CommandFlags;
 import org.spongepowered.api.command.args.GenericArguments;
+import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -34,14 +43,20 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import static com.darwinreforged.server.core.DarwinServer.error;
+
 @SuppressWarnings("unchecked")
-public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext, SpongeArgumentTypeValue> {
+public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentTypeValue> {
 
     private static final Map<String, List<Tuple<String, CommandSpec>>> childsPerAlias = new HashMap<>();
 
     @Override
     protected SpongeArgumentTypeValue getArgumentValue(String type, String permission, String key) {
-        return new SpongeArgumentTypeValue(type, permission, key);
+        try {
+            return new SpongeArgumentTypeValue(type, permission, key);
+        } catch (IllegalArgumentException e) {
+            return new SpongeArgumentTypeValue(Arguments.OTHER.toString(), permission, key);
+        }
     }
 
     @Override
@@ -55,48 +70,60 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext, 
         if (permission != null) spec.permission(permission);
         else spec.permission(Permissions.ADMIN_BYPASS.p());
 
-        String part = command.split(" ")[1];
+        String[] parts = command.split(" ");
+        String part = parts.length > 1 ? parts[1] : null;
         // Child command
-        if (subcommand.matcher(part).matches()) {
+        if (part != null && subcommand.matcher(part).matches()) {
             String arguments = command.substring(command.indexOf(' ') + 1)
                     .replaceFirst(part, "");
             if (arguments.endsWith(" ")) arguments = arguments.substring(0, arguments.length() - 2);
 
             CommandElement[] elements = parseArguments(arguments);
 
-            Arrays.stream(elements).forEach(el -> System.out.println("Element : " + el));
-
             elements = Arrays.stream(elements).filter(Objects::nonNull).toArray(CommandElement[]::new);
             if (elements.length > 0) spec.executor(buildExecutor(runner)).arguments(elements);
+            else spec.executor(buildExecutor(runner));
 
-            String alias = command.substring(0, command.indexOf(' ') + 1);
+            String alias = command.substring(0, command.indexOf(' '));
             if (part.equals("")) part = "@m";
-            childsPerAlias.putIfAbsent(alias, new ArrayList<>());
-            childsPerAlias.get(alias).add(new Tuple<>(part, spec.build()));
+            List<Tuple<String, CommandSpec>> aliases = childsPerAlias.getOrDefault(alias, new ArrayList<>());
+            aliases.add(new Tuple<>(part, spec.build()));
+            childsPerAlias.put(alias, aliases);
 
             // Parent command
         } else if (command.startsWith("*")) {
-            if (!REGISTERED_COMMANDS.contains(command.substring(1, command.indexOf(' ')))) {
-                List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(command.substring(1), new ArrayList<>());
+            String registeredCmd = command.substring(1);
+            if (command.contains(" ")) registeredCmd = command.substring(1, command.indexOf(' '));
+            if (!REGISTERED_COMMANDS.contains(registeredCmd)) {
+                List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, new ArrayList<>());
                 childs.forEach(child -> {
-                    System.out.println("Registering : " + command + " child : " + child.getFirst());
                     if (child.getFirst().equals("@m")) {
-                        System.out.println("Found main");
                         spec.executor(child.getSecond().getExecutor());
                     } else {
-                        System.out.println("Found non-main : '" + child.getFirst() + "'");
                         spec.child(child.getSecond(), child.getFirst());
                     }
                 });
-                System.out.println("Parent command : " + command.substring(1, command.indexOf(' ')));
-                Sponge.getCommandManager().register(DarwinServer.getServer(), spec.build(), command.substring(1, command.indexOf(' ')));
-                REGISTERED_COMMANDS.add(command.substring(1, command.indexOf(' ')));
+
+                try {
+                    Field executorF = spec.getClass().getDeclaredField("executor");
+                    executorF.setAccessible(true);
+                    if (executorF.get(spec) == null) spec.executor((src, args) -> CommandResult.success());
+                } catch (Throwable e) {
+                    error("Could not access executor field", e);
+                    spec.executor((src, args) -> CommandResult.success());
+                }
+
+                try {
+                    Sponge.getCommandManager().register(DarwinServer.getServer(), spec.build(), registeredCmd);
+                } catch (IllegalArgumentException e) {
+                    error(e.getMessage(), e);
+                }
+                REGISTERED_COMMANDS.add(registeredCmd);
             }
             // Single method command
         } else {
             if (!REGISTERED_COMMANDS.contains(command.substring(0, command.indexOf(' ')))) {
                 spec.executor(buildExecutor(runner)).arguments(parseArguments(command.substring(command.indexOf(' ') + 1)));
-                System.out.println("Single command : " + command.substring(0, command.indexOf(' ')));
                 Sponge.getCommandManager().register(DarwinServer.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
                 REGISTERED_COMMANDS.add(command.substring(0, command.indexOf(' ')));
             }
@@ -113,14 +140,26 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext, 
             if (!parsedArgsF.isAccessible()) parsedArgsF.setAccessible(true);
             parsedArgs = (Multimap<String, Object>) parsedArgsF.get(ctx);
         } catch (IllegalAccessException | ClassCastException | NoSuchFieldException e) {
-            DarwinServer.error("Could not load parsed arguments from Sponge command context", e);
+            error("Could not load parsed arguments from Sponge command context", e);
             return null;
         }
+
         parsedArgs.asMap().forEach(((s, o) -> {
-            DarwinServer.getLog().info("S:" + s + "  /  O:" + o.getClass().toGenericString());
+            o.forEach(obj -> {
+                // TODO : Parse Darwin specific objects. Native types and FAWE Objects are correctly handled beforehand.
+                // Perhaps replace Sponge's default parser with a Darwin specific parser?
+                // Items to parse :
+                //Entity
+                //EntityOrSource
+                //Location
+                //Player
+                //PlayerOrSource
+                //User
+                //UserOrSource
+                //World
+            });
         }));
 
-        DarwinServer.getLog().info("Finished listing " + parsedArgs.asMap().size() + " args/vals");
         return null;
     }
 
@@ -133,16 +172,26 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext, 
             Matcher ma = argument.matcher(part);
             if (ma.matches()) {
                 boolean optional = ma.group(1).charAt(0) == '[';
-                CommandElement[] result = parseArguments(ma.group(2));
-                if (result.length==0) result = new CommandElement[]{argValue(ma.group(2)).getPermissionArgument()};
-                elements.add(optional?GenericArguments.optional(wrap(result)):wrap(result));
+                String argUnp = ma.group(2);
+                CommandElement[] result = parseArguments(argUnp);
+                if (result.length == 0) {
+                    SpongeArgumentTypeValue satv = argValue(ma.group(2));
+                    CommandElement permEl = satv.getArgument();
+                    result = new CommandElement[]{permEl};
+                }
+                CommandElement el = wrap(result);
+                if (optional) {
+                    elements.add(GenericArguments.optional(el));
+                } else {
+                    elements.add(el);
+                }
             } else {
                 Matcher mf = flag.matcher(part);
                 if (mf.matches()) {
                     if (cflags == null) cflags = GenericArguments.flags();
                     parseFlag(cflags, mf.group(1), mf.group(2));
                 } else {
-                    DarwinServer.error("Argument type was not recognized for `"+part+"`");
+                    error("Argument type was not recognized for `" + part + "`");
                 }
             }
         }
@@ -162,38 +211,76 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext, 
         } else {
             ArgumentTypeValue<CommandElement> av = argValue(value);
             if (name.indexOf(':') >= 0) {
-                DarwinServer.error("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
+                error("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
-            flags.valueFlag(av.getPermissionArgument(), name);
+            flags.valueFlag(av.getArgument(), name);
         }
     }
 
 
     private static CommandElement wrap(CommandElement... elements) {
-        if (elements.length == 0) return GenericArguments.none();
-        return elements.length == 1 ? elements[0] : GenericArguments.seq(elements);
+        if (elements.length == 0) {
+            return GenericArguments.none();
+        } else if (elements.length == 1) {
+            return elements[0];
+        } else {
+            return GenericArguments.seq(elements);
+        }
     }
 
     private CommandExecutor buildExecutor(CommandRunner runner) {
         return (src, args) -> {
-            // TODO : Wrap runner
-            DarwinServer.getLog().info("Starting command!");
             com.darwinreforged.server.core.commands.context.CommandContext ctx = convertContext(args);
-            // ...
+            if (src instanceof Player) {
+                DarwinPlayer dp = DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(((Player) src).getUniqueId(), src.getName());
+                runner.run(dp, ctx);
+            } else if (src instanceof ConsoleSource) {
+                runner.run(Console.instance, ctx);
+            } else {
+                src.sendMessage(Text.of(TextColors.RED, "Could not determine if you are a player or console, what are you?"));
+            }
             return CommandResult.success();
         };
     }
 
     public static class FaweArgument extends CommandElement {
 
-        protected FaweArgument(@Nullable Text key) {
+        enum FaweTypes {
+            REGION, EDIT_SESSION, PATTERN, MASK
+        }
+
+        private final FaweTypes type;
+
+        protected FaweArgument(@Nullable Text key, FaweTypes type) {
             super(key);
+            this.type = type;
         }
 
         @Nullable
         @Override
-        protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
-            // TODO : Implement parsers for FAWE types
+        protected Object parseValue(@NotNull CommandSource source, @NotNull CommandArgs args) throws ArgumentParseException {
+            try {
+                FawePlayer<?> fawePlayer = FawePlayer.wrap(source);
+                ParserContext pctx = new ParserContext();
+                pctx.setActor(fawePlayer.getPlayer());
+                pctx.setWorld(fawePlayer.getWorld());
+                pctx.setSession(fawePlayer.getSession());
+
+                switch (this.type) {
+                    case REGION:
+                        return fawePlayer.getSelection();
+                    case EDIT_SESSION:
+                        return fawePlayer.getNewEditSession();
+                    case PATTERN:
+                        String patternRaw = args.getRaw();
+                        return WorldEdit.getInstance().getPatternFactory().parseFromInput(patternRaw, pctx);
+                    case MASK:
+                        String maskRaw = args.getRaw();
+                        return WorldEdit.getInstance().getMaskFactory().parseFromInput(maskRaw, pctx);
+                }
+            } catch (Throwable e) {
+                DarwinServer.error("Failed to parse WorldEdit argument", e);
+            }
             return null;
         }
 
@@ -202,7 +289,7 @@ public class SpongeCommandBus extends CommandBus<CommandSource, CommandContext, 
                 @NotNull CommandSource src,
                 @NotNull CommandArgs args,
                 @NotNull CommandContext context) {
-            return null;
+            return new ArrayList<>();
         }
     }
 
