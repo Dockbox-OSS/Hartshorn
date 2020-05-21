@@ -101,7 +101,7 @@ public class DaveChatModule {
     @Permission(Permissions.DAVE_RELOAD)
     public void reload(DarwinPlayer src) {
         setupConfigurations();
-        src.sendMessage(Translations.DAVE_RELOADED_USER.f(configurationUtil.getPrefix().getText()), false);
+        src.sendMessage(Translations.DAVE_RELOADED_USER.f(configurationUtil.getPrefix().getText()), true);
     }
 
     @Command(aliases = "triggers", usage = "dave triggers", desc = "Lists Dave's triggers to the executing player", context = "dave triggers")
