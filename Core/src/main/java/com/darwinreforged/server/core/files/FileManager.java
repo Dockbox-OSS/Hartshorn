@@ -13,8 +13,11 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -50,14 +53,12 @@ public abstract class FileManager {
      the type parameter
      @param object
      the object
-     @param idType
-     the id type
      @param file
      the file
 
      @return the data db
      */
-    public <T, I> Dao<T, I> getDataDb(Class<T> object, Class<I> idType, File file) {
+    public <T, I> Dao<T, I> getDataDb(Class<T> object, File file) {
         if (isConnected(file)) {
             ConnectionSource source = jdbcSources.get(file.toString());
             try {
@@ -79,14 +80,12 @@ public abstract class FileManager {
      the type parameter
      @param object
      the object
-     @param idType
-     the id type
      @param module
      the module
 
      @return the data db
      */
-    public <T, I> Dao<T, I> getDataDb(Class<T> object, Class<I> idType, Object module) {
+    public <T, I> Dao<T, I> getDataDb(Class<T> object, Object module) {
         Optional<Module> info;
         if (module instanceof Class) info = DarwinServer.getModuleInfo((Class<?>) module);
         else info = DarwinServer.getModuleInfo(module.getClass());
@@ -94,7 +93,7 @@ public abstract class FileManager {
         if (info.isPresent()) {
             String id = info.get().id();
             File file = new File(getDataDirectory(module).toFile(), String.format("%s.dat", id));
-            return getDataDb(object, idType, file);
+            return getDataDb(object, file);
         }
         throw new RuntimeException("No such module registered");
     }
@@ -118,6 +117,18 @@ public abstract class FileManager {
         } catch (SQLException e) {
             DarwinServer.error(String.format("Failed to create connection source for '%s'", fileAb), e);
             return false;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getYamlDataForUrl(String url) {
+        try {
+            URL u = new URL(url);
+            Yaml yaml = new Yaml();
+            return yaml.loadAs(u.openStream(), Map.class);
+        } catch (IOException e) {
+            DarwinServer.error(String.format("Failed to obtain YAML from url '%s'.", url));
+            return new HashMap<>();
         }
     }
 

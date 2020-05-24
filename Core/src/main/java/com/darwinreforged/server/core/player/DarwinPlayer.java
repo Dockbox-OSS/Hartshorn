@@ -5,7 +5,6 @@ import com.boydti.fawe.object.FawePlayer;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
-import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
