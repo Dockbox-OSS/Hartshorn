@@ -1,20 +1,21 @@
 package com.darwinreforged.server.modules.optimizations.worldunloader;
 
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.commands.annotations.Permission;
 import com.darwinreforged.server.core.commands.annotations.Source;
 import com.darwinreforged.server.core.commands.context.CommandContext;
-import com.darwinreforged.server.core.external.PlotSquaredUtils;
-import com.darwinreforged.server.core.files.FileManager;
-import com.darwinreforged.server.core.player.DarwinPlayer;
-import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
-import com.darwinreforged.server.core.DarwinServer;
+import com.darwinreforged.server.core.external.PlotSquaredUtils;
+import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.modules.Module;
+import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.resources.Dependencies;
 import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.darwinreforged.server.core.util.LocationUtils;
 import com.darwinreforged.server.core.util.TimeUtils;
 
@@ -28,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 /**
  The type World unload module.
  */
-@Module(id = "worldunloader", name = "WorldUnloader", description = "Unload worlds with no players in them", authors = "GuusLieben")
+@Module(id = "worldunloader", name = "WorldUnloader", description = "Unload worlds with no players in them", authors = "GuusLieben", dependencies = Dependencies.PLOTSQUARED)
 public class WorldUnloadModule {
 
     private FileManager fileUtil;
