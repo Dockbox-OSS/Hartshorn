@@ -13,6 +13,7 @@ import com.darwinreforged.server.core.internal.ServerType;
 import com.darwinreforged.server.core.internal.Utility;
 import com.darwinreforged.server.core.modules.DisabledModule;
 import com.darwinreforged.server.core.modules.Module;
+import com.darwinreforged.server.core.resources.Dependencies;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.tuple.Tuple;
@@ -474,6 +475,11 @@ public abstract class DarwinServer extends Singleton {
 
             Module moduleInfo = module.getAnnotation(Module.class);
             if (moduleInfo == null) throw new InstantiationException("No module info was provided");
+            for (Dependencies dependency : moduleInfo.dependencies()) {
+                if (!dependency.isLoaded())
+                    return ModuleRegistration.DISABLED.setCtx(String.format("Required dependency '%s' is not present.", dependency.getMainClass()));
+            }
+
             registerListener(instance);
             CommandBus<?, ?> cb = getUtilChecked(CommandBus.class);
             cb.register(instance.getClass());

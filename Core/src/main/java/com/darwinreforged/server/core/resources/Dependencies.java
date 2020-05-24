@@ -21,4 +21,13 @@ public enum Dependencies implements Dependency {
     public String getMainClass() {
         return this.mainClass;
     }
+
+    public boolean isLoaded() {
+        try {
+            Class.forName(this.mainClass);
+            return true;
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
 }
