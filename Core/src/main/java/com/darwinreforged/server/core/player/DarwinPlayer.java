@@ -1,8 +1,11 @@
 package com.darwinreforged.server.core.player;
 
+import com.boydti.fawe.Fawe;
+import com.boydti.fawe.object.FawePlayer;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
+import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
@@ -13,10 +16,15 @@ import com.darwinreforged.server.core.types.location.DarwinWorld;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 /**
  The type Darwin player.
  */
 public class DarwinPlayer extends CommandSender {
+
+    @Nullable
+    private FawePlayer<?> fawePlayer;
 
     /**
      Instantiates a new Darwin player.
@@ -29,6 +37,12 @@ public class DarwinPlayer extends CommandSender {
     DarwinPlayer(UUID uuid, String name) {
         super.uuid = uuid;
         super.name = name;
+        this.fawePlayer = Fawe.get().getCachedPlayer(uuid);
+    }
+
+    public Optional<FawePlayer<?>> getFawePlayer() {
+        if (this.fawePlayer == null) this.fawePlayer = Fawe.get().getCachedPlayer(super.uuid);
+        return Optional.ofNullable(this.fawePlayer);
     }
 
     /**
