@@ -23,7 +23,6 @@ import com.darwinreforged.server.core.types.living.CommandSender;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
@@ -631,19 +630,11 @@ public abstract class DarwinServer extends Singleton {
      the runnable
      */
     public abstract void runOnMainThread(Runnable runnable);
-
-    @SuppressWarnings("unchecked")
+    
     private static boolean verifyAlive() {
-        try {
-            URL u = new URL("http://dockbox.org/darwin/stor/darwin.yml");
-            Yaml yaml = new Yaml();
-            Map<String, Object> stor = yaml.loadAs(u.openStream(), Map.class);
-            if (stor.containsKey("keepalive")) return Boolean.parseBoolean(stor.get("keepalive").toString());
-            return false;
-        } catch (IOException e) {
-            error("Failed to verify validity of instance", e);
-            return false;
-        }
+        Map<String, Object> stor = getUtilChecked(FileManager.class).getYamlDataForUrl("http://dockbox.org/darwin/stor/darwin.yml");
+        if (stor.containsKey("keepalive")) return Boolean.parseBoolean(stor.get("keepalive").toString());
+        return false;
     }
 
     /**
