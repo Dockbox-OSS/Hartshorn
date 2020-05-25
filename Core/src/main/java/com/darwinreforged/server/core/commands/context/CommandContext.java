@@ -73,13 +73,21 @@ public class CommandContext {
         return Arrays.stream(flags).filter(flag -> flag.getKey().equals(key)).findFirst().map(flag -> (CommandFlag<T>) flag);
     }
 
+    public boolean hasArgument(String key) {
+        return Arrays.stream(args).anyMatch(arg -> arg.getKey().equals(key));
+    }
+
+    public boolean hasFlag(String key) {
+        return Arrays.stream(flags).anyMatch(arg -> arg.getKey().equals(key));
+    }
+
     // Native argument parsers
 
     public Optional<CommandArgument<String>> getStringArgument(String key) {
         Optional<CommandArgument<?>> candidate = Arrays.stream(args).filter(val -> val.getKey().equals(key)).findFirst();
         if (candidate.isPresent()) {
             CommandArgument<?> value = candidate.get();
-            return Optional.of(new CommandArgument<>(value.getValue().toString(), value.isJoined(), value.getKey()));
+            return Optional.of(new CommandArgument<>(value.getValue().toString(), value.getKey()));
         }
         return Optional.empty();
     }
