@@ -647,11 +647,11 @@ public abstract class DarwinServer extends Singleton {
 
             Text header = Text.of(Translations.DARWIN_SERVER_VERSION.f(getVersion()))
                     .append(Text.NEW_LINE)
-                    .append(Text.of(Translations.DARWIN_SERVER_UPDATE.f(getLastUpdate())))
+                    .append(Translations.DARWIN_SERVER_UPDATE.f(getLastUpdate()))
                     .append(Text.NEW_LINE)
-                    .append(Text.of(Translations.DARWIN_SERVER_AUTHOR.f(AUTHOR)))
+                    .append(Translations.DARWIN_SERVER_AUTHOR.f(AUTHOR))
                     .append(Text.NEW_LINE)
-                    .append(Text.of(Translations.DARWIN_SERVER_MODULE_HEAD.s()));
+                    .append(Translations.DARWIN_SERVER_MODULE_HEAD.s());
 
             PaginationBuilder builder = PaginationBuilder.builder();
             builder
