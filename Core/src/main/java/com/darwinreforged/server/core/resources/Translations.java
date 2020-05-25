@@ -511,7 +511,6 @@ public enum Translations {
                 String arg = "" + args[i];
                 if (arg == null || arg.isEmpty()) map.put(String.format("{%d}", i), "empty");
                 else map.put(String.format("{%d}", i), arg);
-                if (i == 0) map.put("%s", arg);
             }
         }
         m = StringUtils.replaceFromMap(m, map);
@@ -522,7 +521,7 @@ public enum Translations {
         char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
         for (char c : nativeFormats) m = m.replaceAll(String.format("&%s", c), String.format("\u00A7%s", c));
 
-        return "\u00A7r" + m
+        return m
                 .replaceAll("\\$1", String.format("\u00A7%s", COLOR_PRIMARY.s))
                 .replaceAll("\\$2", String.format("\u00A7%s", COLOR_SECONDARY.s))
                 .replaceAll("\\$3", String.format("\u00A7%s", COLOR_MINOR.s))
@@ -535,7 +534,7 @@ public enum Translations {
             File file = new File(DarwinServer.getUtilChecked(FileManager.class).getConfigDirectory(module).toFile(), "translations.yml");
             if (!file.exists()) {
                 configMap = new HashMap<>();
-                Arrays.stream(Translations.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.u()));
+                Arrays.stream(Translations.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.s));
                 DarwinServer.getUtilChecked(FileManager.class).writeYamlDataToFile(configMap, file);
             } else configMap = DarwinServer.getUtilChecked(FileManager.class).getYamlDataFromFile(file);
 
