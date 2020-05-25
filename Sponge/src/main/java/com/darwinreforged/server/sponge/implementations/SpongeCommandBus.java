@@ -158,7 +158,7 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
         }
 
         List<CommandArgument<?>> arguments = new ArrayList<>();
-        PlayerManager pm = DarwinServer.getUtilChecked(PlayerManager.class);
+        PlayerManager pm = DarwinServer.get(PlayerManager.class);
 
         parsedArgs.asMap().forEach(((s, o) -> o.forEach(obj -> {
             if (obj instanceof Player) {
@@ -282,7 +282,7 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
     private CommandExecutor buildExecutor(CommandRunner runner) {
         return (src, args) -> {
             CommandSender sender;
-            if (src instanceof Player) sender = DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(((Player) src).getUniqueId(), src.getName());
+            if (src instanceof Player) sender = DarwinServer.get(PlayerManager.class).getPlayer(((Player) src).getUniqueId(), src.getName());
             else if (src instanceof ConsoleSource) sender = Console.instance;
             else sender = null;
 

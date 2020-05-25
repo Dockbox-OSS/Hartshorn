@@ -55,7 +55,7 @@ public class GoToLobbyModule {
     }
 
     private void init() {
-        FileManager fileManager = DarwinServer.getUtilChecked(FileManager.class);
+        FileManager fileManager = DarwinServer.get(FileManager.class);
         Map<String, Object> config = fileManager.getYamlDataForConfig(this);
 
         if(config.containsKey("blacklist")) blacklist = (List<String>) config.get("blacklist");

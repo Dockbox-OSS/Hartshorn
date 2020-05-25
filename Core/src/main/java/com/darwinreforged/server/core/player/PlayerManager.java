@@ -47,11 +47,11 @@ public abstract class PlayerManager {
     }
 
     private static void updateUtil() {
-        if (playerUtils == null) playerUtils = DarwinServer.getUtilChecked(PlayerManager.class);
+        if (playerUtils == null) playerUtils = DarwinServer.get(PlayerManager.class);
     }
 
     private static void updateStorage() {
-        FileManager fu = DarwinServer.getUtilChecked(FileManager.class);
+        FileManager fu = DarwinServer.get(FileManager.class);
         File dataPath = fu.getDataDirectory(DarwinServerModule.class, "storage").toFile();
 //        File playerStorageFile = new File(dataPath, "player-storage.yml");
 

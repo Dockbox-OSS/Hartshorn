@@ -553,12 +553,12 @@ public enum Translations {
     public static void collect() {
         DarwinServer.getModule(DarwinServerModule.class).ifPresent(module -> {
             Map<String, Object> configMap;
-            File file = new File(DarwinServer.getUtilChecked(FileManager.class).getConfigDirectory(module).toFile(), "translations.yml");
+            File file = new File(DarwinServer.get(FileManager.class).getConfigDirectory(module).toFile(), "translations.yml");
             if (!file.exists()) {
                 configMap = new HashMap<>();
                 Arrays.stream(Translations.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.s));
-                DarwinServer.getUtilChecked(FileManager.class).writeYamlDataToFile(configMap, file);
-            } else configMap = DarwinServer.getUtilChecked(FileManager.class).getYamlDataFromFile(file);
+                DarwinServer.get(FileManager.class).writeYamlDataToFile(configMap, file);
+            } else configMap = DarwinServer.get(FileManager.class).getYamlDataFromFile(file);
 
             configMap.forEach((k, v) -> {
                 try {

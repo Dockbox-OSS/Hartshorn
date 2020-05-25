@@ -50,7 +50,7 @@ public class DarwinPlayer extends CommandSender {
      @return the boolean
      */
     public boolean isOnline() {
-        return DarwinServer.getUtilChecked(PlayerManager.class).isOnline(this);
+        return DarwinServer.get(PlayerManager.class).isOnline(this);
     }
 
     /**
@@ -69,7 +69,7 @@ public class DarwinPlayer extends CommandSender {
      Kick.
      */
     public void kick() {
-        DarwinServer.getUtilChecked(PlayerManager.class).kick(this);
+        DarwinServer.get(PlayerManager.class).kick(this);
     }
 
     public boolean hasPermission(Permissions permission) {
@@ -85,7 +85,7 @@ public class DarwinPlayer extends CommandSender {
      @return the boolean
      */
     public boolean hasPermission(String permission) {
-        return DarwinServer.getUtilChecked(PlayerManager.class).hasPermission(this, permission);
+        return DarwinServer.get(PlayerManager.class).hasPermission(this, permission);
     }
 
     /**
@@ -94,7 +94,7 @@ public class DarwinPlayer extends CommandSender {
      @return the location
      */
     public Optional<DarwinLocation> getLocation() {
-        return DarwinServer.getUtilChecked(PlayerManager.class).getLocation(this);
+        return DarwinServer.get(PlayerManager.class).getLocation(this);
     }
 
     /**
@@ -112,7 +112,7 @@ public class DarwinPlayer extends CommandSender {
      @return the game mode
      */
     public GameModes getGameMode() {
-        return DarwinServer.getUtilChecked(PlayerManager.class).getGameMode(this);
+        return DarwinServer.get(PlayerManager.class).getGameMode(this);
     }
 
     /**
@@ -122,17 +122,17 @@ public class DarwinPlayer extends CommandSender {
      the mode
      */
     public void setGameMode(GameModes mode) {
-        DarwinServer.getUtilChecked(PlayerManager.class).setGameMode(mode, this);
+        DarwinServer.get(PlayerManager.class).setGameMode(mode, this);
     }
 
     @Override
     public String getName(boolean lookup) {
-        return DarwinServer.getUtilChecked(PlayerManager.class).getPlayerName(this.uuid);
+        return DarwinServer.get(PlayerManager.class).getPlayerName(this.uuid);
     }
 
     @Override
     public void execute(String cmd) {
-        DarwinServer.getUtilChecked(PlayerManager.class).executeCmd(cmd, this);
+        DarwinServer.get(PlayerManager.class).executeCmd(cmd, this);
     }
 
     @Override
@@ -159,7 +159,7 @@ public class DarwinPlayer extends CommandSender {
 
     @Override
     public void sendMessage(Text text, boolean plain) {
-        PlayerManager man = DarwinServer.getUtilChecked(PlayerManager.class);
+        PlayerManager man = DarwinServer.get(PlayerManager.class);
         if (plain) man.tellNoMarkup(this, text);
         else man.tell(this, text);
     }

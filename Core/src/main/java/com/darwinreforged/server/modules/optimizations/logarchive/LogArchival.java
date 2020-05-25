@@ -48,7 +48,7 @@ public class LogArchival {
      */
     @Listener
     public void onReload(ServerReloadEvent event) {
-        logs = DarwinServer.getUtilChecked(FileManager.class).getLogDirectory();
+        logs = DarwinServer.get(FileManager.class).getLogDirectory();
         this.run();
     }
 

@@ -53,7 +53,7 @@ public class SpectatorTeleportModule {
     }
 
     private void init() {
-        FileManager fileManager = DarwinServer.getUtilChecked(FileManager.class);
+        FileManager fileManager = DarwinServer.get(FileManager.class);
         Map<String, Object> yamlData = fileManager.getYamlDataForConfig(this);
         if (yamlData.containsKey("whitelist")) {
             whitelistedWorlds = (List<String>) yamlData.get("whitelist");

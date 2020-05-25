@@ -61,14 +61,14 @@ public class WorldUnloadModule {
     }
 
     private void init() {
-        fileUtil = DarwinServer.getUtilChecked(FileManager.class);
-        plotSquaredUtils = DarwinServer.getUtilChecked(PlotSquaredUtils.class);
+        fileUtil = DarwinServer.get(FileManager.class);
+        plotSquaredUtils = DarwinServer.get(PlotSquaredUtils.class);
         ArrayList<String> blacklist = (ArrayList<String>) fileUtil.getYamlDataForConfig(this, "blacklist", ArrayList.class);
         if (blacklist != null) unloadBlacklist.addAll(blacklist);
         refreshBlackList();
 
         // Do not use async, certain platforms do not allow async chunk modifications
-        DarwinServer.getUtilChecked(TimeUtils.class).schedule()
+        DarwinServer.get(TimeUtils.class).schedule()
                 .interval(2, TimeUnit.MINUTES)
                 .execute(this::unloadTask)
                 .submit();
@@ -115,7 +115,7 @@ public class WorldUnloadModule {
     }
 
     private void unloadTask() {
-        DarwinServer.getUtilChecked(LocationUtils.class)
+        DarwinServer.get(LocationUtils.class)
                 .getEmptyWorlds().stream()
                 .filter(world -> !unloadBlacklist.contains(world.getName()) && !plotSquaredUtils.isPlotWorld(world))
                 .forEach(darwinWorld -> darwinWorld.unloadWorld(false));

@@ -149,7 +149,7 @@ public abstract class DarwinServer extends Singleton {
             config = new DarwinConfig();
 
             // Registering JDA Listeners
-            DiscordChatManager du = getUtilChecked(DiscordChatManager.class);
+            DiscordChatManager du = get(DiscordChatManager.class);
             du.init(DarwinConfig.DISCORD_CHANNEL_WHITELIST.get());
 
             if (DarwinConfig.LOAD_EXTERNAL_MODULES.get()) {
@@ -163,7 +163,7 @@ public abstract class DarwinServer extends Singleton {
             Permissions.collect();
 
             // Setting up commands
-            CommandBus<?, ?> cb = getUtilChecked(CommandBus.class);
+            CommandBus<?, ?> cb = get(CommandBus.class);
             cb.register(instance.getClass());
             cb.register(DarwinServer.class); // For dserver command
 
@@ -199,7 +199,7 @@ public abstract class DarwinServer extends Singleton {
     }
 
     private void loadExternalModules() {
-        Path modDir = getUtilChecked(FileManager.class).getModuleDirectory();
+        Path modDir = get(FileManager.class).getModuleDirectory();
         try {
             URL url = modDir.toUri().toURL();
             log.info(String.format("Scanning %s for additional modules", url.toString()));
@@ -346,29 +346,12 @@ public abstract class DarwinServer extends Singleton {
 
      @return the util
      */
-
-    public static <I> Optional<? extends I> getUtil(Class<I> clazz) {
+    private static <I> Optional<? extends I> getUtil(Class<I> clazz) {
         if (!clazz.isAnnotationPresent(Utility.class))
             throw new IllegalArgumentException(String.format("Requested utility class is not annotated as such (%s)", clazz.toGenericString()));
         Object implementation = UTILS.get(clazz);
         if (implementation != null) return (Optional<? extends I>) Optional.of(implementation);
         return Optional.empty();
-    }
-
-    /**
-     Attempt to get a utility of module safely (Optional-wrapped)
-
-     @param <I>
-     the type parameter for the utility or module
-     @param clazz
-     the utility or module type
-
-     @return the Optional instance
-     */
-    public static <I> Optional<? extends I> getSafe(Class<I> clazz) {
-        if (clazz.isAnnotationPresent(Module.class)) return getModule(clazz);
-        else if (clazz.isAnnotationPresent(Utility.class)) return getUtil(clazz);
-        else return Optional.empty();
     }
 
     /**
@@ -381,9 +364,9 @@ public abstract class DarwinServer extends Singleton {
 
      @return the util checked
      */
-    public static <I> I getUtilChecked(Class<I> clazz) {
+    public static <I> I get(Class<I> clazz) {
         Optional<? extends I> optionalImpl = getUtil(clazz);
-        return optionalImpl.orElse(null);
+        return optionalImpl.orElseThrow(() -> new IllegalStateException(String.format("Could not obtain instance of %s", clazz.toGenericString())));
     }
 
     /**
@@ -501,7 +484,7 @@ public abstract class DarwinServer extends Singleton {
             }
 
             registerListener(instance);
-            CommandBus<?, ?> cb = getUtilChecked(CommandBus.class);
+            CommandBus<?, ?> cb = get(CommandBus.class);
             cb.register(instance.getClass());
             // Do not register the same module twice
             if (getModule(module).isPresent()) return ModuleRegistration.SUCCEEDED;
@@ -685,7 +668,7 @@ public abstract class DarwinServer extends Singleton {
     public abstract void runOnMainThread(Runnable runnable);
     
     private static boolean verifyAlive() {
-        Map<String, Object> stor = getUtilChecked(FileManager.class).getYamlDataForUrl("http://dockbox.org/darwin/stor/darwin.yml");
+        Map<String, Object> stor = get(FileManager.class).getYamlDataForUrl("http://dockbox.org/darwin/stor/darwin.yml");
         if (stor.containsKey("keepalive")) return Boolean.parseBoolean(stor.get("keepalive").toString());
         return false;
     }

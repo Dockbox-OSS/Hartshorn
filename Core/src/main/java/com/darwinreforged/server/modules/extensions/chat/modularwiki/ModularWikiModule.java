@@ -55,7 +55,7 @@ public class ModularWikiModule {
     }
 
     public void init() {
-        FileManager fm = DarwinServer.getUtilChecked(FileManager.class);
+        FileManager fm = DarwinServer.get(FileManager.class);
         File entryFile = new File(fm.getDataDirectory(this).toFile(), "entries.yml");
         ModularWikiModule.storageModel = fm.getYamlDataFromFile(entryFile, WikiStorageModel.class, null);
 

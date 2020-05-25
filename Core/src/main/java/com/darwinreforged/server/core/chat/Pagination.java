@@ -26,7 +26,7 @@ public class Pagination {
     }
 
     public void sendTo(MessageReceiver receiver) {
-        DarwinServer.getUtilChecked(PlayerManager.class).sendPagination(receiver, this);
+        DarwinServer.get(PlayerManager.class).sendPagination(receiver, this);
     }
 
     public Text getPadding() {
