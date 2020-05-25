@@ -27,4 +27,6 @@ public abstract class CommandSender extends Target implements MessageReceiver {
      @return the boolean
      */
     public abstract boolean hasPermission(Permissions permission);
+
+    public abstract boolean hasPermission(String permission);
 }

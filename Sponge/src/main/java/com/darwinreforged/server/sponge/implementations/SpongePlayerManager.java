@@ -43,24 +43,28 @@ public class SpongePlayerManager extends PlayerManager {
         return Text.of(s.replaceAll("&", "\u00A7"));
     }
 
+    private static Text prefix() {
+        return fromAPI(com.darwinreforged.server.core.chat.Text.of(Translations.PREFIX.s()));
+    }
+
     @Override
     public void broadcast(com.darwinreforged.server.core.chat.Text message) {
-        Sponge.getServer().getBroadcastChannel().send(fromAPI(message));
+        Sponge.getServer().getBroadcastChannel().send(Text.of(prefix(), fromAPI(message)));
     }
 
     @Override
     public void broadcastIfPermitted(com.darwinreforged.server.core.chat.Text message, String permission) {
         Sponge.getServer().getOnlinePlayers().parallelStream().filter(p -> p.hasPermission(permission) ||
-                p.hasPermission(Permissions.ADMIN_BYPASS.p())).forEach(p -> p.sendMessage(fromAPI(message)));
+                p.hasPermission(Permissions.ADMIN_BYPASS.p())).forEach(p -> p.sendMessage(Text.of(prefix(), fromAPI(message))));
     }
 
     @Override
     public void tell(MessageReceiver receiver, com.darwinreforged.server.core.chat.Text message) {
         if (receiver instanceof DarwinPlayer) {
             Sponge.getServer().getPlayer(((DarwinPlayer) receiver).getUniqueId())
-                    .ifPresent(spp -> spp.sendMessage(fromAPI(message)));
+                    .ifPresent(spp -> spp.sendMessage(Text.of(prefix(), fromAPI(message))));
         } else if (receiver instanceof Console) {
-            Sponge.getServer().getConsole().sendMessage(fromAPI(message));
+            Sponge.getServer().getConsole().sendMessage(Text.of(prefix(), fromAPI(message)));
         } else {
             DarwinServer.getLog().warn("Failed to get receiver for : " + receiver);
         }
@@ -186,7 +190,7 @@ public class SpongePlayerManager extends PlayerManager {
             if (pagination.getTitle() != null) builder.title(fromAPI(pagination.getTitle()));
             if (pagination.getContents() != null) {
                 builder.contents(
-                        pagination.getContents().stream().map(this::fromAPI).collect(Collectors.toList())
+                        pagination.getContents().stream().map(SpongePlayerManager::fromAPI).collect(Collectors.toList())
                 );
             }
 
@@ -199,7 +203,7 @@ public class SpongePlayerManager extends PlayerManager {
         return Sponge.getServer().getPlayer(uuid).map(Player::getName).orElse(Translations.UNKNOWN_PLAYER.s());
     }
 
-    private Text fromAPI(com.darwinreforged.server.core.chat.Text text) {
+    private static Text fromAPI(com.darwinreforged.server.core.chat.Text text) {
         Text spT = parseColors(text.toLegacy());
         Text.Builder builder = spT.toBuilder();
         if (text.getClickEvent() != null) {

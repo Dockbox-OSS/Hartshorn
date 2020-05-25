@@ -37,6 +37,11 @@ public class Console extends CommandSender {
     }
 
     @Override
+    public boolean hasPermission(String permission) {
+        return true;
+    }
+
+    @Override
     public String getName(boolean lookup) {
         return getName();
     }
