@@ -107,8 +107,10 @@ public enum Permissions {
             } else configMap = DarwinServer.getUtilChecked(FileManager.class).getYamlDataFromFile(file);
 
             configMap.forEach((k, v) -> {
-                Permissions t = Permissions.valueOf(k.toUpperCase().replaceAll("\\.", "_"));
-                if (t != null) t.c(v.toString());
+                try {
+                    Permissions t = Permissions.valueOf(k.toUpperCase().replaceAll("\\.", "_"));
+                    if (t != null) t.c(v.toString());
+                } catch (Throwable ignored) {}
             });
         });
     }

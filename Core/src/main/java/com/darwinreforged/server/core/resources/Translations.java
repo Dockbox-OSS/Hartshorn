@@ -561,8 +561,10 @@ public enum Translations {
             } else configMap = DarwinServer.getUtilChecked(FileManager.class).getYamlDataFromFile(file);
 
             configMap.forEach((k, v) -> {
-                Translations t = Translations.valueOf(k.toUpperCase().replaceAll("\\.", "_"));
-                if (t != null) t.c(v.toString());
+                try {
+                    Translations t = Translations.valueOf(k.toUpperCase().replaceAll("\\.", "_"));
+                    if (t != null) t.c(v.toString());
+                } catch (Throwable ignored) {}
             });
         });
     }
