@@ -180,9 +180,9 @@ public class DaveChatListeners {
             message.append(color);
 
             if (link) {
-                Text linkSuggestion = Text.of(Translations.DAVE_LINK_SUGGESTION.f(response))
-                        .setClickEvent(new ClickEvent(ClickAction.OPEN_URL, response))
-                        .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_LINK_SUGGESTION_HOVER.f(response)));
+                Text linkSuggestion = Text.of(Translations.DAVE_LINK_SUGGESTION.f(response));
+                linkSuggestion.setClickEvent(new ClickEvent(ClickAction.OPEN_URL, response));
+                linkSuggestion.setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_LINK_SUGGESTION_HOVER.f(response)));
                 message.append(linkSuggestion);
             } else message.append(Text.of(response));
 
