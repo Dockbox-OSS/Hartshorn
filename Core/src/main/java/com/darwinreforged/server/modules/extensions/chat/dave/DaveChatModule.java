@@ -13,9 +13,10 @@ import com.darwinreforged.server.core.commands.context.CommandContext;
 import com.darwinreforged.server.core.events.internal.server.ServerInitEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.modules.Module;
-import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.resources.Dependencies;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.resources.Translations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.UUID;
  The type Dave chat module.
  */
 @Command(aliases = "dave", usage = "/dave [mute|reload]", desc = "Dave commands", context = "dave")
-@Module(id = "dave", name = "Dave", version = "2.0.1", description = "Read chat, send players a message if it picks up a configured message", authors = "GuusLieben")
+@Module(id = "dave", name = "Dave", version = "2.0.1", description = "Read chat, send players a message if it picks up a configured message", authors = "GuusLieben", dependencies = Dependencies.PLACEHOLDER_API)
 public class DaveChatModule {
 
     /**
@@ -143,7 +144,7 @@ public class DaveChatModule {
                 if (chatModuleOptional.isPresent()) {
                     Text botPrefix = chatModuleOptional.get().getConfigurationUtil().getPrefix();
                     String botDefaultColor = chatModuleOptional.get().getConfigurationUtil().getMessageDefaultColor().replaceAll("&", "\u00A7");
-                    DaveChatListeners.Executor.beforeExecution(src.getName(), candidate.get().getTrigger().get(0).replace(",", " "), botPrefix, botDefaultColor, src);
+                    DaveChatListeners.Executor.beforeExecution(src.getName(), candidate.get().getTrigger().get(0).replace(",", " "), botPrefix, botDefaultColor, src, false);
                     DaveChatListeners.Executor.handleTrigger(candidate.get());
                     sent = true;
                 }

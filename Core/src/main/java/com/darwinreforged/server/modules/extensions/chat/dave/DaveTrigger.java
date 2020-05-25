@@ -11,6 +11,7 @@ public class DaveTrigger {
     private List<String> trigger;
     private boolean important;
     private List<Response> responses;
+    private String permission = null;
 
     /**
      Instantiates a new Dave trigger.
@@ -29,11 +30,12 @@ the responses
 
 
      */
-    public DaveTrigger(String id, List<String> trigger, boolean important, List<Response> responses) {
+    public DaveTrigger(String id, List<String> trigger, boolean important, List<Response> responses, String permission) {
         this.id = id;
         this.trigger = trigger;
         this.important = important;
         this.responses = responses;
+        this.permission = permission;
     }
 
     /**
@@ -70,6 +72,10 @@ the responses
      */
     public List<Response> getResponses() {
         return responses;
+    }
+
+    public String getPermission() {
+        return permission;
     }
 
     /**

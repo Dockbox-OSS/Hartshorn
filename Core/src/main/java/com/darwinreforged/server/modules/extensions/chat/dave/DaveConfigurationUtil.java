@@ -48,7 +48,8 @@ public class DaveConfigurationUtil {
                             Arrays.asList(
                                     new Response("This is a chat message", "message"),
                                     new Response("https://example.com", "url"),
-                                    new Response("help", "cmd"))));
+                                    new Response("help", "cmd")),
+                            "dave.admin"));
             TriggerConfig triggerConfig = new TriggerConfig(triggers);
             fu.writeYamlDataToFile(triggerConfig, triggerFile);
         }

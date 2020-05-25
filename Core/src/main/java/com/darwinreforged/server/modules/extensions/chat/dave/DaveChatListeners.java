@@ -27,20 +27,11 @@ import java.util.Optional;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
 
-/**
- The type Dave chat listeners.
- */
 public class DaveChatListeners {
 
     private Text botPrefix;
     private String botDefaultColor;
 
-    /**
-     On discord chat.
-
-     @param event
-     the event
-     */
     @Listener
     public void onDiscordChat(DiscordChatEvent event) {
         beforeEach();
@@ -53,7 +44,7 @@ public class DaveChatListeners {
                 .getName()
                 .equals("global")) {
             Console console = Console.instance;
-            Executor.beforeExecution(playername, message, botPrefix, botDefaultColor, console);
+            Executor.beforeExecution(playername, message, botPrefix, botDefaultColor, console, true);
             DarwinServer.getUtilChecked(TimeUtils.class).schedule()
                     .execute(new Executor())
                     .delayTicks(5)
@@ -69,12 +60,6 @@ public class DaveChatListeners {
         }
     }
 
-    /**
-     On game chat.
-
-     @param event
-     the event
-     */
     @Listener
     public void onGameChat(SendChatMessageEvent event) {
         beforeEach();
@@ -82,7 +67,7 @@ public class DaveChatListeners {
 
         if (event.isGlobalChat())
             if (!(event.getTarget() instanceof Console)) {
-                Executor.beforeExecution(playername, event.getMessage(), botPrefix, botDefaultColor, (DarwinPlayer) event.getTarget());
+                Executor.beforeExecution(playername, event.getMessage(), botPrefix, botDefaultColor, (DarwinPlayer) event.getTarget(), false);
                 DarwinServer.getUtilChecked(TimeUtils.class).schedule()
                         .execute(new Executor())
                         .delayTicks(5)
@@ -93,51 +78,21 @@ public class DaveChatListeners {
     public static class Executor
             implements Runnable {
 
-        /**
-         The Playername.
-         */
         static String playername;
-        /**
-         The Message.
-         */
         static String message;
-        /**
-         The Bot prefix.
-         */
         static Text botPrefix;
-        /**
-         The Color.
-         */
         static String color;
-        /**
-         The Sender.
-         */
         static CommandSender sender;
-        /**
-         The Time since trigger.
-         */
         static HashMap<DaveTrigger, LocalDateTime> timeSinceTrigger = new HashMap<>();
+        static boolean isDiscordSource;
 
-        /**
-         Before execution.
-
-         @param playername
-         the playername
-         @param message
-         the message
-         @param botPrefix
-         the bot prefix
-         @param color
-         the color
-         @param sender
-         the sender
-         */
-        static void beforeExecution(String playername, String message, Text botPrefix, String color, CommandSender sender) {
+        static void beforeExecution(String playername, String message, Text botPrefix, String color, CommandSender sender, boolean isDiscordSource) {
             Executor.playername = playername;
             Executor.message = message;
             Executor.botPrefix = botPrefix;
             Executor.color = color;
             Executor.sender = sender;
+            Executor.isDiscordSource = isDiscordSource;
         }
 
         @Override
@@ -154,6 +109,17 @@ public class DaveChatListeners {
         }
 
         public static void handleTrigger(DaveTrigger trigger) {
+            String perm = trigger.getPermission();
+
+            if (perm != null) {
+                if (isDiscordSource) return;
+                else {
+                    PlayerManager pm = DarwinServer.getUtilChecked(PlayerManager.class);
+                    Optional<DarwinPlayer> dp = pm.getPlayer(playername);
+                    if (dp.isPresent() && !dp.get().hasPermission(perm)) return;
+                }
+            }
+
             List<Response> responses = trigger.getResponses();
 
             boolean important = trigger.isImportant();
@@ -172,7 +138,8 @@ public class DaveChatListeners {
         }
 
         private static void executeCommand(String command) {
-            sender.execute(command.replaceFirst("/", ""));
+            if (command.startsWith("*")) Console.instance.execute(command);
+            else sender.execute(command);
         }
 
         private static void printResponse(String response, boolean link, boolean important) {
