@@ -5,20 +5,24 @@ import com.darwinreforged.server.core.commands.context.AbstractCommandValue;
 import java.util.Optional;
 
 /**
- The interface Functional parser.
+ The functional interface type used to parse {@link AbstractCommandValue<String>}
+ values to generic types, depending on its implementation.
 
  @param <T>
- the type parameter
+ the type parameter to convert to
  */
 @FunctionalInterface
 public interface FunctionalParser<T> {
+
     /**
-     Parse optional.
+     The method used to parse {@link AbstractCommandValue<String>}s into the given
+     generic type.
 
      @param val
-     the val
+     the {@link AbstractCommandValue} in String format to parse.
 
-     @return the optional
+     @return the optional type of the generic type. Should return {@link Optional#empty()} if
+     null or if the value could not be parsed.
      */
     Optional<T> parse(AbstractCommandValue<String> val);
 }

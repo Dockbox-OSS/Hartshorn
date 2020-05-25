@@ -8,16 +8,17 @@ import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.types.living.DarwinPlayer;
-import com.darwinreforged.server.core.types.living.state.GameModes;
-import com.darwinreforged.server.core.util.FileUtils;
-import com.darwinreforged.server.core.util.TimeDifference;
+import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.player.state.GameModes;
+import com.darwinreforged.server.core.files.FileManager;
+import com.darwinreforged.server.core.types.time.TimeDifference;
 import com.darwinreforged.server.core.util.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  The type Go to lobby module.
@@ -54,12 +55,12 @@ public class GoToLobbyModule {
 
     @SuppressWarnings("unchecked")
     private void init() {
-        FileUtils fileUtils = DarwinServer.getUtilChecked(FileUtils.class);
-        Map<String, Object> config = fileUtils.getYamlDataForConfig(this);
+        FileManager fileManager = DarwinServer.getUtilChecked(FileManager.class);
+        Map<String, Object> config = fileManager.getYamlDataForConfig(this);
 
         if(config.containsKey("blacklist")) blacklist = (List<String>) config.get("blacklist");
         else config.put("blacklist", Arrays.asList("denied_world", "worlds"));
-        fileUtils.writeYamlDataForConfig(config, this);
+        fileManager.writeYamlDataForConfig(config, this);
     }
 
     /**
@@ -71,12 +72,12 @@ public class GoToLobbyModule {
     @Listener
     public void onPlayerMove(PlayerMoveEvent event) {
         DarwinPlayer player = (DarwinPlayer) event.getTarget();
-        TimeDifference diff = TimeUtils.getTimeSinceLastUuidTimeout(player.getUniqueId(), this);
-        if (diff == null || diff.getSeconds() > 10) {
+        Optional<TimeDifference> diff = TimeUtils.getTimeSinceLastUuidTimeout(player.getUniqueId(), this);
+        if ((!diff.isPresent()) || diff.get().getSeconds() > 10) {
             player.getWorld().ifPresent(world -> {
-                if (blacklist.contains(world.getName()) && !player.hasPermission(Permissions.ADMIN_BYPASS)) {
+                if (blacklist.contains(world.getName()) && !player.hasPermission(Permissions.GTL_IGNORE)) {
                     player.setGameMode(GameModes.CREATIVE);
-                    player.sendMessage(Translations.GTL_WARPED);
+                    player.sendMessage(Translations.GTL_WARPED, false);
                     player.execute("hub");
                     TimeUtils.registerUuidTimeout(player.getUniqueId(), this);
                 }

@@ -1,16 +1,16 @@
 package com.darwinreforged.server.modules.optimizations.spectatorteleport;
 
-import com.darwinreforged.server.core.types.living.DarwinPlayer;
-import com.darwinreforged.server.core.types.living.state.GameModes;
+import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.events.internal.player.PlayerTeleportEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
-import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.util.FileUtils;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.files.FileManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,14 +53,14 @@ public class SpectatorTeleportModule {
 
     @SuppressWarnings("unchecked")
     private void init() {
-        FileUtils fileUtils = DarwinServer.getUtilChecked(FileUtils.class);
-        Map<String, Object> yamlData = fileUtils.getYamlDataForConfig(this);
+        FileManager fileManager = DarwinServer.getUtilChecked(FileManager.class);
+        Map<String, Object> yamlData = fileManager.getYamlDataForConfig(this);
         if (yamlData.containsKey("whitelist")) {
             whitelistedWorlds = (List<String>) yamlData.get("whitelist");
         } else {
             yamlData = new HashMap<>();
             yamlData.put("whitelist", Arrays.asList("SampleWorld", "Another_World"));
-            fileUtils.writeYamlDataForConfig(yamlData, this);
+            fileManager.writeYamlDataForConfig(yamlData, this);
         }
     }
 
@@ -75,9 +75,9 @@ public class SpectatorTeleportModule {
         DarwinPlayer player = (DarwinPlayer) event.getTarget();
         if (player.getGameMode().equals(GameModes.SPECTATOR)) {
             player.getWorld().ifPresent(world -> {
-                if (!whitelistedWorlds.contains(world.getName()) && player.hasPermission(Permissions.ADMIN_BYPASS)) {
+                if (!whitelistedWorlds.contains(world.getName()) && player.hasPermission(Permissions.GM3TP_IGNORE)) {
                     event.setCancelled(true);
-                    player.sendMessage(Translations.SPECTATOR_TP_DISALLOWED.s());
+                    player.sendMessage(Translations.SPECTATOR_TP_DISALLOWED.s(), false);
                 }
             });
         }

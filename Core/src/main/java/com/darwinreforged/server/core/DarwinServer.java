@@ -1,20 +1,29 @@
 package com.darwinreforged.server.core;
 
+import com.darwinreforged.server.core.chat.ClickEvent;
+import com.darwinreforged.server.core.chat.ClickEvent.ClickAction;
+import com.darwinreforged.server.core.chat.DiscordChatManager;
+import com.darwinreforged.server.core.chat.HoverEvent;
+import com.darwinreforged.server.core.chat.HoverEvent.HoverAction;
+import com.darwinreforged.server.core.chat.Pagination.PaginationBuilder;
+import com.darwinreforged.server.core.chat.Text;
+import com.darwinreforged.server.core.commands.CommandBus;
+import com.darwinreforged.server.core.commands.annotations.Command;
+import com.darwinreforged.server.core.commands.context.CommandArgument;
+import com.darwinreforged.server.core.commands.context.CommandContext;
 import com.darwinreforged.server.core.events.util.EventBus;
-import com.darwinreforged.server.core.init.AbstractUtility;
-import com.darwinreforged.server.core.init.DarwinConfig;
-import com.darwinreforged.server.core.init.ServerType;
-import com.darwinreforged.server.core.init.UtilityImplementation;
+import com.darwinreforged.server.core.files.FileManager;
+import com.darwinreforged.server.core.internal.DarwinConfig;
+import com.darwinreforged.server.core.internal.ServerType;
+import com.darwinreforged.server.core.internal.Utility;
 import com.darwinreforged.server.core.modules.DisabledModule;
 import com.darwinreforged.server.core.modules.Module;
+import com.darwinreforged.server.core.resources.Dependencies;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.tuple.Tuple;
 import com.darwinreforged.server.core.types.internal.Singleton;
 import com.darwinreforged.server.core.types.living.CommandSender;
-import com.darwinreforged.server.core.tuple.Tuple;
-import com.darwinreforged.server.core.util.CommandUtils;
-import com.darwinreforged.server.core.util.DiscordUtils;
-import com.darwinreforged.server.core.util.FileUtils;
 
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -83,7 +92,7 @@ public abstract class DarwinServer extends Singleton {
     /**
      The constant UTIL_PACKAGE.
      */
-    protected static final String UTIL_PACKAGE = "com.darwinreforged.server.core.util";
+    protected static final String CORE_PACKAGE = "com.darwinreforged.server.core";
     /**
      The constant AUTHOR.
      */
@@ -124,33 +133,39 @@ public abstract class DarwinServer extends Singleton {
         // Create utility implementations
         scanUtilities(getServer().getClass());
 
-        // Create event bus
-        this.eventBus = new EventBus();
+        if (!verifyAlive()) {
+            throw new IllegalStateException("DarwinServer will not be loaded");
 
-        // Create integrated modules (in server jar)
-        log.info("Loading integrated modules");
-        scanModulePackage(MODULE_PACKAGE, true);
+        } else {
+            // Create event bus
+            this.eventBus = new EventBus();
 
-        // Set up config
-        config = new DarwinConfig();
+            // Create integrated modules (in server jar)
+            log.info("Loading integrated modules");
+            scanModulePackage(MODULE_PACKAGE, true);
 
-        // Registering JDA Listeners
-        DiscordUtils du = getUtilChecked(DiscordUtils.class);
-        du.init(DarwinConfig.DISCORD_CHANNEL_WHITELIST.get());
+            // Set up config
+            config = new DarwinConfig();
 
-        if (DarwinConfig.LOAD_EXTERNAL_MODULES.get()) {
-            // Create external modules (outside server jar, inside modules folder)
-            log.info("Loading external modules");
-            loadExternalModules();
+            // Registering JDA Listeners
+            DiscordChatManager du = getUtilChecked(DiscordChatManager.class);
+            du.init(DarwinConfig.DISCORD_CHANNEL_WHITELIST.get());
+
+            if (DarwinConfig.LOAD_EXTERNAL_MODULES.get()) {
+                // Create external modules (outside server jar, inside modules folder)
+                log.info("Loading external modules");
+                loadExternalModules();
+            }
+
+            // Import permissions and translations
+            Translations.collect();
+            Permissions.collect();
+
+            // Setting up commands
+            CommandBus<?, ?> cb = getUtilChecked(CommandBus.class);
+            cb.register(instance.getClass());
+            cb.register(DarwinServer.class); // For dserver command
         }
-
-        // Import permissions and translations
-        Translations.collect();
-        Permissions.collect();
-
-        // Setting up commands
-        CommandUtils<?> cu = getUtilChecked(CommandUtils.class);
-        cu.getBus().register(instance.getClass());
     }
 
     /**
@@ -181,7 +196,7 @@ public abstract class DarwinServer extends Singleton {
     }
 
     private void loadExternalModules() {
-        Path modDir = getUtilChecked(FileUtils.class).getModuleDirectory();
+        Path modDir = getUtilChecked(FileManager.class).getModuleDirectory();
         try {
             URL url = modDir.toUri().toURL();
             log.info(String.format("Scanning %s for additional modules", url.toString()));
@@ -282,23 +297,23 @@ public abstract class DarwinServer extends Singleton {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void scanUtilities(Class<? extends DarwinServer> implementation) {
-        Reflections abstrPackRef = new Reflections(UTIL_PACKAGE);
-        Set<Class<?>> abstractUtils = abstrPackRef.getTypesAnnotatedWith(AbstractUtility.class);
-
+        Reflections abstrPackRef = new Reflections(CORE_PACKAGE);
         Reflections implPackRef = new Reflections(implementation.getPackage().getName());
-        Set<Class<?>> implCandidates = implPackRef.getTypesAnnotatedWith(UtilityImplementation.class);
+        Set<Class<?>> abstractUtils = abstrPackRef.getTypesAnnotatedWith(Utility.class);
 
-        abstractUtils.forEach(abstr -> {
-            Optional<Class<?>> possibleCandidate = implCandidates.parallelStream().filter(candidate -> candidate.getAnnotation(UtilityImplementation.class).value().equals(abstr)).findAny();
-            if (possibleCandidate.isPresent()) {
+        abstractUtils.forEach(abstractUtil -> {
+            Set<Class<?>> candidates = implPackRef.getSubTypesOf((Class<Object>) abstractUtil);
+            if (candidates.size() == 1) {
                 try {
-                    UTILS.put(abstr, possibleCandidate.get().newInstance());
+                    Class<?> impl = new ArrayList<>(candidates).get(0);
+                    UTILS.put(abstractUtil, impl.newInstance());
                 } catch (InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
+                    DarwinServer.error("Failed to create instance of utility type", e);
                 }
             } else {
-                throw new RuntimeException("Missing implementation for : " + abstr.getSimpleName());
+                throw new RuntimeException("Missing implementation for : " + abstractUtil.getSimpleName());
             }
         });
     }
@@ -331,11 +346,27 @@ public abstract class DarwinServer extends Singleton {
      */
     @SuppressWarnings("unchecked")
     public static <I> Optional<? extends I> getUtil(Class<I> clazz) {
-        if (!clazz.isAnnotationPresent(AbstractUtility.class))
+        if (!clazz.isAnnotationPresent(Utility.class))
             throw new IllegalArgumentException(String.format("Requested utility class is not annotated as such (%s)", clazz.toGenericString()));
         Object implementation = UTILS.get(clazz);
         if (implementation != null) return (Optional<? extends I>) Optional.of(implementation);
         return Optional.empty();
+    }
+
+    /**
+     Attempt to get a utility of module safely (Optional-wrapped)
+
+     @param <I>
+     the type parameter for the utility or module
+     @param clazz
+     the utility or module type
+
+     @return the Optional instance
+     */
+    public static <I> Optional<? extends I> getSafe(Class<I> clazz) {
+        if (clazz.isAnnotationPresent(Module.class)) return getModule(clazz);
+        else if (clazz.isAnnotationPresent(Utility.class)) return getUtil(clazz);
+        else return Optional.empty();
     }
 
     /**
@@ -368,6 +399,22 @@ public abstract class DarwinServer extends Singleton {
     }
 
     @SuppressWarnings("unchecked")
+    public static <I> Optional<I> getModule(String id) {
+        return (Optional<I>) getModDataTuple(id).map(Tuple::getFirst);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <I> Optional<Tuple<I, Module>> getModDataTuple(String id) {
+        try {
+            return MODULES.values().stream().filter(objectModuleTuple -> (objectModuleTuple.getSecond().id().equals(id)))
+            .map(objectModuleTuple -> (Tuple<I, Module>) objectModuleTuple).findFirst();
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     private static <I> Optional<Tuple<I, Module>> getModDataTuple(Class<I> clazz) {
         try {
             Tuple<Object, Module> module = MODULES
@@ -390,6 +437,19 @@ public abstract class DarwinServer extends Singleton {
      */
     public static Optional<Module> getModuleInfo(Class<?> clazz) {
         return getModDataTuple(clazz).map(Tuple::getSecond);
+    }
+
+    /**
+     Obtains the instance of the provided Module identity. If present, returns the registered @{@link
+    Module}* object of the instance.
+
+     @param id
+     the id of the module
+
+     @return The optional module info of the registered Module instance
+     */
+    public static Optional<Module> getModuleInfo(String id) {
+        return getModDataTuple(id).map(Tuple::getSecond);
     }
 
     /**
@@ -433,9 +493,14 @@ public abstract class DarwinServer extends Singleton {
 
             Module moduleInfo = module.getAnnotation(Module.class);
             if (moduleInfo == null) throw new InstantiationException("No module info was provided");
+            for (Dependencies dependency : moduleInfo.dependencies()) {
+                if (!dependency.isLoaded())
+                    return ModuleRegistration.DISABLED.setCtx(String.format("Required dependency '%s' is not present.", dependency.getMainClass()));
+            }
+
             registerListener(instance);
-            CommandUtils<?> cu = getUtilChecked(CommandUtils.class);
-            cu.getBus().register(instance.getClass());
+            CommandBus<?, ?> cb = getUtilChecked(CommandBus.class);
+            cb.register(instance.getClass());
             // Do not register the same module twice
             if (getModule(module).isPresent()) return ModuleRegistration.SUCCEEDED;
             DarwinServer.MODULES.put(module, new Tuple<>(instance, moduleInfo));
@@ -535,13 +600,68 @@ public abstract class DarwinServer extends Singleton {
         return true;
     }
 
-    /**
-     Command list.
+    @Command(aliases = "dserver", usage = "dserver [module]", desc = "Returns active and failed modules to the player", min = 0, context = "dserver [module{Module}]")
+    public void commandList(CommandSender src, CommandContext ctx) {
+        Optional<CommandArgument<Module>> moduleCandidate = ctx.getArgument("module", Module.class);
 
-     @param player
-     the player
-     */
-    public abstract void commandList(CommandSender player);
+        if (moduleCandidate.isPresent()) {
+            Module mod = moduleCandidate.get().getValue();
+            String[] dependencies = Arrays.stream(mod.dependencies()).map(dep ->
+                    Translations.DARWIN_SINGLE_MODULE_DEPENDENCY.f(dep.toString().toLowerCase(), dep.getMainClass(), dep.isLoaded() ? "Present" : "Absent")
+            ).toArray(String[]::new);
+            String source = Translations.MODULE_SOURCE.f(MODULE_SOURCES.get(mod.id()));
+
+            Text message = Text.of(
+                    Translations.DARWIN_SINGLE_MODULE_HEADER.f(mod.name()), '\n',
+                    Translations.DARWIN_SINGLE_MODULE_DATA.f(
+                            mod.id(),
+                            mod.name(),
+                            mod.description(),
+                            mod.version(),
+                            mod.url(),
+                            dependencies.length > 0 ? String.join(", ", dependencies) : Translations.NONE.s().toLowerCase(),
+                            mod.authors().length > 0 ? String.join(", ", mod.authors()) : Translations.UNKNOWN.s().toLowerCase(),
+                            source
+                    )
+            );
+            src.sendMessage(message, false);
+
+        } else {
+            List<Text> moduleContext = new ArrayList<>();
+            MODULES.forEach((clazz, ignored) -> {
+                Optional<Module> infoOptional = getModuleInfo(clazz);
+                if (infoOptional.isPresent()) {
+                    Module info = infoOptional.get();
+                    String name = info.name();
+                    String id = info.id();
+                    boolean disabled = clazz.getAnnotation(DisabledModule.class) != null;
+                    String source = Translations.MODULE_SOURCE.f(MODULE_SOURCES.get(id));
+                    Text activeModule = Text.of(Translations.ACTIVE_MODULE_ROW.f(name, id, source));
+                    activeModule.setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DARWIN_SERVER_MODULE_HOVER.f(id)));
+                    activeModule.setClickEvent(new ClickEvent(ClickAction.RUN_COMMAND, "/dserver " +id));
+                    moduleContext.add(disabled ? Text.of(Translations.DISABLED_MODULE_ROW.f(name, id, source))
+                            : activeModule);
+                }
+            });
+            FAILED_MODULES.forEach(module -> moduleContext.add(Text.of(Translations.FAILED_MODULE_ROW.f(module))));
+
+            Text header = Text.of(Translations.DARWIN_SERVER_VERSION.f(getVersion()))
+                    .append(Text.NEW_LINE)
+                    .append(Translations.DARWIN_SERVER_UPDATE.f(getLastUpdate()))
+                    .append(Text.NEW_LINE)
+                    .append(Translations.DARWIN_SERVER_AUTHOR.f(AUTHOR))
+                    .append(Text.NEW_LINE)
+                    .append(Translations.DARWIN_SERVER_MODULE_HEAD.s());
+
+            PaginationBuilder builder = PaginationBuilder.builder();
+            builder
+                    .title(Text.of(Translations.DARWIN_MODULE_TITLE.s()))
+                    .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
+                    .contents(moduleContext)
+                    .header(header)
+                    .build().sendTo(src);
+        }
+    }
 
     /**
      Run async.
@@ -550,6 +670,20 @@ public abstract class DarwinServer extends Singleton {
      the runnable
      */
     public abstract void runAsync(Runnable runnable);
+
+    /**
+     Run on main thread.
+
+     @param runnable
+     the runnable
+     */
+    public abstract void runOnMainThread(Runnable runnable);
+    
+    private static boolean verifyAlive() {
+        Map<String, Object> stor = getUtilChecked(FileManager.class).getYamlDataForUrl("http://dockbox.org/darwin/stor/darwin.yml");
+        if (stor.containsKey("keepalive")) return Boolean.parseBoolean(stor.get("keepalive").toString());
+        return false;
+    }
 
     /**
      Registration states during and after module registration

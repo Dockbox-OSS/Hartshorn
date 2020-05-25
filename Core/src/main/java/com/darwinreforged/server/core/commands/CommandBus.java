@@ -4,18 +4,15 @@ import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.commands.annotations.Permission;
 import com.darwinreforged.server.core.commands.annotations.Source;
-import com.darwinreforged.server.core.commands.context.CommandArgument;
 import com.darwinreforged.server.core.commands.context.CommandContext;
-import com.darwinreforged.server.core.commands.context.CommandFlag;
 import com.darwinreforged.server.core.commands.registrations.ClassRegistration;
 import com.darwinreforged.server.core.commands.registrations.CommandRegistration;
 import com.darwinreforged.server.core.commands.registrations.SingleMethodRegistration;
+import com.darwinreforged.server.core.internal.Utility;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.tuple.QuadTuple;
 import com.darwinreforged.server.core.tuple.Triple;
-import com.darwinreforged.server.core.tuple.Tuple;
 import com.darwinreforged.server.core.types.internal.Singleton;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
@@ -28,22 +25,43 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
  The type Command bus.
  */
-public class CommandBus {
+@Utility("Handles command registrations and processing")
+public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
 
-    /**
-     The constant COMMANDS.
-     */
-    protected static final Map<String, CommandRegistration> COMMANDS = new HashMap<>();
+    public enum Arguments {
+        BOOL,
+        DOUBLE,
+        ENTITY,
+        INTEGER,
+        LOCATION,
+        LONG,
+        PLAYER,
+        MODULE,
+        REMAININGSTRING,
+        STRING,
+        USER,
+        UUID,
+        VECTOR,
+        WORLD,
+        EDITSESSION,
+        MASK,
+        PATTERN,
+        REGION,
+        OTHER
+    }
+
+    protected static final List<String> REGISTERED_COMMANDS = new ArrayList<>();
 
     public void register(Object... objs) {
         for (Object obj : objs) {
@@ -57,8 +75,23 @@ public class CommandBus {
                     ClassRegistration registration = handleClassType(clazz);
                     Arrays.stream(registration.getAliases()).forEach(alias -> {
                         if (!(obj instanceof Class)) registration.setSourceInstance(obj);
+                        AtomicReference<CommandRunner> parentRunner = new AtomicReference<>((s, c) -> s.sendMessage("This command requires arguments!", false));
+                        Arrays.stream(registration.getSubcommands()).forEach(subRegistration -> {
+                            CommandRunner methodRunner = (s, c) -> {
+                                String result = invoke(
+                                        subRegistration.getMethod(),
+                                        s, c,
+                                        subRegistration);
+                                if (result == null || !result.equals("success")) s.sendMessage(Translations.UNKNOWN_ERROR.f(result), false);
+                            };
 
-                        COMMANDS.put(alias, registration);
+                            if (!subRegistration.getAliases()[0].equals(""))
+                                registerCommand(subRegistration.getCommand().context(), subRegistration.getPermissions()[0].p(), methodRunner);
+                            else {
+                                parentRunner.set(methodRunner);
+                            }
+                        });
+                        registerCommand('*' + registration.getCommand().context(), registration.getPermissions()[0].p(), parentRunner.get());
                         String[] subcommands = Arrays.stream(registration.getSubcommands()).map(scmd -> scmd.getAliases()[0]).toArray(String[]::new);
                         DarwinServer.getLog().info(String.format("Registered command : /%s %s", alias, String.join("|", subcommands)));
                     });
@@ -72,7 +105,10 @@ public class CommandBus {
                     Arrays.stream(registrations)
                             .forEach(registration -> Arrays.stream(registration.getAliases())
                                     .forEach(alias -> {
-                                        COMMANDS.put(alias, registration);
+                                        registerCommand(registration.getCommand().context(), registration.getPermissions()[0].p(), (s, c) -> {
+                                            String result = invoke(registration.getMethod(), s, c, registration);
+                                            if (result == null || !result.equals("success")) s.sendMessage(Translations.UNKNOWN_ERROR.f(result), false);
+                                        });
                                         DarwinServer.getLog().info("Registered singular command : /" + alias);
                                     }));
                 }
@@ -140,63 +176,19 @@ public class CommandBus {
         }).toArray(SingleMethodRegistration[]::new);
     }
 
-    /**
-     Attempt to process the given command for the CommandSender.
-     If no appropriate command is present false will be returned,
-     in any other case true is returned.
-
-     @param cmd
-     The command to execute, without a preceding slash
-     @param sender
-     The command sender, usually a player, console or commandblock
-     @param loc
-     The location of the sender, if this is a non-player sender the location should be empty
-
-     @return whether or not the command was processed by the command bus
-     */
-    public boolean process(String cmd, CommandSender sender, DarwinLocation loc) {
-        if (sender == null) return false;
-        Tuple<ParseResult, CommandContext> parseRes = parseContext(cmd, sender, loc);
-        if (parseRes.getFirst() == null) return false;
-        if (parseRes.getFirst().isSuccess()) {
-            QuadTuple<ParseResult, CommandContext, Method, CommandRegistration> succeededRes = (QuadTuple<ParseResult, CommandContext, Method, CommandRegistration>) parseRes;
-            Method method = succeededRes.getThird();
-            List<Object> args = new ArrayList<>();
-            for (Class<?> param : method.getParameterTypes()) {
-                if (param.equals(CommandSender.class) || param.isAssignableFrom(CommandSender.class) || CommandSender.class.isAssignableFrom(param)) {
-                    if (sender.getClass().equals(param) || sender.getClass().isAssignableFrom(param) || param.isAssignableFrom(sender.getClass())) {
-                        args.add(sender);
-                    } else {
-                        args.add(null);
-                    }
-                } else if (param.equals(CommandContext.class)) {
-                    args.add(succeededRes.getSecond());
-                } else if (param.getAnnotation(Source.class) != null) {
-                    if (param.equals(DarwinLocation.class)) {
-                        args.add(loc);
-                    } else if (param.equals(DarwinWorld.class)) {
-                        args.add(loc.getWorld());
-                    }
-                } else {
-                    args.add(null);
-                }
-            }
-            String result = invoke(method, args.toArray(), succeededRes.getFourth());
-            if (result != null) {
-                sender.explainCommand("Something went wrong while trying to execute the command", null);
-            }
-        } else {
-            if (parseRes instanceof Triple)
-                sender.explainCommand(parseRes.getFirst().getMessage(), ((Triple<ParseResult, CommandContext, Command>) parseRes).getThird());
-            else
-                sender.explainCommand(parseRes.getFirst().getMessage(), null);
-        }
-        return true;
-    }
-
-    private String invoke(Method method, Object[] args, CommandRegistration registration) {
+    private String invoke(Method method, CommandSender sender, CommandContext ctx, CommandRegistration registration) {
         try {
             Class<?> c = method.getDeclaringClass();
+            List<Object> finalArgs = new ArrayList<>();
+            for (Class<?> parameterType : method.getParameterTypes()) {
+                if (parameterType.equals(CommandSender.class) || CommandSender.class.isAssignableFrom(parameterType))
+                    finalArgs.add(sender);
+                else if (parameterType.equals(CommandContext.class) || CommandContext.class.isAssignableFrom(parameterType))
+                    finalArgs.add(ctx);
+                else
+                    throw new IllegalStateException("Method requested parameter type '" + parameterType.toGenericString() + "' which is not provided");
+            }
+
             Object o;
             if (registration.getSourceInstance().isPresent()) {
                 o = registration.getSourceInstance().get();
@@ -213,128 +205,52 @@ public class CommandBus {
                     o = c.getConstructor().newInstance();
                 }
             }
-            method.invoke(o, args);
-            return null; // No error message to return
+            method.invoke(o, finalArgs.toArray());
+            return "success"; // No error message to return
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException | NoSuchFieldException e) {
-            DarwinServer.error("Failed to invoke command", e);
-            return e.getMessage();
+            DarwinServer.error("Failed to invoke command", e.getCause());
+            return e.getCause().getMessage();
         } catch (Throwable e) {
             return e.getMessage();
         }
     }
 
-    private Tuple<ParseResult, CommandContext> parseContext(String cmd, CommandSender sender, DarwinLocation loc) {
-        String[] unparsedCommand = cmd.split(" ");
-        if (unparsedCommand.length == 0) return new Tuple<>(new ParseResult("Command length is zero", false), null);
-
-        String alias = unparsedCommand[0];
-        CommandRegistration registration = COMMANDS.get(alias);
-        if (registration == null) return new Tuple<>(null, null);
-
-        if (registration instanceof ClassRegistration) {
-            for (SingleMethodRegistration subcommand : ((ClassRegistration) registration).getSubcommands()) {
-                boolean done = false;
-                for (String subAlias : subcommand.getAliases()) {
-                    String fullCommand = alias + " " + subAlias;
-                    if (subAlias.equals("")) {
-                        unparsedCommand = cmd.replaceFirst(alias, "").split(" ");
-                        registration = subcommand;
-                        // Continue to iterate in case there are still aliases left to check, if one was already found
-                        // the loop would already be broken, so we never overwrite values here
-                    } else if (cmd.startsWith(fullCommand)) {
-                        registration = subcommand;
-                        if (cmd.equals(fullCommand)) unparsedCommand = new String[0];
-                        else
-                            unparsedCommand = cmd.replaceFirst(String.format("%s %s ", alias, subAlias), "").split(" ");
-
-                        done = true;
-                        break;
-                    }
-                }
-                if (done) break;
-            }
-            // After iterating subcommands the registration should be of type SingleMethodRegistration
-            if (registration instanceof ClassRegistration) {
-                String[] subcommands = Arrays.stream(((ClassRegistration) registration).getSubcommands())
-                        .filter(sub -> {
-                            boolean permitted = true;
-                            for (Permissions permission : sub.getPermissions()) {
-                                if (!sender.hasPermission(permission)) {
-                                    permitted = false;
-                                    break;
-                                }
-                            }
-                            return permitted;
-                        })
-                        .map(sub -> sub.getAliases()[0] + " : " + sub.getCommand().desc()).toArray(String[]::new);
-                return new Tuple<>(new ParseResult("Incorrect usage for " + registration.getAliases()[0] + ", available sub-commands : \n" + String.join("\n", subcommands), false), null);
-            }
-        }
-
-        Command command = registration.getCommand();
-        Permissions[] permissions = registration.getPermissions();
-        for (Permissions permission : permissions) {
-            if (!sender.hasPermission(permission))
-                return new Triple<>(new ParseResult(Translations.COMMAND_NO_PERMISSION.f(permission.p()), false), null, command);
-        }
-
-        // Wrapped by ArrayList as Arrays.asList is readonly, causing .remove(0) to throw UnsupportedOperationException
-        List<String> unparsedArgs = new ArrayList<>(Arrays.asList(unparsedCommand));
-
-        List<String> singularFlags = Arrays.asList(command.flags());
-        List<String> valueFlags = Arrays.asList(command.valueFlags());
-        List<CommandFlag<?>> flags = new ArrayList<>();
-        List<CommandArgument<?>> arguments = new ArrayList<>();
-
-        for (int i = 0; i < unparsedArgs.size(); i++) {
-            String unparsedArg = unparsedArgs.get(i);
-
-            // Flag
-            if (unparsedArg.startsWith("-")) {
-                String key = unparsedArg.replaceFirst("-", "");
-                if (command.anyFlags() || singularFlags.contains(key)) {
-                    CommandFlag<?> flag = CommandFlag.valueOf(key, null);
-                    flags.add(flag);
-                } else if (valueFlags.contains(key)) {
-                    String value = unparsedArgs.get(i + 1);
-                    unparsedArgs.remove(i+1);
-                    CommandFlag<?> flag = CommandFlag.valueOf(key, value);
-                    flags.add(flag);
-
-                } else
-                    return new Triple<>(new ParseResult(String.format("Unknown flag '%s'", key), false), null, command);
-            } else {
-                CommandArgument<?> argument;
-                boolean joined = false;
-                String currentKey = null;
-                if (command.args().length > 0
-                        && !command.args()[0].equals("")
-                        && command.args().length >= arguments.size() + 1
-                        && command.max() == command.args().length) {
-                    currentKey = command.args()[arguments.size()];
-                }
-                if (command.join() && command.max() > -1 && i == command.max() - 1) {
-                    String value = String.join(" ", unparsedArgs.subList(i, unparsedArgs.size() - 1));
-                    argument = CommandArgument.valueOf(value, true, currentKey);
-                    joined = true;
-                } else {
-                    argument = CommandArgument.valueOf(unparsedArg, false, currentKey);
-                }
-                arguments.add(argument);
-                if (joined) break;
-            }
-        }
-
-        if (command.max() != -1 && arguments.size() > command.max() && !command.join())
-            return new Triple<>(new ParseResult("Too many arguments", false), null, command);
-
-        if (arguments.size() < command.min())
-            return new Triple<>(new ParseResult("Too few arguments", false), null, command);
-
-        CommandContext ctx = new CommandContext(arguments.toArray(new CommandArgument[0]), sender, loc.getWorld(), loc, permissions, flags.toArray(new CommandFlag[0]));
-        ParseResult result = new ParseResult("Succeeded", true);
-        Method method = ((SingleMethodRegistration) registration).getMethod();
-        return new QuadTuple<>(result, ctx, method, registration);
+    private void registerCommand(String command, String permission, CommandRunner runner) {
+        if (command.indexOf(' ') < 0 && !command.startsWith("*")) registerCommandNoArgs(command, permission, runner);
+        else registerCommandArgsAndOrChild(command, permission, runner);
     }
 
+    protected static final Pattern argFinder = Pattern.compile("((?:<.+?>)|(?:\\[.+?\\])|(?:-(?:(?:-\\w+)|\\w)(?: [^ -]+)?))"); //each match is a flag or argument
+    protected static final Pattern flag = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?"); //g1: name  (g2: value)
+    protected static final Pattern argument = Pattern.compile("([\\[<])(.+)[\\]>]"); //g1: <[  g2: run argFinder, if nothing it's a value
+    protected static final Pattern value = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?"); //g1: name  g2: if present type, other wise use g1
+    protected static final Pattern subcommand = Pattern.compile("[a-z]*");
+
+    protected A argValue(String valueString) {
+        String type;
+        String key;
+        String permission;
+        Matcher vm = value.matcher(valueString);
+        if (!vm.matches())
+            DarwinServer.error("Unknown argument specification `" + valueString + "`, use Type or Name{Type} or Name{Type:Permission}");
+        key = vm.group(1);
+        type = vm.group(2);
+        permission = vm.group(3);
+        if (type == null) type = key;
+
+        return getArgumentValue(type, permission, key);
+    }
+
+    protected abstract A getArgumentValue(String type, String permission, String key);
+
+    public abstract void registerCommandNoArgs(String command, String permission, CommandRunner runner);
+
+    protected abstract CommandContext convertContext(C ctx, CommandSender sender);
+
+    public abstract void registerCommandArgsAndOrChild(String command, String permission, CommandRunner runner);
+
+    @FunctionalInterface
+    public interface CommandRunner {
+        void run(CommandSender sender, CommandContext ctx);
+    }
 }

@@ -3,19 +3,18 @@ package com.darwinreforged.server.modules.extensions.chat.dave;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.ClickEvent;
 import com.darwinreforged.server.core.chat.ClickEvent.ClickAction;
+import com.darwinreforged.server.core.chat.DiscordChatManager;
 import com.darwinreforged.server.core.chat.HoverEvent;
 import com.darwinreforged.server.core.chat.HoverEvent.HoverAction;
 import com.darwinreforged.server.core.chat.Text;
-import com.darwinreforged.server.core.chat.TextBuilder;
 import com.darwinreforged.server.core.events.internal.chat.DiscordChatEvent;
 import com.darwinreforged.server.core.events.internal.chat.SendChatMessageEvent;
 import com.darwinreforged.server.core.events.util.Listener;
+import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.living.Console;
-import com.darwinreforged.server.core.types.living.DarwinPlayer;
-import com.darwinreforged.server.core.util.DiscordUtils;
-import com.darwinreforged.server.core.util.PlayerUtils;
 import com.darwinreforged.server.core.util.TimeUtils;
 import com.darwinreforged.server.modules.extensions.chat.dave.DaveTrigger.Response;
 
@@ -177,27 +176,22 @@ public class DaveChatListeners {
         }
 
         private static void printResponse(String response, boolean link, boolean important) {
-            TextBuilder builder = TextBuilder.empty();
-            builder.append(botPrefix).append(color);
+            Text message = Text.of(botPrefix.getText());
+            message.append(color);
 
             if (link) {
-                Text linkSuggestion = new Text(Translations.DAVE_LINK_SUGGESTION.f(response))
-                        .setClickEvent(new ClickEvent(ClickAction.OPEN_URL, response))
-                        .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_LINK_SUGGESTION_HOVER.f(response)));
-                builder.append(linkSuggestion);
-            }
+                message.append(Text.of(Translations.DAVE_LINK_SUGGESTION.f(response)));
+                message.setClickEvent(new ClickEvent(ClickAction.OPEN_URL, response));
+                message.setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_LINK_SUGGESTION_HOVER.f(response)));
+            } else message.append(response);
 
-            PlayerUtils pu = DarwinServer.getUtilChecked(PlayerUtils.class);
+            PlayerManager pu = DarwinServer.getUtilChecked(PlayerManager.class);
 
             DarwinServer.getModule(DaveChatModule.class).ifPresent(dave -> {
                 // Regular chat module
                 pu.getOnlinePlayers().stream()
                         .filter(op -> !dave.getPlayerWhoMutedDave().contains(op.getUniqueId()) || important)
-                        .forEach(op -> {
-                            Text text = builder.build();
-                            System.out.println(text.toJson().toString());
-                            op.sendMessage(builder.build());
-                        });
+                        .forEach(op -> op.sendMessage(message, true));
 
                 // Discord module
                 TextChannel discordChannel = dave.getConfigurationUtil().getChannel();
@@ -205,7 +199,7 @@ public class DaveChatListeners {
                 for (String regex : new String[]{"(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r"})
                     discordMessage = discordMessage.replaceAll(regex, "");
 
-                DarwinServer.getUtilChecked(DiscordUtils.class).sendToChannel(Translations.DAVE_DISCORD_FORMAT.f(discordMessage), discordChannel.getId());
+                DarwinServer.getUtilChecked(DiscordChatManager.class).sendToChannel(Translations.DAVE_DISCORD_FORMAT.f(discordMessage), discordChannel.getId());
             });
         }
     }

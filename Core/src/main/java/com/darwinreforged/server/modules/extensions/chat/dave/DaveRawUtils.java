@@ -1,9 +1,9 @@
 package com.darwinreforged.server.modules.extensions.chat.dave;
 
-import com.darwinreforged.server.core.types.living.DarwinPlayer;
 import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.util.DiscordUtils;
-import com.darwinreforged.server.core.util.PlayerUtils;
+import com.darwinreforged.server.core.chat.DiscordChatManager;
+import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.player.PlayerManager;
 
 import java.util.Optional;
 import java.util.Random;
@@ -56,7 +56,7 @@ public class DaveRawUtils {
      */
     public static String parsePlaceHolders(String message, String unparsedResponse, String playername) {
         String parsedResponse = unparsedResponse.replaceAll("<player>", playername);
-        DiscordUtils du = DarwinServer.getUtilChecked(DiscordUtils.class);
+        DiscordChatManager du = DarwinServer.getUtilChecked(DiscordChatManager.class);
 
 
         if (parsedResponse.contains("<mention>")) {
@@ -82,7 +82,7 @@ public class DaveRawUtils {
         }
 
         if (parsedResponse.contains("<random>")) {
-            PlayerUtils pu = DarwinServer.getUtilChecked(PlayerUtils.class);
+            PlayerManager pu = DarwinServer.getUtilChecked(PlayerManager.class);
             int index = new Random().nextInt(pu.getOnlinePlayers().size());
             String randomPlayer = ((DarwinPlayer) pu.getOnlinePlayers().toArray()[index]).getName();
 

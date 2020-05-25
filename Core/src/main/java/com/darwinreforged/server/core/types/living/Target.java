@@ -33,6 +33,8 @@ public abstract class Target {
         return name;
     }
 
+    public abstract String getName(boolean lookup);
+
     /**
      Execute.
 

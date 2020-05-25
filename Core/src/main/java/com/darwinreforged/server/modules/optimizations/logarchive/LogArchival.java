@@ -4,8 +4,8 @@ import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.DarwinServer;
+import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.modules.Module;
-import com.darwinreforged.server.core.util.FileUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ public class LogArchival {
      */
     @Listener
     public void onReload(ServerReloadEvent event) {
-        logs = DarwinServer.getUtilChecked(FileUtils.class).getLogDirectory();
+        logs = DarwinServer.getUtilChecked(FileManager.class).getLogDirectory();
         this.run();
     }
 

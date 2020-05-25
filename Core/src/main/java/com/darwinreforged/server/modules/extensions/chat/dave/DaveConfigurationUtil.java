@@ -1,9 +1,9 @@
 package com.darwinreforged.server.modules.extensions.chat.dave;
 
 import com.darwinreforged.server.core.DarwinServer;
+import com.darwinreforged.server.core.chat.DiscordChatManager;
 import com.darwinreforged.server.core.chat.Text;
-import com.darwinreforged.server.core.util.DiscordUtils;
-import com.darwinreforged.server.core.util.FileUtils;
+import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.modules.extensions.chat.dave.DaveTrigger.Response;
 
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -33,7 +33,7 @@ public class DaveConfigurationUtil {
      */
     @SuppressWarnings("unchecked")
     public DaveConfigurationUtil() {
-        FileUtils fu = DarwinServer.getUtilChecked(FileUtils.class);
+        FileManager fu = DarwinServer.getUtilChecked(FileManager.class);
 
         // Load triggers
         File triggerFile = new File(fu.getDataDirectory(DaveChatModule.class).toFile(), "triggers.yml");
@@ -62,7 +62,7 @@ public class DaveConfigurationUtil {
         // Load config
         Map<String, Object> daveConfig = fu.getYamlDataForConfig(DaveChatModule.class);
         boolean updateConfig = false;
-        DiscordUtils du = DarwinServer.getUtilChecked(DiscordUtils.class);
+        DiscordChatManager du = DarwinServer.getUtilChecked(DiscordChatManager.class);
         String channelId;
         if (daveConfig.containsKey("channel")) {
             channelId = String.valueOf(daveConfig.get("channel"));
@@ -76,7 +76,7 @@ public class DaveConfigurationUtil {
         if (daveConfig.containsKey("prefix")) {
             this.prefix = Text.of(String.valueOf(daveConfig.get("prefix")));
         } else {
-            this.prefix = new Text("Dave : ");
+            this.prefix = Text.of("Dave : ");
             daveConfig.put("prefix", "Dave : ");
             updateConfig = true;
         }

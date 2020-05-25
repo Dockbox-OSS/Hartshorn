@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.types.living;
 
-import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.chat.Text;
 
 /**
@@ -15,7 +15,7 @@ public interface MessageReceiver {
      @param message
      the message
      */
-    void sendMessage(String message);
+    void sendMessage(String message, boolean plain);
 
     /**
      Send message.
@@ -23,7 +23,7 @@ public interface MessageReceiver {
      @param translation
      the translation
      */
-    void sendMessage(Translations translation);
+    void sendMessage(Translations translation, boolean plain);
 
     /**
      Send message.
@@ -31,7 +31,7 @@ public interface MessageReceiver {
      @param text
      the text
      */
-    void sendMessage(Text text);
+    void sendMessage(Text text, boolean plain);
 
     /**
      Send message.
@@ -41,7 +41,7 @@ public interface MessageReceiver {
      @param permission
      the permission
      */
-    void sendMessage(String message, String permission);
+    void sendMessage(String message, String permission, boolean plain);
 
     /**
      Send message.
@@ -51,7 +51,7 @@ public interface MessageReceiver {
      @param permission
      the permission
      */
-    void sendMessage(String message, Permissions permission);
+    void sendMessage(String message, Permissions permission, boolean plain);
 
     /**
      Send message.
@@ -61,7 +61,7 @@ public interface MessageReceiver {
      @param permission
      the permission
      */
-    void sendMessage(Translations translation, String permission);
+    void sendMessage(Translations translation, String permission, boolean plain);
 
     /**
      Send message.
@@ -71,7 +71,7 @@ public interface MessageReceiver {
      @param permission
      the permission
      */
-    void sendMessage(Translations translation, Permissions permission);
+    void sendMessage(Translations translation, Permissions permission, boolean plain);
 
     /**
      Send message.
@@ -81,7 +81,7 @@ public interface MessageReceiver {
      @param permission
      the permission
      */
-    void sendMessage(Text text, String permission);
+    void sendMessage(Text text, String permission, boolean plain);
 
     /**
      Send message.
@@ -91,6 +91,6 @@ public interface MessageReceiver {
      @param permission
      the permission
      */
-    void sendMessage(Text text, Permissions permission);
+    void sendMessage(Text text, Permissions permission, boolean plain);
 
 }

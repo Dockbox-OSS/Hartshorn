@@ -17,6 +17,14 @@ repositories {
         name 'sqljet'
         url 'https://repo1.maven.org/maven2/com/j256/ormlite/'
     }
+    maven {
+        name 'fawe'
+        url 'http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/'
+    }
+    maven {
+        name 'sk89q'
+        url 'https://maven.enginehub.org/repo/'
+    }
 }
 
 archivesBaseName = 'core'
@@ -33,6 +41,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8'
     implementation 'org.apache.commons:commons-collections4:4.1'
     compileOnly 'com.google.guava:guava:21.0'
+    compileOnly 'com.boydti:fawe-api:latest'
+    compileOnly 'com.sk89q.worldedit:worldedit-core:6.1'
     compile 'org.slf4j:slf4j-api:1.7.25'
     testCompile 'junit:junit:4.12'
     implementation 'com.j256.ormlite:ormlite-core:5.1'

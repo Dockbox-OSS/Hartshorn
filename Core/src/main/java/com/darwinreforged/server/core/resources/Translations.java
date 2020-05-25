@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.resources;
 
 import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.util.FileUtils;
+import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.util.StringUtils;
 import com.darwinreforged.server.modules.internal.darwin.DarwinServerModule;
 
@@ -43,6 +43,9 @@ public enum Translations {
     OFFLINE_PLAYER("$2{0}"),
     UNOWNED("Unowned"),
     EVERYONE("Everyone"),
+    UNKNOWN_PLAYER("Unknown player"),
+    ARGUMENT_NOT_PROVIDED("$4No argument provided for value '{0}'"),
+    PLAYER_NOT_FOUND("$4Could not find player '{0}'"),
 
     //    Time differences
     TIME_DAYS_AGO("$1{0} $2days ago"),
@@ -459,6 +462,17 @@ public enum Translations {
     DARWIN_SERVER_AUTHOR("$2&lAuthor&r$3: $1{0}"),
     DARWIN_SERVER_MODULE_HEAD("$2&lModules&r$3:"),
     MODULE_SOURCE("&e[{0}]"),
+    DARWIN_SINGLE_MODULE_HEADER("$2About $1{0}"),
+    DARWIN_SINGLE_MODULE_DATA("$2ID : $1{0}\n" +
+            "$2Name : $1{1}\n" +
+            "$2Description : $1{2}\n" +
+            "$2Version : $1{3}\n" +
+            "$2URL : $1{4}\n" +
+            "$2Dependencies : $1{5}\n" +
+            "$2Author(s) : $1{6}\n" +
+            "$2Source : $1{7}"),
+    DARWIN_SINGLE_MODULE_DEPENDENCY("$1{0} $2({1} $3- {2}$2)"),
+    DARWIN_SERVER_MODULE_HOVER("$1More information for '{0}'"),
 
     //   World Unloader
     WU_ADDED("$1Added $2{0} $1to the unload blacklist"),
@@ -474,7 +488,14 @@ public enum Translations {
     CU_DESCRIPTION("$3- $2Summary: $1{0}"),
 
     //  GoToLobby
-    GTL_WARPED("$1You have been teleported to the lobby as the world you were previously in is disabled");
+    GTL_WARPED("$1You have been teleported to the lobby as the world you were previously in is disabled"),
+
+    //  OldPlots
+    OLP_NO_STORAGE_FILE("$4No OldPlots storage file present!"),
+    OLP_LIST_ITEM("$3 - $2#{0} : $1{1}$2, $1{2},{3}"),
+    OLP_LIST_HEADER("$1OldPlots for $1{0}"),
+    OLP_FAILED_READ("$4Failed to obtain information from database")
+    ;
 
     private String s;
 
@@ -508,9 +529,8 @@ public enum Translations {
         if (args.length > 0) {
             for (int i = args.length - 1; i >= 0; i--) {
                 String arg = "" + args[i];
-                if (arg == null || arg.isEmpty()) map.put(String.format("{%d}", i), "");
+                if (arg == null || arg.isEmpty()) map.put(String.format("{%d}", i), "empty");
                 else map.put(String.format("{%d}", i), arg);
-                if (i == 0) map.put("%s", arg);
             }
         }
         m = StringUtils.replaceFromMap(m, map);
@@ -521,7 +541,7 @@ public enum Translations {
         char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
         for (char c : nativeFormats) m = m.replaceAll(String.format("&%s", c), String.format("\u00A7%s", c));
 
-        return "\u00A7r" + m
+        return m
                 .replaceAll("\\$1", String.format("\u00A7%s", COLOR_PRIMARY.s))
                 .replaceAll("\\$2", String.format("\u00A7%s", COLOR_SECONDARY.s))
                 .replaceAll("\\$3", String.format("\u00A7%s", COLOR_MINOR.s))
@@ -531,12 +551,12 @@ public enum Translations {
     public static void collect() {
         DarwinServer.getModule(DarwinServerModule.class).ifPresent(module -> {
             Map<String, Object> configMap;
-            File file = new File(DarwinServer.getUtilChecked(FileUtils.class).getConfigDirectory(module).toFile(), "translations.yml");
+            File file = new File(DarwinServer.getUtilChecked(FileManager.class).getConfigDirectory(module).toFile(), "translations.yml");
             if (!file.exists()) {
                 configMap = new HashMap<>();
-                Arrays.stream(Translations.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.u()));
-                DarwinServer.getUtilChecked(FileUtils.class).writeYamlDataToFile(configMap, file);
-            } else configMap = DarwinServer.getUtilChecked(FileUtils.class).getYamlDataFromFile(file);
+                Arrays.stream(Translations.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.s));
+                DarwinServer.getUtilChecked(FileManager.class).writeYamlDataToFile(configMap, file);
+            } else configMap = DarwinServer.getUtilChecked(FileManager.class).getYamlDataFromFile(file);
 
             configMap.forEach((k, v) -> {
                 Translations t = Translations.valueOf(k.toUpperCase().replaceAll("\\.", "_"));
