@@ -1,7 +1,6 @@
 package com.darwinreforged.server.core.commands;
 
 import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.commands.CommandBus.ArgumentTypeValue;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.commands.annotations.Permission;
 import com.darwinreforged.server.core.commands.annotations.Source;
@@ -44,17 +43,14 @@ public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
         BOOL,
         DOUBLE,
         ENTITY,
-        ENTITYORSOURCE,
         INTEGER,
         LOCATION,
         LONG,
         PLAYER,
-        PLAYERORSOURCE,
         MODULE,
         REMAININGSTRING,
         STRING,
         USER,
-        USERORSOURCE,
         UUID,
         VECTOR,
         WORLD,
@@ -66,20 +62,6 @@ public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
     }
 
     protected static final List<String> REGISTERED_COMMANDS = new ArrayList<>();
-
-    public abstract static class ArgumentTypeValue<T> {
-        protected T element;
-        protected String permission;
-
-        public ArgumentTypeValue(Arguments argument, String permission, String key) {
-            this.permission = permission;
-            this.element = parseArgument(argument, key);
-        }
-
-        protected abstract T parseArgument(Arguments argument, String key);
-
-        public abstract T getArgument();
-    }
 
     public void register(Object... objs) {
         for (Object obj : objs) {
@@ -263,7 +245,7 @@ public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
 
     public abstract void registerCommandNoArgs(String command, String permission, CommandRunner runner);
 
-    protected abstract CommandContext convertContext(C ctx);
+    protected abstract CommandContext convertContext(C ctx, CommandSender sender);
 
     public abstract void registerCommandArgsAndOrChild(String command, String permission, CommandRunner runner);
 

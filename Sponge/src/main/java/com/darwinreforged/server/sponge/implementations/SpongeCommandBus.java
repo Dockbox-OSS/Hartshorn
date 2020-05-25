@@ -1,14 +1,22 @@
 package com.darwinreforged.server.sponge.implementations;
 
 import com.boydti.fawe.object.FawePlayer;
-import com.darwinreforged.server.core.DarwinServer;
+import com.darwinreforged.server.core.commands.ArgumentTypeValue;
 import com.darwinreforged.server.core.commands.CommandBus;
+import com.darwinreforged.server.core.commands.context.CommandArgument;
+import com.darwinreforged.server.core.commands.context.CommandFlag;
+import com.darwinreforged.server.core.DarwinServer;
+import com.darwinreforged.server.core.math.Vector3d;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.player.DarwinUser;
 import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.tuple.Tuple;
+import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.living.Console;
+import com.darwinreforged.server.core.types.location.DarwinLocation;
+import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.google.common.collect.Multimap;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.input.ParserContext;
@@ -26,9 +34,14 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.extent.Extent;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -43,7 +56,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import static com.darwinreforged.server.core.DarwinServer.error;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 @SuppressWarnings("unchecked")
 public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentTypeValue> {
@@ -109,14 +122,14 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
                     executorF.setAccessible(true);
                     if (executorF.get(spec) == null) spec.executor((src, args) -> CommandResult.success());
                 } catch (Throwable e) {
-                    error("Could not access executor field", e);
+                    DarwinServer.error("Could not access executor field", e);
                     spec.executor((src, args) -> CommandResult.success());
                 }
 
                 try {
                     Sponge.getCommandManager().register(DarwinServer.getServer(), spec.build(), registeredCmd);
                 } catch (IllegalArgumentException e) {
-                    error(e.getMessage(), e);
+                    DarwinServer.error(e.getMessage(), e);
                 }
                 REGISTERED_COMMANDS.add(registeredCmd);
             }
@@ -133,34 +146,70 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
 
     @SuppressWarnings("unchecked")
     @Override
-    protected com.darwinreforged.server.core.commands.context.CommandContext convertContext(CommandContext ctx) {
+    protected com.darwinreforged.server.core.commands.context.CommandContext convertContext(CommandContext ctx, CommandSender sender) {
         Multimap<String, Object> parsedArgs;
         try {
             Field parsedArgsF = ctx.getClass().getDeclaredField("parsedArgs");
             if (!parsedArgsF.isAccessible()) parsedArgsF.setAccessible(true);
             parsedArgs = (Multimap<String, Object>) parsedArgsF.get(ctx);
         } catch (IllegalAccessException | ClassCastException | NoSuchFieldException e) {
-            error("Could not load parsed arguments from Sponge command context", e);
+            DarwinServer.error("Could not load parsed arguments from Sponge command context", e);
             return null;
         }
 
-        parsedArgs.asMap().forEach(((s, o) -> {
-            o.forEach(obj -> {
-                // TODO : Parse Darwin specific objects. Native types and FAWE Objects are correctly handled beforehand.
-                // Perhaps replace Sponge's default parser with a Darwin specific parser?
-                // Items to parse :
-                //Entity
-                //EntityOrSource
-                //Location
-                //Player
-                //PlayerOrSource
-                //User
-                //UserOrSource
-                //World
-            });
-        }));
+        List<CommandArgument<?>> arguments = new ArrayList<>();
+        PlayerManager pm = DarwinServer.getUtilChecked(PlayerManager.class);
 
-        return null;
+        parsedArgs.asMap().forEach(((s, o) -> o.forEach(obj -> {
+            if (obj instanceof Player) {
+                DarwinPlayer dplayer = pm.getPlayer(((Player) obj).getUniqueId(), ((Player) obj).getName());
+                arguments.add(new CommandArgument<>(dplayer, false, s));
+
+            } else if (obj instanceof User) {
+                DarwinUser duser = new DarwinUser(((User) obj).getUniqueId(), ((User) obj).getName());
+                arguments.add(new CommandArgument<>(duser, false, s));
+
+            } else if (obj instanceof Entity) {
+                // TODO : Regular Entity wrapper
+                throw new NotImplementedException();
+
+            } else if (obj instanceof Location) {
+                Location<Extent> sloc = (Location<Extent>) obj;
+                World sworld = (World) sloc.getExtent();
+
+                Vector3d locv = new Vector3d(sloc.getX(), sloc.getY(), sloc.getZ());
+                DarwinWorld dworld = new DarwinWorld(sworld.getUniqueId(), sworld.getName());
+                DarwinLocation dloc = new DarwinLocation(dworld, locv);
+                arguments.add(new CommandArgument<>(dloc, false, s));
+
+            } else if (obj instanceof World) {
+                DarwinWorld dworld = new DarwinWorld(((World) obj).getUniqueId(), ((World) obj).getName());
+                arguments.add(new CommandArgument<>(dworld, false, s));
+
+            } else {
+                arguments.add(new CommandArgument<>(obj, false, s));
+            }
+        })));
+
+        com.darwinreforged.server.core.commands.context.CommandContext darwinCtx;
+        if (sender instanceof DarwinPlayer) {
+            DarwinLocation loc = ((DarwinPlayer) sender).getLocation().orElse(null);
+            DarwinWorld world = ((DarwinPlayer) sender).getWorld().orElse(null);
+            darwinCtx = new com.darwinreforged.server.core.commands.context.CommandContext(
+                    arguments.toArray(new CommandArgument<?>[0]),
+                    sender, world, loc,
+                    new Permissions[0],
+                    new CommandFlag<?>[0]
+            );
+        } else {
+            darwinCtx = new com.darwinreforged.server.core.commands.context.CommandContext(
+                    arguments.toArray(new CommandArgument<?>[0]),
+                    sender, null, null,
+                    new Permissions[0],
+                    new CommandFlag<?>[0]
+            );
+        }
+        return darwinCtx;
     }
 
     private CommandElement[] parseArguments(String argString) {
@@ -191,7 +240,7 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
                     if (cflags == null) cflags = GenericArguments.flags();
                     parseFlag(cflags, mf.group(1), mf.group(2));
                 } else {
-                    error("Argument type was not recognized for `" + part + "`");
+                    DarwinServer.error("Argument type was not recognized for `" + part + "`");
                 }
             }
         }
@@ -211,7 +260,7 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
         } else {
             ArgumentTypeValue<CommandElement> av = argValue(value);
             if (name.indexOf(':') >= 0) {
-                error("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
+                DarwinServer.error("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
             flags.valueFlag(av.getArgument(), name);
         }
@@ -230,10 +279,15 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
 
     private CommandExecutor buildExecutor(CommandRunner runner) {
         return (src, args) -> {
-            com.darwinreforged.server.core.commands.context.CommandContext ctx = convertContext(args);
+            CommandSender sender;
+            if (src instanceof Player) sender = DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(((Player) src).getUniqueId(), src.getName());
+            else if (src instanceof ConsoleSource) sender = Console.instance;
+            else sender = null;
+
+            com.darwinreforged.server.core.commands.context.CommandContext ctx = convertContext(args, sender);
+
             if (src instanceof Player) {
-                DarwinPlayer dp = DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(((Player) src).getUniqueId(), src.getName());
-                runner.run(dp, ctx);
+                runner.run(sender, ctx);
             } else if (src instanceof ConsoleSource) {
                 runner.run(Console.instance, ctx);
             } else {

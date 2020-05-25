@@ -1,7 +1,7 @@
 package com.darwinreforged.server.sponge.implementations;
 
 import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.commands.CommandBus.ArgumentTypeValue;
+import com.darwinreforged.server.core.commands.ArgumentTypeValue;
 import com.darwinreforged.server.core.commands.CommandBus.Arguments;
 import com.darwinreforged.server.sponge.implementations.SpongeCommandBus.FaweArgument;
 import com.darwinreforged.server.sponge.implementations.SpongeCommandBus.FaweArgument.FaweTypes;
@@ -40,8 +40,6 @@ public class SpongeArgumentTypeValue extends ArgumentTypeValue<CommandElement> {
                 return GenericArguments.doubleNum(Text.of(key));
             case ENTITY:
                 return GenericArguments.entity(Text.of(key));
-            case ENTITYORSOURCE:
-                return GenericArguments.entityOrSource(Text.of(key));
             case INTEGER:
                 return GenericArguments.integer(Text.of(key));
             case LOCATION:
@@ -50,8 +48,6 @@ public class SpongeArgumentTypeValue extends ArgumentTypeValue<CommandElement> {
                 return GenericArguments.longNum(Text.of(key));
             case PLAYER:
                 return GenericArguments.player(Text.of(key));
-            case PLAYERORSOURCE:
-                return GenericArguments.playerOrSource(Text.of(key));
             case MODULE:
                 return new com.darwinreforged.server.sponge.implementations.SpongeCommandBus.ModuleArgument(Text.of(key));
             case REMAININGSTRING:
@@ -60,8 +56,6 @@ public class SpongeArgumentTypeValue extends ArgumentTypeValue<CommandElement> {
                 return GenericArguments.string(Text.of(key));
             case USER:
                 return GenericArguments.user(Text.of(key));
-            case USERORSOURCE:
-                return GenericArguments.userOrSource(Text.of(key));
             case UUID:
                 return GenericArguments.uuid(Text.of(key));
             case VECTOR:
