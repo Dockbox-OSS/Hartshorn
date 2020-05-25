@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
  The type Location utils.
  */
 @Utility("Location calculations and conversion methods")
-public abstract class LocationUtils {
+public interface LocationUtils {
 
     /**
      Gets empty world.
 
      @return the empty world
      */
-    public static final DarwinLocation getEmptyWorld() {
+    default DarwinLocation getEmptyWorld() {
         DarwinWorld world = new DarwinWorld(UUID.fromString("00000000-0000-0000-0000-000000000000"), "None");
         Vector3i vector = new Vector3i(0, 0, 0);
         return new DarwinLocation(world, vector);
@@ -38,7 +38,7 @@ public abstract class LocationUtils {
 
      @return the highest point
      */
-    public int getHighestPoint(AbstractVector2<? extends Number> vector2, DarwinWorld world) {
+    default int getHighestPoint(AbstractVector2<? extends Number> vector2, DarwinWorld world) {
         return vector2 != null ? getHighestPoint(vector2.getX(), vector2.getZ(), world.getWorldUUID()) : -1;
     }
 
@@ -50,7 +50,7 @@ public abstract class LocationUtils {
 
      @return the highest point
      */
-    public int getHighestPoint(DarwinLocation location) {
+    default int getHighestPoint(DarwinLocation location) {
         return location != null ? getHighestPoint(location.getX(), location.getZ(), location.getWorld().getWorldUUID()) : -1;
     }
 
@@ -66,7 +66,7 @@ public abstract class LocationUtils {
 
      @return the highest point
      */
-    public abstract int getHighestPoint(Number x, Number z, UUID worldUUID);
+    int getHighestPoint(Number x, Number z, UUID worldUUID);
 
     /**
      Gets world.
@@ -76,7 +76,7 @@ public abstract class LocationUtils {
 
      @return the world
      */
-    public abstract Optional<DarwinWorld> getWorld(UUID uuid);
+    Optional<DarwinWorld> getWorld(UUID uuid);
 
     /**
      Gets world.
@@ -86,21 +86,21 @@ public abstract class LocationUtils {
 
      @return the world
      */
-    public abstract Optional<DarwinWorld> getWorld(String name);
+    Optional<DarwinWorld> getWorld(String name);
 
     /**
      Gets all worlds.
 
      @return the all worlds
      */
-    public abstract Collection<DarwinWorld> getAllWorlds();
+    Collection<DarwinWorld> getAllWorlds();
 
     /**
      Gets empty worlds.
 
      @return the empty worlds
      */
-    public Collection<DarwinWorld> getEmptyWorlds() {
+    default Collection<DarwinWorld> getEmptyWorlds() {
         return getAllWorlds().stream().filter(w -> w.getPlayerCount() == 0).collect(Collectors.toList());
     }
 
@@ -112,7 +112,7 @@ public abstract class LocationUtils {
 
      @return the player count in world
      */
-    public abstract int getPlayerCountInWorld(DarwinWorld world);
+    int getPlayerCountInWorld(DarwinWorld world);
 
     /**
      Unload world.
@@ -122,5 +122,5 @@ public abstract class LocationUtils {
      @param keepLoaded
      the keep loaded
      */
-    public abstract void unloadWorld(DarwinWorld world, boolean keepLoaded);
+    void unloadWorld(DarwinWorld world, boolean keepLoaded);
 }

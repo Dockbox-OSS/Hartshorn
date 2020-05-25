@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class SpongeLocationUtils extends LocationUtils {
+public class SpongeLocationUtils implements LocationUtils {
 
     @Override
     public int getHighestPoint(Number x, Number z, UUID worldUUID) {

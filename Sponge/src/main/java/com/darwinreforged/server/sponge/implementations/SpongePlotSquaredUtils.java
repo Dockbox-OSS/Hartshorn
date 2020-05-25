@@ -5,7 +5,7 @@ import com.darwinreforged.server.core.external.PlotSquaredUtils;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.PlotArea;
 
-public class SpongePlotSquaredUtils extends PlotSquaredUtils {
+public class SpongePlotSquaredUtils implements PlotSquaredUtils {
 
     @Override
     public boolean isPlotWorld(DarwinWorld world) {

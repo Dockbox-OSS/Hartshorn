@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SpongeItemUtils extends ItemUtils<ItemStack> {
+public class SpongeItemUtils implements ItemUtils<ItemStack> {
 
     @Override
     public ItemStack setDisplayName(String displayName, DarwinItem<ItemStack> in) {
