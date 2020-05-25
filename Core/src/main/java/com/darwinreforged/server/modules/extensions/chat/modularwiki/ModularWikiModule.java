@@ -8,6 +8,7 @@ import com.darwinreforged.server.core.chat.HoverEvent.HoverAction;
 import com.darwinreforged.server.core.chat.Pagination.PaginationBuilder;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
+import com.darwinreforged.server.core.commands.annotations.Permission;
 import com.darwinreforged.server.core.commands.context.CommandArgument;
 import com.darwinreforged.server.core.commands.context.CommandContext;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
@@ -16,6 +17,7 @@ import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.types.living.CommandSender;
 
@@ -65,6 +67,7 @@ public class ModularWikiModule {
     }
 
     @Command(aliases = "wiki", usage = "wiki [entry]", desc = "Reads a specific entry to the sender", context = "wiki [entry{String}]")
+    @Permission(Permissions.MODWIKI_USE)
     public void execute(CommandSender src, CommandContext ctx) {
         Optional<CommandArgument<String>> optionalEntry = ctx.getStringArgument("entry");
         if (src instanceof DarwinPlayer) {
@@ -134,6 +137,7 @@ public class ModularWikiModule {
     }
 
     @Command(aliases = "sharewiki", usage = "sharewiki <entry> <player>", desc = "Shares a specific entry", context = "sharewiki <entry{String}> <player{Player}>")
+    @Permission(Permissions.MODWIKI_SHARE)
     public void execute(DarwinPlayer src, CommandContext ctx) {
         Optional<CommandArgument<String>> entryArg = ctx.getStringArgument("entry");
         Optional<CommandArgument<DarwinPlayer>> playerArg = ctx.getArgument("player", DarwinPlayer.class);

@@ -59,7 +59,6 @@ public enum Permissions {
     HOTBAR_LOAD("hb.load"),
     HOTBAR_SHARE("hb.share"),
     MODWIKI_USE("modwiki.use"),
-    MODWIKI_RELOAD("modwiki.reload"),
     MODWIKI_SHARE("modwiki.share"),
     PLOTS_ADMIN_BUILD_OTHER("plots.admin.build.other"),
     PLOTS_ADMIN_BUILD_ROAD("plots.admin.build.road"),
