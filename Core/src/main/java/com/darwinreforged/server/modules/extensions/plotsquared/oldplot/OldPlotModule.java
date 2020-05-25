@@ -1,14 +1,17 @@
 package com.darwinreforged.server.modules.extensions.plotsquared.oldplot;
 
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.Pagination;
 import com.darwinreforged.server.core.chat.Pagination.PaginationBuilder;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
+import com.darwinreforged.server.core.commands.annotations.Permission;
 import com.darwinreforged.server.core.commands.context.CommandArgument;
 import com.darwinreforged.server.core.commands.context.CommandContext;
 import com.darwinreforged.server.core.files.FileManager;
-import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -30,13 +33,11 @@ import java.util.UUID;
 public class OldPlotModule {
 
     @Command(aliases = {"oldplots", "olp"}, usage = "oldplots <player>", desc = "Retrieves the list of old plots for a given player", context = "oldplots <player{String}>")
-    // @Permission(Permissions...)
-    // TODO : Add Permissions
+    @Permission(Permissions.OLP_LIST)
     public void getOldPlotList(CommandSender src, CommandContext ctx) {
         Optional<CommandArgument<String>> optionalPlayerArg = ctx.getStringArgument("player");
         if (!optionalPlayerArg.isPresent()) {
-            // TODO : Use Translations for all messages provided in module
-            src.sendMessage("No argument provided for value 'player'", false);
+            src.sendMessage(Translations.ARGUMENT_NOT_PROVIDED.f("player"), false);
             return;
         }
 
@@ -47,7 +48,7 @@ public class OldPlotModule {
         File file = new File(dataDir.toFile(), "oldplots.db");
 
         if (!file.exists()) {
-            src.sendMessage("No OldPlots storage file found!", false);
+            src.sendMessage(Translations.OLP_NO_STORAGE_FILE.s(), false);
             return;
         }
 
@@ -69,19 +70,19 @@ public class OldPlotModule {
                 plotStorageModels.forEach(psm -> {
                     String plotLoc = String.format("%s,%s;%s", psm.world, psm.plot_id_x, psm.plot_id_z);
                     if (!psm.world.equals("*") && !foundPlots.contains(plotLoc)) {
-                        Text singlePlot = Text.of("- #", psm.id, " : ", psm.world, ", ", psm.plot_id_x, ";", psm.plot_id_z);
+                        Text singlePlot = Text.of(Translations.OLP_LIST_ITEM.f(psm.id, psm.world, psm.plot_id_x, psm.plot_id_z));
                         paginationContent.add(singlePlot);
                         foundPlots.add(plotLoc);
                     }
                 });
-                Pagination pagination = PaginationBuilder.builder().contents(paginationContent).title(Text.of("OldPlots for ", playerName)).build();
+                Pagination pagination = PaginationBuilder.builder().contents(paginationContent).title(Text.of(Translations.OLP_LIST_HEADER.f(playerName))).build();
                 pagination.sendTo(src);
             } catch (SQLException e) {
                 DarwinServer.error("Failed to read OldPlots database", e);
-                src.sendMessage("Failed to obtain information from database", false);
+                src.sendMessage(Translations.OLP_FAILED_READ, false);
             }
         } else {
-            src.sendMessage(String.format("Could not find player with name '%s'", playerName), false);
+            src.sendMessage(Translations.PLAYER_NOT_FOUND.f(playerName), false);
         }
 
     }

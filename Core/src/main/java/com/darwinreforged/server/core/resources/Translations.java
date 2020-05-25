@@ -475,7 +475,14 @@ public enum Translations {
     CU_DESCRIPTION("$3- $2Summary: $1{0}"),
 
     //  GoToLobby
-    GTL_WARPED("$1You have been teleported to the lobby as the world you were previously in is disabled");
+    GTL_WARPED("$1You have been teleported to the lobby as the world you were previously in is disabled"),
+
+    //  OldPlots
+    OLP_NO_STORAGE_FILE("$4No OldPlots storage file present!"),
+    OLP_LIST_ITEM("$3 - $2#{0} : $1{1}$2, $1{2},{3}"),
+    OLP_LIST_HEADER("$1OldPlots for $1{0}"),
+    OLP_FAILED_READ("$4Failed to obtain information from database")
+    ;
 
     private String s;
 
