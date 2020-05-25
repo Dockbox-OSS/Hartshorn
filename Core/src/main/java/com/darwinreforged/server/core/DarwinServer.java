@@ -1,10 +1,15 @@
 package com.darwinreforged.server.core;
 
+import com.darwinreforged.server.core.chat.ClickEvent;
+import com.darwinreforged.server.core.chat.ClickEvent.ClickAction;
 import com.darwinreforged.server.core.chat.DiscordChatManager;
+import com.darwinreforged.server.core.chat.HoverEvent;
+import com.darwinreforged.server.core.chat.HoverEvent.HoverAction;
 import com.darwinreforged.server.core.chat.Pagination.PaginationBuilder;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.CommandBus;
 import com.darwinreforged.server.core.commands.annotations.Command;
+import com.darwinreforged.server.core.commands.context.CommandArgument;
 import com.darwinreforged.server.core.commands.context.CommandContext;
 import com.darwinreforged.server.core.events.util.EventBus;
 import com.darwinreforged.server.core.files.FileManager;
@@ -435,6 +440,19 @@ public abstract class DarwinServer extends Singleton {
     }
 
     /**
+     Obtains the instance of the provided Module identity. If present, returns the registered @{@link
+    Module}* object of the instance.
+
+     @param id
+     the id of the module
+
+     @return The optional module info of the registered Module instance
+     */
+    public static Optional<Module> getModuleInfo(String id) {
+        return getModDataTuple(id).map(Tuple::getSecond);
+    }
+
+    /**
      Gets module source.
 
      @param id
@@ -584,36 +602,65 @@ public abstract class DarwinServer extends Singleton {
 
     @Command(aliases = "dserver", usage = "dserver [module]", desc = "Returns active and failed modules to the player", min = 0, context = "dserver [module{Module}]")
     public void commandList(CommandSender src, CommandContext ctx) {
-        List<Text> moduleContext = new ArrayList<>();
-        MODULES.forEach((clazz, ignored) -> {
-            Optional<Module> infoOptional = getModuleInfo(clazz);
-            if (infoOptional.isPresent()) {
-                Module info = infoOptional.get();
-                String name = info.name();
-                String id = info.id();
-                boolean disabled = clazz.getAnnotation(DisabledModule.class) != null;
-                String source = Translations.MODULE_SOURCE.f(MODULE_SOURCES.get(id));
-                moduleContext.add(disabled ? Text.of(Translations.DISABLED_MODULE_ROW.f(name, id, source))
-                        : Text.of(Translations.ACTIVE_MODULE_ROW.f(name, id, source)));
-            }
-        });
-        FAILED_MODULES.forEach(module -> moduleContext.add(Text.of(Translations.FAILED_MODULE_ROW.f(module))));
+        Optional<CommandArgument<Module>> moduleCandidate = ctx.getArgument("module", Module.class);
 
-        Text header = Text.of(Translations.DARWIN_SERVER_VERSION.f(getVersion()))
-                .append(Text.NEW_LINE)
-                .append(Text.of(Translations.DARWIN_SERVER_UPDATE.f(getLastUpdate())))
-                .append(Text.NEW_LINE)
-                .append(Text.of(Translations.DARWIN_SERVER_AUTHOR.f(AUTHOR)))
-                .append(Text.NEW_LINE)
-                .append(Text.of(Translations.DARWIN_SERVER_MODULE_HEAD.s()));
+        if (moduleCandidate.isPresent()) {
+            Module mod = moduleCandidate.get().getValue();
+            String[] dependencies = Arrays.stream(mod.dependencies()).map(dep ->
+                    Translations.DARWIN_SINGLE_MODULE_DEPENDENCY.f(dep.toString().toLowerCase(), dep.getMainClass(), dep.isLoaded() ? "Present" : "Absent")
+            ).toArray(String[]::new);
+            String source = Translations.MODULE_SOURCE.f(MODULE_SOURCES.get(mod.id()));
 
-        PaginationBuilder builder = PaginationBuilder.builder();
-        builder
-                .title(Text.of(Translations.DARWIN_MODULE_TITLE.s()))
-                .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
-                .contents(moduleContext)
-                .header(header)
-                .build().sendTo(src);
+            Text message = Text.of(
+                    Translations.DARWIN_SINGLE_MODULE_HEADER.f(mod.name()), '\n',
+                    Translations.DARWIN_SINGLE_MODULE_DATA.f(
+                            mod.id(),
+                            mod.name(),
+                            mod.description(),
+                            mod.version(),
+                            mod.url(),
+                            dependencies.length > 0 ? String.join(", ", dependencies) : Translations.NONE.s().toLowerCase(),
+                            mod.authors().length > 0 ? String.join(", ", mod.authors()) : Translations.UNKNOWN.s().toLowerCase(),
+                            source
+                    )
+            );
+            src.sendMessage(message, false);
+
+        } else {
+            List<Text> moduleContext = new ArrayList<>();
+            MODULES.forEach((clazz, ignored) -> {
+                Optional<Module> infoOptional = getModuleInfo(clazz);
+                if (infoOptional.isPresent()) {
+                    Module info = infoOptional.get();
+                    String name = info.name();
+                    String id = info.id();
+                    boolean disabled = clazz.getAnnotation(DisabledModule.class) != null;
+                    String source = Translations.MODULE_SOURCE.f(MODULE_SOURCES.get(id));
+                    Text activeModule = Text.of(Translations.ACTIVE_MODULE_ROW.f(name, id, source));
+                    activeModule.setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DARWIN_SERVER_MODULE_HOVER.f(id)));
+                    activeModule.setClickEvent(new ClickEvent(ClickAction.RUN_COMMAND, "/dserver " +id));
+                    moduleContext.add(disabled ? Text.of(Translations.DISABLED_MODULE_ROW.f(name, id, source))
+                            : activeModule);
+                }
+            });
+            FAILED_MODULES.forEach(module -> moduleContext.add(Text.of(Translations.FAILED_MODULE_ROW.f(module))));
+
+            Text header = Text.of(Translations.DARWIN_SERVER_VERSION.f(getVersion()))
+                    .append(Text.NEW_LINE)
+                    .append(Text.of(Translations.DARWIN_SERVER_UPDATE.f(getLastUpdate())))
+                    .append(Text.NEW_LINE)
+                    .append(Text.of(Translations.DARWIN_SERVER_AUTHOR.f(AUTHOR)))
+                    .append(Text.NEW_LINE)
+                    .append(Text.of(Translations.DARWIN_SERVER_MODULE_HEAD.s()));
+
+            PaginationBuilder builder = PaginationBuilder.builder();
+            builder
+                    .title(Text.of(Translations.DARWIN_MODULE_TITLE.s()))
+                    .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
+                    .contents(moduleContext)
+                    .header(header)
+                    .build().sendTo(src);
+        }
     }
 
     /**

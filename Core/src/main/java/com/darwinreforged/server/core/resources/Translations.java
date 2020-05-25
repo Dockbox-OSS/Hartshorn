@@ -44,6 +44,8 @@ public enum Translations {
     UNOWNED("Unowned"),
     EVERYONE("Everyone"),
     UNKNOWN_PLAYER("Unknown player"),
+    ARGUMENT_NOT_PROVIDED("$4No argument provided for value '{0}'"),
+    PLAYER_NOT_FOUND("$4Could not find player '{0}'"),
 
     //    Time differences
     TIME_DAYS_AGO("$1{0} $2days ago"),
@@ -460,6 +462,17 @@ public enum Translations {
     DARWIN_SERVER_AUTHOR("$2&lAuthor&r$3: $1{0}"),
     DARWIN_SERVER_MODULE_HEAD("$2&lModules&r$3:"),
     MODULE_SOURCE("&e[{0}]"),
+    DARWIN_SINGLE_MODULE_HEADER("$2About $1{0}"),
+    DARWIN_SINGLE_MODULE_DATA("$2ID : $1{0}\n" +
+            "$2Name : $1{1}\n" +
+            "$2Description : $1{2}\n" +
+            "$2Version : $1{3}\n" +
+            "$2URL : $1{4}\n" +
+            "$2Dependencies : $1{5}\n" +
+            "$2Author(s) : $1{6}\n" +
+            "$2Source : $1{7}"),
+    DARWIN_SINGLE_MODULE_DEPENDENCY("$1{0} $2({1} $3- {2}$2)"),
+    DARWIN_SERVER_MODULE_HOVER("$1More information for '{0}'"),
 
     //   World Unloader
     WU_ADDED("$1Added $2{0} $1to the unload blacklist"),
