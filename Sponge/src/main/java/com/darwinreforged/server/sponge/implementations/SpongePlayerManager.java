@@ -45,22 +45,22 @@ public class SpongePlayerManager extends PlayerManager {
 
     @Override
     public void broadcast(com.darwinreforged.server.core.chat.Text message) {
-        Sponge.getServer().getBroadcastChannel().send(parseColors(message.getText()));
+        Sponge.getServer().getBroadcastChannel().send(fromAPI(message));
     }
 
     @Override
     public void broadcastIfPermitted(com.darwinreforged.server.core.chat.Text message, String permission) {
         Sponge.getServer().getOnlinePlayers().parallelStream().filter(p -> p.hasPermission(permission) ||
-                p.hasPermission(Permissions.ADMIN_BYPASS.p())).forEach(p -> p.sendMessage(parseColors(message.getText())));
+                p.hasPermission(Permissions.ADMIN_BYPASS.p())).forEach(p -> p.sendMessage(fromAPI(message)));
     }
 
     @Override
     public void tell(MessageReceiver receiver, com.darwinreforged.server.core.chat.Text message) {
         if (receiver instanceof DarwinPlayer) {
             Sponge.getServer().getPlayer(((DarwinPlayer) receiver).getUniqueId())
-                    .ifPresent(spp -> spp.sendMessage(parseColors(Translations.DEFAULT_SINGLE_MESSAGE.f(message.getText()))));
+                    .ifPresent(spp -> spp.sendMessage(fromAPI(message)));
         } else if (receiver instanceof Console) {
-            Sponge.getServer().getConsole().sendMessage(parseColors(Translations.DEFAULT_SINGLE_MESSAGE.f(message.getText())));
+            Sponge.getServer().getConsole().sendMessage(fromAPI(message));
         } else {
             DarwinServer.getLog().warn("Failed to get receiver for : " + receiver);
         }
@@ -69,9 +69,9 @@ public class SpongePlayerManager extends PlayerManager {
     @Override
     public void tellNoMarkup(MessageReceiver receiver, com.darwinreforged.server.core.chat.Text message) {
         if (receiver instanceof DarwinPlayer) {
-            Sponge.getServer().getPlayer(((Target) receiver).getUniqueId()).ifPresent(spp -> spp.sendMessage(parseColors(message.toLegacy())));
+            Sponge.getServer().getPlayer(((Target) receiver).getUniqueId()).ifPresent(spp -> spp.sendMessage(fromAPI(message)));
         } else if (receiver instanceof Console) {
-            Sponge.getServer().getConsole().sendMessage(parseColors(message.toLegacy()));
+            Sponge.getServer().getConsole().sendMessage(fromAPI(message));
         }
     }
 
