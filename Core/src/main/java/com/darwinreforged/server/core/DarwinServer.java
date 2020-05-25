@@ -119,18 +119,19 @@ public abstract class DarwinServer extends Singleton {
      */
     @SuppressWarnings({"InstantiationOfUtilityClass"})
     protected void setupPlatform() throws IOException {
+        // Load plugin properties
+        Properties properties = new Properties();
+        properties.load(getClass().getResourceAsStream("/darwin.properties"));
+        version = properties.getOrDefault("version", "Unknown-dev").toString();
+        lastUpdate = properties.getOrDefault("last_update", "Unknown").toString();
+
+        // Create utility implementations
+        scanUtilities(getServer().getClass());
+
         if (!verifyAlive()) {
             throw new IllegalStateException("DarwinServer will not be loaded");
+
         } else {
-            // Load plugin properties
-            Properties properties = new Properties();
-            properties.load(getClass().getResourceAsStream("/darwin.properties"));
-            version = properties.getOrDefault("version", "Unknown-dev").toString();
-            lastUpdate = properties.getOrDefault("last_update", "Unknown").toString();
-
-            // Create utility implementations
-            scanUtilities(getServer().getClass());
-
             // Create event bus
             this.eventBus = new EventBus();
 
@@ -581,7 +582,7 @@ public abstract class DarwinServer extends Singleton {
         return true;
     }
 
-    @Command(aliases = "dserver", usage = "dserver <module>", desc = "Returns active and failed modules to the player", min = 0, context = "dserver <module{Module}>")
+    @Command(aliases = "dserver", usage = "dserver [module]", desc = "Returns active and failed modules to the player", min = 0, context = "dserver [module{Module}]")
     public void commandList(CommandSender src, CommandContext ctx) {
         List<Text> moduleContext = new ArrayList<>();
         MODULES.forEach((clazz, ignored) -> {
