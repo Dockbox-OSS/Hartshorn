@@ -180,11 +180,10 @@ public class DaveChatListeners {
             message.append(color);
 
             if (link) {
-                Text linkSuggestion = Text.of(Translations.DAVE_LINK_SUGGESTION.f(response));
-                linkSuggestion.setClickEvent(new ClickEvent(ClickAction.OPEN_URL, response));
-                linkSuggestion.setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_LINK_SUGGESTION_HOVER.f(response)));
-                message.append(linkSuggestion);
-            } else message.append(Text.of(response));
+                message.append(Text.of(Translations.DAVE_LINK_SUGGESTION.f(response)));
+                message.setClickEvent(new ClickEvent(ClickAction.OPEN_URL, response));
+                message.setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_LINK_SUGGESTION_HOVER.f(response)));
+            } else message.append(response);
 
             PlayerManager pu = DarwinServer.getUtilChecked(PlayerManager.class);
 
