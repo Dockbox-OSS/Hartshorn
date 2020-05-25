@@ -32,7 +32,7 @@ public @interface Module {
 
      @return the string
      */
-    String version() default "InDev";
+    String version() default "unknown";
 
     /**
      Description string.
