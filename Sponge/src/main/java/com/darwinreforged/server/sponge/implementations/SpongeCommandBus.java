@@ -1,11 +1,11 @@
 package com.darwinreforged.server.sponge.implementations;
 
 import com.boydti.fawe.object.FawePlayer;
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.commands.ArgumentTypeValue;
 import com.darwinreforged.server.core.commands.CommandBus;
 import com.darwinreforged.server.core.commands.context.CommandArgument;
 import com.darwinreforged.server.core.commands.context.CommandFlag;
-import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.math.Vector3d;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.player.DarwinPlayer;
@@ -51,6 +51,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -190,6 +191,8 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
                 arguments.add(new CommandArgument<>(obj, false, s));
             }
         })));
+
+        // TODO : Convert flags
 
         com.darwinreforged.server.core.commands.context.CommandContext darwinCtx;
         if (sender instanceof DarwinPlayer) {
@@ -356,9 +359,8 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
         @Nullable
         @Override
         protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
-            String id = args.next();
-            Object module = DarwinServer.getModule(id);
-            if (module.getClass().isAnnotationPresent(Module.class)) return module;
+            Object module = DarwinServer.getModuleInfo(args.next());
+            if (module != null && ((Optional<?>) module).isPresent()) return ((Optional<?>) module).get();
             return null;
         }
 
