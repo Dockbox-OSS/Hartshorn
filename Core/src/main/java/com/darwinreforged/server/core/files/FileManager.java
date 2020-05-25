@@ -28,6 +28,7 @@ import java.util.Optional;
  The type File utils.
  */
 @Utility("Common utilities for file management and parsing")
+@SuppressWarnings({"unchecked", "rawtypes"})
 public abstract class FileManager {
 
     private final ObjectMapper mapper;
@@ -120,7 +121,6 @@ public abstract class FileManager {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public Map<String, Object> getYamlDataForUrl(String url) {
         try {
             URL u = new URL(url);
@@ -168,7 +168,6 @@ public abstract class FileManager {
 
      @return the yaml data from file
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public Map<String, Object> getYamlDataFromFile(File file) {
         return (Map<String, Object>) getYamlDataFromFile(file, Map.class, new HashMap());
     }
@@ -199,7 +198,6 @@ public abstract class FileManager {
 
      @return the yaml data for config
      */
-    @SuppressWarnings("unchecked")
     public <T> T getYamlDataForConfig(Object module, String path, Class<T> type) {
         Map<String, Object> values = getYamlDataForConfig(module);
         if (values.containsKey(path)) {

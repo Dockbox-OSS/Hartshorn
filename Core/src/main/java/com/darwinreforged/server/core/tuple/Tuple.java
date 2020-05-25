@@ -8,6 +8,7 @@ package com.darwinreforged.server.core.tuple;
  @param <V>
  The value
  */
+@SuppressWarnings("rawtypes")
 public class Tuple<K, V> {
 
     /**
@@ -69,7 +70,6 @@ public class Tuple<K, V> {
         return this.second;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

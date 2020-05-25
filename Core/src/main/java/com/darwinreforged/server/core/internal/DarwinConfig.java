@@ -41,6 +41,7 @@ public class DarwinConfig {
         if (written.get()) fu.writeYamlDataForConfig(config, DarwinServerModule.class);
     }
 
+    @SuppressWarnings("unchecked")
     public static abstract class ConfigFlag<T> {
 
         private final String key;
@@ -52,7 +53,6 @@ public class DarwinConfig {
             DarwinConfig.FLAGS.put(key, this);
         }
 
-        @SuppressWarnings("unchecked")
         void setValue(Object value) {
             this.value = (T) value;
         }

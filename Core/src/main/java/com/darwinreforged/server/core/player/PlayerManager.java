@@ -50,7 +50,6 @@ public abstract class PlayerManager {
         if (playerUtils == null) playerUtils = DarwinServer.getUtilChecked(PlayerManager.class);
     }
 
-    @SuppressWarnings("unchecked")
     private static void updateStorage() {
         FileManager fu = DarwinServer.getUtilChecked(FileManager.class);
         File dataPath = fu.getDataDirectory(DarwinServerModule.class, "storage").toFile();

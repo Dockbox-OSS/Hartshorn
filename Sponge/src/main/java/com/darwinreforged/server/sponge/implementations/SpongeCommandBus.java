@@ -145,7 +145,6 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected com.darwinreforged.server.core.commands.context.CommandContext convertContext(CommandContext ctx, CommandSender sender) {
         Multimap<String, Object> parsedArgs;

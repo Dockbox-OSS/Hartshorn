@@ -16,6 +16,7 @@ import static java.lang.invoke.MethodHandles.Lookup;
 
  @author Andy Li
  @since 1.3 */
+@SuppressWarnings("JavaReflectionMemberAccess")
 final class AccessHelper {
     /**
      * Default lookup object.
@@ -42,7 +43,6 @@ final class AccessHelper {
     static {
         MethodHandle methodhandle = null;
         try {
-            @SuppressWarnings("JavaReflectionMemberAccess")
             Method method = AccessibleObject.class.getMethod("trySetAccessible");
             methodhandle = MethodHandles.lookup().unreflect(method);
         } catch (NoSuchMethodException ignore) {
@@ -92,8 +92,6 @@ final class AccessHelper {
      if access checking fails and cannot be bypassed
      @see Lookup#unreflect(Method) Lookup#unreflect(Method)
      */
-// suppress warning for when compile with Java 9+ (isAccessible() method is deprecated since Java 9)
-    @SuppressWarnings("deprecation")
     static MethodHandle unreflectMethodHandle0(Lookup lookup, Method method) throws IllegalAccessException {
         boolean accessible = method.isAccessible();
         if ((isAtLeastJava9() && !pretendJava8) || pretendJava9) {  // Java 9+
@@ -369,7 +367,6 @@ final class AccessHelper {
      @throws SecurityException
      if a security manager denied access
      */
-    @SuppressWarnings({ "ManualArrayToCollectionCopy", "UseBulkOperation" })
     public static List<Method> getMethodsRecursively(Class<?> cls) throws SecurityException {
         class MethodWrapper {
             final Method method;

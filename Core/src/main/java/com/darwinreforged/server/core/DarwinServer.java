@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
 /**
  The type Darwin server.
  */
-@SuppressWarnings("UnusedReturnValue")
+@SuppressWarnings({"InstantiationOfUtilityClass", "unchecked"})
 public abstract class DarwinServer extends Singleton {
 
     /**
@@ -124,7 +124,6 @@ public abstract class DarwinServer extends Singleton {
      @throws IOException
      the io exception
      */
-    @SuppressWarnings({"InstantiationOfUtilityClass"})
     protected void setupPlatform() throws IOException {
         // Load plugin properties
         Properties properties = new Properties();
@@ -301,7 +300,6 @@ public abstract class DarwinServer extends Singleton {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void scanUtilities(Class<? extends DarwinServer> implementation) {
         Reflections abstrPackRef = new Reflections(CORE_PACKAGE);
         Reflections implPackRef = new Reflections(implementation.getPackage().getName());
@@ -348,7 +346,7 @@ public abstract class DarwinServer extends Singleton {
 
      @return the util
      */
-    @SuppressWarnings("unchecked")
+
     public static <I> Optional<? extends I> getUtil(Class<I> clazz) {
         if (!clazz.isAnnotationPresent(Utility.class))
             throw new IllegalArgumentException(String.format("Requested utility class is not annotated as such (%s)", clazz.toGenericString()));
@@ -402,12 +400,12 @@ public abstract class DarwinServer extends Singleton {
         return getModDataTuple(clazz).map(Tuple::getFirst);
     }
 
-    @SuppressWarnings("unchecked")
+
     public static <I> Optional<I> getModule(String id) {
         return (Optional<I>) getModDataTuple(id).map(Tuple::getFirst);
     }
 
-    @SuppressWarnings("unchecked")
+
     private static <I> Optional<Tuple<I, Module>> getModDataTuple(String id) {
         try {
             return MODULES.values().stream().filter(objectModuleTuple -> (objectModuleTuple.getSecond().id().equals(id)))
@@ -418,7 +416,7 @@ public abstract class DarwinServer extends Singleton {
         }
     }
 
-    @SuppressWarnings("unchecked")
+
     private static <I> Optional<Tuple<I, Module>> getModDataTuple(Class<I> clazz) {
         try {
             Tuple<Object, Module> module = MODULES
@@ -556,11 +554,9 @@ public abstract class DarwinServer extends Singleton {
      the pkg
      @param integrated
      the integrated
-
-     @return the boolean
      */
-    public boolean scanModulePackage(String pkg, boolean integrated) {
-        return scanModulePackage(pkg, integrated ? "Integrated" : "Unknown");
+    public void scanModulePackage(String pkg, boolean integrated) {
+        scanModulePackage(pkg, integrated ? "Integrated" : "Unknown");
     }
 
     private void registerClasses(String source, Class<?>... pluginModules) {
@@ -590,18 +586,15 @@ public abstract class DarwinServer extends Singleton {
      the package string
      @param source
      the source
-
-     @return the boolean
      */
-    public boolean scanModulePackage(String packageString, String source) {
-        if ("".equals(packageString)) return false;
+    public void scanModulePackage(String packageString, String source) {
+        if ("".equals(packageString)) return;
         Reflections reflections = new Reflections(packageString);
         Set<Class<?>> pluginModules = reflections
                 .getTypesAnnotatedWith(Module.class);
-        if (pluginModules.isEmpty()) return false;
+        if (pluginModules.isEmpty()) return;
 
         registerClasses(source, pluginModules.toArray(new Class[0]));
-        return true;
     }
 
     @Command(aliases = "dserver", usage = "dserver [module]", desc = "Returns active and failed modules to the player", min = 0, context = "dserver [module{Module}]")
@@ -667,8 +660,7 @@ public abstract class DarwinServer extends Singleton {
         }
     }
 
-    @SuppressWarnings("InstantiationOfUtilityClass")
-    @Listener
+        @Listener
     public void onServerReload(ServerReloadEvent event) {
         this.config = new DarwinConfig();
         Translations.collect();

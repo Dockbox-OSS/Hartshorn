@@ -22,6 +22,7 @@ import java.util.Map;
  The type Spectator teleport module.
  */
 @Module(id = "spectatorteleport", name = "Spectator Teleport", description = "Block teleportation for players who are in Spectator mode", authors = {"GuusLieben", "TheCrunchy"})
+@SuppressWarnings("unchecked")
 public class SpectatorTeleportModule {
 
     /**
@@ -51,7 +52,6 @@ public class SpectatorTeleportModule {
         init();
     }
 
-    @SuppressWarnings("unchecked")
     private void init() {
         FileManager fileManager = DarwinServer.getUtilChecked(FileManager.class);
         Map<String, Object> yamlData = fileManager.getYamlDataForConfig(this);

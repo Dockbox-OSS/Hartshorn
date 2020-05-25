@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 /**
  The type Dave configuration util.
  */
+@SuppressWarnings("unchecked")
 public class DaveConfigurationUtil {
 
     private List<DaveTrigger> triggers = new ArrayList<>();
@@ -31,7 +32,6 @@ public class DaveConfigurationUtil {
     /**
      Instantiates a new Dave configuration util.
      */
-    @SuppressWarnings("unchecked")
     public DaveConfigurationUtil() {
         FileManager fu = DarwinServer.getUtilChecked(FileManager.class);
 

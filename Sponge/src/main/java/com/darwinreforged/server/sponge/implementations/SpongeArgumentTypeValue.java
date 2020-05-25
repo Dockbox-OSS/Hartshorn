@@ -12,9 +12,9 @@ import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.text.Text;
 
+@SuppressWarnings({"unchecked", "rawtypes", "Guava"})
 public class SpongeArgumentTypeValue extends ArgumentTypeValue<CommandElement> {
 
-    @SuppressWarnings({"unchecked", "rawtypes", "Guava"})
     public SpongeArgumentTypeValue(String type, String permission, String key) throws IllegalArgumentException {
         super(Arguments.valueOf(type.toUpperCase()), permission, key);
         Optional<Arguments> argCandidate = Enums.getIfPresent(Arguments.class, type.toUpperCase());

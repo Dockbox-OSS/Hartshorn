@@ -9,6 +9,7 @@ import com.darwinreforged.server.core.util.ItemUtils;
  @param <I>
  the type parameter
  */
+@SuppressWarnings("unchecked")
 public class DarwinItem<I> {
 
     /**
@@ -32,7 +33,6 @@ public class DarwinItem<I> {
      @param lore
      the lore
      */
-    @SuppressWarnings("unchecked")
     public void setLore(String[] lore) {
         this.itemReference = (I) DarwinServer.getUtilChecked(ItemUtils.class).setLore(lore, this);
     }
@@ -43,7 +43,6 @@ public class DarwinItem<I> {
      @param displayName
      the display name
      */
-    @SuppressWarnings("unchecked")
     public void setDisplayName(String displayName) {
         this.itemReference = (I) DarwinServer.getUtilChecked(ItemUtils.class).setDisplayName(displayName, this);
     }
@@ -53,7 +52,6 @@ public class DarwinItem<I> {
 
      @return the display name
      */
-    @SuppressWarnings("unchecked")
     public String getDisplayName() {
         return DarwinServer.getUtilChecked(ItemUtils.class).getDisplayName(this);
     }
