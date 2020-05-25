@@ -77,7 +77,12 @@ public class SpongePlayerManager extends PlayerManager {
 
     @Override
     public boolean isOnline(DarwinPlayer player) {
-        return Sponge.getServer().getPlayer(player.getUniqueId()).map(User::isOnline).orElse(false);
+        return isOnline(player.getUniqueId());
+    }
+
+    @Override
+    public boolean isOnline(UUID uuid) {
+        return Sponge.getServer().getPlayer(uuid).map(User::isOnline).orElse(false);
     }
 
     @Override
@@ -195,7 +200,7 @@ public class SpongePlayerManager extends PlayerManager {
     }
 
     private Text fromAPI(com.darwinreforged.server.core.chat.Text text) {
-        Text spT = TextSerializers.FORMATTING_CODE.deserializeUnchecked(text.toLegacy());
+        Text spT = parseColors(text.toLegacy());
         Text.Builder builder = spT.toBuilder();
         if (text.getClickEvent() != null) {
             try {
