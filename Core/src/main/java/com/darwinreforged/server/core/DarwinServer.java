@@ -11,7 +11,9 @@ import com.darwinreforged.server.core.commands.CommandBus;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.commands.context.CommandArgument;
 import com.darwinreforged.server.core.commands.context.CommandContext;
+import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.events.util.EventBus;
+import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.internal.DarwinConfig;
 import com.darwinreforged.server.core.internal.ServerType;
@@ -165,6 +167,8 @@ public abstract class DarwinServer extends Singleton {
             CommandBus<?, ?> cb = getUtilChecked(CommandBus.class);
             cb.register(instance.getClass());
             cb.register(DarwinServer.class); // For dserver command
+
+            this.eventBus.subscribe(this);
         }
     }
 
@@ -661,6 +665,15 @@ public abstract class DarwinServer extends Singleton {
                     .header(header)
                     .build().sendTo(src);
         }
+    }
+
+    @SuppressWarnings("InstantiationOfUtilityClass")
+    @Listener
+    public void onServerReload(ServerReloadEvent event) {
+        this.config = new DarwinConfig();
+        Translations.collect();
+        Permissions.collect();
+        getLog().info("Successfully reloaded DarwinServer configurations");
     }
 
     /**
