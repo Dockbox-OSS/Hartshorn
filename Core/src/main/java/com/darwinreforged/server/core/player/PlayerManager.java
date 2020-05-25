@@ -135,6 +135,8 @@ public abstract class PlayerManager {
      */
     public abstract boolean isOnline(DarwinPlayer player);
 
+    public abstract boolean isOnline(UUID uuid);
+
     /**
      Kick.
 
