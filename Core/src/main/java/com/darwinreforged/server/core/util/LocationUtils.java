@@ -38,7 +38,9 @@ public abstract class LocationUtils {
 
      @return the highest point
      */
-    public abstract int getHighestPoint(AbstractVector2<? extends Number> vector2, DarwinWorld world);
+    public int getHighestPoint(AbstractVector2<? extends Number> vector2, DarwinWorld world) {
+        return vector2 != null ? getHighestPoint(vector2.getX(), vector2.getZ(), world.getWorldUUID()) : -1;
+    }
 
     /**
      Gets highest point.
@@ -48,7 +50,9 @@ public abstract class LocationUtils {
 
      @return the highest point
      */
-    public abstract int getHighestPoint(DarwinLocation location);
+    public int getHighestPoint(DarwinLocation location) {
+        return location != null ? getHighestPoint(location.getX(), location.getZ(), location.getWorld().getWorldUUID()) : -1;
+    }
 
     /**
      Gets highest point.

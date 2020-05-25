@@ -83,11 +83,6 @@ public class SpongePlayerManager extends PlayerManager {
     }
 
     @Override
-    public boolean isOnline(DarwinPlayer player) {
-        return isOnline(player.getUniqueId());
-    }
-
-    @Override
     public boolean isOnline(UUID uuid) {
         return Sponge.getServer().getPlayer(uuid).map(User::isOnline).orElse(false);
     }

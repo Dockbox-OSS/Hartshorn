@@ -132,7 +132,9 @@ public abstract class PlayerManager {
 
      @return the boolean
      */
-    public abstract boolean isOnline(DarwinPlayer player);
+    public boolean isOnline(DarwinPlayer player) {
+        return isOnline(player.getUniqueId());
+    }
 
     public abstract boolean isOnline(UUID uuid);
 
