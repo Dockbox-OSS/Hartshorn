@@ -7,7 +7,7 @@ import com.darwinreforged.server.core.internal.Utility;
  The type Plot utils.
  */
 @Utility("Implementation-independent PlotSquared utilities")
-public abstract class PlotSquaredUtils {
+public interface PlotSquaredUtils {
 
     /**
      Is plot world boolean.
@@ -17,6 +17,6 @@ public abstract class PlotSquaredUtils {
 
      @return the boolean
      */
-    public abstract boolean isPlotWorld(DarwinWorld world);
+    boolean isPlotWorld(DarwinWorld world);
 
 }

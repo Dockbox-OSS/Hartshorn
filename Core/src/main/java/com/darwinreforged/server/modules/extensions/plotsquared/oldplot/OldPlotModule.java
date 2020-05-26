@@ -43,7 +43,7 @@ public class OldPlotModule {
 
         String playerName = optionalPlayerArg.get().getValue();
 
-        FileManager fm = DarwinServer.getUtilChecked(FileManager.class);
+        FileManager fm = DarwinServer.get(FileManager.class);
         Path dataDir = fm.getDataDirectory(this);
         File file = new File(dataDir.toFile(), "oldplots.db");
 

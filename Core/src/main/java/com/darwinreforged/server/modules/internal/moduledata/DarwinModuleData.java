@@ -32,9 +32,9 @@ public class DarwinModuleData {
      */
     @Listener
     public void onServerStart(ServerStartedEvent event) {
-        File dataFile = new File(DarwinServer.getUtilChecked(FileManager.class).getDataDirectory(this).toFile(), "module_data.yml");
+        File dataFile = new File(DarwinServer.get(FileManager.class).getDataDirectory(this).toFile(), "module_data.yml");
         DarwinServer.getAllModuleInfo().forEach(this::registerPlugin);
-        DarwinServer.getUtilChecked(FileManager.class).writeYamlDataToFile(data, dataFile);
+        DarwinServer.get(FileManager.class).writeYamlDataToFile(data, dataFile);
     }
 
     private void registerPlugin(Module module) {

@@ -245,7 +245,7 @@ public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
 
     public abstract void registerCommandNoArgs(String command, String permission, CommandRunner runner);
 
-    protected abstract CommandContext convertContext(C ctx, CommandSender sender);
+    protected abstract CommandContext convertContext(C ctx, CommandSender sender, String command);
 
     public abstract void registerCommandArgsAndOrChild(String command, String permission, CommandRunner runner);
 

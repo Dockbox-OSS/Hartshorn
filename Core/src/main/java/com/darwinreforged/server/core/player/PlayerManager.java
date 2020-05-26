@@ -47,12 +47,11 @@ public abstract class PlayerManager {
     }
 
     private static void updateUtil() {
-        if (playerUtils == null) playerUtils = DarwinServer.getUtilChecked(PlayerManager.class);
+        if (playerUtils == null) playerUtils = DarwinServer.get(PlayerManager.class);
     }
 
-    @SuppressWarnings("unchecked")
     private static void updateStorage() {
-        FileManager fu = DarwinServer.getUtilChecked(FileManager.class);
+        FileManager fu = DarwinServer.get(FileManager.class);
         File dataPath = fu.getDataDirectory(DarwinServerModule.class, "storage").toFile();
 //        File playerStorageFile = new File(dataPath, "player-storage.yml");
 
@@ -133,7 +132,9 @@ public abstract class PlayerManager {
 
      @return the boolean
      */
-    public abstract boolean isOnline(DarwinPlayer player);
+    public boolean isOnline(DarwinPlayer player) {
+        return isOnline(player.getUniqueId());
+    }
 
     public abstract boolean isOnline(UUID uuid);
 

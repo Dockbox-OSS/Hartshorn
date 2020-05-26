@@ -521,7 +521,11 @@ public enum Translations {
     public String fsh(final Object... args) {
         int diff = s().length() - u().length();
         String formatted = f(args);
-        return 49+diff > formatted.length() ? formatted : f(args).substring(0, (50+diff));
+        return (49+diff > formatted.length() ? formatted : f(args).substring(0, (50+diff))) + "...";
+    }
+
+    public static String shorten(String s) {
+        return s.substring(0, 50) + "...";
     }
 
     // Format value placeholders and colors
@@ -553,16 +557,18 @@ public enum Translations {
     public static void collect() {
         DarwinServer.getModule(DarwinServerModule.class).ifPresent(module -> {
             Map<String, Object> configMap;
-            File file = new File(DarwinServer.getUtilChecked(FileManager.class).getConfigDirectory(module).toFile(), "translations.yml");
+            File file = new File(DarwinServer.get(FileManager.class).getConfigDirectory(module).toFile(), "translations.yml");
             if (!file.exists()) {
                 configMap = new HashMap<>();
                 Arrays.stream(Translations.values()).forEach(translation -> configMap.put(translation.name().toLowerCase().replaceAll("_", "."), translation.s));
-                DarwinServer.getUtilChecked(FileManager.class).writeYamlDataToFile(configMap, file);
-            } else configMap = DarwinServer.getUtilChecked(FileManager.class).getYamlDataFromFile(file);
+                DarwinServer.get(FileManager.class).writeYamlDataToFile(configMap, file);
+            } else configMap = DarwinServer.get(FileManager.class).getYamlDataFromFile(file);
 
             configMap.forEach((k, v) -> {
-                Translations t = Translations.valueOf(k.toUpperCase().replaceAll("\\.", "_"));
-                if (t != null) t.c(v.toString());
+                try {
+                    Translations t = Translations.valueOf(k.toUpperCase().replaceAll("\\.", "_"));
+                    if (t != null) t.c(v.toString());
+                } catch (Throwable ignored) {}
             });
         });
     }

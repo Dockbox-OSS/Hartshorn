@@ -4,6 +4,7 @@ import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.commands.annotations.Permission;
 import com.darwinreforged.server.core.commands.annotations.Source;
+import com.darwinreforged.server.core.commands.context.CommandArgument;
 import com.darwinreforged.server.core.commands.context.CommandContext;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 /**
  The type World unload module.
  */
+@SuppressWarnings("unchecked")
 @Module(id = "worldunloader", name = "WorldUnloader", description = "Unload worlds with no players in them", authors = "GuusLieben", dependencies = Dependencies.PLOTSQUARED)
 public class WorldUnloadModule {
 
@@ -58,16 +60,15 @@ public class WorldUnloadModule {
         init();
     }
 
-    @SuppressWarnings("unchecked")
     private void init() {
-        fileUtil = DarwinServer.getUtilChecked(FileManager.class);
-        plotSquaredUtils = DarwinServer.getUtilChecked(PlotSquaredUtils.class);
+        fileUtil = DarwinServer.get(FileManager.class);
+        plotSquaredUtils = DarwinServer.get(PlotSquaredUtils.class);
         ArrayList<String> blacklist = (ArrayList<String>) fileUtil.getYamlDataForConfig(this, "blacklist", ArrayList.class);
         if (blacklist != null) unloadBlacklist.addAll(blacklist);
         refreshBlackList();
 
         // Do not use async, certain platforms do not allow async chunk modifications
-        DarwinServer.getUtilChecked(TimeUtils.class).schedule()
+        DarwinServer.get(TimeUtils.class).schedule()
                 .interval(2, TimeUnit.MINUTES)
                 .execute(this::unloadTask)
                 .submit();
@@ -95,8 +96,8 @@ public class WorldUnloadModule {
         String worldName;
         if (context.getArgumentCount() == 0) worldName = world.getName();
         else {
-            Optional<DarwinWorld> worldCandidate = context.getArgumentAsWorld("world");
-            if (worldCandidate.isPresent()) worldName = worldCandidate.get().getName();
+            Optional<CommandArgument<DarwinWorld>> worldCandidate = context.getArgument("world", DarwinWorld.class);
+            if (worldCandidate.isPresent()) worldName = worldCandidate.get().getValue().getName();
             else {
                 player.sendMessage(Translations.WORLD_NOT_FOUND.s(), false);
                 return;
@@ -114,7 +115,7 @@ public class WorldUnloadModule {
     }
 
     private void unloadTask() {
-        DarwinServer.getUtilChecked(LocationUtils.class)
+        DarwinServer.get(LocationUtils.class)
                 .getEmptyWorlds().stream()
                 .filter(world -> !unloadBlacklist.contains(world.getName()) && !plotSquaredUtils.isPlotWorld(world))
                 .forEach(darwinWorld -> darwinWorld.unloadWorld(false));

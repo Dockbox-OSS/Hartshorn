@@ -5,10 +5,10 @@ import com.magitechserver.magibridge.MagiBridge;
 
 import net.dv8tion.jda.api.JDA;
 
-public class SpongeDiscordChatManager extends DiscordChatManager {
+public class SpongeDiscordChatManager implements DiscordChatManager {
 
     @Override
-    protected JDA getJda() {
+    public JDA getJda() {
         return MagiBridge.jda;
     }
 }

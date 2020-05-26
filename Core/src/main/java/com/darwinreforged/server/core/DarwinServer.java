@@ -11,7 +11,9 @@ import com.darwinreforged.server.core.commands.CommandBus;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.commands.context.CommandArgument;
 import com.darwinreforged.server.core.commands.context.CommandContext;
+import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.events.util.EventBus;
+import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.internal.DarwinConfig;
 import com.darwinreforged.server.core.internal.ServerType;
@@ -56,7 +58,7 @@ import java.util.stream.Collectors;
 /**
  The type Darwin server.
  */
-@SuppressWarnings("UnusedReturnValue")
+@SuppressWarnings({"InstantiationOfUtilityClass", "unchecked"})
 public abstract class DarwinServer extends Singleton {
 
     /**
@@ -122,7 +124,6 @@ public abstract class DarwinServer extends Singleton {
      @throws IOException
      the io exception
      */
-    @SuppressWarnings({"InstantiationOfUtilityClass"})
     protected void setupPlatform() throws IOException {
         // Load plugin properties
         Properties properties = new Properties();
@@ -148,7 +149,7 @@ public abstract class DarwinServer extends Singleton {
             config = new DarwinConfig();
 
             // Registering JDA Listeners
-            DiscordChatManager du = getUtilChecked(DiscordChatManager.class);
+            DiscordChatManager du = get(DiscordChatManager.class);
             du.init(DarwinConfig.DISCORD_CHANNEL_WHITELIST.get());
 
             if (DarwinConfig.LOAD_EXTERNAL_MODULES.get()) {
@@ -162,9 +163,11 @@ public abstract class DarwinServer extends Singleton {
             Permissions.collect();
 
             // Setting up commands
-            CommandBus<?, ?> cb = getUtilChecked(CommandBus.class);
+            CommandBus<?, ?> cb = get(CommandBus.class);
             cb.register(instance.getClass());
             cb.register(DarwinServer.class); // For dserver command
+
+            this.eventBus.subscribe(this);
         }
     }
 
@@ -196,7 +199,7 @@ public abstract class DarwinServer extends Singleton {
     }
 
     private void loadExternalModules() {
-        Path modDir = getUtilChecked(FileManager.class).getModuleDirectory();
+        Path modDir = get(FileManager.class).getModuleDirectory();
         try {
             URL url = modDir.toUri().toURL();
             log.info(String.format("Scanning %s for additional modules", url.toString()));
@@ -297,7 +300,6 @@ public abstract class DarwinServer extends Singleton {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void scanUtilities(Class<? extends DarwinServer> implementation) {
         Reflections abstrPackRef = new Reflections(CORE_PACKAGE);
         Reflections implPackRef = new Reflections(implementation.getPackage().getName());
@@ -344,29 +346,12 @@ public abstract class DarwinServer extends Singleton {
 
      @return the util
      */
-    @SuppressWarnings("unchecked")
-    public static <I> Optional<? extends I> getUtil(Class<I> clazz) {
+    private static <I> Optional<? extends I> getUtil(Class<I> clazz) {
         if (!clazz.isAnnotationPresent(Utility.class))
             throw new IllegalArgumentException(String.format("Requested utility class is not annotated as such (%s)", clazz.toGenericString()));
         Object implementation = UTILS.get(clazz);
         if (implementation != null) return (Optional<? extends I>) Optional.of(implementation);
         return Optional.empty();
-    }
-
-    /**
-     Attempt to get a utility of module safely (Optional-wrapped)
-
-     @param <I>
-     the type parameter for the utility or module
-     @param clazz
-     the utility or module type
-
-     @return the Optional instance
-     */
-    public static <I> Optional<? extends I> getSafe(Class<I> clazz) {
-        if (clazz.isAnnotationPresent(Module.class)) return getModule(clazz);
-        else if (clazz.isAnnotationPresent(Utility.class)) return getUtil(clazz);
-        else return Optional.empty();
     }
 
     /**
@@ -379,9 +364,9 @@ public abstract class DarwinServer extends Singleton {
 
      @return the util checked
      */
-    public static <I> I getUtilChecked(Class<I> clazz) {
+    public static <I> I get(Class<I> clazz) {
         Optional<? extends I> optionalImpl = getUtil(clazz);
-        return optionalImpl.orElse(null);
+        return optionalImpl.orElseThrow(() -> new IllegalStateException(String.format("Could not obtain instance of %s", clazz.toGenericString())));
     }
 
     /**
@@ -398,12 +383,12 @@ public abstract class DarwinServer extends Singleton {
         return getModDataTuple(clazz).map(Tuple::getFirst);
     }
 
-    @SuppressWarnings("unchecked")
+
     public static <I> Optional<I> getModule(String id) {
         return (Optional<I>) getModDataTuple(id).map(Tuple::getFirst);
     }
 
-    @SuppressWarnings("unchecked")
+
     private static <I> Optional<Tuple<I, Module>> getModDataTuple(String id) {
         try {
             return MODULES.values().stream().filter(objectModuleTuple -> (objectModuleTuple.getSecond().id().equals(id)))
@@ -414,7 +399,7 @@ public abstract class DarwinServer extends Singleton {
         }
     }
 
-    @SuppressWarnings("unchecked")
+
     private static <I> Optional<Tuple<I, Module>> getModDataTuple(Class<I> clazz) {
         try {
             Tuple<Object, Module> module = MODULES
@@ -499,7 +484,7 @@ public abstract class DarwinServer extends Singleton {
             }
 
             registerListener(instance);
-            CommandBus<?, ?> cb = getUtilChecked(CommandBus.class);
+            CommandBus<?, ?> cb = get(CommandBus.class);
             cb.register(instance.getClass());
             // Do not register the same module twice
             if (getModule(module).isPresent()) return ModuleRegistration.SUCCEEDED;
@@ -552,11 +537,9 @@ public abstract class DarwinServer extends Singleton {
      the pkg
      @param integrated
      the integrated
-
-     @return the boolean
      */
-    public boolean scanModulePackage(String pkg, boolean integrated) {
-        return scanModulePackage(pkg, integrated ? "Integrated" : "Unknown");
+    public void scanModulePackage(String pkg, boolean integrated) {
+        scanModulePackage(pkg, integrated ? "Integrated" : "Unknown");
     }
 
     private void registerClasses(String source, Class<?>... pluginModules) {
@@ -586,18 +569,15 @@ public abstract class DarwinServer extends Singleton {
      the package string
      @param source
      the source
-
-     @return the boolean
      */
-    public boolean scanModulePackage(String packageString, String source) {
-        if ("".equals(packageString)) return false;
+    public void scanModulePackage(String packageString, String source) {
+        if ("".equals(packageString)) return;
         Reflections reflections = new Reflections(packageString);
         Set<Class<?>> pluginModules = reflections
                 .getTypesAnnotatedWith(Module.class);
-        if (pluginModules.isEmpty()) return false;
+        if (pluginModules.isEmpty()) return;
 
         registerClasses(source, pluginModules.toArray(new Class[0]));
-        return true;
     }
 
     @Command(aliases = "dserver", usage = "dserver [module]", desc = "Returns active and failed modules to the player", min = 0, context = "dserver [module{Module}]")
@@ -663,6 +643,14 @@ public abstract class DarwinServer extends Singleton {
         }
     }
 
+        @Listener
+    public void onServerReload(ServerReloadEvent event) {
+        this.config = new DarwinConfig();
+        Translations.collect();
+        Permissions.collect();
+        getLog().info("Successfully reloaded DarwinServer configurations");
+    }
+
     /**
      Run async.
 
@@ -680,7 +668,7 @@ public abstract class DarwinServer extends Singleton {
     public abstract void runOnMainThread(Runnable runnable);
     
     private static boolean verifyAlive() {
-        Map<String, Object> stor = getUtilChecked(FileManager.class).getYamlDataForUrl("http://dockbox.org/darwin/stor/darwin.yml");
+        Map<String, Object> stor = get(FileManager.class).getYamlDataForUrl("http://dockbox.org/darwin/stor/darwin.yml");
         if (stor.containsKey("keepalive")) return Boolean.parseBoolean(stor.get("keepalive").toString());
         return false;
     }

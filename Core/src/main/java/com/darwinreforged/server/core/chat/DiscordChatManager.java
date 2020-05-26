@@ -19,7 +19,7 @@ import javax.security.auth.login.LoginException;
  The type Discord utils.
  */
 @Utility("Discord connection and messaging utilities")
-public abstract class DiscordChatManager {
+public interface DiscordChatManager {
 
     /**
      Init.
@@ -27,7 +27,7 @@ public abstract class DiscordChatManager {
      @param channelWhitelist
      the channel whitelist
      */
-    public void init(List<String> channelWhitelist) {
+    default void init(List<String> channelWhitelist) {
         if (getJda() != null) getJda().addEventListener(new DiscordJDAListener(channelWhitelist));
     }
 
@@ -39,7 +39,7 @@ public abstract class DiscordChatManager {
      @param channel
      the channel
      */
-    public void sendToChannel(String message, String channel) {
+    default void sendToChannel(String message, String channel) {
         getChannel(channel).sendMessage(message).queue();
     }
 
@@ -51,7 +51,7 @@ public abstract class DiscordChatManager {
      @param channel
      the channel
      */
-    public void sendToChannel(String message, long channel) {
+    default void sendToChannel(String message, long channel) {
         getChannel(channel).sendMessage(message).queue();
     }
 
@@ -63,7 +63,7 @@ public abstract class DiscordChatManager {
      @param channel
      the channel
      */
-    public void sendToChannel(MessageEmbed embed, String channel) {
+    default void sendToChannel(MessageEmbed embed, String channel) {
         getChannel(channel).sendMessage(embed).queue();
     }
 
@@ -75,7 +75,7 @@ public abstract class DiscordChatManager {
      @param channel
      the channel
      */
-    public void sendToChannel(MessageEmbed embed, long channel) {
+    default void sendToChannel(MessageEmbed embed, long channel) {
         getChannel(channel).sendMessage(embed).queue();
     }
 
@@ -87,7 +87,7 @@ public abstract class DiscordChatManager {
 
      @return the channel
      */
-    public TextChannel getChannel(String channel) {
+    default TextChannel getChannel(String channel) {
         return getJdaWithFallback().getTextChannelById(channel);
     }
 
@@ -99,7 +99,7 @@ public abstract class DiscordChatManager {
 
      @return the channel
      */
-    public TextChannel getChannel(long channel) {
+    default TextChannel getChannel(long channel) {
         return getJdaWithFallback().getTextChannelById(channel);
     }
 
@@ -111,7 +111,7 @@ public abstract class DiscordChatManager {
 
      @return the user by id
      */
-    public User getUserById(long id) {
+    default User getUserById(long id) {
         return getJdaWithFallback().getUserById(id);
     }
 
@@ -123,7 +123,7 @@ public abstract class DiscordChatManager {
 
      @return the user by id
      */
-    public User getUserById(String id) {
+    default User getUserById(String id) {
         return getJda().getUserById(id);
     }
 
@@ -132,7 +132,7 @@ public abstract class DiscordChatManager {
 
      @return the jda with fallback
      */
-    protected JDA getJdaWithFallback() {
+    default JDA getJdaWithFallback() {
         JDA jda = getJda();
         if (jda != null) return jda;
         else {
@@ -153,5 +153,5 @@ public abstract class DiscordChatManager {
 
      @return the jda
      */
-    protected abstract JDA getJda();
+    JDA getJda();
 }

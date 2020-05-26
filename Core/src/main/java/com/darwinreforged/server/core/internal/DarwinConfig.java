@@ -10,39 +10,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- The type Darwin config.
- */
 public class DarwinConfig {
 
     private static final Map<String, ConfigFlag<?>> FLAGS = new HashMap<>();
 
-    /**
-     The constant DISCORD_CHANNEL_WHITELIST.
-     */
     public static final ListFlag<String> DISCORD_CHANNEL_WHITELIST = new ListFlag<>("discordChannelWhitelist", new ArrayList<>());
-    /**
-     The constant LOAD_EXTERNAL_MODULES.
-     */
     public static final BooleanFlag LOAD_EXTERNAL_MODULES = new BooleanFlag("loadExternalModules", true);
-    /**
-     The constant FRIENDLY_ERRORS.
-     */
     public static final BooleanFlag FRIENDLY_ERRORS = new BooleanFlag("useFriendlyErrors", true);
-    /**
-     The constant STACKTRACES.
-     */
     public static final BooleanFlag STACKTRACES = new BooleanFlag("useStacktraces", true);
-    /**
-     The constant BOT_TOKEN.
-     */
     public static final StringFlag BOT_TOKEN = new StringFlag("botToken", "[insert token]");
+    public static final BooleanFlag PERMIT_WILDCARDS = new BooleanFlag("permitWildcardPermissions", false);
+    public static final BooleanFlag PERMIT_BYPASS = new BooleanFlag("permitBypassAllPermission", true);
 
-    /**
-     Instantiates a new Darwin config.
-     */
     public DarwinConfig() {
-        FileManager fu = DarwinServer.getUtilChecked(FileManager.class);
+        FileManager fu = DarwinServer.get(FileManager.class);
         Map<String, Object> config = fu.getYamlDataForConfig(DarwinServerModule.class);
         AtomicBoolean written = new AtomicBoolean(config.isEmpty());
         FLAGS.forEach((k, v) -> {
@@ -60,101 +41,41 @@ public class DarwinConfig {
         if (written.get()) fu.writeYamlDataForConfig(config, DarwinServerModule.class);
     }
 
-    /**
-     The type Config flag.
-
-     @param <T>
-     the type parameter
-     */
+    @SuppressWarnings("unchecked")
     public static abstract class ConfigFlag<T> {
 
         private final String key;
         private T value;
 
-        /**
-         Instantiates a new Config flag.
-
-         @param key
-         the key
-         @param defVal
-         the def val
-         */
         public ConfigFlag(String key, T defVal) {
             this.key = key;
             this.value = defVal;
             DarwinConfig.FLAGS.put(key, this);
         }
 
-        /**
-         Sets value.
-
-         @param value
-         the value
-         */
-        @SuppressWarnings("unchecked")
         void setValue(Object value) {
             this.value = (T) value;
         }
 
-        /**
-         Get t.
-
-         @return the t
-         */
         public T get() {
             return value;
         }
     }
 
-    /**
-     The type Boolean flag.
-     */
     public static class BooleanFlag extends ConfigFlag<Boolean> {
-        /**
-         Instantiates a new Boolean flag.
-
-         @param key
-         the key
-         @param defVal
-         the def val
-         */
         public BooleanFlag(String key, Boolean defVal) {
             super(key, defVal);
         }
     }
 
-    /**
-     The type String flag.
-     */
     public static class StringFlag extends ConfigFlag<String> {
-        /**
-         Instantiates a new String flag.
-
-         @param key
-         the key
-         @param defVal
-         the def val
-         */
         public StringFlag(String key, String defVal) {
             super(key, defVal);
         }
+
     }
 
-    /**
-     The type List flag.
-
-     @param <T>
-     the type parameter
-     */
     public static class ListFlag<T> extends ConfigFlag<List<T>> {
-        /**
-         Instantiates a new List flag.
-
-         @param key
-         the key
-         @param defVal
-         the def val
-         */
         public ListFlag(String key, List<T> defVal) {
             super(key, defVal);
         }

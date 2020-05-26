@@ -53,6 +53,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -75,7 +76,7 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
 
     @Override
     public void registerCommandNoArgs(String command, String permission, CommandRunner runner) {
-        Sponge.getCommandManager().register(DarwinServer.getServer(), CommandSpec.builder().permission(permission).executor(buildExecutor(runner)).build(), command);
+        Sponge.getCommandManager().register(DarwinServer.getServer(), CommandSpec.builder().permission(permission).executor(buildExecutor(runner, command)).build(), command);
     }
 
     @Override
@@ -95,8 +96,8 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
             CommandElement[] elements = parseArguments(arguments);
 
             elements = Arrays.stream(elements).filter(Objects::nonNull).toArray(CommandElement[]::new);
-            if (elements.length > 0) spec.executor(buildExecutor(runner)).arguments(elements);
-            else spec.executor(buildExecutor(runner));
+            if (elements.length > 0) spec.executor(buildExecutor(runner, command)).arguments(elements);
+            else spec.executor(buildExecutor(runner, command));
 
             String alias = command.substring(0, command.indexOf(' '));
             if (part.equals("")) part = "@m";
@@ -137,7 +138,7 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
             // Single method command
         } else {
             if (!REGISTERED_COMMANDS.contains(command.substring(0, command.indexOf(' ')))) {
-                spec.executor(buildExecutor(runner)).arguments(parseArguments(command.substring(command.indexOf(' ') + 1)));
+                spec.executor(buildExecutor(runner, command)).arguments(parseArguments(command.substring(command.indexOf(' ') + 1)));
                 Sponge.getCommandManager().register(DarwinServer.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
                 REGISTERED_COMMANDS.add(command.substring(0, command.indexOf(' ')));
             }
@@ -145,9 +146,40 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
         }
     }
 
-    @SuppressWarnings("unchecked")
+    private Object getValue(Object obj) {
+        if (obj instanceof Player) {
+            PlayerManager pm = DarwinServer.get(PlayerManager.class);
+            DarwinPlayer dplayer = pm.getPlayer(((Player) obj).getUniqueId(), ((Player) obj).getName());
+            return dplayer;
+
+        } else if (obj instanceof User) {
+            DarwinUser duser = new DarwinUser(((User) obj).getUniqueId(), ((User) obj).getName());
+            return duser;
+
+        } else if (obj instanceof Entity) {
+            // TODO : Regular Entity wrapper
+            throw new NotImplementedException();
+
+        } else if (obj instanceof Location) {
+            Location<Extent> sloc = (Location<Extent>) obj;
+            World sworld = (World) sloc.getExtent();
+
+            Vector3d locv = new Vector3d(sloc.getX(), sloc.getY(), sloc.getZ());
+            DarwinWorld dworld = new DarwinWorld(sworld.getUniqueId(), sworld.getName());
+            DarwinLocation dloc = new DarwinLocation(dworld, locv);
+            return dloc;
+
+        } else if (obj instanceof World) {
+            DarwinWorld dworld = new DarwinWorld(((World) obj).getUniqueId(), ((World) obj).getName());
+            return dworld;
+
+        } else {
+            return obj;
+        }
+    }
+
     @Override
-    protected com.darwinreforged.server.core.commands.context.CommandContext convertContext(CommandContext ctx, CommandSender sender) {
+    protected com.darwinreforged.server.core.commands.context.CommandContext convertContext(CommandContext ctx, CommandSender sender, String command) {
         Multimap<String, Object> parsedArgs;
         try {
             Field parsedArgsF = ctx.getClass().getDeclaredField("parsedArgs");
@@ -159,40 +191,13 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
         }
 
         List<CommandArgument<?>> arguments = new ArrayList<>();
-        PlayerManager pm = DarwinServer.getUtilChecked(PlayerManager.class);
+        List<CommandFlag<?>> flags = new ArrayList<>();
 
-        parsedArgs.asMap().forEach(((s, o) -> o.forEach(obj -> {
-            if (obj instanceof Player) {
-                DarwinPlayer dplayer = pm.getPlayer(((Player) obj).getUniqueId(), ((Player) obj).getName());
-                arguments.add(new CommandArgument<>(dplayer, false, s));
-
-            } else if (obj instanceof User) {
-                DarwinUser duser = new DarwinUser(((User) obj).getUniqueId(), ((User) obj).getName());
-                arguments.add(new CommandArgument<>(duser, false, s));
-
-            } else if (obj instanceof Entity) {
-                // TODO : Regular Entity wrapper
-                throw new NotImplementedException();
-
-            } else if (obj instanceof Location) {
-                Location<Extent> sloc = (Location<Extent>) obj;
-                World sworld = (World) sloc.getExtent();
-
-                Vector3d locv = new Vector3d(sloc.getX(), sloc.getY(), sloc.getZ());
-                DarwinWorld dworld = new DarwinWorld(sworld.getUniqueId(), sworld.getName());
-                DarwinLocation dloc = new DarwinLocation(dworld, locv);
-                arguments.add(new CommandArgument<>(dloc, false, s));
-
-            } else if (obj instanceof World) {
-                DarwinWorld dworld = new DarwinWorld(((World) obj).getUniqueId(), ((World) obj).getName());
-                arguments.add(new CommandArgument<>(dworld, false, s));
-
-            } else {
-                arguments.add(new CommandArgument<>(obj, false, s));
-            }
-        })));
-
-        // TODO : Convert flags
+        parsedArgs.asMap().forEach((s, o) -> o.forEach(obj -> {
+            if (Pattern.compile("-(-?" + s + ")").matcher(command).find())
+                flags.add(new CommandFlag<>(getValue(obj), s));
+            else arguments.add(new CommandArgument<>(getValue(obj), s));
+        }));
 
         com.darwinreforged.server.core.commands.context.CommandContext darwinCtx;
         if (sender instanceof DarwinPlayer) {
@@ -202,14 +207,14 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
                     arguments.toArray(new CommandArgument<?>[0]),
                     sender, world, loc,
                     new Permissions[0],
-                    new CommandFlag<?>[0]
+                    flags.toArray(new CommandFlag<?>[0])
             );
         } else {
             darwinCtx = new com.darwinreforged.server.core.commands.context.CommandContext(
                     arguments.toArray(new CommandArgument<?>[0]),
                     sender, null, null,
                     new Permissions[0],
-                    new CommandFlag<?>[0]
+                    flags.toArray(new CommandFlag<?>[0])
             );
         }
         return darwinCtx;
@@ -280,14 +285,14 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
         }
     }
 
-    private CommandExecutor buildExecutor(CommandRunner runner) {
+    private CommandExecutor buildExecutor(CommandRunner runner, String command) {
         return (src, args) -> {
             CommandSender sender;
-            if (src instanceof Player) sender = DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(((Player) src).getUniqueId(), src.getName());
+            if (src instanceof Player) sender = DarwinServer.get(PlayerManager.class).getPlayer(((Player) src).getUniqueId(), src.getName());
             else if (src instanceof ConsoleSource) sender = Console.instance;
             else sender = null;
 
-            com.darwinreforged.server.core.commands.context.CommandContext ctx = convertContext(args, sender);
+            com.darwinreforged.server.core.commands.context.CommandContext ctx = convertContext(args, sender, command);
 
             if (src instanceof Player) {
                 runner.run(sender, ctx);

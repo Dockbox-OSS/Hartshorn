@@ -10,7 +10,7 @@ import com.darwinreforged.server.core.internal.Utility;
  the type parameter
  */
 @Utility("ItemStack manipulation utilities")
-public abstract class ItemUtils<I> {
+public interface ItemUtils<I> {
 
     /**
      Sets display name.
@@ -22,7 +22,7 @@ public abstract class ItemUtils<I> {
 
      @return the display name
      */
-    public abstract I setDisplayName(String displayName, DarwinItem<I> in);
+    I setDisplayName(String displayName, DarwinItem<I> in);
 
     /**
      Sets lore.
@@ -34,7 +34,7 @@ public abstract class ItemUtils<I> {
 
      @return the lore
      */
-    public abstract I setLore(String[] lore, DarwinItem<I> in);
+    I setLore(String[] lore, DarwinItem<I> in);
 
     /**
      Gets display name.
@@ -44,6 +44,6 @@ public abstract class ItemUtils<I> {
 
      @return the display name
      */
-    public abstract String getDisplayName(DarwinItem<I> in);
+    String getDisplayName(DarwinItem<I> in);
 
 }

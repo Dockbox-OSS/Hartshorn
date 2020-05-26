@@ -13,7 +13,6 @@ import com.darwinreforged.server.core.player.PlayerManager;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.command.SendCommandEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.game.GameReloadEvent;
@@ -32,37 +31,28 @@ public class SpongeListener {
 
     @Listener
     public void onPlayerTeleport(MoveEntityEvent.Teleport event, @First Player p) {
-        postCancellable(new PlayerTeleportEvent(DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(p.getUniqueId(), p.getName())), event);
+        postCancellable(new PlayerTeleportEvent(DarwinServer.get(PlayerManager.class).getPlayer(p.getUniqueId(), p.getName())), event);
     }
 
     @Listener
     public void onPlayerMove(MoveEntityEvent event, @First Player p) {
-        postCancellable(new PlayerMoveEvent(DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(p.getUniqueId(), p.getName())), event);
+        postCancellable(new PlayerMoveEvent(DarwinServer.get(PlayerManager.class).getPlayer(p.getUniqueId(), p.getName())), event);
     }
 
     @Listener
     public void onPlayerLoggedIn(ClientConnectionEvent.Join event, @First Player p) {
-        DarwinServer.getEventBus().post(new PlayerLoggedInEvent(DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(p.getUniqueId(), p.getName())));
+        DarwinServer.getEventBus().post(new PlayerLoggedInEvent(DarwinServer.get(PlayerManager.class).getPlayer(p.getUniqueId(), p.getName())));
     }
 
     @Listener
     public void onInventoryInteract(InteractInventoryEvent event, @First Player p) {
-        postCancellable(new InventoryInteractionEvent(DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(p.getUniqueId(), p.getName())), event);
+        postCancellable(new InventoryInteractionEvent(DarwinServer.get(PlayerManager.class).getPlayer(p.getUniqueId(), p.getName())), event);
     }
 
     @Listener
     public void onChatMessageSent(MessageChannelEvent.Chat event, @First Player p) {
         String channel = MultiChatSponge.playerChannels.getOrDefault(p, "global");
-        postCancellable(new SendChatMessageEvent(DarwinServer.getUtilChecked(PlayerManager.class).getPlayer(p.getUniqueId(), p.getName()), event.getRawMessage().toPlain(), channel.equalsIgnoreCase("global")), event);
-    }
-
-    @Listener
-    public void onCommand(SendCommandEvent event) {
-//        SpongeCommandUtils cu = (SpongeCommandUtils) DarwinServer.getUtilChecked(CommandUtils.class);
-//        if (event.getSource() instanceof CommandSource) {
-//            boolean cancel = cu.handleCommandSend((CommandSource) event.getSource(), String.format("%s %s", event.getCommand(), event.getArguments()));
-////            if (cancel) event.setCancelled(true);
-//        }
+        postCancellable(new SendChatMessageEvent(DarwinServer.get(PlayerManager.class).getPlayer(p.getUniqueId(), p.getName()), event.getRawMessage().toPlain(), channel.equalsIgnoreCase("global")), event);
     }
 
     private <I extends CancellableEvent> void postCancellable(I e, Cancellable se) {

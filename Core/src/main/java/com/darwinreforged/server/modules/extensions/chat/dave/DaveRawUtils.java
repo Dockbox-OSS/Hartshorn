@@ -56,7 +56,7 @@ public class DaveRawUtils {
      */
     public static String parsePlaceHolders(String message, String unparsedResponse, String playername) {
         String parsedResponse = unparsedResponse.replaceAll("<player>", playername);
-        DiscordChatManager du = DarwinServer.getUtilChecked(DiscordChatManager.class);
+        DiscordChatManager du = DarwinServer.get(DiscordChatManager.class);
 
 
         if (parsedResponse.contains("<mention>")) {
@@ -82,7 +82,7 @@ public class DaveRawUtils {
         }
 
         if (parsedResponse.contains("<random>")) {
-            PlayerManager pu = DarwinServer.getUtilChecked(PlayerManager.class);
+            PlayerManager pu = DarwinServer.get(PlayerManager.class);
             int index = new Random().nextInt(pu.getOnlinePlayers().size());
             String randomPlayer = ((DarwinPlayer) pu.getOnlinePlayers().toArray()[index]).getName();
 

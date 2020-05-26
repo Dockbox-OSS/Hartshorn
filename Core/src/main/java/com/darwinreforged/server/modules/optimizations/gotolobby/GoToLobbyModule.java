@@ -24,6 +24,7 @@ import java.util.Optional;
  The type Go to lobby module.
  */
 @Module(id = "gotolobby", name = "GoToLobby", description = "Send players to the lobby if they are in a disallowed world", authors = "GuusLieben")
+@SuppressWarnings("unchecked")
 public class GoToLobbyModule {
 
     /**
@@ -53,9 +54,8 @@ public class GoToLobbyModule {
         init();
     }
 
-    @SuppressWarnings("unchecked")
     private void init() {
-        FileManager fileManager = DarwinServer.getUtilChecked(FileManager.class);
+        FileManager fileManager = DarwinServer.get(FileManager.class);
         Map<String, Object> config = fileManager.getYamlDataForConfig(this);
 
         if(config.containsKey("blacklist")) blacklist = (List<String>) config.get("blacklist");

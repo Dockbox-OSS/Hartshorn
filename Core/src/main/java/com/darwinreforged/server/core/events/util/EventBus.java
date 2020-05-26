@@ -21,6 +21,7 @@ import java.util.TreeSet;
  Represents an event bus.
 
  @author Matt, Andy Li */
+@SuppressWarnings({"unchecked", "EqualsWithItself", "VolatileArrayField"})
 public class EventBus {
     /**
      Map of listener objects to listener invokers.
@@ -52,7 +53,7 @@ public class EventBus {
      @see MethodHandles.Lookup
      @since 1.3
      */
-    @SuppressWarnings("EqualsWithItself")
+
     public void subscribe(Object object, MethodHandles.Lookup lookup) throws IllegalArgumentException, SecurityException {
         if (!object.equals(object)) return;
         if (listenerToInvokers.containsKey(object)) {
@@ -93,7 +94,6 @@ public class EventBus {
      @param object
      object whose listener methods should be unregistered
      */
-    @SuppressWarnings("EqualsWithItself")
     public void unsubscribe(Object object) {
         if (!object.equals(object)) return;
         Set<InvokeWrapper> invokers = listenerToInvokers.remove(object);
@@ -257,7 +257,6 @@ public class EventBus {
     /**
      Event distribution handler.
      */
-    @SuppressWarnings("VolatileArrayField")
     static class Handler {
         /**
          * Event type for this handler.
@@ -488,7 +487,6 @@ public class EventBus {
          @throws SecurityException
          if the provided {@linkplain MethodHandles.Lookup lookup}                           cannot access the specified method
          */
-        @SuppressWarnings("unchecked")
         public static InvokeWrapper create(Object instance, Method method, MethodHandles.Lookup lookup) throws SecurityException {
             int priority = AccessHelper.getAnnotationRecursively(method, Listener.class).priority();
             return create(instance, method, priority, lookup);
@@ -511,7 +509,6 @@ public class EventBus {
          @throws SecurityException
          if the provided {@linkplain MethodHandles.Lookup lookup}                           cannot access the specified method
          */
-        @SuppressWarnings("unchecked")
         public static InvokeWrapper create(Object instance, Method method, int priority, MethodHandles.Lookup lookup)
                 throws SecurityException {
             Class<? extends Event> eventType = (Class<? extends Event>) method.getParameterTypes()[0];
