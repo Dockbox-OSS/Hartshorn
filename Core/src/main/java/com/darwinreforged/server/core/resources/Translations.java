@@ -497,7 +497,11 @@ public enum Translations {
     OLP_LIST_ITEM("$3 - $2#{0} : $1{1}$2, $1{2},{3}"),
     OLP_LIST_HEADER("$1OldPlots for $1{0}"),
     OLP_FAILED_READ("$4Failed to obtain information from database"),
-    WHATWORLD_PLAYER_IN("$1{0} $2is in $1{1}");
+
+    //  Player Locator
+    PLAYER_IN_WORLD("$1{0} $2is in $1{1}"),
+    PLAYER_ON_ROAD("$1{0} $2is on a road"),
+    PLAYER_IN_PLOT("$1{0} $2is in $1{1}, {2}");
 
     private String s;
 
