@@ -6,17 +6,17 @@ public class WikiObject {
     private String name;
     private String permission;
     private String[] description;
-    private boolean hide = false;
+    private Boolean hidden;
 
     public WikiObject() {
     }
 
-    public WikiObject(String id, String name, String permission, String[] description, boolean hide) {
+    public WikiObject(String id, String name, String permission, String[] description, Boolean hidden) {
         this.id = id;
         this.name = name;
         this.permission = permission;
         this.description = description;
-        this.hide = hide;
+        this.hidden = hidden;
     }
 
     public String getId() {
@@ -35,7 +35,7 @@ public class WikiObject {
         return description;
     }
 
-    public boolean isHide() {
-        return hide;
+    public Boolean isHidden() {
+        return hidden != null ? hidden : Boolean.FALSE;
     }
 }
