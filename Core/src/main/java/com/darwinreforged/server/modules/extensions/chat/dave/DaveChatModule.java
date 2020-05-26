@@ -16,7 +16,9 @@ import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.resources.Dependencies;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.translations.DaveTranslations;
+import com.darwinreforged.server.core.resources.translations.DefaultTranslations;
+import com.darwinreforged.server.core.resources.translations.Translation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,10 +87,10 @@ public class DaveChatModule {
     public void mute(DarwinPlayer src) {
         if (!configurationUtil.getMuted().contains(src.getUniqueId())) {
             configurationUtil.getMuted().add(src.getUniqueId());
-            src.sendMessage(Translations.DAVE_MUTED.s(), false);
+            src.sendMessage(DaveTranslations.DAVE_MUTED.s(), false);
         } else {
             playerWhoMutedDave.remove(src.getUniqueId());
-            src.sendMessage(Translations.DAVE_UNMUTED.s(), false);
+            src.sendMessage(DaveTranslations.DAVE_UNMUTED.s(), false);
         }
     }
 
@@ -102,7 +104,7 @@ public class DaveChatModule {
     @Permission(Permissions.DAVE_RELOAD)
     public void reload(DarwinPlayer src) {
         setupConfigurations();
-        src.sendMessage(Translations.DAVE_RELOADED_USER.f(configurationUtil.getPrefix().getText()), true);
+        src.sendMessage(DaveTranslations.DAVE_RELOADED_USER.f(configurationUtil.getPrefix().getText()), true);
     }
 
     @Command(aliases = "triggers", usage = "dave triggers", desc = "Lists Dave's triggers to the executing player", context = "dave triggers")
@@ -113,23 +115,23 @@ public class DaveChatModule {
             List<String> textResponses = new ArrayList<>();
             trigger.getResponses().forEach(response -> {
                 if (response.getType().equals("message") || response.getType().equals("msg")) {
-                    String text = Translations.DAVE_TRIGGER_LIST_ITEM.fsh(response.getMessage().replaceAll("\n", " : "));
+                    String text = DaveTranslations.DAVE_TRIGGER_LIST_ITEM.fsh(response.getMessage().replaceAll("\n", " : "));
                     textResponses.add(text);
                 }
             });
             if (textResponses.size() > 0) {
                 String fullResponse = String.join(" : ", textResponses);
-                fullResponse = Translations.shorten(fullResponse);
+                fullResponse = Translation.shorten(fullResponse);
                 Text responseText = Text.of(fullResponse);
                 ClickEvent clickEvent = new ClickEvent(ClickAction.RUN_COMMAND, "/dave run " + trigger.getId());
-                HoverEvent hoverEvent = new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_TRIGGER_HOVER.s());
+                HoverEvent hoverEvent = new HoverEvent(HoverAction.SHOW_TEXT, DaveTranslations.DAVE_TRIGGER_HOVER.s());
                 responseText.setClickEvent(clickEvent);
                 responseText.setHoverEvent(hoverEvent);
                 triggerMessages.add(responseText);
             }
         });
         PaginationBuilder.builder()
-                .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
+                .padding(Text.of(DefaultTranslations.DARWIN_MODULE_PADDING.s()))
                 .title(Text.of("&bTriggers"))
                 .contents(triggerMessages).build().sendTo(src);
     }

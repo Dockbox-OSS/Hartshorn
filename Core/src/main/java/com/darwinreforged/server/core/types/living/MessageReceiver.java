@@ -1,8 +1,8 @@
 package com.darwinreforged.server.core.types.living;
 
-import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.chat.Text;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.resources.translations.Translation;
 
 /**
  The interface Message receiver.
@@ -23,7 +23,7 @@ public interface MessageReceiver {
      @param translation
      the translation
      */
-    void sendMessage(Translations translation, boolean plain);
+    void sendMessage(Translation translation, boolean plain);
 
     /**
      Send message.
@@ -61,7 +61,7 @@ public interface MessageReceiver {
      @param permission
      the permission
      */
-    void sendMessage(Translations translation, String permission, boolean plain);
+    void sendMessage(Translation translation, String permission, boolean plain);
 
     /**
      Send message.
@@ -71,7 +71,7 @@ public interface MessageReceiver {
      @param permission
      the permission
      */
-    void sendMessage(Translations translation, Permissions permission, boolean plain);
+    void sendMessage(Translation translation, Permissions permission, boolean plain);
 
     /**
      Send message.

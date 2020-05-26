@@ -1,16 +1,16 @@
 package com.darwinreforged.server.modules.optimizations.spectatorteleport;
 
-import com.darwinreforged.server.core.player.DarwinPlayer;
-import com.darwinreforged.server.core.player.state.GameModes;
+import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.events.internal.player.PlayerTeleportEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
-import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.modules.Module;
-import com.darwinreforged.server.core.resources.Translations;
-import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.files.FileManager;
+import com.darwinreforged.server.core.modules.Module;
+import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.player.state.GameModes;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.resources.translations.SpectatorTeleportTranslations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +77,7 @@ public class SpectatorTeleportModule {
             player.getWorld().ifPresent(world -> {
                 if (!whitelistedWorlds.contains(world.getName()) && player.hasPermission(Permissions.GM3TP_IGNORE)) {
                     event.setCancelled(true);
-                    player.sendMessage(Translations.SPECTATOR_TP_DISALLOWED.s(), false);
+                    player.sendMessage(SpectatorTeleportTranslations.SPECTATOR_TP_DISALLOWED.s(), false);
                 }
             });
         }

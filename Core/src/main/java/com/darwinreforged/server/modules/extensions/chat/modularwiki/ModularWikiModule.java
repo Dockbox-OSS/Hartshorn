@@ -18,7 +18,8 @@ import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.translations.DefaultTranslations;
+import com.darwinreforged.server.core.resources.translations.WikiTranslations;
 import com.darwinreforged.server.core.types.living.CommandSender;
 
 import java.io.File;
@@ -87,27 +88,27 @@ public class ModularWikiModule {
                                 String[] partialLines = line.split("\\|");
                                 if (partialLines.length == 2) {
                                     Text singleLine = Text.of(partialLines[1])
-                                            .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.WIKI_OPEN_ENTRY_HOVER.f(partialLines[0])))
+                                            .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, WikiTranslations.WIKI_OPEN_ENTRY_HOVER.f(partialLines[0])))
                                             .setClickEvent(new ClickEvent(ClickAction.RUN_COMMAND, String.format("/wiki %s", partialLines[0])));
 
                                     content.add(singleLine);
                                 } else content.add(Text.of(line));
                             });
-                            Text shareButton = Text.of(Translations.WIKI_SHARE_BUTTON.f(wikiObject.getName()))
-                                    .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.WIKI_SHARE_BUTTON_HOVER.s()))
+                            Text shareButton = Text.of(WikiTranslations.WIKI_SHARE_BUTTON.f(wikiObject.getName()))
+                                    .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, WikiTranslations.WIKI_SHARE_BUTTON_HOVER.s()))
                                     .setClickEvent(new ClickEvent(ClickAction.SUGGEST_COMMAND, String.format("/sharewiki %s", wikiObject.getId())));
                             PaginationBuilder.builder()
                                     .contents(content)
                                     .footer(shareButton)
-                                    .title(Text.of(Translations.DEFAULT_TITLE.f(wikiObject.getName())))
-                                    .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
+                                    .title(Text.of(DefaultTranslations.DEFAULT_TITLE.f(wikiObject.getName())))
+                                    .padding(Text.of(DefaultTranslations.DARWIN_MODULE_PADDING.s()))
                                     .build().sendTo(src);
 
                         } else {
-                            src.sendMessage(Translations.WIKI_NOT_ALLOWED.f(wikiObject.getPermission()), false);
+                            src.sendMessage(WikiTranslations.WIKI_NOT_ALLOWED.f(wikiObject.getPermission()), false);
                         }
                     } else {
-                        src.sendMessage(Translations.WIKI_NOT_FOUND.f(optionalEntry.get().getValue()), false);
+                        src.sendMessage(WikiTranslations.WIKI_NOT_FOUND.f(optionalEntry.get().getValue()), false);
                     }
 
                 } else {
@@ -116,8 +117,8 @@ public class ModularWikiModule {
 
                     ModularWikiModule.storageModel.getEntries().stream().filter(wikiObject -> !wikiObject.isHidden()).forEach(wikiObject -> {
                         if (wikiObject.getPermission() == null || src.hasPermission(wikiObject.getPermission()) && !wikiObject.isHidden()) {
-                            Text singleEntryText = Text.of(Translations.WIKI_LIST_ROW.f(wikiObject.getName()))
-                                    .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.WIKI_LIST_ROW_HOVER.f(wikiObject.getName())))
+                            Text singleEntryText = Text.of(WikiTranslations.WIKI_LIST_ROW.f(wikiObject.getName()))
+                                    .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, WikiTranslations.WIKI_LIST_ROW_HOVER.f(wikiObject.getName())))
                                     .setClickEvent(new ClickEvent(ClickAction.RUN_COMMAND, String.format("/wiki %s ", wikiObject.getId())));
                             content.add(singleEntryText);
                         }
@@ -125,13 +126,13 @@ public class ModularWikiModule {
 
                     PaginationBuilder.builder()
                             .contents(content)
-                            .title(Text.of(Translations.DEFAULT_TITLE.f("Wiki")))
-                            .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
+                            .title(Text.of(DefaultTranslations.DEFAULT_TITLE.f("Wiki")))
+                            .padding(Text.of(DefaultTranslations.DARWIN_MODULE_PADDING.s()))
                             .build().sendTo(src);
 
                 }
             } else {
-                src.sendMessage(Translations.WIKI_NO_ENTRIES.s(), false);
+                src.sendMessage(WikiTranslations.WIKI_NO_ENTRIES.s(), false);
             }
         }
     }
@@ -146,16 +147,16 @@ public class ModularWikiModule {
             String entry = entryArg.get().getValue();
             WikiObject wikiObject = ModularWikiModule.storageModel.getEntries().stream().filter(wikiObj -> wikiObj.getId().equals(entry)).findFirst().orElse(null);
             if (wikiObject != null) {
-                String shareMessage = Translations.WIKI_SHARED_USER.f(src.getName(), wikiObject.getName());
+                String shareMessage = WikiTranslations.WIKI_SHARED_USER.f(src.getName(), wikiObject.getName());
 
-                Text viewButton = Text.of(shareMessage, " ", Translations.WIKI_VIEW_BUTTON.s())
-                        .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.WIKI_VIEW_BUTTON_HOVER.f(entry)))
+                Text viewButton = Text.of(shareMessage, " ", WikiTranslations.WIKI_VIEW_BUTTON.s())
+                        .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, WikiTranslations.WIKI_VIEW_BUTTON_HOVER.f(entry)))
                         .setClickEvent(new ClickEvent(ClickAction.RUN_COMMAND, String.format("/wiki %s", entry)));
 
                 p.sendMessage(viewButton, false);
-                src.sendMessage(Translations.WIKI_SHARED_WITH.f(entry, p.getName()), false);
+                src.sendMessage(WikiTranslations.WIKI_SHARED_WITH.f(entry, p.getName()), false);
             } else
-                src.sendMessage(Translations.WIKI_NOT_FOUND.f(entry), false);
+                src.sendMessage(WikiTranslations.WIKI_NOT_FOUND.f(entry), false);
         }
     }
 

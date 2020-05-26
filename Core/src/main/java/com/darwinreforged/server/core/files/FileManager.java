@@ -3,6 +3,8 @@ package com.darwinreforged.server.core.files;
 import com.darwinreforged.server.core.internal.Utility;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.modules.Module;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -42,6 +44,7 @@ public abstract class FileManager {
         YAMLFactory factory = new YAMLFactory().disable(Feature.WRITE_DOC_START_MARKER);
         mapper = new ObjectMapper(factory);
         mapper.findAndRegisterModules();
+        mapper.setVisibility(PropertyAccessor.ALL, Visibility.ANY);
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 

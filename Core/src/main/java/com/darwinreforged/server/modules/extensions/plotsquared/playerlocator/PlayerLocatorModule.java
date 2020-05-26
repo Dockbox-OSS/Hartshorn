@@ -9,7 +9,8 @@ import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.translations.DefaultTranslations;
+import com.darwinreforged.server.core.resources.translations.PlayerLocatorTranslations;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.intellectualcrafters.plot.object.Plot;
@@ -30,10 +31,10 @@ public class PlayerLocatorModule {
                 DarwinPlayer player = playerCandidate.get().getValue();
                 PlotPlayer plotPlayer = PlotPlayer.get(player.getName());
                 Plot currentPlot = plotPlayer.getCurrentPlot();
-                if (currentPlot == null) src.sendMessage(Translations.PLAYER_ON_ROAD.f(player.getName()), false);
+                if (currentPlot == null) src.sendMessage(PlayerLocatorTranslations.PLAYER_ON_ROAD.f(player.getName()), false);
                 else
-                    src.sendMessage(Translations.PLAYER_IN_PLOT.f(player.getName(), currentPlot.getWorldName(), currentPlot.getId().toCommaSeparatedString()), false);
-            } else src.sendMessage(Translations.UNKNOWN_PLAYER.s(), false);
+                    src.sendMessage(PlayerLocatorTranslations.PLAYER_IN_PLOT.f(player.getName(), currentPlot.getWorldName(), currentPlot.getId().toCommaSeparatedString()), false);
+            } else src.sendMessage(DefaultTranslations.UNKNOWN_PLAYER.s(), false);
 
         } else {
             if (playerCandidate.isPresent()) {
@@ -45,7 +46,7 @@ public class PlayerLocatorModule {
 
     private void worldForPlayer(DarwinPlayer p, CommandSender src) {
         String wn = p.getWorld().map(DarwinWorld::getName).orElse("Unknown");
-        src.sendMessage(Translations.PLAYER_IN_WORLD.f(p.getName(), wn), false);
+        src.sendMessage(PlayerLocatorTranslations.PLAYER_IN_WORLD.f(p.getName(), wn), false);
     }
 
 }

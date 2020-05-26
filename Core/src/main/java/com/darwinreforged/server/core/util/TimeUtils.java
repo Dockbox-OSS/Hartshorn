@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.util;
 
 import com.darwinreforged.server.core.internal.Utility;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.translations.TimeTranslations;
 import com.darwinreforged.server.core.types.time.TimeDifference;
 
 import java.time.Instant;
@@ -99,15 +99,15 @@ public abstract class TimeUtils {
         if (time < 1000000000000L) difference = getDifferenceFromSeconds(time);
         else difference = getDifferenceFromMillis(time);
 
-        if (difference.getDays() > 1) return Translations.TIME_DAYS_AGO.f(difference.getDays());
-        if (difference.getDays() > 0) return Translations.TIME_YESTERDAY.s();
-        if (difference.getHours() > 1) return Translations.TIME_HOURS_AGO.f(difference.getHours());
-        if (difference.getHours() > 0) return Translations.TIME_HOUR_AGO.s();
-        if (difference.getMinutes() > 1) return Translations.TIME_MINUTES_AGO.f(difference.getMinutes());
-        if (difference.getMinutes() > 0) return Translations.TIME_MINUTE_AGO.s();
-        if (difference.getSeconds() > 20) return Translations.TIME_SECONDS_AGO.f(difference.getSeconds());
+        if (difference.getDays() > 1) return TimeTranslations.TIME_DAYS_AGO.f(difference.getDays());
+        if (difference.getDays() > 0) return TimeTranslations.TIME_YESTERDAY.s();
+        if (difference.getHours() > 1) return TimeTranslations.TIME_HOURS_AGO.f(difference.getHours());
+        if (difference.getHours() > 0) return TimeTranslations.TIME_HOUR_AGO.s();
+        if (difference.getMinutes() > 1) return TimeTranslations.TIME_MINUTES_AGO.f(difference.getMinutes());
+        if (difference.getMinutes() > 0) return TimeTranslations.TIME_MINUTE_AGO.s();
+        if (difference.getSeconds() > 20) return TimeTranslations.TIME_SECONDS_AGO.f(difference.getSeconds());
 
-        return Translations.TIME_JUST_NOW.s();
+        return TimeTranslations.TIME_JUST_NOW.s();
     }
 
     /**

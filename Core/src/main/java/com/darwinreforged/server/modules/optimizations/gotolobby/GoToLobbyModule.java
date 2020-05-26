@@ -5,12 +5,12 @@ import com.darwinreforged.server.core.events.internal.player.PlayerMoveEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerStartedEvent;
 import com.darwinreforged.server.core.events.util.Listener;
+import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.modules.Module;
-import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.player.state.GameModes;
-import com.darwinreforged.server.core.files.FileManager;
+import com.darwinreforged.server.core.resources.Permissions;
+import com.darwinreforged.server.core.resources.translations.GoToLobbyTranslations;
 import com.darwinreforged.server.core.types.time.TimeDifference;
 import com.darwinreforged.server.core.util.TimeUtils;
 
@@ -77,7 +77,7 @@ public class GoToLobbyModule {
             player.getWorld().ifPresent(world -> {
                 if (blacklist.contains(world.getName()) && !player.hasPermission(Permissions.GTL_IGNORE)) {
                     player.setGameMode(GameModes.CREATIVE);
-                    player.sendMessage(Translations.GTL_WARPED, false);
+                    player.sendMessage(GoToLobbyTranslations.GTL_WARPED, false);
                     player.execute("hub");
                     TimeUtils.registerUuidTimeout(player.getUniqueId(), this);
                 }

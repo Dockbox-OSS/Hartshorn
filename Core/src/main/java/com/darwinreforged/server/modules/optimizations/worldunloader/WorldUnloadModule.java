@@ -15,7 +15,7 @@ import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.resources.Dependencies;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.translations.WorldUnloaderTranslations;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.darwinreforged.server.core.util.LocationUtils;
 import com.darwinreforged.server.core.util.TimeUtils;
@@ -97,13 +97,13 @@ public class WorldUnloadModule {
             Optional<CommandArgument<DarwinWorld>> worldCandidate = context.getArgument("world", DarwinWorld.class);
             if (worldCandidate.isPresent()) worldName = worldCandidate.get().getValue().getName();
             else {
-                player.sendMessage(Translations.WORLD_NOT_FOUND.s(), false);
+                player.sendMessage(WorldUnloaderTranslations.WORLD_NOT_FOUND.s(), false);
                 return;
             }
         }
         unloadBlacklist.add(worldName);
         refreshBlackList();
-        player.sendMessage(Translations.WU_ADDED.f(world), false);
+        player.sendMessage(WorldUnloaderTranslations.WU_ADDED.f(world), false);
     }
 
     private void refreshBlackList() {

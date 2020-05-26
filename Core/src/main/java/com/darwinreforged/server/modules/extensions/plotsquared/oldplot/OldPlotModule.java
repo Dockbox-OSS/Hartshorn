@@ -11,7 +11,8 @@ import com.darwinreforged.server.core.commands.context.CommandContext;
 import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.translations.DefaultTranslations;
+import com.darwinreforged.server.core.resources.translations.OldPlotsTranslations;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -37,7 +38,7 @@ public class OldPlotModule {
     public void getOldPlotList(CommandSender src, CommandContext ctx) {
         Optional<CommandArgument<String>> optionalPlayerArg = ctx.getStringArgument("player");
         if (!optionalPlayerArg.isPresent()) {
-            src.sendMessage(Translations.ARGUMENT_NOT_PROVIDED.f("player"), false);
+            src.sendMessage(DefaultTranslations.ARGUMENT_NOT_PROVIDED.f("player"), false);
             return;
         }
 
@@ -48,7 +49,7 @@ public class OldPlotModule {
         File file = new File(dataDir.toFile(), "oldplots.db");
 
         if (!file.exists()) {
-            src.sendMessage(Translations.OLP_NO_STORAGE_FILE.s(), false);
+            src.sendMessage(OldPlotsTranslations.OLP_NO_STORAGE_FILE.s(), false);
             return;
         }
 
@@ -70,19 +71,19 @@ public class OldPlotModule {
                 plotStorageModels.forEach(psm -> {
                     String plotLoc = String.format("%s,%s;%s", psm.world, psm.plot_id_x, psm.plot_id_z);
                     if (!psm.world.equals("*") && !foundPlots.contains(plotLoc)) {
-                        Text singlePlot = Text.of(Translations.OLP_LIST_ITEM.f(psm.id, psm.world, psm.plot_id_x, psm.plot_id_z));
+                        Text singlePlot = Text.of(OldPlotsTranslations.OLP_LIST_ITEM.f(psm.id, psm.world, psm.plot_id_x, psm.plot_id_z));
                         paginationContent.add(singlePlot);
                         foundPlots.add(plotLoc);
                     }
                 });
-                Pagination pagination = PaginationBuilder.builder().contents(paginationContent).title(Text.of(Translations.OLP_LIST_HEADER.f(playerName))).build();
+                Pagination pagination = PaginationBuilder.builder().contents(paginationContent).title(Text.of(OldPlotsTranslations.OLP_LIST_HEADER.f(playerName))).build();
                 pagination.sendTo(src);
             } catch (SQLException e) {
                 DarwinServer.error("Failed to read OldPlots database", e);
-                src.sendMessage(Translations.OLP_FAILED_READ, false);
+                src.sendMessage(OldPlotsTranslations.OLP_FAILED_READ, false);
             }
         } else {
-            src.sendMessage(Translations.PLAYER_NOT_FOUND.f(playerName), false);
+            src.sendMessage(DefaultTranslations.PLAYER_NOT_FOUND.f(playerName), false);
         }
 
     }

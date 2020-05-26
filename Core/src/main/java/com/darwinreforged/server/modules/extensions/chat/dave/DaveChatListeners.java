@@ -12,7 +12,7 @@ import com.darwinreforged.server.core.events.internal.chat.SendChatMessageEvent;
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.player.PlayerManager;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.translations.DaveTranslations;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.living.Console;
 import com.darwinreforged.server.core.util.TimeUtils;
@@ -147,9 +147,9 @@ public class DaveChatListeners {
             message.append(color);
 
             if (link) {
-                message.append(Text.of(Translations.DAVE_LINK_SUGGESTION.f(response)));
+                message.append(Text.of(DaveTranslations.DAVE_LINK_SUGGESTION.f(response)));
                 message.setClickEvent(new ClickEvent(ClickAction.OPEN_URL, response));
-                message.setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_LINK_SUGGESTION_HOVER.f(response)));
+                message.setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, DaveTranslations.DAVE_LINK_SUGGESTION_HOVER.f(response)));
             } else message.append(response);
 
             PlayerManager pu = DarwinServer.get(PlayerManager.class);
@@ -166,7 +166,7 @@ public class DaveChatListeners {
                 for (String regex : new String[]{"(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r"})
                     discordMessage = discordMessage.replaceAll(regex, "");
 
-                DarwinServer.get(DiscordChatManager.class).sendToChannel(Translations.DAVE_DISCORD_FORMAT.f(discordMessage), discordChannel.getId());
+                DarwinServer.get(DiscordChatManager.class).sendToChannel(DaveTranslations.DAVE_DISCORD_FORMAT.f(discordMessage), discordChannel.getId());
             });
         }
     }

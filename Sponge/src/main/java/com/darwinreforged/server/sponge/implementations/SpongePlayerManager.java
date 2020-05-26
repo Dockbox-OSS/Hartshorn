@@ -10,7 +10,8 @@ import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.player.inventory.DarwinItem;
 import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.translations.DefaultTranslations;
+import com.darwinreforged.server.core.resources.translations.Translation;
 import com.darwinreforged.server.core.types.living.Console;
 import com.darwinreforged.server.core.types.living.MessageReceiver;
 import com.darwinreforged.server.core.types.living.Target;
@@ -40,11 +41,11 @@ import java.util.stream.Collectors;
 public class SpongePlayerManager extends PlayerManager {
 
     private static Text parseColors(String s) {
-        return Text.of(Translations.parseColors(s));
+        return Text.of(Translation.parseColors(s));
     }
 
     private static Text prefix() {
-        return fromAPI(com.darwinreforged.server.core.chat.Text.of(Translations.PREFIX.s()));
+        return fromAPI(com.darwinreforged.server.core.chat.Text.of(DefaultTranslations.PREFIX.s()));
     }
 
     @Override
@@ -195,7 +196,7 @@ public class SpongePlayerManager extends PlayerManager {
 
     @Override
     public String getPlayerName(UUID uuid) {
-        return Sponge.getServer().getPlayer(uuid).map(Player::getName).orElse(Translations.UNKNOWN_PLAYER.s());
+        return Sponge.getServer().getPlayer(uuid).map(Player::getName).orElse(DefaultTranslations.UNKNOWN_PLAYER.s());
     }
 
     private static Text fromAPI(com.darwinreforged.server.core.chat.Text text) {
