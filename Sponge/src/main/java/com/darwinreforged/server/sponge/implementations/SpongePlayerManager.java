@@ -4,7 +4,6 @@ import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.ClickEvent;
 import com.darwinreforged.server.core.chat.HoverEvent;
 import com.darwinreforged.server.core.chat.Pagination;
-import com.darwinreforged.server.core.internal.DarwinConfig;
 import com.darwinreforged.server.core.math.Vector3d;
 import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.player.PlayerManager;
@@ -33,8 +32,6 @@ import org.spongepowered.api.world.World;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -94,30 +91,8 @@ public class SpongePlayerManager extends PlayerManager {
 
     @Override
     public boolean hasPermission(DarwinPlayer player, String permission) {
-        if (permission.equals(Permissions.ADMIN_BYPASS.p()))
-            DarwinServer.getLog().warn("Received direct permission check for global bypass for player '" + player.getName() + "'");
-
-        boolean hasExactNode = Sponge.getServer().getPlayer(player.getUniqueId()).map(u -> {
-            // Exact permission
-            if (u.hasPermission(permission)) return true;
-
-            // Group permission (usually reached by a recursive call)
-            if (DarwinConfig.PERMIT_WILDCARDS.get() && u.hasPermission(permission+".+")) return true;
-
-            // Admin bypass
-            return DarwinConfig.PERMIT_BYPASS.get() && u.hasPermission(Permissions.ADMIN_BYPASS.p());
-
-            // Default to false
-        }).orElse(false);
-
-        if (!hasExactNode && DarwinConfig.PERMIT_WILDCARDS.get()) { // Lookup wildcard or group permission recursively
-            String[] groups = permission.split("\\.");
-            List<String> nextGroup = new ArrayList<>(Arrays.asList(groups));
-            nextGroup.remove(groups.length-1);
-            if (nextGroup.size() > 0) return hasPermission(player, String.join(".", nextGroup));
-        }
-
-        return hasExactNode;
+        if (permission.equals(Permissions.ADMIN_BYPASS.p())) DarwinServer.getLog().warn("Received direct permission check for global bypass for player '" + player.getName() + "'");
+        return Sponge.getServer().getPlayer(player.getUniqueId()).map(u -> u.hasPermission(permission) || u.hasPermission(Permissions.ADMIN_BYPASS.p())).orElse(false);
     }
 
     @Override
