@@ -496,8 +496,8 @@ public enum Translations {
     OLP_NO_STORAGE_FILE("$4No OldPlots storage file present!"),
     OLP_LIST_ITEM("$3 - $2#{0} : $1{1}$2, $1{2},{3}"),
     OLP_LIST_HEADER("$1OldPlots for $1{0}"),
-    OLP_FAILED_READ("$4Failed to obtain information from database")
-    ;
+    OLP_FAILED_READ("$4Failed to obtain information from database"),
+    WHATWORLD_PLAYER_IN("$1{0} $2is in $1{1}");
 
     private String s;
 
@@ -543,7 +543,7 @@ public enum Translations {
         return parseColors(m);
     }
 
-    private static String parseColors(String m) {
+    public static String parseColors(String m) {
         char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
         for (char c : nativeFormats) m = m.replaceAll(String.format("&%s", c), String.format("\u00A7%s", c));
 

@@ -70,7 +70,8 @@ public enum Permissions {
     GTL_IGNORE("darwin.gtl.ignore"),
     GM3TP_IGNORE("darwin.stp.ignore"),
     OLP_LIST("darwin.oldplots.list"),
-    ADMIN_BYPASS("darwin.admin.bypass-all");
+    ADMIN_BYPASS("darwin.admin.bypass-all"),
+    WW_USE("ww.use");
 
     private String permission;
 

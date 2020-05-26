@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public class SpongePlayerManager extends PlayerManager {
 
     private static Text parseColors(String s) {
-        return Text.of(s.replaceAll("&", "\u00A7"));
+        return Text.of(Translations.parseColors(s));
     }
 
     private static Text prefix() {
