@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 public class WorldUnloadModule {
 
     private FileManager fileUtil;
-    private PlotSquaredUtils plotSquaredUtils;
     private final List<String> unloadBlacklist = new ArrayList<>();
 
     /**
@@ -62,7 +61,6 @@ public class WorldUnloadModule {
 
     private void init() {
         fileUtil = DarwinServer.get(FileManager.class);
-        plotSquaredUtils = DarwinServer.get(PlotSquaredUtils.class);
         ArrayList<String> blacklist = (ArrayList<String>) fileUtil.getYamlDataForConfig(this, "blacklist", ArrayList.class);
         if (blacklist != null) unloadBlacklist.addAll(blacklist);
         refreshBlackList();
@@ -117,7 +115,7 @@ public class WorldUnloadModule {
     private void unloadTask() {
         DarwinServer.get(LocationUtils.class)
                 .getEmptyWorlds().stream()
-                .filter(world -> !unloadBlacklist.contains(world.getName()) && !plotSquaredUtils.isPlotWorld(world))
+                .filter(world -> !unloadBlacklist.contains(world.getName()) && !PlotSquaredUtils.isPlotWorld(world))
                 .forEach(darwinWorld -> darwinWorld.unloadWorld(false));
     }
 }
