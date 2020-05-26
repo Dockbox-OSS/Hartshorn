@@ -17,4 +17,9 @@ public class Vector3f extends AbstractVector3<Float> {
     public Vector3f(Float x, Float y, Float z) {
         super(x, y, z);
     }
+
+    @Override
+    public String toString() {
+        return "x=" + x + ", z=" + z + ", y=" + y;
+    }
 }
