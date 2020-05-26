@@ -521,7 +521,11 @@ public enum Translations {
     public String fsh(final Object... args) {
         int diff = s().length() - u().length();
         String formatted = f(args);
-        return 49+diff > formatted.length() ? formatted : f(args).substring(0, (50+diff));
+        return (49+diff > formatted.length() ? formatted : f(args).substring(0, (50+diff))) + "...";
+    }
+
+    public static String shorten(String s) {
+        return s.substring(0, 50) + "...";
     }
 
     // Format value placeholders and colors

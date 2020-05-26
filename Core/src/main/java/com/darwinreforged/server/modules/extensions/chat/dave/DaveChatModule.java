@@ -112,18 +112,21 @@ public class DaveChatModule {
         configurationUtil.getTriggers().forEach(trigger -> {
             List<String> textResponses = new ArrayList<>();
             trigger.getResponses().forEach(response -> {
-                if (response.getType().equals("message")) {
+                if (response.getType().equals("message") || response.getType().equals("msg")) {
                     String text = Translations.DAVE_TRIGGER_LIST_ITEM.fsh(response.getMessage().replaceAll("\n", " : "));
                     textResponses.add(text);
                 }
             });
-            String fullResponse = String.join(" : ", textResponses);
-            Text responseText = Text.of(fullResponse);
-            ClickEvent clickEvent = new ClickEvent(ClickAction.RUN_COMMAND, "/dave run " + trigger.getId());
-            HoverEvent hoverEvent = new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_TRIGGER_HOVER.s());
-            responseText.setClickEvent(clickEvent);
-            responseText.setHoverEvent(hoverEvent);
-            triggerMessages.add(responseText);
+            if (textResponses.size() > 0) {
+                String fullResponse = String.join(" : ", textResponses);
+                fullResponse = Translations.shorten(fullResponse);
+                Text responseText = Text.of(fullResponse);
+                ClickEvent clickEvent = new ClickEvent(ClickAction.RUN_COMMAND, "/dave run " + trigger.getId());
+                HoverEvent hoverEvent = new HoverEvent(HoverAction.SHOW_TEXT, Translations.DAVE_TRIGGER_HOVER.s());
+                responseText.setClickEvent(clickEvent);
+                responseText.setHoverEvent(hoverEvent);
+                triggerMessages.add(responseText);
+            }
         });
         PaginationBuilder.builder()
                 .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
