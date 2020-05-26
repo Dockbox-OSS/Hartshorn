@@ -114,8 +114,8 @@ public class ModularWikiModule {
                     // List all entries
                     List<Text> content = new ArrayList<>();
 
-                    ModularWikiModule.storageModel.getEntries().forEach(wikiObject -> {
-                        if (wikiObject.getPermission() == null || src.hasPermission(wikiObject.getPermission()) && !wikiObject.isHide()) {
+                    ModularWikiModule.storageModel.getEntries().stream().filter(wikiObject -> !wikiObject.isHidden()).forEach(wikiObject -> {
+                        if (wikiObject.getPermission() == null || src.hasPermission(wikiObject.getPermission()) && !wikiObject.isHidden()) {
                             Text singleEntryText = Text.of(Translations.WIKI_LIST_ROW.f(wikiObject.getName()))
                                     .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.WIKI_LIST_ROW_HOVER.f(wikiObject.getName())))
                                     .setClickEvent(new ClickEvent(ClickAction.RUN_COMMAND, String.format("/wiki %s ", wikiObject.getId())));
