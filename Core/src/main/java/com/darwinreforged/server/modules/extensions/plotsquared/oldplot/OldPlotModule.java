@@ -14,15 +14,11 @@ import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.Translations;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,9 +64,9 @@ public class OldPlotModule {
                 List<String> foundPlots = new ArrayList<>();
                 List<Text> paginationContent = new ArrayList<>();
                 plotStorageModels.forEach(psm -> {
-                    String plotLoc = String.format("%s,%s;%s", psm.world, psm.plot_id_x, psm.plot_id_z);
-                    if (!psm.world.equals("*") && !foundPlots.contains(plotLoc)) {
-                        Text singlePlot = Text.of(Translations.OLP_LIST_ITEM.f(psm.id, psm.world, psm.plot_id_x, psm.plot_id_z));
+                    String plotLoc = String.format("%s,%s;%s", psm.getWorld(), psm.getPlot_id_x(), psm.getPlot_id_z());
+                    if (!psm.getWorld().equals("*") && !foundPlots.contains(plotLoc)) {
+                        Text singlePlot = Text.of(Translations.OLP_LIST_ITEM.f(psm.getId(), psm.getWorld(), psm.getPlot_id_x(), psm.getPlot_id_z()));
                         paginationContent.add(singlePlot);
                         foundPlots.add(plotLoc);
                     }
@@ -84,29 +80,6 @@ public class OldPlotModule {
         } else {
             src.sendMessage(Translations.PLAYER_NOT_FOUND.f(playerName), false);
         }
-
-    }
-
-    @DatabaseTable(tableName = "plot")
-    public static class PlotStorageModel {
-
-        @DatabaseField(dataType = DataType.INTEGER, canBeNull = false, columnName = "id")
-        private int id;
-
-        @DatabaseField(dataType = DataType.INTEGER, canBeNull = false, columnName = "plot_id_x")
-        private int plot_id_x;
-
-        @DatabaseField(dataType = DataType.INTEGER, canBeNull = false, columnName = "plot_id_z")
-        private int plot_id_z;
-
-        @DatabaseField(dataType = DataType.UUID, canBeNull = false, columnName = "owner")
-        private UUID owner;
-
-        @DatabaseField(dataType = DataType.STRING, canBeNull = false, columnName = "world")
-        private String world;
-
-        @DatabaseField(dataType = DataType.DATE, canBeNull = false, columnName = "timestamp")
-        private Date timestamp;
 
     }
 
