@@ -10,12 +10,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.darwinreforged.server.core.resources.translations.DefaultTranslations.COLOR_ERROR;
 import static com.darwinreforged.server.core.resources.translations.DefaultTranslations.COLOR_MINOR;
@@ -121,10 +119,11 @@ public class Translation {
     }
 
     @JsonIgnore
-    public static Translation create(String translation) {
+    public static Translation create(String key, String translation) {
         try {
+            // Obtain category
             StackTraceElement[] ste = Thread.currentThread().getStackTrace();
-            // 0: Translations, 1: Translations, 2: Caller
+            // 0: Thread, 1: Translations, 2: Caller
             String caller = ste[2].getClassName();
             Class<?> callerClass = Class.forName(caller);
             String category = "other";
@@ -133,23 +132,9 @@ public class Translation {
                 category = cs.value();
             }
 
-            AtomicReference<String> key = new AtomicReference<>();
-            Arrays.stream(callerClass.getDeclaredFields()).forEach(f -> {
-                try {
-                    Object fv = f.get(null);
-                    // TODO : Obtain this value before it is completely assigned?
-                    if (fv instanceof Translation) {
-                        if (((Translation) fv).value.equals(translation))
-                            key.set(f.getName().toLowerCase().replaceAll("_", "."));
-                    } else System.out.println("Not instance of translation, instead : ");
-                } catch (Throwable e) {
-                    DarwinServer.error("Could not convert translation field", e);
-                }
-            });
-
-            if (key.get() != null) {
-                DarwinServer.getLog().info(String.format("Registered '%s.%s' for translation '%s'", category, key.get(), translation));
-                Translation t = new Translation(translation, key.get());
+            if (key != null) {
+                DarwinServer.getLog().info(String.format("Registered '%s.%s' for translation '%s'", category, key, translation));
+                Translation t = new Translation(translation, key);
 
                 Translation.TRANSLATION_STORAGE.putIfAbsent(category, new ArrayList<>());
                 List<Translation> categoryTranslations = Translation.TRANSLATION_STORAGE.get(category);
