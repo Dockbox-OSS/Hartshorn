@@ -2,6 +2,7 @@ package com.darwinreforged.server.core.resources.translations;
 
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.files.FileManager;
+import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.ConfigSetting;
 import com.darwinreforged.server.core.util.StringUtils;
 import com.darwinreforged.server.modules.internal.darwin.DarwinServerModule;
@@ -130,6 +131,9 @@ public class Translation {
             if (callerClass.isAnnotationPresent(ConfigSetting.class)) {
                 ConfigSetting cs = callerClass.getAnnotation(ConfigSetting.class);
                 category = cs.value();
+            } else if (callerClass.isAnnotationPresent(Module.class)) {
+                Module mod = callerClass.getAnnotation(Module.class);
+                category = mod.id();
             }
 
             if (key != null) {
