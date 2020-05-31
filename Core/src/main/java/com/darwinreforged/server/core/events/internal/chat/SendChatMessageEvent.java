@@ -1,7 +1,7 @@
 package com.darwinreforged.server.core.events.internal.chat;
 
 import com.darwinreforged.server.core.types.living.Target;
-import com.darwinreforged.server.core.events.CancellableEvent;
+import com.darwinreforged.server.core.events.util.CancellableEvent;
 
 /**
  The type Send chat message event.

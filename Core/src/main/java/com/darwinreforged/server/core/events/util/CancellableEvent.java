@@ -1,7 +1,6 @@
-package com.darwinreforged.server.core.events;
+package com.darwinreforged.server.core.events.util;
 
 import com.darwinreforged.server.core.types.living.Target;
-import com.darwinreforged.server.core.events.util.Event;
 
 /**
  The type Cancellable event.
