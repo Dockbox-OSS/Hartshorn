@@ -1,8 +1,6 @@
 package com.darwinreforged.server.sponge.implementations;
 
 import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.chat.ClickEvent;
-import com.darwinreforged.server.core.chat.HoverEvent;
 import com.darwinreforged.server.core.chat.Pagination;
 import com.darwinreforged.server.core.math.Vector3d;
 import com.darwinreforged.server.core.player.DarwinPlayer;
@@ -11,7 +9,6 @@ import com.darwinreforged.server.core.player.inventory.DarwinItem;
 import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.translations.DefaultTranslations;
-import com.darwinreforged.server.core.resources.translations.Translation;
 import com.darwinreforged.server.core.types.living.Console;
 import com.darwinreforged.server.core.types.living.MessageReceiver;
 import com.darwinreforged.server.core.types.living.Target;
@@ -26,13 +23,9 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
-import org.spongepowered.api.text.serializer.TextSerializers;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,32 +33,28 @@ import java.util.stream.Collectors;
 
 public class SpongePlayerManager extends PlayerManager {
 
-    private static Text parseColors(String s) {
-        return Text.of(Translation.parseColors(s));
-    }
-
     private static Text prefix() {
-        return fromAPI(com.darwinreforged.server.core.chat.Text.of(DefaultTranslations.PREFIX.s()));
+        return SpongeCommonUtils.fromAPI(com.darwinreforged.server.core.chat.Text.of(DefaultTranslations.PREFIX.s()));
     }
 
     @Override
     public void broadcast(com.darwinreforged.server.core.chat.Text message) {
-        Sponge.getServer().getBroadcastChannel().send(Text.of(prefix(), fromAPI(message)));
+        Sponge.getServer().getBroadcastChannel().send(Text.of(prefix(), SpongeCommonUtils.fromAPI(message)));
     }
 
     @Override
     public void broadcastIfPermitted(com.darwinreforged.server.core.chat.Text message, String permission) {
         Sponge.getServer().getOnlinePlayers().parallelStream().filter(p -> p.hasPermission(permission) ||
-                p.hasPermission(Permissions.ADMIN_BYPASS.p())).forEach(p -> p.sendMessage(Text.of(prefix(), fromAPI(message))));
+                p.hasPermission(Permissions.ADMIN_BYPASS.p())).forEach(p -> p.sendMessage(Text.of(prefix(), SpongeCommonUtils.fromAPI(message))));
     }
 
     @Override
     public void tell(MessageReceiver receiver, com.darwinreforged.server.core.chat.Text message) {
         if (receiver instanceof DarwinPlayer) {
             Sponge.getServer().getPlayer(((DarwinPlayer) receiver).getUniqueId())
-                    .ifPresent(spp -> spp.sendMessage(Text.of(prefix(), fromAPI(message))));
+                    .ifPresent(spp -> spp.sendMessage(Text.of(prefix(), SpongeCommonUtils.fromAPI(message))));
         } else if (receiver instanceof Console) {
-            Sponge.getServer().getConsole().sendMessage(Text.of(prefix(), fromAPI(message)));
+            Sponge.getServer().getConsole().sendMessage(Text.of(prefix(), SpongeCommonUtils.fromAPI(message)));
         } else {
             DarwinServer.getLog().warn("Failed to get receiver for : " + receiver);
         }
@@ -74,9 +63,9 @@ public class SpongePlayerManager extends PlayerManager {
     @Override
     public void tellNoMarkup(MessageReceiver receiver, com.darwinreforged.server.core.chat.Text message) {
         if (receiver instanceof DarwinPlayer) {
-            Sponge.getServer().getPlayer(((Target) receiver).getUniqueId()).ifPresent(spp -> spp.sendMessage(fromAPI(message)));
+            Sponge.getServer().getPlayer(((Target) receiver).getUniqueId()).ifPresent(spp -> spp.sendMessage(SpongeCommonUtils.fromAPI(message)));
         } else if (receiver instanceof Console) {
-            Sponge.getServer().getConsole().sendMessage(fromAPI(message));
+            Sponge.getServer().getConsole().sendMessage(SpongeCommonUtils.fromAPI(message));
         }
     }
 
@@ -170,6 +159,20 @@ public class SpongePlayerManager extends PlayerManager {
     }
 
     @Override
+    public void teleportPlayer(DarwinPlayer player, DarwinLocation loc) {
+        Sponge.getServer().getPlayer(player.getUniqueId()).ifPresent(sp -> {
+            com.flowpowered.math.vector.Vector3d vec3d = new com.flowpowered.math.vector.Vector3d(loc.getX().doubleValue(), loc.getY().doubleValue(), loc.getZ().doubleValue());
+            try {
+                sp.setLocation(vec3d, loc.getWorld().getWorldUUID());
+            } catch (IllegalArgumentException e) {
+                DarwinServer.error(String.format("Could not find world with UUID '%s'", loc.getWorld().getWorldUUID()));
+            }
+        });
+    }
+
+
+
+    @Override
     public void sendPagination(MessageReceiver receiver, Pagination pagination) {
         org.spongepowered.api.text.channel.MessageReceiver spongeReceiver = null;
         if (receiver.equals(Console.instance)) spongeReceiver = Sponge.getServer().getConsole();
@@ -179,14 +182,14 @@ public class SpongePlayerManager extends PlayerManager {
         if (spongeReceiver != null) {
             PaginationList.Builder builder = PaginationList.builder();
 
-            if (pagination.getPadding() != null) builder.padding(fromAPI(pagination.getPadding()));
+            if (pagination.getPadding() != null) builder.padding(SpongeCommonUtils.fromAPI(pagination.getPadding()));
             if (pagination.getLinesPerPage() > -1) builder.linesPerPage(pagination.getLinesPerPage());
-            if (pagination.getHeader() != null) builder.header(fromAPI(pagination.getHeader()));
-            if (pagination.getFooter() != null) builder.footer(fromAPI(pagination.getFooter()));
-            if (pagination.getTitle() != null) builder.title(fromAPI(pagination.getTitle()));
+            if (pagination.getHeader() != null) builder.header(SpongeCommonUtils.fromAPI(pagination.getHeader()));
+            if (pagination.getFooter() != null) builder.footer(SpongeCommonUtils.fromAPI(pagination.getFooter()));
+            if (pagination.getTitle() != null) builder.title(SpongeCommonUtils.fromAPI(pagination.getTitle()));
             if (pagination.getContents() != null) {
                 builder.contents(
-                        pagination.getContents().stream().map(SpongePlayerManager::fromAPI).collect(Collectors.toList())
+                        pagination.getContents().stream().map(SpongeCommonUtils::fromAPI).collect(Collectors.toList())
                 );
             }
 
@@ -199,46 +202,4 @@ public class SpongePlayerManager extends PlayerManager {
         return Sponge.getServer().getPlayer(uuid).map(Player::getName).orElse(DefaultTranslations.UNKNOWN_PLAYER.s());
     }
 
-    private static Text fromAPI(com.darwinreforged.server.core.chat.Text text) {
-        Text spT = parseColors(text.toLegacy());
-        Text.Builder builder = spT.toBuilder();
-        if (text.getClickEvent() != null) {
-            try {
-                ClickEvent clickEvent = text.getClickEvent();
-                switch (clickEvent.getClickAction()) {
-                    case OPEN_URL:
-                        builder.onClick(TextActions.openUrl(new URL(clickEvent.getValue())));
-                        break;
-                    case RUN_COMMAND:
-                        builder.onClick(TextActions.runCommand(clickEvent.getValue()));
-                        break;
-                    case SUGGEST_COMMAND:
-                        builder.onClick(TextActions.suggestCommand(clickEvent.getValue()));
-                        break;
-                    case CHANGE_PAGE:
-                        builder.onClick(TextActions.changePage(Integer.parseInt(clickEvent.getValue())));
-                        break;
-                }
-            } catch (MalformedURLException | NumberFormatException e) {
-                builder.onClick(null);
-            }
-        }
-        if (text.getHoverEvent() != null) {
-            HoverEvent hoverEvent = text.getHoverEvent();
-            switch (hoverEvent.getHoverAction()) {
-                case SHOW_TEXT:
-                    builder.onHover(TextActions.showText(TextSerializers.FORMATTING_CODE.deserializeUnchecked(hoverEvent.getValue())));
-                    break;
-                case SHOW_ITEM:
-                    // TODO : Convert HOCON to ItemStack
-                    DarwinServer.getLog().warn("Attempted to set showItem for text object, this is not implemented into Sponge! (yet)");
-                    break;
-                case SHOW_ENTITY:
-                    // TODO : Convert HOCON to Entity
-                    DarwinServer.getLog().warn("Attempted to set showEntity for text object, this is not implemented into Sponge! (yet)");
-                    break;
-            }
-        }
-        return builder.build();
-    }
 }

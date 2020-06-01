@@ -4,8 +4,8 @@ import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.ConfigSetting;
-import com.darwinreforged.server.core.util.StringUtils;
-import com.darwinreforged.server.modules.internal.darwin.DarwinServerModule;
+import com.darwinreforged.server.core.util.CommonUtils;
+import com.darwinreforged.server.modules.DefaultModule;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.File;
@@ -97,7 +97,7 @@ public class Translation {
                 else map.put(String.format("{%d}", i), arg);
             }
         }
-        m = StringUtils.replaceFromMap(m, map);
+        m = CommonUtils.replaceFromMap(m, map);
         return parseColors(m);
     }
 
@@ -157,7 +157,7 @@ public class Translation {
     @JsonIgnore
     public static void writeToFile() {
         FileManager fm = DarwinServer.get(FileManager.class);
-        Path dataDir = fm.getDataDirectory(DarwinServerModule.class);
+        Path dataDir = fm.getDataDirectory(DefaultModule.class);
         File translationFile = new File(dataDir.toFile(), "translation-dump.yml");
         fm.writeYamlDataToFile(Translation.TRANSLATION_STORAGE, translationFile);
     }

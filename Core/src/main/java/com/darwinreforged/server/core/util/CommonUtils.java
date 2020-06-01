@@ -1,27 +1,32 @@
 package com.darwinreforged.server.core.util;
 
 import com.darwinreforged.server.core.internal.Utility;
+import com.darwinreforged.server.core.player.DarwinPlayer;
 import com.darwinreforged.server.core.resources.translations.TimeTranslations;
 import com.darwinreforged.server.core.types.time.TimeDifference;
+import com.darwinreforged.server.core.types.virtual.Bossbar;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
  The type Time utils.
  */
 @Utility("Time parsing and scheduling")
-public abstract class TimeUtils {
+public abstract class CommonUtils<B> {
 
-    private static final Map<Object, Map<UUID, LocalDateTime>> playerRegistrationsPerModule = new HashMap<>();
-
+    private static final Map<Object, Map<UUID, LocalDateTime>> playerRegistrationsPerModule = new ConcurrentHashMap<>();
+    protected final Map<UUID, B> visibleBossbarsPerPlayer = new ConcurrentHashMap<>();
     /**
      Local date time from millis local date time.
 
@@ -111,11 +116,49 @@ public abstract class TimeUtils {
     }
 
     /**
+     Replace from map string.
+
+     @param string
+     the string
+     @param replacements
+     the replacements
+
+     @return the string
+     */
+    public static String replaceFromMap(String string, Map<String, String> replacements) {
+        StringBuilder sb = new StringBuilder(string);
+        int size = string.length();
+        Iterator var4 = replacements.entrySet().iterator();
+
+        while(var4.hasNext()) {
+            Entry<String, String> entry = (Entry)var4.next();
+            if (size == 0) {
+                break;
+            }
+
+            String key = (String)entry.getKey();
+            String value = (String)entry.getValue();
+
+            int nextSearchStart;
+            for(int start = sb.indexOf(key, 0); start > -1; start = sb.indexOf(key, nextSearchStart)) {
+                int end = start + key.length();
+                nextSearchStart = start + value.length();
+                sb.replace(start, end, value);
+                size -= end - start;
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public abstract void toggleBossbar(Bossbar bossbar, DarwinPlayer player);
+
+    /**
      Schedule scheduler.
 
      @return the scheduler
      */
-    public abstract Scheduler schedule();
+    public abstract Scheduler scheduler();
 
     /**
      The type Scheduler.
