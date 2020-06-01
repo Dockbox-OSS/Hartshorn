@@ -5,8 +5,10 @@ import com.darwinreforged.server.core.events.internal.player.PlayerTeleportEvent
 import com.darwinreforged.server.core.events.util.Listener;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.player.DarwinPlayer;
+import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.resources.Permissions;
 import com.darwinreforged.server.core.resources.translations.Translation;
+import com.darwinreforged.server.core.types.living.Console;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.intellectualcrafters.plot.object.Location;
 import com.intellectualcrafters.plot.object.Plot;
@@ -49,6 +51,8 @@ public class WorldDenyModule {
         Plot plot = Plot.getPlot(plotLoc);
         if (plot != null) {
             if (plot.isDenied(player.getUniqueId()) && !player.hasPermission(Permissions.ADMIN_BYPASS) && plot.getWorldName().matches("[0-9]+,[0-9]+")) {
+                if (player.getGameMode().equals(GameModes.SPECTATOR)) Console.instance.execute(String.format("/warn %s Abusing Spectator mode to enter a world you are denied from.", player.getName()));
+
                 player.getLocation().ifPresent(loc -> {
                     if (loc.getWorld().getWorldUUID().equals(newLocation.getWorld().getWorldUUID()))
                         player.execute("/lobby");
