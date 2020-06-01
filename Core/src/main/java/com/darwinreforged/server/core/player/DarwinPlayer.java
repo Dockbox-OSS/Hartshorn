@@ -34,7 +34,7 @@ public class DarwinPlayer extends CommandSender {
      @param name
      the name
      */
-    DarwinPlayer(UUID uuid, String name) {
+    protected DarwinPlayer(UUID uuid, String name) {
         super.uuid = uuid;
         super.name = name;
         this.fawePlayer = Fawe.get().getCachedPlayer(uuid);
@@ -193,5 +193,9 @@ public class DarwinPlayer extends CommandSender {
     @Override
     public void sendMessage(Text text, Permissions permission, boolean plain) {
         sendMessage(text, permission.p(), plain);
+    }
+
+    public void teleport(DarwinLocation loc) {
+        DarwinServer.get(PlayerManager.class).teleportPlayer(this, loc);
     }
 }
