@@ -8,22 +8,27 @@ import com.darwinreforged.server.core.util.CommonUtils;
 import com.darwinreforged.server.modules.DefaultModule;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import org.reflections.Reflections;
+
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static com.darwinreforged.server.core.resources.translations.DefaultTranslations.COLOR_ERROR;
 import static com.darwinreforged.server.core.resources.translations.DefaultTranslations.COLOR_MINOR;
 import static com.darwinreforged.server.core.resources.translations.DefaultTranslations.COLOR_PRIMARY;
 import static com.darwinreforged.server.core.resources.translations.DefaultTranslations.COLOR_SECONDARY;
 
-@SuppressWarnings("InstantiationOfUtilityClass")
 public class Translation {
 
     private String value;
     private String key;
+    private String category;
 
     public void setValue(String value) {
         this.value = value;
@@ -37,37 +42,35 @@ public class Translation {
         this.key = key;
     }
 
+    private String getValue() {
+        // Prefer cached translations (loaded from configuration) over default values
+        if (category != null && TRANSLATION_STORAGE.containsKey(category) && TRANSLATION_STORAGE.get(category).containsKey(key))
+            return TRANSLATION_STORAGE.get(category).get(key);
+        return value;
+    }
+
     public String getKey() {
         return key;
     }
 
     // String
     public String s() {
-        return parseColors(this.value);
+        return parseColors(getValue());
     }
 
     @JsonIgnore
     public static final Map<String, Map<String, String>> TRANSLATION_STORAGE = new HashMap<>();
 
-    // As these are utility classes filled with nothing but `public static final` Translation objects,
-    // the would not be loaded until used, causing the translations not to be present yet. To 'resolve'
-    // this we instantiate them here once, so the translation file can be filled.
-    static {
-        new BrushTranslations();
-        new DaveTranslations();
-        new DefaultTranslations();
-    }
-
     // Unparsed
     @JsonIgnore
     public String u() {
-        return value.replaceAll("[$|&][0-9a-fklmnor]", "");
+        return getValue().replaceAll("[$|&][0-9a-fklmnor]", "");
     }
 
     // Formatted
     @JsonIgnore
     public String f(final Object... args) {
-        return format(this.value, args);
+        return format(getValue(), args);
     }
 
     // Formatted, shortened
@@ -80,7 +83,9 @@ public class Translation {
 
     @JsonIgnore
     public static String shorten(String s) {
-        return s.substring(0, 50) + "...";
+        if (s.length() > 52) // Adding ... to a string of 50 would only make it longer
+            return s.substring(0, 50) + "...";
+        else return s;
     }
 
     // Format value placeholders and colors
@@ -105,10 +110,10 @@ public class Translation {
         for (char c : nativeFormats) m = m.replaceAll(String.format("&%s", c), String.format("\u00A7%s", c));
 
         return m
-                .replaceAll("\\$1", String.format("\u00A7%s", COLOR_PRIMARY.value))
-                .replaceAll("\\$2", String.format("\u00A7%s", COLOR_SECONDARY.value))
-                .replaceAll("\\$3", String.format("\u00A7%s", COLOR_MINOR.value))
-                .replaceAll("\\$4", String.format("\u00A7%s", COLOR_ERROR.value));
+                .replaceAll("\\$1", String.format("\u00A7%s", COLOR_PRIMARY.getValue()))
+                .replaceAll("\\$2", String.format("\u00A7%s", COLOR_SECONDARY.getValue()))
+                .replaceAll("\\$3", String.format("\u00A7%s", COLOR_MINOR.getValue()))
+                .replaceAll("\\$4", String.format("\u00A7%s", COLOR_ERROR.getValue()));
     }
 
     // Change
@@ -137,6 +142,7 @@ public class Translation {
             if (key != null) {
                 DarwinServer.getLog().info(String.format("Registered '%s.%s' for translation '%s'", category, key, translation));
                 Translation t = new Translation(translation, key);
+                t.category = category;
 
                 Translation.TRANSLATION_STORAGE.putIfAbsent(category, new HashMap<>());
                 Map<String, String> categoryTranslations = Translation.TRANSLATION_STORAGE.get(category);
@@ -151,15 +157,40 @@ public class Translation {
         return new Translation(translation, "empty");
     }
 
-
     @JsonIgnore
-    public static void writeToFile() {
+    public static void initTranslationService() {
         FileManager fm = DarwinServer.get(FileManager.class);
-        Path dataDir = fm.getDataDirectory(DefaultModule.class);
-        File translationFile = new File(dataDir.toFile(), "translation-dump.yml");
-        fm.writeYamlDataToFile(Translation.TRANSLATION_STORAGE, translationFile);
+        if (!getStorageFile(fm).exists()) {
+            Reflections ref = new Reflections(Translation.class.getPackage().getName());
+            Set<Class<?>> bulkTranslationTypes = ref.getTypesAnnotatedWith(ConfigSetting.class);
+            bulkTranslationTypes.forEach(type -> {
+                try {
+                    Constructor<?> ctor = type.getConstructor();
+                    ctor.setAccessible(true);
+                    ctor.newInstance();
+                } catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e) {
+                    DarwinServer.error(String.format("Could not safely instantiate bulk translation type '%s'. Note that this may cause incomplete configurations", type.toGenericString()), e);
+                }
+            });
+            fm.writeYamlDataToFile(Translation.TRANSLATION_STORAGE, getStorageFile(fm));
+        } else readFromFile();
     }
 
+    @SuppressWarnings("unchecked")
+    public static void readFromFile() {
+        FileManager fm = DarwinServer.get(FileManager.class);
+        Map<String, Object> storedTranslations = fm.getYamlDataFromFile(getStorageFile(fm));
+        storedTranslations.forEach((category, map) -> {
+            if (!(map instanceof Map))
+                DarwinServer.getLog().warn(String.format("Attempted to read non-map value from translations '%s'", category));
+            else TRANSLATION_STORAGE.put(category, (Map<String, String>) map);
+        });
+    }
+
+    private static File getStorageFile(FileManager fm) {
+        Path dataDir = fm.getDataDirectory(DefaultModule.class, "translations");
+        return new File(dataDir.toFile(), "translations.yml");
+    }
 
 
 }

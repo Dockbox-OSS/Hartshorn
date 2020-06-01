@@ -163,7 +163,7 @@ public abstract class DarwinServer extends Singleton {
 
             // Import permissions and translations
             Permissions.collect();
-            Translation.writeToFile();
+            Translation.initTranslationService();
 
             // Setting up commands
             CommandBus<?, ?> cb = get(CommandBus.class);
@@ -649,7 +649,7 @@ public abstract class DarwinServer extends Singleton {
     public void onServerReload(ServerReloadEvent event) {
         this.config = new DarwinConfig();
         Permissions.collect();
-        Translation.writeToFile();
+        Translation.initTranslationService();
         getLog().info("Successfully reloaded DarwinServer configurations");
     }
 
