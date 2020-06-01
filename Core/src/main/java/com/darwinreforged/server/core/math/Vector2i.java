@@ -15,4 +15,9 @@ public class Vector2i extends AbstractVector2<Integer> {
     public Vector2i(Integer x, Integer z) {
         super(x, z);
     }
+
+    @Override
+    public String toString() {
+        return "x=" + x + ", z=" + z;
+    }
 }

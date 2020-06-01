@@ -2,8 +2,8 @@ package com.darwinreforged.server.core.resources;
 
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.files.FileManager;
-import com.darwinreforged.server.modules.internal.darwin.DarwinServerModule;
-import com.darwinreforged.server.core.util.StringUtils;
+import com.darwinreforged.server.core.util.CommonUtils;
+import com.darwinreforged.server.modules.DefaultModule;
 
 import java.io.File;
 import java.util.Arrays;
@@ -90,7 +90,7 @@ public enum Permissions {
                 if (i == 0) map.put("%s", arg);
             }
         }
-        return StringUtils.replaceFromMap(p(), map);
+        return CommonUtils.replaceFromMap(p(), map);
     }
 
     public String p() {
@@ -98,7 +98,7 @@ public enum Permissions {
     }
 
     public static void collect() {
-        DarwinServer.getModule(DarwinServerModule.class).ifPresent(module -> {
+        DarwinServer.getModule(DefaultModule.class).ifPresent(module -> {
             Map<String, Object> configMap;
             File file = new File(DarwinServer.get(FileManager.class).getConfigDirectory(module).toFile(), "permissions.yml");
             if (!file.exists()) {

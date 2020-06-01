@@ -1,7 +1,7 @@
 package com.darwinreforged.server.sponge;
 
 import com.darwinreforged.server.core.DarwinServer;
-import com.darwinreforged.server.core.events.CancellableEvent;
+import com.darwinreforged.server.core.events.util.CancellableEvent;
 import com.darwinreforged.server.core.events.internal.chat.SendChatMessageEvent;
 import com.darwinreforged.server.core.events.internal.player.InventoryInteractionEvent;
 import com.darwinreforged.server.core.events.internal.player.PlayerLoggedInEvent;
@@ -9,6 +9,8 @@ import com.darwinreforged.server.core.events.internal.player.PlayerMoveEvent;
 import com.darwinreforged.server.core.events.internal.player.PlayerTeleportEvent;
 import com.darwinreforged.server.core.events.internal.server.ServerReloadEvent;
 import com.darwinreforged.server.core.player.PlayerManager;
+import com.darwinreforged.server.core.types.location.DarwinLocation;
+import com.darwinreforged.server.sponge.implementations.SpongeLocationUtils;
 
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Cancellable;
@@ -31,7 +33,9 @@ public class SpongeListener {
 
     @Listener
     public void onPlayerTeleport(MoveEntityEvent.Teleport event, @First Player p) {
-        postCancellable(new PlayerTeleportEvent(DarwinServer.get(PlayerManager.class).getPlayer(p.getUniqueId(), p.getName())), event);
+        DarwinLocation fromLocation = SpongeLocationUtils.getDarwinLocationFrom(event.getFromTransform().getLocation());
+        DarwinLocation toLocation = SpongeLocationUtils.getDarwinLocationFrom(event.getToTransform().getLocation());
+        postCancellable(new PlayerTeleportEvent(DarwinServer.get(PlayerManager.class).getPlayer(p.getUniqueId(), p.getName()), fromLocation, toLocation), event);
     }
 
     @Listener

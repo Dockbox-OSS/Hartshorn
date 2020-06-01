@@ -7,7 +7,8 @@ import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.translations.DefaultTranslations;
+import com.darwinreforged.server.core.resources.translations.Translation;
 import com.darwinreforged.server.core.types.living.CommandSender;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
@@ -33,7 +34,7 @@ public class DarwinPlayer extends CommandSender {
      @param name
      the name
      */
-    DarwinPlayer(UUID uuid, String name) {
+    protected DarwinPlayer(UUID uuid, String name) {
         super.uuid = uuid;
         super.name = name;
         this.fawePlayer = Fawe.get().getCachedPlayer(uuid);
@@ -140,10 +141,10 @@ public class DarwinPlayer extends CommandSender {
         sendMessage(message, false);
         if (command != null) {
             boolean flagEmpty = (command.flags().length == 0 || command.flags()[0].equals(""));
-            sendMessage(Translations.CU_TITLE.f(command.aliases()[0]), true);
-            sendMessage(Translations.CU_USAGE.f(command.usage()), true);
-            if (!flagEmpty) sendMessage(Translations.CU_FLAGS.f(String.join(", ", command.flags())), true);
-            sendMessage(Translations.CU_DESCRIPTION.f(String.join(", ", command.desc())), true);
+            sendMessage(DefaultTranslations.CMD_USAGE_TITLE.f(command.aliases()[0]), true);
+            sendMessage(DefaultTranslations.CMD_USAGE.f(command.usage()), true);
+            if (!flagEmpty) sendMessage(DefaultTranslations.CMD_FLAGS.f(String.join(", ", command.flags())), true);
+            sendMessage(DefaultTranslations.CMD_DESCRIPTION.f(String.join(", ", command.desc())), true);
         }
     }
 
@@ -153,7 +154,7 @@ public class DarwinPlayer extends CommandSender {
     }
 
     @Override
-    public void sendMessage(Translations translation, boolean plain) {
+    public void sendMessage(Translation translation, boolean plain) {
         sendMessage(translation.s(), plain);
     }
 
@@ -175,12 +176,12 @@ public class DarwinPlayer extends CommandSender {
     }
 
     @Override
-    public void sendMessage(Translations translation, String permission, boolean plain) {
+    public void sendMessage(Translation translation, String permission, boolean plain) {
         sendMessage(translation.s(), permission, plain);
     }
 
     @Override
-    public void sendMessage(Translations translation, Permissions permission, boolean plain) {
+    public void sendMessage(Translation translation, Permissions permission, boolean plain) {
         sendMessage(translation.s(), permission.p(), plain);
     }
 
@@ -192,5 +193,9 @@ public class DarwinPlayer extends CommandSender {
     @Override
     public void sendMessage(Text text, Permissions permission, boolean plain) {
         sendMessage(text, permission.p(), plain);
+    }
+
+    public void teleport(DarwinLocation loc) {
+        DarwinServer.get(PlayerManager.class).teleportPlayer(this, loc);
     }
 }
