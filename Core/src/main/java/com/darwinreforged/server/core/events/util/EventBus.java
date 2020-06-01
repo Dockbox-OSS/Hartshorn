@@ -150,7 +150,7 @@ public class EventBus {
             Listener annotation = AccessHelper.getAnnotationRecursively(method, Listener.class);
             if (annotation != null) {
                 checkListenerMethod(method, false);
-                result.add(InvokeWrapper.create(object, method, annotation.priority(), lookup));
+                result.add(InvokeWrapper.create(object, method, annotation.value().getPriority(), lookup));
             }
         }
         return result;
@@ -488,7 +488,7 @@ public class EventBus {
          if the provided {@linkplain MethodHandles.Lookup lookup}                           cannot access the specified method
          */
         public static InvokeWrapper create(Object instance, Method method, MethodHandles.Lookup lookup) throws SecurityException {
-            int priority = AccessHelper.getAnnotationRecursively(method, Listener.class).priority();
+            int priority = AccessHelper.getAnnotationRecursively(method, Listener.class).value().getPriority();
             return create(instance, method, priority, lookup);
         }
 

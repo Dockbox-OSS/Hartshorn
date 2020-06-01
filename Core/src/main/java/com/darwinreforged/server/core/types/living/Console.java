@@ -5,7 +5,7 @@ import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.player.PlayerManager;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.translations.Translation;
 
 import java.util.Arrays;
 
@@ -57,7 +57,7 @@ public class Console extends CommandSender {
     }
 
     @Override
-    public void sendMessage(Translations translation, boolean plain) {
+    public void sendMessage(Translation translation, boolean plain) {
         sendMessage(translation.s(), plain);
     }
 
@@ -79,12 +79,12 @@ public class Console extends CommandSender {
     }
 
     @Override
-    public void sendMessage(Translations translation, String permission, boolean plain) {
+    public void sendMessage(Translation translation, String permission, boolean plain) {
         sendMessage(translation.s(), plain);
     }
 
     @Override
-    public void sendMessage(Translations translation, Permissions permission, boolean plain) {
+    public void sendMessage(Translation translation, Permissions permission, boolean plain) {
         sendMessage(translation.s(), plain);
     }
 

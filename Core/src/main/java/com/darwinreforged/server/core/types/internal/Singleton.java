@@ -21,4 +21,8 @@ public abstract class Singleton {
         instance = this;
     }
 
+    public Singleton(boolean safe) {
+        if (instance == null) instance = this;
+    }
+
 }

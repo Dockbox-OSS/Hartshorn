@@ -2,7 +2,7 @@ package com.darwinreforged.server.core.internal;
 
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.files.FileManager;
-import com.darwinreforged.server.modules.internal.darwin.DarwinServerModule;
+import com.darwinreforged.server.modules.DefaultModule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +24,7 @@ public class DarwinConfig {
 
     public DarwinConfig() {
         FileManager fu = DarwinServer.get(FileManager.class);
-        Map<String, Object> config = fu.getYamlDataForConfig(DarwinServerModule.class);
+        Map<String, Object> config = fu.getYamlDataForConfig(DefaultModule.class);
         AtomicBoolean written = new AtomicBoolean(config.isEmpty());
         FLAGS.forEach((k, v) -> {
             boolean oneWritten = false;
@@ -38,7 +38,7 @@ public class DarwinConfig {
             }
             if (!oneWritten) config.put(v.key, v.value);
         });
-        if (written.get()) fu.writeYamlDataForConfig(config, DarwinServerModule.class);
+        if (written.get()) fu.writeYamlDataForConfig(config, DefaultModule.class);
     }
 
     @SuppressWarnings("unchecked")

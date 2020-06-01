@@ -16,5 +16,5 @@ public @interface Listener {
 
      @return Priority of event receiving.
      */
-    int priority() default 0;
+    Priority value() default Priority.NORMAL;
 }

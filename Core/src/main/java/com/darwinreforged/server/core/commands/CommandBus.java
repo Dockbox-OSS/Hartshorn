@@ -11,7 +11,7 @@ import com.darwinreforged.server.core.commands.registrations.SingleMethodRegistr
 import com.darwinreforged.server.core.internal.Utility;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.translations.DefaultTranslations;
 import com.darwinreforged.server.core.tuple.Triple;
 import com.darwinreforged.server.core.types.internal.Singleton;
 import com.darwinreforged.server.core.types.living.CommandSender;
@@ -82,7 +82,7 @@ public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
                                         subRegistration.getMethod(),
                                         s, c,
                                         subRegistration);
-                                if (result == null || !result.equals("success")) s.sendMessage(Translations.UNKNOWN_ERROR.f(result), false);
+                                if (result == null || !result.equals("success")) s.sendMessage(DefaultTranslations.UNKNOWN_ERROR.f(result), false);
                             };
 
                             if (!subRegistration.getAliases()[0].equals(""))
@@ -107,7 +107,7 @@ public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
                                     .forEach(alias -> {
                                         registerCommand(registration.getCommand().context(), registration.getPermissions()[0].p(), (s, c) -> {
                                             String result = invoke(registration.getMethod(), s, c, registration);
-                                            if (result == null || !result.equals("success")) s.sendMessage(Translations.UNKNOWN_ERROR.f(result), false);
+                                            if (result == null || !result.equals("success")) s.sendMessage(DefaultTranslations.UNKNOWN_ERROR.f(result), false);
                                         });
                                         DarwinServer.getLog().info("Registered singular command : /" + alias);
                                     }));

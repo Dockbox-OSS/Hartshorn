@@ -22,7 +22,8 @@ import com.darwinreforged.server.core.modules.DisabledModule;
 import com.darwinreforged.server.core.modules.Module;
 import com.darwinreforged.server.core.resources.Dependencies;
 import com.darwinreforged.server.core.resources.Permissions;
-import com.darwinreforged.server.core.resources.Translations;
+import com.darwinreforged.server.core.resources.translations.DefaultTranslations;
+import com.darwinreforged.server.core.resources.translations.Translation;
 import com.darwinreforged.server.core.tuple.Tuple;
 import com.darwinreforged.server.core.types.internal.Singleton;
 import com.darwinreforged.server.core.types.living.CommandSender;
@@ -95,6 +96,8 @@ public abstract class DarwinServer extends Singleton {
      The constant UTIL_PACKAGE.
      */
     protected static final String CORE_PACKAGE = "com.darwinreforged.server.core";
+
+    protected static final String RESOURCE_PACKAGE = "com.darwinreforged.server.core.resources";
     /**
      The constant AUTHOR.
      */
@@ -159,8 +162,8 @@ public abstract class DarwinServer extends Singleton {
             }
 
             // Import permissions and translations
-            Translations.collect();
             Permissions.collect();
+            Translation.initTranslationService();
 
             // Setting up commands
             CommandBus<?, ?> cb = get(CommandBus.class);
@@ -170,7 +173,6 @@ public abstract class DarwinServer extends Singleton {
             this.eventBus.subscribe(this);
         }
     }
-
     /**
      Gets config.
 
@@ -587,20 +589,20 @@ public abstract class DarwinServer extends Singleton {
         if (moduleCandidate.isPresent()) {
             Module mod = moduleCandidate.get().getValue();
             String[] dependencies = Arrays.stream(mod.dependencies()).map(dep ->
-                    Translations.DARWIN_SINGLE_MODULE_DEPENDENCY.f(dep.toString().toLowerCase(), dep.getMainClass(), dep.isLoaded() ? "Present" : "Absent")
+                    DefaultTranslations.DARWIN_SINGLE_MODULE_DEPENDENCY.f(dep.toString().toLowerCase(), dep.getMainClass(), dep.isLoaded() ? "Present" : "Absent")
             ).toArray(String[]::new);
-            String source = Translations.MODULE_SOURCE.f(MODULE_SOURCES.get(mod.id()));
+            String source = DefaultTranslations.MODULE_SOURCE.f(MODULE_SOURCES.get(mod.id()));
 
             Text message = Text.of(
-                    Translations.DARWIN_SINGLE_MODULE_HEADER.f(mod.name()), '\n',
-                    Translations.DARWIN_SINGLE_MODULE_DATA.f(
+                    DefaultTranslations.DARWIN_SINGLE_MODULE_HEADER.f(mod.name()), '\n',
+                    DefaultTranslations.DARWIN_SINGLE_MODULE_DATA.f(
                             mod.id(),
                             mod.name(),
                             mod.description(),
                             mod.version(),
                             mod.url(),
-                            dependencies.length > 0 ? String.join(", ", dependencies) : Translations.NONE.s().toLowerCase(),
-                            mod.authors().length > 0 ? String.join(", ", mod.authors()) : Translations.UNKNOWN.s().toLowerCase(),
+                            dependencies.length > 0 ? String.join(", ", dependencies) : DefaultTranslations.NONE.s().toLowerCase(),
+                            mod.authors().length > 0 ? String.join(", ", mod.authors()) : DefaultTranslations.UNKNOWN.s().toLowerCase(),
                             source
                     )
             );
@@ -615,28 +617,28 @@ public abstract class DarwinServer extends Singleton {
                     String name = info.name();
                     String id = info.id();
                     boolean disabled = clazz.getAnnotation(DisabledModule.class) != null;
-                    String source = Translations.MODULE_SOURCE.f(MODULE_SOURCES.get(id));
-                    Text activeModule = Text.of(Translations.ACTIVE_MODULE_ROW.f(name, id, source));
-                    activeModule.setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, Translations.DARWIN_SERVER_MODULE_HOVER.f(id)));
+                    String source = DefaultTranslations.MODULE_SOURCE.f(MODULE_SOURCES.get(id));
+                    Text activeModule = Text.of(DefaultTranslations.ACTIVE_MODULE_ROW.f(name, id, source));
+                    activeModule.setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, DefaultTranslations.DARWIN_SERVER_MODULE_HOVER.f(id)));
                     activeModule.setClickEvent(new ClickEvent(ClickAction.RUN_COMMAND, "/dserver " +id));
-                    moduleContext.add(disabled ? Text.of(Translations.DISABLED_MODULE_ROW.f(name, id, source))
+                    moduleContext.add(disabled ? Text.of(DefaultTranslations.DISABLED_MODULE_ROW.f(name, id, source))
                             : activeModule);
                 }
             });
-            FAILED_MODULES.forEach(module -> moduleContext.add(Text.of(Translations.FAILED_MODULE_ROW.f(module))));
+            FAILED_MODULES.forEach(module -> moduleContext.add(Text.of(DefaultTranslations.FAILED_MODULE_ROW.f(module))));
 
-            Text header = Text.of(Translations.DARWIN_SERVER_VERSION.f(getVersion()))
+            Text header = Text.of(DefaultTranslations.DARWIN_SERVER_VERSION.f(getVersion()))
                     .append(Text.NEW_LINE)
-                    .append(Translations.DARWIN_SERVER_UPDATE.f(getLastUpdate()))
+                    .append(DefaultTranslations.DARWIN_SERVER_UPDATE.f(getLastUpdate()))
                     .append(Text.NEW_LINE)
-                    .append(Translations.DARWIN_SERVER_AUTHOR.f(AUTHOR))
+                    .append(DefaultTranslations.DARWIN_SERVER_AUTHOR.f(AUTHOR))
                     .append(Text.NEW_LINE)
-                    .append(Translations.DARWIN_SERVER_MODULE_HEAD.s());
+                    .append(DefaultTranslations.DARWIN_SERVER_MODULE_HEAD.s());
 
             PaginationBuilder builder = PaginationBuilder.builder();
             builder
-                    .title(Text.of(Translations.DARWIN_MODULE_TITLE.s()))
-                    .padding(Text.of(Translations.DARWIN_MODULE_PADDING.s()))
+                    .title(Text.of(DefaultTranslations.DARWIN_MODULE_TITLE.s()))
+                    .padding(Text.of(DefaultTranslations.DARWIN_MODULE_PADDING.s()))
                     .contents(moduleContext)
                     .header(header)
                     .build().sendTo(src);
@@ -646,8 +648,8 @@ public abstract class DarwinServer extends Singleton {
         @Listener
     public void onServerReload(ServerReloadEvent event) {
         this.config = new DarwinConfig();
-        Translations.collect();
         Permissions.collect();
+        Translation.initTranslationService();
         getLog().info("Successfully reloaded DarwinServer configurations");
     }
 

@@ -87,4 +87,9 @@ public class DarwinLocation {
     public Number getZ() {
         return vectorLoc.getZ();
     }
+
+    @Override
+    public String toString() {
+        return vectorLoc.toString() + "@" + world;
+    }
 }
