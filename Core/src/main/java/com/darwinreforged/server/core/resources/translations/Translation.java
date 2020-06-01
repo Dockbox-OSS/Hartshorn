@@ -10,10 +10,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static com.darwinreforged.server.core.resources.translations.DefaultTranslations.COLOR_ERROR;
@@ -49,7 +47,7 @@ public class Translation {
     }
 
     @JsonIgnore
-    public static final Map<String, List<Translation>> TRANSLATION_STORAGE = new HashMap<>();
+    public static final Map<String, Map<String, String>> TRANSLATION_STORAGE = new HashMap<>();
 
     // As these are utility classes filled with nothing but `public static final` Translation objects,
     // the would not be loaded until used, causing the translations not to be present yet. To 'resolve'
@@ -140,9 +138,9 @@ public class Translation {
                 DarwinServer.getLog().info(String.format("Registered '%s.%s' for translation '%s'", category, key, translation));
                 Translation t = new Translation(translation, key);
 
-                Translation.TRANSLATION_STORAGE.putIfAbsent(category, new ArrayList<>());
-                List<Translation> categoryTranslations = Translation.TRANSLATION_STORAGE.get(category);
-                categoryTranslations.add(t);
+                Translation.TRANSLATION_STORAGE.putIfAbsent(category, new HashMap<>());
+                Map<String, String> categoryTranslations = Translation.TRANSLATION_STORAGE.get(category);
+                categoryTranslations.put(t.key, t.value);
                 Translation.TRANSLATION_STORAGE.put(category, categoryTranslations);
                 return t;
             } else System.out.println("Key null");
@@ -161,5 +159,7 @@ public class Translation {
         File translationFile = new File(dataDir.toFile(), "translation-dump.yml");
         fm.writeYamlDataToFile(Translation.TRANSLATION_STORAGE, translationFile);
     }
+
+
 
 }

@@ -46,6 +46,8 @@ public abstract class FileManager {
         mapper.findAndRegisterModules();
         mapper.setVisibility(PropertyAccessor.ALL, Visibility.ANY);
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.disable(SerializationFeature.WRAP_ROOT_VALUE);
+        mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
     }
 
     /**
