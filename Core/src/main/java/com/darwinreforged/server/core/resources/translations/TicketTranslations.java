@@ -135,6 +135,6 @@ public class TicketTranslations {
     public static final Translation TICKET_DISCORD_ROW_BODY = Translation.create("discord_row_body", "By : {0}\nSubmitted : {1}");
     public static final Translation TICKET_DISCORD_ROW_TITLE = Translation.create("discord_row_title", "Open tickets ({0})");
 
-    private TicketTranslations() {
+    public TicketTranslations() {
     }
 }

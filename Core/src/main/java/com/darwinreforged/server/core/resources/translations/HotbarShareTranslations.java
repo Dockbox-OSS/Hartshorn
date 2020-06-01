@@ -17,6 +17,6 @@ public class HotbarShareTranslations {
     public static final Translation HOTBAR_LOAD_BUTTON = Translation.create("btn_load", "$2[$1Load$2]");
     public static final Translation HOTBAR_LOAD_BUTTON_HOVER = Translation.create("btn_load_hover", "Load hotbar");
 
-    private HotbarShareTranslations() {
+    public HotbarShareTranslations() {
     }
 }

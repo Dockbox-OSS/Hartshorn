@@ -26,6 +26,6 @@ public class PaintingTranslations {
     public static final Translation PAINTING_SUBMISSION_SIZE_TITLE = Translation.create("discord_size_title", "Size");
     public static final Translation PAINTING_SUBMISSION_SIZE_VALUE = Translation.create("discord_size_value", "X: {0}\nY: {1}");
 
-    private PaintingTranslations() {
+    public PaintingTranslations() {
     }
 }

@@ -9,7 +9,7 @@ public class PlayerLocatorTranslations {
     public static final Translation PLAYER_ON_ROAD = Translation.create("on_road", "$1{0} $2is on a road");
     public static final Translation PLAYER_IN_PLOT = Translation.create("in_lot", "$1{0} $2is in $1{1}, {2}");
 
-    private PlayerLocatorTranslations() {
+    public PlayerLocatorTranslations() {
     }
 
 }

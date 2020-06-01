@@ -68,7 +68,7 @@ public class DefaultTranslations {
     public static final Translation DARWIN_SINGLE_MODULE_DEPENDENCY = Translation.create("module_single_dependency", "$1{0} $2({1} $3- {2}$2)");
     public static final Translation DARWIN_SERVER_MODULE_HOVER = Translation.create("module_row_hover", "$1More information for '{0}'");
 
-    DefaultTranslations() {
+    public DefaultTranslations() {
     }
 
 }

@@ -11,7 +11,7 @@ public class HeightToolTranslations {
     public static final Translation HEIGHTTOOL_SET = Translation.create("tool_set", "Successfully set the layer height to $2{0}");
     public static final Translation HEIGHTTOOL_FAILED_BIND = Translation.create("error_failed_bind", "$4Tool cannot be bound to a block");
 
-    private HeightToolTranslations() {
+    public HeightToolTranslations() {
     }
 
 }

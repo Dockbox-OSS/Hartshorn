@@ -14,6 +14,6 @@ public class TimeTranslations {
     public static final Translation TIME_SECONDS_AGO = Translation.create("ago_seconds", "$1{0} $2seconds ago");
     public static final Translation TIME_JUST_NOW = Translation.create("ago_just_now", "$1Just now");
 
-    private TimeTranslations() {
+    public TimeTranslations() {
     }
 }

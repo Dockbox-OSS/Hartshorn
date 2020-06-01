@@ -36,6 +36,6 @@ public class SchematicBrushTranslations {
     public static final Translation SCHEMATIC_FORMAT_NOT_FOUND = Translation.create("error_format_not_found", "Schematic '{0}' format not found");
     public static final Translation SCHEMATIC_READ_ERROR = Translation.create("error_read", "$1Error reading schematic '{0}' - {1}");
 
-    private SchematicBrushTranslations() {
+    public SchematicBrushTranslations() {
     }
 }

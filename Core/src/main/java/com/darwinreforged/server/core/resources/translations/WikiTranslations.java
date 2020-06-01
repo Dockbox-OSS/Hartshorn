@@ -18,6 +18,6 @@ public class WikiTranslations {
     public static final Translation WIKI_SHARED_WITH = Translation.create("shared_with", "$2You shared the $1'{0}' $2entry with $1{1}");
     public static final Translation WIKI_OPEN_ENTRY_HOVER = Translation.create("action_open_hover", "Open entry '{0}'");
 
-    private WikiTranslations() {
+    public WikiTranslations() {
     }
 }

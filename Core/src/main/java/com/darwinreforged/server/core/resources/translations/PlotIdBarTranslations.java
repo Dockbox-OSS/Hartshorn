@@ -15,6 +15,6 @@ public class PlotIdBarTranslations {
     public static final Translation PID_TOGGLE_BAR = Translation.create("toggled_bar", "Updated PlotID Bar preference to $2{0}");
     public static final Translation PID_TOGGLE_MEMBERS = Translation.create("toggled_members", "Updated PlotID Members preference to $2{0}");
 
-    private PlotIdBarTranslations() {
+    public PlotIdBarTranslations() {
     }
 }

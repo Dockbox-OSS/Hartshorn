@@ -13,6 +13,7 @@ public class OldPlotsTranslations {
     public static final Translation OLP_TELEPORTED_TO = Translation.create("teleported_to", "$2Teleported you to $1{0}, {1};{2}");
     public static final Translation OLP_NO_WORLD_PRESENT = Translation.create("error_no_world_present", "$4No world present for value '{0}'");
     public static final Translation OLP_NOT_ASSOCIATED = Translation.create("error_not_associated", "$4Could not find a OldPlot world associated with value '{0}'");
-    private OldPlotsTranslations() {
+
+    public OldPlotsTranslations() {
     }
 }

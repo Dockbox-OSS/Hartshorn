@@ -85,6 +85,6 @@ public class BrushTranslations {
     public static final Translation BRUSH_TOOLTIP_DISPLAY_NAME = Translation.create("tooltip_display_name", "$1{0} $3[$2{1}$3]");
     public static final Translation BRUSH_TOOLTIP_LORE_SEPARATOR = Translation.create("tooltip_separator", "&8&m-------------");
 
-    BrushTranslations() {
+    public BrushTranslations() {
     }
 }

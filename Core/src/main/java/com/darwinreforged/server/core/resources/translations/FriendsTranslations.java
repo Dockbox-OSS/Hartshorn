@@ -20,7 +20,7 @@ public class FriendsTranslations {
     public static final Translation FRIEND_ROW_REQUEST = Translation.create("friend_request_row", "$1{0} $2- Request");
     public static final Translation FRIEND_LIST_TITLE = Translation.create("friend_list_header", "$1Friends");
 
-    private FriendsTranslations() {
+    public FriendsTranslations() {
     }
 
 }

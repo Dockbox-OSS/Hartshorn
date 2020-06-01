@@ -14,6 +14,6 @@ public class DaveTranslations {
     public static final Translation DAVE_TRIGGER_LIST_ITEM = Translation.create("trigger_row", "$3 - $1{0}");
     public static final Translation DAVE_TRIGGER_HOVER = Translation.create("trigger_row_hover", "$1Click to perform trigger");
 
-    DaveTranslations() {
+    public DaveTranslations() {
     }
 }
