@@ -1,5 +1,6 @@
 package com.darwinreforged.server.sponge.implementations;
 
+import com.darwinreforged.server.core.types.location.DarwinLocation;
 import com.darwinreforged.server.core.types.location.DarwinWorld;
 import com.darwinreforged.server.core.util.LocationUtils;
 import com.flowpowered.math.vector.Vector3d;
@@ -7,6 +8,7 @@ import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.util.blockray.BlockRay;
 import org.spongepowered.api.util.blockray.BlockRayHit;
+import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
 
@@ -75,5 +77,20 @@ public class SpongeLocationUtils implements LocationUtils {
                 worldPropertiesOpt.ifPresent(props -> props.setLoadOnStartup(false));
             }
         });
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static Location<World> getSpongeLocationFrom(DarwinLocation loc, boolean load) {
+        com.flowpowered.math.vector.Vector3d vec3d = new com.flowpowered.math.vector.Vector3d(loc.getX().doubleValue(), loc.getY().doubleValue(), loc.getZ().doubleValue());
+        Optional<World> worldCandidate;
+        if (load) worldCandidate = Sponge.getServer().loadWorld(loc.getWorld().getWorldUUID());
+        else worldCandidate = Sponge.getServer().getWorld(loc.getWorld().getWorldUUID());
+        return worldCandidate.map(world -> new Location<>(world, vec3d)).orElseGet(() -> new Location<>(null, vec3d));
+    }
+
+    public static DarwinLocation getDarwinLocationFrom(Location<World> loc) {
+        com.darwinreforged.server.core.math.Vector3d vec3d = new com.darwinreforged.server.core.math.Vector3d(loc.getX(), loc.getY(), loc.getZ());
+        DarwinWorld world = new DarwinWorld(loc.getExtent().getUniqueId(), loc.getExtent().getName());
+        return new DarwinLocation(world, vec3d);
     }
 }

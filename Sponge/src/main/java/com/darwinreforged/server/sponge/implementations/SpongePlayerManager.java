@@ -31,6 +31,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.darwinreforged.server.sponge.implementations.SpongeLocationUtils.getSpongeLocationFrom;
+
 public class SpongePlayerManager extends PlayerManager {
 
     private static Text prefix() {
@@ -161,9 +163,8 @@ public class SpongePlayerManager extends PlayerManager {
     @Override
     public void teleportPlayer(DarwinPlayer player, DarwinLocation loc) {
         Sponge.getServer().getPlayer(player.getUniqueId()).ifPresent(sp -> {
-            com.flowpowered.math.vector.Vector3d vec3d = new com.flowpowered.math.vector.Vector3d(loc.getX().doubleValue(), loc.getY().doubleValue(), loc.getZ().doubleValue());
             try {
-                sp.setLocation(vec3d, loc.getWorld().getWorldUUID());
+                sp.setLocation(getSpongeLocationFrom(loc, true));
             } catch (IllegalArgumentException e) {
                 DarwinServer.error(String.format("Could not find world with UUID '%s'", loc.getWorld().getWorldUUID()));
             }
