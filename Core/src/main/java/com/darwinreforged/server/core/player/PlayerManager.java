@@ -3,34 +3,30 @@ package com.darwinreforged.server.core.player;
 import com.darwinreforged.server.core.DarwinServer;
 import com.darwinreforged.server.core.chat.Pagination;
 import com.darwinreforged.server.core.chat.Text;
-import com.darwinreforged.server.core.files.FileManager;
 import com.darwinreforged.server.core.internal.Utility;
 import com.darwinreforged.server.core.player.inventory.DarwinItem;
 import com.darwinreforged.server.core.player.state.GameModes;
 import com.darwinreforged.server.core.types.living.MessageReceiver;
 import com.darwinreforged.server.core.types.living.Target;
 import com.darwinreforged.server.core.types.location.DarwinLocation;
-import com.darwinreforged.server.modules.internal.darwin.DarwinServerModule;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-@Utility("Common player actions and (persistent) storage")
+@Utility("Common player actions and storage")
 public abstract class PlayerManager {
 
     private static final Map<UUID, DarwinPlayer> PLAYER_STORAGE = new HashMap<>();
-    private static PlayerManager playerUtils;
+    private static PlayerManager man;
 
     public DarwinPlayer getPlayer(UUID uuid) {
         if (PLAYER_STORAGE.containsKey(uuid)) return PLAYER_STORAGE.get(uuid);
 
         updateUtil();
-        String name = playerUtils.getPlayer(uuid).getName();
+        String name = man.getPlayer(uuid).getName();
         return getPlayer(uuid, name);
     }
 
@@ -41,50 +37,16 @@ public abstract class PlayerManager {
         } else {
             player = new DarwinPlayer(uuid, lastknownName);
             PLAYER_STORAGE.put(uuid, player);
-            updateStorage();
         }
         return player;
     }
 
     private static void updateUtil() {
-        if (playerUtils == null) playerUtils = DarwinServer.get(PlayerManager.class);
-    }
-
-    private static void updateStorage() {
-        FileManager fu = DarwinServer.get(FileManager.class);
-        File dataPath = fu.getDataDirectory(DarwinServerModule.class, "storage").toFile();
-//        File playerStorageFile = new File(dataPath, "player-storage.yml");
-
-//        List<PlayerStorageModel> existingPlayers = fu.getYamlDataFromFile(playerStorageFile, ArrayList.class, new ArrayList<PlayerStorageModel>());
-//        existingPlayers.stream().filter(p -> !PLAYER_STORAGE.containsKey(p.getUniqueId()))
-//                .forEach(p -> PLAYER_STORAGE.put(p.getUniqueId(), new DarwinPlayer(p.getUniqueId(), p.getName())));
-
-        List<PlayerStorageModel> storedPlayers = PLAYER_STORAGE.values().stream().map(p -> new PlayerStorageModel(p.getName(), p.getUniqueId())).collect(Collectors.toList());
-        fu.writeYamlDataToFile(storedPlayers, new File(dataPath, "player-storage.yml"));
-    }
-
-    private static final class PlayerStorageModel {
-        private String name;
-        private UUID uuid;
-
-        public PlayerStorageModel(String name, UUID uuid) {
-            this.name = name;
-            this.uuid = uuid;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public UUID getUniqueId() {
-            return uuid;
-        }
-
-        public void setName(String name) {
-            this.name = name;
+        if (man == null) {
+            DarwinServer.getLog().info("Starting player caching");
+            man = DarwinServer.get(PlayerManager.class);
         }
     }
-
 
     /**
      Broadcast.
@@ -259,6 +221,8 @@ public abstract class PlayerManager {
      @return the player
      */
     public abstract Optional<DarwinPlayer> getPlayer(String player);
+
+    public abstract void teleportPlayer(DarwinPlayer player, DarwinLocation loc);
 
     /**
      Send pagination.
