@@ -11,7 +11,7 @@ import java.util.Optional;
 public abstract class CommandRegistration {
     private final String primaryAlias;
     private final String[] aliases;
-    private final Permissions[] permissions;
+    private final Permissions permission;
     private final Command command;
     private Object sourceInstance;
 
@@ -27,10 +27,10 @@ public abstract class CommandRegistration {
      @param command
      the command
      */
-    public CommandRegistration(String primaryAlias, String[] aliases, Permissions[] permissions, Command command) {
+    public CommandRegistration(String primaryAlias, String[] aliases, Permissions permission, Command command) {
         this.primaryAlias = primaryAlias;
         this.aliases = aliases;
-        this.permissions = permissions;
+        this.permission = permission;
         this.command = command;
     }
 
@@ -65,8 +65,8 @@ public abstract class CommandRegistration {
 
      @return the permissions [ ]
      */
-    public Permissions[] getPermissions() {
-        return permissions;
+    public Permissions getPermission() {
+        return permission;
     }
 
     /**

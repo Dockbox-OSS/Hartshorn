@@ -71,47 +71,8 @@ public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
 
             DarwinServer.getLog().info(String.format("\n\nScanning %s for commands", clazz.toGenericString()));
             try {
-                if (clazz.isAnnotationPresent(Command.class)) {
-                    ClassRegistration registration = handleClassType(clazz);
-                    Arrays.stream(registration.getAliases()).forEach(alias -> {
-                        if (!(obj instanceof Class)) registration.setSourceInstance(obj);
-                        AtomicReference<CommandRunner> parentRunner = new AtomicReference<>((s, c) -> s.sendMessage("This command requires arguments!", false));
-                        Arrays.stream(registration.getSubcommands()).forEach(subRegistration -> {
-                            CommandRunner methodRunner = (s, c) -> {
-                                String result = invoke(
-                                        subRegistration.getMethod(),
-                                        s, c,
-                                        subRegistration);
-                                if (result == null || !result.equals("success")) s.sendMessage(DefaultTranslations.UNKNOWN_ERROR.f(result), false);
-                            };
-
-                            if (!subRegistration.getAliases()[0].equals(""))
-                                registerCommand(subRegistration.getCommand().context(), subRegistration.getPermissions()[0].p(), methodRunner);
-                            else {
-                                parentRunner.set(methodRunner);
-                            }
-                        });
-                        registerCommand('*' + registration.getCommand().context(), registration.getPermissions()[0].p(), parentRunner.get());
-                        String[] subcommands = Arrays.stream(registration.getSubcommands()).map(scmd -> scmd.getAliases()[0]).toArray(String[]::new);
-                        DarwinServer.getLog().info(String.format("Registered command : /%s %s", alias, String.join("|", subcommands)));
-                    });
-                } else {
-                    List<Method> methods = new ArrayList<>();
-                    for (Method method : clazz.getDeclaredMethods()) {
-                        method.setAccessible(true);
-                        if (method.isAnnotationPresent(Command.class)) methods.add(method);
-                    }
-                    SingleMethodRegistration[] registrations = handleSingleMethod(methods);
-                    Arrays.stream(registrations)
-                            .forEach(registration -> Arrays.stream(registration.getAliases())
-                                    .forEach(alias -> {
-                                        registerCommand(registration.getCommand().context(), registration.getPermissions()[0].p(), (s, c) -> {
-                                            String result = invoke(registration.getMethod(), s, c, registration);
-                                            if (result == null || !result.equals("success")) s.sendMessage(DefaultTranslations.UNKNOWN_ERROR.f(result), false);
-                                        });
-                                        DarwinServer.getLog().info("Registered singular command : /" + alias);
-                                    }));
-                }
+                if (clazz.isAnnotationPresent(Command.class)) registerClassCommand(clazz, obj);
+                else registerSingleMethodCommand(clazz, obj);
             } catch (Throwable e) {
                 DarwinServer.getLog().warn(String.format("Failed to register potential command class : %s", clazz.toGenericString()));
                 e.printStackTrace();
@@ -119,21 +80,78 @@ public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
         }
     }
 
+    private void registerSingleMethodCommand(Class<?> clazz, Object obj) {
+        List<Method> methods = new ArrayList<>();
+        for (Method method : clazz.getDeclaredMethods()) {
+            method.setAccessible(true);
+            if (method.isAnnotationPresent(Command.class)) methods.add(method);
+        }
+        SingleMethodRegistration[] registrations = handleSingleMethod(methods);
+        Arrays.stream(registrations)
+                .forEach(registration -> Arrays.stream(registration.getAliases())
+                        .forEach(alias -> {
+                            String context = registration.getCommand().context();
+                            String next = context.contains(" ") ? context.replaceFirst(context.substring(0, context.indexOf(' ')), alias) : context;
+                            registerCommand(next, registration.getPermission().p(), (s, c) -> {
+                                String result = invoke(registration.getMethod(), s, c, registration);
+                                if (result == null || !result.equals("success")) s.sendMessage(DefaultTranslations.UNKNOWN_ERROR.f(result), false);
+                            });
+                            DarwinServer.getLog().info("Registered singular command : /" + alias);
+                        }));
+    }
+
+    private void registerClassCommand(Class<?> clazz, Object obj) {
+        ClassRegistration registration = handleClassType(clazz);
+        Arrays.stream(registration.getAliases()).forEach(alias -> {
+            if (!(obj instanceof Class)) registration.setSourceInstance(obj);
+            AtomicReference<CommandRunner> parentRunner = new AtomicReference<>((s, c) -> s.sendMessage("This command requires arguments!", false));
+
+            Arrays.stream(registration.getSubcommands()).forEach(subRegistration -> {
+                CommandRunner methodRunner = (s, c) -> {
+                    String result = invoke(
+                            subRegistration.getMethod(),
+                            s, c,
+                            subRegistration);
+                    if (result == null || !result.equals("success")) s.sendMessage(DefaultTranslations.UNKNOWN_ERROR.f(result), false);
+                };
+
+                Arrays.stream(subRegistration.getAliases()).forEach(subAlias -> {
+                    if (!subAlias.equals("")) {
+                        String context = subRegistration.getCommand().context();
+                        String next = context.contains(" ") ? context.replaceFirst(context.substring(0, context.indexOf(' ')), alias) : context;
+                        registerCommand(next, subRegistration.getPermission().p(), methodRunner);
+                    } else {
+                        parentRunner.set(methodRunner);
+                    }
+                });
+            });
+
+            String context = registration.getCommand().context();
+            String next = context.contains(" ") ? context.replaceFirst(context.substring(0, context.indexOf(' ')), alias) : context;
+            registerCommand('*' + next, registration.getPermission().p(), parentRunner.get());
+
+            // Printing aliases, not used for actual logic
+            List<String> subcommands = new ArrayList<>();
+            Arrays.stream(registration.getSubcommands()).forEach(sub -> subcommands.addAll(Arrays.asList(sub.getAliases())));
+            DarwinServer.getLog().info(String.format("Registered command : /%s %s", alias, String.join("|", subcommands)));
+        });
+    }
+
     private ClassRegistration handleClassType(Class<?> clazz) {
-        Triple<Command, Permissions[], String[]> information = getCommandInformation(clazz);
+        Triple<Command, Permissions, String[]> information = getCommandInformation(clazz);
         Method[] methods = clazz.getDeclaredMethods();
         SingleMethodRegistration[] registrations = handleSingleMethod(Arrays.stream(methods).filter(m -> m.isAnnotationPresent(Command.class)).collect(Collectors.toList()));
         return new ClassRegistration(information.getThird()[0], information.getThird(), information.getSecond(), information.getFirst(), clazz, registrations);
     }
 
-    private Triple<Command, Permissions[], String[]> getCommandInformation(AnnotatedElement element) {
+    private Triple<Command, Permissions, String[]> getCommandInformation(AnnotatedElement element) {
         Command command = element.getAnnotation(Command.class);
-        Permissions[] permissions = new Permissions[]{Permissions.ADMIN_BYPASS};
+        Permissions permission = Permissions.ADMIN_BYPASS;
         if (element.isAnnotationPresent(Permission.class)) {
-            Permission permission = element.getAnnotation(Permission.class);
-            permissions = permission.value();
+            Permission ann = element.getAnnotation(Permission.class);
+            permission = ann.value();
         }
-        return new Triple<>(command, permissions, command.aliases());
+        return new Triple<>(command, permission, command.aliases());
     }
 
     private SingleMethodRegistration[] handleSingleMethod(Collection<Method> methods) {
@@ -171,7 +189,7 @@ public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
 
         }).map(method -> {
             method.setAccessible(true);
-            Triple<Command, Permissions[], String[]> information = getCommandInformation(method);
+            Triple<Command, Permissions, String[]> information = getCommandInformation(method);
             return new SingleMethodRegistration(information.getThird()[0], information.getThird(), information.getFirst(), method, information.getSecond());
         }).toArray(SingleMethodRegistration[]::new);
     }

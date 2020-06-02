@@ -23,11 +23,11 @@ public final class SingleMethodRegistration extends CommandRegistration {
      the command
      @param method
      the method
-     @param permissions
+     @param permission
      the permissions
      */
-    public SingleMethodRegistration(String primaryAlias, String[] aliases, Command command, Method method, Permissions[] permissions) {
-        super(primaryAlias, aliases, permissions, command);
+    public SingleMethodRegistration(String primaryAlias, String[] aliases, Command command, Method method, Permissions permission) {
+        super(primaryAlias, aliases, permission, command);
         this.method = method;
     }
 
