@@ -118,7 +118,7 @@ public class OldPlotModule {
                     Vector3i vec3i = new Vector3i(teleportToX, oldPlotWorld.getHeight(), teleportToZ);
                     DarwinLocation location = new DarwinLocation(world, vec3i);
                     player.teleport(location);
-                    player.sendMessage(OldPlotsTranslations.OLP_TELEPORTED_TO.f(teleportToWorld, teleportToX, teleportToZ), false);
+                    player.sendMessage(OldPlotsTranslations.OLP_TELEPORTED_TO.f(teleportToWorld, xArgCandidate.get().getValue(), zArgCandidate.get().getValue()), false);
                 } else {
                     player.sendMessage(OldPlotsTranslations.OLP_NO_WORLD_PRESENT.f(teleportToWorld), false);
                 }
