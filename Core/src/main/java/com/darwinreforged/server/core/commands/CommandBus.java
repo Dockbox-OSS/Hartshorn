@@ -91,8 +91,7 @@ public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
                 .forEach(registration -> Arrays.stream(registration.getAliases())
                         .forEach(alias -> {
                             String context = registration.getCommand().context();
-                            String primaryAlias = context.substring(context.indexOf(' '));
-                            String next = context.replaceFirst(primaryAlias, alias);
+                            String next = context.contains(" ") ? context.replaceFirst(context.substring(0, context.indexOf(' ')), alias) : context;
                             registerCommand(next, registration.getPermission().p(), (s, c) -> {
                                 String result = invoke(registration.getMethod(), s, c, registration);
                                 if (result == null || !result.equals("success")) s.sendMessage(DefaultTranslations.UNKNOWN_ERROR.f(result), false);
@@ -119,8 +118,7 @@ public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
                 Arrays.stream(subRegistration.getAliases()).forEach(subAlias -> {
                     if (!subAlias.equals("")) {
                         String context = subRegistration.getCommand().context();
-                        String primaryAlias = context.substring(context.indexOf(' '));
-                        String next = context.replaceFirst(primaryAlias, subAlias);
+                        String next = context.contains(" ") ? context.replaceFirst(context.substring(0, context.indexOf(' ')), alias) : context;
                         registerCommand(next, subRegistration.getPermission().p(), methodRunner);
                     } else {
                         parentRunner.set(methodRunner);
@@ -129,8 +127,7 @@ public abstract class CommandBus<C, A extends ArgumentTypeValue<?>> {
             });
 
             String context = registration.getCommand().context();
-            String primaryAlias = context.substring(context.indexOf(' '));
-            String next = context.replaceFirst(primaryAlias, alias);
+            String next = context.contains(" ") ? context.replaceFirst(context.substring(0, context.indexOf(' ')), alias) : context;
             registerCommand('*' + next, registration.getPermission().p(), parentRunner.get());
 
             // Printing aliases, not used for actual logic
