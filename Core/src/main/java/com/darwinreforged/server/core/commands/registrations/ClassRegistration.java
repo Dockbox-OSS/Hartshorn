@@ -27,7 +27,7 @@ public final class ClassRegistration extends CommandRegistration {
      @param subcommands
      the subcommands
      */
-    public ClassRegistration(String primaryAlias, String[] aliases, Permissions[] permissions, Command command, Class<?> clazz, SingleMethodRegistration[] subcommands) {
+    public ClassRegistration(String primaryAlias, String[] aliases, Permissions permissions, Command command, Class<?> clazz, SingleMethodRegistration[] subcommands) {
         super(primaryAlias, aliases, permissions, command);
         this.clazz = clazz;
         this.subcommands = subcommands;

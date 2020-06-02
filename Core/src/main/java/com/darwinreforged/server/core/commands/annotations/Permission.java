@@ -14,11 +14,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Permission {
     /**
-     Indicates which permissions should be used for a method or type
+     Indicates which permission should be used for a method or type
      annotated with {@link Command}. Uses the {@link Permissions} type
      to allow for configurable permissions.
 
-     @return the permissions
+     @return the permission
      */
-    Permissions[] value();
+    Permissions value();
 }
