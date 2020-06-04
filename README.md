@@ -116,7 +116,50 @@ public class ExampleModule {
 ```
 
 ### Argument parsing
-_TODO_
+Command arguments, flags, and relevant context are stored in the CommandContext object passed into the command method. 
+The CommandContext provides several methods to check the presence, and values of all arguments and flags.   
+By default it is possible to inject the CommandSender, usually a player or the console, into the method parameters. 
+However some use-cases may prefer to use only the CommandContext, without losing access to the CommandSender. To solve this, the following methods are made available : `getSender`, `getWorld`, `getLocation`. These methods provide the CommandSender instance, and the location at which the command was performed.  
+
+It is also possible to check the presence of specific flags and arguments without them being made available directly. This can be done using the `hasArgument` and `hasFlag` methods, these methods can be used directly in a conditional statement.
+Another method is to use `getNArgument` or `getNFlag` (`N` being the type, if any), which returns an `Optional` instance of the requested argument. Default methods and casts exist for the following native types : `String`, `Boolean`, `Integer`, `Double`, `Float`.
+
+```java
+@Command(aliases = {"command", "cmd"}, usage = "command <player> [value]", desc = "Does something with the given player", context = "command <player{Player}> [value{String}]")
+public void onCommand(CommandSender src, CommandContext ctx) {
+    // Check if the argument is present
+    if (ctx.hasArgument("value")) {
+    // ...
+    }
+    
+    // Get optional argument of specific type
+    Optional<CommandArgument<DarwinPlayer>> playerCandidate = ctx.getArgument("player", DarwinPlayer.class);
+}
+```
+
+Sometimes a module will require the same custom type argument for several commands. To prevent the need of implementing the same solution again and again, it is possible to create custom argument parsers.
+To create a custom parser, create a type extending `TypeArgumentParser`. This type will need to implement a single method, `parse`. This method has two arguments, the raw `String` value of the argument wrapped in a `AbstractCommandValue`, which also provides access to the key of the argument or flag.
+It also has a secondary argument, which is to be provided by the implementation using the custom parser, this will indicate the return type of the `parse` method.
+An example of a custom parser is an enum parser, which is as follows : 
+
+```java
+public static final class EnumArgumentParser extends TypeArgumentParser {
+    @Override
+    public <A> Optional<A> parse(AbstractCommandValue<String> commandValue, Class<A> type) {
+        if (type.isEnum()) {
+            String value = commandValue.getValue();
+            try {
+                Class<Enum> enumType = (Class<Enum>) type;
+                return Optional.of((A) Enum.valueOf(enumType, value));
+            } catch (IllegalArgumentException | NullPointerException e) {
+                DarwinServer.getLog().warn("Attempted to get value of '" + value + "' and caught error : " + e.getMessage());
+            }
+        }
+        return Optional.empty();
+    }
+}
+```
+ 
 
 ## Utilities
 _TODO_
