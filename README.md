@@ -8,7 +8,7 @@ To build, use ```.\gradlew build```. Distributable files will be stored in `/dis
 To register a class as a module, simply add the `@Module` annotation to the class. Types annotated with this annotation will automatically be registered as listener and command holder.  
 A basic example of a module is as follows :
 ```java
-@Module(id = "example", name = "Example Module", description = "Is a module", authors = "DeveloperMan")
+@Module(id = "example", name = "Example Module", description = "Is a module", authors = "GuusLieben")
 public class ExampleModule {
 // ...
 }
@@ -34,7 +34,7 @@ To register custom translations, use `Translation.create` providing a key of the
 If a translation is created outside of a module, the category will default to `other`. To change this you can use the `@ConfigSetting` annotation on the type declaring the translation. `@ConfigSetting` requires a category key to be provided. Translations should be created as constants using either an `enum` type or using `public static final`. While it is possible to declare translations per-instance, it may cause unintended side-effects.
 
 ```java
-@Module(id = "example", name = "Example Module", description = "Is a module", authors = "DeveloperMan")
+@Module(id = "example", name = "Example Module", description = "Is a module", authors = "GuusLieben")
 public class ExampleModule {
     
     // Will use category "example" as the module ID is present
@@ -61,7 +61,7 @@ To create listeners inside your modules, use the `@Listener` annotation, and inc
 To listen for early server initialization use `ServerInitEvent`, for startup use `ServerStartedEvent`, and for reload use `ServerReloadEvent`.
 An example module implementing these events is as follows :
 ```java
-@Module(id = "example", name = "Example Module", description = "Is a module", authors = "DeveloperMan")
+@Module(id = "example", name = "Example Module", description = "Is a module", authors = "GuusLieben")
 public class ExampleModule {
 
     @Listener
@@ -98,7 +98,7 @@ Type allows the following:
 Types are case insensitive. Permission is build as known with characters matching `~^\\w.*$~i` 
 Arguments and flags are made available in the CommandContext, an example is as follows :
 ```java
-@Module(id = "example", name = "Example Module", description = "Is a module", authors = "DeveloperMan")
+@Module(id = "example", name = "Example Module", description = "Is a module", authors = "GuusLieben")
 public class ExampleModule {
 
     @Command(aliases = {"command", "cmd"}, usage = "command <player> [value]", desc = "Does something with the given player", context = "command <player{Player}> [value{String}]")
@@ -162,10 +162,69 @@ public static final class EnumArgumentParser extends TypeArgumentParser {
  
 
 ## Utilities
-_TODO_
+Several common utilities require a platform specific implementation, such as player management, item modification, and several others. 
+Utilities cannot be added or implemented by single modules, and should only be implemented by platform-specific implementations of DarwinServer itself.
+Abstract utilities are provided inside the `com.darwinreforged.server.core` package, and are marked by the `@Utility` annotation. To implement these utilities,
+you can extend these types in your implementation. When loading the implementation of DarwinServer, types in the same package, and inner packages, will be scanned for utility implementations.
+If more than one implementation exists for the same utility, the last one found by the scanner will be used.  
+```java
+@Utility("Sample utility")
+public abstract class SampleUtils {
+    
+    public abstract String generateValue();
+}
+
+
+public class PlatformSampleUtils extends SampleUtils {
+    
+    public String generateValue() {
+        //...
+    }   
+}
+```
+
+_TODO : Obtaining and using utility instances_
 
 ### File management
-_TODO_
+Storing, reading, and modifying files is often tedious. With different plugins using different file types, in different locations.
+Therefore the FileManager type is made, enforcing the usage of YAML based files for smaller data and configuration files, and SQLite for bulk data storage.
+By default two base directories exist, `data` and `config`. The exact location of these directories depends on the implementation of DarwinServer. By default, a new file will be created if it did not yet exist, this can however be disabled by the developer by providing an additional argument for `createIfNotExists`.   
+When accessing files, an instance or class type of a module should be provided to determine where the files is stored, this uses the module id as sub-directory.
+So for example, a module with id `sample_module` will have its configuration files stored in `config/sample_module` (depending on the implementation).  
+The file manager uses two libraries to read and write to both YAML based files and SQLite. These are [Jackson](https://github.com/FasterXML/jackson) and [OrmLite](https://ormlite.com/).  
+While YAML serialization and deserialization is done completely by the file manager, where you only need to provide the type of the object you wish to use, this isn't the case for SQLite.
+SQLite storage requires you to create a custom model of the data you wish to store. To provide developers with the tools they need, without having to use additional dependencies, OrmLite comes packed with all builds of DarwinServer.
+```java
+@DatabaseTable(tableName = "sample")
+public class StorageModel {
+
+    @DatabaseField(dataType = DataType.INTEGER, canBeNull = false, columnName = "id")
+    private int id;
+    
+    @DatabaseField(dataType = DataType.STRING, columnName = "user_email")
+    private String userEmail;
+
+    //...
+
+}
+```
+
+As seen in the example above, the `userEmail` field uses a different name format for its column name. While Java's convention is to use camelCase, SQLite's convention is to use snake_case. 
+While this is subject to change in later releases, it is expected of developers to provide models for their storage types.  
+It is also possible to collect YAML from a remote source, this can be done using the `getYamlDataForUrl` method. This method returns a `Map<String, Object>` type by default, though it is also possible to use custom models. 
+When using custom models in any file manager provided method, you'll be required to provide a default value in case an exception occurs.
+ ```java
+ @Module(id = "example", name = "Example Module", description = "Is a module", authors = "GuusLieben")
+ public class ExampleModule {
+ 
+     @Listener
+     public void onServerInit(ServerInitEvent event) {
+         File configFile = DarwinServer.get(FileManager.class).getYamlConfigFile(this);
+         //...
+     }
+ 
+ }
+ ```
 
 ### Time API
 #### Scheduling
