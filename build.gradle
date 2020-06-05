@@ -41,6 +41,15 @@ subprojects { Project subProject ->
                 fileset dir: SRC_DIR,
                         includes: "*.jar"
             }
+
+            DIST_DIR = "${rootDir}/javadoc/${version}"
+            SRC_DIR = "${buildDir}/docs/javadoc"
+
+            ant.mkdir(dir: DIST_DIR)
+            ant.copy(todir: DIST_DIR) {
+                fileset dir: SRC_DIR
+            }
+
             delete buildDir
         }
     }
@@ -48,7 +57,11 @@ subprojects { Project subProject ->
     afterEvaluate {
         def buildTask = subProject.tasks.find { it.name == 'build' }
         if (buildTask) {
-            buildTask.finalizedBy(copyArtifacts)
+            buildTask.finalizedBy(javadoc)
+        }
+        def docTask = subProject.tasks.find { it.name == 'javadoc' }
+        if (docTask) {
+            docTask.finalizedBy(copyArtifacts)
         }
     }
 
