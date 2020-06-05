@@ -22,7 +22,7 @@ public abstract class CommandRegistration {
      the primary alias
      @param aliases
      the aliases
-     @param permissions
+     @param permission
      the permissions
      @param command
      the command

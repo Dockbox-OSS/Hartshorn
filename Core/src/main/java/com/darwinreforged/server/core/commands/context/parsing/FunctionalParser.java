@@ -5,7 +5,7 @@ import com.darwinreforged.server.core.commands.context.AbstractCommandValue;
 import java.util.Optional;
 
 /**
- The functional interface type used to parse {@link AbstractCommandValue<String>}
+ The functional interface type used to parse {@link AbstractCommandValue}
  values to generic types, depending on its implementation.
 
  @param <T>
@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface FunctionalParser<T> {
 
     /**
-     The method used to parse {@link AbstractCommandValue<String>}s into the given
+     The method used to parse {@link AbstractCommandValue}s into the given
      generic type.
 
      @param val
