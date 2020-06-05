@@ -183,7 +183,8 @@ public class PlatformSampleUtils extends SampleUtils {
 }
 ```
 
-_TODO : Obtaining and using utility instances_
+There are two ways to obtain utility instances through DarwinServer. The first option is using `get` and providing the class type of the utility you need. `get` will throw an IllegalStateException if no instance of the utility is present.
+The second option is to use `getUtil`, again providing the class type of the needed utility. Unlike `get`, `getUtil` will not throw an exception, and instead returns an empty `Optional` if no implementation is present.
 
 ### File management
 Storing, reading, and modifying files is often tedious. With different plugins using different file types, in different locations.
@@ -228,11 +229,53 @@ When using custom models in any file manager provided method, you'll be required
 
 ### Time API
 #### Scheduling
-_TODO_
-#### Cooldown
-_TODO_
-#### Time difference
-_TODO_
+Some actions may be required to run on scheduled moments. To provide you with the ability to do this easily `CommonUtils.Scheduler` is available using `CommonUtils.scheduler()`. 
+Schedulers have the ability to run on the main thread, or async. Schedulers are expected to have a name associated to them, so they can be easily identified.
+```java
+Scheduler scheduler = DarwinServer.get(CommonUtils.class).scheduler()
+    .async()
+    .name("Sample scheduler")
+    .interval(5, ChronoUnit.MINUTES)
+    .delayTicks(10)
+    .execute(() -> {
+        //...
+    });
+scheduler.submit();
+```
+  
+#### Cooldown / Timeout
+For some actions it is required that a player cannot perform the same action several times within a certain timespan. `CommonUtils` provides an easy API to solve this, the Cooldown API.
+This API is available statically. To mark a player to cool down, use `CommonUtils.registerUuidTimeout`, providing the UUID of the player, and the amount of milliseconds the player should be in cooldown for.
+It is possible to either override the last cooldown if the player is not yet marked, or to ignore the mark if they are already marked. To get the time since the player was (last) put in cooldown you can use `getTimeSinceLastUuidTimeout` providing the UUID of the player.
+This will return a `TimeDifference` object, with which you can easily compare the amount of time in several time units. To unregister a player from a cooldown, simply use `unregisterUuidTimeout`.
+
+```java
+@Listener
+public void onPlayerMove(PlayerMoveEvent event) {
+    DarwinPlayer player = (DarwinPlayer) event.getTarget();
+    Optional<TimeDifference> diff = CommonUtils.getTimeSinceLastUuidTimeout(player.getUniqueId(), this);
+    if ((!diff.isPresent()) || diff.get().getSeconds() > 10) {
+        // If the player was present, we can now reset them
+        CommonUtils.unregisterUuidTimeout(player.getUniqueId(), this);
+        //...
+        if (someCondition) CommonUtils.registerUuidTimeout(player.getUniqueId(), this, false);
+        });
+    }
+}
+```
 
 ## Chat API
-_TODO_
+To easily generate text with preset actions for click and hover events, you can use the Chat API. Using `Text` you can create and append text to a message. Currently it is not possible to have more than one hover, and one click action per `Text` instance, this is however scheduled for a future release.
+To add click events to a `Text` object, use `setClickEvent` providing an instance of `ClickEvent`. Similarly, you can add hover events with `setHoverEvent`, providing an instance of `HoverEvent`.
+
+### Pagination
+To create paginated results for lists of text objects, you can use `Pagination`. To build a `Pagination` instance, use `Pagination.builder()`. 
+Pagination can be build using the following values; `padding`, `linesPerPage`, `header`, `footer`, `title`, and `contents`. If no value is provided for one of these fields, the default value of the implementation will be used.
+```java
+Pagination.builder()
+        .title(Text.of(DefaultTranslations.DARWIN_MODULE_TITLE.s()))
+        .padding(Text.of(DefaultTranslations.DARWIN_MODULE_PADDING.s()))
+        .contents(moduleContext)
+        .header(header)
+        .build().sendTo(src);
+```
