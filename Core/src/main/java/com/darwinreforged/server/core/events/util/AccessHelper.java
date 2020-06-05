@@ -57,7 +57,7 @@ final class AccessHelper {
      Makes a direct method handle to the {@code method}.
 
      @param lookup
-     the {@linkplain Lookup lookup object} used in method handle creation
+     the {@link Lookup lookup object} used in method handle creation
      @param method
      the method
 
@@ -82,7 +82,7 @@ final class AccessHelper {
      Makes a direct method handle to the {@code method}.
 
      @param lookup
-     the {@linkplain Lookup lookup object} used in method handle creation
+     the {@link Lookup lookup object} used in method handle creation
      @param method
      the method
 
@@ -428,7 +428,7 @@ final class AccessHelper {
     }
 
     /**
-     Returns the default {@linkplain Lookup lookup object}.
+     Returns the default {@link Lookup lookup object}.
 
      @return the lookup
      */
@@ -437,13 +437,13 @@ final class AccessHelper {
     }
 
     /**
-     Checks if the specified {@linkplain Lookup lookup object} is the
-     {@linkplain #defaultLookup() default lookup object}.
+     Checks if the specified {@link Lookup lookup object} is the
+     {@link #defaultLookup() default lookup object}.
 
      @param lookup
      the lookup
 
-     @return {@code true} if the {@code lookup} parameter is the same object         as {@linkplain #defaultLookup() default lookup object}, {@code false} otherwise
+     @return {@code true} if the {@code lookup} parameter is the same object         as {@link #defaultLookup() default lookup object}, {@code false} otherwise
 
      @see #defaultLookup() #defaultLookup()
      */

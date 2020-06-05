@@ -9,6 +9,6 @@ public class SpongeDiscordChatManager implements DiscordChatManager {
 
     @Override
     public JDA getJda() {
-        return MagiBridge.jda;
+        return MagiBridge.getInstance().getJDA();
     }
 }

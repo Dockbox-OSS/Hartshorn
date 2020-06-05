@@ -19,7 +19,7 @@ public abstract class TypeArgumentParser implements AbstractParser {
      @param commandValue
      the {@link AbstractCommandValue} in String format to parse.
      @param type
-     the class instance of {@link A} to use while parsing
+     the class type to use while parsing
 
      @return the optional type of the generic type. Should return {@link Optional#empty()} if
      null or if the value could not be parsed.

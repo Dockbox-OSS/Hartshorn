@@ -73,12 +73,32 @@ allprojects {
         repositories {
             mavenCentral()
             jcenter()
+            maven {
+                name 'Jitpack'
+                url 'https://jitpack.io'
+            }
+            maven {
+                name 'fawe'
+                url 'http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/'
+            }
+            maven {
+                name 'sk89q'
+                url 'https://maven.enginehub.org/repo/'
+            }
+            maven {
+                name 'plotsquared'
+                url "https://plotsquared.com/mvn/"
+            }
         }
 
         dependencies {
             compile ('net.dv8tion:JDA:4.ALPHA.0_76') {
                 exclude module: 'opus-java'
             }
+
+            compileOnly 'com.boydti:fawe-api:latest'
+            compileOnly 'com.sk89q.worldedit:worldedit-core:6.1'
+            compileOnly "com.plotsquared:plotsquared-api:3.1"
         }
     }
 }

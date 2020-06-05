@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -109,6 +108,7 @@ public abstract class CommonUtils<B> {
         if (time < 1000000000000L) difference = getDifferenceFromSeconds(time);
         else difference = getDifferenceFromMillis(time);
 
+        if (difference == null) return "Incorrect time format";
         if (difference.getDays() > 1) return TimeTranslations.TIME_DAYS_AGO.f(difference.getDays());
         if (difference.getDays() > 0) return TimeTranslations.TIME_YESTERDAY.s();
         if (difference.getHours() > 1) return TimeTranslations.TIME_HOURS_AGO.f(difference.getHours());
@@ -133,19 +133,17 @@ public abstract class CommonUtils<B> {
     public static String replaceFromMap(String string, Map<String, String> replacements) {
         StringBuilder sb = new StringBuilder(string);
         int size = string.length();
-        Iterator var4 = replacements.entrySet().iterator();
 
-        while(var4.hasNext()) {
-            Entry<String, String> entry = (Entry)var4.next();
+        for (Entry<String, String> entry : replacements.entrySet()) {
             if (size == 0) {
                 break;
             }
 
-            String key = (String)entry.getKey();
-            String value = (String)entry.getValue();
+            String key = entry.getKey();
+            String value = entry.getValue();
 
             int nextSearchStart;
-            for(int start = sb.indexOf(key, 0); start > -1; start = sb.indexOf(key, nextSearchStart)) {
+            for (int start = sb.indexOf(key, 0); start > -1; start = sb.indexOf(key, nextSearchStart)) {
                 int end = start + key.length();
                 nextSearchStart = start + value.length();
                 sb.replace(start, end, value);

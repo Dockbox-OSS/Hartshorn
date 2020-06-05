@@ -17,14 +17,6 @@ repositories {
         name 'sqljet'
         url 'https://repo1.maven.org/maven2/com/j256/ormlite/'
     }
-    maven {
-        name 'fawe'
-        url 'http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/'
-    }
-    maven {
-        name 'sk89q'
-        url 'https://maven.enginehub.org/repo/'
-    }
 }
 
 archivesBaseName = 'core'
@@ -34,20 +26,19 @@ def date = LocalDate.now().toString()
 
 dependencies {
     implementation 'org.reflections:reflections:0.9.11'
-    compileOnly 'com.google.code.gson:gson:2.8.6'
-    compileOnly 'org.yaml:snakeyaml:1.26'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.8'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8'
     implementation 'org.apache.commons:commons-collections4:4.1'
-    compileOnly 'com.google.guava:guava:21.0'
-    compileOnly 'com.boydti:fawe-api:latest'
-    compileOnly 'com.sk89q.worldedit:worldedit-core:6.1'
-    compile 'org.slf4j:slf4j-api:1.7.25'
-    testCompile 'junit:junit:4.12'
-    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.j256.ormlite:ormlite-core:5.1'
     implementation 'com.j256.ormlite:ormlite-jdbc:5.1'
+
+    compileOnly 'com.google.code.gson:gson:2.8.6'
+    compileOnly 'org.yaml:snakeyaml:1.26'
+    compileOnly 'com.google.guava:guava:21.0'
+
+    compile 'org.slf4j:slf4j-api:1.7.25'
+    testCompile 'junit:junit:4.12'
 }
 
 processResources {

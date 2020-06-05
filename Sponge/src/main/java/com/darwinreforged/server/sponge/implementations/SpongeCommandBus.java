@@ -21,7 +21,6 @@ import com.google.common.collect.Multimap;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.input.ParserContext;
 
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -57,8 +56,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
-
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 @SuppressWarnings("unchecked")
 public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentTypeValue> {
@@ -158,7 +155,7 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
 
         } else if (obj instanceof Entity) {
             // TODO : Regular Entity wrapper
-            throw new NotImplementedException();
+            throw new UnsupportedOperationException();
 
         } else if (obj instanceof Location) {
             Location<Extent> sloc = (Location<Extent>) obj;
@@ -320,7 +317,7 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
 
         @Nullable
         @Override
-        protected Object parseValue(@NotNull CommandSource source, @NotNull CommandArgs args) throws ArgumentParseException {
+        protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
             try {
                 FawePlayer<?> fawePlayer = FawePlayer.wrap(source);
                 ParserContext pctx = new ParserContext();
@@ -347,10 +344,10 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
         }
 
         @Override
-        public @NotNull List<String> complete(
-                @NotNull CommandSource src,
-                @NotNull CommandArgs args,
-                @NotNull CommandContext context) {
+        public List<String> complete(
+                CommandSource src,
+                CommandArgs args,
+                CommandContext context) {
             return new ArrayList<>();
         }
     }
@@ -363,17 +360,17 @@ public class SpongeCommandBus extends CommandBus<CommandContext, SpongeArgumentT
 
         @Nullable
         @Override
-        protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
+        protected Object parseValue(CommandSource source, CommandArgs args) throws ArgumentParseException {
             Object module = DarwinServer.getModuleInfo(args.next());
             if (module != null && ((Optional<?>) module).isPresent()) return ((Optional<?>) module).get();
             return null;
         }
 
         @Override
-        public @NotNull List<String> complete(
-                @NotNull CommandSource src,
-                @NotNull CommandArgs args,
-                @NotNull CommandContext context) {
+        public List<String> complete(
+                CommandSource src,
+                CommandArgs args,
+                CommandContext context) {
             return DarwinServer.getAllModuleInfo().stream().map(Module::id).collect(Collectors.toList());
         }
     }

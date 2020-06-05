@@ -3,7 +3,7 @@ package com.darwinreforged.server.core.events.util;
 import com.darwinreforged.server.core.DarwinServer;
 
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
@@ -36,7 +36,7 @@ public class EventBus {
     /**
      Default lookup object used in {@link #subscribe(Object)}.
      */
-    protected MethodHandles.Lookup defaultLookup = AccessHelper.defaultLookup();
+    protected Lookup defaultLookup = AccessHelper.defaultLookup();
 
     /**
      Registers all listener methods on {@code object} for receiving events.
@@ -44,17 +44,17 @@ public class EventBus {
      @param object
      object whose listener methods should be registered
      @param lookup
-     the {@linkplain MethodHandles.Lookup Lookup object} used in {@link MethodHandle} creation
+     the {@link Lookup Lookup object} used in {@link MethodHandle} creation
 
      @throws IllegalArgumentException
      if there's an invalid listener method on the {@code object},                                  or the {@code object} doesn't have any listener methods
      @throws SecurityException
-     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the provided                                  {@linkplain MethodHandles.Lookup lookup object}                                  cannot access one of the listener method found in the class
-     @see MethodHandles.Lookup
+     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the provided                                  {@link Lookup lookup object}                                  cannot access one of the listener method found in the class
+     @see Lookup
      @since 1.3
      */
 
-    public void subscribe(Object object, MethodHandles.Lookup lookup) throws IllegalArgumentException, SecurityException {
+    public void subscribe(Object object, Lookup lookup) throws IllegalArgumentException, SecurityException {
         if (!object.equals(object)) return;
         if (listenerToInvokers.containsKey(object)) {
             return;  // Already registered
@@ -80,9 +80,9 @@ public class EventBus {
      @throws IllegalArgumentException
      if there's an invalid listener method on the {@code object},                                  or the {@code object} doesn't have any listener methods
      @throws SecurityException
-     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the default                                  {@linkplain MethodHandles.Lookup lookup object} cannot access                                  one of the listener method found in the class
-     @see #subscribe(Object, MethodHandles.Lookup) #subscribe(Object, MethodHandles.Lookup)
-     @see #setDefaultLookup(MethodHandles.Lookup) #setDefaultLookup(MethodHandles.Lookup)
+     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the default                                  {@link Lookup lookup object} cannot access                                  one of the listener method found in the class
+     @see #subscribe(Object, Lookup) #subscribe(Object, MethodHandles.Lookup)
+     @see #setDefaultLookup(Lookup) #setDefaultLookup(MethodHandles.Lookup)
      */
     public void subscribe(Object object) throws IllegalArgumentException, SecurityException {
         subscribe(object, defaultLookup);
@@ -117,14 +117,14 @@ public class EventBus {
     }
 
     /**
-     Sets default {@linkplain MethodHandles.Lookup lookup object} used in {@link #subscribe(Object)}.
+     Sets default {@link Lookup lookup object} used in {@link #subscribe(Object)}.
 
      @param lookup
      new default lookup object
 
      @since 1.3
      */
-    public void setDefaultLookup(MethodHandles.Lookup lookup) {
+    public void setDefaultLookup(Lookup lookup) {
         this.defaultLookup = Objects.requireNonNull(lookup);
     }
 
@@ -134,16 +134,16 @@ public class EventBus {
      @param object
      the object
      @param lookup
-     the {@linkplain MethodHandles.Lookup Lookup object} used in {@link MethodHandle} creation
+     the {@link Lookup Lookup object} used in {@link MethodHandle} creation
 
      @return the invokers
 
      @throws IllegalArgumentException
      if there's an invalid listener method on the {@code object}
      @throws SecurityException
-     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the provided                                  {@linkplain MethodHandles.Lookup lookup}                                  cannot access one of the listener method found in the class
+     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the provided                                  {@link Lookup lookup}                                  cannot access one of the listener method found in the class
      */
-    protected static Set<InvokeWrapper> getInvokers(Object object, MethodHandles.Lookup lookup)
+    protected static Set<InvokeWrapper> getInvokers(Object object, Lookup lookup)
             throws IllegalArgumentException, SecurityException {
         Set<InvokeWrapper> result = new LinkedHashSet<>();
         for (Method method : AccessHelper.getMethodsRecursively(object.getClass())) {
@@ -216,7 +216,7 @@ public class EventBus {
         private final Map<Class<? extends Event>, Handler> handlers = new HashMap<>();
 
         /**
-         Gets or creates the {@linkplain Handler handler} for the specified event type.
+         Gets or creates the {@link Handler handler} for the specified event type.
 
          @param type
          the event type
@@ -238,7 +238,7 @@ public class EventBus {
          @param subject
          the subject
 
-         @return {@code true} if the specified {@linkplain Handler handler} has         an association(subtype or supertype) with at least one handler         in the current registry <b>and</b> the hierarchy had been updated,         {@code false} otherwise
+         @return {@code true} if the specified {@link Handler handler} has         an association(subtype or supertype) with at least one handler         in the current registry <b>and</b> the hierarchy had been updated,         {@code false} otherwise
          */
         boolean computeHierarchy(Handler subject) {
             boolean associationFound = false;
@@ -271,7 +271,7 @@ public class EventBus {
         private final Set<Handler> supertypeHandlers = new HashSet<>();
 
         /**
-         * Set of {@linkplain InvokeWrapper invokers} registered in this handler.
+         * Set of {@link InvokeWrapper invokers} registered in this handler.
          * <p>
          * <b>Note</b>: any modification to this collection MUST also invalidate the {@link #computedInvokerCache}.
          */
@@ -291,7 +291,7 @@ public class EventBus {
         Handler(Class<? extends Event> eventType) { this.eventType = eventType; }
 
         /**
-         Adds an {@linkplain InvokeWrapper invoker} to this handler.
+         Adds an {@link InvokeWrapper invoker} to this handler.
 
          @param invoker
          the invoker
@@ -303,7 +303,7 @@ public class EventBus {
         }
 
         /**
-         Removes the specified {@linkplain InvokeWrapper invoker} from this handler if it's present.
+         Removes the specified {@link InvokeWrapper invoker} from this handler if it's present.
 
          @param invoker
          the invoker
@@ -485,9 +485,9 @@ public class EventBus {
          @return the invoke wrapper
 
          @throws SecurityException
-         if the provided {@linkplain MethodHandles.Lookup lookup}                           cannot access the specified method
+         if the provided {@link Lookup lookup}                           cannot access the specified method
          */
-        public static InvokeWrapper create(Object instance, Method method, MethodHandles.Lookup lookup) throws SecurityException {
+        public static InvokeWrapper create(Object instance, Method method, Lookup lookup) throws SecurityException {
             int priority = AccessHelper.getAnnotationRecursively(method, Listener.class).value().getPriority();
             return create(instance, method, priority, lookup);
         }
@@ -507,9 +507,9 @@ public class EventBus {
          @return the invoke wrapper
 
          @throws SecurityException
-         if the provided {@linkplain MethodHandles.Lookup lookup}                           cannot access the specified method
+         if the provided {@link Lookup lookup}                           cannot access the specified method
          */
-        public static InvokeWrapper create(Object instance, Method method, int priority, MethodHandles.Lookup lookup)
+        public static InvokeWrapper create(Object instance, Method method, int priority, Lookup lookup)
                 throws SecurityException {
             Class<? extends Event> eventType = (Class<? extends Event>) method.getParameterTypes()[0];
             MethodHandle methodHandle = AccessHelper.unreflectMethodHandle(lookup, method);

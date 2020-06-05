@@ -1,6 +1,6 @@
 package com.darwinreforged.server.core.events.util;
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 
 /**
  Basic event bus.
@@ -15,17 +15,17 @@ public final class Bus {
      @param object
      object whose listener methods should be registered
      @param lookup
-     the {@linkplain MethodHandles.Lookup Lookup object} used in {@link MethodHandle} creation
+     the {@link Lookup Lookup object} used in {@link MethodHandle} creation
 
      @throws IllegalArgumentException
      if there's an invalid listener method on the {@code object},                                  or the {@code object} doesn't have any listener methods
      @throws SecurityException
-     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the provided                                  {@linkplain MethodHandles.Lookup lookup object}                                  cannot access one of the listener method found in the class
-     @see EventBus#subscribe(Object, MethodHandles.Lookup) EventBus#subscribe(Object, MethodHandles.Lookup)
-     @see MethodHandles.Lookup
+     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the provided                                  {@link Lookup lookup object}                                  cannot access one of the listener method found in the class
+     @see EventBus#subscribe(Object, Lookup) EventBus#subscribe(Object, MethodHandles.Lookup)
+     @see Lookup
      @since 1.3
      */
-    public static void subscribe(Object object, MethodHandles.Lookup lookup) throws IllegalArgumentException, SecurityException {
+    public static void subscribe(Object object, Lookup lookup) throws IllegalArgumentException, SecurityException {
         EVENT_BUS.subscribe(object, lookup);
     }
 
@@ -38,7 +38,7 @@ public final class Bus {
      @throws IllegalArgumentException
      if there's an invalid listener method on the {@code object},                                  or the {@code object} doesn't have any listener methods
      @throws SecurityException
-     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the default                                  {@linkplain MethodHandles.Lookup lookup object} cannot access                                  one of the listener method found in the class
+     if a security manager denied access to the declared methods                                  of the class of the {@code object}, or the default                                  {@link Lookup lookup object} cannot access                                  one of the listener method found in the class
      @see EventBus#subscribe(Object) EventBus#subscribe(Object)
      */
     public static void subscribe(Object object) throws IllegalArgumentException, SecurityException {
