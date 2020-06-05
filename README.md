@@ -259,7 +259,6 @@ public void onPlayerMove(PlayerMoveEvent event) {
         CommonUtils.unregisterUuidTimeout(player.getUniqueId(), this);
         //...
         if (someCondition) CommonUtils.registerUuidTimeout(player.getUniqueId(), this, false);
-        });
     }
 }
 ```
