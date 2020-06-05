@@ -10,3 +10,4 @@ modules/src/test
 *.class
 dist
 .hidden
+*build

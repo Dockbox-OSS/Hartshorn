@@ -33,21 +33,23 @@ subprojects { Project subProject ->
     task copyArtifacts {
         doLast {
             def version = getVersionName()
-            def DIST_DIR = "${rootDir}/dist/${date}/${version}"
-            def SRC_DIR = "${buildDir}/libs"
+            def DIST_DEST_DIR = "${rootDir}/dist/${date}/${version}"
+            def DIRT_SRC_DIR = "${buildDir}/libs"
 
-            ant.mkdir(dir: DIST_DIR)
-            ant.copy(todir: DIST_DIR) {
-                fileset dir: SRC_DIR,
+            ant.mkdir(dir: DIST_DEST_DIR)
+            ant.copy(todir: DIST_DEST_DIR) {
+                fileset dir: DIRT_SRC_DIR,
                         includes: "*.jar"
             }
 
-            DIST_DIR = "${rootDir}/javadoc/${version}"
-            SRC_DIR = "${buildDir}/docs/javadoc"
+            def DOCS_DEST_DIR = "${rootDir}/javadoc"
+            def DOCS_SRC_DIR = "${buildDir}/docs/javadoc"
 
-            ant.mkdir(dir: DIST_DIR)
-            ant.copy(todir: DIST_DIR) {
-                fileset dir: SRC_DIR
+            delete DOCS_DEST_DIR // Remove old JavaDocs
+
+            ant.mkdir(dir: DOCS_DEST_DIR)
+            ant.copy(todir: DOCS_DEST_DIR) {
+                fileset dir: DOCS_SRC_DIR
             }
 
             delete buildDir
