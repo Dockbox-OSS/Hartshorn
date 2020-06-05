@@ -61,7 +61,7 @@ public class WorldUnloadModule {
 
     private void init() {
         fileUtil = DarwinServer.get(FileManager.class);
-        ArrayList<String> blacklist = (ArrayList<String>) fileUtil.getYamlDataForConfig(this, "blacklist", ArrayList.class);
+        ArrayList<String> blacklist = (ArrayList<String>) fileUtil.getYamlDataForConfig(this, "blacklist", ArrayList.class, new ArrayList<String>());
         if (blacklist != null) unloadBlacklist.addAll(blacklist);
         refreshBlackList();
 

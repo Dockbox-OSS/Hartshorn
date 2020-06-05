@@ -127,13 +127,17 @@ public abstract class FileManager {
     }
 
     public Map<String, Object> getYamlDataForUrl(String url) {
+        return getYamlDataForUrl(url, Map.class, new HashMap());
+    }
+
+    public <T> T getYamlDataForUrl(String url, Class<T> type, T defaultValue) {
         try {
             URL u = new URL(url);
             Yaml yaml = new Yaml();
-            return yaml.loadAs(u.openStream(), Map.class);
+            return yaml.loadAs(u.openStream(), type);
         } catch (IOException e) {
             DarwinServer.error(String.format("Failed to obtain YAML from url '%s'.", url));
-            return new HashMap<>();
+            return defaultValue;
         }
     }
 
@@ -203,7 +207,7 @@ public abstract class FileManager {
 
      @return the yaml data for config
      */
-    public <T> T getYamlDataForConfig(Object module, String path, Class<T> type) {
+    public <T> T getYamlDataForConfig(Object module, String path, Class<T> type, T defaultValue) {
         Map<String, Object> values = getYamlDataForConfig(module);
         if (values.containsKey(path)) {
             Object val = values.get(path);
@@ -214,7 +218,7 @@ public abstract class FileManager {
         try {
             return type.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            return null;
+            return defaultValue;
         }
     }
 

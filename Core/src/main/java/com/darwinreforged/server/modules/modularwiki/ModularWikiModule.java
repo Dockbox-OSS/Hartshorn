@@ -5,7 +5,7 @@ import com.darwinreforged.server.core.chat.ClickEvent;
 import com.darwinreforged.server.core.chat.ClickEvent.ClickAction;
 import com.darwinreforged.server.core.chat.HoverEvent;
 import com.darwinreforged.server.core.chat.HoverEvent.HoverAction;
-import com.darwinreforged.server.core.chat.Pagination.PaginationBuilder;
+import com.darwinreforged.server.core.chat.Pagination;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.commands.annotations.Permission;
@@ -97,7 +97,7 @@ public class ModularWikiModule {
                             Text shareButton = Text.of(WikiTranslations.WIKI_SHARE_BUTTON.f(wikiObject.getName()))
                                     .setHoverEvent(new HoverEvent(HoverAction.SHOW_TEXT, WikiTranslations.WIKI_SHARE_BUTTON_HOVER.s()))
                                     .setClickEvent(new ClickEvent(ClickAction.SUGGEST_COMMAND, String.format("/sharewiki %s", wikiObject.getId())));
-                            PaginationBuilder.builder()
+                            Pagination.builder()
                                     .contents(content)
                                     .footer(shareButton)
                                     .title(Text.of(DefaultTranslations.DEFAULT_TITLE.f(wikiObject.getName())))
@@ -124,7 +124,7 @@ public class ModularWikiModule {
                         }
                     });
 
-                    PaginationBuilder.builder()
+                    Pagination.builder()
                             .contents(content)
                             .title(Text.of(DefaultTranslations.DEFAULT_TITLE.f("Wiki")))
                             .padding(Text.of(DefaultTranslations.DARWIN_MODULE_PADDING.s()))

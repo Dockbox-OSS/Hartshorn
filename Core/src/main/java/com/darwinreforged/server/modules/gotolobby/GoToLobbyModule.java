@@ -74,12 +74,13 @@ public class GoToLobbyModule {
         DarwinPlayer player = (DarwinPlayer) event.getTarget();
         Optional<TimeDifference> diff = CommonUtils.getTimeSinceLastUuidTimeout(player.getUniqueId(), this);
         if ((!diff.isPresent()) || diff.get().getSeconds() > 10) {
+            CommonUtils.unregisterUuidTimeout(player.getUniqueId(), this);
             player.getWorld().ifPresent(world -> {
                 if (blacklist.contains(world.getName()) && !player.hasPermission(Permissions.GTL_IGNORE)) {
                     player.setGameMode(GameModes.CREATIVE);
                     player.sendMessage(GoToLobbyTranslations.GTL_WARPED, false);
                     player.execute("hub");
-                    CommonUtils.registerUuidTimeout(player.getUniqueId(), this);
+                    CommonUtils.registerUuidTimeout(player.getUniqueId(), this, false);
                 }
             });
         }

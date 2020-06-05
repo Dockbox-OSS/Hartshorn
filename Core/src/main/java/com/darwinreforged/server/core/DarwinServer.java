@@ -5,6 +5,7 @@ import com.darwinreforged.server.core.chat.ClickEvent.ClickAction;
 import com.darwinreforged.server.core.chat.DiscordChatManager;
 import com.darwinreforged.server.core.chat.HoverEvent;
 import com.darwinreforged.server.core.chat.HoverEvent.HoverAction;
+import com.darwinreforged.server.core.chat.Pagination;
 import com.darwinreforged.server.core.chat.Pagination.PaginationBuilder;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.CommandBus;
@@ -292,7 +293,7 @@ public abstract class DarwinServer extends Singleton {
                                 registerClasses(moduleCandidate.getName(), clazz);
                             }
                         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-                            e.printStackTrace();
+                            error(String.format("Failed to inject class into classpath '%s'", className), e);
                         }
                     }
                 }
@@ -635,7 +636,7 @@ public abstract class DarwinServer extends Singleton {
                     .append(Text.NEW_LINE)
                     .append(DefaultTranslations.DARWIN_SERVER_MODULE_HEAD.s());
 
-            PaginationBuilder builder = PaginationBuilder.builder();
+            PaginationBuilder builder = Pagination.builder();
             builder
                     .title(Text.of(DefaultTranslations.DARWIN_MODULE_TITLE.s()))
                     .padding(Text.of(DefaultTranslations.DARWIN_MODULE_PADDING.s()))
