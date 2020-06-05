@@ -33,6 +33,7 @@ public final class Text {
     }
 
     public Text append(Text text) {
+        // TODO : Implement multi-text registrations to provide click/hover actions for partial messages
         this.text += text.toLegacy();
         return this;
     }

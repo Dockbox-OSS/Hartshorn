@@ -40,6 +40,7 @@ public final class HoverEvent {
      @param value
      the value
      */
+    // TODO : Create .of method in HoverAction to easily create new instance externally
     public HoverEvent(HoverAction hoverAction, String value) {
         this.hoverAction = hoverAction;
         this.value = value;
