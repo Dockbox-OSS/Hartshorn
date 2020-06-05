@@ -39,8 +39,8 @@ public abstract class CommonUtils<B> {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault());
     }
 
-    public static void registerUuidTimeout(UUID uuid, Object module) {
-        if (!playerRegistrationsPerModule.containsKey(module))
+    public static void registerUuidTimeout(UUID uuid, Object module, boolean override) {
+        if (override || !playerRegistrationsPerModule.containsKey(module))
             playerRegistrationsPerModule.put(module, new HashMap<>());
         playerRegistrationsPerModule.get(module).put(uuid, LocalDateTime.now());
     }
@@ -54,6 +54,11 @@ public abstract class CommonUtils<B> {
 
         long millis = ChronoUnit.MILLIS.between(lastTimeout, LocalDateTime.now());
         return Optional.ofNullable(getDifferenceFromMillis(millis));
+    }
+
+    public static void unregisterUuidTimeout(UUID uuid, Object module) {
+        if (playerRegistrationsPerModule.containsKey(module))
+            playerRegistrationsPerModule.get(module).remove(uuid);
     }
 
     /**
