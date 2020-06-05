@@ -6,7 +6,6 @@ import com.darwinreforged.server.core.chat.ClickEvent.ClickAction;
 import com.darwinreforged.server.core.chat.HoverEvent;
 import com.darwinreforged.server.core.chat.HoverEvent.HoverAction;
 import com.darwinreforged.server.core.chat.Pagination;
-import com.darwinreforged.server.core.chat.Pagination.PaginationBuilder;
 import com.darwinreforged.server.core.chat.Text;
 import com.darwinreforged.server.core.commands.annotations.Command;
 import com.darwinreforged.server.core.commands.annotations.Permission;
@@ -86,7 +85,7 @@ public class OldPlotModule {
                         foundPlots.add(plotLoc);
                     }
                 });
-                Pagination pagination = PaginationBuilder.builder().contents(paginationContent).title(Text.of(OldPlotsTranslations.OLP_LIST_HEADER.f(playerName))).build();
+                Pagination pagination = Pagination.builder().contents(paginationContent).title(Text.of(OldPlotsTranslations.OLP_LIST_HEADER.f(playerName))).build();
                 pagination.sendTo(src);
             } catch (SQLException e) {
                 DarwinServer.error("Failed to read OldPlots database", e);

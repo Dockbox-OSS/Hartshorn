@@ -25,6 +25,10 @@ public class Pagination {
         this.contents = contents;
     }
 
+    public static PaginationBuilder builder() {
+        return new PaginationBuilder();
+    }
+
     public void sendTo(MessageReceiver receiver) {
         DarwinServer.get(PlayerManager.class).sendPagination(receiver, this);
     }
@@ -86,10 +90,6 @@ public class Pagination {
         private List<Text> contents;
 
         private PaginationBuilder() {
-        }
-
-        public static PaginationBuilder builder() {
-            return new PaginationBuilder();
         }
 
         public PaginationBuilder padding(Text padding) {
