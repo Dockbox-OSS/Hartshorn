@@ -11,7 +11,7 @@ import java.util.Optional;
 public abstract class ArgumentParser implements AbstractParser {
 
     /**
-     The method used to parse {@link AbstractCommandValue<String>}s into the given
+     The method used to parse {@link AbstractCommandValue}s into the given
      generic type.
 
      @param <A>
