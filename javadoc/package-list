@@ -39,3 +39,5 @@ com.darwinreforged.server.modules.plotidbar.entities
 com.darwinreforged.server.modules.spectatorteleport
 com.darwinreforged.server.modules.worlddeny
 com.darwinreforged.server.modules.worldunloader
+com.darwinreforged.server.sponge
+com.darwinreforged.server.sponge.implementations
