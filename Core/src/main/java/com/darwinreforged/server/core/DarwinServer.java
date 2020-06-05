@@ -293,7 +293,7 @@ public abstract class DarwinServer extends Singleton {
                                 registerClasses(moduleCandidate.getName(), clazz);
                             }
                         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-                            e.printStackTrace();
+                            error(String.format("Failed to inject class into classpath '%s'", className), e);
                         }
                     }
                 }
