@@ -1,13 +1,4 @@
-.idea
-src/test
-*.iml
-.gradle
-Modules/build
-Core/build
-Sponge/build
-gradle
-modules/src/test
-*.class
-dist
-.hidden
-*build
+build/*
+.gradle/
+.idea/
+gradle/

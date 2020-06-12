@@ -1,4 +1,0 @@
-rootProject.name = 'darwinserver'
-
-include 'Core'
-include 'Sponge'
