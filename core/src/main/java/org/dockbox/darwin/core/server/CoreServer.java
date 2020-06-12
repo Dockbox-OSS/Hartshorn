@@ -1,0 +1,100 @@
+package org.dockbox.darwin.core.server;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
+import org.dockbox.darwin.core.util.exceptions.ExceptionHelper;
+import org.dockbox.darwin.core.util.module.ModuleLoader;
+import org.dockbox.darwin.core.util.module.ModuleScanner;
+import org.dockbox.darwin.core.util.provider.SimpleInjectionProvider;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Properties;
+
+public abstract class CoreServer implements Server {
+
+    private final Logger log = LoggerFactory.getLogger(CoreServer.class);
+    private final String version;
+    private final Date lastUpdate;
+    private final String[] authors = {"GuusLieben"};
+
+    private static Server instance;
+
+    private final ExceptionHelper exceptionHelper;
+    private final ModuleScanner moduleScanner;
+    private final ModuleLoader moduleLoader;
+
+    public CoreServer(@Nullable AbstractModule injectionProvider) {
+        String tVer = "dev";
+        Date tLU = Date.from(Instant.now());
+        try {
+            Properties properties = new Properties();
+            properties.load(getClass().getResourceAsStream("/darwin.properties"));
+
+            DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+            tLU = format.parse(properties.getOrDefault("last_update", Instant.now().toString()).toString());
+            tVer = properties.getOrDefault("version", "dev").toString();
+        } catch (IOException | ParseException e) {
+            except("Failed to convert resource file", e);
+        }
+
+        this.version = tVer;
+        this.lastUpdate = tLU;
+
+        if (injectionProvider == null) injectionProvider = new SimpleInjectionProvider();
+        Injector injector = Guice.createInjector(injectionProvider);
+        this.exceptionHelper = injector.getInstance(ExceptionHelper.class);
+        this.moduleScanner = injector.getInstance(ModuleScanner.class);
+        this.moduleLoader = injector.getInstance(ModuleLoader.class);
+
+        CoreServer.instance = this;
+    }
+
+    @NotNull
+    @Override
+    public Logger getLog() {
+        return this.log;
+    }
+
+    @NotNull
+    @Override
+    public String getVersion() {
+        return this.version;
+    }
+
+    @NotNull
+    @Override
+    public Date getLastUpdate() {
+        return this.lastUpdate;
+    }
+
+    @NotNull
+    @Override
+    public String @NotNull [] getAuthors() {
+        return authors;
+    }
+
+    @Override
+    public void except(@Nullable String msg, @Nullable Throwable... e) {
+        for (Throwable throwable : e) {
+            // if config allows stacktraces :
+            boolean stacktraces = true;
+            // if config allows friendly :
+            this.exceptionHelper.printFriendly(msg, throwable, stacktraces);
+        }
+    }
+
+    public static Server getServer() {
+        return instance;
+    }
+}

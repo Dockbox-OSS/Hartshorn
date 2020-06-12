@@ -1,6 +1,12 @@
 package org.dockbox.darwin.sponge;
 
-import org.dockbox.darwin.core.DarwinServer;
+import org.dockbox.darwin.core.server.CoreServer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
-public class SpongeServer extends DarwinServer {
+import java.util.Date;
+
+public class SpongeServer extends CoreServer {
+
 }

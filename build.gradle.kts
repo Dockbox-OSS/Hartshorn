@@ -31,7 +31,7 @@ var date = ""
 
 ext {
     val git = org.ajoberstar.grgit.Grgit.open(file(".git"))
-    val format = SimpleDateFormat("dd-mm-yyyy")
+    val format = SimpleDateFormat("dd-MM-yyyy")
     date = format.format(git.head().date)
     revision = "-${git.head().abbreviatedId}"
 }
