@@ -1,13 +1,14 @@
 package org.dockbox.darwin.core.server;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import org.dockbox.darwin.core.util.exceptions.ExceptionHelper;
+import org.dockbox.darwin.core.util.inject.AbstractExceptionInjector;
+import org.dockbox.darwin.core.util.inject.AbstractModuleInjector;
+import org.dockbox.darwin.core.util.inject.AbstractUtilInjector;
 import org.dockbox.darwin.core.util.module.ModuleLoader;
 import org.dockbox.darwin.core.util.module.ModuleScanner;
-import org.dockbox.darwin.core.util.provider.SimpleInjectionProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -31,12 +32,17 @@ public abstract class CoreServer implements Server {
     private static Server instance;
 
     private final ExceptionHelper exceptionHelper;
-    private final ModuleScanner moduleScanner;
     private final ModuleLoader moduleLoader;
+    private final ModuleScanner moduleScanner;
+    public CoreServer(
+            AbstractModuleInjector moduleInjector,
+            AbstractExceptionInjector exceptionInjector,
+            AbstractUtilInjector utilInjector
+            ) {
 
-    public CoreServer(@Nullable AbstractModule injectionProvider) {
         String tVer = "dev";
         Date tLU = Date.from(Instant.now());
+
         try {
             Properties properties = new Properties();
             properties.load(getClass().getResourceAsStream("/darwin.properties"));
@@ -51,11 +57,15 @@ public abstract class CoreServer implements Server {
         this.version = tVer;
         this.lastUpdate = tLU;
 
-        if (injectionProvider == null) injectionProvider = new SimpleInjectionProvider();
-        Injector injector = Guice.createInjector(injectionProvider);
+        Injector injector = Guice.createInjector();
+        if (moduleInjector != null) injector = injector.createChildInjector(moduleInjector);
+        if (exceptionInjector != null) injector = injector.createChildInjector(exceptionInjector);
+        if (utilInjector != null) injector = injector.createChildInjector(utilInjector);
+
         this.exceptionHelper = injector.getInstance(ExceptionHelper.class);
-        this.moduleScanner = injector.getInstance(ModuleScanner.class);
         this.moduleLoader = injector.getInstance(ModuleLoader.class);
+        this.moduleScanner = injector.getInstance(ModuleScanner.class);
+
 
         CoreServer.instance = this;
     }
