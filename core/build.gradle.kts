@@ -18,6 +18,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.6")
     implementation("org.yaml:snakeyaml:1.26")
     implementation("com.google.guava:guava:21.0")
+    implementation("com.google.inject:guice:4.2.2")
     testImplementation("junit:junit:4.12")
 }
 
