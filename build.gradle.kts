@@ -5,10 +5,6 @@ plugins {
     java
     kotlin("jvm") version "1.3.70" apply false
 
-    checkstyle
-    jacoco
-    pmd
-
     id("com.palantir.git-version") version "0.12.3"
     id("com.github.johnrengelman.shadow") version "4.0.4"
 }
@@ -39,9 +35,6 @@ ext {
 allprojects {
 
     apply(plugin="java")
-    apply(plugin="jacoco")
-    apply(plugin="pmd")
-    apply(plugin="checkstyle")
     apply(plugin="com.github.johnrengelman.shadow")
 
     version = "$revision-$date"
@@ -82,27 +75,6 @@ allprojects {
         build {
             dependsOn(shadowJar)
         }
-        jacocoTestCoverageVerification {
-            violationRules {
-                rule { limit { minimum = BigDecimal.valueOf(0.2) } }
-            }
-        }
-        check {
-            dependsOn(jacocoTestCoverageVerification)
-        }
-    }
-
-    checkstyle {
-        toolVersion = "8.15"
-        configFile = file("config/checkstyle/sun_checks.xml")
-        isIgnoreFailures = true
-    }
-    pmd {
-        isIgnoreFailures = true
-    }
-
-    jacoco {
-        toolVersion = "0.8.2"
     }
 }
 
