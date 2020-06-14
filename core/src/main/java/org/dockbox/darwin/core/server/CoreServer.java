@@ -104,6 +104,10 @@ public abstract class CoreServer implements Server {
         }
     }
 
+    public static Logger log() {
+        return getServer().getLog();
+    }
+
     public static Server getServer() {
         return instance;
     }
