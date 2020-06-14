@@ -2,9 +2,9 @@ package org.dockbox.darwin.core.objects.targets
 
 import java.util.*
 
-class Identifiable : Target {
+open class Identifiable : Target {
 
-    lateinit var uniqueId: UUID
-    lateinit var name: String
+    open lateinit var uniqueId: UUID
+    open lateinit var name: String
 
 }
