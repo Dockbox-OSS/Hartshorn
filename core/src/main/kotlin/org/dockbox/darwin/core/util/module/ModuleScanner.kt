@@ -13,6 +13,7 @@ interface ModuleScanner {
     fun getJarCandidates(): Iterable<ModuleJarCandidate>
     fun getClassCandidates(): Iterable<ModuleClassCandidate>
 
+    fun getScannedClasses(): Iterable<Class<*>>
     fun getAnnotatedCandidates(): Stream<Class<*>>?
 
 }

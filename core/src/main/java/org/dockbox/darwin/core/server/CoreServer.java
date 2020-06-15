@@ -34,6 +34,7 @@ public abstract class CoreServer implements Server {
     private final ExceptionHelper exceptionHelper;
     private final ModuleLoader moduleLoader;
     private final ModuleScanner moduleScanner;
+
     public CoreServer(
             AbstractModuleInjector moduleInjector,
             AbstractExceptionInjector exceptionInjector,
@@ -68,6 +69,18 @@ public abstract class CoreServer implements Server {
 
 
         CoreServer.instance = this;
+    }
+
+    public static ExceptionHelper getExceptionHelper() {
+        return ((CoreServer) getServer()).exceptionHelper;
+    }
+
+    public static ModuleLoader getModuleLoader() {
+        return ((CoreServer) getServer()).moduleLoader;
+    }
+
+    public static ModuleScanner getModuleScanner() {
+        return ((CoreServer) getServer()).moduleScanner;
     }
 
     @NotNull
