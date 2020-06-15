@@ -1,6 +1,6 @@
 package org.dockbox.darwin.core.command.parse
 
-import org.dockbox.darwin.core.command.CommandValue
+import org.dockbox.darwin.core.command.context.CommandValue
 import java.util.*
 
 abstract class AbstractArgumentParser : AbstractParser() {
