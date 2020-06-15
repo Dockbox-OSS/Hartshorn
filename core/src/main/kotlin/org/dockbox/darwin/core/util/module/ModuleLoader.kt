@@ -3,6 +3,7 @@ package org.dockbox.darwin.core.util.module
 import org.dockbox.darwin.core.annotations.Module
 import org.dockbox.darwin.core.objects.module.ModuleInformation
 import org.dockbox.darwin.core.objects.module.ModuleRegistration
+import java.util.*
 
 interface ModuleLoader {
 
@@ -17,7 +18,7 @@ interface ModuleLoader {
     fun getModule(module: Class<*>): Module
     fun getModule(module: String): Module
 
-    fun <I> getModuleInstance(module: Class<*>): I
+    fun <I> getModuleInstance(module: Class<I>): Optional<I>
 
     fun getAllRegistrations(): Iterable<ModuleRegistration>
     fun getRegistration(module: Class<*>): ModuleRegistration
