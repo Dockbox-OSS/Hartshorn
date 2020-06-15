@@ -23,6 +23,7 @@ public class SimpleModuleScanner implements ModuleScanner {
 
     private final List<ModuleJarCandidate> jarCandidates = new CopyOnWriteArrayList<>();
     private final List<ModuleClassCandidate> classCandidates = new CopyOnWriteArrayList<>();
+    private List<Class<?>> scannedClasses = new CopyOnWriteArrayList<>();
 
     @NotNull
     @Override
@@ -51,6 +52,7 @@ public class SimpleModuleScanner implements ModuleScanner {
         Set<Class<?>> moduleCandidates = ref.getTypesAnnotatedWith(Module.class);
 
         if (moduleCandidates.isEmpty()) return this;
+        scannedClasses = new CopyOnWriteArrayList<>(moduleCandidates);
         classCandidates.addAll(moduleCandidates.stream().map(ModuleClassCandidate::new).collect(Collectors.toList()));
 
         return this;
@@ -75,4 +77,9 @@ public class SimpleModuleScanner implements ModuleScanner {
                 .map(ModuleClassCandidate::getClazz);
     }
 
+    @NotNull
+    @Override
+    public Iterable<Class<?>> getScannedClasses() {
+        return this.scannedClasses;
+    }
 }
