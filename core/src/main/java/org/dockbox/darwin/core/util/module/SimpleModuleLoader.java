@@ -15,7 +15,7 @@ public class SimpleModuleLoader implements ModuleLoader {
 
     @NotNull
     @Override
-    public <I> I getModuleInstance(@NotNull Class<?> module) {
+    public <I> I getModuleInstance(@NotNull Class<I> module) {
         Object potentialInstance = getRegistration(module).getInstance();
         if (potentialInstance.getClass().equals(module)) //noinspection unchecked
             return (I) potentialInstance;
