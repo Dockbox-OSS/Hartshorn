@@ -10,6 +10,7 @@ val date = LocalDate.now().toString()
 
 dependencies {
     implementation(kotlin("stdlib"))
+    implementation("com.github.byteflux.libby:libby-core:-SNAPSHOT")
     implementation("org.reflections:reflections:0.9.11")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.9.8")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.8")

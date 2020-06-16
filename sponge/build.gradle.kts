@@ -22,4 +22,5 @@ dependencies {
     compileOnly("com.github.Eufranio:MagiBridge:2.10")
     compileOnly("com.github.MultiChat:Development:1.8.1")
     compileOnly("io.github.nucleuspowered:nucleus-api:1.14.3-SNAPSHOT-S7.1")
+    implementation("com.github.byteflux.libby:libby-sponge:-SNAPSHOT")
 }
