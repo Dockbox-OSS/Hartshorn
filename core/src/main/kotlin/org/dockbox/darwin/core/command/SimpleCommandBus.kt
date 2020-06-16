@@ -12,6 +12,7 @@ import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
 import org.dockbox.darwin.core.objects.targets.CommandSource
 import org.dockbox.darwin.core.server.CoreServer
+import org.dockbox.darwin.core.util.module.ModuleLoader
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -169,7 +170,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                 o = CoreServer.getServer()
             } else {
                 var modOptional: Optional<*>? = null
-                if (c.isAnnotationPresent(Module::class.java) && CoreServer.getModuleLoader().getModuleInstance(c).also { modOptional = it }.isPresent) {
+                if (c.isAnnotationPresent(Module::class.java) && CoreServer.getInstance(ModuleLoader::class.java).getModuleInstance(c).also { modOptional = it }.isPresent) {
                     o = modOptional!!.get()
                 } else {
                     o = c.getConstructor().newInstance()

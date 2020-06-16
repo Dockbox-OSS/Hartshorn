@@ -7,8 +7,6 @@ import org.dockbox.darwin.core.util.exceptions.ExceptionHelper;
 import org.dockbox.darwin.core.util.inject.AbstractExceptionInjector;
 import org.dockbox.darwin.core.util.inject.AbstractModuleInjector;
 import org.dockbox.darwin.core.util.inject.AbstractUtilInjector;
-import org.dockbox.darwin.core.util.module.ModuleLoader;
-import org.dockbox.darwin.core.util.module.ModuleScanner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -29,11 +27,9 @@ public abstract class CoreServer implements Server {
     private final Date lastUpdate;
     private final String[] authors = {"GuusLieben"};
 
-    private static Server instance;
+    private static CoreServer instance;
 
-    private final ExceptionHelper exceptionHelper;
-    private final ModuleLoader moduleLoader;
-    private final ModuleScanner moduleScanner;
+    private Injector injector;
 
     public CoreServer(
             AbstractModuleInjector moduleInjector,
@@ -58,28 +54,16 @@ public abstract class CoreServer implements Server {
         this.version = tVer;
         this.lastUpdate = tLU;
 
-        Injector injector = Guice.createInjector();
-        if (moduleInjector != null) injector = injector.createChildInjector(moduleInjector);
-        if (exceptionInjector != null) injector = injector.createChildInjector(exceptionInjector);
-        if (utilInjector != null) injector = injector.createChildInjector(utilInjector);
-
-        this.exceptionHelper = injector.getInstance(ExceptionHelper.class);
-        this.moduleLoader = injector.getInstance(ModuleLoader.class);
-        this.moduleScanner = injector.getInstance(ModuleScanner.class);
+        this.injector = Guice.createInjector();
+        if (moduleInjector != null) this.injector = this.injector.createChildInjector(moduleInjector);
+        if (exceptionInjector != null) this.injector = this.injector.createChildInjector(exceptionInjector);
+        if (utilInjector != null) this.injector = this.injector.createChildInjector(utilInjector);
 
         CoreServer.instance = this;
     }
 
-    public static ExceptionHelper getExceptionHelper() {
-        return ((CoreServer) getServer()).exceptionHelper;
-    }
-
-    public static ModuleLoader getModuleLoader() {
-        return ((CoreServer) getServer()).moduleLoader;
-    }
-
-    public static ModuleScanner getModuleScanner() {
-        return ((CoreServer) getServer()).moduleScanner;
+    public static <T> T getInstance(Class<T> type) {
+        return instance.injector.getInstance(type);
     }
 
     @NotNull
@@ -112,7 +96,7 @@ public abstract class CoreServer implements Server {
             // if config allows stacktraces :
             boolean stacktraces = true;
             // if config allows friendly :
-            this.exceptionHelper.printFriendly(msg, throwable, stacktraces);
+            getInstance(ExceptionHelper.class).printFriendly(msg, throwable, stacktraces);
         }
     }
 

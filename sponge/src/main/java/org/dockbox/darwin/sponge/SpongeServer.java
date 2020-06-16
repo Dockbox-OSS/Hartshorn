@@ -1,6 +1,8 @@
 package org.dockbox.darwin.sponge;
 
 import org.dockbox.darwin.core.server.CoreServer;
+import org.dockbox.darwin.core.util.module.ModuleLoader;
+import org.dockbox.darwin.core.util.module.ModuleScanner;
 import org.dockbox.darwin.sponge.util.inject.SpongeExceptionInjector;
 import org.dockbox.darwin.sponge.util.inject.SpongeModuleInjector;
 import org.dockbox.darwin.sponge.util.inject.SpongeUtilInjector;
@@ -31,10 +33,10 @@ public class SpongeServer extends CoreServer {
     @Listener
     public void onServerInit(GameInitializationEvent event) {
         // TODO : Init event listener
-        Iterable<Class<?>> annotatedCandidates = CoreServer.getModuleScanner()
+        Iterable<Class<?>> annotatedCandidates = CoreServer.getInstance(ModuleScanner.class)
                 .collectClassCandidates("org.dockbox.darwin.integrated")
                 .getAnnotatedCandidates();
-        annotatedCandidates.forEach(module -> CoreServer.getModuleLoader().loadModule(module));
+        annotatedCandidates.forEach(module -> CoreServer.getInstance(ModuleLoader.class).loadModule(module));
         // TODO : Post init event to modules
     }
 }
