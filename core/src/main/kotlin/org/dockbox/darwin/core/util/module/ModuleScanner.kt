@@ -3,7 +3,6 @@ package org.dockbox.darwin.core.util.module
 import org.dockbox.darwin.core.objects.module.ModuleClassCandidate
 import org.dockbox.darwin.core.objects.module.ModuleJarCandidate
 import java.nio.file.Path
-import java.util.stream.Stream
 
 interface ModuleScanner {
 
@@ -14,6 +13,6 @@ interface ModuleScanner {
     fun getClassCandidates(): Iterable<ModuleClassCandidate>
 
     fun getScannedClasses(): Iterable<Class<*>>
-    fun getAnnotatedCandidates(): Stream<Class<*>>?
+    fun getAnnotatedCandidates(): Iterable<Class<*>>
 
 }

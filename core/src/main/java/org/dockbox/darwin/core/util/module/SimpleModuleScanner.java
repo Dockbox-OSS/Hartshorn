@@ -17,7 +17,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SimpleModuleScanner implements ModuleScanner {
 
@@ -70,11 +69,12 @@ public class SimpleModuleScanner implements ModuleScanner {
         return this.classCandidates;
     }
 
+    @NotNull
     @Override
-    public Stream<Class<?>> getAnnotatedCandidates() {
+    public Iterable<Class<?>> getAnnotatedCandidates() {
         return this.classCandidates.stream()
                 .filter(candidate -> candidate.getClazz().isAnnotationPresent(Module.class))
-                .map(ModuleClassCandidate::getClazz);
+                .map(ModuleClassCandidate::getClazz).collect(Collectors.toList());
     }
 
     @NotNull
