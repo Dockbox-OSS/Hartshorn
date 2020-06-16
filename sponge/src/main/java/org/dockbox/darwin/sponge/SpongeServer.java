@@ -6,6 +6,7 @@ import org.dockbox.darwin.core.util.module.ModuleScanner;
 import org.dockbox.darwin.sponge.util.inject.SpongeExceptionInjector;
 import org.dockbox.darwin.sponge.util.inject.SpongeModuleInjector;
 import org.dockbox.darwin.sponge.util.inject.SpongeUtilInjector;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.plugin.Dependency;
@@ -38,5 +39,11 @@ public class SpongeServer extends CoreServer {
                 .getAnnotatedCandidates();
         annotatedCandidates.forEach(module -> CoreServer.getInstance(ModuleLoader.class).loadModule(module));
         // TODO : Post init event to modules
+    }
+
+    @NotNull
+    @Override
+    public ServerType getServerType() {
+        return ServerType.SPONGE;
     }
 }

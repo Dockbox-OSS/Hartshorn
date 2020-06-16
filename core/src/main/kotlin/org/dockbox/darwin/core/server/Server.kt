@@ -10,5 +10,10 @@ interface Server {
     fun getLastUpdate(): Date
     fun getAuthors(): Array<String>
     fun except(msg: String?, vararg e: Throwable?)
+    fun getServerType(): ServerType
+
+    enum class ServerType {
+        SPONGE, MAGMA, SPIGOT, PAPER, OTHER
+    }
 
 }
