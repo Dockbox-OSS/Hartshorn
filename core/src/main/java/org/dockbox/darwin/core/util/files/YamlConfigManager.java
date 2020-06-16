@@ -1,75 +1,118 @@
 package org.dockbox.darwin.core.util.files;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature;
+
+import org.dockbox.darwin.core.annotations.Module;
+import org.dockbox.darwin.core.server.CoreServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 
 public class YamlConfigManager implements ConfigManager {
 
+    private final ObjectMapper mapper;
+
+    public YamlConfigManager() {
+        YAMLFactory fact = new YAMLFactory();
+        fact.disable(Feature.WRITE_DOC_START_MARKER);
+        mapper = new ObjectMapper(fact);
+
+        mapper.findAndRegisterModules();
+        mapper.setVisibility(PropertyAccessor.ALL, Visibility.ANY);
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.disable(SerializationFeature.WRAP_ROOT_VALUE);
+        mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
+    }
+
     @NotNull
     @Override
     public Path getConfigDir(@NotNull Class<?> module) {
-        return null;
+        Module annotation = module.getAnnotation(Module.class);
+        if (annotation == null) throw new IllegalArgumentException("Requested module is not annotated as such");
+        return CoreServer.getInstance(FileUtils.class).getModuleConfigDir().resolve(annotation.id());
     }
 
     @NotNull
     @Override
     public Path getConfigDir(@NotNull Object module) {
-        return null;
+        if (!(module instanceof Class)) module = module.getClass();
+        return getConfigDir((Class<?>) module);
     }
 
     @NotNull
     @Override
     public File getConfigFile(@NotNull Class<?> module) {
-        return null;
+        Module annotation = module.getAnnotation(Module.class);
+        if (annotation == null) throw new IllegalArgumentException("Requested module is not annotated as such");
+        Path configPath = getConfigDir(module);
+        return CoreServer.getInstance(FileUtils.class).createFileIfNotExists(new File(configPath.toFile(), annotation.id() + ".yml"));
     }
 
     @NotNull
     @Override
     public File getConfigFile(@NotNull Object module) {
-        return null;
+        if (!(module instanceof Class)) module = module.getClass();
+        return getConfigFile((Class<?>) module);
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @NotNull
     @Override
     public Map<String, Object> getConfigContents(@NotNull Class<?> module) {
-        return null;
+        return getConfigContents(module, Map.class, new HashMap());
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @NotNull
     @Override
     public Map<String, Object> getConfigContents(@NotNull Object module) {
-        return null;
+        return getConfigContents(module, Map.class, new HashMap());
     }
 
     @NotNull
     @Override
     public <T> T getConfigContents(@NotNull Class<?> module, @NotNull Class<T> convertTo, T defaultValue) {
-        return null;
+        Module annotation = module.getAnnotation(Module.class);
+        if (annotation == null) throw new IllegalArgumentException("Requested module is not annotated as such");
+        try {
+            File cf = getConfigFile(module);
+            T res = mapper.readValue(cf, convertTo);
+            return res != null ? res : defaultValue;
+        } catch (IOException | IllegalArgumentException e) {
+            CoreServer.getServer().except("Failed to map config contents", e);
+        }
+        return defaultValue;
     }
 
     @NotNull
     @Override
     public <T> T getConfigContents(@NotNull Object module, @NotNull Class<T> convertTo, T defaultValue) {
-        return null;
-    }
-
-    @Override
-    public void writeToConfig(@NotNull Class<?> module, @NotNull Map<String, ?> data) {
-    }
-
-    @Override
-    public void writeToConfig(@NotNull Object module, @NotNull Map<String, ?> data) {
+        if (!(module instanceof Class)) module = module.getClass();
+        return getConfigContents((Class<?>) module, convertTo, defaultValue);
     }
 
     @Override
     public <T> void writeToConfig(@NotNull Class<?> module, T data) {
+        try {
+            File cf = getConfigFile(module);
+            mapper.writeValue(cf, data);
+        } catch (IOException e) {
+            CoreServer.getServer().except("Failed to write config contents", e);
+        }
     }
 
     @Override
     public <T> void writeToConfig(@NotNull Object module, T data) {
-
+        if (!(module instanceof Class)) module = module.getClass();
+        writeToConfig((Class<?>) module, data);
     }
 }

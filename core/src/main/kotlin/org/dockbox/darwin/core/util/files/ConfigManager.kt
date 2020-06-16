@@ -17,9 +17,6 @@ interface ConfigManager {
     fun <T> getConfigContents(module: Class<*>, convertTo: Class<T>, defaultValue: T): T
     fun <T> getConfigContents(module: Any, convertTo: Class<T>, defaultValue: T): T
 
-    fun writeToConfig(module: Class<*>, data: Map<String, Any>)
-    fun writeToConfig(module: Any, data: Map<String, Any>)
-
     fun <T> writeToConfig(module: Class<*>, data: T)
     fun <T> writeToConfig(module: Any, data: T)
 
