@@ -6,11 +6,11 @@ public class SimpleExceptionHelper implements ExceptionHelper {
 
     @Override
     public void printFriendly(@Nullable String message, @Nullable Throwable exception, @Nullable Boolean stacktrace) {
-
+        // TODO
     }
 
     @Override
     public void printMinimal(@Nullable String message, @Nullable Throwable exception, @Nullable Boolean stacktrace) {
-
+        // TODO
     }
 }
