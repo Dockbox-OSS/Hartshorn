@@ -7,6 +7,7 @@ import org.dockbox.darwin.core.objects.module.ModuleRegistration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SimpleModuleLoader implements ModuleLoader {
@@ -15,10 +16,10 @@ public class SimpleModuleLoader implements ModuleLoader {
 
     @NotNull
     @Override
-    public <I> I getModuleInstance(@NotNull Class<I> module) {
+    public <I> Optional<I> getModuleInstance(@NotNull Class<I> module) {
         Object potentialInstance = getRegistration(module).getInstance();
         if (potentialInstance.getClass().equals(module)) //noinspection unchecked
-            return (I) potentialInstance;
+            return Optional.of((I) potentialInstance);
         throw new NoModulePresentException(module.getCanonicalName());
     }
 
