@@ -216,17 +216,17 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         return getArgumentValue(type, arrayOf(permission), key)
     }
 
-    protected abstract fun getArgumentValue(type: String, permission: Array<String>?, key: String): A
-    abstract fun registerCommandNoArgs(command: String, permission: Array<String>?, runner: CommandRunnerFunction)
+    protected abstract fun getArgumentValue(type: String, permission: String?, key: String): A
+    abstract fun registerCommandNoArgs(command: String, permission: String?, runner: CommandRunnerFunction)
     protected abstract fun convertContext(ctx: C, sender: CommandSource, command: String?): CommandContext
-    abstract fun registerCommandArgsAndOrChild(command: String, permission: Array<String>?, runner: CommandRunnerFunction)
+    abstract fun registerCommandArgsAndOrChild(command: String, permission: String?, runner: CommandRunnerFunction)
 
     companion object {
-        protected val REGISTERED_COMMANDS: List<String> = ArrayList()
-        protected val argFinder: Pattern = Pattern.compile("((?:<.+?>)|(?:\\[.+?\\])|(?:-(?:(?:-\\w+)|\\w)(?: [^ -]+)?))") //each match is a flag or argument
-        protected val flag: Pattern = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?") //g1: name  (g2: value)
-        protected val argument: Pattern = Pattern.compile("([\\[<])(.+)[\\]>]") //g1: <[  g2: run argFinder, if nothing it's a value
-        protected val value: Pattern = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?") //g1: name  g2: if present type, other wise use g1
-        protected val subcommand: Pattern = Pattern.compile("[a-z]*")
+        public val RegisteredCommands: List<String> = ArrayList()
+        public val argFinder: Pattern = Pattern.compile("((?:<.+?>)|(?:\\[.+?\\])|(?:-(?:(?:-\\w+)|\\w)(?: [^ -]+)?))") //each match is a flag or argument
+        public val flag: Pattern = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?") //g1: name  (g2: value)
+        public val argument: Pattern = Pattern.compile("([\\[<])(.+)[\\]>]") //g1: <[  g2: run argFinder, if nothing it's a value
+        public val value: Pattern = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?") //g1: name  g2: if present type, other wise use g1
+        public val subcommand: Pattern = Pattern.compile("[a-z]*")
     }
 }
