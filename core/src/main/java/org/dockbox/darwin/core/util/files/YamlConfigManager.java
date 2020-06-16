@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature;
 
-import org.dockbox.darwin.core.annotations.Module;
 import org.dockbox.darwin.core.server.CoreServer;
+import org.dockbox.darwin.core.server.ServerReference;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-public class YamlConfigManager implements ConfigManager {
+public class YamlConfigManager extends ServerReference implements ConfigManager {
 
     private final ObjectMapper mapper;
 
@@ -36,9 +36,7 @@ public class YamlConfigManager implements ConfigManager {
     @NotNull
     @Override
     public Path getConfigDir(@NotNull Class<?> module) {
-        Module annotation = module.getAnnotation(Module.class);
-        if (annotation == null) throw new IllegalArgumentException("Requested module is not annotated as such");
-        return CoreServer.getInstance(FileUtils.class).getModuleConfigDir().resolve(annotation.id());
+        return getModuleAndCallback(module, (annotation) -> CoreServer.getInstance(FileUtils.class).getModuleConfigDir().resolve(annotation.id()));
     }
 
     @NotNull
@@ -51,10 +49,10 @@ public class YamlConfigManager implements ConfigManager {
     @NotNull
     @Override
     public File getConfigFile(@NotNull Class<?> module) {
-        Module annotation = module.getAnnotation(Module.class);
-        if (annotation == null) throw new IllegalArgumentException("Requested module is not annotated as such");
-        Path configPath = getConfigDir(module);
-        return CoreServer.getInstance(FileUtils.class).createFileIfNotExists(new File(configPath.toFile(), annotation.id() + ".yml"));
+        return getModuleAndCallback(module, (annotation) -> {
+            Path configPath = getConfigDir(module);
+            return CoreServer.getInstance(FileUtils.class).createFileIfNotExists(new File(configPath.toFile(), annotation.id() + ".yml"));
+        });
     }
 
     @NotNull
@@ -81,16 +79,16 @@ public class YamlConfigManager implements ConfigManager {
     @NotNull
     @Override
     public <T> T getConfigContents(@NotNull Class<?> module, @NotNull Class<T> convertTo, T defaultValue) {
-        Module annotation = module.getAnnotation(Module.class);
-        if (annotation == null) throw new IllegalArgumentException("Requested module is not annotated as such");
-        try {
-            File cf = getConfigFile(module);
-            T res = mapper.readValue(cf, convertTo);
-            return res != null ? res : defaultValue;
-        } catch (IOException | IllegalArgumentException e) {
-            CoreServer.getServer().except("Failed to map config contents", e);
-        }
-        return defaultValue;
+        return getModuleAndCallback(module, (annotation) -> {
+            try {
+                File cf = getConfigFile(module);
+                T res = mapper.readValue(cf, convertTo);
+                return res != null ? res : defaultValue;
+            } catch (IOException | IllegalArgumentException e) {
+                CoreServer.getServer().except("Failed to map config contents", e);
+            }
+            return defaultValue;
+        });
     }
 
     @NotNull
