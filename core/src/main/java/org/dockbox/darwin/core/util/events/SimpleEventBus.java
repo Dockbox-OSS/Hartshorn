@@ -3,6 +3,7 @@ package org.dockbox.darwin.core.util.events;
 import org.dockbox.darwin.core.annotations.Listener;
 import org.dockbox.darwin.core.objects.events.Event;
 import org.dockbox.darwin.core.server.CoreServer;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles.Lookup;
@@ -21,13 +22,13 @@ import java.util.TreeSet;
 
 @SuppressWarnings({"unchecked", "EqualsWithItself", "VolatileArrayField"})
 public class SimpleEventBus implements EventBus {
-    protected final Map<Object, Set<InvokeWrapper>> listenerToInvokers = new HashMap<>();
+    protected static final Map<Object, Set<InvokeWrapper>> listenerToInvokers = new HashMap<>();
 
-    protected final HandlerRegistry handlerRegistry = new HandlerRegistry();
+    protected static final HandlerRegistry handlerRegistry = new HandlerRegistry();
 
-    protected Lookup defaultLookup = AccessHelper.defaultLookup();
+    protected static Lookup defaultLookup = AccessHelper.defaultLookup();
 
-    public void subscribe(Object object, Lookup lookup) throws IllegalArgumentException, SecurityException {
+    public void subscribe(Object object, @NotNull Lookup lookup) throws IllegalArgumentException, SecurityException {
         if (!object.equals(object)) return;
         if (listenerToInvokers.containsKey(object)) {
             return;  // Already registered
