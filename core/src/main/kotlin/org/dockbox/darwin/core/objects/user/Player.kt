@@ -1,14 +1,11 @@
 package org.dockbox.darwin.core.objects.user
 
 import com.boydti.fawe.`object`.FawePlayer
-import org.dockbox.darwin.core.objects.targets.CommandSource
-import org.dockbox.darwin.core.objects.targets.Identifiable
-import org.dockbox.darwin.core.objects.targets.MessageReceiver
-import org.dockbox.darwin.core.objects.targets.PermissionHolder
+import org.dockbox.darwin.core.objects.targets.*
 import org.dockbox.darwin.core.text.Text
 import java.util.*
 
-abstract class Player : Identifiable(), MessageReceiver, CommandSource, PermissionHolder {
+abstract class Player(uniqueId: UUID, name: String) : Identifiable(uniqueId, name), MessageReceiver, CommandSource, PermissionHolder, Locatable {
 
     abstract fun isOnline(): Boolean
     abstract fun getFawePlayer(): Optional<FawePlayer<*>>
