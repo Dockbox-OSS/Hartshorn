@@ -67,7 +67,6 @@ public abstract class CoreServer implements Server {
         this.moduleLoader = injector.getInstance(ModuleLoader.class);
         this.moduleScanner = injector.getInstance(ModuleScanner.class);
 
-
         CoreServer.instance = this;
     }
 

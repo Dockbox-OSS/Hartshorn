@@ -8,7 +8,7 @@ interface Server {
     fun getLog(): Logger
     fun getVersion(): String
     fun getLastUpdate(): Date
-    fun getAuthors(): Array<String?>
+    fun getAuthors(): Array<String>
     fun except(msg: String?, vararg e: Throwable?)
 
 }
