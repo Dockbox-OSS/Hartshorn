@@ -4,9 +4,12 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import org.dockbox.darwin.core.util.exceptions.ExceptionHelper;
+import org.dockbox.darwin.core.util.inject.AbstractCommonInjector;
 import org.dockbox.darwin.core.util.inject.AbstractExceptionInjector;
 import org.dockbox.darwin.core.util.inject.AbstractModuleInjector;
 import org.dockbox.darwin.core.util.inject.AbstractUtilInjector;
+import org.dockbox.darwin.core.util.library.LibraryArtifact;
+import org.dockbox.darwin.core.util.library.LibraryLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -17,17 +20,20 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
-public abstract class CoreServer implements Server {
+public abstract class CoreServer<L> implements Server {
 
     private final Logger log = LoggerFactory.getLogger(CoreServer.class);
-    private final String version;
-    private final Date lastUpdate;
+    private String version;
+    private Date lastUpdate;
     private final String[] authors = {"GuusLieben"};
 
-    private static CoreServer instance;
+    private static CoreServer<?> instance;
 
     private Injector injector;
 
@@ -67,9 +73,13 @@ public abstract class CoreServer implements Server {
         this.version = tVer;
         this.lastUpdate = tLU;
 
+        //noinspection unchecked
+        this.injector.getInstance(LibraryLoader.class).configure(getLoader(), getAllArtifacts());
 
         CoreServer.instance = this;
     }
+
+    protected abstract L getLoader();
 
     public static <T> T getInstance(Class<T> type) {
         return instance.injector.getInstance(type);
@@ -116,4 +126,17 @@ public abstract class CoreServer implements Server {
     public static Server getServer() {
         return instance;
     }
+
+    private LibraryArtifact[] getAllArtifacts() {
+        List<LibraryArtifact> artifacts = new ArrayList<>(Arrays.asList(getArtifacts()));
+        artifacts.add(new LibraryArtifact("org.reflections", "reflections", "0.9.11"));
+        artifacts.add(new LibraryArtifact("com.fasterxml.jackson.core", "jackson-databind", "2.9.8"));
+        artifacts.add(new LibraryArtifact("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", "2.9.8"));
+        artifacts.add(new LibraryArtifact("com.fasterxml.jackson.datatype", "jackson-datatype-jsr310", "2.9.8"));
+        artifacts.add(new LibraryArtifact("org.apache.commons", "commons-collections4", "4.1"));
+        return artifacts.toArray(new LibraryArtifact[0]);
+    }
+
+    protected abstract LibraryArtifact[] getArtifacts();
+
 }

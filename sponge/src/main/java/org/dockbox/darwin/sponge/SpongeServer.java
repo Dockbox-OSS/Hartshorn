@@ -1,6 +1,11 @@
 package org.dockbox.darwin.sponge;
 
+import net.byteflux.libby.LibraryManager;
+
+import org.dockbox.darwin.core.events.server.ServerEvent.Init;
 import org.dockbox.darwin.core.server.CoreServer;
+import org.dockbox.darwin.core.util.events.EventBus;
+import org.dockbox.darwin.core.util.library.LibraryArtifact;
 import org.dockbox.darwin.core.util.module.ModuleLoader;
 import org.dockbox.darwin.core.util.module.ModuleScanner;
 import org.dockbox.darwin.sponge.util.inject.SpongeCommonInjector;
@@ -9,7 +14,6 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
-
 
 @Plugin(
         id = "darwinserver",
@@ -23,7 +27,7 @@ import org.spongepowered.api.plugin.Plugin;
                 @Dependency(id = "luckperms")
         }
 )
-public class SpongeServer extends CoreServer {
+public class SpongeServer extends CoreServer<LibraryManager> {
 
     public SpongeServer() {
         super(new SpongeCommonInjector());
@@ -43,5 +47,17 @@ public class SpongeServer extends CoreServer {
     @Override
     public ServerType getServerType() {
         return ServerType.SPONGE;
+    }
+
+    @Override
+    protected LibraryManager getLoader() {
+        // TODO : Confirm inject works for Sponge Library Manager (injecting Logger, Path, Plugin)
+        return getInstance(LibraryManager.class);
+    }
+
+    @Override
+    protected LibraryArtifact[] getArtifacts() {
+        // Define libraries to download, specifically targeting Sponge
+        return new LibraryArtifact[0];
     }
 }
