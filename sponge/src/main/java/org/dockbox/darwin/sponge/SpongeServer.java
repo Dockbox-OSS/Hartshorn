@@ -3,9 +3,7 @@ package org.dockbox.darwin.sponge;
 import org.dockbox.darwin.core.server.CoreServer;
 import org.dockbox.darwin.core.util.module.ModuleLoader;
 import org.dockbox.darwin.core.util.module.ModuleScanner;
-import org.dockbox.darwin.sponge.util.inject.SpongeExceptionInjector;
-import org.dockbox.darwin.sponge.util.inject.SpongeModuleInjector;
-import org.dockbox.darwin.sponge.util.inject.SpongeUtilInjector;
+import org.dockbox.darwin.sponge.util.inject.SpongeCommonInjector;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -28,7 +26,7 @@ import org.spongepowered.api.plugin.Plugin;
 public class SpongeServer extends CoreServer {
 
     public SpongeServer() {
-        super(new SpongeModuleInjector(), new SpongeExceptionInjector(), new SpongeUtilInjector());
+        super(new SpongeCommonInjector());
     }
 
     @Listener

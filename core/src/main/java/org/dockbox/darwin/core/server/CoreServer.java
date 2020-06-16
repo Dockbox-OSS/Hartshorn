@@ -31,12 +31,25 @@ public abstract class CoreServer implements Server {
 
     private Injector injector;
 
+    public CoreServer(AbstractCommonInjector injector) {
+        this.injector = Guice.createInjector(injector);
+        construct();
+    }
+
     public CoreServer(
             AbstractModuleInjector moduleInjector,
             AbstractExceptionInjector exceptionInjector,
             AbstractUtilInjector utilInjector
-            ) {
+    ) {
+        this.injector = Guice.createInjector();
+        if (moduleInjector != null) this.injector = this.injector.createChildInjector(moduleInjector);
+        if (exceptionInjector != null) this.injector = this.injector.createChildInjector(exceptionInjector);
+        if (utilInjector != null) this.injector = this.injector.createChildInjector(utilInjector);
 
+        construct();
+    }
+
+    protected void construct() {
         String tVer = "dev";
         Date tLU = Date.from(Instant.now());
 
@@ -54,10 +67,6 @@ public abstract class CoreServer implements Server {
         this.version = tVer;
         this.lastUpdate = tLU;
 
-        this.injector = Guice.createInjector();
-        if (moduleInjector != null) this.injector = this.injector.createChildInjector(moduleInjector);
-        if (exceptionInjector != null) this.injector = this.injector.createChildInjector(exceptionInjector);
-        if (utilInjector != null) this.injector = this.injector.createChildInjector(utilInjector);
 
         CoreServer.instance = this;
     }
