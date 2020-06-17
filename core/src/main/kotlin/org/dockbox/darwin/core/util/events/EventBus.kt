@@ -5,6 +5,7 @@ import java.lang.invoke.MethodHandles
 
 interface EventBus {
 
+    fun subscribe(`object`: Any)
     fun subscribe(`object`: Any, lookup: MethodHandles.Lookup)
     fun unsubscribe(`object`: Any)
     fun post(event: Event)
