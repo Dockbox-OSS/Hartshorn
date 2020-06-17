@@ -1,5 +1,6 @@
 package org.dockbox.darwin.core.objects.module
 
+import java.io.File
 import java.util.jar.JarEntry
 
-class ModuleJarCandidate(open var entry: JarEntry?) : ModuleCandidate
+class ModuleJarCandidate(var entry: JarEntry?, var sourceFile: File) : ModuleCandidate
