@@ -1,16 +1,28 @@
 package org.dockbox.darwin.core.util.module;
 
+import org.dockbox.darwin.core.annotations.Disabled;
 import org.dockbox.darwin.core.annotations.Module;
 import org.dockbox.darwin.core.exceptions.NoModulePresentException;
+import org.dockbox.darwin.core.objects.module.ModuleCandidate;
+import org.dockbox.darwin.core.objects.module.ModuleClassCandidate;
 import org.dockbox.darwin.core.objects.module.ModuleInformation;
+import org.dockbox.darwin.core.objects.module.ModuleJarCandidate;
 import org.dockbox.darwin.core.objects.module.ModuleRegistration;
+import org.dockbox.darwin.core.objects.module.ModuleStatus;
+import org.dockbox.darwin.core.server.CoreServer;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.jar.JarEntry;
 
 public class SimpleModuleLoader implements ModuleLoader {
+
 
     private final List<ModuleRegistration> registrations = new CopyOnWriteArrayList<>();
 
@@ -44,6 +56,25 @@ public class SimpleModuleLoader implements ModuleLoader {
         } else {
             throw new IllegalArgumentException("Provided candidate is not of a known type");
         }
+
+        switch (registerModule(clazz, source, candidate)) {
+            case FAILED:
+                break;
+            case LOADED:
+                break;
+            case ERRORED:
+                break;
+            case DEPRECATED_LOADED:
+                break;
+            case DEPRECATED_FAILED:
+                break;
+            case DEPRECATED_ERRORED:
+                break;
+            case DISABLED: // Done
+                break;
+        }
+    }
+
     private Class<?> injectEntry(JarEntry entry, File sourceFile) {
         Class<?> clazz = null;
         try {
@@ -74,6 +105,27 @@ public class SimpleModuleLoader implements ModuleLoader {
 
         return clazz;
     }
+
+    private ModuleStatus registerModule(@NotNull Class<?> module, @NotNull String source, @NotNull ModuleCandidate candidate) {
+        Module moduleAnnotation = module.getAnnotation(Module.class);
+
+        boolean isDisabled = module.isAnnotationPresent(Disabled.class);
+        if (isDisabled) {
+            ModuleInformation information = new ModuleInformation(moduleAnnotation, source, ModuleStatus.DISABLED);
+            registrations.add(new ModuleRegistration(null, information, candidate));
+            return ModuleStatus.DISABLED;
+        }
+
+        boolean isDeprecated = module.isAnnotationPresent(Deprecated.class);
+        // TODO : Proceed with checks for;
+        // Unavailable ctor (FAILED)
+        // Instantiation error for ctor (ERRORED)
+        // Missing Module annotation (FAILED)
+        // Missing required dependency (FAILED)
+        // Missing NMS access in current platform (FAILED)
+        // ID in incorrect format (FAILED)
+        // Return combined with Deprecated status
+        return ModuleStatus.FAILED;
     }
 
     @NotNull
