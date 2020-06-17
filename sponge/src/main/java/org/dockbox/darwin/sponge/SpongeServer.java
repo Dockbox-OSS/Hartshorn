@@ -35,7 +35,8 @@ public class SpongeServer extends CoreServer<LibraryManager> {
 
     @Listener
     public void onServerInit(GameInitializationEvent event) {
-        // TODO : Register module instances as listeners
+        Sponge.getEventManager().registerListeners(this, new SpongeEventListener());
+
         Iterable<Class<?>> annotatedCandidates = CoreServer.getInstance(ModuleScanner.class)
                 .collectClassCandidates("org.dockbox.darwin.integrated")
                 .getAnnotatedCandidates();
