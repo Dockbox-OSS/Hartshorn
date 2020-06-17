@@ -2,14 +2,17 @@ package org.dockbox.darwin.sponge;
 
 import net.byteflux.libby.LibraryManager;
 
+import org.dockbox.darwin.core.command.CommandBus;
 import org.dockbox.darwin.core.events.server.ServerEvent.Init;
 import org.dockbox.darwin.core.server.CoreServer;
 import org.dockbox.darwin.core.util.events.EventBus;
 import org.dockbox.darwin.core.util.library.LibraryArtifact;
 import org.dockbox.darwin.core.util.module.ModuleLoader;
 import org.dockbox.darwin.core.util.module.ModuleScanner;
+import org.dockbox.darwin.sponge.listeners.SpongeEventListener;
 import org.dockbox.darwin.sponge.util.inject.SpongeCommonInjector;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.plugin.Dependency;
@@ -40,7 +43,18 @@ public class SpongeServer extends CoreServer<LibraryManager> {
         Iterable<Class<?>> annotatedCandidates = CoreServer.getInstance(ModuleScanner.class)
                 .collectClassCandidates("org.dockbox.darwin.integrated")
                 .getAnnotatedCandidates();
-        annotatedCandidates.forEach(module -> CoreServer.getInstance(ModuleLoader.class).loadModule(module));
+        EventBus eb = getInstance(EventBus.class);
+        CommandBus cb = getInstance(CommandBus.class);
+
+        annotatedCandidates.forEach(module -> {
+            ModuleLoader loader = getInstance(ModuleLoader.class);
+            loader.loadCandidate(module);
+            loader.getModuleInstance(module).ifPresent(instance -> {
+                eb.subscribe(instance);
+                cb.register(instance);
+            });
+        });
+
         getInstance(EventBus.class).post(new Init());
     }
 
