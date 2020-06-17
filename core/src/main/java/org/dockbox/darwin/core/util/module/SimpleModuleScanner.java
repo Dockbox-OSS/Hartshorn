@@ -34,7 +34,7 @@ public class SimpleModuleScanner implements ModuleScanner {
                         Enumeration<JarEntry> jarEntries = new JarFile(f).entries();
                         while (jarEntries.hasMoreElements()) {
                             JarEntry entry = jarEntries.nextElement();
-                            if (entry != null) jarCandidates.add(new ModuleJarCandidate(entry));
+                            if (entry != null) jarCandidates.add(new ModuleJarCandidate(entry, f));
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
