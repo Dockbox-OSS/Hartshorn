@@ -24,8 +24,56 @@ public class SimpleModuleLoader implements ModuleLoader {
     }
 
     @Override
-    public void loadModule(@NotNull Class<?> module) {
-        // TODO
+    public void loadCandidate(@NotNull ModuleCandidate candidate) {
+        String source;
+        Class<?> clazz;
+        if (candidate instanceof ModuleClassCandidate) {
+            source = "Integrated";
+            clazz = ((ModuleClassCandidate) candidate).getClazz();
+        } else if (candidate instanceof ModuleJarCandidate) {
+            File sourceFile = ((ModuleJarCandidate) candidate).getSourceFile();
+            source = sourceFile.getName();
+
+            JarEntry entry = ((ModuleJarCandidate) candidate).getEntry();
+            // Could also be a resource file, those will be ignored
+            if (entry.getName().endsWith(".class")) {
+                clazz = injectEntry(entry, sourceFile);
+                if (clazz == null) return;
+            }
+            else return;
+        } else {
+            throw new IllegalArgumentException("Provided candidate is not of a known type");
+        }
+    private Class<?> injectEntry(JarEntry entry, File sourceFile) {
+        Class<?> clazz = null;
+        try {
+            URLClassLoader ucl = URLClassLoader.newInstance(
+                    new URL[]{sourceFile.toURI().toURL()},
+                    this.getClass().getClassLoader());
+            String className = entry.getName().replace("/", ".").replace(".class", "");
+
+            try {
+                clazz = ucl.loadClass(className);
+            } catch (ClassNotFoundException e) {
+                clazz = Class.forName(className, true, ucl);
+            }
+
+            // Ensure the class is a module
+            if (!clazz.isAnnotationPresent(Module.class)) return null;
+
+            // Ensure the class has an empty constructor (will throw an exception if not)
+            clazz.newInstance();
+
+            // Ensure the class has a dedicated package, if not it may cause issues with other sources
+            if (clazz.getPackage() == null)
+                throw new IllegalStateException("Found class without dedicated package, this is not permitted!");
+
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | MalformedURLException e) {
+            CoreServer.getServer().except("Failed to load module from source '" + sourceFile.getName() + "'", e);
+        }
+
+        return clazz;
+    }
     }
 
     @NotNull
