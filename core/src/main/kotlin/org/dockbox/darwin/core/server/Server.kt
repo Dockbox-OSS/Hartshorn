@@ -20,4 +20,12 @@ interface Server {
         OTHER(true, "Not (yet) supported", "Not (yet) supported")
     }
 
+    companion object {
+        private lateinit var instance: Server
+
+        fun getInstance(): Server {
+            return instance
+        }
+    }
+
 }

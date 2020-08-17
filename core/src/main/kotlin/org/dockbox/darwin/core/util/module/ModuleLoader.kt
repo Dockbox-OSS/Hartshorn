@@ -24,5 +24,6 @@ interface ModuleLoader {
     fun getRegistration(module: String): ModuleRegistration
 
     fun loadCandidate(candidate: ModuleCandidate)
+    fun loadCandidate(clazz: Class<ModuleCandidate>)
 
 }
