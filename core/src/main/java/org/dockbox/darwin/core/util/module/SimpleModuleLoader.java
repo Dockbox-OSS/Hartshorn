@@ -13,9 +13,11 @@ import org.dockbox.darwin.core.server.CoreServer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -33,6 +35,11 @@ public class SimpleModuleLoader implements ModuleLoader {
         if (potentialInstance.getClass().equals(module)) //noinspection unchecked
             return Optional.of((I) potentialInstance);
         throw new NoModulePresentException(module.getCanonicalName());
+    }
+
+    @Override
+    public void loadCandidate(@NotNull Class<ModuleCandidate> clazz) {
+
     }
 
     @Override
@@ -106,7 +113,7 @@ public class SimpleModuleLoader implements ModuleLoader {
         return clazz;
     }
 
-    private ModuleStatus registerModule(@NotNull Class<?> module, @NotNull String source, @NotNull ModuleCandidate candidate) {
+    private <T> ModuleStatus registerModule(@NotNull Class<T> module, @NotNull String source, @NotNull ModuleCandidate candidate) {
         Module moduleAnnotation = module.getAnnotation(Module.class);
 
         boolean isDisabled = module.isAnnotationPresent(Disabled.class);
@@ -117,11 +124,48 @@ public class SimpleModuleLoader implements ModuleLoader {
         }
 
         boolean isDeprecated = module.isAnnotationPresent(Deprecated.class);
+        boolean isModuleAnnotated = moduleAnnotation != null;
+
+        if (!isModuleAnnotated) {
+            CoreServer.log().error("Module candidate not annotated as such (" + module.getSimpleName() + ")");
+            return isDeprecated ? ModuleStatus.DEPRECATED_FAILED : ModuleStatus.FAILED;
+        }
+
+
+        boolean dependenciesPresent = Arrays.stream(moduleAnnotation.dependencies()).allMatch(dep -> {
+            try {
+                Class.forName(dep);
+                return true;
+            } catch (ClassNotFoundException e) {
+                boolean packagePresent = Package.getPackage(dep) != null;
+                if (packagePresent) return true;
+                CoreServer.log().warn("Missing dependency '" + dep + "' for module candidate " + module.getSimpleName());
+                return false;
+            }
+        });
+        if (!dependenciesPresent) {
+            CoreServer.log().error("One or more dependencies were missing for candidate " + module.getSimpleName());
+            return isDeprecated ? ModuleStatus.DEPRECATED_FAILED : ModuleStatus.FAILED;
+        }
+
+
+        boolean hasCtors = module.getConstructors().length > 0;
+        if (!hasCtors) {
+            CoreServer.log().error("No constructors present for module candidate " + module.getSimpleName());
+            return isDeprecated ? ModuleStatus.DEPRECATED_FAILED : ModuleStatus.FAILED;
+        }
+
+        Constructor<T> ctor = null;
+        try {
+            ctor = module.getConstructor();
+        } catch (ReflectiveOperationException e) {
+            CoreServer.log().error("Failed to get constructor for module candidate " + module.getSimpleName());
+            return isDeprecated ? ModuleStatus.DEPRECATED_ERRORED : ModuleStatus.ERRORED;
+        }
+
+
+
         // TODO : Proceed with checks for;
-        // Unavailable ctor (FAILED)
-        // Instantiation error for ctor (ERRORED)
-        // Missing Module annotation (FAILED)
-        // Missing required dependency (FAILED)
         // Missing NMS access in current platform (FAILED)
         // ID in incorrect format (FAILED)
         // Return combined with Deprecated status

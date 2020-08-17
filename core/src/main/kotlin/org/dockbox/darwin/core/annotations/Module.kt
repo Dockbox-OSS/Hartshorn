@@ -8,5 +8,6 @@ annotation class Module (
         val version: String = "unknown",
         val description: String,
         val url: String = "none",
-        val authors: Array<String>
+        val authors: Array<String>,
+        val dependencies: Array<String>
         )
