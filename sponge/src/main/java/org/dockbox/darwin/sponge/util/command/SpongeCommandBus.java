@@ -15,6 +15,7 @@ import org.dockbox.darwin.core.objects.module.ModuleInformation;
 import org.dockbox.darwin.core.objects.tuple.Tuple;
 import org.dockbox.darwin.core.objects.tuple.Vector3D;
 import org.dockbox.darwin.core.server.CoreServer;
+import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.util.module.ModuleLoader;
 import org.dockbox.darwin.sponge.objects.location.SpongeLocation;
 import org.dockbox.darwin.sponge.objects.location.SpongePlayer;
@@ -79,8 +80,16 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     @Override
     public void registerCommandArgsAndOrChild(@NotNull String command, Permission[] permissions, @NotNull CommandRunnerFunction runner) {
         CommandSpec.Builder spec = CommandSpec.builder();
-        if (permissions != null) spec.permission(permissions);
-        else spec.permission("admin.bypass"); // TODO
+        // Sponge does not allow for multiple permissions for one command
+        if (permissions != null) {
+            spec.permission(permissions[0].getValue());
+            Server.Companion.getInstance().getLog().warn(
+                    String.format("Registering command '%s' with singular permission (%s)", command,
+                            permissions[0].getValue()));
+        }
+        else {
+            spec.permission(Permission.GLOBAL_BYPASS.getValue());
+        }
 
         String[] parts = command.split(" ");
         String part = parts.length > 1 ? parts[1] : null;
