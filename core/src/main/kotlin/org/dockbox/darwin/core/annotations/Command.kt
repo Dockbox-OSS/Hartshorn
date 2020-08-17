@@ -1,5 +1,7 @@
 package org.dockbox.darwin.core.annotations
 
+import org.dockbox.darwin.core.i18n.Permission
+
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 annotation class Command (
@@ -11,5 +13,5 @@ annotation class Command (
         val valueFlags: String = "",
         val anyFlags: Boolean = false,
         val context: String,
-        val permissions: Array<String> = []
+        val permissions: Array<Permission> = []
 )

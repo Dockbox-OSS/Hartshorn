@@ -8,6 +8,8 @@ import org.dockbox.darwin.core.command.registry.AbstractCommandRegistration
 import org.dockbox.darwin.core.command.registry.ClassCommandRegistration
 import org.dockbox.darwin.core.command.registry.MethodCommandRegistration
 import org.dockbox.darwin.core.i18n.I18N
+import org.dockbox.darwin.core.i18n.I18NRegistry
+import org.dockbox.darwin.core.i18n.Permission
 import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
 import org.dockbox.darwin.core.objects.targets.CommandSource
@@ -108,15 +110,15 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     }
 
     override fun createClassRegistration(clazz: Class<*>): ClassCommandRegistration {
-        val information: Triple<Command, Array<String>, Array<String>> = getCommandInformation(clazz)
+        val information: Triple<Command, Array<Permission>, Array<String>> = getCommandInformation(clazz)
         val methods: Array<Method> = clazz.declaredMethods
         val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(Arrays.stream(methods).filter { it.isAnnotationPresent(Command::class.java) }.collect(Collectors.toList()))
         return ClassCommandRegistration(information.third[0], information.third, information.second, information.first, clazz, registrations)
     }
 
-    private fun getCommandInformation(element: AnnotatedElement): Triple<Command, Array<String>, Array<String>> {
+    private fun getCommandInformation(element: AnnotatedElement): Triple<Command, Array<Permission>, Array<String>> {
         val command: Command = element.getAnnotation(Command::class.java)
-        var permission: Array<String> = arrayOf("Permissions.ADMIN_BYPASS") // TODO : Common storage
+        var permission: Array<Permission> = arrayOf(Permission.GLOBAL_BYPASS) // TODO : Common storage
         if (command.permissions.isNotEmpty()) permission = command.permissions
         return Triple(command, permission, command.aliases)
     }
@@ -151,16 +153,16 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             allowed
         }.map { method: Method ->
             method.isAccessible = true
-            val information: Triple<Command, Array<String>, Array<String>> = getCommandInformation(method)
+            val information: Triple<Command, Array<Permission>, Array<String>> = getCommandInformation(method)
             MethodCommandRegistration(information.third[0], information.third, information.first, method, information.second)
         }.toArray { size -> arrayOfNulls<MethodCommandRegistration>(size) }
     }
 
     private operator fun invoke(method: Method, sender: CommandSource, ctx: CommandContext, registration: AbstractCommandRegistration): String? {
         return try {
-            val c: Class<*> = method.getDeclaringClass()
+            val c: Class<*> = method.declaringClass
             val finalArgs: MutableList<Any> = ArrayList()
-            for (parameterType in method.getParameterTypes()) {
+            for (parameterType in method.parameterTypes) {
                 if (parameterType == CommandSource::class.java || CommandSource::class.java.isAssignableFrom(parameterType)) finalArgs.add(sender) else if (parameterType == CommandContext::class.java || CommandContext::class.java.isAssignableFrom(parameterType)) finalArgs.add(ctx) else throw IllegalStateException("Method requested parameter type '" + parameterType.toGenericString() + "' which is not provided")
             }
             val o: Any
@@ -198,7 +200,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         }
     }
 
-    override fun registerCommand(command: String, permissions: Array<String>?, runner: CommandRunnerFunction) {
+    override fun registerCommand(command: String, permissions: Array<Permission>?, runner: CommandRunnerFunction) {
         if (command.indexOf(' ') < 0 && !command.startsWith("*")) registerCommandNoArgs(command, permissions, runner)
         else registerCommandArgsAndOrChild(command, permissions, runner)
     }
@@ -213,20 +215,22 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         type = vm.group(2)
         permission = vm.group(3)
         if (type == null) type = key
-        return getArgumentValue(type, arrayOf(permission), key)
+
+
+        return getArgumentValue(type, arrayOf(Permission.of(permission)), key)
     }
 
-    protected abstract fun getArgumentValue(type: String, permission: String?, key: String): A
-    abstract fun registerCommandNoArgs(command: String, permission: String?, runner: CommandRunnerFunction)
+    protected abstract fun getArgumentValue(type: String, permissions: Array<I18NRegistry>?, key: String): A
+    abstract fun registerCommandNoArgs(command: String, permissions: Array<Permission>?, runner: CommandRunnerFunction)
     protected abstract fun convertContext(ctx: C, sender: CommandSource, command: String?): CommandContext
-    abstract fun registerCommandArgsAndOrChild(command: String, permission: String?, runner: CommandRunnerFunction)
+    abstract fun registerCommandArgsAndOrChild(command: String, permissions: Array<Permission>?, runner: CommandRunnerFunction)
 
     companion object {
-        public val RegisteredCommands: List<String> = ArrayList()
-        public val argFinder: Pattern = Pattern.compile("((?:<.+?>)|(?:\\[.+?\\])|(?:-(?:(?:-\\w+)|\\w)(?: [^ -]+)?))") //each match is a flag or argument
-        public val flag: Pattern = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?") //g1: name  (g2: value)
-        public val argument: Pattern = Pattern.compile("([\\[<])(.+)[\\]>]") //g1: <[  g2: run argFinder, if nothing it's a value
-        public val value: Pattern = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?") //g1: name  g2: if present type, other wise use g1
-        public val subcommand: Pattern = Pattern.compile("[a-z]*")
+        val RegisteredCommands: List<String> = ArrayList()
+        val argFinder: Pattern = Pattern.compile("((?:<.+?>)|(?:\\[.+?\\])|(?:-(?:(?:-\\w+)|\\w)(?: [^ -]+)?))") //each match is a flag or argument
+        val flag: Pattern = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?") //g1: name  (g2: value)
+        val argument: Pattern = Pattern.compile("([\\[<])(.+)[\\]>]") //g1: <[  g2: run argFinder, if nothing it's a value
+        val value: Pattern = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?") //g1: name  g2: if present type, other wise use g1
+        val subcommand: Pattern = Pattern.compile("[a-z]*")
     }
 }

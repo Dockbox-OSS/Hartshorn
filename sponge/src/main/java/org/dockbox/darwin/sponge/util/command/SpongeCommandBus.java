@@ -9,6 +9,8 @@ import org.dockbox.darwin.core.command.AbstractArgumentValue;
 import org.dockbox.darwin.core.command.CommandRunnerFunction;
 import org.dockbox.darwin.core.command.SimpleCommandBus;
 import org.dockbox.darwin.core.command.context.CommandValue;
+import org.dockbox.darwin.core.i18n.I18NRegistry;
+import org.dockbox.darwin.core.i18n.Permission;
 import org.dockbox.darwin.core.objects.module.ModuleInformation;
 import org.dockbox.darwin.core.objects.tuple.Tuple;
 import org.dockbox.darwin.core.objects.tuple.Vector3D;
@@ -61,7 +63,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     private static final Map<String, List<Tuple<String, CommandSpec>>> childsPerAlias = new HashMap<>();
 
     @Override
-    protected SpongeArgumentTypeValue getArgumentValue(@NotNull String type, String permission, @NotNull String key) {
+    protected SpongeArgumentTypeValue getArgumentValue(@NotNull String type, I18NRegistry[] permission, @NotNull String key) {
         try {
             return new SpongeArgumentTypeValue(type, permission, key);
         } catch (IllegalArgumentException e) {
@@ -70,14 +72,14 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     @Override
-    public void registerCommandNoArgs(@NotNull String command, String permission, @NotNull CommandRunnerFunction runner) {
-        Sponge.getCommandManager().register(CoreServer.getServer(), CommandSpec.builder().permission(permission).executor(buildExecutor(runner, command)).build(), command);
+    public void registerCommandNoArgs(@NotNull String command, Permission[] permissions, @NotNull CommandRunnerFunction runner) {
+        Sponge.getCommandManager().register(CoreServer.getServer(), CommandSpec.builder().permission(permissions).executor(buildExecutor(runner, command)).build(), command);
     }
 
     @Override
-    public void registerCommandArgsAndOrChild(@NotNull String command, String permission, @NotNull CommandRunnerFunction runner) {
+    public void registerCommandArgsAndOrChild(@NotNull String command, Permission[] permissions, @NotNull CommandRunnerFunction runner) {
         CommandSpec.Builder spec = CommandSpec.builder();
-        if (permission != null) spec.permission(permission);
+        if (permissions != null) spec.permission(permissions);
         else spec.permission("admin.bypass"); // TODO
 
         String[] parts = command.split(" ");
@@ -167,7 +169,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
     @NotNull
     @Override
-    protected org.dockbox.darwin.core.command.context.CommandContext convertContext(CommandContext ctx, org.dockbox.darwin.core.objects.targets.@NotNull CommandSource sender, String command) {
+    protected org.dockbox.darwin.core.command.context.CommandContext convertContext(CommandContext ctx, @NotNull CommandSource sender, String command) {
         Multimap<String, Object> parsedArgs;
         try {
             Field parsedArgsF = ctx.getClass().getDeclaredField("parsedArgs");
