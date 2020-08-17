@@ -19,13 +19,14 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.jar.JarEntry;
 
 public class SimpleModuleLoader implements ModuleLoader {
 
-
+    private final String idPattern = "([a-z]|[0-9]|_)";
     private final List<ModuleRegistration> registrations = new CopyOnWriteArrayList<>();
 
     @NotNull
@@ -163,13 +164,25 @@ public class SimpleModuleLoader implements ModuleLoader {
             return isDeprecated ? ModuleStatus.DEPRECATED_ERRORED : ModuleStatus.ERRORED;
         }
 
+        if (moduleAnnotation.requiresNMS() && !CoreServer.getServer().getServerType().getHasNMSAccess()) {
+            CoreServer.log().error("Module candidate requires NMS access but was not provided by current platform (" + module.getSimpleName() + ")");
+            return isDeprecated ? ModuleStatus.DEPRECATED_FAILED : ModuleStatus.FAILED;
+        }
 
 
-        // TODO : Proceed with checks for;
-        // Missing NMS access in current platform (FAILED)
-        // ID in incorrect format (FAILED)
-        // Return combined with Deprecated status
-        return ModuleStatus.FAILED;
+        if (!moduleAnnotation.id().matches(idPattern)) {
+            String lower = moduleAnnotation.id().toLowerCase();
+            if (!lower.matches(idPattern)) {
+                CoreServer.log().warn("Module registered with uppercase ID '" + moduleAnnotation.id() + "', converting to '" + lower + "'");
+            } else {
+                CoreServer.log().error("Module candidate registered with incorrect ID format '" + moduleAnnotation.id() + "' (" + module.getSimpleName() + ")");
+                return isDeprecated ? ModuleStatus.DEPRECATED_FAILED : ModuleStatus.FAILED;
+            }
+        }
+
+        // TODO : Create instance with prepared ctor
+
+        return isDeprecated ? ModuleStatus.DEPRECATED_LOADED : ModuleStatus.LOADED;
     }
 
     @NotNull
@@ -217,7 +230,7 @@ public class SimpleModuleLoader implements ModuleLoader {
     @NotNull
     @Override
     public ModuleRegistration getRegistration(@NotNull Class<?> module) {
-        return registrations.stream().filter(registration -> registration.getInstance().getClass().equals(module))
+        return registrations.stream().filter(registration -> Objects.requireNonNull(registration.getInstance()).getClass().equals(module))
                 .findFirst().orElseThrow(() -> new NoModulePresentException(module.getCanonicalName()));
     }
 
