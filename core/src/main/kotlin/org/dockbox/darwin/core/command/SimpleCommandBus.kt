@@ -68,7 +68,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                 }
     }
 
-    override fun registerClassCommand(clazz: Class<*>, obj: Any) {
+    override fun registerClassCommand(clazz: Class<*>, instance: Any) {
         val registration: ClassCommandRegistration = createClassRegistration(clazz)
         Arrays.stream(registration.aliases).forEach { alias ->
             if (obj !is Class<*>) registration.sourceInstance = obj

@@ -167,49 +167,6 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         }
     }
 
-    @NotNull
-    @Override
-    protected org.dockbox.darwin.core.command.context.CommandContext convertContext(CommandContext ctx, @NotNull CommandSource sender, String command) {
-        Multimap<String, Object> parsedArgs;
-        try {
-            Field parsedArgsF = ctx.getClass().getDeclaredField("parsedArgs");
-            if (!parsedArgsF.isAccessible()) parsedArgsF.setAccessible(true);
-            parsedArgs = (Multimap<String, Object>) parsedArgsF.get(ctx);
-        } catch (IllegalAccessException | ClassCastException | NoSuchFieldException e) {
-            CoreServer.getServer().except("Could not load parsed arguments from Sponge command context", e);
-            return null;
-        }
-
-        List<CommandValue.Argument<?>> arguments = new ArrayList<>();
-        List<CommandValue.Flag<?>> flags = new ArrayList<>();
-
-        parsedArgs.asMap().forEach((s, o) -> o.forEach(obj -> {
-            if (Pattern.compile("-(-?" + s + ")").matcher(command).find())
-                flags.add(new CommandValue.Flag<>(getValue(obj), s));
-            else arguments.add(new CommandValue.Argument<>(getValue(obj), s));
-        }));
-
-        org.dockbox.darwin.core.command.context.CommandContext darwinCtx;
-        if (sender instanceof org.dockbox.darwin.core.objects.user.Player) {
-            org.dockbox.darwin.core.objects.location.Location loc = ((org.dockbox.darwin.core.objects.user.Player) sender).getLocation();
-            org.dockbox.darwin.core.objects.location.World world = ((org.dockbox.darwin.core.objects.user.Player) sender).getLocation().getWorld();
-            darwinCtx = new org.dockbox.darwin.core.command.context.CommandContext(
-                    arguments.toArray(new CommandValue.Argument<?>[0]),
-                    flags.toArray(new CommandValue.Flag<?>[0]),
-                    sender, loc, world,
-                    new String[0]
-            );
-        } else {
-            darwinCtx = new org.dockbox.darwin.core.command.context.CommandContext(
-                    arguments.toArray(new CommandValue.Argument<?>[0]),
-                    flags.toArray(new CommandValue.Flag<?>[0]),
-                    sender, null, null,
-                    new String[0]
-            );
-        }
-        return darwinCtx;
-    }
-
     private CommandElement[] parseArguments(String argString) {
         List<CommandElement> elements = new LinkedList<>();
         CommandFlags.Builder cflags = null;
@@ -293,6 +250,51 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             }
             return CommandResult.success();
         };
+    }
+
+    @NotNull
+    @Override
+    protected org.dockbox.darwin.core.command.context.CommandContext convertContext(CommandContext ctx,
+            @NotNull org.dockbox.darwin.core.objects.targets.CommandSource sender,
+            @org.jetbrains.annotations.Nullable String command) {
+        Multimap<String, Object> parsedArgs;
+        try {
+            Field parsedArgsF = ctx.getClass().getDeclaredField("parsedArgs");
+            if (!parsedArgsF.isAccessible()) parsedArgsF.setAccessible(true);
+            parsedArgs = (Multimap<String, Object>) parsedArgsF.get(ctx);
+        } catch (IllegalAccessException | ClassCastException | NoSuchFieldException e) {
+            CoreServer.getServer().except("Could not load parsed arguments from Sponge command context", e);
+            return null;
+        }
+
+        List<CommandValue.Argument<?>> arguments = new ArrayList<>();
+        List<CommandValue.Flag<?>> flags = new ArrayList<>();
+
+        parsedArgs.asMap().forEach((s, o) -> o.forEach(obj -> {
+            if (Pattern.compile("-(-?" + s + ")").matcher(command).find())
+                flags.add(new CommandValue.Flag<>(getValue(obj), s));
+            else arguments.add(new CommandValue.Argument<>(getValue(obj), s));
+        }));
+
+        org.dockbox.darwin.core.command.context.CommandContext darwinCtx;
+        if (sender instanceof org.dockbox.darwin.core.objects.user.Player) {
+            org.dockbox.darwin.core.objects.location.Location loc = ((org.dockbox.darwin.core.objects.user.Player) sender).getLocation();
+            org.dockbox.darwin.core.objects.location.World world = ((org.dockbox.darwin.core.objects.user.Player) sender).getLocation().getWorld();
+            darwinCtx = new org.dockbox.darwin.core.command.context.CommandContext(
+                    arguments.toArray(new CommandValue.Argument<?>[0]),
+                    flags.toArray(new CommandValue.Flag<?>[0]),
+                    sender, loc, world,
+                    new String[0]
+            );
+        } else {
+            darwinCtx = new org.dockbox.darwin.core.command.context.CommandContext(
+                    arguments.toArray(new CommandValue.Argument<?>[0]),
+                    flags.toArray(new CommandValue.Flag<?>[0]),
+                    sender, null, null,
+                    new String[0]
+            );
+        }
+        return darwinCtx;
     }
 
     public static class FaweArgument extends CommandElement {
