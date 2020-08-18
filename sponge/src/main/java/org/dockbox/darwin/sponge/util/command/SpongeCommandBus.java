@@ -106,7 +106,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             else spec.executor(buildExecutor(runner, command));
 
             String alias = command.substring(0, command.indexOf(' '));
-            if (part.equals("")) part = "@m";
+            if (part.isEmpty()) part = "@m";
             List<Tuple<String, CommandSpec>> aliases = childsPerAlias.getOrDefault(alias, new ArrayList<>());
             aliases.add(new Tuple<>(part, spec.build()));
             childsPerAlias.put(alias, aliases);
@@ -118,7 +118,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(registeredCmd)) {
                 List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, new ArrayList<>());
                 childs.forEach(child -> {
-                    if (child.getFirst().equals("@m")) {
+                    if ("@m".equals(child.getFirst())) {
                         spec.executor(child.getSecond().getExecutor());
                     } else {
                         spec.child(child.getSecond(), child.getFirst());
@@ -248,14 +248,13 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             else if (src instanceof ConsoleSource) sender = SpongeConsole.instance;
             else sender = null;
 
+            assert sender != null : "Command sender is not a console or a player, did a plugin call me?";
             org.dockbox.darwin.core.command.context.CommandContext ctx = convertContext(args, sender, command);
 
             if (src instanceof Player) {
                 runner.run(sender, ctx);
-            } else if (src instanceof ConsoleSource) {
-                runner.run(SpongeConsole.instance, ctx);
             } else {
-                src.sendMessage(Text.of(TextColors.RED, "Could not determine if you are a player or console, what are you?"));
+                runner.run(SpongeConsole.instance, ctx);
             }
             return CommandResult.success();
         };
@@ -273,12 +272,13 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             parsedArgs = (Multimap<String, Object>) parsedArgsF.get(ctx);
         } catch (IllegalAccessException | ClassCastException | NoSuchFieldException e) {
             CoreServer.getServer().except("Could not load parsed arguments from Sponge command context", e);
-            return null;
+            return org.dockbox.darwin.core.command.context.CommandContext.Companion.getEMPTY();
         }
 
         List<CommandValue.Argument<?>> arguments = new ArrayList<>();
         List<CommandValue.Flag<?>> flags = new ArrayList<>();
 
+        assert command != null : "Context carrier command was null";
         parsedArgs.asMap().forEach((s, o) -> o.forEach(obj -> {
             if (Pattern.compile("-(-?" + s + ")").matcher(command).find())
                 flags.add(new CommandValue.Flag<>(getValue(obj), s));
