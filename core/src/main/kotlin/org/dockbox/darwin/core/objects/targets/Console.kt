@@ -12,5 +12,4 @@ abstract class Console : CommandSource, PermissionHolder {
 
     override fun setPermissions(vararg permissions: String) = Unit
 
-
 }

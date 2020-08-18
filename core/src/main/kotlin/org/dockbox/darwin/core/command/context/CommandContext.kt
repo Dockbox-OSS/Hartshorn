@@ -4,6 +4,8 @@ import org.dockbox.darwin.core.command.parse.AbstractArgumentParser
 import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
 import org.dockbox.darwin.core.objects.targets.CommandSource
+import org.dockbox.darwin.core.objects.targets.Console
+import org.dockbox.darwin.core.objects.targets.Identifiable
 import java.util.*
 
 @Suppress("UNCHECKED_CAST")
@@ -70,5 +72,6 @@ open class CommandContext(
 
     companion object {
         val ENUM_ARGUMENT_PARSER: EnumArgumentParser = EnumArgumentParser()
+        val EMPTY: CommandContext = CommandContext(emptyArray(), emptyArray(), CommandSource.None, null, null, emptyArray())
     }
 }
