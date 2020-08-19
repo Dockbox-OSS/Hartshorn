@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -65,20 +66,30 @@ public class SimpleModuleLoader implements ModuleLoader {
             throw new IllegalArgumentException("Provided candidate is not of a known type");
         }
 
-        switch (registerModule(clazz, source, candidate)) {
-            case FAILED:
+        handleStatus(registerModule(clazz, source, candidate));
+    }
+
+    private void handleStatus(ModuleStatus status) {
+        // TODO: Decide how to handle these
+        // X1:
+        // * Add to failure collection?
+        // * Render issue format?
+        // * Create log overview?
+        // * Other?
+        switch (status) {
+            case FAILED: // X1
                 break;
-            case LOADED:
+            case LOADED: // Already added to registrations
                 break;
-            case ERRORED:
+            case ERRORED: // X1
                 break;
-            case DEPRECATED_LOADED:
+            case DEPRECATED_LOADED: // Already added to registrations
                 break;
-            case DEPRECATED_FAILED:
+            case DEPRECATED_FAILED: // X1
                 break;
-            case DEPRECATED_ERRORED:
+            case DEPRECATED_ERRORED: // X1
                 break;
-            case DISABLED: // Done
+            case DISABLED: // Add to disabled module list, notify console
                 break;
         }
     }
