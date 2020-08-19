@@ -57,6 +57,7 @@ public class SimpleModuleLoader implements ModuleLoader {
 
             JarEntry entry = ((ModuleJarCandidate) candidate).getEntry();
             // Could also be a resource file, those will be ignored
+            assert entry != null : "";
             if (entry.getName().endsWith(".class")) {
                 clazz = injectEntry(entry, sourceFile);
                 if (clazz == null) return;
