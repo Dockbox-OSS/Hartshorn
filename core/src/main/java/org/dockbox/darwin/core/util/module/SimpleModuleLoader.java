@@ -179,9 +179,15 @@ public class SimpleModuleLoader implements ModuleLoader {
             }
         }
 
-        // TODO : Create instance with prepared ctor
-
-        return isDeprecated ? ModuleStatus.DEPRECATED_LOADED : ModuleStatus.LOADED;
+        try {
+            T instance = ctor.newInstance();
+            ModuleStatus status = isDeprecated ? ModuleStatus.DEPRECATED_LOADED : ModuleStatus.LOADED;
+            ModuleInformation information = new ModuleInformation(moduleAnnotation, source, status);
+            registrations.add(new ModuleRegistration(instance, information, candidate));
+            return status;
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            return isDeprecated ? ModuleStatus.DEPRECATED_ERRORED : ModuleStatus.ERRORED;
+        }
     }
 
     @NotNull
