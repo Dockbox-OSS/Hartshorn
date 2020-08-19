@@ -13,5 +13,5 @@ annotation class Command (
         val valueFlags: String = "",
         val anyFlags: Boolean = false,
         val context: String,
-        val permissions: Array<Permission> = []
+        val permissions: Array<Permission> = [Permission.GLOBAL_BYPASS]
 )
