@@ -4,7 +4,6 @@ import net.byteflux.libby.LibraryManager;
 
 import org.dockbox.darwin.core.command.CommandBus;
 import org.dockbox.darwin.core.events.server.ServerEvent.Init;
-import org.dockbox.darwin.core.objects.module.ModuleCandidate;
 import org.dockbox.darwin.core.server.CoreServer;
 import org.dockbox.darwin.core.util.events.EventBus;
 import org.dockbox.darwin.core.util.library.LibraryArtifact;
@@ -49,14 +48,11 @@ public class SpongeServer extends CoreServer<LibraryManager> {
         ModuleLoader loader = getInstance(ModuleLoader.class);
 
         annotatedCandidates.forEach(module -> {
-            if (module.isAssignableFrom(ModuleCandidate.class)) {
-                //noinspection unchecked
-                loader.loadCandidate((Class<ModuleCandidate>) module);
-                loader.getModuleInstance(module).ifPresent(instance -> {
-                    eb.subscribe(instance);
-                    cb.register(instance);
-                });
-            }
+            loader.loadCandidate(module);
+            loader.getModuleInstance(module).ifPresent(instance -> {
+                eb.subscribe(instance);
+                cb.register(instance);
+            });
         });
 
         getInstance(EventBus.class).post(new Init());

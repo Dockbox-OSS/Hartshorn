@@ -39,8 +39,7 @@ public class SimpleModuleLoader implements ModuleLoader {
     }
 
     @Override
-    public void loadCandidate(@NotNull Class<ModuleCandidate> clazz) {
-
+    public void loadCandidate(@NotNull Class<?> clazz) {
     }
 
     @Override
