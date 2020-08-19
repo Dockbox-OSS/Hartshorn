@@ -40,6 +40,7 @@ public class SimpleModuleLoader implements ModuleLoader {
 
     @Override
     public void loadCandidate(@NotNull Class<?> clazz) {
+        handleStatus(registerModule(clazz, "Internal Class Type", new ModuleClassCandidate(clazz)));
     }
 
     @Override
