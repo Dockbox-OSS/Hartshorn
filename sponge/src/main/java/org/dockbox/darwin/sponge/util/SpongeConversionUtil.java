@@ -34,19 +34,25 @@ public class SpongeConversionUtil {
         Iterable<org.dockbox.darwin.core.text.Text> parts = message.getParts();
         Text.Builder b = Text.builder();
         parts.forEach(part -> {
-            Text.Builder pb = Text.builder();
-            pb.append(TextSerializers.FORMATTING_CODE.deserialize(part.toLegacy()));
+            
+            if (part.getParts().size() > 1) {
+                b.append(toSponge(part));
 
-            org.spongepowered.api.text.action.ClickAction<?> clickAction = toSponge(part.getClickAction());
-            if (clickAction != null) pb.onClick(clickAction);
+            } else {
+                Text.Builder pb = Text.builder();
+                pb.append(TextSerializers.FORMATTING_CODE.deserialize(part.toLegacy()));
 
-            org.spongepowered.api.text.action.HoverAction<?> hoverAction = toSponge(part.getHoverAction());
-            if (hoverAction != null) pb.onHover(hoverAction);
+                org.spongepowered.api.text.action.ClickAction<?> clickAction = toSponge(part.getClickAction());
+                if (clickAction != null) pb.onClick(clickAction);
 
-            org.spongepowered.api.text.action.ShiftClickAction<?> shiftClickAction = toSponge(part.getShiftClickAction());
-            if (shiftClickAction != null) pb.onShiftClick(shiftClickAction);
+                org.spongepowered.api.text.action.HoverAction<?> hoverAction = toSponge(part.getHoverAction());
+                if (hoverAction != null) pb.onHover(hoverAction);
 
-            b.append(pb.build());
+                org.spongepowered.api.text.action.ShiftClickAction<?> shiftClickAction = toSponge(part.getShiftClickAction());
+                if (shiftClickAction != null) pb.onShiftClick(shiftClickAction);
+
+                b.append(pb.build());
+            }
         });
 
         return b.build();

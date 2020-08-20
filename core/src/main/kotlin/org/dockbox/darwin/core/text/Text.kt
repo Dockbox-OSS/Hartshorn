@@ -64,7 +64,7 @@ open class Text(vararg objects: Any) {
         for (receiver in receivers) receiver.sendWithPrefix(this)
     }
 
-    open fun getParts(): Iterable<Text> {
+    open fun getParts(): List<Text> {
         return ArrayList<Text>().also {
             it.add(this)
             it.addAll(extra)
