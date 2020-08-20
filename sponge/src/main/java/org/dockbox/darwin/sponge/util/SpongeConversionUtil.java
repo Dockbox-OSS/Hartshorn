@@ -34,7 +34,7 @@ public class SpongeConversionUtil {
         Iterable<org.dockbox.darwin.core.text.Text> parts = message.getParts();
         Text.Builder b = Text.builder();
         parts.forEach(part -> {
-            
+
             if (part.getParts().size() > 1) {
                 b.append(toSponge(part));
 
