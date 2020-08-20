@@ -17,7 +17,7 @@ import org.dockbox.darwin.core.objects.tuple.Vector3D;
 import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.util.module.ModuleLoader;
 import org.dockbox.darwin.sponge.objects.location.SpongeLocation;
-import org.dockbox.darwin.sponge.objects.location.SpongePlayer;
+import org.dockbox.darwin.sponge.objects.targets.SpongePlayer;
 import org.dockbox.darwin.sponge.objects.location.SpongeWorld;
 import org.dockbox.darwin.sponge.objects.targets.SpongeConsole;
 import org.jetbrains.annotations.NotNull;
@@ -243,7 +243,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         return (src, args) -> {
             org.dockbox.darwin.core.objects.targets.CommandSource sender;
             if (src instanceof Player) sender = new SpongePlayer(((Player) src).getUniqueId(), src.getName());
-            else if (src instanceof ConsoleSource) sender = SpongeConsole.instance;
+            else if (src instanceof ConsoleSource) sender = SpongeConsole.Companion.getInstance();
             else sender = null;
 
             assert sender != null : "Command sender is not a console or a player, did a plugin call me?";
@@ -252,7 +252,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             if (src instanceof Player) {
                 runner.run(sender, ctx);
             } else {
-                runner.run(SpongeConsole.instance, ctx);
+                runner.run(SpongeConsole.Companion.getInstance(), ctx);
             }
             return CommandResult.success();
         };

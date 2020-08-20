@@ -45,7 +45,7 @@ public class SimpleEventBus implements EventBus {
         }
     }
 
-    public void subscribe(Object object) throws IllegalArgumentException, SecurityException {
+    public void subscribe(@NotNull Object object) throws IllegalArgumentException, SecurityException {
         subscribe(object, defaultLookup);
     }
 
@@ -66,7 +66,7 @@ public class SimpleEventBus implements EventBus {
     }
 
     public void setDefaultLookup(Lookup lookup) {
-        this.defaultLookup = Objects.requireNonNull(lookup);
+        defaultLookup = Objects.requireNonNull(lookup);
     }
 
     protected static Set<InvokeWrapper> getInvokers(Object object, Lookup lookup)

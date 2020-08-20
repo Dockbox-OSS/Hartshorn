@@ -10,9 +10,9 @@ import org.dockbox.darwin.core.text.actions.HoverAction;
 import org.dockbox.darwin.core.text.actions.ShiftClickAction;
 import org.dockbox.darwin.sponge.exceptions.TypeConversionException;
 import org.dockbox.darwin.sponge.objects.location.SpongeLocation;
-import org.dockbox.darwin.sponge.objects.location.SpongePlayer;
 import org.dockbox.darwin.sponge.objects.location.SpongeWorld;
 import org.dockbox.darwin.sponge.objects.targets.SpongeConsole;
+import org.dockbox.darwin.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.source.ConsoleSource;
@@ -98,7 +98,7 @@ public class SpongeConversionUtil {
     }
 
     private static CommandSource fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
-        if (commandSource instanceof ConsoleSource) return SpongeConsole.instance;
+        if (commandSource instanceof ConsoleSource) return SpongeConsole.Companion.getInstance();
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
             return new SpongePlayer(((org.spongepowered.api.entity.living.player.Player) commandSource).getUniqueId(), commandSource.getName());
         throw new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'");
@@ -120,10 +120,13 @@ public class SpongeConversionUtil {
 
     @NotNull
     public static World toSponge(org.dockbox.darwin.core.objects.location.World world) {
-        if (world instanceof SpongeWorld) return ((SpongeWorld) world).getReference();
-        else
-            return Sponge.getServer().getWorld(world.getWorldUniqueId())
-                    .orElseThrow(() -> new RuntimeException("World reference not present on server"));
+        if (world instanceof SpongeWorld) {
+            World wref = ((SpongeWorld) world).getReference();
+            if (wref != null) return wref;
+        }
+
+        return Sponge.getServer().getWorld(world.getWorldUniqueId())
+                .orElseThrow(() -> new RuntimeException("World reference not present on server"));
     }
 
     @NotNull

@@ -34,6 +34,7 @@ public class SimpleModuleLoader implements ModuleLoader {
     @Override
     public <I> Optional<I> getModuleInstance(@NotNull Class<I> module) {
         Object potentialInstance = getRegistration(module).getInstance();
+        assert potentialInstance != null : "Module candidate instance was null";
         if (potentialInstance.getClass().equals(module)) //noinspection unchecked
             return Optional.of((I) potentialInstance);
         throw new NoModulePresentException(module.getCanonicalName());

@@ -34,6 +34,7 @@ public class SpongeArgumentTypeValue extends AbstractArgumentValue<CommandElemen
 
     @Override
     protected CommandElement parseArgument(Arguments argument, String key) {
+        if (argument == null) return null;
         switch (argument) {
             case BOOL:
                 return GenericArguments.bool(Text.of(key));
