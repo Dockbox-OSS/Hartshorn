@@ -1,6 +1,10 @@
 package org.dockbox.darwin.sponge.util;
 
+import com.flowpowered.math.vector.Vector3d;
+
+import org.dockbox.darwin.core.objects.tuple.Vector3D;
 import org.dockbox.darwin.core.objects.user.Gamemode;
+import org.dockbox.darwin.sponge.objects.location.SpongeLocation;
 import org.dockbox.darwin.sponge.objects.location.SpongeWorld;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -27,14 +31,16 @@ public class SpongeConversionUtil {
 
     @NotNull
     public static Location<World> toSponge(org.dockbox.darwin.core.objects.location.Location location) {
-        // TODO
-        return null;
+        World world = toSponge(location.getWorld());
+        Vector3d vector3d = new Vector3d(location.getX().doubleValue(), location.getY().doubleValue(), location.getZ().doubleValue());
+        return new Location<>(world, vector3d);
     }
 
     @NotNull
-    public static org.dockbox.darwin.core.objects.location.Location fromSponge(Location<?> location) {
-        // TODO
-        return org.dockbox.darwin.core.objects.location.Location.Companion.getEMPTY();
+    public static org.dockbox.darwin.core.objects.location.Location fromSponge(Location<World> location) {
+        org.dockbox.darwin.core.objects.location.World world = fromSponge(location.getExtent());
+        Vector3D vector3D = new Vector3D(location.getX(), location.getY(), location.getZ());
+        return new SpongeLocation(vector3D, world);
     }
 
     @NotNull
