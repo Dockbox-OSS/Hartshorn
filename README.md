@@ -1,5 +1,8 @@
 # Darwin Server ![ci-status](https://api.travis-ci.com/GuusLieben/DarwinServer.svg?branch=api-7.1-1.12.2)  
 **Project is in pre-alpha stages, please note there might be major changes without special notice**
+  
+## Version 2.x is no longer maintained!
+### DarwinServer is moving to version 3.1 [here](https://github.com/GuusLieben/DarwinServer/tree/api-3.0-1.12.2-kj).
 
 ## How to build
 To build, use ```.\gradlew build```. Distributable files will be stored in `/dist/{date}/{commit-hash}`.
