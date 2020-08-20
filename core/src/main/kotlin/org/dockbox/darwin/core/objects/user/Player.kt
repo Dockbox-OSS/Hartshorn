@@ -28,11 +28,11 @@ abstract class Player(uniqueId: UUID, name: String) : Identifiable(uniqueId, nam
         return true
     }
 
-    override fun setPermission(permission: Permission) {
-        setPermission(permission.getValue())
+    override fun setPermission(permission: Permission, value: Boolean) {
+        setPermission(permission.getValue(), value)
     }
 
-    override fun setPermissions(vararg permissions: Permission) {
-        for (permission in permissions) setPermission(permission)
+    override fun setPermissions(value: Boolean, vararg permissions: Permission) {
+        for (permission in permissions) setPermission(permission, value)
     }
 }

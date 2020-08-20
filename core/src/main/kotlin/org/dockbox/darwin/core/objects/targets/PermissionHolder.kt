@@ -12,10 +12,10 @@ interface PermissionHolder : Target {
     fun hasAnyPermission(vararg permissions: Permission): Boolean
     fun hasAllPermissions(vararg permissions: Permission): Boolean
 
-    fun setPermission(permission: String)
-    fun setPermissions(vararg permissions: String)
+    fun setPermission(permission: String, value: Boolean)
+    fun setPermissions(value: Boolean, vararg permissions: String)
 
-    fun setPermission(permission: Permission)
-    fun setPermissions(vararg permissions: Permission)
+    fun setPermission(permission: Permission, value: Boolean)
+    fun setPermissions(value: Boolean, vararg permissions: Permission)
 
 }
