@@ -1,41 +1,47 @@
-package org.dockbox.darwin.sponge.util.text;
+package org.dockbox.darwin.core.util.text;
 
 import org.dockbox.darwin.core.i18n.Permission;
 import org.dockbox.darwin.core.objects.user.Player;
+import org.dockbox.darwin.core.server.CoreServer;
 import org.dockbox.darwin.core.text.Text;
-import org.dockbox.darwin.core.util.text.BroadcastService;
+import org.dockbox.darwin.core.util.player.PlayerStorageService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-public class SpongeBroadcastService implements BroadcastService {
+public class SimpleBroadcastService implements BroadcastService {
+
     @Override
     public void broadcastPublic(@NotNull Text message) {
-        // TODO
+        CoreServer.getInstance(PlayerStorageService.class).getOnlinePlayers().forEach(message::send);
     }
 
     @Override
     public void broadcastWithFilter(@NotNull Text message, @NotNull Predicate<Player> filter) {
-        // TODO
+        sendWithPredicate(message, filter);
     }
 
     @Override
     public void broadcastForPermission(@NotNull Text message, @NotNull Permission permission) {
-        // TODO
+        sendWithPredicate(message, p -> p.hasPermission(permission));
     }
 
     @Override
     public void broadcastForPermission(@NotNull Text message, @NotNull String permission) {
-        // TODO
+        sendWithPredicate(message, p -> p.hasPermission(permission));
     }
 
     @Override
     public void broadcastForPermissionWithFilter(@NotNull Text message, @NotNull Permission permission, @NotNull Predicate<Player> filter) {
-        // TODO
+        sendWithPredicate(message, p -> filter.test(p) && p.hasPermission(permission));
     }
 
     @Override
     public void broadcastForPermissionWithFilter(@NotNull Text message, @NotNull String permission, @NotNull Predicate<Player> filter) {
-        // TODO
+        sendWithPredicate(message, p -> filter.test(p) && p.hasPermission(permission));
+    }
+
+    private void sendWithPredicate(@NotNull Text message, @NotNull Predicate<Player> filter) {
+        CoreServer.getInstance(PlayerStorageService.class).getOnlinePlayers().stream().filter(filter).forEach(message::send);
     }
 }
