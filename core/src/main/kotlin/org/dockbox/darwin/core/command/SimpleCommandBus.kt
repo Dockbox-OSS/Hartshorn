@@ -118,7 +118,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
 
     private fun getCommandInformation(element: AnnotatedElement): Triple<Command, Array<Permission>, Array<String>> {
         val command: Command = element.getAnnotation(Command::class.java)
-        var permission: Array<Permission> = arrayOf(Permission.GLOBAL_BYPASS) // TODO : Common storage
+        var permission: Array<Permission> = arrayOf(Permission.GLOBAL_BYPASS)
         if (command.permissions.isNotEmpty()) permission = command.permissions
         return Triple(command, permission, command.aliases)
     }
