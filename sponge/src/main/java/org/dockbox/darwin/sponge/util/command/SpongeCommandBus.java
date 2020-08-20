@@ -38,7 +38,6 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.Extent;
@@ -64,28 +63,28 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     private static final Map<String, List<Tuple<String, CommandSpec>>> childsPerAlias = new HashMap<>();
 
     @Override
-    protected SpongeArgumentTypeValue getArgumentValue(@NotNull String type, I18NRegistry[] permission, @NotNull String key) {
+    protected SpongeArgumentTypeValue getArgumentValue(@NotNull String type, @NotNull I18NRegistry permission, @NotNull String key) {
         try {
-            return new SpongeArgumentTypeValue(type, permission, key);
+            return new SpongeArgumentTypeValue(type, permission.asString(), key);
         } catch (IllegalArgumentException e) {
-            return new SpongeArgumentTypeValue(Arguments.OTHER.toString(), permission, key);
+            return new SpongeArgumentTypeValue(Arguments.OTHER.toString(), permission.getValue(), key);
         }
     }
 
     @Override
-    public void registerCommandNoArgs(@NotNull String command, Permission[] permissions, @NotNull CommandRunnerFunction runner) {
-        Sponge.getCommandManager().register(CoreServer.getServer(), CommandSpec.builder().permission(permissions).executor(buildExecutor(runner, command)).build(), command);
+    public void registerCommandNoArgs(@NotNull String command, @NotNull Permission permission, @NotNull CommandRunnerFunction runner) {
+        Sponge.getCommandManager().register(CoreServer.getServer(), CommandSpec.builder().permission(permission.getValue()).executor(buildExecutor(runner, command)).build(), command);
     }
 
     @Override
-    public void registerCommandArgsAndOrChild(@NotNull String command, Permission[] permissions, @NotNull CommandRunnerFunction runner) {
+    public void registerCommandArgsAndOrChild(@NotNull String command, Permission permission, @NotNull CommandRunnerFunction runner) {
         CommandSpec.Builder spec = CommandSpec.builder();
         // Sponge does not allow for multiple permissions for one command
-        if (permissions != null) {
-            spec.permission(permissions[0].getValue());
+        if (permission != null) {
+            spec.permission(permission.getValue());
             Server.Companion.getInstance().getLog().warn(
                     String.format("Registering command '%s' with singular permission (%s)", command,
-                            permissions[0].getValue()));
+                            permission.getValue()));
         }
         else {
             spec.permission(Permission.GLOBAL_BYPASS.getValue());

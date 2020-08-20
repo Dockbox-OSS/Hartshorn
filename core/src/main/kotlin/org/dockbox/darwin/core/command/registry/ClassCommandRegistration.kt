@@ -5,11 +5,8 @@ import org.dockbox.darwin.core.i18n.Permission
 
 class ClassCommandRegistration(primaryAlias: String,
                                aliases: Array<String>,
-                               permissions: Array<Permission>?,
+                               permission: Permission,
                                command: Command,
                                clazz: Class<*>,
                                val subcommands: Array<MethodCommandRegistration>
-) : AbstractCommandRegistration(primaryAlias, aliases, permissions, command, clazz) {
-
-
-}
+) : AbstractCommandRegistration(primaryAlias, aliases, permission, command, clazz)

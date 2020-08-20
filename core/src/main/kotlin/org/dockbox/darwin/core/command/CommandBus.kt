@@ -14,6 +14,6 @@ interface CommandBus {
     fun createClassRegistration(clazz: Class<*>): ClassCommandRegistration
     fun createSingleMethodRegistrations(methods: Collection<Method>): Array<MethodCommandRegistration>
 
-    fun registerCommand(command: String, permissions: Array<Permission>?, runner: CommandRunnerFunction)
+    fun registerCommand(command: String, permission: Permission, runner: CommandRunnerFunction)
 
 }

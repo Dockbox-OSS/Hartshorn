@@ -8,5 +8,5 @@ class MethodCommandRegistration(primaryAlias: String,
                                 aliases: Array<String>,
                                 command: Command,
                                 val method: Method,
-                                permissions: Array<Permission>?
-) : AbstractCommandRegistration(primaryAlias, aliases, permissions, command, method)
+                                permission: Permission
+) : AbstractCommandRegistration(primaryAlias, aliases, permission, command, method)
