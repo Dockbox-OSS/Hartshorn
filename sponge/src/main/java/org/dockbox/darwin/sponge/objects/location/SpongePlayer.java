@@ -122,13 +122,13 @@ public class SpongePlayer extends Player {
     }
 
     @Override
-    public boolean hasAnyPermission(@NotNull String @NotNull ... permissions) {
+    public boolean hasAnyPermission(@NotNull String ... permissions) {
         for (String permission : permissions) if (hasPermission(permission)) return true;
         return false;
     }
 
     @Override
-    public boolean hasAllPermissions(@NotNull String @NotNull ... permissions) {
+    public boolean hasAllPermissions(@NotNull String ... permissions) {
         for (String permission : permissions) if (!hasPermission(permission)) return false;
         return true;
     }
@@ -147,7 +147,7 @@ public class SpongePlayer extends Player {
     }
 
     @Override
-    public void setPermissions(boolean value, @NotNull String @NotNull ... permissions) {
+    public void setPermissions(boolean value, @NotNull String ... permissions) {
         for (String permission : permissions) setPermission(permission, value);
     }
 
