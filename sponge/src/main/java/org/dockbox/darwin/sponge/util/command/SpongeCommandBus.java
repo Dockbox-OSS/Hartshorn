@@ -14,7 +14,6 @@ import org.dockbox.darwin.core.i18n.Permission;
 import org.dockbox.darwin.core.objects.module.ModuleInformation;
 import org.dockbox.darwin.core.objects.tuple.Tuple;
 import org.dockbox.darwin.core.objects.tuple.Vector3D;
-import org.dockbox.darwin.core.server.CoreServer;
 import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.util.module.ModuleLoader;
 import org.dockbox.darwin.sponge.objects.location.SpongeLocation;
@@ -73,7 +72,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
     @Override
     public void registerCommandNoArgs(@NotNull String command, @NotNull Permission permission, @NotNull CommandRunnerFunction runner) {
-        Sponge.getCommandManager().register(CoreServer.getServer(), CommandSpec.builder().permission(permission.getValue()).executor(buildExecutor(runner, command)).build(), command);
+        Sponge.getCommandManager().register(Server.getServer(), CommandSpec.builder().permission(permission.getValue()).executor(buildExecutor(runner, command)).build(), command);
     }
 
     @Override
@@ -82,7 +81,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         // Sponge does not allow for multiple permissions for one command
         if (permission != null) {
             spec.permission(permission.getValue());
-            Server.Companion.getInstance().getLog().warn(
+            Server.log().warn(
                     String.format("Registering command '%s' with singular permission (%s)", command,
                             permission.getValue()));
         }
@@ -129,14 +128,14 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                     executorF.setAccessible(true);
                     if (executorF.get(spec) == null) spec.executor((src, args) -> CommandResult.success());
                 } catch (Throwable e) {
-                    CoreServer.getServer().except("Could not access executor field", e);
+                    Server.getServer().except("Could not access executor field", e);
                     spec.executor((src, args) -> CommandResult.success());
                 }
 
                 try {
-                    Sponge.getCommandManager().register(CoreServer.getServer(), spec.build(), registeredCmd);
+                    Sponge.getCommandManager().register(Server.getServer(), spec.build(), registeredCmd);
                 } catch (IllegalArgumentException e) {
-                    CoreServer.getServer().except(e.getMessage(), e);
+                    Server.getServer().except(e.getMessage(), e);
                 }
                 SimpleCommandBus.Companion.getRegisteredCommands().add(registeredCmd);
             }
@@ -144,7 +143,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         } else {
             if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(command.substring(0, command.indexOf(' ')))) {
                 spec.executor(buildExecutor(runner, command)).arguments(parseArguments(command.substring(command.indexOf(' ') + 1)));
-                Sponge.getCommandManager().register(CoreServer.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
+                Sponge.getCommandManager().register(Server.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
                 SimpleCommandBus.Companion.getRegisteredCommands().add(command.substring(0, command.indexOf(' ')));
             }
 
@@ -203,7 +202,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                     if (cflags == null) cflags = GenericArguments.flags();
                     parseFlag(cflags, mf.group(1), mf.group(2));
                 } else {
-                    CoreServer.getServer().except("Argument type was not recognized for `" + part + "`");
+                    Server.getServer().except("Argument type was not recognized for `" + part + "`");
                 }
             }
         }
@@ -223,7 +222,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         } else {
             AbstractArgumentValue<CommandElement> av = argValue(value);
             if (name.indexOf(':') >= 0) {
-                CoreServer.getServer().except("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
+                Server.getServer().except("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
             flags.valueFlag(av.getArgument(), name);
         }
@@ -270,7 +269,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             if (!parsedArgsF.isAccessible()) parsedArgsF.setAccessible(true);
             parsedArgs = (Multimap<String, Object>) parsedArgsF.get(ctx);
         } catch (IllegalAccessException | ClassCastException | NoSuchFieldException e) {
-            CoreServer.getServer().except("Could not load parsed arguments from Sponge command context", e);
+            Server.getServer().except("Could not load parsed arguments from Sponge command context", e);
             return org.dockbox.darwin.core.command.context.CommandContext.Companion.getEMPTY();
         }
 
@@ -341,7 +340,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                         return WorldEdit.getInstance().getMaskFactory().parseFromInput(maskRaw, pctx);
                 }
             } catch (Throwable e) {
-                CoreServer.getServer().except("Failed to parse WorldEdit argument", e);
+                Server.getServer().except("Failed to parse WorldEdit argument", e);
             }
             return null;
         }
@@ -365,7 +364,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         @Nullable
         @Override
         protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
-            ModuleInformation module = CoreServer.getInstance(ModuleLoader.class).getModuleInformation(args.next());
+            ModuleInformation module = Server.getInstance(ModuleLoader.class).getModuleInformation(args.next());
             return module.getModule();
         }
 
@@ -376,7 +375,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 @NotNull CommandArgs args,
                 @NotNull CommandContext context) {
             return StreamSupport.stream(
-                    CoreServer.getInstance(ModuleLoader.class).getAllRegistrations().spliterator(),
+                    Server.getInstance(ModuleLoader.class).getAllRegistrations().spliterator(),
                     false
             ).map(reg -> reg.getInformation().getModule().id())
                     .collect(Collectors.toList());

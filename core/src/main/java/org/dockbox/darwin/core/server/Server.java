@@ -29,23 +29,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-public abstract class CoreServer<L> implements Server {
+public abstract class Server<L> implements KServer {
 
-    private final Logger log = LoggerFactory.getLogger(CoreServer.class);
+    private final Logger log = LoggerFactory.getLogger(Server.class);
     private String version;
     private Date lastUpdate;
     private final String[] authors = {"GuusLieben"};
 
-    private static CoreServer<?> instance;
+    private static Server<?> instance;
 
     private Injector injector;
 
-    public CoreServer(AbstractCommonInjector injector) {
+    public Server(AbstractCommonInjector injector) {
         this.injector = Guice.createInjector(injector);
         construct();
     }
 
-    public CoreServer(
+    public Server(
             AbstractModuleInjector moduleInjector,
             AbstractExceptionInjector exceptionInjector,
             AbstractUtilInjector utilInjector
@@ -79,7 +79,7 @@ public abstract class CoreServer<L> implements Server {
         //noinspection unchecked
         this.injector.getInstance(LibraryLoader.class).configure(getLoader(), getAllArtifacts());
 
-        CoreServer.instance = this;
+        Server.instance = this;
     }
 
     protected abstract L getLoader();
@@ -140,7 +140,7 @@ public abstract class CoreServer<L> implements Server {
         return getServer().getLog();
     }
 
-    public static Server getServer() {
+    public static KServer getServer() {
         return instance;
     }
 

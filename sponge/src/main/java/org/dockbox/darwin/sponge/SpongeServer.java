@@ -4,7 +4,7 @@ import net.byteflux.libby.LibraryManager;
 
 import org.dockbox.darwin.core.command.CommandBus;
 import org.dockbox.darwin.core.events.server.ServerEvent.Init;
-import org.dockbox.darwin.core.server.CoreServer;
+import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.util.events.EventBus;
 import org.dockbox.darwin.core.util.library.LibraryArtifact;
 import org.dockbox.darwin.core.util.module.ModuleLoader;
@@ -30,7 +30,7 @@ import org.spongepowered.api.plugin.Plugin;
                 @Dependency(id = "luckperms")
         }
 )
-public class SpongeServer extends CoreServer<LibraryManager> {
+public class SpongeServer extends Server<LibraryManager> {
 
     public SpongeServer() {
         super(new SpongeCommonInjector());
@@ -40,7 +40,7 @@ public class SpongeServer extends CoreServer<LibraryManager> {
     public void onServerInit(GameInitializationEvent event) {
         Sponge.getEventManager().registerListeners(this, new SpongeEventListener());
 
-        Iterable<Class<?>> annotatedCandidates = CoreServer.getInstance(ModuleScanner.class)
+        Iterable<Class<?>> annotatedCandidates = Server.getInstance(ModuleScanner.class)
                 .collectClassCandidates("org.dockbox.darwin.integrated")
                 .getAnnotatedCandidates();
         EventBus eb = getInstance(EventBus.class);

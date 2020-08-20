@@ -13,7 +13,7 @@ import org.dockbox.darwin.core.i18n.Permission
 import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
 import org.dockbox.darwin.core.objects.targets.CommandSource
-import org.dockbox.darwin.core.server.CoreServer
+import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.util.module.ModuleLoader
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.InvocationTargetException
@@ -34,11 +34,11 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     override fun register(vararg objs: Any) {
         for (obj in objs) {
             var clazz: Class<*> = if (obj is Class<*>) obj else obj.javaClass
-            CoreServer.log().info("\n\nScanning {} for commands", clazz.toGenericString())
+            Server.log().info("\n\nScanning {} for commands", clazz.toGenericString())
             try {
                 if (clazz.isAnnotationPresent(Command::class.java)) registerClassCommand(clazz, obj) else registerSingleMethodCommand(clazz)
             } catch (e: Throwable) {
-                CoreServer.log().warn("Failed to register potential command class : {}", clazz.toGenericString())
+                Server.log().warn("Failed to register potential command class : {}", clazz.toGenericString())
                 e.printStackTrace()
             }
         }
@@ -63,7 +63,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                                         if (result == null || result != "success") src.sendWithPrefix(I18N.UNKNOWN_ERROR.format(result))
                                     }
                                 })
-                                CoreServer.log().info("Registered singular command : /$alias")
+                                Server.log().info("Registered singular command : /$alias")
                             }
                 }
     }
@@ -105,7 +105,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             // Printing aliases, not used for actual logic
             val subcommands: MutableList<String> = ArrayList()
             Arrays.stream(registration.subcommands).forEach { subcommands.addAll(it.aliases) }
-            CoreServer.log().info("Registered command : /{} {}", alias, java.lang.String.join("|", subcommands))
+            Server.log().info("Registered command : /{} {}", alias, java.lang.String.join("|", subcommands))
         }
     }
 
@@ -167,11 +167,11 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             val o: Any
             if (registration.sourceInstance != null) {
                 o = registration.sourceInstance!!
-            } else if (c == CoreServer::class.java || c.isAssignableFrom(CoreServer::class.java) || CoreServer::class.java.isAssignableFrom(c)) {
-                o = CoreServer.getServer()
+            } else if (c == Server::class.java || c.isAssignableFrom(Server::class.java) || Server::class.java.isAssignableFrom(c)) {
+                o = Server.getServer()
             } else {
                 var modOptional: Optional<*>? = null
-                if (c.isAnnotationPresent(Module::class.java) && CoreServer.getInstance(ModuleLoader::class.java).getModuleInstance(c).also { modOptional = it }.isPresent) {
+                if (c.isAnnotationPresent(Module::class.java) && Server.getInstance(ModuleLoader::class.java).getModuleInstance(c).also { modOptional = it }.isPresent) {
                     o = modOptional!!.get()
                 } else {
                     o = c.getConstructor().newInstance()
@@ -180,19 +180,19 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             method.invoke(o, finalArgs.toTypedArray())
             "success" // No error message to return
         } catch (e: IllegalAccessException) {
-            CoreServer.getServer().except("Failed to invoke command", e.cause)
+            Server.getServer().except("Failed to invoke command", e.cause)
             e.cause!!.message
         } catch (e: InvocationTargetException) {
-            CoreServer.getServer().except("Failed to invoke command", e.cause)
+            Server.getServer().except("Failed to invoke command", e.cause)
             e.cause!!.message
         } catch (e: NoSuchMethodException) {
-            CoreServer.getServer().except("Failed to invoke command", e.cause)
+            Server.getServer().except("Failed to invoke command", e.cause)
             e.cause!!.message
         } catch (e: InstantiationException) {
-            CoreServer.getServer().except("Failed to invoke command", e.cause)
+            Server.getServer().except("Failed to invoke command", e.cause)
             e.cause!!.message
         } catch (e: NoSuchFieldException) {
-            CoreServer.getServer().except("Failed to invoke command", e.cause)
+            Server.getServer().except("Failed to invoke command", e.cause)
             e.cause!!.message
         } catch (e: Throwable) {
             e.message
@@ -209,7 +209,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         val key: String
         val permission: String
         val vm: Matcher = value.matcher(valueString)
-        if (!vm.matches()) CoreServer.getServer().except("Unknown argument specification `$valueString`, use Type or Name{Type} or Name{Type:Permission}")
+        if (!vm.matches()) Server.getServer().except("Unknown argument specification `$valueString`, use Type or Name{Type} or Name{Type:Permission}")
         key = vm.group(1)
         type = vm.group(2)
         permission = vm.group(3)

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature;
 
-import org.dockbox.darwin.core.server.CoreServer;
+import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.server.ServerReference;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
     @NotNull
     @Override
     public Path getConfigDir(@NotNull Class<?> module) {
-        return getModuleAndCallback(module, (annotation) -> CoreServer.getInstance(FileUtils.class).getModuleConfigDir().resolve(annotation.id()));
+        return getModuleAndCallback(module, (annotation) -> Server.getInstance(FileUtils.class).getModuleConfigDir().resolve(annotation.id()));
     }
 
     @NotNull
@@ -51,7 +51,7 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
     public File getConfigFile(@NotNull Class<?> module) {
         return getModuleAndCallback(module, (annotation) -> {
             Path configPath = getConfigDir(module);
-            return CoreServer.getInstance(FileUtils.class).createFileIfNotExists(new File(configPath.toFile(), annotation.id() + ".yml"));
+            return Server.getInstance(FileUtils.class).createFileIfNotExists(new File(configPath.toFile(), annotation.id() + ".yml"));
         });
     }
 
@@ -85,7 +85,7 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
                 T res = mapper.readValue(cf, convertTo);
                 return res != null ? res : defaultValue;
             } catch (IOException | IllegalArgumentException e) {
-                CoreServer.getServer().except("Failed to map config contents", e);
+                Server.getServer().except("Failed to map config contents", e);
             }
             return defaultValue;
         });
@@ -104,7 +104,7 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
             File cf = getConfigFile(module);
             mapper.writeValue(cf, data);
         } catch (IOException e) {
-            CoreServer.getServer().except("Failed to write config contents", e);
+            Server.getServer().except("Failed to write config contents", e);
         }
     }
 

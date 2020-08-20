@@ -2,7 +2,7 @@ package org.dockbox.darwin.core.util.events;
 
 import org.dockbox.darwin.core.annotations.Listener;
 import org.dockbox.darwin.core.objects.events.Event;
-import org.dockbox.darwin.core.server.CoreServer;
+import org.dockbox.darwin.core.server.Server;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.invoke.MethodHandle;
@@ -38,7 +38,7 @@ public class SimpleEventBus implements EventBus {
         if(invokers.isEmpty()) {
             return; // Doesn't contain any listener methods
         }
-        CoreServer.log().info("Registered {} as event listener", object.getClass().toGenericString());
+        Server.log().info("Registered {} as event listener", object.getClass().toGenericString());
         listenerToInvokers.put(object, invokers);
         for (InvokeWrapper invoker : invokers) {
             handlerRegistry.getHandler(invoker.eventType).subscribe(invoker);
@@ -283,7 +283,7 @@ public class SimpleEventBus implements EventBus {
             try {
                 methodHandle.invoke(listener, event);
             } catch (Throwable e) {
-                CoreServer.getServer().except("Failed to invoke method", e);
+                Server.getServer().except("Failed to invoke method", e);
             }
         }
 

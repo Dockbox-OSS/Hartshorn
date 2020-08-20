@@ -12,7 +12,7 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
-import org.dockbox.darwin.core.server.CoreServer;
+import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.server.ServerReference;
 import org.jetbrains.annotations.NotNull;
 
@@ -135,7 +135,7 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
                 T res = mapper.readValue(cf, convertTo);
                 return res != null ? res : defaultValue;
             } catch (IOException | IllegalArgumentException e) {
-                CoreServer.getServer().except("Failed to map data contents", e);
+                Server.getServer().except("Failed to map data contents", e);
             }
             return defaultValue;
         });
@@ -154,7 +154,7 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
             File df = getDefaultDataFile(module);
             mapper.writeValue(df, data);
         } catch (IOException e) {
-            CoreServer.getServer().except("Failed to write data contents", e);
+            Server.getServer().except("Failed to write data contents", e);
         }
     }
 
@@ -171,7 +171,7 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
             File df = getInstance(FileUtils.class).createFileIfNotExists(new File(dataDir.toFile(), fileName));
             mapper.writeValue(df, data);
         } catch (IOException e) {
-            CoreServer.getServer().except("Failed to write data contents", e);
+            Server.getServer().except("Failed to write data contents", e);
         }
     }
 
@@ -189,7 +189,7 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
                 TableUtils.createTableIfNotExists(source, type);
                 return DaoManager.createDao(source, type);
             } catch (SQLException e) {
-                CoreServer.getServer().except("Could not create DAO for type", e);
+                Server.getServer().except("Could not create DAO for type", e);
             }
         }
         return null;
@@ -204,7 +204,7 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
             jdbcSources.put(fileAb, connectionSource);
             return true;
         } catch (SQLException e) {
-            CoreServer.getServer().except(String.format("Failed to create connection source for '%s'", fileAb), e);
+            Server.getServer().except(String.format("Failed to create connection source for '%s'", fileAb), e);
             return false;
         }
     }

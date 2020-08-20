@@ -6,7 +6,7 @@ import java.util.function.Function
 abstract class ServerReference {
 
     open fun <T> getInstance(type: Class<T>): T {
-        return CoreServer.getInstance(type)
+        return Server.getInstance(type)
     }
 
     open fun getModule(module: Class<*>): Module? {

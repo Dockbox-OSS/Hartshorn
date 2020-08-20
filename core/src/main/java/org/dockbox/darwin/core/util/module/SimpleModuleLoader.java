@@ -9,7 +9,7 @@ import org.dockbox.darwin.core.objects.module.ModuleInformation;
 import org.dockbox.darwin.core.objects.module.ModuleJarCandidate;
 import org.dockbox.darwin.core.objects.module.ModuleRegistration;
 import org.dockbox.darwin.core.objects.module.ModuleStatus;
-import org.dockbox.darwin.core.server.CoreServer;
+import org.dockbox.darwin.core.server.Server;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -120,7 +120,7 @@ public class SimpleModuleLoader implements ModuleLoader {
                 throw new IllegalStateException("Found class without dedicated package, this is not permitted!");
 
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | MalformedURLException e) {
-            CoreServer.getServer().except("Failed to load module from source '" + sourceFile.getName() + "'", e);
+            Server.getServer().except("Failed to load module from source '" + sourceFile.getName() + "'", e);
         }
 
         return clazz;
@@ -140,7 +140,7 @@ public class SimpleModuleLoader implements ModuleLoader {
         boolean isModuleAnnotated = moduleAnnotation != null;
 
         if (!isModuleAnnotated) {
-            CoreServer.log().error("Module candidate not annotated as such (" + module.getSimpleName() + ")");
+            Server.log().error("Module candidate not annotated as such (" + module.getSimpleName() + ")");
             return isDeprecated ? ModuleStatus.DEPRECATED_FAILED : ModuleStatus.FAILED;
         }
 
@@ -152,19 +152,19 @@ public class SimpleModuleLoader implements ModuleLoader {
             } catch (ClassNotFoundException e) {
                 boolean packagePresent = Package.getPackage(dep) != null;
                 if (packagePresent) return true;
-                CoreServer.log().warn("Missing dependency '" + dep + "' for module candidate " + module.getSimpleName());
+                Server.log().warn("Missing dependency '" + dep + "' for module candidate " + module.getSimpleName());
                 return false;
             }
         });
         if (!dependenciesPresent) {
-            CoreServer.log().error("One or more dependencies were missing for candidate " + module.getSimpleName());
+            Server.log().error("One or more dependencies were missing for candidate " + module.getSimpleName());
             return isDeprecated ? ModuleStatus.DEPRECATED_FAILED : ModuleStatus.FAILED;
         }
 
 
         boolean hasCtors = module.getConstructors().length > 0;
         if (!hasCtors) {
-            CoreServer.log().error("No constructors present for module candidate " + module.getSimpleName());
+            Server.log().error("No constructors present for module candidate " + module.getSimpleName());
             return isDeprecated ? ModuleStatus.DEPRECATED_FAILED : ModuleStatus.FAILED;
         }
 
@@ -172,12 +172,12 @@ public class SimpleModuleLoader implements ModuleLoader {
         try {
             ctor = module.getConstructor();
         } catch (ReflectiveOperationException e) {
-            CoreServer.log().error("Failed to get constructor for module candidate " + module.getSimpleName());
+            Server.log().error("Failed to get constructor for module candidate " + module.getSimpleName());
             return isDeprecated ? ModuleStatus.DEPRECATED_ERRORED : ModuleStatus.ERRORED;
         }
 
-        if (moduleAnnotation.requiresNMS() && !CoreServer.getServer().getServerType().getHasNMSAccess()) {
-            CoreServer.log().error("Module candidate requires NMS access but was not provided by current platform (" + module.getSimpleName() + ")");
+        if (moduleAnnotation.requiresNMS() && !Server.getServer().getServerType().getHasNMSAccess()) {
+            Server.log().error("Module candidate requires NMS access but was not provided by current platform (" + module.getSimpleName() + ")");
             return isDeprecated ? ModuleStatus.DEPRECATED_FAILED : ModuleStatus.FAILED;
         }
 
@@ -185,9 +185,9 @@ public class SimpleModuleLoader implements ModuleLoader {
         if (!moduleAnnotation.id().matches(idPattern)) {
             String lower = moduleAnnotation.id().toLowerCase();
             if (!lower.matches(idPattern)) {
-                CoreServer.log().warn("Module registered with uppercase ID '" + moduleAnnotation.id() + "', converting to '" + lower + "'");
+                Server.log().warn("Module registered with uppercase ID '" + moduleAnnotation.id() + "', converting to '" + lower + "'");
             } else {
-                CoreServer.log().error("Module candidate registered with incorrect ID format '" + moduleAnnotation.id() + "' (" + module.getSimpleName() + ")");
+                Server.log().error("Module candidate registered with incorrect ID format '" + moduleAnnotation.id() + "' (" + module.getSimpleName() + ")");
                 return isDeprecated ? ModuleStatus.DEPRECATED_FAILED : ModuleStatus.FAILED;
             }
         }

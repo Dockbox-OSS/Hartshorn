@@ -5,7 +5,7 @@ import com.google.common.base.Optional;
 
 import org.dockbox.darwin.core.command.AbstractArgumentValue;
 import org.dockbox.darwin.core.command.SimpleCommandBus.Arguments;
-import org.dockbox.darwin.core.server.CoreServer;
+import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.sponge.util.command.SpongeCommandBus.FaweArgument;
 import org.dockbox.darwin.sponge.util.command.SpongeCommandBus.FaweArgument.FaweTypes;
 import org.dockbox.darwin.sponge.util.command.SpongeCommandBus.ModuleArgument;
@@ -27,7 +27,7 @@ public class SpongeArgumentTypeValue extends AbstractArgumentValue<CommandElemen
                     this.setElement(GenericArguments.enumValue(Text.of(key), enumType));
                 } else throw new IllegalArgumentException("Type '" + type.toLowerCase() + "' is not supported");
             } catch (Exception e) {
-                CoreServer.getServer().except("No argument of type `" + type + "` can be read", e);
+                Server.getServer().except("No argument of type `" + type + "` can be read", e);
             }
         }
     }

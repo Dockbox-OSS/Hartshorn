@@ -3,7 +3,7 @@ package org.dockbox.darwin.core.server
 import org.slf4j.Logger
 import java.util.*
 
-interface Server {
+interface KServer {
 
     fun getLog(): Logger
     fun getVersion(): String
@@ -21,9 +21,9 @@ interface Server {
     }
 
     companion object {
-        private lateinit var instance: Server
+        private lateinit var instance: KServer
 
-        fun getInstance(): Server {
+        fun getInstance(): KServer {
             return instance
         }
     }

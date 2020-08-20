@@ -2,7 +2,7 @@ package org.dockbox.darwin.core.util.text;
 
 import org.dockbox.darwin.core.i18n.Permission;
 import org.dockbox.darwin.core.objects.user.Player;
-import org.dockbox.darwin.core.server.CoreServer;
+import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.text.Text;
 import org.dockbox.darwin.core.util.player.PlayerStorageService;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ public class SimpleBroadcastService implements BroadcastService {
 
     @Override
     public void broadcastPublic(@NotNull Text message) {
-        CoreServer.getInstance(PlayerStorageService.class).getOnlinePlayers().forEach(message::send);
+        Server.getInstance(PlayerStorageService.class).getOnlinePlayers().forEach(message::send);
     }
 
     @Override
@@ -42,6 +42,6 @@ public class SimpleBroadcastService implements BroadcastService {
     }
 
     private void sendWithPredicate(@NotNull Text message, @NotNull Predicate<Player> filter) {
-        CoreServer.getInstance(PlayerStorageService.class).getOnlinePlayers().stream().filter(filter).forEach(message::send);
+        Server.getInstance(PlayerStorageService.class).getOnlinePlayers().stream().filter(filter).forEach(message::send);
     }
 }
