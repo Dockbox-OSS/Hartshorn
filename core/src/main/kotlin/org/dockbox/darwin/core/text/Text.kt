@@ -9,9 +9,9 @@ import java.util.concurrent.CopyOnWriteArrayList
 open class Text(vararg objects: Any) {
 
     private lateinit var text: String
-    private lateinit var clickAction: ClickAction<*>
-    private lateinit var hoverAction: HoverAction<*>
-    private lateinit var shiftClickAction: ShiftClickAction<*>
+    lateinit var clickAction: ClickAction<*>
+    lateinit var hoverAction: HoverAction<*>
+    lateinit var shiftClickAction: ShiftClickAction<*>
 
     private var extra: MutableList<Text> = CopyOnWriteArrayList()
 
