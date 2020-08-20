@@ -85,6 +85,9 @@ public abstract class CoreServer<L> implements Server {
     protected abstract L getLoader();
 
     public static <T> T getInstance(Class<T> type) {
+        if (type.isAnnotationPresent(Module.class)) {
+            return getInstance(ModuleLoader.class).getModuleInstance(type).orElse(null);
+        }
         return instance.injector.getInstance(type);
     }
 
