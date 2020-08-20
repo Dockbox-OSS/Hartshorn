@@ -23,21 +23,30 @@ import java.util.UUID;
 
 public class SpongePlayer extends Player {
 
-    private org.spongepowered.api.entity.living.player.Player referencePlayer;
+    private final ThreadLocal<Optional<org.spongepowered.api.entity.living.player.Player>> referencePlayer = new ThreadLocal<>();
 
     public SpongePlayer(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
-        referencePlayer = Sponge.getServer().getPlayer(uniqueId).orElse(null);
+        referencePlayer.set(Sponge.getServer().getPlayer(uniqueId));
     }
 
     private void refreshReference() {
-        if (referencePlayer == null) referencePlayer = Sponge.getServer().getPlayer(getUniqueId()).orElse(null);
+        if (!referencePlayer.get().isPresent()) referencePlayer.set(Sponge.getServer().getPlayer(getUniqueId()));
+    }
+
+    private org.spongepowered.api.entity.living.player.Player getReference() {
+        refreshReference();
+        return referencePlayer.get().orElse(null);
+    }
+
+    private boolean referenceExists() {
+        refreshReference();
+        return referencePlayer.get().isPresent();
     }
 
     @Override
     public boolean isOnline() {
-        refreshReference();
-        return referencePlayer != null && referencePlayer.isOnline();
+        return referenceExists() && getReference().isOnline();
     }
 
     @NotNull
@@ -48,48 +57,44 @@ public class SpongePlayer extends Player {
 
     @Override
     public void kick(@NotNull Text message) {
-        refreshReference();
-        if (referencePlayer != null) referencePlayer.kick();
+        if (referenceExists()) getReference().kick();
     }
 
     @NotNull
     @Override
     public Gamemode getGamemode() {
-        refreshReference();
-        if (referencePlayer != null) {
-            GameMode mode = referencePlayer.get(Keys.GAME_MODE).orElse(GameModes.NOT_SET);
+        if (referenceExists()) {
+            GameMode mode = getReference().get(Keys.GAME_MODE).orElse(GameModes.NOT_SET);
             return SpongeConversionUtil.fromSponge(mode);
         } else return Gamemode.OTHER;
     }
 
     @Override
     public void setGamemode(@NotNull Gamemode gamemode) {
-        refreshReference();
-        if (referencePlayer != null) referencePlayer.offer(Keys.GAME_MODE, SpongeConversionUtil.toSponge(gamemode));
+        if (referenceExists())
+            getReference().offer(Keys.GAME_MODE, SpongeConversionUtil.toSponge(gamemode));
     }
 
     @Override
     public void execute(@NotNull String command) {
         refreshReference();
-        if (referencePlayer != null) Sponge.getCommandManager().process(referencePlayer, command);
+        if (referenceExists()) Sponge.getCommandManager().process(getReference(), command);
     }
 
     @Override
     public void send(@NotNull Text text) {
         refreshReference();
-        if (referencePlayer != null) referencePlayer.sendMessage(SpongeConversionUtil.toSponge(text));
+        if (referenceExists()) getReference().sendMessage(SpongeConversionUtil.toSponge(text));
     }
 
     @Override
     public void send(@NotNull CharSequence text) {
-        refreshReference();
-        if (referencePlayer != null) referencePlayer.sendMessage(org.spongepowered.api.text.Text.of(text));
+        if (referenceExists()) getReference().sendMessage(org.spongepowered.api.text.Text.of(text));
     }
 
     @Override
     public void sendWithPrefix(@NotNull Text text) {
-        refreshReference();
-        if (referencePlayer != null) referencePlayer.sendMessage(org.spongepowered.api.text.Text.of(
+        if (referenceExists()) getReference().sendMessage(org.spongepowered.api.text.Text.of(
                 SpongeConversionUtil.toSponge(I18N.PREFIX.asText()),
                 SpongeConversionUtil.toSponge(text)
                 )
@@ -98,8 +103,7 @@ public class SpongePlayer extends Player {
 
     @Override
     public void sendWithPrefix(@NotNull CharSequence text) {
-        refreshReference();
-        if (referencePlayer != null) referencePlayer.sendMessage(org.spongepowered.api.text.Text.of(
+        if (referenceExists()) getReference().sendMessage(org.spongepowered.api.text.Text.of(
                 SpongeConversionUtil.toSponge(I18N.PREFIX.asText()),
                 org.spongepowered.api.text.Text.of(text)
                 )
@@ -108,8 +112,7 @@ public class SpongePlayer extends Player {
 
     @Override
     public boolean hasPermission(@NotNull String permission) {
-        refreshReference();
-        if (referencePlayer != null) return referencePlayer.hasPermission(permission);
+        if (referenceExists()) return getReference().hasPermission(permission);
         else return Sponge.getServiceManager().provide(UserStorageService.class)
                 .map(uss -> uss
                         .get(this.getUniqueId())
@@ -132,9 +135,8 @@ public class SpongePlayer extends Player {
 
     @Override
     public void setPermission(@NotNull String permission, boolean value) {
-        refreshReference();
-        if (referencePlayer != null)
-            referencePlayer.getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, permission, Tristate.fromBoolean(value));
+        if (referenceExists())
+            getReference().getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, permission, Tristate.fromBoolean(value));
         else Sponge.getServiceManager().
                 provide(UserStorageService.class)
                 .flatMap(uss -> uss.get(this.getUniqueId()))
@@ -152,15 +154,13 @@ public class SpongePlayer extends Player {
     @NotNull
     @Override
     public Location getLocation() {
-        refreshReference();
-        if (referencePlayer != null)         return SpongeConversionUtil.fromSponge(referencePlayer.getLocation());
+        if (referenceExists()) return SpongeConversionUtil.fromSponge(getReference().getLocation());
         else return Location.Companion.getEMPTY();
     }
 
     @Override
     public void setLocation(@NotNull Location location) {
-        refreshReference();
-        if (referencePlayer != null) referencePlayer.setLocation(SpongeConversionUtil.toSponge(location));
+        if (referenceExists()) getReference().setLocation(SpongeConversionUtil.toSponge(location));
     }
 
     @NotNull
