@@ -26,7 +26,7 @@ open class Text(vararg objects: Any) {
     }
 
     fun toPlain(): String {
-        TODO()
+        return this.toLegacy().replace("[$|&][0-9a-fklmnor]", "")
     }
 
     fun append(text: Text): Text {
