@@ -64,6 +64,13 @@ open class Text(vararg objects: Any) {
         for (receiver in receivers) receiver.sendWithPrefix(this)
     }
 
+    open fun getParts(): Iterable<Text> {
+        return ArrayList<Text>().also {
+            it.add(this)
+            it.addAll(extra)
+        }
+    }
+
     companion object {
 
         private const val styleChars: String = "01234567890abcdefklmnor"
