@@ -1,7 +1,9 @@
 package org.dockbox.darwin.sponge.util;
 
 import org.dockbox.darwin.core.objects.user.Gamemode;
+import org.dockbox.darwin.sponge.objects.location.SpongeWorld;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.text.Text;
@@ -25,22 +27,27 @@ public class SpongeConversionUtil {
 
     @NotNull
     public static Location<World> toSponge(org.dockbox.darwin.core.objects.location.Location location) {
+        // TODO
         return null;
     }
 
     @NotNull
     public static org.dockbox.darwin.core.objects.location.Location fromSponge(Location<?> location) {
+        // TODO
         return org.dockbox.darwin.core.objects.location.Location.Companion.getEMPTY();
     }
 
     @NotNull
     public static World toSponge(org.dockbox.darwin.core.objects.location.World world) {
-        return null;
+        if (world instanceof SpongeWorld) return ((SpongeWorld) world).getReference();
+        else
+            return Sponge.getServer().getWorld(world.getWorldUniqueId())
+                    .orElseThrow(() -> new RuntimeException("World reference not present on server"));
     }
 
     @NotNull
     public static org.dockbox.darwin.core.objects.location.World fromSponge(World world) {
-        return org.dockbox.darwin.core.objects.location.World.Companion.getEmpty();
+        return new SpongeWorld(world.getUniqueId(), world.getName());
     }
 
     public static GameMode toSponge(Gamemode gamemode) {
