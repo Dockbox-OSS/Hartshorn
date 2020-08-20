@@ -1,8 +1,10 @@
 package org.dockbox.darwin.core.server;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import org.dockbox.darwin.core.annotations.Module;
 import org.dockbox.darwin.core.util.exceptions.ExceptionHelper;
 import org.dockbox.darwin.core.util.inject.AbstractCommonInjector;
 import org.dockbox.darwin.core.util.inject.AbstractExceptionInjector;
@@ -10,6 +12,7 @@ import org.dockbox.darwin.core.util.inject.AbstractModuleInjector;
 import org.dockbox.darwin.core.util.inject.AbstractUtilInjector;
 import org.dockbox.darwin.core.util.library.LibraryArtifact;
 import org.dockbox.darwin.core.util.library.LibraryLoader;
+import org.dockbox.darwin.core.util.module.ModuleLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -83,6 +86,17 @@ public abstract class CoreServer<L> implements Server {
 
     public static <T> T getInstance(Class<T> type) {
         return instance.injector.getInstance(type);
+    }
+
+    public static <T> void bindUtility(Class<T> contract, Class<? extends T> implementation) {
+        AbstractModule localModule = new AbstractModule() {
+            @Override
+            protected void configure() {
+                super.configure();
+                bind(contract).to(implementation);
+            }
+        };
+        instance.injector = instance.injector.createChildInjector(localModule);
     }
 
     @NotNull
