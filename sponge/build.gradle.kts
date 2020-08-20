@@ -5,6 +5,10 @@ plugins {
 
 group = "org.dockbox.darwin.sponge"
 
+application {
+    mainClassName = "org.dockbox.darwin.sponge.SpongeServer"
+}
+
 repositories {
     maven {
         url = uri("http://repo.drnaylor.co.uk/artifactory/list/minecraft")

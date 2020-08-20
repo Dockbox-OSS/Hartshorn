@@ -75,4 +75,9 @@ public class SpongeServer extends CoreServer<LibraryManager> {
         // Define libraries to download, specifically targeting Sponge
         return new LibraryArtifact[0];
     }
+
+    public static void main(String[] args) {
+        System.out.println("DarwinServer is a framework plugin, it should not be started as a separate application.");
+        System.exit(8);
+    }
 }
