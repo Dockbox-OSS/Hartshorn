@@ -18,10 +18,12 @@ import org.dockbox.darwin.core.util.module.ModuleLoader;
 import org.dockbox.darwin.core.util.module.ModuleScanner;
 import org.dockbox.darwin.core.util.module.SimpleModuleLoader;
 import org.dockbox.darwin.core.util.module.SimpleModuleScanner;
+import org.dockbox.darwin.core.util.player.PlayerStorageService;
 import org.dockbox.darwin.core.util.text.BroadcastService;
 import org.dockbox.darwin.sponge.util.discord.SpongeDiscordUtils;
 import org.dockbox.darwin.sponge.util.files.SpongeFileUtils;
 import org.dockbox.darwin.core.util.text.SimpleBroadcastService;
+import org.dockbox.darwin.sponge.util.player.SpongePlayerStorageService;
 
 public class SpongeCommonInjector extends AbstractCommonInjector {
 
@@ -45,6 +47,7 @@ public class SpongeCommonInjector extends AbstractCommonInjector {
         bind(DiscordUtils.class).to(SpongeDiscordUtils.class);
         bind(LibraryManager.class).to(SpongeLibraryManager.class);
         bind(BroadcastService.class).to(SimpleBroadcastService.class);
+        bind(PlayerStorageService.class).to(SpongePlayerStorageService.class);
     }
 
 }
