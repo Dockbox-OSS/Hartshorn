@@ -2,8 +2,10 @@ package org.dockbox.darwin.sponge.objects.targets;
 
 import com.google.inject.Singleton;
 
+import org.dockbox.darwin.core.i18n.I18N;
 import org.dockbox.darwin.core.objects.targets.Console;
 import org.dockbox.darwin.core.text.Text;
+import org.dockbox.darwin.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
@@ -23,7 +25,7 @@ public class SpongeConsole extends Console {
 
     @Override
     public void send(@NotNull Text text) {
-        // TODO : Text -> Sponge conversion
+        Sponge.getServer().getConsole().sendMessage(SpongeConversionUtil.toSponge(text));
     }
 
     @Override
@@ -33,7 +35,10 @@ public class SpongeConsole extends Console {
 
     @Override
     public void sendWithPrefix(@NotNull Text text) {
-        // TODO : Text -> Sponge conversion
+        Sponge.getServer().getConsole().sendMessage(org.spongepowered.api.text.Text.of(
+                SpongeConversionUtil.toSponge(I18N.PREFIX.asText()),
+                SpongeConversionUtil.toSponge(text)
+        ));
     }
 
     @Override
