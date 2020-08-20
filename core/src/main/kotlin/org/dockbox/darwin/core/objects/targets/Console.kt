@@ -16,12 +16,12 @@ abstract class Console : CommandSource, PermissionHolder {
 
     override fun hasAllPermissions(vararg permissions: Permission): Boolean = true
 
-    override fun setPermission(permission: String) = Unit
+    override fun setPermission(permission: String, value: Boolean) = Unit
 
-    override fun setPermissions(vararg permissions: String) = Unit
+    override fun setPermissions(value: Boolean, vararg permissions: String) = Unit
 
-    override fun setPermission(permission: Permission) = Unit
+    override fun setPermission(permission: Permission, value: Boolean) = Unit
 
-    override fun setPermissions(vararg permissions: Permission) = Unit
+    override fun setPermissions(value: Boolean, vararg permissions: Permission) = Unit
 
 }
