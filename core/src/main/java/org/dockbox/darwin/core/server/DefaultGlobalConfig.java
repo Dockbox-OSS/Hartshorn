@@ -20,7 +20,7 @@ public class DefaultGlobalConfig implements GlobalConfig {
     @NotNull
     @Override
     public Languages getDefaultLanguage() {
-        String cfg = getSetting("global.language");
+        String cfg = getSetting(ConfigKeys.GLOBAL_CONFIG.getKey());
         return cfg == null ? Languages.EN_US : Languages.valueOf(cfg.toUpperCase());
     }
 
