@@ -3,6 +3,7 @@ package org.dockbox.darwin.core.util.module;
 import org.dockbox.darwin.core.annotations.Module;
 import org.dockbox.darwin.core.objects.module.ModuleClassCandidate;
 import org.dockbox.darwin.core.objects.module.ModuleJarCandidate;
+import org.dockbox.darwin.core.server.Server;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
@@ -52,7 +53,11 @@ public class SimpleModuleScanner implements ModuleScanner {
 
         if (moduleCandidates.isEmpty()) return this;
         scannedClasses = new CopyOnWriteArrayList<>(moduleCandidates);
-        classCandidates.addAll(moduleCandidates.stream().map(ModuleClassCandidate::new).collect(Collectors.toList()));
+        classCandidates.addAll(
+                moduleCandidates.stream()
+                        .filter(c -> c != Server.class)
+                        .map(ModuleClassCandidate::new)
+                        .collect(Collectors.toList()));
 
         return this;
     }

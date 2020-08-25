@@ -9,8 +9,9 @@ abstract class ServerReference {
         return Server.getInstance(type)
     }
 
-    open fun getModule(module: Class<*>): Module? {
-        return module.getAnnotation(Module::class.java)
+    open fun getModule(module: Class<*>?): Module? {
+        if (module == null) return null;
+        return module.getAnnotation(Module::class.java) ?: getModule(module.superclass)
     }
 
     open fun <T> getModuleAndCallback(module: Class<*>, consumer: Function<Module, T>): T {

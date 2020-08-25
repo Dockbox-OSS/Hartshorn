@@ -4,7 +4,7 @@ import org.dockbox.darwin.core.i18n.Languages
 
 interface GlobalConfig {
 
-    fun <T> getSetting(key: String): T
+    fun getSetting(key: String): String?
     fun getDefaultLanguage(): Languages
 
 }

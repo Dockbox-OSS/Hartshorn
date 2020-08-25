@@ -29,12 +29,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+@Module(id = "darwinserver", name = "Darwin Server", description = "The global module used for configuration purposes", authors = {"GuusLieben"})
 public abstract class Server<L> implements KServer {
 
     private final Logger log = LoggerFactory.getLogger(Server.class);
     private String version;
     private Date lastUpdate;
-    private final String[] authors = {"GuusLieben"};
+    protected static final String[] authors = {"GuusLieben"};
 
     private static Server<?> instance;
 
