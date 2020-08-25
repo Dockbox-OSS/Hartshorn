@@ -4,4 +4,5 @@ interface I18nService {
 
     fun injectDocumentedTranslations()
 
+    fun getEntry(key: String): I18NRegistry
 }
