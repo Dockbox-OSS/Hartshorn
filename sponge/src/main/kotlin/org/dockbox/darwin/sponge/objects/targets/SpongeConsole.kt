@@ -2,6 +2,7 @@ package org.dockbox.darwin.sponge.objects.targets
 
 import com.google.inject.Singleton
 import org.dockbox.darwin.core.i18n.I18N
+import org.dockbox.darwin.core.i18n.Languages
 import org.dockbox.darwin.core.objects.targets.Console
 import org.dockbox.darwin.core.text.Text
 import org.dockbox.darwin.core.text.Text.Companion.of
@@ -15,12 +16,20 @@ class SpongeConsole private constructor() : Console() {
                 Sponge.getServer().console, command)
     }
 
+    override fun send(text: I18N) {
+        send(of(text.getValue(Languages.EN_US))) // TODO: Config default language
+    }
+
     override fun send(text: Text) {
         Sponge.getServer().console.sendMessage(SpongeConversionUtil.toSponge(text))
     }
 
     override fun send(text: CharSequence) {
         send(of(text))
+    }
+
+    override fun sendWithPrefix(text: I18N) {
+        sendWithPrefix(of(text.getValue(Languages.EN_US))) // TODO: Config default language
     }
 
     override fun sendWithPrefix(text: Text) {
