@@ -11,6 +11,7 @@ import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.text.Text
 import org.dockbox.darwin.core.text.Text.Companion.of
+import org.dockbox.darwin.core.util.player.PlayerStorageService
 import org.dockbox.darwin.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.data.key.Keys
@@ -63,11 +64,11 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun getLanguage(): Languages {
-        return Server.getServer().getGlobalConfig().getDefaultLanguage() // TODO: Per-player preference
+        return Server.getInstance(PlayerStorageService::class.java).getLanguagePreference(this.uniqueId)
     }
 
     override fun setLanguage(lang: Languages) {
-        TODO("Not yet implemented")
+        Server.getInstance(PlayerStorageService::class.java).setLanguagePreference(this.uniqueId, lang)
     }
 
     override fun execute(command: String) {
