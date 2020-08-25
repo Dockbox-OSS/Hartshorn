@@ -13,8 +13,8 @@ class SimpleI18NService : I18nService {
     var permissionMaps: EnumMap<Languages, Map<String, Permission>> = EnumMap(Languages::class.java)
 
     override fun inject() {
-        getPermissions(Languages.EN_US) // TODO: Default language config
-        getTranslations(Languages.EN_US) // TODO: Default language config
+        getPermissions(Server.getServer().getGlobalConfig().getDefaultLanguage())
+        getTranslations(Server.getServer().getGlobalConfig().getDefaultLanguage())
     }
 
     override fun getMap(lang: Languages): Map<String, I18NRegistry> {

@@ -11,7 +11,7 @@ enum class Permission(private var value: String): I18NRegistry {
     }
 
     override fun getValue(): String {
-        return getValue(Languages.EN_US) // TODO: Default language config
+        return getValue(Server.getServer().getGlobalConfig().getDefaultLanguage()) // TODO: Default language config
     }
 
     override fun getValue(lang: Languages): String {

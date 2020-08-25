@@ -8,6 +8,7 @@ import org.dockbox.darwin.core.objects.location.Location.Companion.EMPTY
 import org.dockbox.darwin.core.objects.location.World
 import org.dockbox.darwin.core.objects.user.Gamemode
 import org.dockbox.darwin.core.objects.user.Player
+import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.text.Text
 import org.dockbox.darwin.core.text.Text.Companion.of
 import org.dockbox.darwin.sponge.util.SpongeConversionUtil
@@ -62,7 +63,7 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun getLanguage(): Languages {
-        return Languages.EN_US
+        return Server.getServer().getGlobalConfig().getDefaultLanguage() // TODO: Per-player preference
     }
 
     override fun setLanguage(lang: Languages) {

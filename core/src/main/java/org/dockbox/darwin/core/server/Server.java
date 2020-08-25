@@ -136,6 +136,12 @@ public abstract class Server<L> implements KServer {
         }
     }
 
+    @NotNull
+    @Override
+    public GlobalConfig getGlobalConfig() {
+        return getInstance(GlobalConfig.class);
+    }
+
     public static Logger log() {
         return getServer().getLog();
     }

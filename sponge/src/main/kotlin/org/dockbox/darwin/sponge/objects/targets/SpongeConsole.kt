@@ -2,8 +2,8 @@ package org.dockbox.darwin.sponge.objects.targets
 
 import com.google.inject.Singleton
 import org.dockbox.darwin.core.i18n.I18N
-import org.dockbox.darwin.core.i18n.Languages
 import org.dockbox.darwin.core.objects.targets.Console
+import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.text.Text
 import org.dockbox.darwin.core.text.Text.Companion.of
 import org.dockbox.darwin.sponge.util.SpongeConversionUtil
@@ -17,7 +17,7 @@ class SpongeConsole private constructor() : Console() {
     }
 
     override fun send(text: I18N) {
-        send(of(text.getValue(Languages.EN_US))) // TODO: Config default language
+        send(of(text.getValue(Server.getServer().getGlobalConfig().getDefaultLanguage())))
     }
 
     override fun send(text: Text) {
@@ -29,7 +29,7 @@ class SpongeConsole private constructor() : Console() {
     }
 
     override fun sendWithPrefix(text: I18N) {
-        sendWithPrefix(of(text.getValue(Languages.EN_US))) // TODO: Config default language
+        sendWithPrefix(of(text.getValue(Server.getServer().getGlobalConfig().getDefaultLanguage())))
     }
 
     override fun sendWithPrefix(text: Text) {
