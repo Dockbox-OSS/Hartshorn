@@ -7,6 +7,10 @@ interface I18NRegistry {
 
     fun getValue(): String
 
+    fun getValue(lang: Languages): String
+
+    fun setValue(value: String)
+
     fun plain(): String {
         return this.getValue().replace("[$|&][0-9a-fklmnor]", "")
     }
