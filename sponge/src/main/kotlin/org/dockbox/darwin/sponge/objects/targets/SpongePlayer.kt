@@ -61,6 +61,14 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
         if (referenceExists()) reference!!.offer(Keys.GAME_MODE, SpongeConversionUtil.toSponge(gamemode))
     }
 
+    override fun getLanguage(): Languages {
+        return Languages.EN_US
+    }
+
+    override fun setLanguage(lang: Languages) {
+        TODO("Not yet implemented")
+    }
+
     override fun execute(command: String) {
         refreshReference()
         if (referenceExists()) Sponge.getCommandManager().process(reference!!, command)
@@ -76,7 +84,7 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun sendWithPrefix(text: I18N) {
-        sendWithPrefix(of(text.getValue(Languages.EN_US))) // TODO: Player specific language
+        sendWithPrefix(of(text.getValue(getLanguage())))
     }
 
     override fun sendWithPrefix(text: Text) {
@@ -127,7 +135,7 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun send(text: I18N) {
-        send(of(text.getValue(Languages.EN_US))) // TODO: Player specific language
+        send(of(text.getValue(getLanguage())))
     }
 
     override fun getLocation(): Location {
