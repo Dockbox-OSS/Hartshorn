@@ -1,6 +1,7 @@
 package org.dockbox.darwin.core.server;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -56,7 +57,18 @@ public abstract class Server<L> implements KServer {
         if (exceptionInjector != null) this.injector = this.injector.createChildInjector(exceptionInjector);
         if (utilInjector != null) this.injector = this.injector.createChildInjector(utilInjector);
 
+        verifyInjectorBindings();
         construct();
+    }
+
+    private void verifyInjectorBindings() {
+        for (Class<?> bindingType : AbstractCommonInjector.Companion.getRequiredBindings()) {
+            try {
+                this.injector.getBinding(bindingType);
+            } catch (ConfigurationException e) {
+                log().error("Missing binding for " + bindingType.getCanonicalName() + "! While it is possible to inject it later, it is recommended to do so through the default platform injector!");
+            }
+        }
     }
 
     protected void construct() {
