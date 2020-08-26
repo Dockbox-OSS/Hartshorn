@@ -1,7 +1,7 @@
 package org.dockbox.darwin.core.objects.targets
 
+import org.dockbox.darwin.core.i18n.I18N
 import org.dockbox.darwin.core.text.Text
-import java.util.*
 
 interface CommandSource : MessageReceiver {
 
@@ -12,20 +12,28 @@ interface CommandSource : MessageReceiver {
             throw UnsupportedOperationException("Attempted to execute command without source")
         }
 
+        override fun send(text: I18N) {
+            throw UnsupportedOperationException("Attempted to send message without source")
+        }
+
         override fun send(text: Text) {
-            TODO("Not yet implemented")
+            throw UnsupportedOperationException("Attempted to send message without source")
         }
 
         override fun send(text: CharSequence) {
-            TODO("Not yet implemented")
+            throw UnsupportedOperationException("Attempted to send message without source")
+        }
+
+        override fun sendWithPrefix(text: I18N) {
+            throw UnsupportedOperationException("Attempted to send message without source")
         }
 
         override fun sendWithPrefix(text: Text) {
-            TODO("Not yet implemented")
+            throw UnsupportedOperationException("Attempted to send message without source")
         }
 
         override fun sendWithPrefix(text: CharSequence) {
-            TODO("Not yet implemented")
+            throw UnsupportedOperationException("Attempted to send message without source")
         }
     }
 
