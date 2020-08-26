@@ -459,7 +459,10 @@ enum class I18N(private var value: String): I18NRegistry {
     CU_USAGE("$3- $1/{0}"),
     CU_FLAGS("$3- $2Flags: $1{0}"),
     CU_DESCRIPTION("$3- $2Summary: $1{0}"),
-    GTL_WARPED("$1You have been teleported to the lobby as the world you were previously in is disabled");
+    GTL_WARPED("$1You have been teleported to the lobby as the world you were previously in is disabled"),
+    LANG_SWITCHED("$1Your preferred language has been switched to: $2{0}")
+
+    ;
 
     fun getValue(player: Player): String {
         return getValue(player.getLanguage())

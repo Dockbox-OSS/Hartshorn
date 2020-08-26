@@ -16,4 +16,5 @@ abstract class AbstractArgumentParser : AbstractParser() {
      * null or if the value could not be parsed.
     </A> */
     abstract fun <A> parse(commandValue: CommandValue<String>, type: Class<A>?): Optional<A>
+
 }
