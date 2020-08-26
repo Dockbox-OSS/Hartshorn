@@ -1,10 +1,12 @@
 package org.dockbox.darwin.core.server;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import org.dockbox.darwin.core.annotations.Module;
+import org.dockbox.darwin.core.server.config.GlobalConfig;
 import org.dockbox.darwin.core.util.exceptions.ExceptionHelper;
 import org.dockbox.darwin.core.util.inject.AbstractCommonInjector;
 import org.dockbox.darwin.core.util.inject.AbstractExceptionInjector;
@@ -29,12 +31,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+@Module(id = "darwinserver", name = "Darwin Server", description = "The global module used for configuration purposes", authors = {"GuusLieben"})
 public abstract class Server<L> implements KServer {
 
     private final Logger log = LoggerFactory.getLogger(Server.class);
     private String version;
     private Date lastUpdate;
-    private final String[] authors = {"GuusLieben"};
+    protected static final String[] authors = {"GuusLieben"};
 
     private static Server<?> instance;
 
@@ -55,7 +58,18 @@ public abstract class Server<L> implements KServer {
         if (exceptionInjector != null) this.injector = this.injector.createChildInjector(exceptionInjector);
         if (utilInjector != null) this.injector = this.injector.createChildInjector(utilInjector);
 
+        verifyInjectorBindings();
         construct();
+    }
+
+    private void verifyInjectorBindings() {
+        for (Class<?> bindingType : AbstractCommonInjector.Companion.getRequiredBindings()) {
+            try {
+                this.injector.getBinding(bindingType);
+            } catch (ConfigurationException e) {
+                log().error("Missing binding for " + bindingType.getCanonicalName() + "! While it is possible to inject it later, it is recommended to do so through the default platform injector!");
+            }
+        }
     }
 
     protected void construct() {
@@ -134,6 +148,12 @@ public abstract class Server<L> implements KServer {
             // if config allows friendly :
             getInstance(ExceptionHelper.class).printFriendly(msg, throwable, stacktraces);
         }
+    }
+
+    @NotNull
+    @Override
+    public GlobalConfig getGlobalConfig() {
+        return getInstance(GlobalConfig.class);
     }
 
     public static Logger log() {

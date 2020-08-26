@@ -16,6 +16,8 @@ interface DataManager<D> {
 
     fun getDataContents(module: Class<*>): Map<String, Any>
     fun getDataContents(module: Any): Map<String, Any>
+    fun getDataContents(module: Class<*>, fileName: String): Map<String, Any>
+    fun getDataContents(module: Any, fileName: String): Map<String, Any>
 
     fun <T> getDataContents(module: Class<*>, convertTo: Class<T>, defaultValue: T): T
     fun <T> getDataContents(module: Any, convertTo: Class<T>, defaultValue: T): T

@@ -1,5 +1,6 @@
 package org.dockbox.darwin.core.server
 
+import org.dockbox.darwin.core.server.config.GlobalConfig
 import org.slf4j.Logger
 import java.util.*
 
@@ -11,6 +12,7 @@ interface KServer {
     fun getAuthors(): Array<String>
     fun except(msg: String?, vararg e: Throwable?)
     fun getServerType(): ServerType
+    fun getGlobalConfig(): GlobalConfig
 
     enum class ServerType(val hasNMSAccess: Boolean, val minimumVersion: String, val preferredVersion: String) {
         SPONGE(true, "1.12.2-2555-7.1.0-BETA-2815", "1.12.2-2838-7.2.2-RC0"),

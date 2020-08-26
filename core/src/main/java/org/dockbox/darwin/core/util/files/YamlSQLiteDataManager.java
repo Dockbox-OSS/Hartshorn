@@ -91,7 +91,7 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
     public Dao<?, ?> getBulkDao(@NotNull Class<?> module, @NotNull Class<?> type, @NotNull String fileName) {
         return getModuleAndCallback(module, (annotation) -> {
             Path dataDir = getDataDir(module);
-            return constructDao(type, new File(dataDir.toFile(), fileName));
+            return constructDao(type, new File(dataDir.toFile(), fileName + ".sqlite"));
         });
     }
 
@@ -168,7 +168,7 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
     public <T> void writeToData(@NotNull Class<?> module, T data, @NotNull String fileName) {
         try {
             Path dataDir = getDataDir(module);
-            File df = getInstance(FileUtils.class).createFileIfNotExists(new File(dataDir.toFile(), fileName));
+            File df = getInstance(FileUtils.class).createFileIfNotExists(new File(dataDir.toFile(), fileName + ".yml"));
             mapper.writeValue(df, data);
         } catch (IOException e) {
             Server.getServer().except("Failed to write data contents", e);
@@ -207,5 +207,27 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
             Server.getServer().except(String.format("Failed to create connection source for '%s'", fileAb), e);
             return false;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    @NotNull
+    @Override
+    public Map<String, Object> getDataContents(@NotNull Class<?> module, @NotNull String fileName) {
+        return getModuleAndCallback(module, (annotation) -> {
+            try {
+                File cf = getInstance(FileUtils.class).createFileIfNotExists(new File(getDefaultDataFile(module), fileName + ".yml"));
+                Map<String, Object> res = mapper.readValue(cf, Map.class);
+                return res != null ? res : new HashMap<>();
+            } catch (IOException | IllegalArgumentException e) {
+                Server.getServer().except("Failed to map data contents", e);
+            }
+            return new HashMap<>();
+        });
+    }
+
+    @NotNull
+    @Override
+    public Map<String, Object> getDataContents(@NotNull Object module, @NotNull String fileName) {
+        return getDataContents(module.getClass(), fileName);
     }
 }

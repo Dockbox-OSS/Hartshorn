@@ -3,13 +3,15 @@ package org.dockbox.darwin.sponge.util.inject
 import net.byteflux.libby.LibraryManager
 import net.byteflux.libby.SpongeLibraryManager
 import org.dockbox.darwin.core.i18n.I18nService
+import org.dockbox.darwin.core.i18n.SimpleI18NService
+import org.dockbox.darwin.core.server.config.DefaultGlobalConfig
+import org.dockbox.darwin.core.server.config.GlobalConfig
 import org.dockbox.darwin.core.util.discord.DiscordUtils
 import org.dockbox.darwin.core.util.events.EventBus
 import org.dockbox.darwin.core.util.events.SimpleEventBus
 import org.dockbox.darwin.core.util.exceptions.ExceptionHelper
 import org.dockbox.darwin.core.util.exceptions.SimpleExceptionHelper
 import org.dockbox.darwin.core.util.files.*
-import org.dockbox.darwin.core.util.i18n.SimpleI18NService
 import org.dockbox.darwin.core.util.inject.AbstractCommonInjector
 import org.dockbox.darwin.core.util.module.ModuleLoader
 import org.dockbox.darwin.core.util.module.ModuleScanner
@@ -42,5 +44,6 @@ class SpongeCommonInjector : AbstractCommonInjector() {
         bind(BroadcastService::class.java).to(SimpleBroadcastService::class.java)
         bind(PlayerStorageService::class.java).to(SpongePlayerStorageService::class.java)
         bind(I18nService::class.java).to(SimpleI18NService::class.java)
+        bind(GlobalConfig::class.java).to(DefaultGlobalConfig::class.java)
     }
 }

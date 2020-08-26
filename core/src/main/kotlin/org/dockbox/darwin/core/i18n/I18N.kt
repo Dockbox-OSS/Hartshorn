@@ -1,5 +1,8 @@
 package org.dockbox.darwin.core.i18n
 
+import org.dockbox.darwin.core.objects.user.Player
+import org.dockbox.darwin.core.server.Server
+
 
 enum class I18N(private var value: String): I18NRegistry {
 
@@ -458,9 +461,20 @@ enum class I18N(private var value: String): I18NRegistry {
     CU_DESCRIPTION("$3- $2Summary: $1{0}"),
     GTL_WARPED("$1You have been teleported to the lobby as the world you were previously in is disabled");
 
-    override fun getValue(): String {
-        return this.value
+    fun getValue(player: Player): String {
+        return getValue(player.getLanguage())
     }
 
+    override fun getValue(): String {
+        return getValue(Server.getServer().getGlobalConfig().getDefaultLanguage()) // TODO: Default language config
+    }
+
+    override fun getValue(lang: Languages): String {
+        return parseColors(Server.getInstance(I18nService::class.java).getTranslations(lang)[this.name]?.getValue() ?: this.value)
+    }
+
+    override fun setValue(value: String) {
+        this.value = value
+    }
 
 }

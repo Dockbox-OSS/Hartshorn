@@ -7,6 +7,10 @@ interface I18NRegistry {
 
     fun getValue(): String
 
+    fun getValue(lang: Languages): String
+
+    fun setValue(value: String)
+
     fun plain(): String {
         return this.getValue().replace("[$|&][0-9a-fklmnor]", "")
     }
@@ -50,7 +54,7 @@ interface I18NRegistry {
         return parseColors(m)
     }
 
-    private fun parseColors(m: String): String {
+    fun parseColors(m: String): String {
         var m = m
         val nativeFormats = "abcdef1234567890klmnor".toCharArray()
         for (c in nativeFormats) m = m.replace(String.format("&%s", c).toRegex(), String.format("\u00A7%s", c))

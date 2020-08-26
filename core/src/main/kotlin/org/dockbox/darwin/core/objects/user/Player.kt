@@ -1,6 +1,7 @@
 package org.dockbox.darwin.core.objects.user
 
 import com.boydti.fawe.`object`.FawePlayer
+import org.dockbox.darwin.core.i18n.Languages
 import org.dockbox.darwin.core.i18n.Permission
 import org.dockbox.darwin.core.objects.targets.*
 import org.dockbox.darwin.core.text.Text
@@ -13,6 +14,8 @@ abstract class Player(uniqueId: UUID, name: String) : Identifiable(uniqueId, nam
     abstract fun kick(message: Text)
     abstract fun getGamemode(): Gamemode
     abstract fun setGamemode(gamemode: Gamemode)
+    abstract fun getLanguage(): Languages
+    abstract fun setLanguage(lang: Languages)
 
     override fun hasPermission(permission: Permission): Boolean {
         return hasPermission(permission.getValue())
