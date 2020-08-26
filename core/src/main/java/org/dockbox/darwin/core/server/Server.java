@@ -6,6 +6,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import org.dockbox.darwin.core.annotations.Module;
+import org.dockbox.darwin.core.server.config.GlobalConfig;
 import org.dockbox.darwin.core.util.exceptions.ExceptionHelper;
 import org.dockbox.darwin.core.util.inject.AbstractCommonInjector;
 import org.dockbox.darwin.core.util.inject.AbstractExceptionInjector;

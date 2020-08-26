@@ -3,7 +3,7 @@ package org.dockbox.darwin.core.util.inject
 import com.google.inject.AbstractModule
 import net.byteflux.libby.LibraryManager
 import org.dockbox.darwin.core.i18n.I18nService
-import org.dockbox.darwin.core.server.GlobalConfig
+import org.dockbox.darwin.core.server.config.GlobalConfig
 import org.dockbox.darwin.core.util.discord.DiscordUtils
 import org.dockbox.darwin.core.util.events.EventBus
 import org.dockbox.darwin.core.util.exceptions.ExceptionHelper

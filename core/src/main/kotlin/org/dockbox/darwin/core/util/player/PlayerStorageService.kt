@@ -2,7 +2,7 @@ package org.dockbox.darwin.core.util.player
 
 import org.dockbox.darwin.core.i18n.Languages
 import org.dockbox.darwin.core.objects.user.Player
-import org.dockbox.darwin.core.server.GlobalConfig
+import org.dockbox.darwin.core.server.config.GlobalConfig
 import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.util.files.DataManager
 import java.util.*

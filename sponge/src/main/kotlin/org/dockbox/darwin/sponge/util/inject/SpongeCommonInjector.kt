@@ -4,8 +4,8 @@ import net.byteflux.libby.LibraryManager
 import net.byteflux.libby.SpongeLibraryManager
 import org.dockbox.darwin.core.i18n.I18nService
 import org.dockbox.darwin.core.i18n.SimpleI18NService
-import org.dockbox.darwin.core.server.DefaultGlobalConfig
-import org.dockbox.darwin.core.server.GlobalConfig
+import org.dockbox.darwin.core.server.config.DefaultGlobalConfig
+import org.dockbox.darwin.core.server.config.GlobalConfig
 import org.dockbox.darwin.core.util.discord.DiscordUtils
 import org.dockbox.darwin.core.util.events.EventBus
 import org.dockbox.darwin.core.util.events.SimpleEventBus
