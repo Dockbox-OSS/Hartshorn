@@ -1,2 +1,2 @@
 
-include("sponge", "core")
+include("sponge", "core", "modules")
