@@ -9,7 +9,7 @@ import kotlin.collections.HashMap
 @Module(id = "i18n", authors = ["GuusLieben"], description = "Provides a simple implementation of I18N", name = "Simple I18N")
 class SimpleI18NService : I18nService {
 
-    var translationMaps: EnumMap<Languages, Map<String, I18N>> = EnumMap(Languages::class.java)
+    var translationMaps: EnumMap<Languages, Map<String, I18NRegistry>> = EnumMap(Languages::class.java)
     var permissionMaps: EnumMap<Languages, Map<String, Permission>> = EnumMap(Languages::class.java)
 
     override fun inject() {
@@ -24,7 +24,7 @@ class SimpleI18NService : I18nService {
         }
     }
 
-    override fun getTranslations(lang: Languages): Map<String, I18N> {
+    override fun getTranslations(lang: Languages): Map<String, I18NRegistry> {
         if (translationMaps.containsKey(lang)) return translationMaps[lang]!!
 
         val i18nMap = Server.getInstance(DataManager::class.java).getDataContents(this, lang.code)
@@ -75,6 +75,12 @@ class SimpleI18NService : I18nService {
         }
 
         return null
+    }
+
+    override fun addTranslation(key: String, lang: Languages, reg: I18NRegistry) {
+        val map = translationMaps.getOrDefault(lang, HashMap<String, I18N>()).toMutableMap()
+        map[key] = reg
+        translationMaps[lang] = map
     }
 
     private fun convertKey(raw: String): String = raw

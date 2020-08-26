@@ -9,4 +9,5 @@ interface I18nService {
     fun getPermissions(lang: Languages): Map<String, I18NRegistry>
 
     fun getEntry(key: String, lang: Languages): I18NRegistry?
+    fun addTranslation(key:String, lang: Languages, reg: I18NRegistry)
 }
