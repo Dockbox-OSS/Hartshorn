@@ -1,11 +1,10 @@
 package org.dockbox.darwin.core.command.context
 
 import org.dockbox.darwin.core.command.parse.AbstractArgumentParser
+import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
 import org.dockbox.darwin.core.objects.targets.CommandSource
-import org.dockbox.darwin.core.objects.targets.Console
-import org.dockbox.darwin.core.objects.targets.Identifiable
 import java.util.*
 
 @Suppress("UNCHECKED_CAST")
@@ -24,12 +23,32 @@ open class CommandContext(
     val flagCount: Int
         get() = flags!!.size
 
+    fun getArgument(key: String): Optional<CommandValue.Argument<String>> {
+        return Arrays.stream(args).filter { it.key == key }.findFirst().map { CommandValue.Argument(it.value.toString(), it.key) }
+    }
+
     fun <T> getArgument(key: String, type: Class<T>): Optional<CommandValue.Argument<T>> {
         return Arrays.stream(args).filter { it.key == key }.findFirst().map { it as CommandValue.Argument<T> }
     }
 
+    fun <T> getArgumentAndParse(key: String, parser: AbstractTypeArgumentParser<T>): Optional<T> {
+        val optionalArg = getArgument(key)
+        return if (optionalArg.isPresent) parser.parse(optionalArg.get())
+        else Optional.empty()
+    }
+
+    fun getFlag(key: String): Optional<CommandValue.Flag<String>> {
+        return Arrays.stream(flags).filter { it.key == key }.findFirst().map { CommandValue.Flag(it.value.toString(), it.key) }
+    }
+
     fun <T> getFlag(key: String, type: Class<T>): Optional<CommandValue.Flag<T>> {
         return Arrays.stream(flags).filter { it.key == key }.findFirst().map { it as CommandValue.Flag<T> }
+    }
+
+    fun <T> getFlagAndParse(key: String, parser: AbstractTypeArgumentParser<T>): Optional<T> {
+        val optionalArg = getFlag(key)
+        return if (optionalArg.isPresent) parser.parse(optionalArg.get())
+        else Optional.empty()
     }
 
     fun hasArgument(key: String): Boolean {
