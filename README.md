@@ -1,4 +1,9 @@
-# Darwin Server ![ci-status](https://api.travis-ci.com/GuusLieben/DarwinServer.svg?branch=api-7.1-1.12.2)  
+# Darwin Server
+![ci-status](https://api.travis-ci.com/GuusLieben/DarwinServer.svg?branch=api-7.1-1.12.2) 
+![minecraft](https://img.shields.io/badge/Minecraft-1.12.2-lightgrey)
+![sponge-api](https://img.shields.io/badge/SpongeAPI-7.2-yellow)  
+[![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1)  
+
 **Project is in pre-alpha stages, please note there might be major changes without special notice**
 
 _Documentation will follow once 3.1 milestone has been reached_
