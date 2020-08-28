@@ -469,7 +469,7 @@ enum class I18N(private var value: String): I18NRegistry {
     }
 
     override fun getValue(): String {
-        return getValue(Server.getServer().getGlobalConfig().getDefaultLanguage()) // TODO: Default language config
+        return getValue(Server.getServer().getGlobalConfig().getDefaultLanguage())
     }
 
     override fun getValue(lang: Languages): String {
