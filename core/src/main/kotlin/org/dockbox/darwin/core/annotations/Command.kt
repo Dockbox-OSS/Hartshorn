@@ -13,5 +13,6 @@ annotation class Command (
         val valueFlags: String = "",
         val anyFlags: Boolean = false,
         val context: String,
-        val permission: Permission = Permission.GLOBAL_BYPASS
+        val permission: Permission = Permission.GLOBAL_BYPASS,
+        val permissionKey: String = ""
 )

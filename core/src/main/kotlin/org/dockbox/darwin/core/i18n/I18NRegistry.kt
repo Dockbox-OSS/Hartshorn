@@ -65,24 +65,6 @@ interface I18NRegistry {
                 .replace("\\$4".toRegex(), java.lang.String.format("\u00A7%s", this.getValue()))
     }
 
-//    open fun collect() {
-//        CoreServer.getModuleLoader().getModuleInstance(DarwinServerModule::class.java)
-//
-//        DarwinCore.getModule(DarwinServerModule::class.java).ifPresent({ module ->
-//            val configMap: MutableMap<String, Any>
-//            val file = File(DarwinServer.getUtilChecked(FileUtils::class.java).getConfigDirectory(module).toFile(), "translations.yml")
-//            if (!file.exists()) {
-//                configMap = HashMap<String, Any>()
-//                Arrays.stream(Translations.values()).forEach { translation -> configMap[translation.name().toLowerCase().replaceAll("_", ".")] = translation.u() }
-//                DarwinServer.getUtilChecked(FileUtils::class.java).writeYamlDataToFile(configMap, file)
-//            } else configMap = DarwinServer.getUtilChecked(FileUtils::class.java).getYamlDataFromFile(file)
-//            configMap.forEach { (k: String, v: Any) ->
-//                val t: Translations = Translations.valueOf(k.toUpperCase().replace("\\.".toRegex(), "_"))
-//                if (t != null) t.c(v.toString())
-//            }
-//        })
-//    }
-
     @Suppress("UNCHECKED_CAST")
     fun replaceFromMap(string: String, replacements: MutableMap<String, String?>): String {
         val sb = StringBuilder(string)

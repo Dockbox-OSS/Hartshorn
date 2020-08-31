@@ -71,12 +71,12 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     @Override
-    public void registerCommandNoArgs(@NotNull String command, @NotNull Permission permission, @NotNull CommandRunnerFunction runner) {
+    public void registerCommandNoArgs(@NotNull String command, @NotNull I18NRegistry permission, @NotNull CommandRunnerFunction runner) {
         Sponge.getCommandManager().register(Server.getServer(), CommandSpec.builder().permission(permission.getValue()).executor(buildExecutor(runner, command)).build(), command);
     }
 
     @Override
-    public void registerCommandArgsAndOrChild(@NotNull String command, Permission permission, @NotNull CommandRunnerFunction runner) {
+    public void registerCommandArgsAndOrChild(@NotNull String command, I18NRegistry permission, @NotNull CommandRunnerFunction runner) {
         CommandSpec.Builder spec = CommandSpec.builder();
         // Sponge does not allow for multiple permissions for one command
         if (permission != null) {

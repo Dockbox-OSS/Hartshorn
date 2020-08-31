@@ -74,12 +74,19 @@ class SimpleI18NService : I18nService {
         } catch (ignored: NullPointerException) {
         }
 
+        if (translationMaps.containsKey(lang)) {
+            if (translationMaps[lang]!!.containsKey(shadow)) {
+                return translationMaps[lang]!![shadow]
+            }
+        }
+
         return null
     }
 
     override fun addTranslation(key: String, lang: Languages, reg: I18NRegistry) {
         val map = translationMaps.getOrDefault(lang, HashMap<String, I18N>()).toMutableMap()
-        map[key] = reg
+        val shadow = convertKey(key)
+        map[shadow] = reg
         translationMaps[lang] = map
     }
 
