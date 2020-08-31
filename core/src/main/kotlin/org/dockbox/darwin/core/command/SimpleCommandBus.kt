@@ -155,7 +155,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             allowed
         }.map { method: Method ->
             method.isAccessible = true
-            val information: Triple<Command, Permission, Array<String>> = getCommandInformation(method)
+            val information: Triple<Command, I18NRegistry, Array<String>> = getCommandInformation(method)
             MethodCommandRegistration(information.third[0], information.third, information.first, method, information.second)
         }.toArray { size -> arrayOfNulls<MethodCommandRegistration>(size) }
     }
@@ -202,7 +202,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         }
     }
 
-    override fun registerCommand(command: String, permission: Permission, runner: CommandRunnerFunction) {
+    override fun registerCommand(command: String, permission: I18NRegistry, runner: CommandRunnerFunction) {
         if (command.indexOf(' ') < 0 && !command.startsWith("*")) registerCommandNoArgs(command, permission, runner)
         else registerCommandArgsAndOrChild(command, permission, runner)
     }
@@ -223,9 +223,9 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     }
 
     protected abstract fun getArgumentValue(type: String, permissions: I18NRegistry, key: String): A
-    abstract fun registerCommandNoArgs(command: String, permissions: Permission, runner: CommandRunnerFunction)
+    abstract fun registerCommandNoArgs(command: String, permissions: I18NRegistry, runner: CommandRunnerFunction)
     protected abstract fun convertContext(ctx: C, sender: CommandSource, command: String?): CommandContext
-    abstract fun registerCommandArgsAndOrChild(command: String, permissions: Permission, runner: CommandRunnerFunction)
+    abstract fun registerCommandArgsAndOrChild(command: String, permissions: I18NRegistry, runner: CommandRunnerFunction)
 
     companion object {
         val RegisteredCommands: List<String> = ArrayList()
