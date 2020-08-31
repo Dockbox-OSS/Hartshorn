@@ -25,6 +25,8 @@ group = "org.dockbox.darwin"
 var revision = ""
 var date = ""
 
+val junitVersion: String = "5.3.2"
+
 ext {
     val git = org.ajoberstar.grgit.Grgit.open(file(".git"))
     val format = SimpleDateFormat("dd-MM-yyyy")
@@ -69,11 +71,23 @@ allprojects {
         compileOnly("net.dv8tion:JDA:4.ALPHA.0_76") {
             exclude("club.minnced", "opus-java")
         }
+
+
+        testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+        testCompile("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+        testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     }
 
     tasks {
         build {
             dependsOn(shadowJar)
+        }
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+        testLogging {
+            events("passed", "skipped", "failed")
         }
     }
 }
