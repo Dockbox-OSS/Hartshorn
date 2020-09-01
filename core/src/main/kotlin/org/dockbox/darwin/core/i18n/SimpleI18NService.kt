@@ -107,9 +107,9 @@ class SimpleI18NService : I18nService {
         translationMaps[lang] = map
     }
 
-    override fun addTranslation(key: String, lang: Languages, reg: String) {
-        val simpleReg = SimpleI18NRegistry(reg)
-        addTranslation(key, lang, simpleReg)
+    override fun addTranslation(key: String, lang: Languages, defaultValue: String) {
+        val reg = SimpleI18NRegistry(defaultValue)
+        addTranslation(key, lang, reg)
     }
 
     private fun convertKey(raw: String): String = raw

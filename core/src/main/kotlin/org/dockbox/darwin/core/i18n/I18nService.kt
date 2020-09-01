@@ -27,5 +27,5 @@ interface I18nService {
 
     fun getEntry(key: String, lang: Languages): I18NRegistry?
     fun addTranslation(key:String, lang: Languages, reg: I18NRegistry)
-    fun addTranslation(key:String, lang: Languages, reg: String)
+    fun addTranslation(key:String, lang: Languages, defaultValue: String)
 }
