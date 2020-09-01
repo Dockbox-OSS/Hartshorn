@@ -21,6 +21,7 @@ import org.dockbox.darwin.core.util.files.FileUtils
 import org.spongepowered.api.Sponge
 import java.io.File
 import java.io.IOException
+import java.nio.file.Files
 import java.nio.file.Path
 
 class SpongeFileUtils : FileUtils {
@@ -29,11 +30,11 @@ class SpongeFileUtils : FileUtils {
         return path
     }
 
-    override fun createFileIfNotExists(file: File): File {
-        if (!file.exists()) {
+    override fun createFileIfNotExists(file: Path): Path {
+        if (!Files.exists(file)) {
             try {
-                file.parentFile.mkdirs()
-                file.createNewFile()
+                Files.createDirectories(file.parent)
+                Files.createFile(file)
             } catch (ex: IOException) {
                 ex.printStackTrace()
             }

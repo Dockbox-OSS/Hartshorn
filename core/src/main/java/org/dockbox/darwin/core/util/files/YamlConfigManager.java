@@ -65,16 +65,16 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
 
     @NotNull
     @Override
-    public File getConfigFile(@NotNull Class<?> module) {
+    public Path getConfigFile(@NotNull Class<?> module) {
         return getModuleAndCallback(module, (annotation) -> {
             Path configPath = getConfigDir(module);
-            return Server.getInstance(FileUtils.class).createFileIfNotExists(new File(configPath.toFile(), annotation.id() + ".yml"));
+            return Server.getInstance(FileUtils.class).createFileIfNotExists(configPath.resolve(annotation.id() + ".yml"));
         });
     }
 
     @NotNull
     @Override
-    public File getConfigFile(@NotNull Object module) {
+    public Path getConfigFile(@NotNull Object module) {
         if (!(module instanceof Class)) module = module.getClass();
         return getConfigFile((Class<?>) module);
     }
@@ -98,8 +98,8 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
     public <T> T getConfigContents(@NotNull Class<?> module, @NotNull Class<T> convertTo, T defaultValue) {
         return getModuleAndCallback(module, (annotation) -> {
             try {
-                File cf = getConfigFile(module);
-                T res = mapper.readValue(cf, convertTo);
+                Path cf = getConfigFile(module);
+                T res = mapper.readValue(cf.toFile(), convertTo);
                 return res != null ? res : defaultValue;
             } catch (IOException | IllegalArgumentException e) {
                 Server.getServer().except("Failed to map config contents", e);
@@ -118,8 +118,8 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
     @Override
     public <T> void writeToConfig(@NotNull Class<?> module, T data) {
         try {
-            File cf = getConfigFile(module);
-            mapper.writeValue(cf, data);
+            Path cf = getConfigFile(module);
+            mapper.writeValue(cf.toFile(), data);
         } catch (IOException e) {
             Server.getServer().except("Failed to write config contents", e);
         }

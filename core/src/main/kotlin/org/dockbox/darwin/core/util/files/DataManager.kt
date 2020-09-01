@@ -17,7 +17,6 @@
 
 package org.dockbox.darwin.core.util.files
 
-import java.io.File
 import java.nio.file.Path
 
 interface DataManager {
@@ -25,8 +24,8 @@ interface DataManager {
     fun getDataDir(module: Class<*>): Path
     fun getDataDir(module: Any): Path
 
-    fun getDefaultDataFile(module: Class<*>): File
-    fun getDefaultDataFile(module: Any): File
+    fun getDefaultDataFile(module: Class<*>): Path
+    fun getDefaultDataFile(module: Any): Path
 
     fun getDefaultDataFileContents(module: Class<*>): Map<String, Any>
     fun getDefaultDataFileContents(module: Any): Map<String, Any>

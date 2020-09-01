@@ -25,8 +25,8 @@ interface BulkDataManager<D> {
     fun getDataDir(module: Class<*>): Path
     fun getDataDir(module: Any): Path
 
-    fun getDefaultBulkDataFile(module: Class<*>): File
-    fun getDefaultBulkDataFile(module: Any): File
+    fun getDefaultBulkDataFile(module: Class<*>): Path
+    fun getDefaultBulkDataFile(module: Any): Path
 
     fun getBulkDao(module: Any, type: Class<*>, fileName: String): D
     fun getBulkDao(module: Class<*>, type: Class<*>, fileName: String): D

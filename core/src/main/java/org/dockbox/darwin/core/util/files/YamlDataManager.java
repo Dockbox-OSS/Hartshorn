@@ -23,23 +23,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 
 import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.server.ServerReference;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class YamlDataManager extends ServerReference implements DataManager {
 
@@ -72,16 +64,16 @@ public class YamlDataManager extends ServerReference implements DataManager {
 
     @NotNull
     @Override
-    public File getDefaultDataFile(@NotNull Class<?> module) {
+    public Path getDefaultDataFile(@NotNull Class<?> module) {
         return getModuleAndCallback(module, (annotation) -> {
             Path dataPath = getDataDir(module);
-            return getInstance(FileUtils.class).createFileIfNotExists(new File(dataPath.toFile(), annotation.id() + ".yml"));
+            return getInstance(FileUtils.class).createFileIfNotExists(dataPath.resolve(annotation.id() + ".yml"));
         });
     }
 
     @NotNull
     @Override
-    public File getDefaultDataFile(@NotNull Object module) {
+    public Path getDefaultDataFile(@NotNull Object module) {
         if (!(module instanceof Class)) module = module.getClass();
         return getDefaultDataFile((Class<?>) module);
     }
@@ -106,8 +98,8 @@ public class YamlDataManager extends ServerReference implements DataManager {
     public <T> T getDefaultDataFileContents(@NotNull Class<?> module, @NotNull Class<T> convertTo, T defaultValue) {
         return getModuleAndCallback(module, (annotation) -> {
             try {
-                File cf = getDefaultDataFile(module);
-                T res = mapper.readValue(cf, convertTo);
+                Path cf = getDefaultDataFile(module);
+                T res = mapper.readValue(cf.toFile(), convertTo);
                 return res != null ? res : defaultValue;
             } catch (IOException | IllegalArgumentException e) {
                 Server.getServer().except("Failed to map data contents", e);
@@ -126,8 +118,8 @@ public class YamlDataManager extends ServerReference implements DataManager {
     @Override
     public <T> void writeToDefaultDataFile(@NotNull Class<?> module, T data) {
         try {
-            File df = getDefaultDataFile(module);
-            mapper.writeValue(df, data);
+            Path df = getDefaultDataFile(module);
+            mapper.writeValue(df.toFile(), data);
         } catch (IOException e) {
             Server.getServer().except("Failed to write data contents", e);
         }
@@ -143,8 +135,8 @@ public class YamlDataManager extends ServerReference implements DataManager {
     public <T> void writeToDataFile(@NotNull Class<?> module, T data, @NotNull String fileName) {
         try {
             Path dataDir = getDataDir(module);
-            File df = getInstance(FileUtils.class).createFileIfNotExists(new File(dataDir.toFile(), fileName + ".yml"));
-            mapper.writeValue(df, data);
+            Path df = getInstance(FileUtils.class).createFileIfNotExists(dataDir.resolve(fileName + ".yml"));
+            mapper.writeValue(df.toFile(), data);
         } catch (IOException e) {
             Server.getServer().except("Failed to write data contents", e);
         }
@@ -162,8 +154,8 @@ public class YamlDataManager extends ServerReference implements DataManager {
     public Map<String, Object> getDataFileContents(@NotNull Class<?> module, @NotNull String fileName) {
         return getModuleAndCallback(module, (annotation) -> {
             try {
-                File cf = getInstance(FileUtils.class).createFileIfNotExists(new File(getDefaultDataFile(module), fileName + ".yml"));
-                Map<String, Object> res = mapper.readValue(cf, Map.class);
+                Path cf = getInstance(FileUtils.class).createFileIfNotExists(getDataDir(module).resolve(fileName + ".yml"));
+                Map<String, Object> res = mapper.readValue(cf.toFile(), Map.class);
                 return res != null ? res : new HashMap<>();
             } catch (IOException | IllegalArgumentException e) {
                 Server.getServer().except("Failed to map data contents", e);

@@ -40,16 +40,16 @@ public class SQLiteBulkDataManager extends ServerReference implements BulkDataMa
 
     @NotNull
     @Override
-    public File getDefaultBulkDataFile(@NotNull Class<?> module) {
+    public Path getDefaultBulkDataFile(@NotNull Class<?> module) {
         return getModuleAndCallback(module, (annotation) -> {
             Path dataPath = getDataDir(module);
-            return getInstance(FileUtils.class).createFileIfNotExists(new File(dataPath.toFile(), annotation.id() + ".db"));
+            return getInstance(FileUtils.class).createFileIfNotExists(dataPath.resolve(annotation.id() + ".db"));
         });
     }
 
     @NotNull
     @Override
-    public File getDefaultBulkDataFile(@NotNull Object module) {
+    public Path getDefaultBulkDataFile(@NotNull Object module) {
         if (!(module instanceof Class)) module = module.getClass();
         return getDefaultBulkDataFile((Class<?>) module);
     }
@@ -58,7 +58,7 @@ public class SQLiteBulkDataManager extends ServerReference implements BulkDataMa
     public Dao<?, ?> getBulkDao(@NotNull Class<?> module, @NotNull Class<?> type, @NotNull String fileName) {
         return getModuleAndCallback(module, (annotation) -> {
             Path dataDir = getDataDir(module);
-            return constructDao(type, new File(dataDir.toFile(), fileName + ".sqlite"));
+            return constructDao(type, dataDir.resolve(fileName + ".sqlite"));
         });
     }
 
@@ -79,7 +79,7 @@ public class SQLiteBulkDataManager extends ServerReference implements BulkDataMa
         return constructDao(type, getDefaultBulkDataFile(module));
     }
 
-    public Dao<?, ?> constructDao(@NotNull Class<?> type, @NotNull File file) {
+    public Dao<?, ?> constructDao(@NotNull Class<?> type, @NotNull Path file) {
         getInstance(FileUtils.class).createFileIfNotExists(file);
         if (sqliteConnectedTo(file)) {
             ConnectionSource source = jdbcSources.get(file.toString());
@@ -93,7 +93,7 @@ public class SQLiteBulkDataManager extends ServerReference implements BulkDataMa
         return null;
     }
 
-    public boolean sqliteConnectedTo(File file) {
+    public boolean sqliteConnectedTo(Path file) {
         String fileAb = file.toString();
         if (jdbcSources.containsKey(fileAb) && jdbcSources.get(fileAb) != null) return true;
         String connStr = String.format(JDBC_FORMAT, fileAb);

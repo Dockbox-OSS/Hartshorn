@@ -25,8 +25,8 @@ interface ConfigManager {
     fun getConfigDir(module: Class<*>): Path
     fun getConfigDir(module: Any): Path
 
-    fun getConfigFile(module: Class<*>): File
-    fun getConfigFile(module: Any): File
+    fun getConfigFile(module: Class<*>): Path
+    fun getConfigFile(module: Any): Path
 
     fun getConfigContents(module: Class<*>): Map<String, Any>
     fun getConfigContents(module: Any): Map<String, Any>
