@@ -107,6 +107,11 @@ class SimpleI18NService : I18nService {
         translationMaps[lang] = map
     }
 
+    override fun addTranslation(key: String, lang: Languages, reg: String) {
+        val simpleReg = SimpleI18NRegistry(reg)
+        addTranslation(key, lang, simpleReg)
+    }
+
     private fun convertKey(raw: String): String = raw
             .replace("-".toRegex(), "_")
             .replace("\\.".toRegex(), "_")
