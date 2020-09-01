@@ -35,6 +35,6 @@ interface FileUtils {
     fun getPluginConfigDir(): Path
 
     fun createPathIfNotExists(path: Path): Path
-    fun createFileIfNotExists(file: File): File
+    fun createFileIfNotExists(file: Path): Path
 
 }

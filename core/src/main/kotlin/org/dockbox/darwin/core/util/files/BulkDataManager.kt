@@ -20,22 +20,17 @@ package org.dockbox.darwin.core.util.files
 import java.io.File
 import java.nio.file.Path
 
-interface ConfigManager {
+interface BulkDataManager<D> {
 
-    fun getConfigDir(module: Class<*>): Path
-    fun getConfigDir(module: Any): Path
+    fun getDataDir(module: Class<*>): Path
+    fun getDataDir(module: Any): Path
 
-    fun getConfigFile(module: Class<*>): Path
-    fun getConfigFile(module: Any): Path
+    fun getDefaultBulkDataFile(module: Class<*>): Path
+    fun getDefaultBulkDataFile(module: Any): Path
 
-    fun getConfigContents(module: Class<*>): Map<String, Any>
-    fun getConfigContents(module: Any): Map<String, Any>
-
-    fun <T> getConfigContents(module: Class<*>, convertTo: Class<T>, defaultValue: T): T
-    fun <T> getConfigContents(module: Any, convertTo: Class<T>, defaultValue: T): T
-
-    fun <T> writeToConfig(module: Class<*>, data: T)
-    fun <T> writeToConfig(module: Any, data: T)
-
+    fun getBulkDao(module: Any, type: Class<*>, fileName: String): D
+    fun getBulkDao(module: Class<*>, type: Class<*>, fileName: String): D
+    fun getDefaultBulkDao(module: Any, type: Class<*>): D
+    fun getDefaultBulkDao(module: Class<*>, type: Class<*>): D
 
 }

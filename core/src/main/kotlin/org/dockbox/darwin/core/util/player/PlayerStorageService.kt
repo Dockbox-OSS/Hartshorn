@@ -33,7 +33,7 @@ abstract class PlayerStorageService {
     fun setLanguagePreference(uuid: UUID, lang: Languages) {
         val data = getUserData(uuid).toMutableMap()
         data[GlobalConfig.ConfigKeys.PLAYER_LANGUAGE.key] = lang.code
-        Server.getInstance(DataManager::class.java).writeToData(Server::class.java, data, uuid.toString().toLowerCase())
+        Server.getInstance(DataManager::class.java).writeToDataFile(Server::class.java, data, uuid.toString().toLowerCase())
     }
 
     fun getLanguagePreference(uuid: UUID): Languages {
@@ -51,6 +51,6 @@ abstract class PlayerStorageService {
     private fun getUserData(uuid: UUID): Map<String, Any> {
         return Server
                 .getInstance(DataManager::class.java)
-                .getDataContents(Server::class.java, uuid.toString().toLowerCase())
+                .getDataFileContents(Server::class.java, uuid.toString().toLowerCase())
     }
 }

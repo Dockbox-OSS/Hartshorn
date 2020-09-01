@@ -44,7 +44,7 @@ class SimpleI18NService : I18nService {
     override fun getTranslations(lang: Languages): Map<String, I18NRegistry> {
         if (translationMaps.containsKey(lang)) return translationMaps[lang]!!
 
-        val i18nMap = Server.getInstance(DataManager::class.java).getDataContents(this, lang.code)
+        val i18nMap = Server.getInstance(DataManager::class.java).getDataFileContents(this, lang.code)
         val translationMap = i18nMap["translations"]
         @Suppress("UNCHECKED_CAST")
         val map = getReturnableMap(translationMap) { k -> I18N.valueOf(k) } as Map<String, I18N>
@@ -55,7 +55,7 @@ class SimpleI18NService : I18nService {
     override fun getPermissions(lang: Languages): Map<String, Permission> {
         if (permissionMaps.containsKey(lang)) return permissionMaps[lang]!!
 
-        val i18nMap = Server.getInstance(DataManager::class.java).getDataContents(this, lang.code)
+        val i18nMap = Server.getInstance(DataManager::class.java).getDataFileContents(this, lang.code)
         val permissionMap = i18nMap["permissions"]
         @Suppress("UNCHECKED_CAST")
         val map = getReturnableMap(permissionMap) { k -> Permission.valueOf(k) } as Map<String, Permission>
@@ -105,6 +105,11 @@ class SimpleI18NService : I18nService {
         val shadow = convertKey(key)
         map[shadow] = reg
         translationMaps[lang] = map
+    }
+
+    override fun addTranslation(key: String, lang: Languages, defaultValue: String) {
+        val reg = SimpleI18NRegistry(defaultValue)
+        addTranslation(key, lang, reg)
     }
 
     private fun convertKey(raw: String): String = raw

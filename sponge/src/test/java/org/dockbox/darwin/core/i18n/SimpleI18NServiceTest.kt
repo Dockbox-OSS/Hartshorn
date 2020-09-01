@@ -26,11 +26,22 @@ internal class SimpleI18NServiceTest {
     private val defaultValue: String = "Sample line"
 
     @Test
-    fun addTranslation() {
+    fun addTranslationRegistry() {
         // No need to mock KServer here, as long as .inject() is not called on the service
-        val service = SimpleI18NService();
+        val service = SimpleI18NService()
         val custom = SimpleI18NRegistry(defaultValue)
         service.addTranslation(defaultKey, language, custom)
+
+        val entry = service.getEntry(defaultKey, language)
+        assert(entry != null)
+        assert(entry!!.getValue() == defaultValue)
+    }
+
+    @Test
+    fun addTranslationString() {
+        // No need to mock KServer here, as long as .inject() is not called on the service
+        val service = SimpleI18NService()
+        service.addTranslation(defaultKey, language, defaultValue)
 
         val entry = service.getEntry(defaultKey, language)
         assert(entry != null)
