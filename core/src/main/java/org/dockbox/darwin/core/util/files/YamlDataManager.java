@@ -41,13 +41,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class YamlSQLiteDataManager extends ServerReference implements DataManager<Dao<?, ?>> {
+public class YamlDataManager extends ServerReference implements DataManager {
 
     private final ObjectMapper mapper;
-    private static final Map<String, ConnectionSource> jdbcSources = new ConcurrentHashMap<>();
-    private static final String JDBC_FORMAT = "jdbc:sqlite:%s";
 
-    public YamlSQLiteDataManager() {
+    public YamlDataManager() {
         YAMLFactory fact = new YAMLFactory();
         fact.disable(Feature.WRITE_DOC_START_MARKER);
         mapper = new ObjectMapper(fact);
@@ -88,64 +86,24 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
         return getDefaultDataFile((Class<?>) module);
     }
 
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @NotNull
     @Override
-    public File getDefaultBulkDataFile(@NotNull Class<?> module) {
-        return getModuleAndCallback(module, (annotation) -> {
-            Path dataPath = getDataDir(module);
-            return getInstance(FileUtils.class).createFileIfNotExists(new File(dataPath.toFile(), annotation.id() + ".db"));
-        });
-    }
-
-    @NotNull
-    @Override
-    public File getDefaultBulkDataFile(@NotNull Object module) {
-        if (!(module instanceof Class)) module = module.getClass();
-        return getDefaultBulkDataFile((Class<?>) module);
-    }
-
-    @Override
-    public Dao<?, ?> getBulkDao(@NotNull Class<?> module, @NotNull Class<?> type, @NotNull String fileName) {
-        return getModuleAndCallback(module, (annotation) -> {
-            Path dataDir = getDataDir(module);
-            return constructDao(type, new File(dataDir.toFile(), fileName + ".sqlite"));
-        });
-    }
-
-    @Override
-    public Dao<?, ?> getBulkDao(@NotNull Object module, @NotNull Class<?> type, @NotNull String fileName) {
-        if (!(module instanceof Class)) module = module.getClass();
-        return getBulkDao((Class<?>) module, type, fileName);
-    }
-
-    @Override
-    public Dao<?, ?> getDefaultBulkDao(@NotNull Class<?> module, @NotNull Class<?> type) {
-        return constructDao(type, getDefaultBulkDataFile(module));
-    }
-
-    @Override
-    public Dao<?, ?> getDefaultBulkDao(@NotNull Object module, @NotNull Class<?> type) {
-        if (!(module instanceof Class)) module = module.getClass();
-        return constructDao(type, getDefaultBulkDataFile(module));
+    public Map<String, Object> getDefaultDataFileContents(@NotNull Class<?> module) {
+        return getDefaultDataFileContents(module, Map.class, new HashMap());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @NotNull
     @Override
-    public Map<String, Object> getDataContents(@NotNull Class<?> module) {
-        return getDataContents(module, Map.class, new HashMap());
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @NotNull
-    @Override
-    public Map<String, Object> getDataContents(@NotNull Object module) {
-        return getDataContents(module, Map.class, new HashMap());
+    public Map<String, Object> getDefaultDataFileContents(@NotNull Object module) {
+        return getDefaultDataFileContents(module, Map.class, new HashMap());
     }
 
     @NotNull
     @Override
-    public <T> T getDataContents(@NotNull Class<?> module, @NotNull Class<T> convertTo, T defaultValue) {
+    public <T> T getDefaultDataFileContents(@NotNull Class<?> module, @NotNull Class<T> convertTo, T defaultValue) {
         return getModuleAndCallback(module, (annotation) -> {
             try {
                 File cf = getDefaultDataFile(module);
@@ -160,13 +118,13 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
 
     @NotNull
     @Override
-    public <T> T getDataContents(@NotNull Object module, @NotNull Class<T> convertTo, T defaultValue) {
+    public <T> T getDefaultDataFileContents(@NotNull Object module, @NotNull Class<T> convertTo, T defaultValue) {
         if (!(module instanceof Class)) module = module.getClass();
-        return getDataContents((Class<?>) module, convertTo, defaultValue);
+        return getDefaultDataFileContents((Class<?>) module, convertTo, defaultValue);
     }
 
     @Override
-    public <T> void writeToData(@NotNull Class<?> module, T data) {
+    public <T> void writeToDefaultDataFile(@NotNull Class<?> module, T data) {
         try {
             File df = getDefaultDataFile(module);
             mapper.writeValue(df, data);
@@ -176,13 +134,13 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
     }
 
     @Override
-    public <T> void writeToData(@NotNull Object module, T data) {
+    public <T> void writeToDefaultDataFile(@NotNull Object module, T data) {
         if (!(module instanceof Class)) module = module.getClass();
-        writeToData((Class<?>) module, data);
+        writeToDefaultDataFile((Class<?>) module, data);
     }
 
     @Override
-    public <T> void writeToData(@NotNull Class<?> module, T data, @NotNull String fileName) {
+    public <T> void writeToDataFile(@NotNull Class<?> module, T data, @NotNull String fileName) {
         try {
             Path dataDir = getDataDir(module);
             File df = getInstance(FileUtils.class).createFileIfNotExists(new File(dataDir.toFile(), fileName + ".yml"));
@@ -193,43 +151,15 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
     }
 
     @Override
-    public <T> void writeToData(@NotNull Object module, T data, @NotNull String fileName) {
+    public <T> void writeToDataFile(@NotNull Object module, T data, @NotNull String fileName) {
         if (!(module instanceof Class)) module = module.getClass();
-        writeToData((Class<?>) module, data, fileName);
-    }
-
-    public Dao<?, ?> constructDao(@NotNull Class<?> type, @NotNull File file) {
-        getInstance(FileUtils.class).createFileIfNotExists(file);
-        if (sqliteConnectedTo(file)) {
-            ConnectionSource source = jdbcSources.get(file.toString());
-            try {
-                TableUtils.createTableIfNotExists(source, type);
-                return DaoManager.createDao(source, type);
-            } catch (SQLException e) {
-                Server.getServer().except("Could not create DAO for type", e);
-            }
-        }
-        return null;
-    }
-
-    public boolean sqliteConnectedTo(File file) {
-        String fileAb = file.toString();
-        if (jdbcSources.containsKey(fileAb) && jdbcSources.get(fileAb) != null) return true;
-        String connStr = String.format(JDBC_FORMAT, fileAb);
-        try {
-            ConnectionSource connectionSource = new JdbcConnectionSource(connStr);
-            jdbcSources.put(fileAb, connectionSource);
-            return true;
-        } catch (SQLException e) {
-            Server.getServer().except(String.format("Failed to create connection source for '%s'", fileAb), e);
-            return false;
-        }
+        writeToDataFile((Class<?>) module, data, fileName);
     }
 
     @SuppressWarnings("unchecked")
     @NotNull
     @Override
-    public Map<String, Object> getDataContents(@NotNull Class<?> module, @NotNull String fileName) {
+    public Map<String, Object> getDataFileContents(@NotNull Class<?> module, @NotNull String fileName) {
         return getModuleAndCallback(module, (annotation) -> {
             try {
                 File cf = getInstance(FileUtils.class).createFileIfNotExists(new File(getDefaultDataFile(module), fileName + ".yml"));
@@ -244,7 +174,7 @@ public class YamlSQLiteDataManager extends ServerReference implements DataManage
 
     @NotNull
     @Override
-    public Map<String, Object> getDataContents(@NotNull Object module, @NotNull String fileName) {
-        return getDataContents(module.getClass(), fileName);
+    public Map<String, Object> getDataFileContents(@NotNull Object module, @NotNull String fileName) {
+        return getDataFileContents(module.getClass(), fileName);
     }
 }

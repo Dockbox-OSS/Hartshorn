@@ -54,7 +54,8 @@ class SpongeCommonInjector : AbstractCommonInjector() {
     override fun configureUtilInject() {
         bind(FileUtils::class.java).to(SpongeFileUtils::class.java)
         bind(ConfigManager::class.java).to(YamlConfigManager::class.java)
-        bind(DataManager::class.java).to(YamlSQLiteDataManager::class.java)
+        bind(DataManager::class.java).to(YamlDataManager::class.java)
+        bind(BulkDataManager::class.java).to(SQLiteBulkDataManager::class.java)
         bind(EventBus::class.java).to(SimpleEventBus::class.java)
         bind(DiscordUtils::class.java).to(SpongeDiscordUtils::class.java)
         bind(LibraryManager::class.java).to(SpongeLibraryManager::class.java)
