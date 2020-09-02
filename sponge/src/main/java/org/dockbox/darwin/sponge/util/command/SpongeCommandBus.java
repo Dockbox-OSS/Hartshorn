@@ -262,7 +262,14 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             assert sender != null : "Command sender is not a console or a player, did a plugin call me?";
             org.dockbox.darwin.core.command.context.CommandContext ctx = convertContext(args, sender, command);
 
-            // TODO: Create early runner for @CommandInterceptor
+            /*
+             * TODO: Create early runner for @CommandInterceptor
+             * - Register @CommandInterceptor early in plugin initialization
+             * - Access all mappings by checking if our command starts with the mapping (so it allows intercepting subcommands)
+             * - Invoke all interceptors and check if context is cancelled
+             * - If cancelled, return CommandResult.empty()
+             * - Otherwise continue to default runner
+             */
 
             if (src instanceof Player) {
                 runner.run(sender, ctx);
