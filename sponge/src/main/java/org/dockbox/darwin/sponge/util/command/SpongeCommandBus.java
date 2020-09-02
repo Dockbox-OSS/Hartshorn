@@ -93,18 +93,13 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     @Override
-    public void registerCommandArgsAndOrChild(@NotNull String command, I18NRegistry permission, @NotNull CommandRunnerFunction runner) {
+    public void registerCommandArgsAndOrChild(@NotNull String command, @NotNull I18NRegistry permission, @NotNull CommandRunnerFunction runner) {
         CommandSpec.Builder spec = CommandSpec.builder();
         // Sponge does not allow for multiple permissions for one command
-        if (permission != null) {
-            spec.permission(permission.getValue());
-            Server.log().warn(
-                    String.format("Registering command '%s' with singular permission (%s)", command,
-                            permission.getValue()));
-        }
-        else {
-            spec.permission(Permission.GLOBAL_BYPASS.getValue());
-        }
+        spec.permission(permission.getValue());
+        Server.log().warn(
+                String.format("Registering command '%s' with singular permission (%s)", command,
+                        permission.getValue()));
 
         String[] parts = command.split(" ");
         String part = parts.length > 1 ? parts[1] : null;
@@ -168,6 +163,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     private Object getValue(Object obj) {
+        // TODO: Text, and other types
         if (obj instanceof User) {
             return new SpongePlayer(((User) obj).getUniqueId(), ((User) obj).getName());
 
@@ -265,6 +261,8 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
             assert sender != null : "Command sender is not a console or a player, did a plugin call me?";
             org.dockbox.darwin.core.command.context.CommandContext ctx = convertContext(args, sender, command);
+
+            // TODO: Create early runner for @CommandInterceptor
 
             if (src instanceof Player) {
                 runner.run(sender, ctx);
