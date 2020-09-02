@@ -94,6 +94,10 @@ open class Text(vararg objects: Any) {
         const val sectionSymbol: Char = '\u00A7'
         const val legacySectionSymbol: Char = '&'
 
+        fun empty(): Text {
+            return Text("")
+        }
+
         fun of(vararg objects: Any): Text {
             return Text(objects)
         }

@@ -22,9 +22,12 @@ import com.flowpowered.math.vector.Vector3d;
 import org.dockbox.darwin.core.objects.targets.CommandSource;
 import org.dockbox.darwin.core.objects.tuple.Vector3D;
 import org.dockbox.darwin.core.objects.user.Gamemode;
+import org.dockbox.darwin.core.objects.user.Player;
+import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.text.actions.ClickAction;
 import org.dockbox.darwin.core.text.actions.HoverAction;
 import org.dockbox.darwin.core.text.actions.ShiftClickAction;
+import org.dockbox.darwin.core.util.player.PlayerStorageService;
 import org.dockbox.darwin.sponge.exceptions.TypeConversionException;
 import org.dockbox.darwin.sponge.objects.location.SpongeLocation;
 import org.dockbox.darwin.sponge.objects.location.SpongeWorld;
@@ -33,8 +36,10 @@ import org.dockbox.darwin.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.source.ConsoleSource;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.serializer.TextSerializers;
@@ -42,6 +47,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class SpongeConversionUtil {
@@ -114,11 +120,28 @@ public class SpongeConversionUtil {
         return null;
     }
 
+    public static org.dockbox.darwin.core.text.Text fromSponge(Text text) {
+        // TODO
+        return org.dockbox.darwin.core.text.Text.Companion.empty();
+    }
+
     private static CommandSource fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
         if (commandSource instanceof ConsoleSource) return SpongeConsole.Companion.getInstance();
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
             return new SpongePlayer(((org.spongepowered.api.entity.living.player.Player) commandSource).getUniqueId(), commandSource.getName());
         throw new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'");
+    }
+
+    public static Optional<Player> fromSponge(User user) {
+        return Server.getInstance(PlayerStorageService.class).getPlayer(user.getUniqueId());
+    }
+
+    public static Optional<? super org.spongepowered.api.entity.living.player.Player> toSponge(Player player) {
+        Optional<org.spongepowered.api.entity.living.player.Player> op = Sponge.getServer().getOnlinePlayers().stream().filter(p -> p.getUniqueId().equals(player.getUniqueId())).findFirst();
+        if (op.isPresent()) return op;
+
+        return Sponge.getServiceManager().provide(UserStorageService.class)
+                .flatMap(uss -> uss.get(player.getUniqueId()));
     }
 
     @NotNull
