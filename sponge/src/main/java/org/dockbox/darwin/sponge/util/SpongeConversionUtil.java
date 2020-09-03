@@ -34,15 +34,16 @@ import org.dockbox.darwin.sponge.objects.location.SpongeWorld;
 import org.dockbox.darwin.sponge.objects.targets.SpongeConsole;
 import org.dockbox.darwin.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.source.ConsoleSource;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -50,7 +51,8 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class SpongeConversionUtil {
+public enum SpongeConversionUtil {
+    ;
 
     @NotNull
     public static Text toSponge(org.dockbox.darwin.core.text.Text message) {
@@ -58,7 +60,7 @@ public class SpongeConversionUtil {
         Text.Builder b = Text.builder();
         parts.forEach(part -> {
 
-            if (part.getParts().size() > 1) {
+            if (1 < part.getParts().size()) {
                 b.append(toSponge(part));
 
             } else {
@@ -66,13 +68,13 @@ public class SpongeConversionUtil {
                 pb.append(TextSerializers.FORMATTING_CODE.deserialize(part.toLegacy()));
 
                 org.spongepowered.api.text.action.ClickAction<?> clickAction = toSponge(part.getClickAction());
-                if (clickAction != null) pb.onClick(clickAction);
+                if (null != clickAction) pb.onClick(clickAction);
 
                 org.spongepowered.api.text.action.HoverAction<?> hoverAction = toSponge(part.getHoverAction());
-                if (hoverAction != null) pb.onHover(hoverAction);
+                if (null != hoverAction) pb.onHover(hoverAction);
 
                 org.spongepowered.api.text.action.ShiftClickAction<?> shiftClickAction = toSponge(part.getShiftClickAction());
-                if (shiftClickAction != null) pb.onShiftClick(shiftClickAction);
+                if (null != shiftClickAction) pb.onShiftClick(shiftClickAction);
 
                 b.append(pb.build());
             }
@@ -81,8 +83,9 @@ public class SpongeConversionUtil {
         return b.build();
     }
 
+    @Nullable
     private static org.spongepowered.api.text.action.ShiftClickAction<?> toSponge(ShiftClickAction<?> action) {
-        if (action == null) return null;
+        if (null == action) return null;
         Object result = action.getResult();
         if (action instanceof ShiftClickAction.InsertText) {
             return TextActions.insertText(((org.dockbox.darwin.core.text.Text) result).toPlain());
@@ -90,8 +93,9 @@ public class SpongeConversionUtil {
         return null;
     }
 
+    @Nullable
     private static org.spongepowered.api.text.action.HoverAction<?> toSponge(HoverAction<?> action) {
-        if (action == null) return null;
+        if (null == action) return null;
         Object result = action.getResult();
         if (action instanceof HoverAction.ShowText) {
             return TextActions.showText(TextSerializers.FORMATTING_CODE.deserialize(((org.dockbox.darwin.core.text.Text) result).toLegacy()));
@@ -100,8 +104,9 @@ public class SpongeConversionUtil {
         return null;
     }
 
+    @Nullable
     private static org.spongepowered.api.text.action.ClickAction<?> toSponge(ClickAction<?> action) {
-        if (action == null) return null;
+        if (null == action) return null;
         Object result = action.getResult();
         if (action instanceof ClickAction.OpenUrl) {
             return TextActions.openUrl((URL) result);
@@ -121,18 +126,18 @@ public class SpongeConversionUtil {
     }
 
     public static org.dockbox.darwin.core.text.Text fromSponge(Text text) {
-        // TODO
+        // TODO: Sponge Text to Darwin Text
         return org.dockbox.darwin.core.text.Text.Companion.empty();
     }
 
     private static CommandSource fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
         if (commandSource instanceof ConsoleSource) return SpongeConsole.Companion.getInstance();
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
-            return new SpongePlayer(((org.spongepowered.api.entity.living.player.Player) commandSource).getUniqueId(), commandSource.getName());
+            return new SpongePlayer(((Identifiable) commandSource).getUniqueId(), commandSource.getName());
         throw new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'");
     }
 
-    public static Optional<Player> fromSponge(User user) {
+    public static Optional<Player> fromSponge(Identifiable user) {
         return Server.getInstance(PlayerStorageService.class).getPlayer(user.getUniqueId());
     }
 
@@ -162,7 +167,7 @@ public class SpongeConversionUtil {
     public static World toSponge(org.dockbox.darwin.core.objects.location.World world) {
         if (world instanceof SpongeWorld) {
             World wref = ((SpongeWorld) world).getReference();
-            if (wref != null) return wref;
+            if (null != wref) return wref;
         }
 
         return Sponge.getServer().getWorld(world.getWorldUniqueId())
