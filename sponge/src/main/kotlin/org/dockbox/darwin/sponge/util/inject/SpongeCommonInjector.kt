@@ -30,10 +30,8 @@ import org.dockbox.darwin.core.util.exceptions.ExceptionHelper
 import org.dockbox.darwin.core.util.exceptions.SimpleExceptionHelper
 import org.dockbox.darwin.core.util.files.*
 import org.dockbox.darwin.core.util.inject.AbstractCommonInjector
-import org.dockbox.darwin.core.util.module.ModuleLoader
-import org.dockbox.darwin.core.util.module.ModuleScanner
-import org.dockbox.darwin.core.util.module.SimpleModuleLoader
-import org.dockbox.darwin.core.util.module.SimpleModuleScanner
+import org.dockbox.darwin.core.util.extension.ExtensionManager
+import org.dockbox.darwin.core.util.extension.SimpleExtensionManager
 import org.dockbox.darwin.core.util.player.PlayerStorageService
 import org.dockbox.darwin.core.util.text.BroadcastService
 import org.dockbox.darwin.core.util.text.SimpleBroadcastService
@@ -47,8 +45,7 @@ class SpongeCommonInjector : AbstractCommonInjector() {
     }
 
     override fun configureModuleInject() {
-        bind(ModuleLoader::class.java).to(SimpleModuleLoader::class.java)
-        bind(ModuleScanner::class.java).to(SimpleModuleScanner::class.java)
+        bind(ExtensionManager::class.java).to(SimpleExtensionManager::class.java)
     }
 
     override fun configureUtilInject() {

@@ -17,13 +17,13 @@
 
 package org.dockbox.darwin.core.i18n
 
-import org.dockbox.darwin.core.annotations.Module
+import org.dockbox.darwin.core.util.extension.Extension
 import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.util.files.DataManager
 import java.util.*
 import kotlin.collections.HashMap
 
-@Module(id = "i18n", authors = ["GuusLieben"], description = "Provides a simple implementation of I18N", name = "Simple I18N")
+@Extension(id = "i18n", authors = ["GuusLieben"], description = "Provides a simple implementation of I18N", name = "Simple I18N")
 class SimpleI18NService : I18nService {
 
     var translationMaps: EnumMap<Languages, Map<String, I18NRegistry>> = EnumMap(Languages::class.java)

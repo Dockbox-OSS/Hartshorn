@@ -15,17 +15,25 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.darwin.core.annotations
+package org.dockbox.darwin.core.util.extension
 
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS)
-annotation class Module (
-        val id: String,
-        val name: String,
-        val version: String = "unknown",
-        val description: String,
-        val url: String = "none",
-        val authors: Array<String>,
-        val dependencies: Array<String> = [],
-        val requiresNMS: Boolean = false
-        )
+import java.nio.file.Path
+import java.util.*
+
+interface ExtensionManager {
+
+    fun getContext(module: Class<*>): Optional<ExtensionContext>
+    fun getContext(id: String): Optional<ExtensionContext>
+
+    fun getHeader(module: Class<*>): Optional<Extension>
+    fun getHeader(id: String): Optional<Extension>
+
+    fun <T> getInstance(module: Class<T>): Optional<T>
+    fun getInstance(id: String): Optional<*>
+
+    fun getExternalExtensions(): List<ExtensionContext>
+    fun collectIntegratedExtensions(): List<ExtensionContext>
+    fun loadExternalExtension(file: Path): Optional<ExtensionContext>
+
+    fun getRegisteredExtensionIds(): List<String>
+}

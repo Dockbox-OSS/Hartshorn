@@ -28,15 +28,15 @@ import org.dockbox.darwin.core.command.SimpleCommandBus;
 import org.dockbox.darwin.core.command.context.CommandValue;
 import org.dockbox.darwin.core.i18n.I18NRegistry;
 import org.dockbox.darwin.core.i18n.Permission;
-import org.dockbox.darwin.core.objects.module.ModuleInformation;
 import org.dockbox.darwin.core.objects.tuple.Tuple;
 import org.dockbox.darwin.core.objects.tuple.Vector3D;
 import org.dockbox.darwin.core.server.Server;
-import org.dockbox.darwin.core.util.module.ModuleLoader;
+import org.dockbox.darwin.core.util.extension.Extension;
+import org.dockbox.darwin.core.util.extension.ExtensionManager;
 import org.dockbox.darwin.sponge.objects.location.SpongeLocation;
-import org.dockbox.darwin.sponge.objects.targets.SpongePlayer;
 import org.dockbox.darwin.sponge.objects.location.SpongeWorld;
 import org.dockbox.darwin.sponge.objects.targets.SpongeConsole;
+import org.dockbox.darwin.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -66,10 +66,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.annotation.Nullable;
 
@@ -381,8 +380,8 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         @Nullable
         @Override
         protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
-            ModuleInformation module = Server.getInstance(ModuleLoader.class).getModuleInformation(args.next());
-            return module.getModule();
+            Optional<Extension> octx = Server.getInstance(ExtensionManager.class).getHeader(args.next());
+            return octx.orElse(null);
         }
 
         @NotNull
@@ -391,11 +390,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 @NotNull CommandSource src,
                 @NotNull CommandArgs args,
                 @NotNull CommandContext context) {
-            return StreamSupport.stream(
-                    Server.getInstance(ModuleLoader.class).getAllRegistrations().spliterator(),
-                    false
-            ).map(reg -> reg.getInformation().getModule().id())
-                    .collect(Collectors.toList());
+            return Server.getInstance(ExtensionManager.class).getRegisteredExtensionIds();
         }
     }
 

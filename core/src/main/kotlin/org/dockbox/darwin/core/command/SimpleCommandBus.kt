@@ -19,7 +19,7 @@ package org.dockbox.darwin.core.command
 
 import org.dockbox.darwin.core.annotations.Command
 import org.dockbox.darwin.core.annotations.FromSource
-import org.dockbox.darwin.core.annotations.Module
+import org.dockbox.darwin.core.util.extension.Extension
 import org.dockbox.darwin.core.command.context.CommandContext
 import org.dockbox.darwin.core.command.registry.AbstractCommandRegistration
 import org.dockbox.darwin.core.command.registry.ClassCommandRegistration
@@ -32,7 +32,7 @@ import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
 import org.dockbox.darwin.core.objects.targets.CommandSource
 import org.dockbox.darwin.core.server.Server
-import org.dockbox.darwin.core.util.module.ModuleLoader
+import org.dockbox.darwin.core.util.extension.ExtensionManager
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -191,7 +191,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                 o = Server.getServer()
             } else {
                 var modOptional: Optional<*>? = null
-                if (c.isAnnotationPresent(Module::class.java) && Server.getInstance(ModuleLoader::class.java).getModuleInstance(c).also { modOptional = it }.isPresent) {
+                if (c.isAnnotationPresent(Extension::class.java) && Server.getInstance(ExtensionManager::class.java).getInstance(c).also { modOptional = it }.isPresent) {
                     o = modOptional!!.get()
                 } else {
                     o = c.getConstructor().newInstance()
