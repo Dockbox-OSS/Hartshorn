@@ -19,6 +19,7 @@ package org.dockbox.darwin.core.util.extension;
 
 import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.util.extension.ExtensionContext.ComponentType;
+import org.dockbox.darwin.core.util.extension.status.ExtensionStatus;
 import org.dockbox.darwin.core.util.files.FileUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -122,21 +123,24 @@ public class SimpleExtensionManager implements ExtensionManager {
         return false;
     }
 
-    private <T> void createComponentInstance(Class<T> entry) {
+    private <T> void createComponentInstance(Class<T> entry, ExtensionContext context) {
+        Extension header = entry.getAnnotation(Extension.class);
+        assert null != header : "@Extension header missing from previously checked type [" + entry.getCanonicalName() + "]! This should not be possible!";
         T instance = null;
         try {
             Constructor<T> defaultConstructor = entry.getConstructor();
             defaultConstructor.setAccessible(true);
             instance = defaultConstructor.newInstance();
-        } catch (NoSuchMethodException e) {
-            Server.log().warn("No default constructor available for [" + entry.getCanonicalName() + ']');
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            context.addStatus(entry, ExtensionStatus.LOADED);
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            context.addStatus(entry, ExtensionStatus.FAILED);
+            Server.log().warn("No default accessible constructor available for [" + entry.getCanonicalName() + ']');
+        } catch (InstantiationException | InvocationTargetException e) {
+            context.addStatus(entry, ExtensionStatus.ERRORED);
             Server.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
         }
 
         // TODO: Guice injection for alternative instance creation
-
-        Extension header = entry.getAnnotation(Extension.class);
         if (null != instance) this.instanceMappings.put(header.id(), instance);
     }
 
@@ -146,18 +150,12 @@ public class SimpleExtensionManager implements ExtensionManager {
         Reflections integratedReflections = new Reflections("org.dockbox.darwin.integrated");
         Set<Class<?>> annotatedTypes = integratedReflections.getTypesAnnotatedWith(Extension.class);
         return annotatedTypes.stream().map(type -> {
-
-            // TODO: Add extension status (
-            // - loaded (all went well)
-            // - errored (caught exception when instantiating)
-            // - failed (something else went wrong)
-            // - disabled (@Disabled annotation present)
-            // - deprecated_[n] (@Deprecated annotation present, but with one of the above statuses)
+            
             ExtensionContext context = new ExtensionContext(ComponentType.INTERNAL_CLASS, type.getCanonicalName());
             context.addComponentClass(type);
-            this.globalContexts.add(context);
+            this.createComponentInstance(type, context);
 
-            this.createComponentInstance(type);
+            this.globalContexts.add(context);
 
             return context;
         }).collect(Collectors.toList());
@@ -192,7 +190,7 @@ public class SimpleExtensionManager implements ExtensionManager {
                                     if (null == header) //noinspection ThrowCaughtLocally
                                         throw new IllegalStateException("Supposed header is absent from component entry");
 
-                                    this.createComponentInstance(classEntry);
+                                    this.createComponentInstance(classEntry, context);
 
                                     Server.log().info("Finished component registration for [" + classEntry.getCanonicalName() + ']');
                                 }
