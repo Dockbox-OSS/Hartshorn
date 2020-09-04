@@ -17,10 +17,13 @@
 
 package org.dockbox.darwin.core.util.extension
 
+import org.dockbox.darwin.core.server.Server
+import org.dockbox.darwin.core.util.extension.status.ExtensionStatus
 import java.util.concurrent.ConcurrentHashMap
 
 class ExtensionContext(var type: ComponentType, var source: String) {
 
+    var entryStatus: MutableMap<Class<*>, ExtensionStatus> = ConcurrentHashMap()
     var classes: MutableMap<Extension, Class<*>> = ConcurrentHashMap()
 
     fun addComponentClass(clazz: Class<*>): Boolean {
@@ -30,6 +33,15 @@ class ExtensionContext(var type: ComponentType, var source: String) {
             return true
         }
         return false
+    }
+
+    fun addStatus(clazz: Class<*>, status: ExtensionStatus) {
+        if (status.intValue < 0) Server.log().warn("Manually assigning deprecated status to [" + clazz.canonicalName + "]! " +
+                "Deprecated statuses should only be assigned automatically based on annotation presence!")
+
+        if (clazz.isAnnotationPresent(Deprecated::class.java)) {
+            entryStatus[clazz] = ExtensionStatus.of(-status.intValue)
+        }
     }
 
     enum class ComponentType {
