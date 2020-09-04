@@ -126,6 +126,13 @@ public class SimpleExtensionManager implements ExtensionManager {
     private <T> void createComponentInstance(Class<T> entry, ExtensionContext context) {
         Extension header = entry.getAnnotation(Extension.class);
         assert null != header : "@Extension header missing from previously checked type [" + entry.getCanonicalName() + "]! This should not be possible!";
+
+        String[] dependencies = header.dependencies();
+        // TODO: Ensure dependencies are present beforehand.
+        // If absent, delay the entry instantiation by 10s with up to three attempts to allow others to load first.
+        // If the dependency is present, and is marked as extension, send out a warning.
+        // Common code should be included in server core, not in extensions.
+
         T instance = null;
         try {
             Constructor<T> defaultConstructor = entry.getConstructor();
@@ -150,7 +157,7 @@ public class SimpleExtensionManager implements ExtensionManager {
         Reflections integratedReflections = new Reflections("org.dockbox.darwin.integrated");
         Set<Class<?>> annotatedTypes = integratedReflections.getTypesAnnotatedWith(Extension.class);
         return annotatedTypes.stream().map(type -> {
-            
+
             ExtensionContext context = new ExtensionContext(ComponentType.INTERNAL_CLASS, type.getCanonicalName());
             context.addComponentClass(type);
             this.createComponentInstance(type, context);
