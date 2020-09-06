@@ -41,6 +41,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -108,49 +109,6 @@ public class SimpleExtensionManager implements ExtensionManager {
         }
     }
 
-    private boolean addJarToClassPath(Path jar) {
-        if (jar.getFileName().endsWith(".jar")) {
-            try {
-                ClassLoader ucl = ClassLoader.getSystemClassLoader();
-                Method addUrl = ucl.getClass().getSuperclass().getDeclaredMethod("addURL", URL.class);
-                addUrl.setAccessible(true);
-                addUrl.invoke(ucl, jar.toUri().toURL());
-                return true;
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | MalformedURLException e) {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    private <T> void createComponentInstance(Class<T> entry, ExtensionContext context) {
-        Extension header = entry.getAnnotation(Extension.class);
-        assert null != header : "@Extension header missing from previously checked type [" + entry.getCanonicalName() + "]! This should not be possible!";
-
-        String[] dependencies = header.dependencies();
-        // TODO: Ensure dependencies are present beforehand.
-        // If absent, delay the entry instantiation by 10s with up to three attempts to allow others to load first.
-        // If the dependency is present, and is marked as extension, send out a warning.
-        // Common code should be included in server core, not in extensions.
-
-        T instance = null;
-        try {
-            Constructor<T> defaultConstructor = entry.getConstructor();
-            defaultConstructor.setAccessible(true);
-            instance = defaultConstructor.newInstance();
-            context.addStatus(entry, ExtensionStatus.LOADED);
-        } catch (NoSuchMethodException | IllegalAccessException e) {
-            context.addStatus(entry, ExtensionStatus.FAILED);
-            Server.log().warn("No default accessible constructor available for [" + entry.getCanonicalName() + ']');
-        } catch (InstantiationException | InvocationTargetException e) {
-            context.addStatus(entry, ExtensionStatus.ERRORED);
-            Server.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
-        }
-
-        // TODO: Guice injection for alternative instance creation
-        if (null != instance) this.instanceMappings.put(header.id(), instance);
-    }
-
     @NotNull
     @Override
     public List<ExtensionContext> collectIntegratedExtensions() {
@@ -183,28 +141,7 @@ public class SimpleExtensionManager implements ExtensionManager {
                 JarFile jarFile = new JarFile(file.toFile());
                 jarFile.stream()
                         .filter(entry -> !entry.isDirectory() && entry.getName().endsWith(".class"))
-                        .forEach(entry -> {
-                            try {
-                                String className = entry.getName().replace('/', '.');
-                                className = className.substring(0, className.length() - ".class".length());
-                                Class<?> classEntry = Class.forName(className);
-
-                                // If the class isn't added to the classpath, this the above will cause an
-                                // exception making it so this line is never reached.
-                                // Additionally, the addComponentClass method scans if the entry is annotated.
-                                if (context.addComponentClass(classEntry)) {
-                                    Extension header = classEntry.getAnnotation(Extension.class);
-                                    if (null == header) //noinspection ThrowCaughtLocally
-                                        throw new IllegalStateException("Supposed header is absent from component entry");
-
-                                    this.createComponentInstance(classEntry, context);
-
-                                    Server.log().info("Finished component registration for [" + classEntry.getCanonicalName() + ']');
-                                }
-                            } catch (ClassNotFoundException | IllegalStateException e) {
-                                Server.getServer().except("Failed to load (supposedly) injected class", e);
-                            }
-                        });
+                        .forEach(entry -> this.injectJarEntry(entry, context));
 
             } catch (IOException e) {
                 Server.getServer().except("Failed to convert known .jar file to JarFile instance", e);
@@ -230,5 +167,71 @@ public class SimpleExtensionManager implements ExtensionManager {
     @Override
     public List<String> getRegisteredExtensionIds() {
         return new ArrayList<>(this.instanceMappings.keySet());
+    }
+
+    private boolean addJarToClassPath(Path jar) {
+        if (jar.getFileName().endsWith(".jar")) {
+            try {
+                ClassLoader ucl = ClassLoader.getSystemClassLoader();
+                Method addUrl = ucl.getClass().getSuperclass().getDeclaredMethod("addURL", URL.class);
+                addUrl.setAccessible(true);
+                addUrl.invoke(ucl, jar.toUri().toURL());
+                return true;
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | MalformedURLException e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private void injectJarEntry(JarEntry entry, ExtensionContext context) {
+        try {
+            String className = entry.getName().replace('/', '.');
+            className = className.substring(0, className.length() - ".class".length());
+            Class<?> classEntry = Class.forName(className);
+
+            // If the class isn't added to the classpath, this the above will cause an
+            // exception making it so this line is never reached.
+            // Additionally, the addComponentClass method scans if the entry is annotated.
+            if (context.addComponentClass(classEntry)) {
+                Extension header = classEntry.getAnnotation(Extension.class);
+                if (null == header) //noinspection ThrowCaughtLocally
+                    throw new IllegalStateException("Supposed header is absent from component entry");
+
+                this.createComponentInstance(classEntry, context);
+
+                Server.log().info("Finished component registration for [" + classEntry.getCanonicalName() + ']');
+            }
+        } catch (ClassNotFoundException | IllegalStateException e) {
+            Server.getServer().except("Failed to load (supposedly) injected class", e);
+        }
+    }
+
+    private <T> void createComponentInstance(Class<T> entry, ExtensionContext context) {
+        Extension header = entry.getAnnotation(Extension.class);
+        assert null != header : "@Extension header missing from previously checked type [" + entry.getCanonicalName() + "]! This should not be possible!";
+
+        String[] dependencies = header.dependencies();
+        // TODO: Ensure dependencies are present beforehand.
+        // If absent, delay the entry instantiation by 10s with up to three attempts to allow others to load first.
+        // If the dependency is present, and is marked as extension, send out a warning.
+        // Common code should be included in server core, not in extensions.
+
+        T instance = null;
+        try {
+            Constructor<T> defaultConstructor = entry.getConstructor();
+            defaultConstructor.setAccessible(true);
+            instance = defaultConstructor.newInstance();
+            context.addStatus(entry, ExtensionStatus.LOADED);
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            context.addStatus(entry, ExtensionStatus.FAILED);
+            Server.log().warn("No default accessible constructor available for [" + entry.getCanonicalName() + ']');
+        } catch (InstantiationException | InvocationTargetException e) {
+            context.addStatus(entry, ExtensionStatus.ERRORED);
+            Server.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
+        }
+
+        // TODO: Guice injection for alternative instance creation
+        if (null != instance) this.instanceMappings.put(header.id(), instance);
     }
 }
