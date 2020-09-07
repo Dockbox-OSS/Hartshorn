@@ -17,13 +17,12 @@
 
 package org.dockbox.darwin.sponge;
 
-import net.byteflux.libby.LibraryManager;
-
 import org.dockbox.darwin.core.command.CommandBus;
-import org.dockbox.darwin.core.events.server.ServerEvent.Init;
+import org.dockbox.darwin.core.events.server.ServerEvent;
 import org.dockbox.darwin.core.server.Server;
-import org.dockbox.darwin.core.util.extension.ExtensionManager;
 import org.dockbox.darwin.core.util.events.EventBus;
+import org.dockbox.darwin.core.util.extension.ExtensionContext;
+import org.dockbox.darwin.core.util.extension.ExtensionManager;
 import org.dockbox.darwin.core.util.library.LibraryArtifact;
 import org.dockbox.darwin.sponge.listeners.SpongeEventListener;
 import org.dockbox.darwin.sponge.util.inject.SpongeCommonInjector;
@@ -35,6 +34,7 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Plugin(
         id = "darwinserver",
@@ -48,7 +48,7 @@ import java.util.Optional;
                 @Dependency(id = "luckperms")
         }
 )
-public class SpongeServer extends Server<LibraryManager> {
+public class SpongeServer extends Server {
 
     public SpongeServer() {
         super(new SpongeCommonInjector());
@@ -62,16 +62,22 @@ public class SpongeServer extends Server<LibraryManager> {
         CommandBus cb = getInstance(CommandBus.class);
         ExtensionManager cm = getInstance(ExtensionManager.class);
 
-        cm.collectIntegratedExtensions().forEach(componentContext -> {
-            componentContext.getClasses().values().forEach(type -> {
-                Optional<?> optionalInstance = cm.getInstance(type);
-                optionalInstance.ifPresent(i -> {
-                    eb.subscribe(i);
-                    cb.register(i);
-                });
+        super.initIntegratedExtensions(this.getConsumer("integrated", cb, eb, cm));
+        super.initExternalExtensions(this.getConsumer("external", cb, eb, cm));
+
+        getInstance(EventBus.class).post(new ServerEvent.Init());
+    }
+
+    private Consumer<ExtensionContext> getConsumer(String contextType, CommandBus cb, EventBus eb, ExtensionManager em) {
+        return (ExtensionContext ctx) -> ctx.getClasses().values().forEach(type -> {
+            log().info("Found type [" + type.getCanonicalName() + "] in " + contextType + " context");
+            Optional<?> oi = em.getInstance(type);
+            oi.ifPresent(i -> {
+                log().info("Registering [" + type.getCanonicalName() + "] as Event and Command listener");
+                eb.subscribe(i);
+                cb.register(i);
             });
         });
-        getInstance(EventBus.class).post(new Init());
     }
 
     @NotNull
@@ -81,18 +87,14 @@ public class SpongeServer extends Server<LibraryManager> {
     }
 
     @Override
-    protected LibraryManager getLoader() {
-        // TODO: See if we can get rid of Libby
-        return getInstance(LibraryManager.class);
-    }
-
-    @Override
     protected LibraryArtifact[] getArtifacts() {
-        // Define libraries to download, specifically targeting Sponge
+        // Define libraries to download, specifically targeting Sponge.
+        // At the time of writing there are no additional libraries required for Sponge.
         return new LibraryArtifact[0];
     }
 
     public static void main(String[] args) {
+        // This is the only place where SystemOut is allowed as no server instance can exist at this point.
         //noinspection UseOfSystemOutOrSystemErr
         System.out.println("DarwinServer is a framework plugin, it should not be started as a separate application.");
         System.exit(8);
