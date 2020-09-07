@@ -97,6 +97,9 @@ public class SpongeServer extends Server {
         // This is the only place where SystemOut is allowed as no server instance can exist at this point.
         //noinspection UseOfSystemOutOrSystemErr
         System.out.println("DarwinServer is a framework plugin, it should not be started as a separate application.");
+
+        // This will cause Forge to complain about direct System.exit references. This only results in a warning
+        // message and an automatic redirect to FMLCommonHandler.exitJava.
         System.exit(8);
     }
 }
