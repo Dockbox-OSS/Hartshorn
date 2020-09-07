@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-@Extension(id = "i18n_commands", name = "I18N Commands", description = "Provided I18N commands, implementation of i18n module", authors = {"GuusLieben"})
+@Extension(id = "i18n_commands", name = "I18N Commands", description = "Provided I18N commands, implementation of i18n extension", authors = {"GuusLieben"})
 public class I18NModule {
 
     @Command(aliases = {"lang", "language"}, usage = "language <language>", context = "language <language{String}")

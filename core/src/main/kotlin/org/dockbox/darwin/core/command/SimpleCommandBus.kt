@@ -190,9 +190,9 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             } else if (c == Server::class.java || c.isAssignableFrom(Server::class.java) || Server::class.java.isAssignableFrom(c)) {
                 o = Server.getServer()
             } else {
-                var modOptional: Optional<*>? = null
-                if (c.isAnnotationPresent(Extension::class.java) && Server.getInstance(ExtensionManager::class.java).getInstance(c).also { modOptional = it }.isPresent) {
-                    o = modOptional!!.get()
+                var extension: Optional<*>? = null
+                if (c.isAnnotationPresent(Extension::class.java) && Server.getInstance(ExtensionManager::class.java).getInstance(c).also { extension = it }.isPresent) {
+                    o = extension!!.get()
                 } else {
                     o = c.getConstructor().newInstance()
                 }

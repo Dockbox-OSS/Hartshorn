@@ -26,13 +26,13 @@ abstract class ServerReference {
         return Server.getInstance(type)
     }
 
-    open fun getModule(module: Class<*>?): Extension? {
-        if (module == null) return null;
-        return module.getAnnotation(Extension::class.java) ?: getModule(module.superclass)
+    open fun getExtension(type: Class<*>?): Extension? {
+        if (type == null) return null;
+        return type.getAnnotation(Extension::class.java) ?: getExtension(type.superclass)
     }
 
-    open fun <T> getModuleAndCallback(module: Class<*>, consumer: Function<Extension, T>): T {
-        val annotation = getModule(module) ?: throw IllegalArgumentException("Requested module is not annotated as such")
+    open fun <T> runWithExtension(type: Class<*>, consumer: Function<Extension, T>): T {
+        val annotation = getExtension(type) ?: throw IllegalArgumentException("Requested module is not annotated as such")
         return consumer.apply(annotation)
     }
 }

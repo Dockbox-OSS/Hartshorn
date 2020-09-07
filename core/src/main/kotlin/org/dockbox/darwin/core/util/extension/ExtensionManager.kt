@@ -22,13 +22,13 @@ import java.util.*
 
 interface ExtensionManager {
 
-    fun getContext(module: Class<*>): Optional<ExtensionContext>
+    fun getContext(type: Class<*>): Optional<ExtensionContext>
     fun getContext(id: String): Optional<ExtensionContext>
 
-    fun getHeader(module: Class<*>): Optional<Extension>
+    fun getHeader(type: Class<*>): Optional<Extension>
     fun getHeader(id: String): Optional<Extension>
 
-    fun <T> getInstance(module: Class<T>): Optional<T>
+    fun <T> getInstance(type: Class<T>): Optional<T>
     fun getInstance(id: String): Optional<*>
 
     fun getExternalExtensions(): List<ExtensionContext>

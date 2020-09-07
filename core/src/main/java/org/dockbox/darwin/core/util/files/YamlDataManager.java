@@ -52,7 +52,7 @@ public class YamlDataManager extends ServerReference implements DataManager {
     @NotNull
     @Override
     public Path getDataDir(@NotNull Class<?> module) {
-        return getModuleAndCallback(module, (annotation) -> getInstance(FileUtils.class).getDataDir().resolve(annotation.id()));
+        return runWithExtension(module, (annotation) -> getInstance(FileUtils.class).getDataDir().resolve(annotation.id()));
     }
 
     @NotNull
@@ -65,7 +65,7 @@ public class YamlDataManager extends ServerReference implements DataManager {
     @NotNull
     @Override
     public Path getDefaultDataFile(@NotNull Class<?> module) {
-        return getModuleAndCallback(module, (annotation) -> {
+        return runWithExtension(module, (annotation) -> {
             Path dataPath = getDataDir(module);
             return getInstance(FileUtils.class).createFileIfNotExists(dataPath.resolve(annotation.id() + ".yml"));
         });
@@ -96,7 +96,7 @@ public class YamlDataManager extends ServerReference implements DataManager {
     @NotNull
     @Override
     public <T> T getDefaultDataFileContents(@NotNull Class<?> module, @NotNull Class<T> convertTo, T defaultValue) {
-        return getModuleAndCallback(module, (annotation) -> {
+        return runWithExtension(module, (annotation) -> {
             try {
                 Path cf = getDefaultDataFile(module);
                 T res = mapper.readValue(cf.toFile(), convertTo);
@@ -152,7 +152,7 @@ public class YamlDataManager extends ServerReference implements DataManager {
     @NotNull
     @Override
     public Map<String, Object> getDataFileContents(@NotNull Class<?> module, @NotNull String fileName) {
-        return getModuleAndCallback(module, (annotation) -> {
+        return runWithExtension(module, (annotation) -> {
             try {
                 Path cf = getInstance(FileUtils.class).createFileIfNotExists(getDataDir(module).resolve(fileName + ".yml"));
                 Map<String, Object> res = mapper.readValue(cf.toFile(), Map.class);

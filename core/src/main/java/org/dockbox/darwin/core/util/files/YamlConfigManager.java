@@ -28,7 +28,6 @@ import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.server.ServerReference;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -53,7 +52,7 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
     @NotNull
     @Override
     public Path getConfigDir(@NotNull Class<?> module) {
-        return getModuleAndCallback(module, (annotation) -> Server.getInstance(FileUtils.class).getModuleConfigDir().resolve(annotation.id()));
+        return runWithExtension(module, (annotation) -> Server.getInstance(FileUtils.class).getModuleConfigDir().resolve(annotation.id()));
     }
 
     @NotNull
@@ -66,7 +65,7 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
     @NotNull
     @Override
     public Path getConfigFile(@NotNull Class<?> module) {
-        return getModuleAndCallback(module, (annotation) -> {
+        return runWithExtension(module, (annotation) -> {
             Path configPath = getConfigDir(module);
             return Server.getInstance(FileUtils.class).createFileIfNotExists(configPath.resolve(annotation.id() + ".yml"));
         });
@@ -96,7 +95,7 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
     @NotNull
     @Override
     public <T> T getConfigContents(@NotNull Class<?> module, @NotNull Class<T> convertTo, T defaultValue) {
-        return getModuleAndCallback(module, (annotation) -> {
+        return runWithExtension(module, (annotation) -> {
             try {
                 Path cf = getConfigFile(module);
                 T res = mapper.readValue(cf.toFile(), convertTo);
