@@ -17,8 +17,6 @@
 
 package org.dockbox.darwin.sponge.util.inject
 
-import net.byteflux.libby.LibraryManager
-import net.byteflux.libby.SpongeLibraryManager
 import org.dockbox.darwin.core.i18n.I18nService
 import org.dockbox.darwin.core.i18n.SimpleI18NService
 import org.dockbox.darwin.core.server.config.DefaultGlobalConfig
@@ -55,7 +53,6 @@ class SpongeCommonInjector : AbstractCommonInjector() {
         bind(BulkDataManager::class.java).to(SQLiteBulkDataManager::class.java)
         bind(EventBus::class.java).to(SimpleEventBus::class.java)
         bind(DiscordUtils::class.java).to(SpongeDiscordUtils::class.java)
-        bind(LibraryManager::class.java).to(SpongeLibraryManager::class.java)
         bind(BroadcastService::class.java).to(SimpleBroadcastService::class.java)
         bind(PlayerStorageService::class.java).to(SpongePlayerStorageService::class.java)
         bind(I18nService::class.java).to(SimpleI18NService::class.java)
