@@ -53,10 +53,10 @@ public class SimpleExtensionManager implements ExtensionManager {
 
     @NotNull
     @Override
-    public Optional<ExtensionContext> getContext(@NotNull Class<?> module) {
+    public Optional<ExtensionContext> getContext(@NotNull Class<?> type) {
         for (ExtensionContext ctx : this.globalContexts) {
             for (Class<?> componentType : ctx.getClasses().values()) {
-                if (componentType.equals(module)) return Optional.of(ctx);
+                if (componentType.equals(type)) return Optional.of(ctx);
             }
         }
         return Optional.empty();
@@ -75,9 +75,9 @@ public class SimpleExtensionManager implements ExtensionManager {
 
     @NotNull
     @Override
-    public <T> Optional<T> getInstance(@NotNull Class<T> module) {
+    public <T> Optional<T> getInstance(@NotNull Class<T> type) {
         for (Object o : this.instanceMappings.values()) {
-            if (null != o && o.getClass().equals(module))
+            if (null != o && o.getClass().equals(type))
                 // Condition meets requirement for checked cast
                 //noinspection unchecked
                 return Optional.of((T) o);
@@ -153,8 +153,8 @@ public class SimpleExtensionManager implements ExtensionManager {
 
     @NotNull
     @Override
-    public Optional<Extension> getHeader(@NotNull Class<?> module) {
-        return Optional.ofNullable(module.getAnnotation(Extension.class));
+    public Optional<Extension> getHeader(@NotNull Class<?> type) {
+        return Optional.ofNullable(type.getAnnotation(Extension.class));
     }
 
     @NotNull
@@ -200,7 +200,7 @@ public class SimpleExtensionManager implements ExtensionManager {
 
                 this.createComponentInstance(classEntry, context);
 
-                Server.log().info("Finished component registration for [" + classEntry.getCanonicalName() + ']');
+                Server.log().info("Finished component registration for [" + classEntry.getCanonicalName() + "] with status " + context.getStatus(classEntry));
             }
         } catch (ClassNotFoundException | IllegalStateException e) {
             Server.getServer().except("Failed to load (supposedly) injected class", e);
@@ -212,16 +212,36 @@ public class SimpleExtensionManager implements ExtensionManager {
         assert null != header : "@Extension header missing from previously checked type [" + entry.getCanonicalName() + "]! This should not be possible!";
 
         String[] dependencies = header.dependencies();
-        // TODO: Ensure dependencies are present beforehand.
-        // If absent, delay the entry instantiation by 10s with up to three attempts to allow others to load first.
-        // If the dependency is present, and is marked as extension, send out a warning.
-        // Common code should be included in server core, not in extensions.
+        for (String dependentPackage : dependencies) {
+            try {
+                Package pkg = Package.getPackage(dependentPackage);
+                if (null == pkg) {
+                    // Do not instantiate entries which require dependencies which are not present.
+                    context.addStatus(entry, ExtensionStatus.FAILED);
+                    return;
+                }
+
+                // Due to the way external .jar files are injected Reflections sometimes causes issues when using the Package instance
+                Reflections ref = new Reflections(dependentPackage);
+                Set<Class<?>> extensions = ref.getTypesAnnotatedWith(Extension.class);
+                if (!extensions.isEmpty())
+                    Server.log().warn("Detected " + extensions.size() + " extensions in dependent package " + dependentPackage + ". " +
+                            "Common code shared by extensions should be implemented in DarwinServer, extensions should NEVER depend on each other.");
+
+            } catch (Throwable e) {
+                // Package.getPackage(String) typically returns null if no package with that name is present, this clause is a fail-safe and should
+                // technically never be reached. If it is reached we explicitly need to mention the package to prevent future issues (by reporting this).
+                Server.getServer().except("Failed to obtain package [" + dependentPackage + "].", e);
+            }
+        }
 
         T instance = null;
         try {
             Constructor<T> defaultConstructor = entry.getConstructor();
             defaultConstructor.setAccessible(true);
             instance = defaultConstructor.newInstance();
+            //noinspection rawtypes
+            ((Server) Server.getServer()).getInjector().injectMembers(instance);
             context.addStatus(entry, ExtensionStatus.LOADED);
         } catch (NoSuchMethodException | IllegalAccessException e) {
             context.addStatus(entry, ExtensionStatus.FAILED);
@@ -231,7 +251,6 @@ public class SimpleExtensionManager implements ExtensionManager {
             Server.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
         }
 
-        // TODO: Guice injection for alternative instance creation
         if (null != instance) this.instanceMappings.put(header.id(), instance);
     }
 }

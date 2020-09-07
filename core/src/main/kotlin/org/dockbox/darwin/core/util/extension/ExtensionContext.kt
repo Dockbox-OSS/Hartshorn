@@ -44,6 +44,10 @@ class ExtensionContext(var type: ComponentType, var source: String) {
         }
     }
 
+    fun getStatus(clazz: Class<*>): ExtensionStatus? {
+        return if (entryStatus.containsKey(clazz)) entryStatus[clazz] else null
+    }
+
     enum class ComponentType {
         EXTERNAL_JAR, INTERNAL_CLASS, UNKNOWN
     }
