@@ -33,6 +33,7 @@ import org.dockbox.darwin.core.objects.location.World
 import org.dockbox.darwin.core.objects.targets.CommandSource
 import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.util.extension.ExtensionManager
+import java.lang.NullPointerException
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -56,8 +57,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             try {
                 if (clazz.isAnnotationPresent(Command::class.java)) registerClassCommand(clazz, obj) else registerSingleMethodCommand(clazz)
             } catch (e: Throwable) {
-                Server.log().warn("Failed to register potential command class : {}", clazz.toGenericString())
-                e.printStackTrace()
+                Server.getServer().except("Failed to register potential command class : [" + clazz.canonicalName + "]", e)
             }
         }
     }
@@ -227,14 +227,19 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     protected fun argValue(valueString: String): A {
         var type: String?
         val key: String
-        val permission: String
+        var permission: String
         val vm: Matcher = value.matcher(valueString)
         if (!vm.matches()) Server.getServer().except("Unknown argument specification `$valueString`, use Type or Name{Type} or Name{Type:Permission}")
+        Server.log().info("Groups: " + vm.groupCount())
         key = vm.group(1)
         type = vm.group(2)
-        permission = vm.group(3)
+        permission = try {
+            // TODO: Prevent NPE on group 3 (permission)
+            vm.group(3)
+        } catch (e: NullPointerException) {
+            Permission.GLOBAL_BYPASS.getValue()
+        }
         if (type == null) type = key
-
 
         return getArgumentValue(type, Permission.of(permission), key)
     }
