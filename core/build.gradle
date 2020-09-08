@@ -31,10 +31,6 @@ repositories {
         name 'jitpack'
         url 'https://jitpack.io'
     }
-    maven {
-        name 'sqljet'
-        url 'https://repo1.maven.org/maven2/com/j256/ormlite/'
-    }
 }
 
 archivesBaseName = 'core'
@@ -43,7 +39,7 @@ description = 'Common API for Darwin Server modules'
 def date = LocalDate.now().toString()
 
 dependencies {
-    shadow('com.google.inject:guice:4.2.2')
+    shadow 'com.google.inject:guice:4.2.2'
     shadow 'org.reflections:reflections:0.9.11'
     shadow 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
     shadow 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.8'
