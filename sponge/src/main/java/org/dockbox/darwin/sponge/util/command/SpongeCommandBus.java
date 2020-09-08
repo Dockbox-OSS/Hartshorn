@@ -88,7 +88,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
     @Override
     public void registerCommandNoArgs(@NotNull String command, @NotNull I18NRegistry permission, @NotNull CommandRunnerFunction runner) {
-        Sponge.getCommandManager().register(Server.getServer(), CommandSpec.builder().permission(permission.getValue()).executor(buildExecutor(runner, command)).build(), command);
+        Sponge.getCommandManager().register(Server.getServer(), CommandSpec.builder().permission(permission.getValue()).executor(this.buildExecutor(runner, command)).build(), command);
     }
 
     @Override
@@ -109,15 +109,16 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         String part = parts.length > 1 ? parts[1] : null;
         // Child command
         if (part != null && SimpleCommandBus.Companion.getSubcommand().matcher(part).matches()) {
+            Server.log().info("Found child command '" + part + "'");
             String arguments = command.substring(command.indexOf(' ') + 1)
                     .replaceFirst(part, "");
             if (arguments.endsWith(" ")) arguments = arguments.substring(0, arguments.length() - 2);
 
-            CommandElement[] elements = parseArguments(arguments);
+            CommandElement[] elements = this.parseArguments(arguments);
 
             elements = Arrays.stream(elements).filter(Objects::nonNull).toArray(CommandElement[]::new);
-            if (elements.length > 0) spec.executor(buildExecutor(runner, command)).arguments(elements);
-            else spec.executor(buildExecutor(runner, command));
+            if (elements.length > 0) spec.executor(this.buildExecutor(runner, command)).arguments(elements);
+            else spec.executor(this.buildExecutor(runner, command));
 
             String alias = command.substring(0, command.indexOf(' '));
             if (part.isEmpty()) part = "@m";
@@ -127,6 +128,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
             // Parent command
         } else if (command.startsWith("*")) {
+            Server.log().info("Found parent command '" + part + "'");
             String registeredCmd = command.substring(1);
             if (command.contains(" ")) registeredCmd = command.substring(1, command.indexOf(' '));
             if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(registeredCmd)) {
@@ -149,6 +151,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 }
 
                 try {
+                    Server.log().info("Registering '" + command + "' to Sponge");
                     Sponge.getCommandManager().register(Server.getServer(), spec.build(), registeredCmd);
                 } catch (IllegalArgumentException e) {
                     Server.getServer().except(e.getMessage(), e);
@@ -157,8 +160,10 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             }
             // Single method command
         } else {
+            Server.log().info("Found single method command '" + part + "'");
             if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(command.substring(0, command.indexOf(' ')))) {
-                spec.executor(buildExecutor(runner, command)).arguments(parseArguments(command.substring(command.indexOf(' ') + 1)));
+                Server.log().info("Registering single method command '" + part + "' to Sponge");
+                spec.executor(this.buildExecutor(runner, command)).arguments(this.parseArguments(command.substring(command.indexOf(' ') + 1)));
                 Sponge.getCommandManager().register(Server.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
                 SimpleCommandBus.Companion.getRegisteredCommands().add(command.substring(0, command.indexOf(' ')));
             }
@@ -200,9 +205,9 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             if (ma.matches()) {
                 boolean optional = ma.group(1).charAt(0) == '[';
                 String argUnp = ma.group(2);
-                CommandElement[] result = parseArguments(argUnp);
+                CommandElement[] result = this.parseArguments(argUnp);
                 if (result.length == 0) {
-                    SpongeArgumentTypeValue satv = argValue(ma.group(2));
+                    SpongeArgumentTypeValue satv = this.argValue(ma.group(2));
                     CommandElement permEl = satv.getArgument();
                     result = new CommandElement[]{permEl};
                 }
@@ -216,7 +221,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 Matcher mf = Companion.getFlag().matcher(part);
                 if (mf.matches()) {
                     if (cflags == null) cflags = GenericArguments.flags();
-                    parseFlag(cflags, mf.group(1), mf.group(2));
+                    this.parseFlag(cflags, mf.group(1), mf.group(2));
                 } else {
                     Server.getServer().except("Argument type was not recognized for `" + part + "`");
                 }
@@ -236,7 +241,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 flags.flag(name);
             }
         } else {
-            AbstractArgumentValue<CommandElement> av = argValue(value);
+            AbstractArgumentValue<CommandElement> av = this.argValue(value);
             if (name.indexOf(':') >= 0) {
                 Server.getServer().except("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
@@ -263,7 +268,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             else sender = null;
 
             assert sender != null : "Command sender is not a console or a player, did a plugin call me?";
-            org.dockbox.darwin.core.command.context.CommandContext ctx = convertContext(args, sender, command);
+            org.dockbox.darwin.core.command.context.CommandContext ctx = this.convertContext(args, sender, command);
 
             if (src instanceof Player) {
                 runner.run(sender, ctx);
@@ -295,8 +300,8 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         assert command != null : "Context carrier command was null";
         parsedArgs.asMap().forEach((s, o) -> o.forEach(obj -> {
             if (Pattern.compile("-(-?" + s + ")").matcher(command).find())
-                flags.add(new CommandValue.Flag<>(getValue(obj), s));
-            else arguments.add(new CommandValue.Argument<>(getValue(obj), s));
+                flags.add(new CommandValue.Flag<>(this.getValue(obj), s));
+            else arguments.add(new CommandValue.Argument<>(this.getValue(obj), s));
         }));
 
         org.dockbox.darwin.core.command.context.CommandContext darwinCtx;
