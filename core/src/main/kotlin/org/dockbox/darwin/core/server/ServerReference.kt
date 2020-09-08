@@ -32,7 +32,7 @@ abstract class ServerReference {
     }
 
     open fun <T> runWithExtension(type: Class<*>, consumer: Function<Extension, T>): T {
-        val annotation = getExtension(type) ?: throw IllegalArgumentException("Requested module is not annotated as such")
+        val annotation = getExtension(type) ?: throw IllegalArgumentException("Requested extension is not annotated as such")
         return consumer.apply(annotation)
     }
 }
