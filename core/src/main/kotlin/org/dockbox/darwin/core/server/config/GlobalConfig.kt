@@ -26,15 +26,4 @@ interface GlobalConfig {
     fun getStacktracesAllowed(): Boolean
     fun getExceptionLevel(): ExceptionLevels
 
-    enum class ConfigKeys(val key: String) {
-        PLAYER_LANGUAGE("language"),
-        GLOBAL_CONFIG("global.language"),
-        ALLOW_STACKTRACES("exceptions.stacktraces"),
-        EXCEPTION_LEVEL("exceptions.level")
-    }
-
-    enum class ExceptionLevels {
-        FRIENDLY, MINIMAL
-    }
-
 }
