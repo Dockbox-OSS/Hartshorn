@@ -17,6 +17,8 @@
 
 package org.dockbox.darwin.core.util.extension;
 
+import com.google.inject.Singleton;
+
 import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.util.extension.ExtensionContext.ComponentType;
 import org.dockbox.darwin.core.util.extension.status.ExtensionStatus;
@@ -46,15 +48,16 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Singleton
 public class SimpleExtensionManager implements ExtensionManager {
 
-    private final Collection<ExtensionContext> globalContexts = new CopyOnWriteArrayList<>();
-    private final Map<String, Object> instanceMappings = new ConcurrentHashMap<>();
+    private static final Collection<ExtensionContext> globalContexts = new CopyOnWriteArrayList<>();
+    private static final Map<String, Object> instanceMappings = new ConcurrentHashMap<>();
 
     @NotNull
     @Override
     public Optional<ExtensionContext> getContext(@NotNull Class<?> type) {
-        for (ExtensionContext ctx : this.globalContexts) {
+        for (ExtensionContext ctx : globalContexts) {
             for (Class<?> componentType : ctx.getClasses().values()) {
                 if (componentType.equals(type)) return Optional.of(ctx);
             }
@@ -65,7 +68,7 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public Optional<ExtensionContext> getContext(@NonNls @NotNull String id) {
-        for (ExtensionContext ctx : this.globalContexts) {
+        for (ExtensionContext ctx : globalContexts) {
             for (Extension extension : ctx.getClasses().keySet()) {
                 if (extension.id().equals(id)) return Optional.of(ctx);
             }
@@ -76,7 +79,9 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public <T> Optional<T> getInstance(@NotNull Class<T> type) {
-        for (Object o : this.instanceMappings.values()) {
+        Server.log().info("Instance requested for [" + type.getCanonicalName() +"]");
+        for (Object o : instanceMappings.values()) {
+            Server.log().info(" - mapping: " + o);
             if (null != o && o.getClass().equals(type))
                 // Condition meets requirement for checked cast
                 //noinspection unchecked
@@ -88,7 +93,7 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public Optional<?> getInstance(@NotNull String id) {
-        return Optional.ofNullable(this.instanceMappings.get(id));
+        return Optional.ofNullable(instanceMappings.get(id));
     }
 
     @NotNull
@@ -102,7 +107,7 @@ public class SimpleExtensionManager implements ExtensionManager {
             stream.filter(file -> !Files.isDirectory(file))
                     .forEach(jar -> this.loadExternalExtension(jar).ifPresent(contexts::add));
 
-            this.globalContexts.addAll(contexts);
+            globalContexts.addAll(contexts);
             return contexts;
         } catch (IOException e) {
             return new ArrayList<>();
@@ -114,13 +119,15 @@ public class SimpleExtensionManager implements ExtensionManager {
     public List<ExtensionContext> collectIntegratedExtensions() {
         Reflections integratedReflections = new Reflections("org.dockbox.darwin.integrated");
         Set<Class<?>> annotatedTypes = integratedReflections.getTypesAnnotatedWith(Extension.class);
+        Server.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
         return annotatedTypes.stream().map(type -> {
 
+            Server.log().info(" - [" + type.getCanonicalName() + "]");
             ExtensionContext context = new ExtensionContext(ComponentType.INTERNAL_CLASS, type.getCanonicalName());
             context.addComponentClass(type);
             this.createComponentInstance(type, context);
 
-            this.globalContexts.add(context);
+            globalContexts.add(context);
 
             return context;
         }).collect(Collectors.toList());
@@ -166,7 +173,7 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public List<String> getRegisteredExtensionIds() {
-        return new ArrayList<>(this.instanceMappings.keySet());
+        return new ArrayList<>(instanceMappings.keySet());
     }
 
     private boolean addJarToClassPath(Path jar) {
@@ -240,7 +247,6 @@ public class SimpleExtensionManager implements ExtensionManager {
             Constructor<T> defaultConstructor = entry.getConstructor();
             defaultConstructor.setAccessible(true);
             instance = defaultConstructor.newInstance();
-            //noinspection rawtypes
             ((Server) Server.getServer()).getInjector().injectMembers(instance);
             context.addStatus(entry, ExtensionStatus.LOADED);
         } catch (NoSuchMethodException | IllegalAccessException e) {
@@ -251,6 +257,7 @@ public class SimpleExtensionManager implements ExtensionManager {
             Server.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
         }
 
-        if (null != instance) this.instanceMappings.put(header.id(), instance);
+        Server.log().info("Instance for [" + entry.getCanonicalName() + "] = " + instance);
+        if (null != instance) instanceMappings.put(header.id(), instance);
     }
 }
