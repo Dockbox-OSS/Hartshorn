@@ -19,6 +19,8 @@ package org.dockbox.darwin.sponge.util;
 
 import com.flowpowered.math.vector.Vector3d;
 
+import org.dockbox.darwin.core.i18n.I18N;
+import org.dockbox.darwin.core.objects.optional.Exceptional;
 import org.dockbox.darwin.core.objects.targets.CommandSource;
 import org.dockbox.darwin.core.objects.tuple.Vector3D;
 import org.dockbox.darwin.core.objects.user.Gamemode;
@@ -38,13 +40,16 @@ import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.function.Consumer;
 
-public class SpongeConversionUtil {
+public enum SpongeConversionUtil {
+    ;
 
     @NotNull
     public static Text toSponge(org.dockbox.darwin.core.text.Text message) {
@@ -52,21 +57,21 @@ public class SpongeConversionUtil {
         Text.Builder b = Text.builder();
         parts.forEach(part -> {
 
-            if (part.getParts().size() > 1) {
+            if (1 < part.getParts().size()) {
                 b.append(toSponge(part));
 
             } else {
                 Text.Builder pb = Text.builder();
                 pb.append(TextSerializers.FORMATTING_CODE.deserialize(part.toLegacy()));
 
-                org.spongepowered.api.text.action.ClickAction<?> clickAction = toSponge(part.getClickAction());
-                if (clickAction != null) pb.onClick(clickAction);
+                Optional<org.spongepowered.api.text.action.ClickAction<?>> clickAction = toSponge(part.getClickAction());
+                clickAction.ifPresent(pb::onClick);
 
-                org.spongepowered.api.text.action.HoverAction<?> hoverAction = toSponge(part.getHoverAction());
-                if (hoverAction != null) pb.onHover(hoverAction);
+                Optional<org.spongepowered.api.text.action.HoverAction<?>> hoverAction = toSponge(part.getHoverAction());
+                hoverAction.ifPresent(pb::onHover);
 
-                org.spongepowered.api.text.action.ShiftClickAction<?> shiftClickAction = toSponge(part.getShiftClickAction());
-                if (shiftClickAction != null) pb.onShiftClick(shiftClickAction);
+                Optional<org.spongepowered.api.text.action.ShiftClickAction<?>> shiftClickAction = toSponge(part.getShiftClickAction());
+                shiftClickAction.ifPresent(pb::onShiftClick);
 
                 b.append(pb.build());
             }
@@ -75,57 +80,62 @@ public class SpongeConversionUtil {
         return b.build();
     }
 
-    private static org.spongepowered.api.text.action.ShiftClickAction<?> toSponge(ShiftClickAction<?> action) {
-        if (action == null) return null;
+    private static Optional<org.spongepowered.api.text.action.ShiftClickAction<?>> toSponge(ShiftClickAction<?> action) {
+        if (null == action) return Optional.empty();
         Object result = action.getResult();
         if (action instanceof ShiftClickAction.InsertText) {
-            return TextActions.insertText(((org.dockbox.darwin.core.text.Text) result).toPlain());
+            return Optional.of(TextActions.insertText(((org.dockbox.darwin.core.text.Text) result).toPlain()));
         }
-        return null;
+        return Optional.empty();
     }
 
-    private static org.spongepowered.api.text.action.HoverAction<?> toSponge(HoverAction<?> action) {
-        if (action == null) return null;
+    private static Optional<org.spongepowered.api.text.action.HoverAction<?>> toSponge(HoverAction<?> action) {
+        if (null == action) return Optional.empty();
         Object result = action.getResult();
         if (action instanceof HoverAction.ShowText) {
-            return TextActions.showText(TextSerializers.FORMATTING_CODE.deserialize(((org.dockbox.darwin.core.text.Text) result).toLegacy()));
+            return Optional.of(TextActions.showText(TextSerializers.FORMATTING_CODE.deserialize(((org.dockbox.darwin.core.text.Text) result).toLegacy())));
         }
         // TODO: Once implemented; ShowItem, ShowEntity
-        return null;
+        return Optional.empty();
     }
 
-    private static org.spongepowered.api.text.action.ClickAction<?> toSponge(ClickAction<?> action) {
-        if (action == null) return null;
+    private static Optional<org.spongepowered.api.text.action.ClickAction<?>> toSponge(ClickAction<?> action) {
+        if (null == action) return Optional.empty();
         Object result = action.getResult();
         if (action instanceof ClickAction.OpenUrl) {
-            return TextActions.openUrl((URL) result);
+            return Optional.of(TextActions.openUrl((URL) result));
         } else if (action instanceof ClickAction.RunCommand) {
-            return TextActions.runCommand((String) result);
+            return Optional.of(TextActions.runCommand((String) result));
         } else if (action instanceof ClickAction.ChangePage) {
-            return TextActions.changePage((int) result);
+            return Optional.of(TextActions.changePage((int) result));
         } else if (action instanceof ClickAction.SuggestCommand) {
-            return TextActions.suggestCommand((String) result);
+            return Optional.of(TextActions.suggestCommand((String) result));
         } else if (action instanceof ClickAction.ExecuteCallback) {
-            return TextActions.executeCallback(commandSource -> {
+            return Optional.of(TextActions.executeCallback(commandSource -> {
                 Consumer<CommandSource> consumer = ((ClickAction.ExecuteCallback) action).getResult();
-                consumer.accept(fromSponge(commandSource));
-            });
+                try {
+                    fromSponge(commandSource).ifPresent(consumer).rethrow();
+                } catch (Throwable throwable) {
+                    commandSource.sendMessage(Text.of(I18N.UNKNOWN_ERROR.format(throwable.getMessage())));
+                }
+            }));
         }
-        return null;
+        return Optional.empty();
     }
 
-    private static CommandSource fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
-        if (commandSource instanceof ConsoleSource) return SpongeConsole.Companion.getInstance();
+    private static Exceptional<CommandSource> fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
+        if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.Companion.getInstance());
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
-            return new SpongePlayer(((org.spongepowered.api.entity.living.player.Player) commandSource).getUniqueId(), commandSource.getName());
-        throw new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'");
+            return Exceptional.of(new SpongePlayer(((Identifiable) commandSource).getUniqueId(), commandSource.getName()));
+        return Exceptional.of(new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'"));
     }
 
     @NotNull
-    public static Location<World> toSponge(org.dockbox.darwin.core.objects.location.Location location) {
-        World world = toSponge(location.getWorld());
+    public static Exceptional<Location<World>> toSponge(org.dockbox.darwin.core.objects.location.Location location) {
+        Exceptional<World> world = toSponge(location.getWorld());
+        if (world.errorPresent()) return Exceptional.of(world.getError());
         Vector3d vector3d = new Vector3d(location.getX().doubleValue(), location.getY().doubleValue(), location.getZ().doubleValue());
-        return new Location<>(world, vector3d);
+        return Exceptional.of(new Location<>(world.get(), vector3d));
     }
 
     @NotNull
@@ -136,14 +146,14 @@ public class SpongeConversionUtil {
     }
 
     @NotNull
-    public static World toSponge(org.dockbox.darwin.core.objects.location.World world) {
+    public static Exceptional<World> toSponge(org.dockbox.darwin.core.objects.location.World world) {
         if (world instanceof SpongeWorld) {
             World wref = ((SpongeWorld) world).getReference();
-            if (wref != null) return wref;
+            if (null != wref) return Exceptional.of(wref);
         }
 
-        return Sponge.getServer().getWorld(world.getWorldUniqueId())
-                .orElseThrow(() -> new RuntimeException("World reference not present on server"));
+        return Exceptional.ofSupplier(() -> Sponge.getServer().getWorld(world.getWorldUniqueId())
+                .orElseThrow(() -> new RuntimeException("World reference not present on server")));
     }
 
     @NotNull

@@ -162,7 +162,9 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun setLocation(location: Location) {
-        if (referenceExists()) reference!!.location = SpongeConversionUtil.toSponge(location)
+        if (referenceExists()) {
+            SpongeConversionUtil.toSponge(location).ifPresent { reference!!.location = it }
+        }
     }
 
     override fun getWorld(): World {
