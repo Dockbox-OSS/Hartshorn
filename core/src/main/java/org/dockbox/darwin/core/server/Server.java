@@ -23,7 +23,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import org.dockbox.darwin.core.server.config.GlobalConfig;
-import org.dockbox.darwin.core.server.config.GlobalConfig.ExceptionLevels;
+import org.dockbox.darwin.core.server.config.ExceptionLevels;
 import org.dockbox.darwin.core.util.exceptions.ExceptionHelper;
 import org.dockbox.darwin.core.util.extension.Extension;
 import org.dockbox.darwin.core.util.extension.ExtensionContext;
@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -91,15 +90,14 @@ public abstract class Server implements KServer {
 
     protected void construct() {
         String tVer = "dev";
-        LocalDate tLU = LocalDate.from(Instant.now());
+        LocalDate tLU = LocalDate.now();
 
         try {
             Properties properties = new Properties();
             properties.load(this.getClass().getResourceAsStream("/darwin.properties"));
 
-            DateTimeFormatter format = DateTimeFormatter.BASIC_ISO_DATE;
-            tLU = LocalDate.parse(properties.getOrDefault("last_update", Instant.now().toString()).toString(), format);
-
+            // LocalDate can be parsed directly, as it is generated using LocalDate when building with Gradle
+            tLU = LocalDate.parse(properties.getOrDefault("last_update", Instant.now().toString()).toString());
             tVer = properties.getOrDefault("version", "dev").toString();
         } catch (IOException e) {
             this.except("Failed to convert resource file", e);
