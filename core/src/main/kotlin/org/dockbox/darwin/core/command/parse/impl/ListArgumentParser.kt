@@ -21,8 +21,9 @@ import org.dockbox.darwin.core.command.context.CommandValue
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
 import java.util.*
 
-class ListArgumentParser<T> : AbstractTypeArgumentParser<List<T>>() {
-    override fun parse(commandValue: CommandValue<String>): Optional<List<T>> {
-        TODO("Not yet implemented")
+class ListArgumentParser : AbstractTypeArgumentParser<List<String>>() {
+    override fun parse(commandValue: CommandValue<String>): Optional<List<String>> {
+        val v = commandValue.value
+        return Optional.of(v.split(','))
     }
 }

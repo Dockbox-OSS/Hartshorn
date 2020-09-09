@@ -23,6 +23,7 @@ import java.util.*
 
 class EnumArgumentParser : AbstractArgumentParser() {
 
+    @Suppress("UNCHECKED_CAST")
     override fun <A> parse(commandValue: CommandValue<String>, type: Class<A>?): Optional<A> {
         if (type!!.isEnum) {
             val enumConstants = type.enumConstants as Array<out Enum<*>>

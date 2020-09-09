@@ -20,9 +20,20 @@ package org.dockbox.darwin.core.command.parse.impl
 import org.dockbox.darwin.core.command.context.CommandValue
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
 import java.util.*
+import kotlin.collections.HashMap
 
-class MapArgumentParser<K, V> : AbstractTypeArgumentParser<Map<K, V>>() {
-    override fun parse(commandValue: CommandValue<String>): Optional<Map<K, V>> {
-        TODO("Not yet implemented")
+class MapArgumentParser : AbstractTypeArgumentParser<Map<String, String>>() {
+    override fun parse(commandValue: CommandValue<String>): Optional<Map<String, String>> {
+        val v = commandValue.value
+        val map = HashMap<String, String>()
+        for (s in v.split(',')) {
+            if (s.contains('=')) {
+                val parts = s.split('=')
+                if (parts.size == 2) {
+                    map[parts[0]] = parts[1]
+                }
+            }
+        }
+        return Optional.of(map)
     }
 }
