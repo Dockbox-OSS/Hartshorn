@@ -20,10 +20,25 @@ package org.dockbox.darwin.core.command.parse.impl
 import org.dockbox.darwin.core.command.context.CommandValue
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.darwin.core.i18n.common.ResourceEntry
+import org.dockbox.darwin.core.i18n.common.ResourceService
+import org.dockbox.darwin.core.i18n.entry.IntegratedResource
+import org.dockbox.darwin.core.server.Server
 import java.util.*
 
 class ResourceArgumentParser : AbstractTypeArgumentParser<ResourceEntry>() {
+
     override fun parse(commandValue: CommandValue<String>): Optional<ResourceEntry> {
-        TODO("Not yet implemented")
+        var k = commandValue.value
+        val rs = Server.getInstance(ResourceService::class.java)
+        k = rs.createValidKey(k)
+
+        val or = rs.getExternalResource(k)
+        if (or.isPresent) return or.map { it as ResourceEntry }
+
+        return try {
+            Optional.of(IntegratedResource.valueOf(k))
+        } catch (e: IllegalArgumentException) {
+            Optional.empty()
+        }
     }
 }

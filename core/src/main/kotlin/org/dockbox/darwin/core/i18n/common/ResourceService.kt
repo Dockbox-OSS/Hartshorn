@@ -17,11 +17,15 @@
 
 package org.dockbox.darwin.core.i18n.common
 
+import org.dockbox.darwin.core.i18n.entry.ExternalResourceEntry
+import java.util.*
+
 interface ResourceService {
 
     fun init()
     fun getResourceMap(lang: Language): Map<String, String>
-    fun getTranslations(key: String): Map<Language, String>
+    fun getTranslations(entry: ExternalResourceEntry): Map<Language, String>
     fun createValidKey(raw: String): String
+    fun getExternalResource(key: String): Optional<ExternalResourceEntry>
 
 }
