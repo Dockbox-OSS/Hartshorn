@@ -22,8 +22,15 @@ import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
 import java.util.*
 
 class ListArgumentParser : AbstractTypeArgumentParser<List<String>>() {
+
+    private var delimiter: Char = ','
+
+    fun setDelimiter(delimiter: Char) {
+        this.delimiter = delimiter
+    }
+
     override fun parse(commandValue: CommandValue<String>): Optional<List<String>> {
         val v = commandValue.value
-        return Optional.of(v.split(','))
+        return Optional.of(v.split(this.delimiter))
     }
 }

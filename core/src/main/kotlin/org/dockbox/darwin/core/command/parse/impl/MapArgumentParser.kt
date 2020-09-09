@@ -19,16 +19,35 @@ package org.dockbox.darwin.core.command.parse.impl
 
 import org.dockbox.darwin.core.command.context.CommandValue
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
+import org.dockbox.darwin.core.server.Server
 import java.util.*
 import kotlin.collections.HashMap
 
 class MapArgumentParser : AbstractTypeArgumentParser<Map<String, String>>() {
+
+    private var rowDelimiter: Char = ','
+    private var valueDelimiter: Char = '='
+
+    fun setRowDelimiter(delimiter: Char) {
+        this.rowDelimiter = delimiter
+    }
+
+    fun setValueDelimiter(delimiter: Char) {
+        this.valueDelimiter = delimiter
+    }
+
+
     override fun parse(commandValue: CommandValue<String>): Optional<Map<String, String>> {
+        if (rowDelimiter == valueDelimiter) {
+            Server.log().warn("Row and value delimiter cannot be equal!")
+            return Optional.empty()
+        }
+
         val v = commandValue.value
         val map = HashMap<String, String>()
-        for (s in v.split(',')) {
-            if (s.contains('=')) {
-                val parts = s.split('=')
+        for (s in v.split(rowDelimiter)) {
+            if (s.contains(valueDelimiter)) {
+                val parts = s.split(valueDelimiter)
                 if (parts.size == 2) {
                     map[parts[0]] = parts[1]
                 }
