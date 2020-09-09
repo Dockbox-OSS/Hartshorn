@@ -17,16 +17,19 @@
 
 package org.dockbox.darwin.core.i18n.common
 
+import com.google.inject.Singleton
+import org.dockbox.darwin.core.i18n.entry.ExternalResourceEntry
 import org.dockbox.darwin.core.server.Server
-import org.dockbox.darwin.core.util.extension.Extension
 import org.dockbox.darwin.core.util.files.DataManager
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
-@Extension(id = "i18n", authors = ["GuusLieben"], description = "Provides a simple implementation of I18N", name = "Simple I18N")
+@Singleton
 class SimpleResourceService : ResourceService {
 
-    var resourceMaps: EnumMap<Language, Map<String, String>> = EnumMap(Language::class.java)
+    private val resourceMaps: EnumMap<Language, Map<String, String>> = EnumMap(Language::class.java)
+    private val knownEntries: MutableList<ExternalResourceEntry> = CopyOnWriteArrayList()
 
     override fun init() {
         getResourceMap(Server.getServer().getGlobalConfig().getDefaultLanguage())
@@ -46,7 +49,9 @@ class SimpleResourceService : ResourceService {
         return resourceMap
     }
 
-    override fun getTranslations(key: String): Map<Language, String> {
+    override fun getTranslations(entry: ExternalResourceEntry): Map<Language, String> {
+        val key = entry.getKey()
+        knownEntries.add(entry)
         val resourceMap = ConcurrentHashMap<Language, String>()
         resourceMaps.forEach { (k, v) ->
             run {
@@ -58,9 +63,15 @@ class SimpleResourceService : ResourceService {
         return resourceMap
     }
 
+
+
     override fun createValidKey(raw: String): String = raw
             .replace("-".toRegex(), "_")
             .replace("\\.".toRegex(), "_")
             .replace("/".toRegex(), "_")
             .toUpperCase()
+
+    override fun getExternalResource(key: String): Optional<ExternalResourceEntry> {
+        return Optional.ofNullable(knownEntries.firstOrNull { it.getKey() == createValidKey(key) })
+    }
 }

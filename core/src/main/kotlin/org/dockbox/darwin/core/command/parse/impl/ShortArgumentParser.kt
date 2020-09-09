@@ -15,17 +15,14 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.darwin.core.i18n.common
+package org.dockbox.darwin.core.command.parse.impl
 
-import org.dockbox.darwin.core.i18n.entry.ExternalResourceEntry
+import org.dockbox.darwin.core.command.context.CommandValue
+import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
 import java.util.*
 
-interface ResourceService {
-
-    fun init()
-    fun getResourceMap(lang: Language): Map<String, String>
-    fun getTranslations(entry: ExternalResourceEntry): Map<Language, String>
-    fun createValidKey(raw: String): String
-    fun getExternalResource(key: String): Optional<ExternalResourceEntry>
-
+class ShortArgumentParser : AbstractTypeArgumentParser<Short>() {
+    override fun parse(commandValue: CommandValue<String>): Optional<Short> {
+        return Optional.ofNullable(commandValue.value.toShortOrNull())
+    }
 }

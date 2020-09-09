@@ -27,17 +27,19 @@ import org.dockbox.darwin.core.util.events.EventBus
 import org.dockbox.darwin.core.util.events.SimpleEventBus
 import org.dockbox.darwin.core.util.exceptions.ExceptionHelper
 import org.dockbox.darwin.core.util.exceptions.SimpleExceptionHelper
-import org.dockbox.darwin.core.util.files.*
-import org.dockbox.darwin.core.util.inject.AbstractCommonInjector
 import org.dockbox.darwin.core.util.extension.ExtensionManager
 import org.dockbox.darwin.core.util.extension.SimpleExtensionManager
+import org.dockbox.darwin.core.util.files.*
+import org.dockbox.darwin.core.util.inject.AbstractCommonInjector
 import org.dockbox.darwin.core.util.player.PlayerStorageService
 import org.dockbox.darwin.core.util.text.BroadcastService
 import org.dockbox.darwin.core.util.text.SimpleBroadcastService
+import org.dockbox.darwin.core.util.world.WorldStorageService
 import org.dockbox.darwin.sponge.util.command.SpongeCommandBus
 import org.dockbox.darwin.sponge.util.discord.SpongeDiscordUtils
 import org.dockbox.darwin.sponge.util.files.SpongeFileUtils
 import org.dockbox.darwin.sponge.util.player.SpongePlayerStorageService
+import org.dockbox.darwin.sponge.util.world.SpongeWorldStorageService
 
 class SpongeCommonInjector : AbstractCommonInjector() {
     override fun configureExceptionInject() {
@@ -61,5 +63,6 @@ class SpongeCommonInjector : AbstractCommonInjector() {
         bind(GlobalConfig::class.java).to(DefaultGlobalConfig::class.java)
         bind(ResourceService::class.java).to(SimpleResourceService::class.java)
         bind(PlayerStorageService::class.java).to(SpongePlayerStorageService::class.java)
+        bind(WorldStorageService::class.java).to(SpongeWorldStorageService::class.java)
     }
 }

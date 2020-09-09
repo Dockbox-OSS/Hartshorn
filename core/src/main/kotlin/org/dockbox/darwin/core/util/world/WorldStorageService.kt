@@ -15,17 +15,20 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.darwin.core.i18n.common
+package org.dockbox.darwin.core.util.world
 
-import org.dockbox.darwin.core.i18n.entry.ExternalResourceEntry
+import org.dockbox.darwin.core.objects.location.Location
+import org.dockbox.darwin.core.objects.location.World
+import org.dockbox.darwin.core.objects.tuple.Vector3D
 import java.util.*
 
-interface ResourceService {
+abstract class WorldStorageService {
 
-    fun init()
-    fun getResourceMap(lang: Language): Map<String, String>
-    fun getTranslations(entry: ExternalResourceEntry): Map<Language, String>
-    fun createValidKey(raw: String): String
-    fun getExternalResource(key: String): Optional<ExternalResourceEntry>
+    abstract fun getLoadedWorlds(): List<World>
+    abstract fun getAllWorldUUIDs(): List<UUID>
 
+    abstract fun getWorld(name: String): Optional<World>
+    abstract fun getWorld(uuid: UUID): Optional<World>
+
+    abstract fun createLocation(vector: Vector3D, world: World): Location
 }
