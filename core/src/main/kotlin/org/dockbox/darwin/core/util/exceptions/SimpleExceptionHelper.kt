@@ -22,6 +22,7 @@ import java.util.*
 
 class SimpleExceptionHelper : ExceptionHelper {
     override fun printFriendly(message: String?, exception: Throwable?, stacktrace: Boolean?) {
+        Server.log().error("========================================")
         if (exception != null) {
             Server.log().error("Headline: " + exception.javaClass.canonicalName)
             if (message != null && "" != message) Server.log().error("Message: $message")
@@ -31,7 +32,7 @@ class SimpleExceptionHelper : ExceptionHelper {
                 if (stacktrace != null && stacktrace) Server.log().error(Arrays.toString(exception.stackTrace))
             }
         } else Server.log().error("Received exception call, but exception was null")
-
+        Server.log().error("========================================")
         // Headline: java.lang.NullPointerException
         // Message: Foo bar
         // Location: SourceFile.java line 19
@@ -39,11 +40,12 @@ class SimpleExceptionHelper : ExceptionHelper {
     }
 
     override fun printMinimal(message: String?, exception: Throwable?, stacktrace: Boolean?) {
+        Server.log().error("========================================")
         if (exception != null && message != null && "" != message) {
             Server.log().error(exception.javaClass.simpleName + ": " + message)
             if (stacktrace != null && stacktrace) Server.log().error(Arrays.toString(exception.stackTrace))
         }
-
+        Server.log().error("========================================")
         // NullPointerException: Foo bar
         // Stack: [...]
     }

@@ -18,8 +18,8 @@
 package org.dockbox.darwin.sponge.objects.targets
 
 import com.boydti.fawe.`object`.FawePlayer
-import org.dockbox.darwin.core.i18n.I18N
-import org.dockbox.darwin.core.i18n.Languages
+import org.dockbox.darwin.core.i18n.common.Language
+import org.dockbox.darwin.core.i18n.entry.IntegratedResource
 import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.Location.Companion.EMPTY
 import org.dockbox.darwin.core.objects.location.World
@@ -27,7 +27,7 @@ import org.dockbox.darwin.core.objects.user.Gamemode
 import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.text.Text
-import org.dockbox.darwin.core.text.Text.Companion.of
+import org.dockbox.darwin.core.text.Text.of
 import org.dockbox.darwin.core.util.player.PlayerStorageService
 import org.dockbox.darwin.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
@@ -80,11 +80,11 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
         if (referenceExists()) reference!!.offer(Keys.GAME_MODE, SpongeConversionUtil.toSponge(gamemode))
     }
 
-    override fun getLanguage(): Languages {
+    override fun getLanguage(): Language {
         return Server.getInstance(PlayerStorageService::class.java).getLanguagePreference(this.uniqueId)
     }
 
-    override fun setLanguage(lang: Languages) {
+    override fun setLanguage(lang: Language) {
         Server.getInstance(PlayerStorageService::class.java).setLanguagePreference(this.uniqueId, lang)
     }
 
@@ -102,13 +102,13 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
         if (referenceExists()) reference!!.sendMessage(org.spongepowered.api.text.Text.of(text))
     }
 
-    override fun sendWithPrefix(text: I18N) {
+    override fun sendWithPrefix(text: IntegratedResource) {
         sendWithPrefix(of(text.getValue(getLanguage())))
     }
 
     override fun sendWithPrefix(text: Text) {
         if (referenceExists()) reference!!.sendMessage(org.spongepowered.api.text.Text.of(
-                SpongeConversionUtil.toSponge(I18N.PREFIX.asText()),
+                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
                 SpongeConversionUtil.toSponge(text)
         )
         )
@@ -116,7 +116,7 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
 
     override fun sendWithPrefix(text: CharSequence) {
         if (referenceExists()) reference!!.sendMessage(org.spongepowered.api.text.Text.of(
-                SpongeConversionUtil.toSponge(I18N.PREFIX.asText()),
+                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
                 org.spongepowered.api.text.Text.of(text)
         )
         )
@@ -153,7 +153,7 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
         for (permission in permissions) setPermission(permission, value)
     }
 
-    override fun send(text: I18N) {
+    override fun send(text: IntegratedResource) {
         send(of(text.getValue(getLanguage())))
     }
 
@@ -162,7 +162,9 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun setLocation(location: Location) {
-        if (referenceExists()) reference!!.location = SpongeConversionUtil.toSponge(location)
+        if (referenceExists()) {
+            SpongeConversionUtil.toSponge(location).ifPresent { reference!!.location = it }
+        }
     }
 
     override fun getWorld(): World {

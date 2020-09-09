@@ -1,0 +1,157 @@
+/*
+ *  Copyright (C) 2020 Guus Lieben
+ *
+ *  This framework is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as
+ *  published by the Free Software Foundation, either version 2.1 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ *  the GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
+
+
+import java.time.LocalDate
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.2"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'java-library'
+    id "org.jetbrains.kotlin.jvm" version "1.4.0"
+}
+
+def getVersionName = { ->
+    return 'git rev-parse --verify --short HEAD'.execute().text.trim()
+}
+
+version = getVersionName()
+group = project.pluginGroup
+description = 'Common sources for Darwin Server plugins'
+def junitVersion = '5.3.2'
+
+subprojects { Project subProject ->
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    def date = LocalDate.now().toString()
+    group = project.pluginGroup
+    version = "${getVersionName()}-$date"
+
+    task copyArtifacts {
+        doLast {
+            def version = getVersionName()
+            def DIST_DEST_DIR = "${rootDir}/dist/${date}/${version}"
+            def DIRT_SRC_DIR = "${buildDir}/libs"
+
+            ant.mkdir(dir: DIST_DEST_DIR)
+            ant.copy(todir: DIST_DEST_DIR) {
+                fileset dir: DIRT_SRC_DIR,
+                        includes: "*${version}-${date}*.jar"
+            }
+
+            delete buildDir
+        }
+    }
+
+    afterEvaluate {
+        def buildTask = subProject.tasks.find { it.name == 'build' }
+        if (buildTask) {
+            buildTask.finalizedBy aggregatedJavadocs
+        }
+        aggregatedJavadocs.finalizedBy copyArtifacts
+    }
+
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+
+    tasks.build.dependsOn tasks.shadowJar
+
+    shadowJar {
+        relocate 'com.fasterxml.jackson', 'com.darwinreforged.internal.jackson'
+        relocate 'org.apache.commons', 'com.darwinreforged.internal.apache.commons'
+    }
+}
+
+allprojects {
+    plugins.withType(JavaPlugin) {
+        repositories {
+            mavenCentral()
+            jcenter()
+            maven {
+                name 'Jitpack'
+                url 'https://jitpack.io'
+            }
+            maven {
+                name 'fawe'
+                url 'http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/'
+            }
+            maven {
+                name 'sk89q'
+                url 'https://maven.enginehub.org/repo/'
+            }
+            maven {
+                name 'plotsquared'
+                url "https://plotsquared.com/mvn/"
+            }
+        }
+
+        dependencies {
+            compile('net.dv8tion:JDA:4.ALPHA.0_76') {
+                exclude module: 'opus-java'
+            }
+
+            // Required plugins for all platforms
+            compileOnly 'com.boydti:fawe-api:latest'
+            compileOnly 'com.sk89q.worldedit:worldedit-core:6.1'
+            compileOnly "com.plotsquared:plotsquared-api:3.1"
+
+            // Typically included by platforms
+            compileOnly 'org.slf4j:slf4j-api:1.7.25'
+
+            // Shaded dependencies for SQLite implementations
+            implementation 'com.j256.ormlite:ormlite-core:5.1'
+            implementation 'com.j256.ormlite:ormlite-jdbc:5.1'
+
+            // Testing requirements
+            testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+            testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+            testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+
+        }
+    }
+}
+
+task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all child projects as if it was a single project', group: 'Documentation') {
+    destinationDir = file "./docs"
+    title = "DarwinServer (commit #$version)"
+    options.author true
+    options.links 'http://docs.spring.io/spring/docs/4.3.x/javadoc-api/', 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.spring.io/spring-ws/docs/2.3.0.RELEASE/api/', 'http://docs.spring.io/spring-security/site/docs/4.0.4.RELEASE/apidocs/'
+    options.addStringOption 'Xdoclint:none', '-quiet'
+
+    delete "./docs"
+
+    subprojects.each { proj ->
+        proj.tasks.withType(Javadoc).each { javadocTask ->
+            source += javadocTask.source
+            classpath += javadocTask.classpath
+            excludes += javadocTask.excludes
+            includes += javadocTask.includes
+        }
+    }
+}

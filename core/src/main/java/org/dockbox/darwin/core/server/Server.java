@@ -22,61 +22,60 @@ import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import org.dockbox.darwin.core.annotations.Module;
 import org.dockbox.darwin.core.server.config.GlobalConfig;
+import org.dockbox.darwin.core.server.config.ExceptionLevels;
 import org.dockbox.darwin.core.util.exceptions.ExceptionHelper;
+import org.dockbox.darwin.core.util.extension.Extension;
+import org.dockbox.darwin.core.util.extension.ExtensionContext;
+import org.dockbox.darwin.core.util.extension.ExtensionManager;
 import org.dockbox.darwin.core.util.inject.AbstractCommonInjector;
 import org.dockbox.darwin.core.util.inject.AbstractExceptionInjector;
 import org.dockbox.darwin.core.util.inject.AbstractModuleInjector;
 import org.dockbox.darwin.core.util.inject.AbstractUtilInjector;
 import org.dockbox.darwin.core.util.library.LibraryArtifact;
-import org.dockbox.darwin.core.util.library.LibraryLoader;
-import org.dockbox.darwin.core.util.module.ModuleLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Consumer;
 
-@Module(id = "darwinserver", name = "Darwin Server", description = "The global module used for configuration purposes", authors = {"GuusLieben"})
-public abstract class Server<L> implements KServer {
+@Extension(id = "darwinserver", name = "Darwin Server", description = "The global module used for configuration purposes", authors = "GuusLieben")
+public abstract class Server implements KServer {
 
     private final Logger log = LoggerFactory.getLogger(Server.class);
     private String version;
-    private Date lastUpdate;
+    private LocalDate lastUpdate;
     protected static final String[] authors = {"GuusLieben"};
 
-    private static Server<?> instance;
+    private static Server instance;
 
     private Injector injector;
 
-    public Server(AbstractCommonInjector injector) {
+    protected Server(AbstractCommonInjector injector) {
         this.injector = Guice.createInjector(injector);
-        construct();
+        this.construct();
     }
 
-    public Server(
+    protected Server(
             AbstractModuleInjector moduleInjector,
             AbstractExceptionInjector exceptionInjector,
             AbstractUtilInjector utilInjector
     ) {
         this.injector = Guice.createInjector();
-        if (moduleInjector != null) this.injector = this.injector.createChildInjector(moduleInjector);
-        if (exceptionInjector != null) this.injector = this.injector.createChildInjector(exceptionInjector);
-        if (utilInjector != null) this.injector = this.injector.createChildInjector(utilInjector);
+        if (null != moduleInjector) this.injector = this.injector.createChildInjector(moduleInjector);
+        if (null != exceptionInjector) this.injector = this.injector.createChildInjector(exceptionInjector);
+        if (null != utilInjector) this.injector = this.injector.createChildInjector(utilInjector);
 
-        verifyInjectorBindings();
-        construct();
+        this.verifyInjectorBindings();
+        this.construct();
     }
 
     private void verifyInjectorBindings() {
@@ -91,33 +90,28 @@ public abstract class Server<L> implements KServer {
 
     protected void construct() {
         String tVer = "dev";
-        Date tLU = Date.from(Instant.now());
+        LocalDate tLU = LocalDate.now();
 
         try {
             Properties properties = new Properties();
-            properties.load(getClass().getResourceAsStream("/darwin.properties"));
+            properties.load(this.getClass().getResourceAsStream("/darwin.properties"));
 
-            DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-            tLU = format.parse(properties.getOrDefault("last_update", Instant.now().toString()).toString());
+            // LocalDate can be parsed directly, as it is generated using LocalDate when building with Gradle
+            tLU = LocalDate.parse(properties.getOrDefault("last_update", Instant.now().toString()).toString());
             tVer = properties.getOrDefault("version", "dev").toString();
-        } catch (IOException | ParseException e) {
-            except("Failed to convert resource file", e);
+        } catch (IOException e) {
+            this.except("Failed to convert resource file", e);
         }
 
         this.version = tVer;
         this.lastUpdate = tLU;
 
-        //noinspection unchecked
-        this.injector.getInstance(LibraryLoader.class).configure(getLoader(), getAllArtifacts());
-
         Server.instance = this;
     }
 
-    protected abstract L getLoader();
-
     public static <T> T getInstance(Class<T> type) {
-        if (type.isAnnotationPresent(Module.class)) {
-            return getInstance(ModuleLoader.class).getModuleInstance(type).orElse(null);
+        if (type.isAnnotationPresent(Extension.class)) {
+            return getInstance(ExtensionManager.class).getInstance(type).orElse(null);
         }
         return instance.injector.getInstance(type);
     }
@@ -127,10 +121,22 @@ public abstract class Server<L> implements KServer {
             @Override
             protected void configure() {
                 super.configure();
-                bind(contract).to(implementation);
+                this.bind(contract).to(implementation);
             }
         };
         instance.injector = instance.injector.createChildInjector(localModule);
+    }
+
+    public Injector getInjector() {
+        return this.injector;
+    }
+
+    protected void initIntegratedExtensions(Consumer<ExtensionContext> consumer) {
+        getInstance(ExtensionManager.class).collectIntegratedExtensions().forEach(consumer);
+    }
+
+    protected void initExternalExtensions(Consumer<ExtensionContext> consumer) {
+        getInstance(ExtensionManager.class).getExternalExtensions().forEach(consumer);
     }
 
     @NotNull
@@ -147,7 +153,7 @@ public abstract class Server<L> implements KServer {
 
     @NotNull
     @Override
-    public Date getLastUpdate() {
+    public LocalDate getLastUpdate() {
         return this.lastUpdate;
     }
 
@@ -160,10 +166,14 @@ public abstract class Server<L> implements KServer {
     @Override
     public void except(@Nullable String msg, @Nullable Throwable... e) {
         for (Throwable throwable : e) {
-            // if config allows stacktraces :
-            boolean stacktraces = true;
-            // if config allows friendly :
-            getInstance(ExceptionHelper.class).printFriendly(msg, throwable, stacktraces);
+            boolean stacktraces = this.getGlobalConfig().getStacktracesAllowed();
+            ExceptionHelper eh = getInstance(ExceptionHelper.class);
+
+            if (ExceptionLevels.FRIENDLY == this.getGlobalConfig().getExceptionLevel()) {
+                eh.printFriendly(msg, throwable, stacktraces);
+            } else {
+                eh.printMinimal(msg, throwable, stacktraces);
+            }
         }
     }
 
@@ -181,8 +191,9 @@ public abstract class Server<L> implements KServer {
         return instance;
     }
 
+    // TODO: Check if these are present at startup
     private LibraryArtifact[] getAllArtifacts() {
-        List<LibraryArtifact> artifacts = new ArrayList<>(Arrays.asList(getArtifacts()));
+        List<LibraryArtifact> artifacts = new ArrayList<>(Arrays.asList(this.getArtifacts()));
         artifacts.add(new LibraryArtifact("org.reflections", "reflections", "0.9.11"));
         artifacts.add(new LibraryArtifact("com.fasterxml.jackson.core", "jackson-databind", "2.9.8"));
         artifacts.add(new LibraryArtifact("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", "2.9.8"));

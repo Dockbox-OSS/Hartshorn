@@ -17,7 +17,6 @@
 
 package org.dockbox.darwin.core.util.files;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Map;
@@ -41,7 +40,7 @@ public class SQLiteBulkDataManager extends ServerReference implements BulkDataMa
     @NotNull
     @Override
     public Path getDefaultBulkDataFile(@NotNull Class<?> module) {
-        return getModuleAndCallback(module, (annotation) -> {
+        return runWithExtension(module, (annotation) -> {
             Path dataPath = getDataDir(module);
             return getInstance(FileUtils.class).createFileIfNotExists(dataPath.resolve(annotation.id() + ".db"));
         });
@@ -56,7 +55,7 @@ public class SQLiteBulkDataManager extends ServerReference implements BulkDataMa
 
     @Override
     public Dao<?, ?> getBulkDao(@NotNull Class<?> module, @NotNull Class<?> type, @NotNull String fileName) {
-        return getModuleAndCallback(module, (annotation) -> {
+        return runWithExtension(module, (annotation) -> {
             Path dataDir = getDataDir(module);
             return constructDao(type, dataDir.resolve(fileName + ".sqlite"));
         });
@@ -110,7 +109,7 @@ public class SQLiteBulkDataManager extends ServerReference implements BulkDataMa
     @NotNull
     @Override
     public Path getDataDir(@NotNull Class<?> module) {
-        return getModuleAndCallback(module, (annotation) -> getInstance(FileUtils.class).getDataDir().resolve(annotation.id()));
+        return runWithExtension(module, (annotation) -> getInstance(FileUtils.class).getDataDir().resolve(annotation.id()));
     }
 
     @NotNull
