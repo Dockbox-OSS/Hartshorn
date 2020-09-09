@@ -105,19 +105,13 @@ open class CommandContext(
             val instance: T = ctor.newInstance()
             type.declaredFields.forEach { field ->
                 run {
-                    if (!argumentKeys.contains(field.name)) throw MissingArgumentException("Missing argument for '" + field.name + "'")
+                    if (!argumentKeys.contains(field.name)) throwOrSetNull(field, instance)
                     else {
                         val optionalValue = tryGetValue(field).rethrow()
                         if (optionalValue.isPresent) {
                             val fieldValue = optionalValue.get()
                             field.set(instance, fieldValue)
-                        } else {
-                            if ((field.isAnnotationPresent(Strict::class.java) && field.getAnnotation(Strict::class.java).strict)
-                                    || field.isAnnotationPresent(NotNull::class.java)) {
-                                throw MissingArgumentException("Could not get argument value for '" + field.name + "'")
-                            }
-                            field.set(instance, null)
-                        }
+                        } else throwOrSetNull(field, instance)
                     }
                 }
             }
@@ -125,6 +119,14 @@ open class CommandContext(
         } catch (e: Throwable) {
             return Exceptional.of(e)
         }
+    }
+
+    private fun <T> throwOrSetNull(field: Field, instance: T) {
+        if ((field.isAnnotationPresent(Strict::class.java) && field.getAnnotation(Strict::class.java).strict)
+                || field.isAnnotationPresent(NotNull::class.java)) {
+            throw MissingArgumentException("Could not get argument value for '" + field.name + "'")
+        }
+        field.set(instance, null)
     }
 
     private fun tryGetValue(field: Field): Exceptional<*> {
