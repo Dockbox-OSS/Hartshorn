@@ -26,10 +26,13 @@ import org.dockbox.darwin.core.command.AbstractArgumentValue;
 import org.dockbox.darwin.core.command.CommandRunnerFunction;
 import org.dockbox.darwin.core.command.SimpleCommandBus;
 import org.dockbox.darwin.core.command.context.CommandValue;
+import org.dockbox.darwin.core.events.chat.CommandEvent;
 import org.dockbox.darwin.core.i18n.permissions.AbstractPermission;
+import org.dockbox.darwin.core.objects.events.Cancellable;
 import org.dockbox.darwin.core.objects.tuple.Tuple;
 import org.dockbox.darwin.core.objects.tuple.Vector3D;
 import org.dockbox.darwin.core.server.Server;
+import org.dockbox.darwin.core.util.events.EventBus;
 import org.dockbox.darwin.core.util.extension.Extension;
 import org.dockbox.darwin.core.util.extension.ExtensionManager;
 import org.dockbox.darwin.sponge.objects.location.SpongeLocation;
@@ -267,11 +270,21 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             assert null != sender : "Command sender is not a console or a player, did a plugin call me?";
             org.dockbox.darwin.core.command.context.CommandContext ctx = this.convertContext(args, sender, command);
 
-            if (src instanceof Player) {
-                runner.run(sender, ctx);
-            } else {
-                runner.run(SpongeConsole.Companion.getInstance(), ctx);
+            EventBus eb = Server.getInstance(EventBus.class);
+
+            Cancellable ceb = new CommandEvent.Before(sender, ctx);
+            eb.post(ceb);
+
+            if (!ceb.isCancelled()) {
+                if (src instanceof Player) {
+                    runner.run(sender, ctx);
+                } else {
+                    runner.run(SpongeConsole.Companion.getInstance(), ctx);
+                }
+
+                eb.post(new CommandEvent.After(sender, ctx));
             }
+
             return CommandResult.success();
         };
     }
