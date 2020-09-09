@@ -19,6 +19,7 @@ package org.dockbox.darwin.core.command.context
 
 import com.sk89q.worldedit.util.command.argument.MissingArgumentException
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.EnumArgumentParser
 import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
 import org.dockbox.darwin.core.objects.optional.Exceptional
@@ -125,18 +126,6 @@ open class CommandContext(
             if (commandValue.value!!.javaClass == type) return Optional.of(commandValue as A)
         }
         return Optional.empty()
-    }
-
-    class EnumArgumentParser : AbstractArgumentParser() {
-
-        override fun <A> parse(commandValue: CommandValue<String>, type: Class<A>?): Optional<A> {
-            if (type!!.isEnum) {
-                val enumConstants = type.enumConstants as Array<out Enum<*>>
-                return Optional.ofNullable(enumConstants.first { it.name == commandValue.value }) as Optional<A>
-            }
-            return Optional.empty()
-        }
-
     }
 
     companion object {
