@@ -15,28 +15,28 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.darwin.core.command.parse.impl
+package org.dockbox.darwin.sponge.util.world
 
-import org.dockbox.darwin.core.command.context.CommandValue
-import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.darwin.core.objects.location.World
-import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.util.world.WorldStorageService
+import org.dockbox.darwin.sponge.util.SpongeConversionUtil
+import org.spongepowered.api.Sponge
 import java.util.*
 
-class WorldArgumentParser : AbstractTypeArgumentParser<World>() {
-    override fun parse(commandValue: CommandValue<String>): Optional<World> {
-        val v = commandValue.value
-        val ws = Server.getInstance(WorldStorageService::class.java)
-        val op = ws.getWorld(v)
-        return if (op.isPresent) op
-        else {
-            try {
-                val uuid = UUID.fromString(v)
-                ws.getWorld(uuid)
-            } catch (e: IllegalArgumentException) {
-                Optional.empty()
-            }
-        }
+class SpongeWorldStorageService : WorldStorageService() {
+    override fun getLoadedWorlds(): List<World> {
+        return Sponge.getServer().worlds.map { SpongeConversionUtil.fromSponge(it) }
+    }
+
+    override fun getAllWorldUUIDs(): List<UUID> {
+        return Sponge.getServer().allWorldProperties.map { it.uniqueId }
+    }
+
+    override fun getWorld(name: String): Optional<World> {
+        return Sponge.getServer().loadWorld(name).map { SpongeConversionUtil.fromSponge(it) }
+    }
+
+    override fun getWorld(uuid: UUID): Optional<World> {
+        return Sponge.getServer().loadWorld(uuid).map { SpongeConversionUtil.fromSponge(it) }
     }
 }
