@@ -17,11 +17,14 @@
 
 package org.dockbox.darwin.core.command.context
 
-import org.dockbox.darwin.core.command.parse.AbstractArgumentParser
+import com.sk89q.worldedit.util.command.argument.MissingArgumentException
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
+import org.dockbox.darwin.core.objects.optional.Exceptional
 import org.dockbox.darwin.core.objects.targets.CommandSource
+import java.lang.reflect.Constructor
+import java.lang.reflect.Field
 import java.util.*
 
 @Suppress("UNCHECKED_CAST")
@@ -83,6 +86,36 @@ open class CommandContext(
             CommandValue.Type.BOTH -> arrayOf(*args as Array<CommandValue<*>>, *flags as Array<CommandValue<*>>)
         }
         return getValueAs(key, type, arr)
+    }
+
+    fun <T> tryCreate(type: Class<T>): Exceptional<T> {
+        try {
+            val argumentKeys = this.args!!.map { it.key }
+            val ctor: Constructor<T> = type.getConstructor() as Constructor<T>
+            val instance: T = ctor.newInstance()
+            type.declaredFields.forEach { field ->
+                run {
+                    if (!argumentKeys.contains(field.name)) throw MissingArgumentException("Missing argument for '" + field.name + "'")
+                    else {
+                        val optionalValue = tryGetValue(field).rethrow()
+                        if (optionalValue.isPresent) {
+                            val fieldValue = optionalValue.get()
+                            field.set(instance, fieldValue)
+                        } else {
+                            throw MissingArgumentException("Could not get argument value for '" + field.name + "'")
+                        }
+                    }
+                }
+            }
+            return Exceptional.of(instance)
+        } catch (e: Throwable) {
+            return Exceptional.of(e)
+        }
+    }
+
+    private fun tryGetValue(field: Field): Exceptional<Any> {
+        // TODO: Create values for all minimum supported types (use AbstractArgumentParser implementations for this)
+        return Exceptional.empty();
     }
 
     private fun <T, A : CommandValue<T>> getValueAs(key: String, type: Class<T>, values: Array<CommandValue<*>>): Optional<A> {
