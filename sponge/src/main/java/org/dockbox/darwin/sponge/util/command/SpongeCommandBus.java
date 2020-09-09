@@ -314,21 +314,25 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             else arguments.add(new CommandValue.Argument<>(this.getValue(obj), s));
         }));
 
+        String alias = command.split(" ")[0];
+
         org.dockbox.darwin.core.command.context.CommandContext darwinCtx;
         if (sender instanceof org.dockbox.darwin.core.objects.user.Player) {
             org.dockbox.darwin.core.objects.location.Location loc = ((org.dockbox.darwin.core.objects.user.Player) sender).getLocation();
             org.dockbox.darwin.core.objects.location.World world = ((org.dockbox.darwin.core.objects.user.Player) sender).getLocation().getWorld();
             darwinCtx = new org.dockbox.darwin.core.command.context.CommandContext(
+                    alias,
                     arguments.toArray(new CommandValue.Argument<?>[0]),
                     flags.toArray(new CommandValue.Flag<?>[0]),
-                    sender, loc, world,
+                    sender, Optional.of(loc), Optional.of(world),
                     new String[0]
             );
         } else {
             darwinCtx = new org.dockbox.darwin.core.command.context.CommandContext(
+                    alias,
                     arguments.toArray(new CommandValue.Argument<?>[0]),
                     flags.toArray(new CommandValue.Flag<?>[0]),
-                    sender, null, null,
+                    sender, Optional.empty(), Optional.empty(),
                     new String[0]
             );
         }

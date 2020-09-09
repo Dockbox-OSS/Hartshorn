@@ -33,20 +33,22 @@ import org.dockbox.darwin.core.objects.targets.Locatable
 import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
 import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.util.*
 
 @Suppress("UNCHECKED_CAST")
 open class CommandContext(
-        internal open val args: Array<CommandValue.Argument<*>>?,
-        internal open val flags: Array<CommandValue.Flag<*>>?,
-        internal open val sender: CommandSource,
+        internal open val alias: String,
+        internal open val args: Array<CommandValue.Argument<*>>,
+        internal open val flags: Array<CommandValue.Flag<*>>,
         // Location and world are snapshots of the location of our CommandSource at the time the command was processed.
         // This way developers can ensure location data does not change while the command is being performed.
-        internal open val location: Location?,
-        internal open val world: World?,
-        internal open val permissions: Array<String>?
+        internal open val sender: @NotNull CommandSource,
+        internal open val location: @Nullable Optional<Location>,
+        internal open val world: @Nullable Optional<World>,
+        internal open val permissions: Array<String>
 ) {
 
     val argumentCount: Int
@@ -138,8 +140,8 @@ open class CommandContext(
         if (field.isAnnotationPresent(FromSource::class.java)) {
             when (field.type) {
                 Player::class.java -> if (this.sender is Player) return Exceptional.of(this.sender)
-                World::class.java -> if (this.sender is Locatable) return Exceptional.of(this.world)
-                Location::class.java -> if (this.sender is Locatable) return Exceptional.of(this.location)
+                World::class.java -> if (this.sender is Locatable) return Exceptional.ofOptional(this.world)
+                Location::class.java -> if (this.sender is Locatable) return Exceptional.ofOptional(this.location)
                 CommandSource::class.java -> return Exceptional.of(this.sender)
                 else -> Server.log().warn("Field '" + field.name + "' has FromSource annotation and type [" + field.type.canonicalName + "]")
             }
@@ -240,6 +242,6 @@ open class CommandContext(
 
     companion object {
         val ENUM_ARGUMENT_PARSER: EnumArgumentParser = EnumArgumentParser()
-        val EMPTY: CommandContext = CommandContext(emptyArray(), emptyArray(), CommandSource.None, null, null, emptyArray())
+        val EMPTY: CommandContext = CommandContext("", emptyArray(), emptyArray(), CommandSource.None, Optional.empty(), Optional.empty(), emptyArray())
     }
 }
