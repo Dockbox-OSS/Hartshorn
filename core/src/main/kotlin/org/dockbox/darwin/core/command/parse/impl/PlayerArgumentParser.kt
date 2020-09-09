@@ -20,10 +20,23 @@ package org.dockbox.darwin.core.command.parse.impl
 import org.dockbox.darwin.core.command.context.CommandValue
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.darwin.core.objects.user.Player
+import org.dockbox.darwin.core.server.Server
+import org.dockbox.darwin.core.util.player.PlayerStorageService
 import java.util.*
 
 class PlayerArgumentParser : AbstractTypeArgumentParser<Player>() {
     override fun parse(commandValue: CommandValue<String>): Optional<Player> {
-        TODO("Not yet implemented")
+        val v = commandValue.value
+        val ps = Server.getInstance(PlayerStorageService::class.java)
+        val op = ps.getPlayer(v)
+        return if (op.isPresent) op
+        else {
+            try {
+                val uuid = UUID.fromString(v)
+                ps.getPlayer(uuid)
+            } catch (e: IllegalArgumentException) {
+                Optional.empty()
+            }
+        }
     }
 }

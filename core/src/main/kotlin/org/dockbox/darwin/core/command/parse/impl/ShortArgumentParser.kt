@@ -23,6 +23,6 @@ import java.util.*
 
 class ShortArgumentParser : AbstractTypeArgumentParser<Short>() {
     override fun parse(commandValue: CommandValue<String>): Optional<Short> {
-        TODO("Not yet implemented")
+        return Optional.ofNullable(commandValue.value.toShortOrNull())
     }
 }

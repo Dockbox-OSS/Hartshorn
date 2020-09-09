@@ -23,6 +23,6 @@ import java.util.*
 
 class FloatArgumentParser : AbstractTypeArgumentParser<Float>() {
     override fun parse(commandValue: CommandValue<String>): Optional<Float> {
-        TODO("Not yet implemented")
+        return Optional.ofNullable(commandValue.value.toFloatOrNull())
     }
 }

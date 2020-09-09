@@ -23,6 +23,6 @@ import java.util.*
 
 class LongArgumentParser : AbstractTypeArgumentParser<Long>() {
     override fun parse(commandValue: CommandValue<String>): Optional<Long> {
-        TODO("Not yet implemented")
+        return Optional.ofNullable(commandValue.value.toLongOrNull())
     }
 }

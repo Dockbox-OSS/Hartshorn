@@ -23,6 +23,6 @@ import java.util.*
 
 class DoubleArgumentParser : AbstractTypeArgumentParser<Double>() {
     override fun parse(commandValue: CommandValue<String>): Optional<Double> {
-        TODO("Not yet implemented")
+        return Optional.ofNullable(commandValue.value.toDoubleOrNull())
     }
 }

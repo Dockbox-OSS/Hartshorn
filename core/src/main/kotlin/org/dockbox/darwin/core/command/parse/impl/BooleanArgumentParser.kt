@@ -23,6 +23,10 @@ import java.util.*
 
 class BooleanArgumentParser : AbstractTypeArgumentParser<Boolean>() {
     override fun parse(commandValue: CommandValue<String>): Optional<Boolean> {
-        TODO("Not yet implemented")
+        return when (commandValue.value.toLowerCase()) {
+            "true" -> Optional.of(true)
+            "false" -> Optional.of(false)
+            else -> Optional.empty()
+        }
     }
 }

@@ -23,6 +23,6 @@ import java.util.*
 
 class IntegerArgumentParser : AbstractTypeArgumentParser<Int>() {
     override fun parse(commandValue: CommandValue<String>): Optional<Int> {
-        TODO("Not yet implemented")
+        return Optional.ofNullable(commandValue.value.toIntOrNull())
     }
 }

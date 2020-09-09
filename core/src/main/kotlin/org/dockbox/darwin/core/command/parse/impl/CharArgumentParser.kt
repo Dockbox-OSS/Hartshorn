@@ -23,6 +23,8 @@ import java.util.*
 
 class CharArgumentParser : AbstractTypeArgumentParser<Char>() {
     override fun parse(commandValue: CommandValue<String>): Optional<Char> {
-        TODO("Not yet implemented")
+        val len = commandValue.value.length
+        return if ( len == 0 || len > 1) Optional.empty()
+        else Optional.of(commandValue.value[0])
     }
 }
