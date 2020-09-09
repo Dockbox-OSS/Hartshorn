@@ -32,5 +32,4 @@ interface CommandBus {
     fun createSingleMethodRegistrations(methods: Collection<Method>): Array<MethodCommandRegistration>
 
     fun registerCommand(command: String, permission: AbstractPermission, runner: CommandRunnerFunction)
-
 }
