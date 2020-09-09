@@ -15,13 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.darwin.core.i18n
+package org.dockbox.darwin.core.i18n.entry
 
+import org.dockbox.darwin.core.i18n.common.Language
+import org.dockbox.darwin.core.i18n.common.ResourceEntry
 import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
+import java.util.concurrent.ConcurrentHashMap
 
 
-enum class I18N(private var value: String): I18NRegistry {
+enum class IntegratedResource(private var value: String): ResourceEntry {
 
     //    Default formats
     PREFIX("$3[] $1"),
@@ -478,8 +481,9 @@ enum class I18N(private var value: String): I18NRegistry {
     CU_DESCRIPTION("$3- $2Summary: $1{0}"),
     GTL_WARPED("$1You have been teleported to the lobby as the world you were previously in is disabled"),
     LANG_SWITCHED("$1Your preferred language has been switched to: $2{0}")
-
     ;
+
+    private var translations: MutableMap<Language, String> = ConcurrentHashMap()
 
     fun getValue(player: Player): String {
         return getValue(player.getLanguage())
@@ -489,12 +493,19 @@ enum class I18N(private var value: String): I18NRegistry {
         return getValue(Server.getServer().getGlobalConfig().getDefaultLanguage())
     }
 
-    override fun getValue(lang: Languages): String {
-        return parseColors(Server.getInstance(I18nService::class.java).getTranslations(lang)[this.name]?.getValue() ?: this.value)
+    override fun getValue(lang: Language): String {
+        return if (translations.containsKey(lang)) translations[lang]!!
+        else this.value
     }
 
     override fun setValue(value: String) {
+        this.translations[Server.getServer().getGlobalConfig().getDefaultLanguage()] = value
         this.value = value
+    }
+
+    fun setLanguageValue(lang: Language, value: String) {
+        this.translations[lang] = value
+        if (lang == Server.getServer().getGlobalConfig().getDefaultLanguage()) this.value = value
     }
 
 }

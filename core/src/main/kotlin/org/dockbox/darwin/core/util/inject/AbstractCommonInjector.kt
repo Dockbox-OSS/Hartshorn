@@ -18,7 +18,7 @@
 package org.dockbox.darwin.core.util.inject
 
 import com.google.inject.AbstractModule
-import org.dockbox.darwin.core.i18n.I18nService
+import org.dockbox.darwin.core.i18n.common.ResourceService
 import org.dockbox.darwin.core.server.config.GlobalConfig
 import org.dockbox.darwin.core.util.discord.DiscordUtils
 import org.dockbox.darwin.core.util.events.EventBus
@@ -53,7 +53,7 @@ abstract class AbstractCommonInjector : AbstractModule() {
                 DiscordUtils::class.java,
                 BroadcastService::class.java,
                 PlayerStorageService::class.java,
-                I18nService::class.java,
+                ResourceService::class.java,
                 GlobalConfig::class.java
         )
     }

@@ -17,7 +17,7 @@
 
 package org.dockbox.darwin.core.objects.targets
 
-import org.dockbox.darwin.core.i18n.Permission
+import org.dockbox.darwin.core.i18n.permissions.Permission
 
 interface PermissionHolder : Target {
 

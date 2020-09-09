@@ -17,7 +17,7 @@
 
 package org.dockbox.darwin.core.util.text
 
-import org.dockbox.darwin.core.i18n.Permission
+import org.dockbox.darwin.core.i18n.permissions.Permission
 import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.text.Text

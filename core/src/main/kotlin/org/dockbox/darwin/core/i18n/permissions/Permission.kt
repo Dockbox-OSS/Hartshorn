@@ -1,26 +1,24 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ *  Copyright (C) 2020 Guus Lieben
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ *  This framework is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as
+ *  published by the Free Software Foundation, either version 2.1 of the
+ *  License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ *  the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.darwin.core.i18n
-
-import org.dockbox.darwin.core.server.Server
+package org.dockbox.darwin.core.i18n.permissions
 
 
-enum class Permission(private var value: String): I18NRegistry {
+enum class Permission(private var value: String) : AbstractPermission {
 
     GLOBAL_BYPASS("darwin.admin.bypass-all"),
     DARWIN_STAFF("darwin.staff"),
@@ -82,28 +80,19 @@ enum class Permission(private var value: String): I18NRegistry {
     OLP_LIST("darwin.oldplots.list"),
     WW_USE("ww.use");
 
-    override fun setValue(value: String) {
-        this.value = value
-    }
-
-    override fun getValue(): String {
-        return getValue(Server.getServer().getGlobalConfig().getDefaultLanguage())
-    }
-
-    override fun getValue(lang: Languages): String {
-        return Server.getInstance(I18nService::class.java).getPermissions(lang)[this.name]?.getValue() ?: this.value
+    override fun get(): String {
+        return this.value
     }
 
     companion object {
+
         private val map = values().associateBy(Permission::value)
 
-        fun of(perm: String): I18NRegistry {
+        fun of(perm: String): AbstractPermission {
             return if (map.containsKey(perm))
                 map[perm] ?: error("Node key is present but was absent on return")
-            else return object :I18NRegistry {
-                override fun getValue(): String = perm
-                override fun getValue(lang: Languages): String = perm
-                override fun setValue(value: String) = Unit
+            else return object : AbstractPermission {
+                override fun get(): String = perm
             }
         }
     }

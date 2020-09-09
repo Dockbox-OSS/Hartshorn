@@ -17,7 +17,7 @@
 
 package org.dockbox.darwin.core.annotations
 
-import org.dockbox.darwin.core.i18n.Permission
+import org.dockbox.darwin.core.i18n.permissions.Permission
 
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)

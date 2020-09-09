@@ -18,8 +18,8 @@
 package org.dockbox.darwin.sponge.util.inject
 
 import org.dockbox.darwin.core.command.CommandBus
-import org.dockbox.darwin.core.i18n.I18nService
-import org.dockbox.darwin.core.i18n.SimpleI18NService
+import org.dockbox.darwin.core.i18n.common.ResourceService
+import org.dockbox.darwin.core.i18n.common.SimpleResourceService
 import org.dockbox.darwin.core.server.config.DefaultGlobalConfig
 import org.dockbox.darwin.core.server.config.GlobalConfig
 import org.dockbox.darwin.core.util.discord.DiscordUtils
@@ -59,7 +59,7 @@ class SpongeCommonInjector : AbstractCommonInjector() {
         bind(EventBus::class.java).to(SimpleEventBus::class.java)
         bind(FileUtils::class.java).to(SpongeFileUtils::class.java)
         bind(GlobalConfig::class.java).to(DefaultGlobalConfig::class.java)
-        bind(I18nService::class.java).to(SimpleI18NService::class.java)
+        bind(ResourceService::class.java).to(SimpleResourceService::class.java)
         bind(PlayerStorageService::class.java).to(SpongePlayerStorageService::class.java)
     }
 }

@@ -143,13 +143,11 @@ public class SimpleExtensionManager implements ExtensionManager {
             ExtensionContext context = new ExtensionContext(ComponentType.EXTERNAL_JAR, fileName);
             Server.log().info("Prepared context for external file [" + fileName + "]");
 
-            try {
+            try (JarFile jarFile = new JarFile(file.toFile())) {
                 // After adding the jar to the classpath, start registering all relevant classes
-                JarFile jarFile = new JarFile(file.toFile());
                 jarFile.stream()
                         .filter(entry -> !entry.isDirectory() && entry.getName().endsWith(".class"))
                         .forEach(entry -> this.injectJarEntry(entry, context));
-
             } catch (IOException e) {
                 Server.getServer().except("Failed to convert known .jar file to JarFile instance", e);
             }

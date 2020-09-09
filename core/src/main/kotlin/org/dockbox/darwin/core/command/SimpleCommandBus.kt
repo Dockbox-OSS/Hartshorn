@@ -19,21 +19,21 @@ package org.dockbox.darwin.core.command
 
 import org.dockbox.darwin.core.annotations.Command
 import org.dockbox.darwin.core.annotations.FromSource
-import org.dockbox.darwin.core.util.extension.Extension
 import org.dockbox.darwin.core.command.context.CommandContext
 import org.dockbox.darwin.core.command.registry.AbstractCommandRegistration
 import org.dockbox.darwin.core.command.registry.ClassCommandRegistration
 import org.dockbox.darwin.core.command.registry.MethodCommandRegistration
-import org.dockbox.darwin.core.i18n.I18N
-import org.dockbox.darwin.core.i18n.I18NRegistry
-import org.dockbox.darwin.core.i18n.Permission
-import org.dockbox.darwin.core.i18n.SimpleI18NRegistry
+import org.dockbox.darwin.core.i18n.entry.IntegratedResource
+import org.dockbox.darwin.core.i18n.permissions.AbstractPermission
+import org.dockbox.darwin.core.i18n.permissions.ExternalPermission
+import org.dockbox.darwin.core.i18n.permissions.Permission
 import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
+import org.dockbox.darwin.core.objects.optional.Exceptional
 import org.dockbox.darwin.core.objects.targets.CommandSource
 import org.dockbox.darwin.core.server.Server
+import org.dockbox.darwin.core.util.extension.Extension
 import org.dockbox.darwin.core.util.extension.ExtensionManager
-import java.lang.NullPointerException
 import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
@@ -52,7 +52,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
 
     override fun register(vararg objs: Any) {
         for (obj in objs) {
-            var clazz: Class<*> = if (obj is Class<*>) obj else obj.javaClass
+            val clazz: Class<*> = if (obj is Class<*>) obj else obj.javaClass
             Server.log().info("\n\nScanning {} for commands", clazz.toGenericString())
             try {
                 if (clazz.isAnnotationPresent(Command::class.java)) registerClassCommand(clazz, obj) else registerSingleMethodCommand(clazz)
@@ -78,7 +78,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                                 registerCommand(next, registration.permissions, object : CommandRunnerFunction {
                                     override fun run(src: CommandSource, ctx: CommandContext) {
                                         val result = invoke(registration.method, src, ctx, registration)
-                                        if (result == null || result != "success") src.sendWithPrefix(I18N.UNKNOWN_ERROR.format(result))
+                                        if (result.errorPresent()) src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result.error.message))
                                     }
                                 })
                                 Server.log().info("Registered singular command : /$alias")
@@ -103,7 +103,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                                 subRegistration.method,
                                 src, ctx,
                                 subRegistration)
-                        if (result == null || result != "success") src.sendWithPrefix(I18N.UNKNOWN_ERROR.format(result))
+                        if (result.errorPresent()) src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result))
                     }
                 }
                 Arrays.stream(subRegistration.aliases).forEach {
@@ -128,16 +128,16 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     }
 
     override fun createClassRegistration(clazz: Class<*>): ClassCommandRegistration {
-        val information: Triple<Command, I18NRegistry, Array<String>> = getCommandInformation(clazz)
+        val information: Triple<Command, AbstractPermission, Array<String>> = getCommandInformation(clazz)
         val methods: Array<Method> = clazz.declaredMethods
         val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(Arrays.stream(methods).filter { it.isAnnotationPresent(Command::class.java) }.collect(Collectors.toList()))
         return ClassCommandRegistration(information.third[0], information.third, information.second, information.first, clazz, registrations)
     }
 
-    private fun getCommandInformation(element: AnnotatedElement): Triple<Command, I18NRegistry, Array<String>> {
+    private fun getCommandInformation(element: AnnotatedElement): Triple<Command, AbstractPermission, Array<String>> {
         val command: Command = element.getAnnotation(Command::class.java)
 
-        val permission: I18NRegistry = if ("" == command.permissionKey) command.permission else SimpleI18NRegistry(command.permissionKey)
+        val permission: AbstractPermission = if ("" == command.permissionKey) command.permission else ExternalPermission(command.permissionKey)
 
         return Triple(command, permission, command.aliases)
     }
@@ -172,54 +172,71 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             allowed
         }.map { method: Method ->
             method.isAccessible = true
-            val information: Triple<Command, I18NRegistry, Array<String>> = getCommandInformation(method)
+            val information: Triple<Command, AbstractPermission, Array<String>> = getCommandInformation(method)
             MethodCommandRegistration(information.third[0], information.third, information.first, method, information.second)
         }.toArray { size -> arrayOfNulls<MethodCommandRegistration>(size) }
     }
 
-    private operator fun invoke(method: Method, sender: CommandSource, ctx: CommandContext, registration: AbstractCommandRegistration): String? {
+    private operator fun invoke(method: Method, sender: CommandSource, ctx: CommandContext, registration: AbstractCommandRegistration): Exceptional<String> {
         return try {
             val c: Class<*> = method.declaringClass
             val finalArgs: MutableList<Any> = ArrayList()
+
             for (parameterType in method.parameterTypes) {
-                if (parameterType == CommandSource::class.java || CommandSource::class.java.isAssignableFrom(parameterType)) finalArgs.add(sender) else if (parameterType == CommandContext::class.java || CommandContext::class.java.isAssignableFrom(parameterType)) finalArgs.add(ctx) else throw IllegalStateException("Method requested parameter type '" + parameterType.toGenericString() + "' which is not provided")
+                if (parameterType == CommandSource::class.java || CommandSource::class.java.isAssignableFrom(parameterType))
+                    finalArgs.add(sender)
+                else if (parameterType == CommandContext::class.java || CommandContext::class.java.isAssignableFrom(parameterType))
+                    finalArgs.add(ctx)
+                else
+                    throw IllegalStateException("Method requested parameter type '" + parameterType.toGenericString() + "' which is not provided")
             }
+
             val o: Any
-            if (registration.sourceInstance != null) {
+            if (registration.sourceInstance != null && registration.sourceInstance !is Method) {
+                Server.log().info("Source instance")
                 o = registration.sourceInstance!!
             } else if (c == Server::class.java || c.isAssignableFrom(Server::class.java) || Server::class.java.isAssignableFrom(c)) {
+                Server.log().info("Server source")
                 o = Server.getServer()
             } else {
+                Server.log().info("Extension!")
                 var extension: Optional<*>? = null
                 if (c.isAnnotationPresent(Extension::class.java) && Server.getInstance(ExtensionManager::class.java).getInstance(c).also { extension = it }.isPresent) {
+                    Server.log().info("Extension annotation present")
+                    // Extension can be asserted as not-null as it is re-assigned inside the condition for instance presence
                     o = extension!!.get()
                 } else {
+                    Server.log().info("No extension annotation, creating instance")
                     o = c.getConstructor().newInstance()
                 }
             }
-            method.invoke(o, finalArgs.toTypedArray())
-            "success" // No error message to return
+            Server.log().info("Object: " + o::class.java.canonicalName)
+            Server.log().info("Arguments: " + finalArgs.size)
+            finalArgs.forEach { Server.log().info(" - $it") }
+            method.invoke(o, *finalArgs.toTypedArray())
+            Exceptional.of("success") // No error message to return
         } catch (e: IllegalAccessException) {
             Server.getServer().except("Failed to invoke command", e.cause)
-            e.cause!!.message
+            Exceptional.of(e)
         } catch (e: InvocationTargetException) {
             Server.getServer().except("Failed to invoke command", e.cause)
-            e.cause!!.message
+            Exceptional.of(e)
         } catch (e: NoSuchMethodException) {
             Server.getServer().except("Failed to invoke command", e.cause)
-            e.cause!!.message
+            Exceptional.of(e)
         } catch (e: InstantiationException) {
             Server.getServer().except("Failed to invoke command", e.cause)
-            e.cause!!.message
+            Exceptional.of(e)
         } catch (e: NoSuchFieldException) {
             Server.getServer().except("Failed to invoke command", e.cause)
-            e.cause!!.message
+            Exceptional.of(e)
         } catch (e: Throwable) {
-            e.message
+            Server.getServer().except("Failed to invoke command", e)
+            Exceptional.of(e)
         }
     }
 
-    override fun registerCommand(command: String, permission: I18NRegistry, runner: CommandRunnerFunction) {
+    override fun registerCommand(command: String, permission: AbstractPermission, runner: CommandRunnerFunction) {
         if (command.indexOf(' ') < 0 && !command.startsWith("*")) registerCommandNoArgs(command, permission, runner)
         else registerCommandArgsAndOrChild(command, permission, runner)
     }
@@ -227,7 +244,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     protected fun argValue(valueString: String): A {
         var type: String?
         val key: String
-        var permission: String
+        val permission: String
         val vm: Matcher = value.matcher(valueString)
         if (!vm.matches()) Server.getServer().except("Unknown argument specification `$valueString`, use Type or Name{Type} or Name{Type:Permission}")
         Server.log().info("Groups: " + vm.groupCount())
@@ -237,17 +254,17 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             // TODO: Prevent NPE on group 3 (permission)
             vm.group(3)
         } catch (e: NullPointerException) {
-            Permission.GLOBAL_BYPASS.getValue()
+            Permission.GLOBAL_BYPASS.get()
         }
         if (type == null) type = key
 
         return getArgumentValue(type, Permission.of(permission), key)
     }
 
-    protected abstract fun getArgumentValue(type: String, permissions: I18NRegistry, key: String): A
-    abstract fun registerCommandNoArgs(command: String, permissions: I18NRegistry, runner: CommandRunnerFunction)
+    protected abstract fun getArgumentValue(type: String, permissions: AbstractPermission, key: String): A
+    abstract fun registerCommandNoArgs(command: String, permissions: AbstractPermission, runner: CommandRunnerFunction)
     protected abstract fun convertContext(ctx: C, sender: CommandSource, command: String?): CommandContext
-    abstract fun registerCommandArgsAndOrChild(command: String, permissions: I18NRegistry, runner: CommandRunnerFunction)
+    abstract fun registerCommandArgsAndOrChild(command: String, permissions: AbstractPermission, runner: CommandRunnerFunction)
 
     companion object {
         val RegisteredCommands: List<String> = ArrayList()

@@ -17,12 +17,12 @@
 
 package org.dockbox.darwin.core.server.config
 
-import org.dockbox.darwin.core.i18n.Languages
+import org.dockbox.darwin.core.i18n.common.Language
 
 interface GlobalConfig {
 
     fun getSetting(key: String): String?
-    fun getDefaultLanguage(): Languages
+    fun getDefaultLanguage(): Language
     fun getStacktracesAllowed(): Boolean
     fun getExceptionLevel(): ExceptionLevels
 

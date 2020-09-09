@@ -21,10 +21,11 @@ import org.dockbox.darwin.core.annotations.Command;
 import org.dockbox.darwin.core.command.context.CommandContext;
 import org.dockbox.darwin.core.command.context.CommandValue;
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser;
-import org.dockbox.darwin.core.i18n.I18N;
-import org.dockbox.darwin.core.i18n.Languages;
+import org.dockbox.darwin.core.i18n.common.Language;
+import org.dockbox.darwin.core.i18n.entry.IntegratedResource;
 import org.dockbox.darwin.core.objects.targets.CommandSource;
 import org.dockbox.darwin.core.objects.user.Player;
+import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.text.Text;
 import org.dockbox.darwin.core.util.extension.Extension;
 import org.jetbrains.annotations.NotNull;
@@ -36,29 +37,30 @@ public class I18NModule {
 
     @Command(aliases = {"lang", "language"}, usage = "language <language>", context = "language <language{String}>")
     public void switchLang(CommandSource src, CommandContext ctx) {
+        Optional<Language> ol = ctx.getArgumentAndParse("language", new LanguageArgumentParser());
+        Server.log().info("Requested language: " + ol.isPresent() + " => " + ol.get().getDescription());
         if (src instanceof Player) {
-            Optional<Languages> ol = ctx.getArgumentAndParse("language", new LanguageArgumentParser());
             // While the parser will always return a language, it is possible the argument is not present in which case we want to use en_US
-            Languages lang = ol.orElse(Languages.EN_US);
+            Language lang = ol.orElse(Language.EN_US);
             ((Player) src).setLanguage(lang);
             // Messages sent after language switch will be in the preferred language
-            src.sendWithPrefix(I18N.LANG_SWITCHED.format(lang.getDescription()));
+            src.sendWithPrefix(IntegratedResource.LANG_SWITCHED.format(lang.getDescription()));
         } else {
-            src.send(Text.Companion.of("What are you??"));
+            src.send(Text.of("What are you??"));
         }
     }
 
-    public static class LanguageArgumentParser extends AbstractTypeArgumentParser<Languages> {
+    public static class LanguageArgumentParser extends AbstractTypeArgumentParser<Language> {
 
         @NotNull
         @Override
-        public Optional<Languages> parse(@NotNull CommandValue<String> commandValue) {
+        public Optional<Language> parse(@NotNull CommandValue<String> commandValue) {
             String val = commandValue.getValue();
-            Languages lang;
+            Language lang;
             try {
-                lang = Languages.valueOf(val);
+                lang = Language.valueOf(val);
             } catch (NullPointerException | IllegalArgumentException e) {
-                lang = Languages.EN_US;
+                lang = Language.EN_US;
             }
             return Optional.of(lang);
         }

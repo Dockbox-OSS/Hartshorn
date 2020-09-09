@@ -17,7 +17,7 @@
 
 package org.dockbox.darwin.core.objects.targets
 
-import org.dockbox.darwin.core.i18n.I18N
+import org.dockbox.darwin.core.i18n.entry.IntegratedResource
 import org.dockbox.darwin.core.text.Text
 
 interface CommandSource : MessageReceiver {
@@ -29,7 +29,7 @@ interface CommandSource : MessageReceiver {
             throw UnsupportedOperationException("Attempted to execute command without source")
         }
 
-        override fun send(text: I18N) {
+        override fun send(text: IntegratedResource) {
             throw UnsupportedOperationException("Attempted to send message without source")
         }
 
@@ -41,7 +41,7 @@ interface CommandSource : MessageReceiver {
             throw UnsupportedOperationException("Attempted to send message without source")
         }
 
-        override fun sendWithPrefix(text: I18N) {
+        override fun sendWithPrefix(text: IntegratedResource) {
             throw UnsupportedOperationException("Attempted to send message without source")
         }
 

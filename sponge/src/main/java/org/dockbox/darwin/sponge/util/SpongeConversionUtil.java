@@ -19,7 +19,7 @@ package org.dockbox.darwin.sponge.util;
 
 import com.flowpowered.math.vector.Vector3d;
 
-import org.dockbox.darwin.core.i18n.I18N;
+import org.dockbox.darwin.core.i18n.entry.IntegratedResource;
 import org.dockbox.darwin.core.objects.optional.Exceptional;
 import org.dockbox.darwin.core.objects.targets.CommandSource;
 import org.dockbox.darwin.core.objects.tuple.Vector3D;
@@ -116,7 +116,7 @@ public enum SpongeConversionUtil {
                 try {
                     fromSponge(commandSource).ifPresent(consumer).rethrow();
                 } catch (Throwable throwable) {
-                    commandSource.sendMessage(Text.of(I18N.UNKNOWN_ERROR.format(throwable.getMessage())));
+                    commandSource.sendMessage(Text.of(IntegratedResource.UNKNOWN_ERROR.format(throwable.getMessage())));
                 }
             }));
         }

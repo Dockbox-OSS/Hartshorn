@@ -26,8 +26,7 @@ import org.dockbox.darwin.core.command.AbstractArgumentValue;
 import org.dockbox.darwin.core.command.CommandRunnerFunction;
 import org.dockbox.darwin.core.command.SimpleCommandBus;
 import org.dockbox.darwin.core.command.context.CommandValue;
-import org.dockbox.darwin.core.i18n.I18NRegistry;
-import org.dockbox.darwin.core.i18n.Permission;
+import org.dockbox.darwin.core.i18n.permissions.AbstractPermission;
 import org.dockbox.darwin.core.objects.tuple.Tuple;
 import org.dockbox.darwin.core.objects.tuple.Vector3D;
 import org.dockbox.darwin.core.server.Server;
@@ -51,9 +50,11 @@ import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.Extent;
@@ -78,37 +79,33 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     private static final Map<String, List<Tuple<String, CommandSpec>>> childsPerAlias = new HashMap<>();
 
     @Override
-    protected SpongeArgumentTypeValue getArgumentValue(@NotNull String type, @NotNull I18NRegistry permission, @NotNull String key) {
+    protected SpongeArgumentTypeValue getArgumentValue(@NotNull String type, @NotNull AbstractPermission permission, @NotNull String key) {
         try {
-            return new SpongeArgumentTypeValue(type, permission.asString(), key);
+            return new SpongeArgumentTypeValue(type, permission.get(), key);
         } catch (IllegalArgumentException e) {
-            return new SpongeArgumentTypeValue(Arguments.OTHER.toString(), permission.getValue(), key);
+            return new SpongeArgumentTypeValue(Arguments.OTHER.toString(), permission.get(), key);
         }
     }
 
     @Override
-    public void registerCommandNoArgs(@NotNull String command, @NotNull I18NRegistry permission, @NotNull CommandRunnerFunction runner) {
-        Sponge.getCommandManager().register(Server.getServer(), CommandSpec.builder().permission(permission.getValue()).executor(this.buildExecutor(runner, command)).build(), command);
+    public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunnerFunction runner) {
+        Sponge.getCommandManager().register(Server.getServer(), CommandSpec.builder().permission(permission.get()).executor(this.buildExecutor(runner, command)).build(), command);
     }
 
+    @SuppressWarnings("CallToSuspiciousStringMethod")
     @Override
-    public void registerCommandArgsAndOrChild(@NotNull String command, I18NRegistry permission, @NotNull CommandRunnerFunction runner) {
+    public void registerCommandArgsAndOrChild(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunnerFunction runner) {
         CommandSpec.Builder spec = CommandSpec.builder();
         // Sponge does not allow for multiple permissions for one command
-        if (permission != null) {
-            spec.permission(permission.getValue());
-            Server.log().warn(
-                    String.format("Registering command '%s' with singular permission (%s)", command,
-                            permission.getValue()));
-        }
-        else {
-            spec.permission(Permission.GLOBAL_BYPASS.getValue());
-        }
+        spec.permission(permission.get());
+        Server.log().warn(
+                String.format("Registering command '%s' with singular permission (%s)", command,
+                        permission.get()));
 
         String[] parts = command.split(" ");
-        String part = parts.length > 1 ? parts[1] : null;
+        String part = 1 < parts.length ? parts[1] : null;
         // Child command
-        if (part != null && SimpleCommandBus.Companion.getSubcommand().matcher(part).matches()) {
+        if (null != part && SimpleCommandBus.Companion.getSubcommand().matcher(part).matches()) {
             Server.log().info("Found child command '" + part + "'");
             String arguments = command.substring(command.indexOf(' ') + 1)
                     .replaceFirst(part, "");
@@ -117,7 +114,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             CommandElement[] elements = this.parseArguments(arguments);
 
             elements = Arrays.stream(elements).filter(Objects::nonNull).toArray(CommandElement[]::new);
-            if (elements.length > 0) spec.executor(this.buildExecutor(runner, command)).arguments(elements);
+            if (0 < elements.length) spec.executor(this.buildExecutor(runner, command)).arguments(elements);
             else spec.executor(this.buildExecutor(runner, command));
 
             String alias = command.substring(0, command.indexOf(' '));
@@ -144,7 +141,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 try {
                     Field executorF = spec.getClass().getDeclaredField("executor");
                     executorF.setAccessible(true);
-                    if (executorF.get(spec) == null) spec.executor((src, args) -> CommandResult.success());
+                    if (null == executorF.get(spec)) spec.executor((src, args) -> CommandResult.success());
                 } catch (Throwable e) {
                     Server.getServer().except("Could not access executor field", e);
                     spec.executor((src, args) -> CommandResult.success());
@@ -173,7 +170,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
     private Object getValue(Object obj) {
         if (obj instanceof User) {
-            return new SpongePlayer(((User) obj).getUniqueId(), ((User) obj).getName());
+            return new SpongePlayer(((Identifiable) obj).getUniqueId(), ((Tamer) obj).getName());
 
         } else if (obj instanceof Entity) {
             // TODO : Regular Entity wrapper
@@ -188,14 +185,14 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             return new SpongeLocation(locv, dworld);
 
         } else if (obj instanceof World) {
-            return new SpongeWorld(((World) obj).getUniqueId(), ((World) obj).getName());
+            return new SpongeWorld(((Identifiable) obj).getUniqueId(), ((World) obj).getName());
 
         } else {
             return obj;
         }
     }
 
-    private CommandElement[] parseArguments(String argString) {
+    private CommandElement[] parseArguments(CharSequence argString) {
         List<CommandElement> elements = new LinkedList<>();
         CommandFlags.Builder cflags = null;
         Matcher m = Companion.getArgFinder().matcher(argString);
@@ -203,10 +200,10 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             String part = m.group();
             Matcher ma = Companion.getArgument().matcher(part);
             if (ma.matches()) {
-                boolean optional = ma.group(1).charAt(0) == '[';
+                boolean optional = '[' == ma.group(1).charAt(0);
                 String argUnp = ma.group(2);
                 CommandElement[] result = this.parseArguments(argUnp);
-                if (result.length == 0) {
+                if (0 == result.length) {
                     SpongeArgumentTypeValue satv = this.argValue(ma.group(2));
                     CommandElement permEl = satv.getArgument();
                     result = new CommandElement[]{permEl};
@@ -220,21 +217,21 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             } else {
                 Matcher mf = Companion.getFlag().matcher(part);
                 if (mf.matches()) {
-                    if (cflags == null) cflags = GenericArguments.flags();
+                    if (null == cflags) cflags = GenericArguments.flags();
                     this.parseFlag(cflags, mf.group(1), mf.group(2));
                 } else {
                     Server.getServer().except("Argument type was not recognized for `" + part + "`");
                 }
             }
         }
-        if (cflags == null) return elements.toArray(new CommandElement[0]);
+        if (null == cflags) return elements.toArray(new CommandElement[0]);
         else return new CommandElement[]{cflags.buildWith(wrap(elements.toArray(new CommandElement[0])))};
     }
 
     private void parseFlag(CommandFlags.Builder flags, String name, String value) {
-        if (value == null) {
+        if (null == value) {
             int at;
-            if ((at = name.indexOf(':')) >= 0) {
+            if (0 <= (at = name.indexOf(':'))) {
                 String a = name.substring(0, at), b = name.substring(at + 1);
                 flags.permissionFlag(b, a);
             } else {
@@ -242,7 +239,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             }
         } else {
             AbstractArgumentValue<CommandElement> av = this.argValue(value);
-            if (name.indexOf(':') >= 0) {
+            if (0 <= name.indexOf(':')) {
                 Server.getServer().except("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
             flags.valueFlag(av.getArgument(), name);
@@ -251,9 +248,9 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
 
     private static CommandElement wrap(CommandElement... elements) {
-        if (elements.length == 0) {
+        if (0 == elements.length) {
             return GenericArguments.none();
-        } else if (elements.length == 1) {
+        } else if (1 == elements.length) {
             return elements[0];
         } else {
             return GenericArguments.seq(elements);
@@ -262,12 +259,12 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
     private CommandExecutor buildExecutor(CommandRunnerFunction runner, String command) {
         return (src, args) -> {
-            org.dockbox.darwin.core.objects.targets.CommandSource sender;
-            if (src instanceof Player) sender = new SpongePlayer(((Player) src).getUniqueId(), src.getName());
+            @org.jetbrains.annotations.Nullable org.dockbox.darwin.core.objects.targets.CommandSource sender;
+            if (src instanceof Player) sender = new SpongePlayer(((Identifiable) src).getUniqueId(), src.getName());
             else if (src instanceof ConsoleSource) sender = SpongeConsole.Companion.getInstance();
             else sender = null;
 
-            assert sender != null : "Command sender is not a console or a player, did a plugin call me?";
+            assert null != sender : "Command sender is not a console or a player, did a plugin call me?";
             org.dockbox.darwin.core.command.context.CommandContext ctx = this.convertContext(args, sender, command);
 
             if (src instanceof Player) {
@@ -297,7 +294,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         List<CommandValue.Argument<?>> arguments = new ArrayList<>();
         List<CommandValue.Flag<?>> flags = new ArrayList<>();
 
-        assert command != null : "Context carrier command was null";
+        assert null != command : "Context carrier command was null";
         parsedArgs.asMap().forEach((s, o) -> o.forEach(obj -> {
             if (Pattern.compile("-(-?" + s + ")").matcher(command).find())
                 flags.add(new CommandValue.Flag<>(this.getValue(obj), s));
@@ -333,14 +330,14 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
         private final FaweTypes type;
 
-        protected FaweArgument(@Nullable Text key, FaweTypes type) {
+        FaweArgument(@Nullable Text key, FaweTypes type) {
             super(key);
             this.type = type;
         }
 
         @Nullable
         @Override
-        protected Object parseValue(@NotNull CommandSource source, @NotNull CommandArgs args) throws ArgumentParseException {
+        protected Object parseValue(@NotNull CommandSource source, @NotNull CommandArgs args) {
             try {
                 FawePlayer<?> fawePlayer = FawePlayer.wrap(source);
                 ParserContext pctx = new ParserContext();
@@ -378,7 +375,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
     public static class ModuleArgument extends CommandElement {
 
-        protected ModuleArgument(@Nullable Text key) {
+        ModuleArgument(@Nullable Text key) {
             super(key);
         }
 

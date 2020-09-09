@@ -17,7 +17,7 @@
 
 package org.dockbox.darwin.core.util.player
 
-import org.dockbox.darwin.core.i18n.Languages
+import org.dockbox.darwin.core.i18n.common.Language
 import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.server.config.ConfigKeys
@@ -30,17 +30,17 @@ abstract class PlayerStorageService {
     abstract fun getPlayer(name: String): Optional<Player>
     abstract fun getPlayer(uuid: UUID): Optional<Player>
 
-    fun setLanguagePreference(uuid: UUID, lang: Languages) {
+    fun setLanguagePreference(uuid: UUID, lang: Language) {
         val data = getUserData(uuid).toMutableMap()
         data[ConfigKeys.PLAYER_LANGUAGE.key] = lang.code
         Server.getInstance(DataManager::class.java).writeToDataFile(Server::class.java, data, uuid.toString().toLowerCase())
     }
 
-    fun getLanguagePreference(uuid: UUID): Languages {
+    fun getLanguagePreference(uuid: UUID): Language {
         val lang = getUserData(uuid).getOrDefault(ConfigKeys.PLAYER_LANGUAGE.key, Server.getServer().getGlobalConfig().getDefaultLanguage().code).toString()
 
         return try {
-            Languages.valueOf(lang.toUpperCase())
+            Language.valueOf(lang.toUpperCase())
         } catch (e: IllegalArgumentException) {
             Server.getServer().getGlobalConfig().getDefaultLanguage()
         } catch (e: NullPointerException) {
