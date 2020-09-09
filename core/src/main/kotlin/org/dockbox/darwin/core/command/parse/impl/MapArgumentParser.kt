@@ -53,6 +53,7 @@ class MapArgumentParser : AbstractTypeArgumentParser<Map<String, String>>() {
                 }
             }
         }
+
         return Optional.of(map)
     }
 }

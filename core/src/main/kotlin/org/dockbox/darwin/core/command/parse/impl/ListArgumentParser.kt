@@ -19,18 +19,32 @@ package org.dockbox.darwin.core.command.parse.impl
 
 import org.dockbox.darwin.core.command.context.CommandValue
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
+import org.dockbox.darwin.core.command.parse.rules.Rule
 import java.util.*
 
 class ListArgumentParser : AbstractTypeArgumentParser<List<String>>() {
 
     private var delimiter: Char = ','
+    private var minMax: Rule.MinMax? = null
 
     fun setDelimiter(delimiter: Char) {
         this.delimiter = delimiter
     }
 
+    fun setMinMax(minMax: Rule.MinMax) {
+        this.minMax = minMax
+    }
+
     override fun parse(commandValue: CommandValue<String>): Optional<List<String>> {
         val v = commandValue.value
-        return Optional.of(v.split(this.delimiter))
+        var list = v.split(this.delimiter)
+
+        if (this.minMax != null) {
+            val min = if (this.minMax!!.min >= 0) this.minMax!!.min else 0
+            val max = if (this.minMax!!.max <= list.size) this.minMax!!.max else (list.size)
+
+            list = list.subList(min, max)
+        }
+        return Optional.of(list)
     }
 }

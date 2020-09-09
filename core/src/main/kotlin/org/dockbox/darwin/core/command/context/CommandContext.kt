@@ -21,6 +21,9 @@ import com.sk89q.worldedit.util.command.argument.MissingArgumentException
 import org.dockbox.darwin.core.annotations.FromSource
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.darwin.core.command.parse.impl.*
+import org.dockbox.darwin.core.command.parse.rules.Rule
+import org.dockbox.darwin.core.command.parse.rules.Split
+import org.dockbox.darwin.core.command.parse.rules.Strict
 import org.dockbox.darwin.core.i18n.common.ResourceEntry
 import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
@@ -29,6 +32,7 @@ import org.dockbox.darwin.core.objects.targets.CommandSource
 import org.dockbox.darwin.core.objects.targets.Locatable
 import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
+import org.jetbrains.annotations.NotNull
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.util.*
@@ -108,7 +112,11 @@ open class CommandContext(
                             val fieldValue = optionalValue.get()
                             field.set(instance, fieldValue)
                         } else {
-                            throw MissingArgumentException("Could not get argument value for '" + field.name + "'")
+                            if ((field.isAnnotationPresent(Strict::class.java) && field.getAnnotation(Strict::class.java).strict)
+                                    || field.isAnnotationPresent(NotNull::class.java)) {
+                                throw MissingArgumentException("Could not get argument value for '" + field.name + "'")
+                            }
+                            field.set(instance, null)
                         }
                     }
                 }
@@ -129,8 +137,13 @@ open class CommandContext(
                 World::class.java -> if (this.sender is Locatable) return Exceptional.of((this.sender as Locatable).getWorld())
                 Location::class.java -> if (this.sender is Locatable) return Exceptional.of((this.sender as Locatable).getLocation())
                 CommandSource::class.java -> return Exceptional.of(this.sender)
-                else -> Server.log().warn("Field '" + field.name +"' has FromSource annotation and type [" + field.type.canonicalName + "]")
+                else -> Server.log().warn("Field '" + field.name + "' has FromSource annotation and type [" + field.type.canonicalName + "]")
             }
+        }
+
+        var minMax: Rule.MinMax? = null
+        if (field.isAnnotationPresent(Rule.MinMax::class.java)) {
+            minMax = field.getAnnotation(Rule.MinMax::class.java)
         }
 
         when (field.type) {
@@ -141,13 +154,67 @@ open class CommandContext(
 
             Boolean::class.java -> return Exceptional.ofOptional(BooleanArgumentParser().parse(arg))
             Char::class.java -> return Exceptional.ofOptional(CharArgumentParser().parse(arg))
-            Double::class.java -> return Exceptional.ofOptional(DoubleArgumentParser().parse(arg))
-            Float::class.java -> return Exceptional.ofOptional(FloatArgumentParser().parse(arg))
-            Integer::class.java -> return Exceptional.ofOptional(IntegerArgumentParser().parse(arg))
-            Long::class.java -> return Exceptional.ofOptional(LongArgumentParser().parse(arg))
-            Short::class.java -> return Exceptional.ofOptional(ShortArgumentParser().parse(arg))
-            List::class.java -> return Exceptional.ofOptional(ListArgumentParser().parse(arg))
-            Map::class.java -> return Exceptional.ofOptional(MapArgumentParser().parse(arg))
+
+            // If anyone knows how to move functions with in/out types extending Number (Or Comparable<* : Number>)
+            // please feel free to change/optimize this.
+            Double::class.java -> {
+                return Exceptional.ofOptional(DoubleArgumentParser().parse(arg).map {
+                    if (minMax != null) when {
+                        it < minMax.min -> minMax.min
+                        it > minMax.max -> minMax.max
+                        else -> it
+                    } else it
+                })
+            }
+            Float::class.java -> {
+                return Exceptional.ofOptional(FloatArgumentParser().parse(arg).map {
+                    if (minMax != null) when {
+                        it < minMax.min -> minMax.min
+                        it > minMax.max -> minMax.max
+                        else -> it
+                    } else it
+                })
+            }
+            Integer::class.java -> {
+                return Exceptional.ofOptional(IntegerArgumentParser().parse(arg).map {
+                    if (minMax != null) when {
+                        it < minMax.min -> minMax.min
+                        it > minMax.max -> minMax.max
+                        else -> it
+                    } else it
+                })
+            }
+            Long::class.java -> {
+                return Exceptional.ofOptional(LongArgumentParser().parse(arg).map {
+                    if (minMax != null) when {
+                        it < minMax.min -> minMax.min
+                        it > minMax.max -> minMax.max
+                        else -> it
+                    } else it
+                })
+            }
+            Short::class.java -> {
+                return Exceptional.ofOptional(ShortArgumentParser().parse(arg).map {
+                    if (minMax != null) when {
+                        it < minMax.min -> minMax.min
+                        it > minMax.max -> minMax.max
+                        else -> it
+                    } else it
+                })
+            }
+
+            List::class.java -> {
+                val parser = ListArgumentParser()
+                if (field.isAnnotationPresent(Split::class.java)) parser.setDelimiter(field.getAnnotation(Split::class.java).delimiter)
+                if (minMax != null) parser.setMinMax(minMax)
+                return Exceptional.ofOptional(parser.parse(arg))
+            }
+
+            Map::class.java -> {
+                val parser = MapArgumentParser()
+                if (field.isAnnotationPresent(Split::class.java)) parser.setRowDelimiter(field.getAnnotation(Split::class.java).delimiter)
+                return Exceptional.ofOptional(parser.parse(arg))
+            }
 
             ResourceEntry::class.java -> return Exceptional.ofOptional(ResourceArgumentParser().parse(arg))
             CommandContext::class.java -> return Exceptional.of(this)
