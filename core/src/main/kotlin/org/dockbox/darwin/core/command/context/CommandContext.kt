@@ -18,12 +18,17 @@
 package org.dockbox.darwin.core.command.context
 
 import com.sk89q.worldedit.util.command.argument.MissingArgumentException
+import org.dockbox.darwin.core.annotations.FromSource
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
-import org.dockbox.darwin.core.command.parse.impl.EnumArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.*
+import org.dockbox.darwin.core.i18n.common.ResourceEntry
 import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
 import org.dockbox.darwin.core.objects.optional.Exceptional
 import org.dockbox.darwin.core.objects.targets.CommandSource
+import org.dockbox.darwin.core.objects.targets.Locatable
+import org.dockbox.darwin.core.objects.user.Player
+import org.dockbox.darwin.core.server.Server
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.util.*
@@ -114,9 +119,43 @@ open class CommandContext(
         }
     }
 
-    private fun tryGetValue(field: Field): Exceptional<Any> {
-        // TODO: Create values for all minimum supported types (use AbstractArgumentParser implementations for this)
-        return Exceptional.empty();
+    private fun tryGetValue(field: Field): Exceptional<*> {
+        val oa = getArgument(field.name)
+        if (!oa.isPresent) return Exceptional.empty<String>()
+        val arg = oa.get()
+        if (field.isAnnotationPresent(FromSource::class.java)) {
+            when (field.type) {
+                Player::class.java -> if (this.sender is Player) return Exceptional.of(this.sender)
+                World::class.java -> if (this.sender is Locatable) return Exceptional.of((this.sender as Locatable).getWorld())
+                Location::class.java -> if (this.sender is Locatable) return Exceptional.of((this.sender as Locatable).getLocation())
+                CommandSource::class.java -> return Exceptional.of(this.sender)
+                else -> Server.log().warn("Field '" + field.name +"' has FromSource annotation and type [" + field.type.canonicalName + "]")
+            }
+        }
+
+        when (field.type) {
+
+            Player::class.java -> Exceptional.ofOptional(PlayerArgumentParser().parse(arg))
+            World::class.java -> return Exceptional.ofOptional(WorldArgumentParser().parse(arg))
+            Location::class.java -> return Exceptional.ofOptional(LocationArgumentParser().parse(arg))
+
+            Boolean::class.java -> return Exceptional.ofOptional(BooleanArgumentParser().parse(arg))
+            Char::class.java -> return Exceptional.ofOptional(CharArgumentParser().parse(arg))
+            Double::class.java -> return Exceptional.ofOptional(DoubleArgumentParser().parse(arg))
+            Float::class.java -> return Exceptional.ofOptional(FloatArgumentParser().parse(arg))
+            Integer::class.java -> return Exceptional.ofOptional(IntegerArgumentParser().parse(arg))
+            Long::class.java -> return Exceptional.ofOptional(LongArgumentParser().parse(arg))
+            Short::class.java -> return Exceptional.ofOptional(ShortArgumentParser().parse(arg))
+            List::class.java -> return Exceptional.ofOptional(ListArgumentParser().parse(arg))
+            Map::class.java -> return Exceptional.ofOptional(MapArgumentParser().parse(arg))
+
+            ResourceEntry::class.java -> return Exceptional.ofOptional(ResourceArgumentParser().parse(arg))
+            CommandContext::class.java -> return Exceptional.of(this)
+
+            else -> Server.log().warn("Field of type [" + field.type.canonicalName + "] has no parser for automatic tryGetValue")
+        }
+
+        return Exceptional.empty<String>();
     }
 
     private fun <T, A : CommandValue<T>> getValueAs(key: String, type: Class<T>, values: Array<CommandValue<*>>): Optional<A> {
