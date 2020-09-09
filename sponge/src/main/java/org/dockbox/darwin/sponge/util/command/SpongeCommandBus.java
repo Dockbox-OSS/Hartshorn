@@ -26,15 +26,16 @@ import org.dockbox.darwin.core.command.AbstractArgumentValue;
 import org.dockbox.darwin.core.command.CommandRunnerFunction;
 import org.dockbox.darwin.core.command.SimpleCommandBus;
 import org.dockbox.darwin.core.command.context.CommandValue;
-import org.dockbox.darwin.core.exceptions.IllegalSourceException;
-import org.dockbox.darwin.core.i18n.I18NRegistry;
-import org.dockbox.darwin.core.objects.module.ModuleInformation;
+import org.dockbox.darwin.core.i18n.permissions.AbstractPermission;
 import org.dockbox.darwin.core.objects.tuple.Tuple;
+import org.dockbox.darwin.core.objects.tuple.Vector3D;
 import org.dockbox.darwin.core.server.Server;
-import org.dockbox.darwin.core.util.module.ModuleLoader;
+import org.dockbox.darwin.core.util.extension.Extension;
+import org.dockbox.darwin.core.util.extension.ExtensionManager;
+import org.dockbox.darwin.sponge.objects.location.SpongeLocation;
+import org.dockbox.darwin.sponge.objects.location.SpongeWorld;
 import org.dockbox.darwin.sponge.objects.targets.SpongeConsole;
 import org.dockbox.darwin.sponge.objects.targets.SpongePlayer;
-import org.dockbox.darwin.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -49,12 +50,14 @@ import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.extent.Extent;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -64,10 +67,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.annotation.Nullable;
 
@@ -77,32 +79,34 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     private static final Map<String, List<Tuple<String, CommandSpec>>> childsPerAlias = new HashMap<>();
 
     @Override
-    protected SpongeArgumentTypeValue getArgumentValue(@NotNull String type, @NotNull I18NRegistry permission, @NotNull String key) {
+    protected SpongeArgumentTypeValue getArgumentValue(@NotNull String type, @NotNull AbstractPermission permission, @NotNull String key) {
         try {
-            return new SpongeArgumentTypeValue(type, permission.asString(), key);
+            return new SpongeArgumentTypeValue(type, permission.get(), key);
         } catch (IllegalArgumentException e) {
-            return new SpongeArgumentTypeValue(Arguments.OTHER.toString(), permission.getValue(), key);
+            return new SpongeArgumentTypeValue(Arguments.OTHER.toString(), permission.get(), key);
         }
     }
 
     @Override
-    public void registerCommandNoArgs(@NotNull String command, @NotNull I18NRegistry permission, @NotNull CommandRunnerFunction runner) {
-        Sponge.getCommandManager().register(Server.getServer(), CommandSpec.builder().permission(permission.getValue()).executor(this.buildExecutor(runner, command)).build(), command);
+    public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunnerFunction runner) {
+        Sponge.getCommandManager().register(Server.getServer(), CommandSpec.builder().permission(permission.get()).executor(this.buildExecutor(runner, command)).build(), command);
     }
 
+    @SuppressWarnings("CallToSuspiciousStringMethod")
     @Override
-    public void registerCommandArgsAndOrChild(@NotNull String command, @NotNull I18NRegistry permission, @NotNull CommandRunnerFunction runner) {
+    public void registerCommandArgsAndOrChild(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunnerFunction runner) {
         CommandSpec.Builder spec = CommandSpec.builder();
         // Sponge does not allow for multiple permissions for one command
-        spec.permission(permission.getValue());
+        spec.permission(permission.get());
         Server.log().warn(
                 String.format("Registering command '%s' with singular permission (%s)", command,
-                        permission.getValue()));
+                        permission.get()));
 
         String[] parts = command.split(" ");
         String part = 1 < parts.length ? parts[1] : null;
         // Child command
         if (null != part && SimpleCommandBus.Companion.getSubcommand().matcher(part).matches()) {
+            Server.log().info("Found child command '" + part + "'");
             String arguments = command.substring(command.indexOf(' ') + 1)
                     .replaceFirst(part, "");
             if (arguments.endsWith(" ")) arguments = arguments.substring(0, arguments.length() - 2);
@@ -121,12 +125,12 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
             // Parent command
         } else if (command.startsWith("*")) {
+            Server.log().info("Found parent command '" + part + "'");
             String registeredCmd = command.substring(1);
             if (command.contains(" ")) registeredCmd = command.substring(1, command.indexOf(' '));
             if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(registeredCmd)) {
                 List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, new ArrayList<>());
                 childs.forEach(child -> {
-                    //noinspection CallToSuspiciousStringMethod
                     if ("@m".equals(child.getFirst())) {
                         spec.executor(child.getSecond().getExecutor());
                     } else {
@@ -144,6 +148,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 }
 
                 try {
+                    Server.log().info("Registering '" + command + "' to Sponge");
                     Sponge.getCommandManager().register(Server.getServer(), spec.build(), registeredCmd);
                 } catch (IllegalArgumentException e) {
                     Server.getServer().except(e.getMessage(), e);
@@ -152,7 +157,9 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             }
             // Single method command
         } else {
+            Server.log().info("Found single method command '" + part + "'");
             if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(command.substring(0, command.indexOf(' ')))) {
+                Server.log().info("Registering single method command '" + part + "' to Sponge");
                 spec.executor(this.buildExecutor(runner, command)).arguments(this.parseArguments(command.substring(command.indexOf(' ') + 1)));
                 Sponge.getCommandManager().register(Server.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
                 SimpleCommandBus.Companion.getRegisteredCommands().add(command.substring(0, command.indexOf(' ')));
@@ -163,17 +170,24 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
     private Object getValue(Object obj) {
         if (obj instanceof User) {
-            return SpongeConversionUtil.fromSponge((User) obj);
+            return new SpongePlayer(((Identifiable) obj).getUniqueId(), ((Tamer) obj).getName());
+
         } else if (obj instanceof Entity) {
             // TODO : Regular Entity wrapper
             throw new UnsupportedOperationException();
+
         } else if (obj instanceof Location) {
-            return SpongeConversionUtil.fromSponge((Location<World>) obj);
+            Location<Extent> sloc = (Location<Extent>) obj;
+            World sworld = (World) sloc.getExtent();
+
+            Vector3D locv = new Vector3D(sloc.getX(), sloc.getY(), sloc.getZ());
+            org.dockbox.darwin.core.objects.location.World dworld = new SpongeWorld(sworld.getUniqueId(), sworld.getName());
+            return new SpongeLocation(locv, dworld);
+
         } else if (obj instanceof World) {
-            return SpongeConversionUtil.fromSponge((World) obj);
-        } else if (obj instanceof Text) {
-            return SpongeConversionUtil.fromSponge((Text) obj);
-        }        else {
+            return new SpongeWorld(((Identifiable) obj).getUniqueId(), ((World) obj).getName());
+
+        } else {
             return obj;
         }
     }
@@ -245,20 +259,13 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
     private CommandExecutor buildExecutor(CommandRunnerFunction runner, String command) {
         return (src, args) -> {
-            org.dockbox.darwin.core.objects.targets.CommandSource sender;
+            @org.jetbrains.annotations.Nullable org.dockbox.darwin.core.objects.targets.CommandSource sender;
             if (src instanceof Player) sender = new SpongePlayer(((Identifiable) src).getUniqueId(), src.getName());
             else if (src instanceof ConsoleSource) sender = SpongeConsole.Companion.getInstance();
-            else throw new IllegalSourceException("Command sender is not a console or a player, did a plugin call me?");
-            org.dockbox.darwin.core.command.context.CommandContext ctx = this.convertContext(args, sender, command);
+            else sender = null;
 
-            /*
-             * TODO: Create early runner for @CommandInterceptor
-             * - Register @CommandInterceptor early in plugin initialization
-             * - Access all mappings by checking if our command starts with the mapping (so it allows intercepting subcommands)
-             * - Invoke all interceptors and check if context is cancelled
-             * - If cancelled, return CommandResult.empty()
-             * - Otherwise continue to default runner
-             */
+            assert null != sender : "Command sender is not a console or a player, did a plugin call me?";
+            org.dockbox.darwin.core.command.context.CommandContext ctx = this.convertContext(args, sender, command);
 
             if (src instanceof Player) {
                 runner.run(sender, ctx);
@@ -375,8 +382,8 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         @Nullable
         @Override
         protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
-            ModuleInformation module = Server.getInstance(ModuleLoader.class).getModuleInformation(args.next());
-            return module.getModule();
+            Optional<Extension> octx = Server.getInstance(ExtensionManager.class).getHeader(args.next());
+            return octx.orElse(null);
         }
 
         @NotNull
@@ -385,11 +392,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 @NotNull CommandSource src,
                 @NotNull CommandArgs args,
                 @NotNull CommandContext context) {
-            return StreamSupport.stream(
-                    Server.getInstance(ModuleLoader.class).getAllRegistrations().spliterator(),
-                    false
-            ).map(reg -> reg.getInformation().getModule().id())
-                    .collect(Collectors.toList());
+            return Server.getInstance(ExtensionManager.class).getRegisteredExtensionIds();
         }
     }
 

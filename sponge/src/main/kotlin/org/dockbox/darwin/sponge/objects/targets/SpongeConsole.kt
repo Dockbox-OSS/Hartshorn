@@ -18,11 +18,11 @@
 package org.dockbox.darwin.sponge.objects.targets
 
 import com.google.inject.Singleton
-import org.dockbox.darwin.core.i18n.I18N
+import org.dockbox.darwin.core.i18n.entry.IntegratedResource
 import org.dockbox.darwin.core.objects.targets.Console
 import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.text.Text
-import org.dockbox.darwin.core.text.Text.Companion.of
+import org.dockbox.darwin.core.text.Text.of
 import org.dockbox.darwin.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
 
@@ -33,7 +33,7 @@ class SpongeConsole private constructor() : Console() {
                 Sponge.getServer().console, command)
     }
 
-    override fun send(text: I18N) {
+    override fun send(text: IntegratedResource) {
         send(of(text.getValue(Server.getServer().getGlobalConfig().getDefaultLanguage())))
     }
 
@@ -45,13 +45,13 @@ class SpongeConsole private constructor() : Console() {
         send(of(text))
     }
 
-    override fun sendWithPrefix(text: I18N) {
+    override fun sendWithPrefix(text: IntegratedResource) {
         sendWithPrefix(of(text.getValue(Server.getServer().getGlobalConfig().getDefaultLanguage())))
     }
 
     override fun sendWithPrefix(text: Text) {
         Sponge.getServer().console.sendMessage(org.spongepowered.api.text.Text.of(
-                SpongeConversionUtil.toSponge(I18N.PREFIX.asText()),
+                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
                 SpongeConversionUtil.toSponge(text)
         ))
     }

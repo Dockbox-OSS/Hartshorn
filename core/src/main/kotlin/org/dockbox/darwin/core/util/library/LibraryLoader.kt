@@ -17,6 +17,7 @@
 
 package org.dockbox.darwin.core.util.library
 
+// TODO: Provide optional default implementation
 interface LibraryLoader<L> {
 
     fun configure(loader: L, artifacts: Array<LibraryArtifact>)

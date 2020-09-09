@@ -19,13 +19,14 @@ package org.dockbox.darwin.core.server
 
 import org.dockbox.darwin.core.server.config.GlobalConfig
 import org.slf4j.Logger
+import java.time.LocalDate
 import java.util.*
 
 interface KServer {
 
     fun getLog(): Logger
     fun getVersion(): String
-    fun getLastUpdate(): Date
+    fun getLastUpdate(): LocalDate
     fun getAuthors(): Array<String>
     fun except(msg: String?, vararg e: Throwable?)
     fun getServerType(): ServerType

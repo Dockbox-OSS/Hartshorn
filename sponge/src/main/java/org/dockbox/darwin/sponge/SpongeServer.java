@@ -17,15 +17,13 @@
 
 package org.dockbox.darwin.sponge;
 
-import net.byteflux.libby.LibraryManager;
-
 import org.dockbox.darwin.core.command.CommandBus;
-import org.dockbox.darwin.core.events.server.ServerEvent.Init;
+import org.dockbox.darwin.core.events.server.ServerEvent;
 import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.util.events.EventBus;
+import org.dockbox.darwin.core.util.extension.ExtensionContext;
+import org.dockbox.darwin.core.util.extension.ExtensionManager;
 import org.dockbox.darwin.core.util.library.LibraryArtifact;
-import org.dockbox.darwin.core.util.module.ModuleLoader;
-import org.dockbox.darwin.core.util.module.ModuleScanner;
 import org.dockbox.darwin.sponge.listeners.SpongeEventListener;
 import org.dockbox.darwin.sponge.util.inject.SpongeCommonInjector;
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +32,9 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+
+import java.util.Optional;
+import java.util.function.Consumer;
 
 @Plugin(
         id = "darwinserver",
@@ -47,7 +48,7 @@ import org.spongepowered.api.plugin.Plugin;
                 @Dependency(id = "luckperms")
         }
 )
-public class SpongeServer extends Server<LibraryManager> {
+public class SpongeServer extends Server {
 
     public SpongeServer() {
         super(new SpongeCommonInjector());
@@ -57,22 +58,26 @@ public class SpongeServer extends Server<LibraryManager> {
     public void onServerInit(GameInitializationEvent event) {
         Sponge.getEventManager().registerListeners(this, new SpongeEventListener());
 
-        Iterable<Class<?>> annotatedCandidates = Server.getInstance(ModuleScanner.class)
-                .collectClassCandidates("org.dockbox.darwin.integrated")
-                .getAnnotatedCandidates();
         EventBus eb = getInstance(EventBus.class);
         CommandBus cb = getInstance(CommandBus.class);
-        ModuleLoader loader = getInstance(ModuleLoader.class);
+        ExtensionManager cm = getInstance(ExtensionManager.class);
 
-        annotatedCandidates.forEach(module -> {
-            loader.loadCandidate(module);
-            loader.getModuleInstance(module).ifPresent(instance -> {
-                eb.subscribe(instance);
-                cb.register(instance);
+        super.initIntegratedExtensions(this.getConsumer("integrated", cb, eb, cm));
+        super.initExternalExtensions(this.getConsumer("external", cb, eb, cm));
+
+        getInstance(EventBus.class).post(new ServerEvent.Init());
+    }
+
+    private Consumer<ExtensionContext> getConsumer(String contextType, CommandBus cb, EventBus eb, ExtensionManager em) {
+        return (ExtensionContext ctx) -> ctx.getClasses().values().forEach(type -> {
+            log().info("Found type [" + type.getCanonicalName() + "] in " + contextType + " context");
+            Optional<?> oi = em.getInstance(type);
+            oi.ifPresent(i -> {
+                log().info("Registering [" + type.getCanonicalName() + "] as Event and Command listener");
+                eb.subscribe(i);
+                cb.register(i);
             });
         });
-
-        getInstance(EventBus.class).post(new Init());
     }
 
     @NotNull
@@ -82,19 +87,19 @@ public class SpongeServer extends Server<LibraryManager> {
     }
 
     @Override
-    protected LibraryManager getLoader() {
-        // TODO : Confirm inject works for Sponge Library Manager (injecting Logger, Path, Plugin)
-        return getInstance(LibraryManager.class);
-    }
-
-    @Override
     protected LibraryArtifact[] getArtifacts() {
-        // Define libraries to download, specifically targeting Sponge
+        // Define libraries to download, specifically targeting Sponge.
+        // At the time of writing there are no additional libraries required for Sponge.
         return new LibraryArtifact[0];
     }
 
     public static void main(String[] args) {
+        // This is the only place where SystemOut is allowed as no server instance can exist at this point.
+        //noinspection UseOfSystemOutOrSystemErr
         System.out.println("DarwinServer is a framework plugin, it should not be started as a separate application.");
+
+        // This will cause Forge to complain about direct System.exit references. This only results in a warning
+        // message and an automatic redirect to FMLCommonHandler.exitJava.
         System.exit(8);
     }
 }

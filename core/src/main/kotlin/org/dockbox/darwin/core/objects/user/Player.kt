@@ -18,8 +18,8 @@
 package org.dockbox.darwin.core.objects.user
 
 import com.boydti.fawe.`object`.FawePlayer
-import org.dockbox.darwin.core.i18n.Languages
-import org.dockbox.darwin.core.i18n.Permission
+import org.dockbox.darwin.core.i18n.common.Language
+import org.dockbox.darwin.core.i18n.permissions.Permission
 import org.dockbox.darwin.core.objects.targets.*
 import org.dockbox.darwin.core.text.Text
 import java.util.*
@@ -31,11 +31,11 @@ abstract class Player(uniqueId: UUID, name: String) : Identifiable(uniqueId, nam
     abstract fun kick(message: Text)
     abstract fun getGamemode(): Gamemode
     abstract fun setGamemode(gamemode: Gamemode)
-    abstract fun getLanguage(): Languages
-    abstract fun setLanguage(lang: Languages)
+    abstract fun getLanguage(): Language
+    abstract fun setLanguage(lang: Language)
 
     override fun hasPermission(permission: Permission): Boolean {
-        return hasPermission(permission.getValue())
+        return hasPermission(permission.get())
     }
 
     override fun hasAnyPermission(vararg permissions: Permission): Boolean {
@@ -49,7 +49,7 @@ abstract class Player(uniqueId: UUID, name: String) : Identifiable(uniqueId, nam
     }
 
     override fun setPermission(permission: Permission, value: Boolean) {
-        setPermission(permission.getValue(), value)
+        setPermission(permission.get(), value)
     }
 
     override fun setPermissions(value: Boolean, vararg permissions: Permission) {
