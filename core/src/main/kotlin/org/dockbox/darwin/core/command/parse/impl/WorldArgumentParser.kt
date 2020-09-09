@@ -28,8 +28,8 @@ class WorldArgumentParser : AbstractTypeArgumentParser<World>() {
     override fun parse(commandValue: CommandValue<String>): Optional<World> {
         val v = commandValue.value
         val ws = Server.getInstance(WorldStorageService::class.java)
-        val op = ws.getWorld(v)
-        return if (op.isPresent) op
+        val ow = ws.getWorld(v)
+        return if (ow.isPresent) ow
         else {
             try {
                 val uuid = UUID.fromString(v)

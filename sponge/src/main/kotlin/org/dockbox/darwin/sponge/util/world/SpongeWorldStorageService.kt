@@ -17,8 +17,11 @@
 
 package org.dockbox.darwin.sponge.util.world
 
+import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
+import org.dockbox.darwin.core.objects.tuple.Vector3D
 import org.dockbox.darwin.core.util.world.WorldStorageService
+import org.dockbox.darwin.sponge.objects.location.SpongeLocation
 import org.dockbox.darwin.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
 import java.util.*
@@ -38,5 +41,9 @@ class SpongeWorldStorageService : WorldStorageService() {
 
     override fun getWorld(uuid: UUID): Optional<World> {
         return Sponge.getServer().loadWorld(uuid).map { SpongeConversionUtil.fromSponge(it) }
+    }
+
+    override fun createLocation(vector: Vector3D, world: World): Location {
+        return SpongeLocation(vector, world)
     }
 }
