@@ -24,7 +24,7 @@ import org.dockbox.darwin.core.server.Server
 
 class ExternalResourceEntry(private var value: String, private var key: String) : ResourceEntry {
 
-    private var resourceMap: Map<Language, String> = Server.getInstance(ResourceService::class.java).getTranslations(this.key)
+    private var resourceMap: Map<Language, String> = Server.getInstance(ResourceService::class.java).getTranslations(this)
 
     fun getKey(): String = Server.getInstance(ResourceService::class.java).createValidKey(key)
 
