@@ -35,7 +35,7 @@ import java.util.Optional;
 @Extension(id = "i18n_commands", name = "I18N Commands", description = "Provided I18N commands, implementation of i18n extension", authors = {"GuusLieben"})
 public class I18NModule {
 
-    @Command(aliases = {"lang", "language"}, usage = "language <language>", context = "language <language{String}>")
+    @Command(aliases = {"lang", "language"}, context = "language <language{String}>")
     public void switchLang(CommandSource src, CommandContext ctx) {
         Optional<Language> ol = ctx.getArgumentAndParse("language", new LanguageArgumentParser());
         Server.log().info("Requested language: " + ol.isPresent() + " => " + ol.get().getDescription());
