@@ -174,6 +174,10 @@ public final class Exceptional<T> {
         return this.throwable;
     }
 
+    public Optional<T> toOptional() {
+        return Optional.ofNullable(this.value);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

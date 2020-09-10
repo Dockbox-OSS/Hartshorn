@@ -19,52 +19,39 @@ package org.dockbox.darwin.integrated;
 
 import org.dockbox.darwin.core.annotations.Command;
 import org.dockbox.darwin.core.command.context.CommandContext;
-import org.dockbox.darwin.core.command.context.CommandValue;
-import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser;
+import org.dockbox.darwin.core.command.context.CommandValue.Argument;
+import org.dockbox.darwin.core.command.parse.impl.LanguageArgumentParser;
 import org.dockbox.darwin.core.i18n.common.Language;
 import org.dockbox.darwin.core.i18n.entry.IntegratedResource;
 import org.dockbox.darwin.core.objects.targets.CommandSource;
 import org.dockbox.darwin.core.objects.user.Player;
-import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.text.Text;
 import org.dockbox.darwin.core.util.extension.Extension;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
 @Extension(id = "i18n_commands", name = "I18N Commands", description = "Provided I18N commands, implementation of i18n extension", authors = {"GuusLieben"})
 public class I18NModule {
 
-    @Command(aliases = {"lang", "language"}, usage = "language <language>", context = "language <language{String}>")
+    @Command(aliases = {"lang", "language"}, context = "language <language{String}> [player{Player}] -s --f flag{String}")
     public void switchLang(CommandSource src, CommandContext ctx) {
         Optional<Language> ol = ctx.getArgumentAndParse("language", new LanguageArgumentParser());
-        Server.log().info("Requested language: " + ol.isPresent() + " => " + ol.get().getDescription());
-        if (src instanceof Player) {
-            // While the parser will always return a language, it is possible the argument is not present in which case we want to use en_US
-            Language lang = ol.orElse(Language.EN_US);
-            ((Player) src).setLanguage(lang);
-            // Messages sent after language switch will be in the preferred language
-            src.sendWithPrefix(IntegratedResource.LANG_SWITCHED.format(lang.getDescription()));
-        } else {
+        @Nullable Player target;
+
+        Optional<Argument<Player>> op = ctx.getArgument("player", Player.class);
+        if (op.isPresent()) target = op.get().getValue();
+        else if (src instanceof Player) target = (Player) src;
+        else {
             src.send(Text.of("What are you??"));
-        }
-    }
-
-    public static class LanguageArgumentParser extends AbstractTypeArgumentParser<Language> {
-
-        @NotNull
-        @Override
-        public Optional<Language> parse(@NotNull CommandValue<String> commandValue) {
-            String val = commandValue.getValue();
-            Language lang;
-            try {
-                lang = Language.valueOf(val);
-            } catch (NullPointerException | IllegalArgumentException e) {
-                lang = Language.EN_US;
-            }
-            return Optional.of(lang);
+            return;
         }
 
+        // While the parser will always return a language, it is possible the argument is not present in which case we want to use en_US
+        Language lang = ol.orElse(Language.EN_US);
+        target.setLanguage(lang);
+        // Messages sent after language switch will be in the preferred language
+        src.sendWithPrefix(IntegratedResource.LANG_SWITCHED.format(lang.getDescription()));
     }
 
 }

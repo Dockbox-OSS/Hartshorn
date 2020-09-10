@@ -15,27 +15,26 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.darwin.core.i18n.entry
+package org.dockbox.darwin.core.command.parse.impl
 
+import org.dockbox.darwin.core.command.context.CommandValue
+import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.darwin.core.i18n.common.Language
-import org.dockbox.darwin.core.i18n.common.ResourceEntry
-import org.dockbox.darwin.core.i18n.common.ResourceService
-import org.dockbox.darwin.core.server.Server
+import java.util.*
 
-class ExternalResourceEntry(private var value: String, private var key: String) : ResourceEntry {
+class LanguageArgumentParser : AbstractTypeArgumentParser<Language>() {
 
-    private var resourceMap: Map<Language, String> = Server.getInstance(ResourceService::class.java).getTranslations(this)
-
-    fun getKey(): String = Server.getInstance(ResourceService::class.java).createValidKey(key)
-
-    override fun getValue(): String = this.value
-
-    override fun getValue(lang: Language): String {
-        return if (resourceMap.containsKey(lang)) resourceMap[lang]!!
-        else this.value
+    override fun parse(commandValue: CommandValue<String>): Optional<Language> {
+        val l = commandValue.value
+        val lang: Language
+        lang = try {
+            Language.valueOf(l)
+        } catch (e: NullPointerException) {
+            Language.EN_US
+        } catch (e: IllegalArgumentException) {
+            Language.EN_US
+        }
+        return Optional.of(lang)
     }
 
-    override fun setValue(value: String) {
-        this.value = value
-    }
 }

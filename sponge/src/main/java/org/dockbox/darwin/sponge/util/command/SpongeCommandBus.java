@@ -30,15 +30,13 @@ import org.dockbox.darwin.core.events.chat.CommandEvent;
 import org.dockbox.darwin.core.i18n.permissions.AbstractPermission;
 import org.dockbox.darwin.core.objects.events.Cancellable;
 import org.dockbox.darwin.core.objects.tuple.Tuple;
-import org.dockbox.darwin.core.objects.tuple.Vector3D;
 import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.util.events.EventBus;
 import org.dockbox.darwin.core.util.extension.Extension;
 import org.dockbox.darwin.core.util.extension.ExtensionManager;
-import org.dockbox.darwin.sponge.objects.location.SpongeLocation;
-import org.dockbox.darwin.sponge.objects.location.SpongeWorld;
 import org.dockbox.darwin.sponge.objects.targets.SpongeConsole;
 import org.dockbox.darwin.sponge.objects.targets.SpongePlayer;
+import org.dockbox.darwin.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -52,15 +50,9 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.Identifiable;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.extent.Extent;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -172,27 +164,8 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     private Object getValue(Object obj) {
-        if (obj instanceof User) {
-            return new SpongePlayer(((Identifiable) obj).getUniqueId(), ((Tamer) obj).getName());
-
-        } else if (obj instanceof Entity) {
-            // TODO : Regular Entity wrapper
-            throw new UnsupportedOperationException();
-
-        } else if (obj instanceof Location) {
-            Location<Extent> sloc = (Location<Extent>) obj;
-            World sworld = (World) sloc.getExtent();
-
-            Vector3D locv = new Vector3D(sloc.getX(), sloc.getY(), sloc.getZ());
-            org.dockbox.darwin.core.objects.location.World dworld = new SpongeWorld(sworld.getUniqueId(), sworld.getName());
-            return new SpongeLocation(locv, dworld);
-
-        } else if (obj instanceof World) {
-            return new SpongeWorld(((Identifiable) obj).getUniqueId(), ((World) obj).getName());
-
-        } else {
-            return obj;
-        }
+        Optional<?> oo = SpongeConversionUtil.autoDetectFromSponge(obj);
+        return oo.isPresent() ? oo.get() : obj; // oo.orElse() cannot be cast due to generic ? type
     }
 
     private CommandElement[] parseArguments(CharSequence argString) {
