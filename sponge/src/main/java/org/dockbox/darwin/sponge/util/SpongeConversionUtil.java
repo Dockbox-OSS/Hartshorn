@@ -35,6 +35,8 @@ import org.dockbox.darwin.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.source.ConsoleSource;
+import org.spongepowered.api.entity.Tamer;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.text.Text;
@@ -50,6 +52,22 @@ import java.util.function.Consumer;
 
 public enum SpongeConversionUtil {
     ;
+
+    public static <T> Optional<?> autoDetectFromSponge(T object) {
+        // CommandSource, Location, World, Gamemode
+        if (object instanceof org.spongepowered.api.command.CommandSource) {
+            return fromSponge((org.spongepowered.api.command.CommandSource) object).toOptional();
+        } else if (object instanceof Location) {
+            return Optional.of(fromSponge((Location) object));
+        } else if (object instanceof World) {
+            return Optional.of(fromSponge((World) object));
+        } else if (object instanceof GameMode) {
+            return Optional.of(fromSponge((GameMode) object));
+        } else if (object instanceof User) {
+            return Optional.of(new SpongePlayer(((Identifiable) object).getUniqueId(), ((Tamer) object).getName()));
+        }
+        return Optional.empty();
+    }
 
     @NotNull
     public static Text toSponge(org.dockbox.darwin.core.text.Text message) {
