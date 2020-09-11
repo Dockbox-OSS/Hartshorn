@@ -70,9 +70,10 @@ public class SpongeServer extends Server {
         EventBus eb = getInstance(EventBus.class);
         CommandBus cb = getInstance(CommandBus.class);
         ExtensionManager cm = getInstance(ExtensionManager.class);
+        DiscordUtils du = getInstance(DiscordUtils.class);
 
-        super.initIntegratedExtensions(this.getConsumer("integrated", cb, eb, cm));
-        super.initExternalExtensions(this.getConsumer("external", cb, eb, cm));
+        super.initIntegratedExtensions(this.getConsumer("integrated", cb, eb, cm, du));
+        super.initExternalExtensions(this.getConsumer("external", cb, eb, cm, du));
 
         getInstance(EventBus.class).post(new ServerEvent.Init());
     }
@@ -100,7 +101,7 @@ public class SpongeServer extends Server {
 
     }
 
-    private Consumer<ExtensionContext> getConsumer(String contextType, CommandBus cb, EventBus eb, ExtensionManager em) {
+    private Consumer<ExtensionContext> getConsumer(String contextType, CommandBus cb, EventBus eb, ExtensionManager em, DiscordUtils du) {
         return (ExtensionContext ctx) -> ctx.getClasses().values().forEach(type -> {
             log().info("Found type [" + type.getCanonicalName() + "] in " + contextType + " context");
             Optional<?> oi = em.getInstance(type);
@@ -108,6 +109,7 @@ public class SpongeServer extends Server {
                 log().info("Registering [" + type.getCanonicalName() + "] as Event and Command listener");
                 eb.subscribe(i);
                 cb.register(i);
+                du.registerCommandListener(i);
             });
         });
     }

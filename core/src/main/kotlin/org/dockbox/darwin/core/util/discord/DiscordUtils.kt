@@ -18,8 +18,8 @@
 package org.dockbox.darwin.core.util.discord
 
 import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.api.entities.Category
-import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.entities.*
+import org.dockbox.darwin.core.events.discord.DiscordCommandContext
 import org.dockbox.darwin.core.i18n.common.ResourceEntry
 import org.dockbox.darwin.core.text.Text
 import java.util.*
@@ -30,8 +30,16 @@ interface DiscordUtils {
 
     fun getGlobalTextChannel(): Optional<TextChannel>
     fun getLoggingCategory(): Optional<Category>
+    fun getGuild(): Optional<Guild>
 
-    fun sendToTextChannel(text: Text, channel: TextChannel)
-    fun sendToTextChannel(text: CharSequence, channel: TextChannel)
-    fun sendToTextChannel(text: ResourceEntry, channel: TextChannel)
+    fun sendToTextChannel(text: Text, channel: MessageChannel)
+    fun sendToTextChannel(text: CharSequence, channel: MessageChannel)
+
+    fun sendToTextChannel(text: ResourceEntry, channel: MessageChannel)
+    fun sendToUser(text: Text, user: User)
+    fun sendToUser(text: CharSequence, user: User)
+
+    fun sendToUser(text: ResourceEntry, user: User)
+    fun registerCommandListener(instance: Any)
+    fun post(command: String, context: DiscordCommandContext)
 }
