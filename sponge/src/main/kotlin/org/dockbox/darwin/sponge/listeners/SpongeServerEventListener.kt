@@ -27,7 +27,7 @@ import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameStartedServerEvent
 import org.spongepowered.api.event.game.state.GameStartingServerEvent
 
-class SpongeEventListener {
+class SpongeServerEventListener {
 
     private val bus: EventBus = SpongeServer.getInstance(EventBus::class.java)
 
