@@ -25,7 +25,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature;
 
 import org.dockbox.darwin.core.server.Server;
-import org.dockbox.darwin.core.server.ServerReference;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -33,7 +32,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-public class YamlDataManager extends ServerReference implements DataManager {
+public class YamlDataManager extends DataManager {
 
     private final ObjectMapper mapper;
 
@@ -51,50 +50,6 @@ public class YamlDataManager extends ServerReference implements DataManager {
 
     @NotNull
     @Override
-    public Path getDataDir(@NotNull Class<?> module) {
-        return this.runWithExtension(module, (annotation) -> this.getInstance(FileUtils.class).getDataDir().resolve(annotation.id()));
-    }
-
-    @NotNull
-    @Override
-    public Path getDataDir(@NotNull Object module) {
-        if (!(module instanceof Class)) module = module.getClass();
-        return this.getDataDir((Class<?>) module);
-    }
-
-    @NotNull
-    @Override
-    public Path getDefaultDataFile(@NotNull Class<?> module) {
-        return this.runWithExtension(module, (annotation) -> {
-            Path dataPath = this.getDataDir(module);
-            return this.getInstance(FileUtils.class).createFileIfNotExists(dataPath.resolve(annotation.id() + ".yml"));
-        });
-    }
-
-    @NotNull
-    @Override
-    public Path getDefaultDataFile(@NotNull Object module) {
-        if (!(module instanceof Class)) module = module.getClass();
-        return this.getDefaultDataFile((Class<?>) module);
-    }
-
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @NotNull
-    @Override
-    public Map<String, Object> getDefaultDataFileContents(@NotNull Class<?> module) {
-        return this.getDefaultDataFileContents(module, Map.class, new HashMap());
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @NotNull
-    @Override
-    public Map<String, Object> getDefaultDataFileContents(@NotNull Object module) {
-        return this.getDefaultDataFileContents(module, Map.class, new HashMap());
-    }
-
-    @NotNull
-    @Override
     public <T> T getDefaultDataFileContents(@NotNull Class<?> module, @NotNull Class<T> convertTo, T defaultValue) {
         return this.runWithExtension(module, (annotation) -> {
             try {
@@ -108,13 +63,6 @@ public class YamlDataManager extends ServerReference implements DataManager {
         });
     }
 
-    @NotNull
-    @Override
-    public <T> T getDefaultDataFileContents(@NotNull Object module, @NotNull Class<T> convertTo, T defaultValue) {
-        if (!(module instanceof Class)) module = module.getClass();
-        return this.getDefaultDataFileContents((Class<?>) module, convertTo, defaultValue);
-    }
-
     @Override
     public <T> void writeToDefaultDataFile(@NotNull Class<?> module, T data) {
         try {
@@ -126,26 +74,14 @@ public class YamlDataManager extends ServerReference implements DataManager {
     }
 
     @Override
-    public <T> void writeToDefaultDataFile(@NotNull Object module, T data) {
-        if (!(module instanceof Class)) module = module.getClass();
-        this.writeToDefaultDataFile((Class<?>) module, data);
-    }
-
-    @Override
     public <T> void writeToDataFile(@NotNull Class<?> module, T data, @NotNull String fileName) {
         try {
             Path dataDir = this.getDataDir(module);
-            Path df = this.getInstance(FileUtils.class).createFileIfNotExists(dataDir.resolve(fileName + ".yml"));
+            Path df = this.getInstance(FileUtils.class).createFileIfNotExists(this.getFileType().asPath(dataDir, fileName));
             this.mapper.writeValue(df.toFile(), data);
         } catch (IOException e) {
             Server.getServer().except("Failed to write data contents", e);
         }
-    }
-
-    @Override
-    public <T> void writeToDataFile(@NotNull Object module, T data, @NotNull String fileName) {
-        if (!(module instanceof Class)) module = module.getClass();
-        this.writeToDataFile((Class<?>) module, data, fileName);
     }
 
     @SuppressWarnings("unchecked")
@@ -154,7 +90,12 @@ public class YamlDataManager extends ServerReference implements DataManager {
     public Map<String, Object> getDataFileContents(@NotNull Class<?> module, @NotNull String fileName) {
         return this.runWithExtension(module, (annotation) -> {
             try {
-                Path cf = this.getInstance(FileUtils.class).createFileIfNotExists(this.getDataDir(module).resolve(fileName + ".yml"));
+                Path cf = this.getInstance(FileUtils.class).createFileIfNotExists(
+                        this.getFileType().asPath(
+                                this.getDataDir(module),
+                                fileName
+                        )
+                );
                 Map<String, Object> res = this.mapper.readValue(cf.toFile(), Map.class);
                 return null != res ? res : new HashMap<>();
             } catch (IOException | IllegalArgumentException e) {
@@ -166,7 +107,7 @@ public class YamlDataManager extends ServerReference implements DataManager {
 
     @NotNull
     @Override
-    public Map<String, Object> getDataFileContents(@NotNull Object module, @NotNull String fileName) {
-        return this.getDataFileContents(module.getClass(), fileName);
+    public FileType getFileType() {
+        return FileType.YAML;
     }
 }
