@@ -18,10 +18,20 @@
 package org.dockbox.darwin.core.util.discord
 
 import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.entities.Category
+import net.dv8tion.jda.api.entities.TextChannel
+import org.dockbox.darwin.core.i18n.common.ResourceEntry
+import org.dockbox.darwin.core.text.Text
 import java.util.*
 
 interface DiscordUtils {
 
     fun getJDA(): Optional<JDA>
 
+    fun getGlobalTextChannel(): Optional<TextChannel>
+    fun getLoggingCategory(): Optional<Category>
+
+    fun sendToTextChannel(text: Text, channel: TextChannel)
+    fun sendToTextChannel(text: CharSequence, channel: TextChannel)
+    fun sendToTextChannel(text: ResourceEntry, channel: TextChannel)
 }
