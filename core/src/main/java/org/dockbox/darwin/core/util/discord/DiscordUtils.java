@@ -19,6 +19,7 @@ package org.dockbox.darwin.core.util.discord;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Category;
+import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -27,6 +28,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.darwin.core.annotations.DiscordCommand;
+import org.dockbox.darwin.core.annotations.DiscordCommand.ListeningLevel;
 import org.dockbox.darwin.core.events.discord.DiscordCommandContext;
 import org.dockbox.darwin.core.i18n.common.ResourceEntry;
 import org.dockbox.darwin.core.i18n.entry.IntegratedResource;
@@ -130,6 +132,10 @@ public abstract class DiscordUtils {
             Triple<DiscordCommand, Method, Object> information = commandMethods.get(command);
             DiscordCommand annotation = information.getFirst();
 
+            ListeningLevel level = annotation.listeningLevel();
+
+            if (!isValidChannel(context, level)) return;
+
             // Ensure the command is either globally available, or it was sent in the correct channel
             boolean correctChannel = WILDCARD.equals(annotation.channelId())
                     || context.getChannel().getId().equals(annotation.channelId());
@@ -165,6 +171,16 @@ public abstract class DiscordUtils {
                 Server.getServer().except("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass().getCanonicalName() + "]");
             }
         } else context.sendToChannel(IntegratedResource.COMMAND_UNKNOWN);
+    }
+
+    private static boolean isValidChannel(@NotNull DiscordCommandContext context, ListeningLevel level) {
+        boolean listensForBoth = ListeningLevel.BOTH == level;
+        if (listensForBoth) return true;
+
+        boolean isPrivateAndValid = ListeningLevel.PRIVATE_ONLY == level && ChannelType.PRIVATE == context.getChannel().getType();
+        boolean isTextAndValid = ListeningLevel.CHANNEL_ONLY == level && ChannelType.TEXT == context.getChannel().getType();
+
+        return isPrivateAndValid || isTextAndValid;
     }
 
 }

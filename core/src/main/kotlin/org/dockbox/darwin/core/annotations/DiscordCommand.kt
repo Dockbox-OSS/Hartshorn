@@ -20,5 +20,14 @@ package org.dockbox.darwin.core.annotations
 annotation class DiscordCommand(
     val command: String,
     val channelId: String,
-    val minimumRankId: String
-)
+    val minimumRankId: String,
+    val listeningLevel: ListeningLevel = ListeningLevel.BOTH
+) {
+
+    enum class ListeningLevel {
+        PRIVATE_ONLY,
+        CHANNEL_ONLY,
+        BOTH
+    }
+
+}
