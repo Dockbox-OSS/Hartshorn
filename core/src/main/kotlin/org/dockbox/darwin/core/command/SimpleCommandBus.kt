@@ -31,6 +31,8 @@ import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.World
 import org.dockbox.darwin.core.objects.optional.Exceptional
 import org.dockbox.darwin.core.objects.targets.CommandSource
+import org.dockbox.darwin.core.objects.targets.Console
+import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.util.extension.Extension
 import org.dockbox.darwin.core.util.extension.ExtensionManager
@@ -183,8 +185,15 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             val finalArgs: MutableList<Any> = ArrayList()
 
             for (parameterType in method.parameterTypes) {
-                if (parameterType == CommandSource::class.java || CommandSource::class.java.isAssignableFrom(parameterType))
-                    finalArgs.add(sender)
+                if (parameterType is CommandSource) {
+                    if (parameterType == Player::class.java) {
+                        if (sender is Player) finalArgs.add(sender)
+                        else return Exceptional.of("skipped")
+                    } else if (parameterType == Console::class.java) {
+                        if (sender is Console) finalArgs.add(sender)
+                        else return Exceptional.of("skipped")
+                    } else finalArgs.add(sender)
+                }
                 else if (parameterType == CommandContext::class.java || CommandContext::class.java.isAssignableFrom(parameterType))
                     finalArgs.add(ctx)
                 else
