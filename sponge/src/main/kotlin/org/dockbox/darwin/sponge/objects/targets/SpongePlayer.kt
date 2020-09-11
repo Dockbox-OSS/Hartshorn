@@ -19,6 +19,7 @@ package org.dockbox.darwin.sponge.objects.targets
 
 import com.boydti.fawe.`object`.FawePlayer
 import org.dockbox.darwin.core.i18n.common.Language
+import org.dockbox.darwin.core.i18n.common.ResourceEntry
 import org.dockbox.darwin.core.i18n.entry.IntegratedResource
 import org.dockbox.darwin.core.objects.location.Location
 import org.dockbox.darwin.core.objects.location.Location.Companion.EMPTY
@@ -102,7 +103,7 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
         if (referenceExists()) reference!!.sendMessage(org.spongepowered.api.text.Text.of(text))
     }
 
-    override fun sendWithPrefix(text: IntegratedResource) {
+    override fun sendWithPrefix(text: ResourceEntry) {
         sendWithPrefix(of(text.getValue(getLanguage())))
     }
 
@@ -153,7 +154,7 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
         for (permission in permissions) setPermission(permission, value)
     }
 
-    override fun send(text: IntegratedResource) {
+    override fun send(text: ResourceEntry) {
         send(of(text.getValue(getLanguage())))
     }
 

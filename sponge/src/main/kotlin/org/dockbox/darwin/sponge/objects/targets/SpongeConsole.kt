@@ -18,6 +18,7 @@
 package org.dockbox.darwin.sponge.objects.targets
 
 import com.google.inject.Singleton
+import org.dockbox.darwin.core.i18n.common.ResourceEntry
 import org.dockbox.darwin.core.i18n.entry.IntegratedResource
 import org.dockbox.darwin.core.objects.targets.Console
 import org.dockbox.darwin.core.server.Server
@@ -33,7 +34,7 @@ class SpongeConsole private constructor() : Console() {
                 Sponge.getServer().console, command)
     }
 
-    override fun send(text: IntegratedResource) {
+    override fun send(text: ResourceEntry) {
         send(of(text.getValue(Server.getServer().getGlobalConfig().getDefaultLanguage())))
     }
 
@@ -45,7 +46,7 @@ class SpongeConsole private constructor() : Console() {
         send(of(text))
     }
 
-    override fun sendWithPrefix(text: IntegratedResource) {
+    override fun sendWithPrefix(text: ResourceEntry) {
         sendWithPrefix(of(text.getValue(Server.getServer().getGlobalConfig().getDefaultLanguage())))
     }
 

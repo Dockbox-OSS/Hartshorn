@@ -17,14 +17,14 @@
 
 package org.dockbox.darwin.core.objects.targets
 
-import org.dockbox.darwin.core.i18n.entry.IntegratedResource
+import org.dockbox.darwin.core.i18n.common.ResourceEntry
 import org.dockbox.darwin.core.text.Text
 
 interface MessageReceiver : Target {
-    fun send(text: IntegratedResource)
+    fun send(text: ResourceEntry)
     fun send(text: Text)
     fun send(text: CharSequence)
-    fun sendWithPrefix(text: IntegratedResource)
+    fun sendWithPrefix(text: ResourceEntry)
     fun sendWithPrefix(text: Text)
     fun sendWithPrefix(text: CharSequence)
 }

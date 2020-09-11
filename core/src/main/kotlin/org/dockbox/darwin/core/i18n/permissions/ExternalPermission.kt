@@ -17,6 +17,6 @@
 
 package org.dockbox.darwin.core.i18n.permissions
 
-class ExternalPermission(private val key: String) : AbstractPermission {
+open class ExternalPermission(private val key: String) : AbstractPermission {
     override fun get(): String = this.key
 }
