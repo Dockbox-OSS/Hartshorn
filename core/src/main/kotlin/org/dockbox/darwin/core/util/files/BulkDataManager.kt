@@ -17,20 +17,60 @@
 
 package org.dockbox.darwin.core.util.files
 
-import java.io.File
+import org.dockbox.darwin.core.server.ServerReference
+import org.dockbox.darwin.core.util.extension.Extension
+import org.jetbrains.annotations.NotNull
 import java.nio.file.Path
+import java.util.*
 
-interface BulkDataManager<D> {
+abstract class BulkDataManager<D> : ServerReference() {
 
-    fun getDataDir(module: Class<*>): Path
-    fun getDataDir(module: Any): Path
+    open fun getDataDir(extension: Class<*>): Path {
+        return runWithExtension(extension) { annotation: Extension -> getInstance(FileUtils::class.java).getDataDir().resolve(annotation.id) }
+    }
 
-    fun getDefaultBulkDataFile(module: Class<*>): Path
-    fun getDefaultBulkDataFile(module: Any): Path
+    open fun getDataDir(extension: Any): Path {
+        var shadow = extension
+        if (shadow !is Class<*>) shadow = shadow.javaClass
+        return this.getDataDir(shadow as Class<*>)
+    }
 
-    fun getBulkDao(module: Any, type: Class<*>, fileName: String): D
-    fun getBulkDao(module: Class<*>, type: Class<*>, fileName: String): D
-    fun getDefaultBulkDao(module: Any, type: Class<*>): D
-    fun getDefaultBulkDao(module: Class<*>, type: Class<*>): D
+    open fun getDefaultBulkDataFile(extension: Class<*>): Path {
+        return runWithExtension(extension) { annotation: Extension ->
+            val dataPath = this.getDataDir(extension)
+            getInstance(FileUtils::class.java).createFileIfNotExists(getFileType().asPath(dataPath, annotation.id))
+        }
+    }
 
+    open fun getDefaultBulkDataFile(extension: Any): Path {
+        var shadow = extension
+        if (shadow !is Class<*>) shadow = shadow.javaClass
+        return this.getDefaultBulkDataFile(shadow as Class<*>)
+    }
+
+    open fun getBulkDao(extension: Class<*>, type: Class<*>, fileName: String): Optional<D> {
+        return runWithExtension(extension) {
+            val dataDir = this.getDataDir(extension)
+            this.getBulkDao(type, getFileType().asPath(dataDir, fileName))
+        }
+    }
+
+    open fun getBulkDao(extension: Any, type: Class<*>, fileName: String): Optional<D> {
+        var shadow = extension
+        if (shadow !is Class<*>) shadow = shadow.javaClass
+        return this.getBulkDao(shadow as Class<*>, type, fileName)
+    }
+
+    open fun getDefaultBulkDao(extension: Class<*>, type: Class<*>): Optional<D> {
+        return this.getBulkDao(type, this.getDefaultBulkDataFile(extension))
+    }
+
+    open fun getDefaultBulkDao(extension: Any, type: Class<*>): Optional<D> {
+        var shadow = extension
+        if (shadow !is Class<*>) shadow = shadow.javaClass
+        return this.getBulkDao(type, this.getDefaultBulkDataFile(shadow))
+    }
+    abstract fun getBulkDao(extension: @NotNull Class<*>, file: @NotNull Path): Optional<D>
+
+    abstract fun getFileType(): FileType
 }
