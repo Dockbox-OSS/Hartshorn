@@ -35,7 +35,7 @@ repositories {
 
 dependencies {
     compile project(path: ':core', configuration: 'shadow')
-    compile project(path: ':modules', configuration: 'shadow')
+    compile project(path: ':extensions', configuration: 'shadow')
 
     compileOnly 'me.lucko.luckperms:luckperms-api:4.4'
     compileOnly 'org.spongepowered:spongeapi:7.1.0'
@@ -44,5 +44,5 @@ dependencies {
     compileOnly 'io.github.nucleuspowered:nucleus-api:1.14.3-SNAPSHOT-S7.1'
 
     testCompileOnly project(':core')
-    testCompileOnly project(':modules')
+    testCompileOnly project(':extensions')
 }

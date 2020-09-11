@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 @Extension(id = "i18n_commands", name = "I18N Commands", description = "Provided I18N commands, implementation of i18n extension", authors = {"GuusLieben"})
-public class I18NModule {
+public class I18NExtension {
 
     @Command(aliases = {"lang", "language"}, context = "language <language{String}> [player{Player}] -s --f flag{String}")
     public void switchLang(CommandSource src, CommandContext ctx) {

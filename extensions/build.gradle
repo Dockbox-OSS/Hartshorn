@@ -21,7 +21,7 @@ plugins {
 }
 
 group = 'org.dockbox.darwin.integrated'
-description = 'Integrated modules for DarwinServer'
+description = 'Integrated extensions for DarwinServer'
 
 dependencies {
     compileOnly project(':core')

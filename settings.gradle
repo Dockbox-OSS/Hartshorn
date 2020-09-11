@@ -19,4 +19,4 @@ rootProject.name = 'DarwinServer'
 
 include 'sponge'
 include 'core'
-include 'modules'
+include 'extensions'
