@@ -480,7 +480,12 @@ enum class IntegratedResource(private var value: String): ResourceEntry {
     CU_FLAGS("$3- $2Flags: $1{0}"),
     CU_DESCRIPTION("$3- $2Summary: $1{0}"),
     GTL_WARPED("$1You have been teleported to the lobby as the world you were previously in is disabled"),
-    LANG_SWITCHED("$1Your preferred language has been switched to: $2{0}")
+    LANG_SWITCHED("$1Your preferred language has been switched to: $2{0}"),
+
+    // Discord
+    COMMAND_NOT_PERMITTED("You are not permitted to use that command!"),
+    COMMAND_UNKNOWN("Sorry, I don't know what to do with that command!"),
+    COMMAND_ERRORED("Sorry, I could not start that command. Please report this in our support channel.")
     ;
 
     private var translations: MutableMap<Language, String> = ConcurrentHashMap()
