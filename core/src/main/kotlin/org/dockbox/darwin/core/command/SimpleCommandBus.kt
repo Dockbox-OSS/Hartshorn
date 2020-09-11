@@ -23,6 +23,7 @@ import org.dockbox.darwin.core.command.context.CommandContext
 import org.dockbox.darwin.core.command.registry.AbstractCommandRegistration
 import org.dockbox.darwin.core.command.registry.ClassCommandRegistration
 import org.dockbox.darwin.core.command.registry.MethodCommandRegistration
+import org.dockbox.darwin.core.exceptions.IllegalSourceException
 import org.dockbox.darwin.core.i18n.entry.IntegratedResource
 import org.dockbox.darwin.core.i18n.permissions.AbstractPermission
 import org.dockbox.darwin.core.i18n.permissions.ExternalPermission
@@ -186,12 +187,12 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
 
             for (parameterType in method.parameterTypes) {
                 if (parameterType is CommandSource) {
-                    if (parameterType == Player::class.java) {
+                    if (parameterType is Player) {
                         if (sender is Player) finalArgs.add(sender)
-                        else return Exceptional.of("skipped")
-                    } else if (parameterType == Console::class.java) {
+                        else return Exceptional.of(IllegalSourceException("Command can only be ran by players!"))
+                    } else if (parameterType is Console) {
                         if (sender is Console) finalArgs.add(sender)
-                        else return Exceptional.of("skipped")
+                        else return Exceptional.of(IllegalSourceException("Command can only be ran by the console!"))
                     } else finalArgs.add(sender)
                 }
                 else if (parameterType == CommandContext::class.java || CommandContext::class.java.isAssignableFrom(parameterType))
