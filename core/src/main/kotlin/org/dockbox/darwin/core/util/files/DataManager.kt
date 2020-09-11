@@ -17,28 +17,72 @@
 
 package org.dockbox.darwin.core.util.files
 
+import org.dockbox.darwin.core.server.ServerReference
+import org.dockbox.darwin.core.util.extension.Extension
 import java.nio.file.Path
+import java.util.*
 
-interface DataManager {
+abstract class DataManager : ServerReference() {
 
-    fun getDataDir(module: Class<*>): Path
-    fun getDataDir(module: Any): Path
+    open fun getDataDir(extension: Class<*>): Path {
+        return this.runWithExtension<Any>(extension) { annotation ->
+            this.getInstance(FileUtils::class.java).getDataDir().resolve(annotation.id)
+        } as Path
+    }
 
-    fun getDefaultDataFile(module: Class<*>): Path
-    fun getDefaultDataFile(module: Any): Path
+    open fun getDataDir(extension: Any): Path {
+        var shadow: Any = extension
+        if ((shadow !is Class<*>)) shadow = shadow.javaClass
+        return this.getDataDir(shadow as Class<*>)
+    }
 
-    fun getDefaultDataFileContents(module: Class<*>): Map<String, Any>
-    fun getDefaultDataFileContents(module: Any): Map<String, Any>
-    fun getDataFileContents(module: Class<*>, fileName: String): Map<String, Any>
-    fun getDataFileContents(module: Any, fileName: String): Map<String, Any>
+    open fun getDefaultDataFile(module: Class<*>): Path {
+        return runWithExtension(module) { annotation: Extension ->
+            val dataPath = this.getDataDir(module)
+            getInstance(FileUtils::class.java).createFileIfNotExists(getFileType().asPath(dataPath, annotation.id))
+        }
+    }
+    open fun getDefaultDataFile(extension: Any): Path {
+        var shadow = extension
+        if (shadow !is Class<*>) shadow = shadow.javaClass
+        return this.getDefaultDataFile((shadow as Class<*>))
+    }
 
-    fun <T> getDefaultDataFileContents(module: Class<*>, convertTo: Class<T>, defaultValue: T): T
-    fun <T> getDefaultDataFileContents(module: Any, convertTo: Class<T>, defaultValue: T): T
+    @Suppress("UNCHECKED_CAST")
+    open fun getDefaultDataFileContents(module: Class<*>): Map<String, Any> {
+        return this.getDefaultDataFileContents(module, MutableMap::class.java, HashMap<Any, Any>()) as Map<String, Any>
+    }
 
-    fun <T> writeToDefaultDataFile(module: Class<*>, data: T)
-    fun <T> writeToDefaultDataFile(module: Any, data: T)
+    @Suppress("UNCHECKED_CAST")
+    open fun getDefaultDataFileContents(module: Any): Map<String, Any> {
+        return this.getDefaultDataFileContents(module as Class<*>, MutableMap::class.java, HashMap<String, Any>()) as Map<String, Any>
+    }
 
-    fun <T> writeToDataFile(module: Class<*>, data: T, fileName: String)
-    fun <T> writeToDataFile(module: Any, data: T, fileName: String)
+    abstract fun getDataFileContents(extension: Class<*>, fileName: String): Map<String, Any>
+    open fun getDataFileContents(extension: Any, fileName: String): Map<String, Any> {
+        return this.getDataFileContents(extension.javaClass, fileName)
+    }
 
+    abstract fun <T> getDefaultDataFileContents(extension: Class<*>, convertTo: Class<T>, defaultValue: T): T
+    open fun <T> getDefaultDataFileContents(extension: Any, convertTo: Class<T>, defaultValue: T): T {
+        var shadow = extension
+        if (shadow !is Class<*>) shadow = shadow.javaClass
+        return this.getDefaultDataFileContents((shadow as Class<*>), convertTo, defaultValue)
+    }
+
+    abstract fun <T> writeToDefaultDataFile(extension: Class<*>, data: T)
+    open fun <T> writeToDefaultDataFile(extension: Any, data: T) {
+        var shadow = extension
+        if (shadow !is Class<*>) shadow = shadow.javaClass
+        this.writeToDefaultDataFile((shadow as Class<*>), data)
+    }
+
+    abstract fun <T> writeToDataFile(extension: Class<*>, data: T, fileName: String)
+    open fun <T> writeToDataFile(extension: Any, data: T, fileName: String) {
+        var shadow = extension
+        if (shadow !is Class<*>) shadow = shadow.javaClass
+        this.writeToDataFile((shadow as Class<*>), data, fileName)
+    }
+
+    abstract fun getFileType(): FileType
 }
