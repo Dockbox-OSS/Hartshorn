@@ -18,9 +18,11 @@
 package org.dockbox.darwin.sponge.listeners;
 
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import org.dockbox.darwin.core.events.discord.DiscordEvent;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.PrivateChatReceived;
 import org.dockbox.darwin.core.objects.events.Event;
 import org.dockbox.darwin.core.util.events.EventBus;
 import org.dockbox.darwin.sponge.SpongeServer;
@@ -32,9 +34,13 @@ public class SpongeDiscordListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        if (null != event.getMember()) {
-            Event dec = new DiscordEvent.Chat(event.getMember(), event.getMessage(), event.getGuild(), event.getChannel());
-            this.bus.post(dec);
-        }
+        Event dec = new DiscordEvent.Chat(event.getAuthor(), event.getMessage(), event.getGuild(), event.getChannel());
+        this.bus.post(dec);
+    }
+
+    @Override
+    public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event) {
+        Event depcr = new PrivateChatReceived(event.getAuthor(), event.getMessage());
+        this.bus.post(depcr);
     }
 }
