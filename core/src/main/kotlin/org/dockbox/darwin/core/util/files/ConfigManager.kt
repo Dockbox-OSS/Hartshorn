@@ -17,25 +17,66 @@
 
 package org.dockbox.darwin.core.util.files
 
-import java.io.File
+import org.dockbox.darwin.core.server.Server
+import org.dockbox.darwin.core.server.ServerReference
+import org.dockbox.darwin.core.util.extension.Extension
 import java.nio.file.Path
+import java.util.*
 
-interface ConfigManager {
+abstract class ConfigManager : ServerReference() {
 
-    fun getConfigDir(module: Class<*>): Path
-    fun getConfigDir(module: Any): Path
+    open fun getConfigDir(extension: Class<*>): Path {
+        return runWithExtension(extension) { annotation: Extension ->
+            getFileType().asPath(
+                    Server.getInstance(FileUtils::class.java).getModuleConfigDir(),
+                    annotation.id
+            )
+        }
+    }
 
-    fun getConfigFile(module: Class<*>): Path
-    fun getConfigFile(module: Any): Path
+    open fun getConfigDir(extension: Any): Path {
+        var shadow = extension
+        if (shadow !is Class<*>) shadow = shadow.javaClass
+        return this.getConfigDir(shadow as Class<*>)
+    }
 
-    fun getConfigContents(module: Class<*>): Map<String, Any>
-    fun getConfigContents(module: Any): Map<String, Any>
+    open fun getConfigFile(extension: Class<*>): Path {
+        return runWithExtension(extension) { annotation: Extension ->
+            val configPath = this.getConfigDir(extension)
+            Server.getInstance(FileUtils::class.java).createFileIfNotExists(getFileType().asPath(configPath, annotation.id))
+        }
+    }
 
-    fun <T> getConfigContents(module: Class<*>, convertTo: Class<T>, defaultValue: T): T
-    fun <T> getConfigContents(module: Any, convertTo: Class<T>, defaultValue: T): T
+    open fun getConfigFile(extension: Any): Path {
+        var shadow = extension
+        if (shadow !is Class<*>) shadow = shadow.javaClass
+        return this.getConfigFile(shadow as Class<*>)
+    }
 
-    fun <T> writeToConfig(module: Class<*>, data: T)
-    fun <T> writeToConfig(module: Any, data: T)
+    @Suppress("UNCHECKED_CAST")
+    open fun getConfigContents(extension: Class<*>): Map<String, Any> {
+        return this.getConfigContents(extension, MutableMap::class.java, HashMap<Any, Any>()) as Map<String, Any>
+    }
 
+    @Suppress("UNCHECKED_CAST")
+    open fun getConfigContents(extension: Any): Map<String, Any> {
+        return this.getConfigContents(extension, MutableMap::class.java, HashMap<Any, Any>()) as Map<String, Any>
+    }
+
+    abstract fun <T> getConfigContents(extension: Class<*>, convertTo: Class<T>, defaultValue: T): T
+    open fun <T> getConfigContents(extension: Any, convertTo: Class<T>, defaultValue: T): T {
+        var shadow = extension
+        if (shadow !is Class<*>) shadow = shadow.javaClass
+        return this.getConfigContents((shadow as Class<*>), convertTo, defaultValue)
+    }
+
+    abstract fun <T> writeToConfig(extension: Class<*>, data: T)
+    open fun <T> writeToConfig(extension: Any, data: T) {
+        var shadow = extension
+        if (shadow !is Class<*>) shadow = shadow.javaClass
+        this.writeToConfig((shadow as Class<*>), data)
+    }
+
+    abstract fun getFileType(): FileType
 
 }

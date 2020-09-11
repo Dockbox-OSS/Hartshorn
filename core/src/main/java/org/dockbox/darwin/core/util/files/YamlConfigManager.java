@@ -25,15 +25,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator.Feature;
 
 import org.dockbox.darwin.core.server.Server;
-import org.dockbox.darwin.core.server.ServerReference;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
-public class YamlConfigManager extends ServerReference implements ConfigManager {
+public class YamlConfigManager extends ConfigManager {
 
     private final ObjectMapper mapper;
 
@@ -51,49 +48,6 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
 
     @NotNull
     @Override
-    public Path getConfigDir(@NotNull Class<?> module) {
-        return this.runWithExtension(module, (annotation) -> Server.getInstance(FileUtils.class).getModuleConfigDir().resolve(annotation.id()));
-    }
-
-    @NotNull
-    @Override
-    public Path getConfigDir(@NotNull Object module) {
-        if (!(module instanceof Class)) module = module.getClass();
-        return this.getConfigDir((Class<?>) module);
-    }
-
-    @NotNull
-    @Override
-    public Path getConfigFile(@NotNull Class<?> module) {
-        return this.runWithExtension(module, (annotation) -> {
-            Path configPath = this.getConfigDir(module);
-            return Server.getInstance(FileUtils.class).createFileIfNotExists(configPath.resolve(annotation.id() + ".yml"));
-        });
-    }
-
-    @NotNull
-    @Override
-    public Path getConfigFile(@NotNull Object module) {
-        if (!(module instanceof Class)) module = module.getClass();
-        return this.getConfigFile((Class<?>) module);
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @NotNull
-    @Override
-    public Map<String, Object> getConfigContents(@NotNull Class<?> module) {
-        return this.getConfigContents(module, Map.class, new HashMap());
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @NotNull
-    @Override
-    public Map<String, Object> getConfigContents(@NotNull Object module) {
-        return this.getConfigContents(module, Map.class, new HashMap());
-    }
-
-    @NotNull
-    @Override
     public <T> T getConfigContents(@NotNull Class<?> module, @NotNull Class<T> convertTo, T defaultValue) {
         return this.runWithExtension(module, (annotation) -> {
             try {
@@ -107,13 +61,6 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
         });
     }
 
-    @NotNull
-    @Override
-    public <T> T getConfigContents(@NotNull Object module, @NotNull Class<T> convertTo, T defaultValue) {
-        if (!(module instanceof Class)) module = module.getClass();
-        return this.getConfigContents((Class<?>) module, convertTo, defaultValue);
-    }
-
     @Override
     public <T> void writeToConfig(@NotNull Class<?> module, T data) {
         try {
@@ -124,9 +71,9 @@ public class YamlConfigManager extends ServerReference implements ConfigManager 
         }
     }
 
+    @NotNull
     @Override
-    public <T> void writeToConfig(@NotNull Object module, T data) {
-        if (!(module instanceof Class)) module = module.getClass();
-        this.writeToConfig((Class<?>) module, data);
+    public FileType getFileType() {
+        return FileType.YAML;
     }
 }
