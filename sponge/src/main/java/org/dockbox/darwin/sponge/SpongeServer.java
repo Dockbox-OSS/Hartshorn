@@ -17,23 +17,30 @@
 
 package org.dockbox.darwin.sponge;
 
+import net.dv8tion.jda.api.JDA;
+
 import org.dockbox.darwin.core.command.CommandBus;
 import org.dockbox.darwin.core.events.server.ServerEvent;
 import org.dockbox.darwin.core.server.Server;
+import org.dockbox.darwin.core.util.discord.DiscordUtils;
 import org.dockbox.darwin.core.util.events.EventBus;
 import org.dockbox.darwin.core.util.extension.ExtensionContext;
 import org.dockbox.darwin.core.util.extension.ExtensionManager;
 import org.dockbox.darwin.core.util.library.LibraryArtifact;
-import org.dockbox.darwin.sponge.listeners.SpongeEventListener;
+import org.dockbox.darwin.sponge.listeners.SpongeDiscordListener;
+import org.dockbox.darwin.sponge.listeners.SpongeServerEventListener;
 import org.dockbox.darwin.sponge.util.inject.SpongeCommonInjector;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 @Plugin(
@@ -50,13 +57,15 @@ import java.util.function.Consumer;
 )
 public class SpongeServer extends Server {
 
+    private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
+
     public SpongeServer() {
         super(new SpongeCommonInjector());
     }
 
     @Listener
     public void onServerInit(GameInitializationEvent event) {
-        Sponge.getEventManager().registerListeners(this, new SpongeEventListener());
+        Sponge.getEventManager().registerListeners(this, new SpongeServerEventListener());
 
         EventBus eb = getInstance(EventBus.class);
         CommandBus cb = getInstance(CommandBus.class);
@@ -66,6 +75,29 @@ public class SpongeServer extends Server {
         super.initExternalExtensions(this.getConsumer("external", cb, eb, cm));
 
         getInstance(EventBus.class).post(new ServerEvent.Init());
+    }
+
+    @Listener(order = Order.LAST)
+    public void onServerStarted(GameStartedServerEvent event) {
+        Optional<JDA> oj = getInstance(DiscordUtils.class).getJDA();
+        if (oj.isPresent()) {
+            JDA jda = oj.get();
+            // Avoid registering it twice if the scheduler outside this condition is executing this twice.
+            // Usually cancelling all tasks would be preferred, however any extension is able to schedule tasks
+            // we may not want to cancel.
+            if (!jda.getRegisteredListeners().contains(this.discordListener)) {
+                jda.addEventListener(this.discordListener);
+            }
+        } else {
+            // Attempt to get the JDA once every 30 seconds until successful
+            Sponge.getScheduler().createTaskBuilder()
+                    .delay(30, TimeUnit.SECONDS)
+                    .execute(() -> this.onServerStarted(event))
+                    .name("JDA_scheduler")
+                    .async()
+                    .submit(this);
+        }
+
     }
 
     private Consumer<ExtensionContext> getConsumer(String contextType, CommandBus cb, EventBus eb, ExtensionManager em) {

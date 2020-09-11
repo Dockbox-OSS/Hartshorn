@@ -30,6 +30,6 @@ abstract class DiscordEvent : Event {
             val message: Message,
             val guild: Guild,
             val channel: TextChannel
-    )
+    ): DiscordEvent()
 
 }
