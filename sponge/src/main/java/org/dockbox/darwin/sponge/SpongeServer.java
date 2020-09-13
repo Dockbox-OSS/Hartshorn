@@ -24,6 +24,7 @@ import org.dockbox.darwin.core.events.server.ServerEvent;
 import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.util.discord.DiscordUtils;
 import org.dockbox.darwin.core.util.events.EventBus;
+import org.dockbox.darwin.core.util.extension.Extension;
 import org.dockbox.darwin.core.util.extension.ExtensionContext;
 import org.dockbox.darwin.core.util.extension.ExtensionManager;
 import org.dockbox.darwin.core.util.library.LibraryArtifact;
@@ -31,6 +32,7 @@ import org.dockbox.darwin.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.darwin.sponge.listeners.SpongeServerEventListener;
 import org.dockbox.darwin.sponge.util.inject.SpongeCommonInjector;
 import org.jetbrains.annotations.NotNull;
+import org.reflections.Reflections;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -106,10 +108,18 @@ public class SpongeServer extends Server {
             log().info("Found type [" + type.getCanonicalName() + "] in " + contextType + " context");
             Optional<?> oi = em.getInstance(type);
             oi.ifPresent(i -> {
-                log().info("Registering [" + type.getCanonicalName() + "] as Event and Command listener");
-                eb.subscribe(i);
-                cb.register(i);
-                du.registerCommandListener(i);
+                Package pkg = i.getClass().getPackage();
+                if (null != pkg) {
+                    log().info("Registering [" + type.getCanonicalName() + "] as Event and Command listener");
+                    eb.subscribe(i);
+                    cb.register(i);
+                    du.registerCommandListener(i);
+
+                    Reflections ref = new Reflections(pkg.toString());
+                    ref.getTypesAnnotatedWith(org.dockbox.darwin.core.annotations.Listener.class).stream()
+                            .filter(it -> !it.isAnnotationPresent(Extension.class))
+                            .forEach(eb::subscribe);
+                }
             });
         });
     }
