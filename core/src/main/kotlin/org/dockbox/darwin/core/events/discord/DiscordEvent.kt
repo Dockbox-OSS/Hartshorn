@@ -17,15 +17,12 @@
 
 package org.dockbox.darwin.core.events.discord
 
-import net.dv8tion.jda.api.entities.Guild
-import net.dv8tion.jda.api.entities.Message
-import net.dv8tion.jda.api.entities.TextChannel
-import net.dv8tion.jda.api.entities.User
+import net.dv8tion.jda.api.entities.*
 import org.dockbox.darwin.core.objects.events.Event
 
 abstract class DiscordEvent : Event {
 
-    class Chat(
+    class ChatReceived(
             val author: User,
             val message: Message,
             val guild: Guild,
@@ -36,4 +33,22 @@ abstract class DiscordEvent : Event {
             val author: User,
             val message: Message
     ): DiscordEvent()
+
+    class ReactionAdded(
+            val author: User,
+            val message: Message,
+            val reaction: MessageReaction
+    ): DiscordEvent() {
+        fun getEmoteId(): String = reaction.reactionEmote.id
+        fun getEmoteName(): String = reaction.reactionEmote.name
+    }
+
+    class ChatDeleted(
+            val messageId: String
+    ): DiscordEvent()
+
+    class PrivateChatDeleted(
+            val messageId: String
+    ): DiscordEvent()
+
 }
