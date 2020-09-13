@@ -19,6 +19,7 @@ package org.dockbox.darwin.core.events.discord
 
 import net.dv8tion.jda.api.entities.*
 import org.dockbox.darwin.core.objects.events.Event
+import java.util.*
 
 abstract class DiscordEvent : Event {
 
@@ -45,10 +46,37 @@ abstract class DiscordEvent : Event {
 
     class ChatDeleted(
             val messageId: String
-    ): DiscordEvent()
+    ) : DiscordEvent()
 
     class PrivateChatDeleted(
             val messageId: String
-    ): DiscordEvent()
+    ) : DiscordEvent()
 
+    class ChatUpdated(
+            val author: User,
+            val message: Message
+    ) : DiscordEvent()
+
+    class PrivateChatUpdated(
+            val author: User,
+            val message: Message
+    ) : DiscordEvent()
+
+    class Banned(val user: User, val guild: Guild) : DiscordEvent()
+
+    class Unbanned(val user: User, val guild: Guild) : DiscordEvent()
+
+    class Joined(val user: User, val guild: Guild) : DiscordEvent()
+
+    class Left(val user: User, val guild: Guild) : DiscordEvent()
+
+    class NicknameChanged(
+            val user: User,
+            val oldNickname: Optional<String>,
+            val newNickname: Optional<String>
+    ) : DiscordEvent()
+
+    class Disconnected : DiscordEvent()
+
+    class Reconnected : DiscordEvent()
 }

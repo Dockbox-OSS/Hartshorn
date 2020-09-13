@@ -18,20 +18,38 @@
 package org.dockbox.darwin.sponge.listeners;
 
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.DisconnectEvent;
+import net.dv8tion.jda.api.events.ReconnectedEvent;
+import net.dv8tion.jda.api.events.guild.GuildBanEvent;
+import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageUpdateEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import org.dockbox.darwin.core.events.discord.DiscordCommandContext;
 import org.dockbox.darwin.core.events.discord.DiscordEvent;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.Banned;
 import org.dockbox.darwin.core.events.discord.DiscordEvent.ChatDeleted;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.ChatUpdated;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.Disconnected;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.Joined;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.Left;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.NicknameChanged;
 import org.dockbox.darwin.core.events.discord.DiscordEvent.PrivateChatDeleted;
 import org.dockbox.darwin.core.events.discord.DiscordEvent.PrivateChatReceived;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.PrivateChatUpdated;
 import org.dockbox.darwin.core.events.discord.DiscordEvent.ReactionAdded;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.Reconnected;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.Unbanned;
 import org.dockbox.darwin.core.objects.events.Event;
 import org.dockbox.darwin.core.util.discord.DiscordUtils;
 import org.dockbox.darwin.core.util.events.EventBus;
@@ -42,6 +60,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class SpongeDiscordListener extends ListenerAdapter {
 
@@ -104,5 +123,61 @@ public class SpongeDiscordListener extends ListenerAdapter {
     public void onPrivateMessageDelete(@NotNull PrivateMessageDeleteEvent event) {
         Event pcde = new PrivateChatDeleted(event.getMessageId());
         this.bus.post(pcde);
+    }
+
+    @Override
+    public void onReconnect(@NotNull ReconnectedEvent event) {
+        this.bus.post(new Reconnected());
+    }
+
+    @Override
+    public void onDisconnect(@NotNull DisconnectEvent event) {
+        this.bus.post(new Disconnected());
+    }
+
+    @Override
+    public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
+        Event cue = new ChatUpdated(event.getAuthor(), event.getMessage());
+        this.bus.post(cue);
+    }
+
+    @Override
+    public void onPrivateMessageUpdate(@NotNull PrivateMessageUpdateEvent event) {
+        Event pcue = new PrivateChatUpdated(event.getAuthor(), event.getMessage());
+        this.bus.post(pcue);
+    }
+
+    @Override
+    public void onGuildBan(@NotNull GuildBanEvent event) {
+        Event be = new Banned(event.getUser(), event.getGuild());
+        this.bus.post(be);
+    }
+
+    @Override
+    public void onGuildUnban(@NotNull GuildUnbanEvent event) {
+        Event ue = new Unbanned(event.getUser(), event.getGuild());
+        this.bus.post(ue);
+    }
+
+    @Override
+    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+        Event je = new Joined(event.getUser(), event.getGuild());
+        this.bus.post(je);
+    }
+
+    @Override
+    public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+        Event le = new Left(event.getUser(), event.getGuild());
+        this.bus.post(le);
+    }
+
+    @Override
+    public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
+        Event nce = new NicknameChanged(
+                event.getUser(),
+                Optional.ofNullable(event.getOldNickname()),
+                Optional.ofNullable(event.getNewNickname())
+        );
+        this.bus.post(nce);
     }
 }
