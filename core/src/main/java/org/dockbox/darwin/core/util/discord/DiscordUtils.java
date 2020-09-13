@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.ChannelType;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -55,6 +56,15 @@ public abstract class DiscordUtils {
     public abstract Optional<JDA> getJDA();
 
     public abstract Optional<TextChannel> getGlobalTextChannel();
+
+    public boolean checkMessageExists(String messageId, String channelId) {
+        return this.getJDA().map(jda -> {
+            TextChannel channel = jda.getTextChannelById(channelId);
+            if (null == channel) return false;
+            Message message = channel.retrieveMessageById(messageId).complete();
+            return null != message;
+        }).orElse(false);
+    }
 
     @NotNull
     public Optional<Category> getLoggingCategory() {
