@@ -17,14 +17,21 @@
 
 package org.dockbox.darwin.sponge.listeners;
 
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.priv.PrivateMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import org.dockbox.darwin.core.events.discord.DiscordCommandContext;
 import org.dockbox.darwin.core.events.discord.DiscordEvent;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.ChatDeleted;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.PrivateChatDeleted;
 import org.dockbox.darwin.core.events.discord.DiscordEvent.PrivateChatReceived;
+import org.dockbox.darwin.core.events.discord.DiscordEvent.ReactionAdded;
 import org.dockbox.darwin.core.objects.events.Event;
 import org.dockbox.darwin.core.util.discord.DiscordUtils;
 import org.dockbox.darwin.core.util.events.EventBus;
@@ -42,14 +49,14 @@ public class SpongeDiscordListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        Event dec = new DiscordEvent.Chat(event.getAuthor(), event.getMessage(), event.getGuild(), event.getChannel());
-        this.bus.post(dec);
+        Event cre = new DiscordEvent.ChatReceived(event.getAuthor(), event.getMessage(), event.getGuild(), event.getChannel());
+        this.bus.post(cre);
     }
 
     @Override
     public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event) {
-        Event depcr = new PrivateChatReceived(event.getAuthor(), event.getMessage());
-        this.bus.post(depcr);
+        Event pcre = new PrivateChatReceived(event.getAuthor(), event.getMessage());
+        this.bus.post(pcre);
     }
 
     @Override
@@ -74,5 +81,28 @@ public class SpongeDiscordListener extends ListenerAdapter {
             );
             SpongeServer.getInstance(DiscordUtils.class).post(alias, ctx);
         }
+    }
+
+    @Override
+    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
+        event.getTextChannel().retrieveMessageById(event.getMessageId()).queue(message -> {
+            User user = event.getJDA().getUserById(event.getUserId());
+            if (null != user) {
+                Event rae = new ReactionAdded(user, message, event.getReaction());
+                this.bus.post(rae);
+            }
+        });
+    }
+
+    @Override
+    public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
+        Event cde = new ChatDeleted(event.getMessageId());
+        this.bus.post(cde);
+    }
+
+    @Override
+    public void onPrivateMessageDelete(@NotNull PrivateMessageDeleteEvent event) {
+        Event pcde = new PrivateChatDeleted(event.getMessageId());
+        this.bus.post(pcde);
     }
 }
