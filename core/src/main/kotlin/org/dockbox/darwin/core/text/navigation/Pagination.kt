@@ -23,11 +23,11 @@ import org.dockbox.darwin.core.text.Text
 interface Pagination {
 
     fun send(receiver: MessageReceiver)
-    var padding: Text
+    var padding: Text?
     var linesPerPage: Number
-    var header: Text
-    var footer: Text
-    var title: Text
+    var header: Text?
+    var footer: Text?
+    var title: Text?
     var content: List<Text>
 
 }

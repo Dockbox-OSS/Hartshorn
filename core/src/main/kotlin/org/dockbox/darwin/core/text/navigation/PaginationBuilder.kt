@@ -22,10 +22,10 @@ import org.dockbox.darwin.core.text.Text
 
 abstract class PaginationBuilder {
 
-    protected lateinit var padding: Text
-    protected lateinit var header: Text
-    protected lateinit var footer: Text
-    protected lateinit var title: Text
+    protected var padding: Text? = null
+    protected var header: Text? = null
+    protected var footer: Text? = null
+    protected var title: Text? = null
 
     protected var linesPerPage = 10
     protected var contents: List<Text> = CopyOnWriteArrayList()
