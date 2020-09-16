@@ -17,6 +17,15 @@
 
 package org.dockbox.darwin.core.command
 
+import java.lang.reflect.AnnotatedElement
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Method
+import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+import java.util.stream.Collectors
 import org.dockbox.darwin.core.annotations.Command
 import org.dockbox.darwin.core.annotations.FromSource
 import org.dockbox.darwin.core.command.context.CommandContext
@@ -33,19 +42,12 @@ import org.dockbox.darwin.core.objects.location.World
 import org.dockbox.darwin.core.objects.optional.Exceptional
 import org.dockbox.darwin.core.objects.targets.CommandSource
 import org.dockbox.darwin.core.objects.targets.Console
+import org.dockbox.darwin.core.objects.targets.Identifiable
 import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
+import org.dockbox.darwin.core.util.Utils
 import org.dockbox.darwin.core.util.extension.Extension
 import org.dockbox.darwin.core.util.extension.ExtensionManager
-import java.lang.reflect.AnnotatedElement
-import java.lang.reflect.InvocationTargetException
-import java.lang.reflect.Method
-import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicReference
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-import java.util.stream.Collectors
 
 
 abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
@@ -82,6 +84,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                                     override fun run(src: CommandSource, ctx: CommandContext) {
                                         val result = invoke(registration.method, src, ctx, registration)
                                         if (result.errorPresent()) src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result.error.message))
+                                        else if (result.isPresent) src.send(result.get())
                                     }
                                 })
                                 Server.log().info("Registered singular command : /$alias")
@@ -107,6 +110,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                                 src, ctx,
                                 subRegistration)
                         if (result.errorPresent()) src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result))
+                        else if (result.isPresent) src.send(result.get())
                     }
                 }
                 Arrays.stream(subRegistration.aliases).forEach {
@@ -180,51 +184,70 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         }.toArray { size -> arrayOfNulls<MethodCommandRegistration>(size) }
     }
 
-    private operator fun invoke(method: Method, sender: CommandSource, ctx: CommandContext, registration: AbstractCommandRegistration): Exceptional<String> {
+    private fun checkSenderInCooldown(sender: CommandSource, ctx: CommandContext, method: Method): Boolean {
+        val command = method.getAnnotation(Command::class.java)
+        if (command.cooldownDuration < 0) return false
+        if (sender is Identifiable) {
+            val registrationId = getRegistrationId(sender, ctx)
+            return (Utils.isInCooldown(registrationId))
+        }
+        return false
+    }
+
+    private fun getRegistrationId(sender: Identifiable, ctx: CommandContext): String {
+        val uuid = sender.uniqueId
+        val alias = ctx.alias
+        return "$uuid$$alias"
+    }
+
+    private operator fun invoke(method: Method, sender: CommandSource, ctx: CommandContext, registration: AbstractCommandRegistration): Exceptional<IntegratedResource> {
+        if (checkSenderInCooldown(sender, ctx, method)) {
+            return Exceptional.of(IntegratedResource.IN_ACTIVE_COOLDOWN)
+        }
+
         return try {
             val c: Class<*> = method.declaringClass
             val finalArgs: MutableList<Any> = ArrayList()
 
             for (parameterType in method.parameterTypes) {
-                if (parameterType is CommandSource) {
-                    if (parameterType is Player) {
+                if (parameterType.isAssignableFrom(CommandSource::class.java) || CommandSource::class.java.isAssignableFrom(parameterType)) {
+                    if (parameterType == Player::class.java) {
                         if (sender is Player) finalArgs.add(sender)
                         else return Exceptional.of(IllegalSourceException("Command can only be ran by players!"))
-                    } else if (parameterType is Console) {
+                    } else if (parameterType == Console::class.java) {
                         if (sender is Console) finalArgs.add(sender)
                         else return Exceptional.of(IllegalSourceException("Command can only be ran by the console!"))
                     } else finalArgs.add(sender)
                 }
-                else if (parameterType == CommandContext::class.java || CommandContext::class.java.isAssignableFrom(parameterType))
+                else if (parameterType == CommandContext::class.java || CommandContext::class.java.isAssignableFrom(parameterType)) {
                     finalArgs.add(ctx)
-                else
+                } else {
                     throw IllegalStateException("Method requested parameter type '" + parameterType.toGenericString() + "' which is not provided")
+                }
             }
 
             val o: Any
             if (registration.sourceInstance != null && registration.sourceInstance !is Method) {
-                Server.log().info("Source instance")
                 o = registration.sourceInstance!!
             } else if (c == Server::class.java || c.isAssignableFrom(Server::class.java) || Server::class.java.isAssignableFrom(c)) {
-                Server.log().info("Server source")
                 o = Server.getServer()
             } else {
-                Server.log().info("Extension!")
                 var extension: Optional<*>? = null
                 if (c.isAnnotationPresent(Extension::class.java) && Server.getInstance(ExtensionManager::class.java).getInstance(c).also { extension = it }.isPresent) {
-                    Server.log().info("Extension annotation present")
                     // Extension can be asserted as not-null as it is re-assigned inside the condition for instance presence
                     o = extension!!.get()
                 } else {
-                    Server.log().info("No extension annotation, creating instance")
                     o = c.getConstructor().newInstance()
                 }
             }
-            Server.log().info("Object: " + o::class.java.canonicalName)
-            Server.log().info("Arguments: " + finalArgs.size)
-            finalArgs.forEach { Server.log().info(" - $it") }
+
+            val command = method.getAnnotation(Command::class.java)
+            if (command.cooldownDuration > 0 && sender is Identifiable) {
+                val registrationId = getRegistrationId(sender, ctx)
+                Utils.cooldown(registrationId, command.cooldownDuration, command.cooldownUnit)
+            }
             method.invoke(o, *finalArgs.toTypedArray())
-            Exceptional.of("success") // No error message to return
+            Exceptional.empty() // No error message to return
         } catch (e: IllegalAccessException) {
             Server.getServer().except("Failed to invoke command", e.cause)
             Exceptional.of(e)
@@ -261,7 +284,6 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         key = vm.group(1)
         type = vm.group(2)
         permission = try {
-            // TODO: Prevent NPE on group 3 (permission)
             vm.group(3)
         } catch (e: NullPointerException) {
             Permission.GLOBAL_BYPASS.get()

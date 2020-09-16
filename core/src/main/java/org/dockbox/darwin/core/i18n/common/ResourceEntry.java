@@ -47,7 +47,7 @@ public interface ResourceEntry extends Formattable {
     }
 
     default String format(Object... args) {
-        return this.format(this.getValue(), args);
+        return this.formatCustom(this.getValue(), args);
     }
 
     default String shortFormat(Object... args) {
@@ -67,7 +67,7 @@ public interface ResourceEntry extends Formattable {
 
     // Format value placeholders and colors
     @SuppressWarnings("DuplicatedCode")
-    default String format(String m, Object... args) {
+    default String formatCustom(String m, Object... args) {
         String temp = m;
         if (0 == args.length) return temp;
         Map<String, String> map = new LinkedHashMap<>();
@@ -87,10 +87,10 @@ public interface ResourceEntry extends Formattable {
         char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
         for (char c : nativeFormats) temp = temp.replace(String.format("&%s", c), String.format("\u00A7%s", c));
         return "\u00A7r" + temp
-                .replace("\\$1", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_PRIMARY.plain()))
-                .replace("\\$2", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_SECONDARY.plain()))
-                .replace("\\$3", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_MINOR.plain()))
-                .replace("\\$4", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_ERROR.plain()));
+                .replace("$1", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_PRIMARY.plain()))
+                .replace("$2", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_SECONDARY.plain()))
+                .replace("$3", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_MINOR.plain()))
+                .replace("$4", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_ERROR.plain()));
     }
 
 }

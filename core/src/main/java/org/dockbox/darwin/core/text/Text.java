@@ -17,6 +17,7 @@
 
 package org.dockbox.darwin.core.text;
 
+import org.dockbox.darwin.core.i18n.common.ResourceEntry;
 import org.dockbox.darwin.core.objects.targets.MessageReceiver;
 import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.text.actions.ClickAction;
@@ -30,12 +31,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.DatatypeConverter;
 
 public class Text {
 
-    private static final String legacyRegexFormat = "[$|&][0-9a-fklmnor]";
+    private static final String legacyRegexFormat = "[\\$|&][0-9a-fklmnor]";
 
     public enum HashMethod {
         MD5("MD5"),
@@ -67,7 +69,9 @@ public class Text {
     public Text(Object... objects) {
         if (0 < objects.length) {
             Object prim = objects[0];
+
             if (prim instanceof Text) this.text = ((Text) prim).toStringValue();
+            else if (prim instanceof ResourceEntry) this.text = ((ResourceEntry) prim).format();
             else this.text = prim.toString();
 
             for (char styleChar : styleChars.toCharArray()) {
@@ -77,13 +81,16 @@ public class Text {
 
             for (Object obj : objects) {
                 if (obj instanceof Text) this.extra.add((Text) obj);
+                if (obj instanceof ResourceEntry) this.extra.add(of(((ResourceEntry) obj).format()));
                 else this.extra.add(of(obj));
             }
         }
     }
 
     public String toStringValue() {
-        return this.text; // TODO: Include extra
+        StringBuilder stringValue = new StringBuilder(this.text);
+        for (Text extraText : this.extra) stringValue.append(' ').append(extraText.text);
+        return stringValue.toString();
     }
 
     public String toLegacy() {
@@ -146,8 +153,13 @@ public class Text {
     public List<Text> getParts() {
         List<Text> parts = new ArrayList<>();
         parts.add(this);
-        parts.addAll(this.extra);
+        parts.addAll(this.getExtra());
         return parts;
+    }
+
+    public List<Text> getExtra() {
+        // To prevent stack overflows
+        return this.extra.stream().filter(e -> e != this).collect(Collectors.toList());
     }
 
     public static Text of(Object... objects) {
@@ -168,4 +180,8 @@ public class Text {
         return Optional.empty();
     }
 
+    @Override
+    public String toString() {
+        return this.toStringValue();
+    }
 }

@@ -18,26 +18,10 @@
 package org.dockbox.darwin.core.i18n.common;
 
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 public interface Formattable {
-
-    default String format(String m, Object... args){
-        String temp = m;
-        if (args.length == 0) return temp;
-        Map<String, String> map = new LinkedHashMap<>();
-
-        for (int i = 0; i < args.length; i++){
-            String arg = "" + args[i];
-            if (arg.isEmpty()) map.put(String.format("{%d}", i), "");
-            else map.put(String.format("{%d}", i), arg);
-            if (i == 0) map.put("%s", arg);
-        }
-        temp = this.replaceFromMap(temp, map);
-        return temp;
-    }
 
     default String replaceFromMap(String string, Map<String, String> replacements) {
         StringBuilder sb = new StringBuilder(string);

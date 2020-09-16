@@ -17,11 +17,11 @@
 
 package org.dockbox.darwin.core.i18n.entry
 
+import java.util.concurrent.ConcurrentHashMap
 import org.dockbox.darwin.core.i18n.common.Language
 import org.dockbox.darwin.core.i18n.common.ResourceEntry
 import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
-import java.util.concurrent.ConcurrentHashMap
 
 
 enum class IntegratedResource(private var value: String): ResourceEntry {
@@ -460,6 +460,7 @@ enum class IntegratedResource(private var value: String): ResourceEntry {
 
     //    Rate Limit
     RATE_LIMIT_KICK_MESSAGE("$4You are being rate limited. To prevent spam, relogging is limited to once per minute."),
+    IN_ACTIVE_COOLDOWN("$4You are in cooldown! Please wait before performing this action again."),
 
     //    Darwin CMD
     DISABLED_MODULE_ROW("$2 - &7[Disabled] $3{0} $3- $2{1} {2}"),
@@ -511,6 +512,12 @@ enum class IntegratedResource(private var value: String): ResourceEntry {
     fun setLanguageValue(lang: Language, value: String) {
         this.translations[lang] = value
         if (lang == Server.getServer().getGlobalConfig().getDefaultLanguage()) this.value = value
+    }
+
+    companion object {
+        fun parseColors(input: String): String {
+            return IntegratedResource.NONE.parseColors(input);
+        }
     }
 
 }

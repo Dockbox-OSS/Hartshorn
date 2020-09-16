@@ -112,7 +112,7 @@ allprojects {
         }
 
         dependencies {
-            compile('net.dv8tion:JDA:4.ALPHA.0_76') {
+            compile('net.dv8tion:JDA:4.1.1_155') {
                 exclude module: 'opus-java'
             }
 

@@ -35,7 +35,8 @@ class SpongeConsole private constructor() : Console() {
     }
 
     override fun send(text: ResourceEntry) {
-        send(of(text.getValue(Server.getServer().getGlobalConfig().getDefaultLanguage())))
+        val formattedValue = IntegratedResource.parseColors(text.getValue(Server.getServer().getGlobalConfig().getDefaultLanguage()))
+        send(of(formattedValue))
     }
 
     override fun send(text: Text) {

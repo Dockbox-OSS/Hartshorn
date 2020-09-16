@@ -81,6 +81,8 @@ public class SpongeDiscordListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         String fullCommand = event.getMessage().getContentStripped();
+        if (fullCommand.isEmpty()) return;
+        
         char prefix = fullCommand.charAt(0);
         if ('*' == prefix) {
             String[] parts = fullCommand.split(" ");
