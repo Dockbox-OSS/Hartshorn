@@ -132,7 +132,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                 }
             }
             val context: String = registration.command.context
-            val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
+            val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else alias
             registerCommand("*$next", registration.permissions, parentRunner.get())
 
             // Printing aliases, not used for actual logic
