@@ -18,11 +18,12 @@
 package org.dockbox.darwin.core.text.navigation
 
 import java.util.concurrent.CopyOnWriteArrayList
+import org.dockbox.darwin.core.i18n.entry.IntegratedResource
 import org.dockbox.darwin.core.text.Text
 
 abstract class PaginationBuilder {
 
-    protected var padding: Text? = null
+    protected var padding: Text = IntegratedResource.DEFAULT_PADDING.asText()
     protected var header: Text? = null
     protected var footer: Text? = null
     protected var title: Text? = null
