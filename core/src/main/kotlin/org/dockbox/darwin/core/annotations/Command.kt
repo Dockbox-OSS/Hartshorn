@@ -17,6 +17,7 @@
 
 package org.dockbox.darwin.core.annotations
 
+import java.time.temporal.ChronoUnit
 import org.dockbox.darwin.core.i18n.permissions.Permission
 
 @Retention(AnnotationRetention.RUNTIME)
@@ -25,5 +26,7 @@ annotation class Command (
         val aliases: Array<String>,
         val context: String,
         val permission: Permission = Permission.GLOBAL_BYPASS,
-        val permissionKey: String = ""
+        val permissionKey: String = "",
+        val cooldownDuration: Long = -1,
+        val cooldownUnit: ChronoUnit = ChronoUnit.SECONDS
 )
