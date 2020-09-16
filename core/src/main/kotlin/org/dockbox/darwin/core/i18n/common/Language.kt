@@ -17,11 +17,11 @@
 
 package org.dockbox.darwin.core.i18n.common
 
-enum class Language(val code: String, val description: String) {
+enum class Language(val code: String, val nameEnglish: String, val nameLocalized: String) {
 
-    EN_US("en_US", "English (US)"),
-    NL_NL("nl_NL", "Dutch (Nederlands)"),
-    FR_FR("fr_FR", "French (Français)"),
-    DE_DE("en_US", "German (Deutsch)")
+    EN_US("en_US", "English", "US"),
+    NL_NL("nl_NL", "Dutch", "Nederlands"),
+    FR_FR("fr_FR", "French", "Français"),
+    DE_DE("en_US", "German", "Deutsch")
 
 }

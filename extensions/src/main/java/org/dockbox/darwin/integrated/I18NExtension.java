@@ -51,7 +51,7 @@ public class I18NExtension {
         Language lang = ol.orElse(Language.EN_US);
         target.setLanguage(lang);
         // Messages sent after language switch will be in the preferred language
-        src.sendWithPrefix(IntegratedResource.LANG_SWITCHED.format(lang.getDescription()));
+        src.sendWithPrefix(IntegratedResource.LANG_SWITCHED.format(lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")"));
     }
 
 }
