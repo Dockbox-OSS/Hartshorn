@@ -45,7 +45,6 @@ import org.dockbox.darwin.core.objects.targets.Console
 import org.dockbox.darwin.core.objects.targets.Identifiable
 import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
-import org.dockbox.darwin.core.text.Text
 import org.dockbox.darwin.core.util.Utils
 import org.dockbox.darwin.core.util.extension.Extension
 import org.dockbox.darwin.core.util.extension.ExtensionManager
@@ -85,7 +84,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                                     override fun run(src: CommandSource, ctx: CommandContext) {
                                         val result = invoke(registration.method, src, ctx, registration)
                                         if (result.errorPresent()) src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result.error.message))
-                                        else if (result.get() != "success") src.sendWithPrefix(Text.of(IntegratedResource.COLOR_SECONDARY.asText(), result.get()))
+                                        else if (result.isPresent) src.send(result.get())
                                     }
                                 })
                                 Server.log().info("Registered singular command : /$alias")
@@ -111,7 +110,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                                 src, ctx,
                                 subRegistration)
                         if (result.errorPresent()) src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result))
-                        else if (result.get() != "success") src.sendWithPrefix(Text.of(IntegratedResource.COLOR_SECONDARY.asText(), result.get()))
+                        else if (result.isPresent) src.send(result.get())
                     }
                 }
                 Arrays.stream(subRegistration.aliases).forEach {
@@ -201,9 +200,9 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         return "$uuid$$alias"
     }
 
-    private operator fun invoke(method: Method, sender: CommandSource, ctx: CommandContext, registration: AbstractCommandRegistration): Exceptional<String> {
+    private operator fun invoke(method: Method, sender: CommandSource, ctx: CommandContext, registration: AbstractCommandRegistration): Exceptional<IntegratedResource> {
         if (checkSenderInCooldown(sender, ctx, method)) {
-            return Exceptional.of("You are in cooldown!")
+            return Exceptional.of(IntegratedResource.IN_ACTIVE_COOLDOWN)
         }
 
         return try {
@@ -211,19 +210,20 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             val finalArgs: MutableList<Any> = ArrayList()
 
             for (parameterType in method.parameterTypes) {
-                if (parameterType is CommandSource) {
-                    if (parameterType is Player) {
+                if (parameterType.isAssignableFrom(CommandSource::class.java) || CommandSource::class.java.isAssignableFrom(parameterType)) {
+                    if (parameterType == Player::class.java) {
                         if (sender is Player) finalArgs.add(sender)
                         else return Exceptional.of(IllegalSourceException("Command can only be ran by players!"))
-                    } else if (parameterType is Console) {
+                    } else if (parameterType == Console::class.java) {
                         if (sender is Console) finalArgs.add(sender)
                         else return Exceptional.of(IllegalSourceException("Command can only be ran by the console!"))
                     } else finalArgs.add(sender)
                 }
-                else if (parameterType == CommandContext::class.java || CommandContext::class.java.isAssignableFrom(parameterType))
+                else if (parameterType == CommandContext::class.java || CommandContext::class.java.isAssignableFrom(parameterType)) {
                     finalArgs.add(ctx)
-                else
+                } else {
                     throw IllegalStateException("Method requested parameter type '" + parameterType.toGenericString() + "' which is not provided")
+                }
             }
 
             val o: Any
@@ -247,7 +247,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                 Utils.cooldown(registrationId, command.cooldownDuration, command.cooldownUnit)
             }
             method.invoke(o, *finalArgs.toTypedArray())
-            Exceptional.of("success") // No error message to return
+            Exceptional.empty() // No error message to return
         } catch (e: IllegalAccessException) {
             Server.getServer().except("Failed to invoke command", e.cause)
             Exceptional.of(e)
@@ -284,7 +284,6 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         key = vm.group(1)
         type = vm.group(2)
         permission = try {
-            // TODO: Prevent NPE on group 3 (permission)
             vm.group(3)
         } catch (e: NullPointerException) {
             Permission.GLOBAL_BYPASS.get()
