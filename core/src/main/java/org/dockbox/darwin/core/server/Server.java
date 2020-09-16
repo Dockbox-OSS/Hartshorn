@@ -18,12 +18,18 @@
 package org.dockbox.darwin.core.server;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Binding;
 import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 
-import org.dockbox.darwin.core.server.config.GlobalConfig;
+import org.dockbox.darwin.core.command.CommandBus;
+import org.dockbox.darwin.core.events.server.ServerEvent;
 import org.dockbox.darwin.core.server.config.ExceptionLevels;
+import org.dockbox.darwin.core.server.config.GlobalConfig;
+import org.dockbox.darwin.core.util.discord.DiscordUtils;
+import org.dockbox.darwin.core.util.events.EventBus;
 import org.dockbox.darwin.core.util.exceptions.ExceptionHelper;
 import org.dockbox.darwin.core.util.extension.Extension;
 import org.dockbox.darwin.core.util.extension.ExtensionContext;
@@ -35,6 +41,7 @@ import org.dockbox.darwin.core.util.inject.AbstractUtilInjector;
 import org.dockbox.darwin.core.util.library.LibraryArtifact;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +51,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Consumer;
 
@@ -69,6 +77,8 @@ public abstract class Server implements KServer {
             AbstractExceptionInjector exceptionInjector,
             AbstractUtilInjector utilInjector
     ) {
+        this.verifyArtifacts();
+
         this.injector = Guice.createInjector();
         if (null != moduleInjector) this.injector = this.injector.createChildInjector(moduleInjector);
         if (null != exceptionInjector) this.injector = this.injector.createChildInjector(exceptionInjector);
@@ -76,6 +86,11 @@ public abstract class Server implements KServer {
 
         this.verifyInjectorBindings();
         this.construct();
+    }
+
+    private void verifyArtifacts() {
+        // TODO: Maven repository verification
+//        for (LibraryArtifact artifact : this.getAllArtifacts()) { }
     }
 
     private void verifyInjectorBindings() {
@@ -139,6 +154,78 @@ public abstract class Server implements KServer {
         getInstance(ExtensionManager.class).getExternalExtensions().forEach(consumer);
     }
 
+    protected void init() {
+        EventBus eb = getInstance(EventBus.class);
+        CommandBus cb = getInstance(CommandBus.class);
+        ExtensionManager cm = getInstance(ExtensionManager.class);
+        DiscordUtils du = getInstance(DiscordUtils.class);
+
+        this.initIntegratedExtensions(this.getConsumer("integrated", cb, eb, cm, du));
+        this.initExternalExtensions(this.getConsumer("external", cb, eb, cm, du));
+
+        getInstance(EventBus.class).post(new ServerEvent.Init());
+    }
+
+    protected void debugRegisteredInstances() {
+        log().info("\u00A77(\u00A7bDarwinServer\u00A77) \u00A7fLoaded bindings: ");
+        this.getInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
+            Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
+            Class<?> providerType = binding.getProvider().get().getClass();
+
+            if (!keyType.equals(providerType))
+                log().info("  - \u00A77" + keyType.getSimpleName() + ": \u00A78" + providerType.getCanonicalName());
+        });
+
+        log().info("\u00A77(\u00A7bDarwinServer\u00A77) \u00A7fLoaded extensions: ");
+        ExtensionManager em = getInstance(ExtensionManager.class);
+        em.getRegisteredExtensionIds().forEach(ext -> {
+            Optional<Extension> header = em.getHeader(ext);
+            if (header.isPresent()) {
+                Extension ex = header.get();
+                log().info("  - \u00A77" + ex.name());
+                log().info("  | - \u00A77ID: \u00A78" + ex.id());
+                log().info("  | - \u00A77Authors: \u00A78" + Arrays.toString(ex.authors()));
+                log().info("  | - \u00A77Version: \u00A78" + ex.version());
+                log().info("  | - \u00A77URL: \u00A78" + ex.url());
+                log().info("  | - \u00A77Requires NMS: \u00A78" + ex.requiresNMS());
+                log().info("  | - \u00A77Dependencies: \u00A78" + Arrays.toString(ex.dependencies()));
+            } else {
+                log().info("  - \u00A77" + ext + " \u00A78(No header)");
+            }
+        });
+
+        log().info("\u00A77(\u00A7bDarwinServer\u00A77) \u00A7fLoaded event handlers: ");
+        getInstance(EventBus.class).getListenerToInvokers().forEach((listener, invokers) -> {
+            Class<?> type;
+            if (listener instanceof Class) type = (Class<?>) listener;
+            else type = listener.getClass();
+
+            log().info("  - \u00A77" + type.getCanonicalName());
+            invokers.forEach(invoker -> log().info("  | - \u00A77" + invoker.getEventType().getSimpleName() + ": \u00A78" + invoker.getMethod().getName()));
+        });
+    }
+
+    private Consumer<ExtensionContext> getConsumer(String contextType, CommandBus cb, EventBus eb, ExtensionManager em, DiscordUtils du) {
+        return (ExtensionContext ctx) -> ctx.getClasses().values().forEach(type -> {
+            log().info("Found type [" + type.getCanonicalName() + "] in " + contextType + " context");
+            Optional<?> oi = em.getInstance(type);
+            oi.ifPresent(i -> {
+                Package pkg = i.getClass().getPackage();
+                if (null != pkg) {
+                    log().info("Registering [" + type.getCanonicalName() + "] as Event and Command listener");
+                    eb.subscribe(i);
+                    cb.register(i);
+                    du.registerCommandListener(i);
+
+                    Reflections ref = new Reflections(pkg.getName());
+                    ref.getTypesAnnotatedWith(org.dockbox.darwin.core.annotations.Listener.class).stream()
+                            .filter(it -> !it.isAnnotationPresent(Extension.class))
+                            .forEach(eb::subscribe);
+                }
+            });
+        });
+    }
+
     @NotNull
     @Override
     public Logger getLog() {
@@ -191,9 +278,8 @@ public abstract class Server implements KServer {
         return instance;
     }
 
-    // TODO: Check if these are present at startup
     private LibraryArtifact[] getAllArtifacts() {
-        List<LibraryArtifact> artifacts = new ArrayList<>(Arrays.asList(this.getArtifacts()));
+        List<LibraryArtifact> artifacts = new ArrayList<>(Arrays.asList(this.getPlatformArtifacts()));
         artifacts.add(new LibraryArtifact("org.reflections", "reflections", "0.9.11"));
         artifacts.add(new LibraryArtifact("com.fasterxml.jackson.core", "jackson-databind", "2.9.8"));
         artifacts.add(new LibraryArtifact("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", "2.9.8"));
@@ -202,6 +288,6 @@ public abstract class Server implements KServer {
         return artifacts.toArray(new LibraryArtifact[0]);
     }
 
-    protected abstract LibraryArtifact[] getArtifacts();
+    protected abstract LibraryArtifact[] getPlatformArtifacts();
 
 }
