@@ -17,15 +17,15 @@
 
 package org.dockbox.darwin.core.command.parse.impl
 
+import java.util.*
 import org.dockbox.darwin.core.command.context.CommandValue
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.darwin.core.i18n.common.Language
-import java.util.*
 
 class LanguageArgumentParser : AbstractTypeArgumentParser<Language>() {
 
     override fun parse(commandValue: CommandValue<String>): Optional<Language> {
-        val l = commandValue.value
+        val l = commandValue.value.toUpperCase()
         val lang: Language
         lang = try {
             Language.valueOf(l)
