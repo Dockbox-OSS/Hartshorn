@@ -28,6 +28,6 @@ interface Pagination {
     var header: Text
     var footer: Text
     var title: Text
-    var content: Iterable<Text>
+    var content: List<Text>
 
 }

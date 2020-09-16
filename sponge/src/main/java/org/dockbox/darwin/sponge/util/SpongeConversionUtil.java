@@ -27,6 +27,7 @@ import org.dockbox.darwin.core.objects.user.Gamemode;
 import org.dockbox.darwin.core.text.actions.ClickAction;
 import org.dockbox.darwin.core.text.actions.HoverAction;
 import org.dockbox.darwin.core.text.actions.ShiftClickAction;
+import org.dockbox.darwin.core.text.navigation.Pagination;
 import org.dockbox.darwin.sponge.exceptions.TypeConversionException;
 import org.dockbox.darwin.sponge.objects.location.SpongeLocation;
 import org.dockbox.darwin.sponge.objects.location.SpongeWorld;
@@ -39,6 +40,7 @@ import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.serializer.TextSerializers;
@@ -47,9 +49,11 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public enum SpongeConversionUtil {
     ;
@@ -204,5 +208,18 @@ public enum SpongeConversionUtil {
         } catch (IllegalArgumentException | NullPointerException e) {
             return Gamemode.OTHER;
         }
+    }
+
+    public static PaginationList toSponge(Pagination pagination) {
+        PaginationList.Builder builder = PaginationList.builder();
+        builder
+                .title(toSponge(pagination.getTitle()))
+                .header(toSponge(pagination.getHeader()))
+                .footer(toSponge(pagination.getFooter()))
+                .padding(toSponge(pagination.getPadding()))
+                .linesPerPage(pagination.getLinesPerPage().intValue());
+        List<Text> convertedContent = pagination.getContent().stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList());
+        builder.contents(convertedContent);
+        return builder.build();
     }
 }

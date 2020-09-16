@@ -30,6 +30,7 @@ import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.text.Text
 import org.dockbox.darwin.core.text.Text.of
+import org.dockbox.darwin.core.text.navigation.Pagination
 import org.dockbox.darwin.core.util.player.PlayerStorageService
 import org.dockbox.darwin.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
@@ -122,6 +123,12 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
                 org.spongepowered.api.text.Text.of(text)
         )
         )
+    }
+
+    override fun sendPagination(pagination: Pagination) {
+        if (referenceExists()) {
+            SpongeConversionUtil.toSponge(pagination).sendTo(reference!!)
+        }
     }
 
     override fun hasPermission(permission: String): Boolean {
