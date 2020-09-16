@@ -18,6 +18,7 @@
 package org.dockbox.darwin.sponge;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDAInfo;
 
 import org.dockbox.darwin.core.command.CommandBus;
 import org.dockbox.darwin.core.events.server.ServerEvent;
@@ -90,6 +91,7 @@ public class SpongeServer extends Server {
             // we may not want to cancel.
             if (!jda.getRegisteredListeners().contains(this.discordListener)) {
                 jda.addEventListener(this.discordListener);
+                log().info("Initiated JDA" + JDAInfo.VERSION);
             }
         } else {
             // Attempt to get the JDA once every 30 seconds until successful
