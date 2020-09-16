@@ -113,37 +113,28 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             else spec.executor(this.buildExecutor(runner, command));
 
             String alias = command.substring(0, command.indexOf(' '));
-            if (part.isEmpty()) part = "@m";
             List<Tuple<String, CommandSpec>> aliases = childsPerAlias.getOrDefault(alias, new ArrayList<>());
             aliases.add(new Tuple<>(part, spec.build()));
             childsPerAlias.put(alias, aliases);
 
             // Parent command
         } else if (command.startsWith("*")) {
-            Server.log().info("Found parent command '" + part + "'");
             String registeredCmd = command.substring(1);
             if (command.contains(" ")) registeredCmd = command.substring(1, command.indexOf(' '));
             if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(registeredCmd)) {
                 List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, new ArrayList<>());
                 childs.forEach(child -> {
-                    if ("@m".equals(child.getFirst())) {
+                    if (super.getPARENT_COMMAND_PREFIX().equals(child.getFirst())) {
                         spec.executor(child.getSecond().getExecutor());
                     } else {
                         spec.child(child.getSecond(), child.getFirst());
                     }
                 });
 
-                try {
-                    Field executorF = spec.getClass().getDeclaredField("executor");
-                    executorF.setAccessible(true);
-                    if (null == executorF.get(spec)) spec.executor((src, args) -> CommandResult.success());
-                } catch (Throwable e) {
-                    Server.getServer().except("Could not access executor field", e);
-                    spec.executor((src, args) -> CommandResult.success());
-                }
+                spec.executor(this.buildExecutor(runner, command));
 
                 try {
-                    Server.log().info("Registering '" + command + "' to Sponge");
+                    Server.log().info("Registering '" + registeredCmd + "' to Sponge");
                     Sponge.getCommandManager().register(Server.getServer(), spec.build(), registeredCmd);
                 } catch (IllegalArgumentException e) {
                     Server.getServer().except(e.getMessage(), e);

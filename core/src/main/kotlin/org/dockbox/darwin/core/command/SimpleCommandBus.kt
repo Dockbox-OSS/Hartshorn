@@ -55,6 +55,8 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         BOOL, DOUBLE, ENTITY, INTEGER, LOCATION, LONG, PLAYER, MODULE, REMAININGSTRING, STRING, USER, UUID, VECTOR, WORLD, EDITSESSION, MASK, PATTERN, REGION, OTHER
     }
 
+    protected val PARENT_COMMAND_PREFIX: String = "@m"
+
     override fun register(vararg objs: Any) {
         for (obj in objs) {
             val clazz: Class<*> = if (obj is Class<*>) obj else obj.javaClass
@@ -84,7 +86,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                                     override fun run(src: CommandSource, ctx: CommandContext) {
                                         val result = invoke(registration.method, src, ctx, registration)
                                         if (result.errorPresent()) src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result.error.message))
-                                        else if (result.isPresent) src.send(result.get())
+                                        else if (result.isPresent) src.sendWithPrefix(result.get())
                                     }
                                 })
                                 Server.log().info("Registered singular command : /$alias")
@@ -103,22 +105,28 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             })
 
             Arrays.stream(registration.subcommands).forEach { subRegistration ->
+
                 val methodRunner = object : CommandRunnerFunction {
                     override fun run(src: CommandSource, ctx: CommandContext) {
+                        Server.log().info("Starting runner for $alias")
                         val result = invoke(
                                 subRegistration.method,
                                 src, ctx,
                                 subRegistration)
                         if (result.errorPresent()) src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result))
-                        else if (result.isPresent) src.send(result.get())
+                        else if (result.isPresent) src.sendWithPrefix(result.get())
                     }
                 }
+
                 Arrays.stream(subRegistration.aliases).forEach {
                     if (it != "") {
-                        val context: String = subRegistration.command.context
+                        println("Registration for sub '$it'")
+                        // Sub commands need the parent command in the context so it can register correctly
+                        val context: String = it + ' ' + subRegistration.command.context
                         val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
                         registerCommand(next, subRegistration.permissions, methodRunner)
                     } else {
+                        println("Found parent! " + subRegistration.method.name)
                         parentRunner.set(methodRunner)
                     }
                 }
