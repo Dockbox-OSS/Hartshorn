@@ -22,14 +22,46 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
+import kotlin.Triple;
 
 @SuppressWarnings({"ClassWithTooManyMethods", "OverlyComplexClass"})
 public enum Utils {
     ;
+
+    private static final Map<Object, Triple<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
+
+    public static void cooldown(Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
+        if (isInCooldown(o) && !overwriteExisting) return;
+        activeCooldowns.put(o, new Triple<>(LocalDateTime.now(), duration, timeUnit));
+    }
+    
+    public static void cooldown(Object o, Long duration, TemporalUnit timeUnit) {
+        cooldown(o, duration, timeUnit, false);
+    }
+
+    public static boolean isInCooldown(Object o) {
+        if (activeCooldowns.containsKey(o)) {
+            LocalDateTime now = LocalDateTime.now();
+            Triple<LocalDateTime, Long, TemporalUnit> cooldown = activeCooldowns.get(o);
+            LocalDateTime timeCooledDown = cooldown.getFirst();
+            Long duration = cooldown.getSecond();
+            TemporalUnit timeUnit = cooldown.getThird();
+
+            LocalDateTime endTime = timeCooledDown.plus(duration, timeUnit);
+
+            return endTime.isAfter(now);
+
+        } else return false;
+    }
 
     private static final char[] _hex = {
             '0', '1', '2', '3', '4', '5', '6', '7',
