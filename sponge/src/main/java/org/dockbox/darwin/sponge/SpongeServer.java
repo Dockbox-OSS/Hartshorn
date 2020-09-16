@@ -115,7 +115,7 @@ public class SpongeServer extends Server {
                     cb.register(i);
                     du.registerCommandListener(i);
 
-                    Reflections ref = new Reflections(pkg.toString());
+                    Reflections ref = new Reflections(pkg.getName());
                     ref.getTypesAnnotatedWith(org.dockbox.darwin.core.annotations.Listener.class).stream()
                             .filter(it -> !it.isAnnotationPresent(Extension.class))
                             .forEach(eb::subscribe);
