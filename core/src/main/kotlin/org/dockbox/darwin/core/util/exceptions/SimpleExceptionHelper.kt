@@ -17,8 +17,8 @@
 
 package org.dockbox.darwin.core.util.exceptions
 
-import org.dockbox.darwin.core.server.Server
 import java.util.*
+import org.dockbox.darwin.core.server.Server
 
 class SimpleExceptionHelper : ExceptionHelper {
     override fun printFriendly(message: String?, exception: Throwable?, stacktrace: Boolean?) {
@@ -29,7 +29,17 @@ class SimpleExceptionHelper : ExceptionHelper {
             if (exception.stackTrace.isNotEmpty()) {
                 val root = exception.stackTrace[0]
                 Server.log().error("Location: " + root.fileName + " line " + root.lineNumber)
-                if (stacktrace != null && stacktrace) Server.log().error(Arrays.toString(exception.stackTrace))
+                if (stacktrace != null && stacktrace) {
+                    var nextException = exception
+                    while (null != nextException) {
+                        val exceptionTrace = nextException.stackTrace
+                        Server.log().error(nextException::class.java.canonicalName)
+                        for (trace in exceptionTrace) {
+                            Server.log().error("  at " + trace.className + "." + trace.methodName + " line " + trace.lineNumber)
+                        }
+                        nextException = nextException.cause
+                    }
+                }
             }
         } else Server.log().error("Received exception call, but exception was null")
         Server.log().error("========================================")
