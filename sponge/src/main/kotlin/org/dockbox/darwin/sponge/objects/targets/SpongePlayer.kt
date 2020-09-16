@@ -18,6 +18,7 @@
 package org.dockbox.darwin.sponge.objects.targets
 
 import com.boydti.fawe.`object`.FawePlayer
+import java.util.*
 import org.dockbox.darwin.core.i18n.common.Language
 import org.dockbox.darwin.core.i18n.common.ResourceEntry
 import org.dockbox.darwin.core.i18n.entry.IntegratedResource
@@ -37,7 +38,6 @@ import org.spongepowered.api.entity.living.player.gamemode.GameModes
 import org.spongepowered.api.service.permission.SubjectData
 import org.spongepowered.api.service.user.UserStorageService
 import org.spongepowered.api.util.Tristate
-import java.util.*
 
 class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
 
@@ -155,7 +155,8 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun send(text: ResourceEntry) {
-        send(of(text.getValue(getLanguage())))
+        val formattedValue = IntegratedResource.parseColors(text.getValue(getLanguage()))
+        send(of(formattedValue))
     }
 
     override fun getLocation(): Location {

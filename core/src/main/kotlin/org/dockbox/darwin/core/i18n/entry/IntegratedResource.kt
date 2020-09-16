@@ -513,4 +513,10 @@ enum class IntegratedResource(private var value: String): ResourceEntry {
         if (lang == Server.getServer().getGlobalConfig().getDefaultLanguage()) this.value = value
     }
 
+    companion object {
+        fun parseColors(input: String): String {
+            return IntegratedResource.NONE.parseColors(input);
+        }
+    }
+
 }
