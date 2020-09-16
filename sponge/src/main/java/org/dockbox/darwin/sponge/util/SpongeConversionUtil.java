@@ -48,6 +48,7 @@ import org.spongepowered.api.world.World;
 
 import java.net.URL;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public enum SpongeConversionUtil {
@@ -73,9 +74,10 @@ public enum SpongeConversionUtil {
     public static Text toSponge(org.dockbox.darwin.core.text.Text message) {
         Iterable<org.dockbox.darwin.core.text.Text> parts = message.getParts();
         Text.Builder b = Text.builder();
+        AtomicBoolean isFirst = new AtomicBoolean(true);
         parts.forEach(part -> {
-
-            if (1 < part.getParts().size()) {
+            // If we check the extra's of the first part, it'll endlessly loop here
+            if (!isFirst.get() && !part.getExtra().isEmpty()) {
                 b.append(toSponge(part));
 
             } else {
@@ -93,6 +95,7 @@ public enum SpongeConversionUtil {
 
                 b.append(pb.build());
             }
+            isFirst.set(false);
         });
 
         return b.build();
