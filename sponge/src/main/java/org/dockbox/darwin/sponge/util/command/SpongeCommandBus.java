@@ -87,70 +87,75 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         Sponge.getCommandManager().register(Server.getServer(), CommandSpec.builder().permission(permission.get()).executor(this.buildExecutor(runner, command)).build(), command);
     }
 
-    @SuppressWarnings("CallToSuspiciousStringMethod")
     @Override
     public void registerCommandArgsAndOrChild(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunnerFunction runner) {
         CommandSpec.Builder spec = CommandSpec.builder();
-        // Sponge does not allow for multiple permissions for one command
         spec.permission(permission.get());
-        Server.log().warn(
-                String.format("Registering command '%s' with singular permission (%s)", command,
-                        permission.get()));
+        Server.log().warn(String.format("Registering command '%s' with singular permission (%s)", command, permission.get()));
 
         String[] parts = command.split(" ");
         String part = 1 < parts.length ? parts[1] : null;
-        // Child command
+
         if (null != part && SimpleCommandBus.Companion.getSubcommand().matcher(part).matches()) {
-            Server.log().info("Found child command '" + part + "'");
-            String arguments = command.substring(command.indexOf(' ') + 1)
-                    .replaceFirst(part, "");
-            if (arguments.endsWith(" ")) arguments = arguments.substring(0, arguments.length() - 2);
-
-            CommandElement[] elements = this.parseArguments(arguments);
-
-            elements = Arrays.stream(elements).filter(Objects::nonNull).toArray(CommandElement[]::new);
-            if (0 < elements.length) spec.executor(this.buildExecutor(runner, command)).arguments(elements);
-            else spec.executor(this.buildExecutor(runner, command));
-
-            String alias = command.substring(0, command.indexOf(' '));
-            List<Tuple<String, CommandSpec>> aliases = childsPerAlias.getOrDefault(alias, new ArrayList<>());
-            aliases.add(new Tuple<>(part, spec.build()));
-            childsPerAlias.put(alias, aliases);
-
-            // Parent command
+            this.registerChildCommand(command, runner, spec, part);
         } else if (command.startsWith("*")) {
-            String registeredCmd = command.substring(1);
-            if (command.contains(" ")) registeredCmd = command.substring(1, command.indexOf(' '));
-            if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(registeredCmd)) {
-                List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, new ArrayList<>());
-                childs.forEach(child -> {
-                    if (super.getPARENT_COMMAND_PREFIX().equals(child.getFirst())) {
-                        spec.executor(child.getSecond().getExecutor());
-                    } else {
-                        spec.child(child.getSecond(), child.getFirst());
-                    }
-                });
-
-                spec.executor(this.buildExecutor(runner, command));
-
-                try {
-                    Server.log().info("Registering '" + registeredCmd + "' to Sponge");
-                    Sponge.getCommandManager().register(Server.getServer(), spec.build(), registeredCmd);
-                } catch (IllegalArgumentException e) {
-                    Server.getServer().except(e.getMessage(), e);
-                }
-                SimpleCommandBus.Companion.getRegisteredCommands().add(registeredCmd);
-            }
-            // Single method command
+            this.registerParentCommand(command, runner, spec);
         } else {
-            Server.log().info("Found single method command '" + part + "'");
-            if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(command.substring(0, command.indexOf(' ')))) {
-                Server.log().info("Registering single method command '" + part + "' to Sponge");
-                spec.executor(this.buildExecutor(runner, command)).arguments(this.parseArguments(command.substring(command.indexOf(' ') + 1)));
-                Sponge.getCommandManager().register(Server.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
-                SimpleCommandBus.Companion.getRegisteredCommands().add(command.substring(0, command.indexOf(' ')));
-            }
+            this.registerSingleMethodCommand(command, runner, spec, part);
+        }
+    }
 
+    private void registerChildCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, CommandSpec.Builder spec, String part) {
+        Server.log().info("Found child command '" + part + "'");
+        String arguments = command.substring(command.indexOf(' ') + 1)
+                .replaceFirst(part, "");
+        if (arguments.endsWith(" ")) arguments = arguments.substring(0, arguments.length() - 2);
+
+        CommandElement[] elements = this.parseArguments(arguments);
+
+        elements = Arrays.stream(elements).filter(Objects::nonNull).toArray(CommandElement[]::new);
+        if (0 < elements.length) spec.executor(this.buildExecutor(runner, command)).arguments(elements);
+        else spec.executor(this.buildExecutor(runner, command));
+
+        String alias = command.substring(0, command.indexOf(' '));
+        List<Tuple<String, CommandSpec>> aliases = childsPerAlias.getOrDefault(alias, new ArrayList<>());
+        aliases.add(new Tuple<>(part, spec.build()));
+        childsPerAlias.put(alias, aliases);
+    }
+
+    private void registerSingleMethodCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, CommandSpec.Builder spec, String part) {
+        Server.log().info("Found single method command '" + part + "'");
+        if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(command.substring(0, command.indexOf(' ')))) {
+            Server.log().info("Registering single method command '" + part + "' to Sponge");
+            spec.executor(this.buildExecutor(runner, command)).arguments(this.parseArguments(command.substring(command.indexOf(' ') + 1)));
+            Sponge.getCommandManager().register(Server.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
+            SimpleCommandBus.Companion.getRegisteredCommands().add(command.substring(0, command.indexOf(' ')));
+        }
+    }
+
+    @SuppressWarnings("CallToSuspiciousStringMethod")
+    private void registerParentCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, CommandSpec.Builder spec) {
+        String registeredCmd = command.substring(1);
+        if (command.contains(" ")) registeredCmd = command.substring(1, command.indexOf(' '));
+        if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(registeredCmd)) {
+            List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, new ArrayList<>());
+            childs.forEach(child -> {
+                if (super.getPARENT_COMMAND_PREFIX().equals(child.getFirst())) {
+                    spec.executor(child.getSecond().getExecutor());
+                } else {
+                    spec.child(child.getSecond(), child.getFirst());
+                }
+            });
+
+            spec.executor(this.buildExecutor(runner, command));
+
+            try {
+                Server.log().info("Registering '" + registeredCmd + "' to Sponge");
+                Sponge.getCommandManager().register(Server.getServer(), spec.build(), registeredCmd);
+            } catch (IllegalArgumentException e) {
+                Server.getServer().except(e.getMessage(), e);
+            }
+            SimpleCommandBus.Companion.getRegisteredCommands().add(registeredCmd);
         }
     }
 
@@ -280,6 +285,11 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
         String alias = command.split(" ")[0];
 
+        return this.getContext(sender, arguments, flags, alias);
+    }
+
+    @NotNull
+    private org.dockbox.darwin.core.command.context.CommandContext getContext(org.dockbox.darwin.core.objects.targets.@NotNull CommandSource sender, List<CommandValue.Argument<?>> arguments, List<CommandValue.Flag<?>> flags, String alias) {
         org.dockbox.darwin.core.command.context.CommandContext darwinCtx;
         if (sender instanceof org.dockbox.darwin.core.objects.user.Player) {
             org.dockbox.darwin.core.objects.location.Location loc = ((org.dockbox.darwin.core.objects.user.Player) sender).getLocation();
