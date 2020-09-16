@@ -24,7 +24,7 @@ import org.dockbox.darwin.core.i18n.permissions.Permission
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 annotation class Command (
         val aliases: Array<String>,
-        val context: String,
+        val usage: String,
         val permission: Permission = Permission.GLOBAL_BYPASS,
         val permissionKey: String = "",
         val cooldownDuration: Long = -1,

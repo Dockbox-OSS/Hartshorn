@@ -80,7 +80,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                 .forEach { registration ->
                     Arrays.stream(registration.aliases)
                             .forEach { alias ->
-                                val context: String = registration.command.context
+                                val context: String = registration.command.usage
                                 val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
                                 registerCommand(next, registration.permissions, object : CommandRunnerFunction {
                                     override fun run(src: CommandSource, ctx: CommandContext) {
@@ -122,7 +122,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                     if (it != "") {
                         println("Registration for sub '$it'")
                         // Sub commands need the parent command in the context so it can register correctly
-                        val context: String = it + ' ' + subRegistration.command.context
+                        val context: String = it + ' ' + subRegistration.command.usage
                         val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
                         registerCommand(next, subRegistration.permissions, methodRunner)
                     } else {
@@ -131,7 +131,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                     }
                 }
             }
-            val context: String = registration.command.context
+            val context: String = registration.command.usage
             val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else alias
             registerCommand("*$next", registration.permissions, parentRunner.get())
 
