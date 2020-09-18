@@ -86,7 +86,9 @@ public enum SpongeConversionUtil {
 
             } else {
                 Text.Builder pb = Text.builder();
-                pb.append(TextSerializers.FORMATTING_CODE.deserialize(part.toLegacy()));
+                // Wrapping in parseColors first so internal color codes are parsed as well. Technically the FormattingCode
+                // from TextSerializers won't be needed, but to ensure no trailing codes are left we use it here anyway.
+                pb.append(TextSerializers.FORMATTING_CODE.deserialize(IntegratedResource.Companion.parseColors(part.toLegacy())));
 
                 Optional<org.spongepowered.api.text.action.ClickAction<?>> clickAction = toSponge(part.getClickAction());
                 clickAction.ifPresent(pb::onClick);

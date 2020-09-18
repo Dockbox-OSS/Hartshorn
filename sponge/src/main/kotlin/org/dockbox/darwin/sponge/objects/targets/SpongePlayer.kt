@@ -101,7 +101,8 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun send(text: CharSequence) {
-        if (referenceExists()) reference!!.sendMessage(org.spongepowered.api.text.Text.of(text))
+        if (referenceExists()) reference!!.sendMessage(org.spongepowered.api.text.Text.of(
+                IntegratedResource.parseColors(text)))
     }
 
     override fun sendWithPrefix(text: ResourceEntry) {
