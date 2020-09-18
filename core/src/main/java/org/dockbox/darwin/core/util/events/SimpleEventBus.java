@@ -28,7 +28,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 @SuppressWarnings({"unchecked", "EqualsWithItself", "VolatileArrayField"})
@@ -88,10 +87,6 @@ public class SimpleEventBus implements EventBus {
         handlerRegistry.getHandler(event.getClass()).post(event);
     }
 
-    public void setDefaultLookup(Lookup lookup) {
-        defaultLookup = Objects.requireNonNull(lookup);
-    }
-
     protected static Set<InvokeWrapper> getInvokers(Object object, Lookup lookup)
             throws IllegalArgumentException, SecurityException {
         Set<InvokeWrapper> result = new LinkedHashSet<>();
@@ -118,25 +113,14 @@ public class SimpleEventBus implements EventBus {
             throw new IllegalArgumentException("Method cannot be abstract: " + method.toGenericString());
         }
 
-        if (method.getParameterCount() != 1) {
-            throw new IllegalArgumentException("Must have exactly one parameter: " + method.toGenericString());
+        if (method.getParameterCount() == 0) {
+            throw new IllegalArgumentException("Must have at least one parameter: " + method.toGenericString());
         }
+
         for (Class<?> param : method.getParameterTypes()) {
             if (!Event.class.isAssignableFrom(param)) {
                 throw new IllegalArgumentException("Parameter must be a subclass of the Event class: " + method.toGenericString());
             }
         }
-    }
-
-    public static boolean isListenerMethod(Method method) {
-        if (AccessHelper.isAnnotationPresentRecursively(method, Listener.class)) {
-            for (Class<?> param : method.getParameterTypes()) {
-                if (!Event.class.isAssignableFrom(param)) return false;
-            }
-
-            int modifiers = method.getModifiers();
-            return !Modifier.isStatic(modifiers) && !Modifier.isAbstract(modifiers);
-        }
-        return false;
     }
 }

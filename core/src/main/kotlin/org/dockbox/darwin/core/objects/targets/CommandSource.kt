@@ -19,6 +19,7 @@ package org.dockbox.darwin.core.objects.targets
 
 import org.dockbox.darwin.core.i18n.common.ResourceEntry
 import org.dockbox.darwin.core.text.Text
+import org.dockbox.darwin.core.text.navigation.Pagination
 
 interface CommandSource : MessageReceiver {
 
@@ -50,6 +51,10 @@ interface CommandSource : MessageReceiver {
         }
 
         override fun sendWithPrefix(text: CharSequence) {
+            throw UnsupportedOperationException("Attempted to send message without source")
+        }
+
+        override fun sendPagination(pagination: Pagination) {
             throw UnsupportedOperationException("Attempted to send message without source")
         }
     }

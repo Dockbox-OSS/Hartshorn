@@ -19,6 +19,7 @@ package org.dockbox.darwin.core.objects.targets
 
 import org.dockbox.darwin.core.i18n.common.ResourceEntry
 import org.dockbox.darwin.core.text.Text
+import org.dockbox.darwin.core.text.navigation.Pagination
 
 interface MessageReceiver : Target {
     fun send(text: ResourceEntry)
@@ -27,4 +28,5 @@ interface MessageReceiver : Target {
     fun sendWithPrefix(text: ResourceEntry)
     fun sendWithPrefix(text: Text)
     fun sendWithPrefix(text: CharSequence)
+    fun sendPagination(pagination: Pagination)
 }

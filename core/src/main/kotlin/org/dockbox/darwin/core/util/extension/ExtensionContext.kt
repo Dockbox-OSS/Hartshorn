@@ -17,9 +17,9 @@
 
 package org.dockbox.darwin.core.util.extension
 
+import java.util.concurrent.ConcurrentHashMap
 import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.util.extension.status.ExtensionStatus
-import java.util.concurrent.ConcurrentHashMap
 
 class ExtensionContext(var type: ComponentType, var source: String) {
 
@@ -48,8 +48,8 @@ class ExtensionContext(var type: ComponentType, var source: String) {
         return if (entryStatus.containsKey(clazz)) entryStatus[clazz] else null
     }
 
-    enum class ComponentType {
-        EXTERNAL_JAR, INTERNAL_CLASS, UNKNOWN
+    enum class ComponentType(var string: String) {
+        EXTERNAL_JAR("External .jar file"), INTERNAL_CLASS("Internal class"), UNKNOWN("Unknown")
     }
 
 }

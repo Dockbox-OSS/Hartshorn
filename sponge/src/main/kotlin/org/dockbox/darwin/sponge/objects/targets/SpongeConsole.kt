@@ -24,6 +24,7 @@ import org.dockbox.darwin.core.objects.targets.Console
 import org.dockbox.darwin.core.server.Server
 import org.dockbox.darwin.core.text.Text
 import org.dockbox.darwin.core.text.Text.of
+import org.dockbox.darwin.core.text.navigation.Pagination
 import org.dockbox.darwin.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
 
@@ -60,6 +61,10 @@ class SpongeConsole private constructor() : Console() {
 
     override fun sendWithPrefix(text: CharSequence) {
         sendWithPrefix(of(text))
+    }
+
+    override fun sendPagination(pagination: Pagination) {
+        SpongeConversionUtil.toSponge(pagination).sendTo(Sponge.getServer().console)
     }
 
     companion object {

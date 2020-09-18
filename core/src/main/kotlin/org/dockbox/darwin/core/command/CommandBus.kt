@@ -25,7 +25,7 @@ import java.lang.reflect.Method
 interface CommandBus {
 
     fun register(vararg objs: Any)
-    fun registerSingleMethodCommand(clazz: Class<*>)
+    fun registerSingleMethodCommands(clazz: Class<*>)
     fun registerClassCommand(clazz: Class<*>, instance: Any)
 
     fun createClassRegistration(clazz: Class<*>): ClassCommandRegistration

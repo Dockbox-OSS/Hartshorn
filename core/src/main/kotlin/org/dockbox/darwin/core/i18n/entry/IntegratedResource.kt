@@ -463,16 +463,7 @@ enum class IntegratedResource(private var value: String): ResourceEntry {
     IN_ACTIVE_COOLDOWN("$4You are in cooldown! Please wait before performing this action again."),
 
     //    Darwin CMD
-    DISABLED_MODULE_ROW("$2 - &7[Disabled] $3{0} $3- $2{1} {2}"),
-    FAILED_MODULE_ROW("$2 - $4[Failed] {0}"),
-    ACTIVE_MODULE_ROW("$2 - &a[Loaded] $1{0} $3- $2{1} {2}"),
-    DARWIN_MODULE_TITLE("$1Darwin Server Info"),
-    DARWIN_MODULE_PADDING("&m$2="),
-    DARWIN_SERVER_VERSION("$2&lDarwin Server &r$3($1Version$3: $1{0}$3)"),
-    DARWIN_SERVER_UPDATE("$2&lLast updated&r$3: $1{0}"),
-    DARWIN_SERVER_AUTHOR("$2&lAuthor&r$3: $1{0}"),
-    DARWIN_SERVER_MODULE_HEAD("$2&lModules&r$3:"),
-    MODULE_SOURCE("&e[{0}]"),
+    DEFAULT_PAGINATION_PADDING("&m$2="),
     WU_ADDED("$1Added $2{0} $1to the unload blacklist"),
     WORLD_NOT_FOUND("$4Could not find that world!"),
     SPECTATOR_TP_DISALLOWED("$3You are not allowed to teleport while in spectator mode"),
@@ -481,7 +472,6 @@ enum class IntegratedResource(private var value: String): ResourceEntry {
     CU_FLAGS("$3- $2Flags: $1{0}"),
     CU_DESCRIPTION("$3- $2Summary: $1{0}"),
     GTL_WARPED("$1You have been teleported to the lobby as the world you were previously in is disabled"),
-    LANG_SWITCHED("$1Your preferred language has been switched to: $2{0}"),
 
     // Discord
     COMMAND_NOT_PERMITTED("You are not permitted to use that command!"),
@@ -515,8 +505,8 @@ enum class IntegratedResource(private var value: String): ResourceEntry {
     }
 
     companion object {
-        fun parseColors(input: String): String {
-            return IntegratedResource.NONE.parseColors(input);
+        fun parseColors(input: CharSequence): String {
+            return IntegratedResource.NONE.parseColors(input.toString())
         }
     }
 

@@ -25,9 +25,9 @@ interface Pagination {
     fun send(receiver: MessageReceiver)
     var padding: Text
     var linesPerPage: Number
-    var header: Text
-    var footer: Text
-    var title: Text
-    var content: Iterable<Text>
+    var header: Text?
+    var footer: Text?
+    var title: Text?
+    var content: List<Text>
 
 }

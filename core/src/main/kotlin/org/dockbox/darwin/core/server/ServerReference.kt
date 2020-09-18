@@ -17,8 +17,9 @@
 
 package org.dockbox.darwin.core.server
 
-import org.dockbox.darwin.core.util.extension.Extension
+import java.util.function.Consumer
 import java.util.function.Function
+import org.dockbox.darwin.core.util.extension.Extension
 
 abstract class ServerReference {
 
@@ -32,7 +33,17 @@ abstract class ServerReference {
     }
 
     open fun <T> runWithExtension(type: Class<*>, consumer: Function<Extension, T>): T {
-        val annotation = getExtension(type) ?: throw IllegalArgumentException("Requested extension is not annotated as such")
+        val annotation = getExtension(type) ?: throw IllegalArgumentException("Requested extension is not present")
         return consumer.apply(annotation)
+    }
+
+    open fun <T, R> runWithInstance(type: Class<R>, consumer: Function<R, T>): T {
+        val instance = getInstance(type) ?: throw IllegalArgumentException("Requested instance is not present")
+        return consumer.apply(instance)
+    }
+
+    open fun <T> consumeWithInstance(type: Class<T>, consumer: Consumer<T>) {
+        val instance = getInstance(type) ?: throw IllegalArgumentException("Requested instance is not present")
+        return consumer.accept(instance)
     }
 }

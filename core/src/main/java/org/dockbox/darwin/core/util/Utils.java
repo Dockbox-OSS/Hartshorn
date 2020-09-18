@@ -181,6 +181,24 @@ public enum Utils {
         return sb.toString();
     }
 
+    public static int[] range(int max) {
+        return range(0, max);
+    }
+
+    public static int[] range(int min, int max) {
+        int[] range = new int[(max-min)+1]; // +1 as both min and max are inclusive
+        for (int i = min; i <= max; i++) {
+            range[i-min] = i;
+        }
+        return range;
+    }
+
+    public static String repeat(String string, int amount) {
+        StringBuilder sb = new StringBuilder();
+        for (int ignored : range(1, amount)) sb.append(string);
+        return sb.toString();
+    }
+
     @SuppressWarnings("MagicNumber")
     private static char convertDigit(int value) {
         return _hex[value & 0x0f];

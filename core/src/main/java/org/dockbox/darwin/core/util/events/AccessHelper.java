@@ -18,166 +18,20 @@
 package org.dockbox.darwin.core.util.events;
 
 import java.lang.annotation.Annotation;
-import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.WrongMethodTypeException;
-import java.lang.reflect.AccessibleObject;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
-
-import static java.lang.invoke.MethodHandles.Lookup;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @SuppressWarnings("JavaReflectionMemberAccess")
 final class AccessHelper {
     private static final Lookup DEFAULT_LOOKUP = MethodHandles.lookup();
-
-    private static final MethodHandle TRY_SET_ACCESSIBLE_METHODHANDLE;
-
-    static boolean trySuppressAccessControl = true;
-
-    static boolean pretendJava8 = false;
-
-    static boolean pretendJava9 = false;
-
-    static {
-        MethodHandle methodhandle = null;
-        try {
-            Method method = AccessibleObject.class.getMethod("trySetAccessible");
-            methodhandle = MethodHandles.lookup().unreflect(method);
-        } catch (NoSuchMethodException ignore) {
-            // Java 1.8 or lower doesn't have trySetAccessible() method
-        } catch (ReflectiveOperationException ex) {
-            throw new ExceptionInInitializerError(ex);
-        }
-        TRY_SET_ACCESSIBLE_METHODHANDLE = methodhandle;
-    }
-
-    public static MethodHandle unreflectMethodHandle(Lookup lookup, Method method) throws SecurityException {
-        try {
-            return unreflectMethodHandle0(lookup, method);
-        } catch (IllegalAccessException ex) {
-            throw new SecurityException(String.format("Cannot access method [%s] with %s lookup [%s]",
-                    method.toGenericString(),
-                    AccessHelper.isDefaultLookup(lookup) ? "default" : "provided",
-                    lookup), ex);
-        }
-    }
-
-    static MethodHandle unreflectMethodHandle0(Lookup lookup, Method method) throws IllegalAccessException {
-        boolean accessible = method.isAccessible();
-        if ((isAtLeastJava9() && !pretendJava8) || pretendJava9) {  // Java 9+
-            try {
-                return lookup.unreflect(method);
-            } catch (IllegalAccessException ex) {
-                if (accessible) throw ex; // Already accessible but still failed? Giving up.
-
-                boolean tryAgain = false;
-                if (trySuppressAccessControl) try {
-                    tryAgain = trySetAccessible(method);
-                } catch (SecurityException ex2) {
-                    try {
-                        Throwable t = ex;
-                        while (t.getCause() != null) t = t.getCause();
-                        t.initCause(ex2);  // set the root cause of `ex` to `ex2`
-                    } catch (IllegalStateException ex3) {
-                        ex.addSuppressed(ex2);
-                    }
-                }
-
-                if (!tryAgain) {
-                    Lookup newLookup = narrowLookupClass(lookup, method);
-                    if (lookup != newLookup) {
-                        if (lookup.lookupModes() == newLookup.lookupModes()) {
-                            lookup = newLookup;
-                            tryAgain = true;
-                        } else try { // lookupMode changed
-                            return newLookup.unreflect(method);
-                        } catch (IllegalAccessException ex2) {
-                            ex2.addSuppressed(ex);
-                            ex = ex2;
-                        }
-                    }
-                }
-
-                if (tryAgain) {
-                    return lookup.unreflect(method);
-                } else {
-                    throw ex;
-                }
-            }
-        } else {  // Java 1.8 or lower
-            Exception suppressed = null;
-            if (trySuppressAccessControl && !accessible) try {
-                method.setAccessible(true);
-                accessible = true;
-            } catch (SecurityException ex) {
-                // if the method is public, then setAccessible() is not necessary, we can safely ignore this;
-                // if the method is not public, the SecurityException will be thrown
-                // as a suppressed exception when calling lookup.unreflect().
-                suppressed = ex;
-            }
-
-            if (!accessible) {
-                Lookup newLookup = narrowLookupClass(lookup, method);
-                if (lookup != newLookup) {
-                    if (lookup.lookupModes() == newLookup.lookupModes()) {
-                        lookup = newLookup;
-                    } else try {  // lookupMode changed
-                        return newLookup.unreflect(method);
-                    } catch (IllegalAccessException ex) {
-                        if (suppressed != null) suppressed.addSuppressed(ex);
-                        else suppressed = ex;
-                    }
-                }
-            }
-
-            try {
-                return lookup.unreflect(method);
-            } catch (Throwable t) {
-                if (suppressed != null) t.addSuppressed(suppressed);
-                throw t;
-            }
-        }
-    }
-
-    static Lookup narrowLookupClass(Lookup lookup, Method method) {
-        Class<?> lookupClass = lookup.lookupClass();
-        Class<?> targetClass = method.getDeclaringClass();
-        if (lookupClass != targetClass && isSamePackageMember(lookupClass, targetClass)) {
-            // targetClass and lookupClass are nestmate, the lookupMode should not change
-            return lookup.in(targetClass);
-        }
-        return lookup;
-    }
-
-    public static boolean trySetAccessible(AccessibleObject object)
-            throws UnsupportedOperationException, SecurityException {
-        if (!isAtLeastJava9()) throw new UnsupportedOperationException(
-                new NoSuchMethodException(AccessibleObject.class.getName() + ".trySetAccessible()"));
-
-        try {
-            return (boolean) TRY_SET_ACCESSIBLE_METHODHANDLE.invoke(object);
-        } catch (WrongMethodTypeException | ClassCastException ex) {
-            throw new AssertionError(ex);
-        } catch (RuntimeException ex) {
-            throw ex;
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
-    }
-
-    public static boolean isAtLeastJava9() {
-        return TRY_SET_ACCESSIBLE_METHODHANDLE != null;
-    }
-
-    public static boolean isSamePackage(Class<?> cls1, Class<?> cls2) {
-        return cls1 == cls2 || Objects.equals(cls1.getPackage().getName(), cls2.getPackage().getName());
-    }
-
-    public static boolean isSamePackageMember(Class<?> cls1, Class<?> cls2) {
-        return isSamePackage(cls1, cls2) && getOutermostEnclosingClass(cls1) == getOutermostEnclosingClass(cls2);
-    }
 
     public static Class<?> getOutermostEnclosingClass(Class<?> cls) {
         Class<?> enclosingClass;
@@ -293,10 +147,6 @@ final class AccessHelper {
 
     static Lookup defaultLookup() {
         return DEFAULT_LOOKUP;
-    }
-
-    static boolean isDefaultLookup(Lookup lookup) {
-        return lookup == DEFAULT_LOOKUP;
     }
 
     private AccessHelper() {}

@@ -27,6 +27,7 @@ import org.dockbox.darwin.core.objects.user.Gamemode;
 import org.dockbox.darwin.core.text.actions.ClickAction;
 import org.dockbox.darwin.core.text.actions.HoverAction;
 import org.dockbox.darwin.core.text.actions.ShiftClickAction;
+import org.dockbox.darwin.core.text.navigation.Pagination;
 import org.dockbox.darwin.sponge.exceptions.TypeConversionException;
 import org.dockbox.darwin.sponge.objects.location.SpongeLocation;
 import org.dockbox.darwin.sponge.objects.location.SpongeWorld;
@@ -39,6 +40,7 @@ import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.serializer.TextSerializers;
@@ -47,9 +49,11 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public enum SpongeConversionUtil {
     ;
@@ -82,7 +86,9 @@ public enum SpongeConversionUtil {
 
             } else {
                 Text.Builder pb = Text.builder();
-                pb.append(TextSerializers.FORMATTING_CODE.deserialize(part.toLegacy()));
+                // Wrapping in parseColors first so internal color codes are parsed as well. Technically the FormattingCode
+                // from TextSerializers won't be needed, but to ensure no trailing codes are left we use it here anyway.
+                pb.append(TextSerializers.FORMATTING_CODE.deserialize(IntegratedResource.Companion.parseColors(part.toLegacy())));
 
                 Optional<org.spongepowered.api.text.action.ClickAction<?>> clickAction = toSponge(part.getClickAction());
                 clickAction.ifPresent(pb::onClick);
@@ -204,5 +210,19 @@ public enum SpongeConversionUtil {
         } catch (IllegalArgumentException | NullPointerException e) {
             return Gamemode.OTHER;
         }
+    }
+
+    public static PaginationList toSponge(Pagination pagination) {
+        PaginationList.Builder builder = PaginationList.builder();
+
+        if (null != pagination.getTitle()) builder.title(toSponge(pagination.getTitle()));
+        if (null != pagination.getHeader()) builder.header(toSponge(pagination.getHeader()));
+        if (null != pagination.getFooter()) builder.footer(toSponge(pagination.getFooter()));
+        
+        builder.padding(toSponge(pagination.getPadding()));
+        builder.linesPerPage(pagination.getLinesPerPage().intValue());
+        List<Text> convertedContent = pagination.getContent().stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList());
+        builder.contents(convertedContent);
+        return builder.build();
     }
 }

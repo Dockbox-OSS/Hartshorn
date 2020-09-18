@@ -62,18 +62,26 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             val clazz: Class<*> = if (obj is Class<*>) obj else obj.javaClass
             Server.log().info("\n\nScanning {} for commands", clazz.toGenericString())
             try {
-                if (clazz.isAnnotationPresent(Command::class.java)) registerClassCommand(clazz, obj) else registerSingleMethodCommand(clazz)
+                if (clazz.isAnnotationPresent(Command::class.java)) {
+                    registerClassCommand(clazz, obj)
+                }
+                registerSingleMethodCommands(clazz)
             } catch (e: Throwable) {
                 Server.getServer().except("Failed to register potential command class : [" + clazz.canonicalName + "]", e)
             }
         }
     }
 
-    override fun registerSingleMethodCommand(clazz: Class<*>) {
+    override fun registerSingleMethodCommands(clazz: Class<*>) {
         val methods: MutableList<Method> = ArrayList<Method>()
         for (method in clazz.declaredMethods) {
             method.isAccessible = true
-            if (method.isAnnotationPresent(Command::class.java)) methods.add(method)
+            if (method.isAnnotationPresent(Command::class.java)) {
+                val command = method.getAnnotation(Command::class.java)
+                if (clazz.isAnnotationPresent(Command::class.java) && !command.single) continue
+
+                methods.add(method)
+            }
         }
         val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(methods)
         Arrays.stream(registrations)
@@ -145,7 +153,14 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     override fun createClassRegistration(clazz: Class<*>): ClassCommandRegistration {
         val information: Triple<Command, AbstractPermission, Array<String>> = getCommandInformation(clazz)
         val methods: Array<Method> = clazz.declaredMethods
-        val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(Arrays.stream(methods).filter { it.isAnnotationPresent(Command::class.java) }.collect(Collectors.toList()))
+        val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(Arrays
+                .stream(methods)
+                .filter { it.isAnnotationPresent(Command::class.java) }
+                .filter {
+                    val command = it.getAnnotation(Command::class.java)
+                    return@filter !command.single // Do not register single method commands as subcommands
+                }
+                .collect(Collectors.toList()))
         return ClassCommandRegistration(information.third[0], information.third, information.second, information.first, clazz, registrations)
     }
 
