@@ -23,7 +23,7 @@ import org.dockbox.darwin.core.text.Text
 
 abstract class PaginationBuilder {
 
-    protected var padding: Text = IntegratedResource.DEFAULT_PADDING.asText()
+    protected var padding: Text = IntegratedResource.DEFAULT_PAGINATION_PADDING.asText()
     protected var header: Text? = null
     protected var footer: Text? = null
     protected var title: Text? = null
