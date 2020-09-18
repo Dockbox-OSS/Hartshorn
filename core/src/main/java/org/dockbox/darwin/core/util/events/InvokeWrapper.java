@@ -23,6 +23,7 @@ import org.dockbox.darwin.core.server.Server;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -74,7 +75,16 @@ public class InvokeWrapper implements Comparable<InvokeWrapper> {
 
     public void invoke(Event event) throws RuntimeException {
         try {
-            methodHandle.invoke(listener, event);
+            List<Event> args = new ArrayList<>();
+            // As event listeners support having multiple event parameters, it may be there are event parameters which
+            // we do not have here. If the parameter type is equal to, or a super class of our event we will add it to
+            // the argument list. If it is neither, null will be injected.
+            for (Class<?> type : this.method.getParameterTypes()) {
+                if (type.isAssignableFrom(event.getClass())) {
+                    args.add(event);
+                } else args.add(null);
+            }
+            this.methodHandle.invoke(this.listener, args.toArray(new Event[0]));
         } catch (Throwable e) {
             Server.getServer().except("Failed to invoke method", e);
         }
@@ -95,9 +105,9 @@ public class InvokeWrapper implements Comparable<InvokeWrapper> {
     @Override
     public int hashCode() {
         int n = 1;
-        n = 31 * n + listener.hashCode();
-        n = 31 * n + eventType.hashCode();
-        n = 31 * n + method.hashCode();
+        n = 31 * n + this.listener.hashCode();
+        n = 31 * n + this.eventType.hashCode();
+        n = 31 * n + this.method.hashCode();
         return n;
     }
 
@@ -110,7 +120,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper> {
     @Override
     public String toString() {
         return String.format("InvokeWrapper{listener=%s, eventType=%s, method=%s(%s), priority=%d}",
-                listener, eventType.getName(), method.getName(), eventType.getSimpleName(), priority);
+                this.listener, this.eventType.getName(), this.method.getName(), this.eventType.getSimpleName(), this.priority);
     }
 
     public Object getListener() {
