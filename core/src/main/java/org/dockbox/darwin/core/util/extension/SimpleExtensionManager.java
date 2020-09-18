@@ -175,14 +175,16 @@ public class SimpleExtensionManager implements ExtensionManager {
     }
 
     private boolean addJarToClassPath(Path jar) {
-        if (jar.getFileName().endsWith(".jar")) {
+        if (jar.getFileName().toString().endsWith(".jar")) {
             try {
                 ClassLoader ucl = ClassLoader.getSystemClassLoader();
                 Method addUrl = ucl.getClass().getSuperclass().getDeclaredMethod("addURL", URL.class);
                 addUrl.setAccessible(true);
                 addUrl.invoke(ucl, jar.toUri().toURL());
+
                 return true;
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | MalformedURLException e) {
+                Server.getServer().except("Failed to add [" + jar.getFileName() + "] to classpath", e);
                 return false;
             }
         }
