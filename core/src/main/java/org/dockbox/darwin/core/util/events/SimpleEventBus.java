@@ -127,13 +127,14 @@ public class SimpleEventBus implements EventBus {
     }
 
     public static boolean isListenerMethod(Method method) {
-        if (AccessHelper.isAnnotationPresentRecursively(method, Listener.class) &&
-                method.getParameterCount() == 1 &&
-                Event.class.isAssignableFrom(method.getParameterTypes()[0])) {
+        if (AccessHelper.isAnnotationPresentRecursively(method, Listener.class)) {
+            for (Class<?> param : method.getParameterTypes()) {
+                if (!Event.class.isAssignableFrom(param)) return false;
+            }
+
             int modifiers = method.getModifiers();
             return !Modifier.isStatic(modifiers) && !Modifier.isAbstract(modifiers);
         }
         return false;
     }
-
 }
