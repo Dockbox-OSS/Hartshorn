@@ -15,17 +15,22 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.darwin.core.util.extension
+package org.dockbox.darwin.core.util.extension;
 
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS)
-annotation class Extension (
-        val id: String,
-        val name: String,
-        val version: String = "unknown",
-        val description: String,
-        val url: String = "none",
-        val authors: Array<String>,
-        val dependencies: Array<String> = [],
-        val requiresNMS: Boolean = false
-        )
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Extension {
+    String id();
+    String name();
+    String version() default "unknown";
+    String description();
+    String url() default "none";
+    String[] authors();
+    String[] dependencies() default {};
+    boolean requiresNMS() default false;
+}
