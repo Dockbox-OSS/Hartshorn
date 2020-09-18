@@ -28,5 +28,6 @@ annotation class Command (
         val permission: Permission = Permission.GLOBAL_BYPASS,
         val permissionKey: String = "",
         val cooldownDuration: Long = -1,
-        val cooldownUnit: ChronoUnit = ChronoUnit.SECONDS
+        val cooldownUnit: ChronoUnit = ChronoUnit.SECONDS,
+        val single: Boolean = false
 )
