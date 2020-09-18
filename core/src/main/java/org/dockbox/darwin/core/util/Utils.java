@@ -17,6 +17,7 @@
 
 package org.dockbox.darwin.core.util;
 
+import org.dockbox.darwin.core.objects.events.Event;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,9 +28,12 @@ import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import kotlin.Triple;
 
@@ -61,6 +65,22 @@ public enum Utils {
             return endTime.isAfter(now);
 
         } else return false;
+    }
+
+    public static List<Event> getFiredEvents(Event... events) {
+        return Arrays.stream(events)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    @Nullable
+    public static Event getFirstFiredEvent(Event... events) {
+        for (Event event : events) {
+            if (null != event) {
+                return event;
+            }
+        }
+        return null;
     }
 
     private static final char[] _hex = {
