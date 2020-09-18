@@ -26,15 +26,21 @@ class LanguageArgumentParser : AbstractTypeArgumentParser<Language>() {
 
     override fun parse(commandValue: CommandValue<String>): Optional<Language> {
         val l = commandValue.value.toUpperCase()
-        val lang: Language
-        lang = try {
-            Language.valueOf(l)
+        var lang: Language? = null
+        try {
+            lang = Language.valueOf(l)
         } catch (e: NullPointerException) {
-            Language.EN_US
+            // Ignored
         } catch (e: IllegalArgumentException) {
-            Language.EN_US
+            // Ignored
         }
-        return Optional.of(lang)
+
+        if (lang == null) Language.values()
+                .forEach { v ->
+                    run { if (v.nameEnglish.toUpperCase() == l || v.nameLocalized.toUpperCase() == l) lang = v }
+                }
+
+        return Optional.ofNullable(lang)
     }
 
 }

@@ -104,7 +104,8 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun sendWithPrefix(text: ResourceEntry) {
-        sendWithPrefix(of(text.getValue(getLanguage())))
+        val formattedValue = IntegratedResource.parseColors(text.getValue(getLanguage()))
+        sendWithPrefix(of(formattedValue))
     }
 
     override fun sendWithPrefix(text: Text) {

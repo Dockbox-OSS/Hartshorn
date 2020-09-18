@@ -20,20 +20,13 @@ package org.dockbox.darwin.sponge;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
-import org.dockbox.darwin.core.command.CommandBus;
-import org.dockbox.darwin.core.events.server.ServerEvent;
 import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.util.discord.DiscordUtils;
-import org.dockbox.darwin.core.util.events.EventBus;
-import org.dockbox.darwin.core.util.extension.Extension;
-import org.dockbox.darwin.core.util.extension.ExtensionContext;
-import org.dockbox.darwin.core.util.extension.ExtensionManager;
 import org.dockbox.darwin.core.util.library.LibraryArtifact;
 import org.dockbox.darwin.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.darwin.sponge.listeners.SpongeServerEventListener;
 import org.dockbox.darwin.sponge.util.inject.SpongeCommonInjector;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -44,7 +37,6 @@ import org.spongepowered.api.plugin.Plugin;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 @Plugin(
         id = "darwinserver",
@@ -69,16 +61,7 @@ public class SpongeServer extends Server {
     @Listener
     public void onServerInit(GameInitializationEvent event) {
         Sponge.getEventManager().registerListeners(this, new SpongeServerEventListener());
-
-        EventBus eb = getInstance(EventBus.class);
-        CommandBus cb = getInstance(CommandBus.class);
-        ExtensionManager cm = getInstance(ExtensionManager.class);
-        DiscordUtils du = getInstance(DiscordUtils.class);
-
-        super.initIntegratedExtensions(this.getConsumer("integrated", cb, eb, cm, du));
-        super.initExternalExtensions(this.getConsumer("external", cb, eb, cm, du));
-
-        getInstance(EventBus.class).post(new ServerEvent.Init());
+        super.init();
     }
 
     @Listener(order = Order.LAST)
@@ -92,6 +75,8 @@ public class SpongeServer extends Server {
             if (!jda.getRegisteredListeners().contains(this.discordListener)) {
                 jda.addEventListener(this.discordListener);
                 log().info("Initiated JDA" + JDAInfo.VERSION);
+
+                super.debugRegisteredInstances();
             }
         } else {
             // Attempt to get the JDA once every 30 seconds until successful
@@ -105,27 +90,6 @@ public class SpongeServer extends Server {
 
     }
 
-    private Consumer<ExtensionContext> getConsumer(String contextType, CommandBus cb, EventBus eb, ExtensionManager em, DiscordUtils du) {
-        return (ExtensionContext ctx) -> ctx.getClasses().values().forEach(type -> {
-            log().info("Found type [" + type.getCanonicalName() + "] in " + contextType + " context");
-            Optional<?> oi = em.getInstance(type);
-            oi.ifPresent(i -> {
-                Package pkg = i.getClass().getPackage();
-                if (null != pkg) {
-                    log().info("Registering [" + type.getCanonicalName() + "] as Event and Command listener");
-                    eb.subscribe(i);
-                    cb.register(i);
-                    du.registerCommandListener(i);
-
-                    Reflections ref = new Reflections(pkg.getName());
-                    ref.getTypesAnnotatedWith(org.dockbox.darwin.core.annotations.Listener.class).stream()
-                            .filter(it -> !it.isAnnotationPresent(Extension.class))
-                            .forEach(eb::subscribe);
-                }
-            });
-        });
-    }
-
     @NotNull
     @Override
     public ServerType getServerType() {
@@ -133,7 +97,7 @@ public class SpongeServer extends Server {
     }
 
     @Override
-    protected LibraryArtifact[] getArtifacts() {
+    protected LibraryArtifact[] getPlatformArtifacts() {
         // Define libraries to download, specifically targeting Sponge.
         // At the time of writing there are no additional libraries required for Sponge.
         return new LibraryArtifact[0];

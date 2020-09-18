@@ -18,13 +18,16 @@
 package org.dockbox.darwin.integrated;
 
 import org.dockbox.darwin.core.annotations.Command;
+import org.dockbox.darwin.core.annotations.Listener;
 import org.dockbox.darwin.core.command.context.CommandContext;
 import org.dockbox.darwin.core.command.context.CommandValue.Argument;
 import org.dockbox.darwin.core.command.parse.impl.LanguageArgumentParser;
+import org.dockbox.darwin.core.events.discord.DiscordEvent;
 import org.dockbox.darwin.core.i18n.common.Language;
 import org.dockbox.darwin.core.i18n.entry.IntegratedResource;
 import org.dockbox.darwin.core.objects.targets.CommandSource;
 import org.dockbox.darwin.core.objects.user.Player;
+import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.text.Text;
 import org.dockbox.darwin.core.util.extension.Extension;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +37,7 @@ import java.util.Optional;
 @Extension(id = "i18n_commands", name = "I18N Commands", description = "Provided I18N commands, implementation of i18n extension", authors = {"GuusLieben"})
 public class I18NExtension {
 
-    @Command(aliases = {"lang", "language"}, context = "language <language{String}> [player{Player}] -s --f flag{String}", cooldownDuration = 10)
+    @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", cooldownDuration = 10)
     public void switchLang(CommandSource src, CommandContext ctx) {
         Optional<Language> ol = ctx.getArgumentAndParse("language", new LanguageArgumentParser());
         @Nullable Player target;
@@ -51,7 +54,7 @@ public class I18NExtension {
         Language lang = ol.orElse(Language.EN_US);
         target.setLanguage(lang);
         // Messages sent after language switch will be in the preferred language
-        src.sendWithPrefix(IntegratedResource.LANG_SWITCHED.format(lang.getDescription()));
+        src.sendWithPrefix(IntegratedResource.LANG_SWITCHED.format(lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")"));
     }
 
 }
