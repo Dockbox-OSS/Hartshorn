@@ -20,10 +20,10 @@ package org.dockbox.darwin.core.util.events;
 import org.dockbox.darwin.core.objects.events.Event;
 import org.dockbox.darwin.core.server.Server;
 
-import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -49,8 +49,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper> {
         List<InvokeWrapper> invokeWrappers = new CopyOnWriteArrayList<>();
         for (Class<?> param : method.getParameterTypes()) {
             Class<? extends Event> eventType = (Class<? extends Event>) param;
-            MethodHandle methodHandle = AccessHelper.unreflectMethodHandle(lookup, method);
-            invokeWrappers.add(new InvokeWrapper(instance, eventType, method, priority, methodHandle));
+            invokeWrappers.add(new InvokeWrapper(instance, eventType, method, priority));
         }
         return invokeWrappers;
     }
@@ -63,19 +62,16 @@ public class InvokeWrapper implements Comparable<InvokeWrapper> {
 
     private final int priority;
 
-    private final MethodHandle methodHandle;
-
-    InvokeWrapper(Object listener, Class<? extends Event> eventType, Method method, int priority, MethodHandle methodHandle) {
+    InvokeWrapper(Object listener, Class<? extends Event> eventType, Method method, int priority) {
         this.listener = listener;
         this.eventType = eventType;
         this.method = method;
         this.priority = priority;
-        this.methodHandle = methodHandle;
     }
 
     public void invoke(Event event) throws RuntimeException {
         try {
-            List<Event> args = new ArrayList<>();
+            Collection<Event> args = new ArrayList<>();
             // As event listeners support having multiple event parameters, it may be there are event parameters which
             // we do not have here. If the parameter type is equal to, or a super class of our event we will add it to
             // the argument list. If it is neither, null will be injected.
@@ -84,7 +80,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper> {
                     args.add(event);
                 } else args.add(null);
             }
-            this.methodHandle.invoke(this.listener, args.toArray(new Event[0]));
+            this.method.invoke(this.listener, args.toArray());
         } catch (Throwable e) {
             Server.getServer().except("Failed to invoke method", e);
         }
@@ -139,7 +135,4 @@ public class InvokeWrapper implements Comparable<InvokeWrapper> {
         return this.priority;
     }
 
-    public MethodHandle getMethodHandle() {
-        return this.methodHandle;
-    }
 }
