@@ -121,8 +121,10 @@ public class SimpleEventBus implements EventBus {
         if (method.getParameterCount() != 1) {
             throw new IllegalArgumentException("Must have exactly one parameter: " + method.toGenericString());
         }
-        if (!Event.class.isAssignableFrom(method.getParameterTypes()[0])) {
-            throw new IllegalArgumentException("Parameter must be a subclass of the Event class: " + method.toGenericString());
+        for (Class<?> param : method.getParameterTypes()) {
+            if (!Event.class.isAssignableFrom(param)) {
+                throw new IllegalArgumentException("Parameter must be a subclass of the Event class: " + method.toGenericString());
+            }
         }
     }
 
