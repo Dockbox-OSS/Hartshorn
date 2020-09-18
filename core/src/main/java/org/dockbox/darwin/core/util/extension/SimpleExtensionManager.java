@@ -33,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -105,7 +106,10 @@ public class SimpleExtensionManager implements ExtensionManager {
             Server.log().info("Scanning [" + moduleDir + "] for component files");
             // Filter out anything that isn't a directory (making it a file), as we only want to scan one layer deep
             stream.filter(file -> !Files.isDirectory(file))
-                    .forEach(jar -> this.loadExternalExtension(jar).ifPresent(contexts::add));
+                    .forEach(jar -> {
+                        Server.log().info("Attempting to load [" + jar.getFileName() + "]");
+                        this.loadExternalExtension(jar).ifPresent(contexts::add);
+                    });
 
             globalContexts.addAll(contexts);
             return contexts;
@@ -152,6 +156,8 @@ public class SimpleExtensionManager implements ExtensionManager {
                 Server.getServer().except("Failed to convert known .jar file to JarFile instance", e);
             }
             return Optional.of(context);
+        } else {
+            Server.log().warn("Failed to add [" + file.getFileName() + "] to classpath");
         }
         return Optional.empty();
     }
@@ -202,15 +208,16 @@ public class SimpleExtensionManager implements ExtensionManager {
             // Additionally, the addComponentClass method scans if the entry is annotated.
             if (context.addComponentClass(classEntry)) {
                 Extension header = classEntry.getAnnotation(Extension.class);
-                if (null == header) //noinspection ThrowCaughtLocally
+                if (null == header) {
                     throw new IllegalStateException("Supposed header is absent from component entry");
+                }
 
                 this.createComponentInstance(classEntry, context);
 
                 Server.log().info("Finished component registration for [" + classEntry.getCanonicalName() + "] with status " + context.getStatus(classEntry));
             }
         } catch (ClassNotFoundException | IllegalStateException e) {
-            Server.getServer().except("Failed to load (supposedly) injected class", e);
+            Server.getServer().except("Failed to load (supposedly) injected class [" + className + "]", e);
         }
     }
 
