@@ -99,7 +99,7 @@ public class SimpleEventBus implements EventBus {
             Listener annotation = AccessHelper.getAnnotationRecursively(method, Listener.class);
             if (annotation != null) {
                 checkListenerMethod(method, false);
-                result.add(InvokeWrapper.create(object, method, annotation.value().getPriority(), lookup));
+                result.addAll(InvokeWrapper.create(object, method, annotation.value().getPriority(), lookup));
             }
         }
         return result;

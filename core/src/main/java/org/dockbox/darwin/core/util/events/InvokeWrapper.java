@@ -17,7 +17,6 @@
 
 package org.dockbox.darwin.core.util.events;
 
-import org.dockbox.darwin.core.annotations.Listener;
 import org.dockbox.darwin.core.objects.events.Event;
 import org.dockbox.darwin.core.server.Server;
 
@@ -25,7 +24,9 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InvokeWrapper implements Comparable<InvokeWrapper> {
     public static final Comparator<InvokeWrapper> COMPARATOR = (o1, o2) -> {
@@ -42,16 +43,15 @@ public class InvokeWrapper implements Comparable<InvokeWrapper> {
         throw new AssertionError();  // ensures the comparator will never return 0 if the two wrapper aren't equal
     };
 
-    public static InvokeWrapper create(Object instance, Method method, Lookup lookup) throws SecurityException {
-        int priority = AccessHelper.getAnnotationRecursively(method, Listener.class).value().getPriority();
-        return create(instance, method, priority, lookup);
-    }
-
-    public static InvokeWrapper create(Object instance, Method method, int priority, Lookup lookup)
+    public static List<InvokeWrapper> create(Object instance, Method method, int priority, Lookup lookup)
             throws SecurityException {
-        Class<? extends Event> eventType = (Class<? extends Event>) method.getParameterTypes()[0];
-        MethodHandle methodHandle = AccessHelper.unreflectMethodHandle(lookup, method);
-        return new InvokeWrapper(instance, eventType, method, priority, methodHandle);
+        List<InvokeWrapper> invokeWrappers = new CopyOnWriteArrayList<>();
+        for (Class<?> param : method.getParameterTypes()) {
+            Class<? extends Event> eventType = (Class<? extends Event>) param;
+            MethodHandle methodHandle = AccessHelper.unreflectMethodHandle(lookup, method);
+            invokeWrappers.add(new InvokeWrapper(instance, eventType, method, priority, methodHandle));
+        }
+        return invokeWrappers;
     }
 
     private final Object listener;
