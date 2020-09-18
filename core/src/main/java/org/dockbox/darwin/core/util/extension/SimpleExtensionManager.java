@@ -198,10 +198,22 @@ public class SimpleExtensionManager implements ExtensionManager {
     }
 
     private void injectJarEntry(JarEntry entry, ExtensionContext context) {
+        String className = entry.getName().replace('/', '.');
+        className = className.substring(0, className.length() - ".class".length());
+
         try {
-            String className = entry.getName().replace('/', '.');
-            className = className.substring(0, className.length() - ".class".length());
-            Class<?> classEntry = Class.forName(className);
+            ClassLoader ucl = ClassLoader.getSystemClassLoader();
+            // loadClass will first look for already loaded classes. If the class is already present or was injected
+            // when loading a jar, this will return the pre-existing class.
+            Class<?> classEntry = ucl.loadClass(className);
+
+            if (null == classEntry) {
+                Server.log().info("Failed through direct UCL injection");
+                //noinspection ThrowCaughtLocally
+                throw new ClassNotFoundException(className);
+            }
+
+            // TODO: [High priority] Resolve externally added class entries not having annotations detected
 
             // If the class isn't added to the classpath, this the above will cause an
             // exception making it so this line is never reached.
