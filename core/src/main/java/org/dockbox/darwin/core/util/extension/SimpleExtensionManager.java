@@ -183,7 +183,7 @@ public class SimpleExtensionManager implements ExtensionManager {
     private boolean addJarToClassPath(Path jar) {
         if (jar.getFileName().toString().endsWith(".jar")) {
             try {
-                ClassLoader ucl = ClassLoader.getSystemClassLoader();
+                URLClassLoader ucl = (URLClassLoader) ClassLoader.getSystemClassLoader();
                 Method addUrl = ucl.getClass().getSuperclass().getDeclaredMethod("addURL", URL.class);
                 addUrl.setAccessible(true);
                 addUrl.invoke(ucl, jar.toUri().toURL());
@@ -214,11 +214,14 @@ public class SimpleExtensionManager implements ExtensionManager {
             }
 
             // TODO: [High priority] Resolve externally added class entries not having annotations detected
+            // classEntry.getAnnotations(); // this is always empty, I do not know why.
 
-            // If the class isn't added to the classpath, this the above will cause an
+            // If the class isn't added to the classpath, the above will cause an
             // exception making it so this line is never reached.
             // Additionally, the addComponentClass method scans if the entry is annotated.
+            // This ensures there will be no NPE's here.
             if (context.addComponentClass(classEntry)) {
+                
                 Extension header = classEntry.getAnnotation(Extension.class);
                 if (null == header) {
                     throw new IllegalStateException("Supposed header is absent from component entry");
