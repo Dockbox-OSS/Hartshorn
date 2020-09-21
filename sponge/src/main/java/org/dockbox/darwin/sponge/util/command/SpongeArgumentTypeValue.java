@@ -26,6 +26,7 @@ import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.sponge.util.command.SpongeCommandBus.FaweArgument;
 import org.dockbox.darwin.sponge.util.command.SpongeCommandBus.FaweArgument.FaweTypes;
 import org.dockbox.darwin.sponge.util.command.SpongeCommandBus.ExtensionArgument;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.text.Text;
@@ -49,9 +50,10 @@ public class SpongeArgumentTypeValue extends AbstractArgumentValue<CommandElemen
         }
     }
 
+    @Nullable
     @Override
     protected CommandElement parseArgument(Arguments argument, String key) {
-        if (argument == null) return null;
+        if (null == argument) return null;
         switch (argument) {
             case BOOL:
                 return GenericArguments.bool(Text.of(key));
