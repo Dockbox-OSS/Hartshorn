@@ -41,12 +41,14 @@ import org.dockbox.darwin.core.util.inject.AbstractCommonInjector
 import org.dockbox.darwin.core.util.player.PlayerStorageService
 import org.dockbox.darwin.core.util.text.BroadcastService
 import org.dockbox.darwin.core.util.text.SimpleBroadcastService
+import org.dockbox.darwin.core.util.threads.ThreadUtils
 import org.dockbox.darwin.core.util.world.WorldStorageService
 import org.dockbox.darwin.sponge.text.navigation.SpongePaginationService
 import org.dockbox.darwin.sponge.util.command.SpongeCommandBus
 import org.dockbox.darwin.sponge.util.discord.SpongeDiscordUtils
 import org.dockbox.darwin.sponge.util.files.SpongeFileUtils
 import org.dockbox.darwin.sponge.util.player.SpongePlayerStorageService
+import org.dockbox.darwin.sponge.util.thread.SpongeThreadUtils
 import org.dockbox.darwin.sponge.util.world.SpongeWorldStorageService
 
 class SpongeCommonInjector : AbstractCommonInjector() {
@@ -73,6 +75,7 @@ class SpongeCommonInjector : AbstractCommonInjector() {
         bind(ResourceService::class.java).to(SimpleResourceService::class.java)
         bind(PaginationService::class.java).to(SpongePaginationService::class.java)
         bind(PlayerStorageService::class.java).to(SpongePlayerStorageService::class.java)
+        bind(ThreadUtils::class.java).to(SpongeThreadUtils::class.java)
         bind(WorldStorageService::class.java).to(SpongeWorldStorageService::class.java)
     }
 }
