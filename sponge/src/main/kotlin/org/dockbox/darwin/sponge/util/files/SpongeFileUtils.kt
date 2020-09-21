@@ -17,12 +17,11 @@
 
 package org.dockbox.darwin.sponge.util.files
 
-import org.dockbox.darwin.core.util.files.FileUtils
-import org.spongepowered.api.Sponge
-import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
+import org.dockbox.darwin.core.util.files.FileUtils
+import org.spongepowered.api.Sponge
 
 class SpongeFileUtils : FileUtils {
     override fun createPathIfNotExists(path: Path): Path {
@@ -55,8 +54,8 @@ class SpongeFileUtils : FileUtils {
         return createPathIfNotExists(modDir)
     }
 
-    override fun getModuleDir(): Path {
-        return createPathIfNotExists(getServerRoot().resolve("modules/"))
+    override fun getExtensionDir(): Path {
+        return createPathIfNotExists(getServerRoot().resolve("extensions/"))
     }
 
     override fun getModDir(): Path {
@@ -67,8 +66,8 @@ class SpongeFileUtils : FileUtils {
         return createPathIfNotExists(getServerRoot().resolve("plugins/"))
     }
 
-    override fun getModuleConfigDir(): Path {
-        return getServerRoot().resolve("config/modules/")
+    override fun getExtensionConfigdir(): Path {
+        return getServerRoot().resolve("config/extensions/")
     }
 
     override fun getModConfigDir(): Path {

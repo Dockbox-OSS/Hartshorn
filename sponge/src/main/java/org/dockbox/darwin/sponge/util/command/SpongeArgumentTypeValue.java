@@ -25,7 +25,7 @@ import org.dockbox.darwin.core.command.SimpleCommandBus.Arguments;
 import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.sponge.util.command.SpongeCommandBus.FaweArgument;
 import org.dockbox.darwin.sponge.util.command.SpongeCommandBus.FaweArgument.FaweTypes;
-import org.dockbox.darwin.sponge.util.command.SpongeCommandBus.ModuleArgument;
+import org.dockbox.darwin.sponge.util.command.SpongeCommandBus.ExtensionArgument;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.text.Text;
@@ -67,8 +67,8 @@ public class SpongeArgumentTypeValue extends AbstractArgumentValue<CommandElemen
                 return GenericArguments.longNum(Text.of(key));
             case PLAYER:
                 return GenericArguments.player(Text.of(key));
-            case MODULE:
-                return new ModuleArgument(Text.of(key));
+            case EXTENSION:
+                return new ExtensionArgument(Text.of(key));
             case REMAININGSTRING:
                 return GenericArguments.remainingJoinedStrings(Text.of(key));
             case STRING:

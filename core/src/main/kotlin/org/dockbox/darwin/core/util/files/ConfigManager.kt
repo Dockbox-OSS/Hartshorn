@@ -28,7 +28,7 @@ abstract class ConfigManager : ServerReference() {
     open fun getConfigDir(extension: Class<*>): Path {
         return runWithExtension(extension) { annotation: Extension ->
             getFileType().asPath(
-                    Server.getInstance(FileUtils::class.java).getModuleConfigDir(),
+                    Server.getInstance(FileUtils::class.java).getExtensionConfigdir(),
                     annotation.id
             )
         }

@@ -52,10 +52,10 @@ import org.dockbox.darwin.core.util.extension.ExtensionManager
 
 abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     enum class Arguments {
-        BOOL, DOUBLE, ENTITY, INTEGER, LOCATION, LONG, PLAYER, MODULE, REMAININGSTRING, STRING, USER, UUID, VECTOR, WORLD, EDITSESSION, MASK, PATTERN, REGION, OTHER
+        BOOL, DOUBLE, ENTITY, INTEGER, LOCATION, LONG, PLAYER, EXTENSION, REMAININGSTRING, STRING, USER, UUID, VECTOR, WORLD, EDITSESSION, MASK, PATTERN, REGION, OTHER
     }
 
-    protected val PARENT_COMMAND_PREFIX: String = "@m"
+    protected val parentCommandPrefix: String = "@m"
 
     override fun register(vararg objs: Any) {
         for (obj in objs) {

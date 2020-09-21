@@ -83,7 +83,7 @@ public class IntegratedServerExtension extends ServerReference {
 
     // Parent command
     @Command(aliases = "", usage = "")
-    public void debugModules(MessageReceiver source) {
+    public void debugExtensions(MessageReceiver source) {
         super.consumeWithInstance(ExtensionManager.class, em -> {
             PaginationBuilder pb = super.getInstance(PaginationService.class).builder();
 

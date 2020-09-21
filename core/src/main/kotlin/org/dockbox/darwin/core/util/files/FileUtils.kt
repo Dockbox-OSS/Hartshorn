@@ -26,11 +26,11 @@ interface FileUtils {
     fun getLogsDir(): Path
     fun getServerRoot(): Path
 
-    fun getModuleDir(): Path
+    fun getExtensionDir(): Path
     fun getModDir(): Path
     fun getPluginDir(): Path
 
-    fun getModuleConfigDir(): Path
+    fun getExtensionConfigdir(): Path
     fun getModConfigDir(): Path
     fun getPluginConfigDir(): Path
 

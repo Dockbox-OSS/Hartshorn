@@ -100,7 +100,7 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public List<ExtensionContext> getExternalExtensions() {
-        Path moduleDir = Server.getInstance(FileUtils.class).getModuleDir();
+        Path moduleDir = Server.getInstance(FileUtils.class).getExtensionDir();
         try (Stream<Path> stream = Files.walk(moduleDir, 1)) {
             List<ExtensionContext> contexts = new CopyOnWriteArrayList<>();
             Server.log().info("Scanning [" + moduleDir + "] for component files");
@@ -221,7 +221,7 @@ public class SimpleExtensionManager implements ExtensionManager {
             // Additionally, the addComponentClass method scans if the entry is annotated.
             // This ensures there will be no NPE's here.
             if (context.addComponentClass(classEntry)) {
-                
+
                 Extension header = classEntry.getAnnotation(Extension.class);
                 if (null == header) {
                     throw new IllegalStateException("Supposed header is absent from component entry");

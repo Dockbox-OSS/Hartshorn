@@ -54,7 +54,7 @@ class SpongeCommonInjector : AbstractCommonInjector() {
         bind(ExceptionHelper::class.java).to(SimpleExceptionHelper::class.java)
     }
 
-    override fun configureModuleInject() {
+    override fun configureExtensionInject() {
         bind(ExtensionManager::class.java).to(SimpleExtensionManager::class.java)
     }
 

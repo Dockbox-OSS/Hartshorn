@@ -23,10 +23,10 @@ import org.dockbox.darwin.core.server.config.GlobalConfig
 import org.dockbox.darwin.core.util.discord.DiscordUtils
 import org.dockbox.darwin.core.util.events.EventBus
 import org.dockbox.darwin.core.util.exceptions.ExceptionHelper
+import org.dockbox.darwin.core.util.extension.ExtensionManager
 import org.dockbox.darwin.core.util.files.ConfigManager
 import org.dockbox.darwin.core.util.files.DataManager
 import org.dockbox.darwin.core.util.files.FileUtils
-import org.dockbox.darwin.core.util.extension.ExtensionManager
 import org.dockbox.darwin.core.util.player.PlayerStorageService
 import org.dockbox.darwin.core.util.text.BroadcastService
 
@@ -34,12 +34,12 @@ abstract class AbstractCommonInjector : AbstractModule() {
 
     override fun configure() {
         this.configureExceptionInject()
-        this.configureModuleInject()
+        this.configureExtensionInject()
         this.configureUtilInject()
     }
 
     protected abstract fun configureExceptionInject()
-    protected abstract fun configureModuleInject()
+    protected abstract fun configureExtensionInject()
     protected abstract fun configureUtilInject()
 
     companion object {

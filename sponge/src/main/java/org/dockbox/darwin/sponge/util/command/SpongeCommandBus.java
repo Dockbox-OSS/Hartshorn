@@ -140,7 +140,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(registeredCmd)) {
             List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, new ArrayList<>());
             childs.forEach(child -> {
-                if (super.getPARENT_COMMAND_PREFIX().equals(child.getFirst())) {
+                if (super.getParentCommandPrefix().equals(child.getFirst())) {
                     spec.executor(child.getSecond().getExecutor());
                 } else {
                     spec.child(child.getSecond(), child.getFirst());
@@ -364,9 +364,9 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         }
     }
 
-    public static class ModuleArgument extends CommandElement {
+    public static class ExtensionArgument extends CommandElement {
 
-        ModuleArgument(@Nullable Text key) {
+        ExtensionArgument(@Nullable Text key) {
             super(key);
         }
 
