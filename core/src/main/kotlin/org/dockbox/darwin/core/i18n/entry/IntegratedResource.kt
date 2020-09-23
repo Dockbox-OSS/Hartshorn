@@ -70,6 +70,8 @@ enum class IntegratedResource(private var value: String): ResourceEntry {
     CONFIRM_INVALID_ENTRY("$4Could not confirm command: Invalid runner entry"),
     CONFIRM_EXPIRED("$4You have no commands waiting for confirmation"),
     CONFIRM_WRONG_SOURCE("$4This command can only be used by identifiable sources (players, console)"),
+    CONFIRM_COMMAND_MESSAGE("$1This command requires confirmation, click here to confirm running $2{0}"),
+    CONFIRM_COMMAND_MESSAGE_HOVER("$1Confirm running $2{0}"),
 
     //    Tickets
     // STATUS_ not used directly but using valueOf, DO NOT REMOVE

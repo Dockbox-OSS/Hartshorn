@@ -113,10 +113,9 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         if (registration.command.requireConfirm && src is Identifiable) {
             confirmableCommands[src.uniqueId] = runnable
 
-            // TODO: Confirmation message resource
-            val confirmMessage = Text.of("")
+            val confirmMessage = Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE.format(ctx.command))
                     .onClick(ClickAction.RunCommand("/darwin confirm ${src.uniqueId}"))
-                    .onHover(HoverAction.ShowText(Text.of("")))
+                    .onHover(HoverAction.ShowText(Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE_HOVER.format(ctx.command))))
 
             src.send(confirmMessage)
         } else runnable.run()
