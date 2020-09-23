@@ -159,8 +159,9 @@ public class IntegratedServerExtension extends ServerReference {
 
                 if (confirmableCommandsSnapshot.containsKey(uuid)) {
                     Runnable runnable = confirmableCommandsSnapshot.get(uuid);
-                    if (null != runnable) runnable.run();
+                    SimpleCommandBus.Companion.getConfirmableCommands().remove(uuid);
 
+                    if (null != runnable) runnable.run();
                     else src.send(IntegratedServerResources.CONFIRM_INVALID_ENTRY);
                 } else src.send(IntegratedServerResources.CONFIRM_EXPIRED);
             } else src.send(IntegratedServerResources.CONFIRM_EXPIRED);
