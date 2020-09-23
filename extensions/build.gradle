@@ -24,5 +24,6 @@ group = 'org.dockbox.selene.integrated'
 description = 'Integrated extensions for Selene'
 
 dependencies {
-    compileOnly project(':core')
+    compileOnly project(':selene-core')
+    compileOnly project(':selene')
 }

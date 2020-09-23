@@ -18,14 +18,14 @@
 package org.dockbox.selene.sponge.util.player
 
 import org.dockbox.selene.core.objects.user.Player
-import org.dockbox.selene.core.util.player.PlayerStorageService
+import org.dockbox.selene.core.impl.util.player.DefaultPlayerStorageService
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.service.user.UserStorageService
 import java.util.*
 import java.util.stream.Collectors
 
-class SpongePlayerStorageService : PlayerStorageService() {
+class SpongePlayerStorageService : DefaultPlayerStorageService() {
 
     override fun getOnlinePlayers(): List<Player> {
         return Sponge.getServer().onlinePlayers.stream().map { SpongePlayer(it.uniqueId, it.name) }.collect(Collectors.toList())

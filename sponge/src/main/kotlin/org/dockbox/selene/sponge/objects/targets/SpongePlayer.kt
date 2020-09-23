@@ -31,7 +31,7 @@ import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.text.Text
 import org.dockbox.selene.core.text.Text.of
 import org.dockbox.selene.core.text.navigation.Pagination
-import org.dockbox.selene.core.util.player.PlayerStorageService
+import org.dockbox.selene.core.impl.util.player.DefaultPlayerStorageService
 import org.dockbox.selene.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.data.key.Keys
@@ -83,11 +83,11 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun getLanguage(): Language {
-        return Selene.getInstance(PlayerStorageService::class.java).getLanguagePreference(this.uniqueId)
+        return Selene.getInstance(DefaultPlayerStorageService::class.java).getLanguagePreference(this.uniqueId)
     }
 
     override fun setLanguage(lang: Language) {
-        Selene.getInstance(PlayerStorageService::class.java).setLanguagePreference(this.uniqueId, lang)
+        Selene.getInstance(DefaultPlayerStorageService::class.java).setLanguagePreference(this.uniqueId, lang)
     }
 
     override fun execute(command: String) {

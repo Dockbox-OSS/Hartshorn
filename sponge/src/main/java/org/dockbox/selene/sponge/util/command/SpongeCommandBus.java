@@ -24,12 +24,13 @@ import com.magitechserver.magibridge.util.BridgeCommandSource;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.input.ParserContext;
 
-import org.dockbox.selene.core.command.AbstractArgumentValue;
+import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
 import org.dockbox.selene.core.command.CommandRunnerFunction;
-import org.dockbox.selene.core.command.SimpleCommandBus;
+import org.dockbox.selene.core.impl.command.SimpleCommandBus;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.events.chat.CommandEvent;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
 import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
@@ -242,7 +243,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             else sender = null;
 
             assert null != sender : "Command sender is not a console or a player, did a plugin call me?";
-            org.dockbox.selene.core.command.context.CommandContext ctx = this.convertContext(args, sender, command);
+            SimpleCommandContext ctx = this.convertContext(args, sender, command);
 
             EventBus eb = Selene.getInstance(EventBus.class);
 
@@ -265,9 +266,9 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
     @NotNull
     @Override
-    protected org.dockbox.selene.core.command.context.CommandContext convertContext(CommandContext ctx,
-                                                                                    @NotNull org.dockbox.selene.core.objects.targets.CommandSource sender,
-                                                                                    @org.jetbrains.annotations.Nullable String command) {
+    protected SimpleCommandContext convertContext(CommandContext ctx,
+                                                  @NotNull org.dockbox.selene.core.objects.targets.CommandSource sender,
+                                                  @org.jetbrains.annotations.Nullable String command) {
         Multimap<String, Object> parsedArgs;
         try {
             Field parsedArgsF = ctx.getClass().getDeclaredField("parsedArgs");
@@ -275,7 +276,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             parsedArgs = (Multimap<String, Object>) parsedArgsF.get(ctx);
         } catch (IllegalAccessException | ClassCastException | NoSuchFieldException e) {
             Selene.getServer().except("Could not load parsed arguments from Sponge command context", e);
-            return org.dockbox.selene.core.command.context.CommandContext.Companion.getEMPTY();
+            return SimpleCommandContext.Companion.getEMPTY();
         }
 
         List<CommandValue.Argument<?>> arguments = new ArrayList<>();
@@ -292,12 +293,12 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     @NotNull
-    private org.dockbox.selene.core.command.context.CommandContext getContext(org.dockbox.selene.core.objects.targets.@NotNull CommandSource sender, List<CommandValue.Argument<?>> arguments, List<CommandValue.Flag<?>> flags, String command) {
-        org.dockbox.selene.core.command.context.CommandContext seleneCtx;
+    private SimpleCommandContext getContext(org.dockbox.selene.core.objects.targets.@NotNull CommandSource sender, List<CommandValue.Argument<?>> arguments, List<CommandValue.Flag<?>> flags, String command) {
+        SimpleCommandContext seleneCtx;
         if (sender instanceof org.dockbox.selene.core.objects.user.Player) {
             org.dockbox.selene.core.objects.location.Location loc = ((org.dockbox.selene.core.objects.user.Player) sender).getLocation();
             org.dockbox.selene.core.objects.location.World world = ((org.dockbox.selene.core.objects.user.Player) sender).getLocation().getWorld();
-            seleneCtx = new org.dockbox.selene.core.command.context.CommandContext(
+            seleneCtx = new SimpleCommandContext(
                     command,
                     arguments.toArray(new CommandValue.Argument<?>[0]),
                     flags.toArray(new CommandValue.Flag<?>[0]),
@@ -305,7 +306,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                     new String[0]
             );
         } else {
-            seleneCtx = new org.dockbox.selene.core.command.context.CommandContext(
+            seleneCtx = new SimpleCommandContext(
                     command,
                     arguments.toArray(new CommandValue.Argument<?>[0]),
                     flags.toArray(new CommandValue.Flag<?>[0]),

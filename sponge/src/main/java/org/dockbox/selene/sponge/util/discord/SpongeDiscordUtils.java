@@ -22,13 +22,13 @@ import com.magitechserver.magibridge.MagiBridge;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import org.dockbox.selene.core.util.discord.DiscordUtils;
+import org.dockbox.selene.core.impl.util.discord.DefaultDiscordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 
-public class SpongeDiscordUtils extends DiscordUtils {
+public class SpongeDiscordUtils extends DefaultDiscordUtils {
 
     @NotNull
     @Override

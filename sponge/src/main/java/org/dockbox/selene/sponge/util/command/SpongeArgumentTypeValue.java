@@ -20,8 +20,8 @@ package org.dockbox.selene.sponge.util.command;
 import com.google.common.base.Enums;
 import com.google.common.base.Optional;
 
-import org.dockbox.selene.core.command.AbstractArgumentValue;
-import org.dockbox.selene.core.command.SimpleCommandBus.Arguments;
+import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
+import org.dockbox.selene.core.impl.command.SimpleCommandBus.Arguments;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus.FaweArgument;
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus.FaweArgument.FaweTypes;
