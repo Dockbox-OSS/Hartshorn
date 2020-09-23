@@ -21,6 +21,7 @@ import org.dockbox.darwin.core.annotations.Command;
 import org.dockbox.darwin.core.command.context.CommandContext;
 import org.dockbox.darwin.core.command.context.CommandValue.Argument;
 import org.dockbox.darwin.core.command.parse.impl.LanguageArgumentParser;
+import org.dockbox.darwin.core.events.server.ServerEvent.Reload;
 import org.dockbox.darwin.core.i18n.common.Language;
 import org.dockbox.darwin.core.i18n.common.ResourceEntry;
 import org.dockbox.darwin.core.i18n.entry.ExternalResourceEntry;
@@ -36,6 +37,7 @@ import org.dockbox.darwin.core.text.actions.HoverAction.ShowText;
 import org.dockbox.darwin.core.text.navigation.PaginationBuilder;
 import org.dockbox.darwin.core.text.navigation.PaginationService;
 import org.dockbox.darwin.core.util.Utils;
+import org.dockbox.darwin.core.util.events.EventBus;
 import org.dockbox.darwin.core.util.extension.Extension;
 import org.dockbox.darwin.core.util.extension.ExtensionContext;
 import org.dockbox.darwin.core.util.extension.ExtensionManager;
@@ -113,19 +115,18 @@ public class IntegratedServerExtension extends ServerReference {
         return line;
     }
 
-    @Command(aliases = "extension", usage = "extension <id{String}>")
+    @Command(aliases = "extension", usage = "extension <id{Extension}>")
     public void debugExtension(MessageReceiver source, CommandContext ctx) {
         super.consumeWithInstance(ExtensionManager.class, em -> {
-            Optional<Argument<String>> oarg = ctx.getArgument("id");
-            if (!oarg.isPresent()) return;
+            Optional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
+            if (!oarg.isPresent()) return; // TODO, message
 
-            Optional<Extension> oe = em.getHeader(oarg.get().getValue());
-            Optional<ExtensionContext> oec = em.getContext(oarg.get().getValue());
+            Extension e = oarg.get().getValue();
+            Optional<ExtensionContext> oec = em.getContext(e.id());
 
-            if (!(oe.isPresent() && oec.isPresent())) {
+            if (!oec.isPresent()) {
                 source.sendWithPrefix(EXTENSION_UNKNOWN.format(oarg.get().getValue()));
             } else {
-                Extension e = oe.get();
                 ExtensionContext ec = oec.get();
 
                 source.send(Text.of(EXTENSION_INFO_BLOCK.format(
