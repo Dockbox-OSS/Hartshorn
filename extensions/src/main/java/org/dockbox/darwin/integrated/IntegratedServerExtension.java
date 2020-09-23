@@ -18,13 +18,14 @@
 package org.dockbox.darwin.integrated;
 
 import org.dockbox.darwin.core.annotations.Command;
-import org.dockbox.darwin.core.command.SimpleCommandBus;
+import org.dockbox.darwin.core.command.CommandBus;
 import org.dockbox.darwin.core.command.context.CommandContext;
 import org.dockbox.darwin.core.command.context.CommandValue.Argument;
 import org.dockbox.darwin.core.command.parse.impl.LanguageArgumentParser;
 import org.dockbox.darwin.core.command.parse.impl.UUIDArgumentParser;
 import org.dockbox.darwin.core.events.server.ServerEvent.Reload;
 import org.dockbox.darwin.core.i18n.common.Language;
+import org.dockbox.darwin.core.i18n.entry.IntegratedResource;
 import org.dockbox.darwin.core.objects.optional.Exceptional;
 import org.dockbox.darwin.core.objects.targets.CommandSource;
 import org.dockbox.darwin.core.objects.targets.Identifiable;
@@ -45,7 +46,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -153,20 +153,16 @@ public class IntegratedServerExtension extends ServerReference {
         }
         Optional<UUID> ouuid = ctx.getArgumentAndParse("uuid", new UUIDArgumentParser());
 
-        Exceptional.ofOptional(ouuid).ifPresent(uuid -> {
-            if (uuid.equals(((Identifiable) src).getUniqueId())) {
-                Map<UUID, Runnable> confirmableCommandsSnapshot = SimpleCommandBus.Companion.getConfirmableCommands();
-
-                if (confirmableCommandsSnapshot.containsKey(uuid)) {
-                    Runnable runnable = confirmableCommandsSnapshot.get(uuid);
-                    SimpleCommandBus.Companion.getConfirmableCommands().remove(uuid);
-
-                    if (null != runnable) runnable.run();
-                    else src.send(IntegratedServerResources.CONFIRM_INVALID_ENTRY);
-                } else src.send(IntegratedServerResources.CONFIRM_EXPIRED);
-            } else src.send(IntegratedServerResources.CONFIRM_EXPIRED);
-
-        }).ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));
+        // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
+        // argument here is just a confirmation that the source is correct.
+        Exceptional.ofOptional(ouuid)
+                .ifPresent(uuid -> {
+                    if (((Identifiable) src).getUniqueId().equals(uuid))
+                        super.getInstance(CommandBus.class).confirmLastCommand(uuid);
+                    else
+                        src.send(IntegratedResource.CONFIRM_EXPIRED);
+                })
+                .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));
     }
 
     @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", single = true)

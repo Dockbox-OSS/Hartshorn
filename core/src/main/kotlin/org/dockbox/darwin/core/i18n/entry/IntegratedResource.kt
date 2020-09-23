@@ -66,6 +66,10 @@ enum class IntegratedResource(private var value: String): ResourceEntry {
     TIME_MINUTE_AGO("$1One $2minute ago"),
     TIME_SECONDS_AGO("$1{0} $2seconds ago"),
     TIME_JUST_NOW("$1Just now"),
+    CONFIRM_INVALID_ID("$4Could not confirm command: Invalid runner ID"),
+    CONFIRM_INVALID_ENTRY("$4Could not confirm command: Invalid runner entry"),
+    CONFIRM_EXPIRED("$4You have no commands waiting for confirmation"),
+    CONFIRM_WRONG_SOURCE("$4This command can only be used by identifiable sources (players, console)"),
 
     //    Tickets
     // STATUS_ not used directly but using valueOf, DO NOT REMOVE

@@ -33,6 +33,7 @@ import org.dockbox.darwin.core.command.context.CommandContext
 import org.dockbox.darwin.core.command.registry.AbstractCommandRegistration
 import org.dockbox.darwin.core.command.registry.ClassCommandRegistration
 import org.dockbox.darwin.core.command.registry.MethodCommandRegistration
+import org.dockbox.darwin.core.exceptions.ConfirmFailedException
 import org.dockbox.darwin.core.exceptions.IllegalSourceException
 import org.dockbox.darwin.core.i18n.entry.IntegratedResource
 import org.dockbox.darwin.core.i18n.permissions.AbstractPermission
@@ -304,6 +305,20 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     override fun registerCommand(command: String, permission: AbstractPermission, runner: CommandRunnerFunction) {
         if (command.indexOf(' ') < 0 && !command.startsWith("*")) registerCommandNoArgs(command, permission, runner)
         else registerCommandArgsAndOrChild(command, permission, runner)
+    }
+
+    override fun confirmLastCommand(uuid: UUID): Exceptional<Boolean> {
+        val confirmableCommandsSnapshot: Map<UUID, Runnable> = confirmableCommands
+        return if (confirmableCommandsSnapshot.containsKey(uuid)) {
+            val runnable = confirmableCommandsSnapshot[uuid]
+            confirmableCommands.remove(uuid)
+            return if (null != runnable) {
+                runnable.run()
+                Exceptional.of(true)
+            } else {
+                Exceptional.of(false, ConfirmFailedException(IntegratedResource.CONFIRM_INVALID_ENTRY.asString()))
+            }
+        } else Exceptional.of(false, ConfirmFailedException(IntegratedResource.CONFIRM_EXPIRED.asString()))
     }
 
     protected fun argValue(valueString: String): A {
