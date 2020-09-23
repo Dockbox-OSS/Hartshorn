@@ -19,6 +19,7 @@ package org.dockbox.darwin.sponge.util.command;
 
 import com.boydti.fawe.object.FawePlayer;
 import com.google.common.collect.Multimap;
+import com.google.inject.Singleton;
 import com.magitechserver.magibridge.util.BridgeCommandSource;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.input.ParserContext;
@@ -71,6 +72,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("unchecked")
+@Singleton
 public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArgumentTypeValue> {
 
     private static final Map<String, List<Tuple<String, CommandSpec>>> childsPerAlias = new HashMap<>();
