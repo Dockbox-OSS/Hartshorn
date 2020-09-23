@@ -52,8 +52,8 @@ enum class IntegratedResource(private var value: String): ResourceEntry {
     DISCORD_COMMAND_ERRORED("Sorry, I could not start that command. Please report this in our support channel."),
 
     // CommandBus Confirmation
-    CONFIRM_COMMAND_MESSAGE("$1This command requires confirmation, click here to confirm running $2{0}"),
-    CONFIRM_COMMAND_MESSAGE_HOVER("$1Confirm running $2{0}"),
+    CONFIRM_COMMAND_MESSAGE("$1This command requires confirmation, click $2[here] $1to confirm"),
+    CONFIRM_COMMAND_MESSAGE_HOVER("$1Confirm running command"),
 
     // Default characters
     DEFAULT_SEPARATOR(" - "),

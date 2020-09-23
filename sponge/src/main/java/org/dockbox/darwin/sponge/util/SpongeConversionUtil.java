@@ -120,7 +120,7 @@ public enum SpongeConversionUtil {
         if (null == action) return Optional.empty();
         Object result = action.getResult();
         if (action instanceof HoverAction.ShowText) {
-            return Optional.of(TextActions.showText(TextSerializers.FORMATTING_CODE.deserialize(((org.dockbox.darwin.core.text.Text) result).toLegacy())));
+            return Optional.of(TextActions.showText(toSponge(((org.dockbox.darwin.core.text.Text) result))));
         }
         // TODO: Once implemented; ShowItem, ShowEntity
         return Optional.empty();

@@ -113,11 +113,11 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         if (registration.command.requireConfirm && src is Identifiable) {
             confirmableCommands[src.uniqueId] = runnable
 
-            val confirmMessage = Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE.format(ctx.command))
+            val confirmMessage = Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE)
                     .onClick(ClickAction.RunCommand("/darwin confirm ${src.uniqueId}"))
-                    .onHover(HoverAction.ShowText(Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE_HOVER.format(ctx.command))))
+                    .onHover(HoverAction.ShowText(Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE_HOVER)))
 
-            src.send(confirmMessage)
+            src.sendWithPrefix(confirmMessage)
         } else runnable.run()
     }
 
@@ -326,7 +326,6 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         val permission: String
         val vm: Matcher = value.matcher(valueString)
         if (!vm.matches()) Server.getServer().except("Unknown argument specification `$valueString`, use Type or Name{Type} or Name{Type:Permission}")
-        Server.log().info("Groups: " + vm.groupCount())
         key = vm.group(1)
         type = vm.group(2)
         permission = try {
