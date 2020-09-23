@@ -103,9 +103,19 @@ public final class Exceptional<T> {
         return null != this.value;
     }
 
+    public boolean isAbsent() {
+        return null == this.value;
+    }
+
     public Exceptional<T> ifPresent(Consumer<? super T> consumer) {
         if (null != this.value)
             consumer.accept(this.value);
+        return this;
+    }
+
+    public Exceptional<T> ifAbsent(Runnable runnable) {
+        if (null == this.value)
+            runnable.run();
         return this;
     }
 
@@ -155,9 +165,17 @@ public final class Exceptional<T> {
         return null != this.throwable;
     }
 
+    public boolean errorAbsent() { return null == this.throwable; }
+
     public Exceptional<T> ifErrorPresent(Consumer<? super Throwable> consumer) {
         if (null != this.throwable)
             consumer.accept(this.throwable);
+        return this;
+    }
+
+    public Exceptional<T> ifErrorAbsent(Runnable runnable) {
+        if (null == this.throwable)
+            runnable.run();
         return this;
     }
 
