@@ -53,5 +53,7 @@ enum IntegratedServerResources {
     static final ResourceEntry EXTENSION_RELOAD_SUCCESSFUL = new ExternalResourceEntry("$1Successfully reloaded '$2{0}$1'", "darwinserver.reload.single");
     static final ResourceEntry EXTENSION_RELOAD_FAILED = new ExternalResourceEntry("$4Failed to reload '{0}'", "darwinserver.reload.single.fail");
     static final ResourceEntry FULL_RELOAD_SUCCESSFUL = new ExternalResourceEntry("$1Successfully reloaded all extensions", "darwinserver.reload.all");
+    static final ResourceEntry CONFIRM_INVALID_ID = new ExternalResourceEntry("$4Could not confirm command: Invalid runner ID", "darwinserver.confirm.invalid.id");
+    static final ResourceEntry CONFIRM_WRONG_SOURCE = new ExternalResourceEntry("$4This command can only be used by identifiable sources (players, console)", "darwinserver.confirm.invalid.source");
 
 }

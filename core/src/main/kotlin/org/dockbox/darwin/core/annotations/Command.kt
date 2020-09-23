@@ -29,5 +29,6 @@ annotation class Command (
         val permissionKey: String = "",
         val cooldownDuration: Long = -1,
         val cooldownUnit: ChronoUnit = ChronoUnit.SECONDS,
-        val single: Boolean = false
+        val single: Boolean = false,
+        val requireConfirm: Boolean = false
 )

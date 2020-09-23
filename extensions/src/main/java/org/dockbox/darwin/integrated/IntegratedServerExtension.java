@@ -18,13 +18,17 @@
 package org.dockbox.darwin.integrated;
 
 import org.dockbox.darwin.core.annotations.Command;
+import org.dockbox.darwin.core.command.CommandBus;
 import org.dockbox.darwin.core.command.context.CommandContext;
 import org.dockbox.darwin.core.command.context.CommandValue.Argument;
 import org.dockbox.darwin.core.command.parse.impl.LanguageArgumentParser;
+import org.dockbox.darwin.core.command.parse.impl.UUIDArgumentParser;
 import org.dockbox.darwin.core.events.server.ServerEvent.Reload;
 import org.dockbox.darwin.core.i18n.common.Language;
+import org.dockbox.darwin.core.i18n.entry.IntegratedResource;
 import org.dockbox.darwin.core.objects.optional.Exceptional;
 import org.dockbox.darwin.core.objects.targets.CommandSource;
+import org.dockbox.darwin.core.objects.targets.Identifiable;
 import org.dockbox.darwin.core.objects.targets.MessageReceiver;
 import org.dockbox.darwin.core.objects.user.Player;
 import org.dockbox.darwin.core.server.Server;
@@ -43,6 +47,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Extension(
         id = "darwinserver",
@@ -115,7 +120,7 @@ public class IntegratedServerExtension extends ServerReference {
         });
     }
 
-    @Command(aliases = "reload", usage = "reload [id{Extension}]")
+    @Command(aliases = "reload", usage = "reload [id{Extension}]", requireConfirm = true)
     public void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = super.getInstance(EventBus.class);
         if (ctx.hasArgument("id")) {
@@ -138,6 +143,26 @@ public class IntegratedServerExtension extends ServerReference {
             eb.post(new Reload());
             src.send(IntegratedServerResources.FULL_RELOAD_SUCCESSFUL);
         }
+    }
+
+    @Command(aliases = "confirm", usage = "confirm <uuid{String}>")
+    public void confirm(CommandSource src, CommandContext ctx) {
+        if (!(src instanceof Identifiable)) {
+            src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
+            return;
+        }
+        Optional<UUID> ouuid = ctx.getArgumentAndParse("uuid", new UUIDArgumentParser());
+
+        // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
+        // argument here is just a confirmation that the source is correct.
+        Exceptional.ofOptional(ouuid)
+                .ifPresent(uuid -> {
+                    if (((Identifiable) src).getUniqueId().equals(uuid))
+                        super.getInstance(CommandBus.class).confirmLastCommand(uuid);
+                    else
+                        src.send(IntegratedResource.CONFIRM_EXPIRED);
+                })
+                .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));
     }
 
     @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", single = true)

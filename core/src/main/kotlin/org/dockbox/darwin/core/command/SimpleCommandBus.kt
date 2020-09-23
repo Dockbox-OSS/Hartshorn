@@ -21,6 +21,7 @@ import java.lang.reflect.AnnotatedElement
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import java.util.regex.Matcher
@@ -32,6 +33,7 @@ import org.dockbox.darwin.core.command.context.CommandContext
 import org.dockbox.darwin.core.command.registry.AbstractCommandRegistration
 import org.dockbox.darwin.core.command.registry.ClassCommandRegistration
 import org.dockbox.darwin.core.command.registry.MethodCommandRegistration
+import org.dockbox.darwin.core.exceptions.ConfirmFailedException
 import org.dockbox.darwin.core.exceptions.IllegalSourceException
 import org.dockbox.darwin.core.i18n.entry.IntegratedResource
 import org.dockbox.darwin.core.i18n.permissions.AbstractPermission
@@ -45,6 +47,9 @@ import org.dockbox.darwin.core.objects.targets.Console
 import org.dockbox.darwin.core.objects.targets.Identifiable
 import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
+import org.dockbox.darwin.core.text.Text
+import org.dockbox.darwin.core.text.actions.ClickAction
+import org.dockbox.darwin.core.text.actions.HoverAction
 import org.dockbox.darwin.core.util.Utils
 import org.dockbox.darwin.core.util.extension.Extension
 import org.dockbox.darwin.core.util.extension.ExtensionManager
@@ -91,15 +96,29 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                                 val context: String = registration.command.usage
                                 val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
                                 registerCommand(next, registration.permissions, object : CommandRunnerFunction {
-                                    override fun run(src: CommandSource, ctx: CommandContext) {
-                                        val result = invoke(registration.method, src, ctx, registration)
-                                        if (result.errorPresent()) src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result.error.message))
-                                        else if (result.isPresent) src.sendWithPrefix(result.get())
-                                    }
+                                    override fun run(src: CommandSource, ctx: CommandContext) = processRunnableCommand(registration, src, ctx)
                                 })
                                 Server.log().info("Registered singular command : /$alias")
                             }
                 }
+    }
+
+    private fun processRunnableCommand(registration: MethodCommandRegistration, src: CommandSource, ctx: CommandContext) {
+        val runnable = Runnable {
+            val result = invoke(registration.method, src, ctx, registration)
+            if (result.errorPresent()) src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result.error.message))
+            else if (result.isPresent) src.sendWithPrefix(result.get())
+        }
+
+        if (registration.command.requireConfirm && src is Identifiable) {
+            confirmableCommands[src.uniqueId] = runnable
+
+            val confirmMessage = Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE)
+                    .onClick(ClickAction.RunCommand("/darwin confirm ${src.uniqueId}"))
+                    .onHover(HoverAction.ShowText(Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE_HOVER)))
+
+            src.sendWithPrefix(confirmMessage)
+        } else runnable.run()
     }
 
     override fun registerClassCommand(clazz: Class<*>, instance: Any) {
@@ -115,26 +134,16 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             Arrays.stream(registration.subcommands).forEach { subRegistration ->
 
                 val methodRunner = object : CommandRunnerFunction {
-                    override fun run(src: CommandSource, ctx: CommandContext) {
-                        Server.log().info("Starting runner for $alias")
-                        val result = invoke(
-                                subRegistration.method,
-                                src, ctx,
-                                subRegistration)
-                        if (result.errorPresent()) src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result))
-                        else if (result.isPresent) src.sendWithPrefix(result.get())
-                    }
+                    override fun run(src: CommandSource, ctx: CommandContext) = processRunnableCommand(subRegistration, src, ctx)
                 }
 
                 Arrays.stream(subRegistration.aliases).forEach {
                     if (it != "") {
-                        println("Registration for sub '$it'")
                         // Sub commands need the parent command in the context so it can register correctly
                         val context: String = it + ' ' + subRegistration.command.usage
                         val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
                         registerCommand(next, subRegistration.permissions, methodRunner)
                     } else {
-                        println("Found parent! " + subRegistration.method.name)
                         parentRunner.set(methodRunner)
                     }
                 }
@@ -297,13 +306,26 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         else registerCommandArgsAndOrChild(command, permission, runner)
     }
 
+    override fun confirmLastCommand(uuid: UUID): Exceptional<Boolean> {
+        val confirmableCommandsSnapshot: Map<UUID, Runnable> = confirmableCommands
+        return if (confirmableCommandsSnapshot.containsKey(uuid)) {
+            val runnable = confirmableCommandsSnapshot[uuid]
+            confirmableCommands.remove(uuid)
+            return if (null != runnable) {
+                runnable.run()
+                Exceptional.of(true)
+            } else {
+                Exceptional.of(false, ConfirmFailedException(IntegratedResource.CONFIRM_INVALID_ENTRY.asString()))
+            }
+        } else Exceptional.of(false, ConfirmFailedException(IntegratedResource.CONFIRM_EXPIRED.asString()))
+    }
+
     protected fun argValue(valueString: String): A {
         var type: String?
         val key: String
         val permission: String
         val vm: Matcher = value.matcher(valueString)
         if (!vm.matches()) Server.getServer().except("Unknown argument specification `$valueString`, use Type or Name{Type} or Name{Type:Permission}")
-        Server.log().info("Groups: " + vm.groupCount())
         key = vm.group(1)
         type = vm.group(2)
         permission = try {
@@ -323,6 +345,8 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
 
     companion object {
         val RegisteredCommands: List<String> = ArrayList()
+        val confirmableCommands: MutableMap<UUID, Runnable> = ConcurrentHashMap()
+
         val argFinder: Pattern = Pattern.compile("((?:<.+?>)|(?:\\[.+?\\])|(?:-(?:(?:-\\w+)|\\w)(?: [^ -]+)?))") //each match is a flag or argument
         val flag: Pattern = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?") //g1: name  (g2: value)
         val argument: Pattern = Pattern.compile("([\\[<])(.+)[\\]>]") //g1: <[  g2: run argFinder, if nothing it's a value

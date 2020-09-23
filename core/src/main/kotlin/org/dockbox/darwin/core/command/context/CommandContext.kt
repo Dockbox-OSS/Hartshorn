@@ -18,9 +18,25 @@
 package org.dockbox.darwin.core.command.context
 
 import com.sk89q.worldedit.util.command.argument.MissingArgumentException
+import java.lang.reflect.Constructor
+import java.lang.reflect.Field
+import java.util.*
 import org.dockbox.darwin.core.annotations.FromSource
 import org.dockbox.darwin.core.command.parse.AbstractTypeArgumentParser
-import org.dockbox.darwin.core.command.parse.impl.*
+import org.dockbox.darwin.core.command.parse.impl.BooleanArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.CharArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.DoubleArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.EnumArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.FloatArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.IntegerArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.ListArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.LocationArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.LongArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.MapArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.PlayerArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.ResourceArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.ShortArgumentParser
+import org.dockbox.darwin.core.command.parse.impl.WorldArgumentParser
 import org.dockbox.darwin.core.command.parse.rules.Rule
 import org.dockbox.darwin.core.command.parse.rules.Split
 import org.dockbox.darwin.core.command.parse.rules.Strict
@@ -34,13 +50,10 @@ import org.dockbox.darwin.core.objects.user.Player
 import org.dockbox.darwin.core.server.Server
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
-import java.lang.reflect.Constructor
-import java.lang.reflect.Field
-import java.util.*
 
 @Suppress("UNCHECKED_CAST")
 open class CommandContext(
-        internal open val alias: String,
+        internal open val usage: String,
         internal open val args: Array<CommandValue.Argument<*>>,
         internal open val flags: Array<CommandValue.Flag<*>>,
         // Location and world are snapshots of the location of our CommandSource at the time the command was processed.
@@ -50,6 +63,9 @@ open class CommandContext(
         internal open val world: @Nullable Optional<World>,
         internal open val permissions: Array<String>
 ) {
+
+    val alias: String
+        get() = this.usage.split(" ")[0]
 
     val argumentCount: Int
         get() = args!!.size

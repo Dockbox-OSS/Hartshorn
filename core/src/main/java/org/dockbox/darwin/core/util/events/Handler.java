@@ -18,6 +18,7 @@
 package org.dockbox.darwin.core.util.events;
 
 import org.dockbox.darwin.core.objects.events.Event;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -36,7 +37,7 @@ public class Handler {
 
     private final SortedSet<InvokeWrapper> invokers = new TreeSet<>(InvokeWrapper.COMPARATOR);
 
-    private transient volatile InvokeWrapper[] computedInvokerCache = null;
+    private transient volatile InvokeWrapper @Nullable [] computedInvokerCache;
 
     Handler(Class<? extends Event> eventType) {
         this.eventType = eventType;
@@ -46,20 +47,20 @@ public class Handler {
         return this.invokers.stream().map(InvokeWrapper::getMethod).collect(Collectors.toList());
     }
 
-    public boolean subscribe(InvokeWrapper invoker) {
-        return invalidateCache(invokers.add(invoker));
+    public void subscribe(InvokeWrapper invoker) {
+        this.invalidateCache(this.invokers.add(invoker));
     }
 
-    public boolean unsubscribe(InvokeWrapper invoker) {
-        return invalidateCache(invokers.remove(invoker));
+    public void unsubscribe(InvokeWrapper invoker) {
+        this.invalidateCache(this.invokers.remove(invoker));
     }
 
     public void post(Event event, Class<?> target) {
         InvokeWrapper[] cache = this.computedInvokerCache;
-        if (cache == null) {
+        if (null == cache) {
             synchronized (this) {
-                if ((cache = this.computedInvokerCache) == null) {
-                    cache = this.computedInvokerCache = computeInvokerCache();
+                if (null == (cache = this.computedInvokerCache)) {
+                    cache = this.computedInvokerCache = this.computeInvokerCache();
                 }
             }
         }
@@ -72,9 +73,9 @@ public class Handler {
         }
     }
 
-    synchronized InvokeWrapper[] computeInvokerCache() {
+    private synchronized InvokeWrapper[] computeInvokerCache() {
         SortedSet<InvokeWrapper> set;
-        if (hasSupertypeHandler()) {
+        if (this.hasSupertypeHandler()) {
             set = new TreeSet<>(this.invokers);
             for (Handler supertypeHandler : this.supertypeHandlers)
                 set.addAll(supertypeHandler.invokers);
@@ -84,51 +85,51 @@ public class Handler {
         return set.toArray(new InvokeWrapper[0]);
     }
 
-    boolean invalidateCache(boolean modified) {
+    private boolean invalidateCache(boolean modified) {
         if (modified) this.computedInvokerCache = null;
         return modified;
     }
 
-    public Class<? extends Event> eventType() {
-        return eventType;
+    private Class<? extends Event> eventType() {
+        return this.eventType;
     }
 
-    public boolean isSubtypeOf(Class<?> cls) {
-        Class<? extends Event> type = eventType();
+    private boolean isSubtypeOf(Class<?> cls) {
+        Class<? extends Event> type = this.eventType();
         return type != cls && cls.isAssignableFrom(type);
     }
 
     public boolean isSubtypeOf(Handler handler) {
-        return isSubtypeOf(handler.eventType());
+        return this.isSubtypeOf(handler.eventType());
     }
 
-    public boolean hasSupertypeHandler() {
-        return !supertypeHandlers.isEmpty();
+    private boolean hasSupertypeHandler() {
+        return !this.supertypeHandlers.isEmpty();
     }
 
     public Set<Handler> getSupertypeHandlers() {
-        return Collections.unmodifiableSet(supertypeHandlers);
+        return Collections.unmodifiableSet(this.supertypeHandlers);
     }
 
     boolean addSupertypeHandler(Handler handler) {
         if (handler == this) return false;
-        return invalidateCache(supertypeHandlers.add(handler));
+        return this.invalidateCache(this.supertypeHandlers.add(handler));
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Handler)) return false;
-        return Objects.equals(eventType, ((Handler) o).eventType);
+        return Objects.equals(this.eventType, ((Handler) o).eventType);
     }
 
     @Override
     public int hashCode() {
-        return eventType.hashCode();
+        return this.eventType.hashCode();
     }
 
     @Override
     public String toString() {
-        return String.format("Handler{%s}", eventType.getName());
+        return String.format("Handler{%s}", this.eventType.getName());
     }
 }

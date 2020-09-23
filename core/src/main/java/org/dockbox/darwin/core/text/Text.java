@@ -118,16 +118,19 @@ public class Text {
         return this;
     }
 
-    public void onClick(ClickAction<?> action) {
+    public Text onClick(ClickAction<?> action) {
         this.clickAction = action;
+        return this;
     }
 
-    public void onHover(HoverAction<?> action) {
+    public Text onHover(HoverAction<?> action) {
         this.hoverAction = action;
+        return this;
     }
 
-    public void onShiftClick(ShiftClickAction<?> action) {
+    public Text onShiftClick(ShiftClickAction<?> action) {
         this.shiftClickAction = action;
+        return this;
     }
 
     public void send(MessageReceiver... receivers) {

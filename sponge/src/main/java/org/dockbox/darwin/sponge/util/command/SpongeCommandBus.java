@@ -19,6 +19,7 @@ package org.dockbox.darwin.sponge.util.command;
 
 import com.boydti.fawe.object.FawePlayer;
 import com.google.common.collect.Multimap;
+import com.google.inject.Singleton;
 import com.magitechserver.magibridge.util.BridgeCommandSource;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.input.ParserContext;
@@ -71,6 +72,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("unchecked")
+@Singleton
 public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArgumentTypeValue> {
 
     private static final Map<String, List<Tuple<String, CommandSpec>>> childsPerAlias = new HashMap<>();
@@ -286,19 +288,17 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             else arguments.add(new CommandValue.Argument<>(this.getValue(obj), s));
         }));
 
-        String alias = command.split(" ")[0];
-
-        return this.getContext(sender, arguments, flags, alias);
+        return this.getContext(sender, arguments, flags, command);
     }
 
     @NotNull
-    private org.dockbox.darwin.core.command.context.CommandContext getContext(org.dockbox.darwin.core.objects.targets.@NotNull CommandSource sender, List<CommandValue.Argument<?>> arguments, List<CommandValue.Flag<?>> flags, String alias) {
+    private org.dockbox.darwin.core.command.context.CommandContext getContext(org.dockbox.darwin.core.objects.targets.@NotNull CommandSource sender, List<CommandValue.Argument<?>> arguments, List<CommandValue.Flag<?>> flags, String command) {
         org.dockbox.darwin.core.command.context.CommandContext darwinCtx;
         if (sender instanceof org.dockbox.darwin.core.objects.user.Player) {
             org.dockbox.darwin.core.objects.location.Location loc = ((org.dockbox.darwin.core.objects.user.Player) sender).getLocation();
             org.dockbox.darwin.core.objects.location.World world = ((org.dockbox.darwin.core.objects.user.Player) sender).getLocation().getWorld();
             darwinCtx = new org.dockbox.darwin.core.command.context.CommandContext(
-                    alias,
+                    command,
                     arguments.toArray(new CommandValue.Argument<?>[0]),
                     flags.toArray(new CommandValue.Flag<?>[0]),
                     sender, Optional.of(loc), Optional.of(world),
@@ -306,7 +306,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             );
         } else {
             darwinCtx = new org.dockbox.darwin.core.command.context.CommandContext(
-                    alias,
+                    command,
                     arguments.toArray(new CommandValue.Argument<?>[0]),
                     flags.toArray(new CommandValue.Flag<?>[0]),
                     sender, Optional.empty(), Optional.empty(),

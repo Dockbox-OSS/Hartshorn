@@ -167,7 +167,7 @@ public abstract class DiscordUtils {
             }
 
             if (!userPermitted) {
-                context.sendToChannel(IntegratedResource.COMMAND_NOT_PERMITTED);
+                context.sendToChannel(IntegratedResource.DISCORD_COMMAND_NOT_PERMITTED);
                 return;
             }
 
@@ -177,10 +177,10 @@ public abstract class DiscordUtils {
             try {
                 method.invoke(instance, context);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                context.sendToChannel(IntegratedResource.COMMAND_ERRORED);
+                context.sendToChannel(IntegratedResource.DISCORD_COMMAND_ERRORED);
                 Server.getServer().except("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass().getCanonicalName() + "]");
             }
-        } else context.sendToChannel(IntegratedResource.COMMAND_UNKNOWN);
+        } else context.sendToChannel(IntegratedResource.DISCORD_COMMAND_UNKNOWN);
     }
 
     private static boolean isValidChannel(@NotNull DiscordCommandContext context, ListeningLevel level) {
