@@ -120,7 +120,7 @@ public class IntegratedServerExtension extends ServerReference {
         });
     }
 
-    @Command(aliases = "reload", usage = "reload [id{Extension}]")
+    @Command(aliases = "reload", usage = "reload [id{Extension}]", requireConfirm = true)
     public void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = super.getInstance(EventBus.class);
         if (ctx.hasArgument("id")) {
