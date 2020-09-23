@@ -25,6 +25,7 @@ interface EventBus {
     fun subscribe(`object`: Any)
     fun subscribe(`object`: Any, lookup: MethodHandles.Lookup)
     fun unsubscribe(`object`: Any)
+    fun post(event: Event, target: Class<*>)
     fun post(event: Event)
     fun getHandlerRegistry(): HandlerRegistry
     fun getListenerToInvokers(): Map<Any, Set<InvokeWrapper>>
