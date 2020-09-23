@@ -21,6 +21,7 @@ import org.dockbox.selene.core.annotations.Listener;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.events.EventBus;
+import org.dockbox.selene.core.util.events.IWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.invoke.MethodHandles.Lookup;
@@ -33,7 +34,7 @@ import java.util.Set;
 
 @SuppressWarnings({"unchecked", "EqualsWithItself", "VolatileArrayField"})
 public class SimpleEventBus implements EventBus {
-    protected static final Map<Object, Set<InvokeWrapper>> listenerToInvokers = new HashMap<>();
+    protected static final Map<Object, Set<IWrapper>> listenerToInvokers = new HashMap<>();
 
     protected static final HandlerRegistry handlerRegistry = new HandlerRegistry();
 
@@ -41,7 +42,7 @@ public class SimpleEventBus implements EventBus {
 
     @NotNull
     @Override
-    public Map<Object, Set<InvokeWrapper>> getListenerToInvokers() {
+    public Map<Object, Set<IWrapper>> getListenerToInvokers() {
         return listenerToInvokers;
     }
 
@@ -58,13 +59,13 @@ public class SimpleEventBus implements EventBus {
             return;  // Already registered
         }
 
-        Set<InvokeWrapper> invokers = getInvokers(object, lookup);
+        Set<IWrapper> invokers = getInvokers(object, lookup);
         if(invokers.isEmpty()) {
             return; // Doesn't contain any listener methods
         }
         Selene.log().info("Registered {} as event listener", object.getClass().toGenericString());
         listenerToInvokers.put(object, invokers);
-        for (InvokeWrapper invoker : invokers) {
+        for (IWrapper invoker : invokers) {
             handlerRegistry.getHandler(invoker.getEventType()).subscribe(invoker);
         }
     }
@@ -77,12 +78,12 @@ public class SimpleEventBus implements EventBus {
     @Override
     public void unsubscribe(Object object) {
         if (!object.equals(object)) return;
-        Set<InvokeWrapper> invokers = listenerToInvokers.remove(object);
+        Set<IWrapper> invokers = listenerToInvokers.remove(object);
         if (invokers == null || invokers.isEmpty()) {
             return; // Not registered
         }
 
-        for (InvokeWrapper invoker : invokers) {
+        for (IWrapper invoker : invokers) {
             handlerRegistry.getHandler(invoker.getEventType()).unsubscribe(invoker);
         }
     }
@@ -97,9 +98,9 @@ public class SimpleEventBus implements EventBus {
         this.post(event, null);
     }
 
-    protected static Set<InvokeWrapper> getInvokers(Object object, Lookup lookup)
+    protected static Set<IWrapper> getInvokers(Object object, Lookup lookup)
             throws IllegalArgumentException, SecurityException {
-        Set<InvokeWrapper> result = new LinkedHashSet<>();
+        Set<IWrapper> result = new LinkedHashSet<>();
         for (Method method : AccessHelper.getMethodsRecursively(object.getClass())) {
             Listener annotation = AccessHelper.getAnnotationRecursively(method, Listener.class);
             if (annotation != null) {

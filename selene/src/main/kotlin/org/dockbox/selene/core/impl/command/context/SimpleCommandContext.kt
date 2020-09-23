@@ -66,7 +66,7 @@ open class SimpleCommandContext(
         internal open val permissions: Array<String>
 ) : CommandContext {
 
-    val alias: String
+    override val alias: String
         get() = this.usage.split(" ")[0]
 
     override val argumentCount: Int

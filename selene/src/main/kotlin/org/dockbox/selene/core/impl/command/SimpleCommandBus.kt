@@ -31,7 +31,7 @@ import org.dockbox.selene.core.annotations.Command
 import org.dockbox.selene.core.annotations.FromSource
 import org.dockbox.selene.core.command.CommandBus
 import org.dockbox.selene.core.command.CommandRunnerFunction
-import org.dockbox.selene.core.impl.command.context.SimpleCommandContext
+import org.dockbox.selene.core.command.context.CommandContext
 import org.dockbox.selene.core.command.registry.AbstractCommandRegistration
 import org.dockbox.selene.core.command.registry.ClassCommandRegistration
 import org.dockbox.selene.core.command.registry.MethodCommandRegistration
@@ -41,6 +41,7 @@ import org.dockbox.selene.core.i18n.entry.IntegratedResource
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission
 import org.dockbox.selene.core.i18n.permissions.ExternalPermission
 import org.dockbox.selene.core.i18n.permissions.Permission
+import org.dockbox.selene.core.impl.command.context.SimpleCommandContext
 import org.dockbox.selene.core.objects.location.Location
 import org.dockbox.selene.core.objects.location.World
 import org.dockbox.selene.core.objects.optional.Exceptional
@@ -98,14 +99,14 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                                 val context: String = registration.command.usage
                                 val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
                                 registerCommand(next, registration.permissions, object : CommandRunnerFunction {
-                                    override fun run(src: CommandSource, ctx: SimpleCommandContext) = processRunnableCommand(registration, src, ctx)
+                                    override fun run(src: CommandSource, ctx: CommandContext) = processRunnableCommand(registration, src, ctx)
                                 })
                                 Selene.log().info("Registered singular command : /$alias")
                             }
                 }
     }
 
-    private fun processRunnableCommand(registration: MethodCommandRegistration, src: CommandSource, ctx: SimpleCommandContext) {
+    private fun processRunnableCommand(registration: MethodCommandRegistration, src: CommandSource, ctx: CommandContext) {
         val runnable = Runnable {
             val result = invoke(registration.method, src, ctx, registration)
             if (result.errorPresent()) src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result.error.message))
@@ -129,14 +130,14 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             if (instance !is Class<*>) registration.sourceInstance = instance
 
             val parentRunner = AtomicReference<CommandRunnerFunction>(object : CommandRunnerFunction {
-                override fun run(src: CommandSource, ctx: SimpleCommandContext) =
+                override fun run(src: CommandSource, ctx: CommandContext) =
                         src.sendWithPrefix("This command requires arguments!")
             })
 
             Arrays.stream(registration.subcommands).forEach { subRegistration ->
 
                 val methodRunner = object : CommandRunnerFunction {
-                    override fun run(src: CommandSource, ctx: SimpleCommandContext) = processRunnableCommand(subRegistration, src, ctx)
+                    override fun run(src: CommandSource, ctx: CommandContext) = processRunnableCommand(subRegistration, src, ctx)
                 }
 
                 Arrays.stream(subRegistration.aliases).forEach {
@@ -218,7 +219,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         }.toArray { size -> arrayOfNulls<MethodCommandRegistration>(size) }
     }
 
-    private fun checkSenderInCooldown(sender: CommandSource, ctx: SimpleCommandContext, method: Method): Boolean {
+    private fun checkSenderInCooldown(sender: CommandSource, ctx: CommandContext, method: Method): Boolean {
         val command = method.getAnnotation(Command::class.java)
         if (command.cooldownDuration < 0) return false
         if (sender is Identifiable) {
@@ -228,13 +229,13 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         return false
     }
 
-    private fun getRegistrationId(sender: Identifiable, ctx: SimpleCommandContext): String {
+    private fun getRegistrationId(sender: Identifiable, ctx: CommandContext): String {
         val uuid = sender.uniqueId
         val alias = ctx.alias
         return "$uuid$$alias"
     }
 
-    private operator fun invoke(method: Method, sender: CommandSource, ctx: SimpleCommandContext, registration: AbstractCommandRegistration): Exceptional<IntegratedResource> {
+    private operator fun invoke(method: Method, sender: CommandSource, ctx: CommandContext, registration: AbstractCommandRegistration): Exceptional<IntegratedResource> {
         if (checkSenderInCooldown(sender, ctx, method)) {
             return Exceptional.of(IntegratedResource.IN_ACTIVE_COOLDOWN)
         }

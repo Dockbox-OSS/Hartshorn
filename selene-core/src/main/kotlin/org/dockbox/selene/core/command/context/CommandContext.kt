@@ -23,6 +23,7 @@ import org.dockbox.selene.core.objects.optional.Exceptional
 
 interface CommandContext {
 
+    val alias: String
     val argumentCount: Int
     val flagCount: Int
 
