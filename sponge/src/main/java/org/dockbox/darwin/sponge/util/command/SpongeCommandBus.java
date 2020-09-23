@@ -19,6 +19,7 @@ package org.dockbox.darwin.sponge.util.command;
 
 import com.boydti.fawe.object.FawePlayer;
 import com.google.common.collect.Multimap;
+import com.magitechserver.magibridge.util.BridgeCommandSource;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.input.ParserContext;
 
@@ -34,6 +35,7 @@ import org.dockbox.darwin.core.server.Server;
 import org.dockbox.darwin.core.util.events.EventBus;
 import org.dockbox.darwin.core.util.extension.Extension;
 import org.dockbox.darwin.core.util.extension.ExtensionManager;
+import org.dockbox.darwin.sponge.objects.discord.MagiBridgeCommandSource;
 import org.dockbox.darwin.sponge.objects.targets.SpongeConsole;
 import org.dockbox.darwin.sponge.objects.targets.SpongePlayer;
 import org.dockbox.darwin.sponge.util.SpongeConversionUtil;
@@ -234,6 +236,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             @org.jetbrains.annotations.Nullable org.dockbox.darwin.core.objects.targets.CommandSource sender;
             if (src instanceof Player) sender = new SpongePlayer(((Identifiable) src).getUniqueId(), src.getName());
             else if (src instanceof ConsoleSource) sender = SpongeConsole.Companion.getInstance();
+            else if (src instanceof BridgeCommandSource) sender = new MagiBridgeCommandSource((BridgeCommandSource) src);
             else sender = null;
 
             assert null != sender : "Command sender is not a console or a player, did a plugin call me?";
