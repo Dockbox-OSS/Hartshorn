@@ -53,7 +53,7 @@ import org.jetbrains.annotations.Nullable
 
 @Suppress("UNCHECKED_CAST")
 open class CommandContext(
-        internal open val command: String,
+        internal open val usage: String,
         internal open val args: Array<CommandValue.Argument<*>>,
         internal open val flags: Array<CommandValue.Flag<*>>,
         // Location and world are snapshots of the location of our CommandSource at the time the command was processed.
@@ -65,7 +65,7 @@ open class CommandContext(
 ) {
 
     val alias: String
-        get() = this.command.split(" ")[0]
+        get() = this.usage.split(" ")[0]
 
     val argumentCount: Int
         get() = args!!.size
