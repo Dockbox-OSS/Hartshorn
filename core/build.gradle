@@ -22,7 +22,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm'
 }
 
-group 'org.dockbox.darwin.core'
+group 'org.dockbox.selene.core'
 
 sourceCompatibility = 1.8
 
@@ -35,7 +35,7 @@ repositories {
 
 archivesBaseName = 'core'
 group = project.pluginGroup
-description = 'Common API for Darwin Server modules'
+description = 'Common API for Selene extensions'
 def date = LocalDate.now().toString()
 
 dependencies {
@@ -51,7 +51,7 @@ dependencies {
 
 processResources {
     from('src/main/resources') {
-        include 'darwin.properties'
+        include 'selene.properties'
         expand(
                 version: "$project.version",
                 last_update: "${date}"

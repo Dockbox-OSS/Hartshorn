@@ -41,7 +41,7 @@ def getVersionName = { ->
 
 version = getVersionName()
 group = project.pluginGroup
-description = 'Common sources for Darwin Server plugins'
+description = 'Common sources for Selene extensions'
 def junitVersion = '5.3.2'
 
 subprojects { Project subProject ->
@@ -83,8 +83,8 @@ subprojects { Project subProject ->
     tasks.build.dependsOn tasks.shadowJar
 
     shadowJar {
-        relocate 'com.fasterxml.jackson', 'com.darwinreforged.internal.jackson'
-        relocate 'org.apache.commons', 'com.darwinreforged.internal.apache.commons'
+        relocate 'com.fasterxml.jackson', 'org.dockbox.selene.internal.jackson'
+        relocate 'org.apache.commons', 'org.dockbox.selene.internal.apache.commons'
     }
 }
 
@@ -139,7 +139,7 @@ allprojects {
 
 task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all child projects as if it was a single project', group: 'Documentation') {
     destinationDir = file "./docs"
-    title = "DarwinServer (commit #$version)"
+    title = "Selene (commit #$version)"
     options.author true
     options.links 'http://docs.spring.io/spring/docs/4.3.x/javadoc-api/', 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.spring.io/spring-ws/docs/2.3.0.RELEASE/api/', 'http://docs.spring.io/spring-security/site/docs/4.0.4.RELEASE/apidocs/'
     options.addStringOption 'Xdoclint:none', '-quiet'
