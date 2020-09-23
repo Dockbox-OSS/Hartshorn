@@ -54,7 +54,7 @@ public class Handler {
         return invalidateCache(invokers.remove(invoker));
     }
 
-    public void post(Event event) {
+    public void post(Event event, Class<?> target) {
         InvokeWrapper[] cache = this.computedInvokerCache;
         if (cache == null) {
             synchronized (this) {
@@ -65,7 +65,10 @@ public class Handler {
         }
 
         for (InvokeWrapper invoker : cache) {
-            invoker.invoke(event);
+            // Target is null if no specific target should be checked
+            // If the target is present we only want to invoke when the listener matches our target
+            if (null == target || invoker.getListener().getClass().equals(target))
+                invoker.invoke(event);
         }
     }
 

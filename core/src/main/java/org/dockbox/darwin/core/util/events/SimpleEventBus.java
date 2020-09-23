@@ -50,6 +50,7 @@ public class SimpleEventBus implements EventBus {
         return handlerRegistry;
     }
 
+    @Override
     public void subscribe(Object object, @NotNull Lookup lookup) throws IllegalArgumentException, SecurityException {
         if (!object.equals(object)) return;
         if (listenerToInvokers.containsKey(object)) {
@@ -67,10 +68,12 @@ public class SimpleEventBus implements EventBus {
         }
     }
 
+    @Override
     public void subscribe(@NotNull Object object) throws IllegalArgumentException, SecurityException {
         subscribe(object, defaultLookup);
     }
 
+    @Override
     public void unsubscribe(Object object) {
         if (!object.equals(object)) return;
         Set<InvokeWrapper> invokers = listenerToInvokers.remove(object);
@@ -83,8 +86,14 @@ public class SimpleEventBus implements EventBus {
         }
     }
 
+    @Override
+    public void post(Event event, Class<?> target) {
+        handlerRegistry.getHandler(event.getClass()).post(event, target);
+    }
+
+    @Override
     public void post(Event event) {
-        handlerRegistry.getHandler(event.getClass()).post(event);
+        this.post(event, null);
     }
 
     protected static Set<InvokeWrapper> getInvokers(Object object, Lookup lookup)
