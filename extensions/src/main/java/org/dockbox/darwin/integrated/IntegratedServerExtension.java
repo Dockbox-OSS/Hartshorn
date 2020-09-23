@@ -141,6 +141,22 @@ public class IntegratedServerExtension extends ServerReference {
         });
     }
 
+    @Command(aliases = "reload", usage = "reload [id{Extension}]")
+    public void reload(MessageReceiver src, CommandContext ctx) {
+        EventBus eb = super.getInstance(EventBus.class);
+        if (ctx.hasArgument("id")) {
+            Optional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
+
+            if (!oarg.isPresent()) return; // TODO, message
+            Extension e = oarg.get().getValue();
+            Optional<?> oi = Server.getInstance(ExtensionManager.class).getInstance(e.id());
+
+            oi.ifPresent(o -> eb.post(new Reload(), o.getClass())); // TODO, messages
+        } else {
+            eb.post(new Reload());
+        }
+    }
+
     @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", single = true)
     public void switchLang(CommandSource src, CommandContext ctx) {
         Optional<Language> ol = ctx.getArgumentAndParse("language", new LanguageArgumentParser());
