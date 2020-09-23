@@ -23,9 +23,7 @@ import org.dockbox.darwin.core.command.context.CommandValue.Argument;
 import org.dockbox.darwin.core.command.parse.impl.LanguageArgumentParser;
 import org.dockbox.darwin.core.events.server.ServerEvent.Reload;
 import org.dockbox.darwin.core.i18n.common.Language;
-import org.dockbox.darwin.core.i18n.common.ResourceEntry;
-import org.dockbox.darwin.core.i18n.entry.ExternalResourceEntry;
-import org.dockbox.darwin.core.i18n.entry.IntegratedResource;
+import org.dockbox.darwin.core.objects.optional.Exceptional;
 import org.dockbox.darwin.core.objects.targets.CommandSource;
 import org.dockbox.darwin.core.objects.targets.MessageReceiver;
 import org.dockbox.darwin.core.objects.user.Player;
@@ -36,7 +34,6 @@ import org.dockbox.darwin.core.text.actions.ClickAction.RunCommand;
 import org.dockbox.darwin.core.text.actions.HoverAction.ShowText;
 import org.dockbox.darwin.core.text.navigation.PaginationBuilder;
 import org.dockbox.darwin.core.text.navigation.PaginationService;
-import org.dockbox.darwin.core.util.Utils;
 import org.dockbox.darwin.core.util.events.EventBus;
 import org.dockbox.darwin.core.util.extension.Extension;
 import org.dockbox.darwin.core.util.extension.ExtensionContext;
@@ -57,32 +54,6 @@ import java.util.Optional;
 @Command(aliases = {"dserver", "darwin"}, usage = "dserver")
 public class IntegratedServerExtension extends ServerReference {
 
-    private static final ResourceEntry PAGINATION_TITLE = new ExternalResourceEntry("$1Darwin Server Info", "darwinserver.pagination.title");
-    private static final ResourceEntry SERVER_HEADER = new ExternalResourceEntry("$2DarwinServer $3($1Version$3: $1{0}$3)", "darwinserver.info.header");
-    private static final ResourceEntry SERVER_UPDATE = new ExternalResourceEntry("$2Last updated$3: $1{0}", "darwinserver.info.updated");
-    private static final ResourceEntry SERVER_AUTHORS = new ExternalResourceEntry("$2Authors$3: $1{0}", "darwinserver.info.authors");
-    private static final ResourceEntry SERVER_EXTENSIONS = new ExternalResourceEntry("$2Extensions$3:", "darwinserver.info.extensions");
-    private static final ResourceEntry EXTENSION_ROW = new ExternalResourceEntry("$3 - $1{0} $3- $2{1}", "darwinserver.info.extension.row");
-    private static final ResourceEntry EXTENSION_ROW_HOVER = new ExternalResourceEntry("$2Details for '$1{0}$2'", "darwinserver.info.extension.hover");
-    private static final ResourceEntry EXTENSION_INFO_BLOCK = new ExternalResourceEntry(
-            String.join("",
-                    Utils.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20), "\n",
-                    "$2Name : $1{0}", "\n",
-                    "$2ID : $1{1}", "\n",
-                    "$2Description : $1{2}", "\n",
-                    "$2Version : $1{3}", "\n",
-                    "$2URL : $1{4}", "\n",
-                    "$2Dependencies : $1{5}", "\n",
-                    "$2Requires NMS : $1{6}", "\n",
-                    "$2Author(s) : $1{7}", "\n",
-                    "$2Type : $1{8}", "\n",
-                    "$2Source : $1{9}", "\n",
-                    Utils.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20)
-            ), "darwinserver.info.extension.block");
-    private static final ResourceEntry EXTENSION_UNKNOWN = new ExternalResourceEntry("$4Could not find extension with ID '{0}'", "darwinserver.info.extension.unknown");
-    private static final ResourceEntry LANG_SWITCHED = new ExternalResourceEntry("$1Your preferred language has been switched to: $2{0}", "i18n.lang.updated");
-
-
     // Parent command
     @Command(aliases = "", usage = "")
     public void debugExtensions(MessageReceiver source) {
@@ -90,10 +61,10 @@ public class IntegratedServerExtension extends ServerReference {
             PaginationBuilder pb = super.getInstance(PaginationService.class).builder();
 
             List<Text> content = new ArrayList<>();
-            content.add(Text.of(SERVER_HEADER.format(Server.getServer().getVersion())));
-            content.add(Text.of(SERVER_UPDATE.format(Server.getServer().getLastUpdate())));
-            content.add(Text.of(SERVER_AUTHORS.format(String.join(",", Server.getServer().getAuthors()))));
-            content.add(Text.of(SERVER_EXTENSIONS));
+            content.add(Text.of(IntegratedServerResources.SERVER_HEADER.format(Server.getServer().getVersion())));
+            content.add(Text.of(IntegratedServerResources.SERVER_UPDATE.format(Server.getServer().getLastUpdate())));
+            content.add(Text.of(IntegratedServerResources.SERVER_AUTHORS.format(String.join(",", Server.getServer().getAuthors()))));
+            content.add(Text.of(IntegratedServerResources.SERVER_EXTENSIONS));
 
             em.getRegisteredExtensionIds()
                     .forEach(id -> em.getHeader(id)
@@ -101,7 +72,7 @@ public class IntegratedServerExtension extends ServerReference {
                             .ifPresent(content::add)
                     );
 
-            pb.title(PAGINATION_TITLE.asText());
+            pb.title(IntegratedServerResources.PAGINATION_TITLE.asText());
             pb.contents(content);
 
             source.sendPagination(pb.build());
@@ -109,27 +80,30 @@ public class IntegratedServerExtension extends ServerReference {
     }
 
     private Text generateText(Extension e) {
-        Text line = Text.of(EXTENSION_ROW.format(e.name(), e.id()));
+        Text line = Text.of(IntegratedServerResources.EXTENSION_ROW.format(e.name(), e.id()));
         line.onClick(new RunCommand("/dserver extension " + e.id()));
-        line.onHover(new ShowText(Text.of(EXTENSION_ROW_HOVER.format(e.name()))));
+        line.onHover(new ShowText(Text.of(IntegratedServerResources.EXTENSION_ROW_HOVER.format(e.name()))));
         return line;
     }
 
     @Command(aliases = "extension", usage = "extension <id{Extension}>")
-    public void debugExtension(MessageReceiver source, CommandContext ctx) {
+    public void debugExtension(MessageReceiver src, CommandContext ctx) {
         super.consumeWithInstance(ExtensionManager.class, em -> {
             Optional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
-            if (!oarg.isPresent()) return; // TODO, message
+            if (!oarg.isPresent()) {
+                src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
+                return;
+            }
 
             Extension e = oarg.get().getValue();
             Optional<ExtensionContext> oec = em.getContext(e.id());
 
             if (!oec.isPresent()) {
-                source.sendWithPrefix(EXTENSION_UNKNOWN.format(oarg.get().getValue()));
+                src.sendWithPrefix(IntegratedServerResources.EXTENSION_UNKNOWN.format(oarg.get().getValue()));
             } else {
                 ExtensionContext ec = oec.get();
 
-                source.send(Text.of(EXTENSION_INFO_BLOCK.format(
+                src.send(Text.of(IntegratedServerResources.EXTENSION_INFO_BLOCK.format(
                         e.name(), e.id(), e.description(), e.version(), e.url(),
                         0 == e.dependencies().length ? "None" : String.join("$3, $1", e.dependencies()),
                         e.requiresNMS(),
@@ -146,14 +120,23 @@ public class IntegratedServerExtension extends ServerReference {
         EventBus eb = super.getInstance(EventBus.class);
         if (ctx.hasArgument("id")) {
             Optional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
+            if (!oarg.isPresent()) {
+                src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
+                return;
+            }
 
-            if (!oarg.isPresent()) return; // TODO, message
             Extension e = oarg.get().getValue();
-            Optional<?> oi = Server.getInstance(ExtensionManager.class).getInstance(e.id());
-
-            oi.ifPresent(o -> eb.post(new Reload(), o.getClass())); // TODO, messages
+            Exceptional<?> oi = Exceptional.ofOptional(Server.getInstance(ExtensionManager.class).getInstance(e.id()));
+            
+            oi.ifPresent(o -> {
+                eb.post(new Reload(), o.getClass());
+                src.send(IntegratedServerResources.EXTENSION_RELOAD_SUCCESSFUL.format(e.name()));
+            }).ifAbsent(() -> {
+                src.send(IntegratedServerResources.EXTENSION_RELOAD_FAILED.format(e.name()));
+            });
         } else {
             eb.post(new Reload());
+            src.send(IntegratedServerResources.FULL_RELOAD_SUCCESSFUL);
         }
     }
 
@@ -174,7 +157,7 @@ public class IntegratedServerExtension extends ServerReference {
         Language lang = ol.orElse(Language.EN_US);
         target.setLanguage(lang);
         // Messages sent after language switch will be in the preferred language
-        src.sendWithPrefix(LANG_SWITCHED.format(lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")"));
+        src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")"));
     }
 
 }
