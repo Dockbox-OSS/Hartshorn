@@ -20,9 +20,10 @@ plugins {
     id 'org.jetbrains.kotlin.jvm'
 }
 
-group = 'org.dockbox.darwin.integrated'
-description = 'Integrated extensions for DarwinServer'
+group = 'org.dockbox.selene.integrated'
+description = 'Integrated extensions for Selene'
 
 dependencies {
-    compileOnly project(':core')
+    compileOnly project(':selene-core')
+    compileOnly project(':selene-commons')
 }

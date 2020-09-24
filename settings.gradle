@@ -15,8 +15,9 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-rootProject.name = 'DarwinServer'
+rootProject.name = 'Selene'
 
 include 'sponge'
-include 'core'
+include 'selene-core'
+include 'selene-commons'
 include 'extensions'
