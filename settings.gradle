@@ -19,5 +19,5 @@ rootProject.name = 'Selene'
 
 include 'sponge'
 include 'selene-core'
-include 'selene'
+include 'selene-commons'
 include 'extensions'

@@ -35,7 +35,7 @@ repositories {
 
 dependencies {
     compile project(path: ':selene-core', configuration: 'shadow')
-    compile project(path: ':selene', configuration: 'shadow')
+    compile project(path: ':selene-commons', configuration: 'shadow')
     compile project(path: ':extensions', configuration: 'shadow')
 
     compileOnly 'me.lucko.luckperms:luckperms-api:4.4'
@@ -45,6 +45,6 @@ dependencies {
     compileOnly 'io.github.nucleuspowered:nucleus-api:1.14.3-SNAPSHOT-S7.1'
 
     testCompileOnly project(':selene-core')
-    testCompileOnly project(':selene')
+    testCompileOnly project(':selene-commons')
     testCompileOnly project(':extensions')
 }

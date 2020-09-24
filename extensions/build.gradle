@@ -25,5 +25,5 @@ description = 'Integrated extensions for Selene'
 
 dependencies {
     compileOnly project(':selene-core')
-    compileOnly project(':selene')
+    compileOnly project(':selene-commons')
 }
