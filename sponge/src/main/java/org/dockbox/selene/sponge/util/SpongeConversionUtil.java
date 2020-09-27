@@ -150,26 +150,12 @@ public enum SpongeConversionUtil {
         return Optional.empty();
     }
 
-    private static Exceptional<CommandSource> fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
-        if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.Companion.getInstance());
-        else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
-            return Exceptional.of(new SpongePlayer(((Identifiable) commandSource).getUniqueId(), commandSource.getName()));
-        return Exceptional.of(new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'"));
-    }
-
     @NotNull
     public static Exceptional<Location<World>> toSponge(org.dockbox.selene.core.objects.location.Location location) {
         Exceptional<World> world = toSponge(location.getWorld());
         if (world.errorPresent()) return Exceptional.of(world.getError());
         Vector3d vector3d = new Vector3d(location.getX().doubleValue(), location.getY().doubleValue(), location.getZ().doubleValue());
         return Exceptional.of(new Location<>(world.get(), vector3d));
-    }
-
-    @NotNull
-    public static org.dockbox.selene.core.objects.location.Location fromSponge(Location<World> location) {
-        org.dockbox.selene.core.objects.location.World world = fromSponge(location.getExtent());
-        Vector3D vector3D = new Vector3D(location.getX(), location.getY(), location.getZ());
-        return new SpongeLocation(vector3D, world);
     }
 
     @NotNull
@@ -181,11 +167,6 @@ public enum SpongeConversionUtil {
 
         return Exceptional.ofSupplier(() -> Sponge.getServer().getWorld(world.getWorldUniqueId())
                 .orElseThrow(() -> new RuntimeException("World reference not present on server")));
-    }
-
-    @NotNull
-    public static org.dockbox.selene.core.objects.location.World fromSponge(World world) {
-        return new SpongeWorld(world.getUniqueId(), world.getName());
     }
 
     public static GameMode toSponge(Gamemode gamemode) {
@@ -204,12 +185,9 @@ public enum SpongeConversionUtil {
         }
     }
 
-    public static Gamemode fromSponge(GameMode gamemode) {
-        try {
-            return Enum.valueOf(Gamemode.class, gamemode.toString());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            return Gamemode.OTHER;
-        }
+    public static org.dockbox.selene.core.text.Text fromSponge(Text text) {
+        // TODO
+        return org.dockbox.selene.core.text.Text.of();
     }
 
     public static PaginationList toSponge(Pagination pagination) {
@@ -218,11 +196,38 @@ public enum SpongeConversionUtil {
         if (null != pagination.getTitle()) builder.title(toSponge(pagination.getTitle()));
         if (null != pagination.getHeader()) builder.header(toSponge(pagination.getHeader()));
         if (null != pagination.getFooter()) builder.footer(toSponge(pagination.getFooter()));
-        
+
         builder.padding(toSponge(pagination.getPadding()));
         builder.linesPerPage(pagination.getLinesPerPage().intValue());
         List<Text> convertedContent = pagination.getContent().stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList());
         builder.contents(convertedContent);
         return builder.build();
+    }
+
+    private static Exceptional<CommandSource> fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
+        if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.Companion.getInstance());
+        else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
+            return Exceptional.of(new SpongePlayer(((Identifiable) commandSource).getUniqueId(), commandSource.getName()));
+        return Exceptional.of(new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'"));
+    }
+
+    @NotNull
+    public static org.dockbox.selene.core.objects.location.Location fromSponge(Location<World> location) {
+        org.dockbox.selene.core.objects.location.World world = fromSponge(location.getExtent());
+        Vector3D vector3D = new Vector3D(location.getX(), location.getY(), location.getZ());
+        return new SpongeLocation(vector3D, world);
+    }
+
+    @NotNull
+    public static org.dockbox.selene.core.objects.location.World fromSponge(World world) {
+        return new SpongeWorld(world.getUniqueId(), world.getName());
+    }
+
+    public static Gamemode fromSponge(GameMode gamemode) {
+        try {
+            return Enum.valueOf(Gamemode.class, gamemode.toString());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return Gamemode.OTHER;
+        }
     }
 }
