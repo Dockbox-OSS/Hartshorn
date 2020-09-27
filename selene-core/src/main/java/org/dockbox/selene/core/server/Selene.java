@@ -91,7 +91,7 @@ public abstract class Selene {
     private final Logger log = LoggerFactory.getLogger(Selene.class);
     private String version;
     private LocalDate lastUpdate;
-    protected static final String[] authors = {"GuusLieben"};
+    protected static String[] authors;
 
     private static Selene instance;
 
@@ -144,6 +144,7 @@ public abstract class Selene {
             // LocalDate can be parsed directly, as it is generated using LocalDate when building with Gradle
             tLU = LocalDate.parse(properties.getOrDefault("last_update", Instant.now().toString()).toString());
             tVer = properties.getOrDefault("version", "dev").toString();
+            authors = properties.getOrDefault("authors", "GuusLieben").toString().split(",");
         } catch (IOException e) {
             this.except("Failed to convert resource file", e);
         }
@@ -158,7 +159,7 @@ public abstract class Selene {
         if (type.isAnnotationPresent(Extension.class)) {
             return getInstance(ExtensionManager.class).getInstance(type).orElse(null);
         }
-        return instance.injector.getInstance(type);
+        return getServer().injector.getInstance(type);
     }
 
     public static <T> void bindUtility(Class<T> contract, Class<? extends T> implementation) {
@@ -169,7 +170,7 @@ public abstract class Selene {
                 this.bind(contract).to(implementation);
             }
         };
-        instance.injector = instance.injector.createChildInjector(localModule);
+        getServer().injector = getServer().injector.createChildInjector(localModule);
     }
 
     public Injector getInjector() {
@@ -308,6 +309,7 @@ public abstract class Selene {
     }
 
     public static Selene getServer() {
+        if (null == instance) throw new IllegalStateException("Selene is not yet initialized!");
         return instance;
     }
 

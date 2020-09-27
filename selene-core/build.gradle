@@ -37,6 +37,7 @@ archivesBaseName = 'core'
 group = project.pluginGroup
 description = 'Common API for Selene extensions'
 def date = LocalDate.now().toString()
+def authors = "GuusLieben"
 
 dependencies {
     shadow 'com.google.inject:guice:4.2.2'
@@ -54,7 +55,8 @@ processResources {
         include 'selene.properties'
         expand(
                 version: "$project.version",
-                last_update: "${date}"
+                last_update: "${date}",
+                authors: "${authors}"
         )
     }
 }
