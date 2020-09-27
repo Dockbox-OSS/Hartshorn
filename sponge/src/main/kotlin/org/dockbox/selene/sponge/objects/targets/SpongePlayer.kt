@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.targets
 
+import com.boydti.fawe.FaweAPI
 import com.boydti.fawe.`object`.FawePlayer
 import java.util.*
 import org.dockbox.selene.core.i18n.common.Language
@@ -31,7 +32,7 @@ import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.text.Text
 import org.dockbox.selene.core.text.Text.of
 import org.dockbox.selene.core.text.navigation.Pagination
-import org.dockbox.selene.core.impl.util.player.DefaultPlayerStorageService
+import org.dockbox.selene.core.util.player.PlayerStorageService
 import org.dockbox.selene.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.data.key.Keys
@@ -49,10 +50,7 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     private val reference: org.spongepowered.api.entity.living.player.Player?
-        get() {
-            refreshReference()
-            return referencePlayer.get().orElse(null)
-        }
+        get() = referencePlayer.get().orElse(null)
 
     private fun referenceExists(): Boolean {
         refreshReference()
@@ -64,7 +62,8 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun getFawePlayer(): Optional<FawePlayer<*>> {
-        return Optional.empty()
+        return if (referenceExists()) Optional.of(FaweAPI.wrapPlayer(reference!!))
+        else Optional.empty()
     }
 
     override fun kick(message: Text) {
@@ -83,20 +82,18 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun getLanguage(): Language {
-        return Selene.getInstance(DefaultPlayerStorageService::class.java).getLanguagePreference(this.uniqueId)
+        return Selene.getInstance(PlayerStorageService::class.java).getLanguagePreference(this.uniqueId)
     }
 
     override fun setLanguage(lang: Language) {
-        Selene.getInstance(DefaultPlayerStorageService::class.java).setLanguagePreference(this.uniqueId, lang)
+        Selene.getInstance(PlayerStorageService::class.java).setLanguagePreference(this.uniqueId, lang)
     }
 
     override fun execute(command: String) {
-        refreshReference()
         if (referenceExists()) Sponge.getCommandManager().process(reference!!, command)
     }
 
     override fun send(text: Text) {
-        refreshReference()
         if (referenceExists()) reference!!.sendMessage(SpongeConversionUtil.toSponge(text))
     }
 
