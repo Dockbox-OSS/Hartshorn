@@ -254,7 +254,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                         else return Exceptional.of(IllegalSourceException("Command can only be ran by the console!"))
                     } else finalArgs.add(sender)
                 }
-                else if (parameterType == SimpleCommandContext::class.java || SimpleCommandContext::class.java.isAssignableFrom(parameterType)) {
+                else if (parameterType == CommandContext::class.java || CommandContext::class.java.isAssignableFrom(parameterType)) {
                     finalArgs.add(ctx)
                 } else {
                     throw IllegalStateException("Method requested parameter type '" + parameterType.toGenericString() + "' which is not provided")
