@@ -20,9 +20,11 @@ package org.dockbox.selene.sponge.objects.targets
 import com.boydti.fawe.FaweAPI
 import com.boydti.fawe.`object`.FawePlayer
 import java.util.*
+import java.util.function.Function
 import org.dockbox.selene.core.i18n.common.Language
 import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.i18n.entry.IntegratedResource
+import org.dockbox.selene.core.objects.FieldReferenceHolder
 import org.dockbox.selene.core.objects.location.Location
 import org.dockbox.selene.core.objects.location.Location.Companion.EMPTY
 import org.dockbox.selene.core.objects.location.World
@@ -42,43 +44,34 @@ import org.spongepowered.api.service.user.UserStorageService
 import org.spongepowered.api.util.Tristate
 
 class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
-
-    private val referencePlayer = ThreadLocal<Optional<org.spongepowered.api.entity.living.player.Player?>>()
-
-    private fun refreshReference() {
-        if (!referencePlayer.get().isPresent) referencePlayer.set(Sponge.getServer().getPlayer(uniqueId))
-    }
-
-    private val reference: org.spongepowered.api.entity.living.player.Player?
-        get() = referencePlayer.get().orElse(null)
-
-    private fun referenceExists(): Boolean {
-        refreshReference()
-        return referencePlayer.get().isPresent
-    }
+    
+    private val spongePlayer = FieldReferenceHolder(Sponge.getServer().getPlayer(uniqueId), Function() {
+        return@Function if (it == null) Sponge.getServer().getPlayer(uniqueId)
+        else Optional.empty()
+    })
 
     override fun isOnline(): Boolean {
-        return referenceExists() && reference!!.isOnline
+        return spongePlayer.referenceExists() && spongePlayer.reference.get().isOnline
     }
 
     override fun getFawePlayer(): Optional<FawePlayer<*>> {
-        return if (referenceExists()) Optional.of(FaweAPI.wrapPlayer(reference!!))
+        return if (spongePlayer.referenceExists()) Optional.of(FaweAPI.wrapPlayer(spongePlayer.reference.get()))
         else Optional.empty()
     }
 
     override fun kick(message: Text) {
-        if (referenceExists()) reference!!.kick()
+        if (spongePlayer.referenceExists()) spongePlayer.reference.get().kick()
     }
 
     override fun getGamemode(): Gamemode {
-        return if (referenceExists()) {
-            val mode = reference!!.get(Keys.GAME_MODE).orElse(GameModes.NOT_SET)
+        return if (spongePlayer.referenceExists()) {
+            val mode = spongePlayer.reference.get().get(Keys.GAME_MODE).orElse(GameModes.NOT_SET)
             SpongeConversionUtil.fromSponge(mode)
         } else Gamemode.OTHER
     }
 
     override fun setGamemode(gamemode: Gamemode) {
-        if (referenceExists()) reference!!.offer(Keys.GAME_MODE, SpongeConversionUtil.toSponge(gamemode))
+        if (spongePlayer.referenceExists()) spongePlayer.reference.get().offer(Keys.GAME_MODE, SpongeConversionUtil.toSponge(gamemode))
     }
 
     override fun getLanguage(): Language {
@@ -90,15 +83,15 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun execute(command: String) {
-        if (referenceExists()) Sponge.getCommandManager().process(reference!!, command)
+        if (spongePlayer.referenceExists()) Sponge.getCommandManager().process(spongePlayer.reference.get(), command)
     }
 
     override fun send(text: Text) {
-        if (referenceExists()) reference!!.sendMessage(SpongeConversionUtil.toSponge(text))
+        if (spongePlayer.referenceExists()) spongePlayer.reference.get().sendMessage(SpongeConversionUtil.toSponge(text))
     }
 
     override fun send(text: CharSequence) {
-        if (referenceExists()) reference!!.sendMessage(org.spongepowered.api.text.Text.of(
+        if (spongePlayer.referenceExists()) spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
                 IntegratedResource.parseColors(text)))
     }
 
@@ -108,7 +101,7 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun sendWithPrefix(text: Text) {
-        if (referenceExists()) reference!!.sendMessage(org.spongepowered.api.text.Text.of(
+        if (spongePlayer.referenceExists()) spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
                 SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
                 SpongeConversionUtil.toSponge(text)
         )
@@ -116,7 +109,7 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun sendWithPrefix(text: CharSequence) {
-        if (referenceExists()) reference!!.sendMessage(org.spongepowered.api.text.Text.of(
+        if (spongePlayer.referenceExists()) spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
                 SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
                 org.spongepowered.api.text.Text.of(text)
         )
@@ -124,13 +117,13 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun sendPagination(pagination: Pagination) {
-        if (referenceExists()) {
-            SpongeConversionUtil.toSponge(pagination).sendTo(reference!!)
+        if (spongePlayer.referenceExists()) {
+            SpongeConversionUtil.toSponge(pagination).sendTo(spongePlayer.reference.get())
         }
     }
 
     override fun hasPermission(permission: String): Boolean {
-        return if (referenceExists()) reference!!.hasPermission(permission) else Sponge.getServiceManager().provide(UserStorageService::class.java)
+        return if (spongePlayer.referenceExists()) spongePlayer.reference.get().hasPermission(permission) else Sponge.getServiceManager().provide(UserStorageService::class.java)
                 .map {
                     return@map it[uniqueId]
                             .map { user -> user.hasPermission(permission) }
@@ -148,7 +141,7 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun setPermission(permission: String, value: Boolean) {
-        if (referenceExists()) reference!!.subjectData.setPermission(SubjectData.GLOBAL_CONTEXT, permission, Tristate.fromBoolean(value)) else Sponge.getServiceManager().provide(UserStorageService::class.java)
+        if (spongePlayer.referenceExists()) spongePlayer.reference.get().subjectData.setPermission(SubjectData.GLOBAL_CONTEXT, permission, Tristate.fromBoolean(value)) else Sponge.getServiceManager().provide(UserStorageService::class.java)
                 .flatMap { it[uniqueId] }
                 .ifPresent {
                     it.subjectData
@@ -166,12 +159,12 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun getLocation(): Location {
-        return if (referenceExists()) SpongeConversionUtil.fromSponge(reference!!.location) else EMPTY
+        return if (spongePlayer.referenceExists()) SpongeConversionUtil.fromSponge(spongePlayer.reference.get().location) else EMPTY
     }
 
     override fun setLocation(location: Location) {
-        if (referenceExists()) {
-            SpongeConversionUtil.toSponge(location).ifPresent { reference!!.location = it }
+        if (spongePlayer.referenceExists()) {
+            SpongeConversionUtil.toSponge(location).ifPresent { spongePlayer.reference.get().location = it }
         }
     }
 
@@ -179,9 +172,5 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
         // No reference refresh required as this is done by getLocation. Should never throw NPE as Location is either
         // valid or EMPTY (World instance follows this same guideline).
         return getLocation().world
-    }
-
-    init {
-        referencePlayer.set(Sponge.getServer().getPlayer(uniqueId))
     }
 }
