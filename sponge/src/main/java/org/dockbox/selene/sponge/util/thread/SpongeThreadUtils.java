@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.sponge.util.thread;
 
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.threads.ThreadUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
 
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -42,22 +42,22 @@ public class SpongeThreadUtils implements ThreadUtils {
     }
 
     @Override
-    public <T> Optional<T> awaitAsync(Callable<T> callable) {
+    public <T> Exceptional<T> awaitAsync(Callable<T> callable) {
         SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Selene.getServer());
         try {
-            return Optional.ofNullable(ses.submit(callable).get());
+            return Exceptional.ofNullable(ses.submit(callable).get());
         } catch (InterruptedException | ExecutionException e) {
-            return Optional.empty();
+            return Exceptional.of(e);
         }
     }
 
     @Override
-    public <T> Optional<T> awaitSync(Callable<T> callable) {
+    public <T> Exceptional<T> awaitSync(Callable<T> callable) {
         SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Selene.getServer());
         try {
-            return Optional.ofNullable(ses.submit(callable).get());
+            return Exceptional.ofNullable(ses.submit(callable).get());
         } catch (InterruptedException | ExecutionException e) {
-            return Optional.empty();
+            return Exceptional.of(e);
         }
     }
 

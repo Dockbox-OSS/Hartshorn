@@ -17,7 +17,8 @@
 
 package org.dockbox.selene.core.util.threads;
 
-import java.util.Optional;
+import org.dockbox.selene.core.objects.optional.Exceptional;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
@@ -27,8 +28,8 @@ public interface ThreadUtils {
 
     Future<?> performSync(Runnable runnable);
 
-    <T> Optional<T> awaitAsync(Callable<T> callable);
+    <T> Exceptional<T> awaitAsync(Callable<T> callable);
 
-    <T> Optional<T> awaitSync(Callable<T> callable);
+    <T> Exceptional<T> awaitSync(Callable<T> callable);
 
 }
