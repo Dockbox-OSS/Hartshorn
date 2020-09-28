@@ -33,14 +33,14 @@ abstract class DefaultPlayerStorageService : PlayerStorageService {
     }
 
     override fun getLanguagePreference(uuid: UUID): Language {
-        val lang = getUserData(uuid).getOrDefault(ConfigKeys.PLAYER_LANGUAGE.key, Selene.getServer().getGlobalConfig().getDefaultLanguage().code).toString()
+        val lang = getUserData(uuid).getOrDefault(ConfigKeys.PLAYER_LANGUAGE.key, Selene.getServer().globalConfig.getDefaultLanguage().code).toString()
 
         return try {
             Language.valueOf(lang.toUpperCase())
         } catch (e: IllegalArgumentException) {
-            Selene.getServer().getGlobalConfig().getDefaultLanguage()
+            Selene.getServer().globalConfig.getDefaultLanguage()
         } catch (e: NullPointerException) {
-            Selene.getServer().getGlobalConfig().getDefaultLanguage()
+            Selene.getServer().globalConfig.getDefaultLanguage()
         }
     }
 
