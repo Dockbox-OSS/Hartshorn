@@ -67,9 +67,10 @@ subprojects { Project subProject ->
                         includes: "*${version}-${date}*.jar"
             }
 
-            delete buildDir
         }
     }
+
+    build.finalizedBy copyArtifacts
 
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
@@ -139,13 +140,13 @@ afterEvaluate {
 task relocateDokka {
     doLast {
         def DOKKA_DEST_DIR = "${rootDir}/docs"
-        def DOKKA_SRC_DIR = "${rootDir}/build/dokka/javadocCollector"
+        def DOKKA_SRC_DIR = "${buildDir}/dokka/javadocCollector"
+
+        delete DOKKA_DEST_DIR
 
         ant.mkdir(dir: DOKKA_DEST_DIR)
         ant.copy(todir: DOKKA_DEST_DIR) {
             fileset dir: DOKKA_SRC_DIR
         }
-
-        delete "${rootDir}/build"
     }
 }
