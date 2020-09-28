@@ -17,10 +17,22 @@
 
 package org.dockbox.selene.core.util.exceptions
 
+import java.util.function.Consumer
+import java.util.function.Function
+import org.dockbox.selene.core.objects.optional.Exceptional
+
 interface ExceptionHelper {
 
     fun printFriendly(message: String?="No message provided", exception: Throwable?, stacktrace: Boolean?=true)
 
     fun printMinimal(message: String?="No message provided", exception: Throwable?, stacktrace: Boolean?=true)
+
+    fun handleSafe(runnable: Runnable)
+    fun <T> handleSafe(consumer: Consumer<T>, value: T)
+    fun <T, R> handleSafe(function: Function<T, R>, value: T): Exceptional<R>
+
+    fun handleSafe(runnable: Runnable, errorConsumer: Consumer<Throwable>)
+    fun <T> handleSafe(consumer: Consumer<T>, value: T, errorConsumer: Consumer<Throwable>)
+    fun <T, R> handleSafe(function: Function<T, R>, value: T, errorConsumer: Consumer<Throwable>): Exceptional<R>
 
 }

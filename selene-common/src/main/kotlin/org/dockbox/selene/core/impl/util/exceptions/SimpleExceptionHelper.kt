@@ -18,10 +18,14 @@
 package org.dockbox.selene.core.impl.util.exceptions
 
 import java.util.*
+import java.util.function.Consumer
+import java.util.function.Function
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper
 
 class SimpleExceptionHelper : ExceptionHelper {
+
     override fun printFriendly(message: String?, exception: Throwable?, stacktrace: Boolean?) {
         Selene.log().error("========================================")
         if (exception != null) {
@@ -59,5 +63,40 @@ class SimpleExceptionHelper : ExceptionHelper {
         Selene.log().error("========================================")
         // NullPointerException: Foo bar
         // Stack: [...]
+    }
+
+    override fun handleSafe(runnable: Runnable) =
+            handleSafe(runnable) { Selene.getServer().except(it.message, it) }
+
+    override fun <T> handleSafe(consumer: Consumer<T>, value: T) =
+            handleSafe(consumer, value) { Selene.getServer().except(it.message, it) }
+
+    override fun <T, R> handleSafe(function: Function<T, R>, value: T): Exceptional<R> =
+            handleSafe(function, value) { Selene.getServer().except(it.message, it) }
+
+
+    override fun handleSafe(runnable: Runnable, errorConsumer: Consumer<Throwable>) {
+        try {
+            runnable.run()
+        } catch (e: Throwable) {
+            errorConsumer.accept(e)
+        }
+    }
+
+    override fun <T> handleSafe(consumer: Consumer<T>, value: T, errorConsumer: Consumer<Throwable>) {
+        try {
+            consumer.accept(value)
+        } catch (e: Throwable) {
+            errorConsumer.accept(e)
+        }
+    }
+
+    override fun <T, R> handleSafe(function: Function<T, R>, value: T, errorConsumer: Consumer<Throwable>): Exceptional<R> {
+        return try {
+            Exceptional.ofNullable(function.apply(value))
+        } catch (e: Throwable) {
+            errorConsumer.accept(e)
+            Exceptional.of(e)
+        }
     }
 }
