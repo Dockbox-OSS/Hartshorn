@@ -24,6 +24,23 @@ import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper
 
+/**
+ * The default (simple) implementation of {@see org.dockbox.selene.core.util.exceptions.ExceptionHelper}.
+ * Formats:
+ * <b>Friendly</b>
+ * <code>
+ *     Headline: java.lang.NullPointerException
+ *     Message: Foo bar
+ *     Location: SourceFile.java line 19
+ *     Stack: [...]
+ * </code>
+ *
+ * <b>Minimal</b>
+ * <code>
+ *     NullPointerException: Foo bar
+ *     Stack: [...]
+ * </code>
+ */
 class SimpleExceptionHelper : ExceptionHelper {
 
     private val line: String = "========================================"
@@ -50,10 +67,6 @@ class SimpleExceptionHelper : ExceptionHelper {
             }
         } else Selene.log().error("Received exception call, but exception was null")
         Selene.log().error(this.line)
-        // Headline: java.lang.NullPointerException
-        // Message: Foo bar
-        // Location: SourceFile.java line 19
-        // Stack: [....]
     }
 
     override fun printMinimal(message: String?, exception: Throwable?, stacktrace: Boolean?) {
@@ -63,8 +76,6 @@ class SimpleExceptionHelper : ExceptionHelper {
             if (stacktrace != null && stacktrace) Selene.log().error(Arrays.toString(exception.stackTrace))
         }
         Selene.log().error(this.line)
-        // NullPointerException: Foo bar
-        // Stack: [...]
     }
 
     override fun handleSafe(runnable: Runnable) =
