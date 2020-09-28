@@ -18,12 +18,35 @@
 package org.dockbox.selene.core.impl.util.exceptions
 
 import java.util.*
+import java.util.function.Consumer
+import java.util.function.Function
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper
 
+/**
+ * The default (simple) implementation of [org.dockbox.selene.core.util.exceptions.ExceptionHelper].
+ * Formats:
+ * - Friendly
+ * ```
+ *     Headline: java.lang.NullPointerException
+ *     Message: Foo bar
+ *     Location: SourceFile.java line 19
+ *     Stack: [...]
+ * ```
+ *
+ * - Minimal
+ * ```
+ *     NullPointerException: Foo bar
+ *     Stack: [...]
+ * ```
+ */
 class SimpleExceptionHelper : ExceptionHelper {
+
+    private val line: String = "========================================"
+    
     override fun printFriendly(message: String?, exception: Throwable?, stacktrace: Boolean?) {
-        Selene.log().error("========================================")
+        Selene.log().error(this.line)
         if (exception != null) {
             Selene.log().error("Headline: " + exception.javaClass.canonicalName)
             if (message != null && "" != message) Selene.log().error("Message: $message")
@@ -43,21 +66,50 @@ class SimpleExceptionHelper : ExceptionHelper {
                 }
             }
         } else Selene.log().error("Received exception call, but exception was null")
-        Selene.log().error("========================================")
-        // Headline: java.lang.NullPointerException
-        // Message: Foo bar
-        // Location: SourceFile.java line 19
-        // Stack: [....]
+        Selene.log().error(this.line)
     }
 
     override fun printMinimal(message: String?, exception: Throwable?, stacktrace: Boolean?) {
-        Selene.log().error("========================================")
+        Selene.log().error(this.line)
         if (exception != null && message != null && "" != message) {
             Selene.log().error(exception.javaClass.simpleName + ": " + message)
             if (stacktrace != null && stacktrace) Selene.log().error(Arrays.toString(exception.stackTrace))
         }
-        Selene.log().error("========================================")
-        // NullPointerException: Foo bar
-        // Stack: [...]
+        Selene.log().error(this.line)
+    }
+
+    override fun handleSafe(runnable: Runnable) =
+            this.handleSafe(runnable) { Selene.getServer().except(it.message, it) }
+
+    override fun <T> handleSafe(consumer: Consumer<T>, value: T) =
+            this.handleSafe(consumer, value) { Selene.getServer().except(it.message, it) }
+
+    override fun <T, R> handleSafe(function: Function<T, R>, value: T): Exceptional<R> =
+            this.handleSafe(function, value) { Selene.getServer().except(it.message, it) }
+
+
+    override fun handleSafe(runnable: Runnable, errorConsumer: Consumer<Throwable>) {
+        try {
+            runnable.run()
+        } catch (e: Throwable) {
+            errorConsumer.accept(e)
+        }
+    }
+
+    override fun <T> handleSafe(consumer: Consumer<T>, value: T, errorConsumer: Consumer<Throwable>) {
+        try {
+            consumer.accept(value)
+        } catch (e: Throwable) {
+            errorConsumer.accept(e)
+        }
+    }
+
+    override fun <T, R> handleSafe(function: Function<T, R>, value: T, errorConsumer: Consumer<Throwable>): Exceptional<R> {
+        return try {
+            Exceptional.ofNullable(function.apply(value))
+        } catch (e: Throwable) {
+            errorConsumer.accept(e)
+            Exceptional.of(e)
+        }
     }
 }
