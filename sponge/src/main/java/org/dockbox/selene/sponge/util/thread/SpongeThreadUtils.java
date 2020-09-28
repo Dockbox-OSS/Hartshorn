@@ -27,6 +27,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+/**
+ The SpongePowered implementation for {@link org.dockbox.selene.core.util.threads.ThreadUtils}, using Sponge's
+ {@link org.spongepowered.api.scheduler.SpongeExecutorService} for underlying thread access.
+ */
 public class SpongeThreadUtils implements ThreadUtils {
 
     @Override

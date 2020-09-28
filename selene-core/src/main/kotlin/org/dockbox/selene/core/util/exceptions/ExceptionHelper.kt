@@ -23,7 +23,7 @@ import org.dockbox.selene.core.objects.optional.Exceptional
 
 /**
  * A low-level interface for easy exception handling. For all cases this should only be
- * accessed through {@see org.dockbox.selene.core.server.Selene#getInstance()}.
+ * accessed through {@link org.dockbox.selene.core.server.Selene#getInstance()}.
  */
 interface ExceptionHelper {
 
@@ -67,7 +67,7 @@ interface ExceptionHelper {
 
     /**
      * Runs a given function accepting a given value, returning a potential result wrapped in a
-     * {@see org.dockbox.selene.core.objects.optional.Exceptional}. The exceptional should wrap the exception if
+     * {@link org.dockbox.selene.core.objects.optional.Exceptional}. The exceptional should wrap the exception if
      * present. Handles any possible exceptions using default behavior for the implementation. Usually this will
      * be logging to a console or file.
      *
@@ -99,7 +99,7 @@ interface ExceptionHelper {
 
     /**
      * Runs a given function accepting a given value, returning a potential result wrapped in a
-     * {@see org.dockbox.selene.core.objects.optional.Exceptional}. The exceptional should wrap the exception if
+     * {@link org.dockbox.selene.core.objects.optional.Exceptional}. The exceptional should wrap the exception if
      * present. Handles any possible exceptions using a given consumer.
      *
      * @param T The type of the value to be consumed

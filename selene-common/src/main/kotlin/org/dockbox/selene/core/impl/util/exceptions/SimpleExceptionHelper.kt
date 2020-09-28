@@ -25,7 +25,7 @@ import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper
 
 /**
- * The default (simple) implementation of {@see org.dockbox.selene.core.util.exceptions.ExceptionHelper}.
+ * The default (simple) implementation of {@link org.dockbox.selene.core.util.exceptions.ExceptionHelper}.
  * Formats:
  * <b>Friendly</b>
  * <code>
