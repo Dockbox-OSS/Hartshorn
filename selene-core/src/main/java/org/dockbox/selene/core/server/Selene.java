@@ -188,11 +188,11 @@ public abstract class Selene {
     }
 
     protected void init() {
-        log().info("\u00A7e ,-,\n" +
-                "\u00A7e/.(\n" +
-                "\u00A7e\\ {\n" +
-                "\u00A7e `-`\n" +
-                "     \u00A77Initiating \u00A7bSelene " + this.getVersion());
+        log().info("\u00A7e ,-,");
+        log().info("\u00A7e/.(");
+        log().info("\u00A7e\\ {");
+        log().info("\u00A7e `-`");
+        log().info("     \u00A77Initiating \u00A7bSelene " + this.getVersion());
 
         EventBus eb = getInstance(EventBus.class);
         CommandBus cb = getInstance(CommandBus.class);

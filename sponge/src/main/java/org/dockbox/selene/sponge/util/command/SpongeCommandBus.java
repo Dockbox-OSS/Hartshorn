@@ -96,7 +96,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     public void registerCommandArgsAndOrChild(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunnerFunction runner) {
         CommandSpec.Builder spec = CommandSpec.builder();
         spec.permission(permission.get());
-        Selene.log().warn(String.format("Registering command '%s' with singular permission (%s)", command, permission.get()));
+        Selene.log().debug(String.format("Registering command '%s' with singular permission (%s)", command, permission.get()));
 
         String[] parts = command.split(" ");
         String part = 1 < parts.length ? parts[1] : null;
@@ -111,7 +111,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     private void registerChildCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, CommandSpec.Builder spec, String part) {
-        Selene.log().info("Found child command '" + part + "'");
+        Selene.log().debug("Found child command '" + part + "'");
         String arguments = command.substring(command.indexOf(' ') + 1)
                 .replaceFirst(part, "");
         if (arguments.endsWith(" ")) arguments = arguments.substring(0, arguments.length() - 2);
@@ -129,9 +129,9 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     private void registerSingleMethodCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, CommandSpec.Builder spec, String part) {
-        Selene.log().info("Found single method command '" + part + "'");
+        Selene.log().debug("Found single method command '" + part + "'");
         if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(command.substring(0, command.indexOf(' ')))) {
-            Selene.log().info("Registering single method command '" + part + "' to Sponge");
+            Selene.log().debug("Registering single method command '" + part + "' to Sponge");
             spec.executor(this.buildExecutor(runner, command)).arguments(this.parseArguments(command.substring(command.indexOf(' ') + 1)));
             Sponge.getCommandManager().register(Selene.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
             SimpleCommandBus.Companion.getRegisteredCommands().add(command.substring(0, command.indexOf(' ')));
@@ -155,7 +155,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             spec.executor(this.buildExecutor(runner, command));
 
             try {
-                Selene.log().info("Registering '" + registeredCmd + "' to Sponge");
+                Selene.log().debug("Registering '" + registeredCmd + "' to Sponge");
                 Sponge.getCommandManager().register(Selene.getServer(), spec.build(), registeredCmd);
             } catch (IllegalArgumentException e) {
                 Selene.getServer().except(e.getMessage(), e);

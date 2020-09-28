@@ -60,7 +60,7 @@ public class YamlDataManager extends DataManager {
                 T res = this.mapper.readValue(cf.toFile(), convertTo);
                 return null != res ? res : defaultValue;
             } catch (IOException | IllegalArgumentException e) {
-                Selene.getServer().except("Failed to map data contents", e);
+                Selene.log().warn("Failed to read data contents for default of [" + module + "]");
             }
             return defaultValue;
         });
@@ -72,7 +72,7 @@ public class YamlDataManager extends DataManager {
             Path df = this.getDefaultDataFile(module);
             this.mapper.writeValue(df.toFile(), data);
         } catch (IOException e) {
-            Selene.getServer().except("Failed to write data contents", e);
+            Selene.log().warn("Failed to write data contents for default of [" + module + "]");
         }
     }
 
@@ -83,7 +83,7 @@ public class YamlDataManager extends DataManager {
             Path df = this.getInstance(FileUtils.class).createFileIfNotExists(this.getFileType().asPath(dataDir, fileName));
             this.mapper.writeValue(df.toFile(), data);
         } catch (IOException e) {
-            Selene.getServer().except("Failed to write data contents", e);
+            Selene.log().warn("Failed to write data contents of '" + fileName + "'");
         }
     }
 
@@ -102,7 +102,7 @@ public class YamlDataManager extends DataManager {
                 Map<String, Object> res = this.mapper.readValue(cf.toFile(), Map.class);
                 return null != res ? res : new HashMap<>();
             } catch (IOException | IllegalArgumentException e) {
-                Selene.getServer().except("Failed to map data contents", e);
+                Selene.log().warn("Failed to read data contents of '" + fileName + "'");
             }
             return new HashMap<>();
         });
