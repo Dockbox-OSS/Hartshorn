@@ -186,7 +186,7 @@ public enum SpongeConversionUtil {
     }
 
     public static org.dockbox.selene.core.text.Text fromSponge(Text text) {
-        // TODO
+        // TODO: Scheduled in S42
         return org.dockbox.selene.core.text.Text.of();
     }
 
@@ -204,7 +204,7 @@ public enum SpongeConversionUtil {
         return builder.build();
     }
 
-    private static Exceptional<CommandSource> fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
+    public static Exceptional<CommandSource> fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
         if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.Companion.getInstance());
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
             return Exceptional.of(new SpongePlayer(((Identifiable) commandSource).getUniqueId(), commandSource.getName()));

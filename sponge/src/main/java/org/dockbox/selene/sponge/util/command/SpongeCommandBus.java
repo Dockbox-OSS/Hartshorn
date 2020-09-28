@@ -20,16 +20,15 @@ package org.dockbox.selene.sponge.util.command;
 import com.boydti.fawe.object.FawePlayer;
 import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
-import com.magitechserver.magibridge.util.BridgeCommandSource;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.input.ParserContext;
 
-import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
 import org.dockbox.selene.core.command.CommandRunnerFunction;
-import org.dockbox.selene.core.impl.command.SimpleCommandBus;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.events.chat.CommandEvent;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
+import org.dockbox.selene.core.impl.command.SimpleCommandBus;
 import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
 import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.tuple.Tuple;
@@ -37,9 +36,7 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
-import org.dockbox.selene.sponge.objects.discord.MagiBridgeCommandSource;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
-import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -51,12 +48,10 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.CommandFlags;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.util.Identifiable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -236,17 +231,14 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
     private CommandExecutor buildExecutor(CommandRunnerFunction runner, String command) {
         return (src, args) -> {
-            @org.jetbrains.annotations.Nullable org.dockbox.selene.core.objects.targets.CommandSource sender;
-            if (src instanceof Player) sender = new SpongePlayer(((Identifiable) src).getUniqueId(), src.getName());
-            else if (src instanceof ConsoleSource) sender = SpongeConsole.Companion.getInstance();
-            else if (src instanceof BridgeCommandSource) sender = new MagiBridgeCommandSource((BridgeCommandSource) src);
-            else sender = null;
+            org.dockbox.selene.core.objects.targets.CommandSource sender = SpongeConversionUtil
+                    .fromSponge(src)
+                    .orElseThrow(() ->
+                            new IllegalArgumentException("Command sender is not a console or a player, did a plugin call me?"));
 
-            assert null != sender : "Command sender is not a console or a player, did a plugin call me?";
             SimpleCommandContext ctx = this.convertContext(args, sender, command);
 
             EventBus eb = Selene.getInstance(EventBus.class);
-
             Cancellable ceb = new CommandEvent.Before(sender, ctx);
             eb.post(ceb);
 
