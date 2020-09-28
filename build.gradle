@@ -25,14 +25,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.2"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
     }
 }
 
 plugins {
     id 'java'
     id 'java-library'
-    id "org.jetbrains.kotlin.jvm" version "1.4.0"
+    id 'org.jetbrains.kotlin.jvm' version '1.4.0'
+    id 'org.jetbrains.dokka' version '1.4.10'
 }
 
 def getVersionName = { ->
@@ -48,6 +49,7 @@ subprojects { Project subProject ->
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'org.jetbrains.dokka'
 
     def date = LocalDate.now().toString()
     group = project.pluginGroup
@@ -67,14 +69,6 @@ subprojects { Project subProject ->
 
             delete buildDir
         }
-    }
-
-    afterEvaluate {
-        def buildTask = subProject.tasks.find { it.name == 'build' }
-        if (buildTask) {
-            buildTask.finalizedBy aggregatedJavadocs
-        }
-        aggregatedJavadocs.finalizedBy copyArtifacts
     }
 
     sourceCompatibility = '1.8'
@@ -107,7 +101,7 @@ allprojects {
             }
             maven {
                 name 'plotsquared'
-                url "https://plotsquared.com/mvn/"
+                url 'https://plotsquared.com/mvn/'
             }
         }
 
@@ -119,7 +113,7 @@ allprojects {
             // Required plugins for all platforms
             compileOnly 'com.boydti:fawe-api:latest'
             compileOnly 'com.sk89q.worldedit:worldedit-core:6.1'
-            compileOnly "com.plotsquared:plotsquared-api:3.1"
+            compileOnly 'com.plotsquared:plotsquared-api:3.1'
 
             // Typically included by platforms
             compileOnly 'org.slf4j:slf4j-api:1.7.25'
@@ -137,21 +131,21 @@ allprojects {
     }
 }
 
-task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all child projects as if it was a single project', group: 'Documentation') {
-    destinationDir = file "./docs"
-    title = "Selene (commit #$version)"
-    options.author true
-    options.links 'http://docs.spring.io/spring/docs/4.3.x/javadoc-api/', 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.spring.io/spring-ws/docs/2.3.0.RELEASE/api/', 'http://docs.spring.io/spring-security/site/docs/4.0.4.RELEASE/apidocs/'
-    options.addStringOption 'Xdoclint:none', '-quiet'
+afterEvaluate {
+    build.finalizedBy dokkaJavadocCollector
+    dokkaJavadocCollector.finalizedBy relocateDokka
+}
 
-    delete "./docs"
+task relocateDokka {
+    doLast {
+        def DOKKA_DEST_DIR = "${rootDir}/docs"
+        def DOKKA_SRC_DIR = "${rootDir}/build/dokka/javadocCollector"
 
-    subprojects.each { proj ->
-        proj.tasks.withType(Javadoc).each { javadocTask ->
-            source += javadocTask.source
-            classpath += javadocTask.classpath
-            excludes += javadocTask.excludes
-            includes += javadocTask.includes
+        ant.mkdir(dir: DOKKA_DEST_DIR)
+        ant.copy(todir: DOKKA_DEST_DIR) {
+            fileset dir: DOKKA_SRC_DIR
         }
+
+        delete "${rootDir}/build"
     }
 }
