@@ -25,21 +25,21 @@ import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper
 
 /**
- * The default (simple) implementation of {@link org.dockbox.selene.core.util.exceptions.ExceptionHelper}.
+ * The default (simple) implementation of [org.dockbox.selene.core.util.exceptions.ExceptionHelper].
  * Formats:
- * <b>Friendly</b>
- * <code>
+ * - Friendly
+ * ```
  *     Headline: java.lang.NullPointerException
  *     Message: Foo bar
  *     Location: SourceFile.java line 19
  *     Stack: [...]
- * </code>
+ * ```
  *
- * <b>Minimal</b>
- * <code>
+ * - Minimal
+ * ```
  *     NullPointerException: Foo bar
  *     Stack: [...]
- * </code>
+ * ```
  */
 class SimpleExceptionHelper : ExceptionHelper {
 
