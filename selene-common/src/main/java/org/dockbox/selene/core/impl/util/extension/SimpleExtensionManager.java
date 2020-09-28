@@ -19,6 +19,7 @@ package org.dockbox.selene.core.impl.util.extension;
 
 import com.google.inject.Singleton;
 
+import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
@@ -41,6 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -131,12 +133,15 @@ public class SimpleExtensionManager implements ExtensionManager {
             Selene.log().info(" - [" + type.getCanonicalName() + "]");
             SimpleExtensionContext context = new SimpleExtensionContext(ComponentType.INTERNAL_CLASS, type.getCanonicalName());
             context.addComponentClass(type);
-            this.createComponentInstance(type, context);
 
-            globalContexts.add(context);
-
-            return context;
-        }).collect(Collectors.toList());
+            return new Tuple<>(context, type);
+        }).filter(tuple -> {
+            if (this.createComponentInstance(tuple.getSecond(), tuple.getFirst())) {
+                globalContexts.add(tuple.getFirst());
+                return true;
+            }
+            return false;
+        }).map(Tuple::getFirst).collect(Collectors.toList());
     }
 
     @NotNull
@@ -208,7 +213,9 @@ public class SimpleExtensionManager implements ExtensionManager {
             // when loading a jar, this will return the pre-existing class.
             Class<?> classEntry = ClassLoader.getSystemClassLoader().loadClass(className);
 
-            // TODO: [High priority] Resolve externally added class entries not having annotations detected
+            // Waiting for restructure, potentially moving towards supertype externals over annotations. See
+            // https://github.com/GuusLieben/Selene/issues/83
+            // TODO S83: Resolve externally added class entries not having annotations detected
             // classEntry.getAnnotations(); // this is always empty, I do not know why.
 
             // If the class isn't added to the classpath, the above will cause an
@@ -231,8 +238,16 @@ public class SimpleExtensionManager implements ExtensionManager {
         }
     }
 
-    private <T> void createComponentInstance(Class<T> entry, SimpleExtensionContext context) {
+    private <T> boolean createComponentInstance(Class<T> entry, SimpleExtensionContext context) {
         Extension header = entry.getAnnotation(Extension.class);
+        List<Extension> existingHeaders = new LinkedList<>();
+        globalContexts.forEach(ctx -> existingHeaders.addAll(ctx.getClasses().keySet()));
+        //noinspection CallToSuspiciousStringMethod
+        if (existingHeaders.stream().anyMatch(e -> e.uniqueId().equals(header.uniqueId()))) {
+            Selene.log().warn("Extension with unique ID " + header.uniqueId() + " already present!");
+            return false;
+        }
+
         assert null != header : "@Extension header missing from previously checked type [" + entry.getCanonicalName() + "]! This should not be possible!";
 
         String[] dependencies = header.dependencies();
@@ -242,7 +257,7 @@ public class SimpleExtensionManager implements ExtensionManager {
                 if (null == pkg) {
                     // Do not instantiate entries which require dependencies which are not present.
                     context.addStatus(entry, ExtensionStatus.FAILED);
-                    return;
+                    return false;
                 }
 
                 // Due to the way external .jar files are injected Reflections sometimes causes issues when using the Package instance
@@ -259,22 +274,24 @@ public class SimpleExtensionManager implements ExtensionManager {
             }
         }
 
-        T instance = null;
+        T instance;
         try {
             Constructor<T> defaultConstructor = entry.getConstructor();
             defaultConstructor.setAccessible(true);
             instance = defaultConstructor.newInstance();
-            ((Selene) Selene.getServer()).getInjector().injectMembers(instance);
+            Selene.getServer().getInjector().injectMembers(instance);
             context.addStatus(entry, ExtensionStatus.LOADED);
         } catch (NoSuchMethodException | IllegalAccessException e) {
             context.addStatus(entry, ExtensionStatus.FAILED);
             Selene.log().warn("No default accessible constructor available for [" + entry.getCanonicalName() + ']');
+            return false;
         } catch (InstantiationException | InvocationTargetException e) {
             context.addStatus(entry, ExtensionStatus.ERRORED);
             Selene.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
+            return false;
         }
 
-        Selene.log().info("Instance for [" + entry.getCanonicalName() + "] = " + instance);
-        if (null != instance) instanceMappings.put(header.id(), instance);
+        instanceMappings.put(header.id(), instance);
+        return true;
     }
 }
