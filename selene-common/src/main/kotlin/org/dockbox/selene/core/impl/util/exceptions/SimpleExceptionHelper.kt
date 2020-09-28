@@ -26,8 +26,10 @@ import org.dockbox.selene.core.util.exceptions.ExceptionHelper
 
 class SimpleExceptionHelper : ExceptionHelper {
 
+    private val line: String = "========================================"
+    
     override fun printFriendly(message: String?, exception: Throwable?, stacktrace: Boolean?) {
-        Selene.log().error("========================================")
+        Selene.log().error(this.line)
         if (exception != null) {
             Selene.log().error("Headline: " + exception.javaClass.canonicalName)
             if (message != null && "" != message) Selene.log().error("Message: $message")
@@ -47,7 +49,7 @@ class SimpleExceptionHelper : ExceptionHelper {
                 }
             }
         } else Selene.log().error("Received exception call, but exception was null")
-        Selene.log().error("========================================")
+        Selene.log().error(this.line)
         // Headline: java.lang.NullPointerException
         // Message: Foo bar
         // Location: SourceFile.java line 19
@@ -55,24 +57,24 @@ class SimpleExceptionHelper : ExceptionHelper {
     }
 
     override fun printMinimal(message: String?, exception: Throwable?, stacktrace: Boolean?) {
-        Selene.log().error("========================================")
+        Selene.log().error(this.line)
         if (exception != null && message != null && "" != message) {
             Selene.log().error(exception.javaClass.simpleName + ": " + message)
             if (stacktrace != null && stacktrace) Selene.log().error(Arrays.toString(exception.stackTrace))
         }
-        Selene.log().error("========================================")
+        Selene.log().error(this.line)
         // NullPointerException: Foo bar
         // Stack: [...]
     }
 
     override fun handleSafe(runnable: Runnable) =
-            handleSafe(runnable) { Selene.getServer().except(it.message, it) }
+            this.handleSafe(runnable) { Selene.getServer().except(it.message, it) }
 
     override fun <T> handleSafe(consumer: Consumer<T>, value: T) =
-            handleSafe(consumer, value) { Selene.getServer().except(it.message, it) }
+            this.handleSafe(consumer, value) { Selene.getServer().except(it.message, it) }
 
     override fun <T, R> handleSafe(function: Function<T, R>, value: T): Exceptional<R> =
-            handleSafe(function, value) { Selene.getServer().except(it.message, it) }
+            this.handleSafe(function, value) { Selene.getServer().except(it.message, it) }
 
 
     override fun handleSafe(runnable: Runnable, errorConsumer: Consumer<Throwable>) {
