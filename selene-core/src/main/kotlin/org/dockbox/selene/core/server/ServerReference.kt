@@ -28,7 +28,11 @@ abstract class ServerReference {
     }
 
     open fun getExtension(type: Class<*>?): Extension? {
-        if (type == null) return null;
+        // Selene uses injection mapping to access the integrated extension so Selene itself doesn't have to be
+        // annotated.
+        if (type == Selene::class.java)
+            return getExtension(Selene.getInstance(Selene.IntegratedExtension::class.java)::class.java)
+        if (type == null) return null
         return type.getAnnotation(Extension::class.java) ?: getExtension(type.superclass)
     }
 

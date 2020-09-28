@@ -32,6 +32,7 @@ import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.Selene.IntegratedExtension;
 import org.dockbox.selene.core.server.ServerReference;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction.RunCommand;
@@ -57,7 +58,7 @@ import java.util.UUID;
         url = "https://github.com/GuusLieben/Selene",
         uniqueId = "a8a96336-06bd-4521-99d4-5682a4f75e0a")
 @Command(aliases = {"selene", "darwin"}, usage = "selene")
-public class IntegratedServerExtension extends ServerReference {
+public class IntegratedServerExtension extends ServerReference implements IntegratedExtension {
 
     // Parent command
     @Command(aliases = "", usage = "")

@@ -28,6 +28,7 @@ import org.dockbox.selene.core.impl.util.files.SQLiteBulkDataManager
 import org.dockbox.selene.core.impl.util.files.YamlConfigManager
 import org.dockbox.selene.core.impl.util.files.YamlDataManager
 import org.dockbox.selene.core.impl.util.text.SimpleBroadcastService
+import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.server.config.GlobalConfig
 import org.dockbox.selene.core.text.navigation.PaginationService
 import org.dockbox.selene.core.util.discord.DiscordUtils
@@ -43,6 +44,7 @@ import org.dockbox.selene.core.util.player.PlayerStorageService
 import org.dockbox.selene.core.util.text.BroadcastService
 import org.dockbox.selene.core.util.threads.ThreadUtils
 import org.dockbox.selene.core.util.world.WorldStorageService
+import org.dockbox.selene.integrated.IntegratedServerExtension
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationService
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus
 import org.dockbox.selene.sponge.util.discord.SpongeDiscordUtils
@@ -72,6 +74,7 @@ class SpongeCommonInjector : AbstractCommonInjector() {
         bind(EventBus::class.java).to(SimpleEventBus::class.java)
         bind(FileUtils::class.java).to(SpongeFileUtils::class.java)
         bind(GlobalConfig::class.java).to(DefaultGlobalConfig::class.java)
+        bind(Selene.IntegratedExtension::class.java).to(IntegratedServerExtension::class.java)
         bind(ResourceService::class.java).to(SimpleResourceService::class.java)
         bind(PaginationService::class.java).to(SpongePaginationService::class.java)
         bind(PlayerStorageService::class.java).to(SpongePlayerStorageService::class.java)

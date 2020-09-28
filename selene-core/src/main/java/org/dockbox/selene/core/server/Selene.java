@@ -58,6 +58,9 @@ import java.util.function.Consumer;
 @SuppressWarnings("ClassWithTooManyMethods")
 public abstract class Selene {
 
+    public interface IntegratedExtension {
+    }
+
     public enum ServerType {
         SPONGE(true, "1.12.2-2555-7.1.0-BETA-2815", "1.12.2-2838-7.2.2-RC0"),
         MAGMA(true, "Not (yet) supported", "Not (yet) supported"),
