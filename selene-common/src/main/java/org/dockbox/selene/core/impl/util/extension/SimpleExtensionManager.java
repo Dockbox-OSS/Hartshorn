@@ -85,9 +85,8 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public <T> Optional<T> getInstance(@NotNull Class<T> type) {
-        Selene.log().info("Instance requested for [" + type.getCanonicalName() +"]");
+        Selene.log().debug("Instance requested for [" + type.getCanonicalName() +"]");
         for (Object o : instanceMappings.values()) {
-            Selene.log().info(" - mapping: " + o);
             if (null != o && o.getClass().equals(type))
                 // Condition meets requirement for checked cast
                 //noinspection unchecked

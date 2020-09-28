@@ -68,7 +68,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     override fun register(vararg objs: Any) {
         for (obj in objs) {
             val clazz: Class<*> = if (obj is Class<*>) obj else obj.javaClass
-            Selene.log().info("\n\nScanning {} for commands", clazz.toGenericString())
+            Selene.log().info("Scanning {} for commands", clazz.toGenericString())
             try {
                 if (clazz.isAnnotationPresent(Command::class.java)) {
                     registerClassCommand(clazz, obj)
