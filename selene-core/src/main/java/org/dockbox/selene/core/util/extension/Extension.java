@@ -33,4 +33,5 @@ public @interface Extension {
     String[] authors();
     String[] dependencies() default {};
     boolean requiresNMS() default false;
+    String uniqueId();
 }

@@ -54,8 +54,8 @@ import java.util.UUID;
         name = "Selene",
         description = "Integrated features of Selene",
         authors = {"GuusLieben"},
-        url = "https://github.com/GuusLieben/Selene"
-)
+        url = "https://github.com/GuusLieben/Selene",
+        uniqueId = "a8a96336-06bd-4521-99d4-5682a4f75e0a")
 @Command(aliases = {"selene", "darwin"}, usage = "selene")
 public class IntegratedServerExtension extends ServerReference {
 

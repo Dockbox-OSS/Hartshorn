@@ -6,7 +6,8 @@
 
 **Project is in pre-alpha stages, please note there might be major changes without special notice**
 
-_Documentation will follow once 3.1 milestone has been reached_
+_Documentation will follow once 3.1 milestone has been reached_  
+Javadocs: https://guuslieben.github.io/Selene/
 
 A WIP branch to restructure DarwinCore/DarwinServer to a cleaner architecture under a new name.
 Selene will primarily use Kotlin for utilities, with stricter stylechecks than present in earlier versions.
