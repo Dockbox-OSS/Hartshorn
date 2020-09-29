@@ -110,7 +110,7 @@ var pathtoroot = "../../../../";
 public class <span class="typeNameLabel"><a href=SeleneSpongeImpl.html>SeleneSpongeImpl</a></span>
 extends <a href=../org/dockbox/selene/core/server/Selene.html>Selene</a>
                     </pre>
-                    <div class="block"></div>
+                    <div class="block"><p>Sponge implementation of Selene, using events to initiate startup tasks.</p></div>
                 </li>
             </ul>
         </div>
@@ -142,7 +142,7 @@ extends <a href=../org/dockbox/selene/core/server/Selene.html>Selene</a>
                                             <tr class="altColor">
                                                 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a
                                                         href="#SeleneSpongeImpl()">SeleneSpongeImpl</a></span>()</code></th>
-                                                <td class="colLast"></td>
+                                                <td class="colLast">Creates a new Selene instance using the <a href=../org/dockbox/selene/sponge/util/inject/SpongeCommonInjector.html>org.dockbox.selene.sponge.util.inject.SpongeCommonInjector</a> bindings providing utilities.</td>
                                             </tr>
                                         
 
@@ -181,7 +181,7 @@ extends <a href=../org/dockbox/selene/core/server/Selene.html>Selene</a>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=SeleneSpongeImpl.html#onServerInit(GameInitializationEvent)>onServerInit</a>(GameInitializationEvent event) </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Sponge Listener method, registers additional listeners present in <a href=../org/dockbox/selene/sponge/listeners/SpongeServerEventListener.html>org.dockbox.selene.sponge.listeners.SpongeServerEventListener</a> .</td>
                                         </tr>
                                         
                                         <tr id="i1" class="rowColor">
@@ -189,7 +189,7 @@ extends <a href=../org/dockbox/selene/core/server/Selene.html>Selene</a>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=SeleneSpongeImpl.html#onServerStarted(GameStartedServerEvent)>onServerStarted</a>(GameStartedServerEvent event) </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Sponge Listener method, registers the MagiBridge JDA instance as soon as it is available.</td>
                                         </tr>
                                         
                                         <tr id="i2" class="altColor">
@@ -201,11 +201,27 @@ extends <a href=../org/dockbox/selene/core/server/Selene.html>Selene</a>
                                         </tr>
                                         
                                         <tr id="i3" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=SeleneSpongeImpl.html#getPlatformVersion()>getPlatformVersion</a>() </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i4" class="altColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=SeleneSpongeImpl.html#getMinecraftVersion()>getMinecraftVersion</a>() </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i5" class="rowColor">
                                             <td class="colFirst"><code>static void</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=SeleneSpongeImpl.html#main(Array)>main</a>(<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html>Array</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; args) </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">The entry point of application, in case it is started directly.</td>
                                         </tr>
                                         
                                         </tbody>
@@ -217,7 +233,7 @@ extends <a href=../org/dockbox/selene/core/server/Selene.html>Selene</a>
                                             <!--   -->
                                         </a>
                                             <h3>Methods inherited from class&nbsp;org.dockbox.selene.core.server.Selene</h3>
-                                            <code>bindUtility, construct, debugRegisteredInstances, except, getAllArtifacts, getAuthors, getConsumer, getGlobalConfig, getInjector, getInstance, getLastUpdate, getLog, getPlatformArtifacts, getServer, getServerType, getVersion, init, initExternalExtensions, initIntegratedExtensions, log, verifyArtifacts, verifyInjectorBindings</code></li>
+                                            <code>bindUtility, construct, debugRegisteredInstances, except, getAllArtifacts, getAuthors, getConsumer, getGlobalConfig, getInjector, getInstance, getLastUpdate, getLog, getMinecraftVersion, getPlatformArtifacts, getPlatformVersion, getServer, getServerType, getVersion, init, initExternalExtensions, initIntegratedExtensions, log, verifyArtifacts, verifyInjectorBindings</code></li>
                                  
                                     <li class="blockList"><a id="methods.inherited.from.class.java.lang.Object">
                                         <!--   -->
@@ -250,7 +266,7 @@ extends <a href=../org/dockbox/selene/core/server/Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>SeleneSpongeImpl</h4>
                                         <pre>SeleneSpongeImpl()</pre>
-                                        <div class="block"></div>
+                                        <div class="block">Creates a new Selene instance using the <a href=../org/dockbox/selene/sponge/util/inject/SpongeCommonInjector.html>org.dockbox.selene.sponge.util.inject.SpongeCommonInjector</a> bindings providing utilities.</div>
                                         
                                     </li>
                                 </ul>
@@ -277,7 +293,16 @@ extends <a href=../org/dockbox/selene/core/server/Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>onServerInit</h4>
                                         <pre class="methodSignature"> void <a href=SeleneSpongeImpl.html#onServerInit(GameInitializationEvent)>onServerInit</a>(GameInitializationEvent event)</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Sponge Listener method, registers additional listeners present in <a href=../org/dockbox/selene/sponge/listeners/SpongeServerEventListener.html>org.dockbox.selene.sponge.listeners.SpongeServerEventListener</a> .</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>event</code> - Sponge's initialization event</dd>
+                                            
+                                            
+                                        </dl>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -292,7 +317,16 @@ extends <a href=../org/dockbox/selene/core/server/Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>onServerStarted</h4>
                                         <pre class="methodSignature"> void <a href=SeleneSpongeImpl.html#onServerStarted(GameStartedServerEvent)>onServerStarted</a>(GameStartedServerEvent event)</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Sponge Listener method, registers the MagiBridge JDA instance as soon as it is available. Sometimes MagiBridge takes a while to start, if this is the case we register a delayed task to execute this method again 30 seconds later.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>event</code> - the event</dd>
+                                            
+                                            
+                                        </dl>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -313,6 +347,36 @@ extends <a href=../org/dockbox/selene/core/server/Selene.html>Selene</a>
                                     </li>
                                 </ul>
                                 
+                                <a id="getPlatformVersion()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getPlatformVersion</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=SeleneSpongeImpl.html#getPlatformVersion()>getPlatformVersion</a>()</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getMinecraftVersion()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getMinecraftVersion</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=SeleneSpongeImpl.html#getMinecraftVersion()>getMinecraftVersion</a>()</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
                                 <a id="main(Array)">
                                     <!--   -->
                                 </a>
@@ -322,7 +386,16 @@ extends <a href=../org/dockbox/selene/core/server/Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>main</h4>
                                         <pre class="methodSignature"> static void <a href=SeleneSpongeImpl.html#main(Array)>main</a>(<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html>Array</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; args)</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>The entry point of application, in case it is started directly.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>args</code> - the input arguments</dd>
+                                            
+                                            
+                                        </dl>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>

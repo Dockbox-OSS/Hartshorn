@@ -110,7 +110,7 @@ var pathtoroot = "../../../../../";
 public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a></span>
 
                     </pre>
-                    <div class="block"></div>
+                    <div class="block"><p>The global <a href=Selene.html>Selene</a> instance used to grant access to various components.</p></div>
                 </li>
             </ul>
         </div>
@@ -138,14 +138,14 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                             <td class="colFirst"><code>public interface</code></td>
                                             <th class="colSecond" scope="row"><code><a href="Selene.IntegratedExtension.html">Selene.IntegratedExtension</a></span></code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast"><p>Low-level interface, used by the default IntegratedExtension as indicated by the mappings provided by the platform implementation. Used to access the extension when <a href=org/dockbox/selene/core/server/Selene.html>Selene</a> is used in a <a href=org/dockbox/selene/core/server/ServerReference.html>ServerReference</a> method call.</p></td>
                                         </tr>
                                         
                                         <tr class="rowColor">
                                             <td class="colFirst"><code>public enum</code></td>
                                             <th class="colSecond" scope="row"><code><a href="Selene.ServerType.html">Selene.ServerType</a></span></code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast"><p>Server type definitions containing display names, minimum/preferred versions, and whether or not the platform provides access to Native Minecraft Sources (NMS).</p></td>
                                         </tr>
                                         
                                     </table>
@@ -243,7 +243,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#bindUtility(Class,Class)>bindUtility</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a>&lt;<a href=../org/dockbox/selene/core/objects/optional/Exceptional.html#empty()>T</a>&gt; contract, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a>&lt;out <a href=../org/dockbox/selene/core/objects/optional/Exceptional.html#empty()>T</a>&gt; implementation) </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Creates a custom binding for a given contract and implementation using a custom AbstractModule .</td>
                                         </tr>
                                         
                                         <tr id="i1" class="rowColor">
@@ -251,7 +251,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getServerType()>getServerType</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Gets the server type as indicated by the <a href=Selene.html>Selene</a> implementation.</td>
                                         </tr>
                                         
                                         <tr id="i2" class="altColor">
@@ -259,7 +259,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#except(String,Array)>except</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> msg, <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html>Array</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html>Throwable</a>&gt; e) </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Handles a given exception and message using the injected <a href=../org/dockbox/selene/core/util/exceptions/ExceptionHelper.html>ExceptionHelper</a> instance.</td>
                                         </tr>
                                         
                                         <tr id="i3" class="rowColor">
@@ -267,7 +267,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getGlobalConfig()>getGlobalConfig</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Gets the <a href=../org/dockbox/selene/core/server/config/GlobalConfig.html>GlobalConfig</a> instance as injected by the <a href=Selene.html>Selene</a> implementation.</td>
                                         </tr>
                                         
                                         <tr id="i4" class="altColor">
@@ -275,7 +275,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#log()>log</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Provides quick access to <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getLog()>getLog</a> through the <a href=Selene.html>Selene</a> instance (using <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getServer()>getServer</a> ).</td>
                                         </tr>
                                         
                                         <tr id="i5" class="rowColor">
@@ -283,55 +283,71 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getServer()>getServer</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Gets the instance of <a href=Selene.html>Selene</a> .</td>
                                         </tr>
                                         
                                         <tr id="i6" class="altColor">
+                                            <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getPlatformVersion()>getPlatformVersion</a>() </code>
+                                            </th>
+                                            <td class="colLast">Gets the used version of the implementation platform.</td>
+                                        </tr>
+                                        
+                                        <tr id="i7" class="rowColor">
+                                            <td class="colFirst"><code>abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getMinecraftVersion()>getMinecraftVersion</a>() </code>
+                                            </th>
+                                            <td class="colLast">Gets the used Minecraft version.</td>
+                                        </tr>
+                                        
+                                        <tr id="i8" class="altColor">
                                             <td class="colFirst"><code>Logger</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getLog()>getLog</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Gets the log instance created by <a href=Selene.html>Selene</a> .</td>
                                         </tr>
                                         
-                                        <tr id="i7" class="rowColor">
+                                        <tr id="i9" class="rowColor">
                                             <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getVersion()>getVersion</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Gets the <a href=Selene.html>Selene</a> version, based on the injected value in <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#construct()>construct</a> .</td>
                                         </tr>
                                         
-                                        <tr id="i8" class="altColor">
+                                        <tr id="i10" class="altColor">
                                             <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html>LocalDate</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getLastUpdate()>getLastUpdate</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Gets the last update of <a href=Selene.html>Selene</a> , based on the injected value in <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#construct()>construct</a></td>
                                         </tr>
                                         
-                                        <tr id="i9" class="rowColor">
+                                        <tr id="i11" class="rowColor">
                                             <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html>Array</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getAuthors()>getAuthors</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Gets the array of authors as defined by <a href=Selene.html#authors>authors</a> .</td>
                                         </tr>
                                         
-                                        <tr id="i10" class="altColor">
+                                        <tr id="i12" class="altColor">
                                             <td class="colFirst"><code>Injector</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getInjector()>getInjector</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Gets the injector used for instance mapping.</td>
                                         </tr>
                                         
-                                        <tr id="i11" class="rowColor">
+                                        <tr id="i13" class="rowColor">
                                             <td class="colFirst"><code>static &lt;T&gt; <a href=../org/dockbox/selene/core/objects/optional/Exceptional.html#empty()>T</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getInstance(Class)>getInstance</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a>&lt;<a href=../org/dockbox/selene/core/objects/optional/Exceptional.html#empty()>T</a>&gt; type) </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Gets an instance of a provided <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a> type.</td>
                                         </tr>
                                         
                                         </tbody>
@@ -376,7 +392,20 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>bindUtility</h4>
                                         <pre class="methodSignature"> static &lt;T&gt; void <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#bindUtility(Class,Class)>bindUtility</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a>&lt;<a href=../org/dockbox/selene/core/objects/optional/Exceptional.html#empty()>T</a>&gt; contract, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a>&lt;out <a href=../org/dockbox/selene/core/objects/optional/Exceptional.html#empty()>T</a>&gt; implementation)</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Creates a custom binding for a given contract and implementation using a custom AbstractModule . Requires the implementation to extend the contract type. The binding is created by Guice, and can be annotated using Guice supported annotations (e.g. com.google.inject.Singleton )</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>contract</code> - The class type of the contract</dd>
+                                            
+                                            
+                                            
+                                            <dd><code>implementation</code> - The class type of the implementation</dd>
+                                            
+                                            
+                                        </dl>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -391,7 +420,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>getServerType</h4>
                                         <pre class="methodSignature">@NotNull() abstract <a href=Selene.ServerType.html>Selene.ServerType</a> <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getServerType()>getServerType</a>()</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Gets the server type as indicated by the <a href=Selene.html>Selene</a> implementation.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -406,7 +435,20 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>except</h4>
                                         <pre class="methodSignature"> void <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#except(String,Array)>except</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> msg, <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html>Array</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html>Throwable</a>&gt; e)</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Handles a given exception and message using the injected <a href=../org/dockbox/selene/core/util/exceptions/ExceptionHelper.html>ExceptionHelper</a> instance. Uses the global preferences as defined in <a href=../org/dockbox/selene/core/server/config/GlobalConfig.html>GlobalConfig</a> to use either the FRIENDLY or MINIMAL level. Additionally this also performs the preference for whether or not to print stacktraces, using <a href=../org/dockbox/selene/core/server/config/GlobalConfig.html#getStacktracesAllowed()>getStacktracesAllowed</a></p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>msg</code> - The message, usually provided by the developer causing the exception.</dd>
+                                            
+                                            
+                                            
+                                            <dd><code>e</code> - Zero or more exceptions (varargs)</dd>
+                                            
+                                            
+                                        </dl>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -421,7 +463,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>getGlobalConfig</h4>
                                         <pre class="methodSignature">@NotNull() <a href=../org/dockbox/selene/core/server/config/GlobalConfig.html>GlobalConfig</a> <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getGlobalConfig()>getGlobalConfig</a>()</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Gets the <a href=../org/dockbox/selene/core/server/config/GlobalConfig.html>GlobalConfig</a> instance as injected by the <a href=Selene.html>Selene</a> implementation.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -436,7 +478,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>log</h4>
                                         <pre class="methodSignature"> static Logger <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#log()>log</a>()</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Provides quick access to <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getLog()>getLog</a> through the <a href=Selene.html>Selene</a> instance (using <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getServer()>getServer</a> ).</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -451,7 +493,37 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>getServer</h4>
                                         <pre class="methodSignature"> static <a href=Selene.html>Selene</a> <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getServer()>getServer</a>()</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Gets the instance of <a href=Selene.html>Selene</a> .</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getPlatformVersion()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getPlatformVersion</h4>
+                                        <pre class="methodSignature"> abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getPlatformVersion()>getPlatformVersion</a>()</pre>
+                                        <div class="block"><p>Gets the used version of the implementation platform.</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getMinecraftVersion()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getMinecraftVersion</h4>
+                                        <pre class="methodSignature"> abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getMinecraftVersion()>getMinecraftVersion</a>()</pre>
+                                        <div class="block"><p>Gets the used Minecraft version.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -466,7 +538,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>getLog</h4>
                                         <pre class="methodSignature">@NotNull() Logger <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getLog()>getLog</a>()</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Gets the log instance created by <a href=Selene.html>Selene</a> .</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -481,7 +553,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>getVersion</h4>
                                         <pre class="methodSignature">@NotNull() <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getVersion()>getVersion</a>()</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Gets the <a href=Selene.html>Selene</a> version, based on the injected value in <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#construct()>construct</a> .</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -496,7 +568,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>getLastUpdate</h4>
                                         <pre class="methodSignature">@NotNull() <a href=https://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html>LocalDate</a> <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getLastUpdate()>getLastUpdate</a>()</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Gets the last update of <a href=Selene.html>Selene</a> , based on the injected value in <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#construct()>construct</a></p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -511,7 +583,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>getAuthors</h4>
                                         <pre class="methodSignature">@NotNull() <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html>Array</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getAuthors()>getAuthors</a>()</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Gets the array of authors as defined by <a href=Selene.html#authors>authors</a> .</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -526,7 +598,7 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>getInjector</h4>
                                         <pre class="methodSignature"> Injector <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getInjector()>getInjector</a>()</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Gets the injector used for instance mapping. Holds both implementation provided mappings and manually created mappings.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -541,7 +613,16 @@ public abstract class <span class="typeNameLabel"><a href=Selene.html>Selene</a>
                                     <li class="blockList">
                                         <h4>getInstance</h4>
                                         <pre class="methodSignature"> static &lt;T&gt; <a href=../org/dockbox/selene/core/objects/optional/Exceptional.html#empty()>T</a> <a href=../org/dockbox/selene/sponge/SeleneSpongeImpl.html#getInstance(Class)>getInstance</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a>&lt;<a href=../org/dockbox/selene/core/objects/optional/Exceptional.html#empty()>T</a>&gt; type)</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Gets an instance of a provided <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html>Class</a> type. If the type is annotated with <a href=../org/dockbox/selene/core/util/extension/Extension.html>Extension</a> it is ran through the <a href=../org/dockbox/selene/core/util/extension/ExtensionManager.html>ExtensionManager</a> instance to obtain the instance. If it is not annotated as such, it is ran through the instance Injector to obtain the instance based on implementation, or manually, provided mappings.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>type</code> - The type of the instance</dd>
+                                            
+                                            
+                                        </dl>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
