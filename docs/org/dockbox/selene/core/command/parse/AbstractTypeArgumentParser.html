@@ -110,7 +110,7 @@ var pathtoroot = "../../../../../../";
 public abstract class <span class="typeNameLabel"><a href=AbstractTypeArgumentParser.html>AbstractTypeArgumentParser</a>&lt;T extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html>Object</a>&gt;</span>
 extends <a href=AbstractParser.html>AbstractParser</a>
                     </pre>
-                    <div class="block"></div>
+                    <div class="block"><p>Low-level class to perform <a href=../org/dockbox/selene/core/command/context/CommandValue.html>CommandValue</a> conversions into a given generic type <a href=AbstractTypeArgumentParser.html>T</a></p></div>
                 </li>
             </ul>
         </div>
@@ -181,7 +181,7 @@ extends <a href=AbstractParser.html>AbstractParser</a>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=AbstractTypeArgumentParser.html#parse(CommandValue)>parse</a>(<a href=../org/dockbox/selene/core/command/context/CommandValue.html>CommandValue</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; commandValue) </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Parses a given <a href=../org/dockbox/selene/core/command/context/CommandValue.html>CommandValue</a> with generic type <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/index.html>String</a> into the given generic type <a href=AbstractTypeArgumentParser.html>T</a>.</td>
                                         </tr>
                                         
                                         </tbody>
@@ -253,7 +253,16 @@ extends <a href=AbstractParser.html>AbstractParser</a>
                                     <li class="blockList">
                                         <h4>parse</h4>
                                         <pre class="methodSignature"> abstract <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html>Optional</a>&lt;<a href=AbstractTypeArgumentParser.html>T</a>&gt; <a href=AbstractTypeArgumentParser.html#parse(CommandValue)>parse</a>(<a href=../org/dockbox/selene/core/command/context/CommandValue.html>CommandValue</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; commandValue)</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Parses a given <a href=../org/dockbox/selene/core/command/context/CommandValue.html>CommandValue</a> with generic type <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/index.html>String</a> into the given generic type <a href=AbstractTypeArgumentParser.html>T</a>. Returns an <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html>Optional</a> to allow developers to return empty results if need be.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>commandValue</code> - The <a href=../org/dockbox/selene/core/command/context/CommandValue.html>CommandValue</a> holding the key and value of a command argument or flag</dd>
+                                            
+                                            
+                                        </dl>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>

@@ -25,6 +25,10 @@ import org.dockbox.selene.core.annotations.FromSource
 import org.dockbox.selene.core.command.context.CommandContext
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
+import org.dockbox.selene.core.command.parse.rules.Rule
+import org.dockbox.selene.core.command.parse.rules.Split
+import org.dockbox.selene.core.command.parse.rules.Strict
+import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.impl.command.parse.BooleanArgumentParser
 import org.dockbox.selene.core.impl.command.parse.CharArgumentParser
 import org.dockbox.selene.core.impl.command.parse.DoubleArgumentParser
@@ -39,10 +43,6 @@ import org.dockbox.selene.core.impl.command.parse.PlayerArgumentParser
 import org.dockbox.selene.core.impl.command.parse.ResourceArgumentParser
 import org.dockbox.selene.core.impl.command.parse.ShortArgumentParser
 import org.dockbox.selene.core.impl.command.parse.WorldArgumentParser
-import org.dockbox.selene.core.command.parse.rules.Rule
-import org.dockbox.selene.core.command.parse.rules.Split
-import org.dockbox.selene.core.command.parse.rules.Strict
-import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.objects.location.Location
 import org.dockbox.selene.core.objects.location.World
 import org.dockbox.selene.core.objects.optional.Exceptional
@@ -228,7 +228,7 @@ open class SimpleCommandContext(
             }
 
             List::class.java -> {
-                val parser = ListArgumentParser()
+                val parser = ListArgumentParser<String>()
                 if (field.isAnnotationPresent(Split::class.java)) parser.setDelimiter(field.getAnnotation(Split::class.java).delimiter)
                 if (minMax != null) parser.setMinMax(minMax)
                 return Exceptional.ofOptional(parser.parse(arg))

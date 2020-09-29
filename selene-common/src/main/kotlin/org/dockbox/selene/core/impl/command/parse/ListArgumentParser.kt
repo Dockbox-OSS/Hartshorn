@@ -25,6 +25,17 @@ import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.selene.core.command.parse.rules.Rule
 import org.dockbox.selene.core.server.Selene
 
+/**
+ * Simple implementation which allows parsing String arguments directly into a List. Uses a configurable delimiter
+ * to decide when to create a new entry, by default this is ','. Also allows you to use @MinMax attributes to set
+ * a minimum/maximum for sublist sizes.
+ *
+ * Additionally, allows you to pass a Function<String, R> which parses the String values before they are are returned
+ * as a List.
+ *
+ * @param R The return type
+ * @constructor Optionally provide the converter function
+ */
 class ListArgumentParser<R> : AbstractTypeArgumentParser<List<R>> {
 
     private var converterFun: Function<String, R>?
