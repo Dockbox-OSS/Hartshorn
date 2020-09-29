@@ -62,20 +62,26 @@ public abstract class Selene {
     }
 
     public enum ServerType {
-        SPONGE(true, "1.12.2-2555-7.1.0-BETA-2815", "1.12.2-2838-7.2.2-RC0"),
-        MAGMA(true, "Not (yet) supported", "Not (yet) supported"),
-        SPIGOT(true, "Not (yet) supported", "Not (yet) supported"),
-        PAPER(true, "Not (yet) supported", "Not (yet) supported"),
-        OTHER(true, "Not (yet) supported", "Not (yet) supported");
+        SPONGE("SpongePowered", true, "1.12.2-2555-7.1.0-BETA-2815", "1.12.2-2838-7.2.2-RC0"),
+        MAGMA("Magma", true, "Not (yet) supported", "Not (yet) supported"),
+        SPIGOT("Spigot", true, "Not (yet) supported", "Not (yet) supported"),
+        PAPER("Paper", true, "Not (yet) supported", "Not (yet) supported"),
+        OTHER("Other", true, "Not (yet) supported", "Not (yet) supported");
 
+        private final String displayName;
         private final boolean hasNMSAccess;
         private final String minimumVersion;
         private final String preferredVersion;
 
-        ServerType(boolean hasNMSAccess, String minimumVersion, String preferredVersion) {
+        ServerType(String displayName, boolean hasNMSAccess, String minimumVersion, String preferredVersion) {
+            this.displayName = displayName;
             this.hasNMSAccess = hasNMSAccess;
             this.minimumVersion = minimumVersion;
             this.preferredVersion = preferredVersion;
+        }
+
+        public String getDisplayName() {
+            return this.displayName;
         }
 
         public boolean hasNMSAccess() {
