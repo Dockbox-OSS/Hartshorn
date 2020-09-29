@@ -31,7 +31,7 @@ import java.util.function.Function
  * @constructor Create empty World edit block parser
  */
 class WorldEditBlockParser : ListArgumentParser<BaseBlock?>(Function {
-    val idData = it.split(":")
+    val idData = it.replace(" ", "").split(":")
     if (idData.isNotEmpty()) {
         var data = 0
         if (idData.size >= 2) data = Integer.parseInt(idData[1])
