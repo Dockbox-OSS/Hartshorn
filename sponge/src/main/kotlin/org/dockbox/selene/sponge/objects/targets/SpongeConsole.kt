@@ -36,8 +36,8 @@ class SpongeConsole private constructor() : Console() {
     }
 
     override fun send(text: ResourceEntry) {
-        val formattedValue = IntegratedResource.parseColors(text.getValue(Selene.getServer().getGlobalConfig().getDefaultLanguage()))
-        send(of(formattedValue))
+        val formattedValue = IntegratedResource.parseColors(text.getValue(Selene.getServer().globalConfig.getDefaultLanguage()))
+        send(formattedValue)
     }
 
     override fun send(text: Text) {
@@ -45,11 +45,11 @@ class SpongeConsole private constructor() : Console() {
     }
 
     override fun send(text: CharSequence) {
-        send(of(text))
+        text.split("\n").forEach { send(of(it)) }
     }
 
     override fun sendWithPrefix(text: ResourceEntry) {
-        sendWithPrefix(of(text.getValue(Selene.getServer().getGlobalConfig().getDefaultLanguage())))
+        sendWithPrefix(text.getValue(Selene.getServer().globalConfig.getDefaultLanguage()))
     }
 
     override fun sendWithPrefix(text: Text) {
@@ -60,7 +60,7 @@ class SpongeConsole private constructor() : Console() {
     }
 
     override fun sendWithPrefix(text: CharSequence) {
-        sendWithPrefix(of(text))
+        text.split("\n").forEach { sendWithPrefix(of(it)) }
     }
 
     override fun sendPagination(pagination: Pagination) {
