@@ -21,26 +21,44 @@ import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.util.threads.ThreadUtils;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class TestThreadUtils implements ThreadUtils {
     @Override
     public Future<?> performAsync(Runnable runnable) {
-        return null;
+        return new CompletableFuture<>().thenRunAsync(runnable);
     }
 
     @Override
     public Future<?> performSync(Runnable runnable) {
-        return null;
+        return new CompletableFuture<>().thenRun(runnable);
     }
 
     @Override
     public <T> Exceptional<T> awaitAsync(Callable<T> callable) {
-        return null;
+        ExecutorService es = Executors.newScheduledThreadPool(1);
+        Future<T> future = es.submit(callable);
+        es.shutdown();
+        try {
+            return Exceptional.ofNullable(future.get());
+        } catch (InterruptedException | ExecutionException e) {
+            return Exceptional.of(null, e);
+        }
     }
 
     @Override
     public <T> Exceptional<T> awaitSync(Callable<T> callable) {
-        return null;
+        ExecutorService es = Executors.newSingleThreadExecutor();
+        Future<T> future = es.submit(callable);
+        es.shutdown();
+        try {
+            return Exceptional.ofNullable(future.get());
+        } catch (InterruptedException | ExecutionException e) {
+            return Exceptional.of(null, e);
+        }
     }
 }
