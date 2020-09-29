@@ -25,6 +25,9 @@ import org.dockbox.selene.core.text.navigation.Pagination
 import org.dockbox.selene.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
 
+/**
+ * Sponge console implementation. Provides the instance only through SpongeConsole.instance
+ */
 @Singleton
 class SpongeConsole private constructor() : Console() {
     override fun execute(command: String) {

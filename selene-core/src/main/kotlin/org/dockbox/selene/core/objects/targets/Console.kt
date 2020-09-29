@@ -23,6 +23,10 @@ import org.dockbox.selene.core.i18n.permissions.Permission
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.text.Text
 
+/**
+ * mid-level Console class containing non-implementation specific logic for permissions and messages.
+ *
+ */
 abstract class Console : CommandSource, PermissionHolder {
 
     override fun hasPermission(permission: String): Boolean = true
