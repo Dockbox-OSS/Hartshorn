@@ -131,6 +131,7 @@ allprojects {
             testImplementation 'com.boydti:fawe-api:latest'
             testImplementation 'com.sk89q.worldedit:worldedit-core:6.1'
             testImplementation 'com.plotsquared:plotsquared-api:3.1'
+            testImplementation 'com.google.inject:guice:4.2.2'
         }
 
         test {
