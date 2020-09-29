@@ -38,7 +38,3 @@ dependencies {
         testImplementation project(':selene-core')
     }
 }
-
-test {
-    useJUnitPlatform()
-}
