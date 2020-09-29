@@ -39,6 +39,9 @@ import org.spongepowered.api.plugin.Plugin;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+/**
+ Sponge implementation of Selene, using events to initiate startup tasks.
+ */
 @Plugin(
         id = "selene",
         name = "Selene Server",
@@ -55,16 +58,36 @@ public class SeleneSpongeImpl extends Selene {
 
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
 
+    /**
+     Creates a new Selene instance using the {@link org.dockbox.selene.sponge.util.inject.SpongeCommonInjector} bindings
+     providing utilities.
+     */
     public SeleneSpongeImpl() {
         super(new SpongeCommonInjector());
     }
 
+    /**
+     Sponge Listener method, registers additional listeners present in
+     {@link org.dockbox.selene.sponge.listeners.SpongeServerEventListener}.
+
+     @param event
+     Sponge's initialization event
+     */
     @Listener
     public void onServerInit(GameInitializationEvent event) {
         Sponge.getEventManager().registerListeners(this, new SpongeServerEventListener());
         super.init();
     }
 
+    /**
+     Sponge Listener method, registers the MagiBridge JDA instance as soon as it is available.
+
+     Sometimes MagiBridge takes a while to start, if this is the case we register a delayed task to execute
+     this method again 30 seconds later.
+
+     @param event
+     the event
+     */
     @Listener(order = Order.LAST)
     public void onServerStarted(GameStartedServerEvent event) {
         Optional<JDA> oj = getInstance(DiscordUtils.class).getJDA();
@@ -115,6 +138,12 @@ public class SeleneSpongeImpl extends Selene {
     }
 
 
+    /**
+     The entry point of application, in case it is started directly.
+
+     @param args
+     the input arguments
+     */
     public static void main(String[] args) {
         // This is the only place where SystemOut is allowed as no server instance can exist at this point.
         //noinspection UseOfSystemOutOrSystemErr
