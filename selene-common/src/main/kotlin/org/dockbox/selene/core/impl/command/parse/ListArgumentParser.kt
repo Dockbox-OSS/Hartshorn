@@ -17,12 +17,25 @@
 
 package org.dockbox.selene.core.impl.command.parse
 
+import java.util.*
+import java.util.function.Function
+import java.util.stream.Collectors
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.selene.core.command.parse.rules.Rule
-import java.util.*
+import org.dockbox.selene.core.server.Selene
 
-class ListArgumentParser : AbstractTypeArgumentParser<List<String>>() {
+class ListArgumentParser<R> : AbstractTypeArgumentParser<List<R>> {
+
+    private var converterFun: Function<String, R>?
+
+    constructor() : super() {
+        this.converterFun = null
+    }
+
+    constructor(converterFun: Function<String, R>?) : super() {
+        this.converterFun = converterFun
+    }
 
     private var delimiter: Char = ','
     private var minMax: Rule.MinMax? = null
@@ -35,7 +48,7 @@ class ListArgumentParser : AbstractTypeArgumentParser<List<String>>() {
         this.minMax = minMax
     }
 
-    override fun parse(commandValue: CommandValue<String>): Optional<List<String>> {
+    override fun parse(commandValue: CommandValue<String>): Optional<List<R>> {
         val v = commandValue.value
         var list = v.split(this.delimiter)
 
@@ -45,6 +58,18 @@ class ListArgumentParser : AbstractTypeArgumentParser<List<String>>() {
 
             list = list.subList(min, max)
         }
-        return Optional.of(list)
+
+        if (null != converterFun) {
+            val finalList = list.stream().map(converterFun).collect(Collectors.toList())
+            return Optional.of(finalList)
+        }
+
+        return try {
+            @Suppress("UNCHECKED_CAST")
+            Optional.of(list as List<R>)
+        } catch (e: ClassCastException) {
+            Selene.log().warn("Could not cast list parsing result. Ensure you passed a parser if not using String as generic type!")
+            Optional.of(ArrayList())
+        }
     }
 }
