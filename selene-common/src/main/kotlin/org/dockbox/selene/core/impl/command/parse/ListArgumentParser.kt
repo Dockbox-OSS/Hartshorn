@@ -22,7 +22,6 @@ import java.util.function.Function
 import java.util.stream.Collectors
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
-import org.dockbox.selene.core.command.parse.rules.Rule
 import org.dockbox.selene.core.server.Selene
 
 /**
@@ -38,6 +37,9 @@ import org.dockbox.selene.core.server.Selene
  */
 class ListArgumentParser<R> : AbstractTypeArgumentParser<List<R>> {
 
+    class MinMax(val min: Int = -1,
+                 val max: Int = -1)
+
     private var converterFun: Function<String, R>?
 
     constructor() : super() {
@@ -49,13 +51,13 @@ class ListArgumentParser<R> : AbstractTypeArgumentParser<List<R>> {
     }
 
     private var delimiter: Char = ','
-    private var minMax: Rule.MinMax? = null
+    private var minMax: MinMax? = null
 
     fun setDelimiter(delimiter: Char) {
         this.delimiter = delimiter
     }
 
-    fun setMinMax(minMax: Rule.MinMax) {
+    fun setMinMax(minMax: MinMax) {
         this.minMax = minMax
     }
 

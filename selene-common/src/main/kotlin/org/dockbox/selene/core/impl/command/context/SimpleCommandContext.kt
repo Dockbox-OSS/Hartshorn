@@ -230,7 +230,10 @@ open class SimpleCommandContext(
             List::class.java -> {
                 val parser = ListArgumentParser<String>()
                 if (field.isAnnotationPresent(Split::class.java)) parser.setDelimiter(field.getAnnotation(Split::class.java).delimiter)
-                if (minMax != null) parser.setMinMax(minMax)
+                if (minMax != null) {
+                    val listMinMax: ListArgumentParser.MinMax = ListArgumentParser.MinMax(minMax.min, minMax.max)
+                    parser.setMinMax(listMinMax)
+                }
                 return Exceptional.ofOptional(parser.parse(arg))
             }
 
