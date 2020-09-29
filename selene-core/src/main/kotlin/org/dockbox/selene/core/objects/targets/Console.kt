@@ -17,7 +17,11 @@
 
 package org.dockbox.selene.core.objects.targets
 
+import org.dockbox.selene.core.i18n.common.ResourceEntry
+import org.dockbox.selene.core.i18n.entry.IntegratedResource
 import org.dockbox.selene.core.i18n.permissions.Permission
+import org.dockbox.selene.core.server.Selene
+import org.dockbox.selene.core.text.Text
 
 abstract class Console : CommandSource, PermissionHolder {
 
@@ -40,5 +44,22 @@ abstract class Console : CommandSource, PermissionHolder {
     override fun setPermission(permission: Permission, value: Boolean) = Unit
 
     override fun setPermissions(value: Boolean, vararg permissions: Permission) = Unit
+
+    override fun send(text: ResourceEntry) {
+        val formattedValue = IntegratedResource.parseColors(text.getValue(Selene.getServer().globalConfig.getDefaultLanguage()))
+        send(formattedValue)
+    }
+
+    override fun send(text: CharSequence) {
+        text.split("\n").forEach { send(Text.of(it)) }
+    }
+
+    override fun sendWithPrefix(text: ResourceEntry) {
+        sendWithPrefix(text.getValue(Selene.getServer().globalConfig.getDefaultLanguage()))
+    }
+
+    override fun sendWithPrefix(text: CharSequence) {
+        text.split("\n").forEach { sendWithPrefix(Text.of(it)) }
+    }
 
 }

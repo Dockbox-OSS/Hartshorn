@@ -18,12 +18,9 @@
 package org.dockbox.selene.sponge.objects.targets
 
 import com.google.inject.Singleton
-import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.i18n.entry.IntegratedResource
 import org.dockbox.selene.core.objects.targets.Console
-import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.text.Text
-import org.dockbox.selene.core.text.Text.of
 import org.dockbox.selene.core.text.navigation.Pagination
 import org.dockbox.selene.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
@@ -35,21 +32,8 @@ class SpongeConsole private constructor() : Console() {
                 Sponge.getServer().console, command)
     }
 
-    override fun send(text: ResourceEntry) {
-        val formattedValue = IntegratedResource.parseColors(text.getValue(Selene.getServer().globalConfig.getDefaultLanguage()))
-        send(formattedValue)
-    }
-
     override fun send(text: Text) {
         Sponge.getServer().console.sendMessage(SpongeConversionUtil.toSponge(text))
-    }
-
-    override fun send(text: CharSequence) {
-        text.split("\n").forEach { send(of(it)) }
-    }
-
-    override fun sendWithPrefix(text: ResourceEntry) {
-        sendWithPrefix(text.getValue(Selene.getServer().globalConfig.getDefaultLanguage()))
     }
 
     override fun sendWithPrefix(text: Text) {
@@ -57,10 +41,6 @@ class SpongeConsole private constructor() : Console() {
                 SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
                 SpongeConversionUtil.toSponge(text)
         ))
-    }
-
-    override fun sendWithPrefix(text: CharSequence) {
-        text.split("\n").forEach { sendWithPrefix(of(it)) }
     }
 
     override fun sendPagination(pagination: Pagination) {
