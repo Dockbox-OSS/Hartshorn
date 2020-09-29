@@ -78,7 +78,7 @@ public abstract class Selene {
             this.preferredVersion = preferredVersion;
         }
 
-        public boolean isHasNMSAccess() {
+        public boolean hasNMSAccess() {
             return this.hasNMSAccess;
         }
 
