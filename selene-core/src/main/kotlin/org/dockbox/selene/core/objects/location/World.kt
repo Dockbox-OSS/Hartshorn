@@ -17,13 +17,15 @@
 
 package org.dockbox.selene.core.objects.location
 
-import org.dockbox.selene.core.util.uuid.UUIDUtil
 import java.util.*
+import org.dockbox.selene.core.util.uuid.UUIDUtil
 
 abstract class World(open var worldUniqueId: UUID, open var name: String) {
 
     abstract fun getPlayerCount(): Int
     abstract fun unload(): Boolean
+    abstract fun load(): Boolean
+    abstract fun isLoaded(): Boolean
 
     companion object {
         val empty: World = EmptyWorld()
@@ -32,5 +34,7 @@ abstract class World(open var worldUniqueId: UUID, open var name: String) {
     private class EmptyWorld : World(UUIDUtil.empty, "EMPTY") {
         override fun getPlayerCount(): Int = 0
         override fun unload(): Boolean = true
+        override fun load(): Boolean = true
+        override fun isLoaded(): Boolean = true
     }
 }
