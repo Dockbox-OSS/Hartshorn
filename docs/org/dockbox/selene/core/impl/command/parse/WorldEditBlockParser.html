@@ -108,7 +108,7 @@ var pathtoroot = "../../../../../../../";
                     <pre class="wrap-overflow">
 
 public final class <span class="typeNameLabel"><a href=WorldEditBlockParser.html>WorldEditBlockParser</a></span>
-extends <a href=../org/dockbox/selene/core/command/parse/AbstractTypeArgumentParser.html>AbstractTypeArgumentParser</a>&lt;<a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html>List</a>&lt;BaseBlock&gt;&gt;
+extends <a href=ListArgumentParser.html>ListArgumentParser</a>&lt;BaseBlock&gt;
                     </pre>
                     <div class="block"><p><p>Parses a list of block ID's, separated by ',' into a list of BaseBlock instances. If the block ID is in the format 'id:data' it will use the data from the block ID, otherwise it defaults to zero (0).</p><p>Delimiter is always ','</p><p>Does not support named ID's like 'minecraft:stone'. Does not support patterns or masks.</p></p></div>
                 </li>
@@ -120,6 +120,45 @@ extends <a href=../org/dockbox/selene/core/command/parse/AbstractTypeArgumentPar
                 <!-- ======== NESTED CLASS SUMMARY ======== -->
                     
                     <!-- =========== FIELD SUMMARY =========== -->
+                    
+                    <section role="region">
+                        <ul class="blockList">
+                            <li class="blockList"><a id="field.summary">
+                                <!--   -->
+                            </a>
+                                <h3>Field Summary</h3>
+                                <div class="memberSummary">
+                                    <table>
+                                        <caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+                                        <tr>
+                                            <th class="colFirst" scope="col">Modifier and Type</th>
+                                            <th class="colSecond" scope="col">Field</th>
+                                            <th class="colLast" scope="col">Description</th>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>private  <a href=https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html>Function</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>, BaseBlock&gt;</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=WorldEditBlockParser.html#converterFun>converterFun</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="rowColor">
+                                            <td class="colFirst"><code>private  <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Character.html>Character</a></code></td>
+                                            <th class="colSecond" scope="row"><code><a href=WorldEditBlockParser.html#delimiter>delimiter</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
+                                            <td class="colFirst"><code>private  <a href=ListArgumentParser.MinMax.html>ListArgumentParser.MinMax</a></code></td>
+                                            <th class="colSecond" scope="row"><code><a href=WorldEditBlockParser.html#minMax>minMax</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                    </table>
+                                </div>
+                            </li>
+                        </ul>
+                    </section>
                     
                     <!-- ======== CONSTRUCTOR SUMMARY ======== -->
                     
@@ -177,9 +216,49 @@ extends <a href=../org/dockbox/selene/core/command/parse/AbstractTypeArgumentPar
                                         </tr>
                                         
                                         <tr id="i0" class="altColor">
-                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html>Optional</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/util/List.html>List</a>&lt;BaseBlock&gt;&gt;</code>
+                                            <td class="colFirst"><code>final <a href=https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html>Function</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>, BaseBlock&gt;</code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=WorldEditBlockParser.html#parse(CommandValue)>parse</a>(<a href=../org/dockbox/selene/core/command/context/CommandValue.html>CommandValue</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; commandValue) </code>
+                                            <th class="colSecond" scope="row"><code><a href=WorldEditBlockParser.html#getConverterFun()>getConverterFun</a>() </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i1" class="rowColor">
+                                            <td class="colFirst"><code>final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Character.html>Character</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=WorldEditBlockParser.html#getDelimiter()>getDelimiter</a>() </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i2" class="altColor">
+                                            <td class="colFirst"><code>final <a href=ListArgumentParser.MinMax.html>ListArgumentParser.MinMax</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=WorldEditBlockParser.html#getMinMax()>getMinMax</a>() </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i3" class="rowColor">
+                                            <td class="colFirst"><code>final <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=WorldEditBlockParser.html#setConverterFun(Function)>setConverterFun</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html>Function</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>, BaseBlock&gt; converterFun) </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i4" class="altColor">
+                                            <td class="colFirst"><code>final <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=WorldEditBlockParser.html#setDelimiter(Character)>setDelimiter</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Character.html>Character</a> delimiter) </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i5" class="rowColor">
+                                            <td class="colFirst"><code>final <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=WorldEditBlockParser.html#setMinMax(ListArgumentParser.MinMax)>setMinMax</a>(<a href=ListArgumentParser.MinMax.html>ListArgumentParser.MinMax</a> minMax) </code>
                                             </th>
                                             <td class="colLast"></td>
                                         </tr>
@@ -189,6 +268,12 @@ extends <a href=../org/dockbox/selene/core/command/parse/AbstractTypeArgumentPar
                                 </div>
                                 <ul class="blockList">
                                 
+                                    <li class="blockList"><a id="methods.inherited.from.class.org.dockbox.selene.core.impl.command.parse.WorldEditBlockParser">
+                                            <!--   -->
+                                        </a>
+                                            <h3>Methods inherited from class&nbsp;org.dockbox.selene.core.impl.command.parse.WorldEditBlockParser</h3>
+                                            <code>parse, setDelimiter, setMinMax</code></li>
+                                 
                                     <li class="blockList"><a id="methods.inherited.from.class.org.dockbox.selene.core.command.parse.AbstractParser">
                                             <!--   -->
                                         </a>
@@ -244,15 +329,90 @@ extends <a href=../org/dockbox/selene/core/command/parse/AbstractTypeArgumentPar
                             </a>
                                 <h3>Method Detail</h3>
                                 
-                                <a id="parse(CommandValue)">
+                                <a id="getConverterFun()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getConverterFun</h4>
+                                        <pre class="methodSignature"> final <a href=https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html>Function</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>, BaseBlock&gt; <a href=WorldEditBlockParser.html#getConverterFun()>getConverterFun</a>()</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getDelimiter()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getDelimiter</h4>
+                                        <pre class="methodSignature"> final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Character.html>Character</a> <a href=WorldEditBlockParser.html#getDelimiter()>getDelimiter</a>()</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getMinMax()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getMinMax</h4>
+                                        <pre class="methodSignature"> final <a href=ListArgumentParser.MinMax.html>ListArgumentParser.MinMax</a> <a href=WorldEditBlockParser.html#getMinMax()>getMinMax</a>()</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setConverterFun(Function)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>setConverterFun</h4>
+                                        <pre class="methodSignature"> final <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=WorldEditBlockParser.html#setConverterFun(Function)>setConverterFun</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/util/function/Function.html>Function</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>, BaseBlock&gt; converterFun)</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setDelimiter(Character)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>setDelimiter</h4>
+                                        <pre class="methodSignature"> final <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=WorldEditBlockParser.html#setDelimiter(Character)>setDelimiter</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Character.html>Character</a> delimiter)</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="setMinMax(ListArgumentParser.MinMax)">
                                     <!--   -->
                                 </a>
                                 <ul class=
                                               "blockListLast"
                                           >
                                     <li class="blockList">
-                                        <h4>parse</h4>
-                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html>Optional</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/util/List.html>List</a>&lt;BaseBlock&gt;&gt; <a href=WorldEditBlockParser.html#parse(CommandValue)>parse</a>(<a href=../org/dockbox/selene/core/command/context/CommandValue.html>CommandValue</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a>&gt; commandValue)</pre>
+                                        <h4>setMinMax</h4>
+                                        <pre class="methodSignature"> final <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=WorldEditBlockParser.html#setMinMax(ListArgumentParser.MinMax)>setMinMax</a>(<a href=ListArgumentParser.MinMax.html>ListArgumentParser.MinMax</a> minMax)</pre>
                                         <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
