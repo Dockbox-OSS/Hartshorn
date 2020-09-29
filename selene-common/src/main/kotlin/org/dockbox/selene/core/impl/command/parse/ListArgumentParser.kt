@@ -17,25 +17,51 @@
 
 package org.dockbox.selene.core.impl.command.parse
 
+import java.util.*
+import java.util.function.Function
+import java.util.stream.Collectors
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
-import org.dockbox.selene.core.command.parse.rules.Rule
-import java.util.*
+import org.dockbox.selene.core.server.Selene
 
-class ListArgumentParser : AbstractTypeArgumentParser<List<String>>() {
+/**
+ * Simple implementation which allows parsing String arguments directly into a List. Uses a configurable delimiter
+ * to decide when to create a new entry, by default this is ','. Also allows you to use @MinMax attributes to set
+ * a minimum/maximum for sublist sizes.
+ *
+ * Additionally, allows you to pass a Function<String, R> which parses the String values before they are are returned
+ * as a List.
+ *
+ * @param R The return type
+ * @constructor Optionally provide the converter function
+ */
+class ListArgumentParser<R> : AbstractTypeArgumentParser<List<R>> {
+
+    class MinMax(val min: Int = -1,
+                 val max: Int = -1)
+
+    private var converterFun: Function<String, R>?
+
+    constructor() : super() {
+        this.converterFun = null
+    }
+
+    constructor(converterFun: Function<String, R>?) : super() {
+        this.converterFun = converterFun
+    }
 
     private var delimiter: Char = ','
-    private var minMax: Rule.MinMax? = null
+    private var minMax: MinMax? = null
 
     fun setDelimiter(delimiter: Char) {
         this.delimiter = delimiter
     }
 
-    fun setMinMax(minMax: Rule.MinMax) {
+    fun setMinMax(minMax: MinMax) {
         this.minMax = minMax
     }
 
-    override fun parse(commandValue: CommandValue<String>): Optional<List<String>> {
+    override fun parse(commandValue: CommandValue<String>): Optional<List<R>> {
         val v = commandValue.value
         var list = v.split(this.delimiter)
 
@@ -45,6 +71,18 @@ class ListArgumentParser : AbstractTypeArgumentParser<List<String>>() {
 
             list = list.subList(min, max)
         }
-        return Optional.of(list)
+
+        if (null != converterFun) {
+            val finalList = list.stream().map(converterFun).collect(Collectors.toList())
+            return Optional.of(finalList)
+        }
+
+        return try {
+            @Suppress("UNCHECKED_CAST")
+            Optional.of(list as List<R>)
+        } catch (e: ClassCastException) {
+            Selene.log().warn("Could not cast list parsing result. Ensure you passed a parser if not using String as generic type!")
+            Optional.of(ArrayList())
+        }
     }
 }

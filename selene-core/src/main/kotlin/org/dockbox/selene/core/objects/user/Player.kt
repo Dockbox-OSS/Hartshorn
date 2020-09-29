@@ -18,16 +18,21 @@
 package org.dockbox.selene.core.objects.user
 
 import com.boydti.fawe.`object`.FawePlayer
+import java.util.*
 import org.dockbox.selene.core.i18n.common.Language
 import org.dockbox.selene.core.i18n.permissions.Permission
-import org.dockbox.selene.core.objects.targets.*
+import org.dockbox.selene.core.objects.optional.Exceptional
+import org.dockbox.selene.core.objects.targets.CommandSource
+import org.dockbox.selene.core.objects.targets.Identifiable
+import org.dockbox.selene.core.objects.targets.Locatable
+import org.dockbox.selene.core.objects.targets.MessageReceiver
+import org.dockbox.selene.core.objects.targets.PermissionHolder
 import org.dockbox.selene.core.text.Text
-import java.util.*
 
 abstract class Player(uniqueId: UUID, name: String) : Identifiable(uniqueId, name), MessageReceiver, CommandSource, PermissionHolder, Locatable {
 
     abstract fun isOnline(): Boolean
-    abstract fun getFawePlayer(): Optional<FawePlayer<*>>
+    abstract fun getFawePlayer(): Exceptional<FawePlayer<*>>
     abstract fun kick(message: Text)
     abstract fun getGamemode(): Gamemode
     abstract fun setGamemode(gamemode: Gamemode)
