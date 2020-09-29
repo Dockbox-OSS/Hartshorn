@@ -18,9 +18,7 @@
 package org.dockbox.selene.core.impl.command.parse
 
 import com.sk89q.worldedit.blocks.BaseBlock
-import java.util.*
-import org.dockbox.selene.core.command.context.CommandValue
-import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
+import java.util.function.Function
 
 /**
  * Parses a list of block ID's, separated by ',' into a list of [BaseBlock] instances. If the block ID is in the format
@@ -32,19 +30,13 @@ import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
  *
  * @constructor Create empty World edit block parser
  */
-class WorldEditBlockParser : AbstractTypeArgumentParser<List<BaseBlock?>>() {
+class WorldEditBlockParser : ListArgumentParser<BaseBlock?>(Function {
+    val idData = it.split(":")
+    if (idData.isNotEmpty()) {
+        var data = 0
+        if (idData.size >= 2) data = Integer.parseInt(idData[1])
 
-    override fun parse(commandValue: CommandValue<String>): Optional<List<BaseBlock?>> {
-        return ListArgumentParser() {
-            val idData = it.split(":")
-            if (idData.isNotEmpty()) {
-                var data = 0
-                if (idData.size >= 2) data = Integer.parseInt(idData[1])
-
-                return@ListArgumentParser BaseBlock(Integer.parseInt(idData[0]), data)
-            }
-            return@ListArgumentParser null
-        }.parse(commandValue)
+        return@Function BaseBlock(Integer.parseInt(idData[0]), data)
     }
-
-}
+    return@Function null
+})

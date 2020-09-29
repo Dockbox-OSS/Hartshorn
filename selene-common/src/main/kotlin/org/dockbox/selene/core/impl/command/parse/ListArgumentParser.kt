@@ -35,7 +35,7 @@ import org.dockbox.selene.core.server.Selene
  * @param R The return type
  * @constructor Optionally provide the converter function
  */
-class ListArgumentParser<R> : AbstractTypeArgumentParser<List<R>> {
+open class ListArgumentParser<R> : AbstractTypeArgumentParser<List<R>> {
 
     class MinMax(val min: Int = -1,
                  val max: Int = -1)
