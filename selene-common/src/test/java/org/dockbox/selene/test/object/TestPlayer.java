@@ -29,6 +29,9 @@ import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.navigation.Pagination;
+import org.dockbox.selene.core.util.player.PlayerStorageService;
+import org.dockbox.selene.test.SeleneTestImpl;
+import org.dockbox.selene.test.util.TestPlayerStorageService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -44,6 +47,7 @@ public class TestPlayer extends Player {
 
     public TestPlayer(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
+        ((TestPlayerStorageService) SeleneTestImpl.getInstance(PlayerStorageService.class)).registerPlayer(this);
     }
 
     @Override
@@ -63,7 +67,7 @@ public class TestPlayer extends Player {
 
     @Override
     public void kick(@NotNull Text message) {
-        // TODO: Kick from onlinePlayerPool in TPSS
+        ((TestPlayerStorageService) SeleneTestImpl.getInstance(PlayerStorageService.class)).setOffline(this);
     }
 
     @NotNull

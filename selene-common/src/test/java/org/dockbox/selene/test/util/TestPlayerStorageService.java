@@ -20,39 +20,64 @@ package org.dockbox.selene.test.util;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.util.player.PlayerStorageService;
+import org.dockbox.selene.test.object.TestPlayer;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 public class TestPlayerStorageService implements PlayerStorageService {
-    @NotNull
-    @Override
-    public List<Player> getOnlinePlayers() {
-        return null;
+
+    private final Collection<Player> knownPlayers = new CopyOnWriteArrayList<>();
+
+    public void registerPlayer(Player player) {
+        this.knownPlayers.add(player);
     }
 
     @NotNull
     @Override
-    public Optional<Player> getPlayer(@NotNull String name) {
-        return Optional.empty();
+    public List<Player> getOnlinePlayers() {
+        return this.knownPlayers.stream().filter(Player::isOnline).collect(Collectors.toList());
+    }
+
+    public void setOnline(TestPlayer player) {
+        player.setOnline(true);
+        this.knownPlayers.add(player);
+    }
+
+    public void setOffline(TestPlayer player) {
+        player.setOnline(false);
+        this.knownPlayers.add(player);
+    }
+
+    @NotNull
+    @Override
+    public Optional<Player> getPlayer(@NonNls @NotNull String name) {
+        return this.knownPlayers.stream().filter(p -> p.getName().equals(name)).findFirst();
     }
 
     @NotNull
     @Override
     public Optional<Player> getPlayer(@NotNull UUID uuid) {
-        return Optional.empty();
+        return this.knownPlayers.stream().filter(p -> p.getUniqueId().equals(uuid)).findFirst();
     }
 
     @Override
     public void setLanguagePreference(@NotNull UUID uuid, @NotNull Language lang) {
-
+        this.getPlayer(uuid).ifPresent(player -> {
+            player.setLanguage(lang);
+            this.knownPlayers.add(player);
+        });
     }
 
     @NotNull
     @Override
     public Language getLanguagePreference(@NotNull UUID uuid) {
-        return null;
+        return this.getPlayer(uuid).map(Player::getLanguage).orElse(Language.EN_US);
     }
 }
