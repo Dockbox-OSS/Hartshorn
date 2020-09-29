@@ -135,7 +135,7 @@ var pathtoroot = "../../../../../../";
 public abstract class <span class="typeNameLabel"><a href=Console.html>Console</a></span>
  implements <a href=CommandSource.html>CommandSource</a>, <a href=PermissionHolder.html>PermissionHolder</a>
                     </pre>
-                    <div class="block"></div>
+                    <div class="block"><p>mid-level Console class containing non-implementation specific logic for permissions and messages.</p></div>
                 </li>
             </ul>
         </div>
@@ -281,22 +281,54 @@ public abstract class <span class="typeNameLabel"><a href=Console.html>Console</
                                             <td class="colLast"></td>
                                         </tr>
                                         
+                                        <tr id="i10" class="altColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/objects/targets/SpongeConsole.html#send(ResourceEntry)>send</a>(<a href=../org/dockbox/selene/core/i18n/common/ResourceEntry.html>ResourceEntry</a> text) </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i11" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/objects/targets/SpongeConsole.html#send(CharSequence)>send</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/CharSequence.html>CharSequence</a> text) </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i12" class="altColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/objects/targets/SpongeConsole.html#sendWithPrefix(ResourceEntry)>sendWithPrefix</a>(<a href=../org/dockbox/selene/core/i18n/common/ResourceEntry.html>ResourceEntry</a> text) </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i13" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=../org/dockbox/selene/sponge/objects/targets/SpongeConsole.html#sendWithPrefix(CharSequence)>sendWithPrefix</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/CharSequence.html>CharSequence</a> text) </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
                                         </tbody>
                                     </table>
                                 </div>
                                 <ul class="blockList">
                                 
+                                    <li class="blockList"><a id="methods.inherited.from.class.org.dockbox.selene.core.objects.targets.CommandSource">
+                                            <!--   -->
+                                        </a>
+                                            <h3>Methods inherited from class&nbsp;org.dockbox.selene.core.objects.targets.CommandSource</h3>
+                                            <code>send, sendPagination, sendWithPrefix</code></li>
+                                 
                                     <li class="blockList"><a id="methods.inherited.from.class.org.dockbox.selene.core.objects.targets.Console">
                                             <!--   -->
                                         </a>
                                             <h3>Methods inherited from class&nbsp;org.dockbox.selene.core.objects.targets.Console</h3>
                                             <code>execute</code></li>
-                                 
-                                    <li class="blockList"><a id="methods.inherited.from.class.org.dockbox.selene.core.objects.targets.CommandSource">
-                                            <!--   -->
-                                        </a>
-                                            <h3>Methods inherited from class&nbsp;org.dockbox.selene.core.objects.targets.CommandSource</h3>
-                                            <code>send, send, send, sendPagination, sendWithPrefix, sendWithPrefix, sendWithPrefix</code></li>
                                  
                                     <li class="blockList"><a id="methods.inherited.from.class.org.dockbox.selene.core.objects.targets.Target">
                                             <!--   -->
@@ -492,11 +524,71 @@ public abstract class <span class="typeNameLabel"><a href=Console.html>Console</
                                     <!--   -->
                                 </a>
                                 <ul class=
-                                              "blockListLast"
+                                              "blockList"
                                           >
                                     <li class="blockList">
                                         <h4>setPermissions</h4>
                                         <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=../org/dockbox/selene/sponge/objects/targets/SpongeConsole.html#setPermissions(Boolean,Array)>setPermissions</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Boolean.html>Boolean</a> value, <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-array/index.html>Array</a>&lt;out <a href=../org/dockbox/selene/core/i18n/permissions/Permission.html>Permission</a>&gt; permissions)</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="send(ResourceEntry)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>send</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=../org/dockbox/selene/sponge/objects/targets/SpongeConsole.html#send(ResourceEntry)>send</a>(<a href=../org/dockbox/selene/core/i18n/common/ResourceEntry.html>ResourceEntry</a> text)</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="send(CharSequence)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>send</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=../org/dockbox/selene/sponge/objects/targets/SpongeConsole.html#send(CharSequence)>send</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/CharSequence.html>CharSequence</a> text)</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="sendWithPrefix(ResourceEntry)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>sendWithPrefix</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=../org/dockbox/selene/sponge/objects/targets/SpongeConsole.html#sendWithPrefix(ResourceEntry)>sendWithPrefix</a>(<a href=../org/dockbox/selene/core/i18n/common/ResourceEntry.html>ResourceEntry</a> text)</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="sendWithPrefix(CharSequence)">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockListLast"
+                                          >
+                                    <li class="blockList">
+                                        <h4>sendWithPrefix</h4>
+                                        <pre class="methodSignature"> <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html>Unit</a> <a href=../org/dockbox/selene/sponge/objects/targets/SpongeConsole.html#sendWithPrefix(CharSequence)>sendWithPrefix</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/CharSequence.html>CharSequence</a> text)</pre>
                                         <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->

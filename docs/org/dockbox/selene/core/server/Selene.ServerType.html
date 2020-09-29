@@ -110,7 +110,7 @@ var pathtoroot = "../../../../../";
 public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.ServerType</a></span>
 
                     </pre>
-                    <div class="block"></div>
+                    <div class="block"><p>Server type definitions containing display names, minimum/preferred versions, and whether or not the platform provides access to Native Minecraft Sources (NMS).</p></div>
                 </li>
             </ul>
         </div>
@@ -138,11 +138,17 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                                         
                                         <tr class="altColor">
                                             <td class="colFirst"><code>private final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code></td>
-                                            <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#minimumVersion>minimumVersion</a></code></th>
+                                            <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#displayName>displayName</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
                                         <tr class="rowColor">
+                                            <td class="colFirst"><code>private final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code></td>
+                                            <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#minimumVersion>minimumVersion</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
                                             <td class="colFirst"><code>private final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code></td>
                                             <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#preferredVersion>preferredVersion</a></code></th>
                                             <td class="colLast"></td>
@@ -174,7 +180,7 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                                         
                                             <tr class="altColor">
                                                 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a
-                                                        href="#ServerType(boolean,String,String)">ServerType</a></span>(boolean hasNMSAccess, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> minimumVersion, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> preferredVersion)</code></th>
+                                                        href="#ServerType(String,boolean,String,String)">ServerType</a></span>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> displayName, boolean hasNMSAccess, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> minimumVersion, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> preferredVersion)</code></th>
                                                 <td class="colLast"></td>
                                             </tr>
                                         
@@ -260,25 +266,33 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                                         <tr id="i0" class="altColor">
                                             <td class="colFirst"><code>boolean</code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#isHasNMSAccess()>isHasNMSAccess</a>() </code>
+                                            <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#hasNMSAccess()>hasNMSAccess</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Returns whether or not the platform provides access to NMS</td>
                                         </tr>
                                         
                                         <tr id="i1" class="rowColor">
                                             <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
                                             </td>
-                                            <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#getMinimumVersion()>getMinimumVersion</a>() </code>
+                                            <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#getDisplayName()>getDisplayName</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Gets the display name of the platform in a human readable format</td>
                                         </tr>
                                         
                                         <tr id="i2" class="altColor">
                                             <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
                                             </td>
+                                            <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#getMinimumVersion()>getMinimumVersion</a>() </code>
+                                            </th>
+                                            <td class="colLast">Gets minimum version.</td>
+                                        </tr>
+                                        
+                                        <tr id="i3" class="rowColor">
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
+                                            </td>
                                             <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#getPreferredVersion()>getPreferredVersion</a>() </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Gets preferred version.</td>
                                         </tr>
                                         
                                         </tbody>
@@ -312,11 +326,11 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                             </a>
                                 <h3>Constructor Detail</h3>
                                 
-                                <a name="ServerType(boolean,String,String)"></a>
+                                <a name="ServerType(String,boolean,String,String)"></a>
                                 <ul class="blockList">
                                     <li class="blockList">
                                         <h4>ServerType</h4>
-                                        <pre>ServerType(boolean hasNMSAccess, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> minimumVersion, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> preferredVersion)</pre>
+                                        <pre>ServerType(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> displayName, boolean hasNMSAccess, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> minimumVersion, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> preferredVersion)</pre>
                                         <div class="block"></div>
                                         
                                     </li>
@@ -335,16 +349,31 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                             </a>
                                 <h3>Method Detail</h3>
                                 
-                                <a id="isHasNMSAccess()">
+                                <a id="hasNMSAccess()">
                                     <!--   -->
                                 </a>
                                 <ul class=
                                               "blockList"
                                           >
                                     <li class="blockList">
-                                        <h4>isHasNMSAccess</h4>
-                                        <pre class="methodSignature"> boolean <a href=Selene.ServerType.html#isHasNMSAccess()>isHasNMSAccess</a>()</pre>
-                                        <div class="block"></div>
+                                        <h4>hasNMSAccess</h4>
+                                        <pre class="methodSignature"> boolean <a href=Selene.ServerType.html#hasNMSAccess()>hasNMSAccess</a>()</pre>
+                                        <div class="block"><p>Returns whether or not the platform provides access to NMS</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getDisplayName()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getDisplayName</h4>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=Selene.ServerType.html#getDisplayName()>getDisplayName</a>()</pre>
+                                        <div class="block"><p>Gets the display name of the platform in a human readable format</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -359,7 +388,7 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                                     <li class="blockList">
                                         <h4>getMinimumVersion</h4>
                                         <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=Selene.ServerType.html#getMinimumVersion()>getMinimumVersion</a>()</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Gets minimum version.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -374,7 +403,7 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                                     <li class="blockList">
                                         <h4>getPreferredVersion</h4>
                                         <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=Selene.ServerType.html#getPreferredVersion()>getPreferredVersion</a>()</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Gets preferred version.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
