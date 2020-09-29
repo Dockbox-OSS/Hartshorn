@@ -29,6 +29,4 @@ abstract class WorldStorageService {
 
     abstract fun getWorld(name: String): Optional<World>
     abstract fun getWorld(uuid: UUID): Optional<World>
-
-    abstract fun createLocation(vector: Vector3D, world: World): Location
 }
