@@ -33,6 +33,7 @@ import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.Selene.IntegratedExtension;
+import org.dockbox.selene.core.server.Selene.ServerType;
 import org.dockbox.selene.core.server.ServerReference;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction.RunCommand;
@@ -164,6 +165,32 @@ public class IntegratedServerExtension extends ServerReference implements Integr
                         src.send(IntegratedResource.CONFIRM_EXPIRED);
                 })
                 .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));
+    }
+
+    @Command(aliases = "platform", usage = "platform")
+    public void platform(MessageReceiver src) {
+        ServerType st = Selene.getServer().getServerType();
+        String platformVersion = Selene.getServer().getPlatformVersion();
+
+        String mcVersion = Selene.getServer().getMinecraftVersion();
+
+        String javaVersion = System.getProperty("java.version");
+        String javaVendor = System.getProperty("java.vendor");
+
+        String jvmVersion = System.getProperty("java.vm.version");
+        String jvmName = System.getProperty("java.vm.name");
+        String jvmVendor = System.getProperty("java.vm.vendor");
+
+        String javaRuntimeVersion = System.getProperty("java.runtime.version");
+        String classVersion = System.getProperty("java.class.version");
+
+        src.send(IntegratedServerResources.PLATFORM_INFORMATION.format(
+                st.getDisplayName(), platformVersion,
+                mcVersion,
+                javaVersion, javaVendor,
+                jvmName, jvmVersion, jvmVendor,
+                javaRuntimeVersion, classVersion
+        ));
     }
 
     @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", single = true)
