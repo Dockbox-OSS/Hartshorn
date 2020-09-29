@@ -327,4 +327,8 @@ public abstract class Selene {
 
     protected abstract LibraryArtifact[] getPlatformArtifacts();
 
+    public abstract String getPlatformVersion();
+
+    public abstract String getMinecraftVersion();
+
 }

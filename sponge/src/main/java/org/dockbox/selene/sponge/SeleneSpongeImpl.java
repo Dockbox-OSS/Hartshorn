@@ -27,6 +27,7 @@ import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.selene.sponge.listeners.SpongeServerEventListener;
 import org.dockbox.selene.sponge.util.inject.SpongeCommonInjector;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -102,6 +103,17 @@ public class SeleneSpongeImpl extends Selene {
         // At the time of writing there are no additional libraries required for Sponge.
         return new LibraryArtifact[0];
     }
+
+    @Override
+    public String getPlatformVersion() {
+        return Sponge.getPlatform().getContainer(Component.IMPLEMENTATION).getVersion().orElse("Unknown");
+    }
+
+    @Override
+    public String getMinecraftVersion() {
+        return Sponge.getPlatform().getMinecraftVersion().getName();
+    }
+
 
     public static void main(String[] args) {
         // This is the only place where SystemOut is allowed as no server instance can exist at this point.
