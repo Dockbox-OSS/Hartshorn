@@ -15,18 +15,16 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util.world
+package org.dockbox.selene.test.extension;
 
-import java.util.*
-import org.dockbox.selene.core.objects.location.Location
-import org.dockbox.selene.core.objects.location.World
-import org.dockbox.selene.core.objects.tuple.Vector3D
+import org.dockbox.selene.core.server.Selene.IntegratedExtension;
+import org.dockbox.selene.core.util.extension.Extension;
 
-abstract class WorldStorageService {
-
-    abstract fun getLoadedWorlds(): List<World>
-    abstract fun getAllWorldUUIDs(): List<UUID>
-
-    abstract fun getWorld(name: String): Optional<World>
-    abstract fun getWorld(uuid: UUID): Optional<World>
+@Extension(
+        id = "junitExtension",
+        name = "JUnit Test Extension",
+        description = "Provides a mocked test extension",
+        authors = "GuusLieben",
+        uniqueId = "44574eca-90ba-4ec4-9a5f-14f035d5480b")
+public class IntegratedTestExtension implements IntegratedExtension {
 }

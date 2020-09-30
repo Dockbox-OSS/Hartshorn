@@ -79,6 +79,7 @@ public abstract class Selene {
         MAGMA("Magma", true, true, "Not (yet) supported", "Not (yet) supported"),
         SPIGOT("Spigot", true, false, "Not (yet) supported", "Not (yet) supported"),
         PAPER("Paper", true, false, "Not (yet) supported", "Not (yet) supported"),
+        JUNIT("JUnit Testing", true, true, "5.3.2", "5.3.2"),
         OTHER("Other", true, false, "Not (yet) supported", "Not (yet) supported");
 
         private final String displayName;

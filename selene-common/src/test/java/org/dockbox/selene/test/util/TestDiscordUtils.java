@@ -15,18 +15,28 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util.world
+package org.dockbox.selene.test.util;
 
-import java.util.*
-import org.dockbox.selene.core.objects.location.Location
-import org.dockbox.selene.core.objects.location.World
-import org.dockbox.selene.core.objects.tuple.Vector3D
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.TextChannel;
 
-abstract class WorldStorageService {
+import org.dockbox.selene.core.impl.util.discord.DefaultDiscordUtils;
 
-    abstract fun getLoadedWorlds(): List<World>
-    abstract fun getAllWorldUUIDs(): List<UUID>
+import java.util.Optional;
 
-    abstract fun getWorld(name: String): Optional<World>
-    abstract fun getWorld(uuid: UUID): Optional<World>
+/**
+ Provides empty {@link Optional} instances, as testing with the {@link JDA} is seemingly impossible without providing
+ a Discord server and bot for this purpose.
+ */
+public class TestDiscordUtils extends DefaultDiscordUtils {
+
+    @Override
+    public Optional<JDA> getJDA() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<TextChannel> getGlobalTextChannel() {
+        return Optional.empty();
+    }
 }

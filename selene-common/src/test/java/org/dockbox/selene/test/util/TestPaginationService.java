@@ -15,18 +15,16 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util.world
+package org.dockbox.selene.test.util;
 
-import java.util.*
-import org.dockbox.selene.core.objects.location.Location
-import org.dockbox.selene.core.objects.location.World
-import org.dockbox.selene.core.objects.tuple.Vector3D
+import org.dockbox.selene.core.text.navigation.PaginationBuilder;
+import org.dockbox.selene.core.text.navigation.PaginationService;
+import org.jetbrains.annotations.NotNull;
 
-abstract class WorldStorageService {
-
-    abstract fun getLoadedWorlds(): List<World>
-    abstract fun getAllWorldUUIDs(): List<UUID>
-
-    abstract fun getWorld(name: String): Optional<World>
-    abstract fun getWorld(uuid: UUID): Optional<World>
+public class TestPaginationService implements PaginationService {
+    @NotNull
+    @Override
+    public PaginationBuilder builder() {
+        throw new UnsupportedOperationException("Pagination is not testable in common implementations, and should only be tested in the platform implementation");
+    }
 }

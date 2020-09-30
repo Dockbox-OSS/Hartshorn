@@ -24,12 +24,12 @@ import com.magitechserver.magibridge.util.BridgeCommandSource;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extension.input.ParserContext;
 
-import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
 import org.dockbox.selene.core.command.CommandRunnerFunction;
-import org.dockbox.selene.core.impl.command.SimpleCommandBus;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.events.chat.CommandEvent;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
+import org.dockbox.selene.core.impl.command.SimpleCommandBus;
 import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
 import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.tuple.Tuple;
@@ -93,27 +93,13 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     @Override
-    public void registerCommandArgsAndOrChild(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunnerFunction runner) {
+    protected void registerChildCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, String usagePart, AbstractPermission permission) {
         CommandSpec.Builder spec = CommandSpec.builder();
         spec.permission(permission.get());
-        Selene.log().debug(String.format("Registering command '%s' with singular permission (%s)", command, permission.get()));
 
-        String[] parts = command.split(" ");
-        String part = 1 < parts.length ? parts[1] : null;
-
-        if (null != part && SimpleCommandBus.Companion.getSubcommand().matcher(part).matches()) {
-            this.registerChildCommand(command, runner, spec, part);
-        } else if (command.startsWith("*")) {
-            this.registerParentCommand(command, runner, spec);
-        } else {
-            this.registerSingleMethodCommand(command, runner, spec, part);
-        }
-    }
-
-    private void registerChildCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, CommandSpec.Builder spec, String part) {
-        Selene.log().debug("Found child command '" + part + "'");
+        Selene.log().debug("Found child command '" + usagePart + "'");
         String arguments = command.substring(command.indexOf(' ') + 1)
-                .replaceFirst(part, "");
+                .replaceFirst(usagePart, "");
         if (arguments.endsWith(" ")) arguments = arguments.substring(0, arguments.length() - 2);
 
         CommandElement[] elements = this.parseArguments(arguments);
@@ -124,22 +110,30 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
         String alias = command.substring(0, command.indexOf(' '));
         List<Tuple<String, CommandSpec>> aliases = childsPerAlias.getOrDefault(alias, new ArrayList<>());
-        aliases.add(new Tuple<>(part, spec.build()));
+        aliases.add(new Tuple<>(usagePart, spec.build()));
         childsPerAlias.put(alias, aliases);
     }
 
-    private void registerSingleMethodCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, CommandSpec.Builder spec, String part) {
-        Selene.log().debug("Found single method command '" + part + "'");
+    @Override
+    protected void registerSingleMethodCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, String commandPart, AbstractPermission permission) {
+        CommandSpec.Builder spec = CommandSpec.builder();
+        spec.permission(permission.get());
+
+        Selene.log().debug("Found single method command '" + commandPart + "'");
         if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(command.substring(0, command.indexOf(' ')))) {
-            Selene.log().debug("Registering single method command '" + part + "' to Sponge");
+            Selene.log().debug("Registering single method command '" + commandPart + "' to Sponge");
             spec.executor(this.buildExecutor(runner, command)).arguments(this.parseArguments(command.substring(command.indexOf(' ') + 1)));
             Sponge.getCommandManager().register(Selene.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
             SimpleCommandBus.Companion.getRegisteredCommands().add(command.substring(0, command.indexOf(' ')));
         }
     }
 
+    @Override
     @SuppressWarnings("CallToSuspiciousStringMethod")
-    private void registerParentCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, CommandSpec.Builder spec) {
+    protected void registerParentCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, AbstractPermission permission) {
+        CommandSpec.Builder spec = CommandSpec.builder();
+        spec.permission(permission.get());
+
         String registeredCmd = command.substring(1);
         if (command.contains(" ")) registeredCmd = command.substring(1, command.indexOf(' '));
         if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(registeredCmd)) {

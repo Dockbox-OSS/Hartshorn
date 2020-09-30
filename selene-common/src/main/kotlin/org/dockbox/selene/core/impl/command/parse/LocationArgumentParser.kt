@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.core.impl.command.parse
 
+import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.selene.core.objects.location.Location
 import org.dockbox.selene.core.objects.tuple.Vector3D
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.util.world.WorldStorageService
-import java.util.*
 
 class LocationArgumentParser : AbstractTypeArgumentParser<Location>() {
     override fun parse(commandValue: CommandValue<String>): Optional<Location> {
@@ -49,7 +49,7 @@ class LocationArgumentParser : AbstractTypeArgumentParser<Location>() {
 
         return if (!world.isPresent) Optional.empty()
         else {
-            Optional.of(ws.createLocation(vector, world.get()))
+            Optional.of(Location(vector, world.get()))
         }
     }
 }
