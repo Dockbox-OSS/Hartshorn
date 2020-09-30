@@ -27,6 +27,9 @@ import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 
+/**
+ The type Language type serializer.
+ */
 public class LanguageTypeSerializer implements TypeSerializer<Language> {
 
     @Override

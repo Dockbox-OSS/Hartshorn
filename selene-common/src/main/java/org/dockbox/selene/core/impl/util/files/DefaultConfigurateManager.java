@@ -20,7 +20,14 @@ package org.dockbox.selene.core.impl.util.files;
 import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.impl.util.files.mapping.NeutrinoObjectMapper;
+import org.dockbox.selene.core.impl.util.files.mapping.NeutrinoObjectMapperFactory;
+import org.dockbox.selene.core.impl.util.files.serialize.ByteArrayTypeSerialiser;
+import org.dockbox.selene.core.impl.util.files.serialize.IntArrayTypeSerialiser;
 import org.dockbox.selene.core.impl.util.files.serialize.LanguageTypeSerializer;
+import org.dockbox.selene.core.impl.util.files.serialize.PatternTypeSerialiser;
+import org.dockbox.selene.core.impl.util.files.serialize.SetTypeSerialiser;
+import org.dockbox.selene.core.impl.util.files.serialize.ShortArrayTypeSerialiser;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.extension.Extension;
@@ -31,12 +38,13 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.gson.GsonConfigurationLoader;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import ninja.leaping.configurate.objectmapping.ObjectMapper;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
@@ -48,12 +56,17 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     private final FileType fileType;
 
     protected DefaultConfigurateManager(FileType fileType) {
-        this.fileType = fileType;
+        super(fileType);
         TypeSerializers.getDefaultSerializers().register(TypeToken.of(Language.class), new LanguageTypeSerializer());
+        TypeSerializers.getDefaultSerializers().register(TypeToken.of(byte[].class), new ByteArrayTypeSerialiser());
+        TypeSerializers.getDefaultSerializers().register(TypeToken.of(int[].class), new IntArrayTypeSerialiser());
+        TypeSerializers.getDefaultSerializers().register(TypeToken.of(Pattern.class), new PatternTypeSerialiser());
+        TypeSerializers.getDefaultSerializers().register(TypeToken.of(Set.class), new SetTypeSerialiser());
+        TypeSerializers.getDefaultSerializers().register(TypeToken.of(short[].class), new ShortArrayTypeSerialiser());
     }
 
     private final ConfigurationLoader<?> getConfigurationLoader(Path file) throws UnsupportedFileException {
-        switch (this.fileType) {
+        switch (this.getFileType()) {
             case YAML:
                 return YAMLConfigurationLoader.builder().setPath(file).build();
             case JSON:
@@ -64,7 +77,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
             case CONFIG:
                 return HoconConfigurationLoader.builder().setPath(file).build();
             default:
-                throw new UnsupportedFileException(this.fileType.getExtension());
+                throw new UnsupportedFileException(this.getFileType().getExtension());
         }
     }
 
@@ -76,7 +89,9 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
 
             final ConfigurationLoader<?> loader = this.getConfigurationLoader(file);
             final ConfigurationNode node = loader.load();
-            final ObjectMapper<T> mapper = ObjectMapper.forClass(type);
+            final NeutrinoObjectMapper<T> mapper = NeutrinoObjectMapperFactory.builder()
+                    .build(true)
+                    .getMapper(type);
 
             final T content = mapper.bindToNew().populate(node);
 
@@ -95,7 +110,9 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
             final ConfigurationLoader<?> loader = this.getConfigurationLoader(file);
             final ConfigurationNode node = loader.load();
             @SuppressWarnings("unchecked")
-            final ObjectMapper<T> mapper = ObjectMapper.forClass((Class<T>) content.getClass());
+            final NeutrinoObjectMapper<T> mapper = NeutrinoObjectMapperFactory.builder()
+                    .build(true)
+                    .getMapper((Class<T>) content.getClass());
 
             mapper.bind(content).serialize(node);
             loader.save(node);
@@ -129,7 +146,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @Override
     public Path getDataFile(@NotNull Extension extension, @NotNull String file) {
         return this.createPathIfNotExists(
-                this.fileType.asPath(
+                this.getFileType().asPath(
                         this.getDataDir().resolve(extension.id()),
                         file
                 )
@@ -140,7 +157,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @Override
     public Path getConfigFile(@NotNull Extension extension, @NotNull String file) {
         return this.createPathIfNotExists(
-                this.fileType.asPath(
+                this.getFileType().asPath(
                         this.getExtensionConfigsDir().resolve(extension.id()),
                         file
                 )

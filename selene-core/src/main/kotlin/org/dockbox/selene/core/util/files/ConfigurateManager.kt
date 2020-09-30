@@ -22,7 +22,7 @@ import java.util.*
 import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.util.extension.Extension
 
-abstract class ConfigurateManager {
+abstract class ConfigurateManager(val fileType: FileType) {
 
     abstract fun getDataFile(extension: Extension): Path
     abstract fun getConfigFile(extension: Extension): Path
