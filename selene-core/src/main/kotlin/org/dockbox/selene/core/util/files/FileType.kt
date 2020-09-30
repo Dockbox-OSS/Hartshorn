@@ -19,6 +19,11 @@ package org.dockbox.selene.core.util.files
 
 import java.nio.file.Path
 
+/**
+ * Enumerated values containing the file extensions for several commonly used file types.
+ *
+ * @property extension The file extension
+ */
 enum class FileType(val extension: String) {
 
     // Minecraft native formats
@@ -33,12 +38,12 @@ enum class FileType(val extension: String) {
     JPG("jpg"),
     BITMAP("bmp"),
 
-    // Datbase formats
+    // Database formats
     FAWE_HISTORY("bd"),
     OLDPLOTS("db"),
     SQLITE("sqlite"),
 
-    // Config storage formats
+    // Data/config formats
     YAML("yml"),
     JSON("json"),
     MOD_CONFIG("cfg"),
@@ -46,15 +51,31 @@ enum class FileType(val extension: String) {
     XML("xml"),
     PROPERTIES("properties"),
 
-    // Others
+    // Other
     ZIP("zip"),
     LOG("log")
     ;
 
+    /**
+     * Converts a given filename (without the file extension present) to a [String] value holding the correct format.
+     *
+     * @param file The filename without a file extension present
+     * @return The generated filename with extension
+     */
     fun asFileName(file: String): String {
         return "$file.$extension"
     }
 
+    /**
+     * Converts a given filename (without the file extension present), combined with a [Path] reference to a directory,
+     * to a new [Path] reference to a file. If the file did not yet exist, it is created.
+     *
+     * Assumes the parent [Path] already exists.
+     *
+     * @param parent The parent directory
+     * @param file The filename without a file extension present
+     * @return The [Path] reference to a file
+     */
     fun asPath(parent: Path, file: String): Path {
         return parent.resolve(asFileName(file))
     }
