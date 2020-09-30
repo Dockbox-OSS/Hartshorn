@@ -14,10 +14,8 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
-
 /*
- * This file is part of Neutrino, licensed under the MIT License (MIT). See the LICENSE.txt file
- * at the root of this project for more details.
+ * This file is part of Neutrino, licensed under the MIT License (MIT).
  */
 package org.dockbox.selene.core.util.files;
 
