@@ -70,10 +70,10 @@ open class SimpleCommandContext(
         get() = this.usage.split(" ")[0]
 
     override val argumentCount: Int
-        get() = args!!.size
+        get() = args.size
 
     override val flagCount: Int
-        get() = flags!!.size
+        get() = flags.size
 
     override fun getArgument(key: String): Optional<CommandValue.Argument<String>> {
         return Arrays.stream(args).filter { it.key == key }.findFirst().map { CommandValue.Argument(it.value.toString(), it.key) }
@@ -122,7 +122,7 @@ open class SimpleCommandContext(
 
     override fun <T> tryCreate(type: Class<T>): Exceptional<T> {
         try {
-            val argumentKeys = this.args!!.map { it.key }
+            val argumentKeys = this.args.map { it.key }
             val ctor: Constructor<T> = type.getConstructor() as Constructor<T>
             val instance: T = ctor.newInstance()
             type.declaredFields.forEach { field ->
