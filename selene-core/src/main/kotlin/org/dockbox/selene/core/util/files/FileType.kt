@@ -43,6 +43,7 @@ enum class FileType(val extension: String) {
     JSON("json"),
     MOD_CONFIG("cfg"),
     CONFIG("conf"),
+    XML("xml"),
     PROPERTIES("properties"),
 
     // Others
