@@ -143,12 +143,18 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                                         </tr>
                                         
                                         <tr class="rowColor">
+                                            <td class="colFirst"><code>private final boolean</code></td>
+                                            <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#isModded()>isModded</a></code></th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr class="altColor">
                                             <td class="colFirst"><code>private final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code></td>
                                             <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#minimumVersion>minimumVersion</a></code></th>
                                             <td class="colLast"></td>
                                         </tr>
                                         
-                                        <tr class="altColor">
+                                        <tr class="rowColor">
                                             <td class="colFirst"><code>private final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code></td>
                                             <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#preferredVersion>preferredVersion</a></code></th>
                                             <td class="colLast"></td>
@@ -180,7 +186,7 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                                         
                                             <tr class="altColor">
                                                 <th class="colConstructorName" scope="row"><code><span class="memberNameLink"><a
-                                                        href="#ServerType(String,boolean,String,String)">ServerType</a></span>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> displayName, boolean hasNMSAccess, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> minimumVersion, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> preferredVersion)</code></th>
+                                                        href="#ServerType(String,boolean,boolean,String,String)">ServerType</a></span>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> displayName, boolean hasNMSAccess, boolean isModded, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> minimumVersion, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> preferredVersion)</code></th>
                                                 <td class="colLast"></td>
                                             </tr>
                                         
@@ -274,7 +280,7 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#hasNMSAccess()>hasNMSAccess</a>() </code>
                                             </th>
-                                            <td class="colLast">Returns whether or not the platform provides access to NMS</td>
+                                            <td class="colLast">Returns whether or not the platform provides access to NMS.</td>
                                         </tr>
                                         
                                         <tr id="i1" class="rowColor">
@@ -286,6 +292,14 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                                         </tr>
                                         
                                         <tr id="i2" class="altColor">
+                                            <td class="colFirst"><code>boolean</code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#isModded()>isModded</a>() </code>
+                                            </th>
+                                            <td class="colLast">Returns whether or not the platform provides access to a mod loader.</td>
+                                        </tr>
+                                        
+                                        <tr id="i3" class="rowColor">
                                             <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#getMinimumVersion()>getMinimumVersion</a>() </code>
@@ -293,7 +307,7 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                                             <td class="colLast">Gets minimum version.</td>
                                         </tr>
                                         
-                                        <tr id="i3" class="rowColor">
+                                        <tr id="i4" class="altColor">
                                             <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=Selene.ServerType.html#getPreferredVersion()>getPreferredVersion</a>() </code>
@@ -332,11 +346,11 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                             </a>
                                 <h3>Constructor Detail</h3>
                                 
-                                <a name="ServerType(String,boolean,String,String)"></a>
+                                <a name="ServerType(String,boolean,boolean,String,String)"></a>
                                 <ul class="blockList">
                                     <li class="blockList">
                                         <h4>ServerType</h4>
-                                        <pre>ServerType(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> displayName, boolean hasNMSAccess, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> minimumVersion, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> preferredVersion)</pre>
+                                        <pre>ServerType(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> displayName, boolean hasNMSAccess, boolean isModded, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> minimumVersion, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> preferredVersion)</pre>
                                         <div class="block"></div>
                                         
                                     </li>
@@ -364,7 +378,7 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                                     <li class="blockList">
                                         <h4>hasNMSAccess</h4>
                                         <pre class="methodSignature"> boolean <a href=Selene.ServerType.html#hasNMSAccess()>hasNMSAccess</a>()</pre>
-                                        <div class="block"><p>Returns whether or not the platform provides access to NMS</p></div>
+                                        <div class="block"><p>Returns whether or not the platform provides access to NMS.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -380,6 +394,21 @@ public enum <span class="typeNameLabel"><a href=Selene.ServerType.html>Selene.Se
                                         <h4>getDisplayName</h4>
                                         <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=Selene.ServerType.html#getDisplayName()>getDisplayName</a>()</pre>
                                         <div class="block"><p>Gets the display name of the platform in a human readable format</p></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="isModded()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockList"
+                                          >
+                                    <li class="blockList">
+                                        <h4>isModded</h4>
+                                        <pre class="methodSignature"> boolean <a href=Selene.ServerType.html#isModded()>isModded</a>()</pre>
+                                        <div class="block"><p>Returns whether or not the platform provides access to a mod loader. This can be especially useful when using <a href=../org/dockbox/selene/core/util/files/ConfigurateManager.html#getModdedPlatformModsConfigDir()>getModdedPlatformModsConfigDir</a> as it may return <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html#empty-->empty</a> depending on the availability mods on the platform.</p></div>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
