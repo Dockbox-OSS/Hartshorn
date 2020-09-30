@@ -44,6 +44,7 @@ version = getVersionName()
 group = project.pluginGroup
 description = 'Common sources for Selene extensions'
 def junitVersion = '5.3.2'
+def configurateVersion = '3.6.1'
 
 subprojects { Project subProject ->
     apply plugin: 'java'
@@ -104,6 +105,10 @@ allprojects {
                 name 'plotsquared'
                 url 'https://plotsquared.com/mvn/'
             }
+            maven { // Only used for Configurate, not for platform implementations
+                name 'Sponge maven repo'
+                url 'https://repo.spongepowered.org/maven'
+            }
         }
 
         dependencies {
@@ -117,7 +122,7 @@ allprojects {
             compileOnly 'com.plotsquared:plotsquared-api:3.1'
 
             // Included by some platforms, should be shadowed by platforms if it isn't already available
-            compileOnly 'org.spongepowered:configurate-core:3.7.1'
+            compileOnly "org.spongepowered:configurate-core:$configurateVersion"
 
             // Typically included by platforms
             compileOnly 'org.slf4j:slf4j-api:1.7.25'

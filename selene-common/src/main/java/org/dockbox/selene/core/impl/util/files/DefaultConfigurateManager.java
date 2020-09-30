@@ -53,16 +53,22 @@ import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 
 public abstract class DefaultConfigurateManager extends ConfigurateManager {
 
-    private final FileType fileType;
 
     protected DefaultConfigurateManager(FileType fileType) {
         super(fileType);
-        TypeSerializers.getDefaultSerializers().register(TypeToken.of(Language.class), new LanguageTypeSerializer());
-        TypeSerializers.getDefaultSerializers().register(TypeToken.of(byte[].class), new ByteArrayTypeSerialiser());
-        TypeSerializers.getDefaultSerializers().register(TypeToken.of(int[].class), new IntArrayTypeSerialiser());
-        TypeSerializers.getDefaultSerializers().register(TypeToken.of(Pattern.class), new PatternTypeSerialiser());
-        TypeSerializers.getDefaultSerializers().register(TypeToken.of(Set.class), new SetTypeSerialiser());
-        TypeSerializers.getDefaultSerializers().register(TypeToken.of(short[].class), new ShortArrayTypeSerialiser());
+        TypeSerializers.getDefaultSerializers().registerType(
+                TypeToken.of(Language.class), new LanguageTypeSerializer());
+        TypeSerializers.getDefaultSerializers().registerType(
+                TypeToken.of(byte[].class), new ByteArrayTypeSerialiser());
+        TypeSerializers.getDefaultSerializers().registerType(
+                TypeToken.of(int[].class), new IntArrayTypeSerialiser());
+        TypeSerializers.getDefaultSerializers().registerType(
+                TypeToken.of(Pattern.class), new PatternTypeSerialiser());
+        TypeSerializers.getDefaultSerializers().registerType(
+                TypeToken.of(short[].class), new ShortArrayTypeSerialiser());
+        TypeSerializers.getDefaultSerializers().registerPredicate(
+                typeToken -> Set.class.isAssignableFrom(typeToken.getRawType()),
+                new SetTypeSerialiser());
     }
 
     private final ConfigurationLoader<?> getConfigurationLoader(Path file) throws UnsupportedFileException {
@@ -109,8 +115,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
 
             final ConfigurationLoader<?> loader = this.getConfigurationLoader(file);
             final ConfigurationNode node = loader.load();
-            @SuppressWarnings("unchecked")
-            final NeutrinoObjectMapper<T> mapper = NeutrinoObjectMapperFactory.builder()
+            @SuppressWarnings("unchecked") final NeutrinoObjectMapper<T> mapper = NeutrinoObjectMapperFactory.builder()
                     .build(true)
                     .getMapper((Class<T>) content.getClass());
 
