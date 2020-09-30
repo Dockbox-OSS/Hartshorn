@@ -122,10 +122,6 @@ allprojects {
             // Typically included by platforms
             compileOnly 'org.slf4j:slf4j-api:1.7.25'
 
-            // Shaded dependencies for SQLite implementations
-            implementation 'com.j256.ormlite:ormlite-core:5.1'
-            implementation 'com.j256.ormlite:ormlite-jdbc:5.1'
-
             // Testing requirements
             testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
             testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
