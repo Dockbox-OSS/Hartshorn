@@ -42,8 +42,8 @@ class SpongeConfigurateManager : DefaultConfigurateManager(FileType.YAML) {
         return createPathIfNotExists(getServerRoot().resolve("extensions/"))
     }
 
-    override fun getModDir(): Path {
-        return createPathIfNotExists(getServerRoot().resolve("mods/"))
+    override fun getModDir(): Optional<Path> {
+        return Optional.of(createPathIfNotExists(getServerRoot().resolve("mods/")))
     }
 
     override fun getPluginDir(): Path {
