@@ -23,7 +23,7 @@ import org.dockbox.selene.core.impl.util.files.DefaultConfigurateManager
 import org.dockbox.selene.core.util.files.FileType
 import org.spongepowered.api.Sponge
 
-class SpongeFileUtils : DefaultConfigurateManager(FileType.YAML) {
+class SpongeConfigurateManager : DefaultConfigurateManager(FileType.YAML) {
 
     override fun getDataDir(): Path {
         return getServerRoot().resolve("data/")
