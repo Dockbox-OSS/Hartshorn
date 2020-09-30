@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.object.item;
 
-import org.dockbox.selene.core.objects.ReferenceHolder;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.item.ItemType;
@@ -33,22 +33,26 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class SpongeItem extends ReferenceHolder<ItemStack> implements Item {
+public class SpongeItem extends Item<ItemStack> {
 
-    public SpongeItem(ItemStack initialValue) {
-        super(Optional.ofNullable(initialValue));
+    public SpongeItem(@NotNull ItemStack initialValue) {
+        super(initialValue);
     }
 
     public SpongeItem(String id) {
-        this(id, 1);
+        super(id, 1);
     }
 
     public SpongeItem(String id, int amount) {
-        this(Sponge.getRegistry()
+        super(id, amount);
+    }
+
+    @Override
+    protected ItemStack getById(String id, int amount) {
+        return Sponge.getRegistry()
                 .getType(ItemType.class, id.replaceFirst("minecraft:", ""))
                 .map(it -> ItemStack.of(it, amount))
-                .orElse(ItemStack.of(ItemTypes.AIR, amount))
-        );
+                .orElse(ItemStack.of(ItemTypes.AIR, amount));
     }
 
     @Override

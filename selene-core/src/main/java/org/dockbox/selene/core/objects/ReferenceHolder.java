@@ -29,6 +29,10 @@ public abstract class ReferenceHolder<T> {
     private transient WeakReference<T> reference;
 
     protected ReferenceHolder(@NotNull Optional<T> reference) {
+        this.setReference(reference);
+    }
+
+    protected void setReference(@NotNull Optional<T> reference) {
         this.reference = reference.map(WeakReference::new).orElseGet(() -> new WeakReference<>(null));
     }
 

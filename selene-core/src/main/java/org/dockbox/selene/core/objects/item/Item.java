@@ -17,14 +17,40 @@
 
 package org.dockbox.selene.core.objects.item;
 
+import org.dockbox.selene.core.objects.ReferenceHolder;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.core.util.construct.ConstructionUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface Item {
+public abstract class Item<T> extends ReferenceHolder<T> {
 
-    Text getDisplayName();
-    List<Text> getLore();
-    int getAmount();
+    protected Item(@NotNull T reference) {
+        super(Optional.of(reference));
+    }
 
+    protected Item(String id, int amount) {
+        super(Optional.empty());
+        T type = this.getById(id, amount);
+        super.setReference(Optional.of(type));
+    }
+
+    protected abstract T getById(String id, int amount);
+
+    public abstract Text getDisplayName();
+
+    public abstract List<Text> getLore();
+
+    public abstract int getAmount();
+
+    public static Item<?> of(String id, int amount) {
+        return Selene.getInstance(ConstructionUtil.class).item(id, amount);
+    }
+
+    public static Item<?> of(String id) {
+        return Selene.getInstance(ConstructionUtil.class).item(id);
+    }
 }
