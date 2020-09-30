@@ -15,16 +15,33 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.text.navigation;
+package org.dockbox.selene.sponge.util.construct;
 
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.text.navigation.PaginationBuilder;
-import org.dockbox.selene.core.text.navigation.PaginationService;
+import org.dockbox.selene.core.util.construct.ConstructionUtil;
+import org.dockbox.selene.sponge.object.item.SpongeItem;
+import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
 import org.jetbrains.annotations.NotNull;
 
-public class SpongePaginationService implements PaginationService {
+public class SpongeConstructionUtil implements ConstructionUtil {
+
     @NotNull
     @Override
-    public PaginationBuilder builder() {
+    public PaginationBuilder paginationBuilder() {
         return new SpongePaginationBuilder();
     }
+
+    @NotNull
+    @Override
+    public Item<?> item(@NotNull String id, int amount) {
+        return new SpongeItem(id, amount);
+    }
+
+    @NotNull
+    @Override
+    public Item<?> item(@NotNull String id) {
+        return new SpongeItem(id);
+    }
+
 }

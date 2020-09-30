@@ -27,7 +27,7 @@ import org.dockbox.selene.core.impl.util.extension.SimpleExtensionManager;
 import org.dockbox.selene.core.impl.util.text.SimpleBroadcastService;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.config.GlobalConfig;
-import org.dockbox.selene.core.text.navigation.PaginationService;
+import org.dockbox.selene.core.util.construct.ConstructionUtil;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper;
@@ -62,7 +62,7 @@ public class TestInjector extends AbstractCommonInjector {
         super.bind(GlobalConfig.class).to(DefaultGlobalConfig.class);
         super.bind(Selene.IntegratedExtension.class).to(IntegratedTestExtension.class);
         super.bind(ResourceService.class).to(SimpleResourceService.class);
-        super.bind(PaginationService.class).to(TestPaginationService.class);
+        super.bind(ConstructionUtil.class).to(TestConstructionUtil.class);
         super.bind(PlayerStorageService.class).to(TestPlayerStorageService.class);
         super.bind(ThreadUtils.class).to(TestThreadUtils.class);
         super.bind(WorldStorageService.class).to(TestWorldStorageService.class);

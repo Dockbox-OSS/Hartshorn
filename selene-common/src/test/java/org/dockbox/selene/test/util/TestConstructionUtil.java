@@ -15,10 +15,16 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.text.navigation
+package org.dockbox.selene.test.util;
 
-interface PaginationService {
+import org.dockbox.selene.core.text.navigation.PaginationBuilder;
+import org.dockbox.selene.core.util.construct.ConstructionUtil;
+import org.jetbrains.annotations.NotNull;
 
-    fun builder(): PaginationBuilder
-
+public class TestConstructionUtil implements ConstructionUtil {
+    @NotNull
+    @Override
+    public PaginationBuilder paginationBuilder() {
+        throw new UnsupportedOperationException("Pagination is not testable in common implementations, and should only be tested in the platform implementation");
+    }
 }

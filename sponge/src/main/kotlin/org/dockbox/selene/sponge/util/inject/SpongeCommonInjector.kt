@@ -27,7 +27,7 @@ import org.dockbox.selene.core.impl.util.extension.SimpleExtensionManager
 import org.dockbox.selene.core.impl.util.text.SimpleBroadcastService
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.server.config.GlobalConfig
-import org.dockbox.selene.core.text.navigation.PaginationService
+import org.dockbox.selene.core.util.construct.ConstructionUtil
 import org.dockbox.selene.core.util.discord.DiscordUtils
 import org.dockbox.selene.core.util.events.EventBus
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper
@@ -39,7 +39,7 @@ import org.dockbox.selene.core.util.text.BroadcastService
 import org.dockbox.selene.core.util.threads.ThreadUtils
 import org.dockbox.selene.core.util.world.WorldStorageService
 import org.dockbox.selene.integrated.IntegratedServerExtension
-import org.dockbox.selene.sponge.text.navigation.SpongePaginationService
+import org.dockbox.selene.sponge.util.construct.SpongeConstructionUtil
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus
 import org.dockbox.selene.sponge.util.discord.SpongeDiscordUtils
 import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager
@@ -67,7 +67,7 @@ class SpongeCommonInjector : AbstractCommonInjector() {
         bind(GlobalConfig::class.java).to(DefaultGlobalConfig::class.java)
         bind(Selene.IntegratedExtension::class.java).to(IntegratedServerExtension::class.java)
         bind(ResourceService::class.java).to(SimpleResourceService::class.java)
-        bind(PaginationService::class.java).to(SpongePaginationService::class.java)
+        bind(ConstructionUtil::class.java).to(SpongeConstructionUtil::class.java)
         bind(PlayerStorageService::class.java).to(SpongePlayerStorageService::class.java)
         bind(ThreadUtils::class.java).to(SpongeThreadUtils::class.java)
         bind(WorldStorageService::class.java).to(SpongeWorldStorageService::class.java)

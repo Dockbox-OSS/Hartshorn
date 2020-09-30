@@ -39,7 +39,7 @@ import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction.RunCommand;
 import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
 import org.dockbox.selene.core.text.navigation.PaginationBuilder;
-import org.dockbox.selene.core.text.navigation.PaginationService;
+import org.dockbox.selene.core.util.construct.ConstructionUtil;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
@@ -65,7 +65,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
     @Command(aliases = "", usage = "")
     public void debugExtensions(MessageReceiver source) {
         super.consumeWithInstance(ExtensionManager.class, em -> {
-            PaginationBuilder pb = super.getInstance(PaginationService.class).builder();
+            PaginationBuilder pb = super.getInstance(ConstructionUtil.class).paginationBuilder();
 
             List<Text> content = new ArrayList<>();
             content.add(Text.of(IntegratedServerResources.SERVER_HEADER.format(Selene.getServer().getVersion())));
