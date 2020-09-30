@@ -34,6 +34,12 @@ dependencies {
         shadow 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8'
         shadow 'org.apache.commons:commons-collections4:4.1'
 
+        compileOnly 'org.spongepowered:configurate-hocon:3.7.1'
+        compileOnly 'org.spongepowered:configurate-yaml:3.7.1'
+        compileOnly 'org.spongepowered:configurate-json:3.7.1'
+        compileOnly 'org.spongepowered:configurate-gson:3.7.1'
+        compileOnly 'org.spongepowered:configurate-xml:3.7.1'
+
         testImplementation 'junit:junit:4.12'
         testImplementation project(':selene-core')
     }

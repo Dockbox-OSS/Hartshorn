@@ -116,6 +116,9 @@ allprojects {
             compileOnly 'com.sk89q.worldedit:worldedit-core:6.1'
             compileOnly 'com.plotsquared:plotsquared-api:3.1'
 
+            // Included by some platforms, should be shadowed by platforms if it isn't already available
+            compileOnly 'org.spongepowered:configurate-core:3.7.1'
+
             // Typically included by platforms
             compileOnly 'org.slf4j:slf4j-api:1.7.25'
 
