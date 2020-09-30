@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Properties;
 
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.gson.GsonConfigurationLoader;
@@ -61,13 +60,6 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
             default:
                 throw new UnsupportedFileException(this.fileType.getExtension());
         }
-    }
-
-    @NotNull
-    @Override
-    public Exceptional<Properties> getPropertyFileContent(@NotNull Path file) {
-        // TODO
-        return Exceptional.empty();
     }
 
     @NotNull

@@ -30,7 +30,6 @@ abstract class ConfigurateManager {
     abstract fun getDataFile(extension: Extension, file: String): Path
     abstract fun getConfigFile(extension: Extension, file: String): Path
 
-    abstract fun getPropertyFileContent(file: Path): Exceptional<Properties>
     abstract fun <T> getFileContent(file: Path, type: Class<T>): Exceptional<T>
     abstract fun <T> writeFileContent(file: Path, content: T): Exceptional<Boolean>
 
