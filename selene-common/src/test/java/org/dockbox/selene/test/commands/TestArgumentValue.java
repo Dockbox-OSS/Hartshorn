@@ -15,38 +15,26 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test;
+package org.dockbox.selene.test.commands;
 
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.library.LibraryArtifact;
-import org.dockbox.selene.test.util.TestInjector;
+import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
+import org.dockbox.selene.core.impl.command.SimpleCommandBus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class SeleneTestImpl extends Selene {
+public class TestArgumentValue extends AbstractArgumentValue<String> {
 
-    public SeleneTestImpl() {
-        super(new TestInjector());
-    }
-
-    // TODO: construct() and init()
-
-    @Override
-    public @NotNull ServerType getServerType() {
-        return ServerType.JUNIT;
+    public TestArgumentValue(@Nullable SimpleCommandBus.Arguments argument, @Nullable String permission, @NotNull String key) {
+        super(argument, permission, key);
     }
 
     @Override
-    protected LibraryArtifact[] getPlatformArtifacts() {
-        return new LibraryArtifact[0];
+    protected String parseArgument(@Nullable SimpleCommandBus.Arguments argument, @Nullable String key) {
+        return null;
     }
 
     @Override
-    public String getPlatformVersion() {
-        return "5.3.2";
-    }
-
-    @Override
-    public String getMinecraftVersion() {
-        return "indev";
+    public String getArgument() {
+        return null;
     }
 }

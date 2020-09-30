@@ -19,33 +19,33 @@ package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.core.command.CommandRunnerFunction;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
-import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
 import org.dockbox.selene.core.impl.command.SimpleCommandBus;
 import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
 import org.dockbox.selene.core.objects.targets.CommandSource;
+import org.dockbox.selene.test.commands.TestArgumentValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TestCommandBus extends SimpleCommandBus {
+public class TestCommandBus extends SimpleCommandBus<SimpleCommandContext, TestArgumentValue> {
 
     @Override
-    protected AbstractArgumentValue<?> getArgumentValue(@NotNull String type, @NotNull AbstractPermission permissions, @NotNull String key) {
-        return null;
-    }
-
-    @Override
-    public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permissions, @NotNull CommandRunnerFunction runner) {
+    public void registerCommandArgsAndOrChild(@NotNull String command, @NotNull AbstractPermission permissions, @NotNull CommandRunnerFunction runner) {
 
     }
 
     @NotNull
     @Override
-    protected SimpleCommandContext convertContext(Object ctx, @NotNull CommandSource sender, @Nullable String command) {
+    protected SimpleCommandContext convertContext(SimpleCommandContext ctx, @NotNull CommandSource sender, @Nullable String command) {
         return null;
     }
 
     @Override
-    public void registerCommandArgsAndOrChild(@NotNull String command, @NotNull AbstractPermission permissions, @NotNull CommandRunnerFunction runner) {
+    protected TestArgumentValue getArgumentValue(@NotNull String type, @NotNull AbstractPermission permissions, @NotNull String key) {
+        return null;
+    }
+
+    @Override
+    public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permissions, @NotNull CommandRunnerFunction runner) {
 
     }
 }
