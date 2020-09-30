@@ -127,6 +127,8 @@ allprojects {
             testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
             testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 
+            testCompile "org.mockito:mockito-all:1.10.19"
+
             testImplementation 'com.boydti:fawe-api:latest'
             testImplementation 'com.sk89q.worldedit:worldedit-core:6.1'
             testImplementation 'com.plotsquared:plotsquared-api:3.1'

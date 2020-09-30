@@ -38,6 +38,7 @@ dependencies {
         compileOnly 'org.spongepowered:configurate-xml:3.7.1'
 
         testImplementation 'junit:junit:4.12'
+        testImplementation 'org.spongepowered:configurate-core:3.7.1'
         testImplementation project(':selene-core')
     }
 }
