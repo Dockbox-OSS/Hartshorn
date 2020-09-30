@@ -34,6 +34,7 @@ import org.dockbox.selene.core.util.exceptions.ExceptionHelper;
 import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
+import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.core.util.inject.AbstractCommonInjector;
 import org.dockbox.selene.core.util.inject.AbstractExceptionInjector;
 import org.dockbox.selene.core.util.inject.AbstractModuleInjector;
@@ -74,20 +75,22 @@ public abstract class Selene {
      provides access to Native Minecraft Sources (NMS).
      */
     public enum ServerType {
-        SPONGE("SpongePowered", true, "1.12.2-2555-7.1.0-BETA-2815", "1.12.2-2838-7.2.2-RC0"),
-        MAGMA("Magma", true, "Not (yet) supported", "Not (yet) supported"),
-        SPIGOT("Spigot", true, "Not (yet) supported", "Not (yet) supported"),
-        PAPER("Paper", true, "Not (yet) supported", "Not (yet) supported"),
-        OTHER("Other", true, "Not (yet) supported", "Not (yet) supported");
+        SPONGE("SpongePowered", true, true, "1.12.2-2555-7.1.0-BETA-2815", "1.12.2-2838-7.2.2-RC0"),
+        MAGMA("Magma", true, true, "Not (yet) supported", "Not (yet) supported"),
+        SPIGOT("Spigot", true, false, "Not (yet) supported", "Not (yet) supported"),
+        PAPER("Paper", true, false, "Not (yet) supported", "Not (yet) supported"),
+        OTHER("Other", true, false, "Not (yet) supported", "Not (yet) supported");
 
         private final String displayName;
         private final boolean hasNMSAccess;
+        private final boolean isModded;
         private final String minimumVersion;
         private final String preferredVersion;
 
-        ServerType(String displayName, boolean hasNMSAccess, String minimumVersion, String preferredVersion) {
+        ServerType(String displayName, boolean hasNMSAccess, boolean isModded, String minimumVersion, String preferredVersion) {
             this.displayName = displayName;
             this.hasNMSAccess = hasNMSAccess;
+            this.isModded = isModded;
             this.minimumVersion = minimumVersion;
             this.preferredVersion = preferredVersion;
         }
@@ -102,7 +105,7 @@ public abstract class Selene {
         }
 
         /**
-         Returns whether or not the platform provides access to NMS
+         Returns whether or not the platform provides access to NMS.
 
          @return the boolean
          */
@@ -126,6 +129,17 @@ public abstract class Selene {
          */
         public String getPreferredVersion() {
             return this.preferredVersion;
+        }
+
+        /**
+         Returns whether or not the platform provides access to a mod loader.
+         This can be especially useful when using {@link ConfigurateManager#getModdedPlatformModsConfigDir()} as it
+         may return {@link Optional#empty()} depending on the availability mods on the platform.
+
+         @return the boolean
+         */
+        public boolean isModded() {
+            return this.isModded;
         }
     }
 
