@@ -17,6 +17,10 @@
 
 package org.dockbox.selene.core.impl.util.files;
 
+import com.google.common.reflect.TypeToken;
+
+import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.impl.util.files.serialize.LanguageTypeSerializer;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.extension.Extension;
@@ -35,6 +39,7 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMapper;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 import ninja.leaping.configurate.xml.XMLConfigurationLoader;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 
@@ -44,6 +49,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
 
     protected DefaultConfigurateManager(FileType fileType) {
         this.fileType = fileType;
+        TypeSerializers.getDefaultSerializers().register(TypeToken.of(Language.class), new LanguageTypeSerializer());
     }
 
     private final ConfigurationLoader<?> getConfigurationLoader(Path file) throws UnsupportedFileException {

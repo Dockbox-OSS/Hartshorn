@@ -32,27 +32,19 @@ abstract class DefaultPlayerStorageService : PlayerStorageService, ServerReferen
     class UserDataModel {
 
         @Setting
-        var language: String = Selene.getServer().globalConfig.getDefaultLanguage().code
+        var language: Language = Selene.getServer().globalConfig.getDefaultLanguage()
 
     }
 
     override fun setLanguagePreference(uuid: UUID, lang: Language) {
         val userData = this.getUserData(uuid)
-        userData.language = lang.code
+        userData.language = lang
         this.updateUserData(uuid, userData)
 
     }
 
     override fun getLanguagePreference(uuid: UUID): Language {
-        val lang = getUserData(uuid).language
-
-        return try {
-            Language.valueOf(lang.toUpperCase())
-        } catch (e: IllegalArgumentException) {
-            Selene.getServer().globalConfig.getDefaultLanguage()
-        } catch (e: NullPointerException) {
-            Selene.getServer().globalConfig.getDefaultLanguage()
-        }
+        return getUserData(uuid).language
     }
 
     private fun updateUserData(uuid: UUID, userData: UserDataModel) {
