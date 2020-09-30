@@ -26,7 +26,7 @@ import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionContext.ComponentType;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.dockbox.selene.core.util.extension.status.ExtensionStatus;
-import org.dockbox.selene.core.util.files.FileUtils;
+import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
@@ -85,9 +85,8 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public <T> Optional<T> getInstance(@NotNull Class<T> type) {
-        Selene.log().info("Instance requested for [" + type.getCanonicalName() +"]");
+        Selene.log().debug("Instance requested for [" + type.getCanonicalName() +"]");
         for (Object o : instanceMappings.values()) {
-            Selene.log().info(" - mapping: " + o);
             if (null != o && o.getClass().equals(type))
                 // Condition meets requirement for checked cast
                 //noinspection unchecked
@@ -104,7 +103,7 @@ public class SimpleExtensionManager implements ExtensionManager {
 
     @Override
     public @NotNull List<? extends ExtensionContext> getExternalExtensions() {
-        Path moduleDir = Selene.getInstance(FileUtils.class).getExtensionDir();
+        Path moduleDir = Selene.getInstance(ConfigurateManager.class).getExtensionDir();
         try (Stream<Path> stream = Files.walk(moduleDir, 1)) {
             List<SimpleExtensionContext> contexts = new CopyOnWriteArrayList<>();
             Selene.log().info("Scanning [" + moduleDir + "] for component files");

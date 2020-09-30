@@ -24,9 +24,7 @@ import org.dockbox.selene.core.util.discord.DiscordUtils
 import org.dockbox.selene.core.util.events.EventBus
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper
 import org.dockbox.selene.core.util.extension.ExtensionManager
-import org.dockbox.selene.core.util.files.ConfigManager
-import org.dockbox.selene.core.util.files.DataManager
-import org.dockbox.selene.core.util.files.FileUtils
+import org.dockbox.selene.core.util.files.ConfigurateManager
 import org.dockbox.selene.core.util.player.PlayerStorageService
 import org.dockbox.selene.core.util.text.BroadcastService
 
@@ -46,9 +44,7 @@ abstract class AbstractCommonInjector : AbstractModule() {
         val requiredBindings: Array<Class<*>> = arrayOf(
                 ExceptionHelper::class.java,
                 ExtensionManager::class.java,
-                FileUtils::class.java,
-                ConfigManager::class.java,
-                DataManager::class.java,
+                ConfigurateManager::class.java,
                 EventBus::class.java,
                 DiscordUtils::class.java,
                 BroadcastService::class.java,

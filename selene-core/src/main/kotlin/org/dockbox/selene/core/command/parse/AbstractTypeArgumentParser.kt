@@ -20,7 +20,19 @@ package org.dockbox.selene.core.command.parse
 import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
 
+/**
+ * Low-level class to perform [CommandValue] conversions into a given generic type [T]
+ *
+ * @param T The generic return type
+ */
 abstract class AbstractTypeArgumentParser<T> : AbstractParser() {
 
+    /**
+     * Parses a given [CommandValue] with generic type [String] into the given generic type [T]. Returns
+     * an [Optional] to allow developers to return empty results if need be.
+     *
+     * @param commandValue The [CommandValue] holding the key and value of a command argument or flag
+     * @return The return value wrapped in [Optional]
+     */
     abstract fun parse(commandValue: CommandValue<String>): Optional<T>
 }

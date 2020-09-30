@@ -22,6 +22,7 @@ plugins {
 
 group = 'org.dockbox.selene.core.impl'
 description = 'Default implementations for Selene'
+def configurateVersion = "3.6.1"
 
 dependencies {
     compileOnly project(':selene-core')
@@ -29,11 +30,16 @@ dependencies {
     dependencies {
         shadow 'com.google.inject:guice:4.2.2'
         shadow 'org.reflections:reflections:0.9.11'
-        shadow 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
-        shadow 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.8'
-        shadow 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8'
         shadow 'org.apache.commons:commons-collections4:4.1'
 
+        compileOnly "org.spongepowered:configurate-hocon:$configurateVersion"
+        compileOnly "org.spongepowered:configurate-yaml:$configurateVersion"
+        compileOnly "org.spongepowered:configurate-json:$configurateVersion"
+        compileOnly "org.spongepowered:configurate-gson:$configurateVersion"
+        compileOnly "org.spongepowered:configurate-xml:$configurateVersion"
+
         testImplementation 'junit:junit:4.12'
+        testImplementation "org.spongepowered:configurate-core:$configurateVersion"
+        testImplementation project(':selene-core')
     }
 }

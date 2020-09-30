@@ -17,14 +17,11 @@
 
 package org.dockbox.selene.sponge.util.world
 
-import org.dockbox.selene.core.objects.location.Location
+import java.util.*
 import org.dockbox.selene.core.objects.location.World
-import org.dockbox.selene.core.objects.tuple.Vector3D
 import org.dockbox.selene.core.util.world.WorldStorageService
-import org.dockbox.selene.sponge.objects.location.SpongeLocation
 import org.dockbox.selene.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
-import java.util.*
 
 class SpongeWorldStorageService : WorldStorageService() {
     override fun getLoadedWorlds(): List<World> {
@@ -41,9 +38,5 @@ class SpongeWorldStorageService : WorldStorageService() {
 
     override fun getWorld(uuid: UUID): Optional<World> {
         return Sponge.getServer().loadWorld(uuid).map { SpongeConversionUtil.fromSponge(it) }
-    }
-
-    override fun createLocation(vector: Vector3D, world: World): Location {
-        return SpongeLocation(vector, world)
     }
 }

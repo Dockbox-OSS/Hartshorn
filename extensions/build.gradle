@@ -26,4 +26,9 @@ description = 'Integrated extensions for Selene'
 dependencies {
     compileOnly project(':selene-core')
     compileOnly project(':selene-common')
+
+    // Shaded dependencies for SQLite implementations
+    // These are currently not in use, but will be used by the OldPlots & Tickets extensions
+    shadow 'com.j256.ormlite:ormlite-core:5.1'
+    shadow 'com.j256.ormlite:ormlite-jdbc:5.1'
 }

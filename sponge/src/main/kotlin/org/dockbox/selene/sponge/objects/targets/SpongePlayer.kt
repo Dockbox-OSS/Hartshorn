@@ -28,6 +28,7 @@ import org.dockbox.selene.core.objects.FieldReferenceHolder
 import org.dockbox.selene.core.objects.location.Location
 import org.dockbox.selene.core.objects.location.Location.Companion.EMPTY
 import org.dockbox.selene.core.objects.location.World
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.objects.user.Gamemode
 import org.dockbox.selene.core.objects.user.Player
 import org.dockbox.selene.core.server.Selene
@@ -54,9 +55,9 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
         return spongePlayer.referenceExists() && spongePlayer.reference.get().isOnline
     }
 
-    override fun getFawePlayer(): Optional<FawePlayer<*>> {
-        return if (spongePlayer.referenceExists()) Optional.of(FaweAPI.wrapPlayer(spongePlayer.reference.get()))
-        else Optional.empty()
+    override fun getFawePlayer(): Exceptional<FawePlayer<*>> {
+        return if (spongePlayer.referenceExists()) Exceptional.of(FaweAPI.wrapPlayer(spongePlayer.reference.get()))
+        else Exceptional.empty()
     }
 
     override fun kick(message: Text) {

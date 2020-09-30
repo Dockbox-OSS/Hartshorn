@@ -55,5 +55,12 @@ enum IntegratedServerResources {
     static final ResourceEntry FULL_RELOAD_SUCCESSFUL = new ExternalResourceEntry("$1Successfully reloaded all extensions", "selene.reload.all");
     static final ResourceEntry CONFIRM_INVALID_ID = new ExternalResourceEntry("$4Could not confirm command: Invalid runner ID", "selene.confirm.invalid.id");
     static final ResourceEntry CONFIRM_WRONG_SOURCE = new ExternalResourceEntry("$4This command can only be used by identifiable sources (players, console)", "selene.confirm.invalid.source");
+    static final ResourceEntry PLATFORM_INFORMATION = new ExternalResourceEntry(
+            "$2Platform: $1{0} $3(version: {1})\n" +
+                    "$2Minecraft: $1{2}\n" +
+                    "$2Java: $1{3} $3(vendor: {4})\n" +
+                    "$2JVM: $1{5} $3(version: {6}, vendor: {7})\n" +
+                    "$2Runtime: $1{8} $3(class version: {9})",
+            "selene.info.platform");
 
 }

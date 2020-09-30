@@ -44,6 +44,7 @@ version = getVersionName()
 group = project.pluginGroup
 description = 'Common sources for Selene extensions'
 def junitVersion = '5.3.2'
+def configurateVersion = '3.6.1'
 
 subprojects { Project subProject ->
     apply plugin: 'java'
@@ -67,9 +68,10 @@ subprojects { Project subProject ->
                         includes: "*${version}-${date}*.jar"
             }
 
-            delete buildDir
         }
     }
+
+    build.finalizedBy copyArtifacts
 
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
@@ -103,6 +105,10 @@ allprojects {
                 name 'plotsquared'
                 url 'https://plotsquared.com/mvn/'
             }
+            maven { // Only used for Configurate, not for platform implementations
+                name 'Sponge maven repo'
+                url 'https://repo.spongepowered.org/maven'
+            }
         }
 
         dependencies {
@@ -115,18 +121,27 @@ allprojects {
             compileOnly 'com.sk89q.worldedit:worldedit-core:6.1'
             compileOnly 'com.plotsquared:plotsquared-api:3.1'
 
+            // Included by some platforms, should be shadowed by platforms if it isn't already available
+            compileOnly "org.spongepowered:configurate-core:$configurateVersion"
+
             // Typically included by platforms
             compileOnly 'org.slf4j:slf4j-api:1.7.25'
-
-            // Shaded dependencies for SQLite implementations
-            implementation 'com.j256.ormlite:ormlite-core:5.1'
-            implementation 'com.j256.ormlite:ormlite-jdbc:5.1'
 
             // Testing requirements
             testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
             testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
             testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 
+            testCompile "org.mockito:mockito-all:1.10.19"
+
+            testImplementation 'com.boydti:fawe-api:latest'
+            testImplementation 'com.sk89q.worldedit:worldedit-core:6.1'
+            testImplementation 'com.plotsquared:plotsquared-api:3.1'
+            testImplementation 'com.google.inject:guice:4.2.2'
+        }
+
+        test {
+            useJUnitPlatform()
         }
     }
 }
@@ -139,13 +154,13 @@ afterEvaluate {
 task relocateDokka {
     doLast {
         def DOKKA_DEST_DIR = "${rootDir}/docs"
-        def DOKKA_SRC_DIR = "${rootDir}/build/dokka/javadocCollector"
+        def DOKKA_SRC_DIR = "${buildDir}/dokka/javadocCollector"
+
+        delete DOKKA_DEST_DIR
 
         ant.mkdir(dir: DOKKA_DEST_DIR)
         ant.copy(todir: DOKKA_DEST_DIR) {
             fileset dir: DOKKA_SRC_DIR
         }
-
-        delete "${rootDir}/build"
     }
 }

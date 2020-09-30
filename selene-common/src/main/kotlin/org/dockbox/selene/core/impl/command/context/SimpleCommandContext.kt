@@ -25,6 +25,10 @@ import org.dockbox.selene.core.annotations.FromSource
 import org.dockbox.selene.core.command.context.CommandContext
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
+import org.dockbox.selene.core.command.parse.rules.Rule
+import org.dockbox.selene.core.command.parse.rules.Split
+import org.dockbox.selene.core.command.parse.rules.Strict
+import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.impl.command.parse.BooleanArgumentParser
 import org.dockbox.selene.core.impl.command.parse.CharArgumentParser
 import org.dockbox.selene.core.impl.command.parse.DoubleArgumentParser
@@ -39,10 +43,6 @@ import org.dockbox.selene.core.impl.command.parse.PlayerArgumentParser
 import org.dockbox.selene.core.impl.command.parse.ResourceArgumentParser
 import org.dockbox.selene.core.impl.command.parse.ShortArgumentParser
 import org.dockbox.selene.core.impl.command.parse.WorldArgumentParser
-import org.dockbox.selene.core.command.parse.rules.Rule
-import org.dockbox.selene.core.command.parse.rules.Split
-import org.dockbox.selene.core.command.parse.rules.Strict
-import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.objects.location.Location
 import org.dockbox.selene.core.objects.location.World
 import org.dockbox.selene.core.objects.optional.Exceptional
@@ -70,10 +70,10 @@ open class SimpleCommandContext(
         get() = this.usage.split(" ")[0]
 
     override val argumentCount: Int
-        get() = args!!.size
+        get() = args.size
 
     override val flagCount: Int
-        get() = flags!!.size
+        get() = flags.size
 
     override fun getArgument(key: String): Optional<CommandValue.Argument<String>> {
         return Arrays.stream(args).filter { it.key == key }.findFirst().map { CommandValue.Argument(it.value.toString(), it.key) }
@@ -122,7 +122,7 @@ open class SimpleCommandContext(
 
     override fun <T> tryCreate(type: Class<T>): Exceptional<T> {
         try {
-            val argumentKeys = this.args!!.map { it.key }
+            val argumentKeys = this.args.map { it.key }
             val ctor: Constructor<T> = type.getConstructor() as Constructor<T>
             val instance: T = ctor.newInstance()
             type.declaredFields.forEach { field ->
@@ -228,9 +228,12 @@ open class SimpleCommandContext(
             }
 
             List::class.java -> {
-                val parser = ListArgumentParser()
+                val parser = ListArgumentParser<String>()
                 if (field.isAnnotationPresent(Split::class.java)) parser.setDelimiter(field.getAnnotation(Split::class.java).delimiter)
-                if (minMax != null) parser.setMinMax(minMax)
+                if (minMax != null) {
+                    val listMinMax: ListArgumentParser.MinMax = ListArgumentParser.MinMax(minMax.min, minMax.max)
+                    parser.setMinMax(listMinMax)
+                }
                 return Exceptional.ofOptional(parser.parse(arg))
             }
 

@@ -29,7 +29,6 @@ import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
 import org.dockbox.selene.core.text.navigation.Pagination;
 import org.dockbox.selene.sponge.exceptions.TypeConversionException;
-import org.dockbox.selene.sponge.objects.location.SpongeLocation;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
@@ -158,7 +157,12 @@ public enum SpongeConversionUtil {
         return Exceptional.of(new Location<>(world.get(), vector3d));
     }
 
-    @NotNull
+    public static org.dockbox.selene.core.objects.location.Location fromSponge(Location<World> location) {
+        org.dockbox.selene.core.objects.location.World world = fromSponge(location.getExtent());
+        Vector3D vector3D = new Vector3D(location.getX(), location.getY(), location.getZ());
+        return new org.dockbox.selene.core.objects.location.Location(vector3D, world);
+    }
+
     public static Exceptional<World> toSponge(org.dockbox.selene.core.objects.location.World world) {
         if (world instanceof SpongeWorld) {
             World wref = ((SpongeWorld) world).getReference();
@@ -209,13 +213,6 @@ public enum SpongeConversionUtil {
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
             return Exceptional.of(new SpongePlayer(((Identifiable) commandSource).getUniqueId(), commandSource.getName()));
         return Exceptional.of(new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'"));
-    }
-
-    @NotNull
-    public static org.dockbox.selene.core.objects.location.Location fromSponge(Location<World> location) {
-        org.dockbox.selene.core.objects.location.World world = fromSponge(location.getExtent());
-        Vector3D vector3D = new Vector3D(location.getX(), location.getY(), location.getZ());
-        return new SpongeLocation(vector3D, world);
     }
 
     @NotNull
