@@ -17,12 +17,19 @@
 
 package org.dockbox.selene.test.util;
 
-import org.dockbox.selene.core.util.files.FileUtils;
+import org.dockbox.selene.core.impl.util.files.DefaultConfigurateManager;
+import org.dockbox.selene.core.util.files.FileType;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
+import java.util.Optional;
 
-public class TestFileUtils implements FileUtils {
+public class TestConfigurateManager extends DefaultConfigurateManager {
+
+    protected TestConfigurateManager() {
+        super(FileType.JSON);
+    }
+
     @NotNull
     @Override
     public Path getDataDir() {
@@ -49,8 +56,8 @@ public class TestFileUtils implements FileUtils {
 
     @NotNull
     @Override
-    public Path getModDir() {
-        return null;
+    public Optional<Path> getModDir() {
+        return Optional.empty();
     }
 
     @NotNull
@@ -61,31 +68,19 @@ public class TestFileUtils implements FileUtils {
 
     @NotNull
     @Override
-    public Path getExtensionConfigdir() {
+    public Path getExtensionConfigsDir() {
         return null;
     }
 
     @NotNull
     @Override
-    public Path getModConfigDir() {
-        return null;
+    public Optional<Path> getModdedPlatformModsConfigDir() {
+        return Optional.empty();
     }
 
     @NotNull
     @Override
-    public Path getPluginConfigDir() {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public Path createPathIfNotExists(@NotNull Path path) {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public Path createFileIfNotExists(@NotNull Path file) {
+    public Path getPlatformPluginsConfigDir() {
         return null;
     }
 }

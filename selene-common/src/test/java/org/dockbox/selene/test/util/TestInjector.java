@@ -24,9 +24,6 @@ import org.dockbox.selene.core.impl.server.config.DefaultGlobalConfig;
 import org.dockbox.selene.core.impl.util.events.SimpleEventBus;
 import org.dockbox.selene.core.impl.util.exceptions.SimpleExceptionHelper;
 import org.dockbox.selene.core.impl.util.extension.SimpleExtensionManager;
-import org.dockbox.selene.core.impl.util.files.SQLiteBulkDataManager;
-import org.dockbox.selene.core.impl.util.files.YamlConfigManager;
-import org.dockbox.selene.core.impl.util.files.YamlDataManager;
 import org.dockbox.selene.core.impl.util.text.SimpleBroadcastService;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.config.GlobalConfig;
@@ -35,10 +32,7 @@ import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
-import org.dockbox.selene.core.util.files.BulkDataManager;
-import org.dockbox.selene.core.util.files.ConfigManager;
-import org.dockbox.selene.core.util.files.DataManager;
-import org.dockbox.selene.core.util.files.FileUtils;
+import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.core.util.inject.AbstractCommonInjector;
 import org.dockbox.selene.core.util.player.PlayerStorageService;
 import org.dockbox.selene.core.util.text.BroadcastService;
@@ -61,13 +55,10 @@ public class TestInjector extends AbstractCommonInjector {
     @Override
     protected void configureUtilInject() {
         super.bind(BroadcastService.class).to(SimpleBroadcastService.class);
-        super.bind(BulkDataManager.class).to(SQLiteBulkDataManager.class);
         super.bind(CommandBus.class).to(TestCommandBus.class);
-        super.bind(ConfigManager.class).to(YamlConfigManager.class);
-        super.bind(DataManager.class).to(YamlDataManager.class);
+        super.bind(ConfigurateManager.class).to(TestConfigurateManager.class);
         super.bind(DiscordUtils.class).to(TestDiscordUtils.class);
         super.bind(EventBus.class).to(SimpleEventBus.class);
-        super.bind(FileUtils.class).to(TestFileUtils.class);
         super.bind(GlobalConfig.class).to(DefaultGlobalConfig.class);
         super.bind(Selene.IntegratedExtension.class).to(IntegratedTestExtension.class);
         super.bind(ResourceService.class).to(SimpleResourceService.class);
