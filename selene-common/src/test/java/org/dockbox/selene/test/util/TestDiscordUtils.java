@@ -24,7 +24,12 @@ import org.dockbox.selene.core.impl.util.discord.DefaultDiscordUtils;
 
 import java.util.Optional;
 
+/**
+ Provides empty {@link Optional} instances, as testing with the {@link JDA} is seemingly impossible without providing
+ a Discord server and bot for this purpose.
+ */
 public class TestDiscordUtils extends DefaultDiscordUtils {
+
     @Override
     public Optional<JDA> getJDA() {
         return Optional.empty();

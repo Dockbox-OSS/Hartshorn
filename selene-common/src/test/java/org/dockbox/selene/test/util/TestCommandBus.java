@@ -29,23 +29,33 @@ import org.jetbrains.annotations.Nullable;
 public class TestCommandBus extends SimpleCommandBus<SimpleCommandContext, TestArgumentValue> {
 
     @Override
-    public void registerCommandArgsAndOrChild(@NotNull String command, @NotNull AbstractPermission permissions, @NotNull CommandRunnerFunction runner) {
+    public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permissions, @NotNull CommandRunnerFunction runner) {
+        throw new UnsupportedOperationException("CommandBus is not testable in common implementations, and should only be tested in the platform implementation");
+    }
 
+    @Override
+    protected void registerChildCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, @NotNull String usagePart, @NotNull AbstractPermission permissions) {
+        throw new UnsupportedOperationException("CommandBus is not testable in common implementations, and should only be tested in the platform implementation");
+    }
+
+    @Override
+    protected void registerSingleMethodCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, @NotNull String usagePart, @NotNull AbstractPermission permissions) {
+        throw new UnsupportedOperationException("CommandBus is not testable in common implementations, and should only be tested in the platform implementation");
+    }
+
+    @Override
+    protected void registerParentCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, @NotNull AbstractPermission permissions) {
+        throw new UnsupportedOperationException("CommandBus is not testable in common implementations, and should only be tested in the platform implementation");
     }
 
     @NotNull
     @Override
     protected SimpleCommandContext convertContext(SimpleCommandContext ctx, @NotNull CommandSource sender, @Nullable String command) {
-        return null;
+        throw new UnsupportedOperationException("CommandBus is not testable in common implementations, and should only be tested in the platform implementation");
     }
 
     @Override
     protected TestArgumentValue getArgumentValue(@NotNull String type, @NotNull AbstractPermission permissions, @NotNull String key) {
-        return null;
-    }
-
-    @Override
-    public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permissions, @NotNull CommandRunnerFunction runner) {
-
+        throw new UnsupportedOperationException("CommandBus is not testable in common implementations, and should only be tested in the platform implementation");
     }
 }

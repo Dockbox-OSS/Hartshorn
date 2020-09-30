@@ -25,6 +25,6 @@ public class TestPaginationService implements PaginationService {
     @NotNull
     @Override
     public PaginationBuilder builder() {
-        return null;
+        throw new UnsupportedOperationException("Pagination is not testable in common implementations, and should only be tested in the platform implementation");
     }
 }

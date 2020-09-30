@@ -30,11 +30,11 @@ public class TestArgumentValue extends AbstractArgumentValue<String> {
 
     @Override
     protected String parseArgument(@Nullable SimpleCommandBus.Arguments argument, @Nullable String key) {
-        return null;
+        throw new UnsupportedOperationException("ArgumentValue is not testable in common implementations, and should only be tested in the platform implementation");
     }
 
     @Override
     public String getArgument() {
-        return null;
+        throw new UnsupportedOperationException("ArgumentValue is not testable in common implementations, and should only be tested in the platform implementation");
     }
 }
