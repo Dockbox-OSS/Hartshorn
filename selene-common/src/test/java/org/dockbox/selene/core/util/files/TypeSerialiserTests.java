@@ -24,12 +24,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 
+import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.impl.util.files.serialize.ByteArrayTypeSerialiser;
 import org.dockbox.selene.core.impl.util.files.serialize.IntArrayTypeSerialiser;
 import org.dockbox.selene.core.impl.util.files.serialize.SetTypeSerialiser;
 import org.dockbox.selene.core.impl.util.files.serialize.ShortArrayTypeSerialiser;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Set;
@@ -155,5 +156,25 @@ public class TypeSerialiserTests {
         Assert.assertEquals(2, ls.size());
         Assert.assertTrue(ls.contains("test"));
         Assert.assertTrue(ls.contains("test2"));
+    }
+
+    @Test
+    public void testThatLanguagesCanBeSerialised() throws ObjectMappingException {
+        TestConfigurationLoader tcl = this.getSetTestLoader();
+        ConfigurationNode cn = tcl.createEmptyNode().setValue(new TypeToken<Language>() {}, Language.NL_NL);
+
+        Language ls = cn.getValue(TypeToken.of(Language.class));
+        Assert.assertEquals(ls.getCode(), Language.NL_NL.getCode());
+        Assert.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
+    }
+
+    @Test
+    public void testThatLanguagesCanBeDeserialised() throws ObjectMappingException {
+        TestConfigurationLoader tcl = this.getSetTestLoader();
+        ConfigurationNode cn = tcl.createEmptyNode().setValue(new TypeToken<Language>() {}, Language.NL_NL);
+
+        Language ls = cn.getValue(new TypeToken<Language>() {});
+        Assert.assertEquals(ls.getCode(), Language.NL_NL.getCode());
+        Assert.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
     }
 }

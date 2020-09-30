@@ -23,7 +23,7 @@ import org.dockbox.selene.core.impl.util.files.annotations.Default;
 import org.dockbox.selene.core.impl.util.files.annotations.RequiresProperty;
 import org.dockbox.selene.core.impl.util.files.mapping.NeutrinoObjectMapperFactory;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.commented.SimpleCommentedConfigurationNode;

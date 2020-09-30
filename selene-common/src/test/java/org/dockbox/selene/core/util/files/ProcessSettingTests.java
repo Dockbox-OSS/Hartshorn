@@ -24,7 +24,7 @@ import com.google.common.reflect.TypeToken;
 import org.dockbox.selene.core.impl.util.files.annotations.ProcessSetting;
 import org.dockbox.selene.core.impl.util.files.process.SettingProcessor;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
