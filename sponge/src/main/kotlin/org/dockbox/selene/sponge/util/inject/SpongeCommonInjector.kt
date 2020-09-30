@@ -24,9 +24,6 @@ import org.dockbox.selene.core.impl.server.config.DefaultGlobalConfig
 import org.dockbox.selene.core.impl.util.events.SimpleEventBus
 import org.dockbox.selene.core.impl.util.exceptions.SimpleExceptionHelper
 import org.dockbox.selene.core.impl.util.extension.SimpleExtensionManager
-import org.dockbox.selene.core.impl.util.files.SQLiteBulkDataManager
-import org.dockbox.selene.core.impl.util.files.YamlConfigManager
-import org.dockbox.selene.core.impl.util.files.YamlDataManager
 import org.dockbox.selene.core.impl.util.text.SimpleBroadcastService
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.server.config.GlobalConfig
@@ -35,10 +32,7 @@ import org.dockbox.selene.core.util.discord.DiscordUtils
 import org.dockbox.selene.core.util.events.EventBus
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper
 import org.dockbox.selene.core.util.extension.ExtensionManager
-import org.dockbox.selene.core.util.files.BulkDataManager
-import org.dockbox.selene.core.util.files.ConfigManager
-import org.dockbox.selene.core.util.files.DataManager
-import org.dockbox.selene.core.util.files.FileUtils
+import org.dockbox.selene.core.util.files.ConfigurateManager
 import org.dockbox.selene.core.util.inject.AbstractCommonInjector
 import org.dockbox.selene.core.util.player.PlayerStorageService
 import org.dockbox.selene.core.util.text.BroadcastService
@@ -48,7 +42,7 @@ import org.dockbox.selene.integrated.IntegratedServerExtension
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationService
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus
 import org.dockbox.selene.sponge.util.discord.SpongeDiscordUtils
-import org.dockbox.selene.sponge.util.files.SpongeFileUtils
+import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager
 import org.dockbox.selene.sponge.util.player.SpongePlayerStorageService
 import org.dockbox.selene.sponge.util.thread.SpongeThreadUtils
 import org.dockbox.selene.sponge.util.world.SpongeWorldStorageService
@@ -66,13 +60,10 @@ class SpongeCommonInjector : AbstractCommonInjector() {
         // Keep this alphabatically sorted if/when adding and/or swapping bindings (based on the interface type)
         // This is for no other usage than readability
         bind(BroadcastService::class.java).to(SimpleBroadcastService::class.java)
-        bind(BulkDataManager::class.java).to(SQLiteBulkDataManager::class.java)
         bind(CommandBus::class.java).to(SpongeCommandBus::class.java)
-        bind(ConfigManager::class.java).to(YamlConfigManager::class.java)
-        bind(DataManager::class.java).to(YamlDataManager::class.java)
+        bind(ConfigurateManager::class.java).to(SpongeConfigurateManager::class.java)
         bind(DiscordUtils::class.java).to(SpongeDiscordUtils::class.java)
         bind(EventBus::class.java).to(SimpleEventBus::class.java)
-        bind(FileUtils::class.java).to(SpongeFileUtils::class.java)
         bind(GlobalConfig::class.java).to(DefaultGlobalConfig::class.java)
         bind(Selene.IntegratedExtension::class.java).to(IntegratedServerExtension::class.java)
         bind(ResourceService::class.java).to(SimpleResourceService::class.java)

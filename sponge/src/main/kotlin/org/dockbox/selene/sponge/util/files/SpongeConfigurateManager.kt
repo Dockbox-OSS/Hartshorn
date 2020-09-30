@@ -17,29 +17,13 @@
 
 package org.dockbox.selene.sponge.util.files
 
-import java.io.IOException
-import java.nio.file.Files
 import java.nio.file.Path
-import org.dockbox.selene.core.util.files.FileUtils
+import java.util.*
+import org.dockbox.selene.core.impl.util.files.DefaultConfigurateManager
+import org.dockbox.selene.core.util.files.FileType
 import org.spongepowered.api.Sponge
 
-class SpongeFileUtils : FileUtils {
-    override fun createPathIfNotExists(path: Path): Path {
-        if (!path.toFile().exists()) path.toFile().mkdirs()
-        return path
-    }
-
-    override fun createFileIfNotExists(file: Path): Path {
-        if (!Files.exists(file)) {
-            try {
-                Files.createDirectories(file.parent)
-                Files.createFile(file)
-            } catch (ex: IOException) {
-                ex.printStackTrace()
-            }
-        }
-        return file
-    }
+class SpongeConfigurateManager : DefaultConfigurateManager(FileType.YAML) {
 
     override fun getDataDir(): Path {
         return getServerRoot().resolve("data/")
@@ -58,23 +42,23 @@ class SpongeFileUtils : FileUtils {
         return createPathIfNotExists(getServerRoot().resolve("extensions/"))
     }
 
-    override fun getModDir(): Path {
-        return createPathIfNotExists(getServerRoot().resolve("mods/"))
+    override fun getModDir(): Optional<Path> {
+        return Optional.of(createPathIfNotExists(getServerRoot().resolve("mods/")))
     }
 
     override fun getPluginDir(): Path {
         return createPathIfNotExists(getServerRoot().resolve("plugins/"))
     }
 
-    override fun getExtensionConfigdir(): Path {
+    override fun getExtensionConfigsDir(): Path {
         return getServerRoot().resolve("config/extensions/")
     }
 
-    override fun getModConfigDir(): Path {
-        return getServerRoot().resolve("config/")
+    override fun getModdedPlatformModsConfigDir(): Optional<Path> {
+        return Optional.of(getServerRoot().resolve("config/"))
     }
 
-    override fun getPluginConfigDir(): Path {
+    override fun getPlatformPluginsConfigDir(): Path {
         return getServerRoot().resolve("config/plugins/")
     }
 }

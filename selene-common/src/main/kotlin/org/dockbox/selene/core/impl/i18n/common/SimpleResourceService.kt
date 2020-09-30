@@ -21,14 +21,17 @@ import com.google.inject.Singleton
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CopyOnWriteArrayList
+import ninja.leaping.configurate.objectmapping.Setting
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable
 import org.dockbox.selene.core.i18n.common.Language
 import org.dockbox.selene.core.i18n.common.ResourceService
 import org.dockbox.selene.core.i18n.entry.ExternalResourceEntry
 import org.dockbox.selene.core.server.Selene
-import org.dockbox.selene.core.util.files.DataManager
+import org.dockbox.selene.core.server.ServerReference
+import org.dockbox.selene.core.util.files.ConfigurateManager
 
 @Singleton
-class SimpleResourceService : ResourceService {
+class SimpleResourceService : ResourceService, ServerReference() {
 
     private val resourceMaps: EnumMap<Language, Map<String, String>> = EnumMap(Language::class.java)
     private val knownEntries: MutableList<ExternalResourceEntry> = CopyOnWriteArrayList()
@@ -37,20 +40,34 @@ class SimpleResourceService : ResourceService {
         getResourceMap(Selene.getServer().getGlobalConfig().getDefaultLanguage())
     }
 
+    @ConfigSerializable
+    class ResourceConfig {
+        @Setting
+        var translations: Map<String, String> = HashMap()
+    }
+
     override fun getResourceMap(lang: Language): Map<String, String> {
         if (resourceMaps.containsKey(lang)) return resourceMaps[lang]!!
 
-        val translationDataMap = Selene.getInstance(DataManager::class.java).getDataFileContents(this, lang.code)
+        val cm = Selene.getInstance(ConfigurateManager::class.java)
+
+        val resourceConfig = cm.getFileContent(
+                cm.getConfigFile(super.getExtension(Selene::class.java)!!, lang.code),
+                ResourceConfig::class.java)
+
         val resourceMap = ConcurrentHashMap<String, String>()
-        translationDataMap.forEach { (k, v) ->
-            run {
-                resourceMap[k] = v.toString()
+        resourceConfig.ifPresent {
+            it.translations.forEach { (k, v) ->
+                run {
+                    resourceMap[k] = v
+                }
             }
         }
         resourceMaps[lang] = resourceMap
         return resourceMap
     }
 
+    // TODO: Populate if not exists
     override fun getTranslations(entry: ExternalResourceEntry): Map<Language, String> {
         val key = entry.getKey()
         knownEntries.add(entry)

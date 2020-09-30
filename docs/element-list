@@ -26,6 +26,11 @@ org.dockbox.selene.core.impl.util.events
 org.dockbox.selene.core.impl.util.exceptions
 org.dockbox.selene.core.impl.util.extension
 org.dockbox.selene.core.impl.util.files
+org.dockbox.selene.core.impl.util.files.annotations
+org.dockbox.selene.core.impl.util.files.mapping
+org.dockbox.selene.core.impl.util.files.process
+org.dockbox.selene.core.impl.util.files.serialize
+org.dockbox.selene.core.impl.util.files.util
 org.dockbox.selene.core.impl.util.player
 org.dockbox.selene.core.impl.util.text
 org.dockbox.selene.core.objects.discord
