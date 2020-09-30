@@ -344,7 +344,23 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     protected abstract fun getArgumentValue(type: String, permissions: AbstractPermission, key: String): A
     abstract fun registerCommandNoArgs(command: String, permissions: AbstractPermission, runner: CommandRunnerFunction)
     protected abstract fun convertContext(ctx: C, sender: CommandSource, command: String?): SimpleCommandContext
-    abstract fun registerCommandArgsAndOrChild(command: String, permissions: AbstractPermission, runner: CommandRunnerFunction)
+
+    open fun registerCommandArgsAndOrChild(command: String, permission: AbstractPermission, runner: CommandRunnerFunction) {
+        Selene.log().debug(String.format("Registering command '%s' with singular permission (%s)", command, permission.get()))
+        val parts = command.split(" ".toRegex()).toTypedArray()
+        val part = if (1 < parts.size) parts[1] else null
+        if (null != part && subcommand.matcher(part).matches()) {
+            registerChildCommand(command, runner, part, permission)
+        } else if (command.startsWith("*")) {
+            registerParentCommand(command, runner, permission)
+        } else {
+            registerSingleMethodCommand(command, runner, part!!, permission)
+        }
+    }
+
+    protected abstract fun registerChildCommand(command: String, runner: CommandRunnerFunction, usagePart: String, permissions: AbstractPermission)
+    protected abstract fun registerSingleMethodCommand(command: String, runner: CommandRunnerFunction, usagePart: String, permissions: AbstractPermission)
+    protected abstract fun registerParentCommand(command: String, runner: CommandRunnerFunction, permissions: AbstractPermission)
 
     companion object {
         val RegisteredCommands: List<String> = ArrayList()
