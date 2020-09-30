@@ -236,7 +236,7 @@ extends <a href=../org/dockbox/selene/core/impl/util/files/DefaultConfigurateMan
                                         </tr>
                                         
                                         <tr id="i4" class="altColor">
-                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a></code>
+                                            <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html>Optional</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a>&gt;</code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=SpongeConfigurateManager.html#getModDir()>getModDir</a>() </code>
                                             </th>
@@ -271,6 +271,14 @@ extends <a href=../org/dockbox/selene/core/impl/util/files/DefaultConfigurateMan
                                             <td class="colFirst"><code><a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a></code>
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=SpongeConfigurateManager.html#getPlatformPluginsConfigDir()>getPlatformPluginsConfigDir</a>() </code>
+                                            </th>
+                                            <td class="colLast"></td>
+                                        </tr>
+                                        
+                                        <tr id="i9" class="rowColor">
+                                            <td class="colFirst"><code>final <a href=../org/dockbox/selene/core/util/files/FileType.html>FileType</a></code>
+                                            </td>
+                                            <th class="colSecond" scope="row"><code><a href=SpongeConfigurateManager.html#getFileType()>getFileType</a>() </code>
                                             </th>
                                             <td class="colLast"></td>
                                         </tr>
@@ -409,7 +417,7 @@ extends <a href=../org/dockbox/selene/core/impl/util/files/DefaultConfigurateMan
                                           >
                                     <li class="blockList">
                                         <h4>getModDir</h4>
-                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a> <a href=SpongeConfigurateManager.html#getModDir()>getModDir</a>()</pre>
+                                        <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html>Optional</a>&lt;<a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a>&gt; <a href=SpongeConfigurateManager.html#getModDir()>getModDir</a>()</pre>
                                         <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->
@@ -465,11 +473,26 @@ extends <a href=../org/dockbox/selene/core/impl/util/files/DefaultConfigurateMan
                                     <!--   -->
                                 </a>
                                 <ul class=
-                                              "blockListLast"
+                                              "blockList"
                                           >
                                     <li class="blockList">
                                         <h4>getPlatformPluginsConfigDir</h4>
                                         <pre class="methodSignature"> <a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a> <a href=SpongeConfigurateManager.html#getPlatformPluginsConfigDir()>getPlatformPluginsConfigDir</a>()</pre>
+                                        <div class="block"></div>
+                                        
+                                        <!-- TODO missing return annotation -->
+                                    </li>
+                                </ul>
+                                
+                                <a id="getFileType()">
+                                    <!--   -->
+                                </a>
+                                <ul class=
+                                              "blockListLast"
+                                          >
+                                    <li class="blockList">
+                                        <h4>getFileType</h4>
+                                        <pre class="methodSignature"> final <a href=../org/dockbox/selene/core/util/files/FileType.html>FileType</a> <a href=SpongeConfigurateManager.html#getFileType()>getFileType</a>()</pre>
                                         <div class="block"></div>
                                         
                                         <!-- TODO missing return annotation -->

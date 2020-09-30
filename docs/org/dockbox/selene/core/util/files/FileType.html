@@ -125,7 +125,7 @@ var pathtoroot = "../../../../../../";
 public enum <span class="typeNameLabel"><a href=FileType.html>FileType</a></span>
 extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>Enum</a>&lt;<a href=FileType.html>FileType</a>&gt;
                     </pre>
-                    <div class="block"></div>
+                    <div class="block"><p>Enumerated values containing the file extensions for several commonly used file types.</p></div>
                 </li>
             </ul>
         </div>
@@ -325,7 +325,7 @@ extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>En
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=FileType.html#asFileName(String)>asFileName</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> file) </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Converts a given filename (without the file extension present) to a <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/index.html>String</a> value holding the correct format.</td>
                                         </tr>
                                         
                                         <tr id="i1" class="rowColor">
@@ -333,7 +333,7 @@ extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>En
                                             </td>
                                             <th class="colSecond" scope="row"><code><a href=FileType.html#asPath(Path,String)>asPath</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a> parent, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> file) </code>
                                             </th>
-                                            <td class="colLast"></td>
+                                            <td class="colLast">Converts a given filename (without the file extension present), combined with a <a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a> reference to a directory, to a new <a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a> reference to a file.</td>
                                         </tr>
                                         
                                         <tr id="i2" class="altColor">
@@ -408,7 +408,16 @@ extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>En
                                     <li class="blockList">
                                         <h4>asFileName</h4>
                                         <pre class="methodSignature"> final <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> <a href=FileType.html#asFileName(String)>asFileName</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> file)</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p>Converts a given filename (without the file extension present) to a <a href=https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/index.html>String</a> value holding the correct format.</p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>file</code> - The filename without a file extension present</dd>
+                                            
+                                            
+                                        </dl>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
@@ -423,7 +432,20 @@ extends <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/Enum.html>En
                                     <li class="blockList">
                                         <h4>asPath</h4>
                                         <pre class="methodSignature"> final <a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a> <a href=FileType.html#asPath(Path,String)>asPath</a>(<a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a> parent, <a href=https://docs.oracle.com/javase/8/docs/api/java/lang/String.html>String</a> file)</pre>
-                                        <div class="block"></div>
+                                        <div class="block"><p><p>Converts a given filename (without the file extension present), combined with a <a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a> reference to a directory, to a new <a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a> reference to a file. If the file did not yet exist, it is created.</p><p>Assumes the parent <a href=https://docs.oracle.com/javase/8/docs/api/java/nio/file/Path.html>Path</a> already exists.</p></p></div>
+                                        
+                                        <dl>
+                                            <dt><span class="paramLabel">Parameters:</span></dt>
+                                            
+                                            
+                                            <dd><code>parent</code> - The parent directory</dd>
+                                            
+                                            
+                                            
+                                            <dd><code>file</code> - The filename without a file extension present</dd>
+                                            
+                                            
+                                        </dl>
                                         
                                         <!-- TODO missing return annotation -->
                                     </li>
