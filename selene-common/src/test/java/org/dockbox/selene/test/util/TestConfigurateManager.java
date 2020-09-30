@@ -21,66 +21,71 @@ import org.dockbox.selene.core.impl.util.files.DefaultConfigurateManager;
 import org.dockbox.selene.core.util.files.FileType;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
 public class TestConfigurateManager extends DefaultConfigurateManager {
 
-    protected TestConfigurateManager() {
+    private final Path tempDirRoot;
+
+    protected TestConfigurateManager() throws IOException {
         super(FileType.JSON);
+        this.tempDirRoot = Files.createTempDirectory("SeleneTesting");
     }
 
     @NotNull
     @Override
     public Path getDataDir() {
-        return null;
+        return this.tempDirRoot.resolve("data");
     }
 
     @NotNull
     @Override
     public Path getLogsDir() {
-        return null;
+        return this.tempDirRoot.resolve("logs");
     }
 
     @NotNull
     @Override
     public Path getServerRoot() {
-        return null;
+        return this.tempDirRoot;
     }
 
     @NotNull
     @Override
     public Path getExtensionDir() {
-        return null;
+        return this.tempDirRoot.resolve("extensions");
     }
 
     @NotNull
     @Override
     public Optional<Path> getModDir() {
-        return Optional.empty();
+        return Optional.of(this.tempDirRoot.resolve("mods"));
     }
 
     @NotNull
     @Override
     public Path getPluginDir() {
-        return null;
+        return this.tempDirRoot.resolve("plugins");
     }
 
     @NotNull
     @Override
     public Path getExtensionConfigsDir() {
-        return null;
+        return this.tempDirRoot.resolve("config/extensions");
     }
 
     @NotNull
     @Override
     public Optional<Path> getModdedPlatformModsConfigDir() {
-        return Optional.empty();
+        return Optional.of(this.tempDirRoot.resolve("config/mods"));
     }
 
     @NotNull
     @Override
     public Path getPlatformPluginsConfigDir() {
-        return null;
+        return this.tempDirRoot.resolve("config/plugins");
     }
 }
