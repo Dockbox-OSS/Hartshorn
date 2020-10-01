@@ -89,7 +89,13 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
     @Override
     public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunnerFunction runner) {
-        Sponge.getCommandManager().register(Selene.getServer(), CommandSpec.builder().permission(permission.get()).executor(this.buildExecutor(runner, command)).build(), command);
+        Sponge.getCommandManager().register(
+                Selene.getServer(),
+                CommandSpec.builder()
+                        .permission(permission.get())
+                        .executor(this.buildExecutor(runner, command))
+                        .build(),
+                command);
     }
 
     @Override
@@ -120,12 +126,21 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         spec.permission(permission.get());
 
         Selene.log().debug("Found single method command '" + commandPart + "'");
-        if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(command.substring(0, command.indexOf(' ')))) {
-            Selene.log().debug("Registering single method command '" + commandPart + "' to Sponge");
-            spec.executor(this.buildExecutor(runner, command)).arguments(this.parseArguments(command.substring(command.indexOf(' ') + 1)));
-            Sponge.getCommandManager().register(Selene.getServer(), spec.build(), command.substring(0, command.indexOf(' ')));
-            SimpleCommandBus.Companion.getRegisteredCommands().add(command.substring(0, command.indexOf(' ')));
-        }
+        if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(command.substring(0, command.indexOf(' '))))
+            this.registerValidatedSingleMethodCommand(command, runner, commandPart, spec);
+    }
+
+    private void registerValidatedSingleMethodCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, String commandPart, CommandSpec.Builder spec) {
+        String alias = command.substring(0, command.indexOf(' '));
+        Selene.log().debug("Registering single method command '" + commandPart + "' to Sponge");
+        spec
+                .executor(this.buildExecutor(runner, command))
+                .arguments(this.parseArguments(command.substring(command.indexOf(' ') + 1)));
+        Sponge.getCommandManager().register(
+                Selene.getServer(),
+                spec.build(),
+                alias);
+        SimpleCommandBus.Companion.getRegisteredCommands().add(alias);
     }
 
     @Override
@@ -136,25 +151,29 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
         String registeredCmd = command.substring(1);
         if (command.contains(" ")) registeredCmd = command.substring(1, command.indexOf(' '));
-        if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(registeredCmd)) {
-            List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, new ArrayList<>());
-            childs.forEach(child -> {
-                if (super.getParentCommandPrefix().equals(child.getFirst())) {
-                    spec.executor(child.getSecond().getExecutor());
-                } else {
-                    spec.child(child.getSecond(), child.getFirst());
-                }
-            });
+        if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(registeredCmd))
+            this.registerValidatedParentCommand(command, runner, spec, registeredCmd);
+    }
 
-            spec.executor(this.buildExecutor(runner, command));
+    private void registerValidatedParentCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, CommandSpec.Builder spec, String registeredCmd) {
+        List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, new ArrayList<>());
+        childs.forEach(child -> this.defineExecutorOrChild(spec, child));
+        spec.executor(this.buildExecutor(runner, command));
 
-            try {
-                Selene.log().debug("Registering '" + registeredCmd + "' to Sponge");
-                Sponge.getCommandManager().register(Selene.getServer(), spec.build(), registeredCmd);
-            } catch (IllegalArgumentException e) {
-                Selene.getServer().except(e.getMessage(), e);
-            }
-            SimpleCommandBus.Companion.getRegisteredCommands().add(registeredCmd);
+        try {
+            Selene.log().debug("Registering '" + registeredCmd + "' to Sponge");
+            Sponge.getCommandManager().register(Selene.getServer(), spec.build(), registeredCmd);
+        } catch (IllegalArgumentException e) {
+            Selene.getServer().except(e.getMessage(), e);
+        }
+        SimpleCommandBus.Companion.getRegisteredCommands().add(registeredCmd);
+    }
+
+    private void defineExecutorOrChild(CommandSpec.Builder spec, Tuple<String, CommandSpec> child) {
+        if (super.getParentCommandPrefix().equals(child.getFirst())) {
+            spec.executor(child.getSecond().getExecutor());
+        } else {
+            spec.child(child.getSecond(), child.getFirst());
         }
     }
 
@@ -219,13 +238,9 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
 
     private static CommandElement wrap(CommandElement... elements) {
-        if (0 == elements.length) {
-            return GenericArguments.none();
-        } else if (1 == elements.length) {
-            return elements[0];
-        } else {
-            return GenericArguments.seq(elements);
-        }
+        if (0 == elements.length) return GenericArguments.none();
+        else if (1 == elements.length) return elements[0];
+        else return GenericArguments.seq(elements);
     }
 
     private CommandExecutor buildExecutor(CommandRunnerFunction runner, String command) {
@@ -245,11 +260,8 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             eb.post(ceb);
 
             if (!ceb.isCancelled()) {
-                if (src instanceof Player) {
-                    runner.run(sender, ctx);
-                } else {
-                    runner.run(SpongeConsole.Companion.getInstance(), ctx);
-                }
+                if (src instanceof Player) runner.run(sender, ctx);
+                else runner.run(SpongeConsole.Companion.getInstance(), ctx);
 
                 eb.post(new CommandEvent.After(sender, ctx));
             }
@@ -314,7 +326,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     public static class FaweArgument extends CommandElement {
 
         enum FaweTypes {
-            REGION, EDIT_SESSION, PATTERN, MASK
+            PATTERN, MASK
         }
 
         private final FaweTypes type;
@@ -335,10 +347,6 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 pctx.setSession(fawePlayer.getSession());
 
                 switch (this.type) {
-                    case REGION:
-                        return fawePlayer.getSelection();
-                    case EDIT_SESSION:
-                        return fawePlayer.getNewEditSession();
                     case PATTERN:
                         String patternRaw = args.getRaw();
                         return WorldEdit.getInstance().getPatternFactory().parseFromInput(patternRaw, pctx);
