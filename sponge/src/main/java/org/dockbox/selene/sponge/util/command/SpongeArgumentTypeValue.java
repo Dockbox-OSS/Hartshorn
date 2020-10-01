@@ -83,14 +83,10 @@ public class SpongeArgumentTypeValue extends AbstractArgumentValue<CommandElemen
                 return GenericArguments.vector3d(Text.of(key));
             case WORLD:
                 return GenericArguments.world(Text.of(key));
-            case EDITSESSION:
-                return new FaweArgument(Text.of(key), FaweTypes.EDIT_SESSION);
             case MASK:
                 return new FaweArgument(Text.of(key), FaweTypes.MASK);
             case PATTERN:
                 return new FaweArgument(Text.of(key), FaweTypes.PATTERN);
-            case REGION:
-                return new FaweArgument(Text.of(key), FaweTypes.REGION);
             case OTHER:
             default:
                 return null;
@@ -98,6 +94,6 @@ public class SpongeArgumentTypeValue extends AbstractArgumentValue<CommandElemen
     }
 
     public CommandElement getArgument() {
-        return getPermission() == null ? super.getElement() : GenericArguments.requiringPermission(getElement(), getPermission());
+        return null == this.getPermission() ? super.getElement() : GenericArguments.requiringPermission(this.getElement(), this.getPermission());
     }
 }
