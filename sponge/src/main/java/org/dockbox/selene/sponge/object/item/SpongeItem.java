@@ -73,6 +73,21 @@ public class SpongeItem extends Item<ItemStack> {
     }
 
     @Override
+    public void setDisplayName(Text displayName) {
+        this.getReference().ifPresent(i -> i.offer(Keys.DISPLAY_NAME, SpongeConversionUtil.toSponge(displayName)));
+    }
+
+    @Override
+    public void setLore(List<Text> lore) {
+        // TODO
+    }
+
+    @Override
+    public void setAmount(int amount) {
+        this.getReference().ifPresent(i -> i.setQuantity(amount));
+    }
+
+    @Override
     public Function<ItemStack, Optional<ItemStack>> getUpdateReferenceTask() {
         return Optional::ofNullable;
     }

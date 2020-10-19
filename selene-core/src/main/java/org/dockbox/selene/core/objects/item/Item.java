@@ -18,6 +18,9 @@
 package org.dockbox.selene.core.objects.item;
 
 import org.dockbox.selene.core.objects.ReferenceHolder;
+import org.dockbox.selene.core.objects.keys.Key;
+import org.dockbox.selene.core.objects.keys.KeyHolder;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.construct.ConstructionUtil;
@@ -26,7 +29,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class Item<T> extends ReferenceHolder<T> {
+@SuppressWarnings("rawtypes")
+public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<Item> {
 
     protected Item(@NotNull T reference) {
         super(Optional.of(reference));
@@ -46,11 +50,27 @@ public abstract class Item<T> extends ReferenceHolder<T> {
 
     public abstract int getAmount();
 
+    public abstract void setDisplayName(Text displayName);
+
+    public abstract void setLore(List<Text> lore);
+
+    public abstract void setAmount(int amount);
+
     public static Item<?> of(String id, int amount) {
         return Selene.getInstance(ConstructionUtil.class).item(id, amount);
     }
 
     public static Item<?> of(String id) {
         return Selene.getInstance(ConstructionUtil.class).item(id);
+    }
+
+    @Override
+    public <A> void applyKey(Key<Item, A> key, A appliedValue) {
+        key.applyTo(this, appliedValue);
+    }
+
+    @Override
+    public <A> Exceptional<A> getValue(Key<Item, A> key) {
+        return Exceptional.ofNullable(key.getFrom(this));
     }
 }
