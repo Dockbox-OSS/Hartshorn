@@ -75,4 +75,21 @@ public abstract class Key<K, A> {
         return this.getter.apply(keyType);
     }
 
+    /**
+     Resolves the correct parent type for a given key, so it can be applied safely. This is useful when applying
+     keys to supertypes which extend from multiple Keyholders, like {@link org.dockbox.selene.core.objects.user.Player}.
+     This method applies a constraint on the type, so that the supertype has to extend type parameter {@link K}, so
+     we can ensure no {@link ClassCastException} will be thrown. This also prevents us from applying a {@link Key} made
+     for e.g. {@link org.dockbox.selene.core.objects.item.Item} to a {@link org.dockbox.selene.core.objects.user.Player}.
+
+     @param <T>
+     The type parameter indicating the supertype to resolve
+
+     @return The current instance, resolved for the supertype.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends K> Key<T, A> resolve() {
+        return (Key<T, A>) this;
+    }
+
 }

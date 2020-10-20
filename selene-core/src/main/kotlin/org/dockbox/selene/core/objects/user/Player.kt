@@ -29,7 +29,7 @@ import org.dockbox.selene.core.objects.targets.MessageReceiver
 import org.dockbox.selene.core.objects.targets.PermissionHolder
 import org.dockbox.selene.core.text.Text
 
-abstract class Player(uniqueId: UUID, name: String) : Identifiable(uniqueId, name), MessageReceiver, CommandSource, PermissionHolder, Locatable {
+abstract class Player(uniqueId: UUID, name: String) : Identifiable<Player>(uniqueId, name), MessageReceiver, CommandSource, PermissionHolder, Locatable {
 
     abstract fun isOnline(): Boolean
     abstract fun getFawePlayer(): Exceptional<FawePlayer<*>>
