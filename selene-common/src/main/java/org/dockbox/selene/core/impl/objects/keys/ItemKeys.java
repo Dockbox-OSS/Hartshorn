@@ -15,9 +15,10 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.objects.keys;
+package org.dockbox.selene.core.impl.objects.keys;
 
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.keys.Key;
 import org.dockbox.selene.core.text.Text;
 
 import java.util.function.BiConsumer;
