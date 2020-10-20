@@ -18,9 +18,7 @@
 package org.dockbox.selene.core.objects.item;
 
 import org.dockbox.selene.core.objects.ReferenceHolder;
-import org.dockbox.selene.core.objects.keys.Key;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
-import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.construct.ConstructionUtil;
@@ -64,13 +62,4 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
         return Selene.getInstance(ConstructionUtil.class).item(id);
     }
 
-    @Override
-    public <A> void applyKey(Key<Item, A> key, A appliedValue) {
-        key.applyTo(this, appliedValue);
-    }
-
-    @Override
-    public <A> Exceptional<A> getValue(Key<Item, A> key) {
-        return Exceptional.ofNullable(key.getFrom(this));
-    }
 }

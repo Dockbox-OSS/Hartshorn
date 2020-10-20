@@ -18,11 +18,21 @@
 package org.dockbox.selene.core.objects.keys;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.server.Selene;
 
+@SuppressWarnings("unchecked")
 public interface KeyHolder<T> {
 
-    <A> void applyKey(Key<T, A> key, A appliedValue);
+    default <A> void applyKey(Key<T, A> key, A appliedValue) {
+        try {
+            key.applyTo((T) this, appliedValue);
+        } catch (ClassCastException e) {
+            Selene.getServer().except("Attempted to apply " + key + " to non-supporting type " + this, e);
+        }
+    }
 
-    <A> Exceptional<A> getValue(Key<T, A> key);
+    default <A> Exceptional<A> getValue(Key<T, A> key) {
+        return Exceptional.ofSupplier(() -> key.getFrom((T) this));
+    }
 
 }
