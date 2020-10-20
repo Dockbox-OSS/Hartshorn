@@ -20,6 +20,7 @@ package org.dockbox.selene.sponge.util;
 import com.flowpowered.math.vector.Vector3d;
 
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.CommandSource;
 import org.dockbox.selene.core.objects.tuple.Vector3D;
@@ -29,6 +30,7 @@ import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
 import org.dockbox.selene.core.text.navigation.Pagination;
 import org.dockbox.selene.sponge.exceptions.TypeConversionException;
+import org.dockbox.selene.sponge.object.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
@@ -39,6 +41,7 @@ import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -57,6 +60,7 @@ import java.util.stream.Collectors;
 public enum SpongeConversionUtil {
     ;
 
+    @NotNull
     public static <T> Optional<?> autoDetectFromSponge(T object) {
         // CommandSource, Location, World, Gamemode
         if (object instanceof org.spongepowered.api.command.CommandSource) {
@@ -69,8 +73,16 @@ public enum SpongeConversionUtil {
             return Optional.of(fromSponge((GameMode) object));
         } else if (object instanceof User) {
             return Optional.of(new SpongePlayer(((Identifiable) object).getUniqueId(), ((Tamer) object).getName()));
+        } else if (object instanceof ItemStack) {
+            return Optional.of(fromSponge((ItemStack) object));
         }
         return Optional.empty();
+    }
+
+    @NotNull
+    public static ItemStack toSponge(Item<ItemStack> item) {
+        // Create a copy of the ItemStack so Sponge doesn't modify the Item reference
+        return item.getReference().orElse(ItemStack.empty()).copy();
     }
 
     @NotNull
@@ -106,6 +118,7 @@ public enum SpongeConversionUtil {
         return b.build();
     }
 
+    @NotNull
     private static Optional<org.spongepowered.api.text.action.ShiftClickAction<?>> toSponge(ShiftClickAction<?> action) {
         if (null == action) return Optional.empty();
         Object result = action.getResult();
@@ -115,6 +128,7 @@ public enum SpongeConversionUtil {
         return Optional.empty();
     }
 
+    @NotNull
     private static Optional<org.spongepowered.api.text.action.HoverAction<?>> toSponge(HoverAction<?> action) {
         if (null == action) return Optional.empty();
         Object result = action.getResult();
@@ -125,6 +139,7 @@ public enum SpongeConversionUtil {
         return Optional.empty();
     }
 
+    @NotNull
     private static Optional<org.spongepowered.api.text.action.ClickAction<?>> toSponge(ClickAction<?> action) {
         if (null == action) return Optional.empty();
         Object result = action.getResult();
@@ -157,12 +172,20 @@ public enum SpongeConversionUtil {
         return Exceptional.of(new Location<>(world.get(), vector3d));
     }
 
+    @NotNull
+    public static Item<ItemStack> fromSponge(ItemStack item) {
+        // Create a copy of the ItemStack so Sponge doesn't modify the Item reference
+        return new SpongeItem(item.copy());
+    }
+
+    @NotNull
     public static org.dockbox.selene.core.objects.location.Location fromSponge(Location<World> location) {
         org.dockbox.selene.core.objects.location.World world = fromSponge(location.getExtent());
         Vector3D vector3D = new Vector3D(location.getX(), location.getY(), location.getZ());
         return new org.dockbox.selene.core.objects.location.Location(vector3D, world);
     }
 
+    @NotNull
     public static Exceptional<World> toSponge(org.dockbox.selene.core.objects.location.World world) {
         if (world instanceof SpongeWorld) {
             World wref = ((SpongeWorld) world).getReference();
@@ -173,6 +196,7 @@ public enum SpongeConversionUtil {
                 .orElseThrow(() -> new RuntimeException("World reference not present on server")));
     }
 
+    @NotNull
     public static GameMode toSponge(Gamemode gamemode) {
         switch (gamemode) {
             case SURVIVAL:
@@ -189,11 +213,13 @@ public enum SpongeConversionUtil {
         }
     }
 
+    @NotNull
     public static org.dockbox.selene.core.text.Text fromSponge(Text text) {
         // TODO: Scheduled in S42
         return org.dockbox.selene.core.text.Text.of();
     }
 
+    @NotNull
     public static PaginationList toSponge(Pagination pagination) {
         PaginationList.Builder builder = PaginationList.builder();
 
@@ -208,6 +234,7 @@ public enum SpongeConversionUtil {
         return builder.build();
     }
 
+    @NotNull
     public static Exceptional<CommandSource> fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
         if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.Companion.getInstance());
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
@@ -220,6 +247,7 @@ public enum SpongeConversionUtil {
         return new SpongeWorld(world.getUniqueId(), world.getName());
     }
 
+    @NotNull
     public static Gamemode fromSponge(GameMode gamemode) {
         try {
             return Enum.valueOf(Gamemode.class, gamemode.toString());

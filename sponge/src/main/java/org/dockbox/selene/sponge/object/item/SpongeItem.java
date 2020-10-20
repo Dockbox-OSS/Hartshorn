@@ -17,14 +17,17 @@
 
 package org.dockbox.selene.sponge.object.item;
 
+import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -34,6 +37,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class SpongeItem extends Item<ItemStack> {
+
+    public static final int DEFAULT_STACK_SIZE = 64;
 
     public SpongeItem(@NotNull ItemStack initialValue) {
         super(initialValue);
@@ -49,16 +54,32 @@ public class SpongeItem extends Item<ItemStack> {
 
     @Override
     protected ItemStack getById(String id, int amount) {
-        return Sponge.getRegistry()
-                .getType(ItemType.class, id.replaceFirst("minecraft:", ""))
+        if (this.isNumericalId(id)) {
+            Selene.log().warn("The usage of numerical ID's is not recommended! This will be removed as of 1.13");
+        }
+
+        ItemStack itemStack = Sponge.getGame().getRegistry()
+                .getType(ItemType.class, id)
                 .map(it -> ItemStack.of(it, amount))
-                .orElse(ItemStack.of(ItemTypes.AIR, amount));
+                .orElse(ItemStack.empty());
+
+        return itemStack;
+    }
+
+    private boolean isNumericalId(String id) {
+        return id.matches("[0-9|:]+");
     }
 
     @Override
-    public Text getDisplayName() {
-        Optional<org.spongepowered.api.text.Text> dno = this.getReference().map(i -> i.get(Keys.DISPLAY_NAME)).get();
-        return dno.map(SpongeConversionUtil::fromSponge).orElseGet(Text::of);
+    public Text getDisplayName(Language language) {
+        Exceptional<ItemStack> ref = this.getReference();
+        Optional<Text> name = ref.map(i -> i.get(Keys.DISPLAY_NAME)).get().map(SpongeConversionUtil::fromSponge);
+        if (name.isPresent()) return name.get();
+
+        Exceptional<String> translatedName = ref.map(i -> i.getTranslation().get());
+        if (translatedName.isPresent()) return Text.of(translatedName.get());
+
+        return Text.of(ref.map(i -> i.getItem().getId()).orElse(IntegratedResource.UNKNOWN.getValue(language)));
     }
 
     @Override
@@ -95,7 +116,25 @@ public class SpongeItem extends Item<ItemStack> {
     }
 
     @Override
+    public String getId() {
+        if (this.referenceExists()) {
+            this.setId(this.getReference().get().getItem().getId());
+        }
+        return super.getId();
+    }
+
+    @Override
+    public int getStackSize() {
+        return this.getReference().map(ItemStack::getMaxStackQuantity).orElse(DEFAULT_STACK_SIZE);
+    }
+
+    @Override
     public Function<ItemStack, Optional<ItemStack>> getUpdateReferenceTask() {
         return Optional::ofNullable;
+    }
+
+    @Override
+    public Class<?> getReferenceType() {
+        return ItemStack.class;
     }
 }

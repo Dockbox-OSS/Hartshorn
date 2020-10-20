@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.objects.item;
 
+import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.ReferenceHolder;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
 import org.dockbox.selene.core.server.Selene;
@@ -30,19 +31,27 @@ import java.util.Optional;
 @SuppressWarnings("rawtypes")
 public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<Item> {
 
+    private String id;
+
     protected Item(@NotNull T reference) {
         super(Optional.of(reference));
+        this.id = this.getId();
     }
 
     protected Item(String id, int amount) {
         super(Optional.empty());
+        this.id = id;
         T type = this.getById(id, amount);
         super.setReference(Optional.of(type));
     }
 
     protected abstract T getById(String id, int amount);
 
-    public abstract Text getDisplayName();
+    public abstract Text getDisplayName(Language language);
+
+    public Text getDisplayName() {
+        return this.getDisplayName(Selene.getServer().getGlobalConfig().getDefaultLanguage());
+    }
 
     public abstract List<Text> getLore();
 
@@ -55,6 +64,21 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
     public abstract void addLore(Text lore);
 
     public abstract void setAmount(int amount);
+
+    public String getId() {
+        return this.id;
+    }
+
+    protected void setId(String id) {
+        this.id = id;
+    }
+
+    public Item stack() {
+        this.setAmount(this.getStackSize());
+        return this;
+    }
+
+    public abstract int getStackSize();
 
     public static Item<?> of(String id, int amount) {
         return Selene.getInstance(ConstructionUtil.class).item(id, amount);

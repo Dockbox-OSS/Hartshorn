@@ -17,22 +17,27 @@
 
 package org.dockbox.selene.core.objects;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Optional;
 import java.util.function.Function;
 
 public class FieldReferenceHolder<T> extends ReferenceHolder<T> {
 
     private final Function<T, Optional<T>> updateRefTask;
+    private final Class<T> type;
 
-    public FieldReferenceHolder(@Nullable Optional<T> reference, Function<T, Optional<T>> updateRefTask) {
+    public FieldReferenceHolder(Optional<T> reference, Function<T, Optional<T>> updateRefTask, Class<T> type) {
         super(reference);
         this.updateRefTask = updateRefTask;
+        this.type = type;
     }
 
     @Override
     public Function<T, Optional<T>> getUpdateReferenceTask() {
         return this.updateRefTask;
+    }
+
+    @Override
+    public Class<?> getReferenceType() {
+        return this.type;
     }
 }

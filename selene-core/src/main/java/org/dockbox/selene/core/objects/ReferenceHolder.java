@@ -47,4 +47,6 @@ public abstract class ReferenceHolder<T> {
     }
 
     public abstract Function<T, Optional<T>> getUpdateReferenceTask();
+
+    public abstract Class<?> getReferenceType();
 }
