@@ -24,12 +24,13 @@ import org.dockbox.selene.core.i18n.permissions.Permission
 import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.objects.targets.CommandSource
 import org.dockbox.selene.core.objects.targets.Identifiable
+import org.dockbox.selene.core.objects.targets.InventoryHolder
 import org.dockbox.selene.core.objects.targets.Locatable
 import org.dockbox.selene.core.objects.targets.MessageReceiver
 import org.dockbox.selene.core.objects.targets.PermissionHolder
 import org.dockbox.selene.core.text.Text
 
-abstract class Player(uniqueId: UUID, name: String) : Identifiable<Player>(uniqueId, name), MessageReceiver, CommandSource, PermissionHolder, Locatable {
+abstract class Player(uniqueId: UUID, name: String) : Identifiable<Player>(uniqueId, name), MessageReceiver, CommandSource, PermissionHolder, Locatable, InventoryHolder {
 
     abstract fun isOnline(): Boolean
     abstract fun getFawePlayer(): Exceptional<FawePlayer<*>>

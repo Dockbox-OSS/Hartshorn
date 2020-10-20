@@ -25,6 +25,7 @@ import org.dockbox.selene.core.i18n.common.Language
 import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.i18n.entry.IntegratedResource
 import org.dockbox.selene.core.objects.FieldReferenceHolder
+import org.dockbox.selene.core.objects.item.Item
 import org.dockbox.selene.core.objects.location.Location
 import org.dockbox.selene.core.objects.location.Location.Companion.EMPTY
 import org.dockbox.selene.core.objects.location.World
@@ -40,6 +41,10 @@ import org.dockbox.selene.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.data.key.Keys
 import org.spongepowered.api.entity.living.player.gamemode.GameModes
+import org.spongepowered.api.item.inventory.Inventory
+import org.spongepowered.api.item.inventory.ItemStack
+import org.spongepowered.api.item.inventory.property.SlotPos
+import org.spongepowered.api.item.inventory.query.QueryOperationTypes
 import org.spongepowered.api.service.permission.SubjectData
 import org.spongepowered.api.service.user.UserStorageService
 import org.spongepowered.api.util.Tristate
@@ -49,7 +54,7 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     private val spongePlayer = FieldReferenceHolder(Sponge.getServer().getPlayer(uniqueId), Function() {
         return@Function if (it == null) Sponge.getServer().getPlayer(uniqueId)
         else Optional.empty()
-    })
+    }, org.spongepowered.api.entity.living.player.Player::class.java)
 
     override fun isOnline(): Boolean {
         return spongePlayer.referenceExists() && spongePlayer.reference.get().isOnline
@@ -173,5 +178,48 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
         // No reference refresh required as this is done by getLocation. Should never throw NPE as Location is either
         // valid or EMPTY (World instance follows this same guideline).
         return getLocation().world
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun giveItem(item: Item<*>) {
+        if (item.referenceType != ItemStack::class.java) {
+            return
+        }
+        if (spongePlayer.referenceExists()) {
+            spongePlayer.reference.ifPresent {
+                it.inventory.offer(SpongeConversionUtil.toSponge(item as Item<ItemStack>))
+            }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun giveItem(item: Item<*>, row: Int, column: Int) {
+        if (item.referenceType != ItemStack::class.java) {
+            return
+        }
+        if (spongePlayer.referenceExists()) {
+            spongePlayer.reference.ifPresent {
+                val inventory = it.inventory.query<Inventory>(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotPos.of(column, row)))
+                val spItem = SpongeConversionUtil.toSponge(item as Item<ItemStack>)
+                Selene.log().info("Type: " + spItem.type)
+                inventory.set(spItem)
+            }
+        }
+    }
+
+    override fun getItemAt(row: Int, column: Int): Exceptional<Item<*>> {
+        if (spongePlayer.referenceExists()) {
+            return spongePlayer.reference.map {
+                val slot = it.inventory.query<Inventory>(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotPos.of(column, row)))
+                return@map slot.peek().map { item -> SpongeConversionUtil.fromSponge(item) }
+                        .map { item -> item as Item<*> }
+                        .orElse(Item.of("0"))
+            }
+        }
+        return Exceptional.of(IllegalStateException("Player reference lost"))
+    }
+
+    override fun getInventory(): Array<Array<Item<*>>> {
+        TODO("Not yet implemented")
     }
 }
