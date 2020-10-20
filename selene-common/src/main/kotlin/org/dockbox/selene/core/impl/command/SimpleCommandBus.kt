@@ -113,7 +113,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             else if (result.isPresent) src.sendWithPrefix(result.get())
         }
 
-        if (registration.command.requireConfirm && src is Identifiable) {
+        if (registration.command.requireConfirm && src is Identifiable<*>) {
             confirmableCommands[src.uniqueId] = runnable
 
             val confirmMessage = Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE)
@@ -222,14 +222,14 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     private fun checkSenderInCooldown(sender: CommandSource, ctx: CommandContext, method: Method): Boolean {
         val command = method.getAnnotation(Command::class.java)
         if (command.cooldownDuration < 0) return false
-        if (sender is Identifiable) {
+        if (sender is Identifiable<*>) {
             val registrationId = getRegistrationId(sender, ctx)
             return (Utils.isInCooldown(registrationId))
         }
         return false
     }
 
-    private fun getRegistrationId(sender: Identifiable, ctx: CommandContext): String {
+    private fun getRegistrationId(sender: Identifiable<*>, ctx: CommandContext): String {
         val uuid = sender.uniqueId
         val alias = ctx.alias
         return "$uuid$$alias"
@@ -277,7 +277,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             }
 
             val command = method.getAnnotation(Command::class.java)
-            if (command.cooldownDuration > 0 && sender is Identifiable) {
+            if (command.cooldownDuration > 0 && sender is Identifiable<*>) {
                 val registrationId = getRegistrationId(sender, ctx)
                 Utils.cooldown(registrationId, command.cooldownDuration, command.cooldownUnit)
             }

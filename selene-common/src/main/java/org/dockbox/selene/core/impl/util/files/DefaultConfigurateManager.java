@@ -121,7 +121,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
 
             return Exceptional.ofNullable(content);
         } catch (IOException | IllegalArgumentException | ObjectMappingException | UnsupportedFileException e) {
-            return Exceptional.of(null, e);
+            return Exceptional.of(e);
         }
     }
 
