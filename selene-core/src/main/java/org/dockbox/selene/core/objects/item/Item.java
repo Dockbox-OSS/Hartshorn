@@ -52,6 +52,8 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
 
     public abstract void setLore(List<Text> lore);
 
+    public abstract void addLore(Text lore);
+
     public abstract void setAmount(int amount);
 
     public static Item<?> of(String id, int amount) {

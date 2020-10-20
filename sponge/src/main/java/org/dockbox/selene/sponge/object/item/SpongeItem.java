@@ -79,7 +79,14 @@ public class SpongeItem extends Item<ItemStack> {
 
     @Override
     public void setLore(List<Text> lore) {
-        // TODO
+        this.getReference().ifPresent(i -> i.offer(Keys.ITEM_LORE, lore.stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList())));
+    }
+
+    @Override
+    public void addLore(Text lore) {
+        List<Text> existing = this.getLore();
+        existing.add(lore);
+        this.setLore(existing);
     }
 
     @Override
