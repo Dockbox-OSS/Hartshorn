@@ -20,23 +20,59 @@ package org.dockbox.selene.core.objects.keys;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+/**
+ A low-level type which can be used in combination with a {@link KeyHolder<K>} to dynamically apply and retrieve
+ values from types.
+
+ @param <K>
+ The type parameter indicating the constraint for the type to apply to/retrieve from.
+ @param <A>
+ The type parameter indicating the constraint for the value to be applied/retrieved.
+ */
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class Key<K, A> {
 
     private final BiConsumer<K, A> setter;
     private final Function<K, A> getter;
 
+    /**
+     Instantiates a new Key using a given setter and getter.
+
+     @param setter
+     The setter, accepting two values. The first being the type to apply to, constrained using type parameter {@link K}.
+     The second being the value to apply, constrained using type parameter {@link A}.
+     @param getter
+     The getter, accepting one value, and returning another. The accepting value being the type to retrieve from,
+     constrained using type parameter {@link K}. The return value being the value retreived from the type, constrained
+     using type parameter {@link A}.
+     */
     protected Key(BiConsumer<K, A> setter, Function<K, A> getter) {
         this.setter = setter;
         this.getter = getter;
     }
 
-    public void applyTo(K itemDataHolder, A appliedValue) {
-        this.setter.accept(itemDataHolder, appliedValue);
+    /**
+     Apply a given value of type parameter {@link A} to a given type constrained by type parameter {@link K}.
+
+     @param keyType
+     The data holder, constrained by type parameter {@link K}.
+     @param appliedValue
+     The value to apply, constrained by type parameter {@link A}.
+     */
+    public void applyTo(K keyType, A appliedValue) {
+        this.setter.accept(keyType, appliedValue);
     }
 
-    public A getFrom(K itemDataHolder) {
-        return this.getter.apply(itemDataHolder);
+    /**
+     Retrieves a value from the given type constrained by type parameter {@link K}.
+
+     @param keyType
+     The data holder, constrained by type parameter {@link K}.
+
+     @return The retrieved value, constrained by type parameter {@link A}.
+     */
+    public A getFrom(K keyType) {
+        return this.getter.apply(keyType);
     }
 
 }
