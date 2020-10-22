@@ -302,21 +302,11 @@ public abstract class Selene {
      The consumer to apply
      */
     protected void initIntegratedExtensions(Consumer<ExtensionContext> consumer) {
-        getInstance(ExtensionManager.class).collectIntegratedExtensions().forEach(consumer);
+        getInstance(ExtensionManager.class).initialiseExtensions().forEach(consumer);
     }
 
     /**
-     Initiates external extensions and performs a given consumer on each loaded extension.
-
-     @param consumer
-     The consumer to apply
-     */
-    protected void initExternalExtensions(Consumer<ExtensionContext> consumer) {
-        getInstance(ExtensionManager.class).getExternalExtensions().forEach(consumer);
-    }
-
-    /**
-     Initiates a {@link Selene} instance. Collecting integrated and external extensions and registering them to the
+     Initiates a {@link Selene} instance. Collecting integrated extensions and registering them to the
      appropriate {@link EventBus}, {@link CommandBus}, and {@link DiscordUtils} instances.
      */
     protected void init() {
@@ -332,7 +322,6 @@ public abstract class Selene {
         DiscordUtils du = getInstance(DiscordUtils.class);
 
         this.initIntegratedExtensions(this.getConsumer("integrated", cb, eb, cm, du));
-        this.initExternalExtensions(this.getConsumer("external", cb, eb, cm, du));
 
         getInstance(EventBus.class).post(new ServerEvent.Init());
     }
@@ -382,7 +371,8 @@ public abstract class Selene {
     }
 
     private Consumer<ExtensionContext> getConsumer(String contextType, CommandBus cb, EventBus eb, ExtensionManager em, DiscordUtils du) {
-        return (ExtensionContext ctx) -> ctx.getClasses().values().forEach(type -> {
+        return (ExtensionContext ctx) -> {
+            Class<?> type = ctx.getExtensionClass();
             log().info("Found type [" + type.getCanonicalName() + "] in " + contextType + " context");
             Optional<?> oi = em.getInstance(type);
             oi.ifPresent(i -> {
@@ -399,7 +389,7 @@ public abstract class Selene {
                             .forEach(eb::subscribe);
                 }
             });
-        });
+        };
     }
 
     /**

@@ -23,19 +23,9 @@ import org.dockbox.selene.core.util.extension.Extension
 import org.dockbox.selene.core.util.extension.ExtensionContext
 import org.dockbox.selene.core.util.extension.status.ExtensionStatus
 
-class SimpleExtensionContext(override var type: ExtensionContext.ComponentType, override var source: String) : ExtensionContext {
+class SimpleExtensionContext(override var type: ExtensionContext.ComponentType, override var source: String, override var extensionClass: Class<*>, override var extension: Extension) : ExtensionContext {
 
     override var entryStatus: MutableMap<Class<*>, ExtensionStatus> = ConcurrentHashMap()
-    override var classes: MutableMap<Extension, Class<*>> = ConcurrentHashMap()
-
-    override fun addComponentClass(clazz: Class<*>): Boolean {
-        if (clazz.isAnnotationPresent(Extension::class.java)) {
-            val header = clazz.getAnnotation(Extension::class.java)
-            classes[header] = clazz
-            return true
-        }
-        return false
-    }
 
     override fun addStatus(clazz: Class<*>, status: ExtensionStatus) {
         if (status.intValue < 0) Selene.log().warn("Manually assigning deprecated status to [" + clazz.canonicalName + "]! " +

@@ -17,9 +17,7 @@
 
 package org.dockbox.selene.core.util.extension
 
-import java.nio.file.Path
 import java.util.*
-import org.jetbrains.annotations.NotNull
 
 interface ExtensionManager {
 
@@ -32,9 +30,7 @@ interface ExtensionManager {
     fun <T> getInstance(type: Class<T>): Optional<T>
     fun getInstance(id: String): Optional<*>
 
-    fun getExternalExtensions(): @NotNull MutableList<out ExtensionContext>
-    fun collectIntegratedExtensions(): List<ExtensionContext>
-    fun loadExternalExtension(file: Path): Optional<out ExtensionContext>
+    fun initialiseExtensions(): List<ExtensionContext>
 
     fun getRegisteredExtensionIds(): List<String>
 }
