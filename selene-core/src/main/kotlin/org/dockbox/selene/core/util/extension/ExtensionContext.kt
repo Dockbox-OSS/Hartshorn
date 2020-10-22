@@ -24,14 +24,15 @@ interface ExtensionContext {
     var type: ComponentType
     var source: String
     var entryStatus: MutableMap<Class<*>, ExtensionStatus>
-    var classes: MutableMap<Extension, Class<*>>
+    var extensionClass: Class<*>
+    var extension: Extension
 
-    fun addComponentClass(clazz: Class<*>): Boolean
     fun addStatus(clazz: Class<*>, status: ExtensionStatus)
     fun getStatus(clazz: Class<*>): ExtensionStatus?
 
     enum class ComponentType(var string: String) {
-        EXTERNAL_JAR("External .jar file"), INTERNAL_CLASS("Internal class"), UNKNOWN("Unknown")
+        INTERNAL_CLASS("Internal class"),
+        UNKNOWN("Unknown")
     }
 
 }
