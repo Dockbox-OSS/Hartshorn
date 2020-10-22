@@ -21,6 +21,7 @@ import com.boydti.fawe.object.FawePlayer;
 
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.optional.Exceptional;
@@ -174,5 +175,27 @@ public class TestPlayer extends Player {
     @Override
     public void setPermissions(boolean value, @NotNull String... permissions) {
         for (String perm : permissions) this.setPermission(perm, value);
+    }
+
+    @Override
+    public void giveItem(@NotNull Item<?> item) {
+
+    }
+
+    @Override
+    public void giveItem(@NotNull Item<?> item, int row, int column) {
+
+    }
+
+    @NotNull
+    @Override
+    public Exceptional<Item<?>> getItemAt(int row, int column) {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Item<?>[][] getInventory() {
+        return new Item[0][];
     }
 }

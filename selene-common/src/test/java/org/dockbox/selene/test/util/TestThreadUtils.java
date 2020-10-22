@@ -46,7 +46,7 @@ public class TestThreadUtils implements ThreadUtils {
         try {
             return Exceptional.ofNullable(future.get());
         } catch (InterruptedException | ExecutionException e) {
-            return Exceptional.of(null, e);
+            return Exceptional.of(e);
         }
     }
 
@@ -58,7 +58,7 @@ public class TestThreadUtils implements ThreadUtils {
         try {
             return Exceptional.ofNullable(future.get());
         } catch (InterruptedException | ExecutionException e) {
-            return Exceptional.of(null, e);
+            return Exceptional.of(e);
         }
     }
 }
