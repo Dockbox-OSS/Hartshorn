@@ -48,6 +48,7 @@ import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.objects.targets.CommandSource
 import org.dockbox.selene.core.objects.targets.Console
 import org.dockbox.selene.core.objects.targets.Identifiable
+import org.dockbox.selene.core.objects.tuple.Triad
 import org.dockbox.selene.core.objects.user.Player
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.text.Text
@@ -56,7 +57,6 @@ import org.dockbox.selene.core.text.actions.HoverAction
 import org.dockbox.selene.core.util.Utils
 import org.dockbox.selene.core.util.extension.Extension
 import org.dockbox.selene.core.util.extension.ExtensionManager
-
 
 abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     enum class Arguments {
@@ -163,7 +163,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     }
 
     override fun createClassRegistration(clazz: Class<*>): ClassCommandRegistration {
-        val information: Triple<Command, AbstractPermission, Array<String>> = getCommandInformation(clazz)
+        val information: Triad<Command, AbstractPermission, Array<String>> = getCommandInformation(clazz)
         val methods: Array<Method> = clazz.declaredMethods
         val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(Arrays
                 .stream(methods)
@@ -176,12 +176,12 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         return ClassCommandRegistration(information.third[0], information.third, information.second, information.first, clazz, registrations)
     }
 
-    private fun getCommandInformation(element: AnnotatedElement): Triple<Command, AbstractPermission, Array<String>> {
+    private fun getCommandInformation(element: AnnotatedElement): Triad<Command, AbstractPermission, Array<String>> {
         val command: Command = element.getAnnotation(Command::class.java)
 
         val permission: AbstractPermission = if ("" == command.permissionKey) command.permission else ExternalPermission(command.permissionKey)
 
-        return Triple(command, permission, command.aliases)
+        return Triad(command, permission, command.aliases)
     }
 
     override fun createSingleMethodRegistrations(methods: Collection<Method>): Array<MethodCommandRegistration> {
@@ -214,7 +214,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             allowed
         }.map { method: Method ->
             method.isAccessible = true
-            val information: Triple<Command, AbstractPermission, Array<String>> = getCommandInformation(method)
+            val information: Triad<Command, AbstractPermission, Array<String>> = getCommandInformation(method)
             MethodCommandRegistration(information.third[0], information.third, information.first, method, information.second)
         }.toArray { size -> arrayOfNulls<MethodCommandRegistration>(size) }
     }
