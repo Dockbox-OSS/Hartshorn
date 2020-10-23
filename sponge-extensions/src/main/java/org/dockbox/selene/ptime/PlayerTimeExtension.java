@@ -29,5 +29,5 @@ import org.dockbox.selene.core.util.extension.Extension;
 )
 @Placeholder(description = "Placeholder for future platform extension", by = "GuusLieben", assignee = "GuusLieben")
 public class PlayerTimeExtension {
-    
+
 }

@@ -26,7 +26,6 @@ description = 'Sponge platform extensions for Selene'
 dependencies {
     compileOnly project(':selene-core')
     compileOnly project(':selene-common')
-    compileOnly project(':sponge')
 
     compileOnly 'org.spongepowered:spongeapi:7.1.0'
 }
