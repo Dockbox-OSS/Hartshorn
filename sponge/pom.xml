@@ -107,7 +107,8 @@
     </dependencies>
 
     <build>
-        <directory>${parent.basedir}/dist/</directory>
+        <!-- Directory doesn't like the usage of parent.basedir, as it creates a folder with that name under /sponge -->
+        <directory>${basedir}/../dist/</directory>
         <finalName>${build.target.name}</finalName>
         <plugins>
             <plugin>

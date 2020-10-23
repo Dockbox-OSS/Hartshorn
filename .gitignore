@@ -3,7 +3,7 @@ build
 .idea/
 gradle/
 dist
-*.hprof
 target
 dependency-reduced-pom.xml
 *.iml
+*.hprof
