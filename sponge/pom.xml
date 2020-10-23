@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright (C) 2020 Guus Lieben
+  ~  
+  ~  This framework is free software; you can redistribute it and/or modify
+  ~  it under the terms of the GNU Lesser General Public License as
+  ~  published by the Free Software Foundation, either version 2.1 of the
+  ~  License, or (at your option) any later version.
+  ~  
+  ~  This library is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+  ~  the GNU Lesser General Public License for more details.
+  ~  
+  ~  You should have received a copy of the GNU Lesser General Public License
+  ~  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.dockbox.selene</groupId>
+    <artifactId>sponge</artifactId>
+    <version>${parent.version}</version>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>org.dockbox</groupId>
+        <artifactId>selene</artifactId>
+        <version>3.0.0-alpha</version>
+    </parent>
+
+    <properties>
+        <main.class>org.dockbox.selene.sponge.SeleneSpongeImpl</main.class>
+
+        <!-- Versions -->
+        <luckperms.version>4.4</luckperms.version>
+        <sponge.api.version>7.2.0</sponge.api.version>
+        <magibridge.version>2.10</magibridge.version>
+        <multichat.version>1.8.1</multichat.version>
+        <nucleus.version>1.14.3-SNAPSHOT-S7.1</nucleus.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>drnaylor</id>
+            <name>DrNaylor Artifactory</name>
+            <url>http://repo.drnaylor.co.uk/artifactory/list/minecraft</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Modules -->
+        <dependency>
+            <groupId>org.dockbox.selene</groupId>
+            <artifactId>selene-core</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dockbox.selene</groupId>
+            <artifactId>selene-common</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dockbox.selene</groupId>
+            <artifactId>extensions</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dockbox.selene</groupId>
+            <artifactId>sponge-extensions</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+
+        <!-- Platform -->
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongeapi</artifactId>
+            <version>${sponge.api.version}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Platform plugins -->
+        <dependency>
+            <groupId>me.lucko.luckperms</groupId>
+            <artifactId>luckperms-api</artifactId>
+            <version>${luckperms.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.Eufranio</groupId>
+            <artifactId>MagiBridge</artifactId>
+            <version>${magibridge.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.MultiChat</groupId>
+            <artifactId>Development</artifactId>
+            <version>${multichat.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.nucleuspowered</groupId>
+            <artifactId>nucleus-api</artifactId>
+            <version>${nucleus.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <directory>${parent.basedir}/dist/</directory>
+        <finalName>${build.target.name}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>${main.class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <minimizeJar>true</minimizeJar>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.fasterxml.jackson</pattern>
+                                    <shadedPattern>org.dockbox.shaded.fasterxml.jackson</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.commons</pattern>
+                                    <shadedPattern>org.dockbox.shaded.apache.commons</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

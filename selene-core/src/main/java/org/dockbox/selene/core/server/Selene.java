@@ -48,10 +48,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Consumer;
@@ -146,7 +149,7 @@ public abstract class Selene {
 
     private final Logger log = LoggerFactory.getLogger(Selene.class);
     private String version;
-    private LocalDate lastUpdate;
+    private LocalDateTime lastUpdate;
     /**
      Constant value holding the GitHub username(s) of the author(s) of {@link Selene}. This does not include names of
      extension developers.
@@ -221,14 +224,23 @@ public abstract class Selene {
      */
     protected void construct() {
         String tVer = "dev";
-        LocalDate tLU = LocalDate.now();
+        LocalDateTime tLU = LocalDateTime.now();
 
         try {
             Properties properties = new Properties();
             properties.load(this.getClass().getResourceAsStream("/selene.properties"));
 
-            // LocalDate can be parsed directly, as it is generated using LocalDate when building with Gradle
-            tLU = LocalDate.parse(properties.getOrDefault("last_update", Instant.now().toString()).toString());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")
+                    .withLocale(Locale.getDefault())
+                    .withZone(ZoneId.systemDefault());
+
+            tLU = LocalDateTime.parse(
+                    properties.getOrDefault(
+                            "last_update",
+                            formatter.format(Instant.now())
+                    ).toString(),
+                    formatter
+            );
             tVer = properties.getOrDefault("version", "dev").toString();
         } catch (IOException e) {
             this.except("Failed to convert resource file", e);
@@ -426,7 +438,7 @@ public abstract class Selene {
      @return The last update
      */
     @NotNull
-    public LocalDate getLastUpdate() {
+    public LocalDateTime getLastUpdate() {
         return this.lastUpdate;
     }
 
