@@ -26,20 +26,12 @@ import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionContext.ComponentType;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.dockbox.selene.core.util.extension.status.ExtensionStatus;
-import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -49,10 +41,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Singleton
 public class SimpleExtensionManager implements ExtensionManager {
@@ -64,9 +53,8 @@ public class SimpleExtensionManager implements ExtensionManager {
     @Override
     public Optional<ExtensionContext> getContext(@NotNull Class<?> type) {
         for (SimpleExtensionContext ctx : globalContexts) {
-            for (Class<?> componentType : ctx.getClasses().values()) {
-                if (componentType.equals(type)) return Optional.of(ctx);
-            }
+            Class<?> componentClassType = ctx.getExtensionClass();
+            if (componentClassType.equals(type)) return Optional.of(ctx);
         }
         return Optional.empty();
     }
@@ -75,9 +63,7 @@ public class SimpleExtensionManager implements ExtensionManager {
     @Override
     public Optional<ExtensionContext> getContext(@NonNls @NotNull String id) {
         for (SimpleExtensionContext ctx : globalContexts) {
-            for (Extension extension : ctx.getClasses().keySet()) {
-                if (extension.id().equals(id)) return Optional.of(ctx);
-            }
+            if (ctx.getExtension().id().equals(id)) return Optional.of(ctx);
         }
         return Optional.empty();
     }
@@ -101,37 +87,21 @@ public class SimpleExtensionManager implements ExtensionManager {
         return Optional.ofNullable(instanceMappings.get(id));
     }
 
-    @Override
-    public @NotNull List<? extends ExtensionContext> getExternalExtensions() {
-        Path moduleDir = Selene.getInstance(ConfigurateManager.class).getExtensionDir();
-        try (Stream<Path> stream = Files.walk(moduleDir, 1)) {
-            List<SimpleExtensionContext> contexts = new CopyOnWriteArrayList<>();
-            Selene.log().info("Scanning [" + moduleDir + "] for component files");
-            // Filter out anything that isn't a directory (making it a file), as we only want to scan one layer deep
-            stream.filter(file -> !Files.isDirectory(file))
-                    .forEach(jar -> {
-                        Selene.log().info("Attempting to load [" + jar.getFileName() + "]");
-                        this.loadExternalExtension(jar).ifPresent(contexts::add);
-                    });
-
-            globalContexts.addAll(contexts);
-            return contexts;
-        } catch (IOException e) {
-            return new ArrayList<>();
-        }
-    }
-
     @NotNull
     @Override
-    public List<ExtensionContext> collectIntegratedExtensions() {
+    public List<ExtensionContext> initialiseExtensions() {
         Reflections integratedReflections = new Reflections("org.dockbox.selene");
         Set<Class<?>> annotatedTypes = integratedReflections.getTypesAnnotatedWith(Extension.class);
         Selene.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
         return annotatedTypes.stream().map(type -> {
 
             Selene.log().info(" - [" + type.getCanonicalName() + "]");
-            SimpleExtensionContext context = new SimpleExtensionContext(ComponentType.INTERNAL_CLASS, type.getCanonicalName());
-            context.addComponentClass(type);
+            SimpleExtensionContext context = new SimpleExtensionContext(
+                    ComponentType.INTERNAL_CLASS,
+                    type.getCanonicalName(),
+                    type,
+                    type.getAnnotation(Extension.class)
+            );
 
             return new Tuple<>(context, type);
         }).filter(tuple -> {
@@ -141,31 +111,6 @@ public class SimpleExtensionManager implements ExtensionManager {
             }
             return false;
         }).map(Tuple::getFirst).collect(Collectors.toList());
-    }
-
-    @NotNull
-    @Override
-    public Optional<? extends SimpleExtensionContext> loadExternalExtension(@NotNull Path file) {
-        if (this.addJarToClassPath(file)) {
-
-            // Context should always be created for all injected jar files, so we can find it back later
-            String fileName = file.toString();
-            SimpleExtensionContext context = new SimpleExtensionContext(ComponentType.EXTERNAL_JAR, fileName);
-            Selene.log().info("Prepared context for external file [" + fileName + "]");
-
-            try (JarFile jarFile = new JarFile(file.toFile())) {
-                // After adding the jar to the classpath, start registering all relevant classes
-                jarFile.stream()
-                        .filter(entry -> !entry.isDirectory() && entry.getName().endsWith(".class"))
-                        .forEach(entry -> this.injectJarEntry(entry, context));
-            } catch (IOException e) {
-                Selene.getServer().except("Failed to convert known .jar file to JarFile instance", e);
-            }
-            return Optional.of(context);
-        } else {
-            Selene.log().warn("Failed to add [" + file.getFileName() + "] to classpath");
-        }
-        return Optional.empty();
     }
 
     @NotNull
@@ -186,61 +131,10 @@ public class SimpleExtensionManager implements ExtensionManager {
         return new ArrayList<>(instanceMappings.keySet());
     }
 
-    private boolean addJarToClassPath(Path jar) {
-        if (jar.getFileName().toString().endsWith(".jar")) {
-            try {
-                Method addUrl = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                addUrl.setAccessible(true);
-                addUrl.invoke(ClassLoader.getSystemClassLoader(), jar.toUri().toURL());
-
-                return true;
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | MalformedURLException e) {
-                Selene.getServer().except("Failed to add [" + jar.getFileName() + "] to classpath", e);
-                return false;
-            }
-        }
-        return false;
-    }
-
-    private void injectJarEntry(JarEntry entry, SimpleExtensionContext context) {
-        String className = entry.getName().replace('/', '.');
-        className = className.substring(0, className.length() - ".class".length());
-
-        try {
-//            ClassLoader ucl = ClassLoader.getSystemClassLoader();
-            // loadClass will first look for already loaded classes. If the class is already present or was injected
-            // when loading a jar, this will return the pre-existing class.
-            Class<?> classEntry = ClassLoader.getSystemClassLoader().loadClass(className);
-
-            // Waiting for restructure, potentially moving towards supertype externals over annotations. See
-            // https://github.com/GuusLieben/Selene/issues/83
-            // TODO S83: Resolve externally added class entries not having annotations detected
-            // classEntry.getAnnotations(); // this is always empty, I do not know why.
-
-            // If the class isn't added to the classpath, the above will cause an
-            // exception making it so this line is never reached.
-            // Additionally, the addComponentClass method scans if the entry is annotated.
-            // This ensures there will be no NPE's here.
-            if (context.addComponentClass(classEntry)) {
-
-                Extension header = classEntry.getAnnotation(Extension.class);
-                if (null == header) {
-                    throw new IllegalStateException("Supposed header is absent from component entry");
-                }
-
-                this.createComponentInstance(classEntry, context);
-
-                Selene.log().info("Finished component registration for [" + classEntry.getCanonicalName() + "] with status " + context.getStatus(classEntry));
-            }
-        } catch (ClassNotFoundException | IllegalStateException e) {
-            Selene.getServer().except("Failed to load (supposedly) injected class [" + className + "]", e);
-        }
-    }
-
-    private <T> boolean createComponentInstance(Class<T> entry, SimpleExtensionContext context) {
+    private <T> boolean createComponentInstance(Class<T> entry, ExtensionContext context) {
         Extension header = entry.getAnnotation(Extension.class);
         List<Extension> existingHeaders = new LinkedList<>();
-        globalContexts.forEach(ctx -> existingHeaders.addAll(ctx.getClasses().keySet()));
+        globalContexts.forEach(ctx -> existingHeaders.add(ctx.getExtension()));
         //noinspection CallToSuspiciousStringMethod
         if (existingHeaders.stream().anyMatch(e -> e.uniqueId().equals(header.uniqueId()))) {
             Selene.log().warn("Extension with unique ID " + header.uniqueId() + " already present!");

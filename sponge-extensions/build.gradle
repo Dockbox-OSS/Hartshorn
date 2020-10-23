@@ -15,10 +15,17 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-rootProject.name = 'Selene'
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm'
+}
 
-include 'sponge'
-include 'selene-core'
-include 'selene-common'
-include 'extensions'
-include 'sponge-extensions'
+group = 'org.dockbox.selene.sponge'
+description = 'Sponge platform extensions for Selene'
+
+dependencies {
+    compileOnly project(':selene-core')
+    compileOnly project(':selene-common')
+
+    compileOnly 'org.spongepowered:spongeapi:7.1.0'
+}

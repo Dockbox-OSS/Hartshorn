@@ -15,10 +15,19 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-rootProject.name = 'Selene'
+package org.dockbox.selene.ptime;
 
-include 'sponge'
-include 'selene-core'
-include 'selene-common'
-include 'extensions'
-include 'sponge-extensions'
+import org.dockbox.selene.core.annotations.Placeholder;
+import org.dockbox.selene.core.util.extension.Extension;
+
+@Extension(
+        id = "ptime",
+        name = "Player Time",
+        description = "Player time extension",
+        authors = {"GuusLieben"},
+        uniqueId = "0b371c1f-483b-48bd-a7ab-6c06bebdc0ff"
+)
+@Placeholder(description = "Placeholder for future platform extension", by = "GuusLieben", assignee = "GuusLieben")
+public class PlayerTimeExtension {
+
+}

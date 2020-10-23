@@ -37,6 +37,7 @@ dependencies {
     compile project(path: ':selene-core', configuration: 'shadow')
     compile project(path: ':selene-common', configuration: 'shadow')
     compile project(path: ':extensions', configuration: 'shadow')
+    compile project(path: ':sponge-extensions', configuration: 'shadow')
 
     compileOnly 'me.lucko.luckperms:luckperms-api:4.4'
     compileOnly 'org.spongepowered:spongeapi:7.1.0'
@@ -47,4 +48,5 @@ dependencies {
     testCompileOnly project(':selene-core')
     testCompileOnly project(':selene-common')
     testCompileOnly project(':extensions')
+    testCompileOnly project(':sponge-extensions')
 }
