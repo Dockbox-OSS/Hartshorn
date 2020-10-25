@@ -39,8 +39,6 @@
         <!-- General -->
         <timestamp>${maven.build.timestamp}</timestamp>
         <maven.build.timestamp.format>yyyy-MM-dd_HH-mm</maven.build.timestamp.format>
-        <kotlin.version>1.4.10</kotlin.version>
-        <java.version>1.8</java.version>
 
         <!-- Build -->
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -52,18 +50,32 @@
         <experimentalCoroutines>enable</experimentalCoroutines>
 
         <!-- Versions -->
+        <!-- Languages -->
+        <kotlin.version>1.4.10</kotlin.version>
+        <java.version>1.8</java.version>
+        <!-- Maven plugins -->
         <git-commit-id-plugin.version>4.0.2</git-commit-id-plugin.version>
-        <configurate.version>3.6.1</configurate.version>
+        <dokka.version>0.10.0</dokka.version>
+        <!-- Plugin versions -->
         <fawe.version>latest</fawe.version>
         <worldedit.version>6.1.4-SNAPSHOT</worldedit.version>
         <plotsquared.version>3.1</plotsquared.version>
+        <!-- Framework/Library versions-->
+        <configurate.version>3.6.1</configurate.version>
         <slf4j.version>1.7.25</slf4j.version>
         <jda.version>4.1.1_155</jda.version>
-
-        <!-- Test versions -->
+        <!-- Testing versions -->
         <junit.version>5.3.2</junit.version>
         <mockito.version>1.10.19</mockito.version>
     </properties>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jcenter</id>
+            <name>JCenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <repositories>
         <repository>
@@ -244,6 +256,50 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <reportOutputDirectory>${project.basedir}</reportOutputDirectory>
+                    <destDir>docs</destDir>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>aggregate</id>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <phase>site</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Dokka does not currently support multi-module projects, so it cannot be used (yet) -->
+            <!--            <plugin>-->
+            <!--                <groupId>org.jetbrains.dokka</groupId>-->
+            <!--                <artifactId>dokka-maven-plugin</artifactId>-->
+            <!--                <version>${dokka.version}</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <phase>prepare-package</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>dokka</goal>-->
+            <!--                            <goal>javadoc</goal>-->
+            <!--                            <goal>javadocJar</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--                <configuration>-->
+            <!--                    <dokkaPlugins>-->
+            <!--                        <plugin>-->
+            <!--                            <groupId>org.jetbrains.dokka</groupId>-->
+            <!--                            <artifactId>kotlin-as-java-plugin</artifactId>-->
+            <!--                            <version>${dokka.version}</version>-->
+            <!--                        </plugin>-->
+            <!--                    </dokkaPlugins>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
 
