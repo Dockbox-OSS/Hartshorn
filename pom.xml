@@ -176,6 +176,8 @@
     </dependencies>
 
     <build>
+        <directory>${basedir}/../dist/${project.artifactId}</directory>
+        <finalName>${build.target.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
