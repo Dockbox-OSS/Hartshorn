@@ -272,7 +272,7 @@ public abstract class Selene {
 
      @return The instance, if present. Otherwise returns null
      */
-    public static <T> T getInstance(Class<T> type) {
+    public static <T> T getInstance(Class<T> type, InjectorProperty<?>... additionalProperties) {
         T typeInstance = null;
         if (type.isAnnotationPresent(Extension.class)) {
             typeInstance = getInstance(ExtensionManager.class).getInstance(type).orElse(null);
@@ -284,6 +284,10 @@ public abstract class Selene {
                 } catch (ConfigurationException | ProvisionException ignored) {
                 }
             }
+        }
+
+        if (typeInstance instanceof InjectableType) {
+            ((InjectableType) typeInstance).injectProperties(additionalProperties);
         }
 
         getServer().injectMembers(typeInstance);
