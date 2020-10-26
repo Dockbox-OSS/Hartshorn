@@ -118,7 +118,7 @@ public class SpongeItem extends Item<ItemStack> {
     @Override
     public String getId() {
         if (this.referenceExists()) {
-            this.setId(this.getReference().get().getItem().getId());
+            this.setId(this.getReference().get().getType().getId());
         }
         return super.getId();
     }

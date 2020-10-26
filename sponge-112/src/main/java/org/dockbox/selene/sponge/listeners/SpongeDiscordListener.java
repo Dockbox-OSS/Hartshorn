@@ -51,9 +51,9 @@ import org.dockbox.selene.core.events.discord.DiscordEvent.ReactionAdded;
 import org.dockbox.selene.core.events.discord.DiscordEvent.Reconnected;
 import org.dockbox.selene.core.events.discord.DiscordEvent.Unbanned;
 import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.dockbox.selene.core.util.events.EventBus;
-import org.dockbox.selene.sponge.SeleneSpongeImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -64,7 +64,7 @@ import java.util.Optional;
 
 public class SpongeDiscordListener extends ListenerAdapter {
 
-    private final EventBus bus = SeleneSpongeImpl.getInstance(EventBus.class);
+    private final EventBus bus = Selene.getInstance(EventBus.class);
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
@@ -100,7 +100,7 @@ public class SpongeDiscordListener extends ListenerAdapter {
                     alias,
                     arguments.toArray(new String[0])
             );
-            SeleneSpongeImpl.getInstance(DiscordUtils.class).post(alias, ctx);
+            Selene.getInstance(DiscordUtils.class).post(alias, ctx);
         }
     }
 
