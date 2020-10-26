@@ -29,6 +29,7 @@ import org.dockbox.selene.core.events.server.ServerEvent;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
+import org.dockbox.selene.core.util.environment.MinecraftVersion;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper;
 import org.dockbox.selene.core.util.extension.Extension;
@@ -534,6 +535,6 @@ public abstract class Selene {
 
      @return The Minecraft version
      */
-    public abstract String getMinecraftVersion();
+    public abstract MinecraftVersion getMinecraftVersion();
 
 }

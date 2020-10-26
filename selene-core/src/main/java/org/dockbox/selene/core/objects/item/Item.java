@@ -88,4 +88,6 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
         return Selene.getInstance(ConstructionUtil.class).item(id);
     }
 
+    // TODO GuusLieben, enchantments
+
 }

@@ -172,7 +172,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
         ServerType st = Selene.getServer().getServerType();
         String platformVersion = Selene.getServer().getPlatformVersion();
 
-        String mcVersion = Selene.getServer().getMinecraftVersion();
+        String mcVersion = Selene.getServer().getMinecraftVersion().getReadableVersionString();
 
         String javaVersion = System.getProperty("java.version");
         String javaVendor = System.getProperty("java.vendor");
