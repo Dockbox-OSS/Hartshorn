@@ -20,6 +20,7 @@ package org.dockbox.selene.sponge.util;
 import com.flowpowered.math.vector.Vector3d;
 
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.CommandSource;
@@ -41,6 +42,7 @@ import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
@@ -75,7 +77,15 @@ public enum SpongeConversionUtil {
             return Optional.of(new SpongePlayer(((Identifiable) object).getUniqueId(), ((Tamer) object).getName()));
         } else if (object instanceof ItemStack) {
             return Optional.of(fromSponge((ItemStack) object));
+        } else if (object instanceof Enchantment) {
+            return fromSponge((Enchantment) object).toOptional();
         }
+        return Optional.empty();
+    }
+
+    @NotNull
+    public static Optional<Enchantment> toSponge(Enchant enchantment) {
+        // TODO GuusLieben, enchantment conversion (also update ItemStack conversions)
         return Optional.empty();
     }
 
@@ -170,6 +180,18 @@ public enum SpongeConversionUtil {
         if (world.errorPresent()) return Exceptional.of(world.getError());
         Vector3d vector3d = new Vector3d(location.getX().doubleValue(), location.getY().doubleValue(), location.getZ().doubleValue());
         return Exceptional.of(new Location<>(world.get(), vector3d));
+    }
+
+    @NotNull
+    public static Exceptional<Enchant> fromSponge(Enchantment enchantment) {
+        try {
+            String id = enchantment.getType().getId();
+            int level = enchantment.getLevel();
+            Enchant enchant = new Enchant(org.dockbox.selene.core.objects.item.Enchantment.valueOf(id.toUpperCase()), level);
+            return Exceptional.of(enchant);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return Exceptional.of(e);
+        }
     }
 
     @NotNull
