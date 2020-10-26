@@ -32,6 +32,7 @@ import org.dockbox.selene.core.annotations.DiscordCommand.ListeningLevel;
 import org.dockbox.selene.core.events.discord.DiscordCommandContext;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
@@ -45,11 +46,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import kotlin.Triple;
-
 public abstract class DefaultDiscordUtils implements DiscordUtils {
 
-    private static final Map<String, Triple<DiscordCommand, Method, Object>> commandMethods = new ConcurrentHashMap<>();
+    private static final Map<String, Triad<DiscordCommand, Method, Object>> commandMethods = new ConcurrentHashMap<>();
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String WILDCARD = "*";
 
@@ -133,7 +132,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                 .forEach(method -> {
                     DiscordCommand annotation = method.getAnnotation(DiscordCommand.class);
                     String command = annotation.command();
-                    Triple<DiscordCommand, Method, Object> information = new Triple<>(annotation, method, instance);
+                    Triad<DiscordCommand, Method, Object> information = new Triad<>(annotation, method, instance);
 
                     if (commandMethods.containsKey(command))
                         Selene.log().warn("More than one listener registered for Discord command: " + command);
@@ -145,7 +144,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @SuppressWarnings("CallToSuspiciousStringMethod")
     public void post(@NotNull String command, @NotNull DiscordCommandContext context) {
         if (commandMethods.containsKey(command)) {
-            Triple<DiscordCommand, Method, Object> information = commandMethods.get(command);
+            Triad<DiscordCommand, Method, Object> information = commandMethods.get(command);
             DiscordCommand annotation = information.getFirst();
 
             ListeningLevel level = annotation.listeningLevel();

@@ -18,6 +18,7 @@
 package org.dockbox.selene.core.util;
 
 import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.objects.tuple.Triad;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,17 +36,15 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import kotlin.Triple;
-
 @SuppressWarnings({"ClassWithTooManyMethods", "OverlyComplexClass"})
 public enum Utils {
     ;
 
-    private static final Map<Object, Triple<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
+    private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
 
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
         if (isInCooldown(o) && !overwriteExisting) return;
-        activeCooldowns.put(o, new Triple<>(LocalDateTime.now(), duration, timeUnit));
+        activeCooldowns.put(o, new Triad<>(LocalDateTime.now(), duration, timeUnit));
     }
     
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit) {
@@ -55,7 +54,7 @@ public enum Utils {
     public static boolean isInCooldown(Object o) {
         if (activeCooldowns.containsKey(o)) {
             LocalDateTime now = LocalDateTime.now();
-            Triple<LocalDateTime, Long, TemporalUnit> cooldown = activeCooldowns.get(o);
+            Triad<LocalDateTime, Long, TemporalUnit> cooldown = activeCooldowns.get(o);
             LocalDateTime timeCooledDown = cooldown.getFirst();
             Long duration = cooldown.getSecond();
             TemporalUnit timeUnit = cooldown.getThird();
