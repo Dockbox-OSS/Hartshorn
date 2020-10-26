@@ -21,7 +21,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
- A low-level type which can be used in combination with a {@link KeyHolder<K>} to dynamically apply and retrieve
+ A low-level type which can be used in combination with a {@link KeyHolder} to dynamically apply and retrieve
  values from types.
 
  @param <K>

@@ -60,8 +60,8 @@ public interface KeyHolder<T> {
      @param key
      The key to use when retrieving a value, providing the constraints for the returned value.
 
-     @return The value wrapped in a {@link Exceptional<A>}, which will contain a {@link ClassCastException}
-     if {@link this} does not match the constraint of the given {@link Key}.
+     @return The value wrapped in a {@link Exceptional}, which will contain a {@link ClassCastException}
+     if <em>this</em> does not match the constraint of the given {@link Key}.
      */
     default <A> Exceptional<A> getValue(Key<T, A> key) {
         return Exceptional.ofSupplier(() -> key.getFrom((T) this));
