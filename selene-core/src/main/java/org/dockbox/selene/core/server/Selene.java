@@ -164,7 +164,7 @@ public abstract class Selene {
 
     private static Selene instance;
 
-    private transient List<Injector> injectors = new CopyOnWriteArrayList<>();
+    private final transient List<Injector> injectors = new CopyOnWriteArrayList<>();
     private Injector mainInjector;
 
     /**
@@ -290,9 +290,7 @@ public abstract class Selene {
             ((InjectableType) typeInstance).injectProperties(additionalProperties);
         }
 
-        getServer().injectMembers(typeInstance);
-
-        return typeInstance;
+        return getServer().injectMembers(typeInstance);
     }
 
     /**
@@ -326,7 +324,7 @@ public abstract class Selene {
 
      @return The injector
      */
-    protected List<Injector> getInjectors() {
+    private List<Injector> getInjectors() {
         return this.injectors;
     }
 
@@ -342,7 +340,7 @@ public abstract class Selene {
             this.getInjectors().add(injector);
     }
 
-    protected Map<Key<?>, Binding<?>> getAllBindings() {
+    private Map<Key<?>, Binding<?>> getAllBindings() {
         Map<Key<?>, Binding<?>> bindingsMap = new ConcurrentHashMap<>();
         for (Injector injector : this.getInjectors()) {
             bindingsMap.putAll(injector.getAllBindings());
@@ -356,7 +354,7 @@ public abstract class Selene {
      @param consumer
      The consumer to apply
      */
-    protected void initIntegratedExtensions(Consumer<ExtensionContext> consumer) {
+    private void initIntegratedExtensions(Consumer<ExtensionContext> consumer) {
         getInstance(ExtensionManager.class).initialiseExtensions().forEach(consumer);
     }
 
