@@ -57,7 +57,7 @@ import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
  {@link FileType#JSON}, {@link FileType#XML}, {@link FileType#MOD_CONFIG}, and {@link FileType#CONFIG} file types.
 
  Supports type mapping through {@link NeutrinoObjectMapper}, which allows for additional functionality on top of the
- normal Configurate functionality. See {@see https://github.com/NucleusPowered/Neutrino} for reference.
+ normal Configurate functionality. See <a href="https://github.com/NucleusPowered/Neutrino">Neutrino</a> for reference.
 
  Automatically generates, and checks the presence of, files in their directories. For both custom file locations and
  {@link Extension#id()} based.
