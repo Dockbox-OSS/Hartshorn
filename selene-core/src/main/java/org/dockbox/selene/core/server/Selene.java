@@ -23,11 +23,14 @@ import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.ProvisionException;
 
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
+import org.dockbox.selene.core.server.properties.InjectableType;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper;
@@ -35,7 +38,7 @@ import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
-import org.dockbox.selene.core.util.inject.AbstractCommonInjector;
+import org.dockbox.selene.core.util.inject.SeleneInjectModule;
 import org.dockbox.selene.core.util.inject.AbstractExceptionInjector;
 import org.dockbox.selene.core.util.inject.AbstractModuleInjector;
 import org.dockbox.selene.core.util.inject.AbstractUtilInjector;
@@ -55,8 +58,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 /**
@@ -158,19 +164,20 @@ public abstract class Selene {
 
     private static Selene instance;
 
-    private Injector injector;
+    private transient List<Injector> injectors = new CopyOnWriteArrayList<>();
+    private Injector mainInjector;
 
     /**
-     Instantiates {@link Selene}, creating a local injector based on the provided {@link AbstractCommonInjector}.
+     Instantiates {@link Selene}, creating a local injector based on the provided {@link SeleneInjectModule}.
      Also verifies dependency artifacts and injector bindings. Proceeds to {@link Selene#construct()} once verified.
 
      @param injector
      the injector provided by the Selene implementation
      */
-    protected Selene(AbstractCommonInjector injector) {
+    protected Selene(SeleneInjectModule injector) {
         this.verifyArtifacts();
 
-        this.injector = Guice.createInjector(injector);
+        this.mainInjector = Guice.createInjector(injector);
 
         this.verifyInjectorBindings();
         this.construct();
@@ -194,10 +201,10 @@ public abstract class Selene {
     ) {
         this.verifyArtifacts();
 
-        this.injector = Guice.createInjector();
-        if (null != moduleInjector) this.injector = this.injector.createChildInjector(moduleInjector);
-        if (null != exceptionInjector) this.injector = this.injector.createChildInjector(exceptionInjector);
-        if (null != utilInjector) this.injector = this.injector.createChildInjector(utilInjector);
+        this.mainInjector = Guice.createInjector();
+        if (null != moduleInjector) this.mainInjector = this.mainInjector.createChildInjector(moduleInjector);
+        if (null != exceptionInjector) this.mainInjector = this.mainInjector.createChildInjector(exceptionInjector);
+        if (null != utilInjector) this.mainInjector = this.mainInjector.createChildInjector(utilInjector);
 
         this.verifyInjectorBindings();
         this.construct();
@@ -209,9 +216,9 @@ public abstract class Selene {
     }
 
     private void verifyInjectorBindings() {
-        for (Class<?> bindingType : AbstractCommonInjector.Companion.getRequiredBindings()) {
+        for (Class<?> bindingType : SeleneInjectModule.Companion.getRequiredBindings()) {
             try {
-                this.injector.getBinding(bindingType);
+                this.mainInjector.getBinding(bindingType);
             } catch (ConfigurationException e) {
                 log().error("Missing binding for " + bindingType.getCanonicalName() + "! While it is possible to inject it later, it is recommended to do so through the default platform injector!");
             }
@@ -266,10 +273,22 @@ public abstract class Selene {
      @return The instance, if present. Otherwise returns null
      */
     public static <T> T getInstance(Class<T> type) {
+        T typeInstance = null;
         if (type.isAnnotationPresent(Extension.class)) {
-            return getInstance(ExtensionManager.class).getInstance(type).orElse(null);
+            typeInstance = getInstance(ExtensionManager.class).getInstance(type).orElse(null);
+        } else {
+            for (Injector injector : getServer().getInjectors()) {
+                try {
+                    typeInstance = injector.getInstance(type);
+                    break;
+                } catch (ConfigurationException | ProvisionException ignored) {
+                }
+            }
         }
-        return instance.injector.getInstance(type);
+
+        getServer().injectMembers(typeInstance);
+
+        return typeInstance;
     }
 
     /**
@@ -294,7 +313,7 @@ public abstract class Selene {
                 this.bind(contract).to(implementation);
             }
         };
-        instance.injector = instance.injector.createChildInjector(localModule);
+        getServer().mainInjector = getServer().mainInjector.createChildInjector(localModule);
     }
 
     /**
@@ -303,8 +322,28 @@ public abstract class Selene {
 
      @return The injector
      */
-    public Injector getInjector() {
-        return this.injector;
+    protected List<Injector> getInjectors() {
+        return this.injectors;
+    }
+
+    public <T> T injectMembers(T type) {
+        for (Injector injector : this.getInjectors()) {
+            injector.injectMembers(type);
+        }
+        return type;
+    }
+
+    protected void upgradeInjectors(Injector injector) {
+        if (null != injector)
+            this.getInjectors().add(injector);
+    }
+
+    protected Map<Key<?>, Binding<?>> getAllBindings() {
+        Map<Key<?>, Binding<?>> bindingsMap = new ConcurrentHashMap<>();
+        for (Injector injector : this.getInjectors()) {
+            bindingsMap.putAll(injector.getAllBindings());
+        }
+        return bindingsMap;
     }
 
     /**
@@ -344,7 +383,7 @@ public abstract class Selene {
      */
     protected void debugRegisteredInstances() {
         log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
-        this.getInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
+        this.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
             Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
             Class<?> providerType = binding.getProvider().get().getClass();
 

@@ -172,7 +172,7 @@ public class SimpleExtensionManager implements ExtensionManager {
             Constructor<T> defaultConstructor = entry.getConstructor();
             defaultConstructor.setAccessible(true);
             instance = defaultConstructor.newInstance();
-            Selene.getServer().getInjector().injectMembers(instance);
+            Selene.getServer().injectMembers(instance);
             context.addStatus(entry, ExtensionStatus.LOADED);
         } catch (NoSuchMethodException | IllegalAccessException e) {
             context.addStatus(entry, ExtensionStatus.FAILED);

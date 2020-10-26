@@ -33,14 +33,14 @@ import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
-import org.dockbox.selene.core.util.inject.AbstractCommonInjector;
+import org.dockbox.selene.core.util.inject.SeleneInjectModule;
 import org.dockbox.selene.core.util.player.PlayerStorageService;
 import org.dockbox.selene.core.util.text.BroadcastService;
 import org.dockbox.selene.core.util.threads.ThreadUtils;
 import org.dockbox.selene.core.util.world.WorldStorageService;
 import org.dockbox.selene.test.extension.IntegratedTestExtension;
 
-public class TestInjector extends AbstractCommonInjector {
+public class TestInjector extends SeleneInjectModule {
 
     @Override
     protected void configureExceptionInject() {

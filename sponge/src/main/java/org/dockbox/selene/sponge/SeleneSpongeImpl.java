@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.sponge;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
@@ -57,6 +60,9 @@ import java.util.concurrent.TimeUnit;
 )
 public class SeleneSpongeImpl extends Selene {
 
+    @Inject
+    private Injector spongeInjector;
+
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
 
     /**
@@ -76,6 +82,7 @@ public class SeleneSpongeImpl extends Selene {
      */
     @Listener
     public void onServerInit(GameInitializationEvent event) {
+        super.upgradeInjectors(this.spongeInjector);
         Sponge.getEventManager().registerListeners(this, new SpongeServerEventListener());
         super.init();
     }

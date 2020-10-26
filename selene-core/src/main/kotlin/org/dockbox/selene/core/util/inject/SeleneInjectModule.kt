@@ -28,7 +28,7 @@ import org.dockbox.selene.core.util.files.ConfigurateManager
 import org.dockbox.selene.core.util.player.PlayerStorageService
 import org.dockbox.selene.core.util.text.BroadcastService
 
-abstract class AbstractCommonInjector : AbstractModule() {
+abstract class SeleneInjectModule : AbstractModule() {
 
     override fun configure() {
         this.configureExceptionInject()

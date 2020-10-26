@@ -33,27 +33,28 @@ import org.dockbox.selene.core.util.events.EventBus
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper
 import org.dockbox.selene.core.util.extension.ExtensionManager
 import org.dockbox.selene.core.util.files.ConfigurateManager
-import org.dockbox.selene.core.util.inject.AbstractCommonInjector
+import org.dockbox.selene.core.util.inject.SeleneInjectModule
 import org.dockbox.selene.core.util.player.PlayerStorageService
 import org.dockbox.selene.core.util.text.BroadcastService
 import org.dockbox.selene.core.util.threads.ThreadUtils
 import org.dockbox.selene.core.util.world.WorldStorageService
 import org.dockbox.selene.integrated.IntegratedServerExtension
-import org.dockbox.selene.sponge.util.construct.SpongeConstructionUtil
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus
+import org.dockbox.selene.sponge.util.construct.SpongeConstructionUtil
 import org.dockbox.selene.sponge.util.discord.SpongeDiscordUtils
 import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager
 import org.dockbox.selene.sponge.util.player.SpongePlayerStorageService
 import org.dockbox.selene.sponge.util.thread.SpongeThreadUtils
 import org.dockbox.selene.sponge.util.world.SpongeWorldStorageService
 
-class SpongeCommonInjector : AbstractCommonInjector() {
+class SpongeCommonInjector : SeleneInjectModule() {
     override fun configureExceptionInject() {
         bind(ExceptionHelper::class.java).to(SimpleExceptionHelper::class.java)
     }
 
     override fun configureExtensionInject() {
         bind(ExtensionManager::class.java).to(SimpleExtensionManager::class.java)
+        bind(Selene.IntegratedExtension::class.java).to(IntegratedServerExtension::class.java)
     }
 
     override fun configureUtilInject() {
@@ -65,7 +66,6 @@ class SpongeCommonInjector : AbstractCommonInjector() {
         bind(DiscordUtils::class.java).to(SpongeDiscordUtils::class.java)
         bind(EventBus::class.java).to(SimpleEventBus::class.java)
         bind(GlobalConfig::class.java).to(DefaultGlobalConfig::class.java)
-        bind(Selene.IntegratedExtension::class.java).to(IntegratedServerExtension::class.java)
         bind(ResourceService::class.java).to(SimpleResourceService::class.java)
         bind(ConstructionUtil::class.java).to(SpongeConstructionUtil::class.java)
         bind(PlayerStorageService::class.java).to(SpongePlayerStorageService::class.java)
