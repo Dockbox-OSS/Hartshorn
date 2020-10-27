@@ -38,10 +38,10 @@ import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
-import org.dockbox.selene.core.util.inject.SeleneInjectModule;
 import org.dockbox.selene.core.util.inject.AbstractExceptionInjector;
 import org.dockbox.selene.core.util.inject.AbstractModuleInjector;
 import org.dockbox.selene.core.util.inject.AbstractUtilInjector;
+import org.dockbox.selene.core.util.inject.SeleneInjectModule;
 import org.dockbox.selene.core.util.library.LibraryArtifact;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -153,7 +153,7 @@ public abstract class Selene {
         }
     }
 
-    private final Logger log = LoggerFactory.getLogger(Selene.class);
+    private static final Logger log = LoggerFactory.getLogger(Selene.class);
     private String version;
     private LocalDateTime lastUpdate;
     /**
@@ -276,7 +276,9 @@ public abstract class Selene {
         T typeInstance = null;
         if (type.isAnnotationPresent(Extension.class)) {
             typeInstance = getInstance(ExtensionManager.class).getInstance(type).orElse(null);
-        } else {
+        }
+
+        if (null == typeInstance) {
             for (Injector injector : getServer().getInjectors()) {
                 try {
                     typeInstance = injector.getInstance(type);
@@ -285,6 +287,22 @@ public abstract class Selene {
                 }
             }
         }
+
+        AbstractModule extensionModule = new AbstractModule() {
+            @Override
+            protected void configure() {
+                this.bind(InjectorProperty[].class).toInstance(additionalProperties);
+            }
+        };
+        Injector propertyInjector = Guice.createInjector(extensionModule);
+
+        if (null == typeInstance) {
+            try {
+                typeInstance = propertyInjector.getInstance(type);
+            } catch (ConfigurationException | ProvisionException ignored) {
+            }
+        }
+        propertyInjector.injectMembers(instance);
 
         if (typeInstance instanceof InjectableType) {
             ((InjectableType) typeInstance).injectProperties(additionalProperties);
@@ -452,7 +470,7 @@ public abstract class Selene {
      */
     @NotNull
     public Logger getLog() {
-        return this.log;
+        return log;
     }
 
     /**
@@ -533,7 +551,7 @@ public abstract class Selene {
      @return The {@link Logger}
      */
     public static Logger log() {
-        return getServer().getLog();
+        return log;
     }
 
     /**
