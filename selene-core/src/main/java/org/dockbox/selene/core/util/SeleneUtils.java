@@ -576,6 +576,32 @@ public enum SeleneUtils {
     public static <T> Set<T> asUnmodifiableSet(T... objects) {
         return Collections.unmodifiableSet(asSet(objects));
     }
+
+    public static boolean throwsException(Runnable runnable) {
+        try {
+            runnable.run();
+            return false;
+        } catch (Throwable t) {
+            return true;
+        }
+    }
+
+    public static boolean throwsException(Runnable runnable, Class<? extends Throwable> exception) {
+        try {
+            runnable.run();
+            return false;
+        } catch (Throwable t) {
+            return exception.isAssignableFrom(t.getClass());
+        }
+    }
+
+    public static boolean doesNotThrow(Runnable runnable) {
+        return !throwsException(runnable);
+    }
+
+    public static boolean doesNotThrow(Runnable runnable, Class<? extends Throwable> exception) {
+        return !throwsException(runnable, exception);
+    }
     public enum HttpStatus
     {
         ;
