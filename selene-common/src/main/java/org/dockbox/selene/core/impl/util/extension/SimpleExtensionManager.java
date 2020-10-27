@@ -31,6 +31,8 @@ import org.dockbox.selene.core.util.extension.status.ExtensionStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -170,21 +172,25 @@ public class SimpleExtensionManager implements ExtensionManager {
         }
 
         T instance;
-        try {
-            Constructor<T> defaultConstructor = entry.getConstructor();
-            defaultConstructor.setAccessible(true);
-            instance = defaultConstructor.newInstance();
-            this.injectMembers(instance, context, header);
-            
-            context.addStatus(entry, ExtensionStatus.LOADED);
-        } catch (NoSuchMethodException | IllegalAccessException e) {
-            context.addStatus(entry, ExtensionStatus.FAILED);
-            Selene.log().warn("No default accessible constructor available for [" + entry.getCanonicalName() + ']');
-            return false;
-        } catch (InstantiationException | InvocationTargetException e) {
-            context.addStatus(entry, ExtensionStatus.ERRORED);
-            Selene.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
-            return false;
+        instance = Selene.getInstance(entry);
+
+        if (null == instance) {
+            try {
+                Constructor<T> defaultConstructor = entry.getConstructor();
+                defaultConstructor.setAccessible(true);
+                instance = defaultConstructor.newInstance();
+                this.injectMembers(instance, context, header);
+
+                context.addStatus(entry, ExtensionStatus.LOADED);
+            } catch (NoSuchMethodException | IllegalAccessException e) {
+                context.addStatus(entry, ExtensionStatus.FAILED);
+                Selene.log().warn("No default accessible constructor available for [" + entry.getCanonicalName() + ']');
+                return false;
+            } catch (InstantiationException | InvocationTargetException e) {
+                context.addStatus(entry, ExtensionStatus.ERRORED);
+                Selene.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
+                return false;
+            }
         }
 
         instanceMappings.put(header.id(), instance);
@@ -200,6 +206,7 @@ public class SimpleExtensionManager implements ExtensionManager {
                 super.configure();
                 this.bind(ExtensionContext.class).toInstance(context);
                 this.bind(Extension.class).toInstance(header);
+                this.bind(Logger.class).toInstance(LoggerFactory.getLogger(instance.getClass()));
             }
         };
         Guice.createInjector(extensionModule).injectMembers(instance);
