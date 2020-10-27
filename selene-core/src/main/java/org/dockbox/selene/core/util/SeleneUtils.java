@@ -557,6 +557,25 @@ public enum SeleneUtils {
         return (T[]) new Object[0];
     }
 
+    @SafeVarargs
+    public static <T> List<T> asList(T... objects) {
+        return Arrays.asList(objects);
+    }
+
+    @SafeVarargs
+    public static <T> Set<T> asSet(T... objects) {
+        return new HashSet<>(asList(objects));
+    }
+
+    @SafeVarargs
+    public static <T> List<T> asUnmodifiableList(T... objects) {
+        return Collections.unmodifiableList(asList(objects));
+    }
+
+    @SafeVarargs
+    public static <T> Set<T> asUnmodifiableSet(T... objects) {
+        return Collections.unmodifiableSet(asSet(objects));
+    }
     public enum HttpStatus
     {
         ;
