@@ -29,14 +29,13 @@ import org.dockbox.selene.core.impl.util.files.serialize.PatternTypeSerialiser;
 import org.dockbox.selene.core.impl.util.files.serialize.SetTypeSerialiser;
 import org.dockbox.selene.core.impl.util.files.serialize.ShortArrayTypeSerialiser;
 import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.core.util.files.FileType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -190,22 +189,13 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @NotNull
     @Override
     public Path createPathIfNotExists(@NotNull Path path) {
-        if (!path.toFile().exists()) path.toFile().mkdirs();
-        return path;
+        return SeleneUtils.createPathIfNotExists(path);
     }
 
     @NotNull
     @Override
     public Path createFileIfNotExists(@NotNull Path file) {
-        if (!Files.exists(file)) {
-            try {
-                Files.createDirectories(file.getParent());
-                Files.createFile(file);
-            } catch (IOException ex) {
-                Selene.getServer().except("Could not create file '" + file.getFileName() + "'", ex);
-            }
-        }
-        return file;
+        return SeleneUtils.createFileIfNotExists(file);
     }
 
 }

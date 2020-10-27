@@ -21,19 +21,28 @@ import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.server.Selene;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -557,6 +566,16 @@ public enum SeleneUtils {
         return (T[]) new Object[0];
     }
 
+    public static double round(double value, int decimalPlaces) {
+        if (Double.isNaN(value) || Double.isInfinite(value) || decimalPlaces > 15) {
+            return value;
+        }
+
+        BigDecimal decimal = BigDecimal.valueOf(value);
+        decimal = decimal.setScale(decimalPlaces, RoundingMode.HALF_UP);
+        return decimal.doubleValue();
+    }
+
     @SafeVarargs
     public static <T> List<T> asList(T... objects) {
         return Arrays.asList(objects);
@@ -602,6 +621,24 @@ public enum SeleneUtils {
     public static boolean doesNotThrow(Runnable runnable, Class<? extends Throwable> exception) {
         return !throwsException(runnable, exception);
     }
+
+    public static Path createPathIfNotExists(@NotNull Path path) {
+        if (!path.toFile().exists()) path.toFile().mkdirs();
+        return path;
+    }
+
+    public static Path createFileIfNotExists(@NotNull Path file) {
+        if (!Files.exists(file)) {
+            try {
+                Files.createDirectories(file.getParent());
+                Files.createFile(file);
+            } catch (IOException ex) {
+                Selene.getServer().except("Could not create file '" + file.getFileName() + "'", ex);
+            }
+        }
+        return file;
+    }
+
     public enum HttpStatus
     {
         ;
