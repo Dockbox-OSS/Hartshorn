@@ -407,13 +407,19 @@ public abstract class Selene {
      */
     protected void debugRegisteredInstances() {
         log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
+        AtomicInteger unprovisionedTypes = new AtomicInteger();
         this.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
-            Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
-            Class<?> providerType = binding.getProvider().get().getClass();
+            try {
+                Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
+                Class<?> providerType = binding.getProvider().get().getClass();
 
-            if (!keyType.equals(providerType))
-                log().info("  - \u00A77" + keyType.getSimpleName() + ": \u00A78" + providerType.getCanonicalName());
+                if (!keyType.equals(providerType) && null != providerType)
+                    log().info("  - \u00A77" + keyType.getSimpleName() + ": \u00A78" + providerType.getCanonicalName());
+            } catch (ProvisionException | AssertionError e) {
+                unprovisionedTypes.getAndIncrement();
+            }
         });
+        log().info("  \u00A77.. and " + unprovisionedTypes.get() + " unprovisioned types.");
 
         log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded extensions: ");
         ExtensionManager em = getInstance(ExtensionManager.class);
