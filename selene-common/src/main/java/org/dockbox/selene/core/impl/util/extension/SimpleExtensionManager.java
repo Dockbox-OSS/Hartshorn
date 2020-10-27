@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.core.impl.util.extension;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
 import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.objects.tuple.Tuple;
@@ -172,7 +174,8 @@ public class SimpleExtensionManager implements ExtensionManager {
             Constructor<T> defaultConstructor = entry.getConstructor();
             defaultConstructor.setAccessible(true);
             instance = defaultConstructor.newInstance();
-            Selene.getServer().injectMembers(instance);
+            this.injectMembers(instance, context, header);
+            
             context.addStatus(entry, ExtensionStatus.LOADED);
         } catch (NoSuchMethodException | IllegalAccessException e) {
             context.addStatus(entry, ExtensionStatus.FAILED);
@@ -186,5 +189,19 @@ public class SimpleExtensionManager implements ExtensionManager {
 
         instanceMappings.put(header.id(), instance);
         return true;
+    }
+
+    private <T> void injectMembers(T instance, ExtensionContext context, Extension header) {
+        Selene.getServer().injectMembers(instance);
+
+        AbstractModule extensionModule = new AbstractModule() {
+            @Override
+            protected void configure() {
+                super.configure();
+                this.bind(ExtensionContext.class).toInstance(context);
+                this.bind(Extension.class).toInstance(header);
+            }
+        };
+        Guice.createInjector(extensionModule).injectMembers(instance);
     }
 }
