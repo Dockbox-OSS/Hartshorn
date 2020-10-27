@@ -203,7 +203,6 @@ public class SimpleExtensionManager implements ExtensionManager {
         AbstractModule extensionModule = new AbstractModule() {
             @Override
             protected void configure() {
-                super.configure();
                 this.bind(ExtensionContext.class).toInstance(context);
                 this.bind(Extension.class).toInstance(header);
                 this.bind(Logger.class).toInstance(LoggerFactory.getLogger(instance.getClass()));

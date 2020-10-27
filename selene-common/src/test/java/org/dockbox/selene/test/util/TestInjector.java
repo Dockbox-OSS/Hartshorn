@@ -54,17 +54,26 @@ public class TestInjector extends SeleneInjectModule {
 
     @Override
     protected void configureUtilInject() {
-        super.bind(BroadcastService.class).to(SimpleBroadcastService.class);
+        // None
+    }
+
+    @Override
+    protected void configurePlatformInject() {
         super.bind(CommandBus.class).to(TestCommandBus.class);
         super.bind(ConfigurateManager.class).to(TestConfigurateManager.class);
         super.bind(DiscordUtils.class).to(TestDiscordUtils.class);
-        super.bind(EventBus.class).to(SimpleEventBus.class);
-        super.bind(GlobalConfig.class).to(DefaultGlobalConfig.class);
-        super.bind(Selene.IntegratedExtension.class).to(IntegratedTestExtension.class);
-        super.bind(ResourceService.class).to(SimpleResourceService.class);
         super.bind(ConstructionUtil.class).to(TestConstructionUtil.class);
         super.bind(PlayerStorageService.class).to(TestPlayerStorageService.class);
         super.bind(ThreadUtils.class).to(TestThreadUtils.class);
         super.bind(WorldStorageService.class).to(TestWorldStorageService.class);
+    }
+
+    @Override
+    protected void configureDefaultInject() {
+        super.bind(BroadcastService.class).to(SimpleBroadcastService.class);
+        super.bind(EventBus.class).to(SimpleEventBus.class);
+        super.bind(GlobalConfig.class).to(DefaultGlobalConfig.class);
+        super.bind(Selene.IntegratedExtension.class).to(IntegratedTestExtension.class);
+        super.bind(ResourceService.class).to(SimpleResourceService.class);
     }
 }

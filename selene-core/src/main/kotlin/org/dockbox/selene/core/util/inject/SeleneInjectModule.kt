@@ -35,6 +35,7 @@ abstract class SeleneInjectModule : AbstractModule() {
         this.configureExtensionInject()
         this.configureUtilInject()
         this.configurePlatformInject()
+        this.configureDefaultInject()
     }
 
     protected abstract fun configureExceptionInject()

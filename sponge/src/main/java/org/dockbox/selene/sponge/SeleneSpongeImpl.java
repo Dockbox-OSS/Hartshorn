@@ -87,6 +87,11 @@ public class SeleneSpongeImpl extends Selene {
         super.init();
     }
 
+    @Listener
+    public void onServerStarted(GameStartedServerEvent event) {
+        super.debugRegisteredInstances();
+    }
+
     /**
      Sponge Listener method, registers the MagiBridge JDA instance as soon as it is available.
 
@@ -97,7 +102,7 @@ public class SeleneSpongeImpl extends Selene {
      the event
      */
     @Listener(order = Order.LAST)
-    public void onServerStarted(GameStartedServerEvent event) {
+    public void onServerStartedLate(GameStartedServerEvent event) {
         Optional<JDA> oj = getInstance(DiscordUtils.class).getJDA();
         if (oj.isPresent()) {
             JDA jda = oj.get();
@@ -107,14 +112,12 @@ public class SeleneSpongeImpl extends Selene {
             if (!jda.getRegisteredListeners().contains(this.discordListener)) {
                 jda.addEventListener(this.discordListener);
                 log().info("Initiated JDA" + JDAInfo.VERSION);
-
-                super.debugRegisteredInstances();
             }
         } else {
             // Attempt to get the JDA once every 30 seconds until successful
             Sponge.getScheduler().createTaskBuilder()
                     .delay(30, TimeUnit.SECONDS)
-                    .execute(() -> this.onServerStarted(event))
+                    .execute(() -> this.onServerStartedLate(event))
                     .name("JDA_scheduler")
                     .async()
                     .submit(this);

@@ -20,8 +20,8 @@ package org.dockbox.selene.sponge.listeners
 import org.dockbox.selene.core.events.server.ServerEvent
 import org.dockbox.selene.core.events.server.ServerEvent.Started
 import org.dockbox.selene.core.events.server.ServerEvent.Starting
+import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.util.events.EventBus
-import org.dockbox.selene.sponge.SeleneSpongeImpl
 import org.spongepowered.api.event.Listener
 import org.spongepowered.api.event.game.GameReloadEvent
 import org.spongepowered.api.event.game.state.GameStartedServerEvent
@@ -29,15 +29,17 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent
 
 class SpongeServerEventListener {
 
-    private val bus: EventBus = SeleneSpongeImpl.getInstance(EventBus::class.java)
+    @Listener
+    fun onServerStarting(event: GameStartingServerEvent?) = getBus().post(Starting())
 
     @Listener
-    fun onServerStarting(event: GameStartingServerEvent?) = bus.post(Starting())
+    fun onServerStarted(event: GameStartedServerEvent?) = getBus().post(Started())
 
     @Listener
-    fun onServerStarted(event: GameStartedServerEvent?) = bus.post(Started())
+    fun onServerReload(event: GameReloadEvent?) = getBus().post(ServerEvent.Reload())
 
-    @Listener
-    fun onServerReload(event: GameReloadEvent?) = bus.post(ServerEvent.Reload())
+    private fun getBus(): EventBus {
+        return Selene.getInstance(EventBus::class.java)
+    }
 
 }

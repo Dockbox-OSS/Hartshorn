@@ -333,7 +333,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         type = vm.group(2)
         permission = try {
             vm.group(3)
-        } catch (e: NullPointerException) {
+        } catch (e: Exception) {
             Permission.GLOBAL_BYPASS.get()
         }
         if (type == null) type = key
