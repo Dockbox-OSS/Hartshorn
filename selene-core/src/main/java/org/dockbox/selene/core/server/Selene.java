@@ -63,6 +63,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /**
@@ -176,10 +177,7 @@ public abstract class Selene {
      */
     protected Selene(SeleneInjectModule injector) {
         this.verifyArtifacts();
-
         this.mainInjector = Guice.createInjector(injector);
-
-        this.verifyInjectorBindings();
         this.construct();
     }
 
@@ -200,13 +198,10 @@ public abstract class Selene {
             AbstractUtilInjector utilInjector
     ) {
         this.verifyArtifacts();
-
         this.mainInjector = Guice.createInjector();
         if (null != moduleInjector) this.mainInjector = this.mainInjector.createChildInjector(moduleInjector);
         if (null != exceptionInjector) this.mainInjector = this.mainInjector.createChildInjector(exceptionInjector);
         if (null != utilInjector) this.mainInjector = this.mainInjector.createChildInjector(utilInjector);
-
-        this.verifyInjectorBindings();
         this.construct();
     }
 
@@ -230,6 +225,10 @@ public abstract class Selene {
      Once done sets the static instance equal to this instance.
      */
     protected void construct() {
+
+        this.verifyInjectorBindings();
+        this.upgradeInjectors(this.mainInjector);
+
         String tVer = "dev";
         LocalDateTime tLU = LocalDateTime.now();
 
@@ -278,11 +277,12 @@ public abstract class Selene {
             typeInstance = getInstance(ExtensionManager.class).getInstance(type).orElse(null);
         }
 
-        if (null == typeInstance) {
+        if (null == typeInstance && null != getServer()) {
             for (Injector injector : getServer().getInjectors()) {
                 try {
                     typeInstance = injector.getInstance(type);
-                    break;
+                    if (null != typeInstance)
+                        break;
                 } catch (ConfigurationException | ProvisionException ignored) {
                 }
             }
@@ -308,7 +308,11 @@ public abstract class Selene {
             ((InjectableType) typeInstance).injectProperties(additionalProperties);
         }
 
-        return getServer().injectMembers(typeInstance);
+        if (null != typeInstance && null != getServer()) {
+            typeInstance = getServer().injectMembers(typeInstance);
+        }
+
+        return typeInstance;
     }
 
     /**
