@@ -19,6 +19,7 @@ package org.dockbox.selene.core.util;
 
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.tuple.Triad;
+import org.dockbox.selene.core.server.Selene;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,9 +36,10 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings({"ClassWithTooManyMethods", "OverlyComplexClass"})
-public enum Utils {
+public enum SeleneUtils {
     ;
 
     private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
@@ -532,6 +534,27 @@ public enum Utils {
             Array.set(array, idx++, i.next());
         }
         return array;
+    }
+
+    public static <T> boolean isGenericInstanceOf(T instance, Class<?> type) {
+        return null != instance && null != type && type.isAssignableFrom(instance.getClass());
+    }
+
+    public <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
+        Object[] merged =  Stream.of(arrayOne, arrayTwo).flatMap(Stream::of).toArray(Object[]::new);
+        return this.convertGenericArray(merged);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T[] convertGenericArray(Object[] array) {
+        try {
+            Class<T> type = (Class<T>) array.getClass().getComponentType();
+            T[] finalArray = (T[]) Array.newInstance(type, 0);
+            return (T[]) addAll(finalArray, array);
+        } catch (ClassCastException e) {
+            Selene.log().error("Attempted to convert generic array not matching generic type T", e);
+        }
+        return (T[]) new Object[0];
     }
 
     public enum HttpStatus
