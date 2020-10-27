@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.core.impl.util.events;
 
+import com.google.inject.Singleton;
+
 import org.dockbox.selene.core.annotations.Listener;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.server.Selene;
@@ -32,6 +34,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+@Singleton
 @SuppressWarnings({"unchecked", "EqualsWithItself", "VolatileArrayField"})
 public class SimpleEventBus implements EventBus {
     protected static final Map<Object, Set<IWrapper>> listenerToInvokers = new HashMap<>();

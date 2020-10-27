@@ -46,8 +46,10 @@ import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager
 import org.dockbox.selene.sponge.util.player.SpongePlayerStorageService
 import org.dockbox.selene.sponge.util.thread.SpongeThreadUtils
 import org.dockbox.selene.sponge.util.world.SpongeWorldStorageService
+import org.slf4j.Logger
 
 class SpongeCommonInjector : SeleneInjectModule() {
+
     override fun configureExceptionInject() {
         bind(ExceptionHelper::class.java).to(SimpleExceptionHelper::class.java)
     }
@@ -58,18 +60,23 @@ class SpongeCommonInjector : SeleneInjectModule() {
     }
 
     override fun configureUtilInject() {
-        // Keep this alphabatically sorted if/when adding and/or swapping bindings (based on the interface type)
-        // This is for no other usage than readability
-        bind(BroadcastService::class.java).to(SimpleBroadcastService::class.java)
+        bind(DiscordUtils::class.java).to(SpongeDiscordUtils::class.java)
+        bind(ConstructionUtil::class.java).to(SpongeConstructionUtil::class.java)
+        bind(ThreadUtils::class.java).to(SpongeThreadUtils::class.java)
+    }
+
+    override fun configurePlatformInject() {
         bind(CommandBus::class.java).to(SpongeCommandBus::class.java)
         bind(ConfigurateManager::class.java).to(SpongeConfigurateManager::class.java)
-        bind(DiscordUtils::class.java).to(SpongeDiscordUtils::class.java)
+        bind(PlayerStorageService::class.java).to(SpongePlayerStorageService::class.java)
+        bind(WorldStorageService::class.java).to(SpongeWorldStorageService::class.java)
+    }
+
+    override fun configureDefaultInject() {
+        bind(BroadcastService::class.java).to(SimpleBroadcastService::class.java)
         bind(EventBus::class.java).to(SimpleEventBus::class.java)
         bind(GlobalConfig::class.java).to(DefaultGlobalConfig::class.java)
         bind(ResourceService::class.java).to(SimpleResourceService::class.java)
-        bind(ConstructionUtil::class.java).to(SpongeConstructionUtil::class.java)
-        bind(PlayerStorageService::class.java).to(SpongePlayerStorageService::class.java)
-        bind(ThreadUtils::class.java).to(SpongeThreadUtils::class.java)
-        bind(WorldStorageService::class.java).to(SpongeWorldStorageService::class.java)
+        bind(Logger::class.java).toInstance(Selene.log())
     }
 }

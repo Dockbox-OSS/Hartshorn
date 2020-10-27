@@ -17,13 +17,14 @@
 
 package org.dockbox.selene.sponge.util.player
 
-import org.dockbox.selene.core.objects.user.Player
+import com.google.inject.Singleton
+import java.util.*
+import java.util.stream.Collectors
 import org.dockbox.selene.core.impl.util.player.DefaultPlayerStorageService
+import org.dockbox.selene.core.objects.user.Player
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer
 import org.spongepowered.api.Sponge
 import org.spongepowered.api.service.user.UserStorageService
-import java.util.*
-import java.util.stream.Collectors
 
 class SpongePlayerStorageService : DefaultPlayerStorageService() {
 

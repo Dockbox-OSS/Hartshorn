@@ -34,11 +34,14 @@ abstract class SeleneInjectModule : AbstractModule() {
         this.configureExceptionInject()
         this.configureExtensionInject()
         this.configureUtilInject()
+        this.configurePlatformInject()
     }
 
     protected abstract fun configureExceptionInject()
     protected abstract fun configureExtensionInject()
     protected abstract fun configureUtilInject()
+    protected abstract fun configurePlatformInject()
+    protected abstract fun configureDefaultInject()
 
     companion object {
         val requiredBindings: Array<Class<*>> = arrayOf(
