@@ -51,6 +51,8 @@ import java.util.stream.Stream;
 public enum SeleneUtils {
     ;
 
+    private static final Random random = new Random();
+
     private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
 
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
@@ -380,7 +382,6 @@ public enum SeleneUtils {
 
     public static String getRandomString(int minLen, int maxLen) {
         StringBuilder s = new StringBuilder();
-        Random random = new Random();
         int length = minLen + random.nextInt(maxLen - minLen + 1);
         for (int i = 0; i < length; i++) {
             s.append(getRandomChar(0 == i));
@@ -390,7 +391,6 @@ public enum SeleneUtils {
 
     @SuppressWarnings({"BooleanParameter", "MagicNumber"})
     public static String getRandomChar(boolean upper) {
-        Random random = new Random();
         int r = random.nextInt(26);
         return upper ? "" + (char) ((int) 'A' + r) : "" + (char) ((int) 'a' + r);
     }
