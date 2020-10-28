@@ -114,9 +114,9 @@ public class SeleneSpongeImpl extends Selene {
                 log().info("Initiated JDA" + JDAInfo.VERSION);
             }
         } else {
-            // Attempt to get the JDA once every 30 seconds until successful
+            // Attempt to get the JDA once every 10 seconds until successful
             Sponge.getScheduler().createTaskBuilder()
-                    .delay(30, TimeUnit.SECONDS)
+                    .delay(10, TimeUnit.SECONDS)
                     .execute(() -> this.onServerStartedLate(event))
                     .name("JDA_scheduler")
                     .async()
