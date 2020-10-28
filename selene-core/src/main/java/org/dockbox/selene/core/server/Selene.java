@@ -24,6 +24,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
+import com.google.inject.binder.AnnotatedBindingBuilder;
 
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
@@ -258,6 +259,18 @@ public abstract class Selene {
         Selene.instance = this;
     }
 
+    public static <T> T getInstance(Class<T> type, InjectorProperty<?>... additionalProperties) {
+        return getInstance(type, type, additionalProperties);
+    }
+
+    public static <T> T getInstance(Class<T> type, Object extension, InjectorProperty<?>... additionalProperties) {
+        if (null != extension) {
+            return getInstance(type, extension.getClass(), additionalProperties);
+        } else {
+            return getInstance(type, additionalProperties);
+        }
+    }
+
     /**
      Gets an instance of a provided {@link Class} type. If the type is annotated with {@link Extension} it is ran
      through the {@link ExtensionManager} instance to obtain the instance. If it is not annotated as such, it is ran
@@ -271,12 +284,27 @@ public abstract class Selene {
 
      @return The instance, if present. Otherwise returns null
      */
-    public static <T> T getInstance(Class<T> type, InjectorProperty<?>... additionalProperties) {
+    public static <T> T getInstance(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
         T typeInstance = null;
+        // Prepare modules
+        ExtensionModule extensionModule = null;
+        AbstractModule propertyModule = new AbstractModule() {
+            @Override
+            protected void configure() {
+                this.bind(InjectorProperty[].class).toInstance(additionalProperties);
+            }
+        };
+
+        // Attempt to get extension instance and get the extension module
         if (type.isAnnotationPresent(Extension.class)) {
             typeInstance = getInstance(ExtensionManager.class).getInstance(type).orElse(null);
         }
 
+        if (extension.isAnnotationPresent(Extension.class)) {
+            extensionModule = getServer().getExtensionModule(extension, extension.getAnnotation(Extension.class), null);
+        }
+
+        // If the instance didn't exist, or wasn't a extension, attempt to use any known injector to create one
         if (null == typeInstance && null != getServer()) {
             for (Injector injector : getServer().getInjectors()) {
                 try {
@@ -288,31 +316,72 @@ public abstract class Selene {
             }
         }
 
-        AbstractModule extensionModule = new AbstractModule() {
-            @Override
-            protected void configure() {
-                this.bind(InjectorProperty[].class).toInstance(additionalProperties);
-            }
-        };
-        Injector propertyInjector = Guice.createInjector(extensionModule);
+        // Prepare the local injector, depending on whether or not the extension was present
+        Injector localInjector;
+        if (null == extensionModule) {
+            localInjector = Guice.createInjector(propertyModule);
+        } else {
+            localInjector = Guice.createInjector(propertyModule, extensionModule);
+        }
 
+        // If the current instance was not created using a existing injector, try it again with our local injector
         if (null == typeInstance) {
             try {
-                typeInstance = propertyInjector.getInstance(type);
+                typeInstance = localInjector.getInstance(type);
             } catch (ConfigurationException | ProvisionException ignored) {
             }
         }
-        propertyInjector.injectMembers(instance);
 
-        if (typeInstance instanceof InjectableType) {
-            ((InjectableType) typeInstance).injectProperties(additionalProperties);
-        }
+        // Always inject members afterwards, even if the instance was created using another injector
+        localInjector.injectMembers(typeInstance);
 
+        // Inject all members using all known injectors
         if (null != typeInstance && null != getServer()) {
             typeInstance = getServer().injectMembers(typeInstance);
         }
 
+        // Inject properties if applicable
+        if (typeInstance instanceof InjectableType) {
+            ((InjectableType) typeInstance).injectProperties(additionalProperties);
+        }
+
+        // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
+    }
+
+    public Injector createExtensionInjector(Object instance) {
+        if (null != instance && instance.getClass().isAnnotationPresent(Extension.class)) {
+            Optional<ExtensionContext> context = getInstance(ExtensionManager.class).getContext(instance.getClass());
+            Extension extension;
+            extension = context
+                    .map(ExtensionContext::getExtension)
+                    .orElseGet(() -> instance.getClass().getAnnotation(Extension.class));
+            return this.createExtensionInjector(instance, extension, context.orElse(null));
+        }
+        return this.mainInjector;
+    }
+
+    private <T> ExtensionModule getExtensionModule(T instance, Extension header, ExtensionContext context) {
+        ExtensionModule module = new ExtensionModule();
+        if (null != instance) {
+            if (instance instanceof Class<?>) {
+                module.bind(Logger.class).toInstance(LoggerFactory.getLogger((Class<?>) instance));
+            } else {
+                module.bind(Logger.class).toInstance(LoggerFactory.getLogger(instance.getClass()));
+                //noinspection unchecked
+                module.bind((Class<T>) instance.getClass()).toInstance(instance);
+            }
+        }
+        if (null != header)
+            module.bind(Extension.class).toInstance(header);
+        if (null != context)
+            module.bind(ExtensionContext.class).toInstance(context);
+
+        return module;
+    }
+
+    public Injector createExtensionInjector(Object instance, Extension header, ExtensionContext context) {
+        return this.mainInjector.createChildInjector(this.getExtensionModule(instance, header, context));
     }
 
     /**
@@ -351,9 +420,26 @@ public abstract class Selene {
     }
 
     public <T> T injectMembers(T type) {
-        for (Injector injector : this.getInjectors()) {
-            injector.injectMembers(type);
+        if (null != type) {
+            for (Injector injector : this.getInjectors()) {
+                injector.injectMembers(type);
+            }
         }
+
+        return type;
+    }
+
+    public <T> T injectMembers(T type, Object extensionInstance) {
+        if (null != type) {
+            for (Injector injector : this.getInjectors()) {
+                injector.injectMembers(type);
+            }
+
+            if (null != extensionInstance && extensionInstance.getClass().isAnnotationPresent(Extension.class)) {
+                this.createExtensionInjector(extensionInstance).injectMembers(type);
+            }
+        }
+
         return type;
     }
 
@@ -605,4 +691,19 @@ public abstract class Selene {
      */
     public abstract String getMinecraftVersion();
 
+    private static final class ExtensionModule extends AbstractModule {
+
+        private ExtensionModule() {
+        }
+
+        @Override
+        protected void configure() {
+            // To be done externally
+        }
+
+        @Override
+        public <T> AnnotatedBindingBuilder<T> bind(Class<T> clazz) {
+            return super.bind(clazz);
+        }
+    }
 }

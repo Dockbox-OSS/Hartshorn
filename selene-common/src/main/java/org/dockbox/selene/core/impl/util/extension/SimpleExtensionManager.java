@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.core.impl.util.extension;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.objects.tuple.Tuple;
@@ -31,8 +29,6 @@ import org.dockbox.selene.core.util.extension.status.ExtensionStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -199,15 +195,6 @@ public class SimpleExtensionManager implements ExtensionManager {
 
     private <T> void injectMembers(T instance, ExtensionContext context, Extension header) {
         Selene.getServer().injectMembers(instance);
-
-        AbstractModule extensionModule = new AbstractModule() {
-            @Override
-            protected void configure() {
-                this.bind(ExtensionContext.class).toInstance(context);
-                this.bind(Extension.class).toInstance(header);
-                this.bind(Logger.class).toInstance(LoggerFactory.getLogger(instance.getClass()));
-            }
-        };
-        Guice.createInjector(extensionModule).injectMembers(instance);
+        Selene.getServer().createExtensionInjector(instance, header, context).injectMembers(instance);
     }
 }
