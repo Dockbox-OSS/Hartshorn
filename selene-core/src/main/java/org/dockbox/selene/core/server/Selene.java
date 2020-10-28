@@ -482,7 +482,7 @@ public abstract class Selene {
         ExtensionManager cm = getInstance(ExtensionManager.class);
         DiscordUtils du = getInstance(DiscordUtils.class);
 
-        this.initIntegratedExtensions(this.getConsumer("integrated", cb, eb, cm, du));
+        this.initIntegratedExtensions(this.getExtensionContextConsumer(cb, eb, cm, du));
 
         getInstance(EventBus.class).post(new ServerEvent.Init());
     }
@@ -537,10 +537,10 @@ public abstract class Selene {
         });
     }
 
-    private Consumer<ExtensionContext> getConsumer(String contextType, CommandBus cb, EventBus eb, ExtensionManager em, DiscordUtils du) {
+    private Consumer<ExtensionContext> getExtensionContextConsumer(CommandBus cb, EventBus eb, ExtensionManager em, DiscordUtils du) {
         return (ExtensionContext ctx) -> {
             Class<?> type = ctx.getExtensionClass();
-            log().info("Found type [" + type.getCanonicalName() + "] in " + contextType + " context");
+            log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
             Optional<?> oi = em.getInstance(type);
             oi.ifPresent(i -> {
                 Package pkg = i.getClass().getPackage();
