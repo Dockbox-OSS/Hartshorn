@@ -25,6 +25,7 @@ import org.dockbox.selene.core.impl.util.events.SimpleEventBus
 import org.dockbox.selene.core.impl.util.exceptions.SimpleExceptionHelper
 import org.dockbox.selene.core.impl.util.extension.SimpleExtensionManager
 import org.dockbox.selene.core.impl.util.text.SimpleBroadcastService
+import org.dockbox.selene.core.server.IntegratedExtension
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.server.config.GlobalConfig
 import org.dockbox.selene.core.util.construct.ConstructionUtil
@@ -56,7 +57,7 @@ class SpongeCommonInjector : SeleneInjectModule() {
 
     override fun configureExtensionInject() {
         bind(ExtensionManager::class.java).to(SimpleExtensionManager::class.java)
-        bind(Selene.IntegratedExtension::class.java).to(IntegratedServerExtension::class.java)
+        bind(IntegratedExtension::class.java).to(IntegratedServerExtension::class.java)
     }
 
     override fun configureUtilInject() {

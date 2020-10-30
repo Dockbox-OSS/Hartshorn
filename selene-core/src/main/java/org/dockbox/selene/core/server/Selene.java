@@ -24,7 +24,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
-import com.google.inject.binder.AnnotatedBindingBuilder;
 
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
@@ -38,7 +37,6 @@ import org.dockbox.selene.core.util.exceptions.ExceptionHelper;
 import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
-import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.core.util.inject.AbstractExceptionInjector;
 import org.dockbox.selene.core.util.inject.AbstractModuleInjector;
 import org.dockbox.selene.core.util.inject.AbstractUtilInjector;
@@ -72,88 +70,6 @@ import java.util.function.Consumer;
  */
 @SuppressWarnings("ClassWithTooManyMethods")
 public abstract class Selene {
-
-    /**
-     Low-level interface, used by the default IntegratedExtension as indicated by the mappings provided by the platform
-     implementation. Used to access the extension when {@link Selene} is used
-     in a {@link ServerReference} method call.
-     */
-    public interface IntegratedExtension {
-    }
-
-    /**
-     Server type definitions containing display names, minimum/preferred versions, and whether or not the platform
-     provides access to Native Minecraft Sources (NMS).
-     */
-    public enum ServerType {
-        SPONGE("SpongePowered", true, true, "1.12.2-2555-7.1.0-BETA-2815", "1.12.2-2838-7.2.2-RC0"),
-        MAGMA("Magma", true, true, "Not (yet) supported", "Not (yet) supported"),
-        SPIGOT("Spigot", true, false, "Not (yet) supported", "Not (yet) supported"),
-        PAPER("Paper", true, false, "Not (yet) supported", "Not (yet) supported"),
-        JUNIT("JUnit Testing", true, true, "5.3.2", "5.3.2"),
-        OTHER("Other", true, false, "Not (yet) supported", "Not (yet) supported");
-
-        private final String displayName;
-        private final boolean hasNMSAccess;
-        private final boolean isModded;
-        private final String minimumVersion;
-        private final String preferredVersion;
-
-        ServerType(String displayName, boolean hasNMSAccess, boolean isModded, String minimumVersion, String preferredVersion) {
-            this.displayName = displayName;
-            this.hasNMSAccess = hasNMSAccess;
-            this.isModded = isModded;
-            this.minimumVersion = minimumVersion;
-            this.preferredVersion = preferredVersion;
-        }
-
-        /**
-         Gets the display name of the platform in a human readable format
-
-         @return the display name
-         */
-        public String getDisplayName() {
-            return this.displayName;
-        }
-
-        /**
-         Returns whether or not the platform provides access to NMS.
-
-         @return the boolean
-         */
-        public boolean hasNMSAccess() {
-            return this.hasNMSAccess;
-        }
-
-        /**
-         Gets minimum version.
-
-         @return the minimum version
-         */
-        public String getMinimumVersion() {
-            return this.minimumVersion;
-        }
-
-        /**
-         Gets preferred version.
-
-         @return the preferred version
-         */
-        public String getPreferredVersion() {
-            return this.preferredVersion;
-        }
-
-        /**
-         Returns whether or not the platform provides access to a mod loader.
-         This can be especially useful when using {@link ConfigurateManager#getModdedPlatformModsConfigDir()} as it
-         may return {@link Optional#empty()} depending on the availability mods on the platform.
-
-         @return the boolean
-         */
-        public boolean isModded() {
-            return this.isModded;
-        }
-    }
 
     private static final Logger log = LoggerFactory.getLogger(Selene.class);
     private String version;
@@ -691,19 +607,4 @@ public abstract class Selene {
      */
     public abstract String getMinecraftVersion();
 
-    private static final class ExtensionModule extends AbstractModule {
-
-        private ExtensionModule() {
-        }
-
-        @Override
-        protected void configure() {
-            // To be done externally
-        }
-
-        @Override
-        public <T> AnnotatedBindingBuilder<T> bind(Class<T> clazz) {
-            return super.bind(clazz);
-        }
-    }
 }

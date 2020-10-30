@@ -25,7 +25,7 @@ import org.dockbox.selene.core.impl.util.events.SimpleEventBus;
 import org.dockbox.selene.core.impl.util.exceptions.SimpleExceptionHelper;
 import org.dockbox.selene.core.impl.util.extension.SimpleExtensionManager;
 import org.dockbox.selene.core.impl.util.text.SimpleBroadcastService;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.util.construct.ConstructionUtil;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
@@ -73,7 +73,7 @@ public class TestInjector extends SeleneInjectModule {
         super.bind(BroadcastService.class).to(SimpleBroadcastService.class);
         super.bind(EventBus.class).to(SimpleEventBus.class);
         super.bind(GlobalConfig.class).to(DefaultGlobalConfig.class);
-        super.bind(Selene.IntegratedExtension.class).to(IntegratedTestExtension.class);
+        super.bind(IntegratedExtension.class).to(IntegratedTestExtension.class);
         super.bind(ResourceService.class).to(SimpleResourceService.class);
     }
 }

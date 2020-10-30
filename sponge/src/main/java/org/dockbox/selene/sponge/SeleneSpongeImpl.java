@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.dockbox.selene.core.util.library.LibraryArtifact;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
