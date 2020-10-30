@@ -19,6 +19,7 @@ package org.dockbox.selene.sponge.object.item;
 
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
@@ -27,12 +28,15 @@ import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.item.EnchantmentData;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -118,7 +122,7 @@ public class SpongeItem extends Item<ItemStack> {
     @Override
     public String getId() {
         if (this.referenceExists()) {
-            this.setId(this.getReference().get().getItem().getId());
+            this.setId(this.getReference().get().getType().getId());
         }
         return super.getId();
     }
@@ -126,6 +130,33 @@ public class SpongeItem extends Item<ItemStack> {
     @Override
     public int getStackSize() {
         return this.getReference().map(ItemStack::getMaxStackQuantity).orElse(DEFAULT_STACK_SIZE);
+    }
+
+    @Override
+    public List<Enchant> getEnchantments() {
+        List<org.spongepowered.api.item.enchantment.Enchantment> enchantments = this.getReference()
+                .map(i -> i.get(Keys.ITEM_ENCHANTMENTS).orElse(new ArrayList<>()))
+                .orElse(new ArrayList<>());
+        return enchantments.stream().map(SpongeConversionUtil::fromSponge).filter(Exceptional::isPresent).map(Exceptional::get).collect(Collectors.toList());
+    }
+
+    @Override
+    public void addEnchant(Enchant enchant) {
+        this.performOnEnchantmentData(enchant, (EnchantmentData::addElement));
+    }
+
+    @Override
+    public void removeEnchant(Enchant enchant) {
+        this.performOnEnchantmentData(enchant, (EnchantmentData::remove));
+    }
+
+    private void performOnEnchantmentData(Enchant enchant, BiConsumer<EnchantmentData, Enchantment> action) {
+        this.getReference().ifPresent(itemStack -> {
+            EnchantmentData enchantmentData = itemStack.getOrCreate(EnchantmentData.class).get();
+            @NotNull Optional<org.spongepowered.api.item.enchantment.Enchantment> enchantment =
+                    SpongeConversionUtil.toSponge(enchant);
+            enchantment.ifPresent(e -> action.accept(enchantmentData, e));
+        });
     }
 
     @Override

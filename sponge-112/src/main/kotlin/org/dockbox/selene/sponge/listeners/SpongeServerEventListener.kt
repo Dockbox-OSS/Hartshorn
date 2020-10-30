@@ -29,6 +29,8 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent
 
 class SpongeServerEventListener {
 
+    private val bus: EventBus = Selene.getInstance(EventBus::class.java)
+
     @Listener
     fun onServerStarting(event: GameStartingServerEvent?) = getBus().post(Starting())
 

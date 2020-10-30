@@ -26,6 +26,7 @@ import net.dv8tion.jda.api.JDAInfo;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
+import org.dockbox.selene.core.util.environment.MinecraftVersion;
 import org.dockbox.selene.core.util.library.LibraryArtifact;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.selene.sponge.listeners.SpongeServerEventListener;
@@ -59,7 +60,7 @@ import java.util.concurrent.TimeUnit;
                 @Dependency(id = "spotlin")
         }
 )
-public class SeleneSpongeImpl extends Selene {
+public class SeleneSponge112Impl extends Selene {
 
     @Inject
     private Injector spongeInjector;
@@ -70,7 +71,7 @@ public class SeleneSpongeImpl extends Selene {
      Creates a new Selene instance using the {@link org.dockbox.selene.sponge.util.inject.SpongeCommonInjector} bindings
      providing utilities.
      */
-    public SeleneSpongeImpl() {
+    public SeleneSponge112Impl() {
         super(new SpongeCommonInjector());
     }
 
@@ -145,8 +146,8 @@ public class SeleneSpongeImpl extends Selene {
     }
 
     @Override
-    public String getMinecraftVersion() {
-        return Sponge.getPlatform().getMinecraftVersion().getName();
+    public MinecraftVersion getMinecraftVersion() {
+        return MinecraftVersion.MC1_12;
     }
 
 

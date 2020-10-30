@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.dockbox.selene</groupId>
-    <artifactId>sponge</artifactId>
+    <artifactId>sponge-112</artifactId>
     <version>${parent.version}</version>
     <packaging>jar</packaging>
 
@@ -33,7 +33,7 @@
     </parent>
 
     <properties>
-        <main.class>org.dockbox.selene.sponge.SeleneSpongeImpl</main.class>
+        <main.class>org.dockbox.selene.sponge.SeleneSponge112Impl</main.class>
 
         <!-- Versions -->
         <luckperms.version>4.4</luckperms.version>

@@ -80,6 +80,12 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
 
     public abstract int getStackSize();
 
+    public abstract List<Enchant> getEnchantments();
+
+    public abstract void addEnchant(Enchant enchant);
+
+    public abstract void removeEnchant(Enchant enchant);
+
     public static Item<?> of(String id, int amount) {
         return Selene.getInstance(ConstructionUtil.class).item(id, amount);
     }
