@@ -20,33 +20,25 @@
  */
 package org.dockbox.selene.core.impl.util.files.serialize;
 
-import com.google.common.primitives.Bytes;
 import com.google.common.reflect.TypeToken;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 
-public class ByteArrayTypeSerialiser implements TypeSerializer<byte[]> {
+public class PatternTypeSerializer implements TypeSerializer<Pattern> {
 
-    private final TypeToken<Byte> ttb = new TypeToken<Byte>() {
-    };
-    private final TypeToken<List<Byte>> ttlb = new TypeToken<List<Byte>>() {
-    };
-
-    @Override
-    public byte[] deserialize(@NotNull TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
-        List<Byte> list = value.getList(this.ttb);
-        return Bytes.toArray(list);
+    @Override public Pattern deserialize(@NotNull TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
+        return Pattern.compile(Objects.requireNonNull(value.getString()));
     }
 
-    @Override
-    public void serialize(@NotNull TypeToken<?> type, byte[] obj, ConfigurationNode value) throws ObjectMappingException {
-        List<Byte> bytes = Bytes.asList(obj);
-        value.setValue(this.ttlb, bytes);
+    @Override public void serialize(TypeToken<?> type, Pattern obj, ConfigurationNode value) throws ObjectMappingException {
+        assert null != obj : "Pattern object is required";
+        value.setValue(TypeToken.of(String.class), obj.pattern());
     }
 }
