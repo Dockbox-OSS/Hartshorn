@@ -28,17 +28,21 @@ import org.dockbox.selene.core.util.files.ConfigurateManager
 import org.dockbox.selene.core.util.player.PlayerStorageService
 import org.dockbox.selene.core.util.text.BroadcastService
 
-abstract class AbstractCommonInjector : AbstractModule() {
+abstract class SeleneInjectModule : AbstractModule() {
 
     override fun configure() {
         this.configureExceptionInject()
         this.configureExtensionInject()
         this.configureUtilInject()
+        this.configurePlatformInject()
+        this.configureDefaultInject()
     }
 
     protected abstract fun configureExceptionInject()
     protected abstract fun configureExtensionInject()
     protected abstract fun configureUtilInject()
+    protected abstract fun configurePlatformInject()
+    protected abstract fun configureDefaultInject()
 
     companion object {
         val requiredBindings: Array<Class<*>> = arrayOf(

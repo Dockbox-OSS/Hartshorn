@@ -19,26 +19,39 @@ package org.dockbox.selene.core.util;
 
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.tuple.Triad;
+import org.dockbox.selene.core.server.Selene;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings({"ClassWithTooManyMethods", "OverlyComplexClass"})
-public enum Utils {
+public enum SeleneUtils {
     ;
+
+    private static final Random random = new Random();
 
     private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
 
@@ -369,7 +382,6 @@ public enum Utils {
 
     public static String getRandomString(int minLen, int maxLen) {
         StringBuilder s = new StringBuilder();
-        Random random = new Random();
         int length = minLen + random.nextInt(maxLen - minLen + 1);
         for (int i = 0; i < length; i++) {
             s.append(getRandomChar(0 == i));
@@ -379,7 +391,6 @@ public enum Utils {
 
     @SuppressWarnings({"BooleanParameter", "MagicNumber"})
     public static String getRandomChar(boolean upper) {
-        Random random = new Random();
         int r = random.nextInt(26);
         return upper ? "" + (char) ((int) 'A' + r) : "" + (char) ((int) 'a' + r);
     }
@@ -532,6 +543,100 @@ public enum Utils {
             Array.set(array, idx++, i.next());
         }
         return array;
+    }
+
+    public static <T> boolean isGenericInstanceOf(T instance, Class<?> type) {
+        return null != instance && null != type && type.isAssignableFrom(instance.getClass());
+    }
+
+    public <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
+        Object[] merged =  Stream.of(arrayOne, arrayTwo).flatMap(Stream::of).toArray(Object[]::new);
+        return this.convertGenericArray(merged);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T[] convertGenericArray(Object[] array) {
+        try {
+            Class<T> type = (Class<T>) array.getClass().getComponentType();
+            T[] finalArray = (T[]) Array.newInstance(type, 0);
+            return (T[]) addAll(finalArray, array);
+        } catch (ClassCastException e) {
+            Selene.log().error("Attempted to convert generic array not matching generic type T", e);
+        }
+        return (T[]) new Object[0];
+    }
+
+    public static double round(double value, int decimalPlaces) {
+        if (Double.isNaN(value) || Double.isInfinite(value) || decimalPlaces > 15) {
+            return value;
+        }
+
+        BigDecimal decimal = BigDecimal.valueOf(value);
+        decimal = decimal.setScale(decimalPlaces, RoundingMode.HALF_UP);
+        return decimal.doubleValue();
+    }
+
+    @SafeVarargs
+    public static <T> List<T> asList(T... objects) {
+        return Arrays.asList(objects);
+    }
+
+    @SafeVarargs
+    public static <T> Set<T> asSet(T... objects) {
+        return new HashSet<>(asList(objects));
+    }
+
+    @SafeVarargs
+    public static <T> List<T> asUnmodifiableList(T... objects) {
+        return Collections.unmodifiableList(asList(objects));
+    }
+
+    @SafeVarargs
+    public static <T> Set<T> asUnmodifiableSet(T... objects) {
+        return Collections.unmodifiableSet(asSet(objects));
+    }
+
+    public static boolean throwsException(Runnable runnable) {
+        try {
+            runnable.run();
+            return false;
+        } catch (Throwable t) {
+            return true;
+        }
+    }
+
+    public static boolean throwsException(Runnable runnable, Class<? extends Throwable> exception) {
+        try {
+            runnable.run();
+            return false;
+        } catch (Throwable t) {
+            return exception.isAssignableFrom(t.getClass());
+        }
+    }
+
+    public static boolean doesNotThrow(Runnable runnable) {
+        return !throwsException(runnable);
+    }
+
+    public static boolean doesNotThrow(Runnable runnable, Class<? extends Throwable> exception) {
+        return !throwsException(runnable, exception);
+    }
+
+    public static Path createPathIfNotExists(@NotNull Path path) {
+        if (!path.toFile().exists()) path.toFile().mkdirs();
+        return path;
+    }
+
+    public static Path createFileIfNotExists(@NotNull Path file) {
+        if (!Files.exists(file)) {
+            try {
+                Files.createDirectories(file.getParent());
+                Files.createFile(file);
+            } catch (IOException ex) {
+                Selene.getServer().except("Could not create file '" + file.getFileName() + "'", ex);
+            }
+        }
+        return file;
     }
 
     public enum HttpStatus

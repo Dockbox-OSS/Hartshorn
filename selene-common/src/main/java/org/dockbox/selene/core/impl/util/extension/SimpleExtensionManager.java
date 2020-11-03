@@ -168,23 +168,33 @@ public class SimpleExtensionManager implements ExtensionManager {
         }
 
         T instance;
-        try {
-            Constructor<T> defaultConstructor = entry.getConstructor();
-            defaultConstructor.setAccessible(true);
-            instance = defaultConstructor.newInstance();
-            Selene.getServer().getInjector().injectMembers(instance);
-            context.addStatus(entry, ExtensionStatus.LOADED);
-        } catch (NoSuchMethodException | IllegalAccessException e) {
-            context.addStatus(entry, ExtensionStatus.FAILED);
-            Selene.log().warn("No default accessible constructor available for [" + entry.getCanonicalName() + ']');
-            return false;
-        } catch (InstantiationException | InvocationTargetException e) {
-            context.addStatus(entry, ExtensionStatus.ERRORED);
-            Selene.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
-            return false;
+        instance = Selene.getInstance(entry);
+
+        if (null == instance) {
+            try {
+                Constructor<T> defaultConstructor = entry.getConstructor();
+                defaultConstructor.setAccessible(true);
+                instance = defaultConstructor.newInstance();
+                this.injectMembers(instance, context, header);
+
+                context.addStatus(entry, ExtensionStatus.LOADED);
+            } catch (NoSuchMethodException | IllegalAccessException e) {
+                context.addStatus(entry, ExtensionStatus.FAILED);
+                Selene.log().warn("No default accessible constructor available for [" + entry.getCanonicalName() + ']');
+                return false;
+            } catch (InstantiationException | InvocationTargetException e) {
+                context.addStatus(entry, ExtensionStatus.ERRORED);
+                Selene.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
+                return false;
+            }
         }
 
         instanceMappings.put(header.id(), instance);
         return true;
+    }
+
+    private <T> void injectMembers(T instance, ExtensionContext context, Extension header) {
+        Selene.getServer().injectMembers(instance);
+        Selene.getServer().createExtensionInjector(instance, header, context).injectMembers(instance);
     }
 }

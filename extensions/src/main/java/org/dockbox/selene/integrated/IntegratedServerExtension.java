@@ -27,13 +27,12 @@ import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.impl.command.parse.LanguageArgumentParser;
 import org.dockbox.selene.core.impl.command.parse.UUIDArgumentParser;
 import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.targets.CommandSource;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.Selene.IntegratedExtension;
-import org.dockbox.selene.core.server.Selene.ServerType;
+import org.dockbox.selene.core.server.IntegratedExtension;
+import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.server.ServerReference;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction.RunCommand;
@@ -55,9 +54,10 @@ import java.util.UUID;
         id = "selene",
         name = "Selene",
         description = "Integrated features of Selene",
-        authors = {"GuusLieben"},
+        authors = "GuusLieben",
         url = "https://github.com/GuusLieben/Selene",
-        uniqueId = "a8a96336-06bd-4521-99d4-5682a4f75e0a")
+        uniqueId = "a8a96336-06bd-4521-99d4-5682a4f75e0a"
+)
 @Command(aliases = {"selene", "darwin"}, usage = "selene")
 public class IntegratedServerExtension extends ServerReference implements IntegratedExtension {
 
@@ -134,13 +134,12 @@ public class IntegratedServerExtension extends ServerReference implements Integr
 
             Extension e = oarg.get().getValue();
             Exceptional<?> oi = Exceptional.ofOptional(Selene.getInstance(ExtensionManager.class).getInstance(e.id()));
-            
+
             oi.ifPresent(o -> {
                 eb.post(new Reload(), o.getClass());
                 src.send(IntegratedServerResources.EXTENSION_RELOAD_SUCCESSFUL.format(e.name()));
-            }).ifAbsent(() -> {
-                src.send(IntegratedServerResources.EXTENSION_RELOAD_FAILED.format(e.name()));
-            });
+            }).ifAbsent(() ->
+                    src.send(IntegratedServerResources.EXTENSION_RELOAD_FAILED.format(e.name())));
         } else {
             eb.post(new Reload());
             src.send(IntegratedServerResources.FULL_RELOAD_SUCCESSFUL);
@@ -148,7 +147,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
     }
 
     @Command(aliases = "confirm", usage = "confirm <uuid{String}>")
-    public void confirm(CommandSource src, CommandContext ctx) {
+    public void confirm(MessageReceiver src, CommandContext ctx) {
         if (!(src instanceof Identifiable)) {
             src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
             return;
@@ -159,7 +158,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
         // argument here is just a confirmation that the source is correct.
         Exceptional.ofOptional(ouuid)
                 .ifPresent(uuid -> {
-                    if (((Identifiable) src).getUniqueId().equals(uuid))
+                    if (((Identifiable<?>) src).getUniqueId().equals(uuid))
                         super.getInstance(CommandBus.class).confirmLastCommand(uuid);
                     else
                         src.send(IntegratedResource.CONFIRM_EXPIRED);
@@ -194,7 +193,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
     }
 
     @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", single = true)
-    public void switchLang(CommandSource src, CommandContext ctx) {
+    public void switchLang(MessageReceiver src, CommandContext ctx) {
         Optional<Language> ol = ctx.getArgumentAndParse("language", new LanguageArgumentParser());
         @Nullable Player target;
 

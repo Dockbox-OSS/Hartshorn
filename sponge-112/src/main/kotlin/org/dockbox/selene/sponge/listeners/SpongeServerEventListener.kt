@@ -32,12 +32,16 @@ class SpongeServerEventListener {
     private val bus: EventBus = Selene.getInstance(EventBus::class.java)
 
     @Listener
-    fun onServerStarting(event: GameStartingServerEvent?) = bus.post(Starting())
+    fun onServerStarting(event: GameStartingServerEvent?) = getBus().post(Starting())
 
     @Listener
-    fun onServerStarted(event: GameStartedServerEvent?) = bus.post(Started())
+    fun onServerStarted(event: GameStartedServerEvent?) = getBus().post(Started())
 
     @Listener
-    fun onServerReload(event: GameReloadEvent?) = bus.post(ServerEvent.Reload())
+    fun onServerReload(event: GameReloadEvent?) = getBus().post(ServerEvent.Reload())
+
+    private fun getBus(): EventBus {
+        return Selene.getInstance(EventBus::class.java)
+    }
 
 }

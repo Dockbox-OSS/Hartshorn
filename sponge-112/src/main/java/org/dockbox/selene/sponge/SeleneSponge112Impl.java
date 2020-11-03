@@ -17,10 +17,14 @@
 
 package org.dockbox.selene.sponge;
 
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.dockbox.selene.core.util.environment.MinecraftVersion;
 import org.dockbox.selene.core.util.library.LibraryArtifact;
@@ -58,6 +62,9 @@ import java.util.concurrent.TimeUnit;
 )
 public class SeleneSponge112Impl extends Selene {
 
+    @Inject
+    private Injector spongeInjector;
+
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
 
     /**
@@ -77,8 +84,14 @@ public class SeleneSponge112Impl extends Selene {
      */
     @Listener
     public void onServerInit(GameInitializationEvent event) {
+        super.upgradeInjectors(this.spongeInjector);
         Sponge.getEventManager().registerListeners(this, new SpongeServerEventListener());
         super.init();
+    }
+
+    @Listener
+    public void onServerStarted(GameStartedServerEvent event) {
+        super.debugRegisteredInstances();
     }
 
     /**
@@ -91,7 +104,7 @@ public class SeleneSponge112Impl extends Selene {
      the event
      */
     @Listener(order = Order.LAST)
-    public void onServerStarted(GameStartedServerEvent event) {
+    public void onServerStartedLate(GameStartedServerEvent event) {
         Optional<JDA> oj = getInstance(DiscordUtils.class).getJDA();
         if (oj.isPresent()) {
             JDA jda = oj.get();
@@ -101,14 +114,12 @@ public class SeleneSponge112Impl extends Selene {
             if (!jda.getRegisteredListeners().contains(this.discordListener)) {
                 jda.addEventListener(this.discordListener);
                 log().info("Initiated JDA" + JDAInfo.VERSION);
-
-                super.debugRegisteredInstances();
             }
         } else {
-            // Attempt to get the JDA once every 30 seconds until successful
+            // Attempt to get the JDA once every 10 seconds until successful
             Sponge.getScheduler().createTaskBuilder()
-                    .delay(30, TimeUnit.SECONDS)
-                    .execute(() -> this.onServerStarted(event))
+                    .delay(10, TimeUnit.SECONDS)
+                    .execute(() -> this.onServerStartedLate(event))
                     .name("JDA_scheduler")
                     .async()
                     .submit(this);

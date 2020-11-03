@@ -15,16 +15,12 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.extension;
+package org.dockbox.selene.core.server.properties;
 
-import org.dockbox.selene.core.server.IntegratedExtension;
-import org.dockbox.selene.core.util.extension.Extension;
+public interface InjectorProperty<T> {
 
-@Extension(
-        id = "junitExtension",
-        name = "JUnit Test Extension",
-        description = "Provides a mocked test extension",
-        authors = "GuusLieben",
-        uniqueId = "44574eca-90ba-4ec4-9a5f-14f035d5480b")
-public class IntegratedTestExtension implements IntegratedExtension {
+    String getKey();
+
+    T getObject();
+
 }

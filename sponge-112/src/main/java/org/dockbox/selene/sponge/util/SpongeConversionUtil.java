@@ -178,6 +178,7 @@ public enum SpongeConversionUtil {
     public static Exceptional<Location<World>> toSponge(org.dockbox.selene.core.objects.location.Location location) {
         Exceptional<World> world = toSponge(location.getWorld());
         if (world.errorPresent()) return Exceptional.of(world.getError());
+        if (!world.isPresent()) return Exceptional.empty();
         Vector3d vector3d = new Vector3d(location.getX().doubleValue(), location.getY().doubleValue(), location.getZ().doubleValue());
         return Exceptional.of(new Location<>(world.get(), vector3d));
     }

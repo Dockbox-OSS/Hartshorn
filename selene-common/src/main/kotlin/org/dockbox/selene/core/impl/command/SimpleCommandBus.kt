@@ -54,7 +54,7 @@ import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.text.Text
 import org.dockbox.selene.core.text.actions.ClickAction
 import org.dockbox.selene.core.text.actions.HoverAction
-import org.dockbox.selene.core.util.Utils
+import org.dockbox.selene.core.util.SeleneUtils
 import org.dockbox.selene.core.util.extension.Extension
 import org.dockbox.selene.core.util.extension.ExtensionManager
 
@@ -224,7 +224,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         if (command.cooldownDuration < 0) return false
         if (sender is Identifiable<*>) {
             val registrationId = getRegistrationId(sender, ctx)
-            return (Utils.isInCooldown(registrationId))
+            return (SeleneUtils.isInCooldown(registrationId))
         }
         return false
     }
@@ -279,7 +279,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             val command = method.getAnnotation(Command::class.java)
             if (command.cooldownDuration > 0 && sender is Identifiable<*>) {
                 val registrationId = getRegistrationId(sender, ctx)
-                Utils.cooldown(registrationId, command.cooldownDuration, command.cooldownUnit)
+                SeleneUtils.cooldown(registrationId, command.cooldownDuration, command.cooldownUnit)
             }
             method.invoke(o, *finalArgs.toTypedArray())
             Exceptional.empty() // No error message to return
@@ -333,7 +333,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         type = vm.group(2)
         permission = try {
             vm.group(3)
-        } catch (e: NullPointerException) {
+        } catch (e: Exception) {
             Permission.GLOBAL_BYPASS.get()
         }
         if (type == null) type = key

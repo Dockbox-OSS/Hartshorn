@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.core.impl.server.config;
 
+import com.google.inject.Singleton;
+
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.server.config.ConfigKeys;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+@Singleton
 public class DefaultGlobalConfig implements GlobalConfig {
 
     private final Map<String, Object> configMap = new HashMap<>();
