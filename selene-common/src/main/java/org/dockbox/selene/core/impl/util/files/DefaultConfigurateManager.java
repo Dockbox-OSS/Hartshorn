@@ -17,17 +17,9 @@
 
 package org.dockbox.selene.core.impl.util.files;
 
-import com.google.common.reflect.TypeToken;
-
-import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.impl.util.files.mapping.NeutrinoObjectMapper;
 import org.dockbox.selene.core.impl.util.files.mapping.NeutrinoObjectMapperFactory;
-import org.dockbox.selene.core.impl.util.files.serialize.ByteArrayTypeSerialiser;
-import org.dockbox.selene.core.impl.util.files.serialize.IntArrayTypeSerialiser;
-import org.dockbox.selene.core.impl.util.files.serialize.LanguageTypeSerializer;
-import org.dockbox.selene.core.impl.util.files.serialize.PatternTypeSerialiser;
-import org.dockbox.selene.core.impl.util.files.serialize.SetTypeSerialiser;
-import org.dockbox.selene.core.impl.util.files.serialize.ShortArrayTypeSerialiser;
+import org.dockbox.selene.core.impl.util.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.extension.Extension;
@@ -37,8 +29,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.gson.GsonConfigurationLoader;
@@ -73,19 +63,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
      */
     protected DefaultConfigurateManager(FileType fileType) {
         super(fileType);
-        TypeSerializers.getDefaultSerializers().registerType(
-                TypeToken.of(Language.class), new LanguageTypeSerializer());
-        TypeSerializers.getDefaultSerializers().registerType(
-                TypeToken.of(byte[].class), new ByteArrayTypeSerialiser());
-        TypeSerializers.getDefaultSerializers().registerType(
-                TypeToken.of(int[].class), new IntArrayTypeSerialiser());
-        TypeSerializers.getDefaultSerializers().registerType(
-                TypeToken.of(Pattern.class), new PatternTypeSerialiser());
-        TypeSerializers.getDefaultSerializers().registerType(
-                TypeToken.of(short[].class), new ShortArrayTypeSerialiser());
-        TypeSerializers.getDefaultSerializers().registerPredicate(
-                typeToken -> Set.class.isAssignableFrom(typeToken.getRawType()),
-                new SetTypeSerialiser());
+        SeleneTypeSerializers.registerTypeSerializers();
     }
 
     private final ConfigurationLoader<?> getConfigurationLoader(Path file) throws UnsupportedFileException {

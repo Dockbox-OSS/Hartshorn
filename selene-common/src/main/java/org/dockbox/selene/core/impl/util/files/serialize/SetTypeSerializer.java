@@ -20,25 +20,42 @@
  */
 package org.dockbox.selene.core.impl.util.files.serialize;
 
+import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 
-public class PatternTypeSerialiser implements TypeSerializer<Pattern> {
+public class SetTypeSerializer implements TypeSerializer<Set<?>> {
 
-    @Override public Pattern deserialize(@NotNull TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
-        return Pattern.compile(Objects.requireNonNull(value.getString()));
+    @Override
+    public Set<?> deserialize(@NotNull TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
+        return new HashSet<>(value.getList(this.getInnerToken(type)));
     }
 
-    @Override public void serialize(TypeToken<?> type, Pattern obj, ConfigurationNode value) throws ObjectMappingException {
-        assert null != obj : "Pattern object is required";
-        value.setValue(TypeToken.of(String.class), obj.pattern());
+    @Override
+    public void serialize(@NotNull TypeToken<?> type, Set<?> obj, ConfigurationNode value) throws ObjectMappingException {
+        value.setValue(this.getListTokenFromSet(type), new ArrayList<>(obj));
+    }
+
+    private TypeToken<?> getInnerToken(TypeToken<?> type) {
+        return type.resolveType(Set.class.getTypeParameters()[0]);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <E> TypeToken<List<E>> getListTokenFromSet(TypeToken<?> type) {
+        // Get the inner type out of the type token
+        TypeToken<?> innerType = this.getInnerToken(type);
+
+        // Put it into the new list token
+        return new TypeToken<List<E>>() {}.where(new TypeParameter<E>() {}, (TypeToken<E>)innerType);
     }
 }

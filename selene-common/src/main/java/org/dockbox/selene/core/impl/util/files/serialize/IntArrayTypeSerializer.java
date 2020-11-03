@@ -31,7 +31,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 
-public class IntArrayTypeSerialiser implements TypeSerializer<int[]> {
+public class IntArrayTypeSerializer implements TypeSerializer<int[]> {
 
     private final TypeToken<Integer> ttb = new TypeToken<Integer>() {};
     private final TypeToken<List<Integer>> ttlb = new TypeToken<List<Integer>>() {};

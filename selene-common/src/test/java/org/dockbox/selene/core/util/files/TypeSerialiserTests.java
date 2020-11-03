@@ -25,10 +25,10 @@ import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.impl.util.files.serialize.ByteArrayTypeSerialiser;
-import org.dockbox.selene.core.impl.util.files.serialize.IntArrayTypeSerialiser;
-import org.dockbox.selene.core.impl.util.files.serialize.SetTypeSerialiser;
-import org.dockbox.selene.core.impl.util.files.serialize.ShortArrayTypeSerialiser;
+import org.dockbox.selene.core.impl.util.files.serialize.ByteArrayTypeSerializer;
+import org.dockbox.selene.core.impl.util.files.serialize.IntArrayTypeSerializer;
+import org.dockbox.selene.core.impl.util.files.serialize.SetTypeSerializer;
+import org.dockbox.selene.core.impl.util.files.serialize.ShortArrayTypeSerializer;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +46,7 @@ public class TypeSerialiserTests {
         TypeSerializerCollection tsc = tclb.getDefaultOptions().getSerializers();
         tsc.registerPredicate(
                 typeToken -> Set.class.isAssignableFrom(typeToken.getRawType()),
-                new SetTypeSerialiser()
+                new SetTypeSerializer()
         );
 
         tclb.setDefaultOptions(tclb.getDefaultOptions().setSerializers(tsc));
@@ -56,9 +56,9 @@ public class TypeSerialiserTests {
     private TestConfigurationLoader getArrayTestLoader() {
         TestConfigurationLoader.Builder tclb = TestConfigurationLoader.builder();
         TypeSerializerCollection tsc = tclb.getDefaultOptions().getSerializers();
-        tsc.registerType(new TypeToken<byte[]>() {}, new ByteArrayTypeSerialiser());
-        tsc.registerType(new TypeToken<short[]>() {}, new ShortArrayTypeSerialiser());
-        tsc.registerType(new TypeToken<int[]>() {}, new IntArrayTypeSerialiser());
+        tsc.registerType(new TypeToken<byte[]>() {}, new ByteArrayTypeSerializer());
+        tsc.registerType(new TypeToken<short[]>() {}, new ShortArrayTypeSerializer());
+        tsc.registerType(new TypeToken<int[]>() {}, new IntArrayTypeSerializer());
 
         tclb.setDefaultOptions(tclb.getDefaultOptions().setSerializers(tsc)
             .setAcceptedTypes(Sets.newHashSet(Byte.class, Integer.class, Short.class)));

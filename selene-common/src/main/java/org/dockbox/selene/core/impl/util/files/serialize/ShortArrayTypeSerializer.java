@@ -31,7 +31,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 
-public class ShortArrayTypeSerialiser implements TypeSerializer<short[]> {
+public class ShortArrayTypeSerializer implements TypeSerializer<short[]> {
 
     private final TypeToken<Short> ttb = new TypeToken<Short>() {};
     private final TypeToken<List<Short>> ttlb = new TypeToken<List<Short>>() {};
