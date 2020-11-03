@@ -20,42 +20,33 @@
  */
 package org.dockbox.selene.core.impl.util.files.serialize;
 
-import com.google.common.reflect.TypeParameter;
+import com.google.common.primitives.Bytes;
 import com.google.common.reflect.TypeToken;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 
-public class SetTypeSerialiser implements TypeSerializer<Set<?>> {
+public class ByteArrayTypeSerializer implements TypeSerializer<byte[]> {
+
+    private final TypeToken<Byte> ttb = new TypeToken<Byte>() {
+    };
+    private final TypeToken<List<Byte>> ttlb = new TypeToken<List<Byte>>() {
+    };
 
     @Override
-    public Set<?> deserialize(@NotNull TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
-        return new HashSet<>(value.getList(this.getInnerToken(type)));
+    public byte[] deserialize(@NotNull TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
+        List<Byte> list = value.getList(this.ttb);
+        return Bytes.toArray(list);
     }
 
     @Override
-    public void serialize(@NotNull TypeToken<?> type, Set<?> obj, ConfigurationNode value) throws ObjectMappingException {
-        value.setValue(this.getListTokenFromSet(type), new ArrayList<>(obj));
-    }
-
-    private TypeToken<?> getInnerToken(TypeToken<?> type) {
-        return type.resolveType(Set.class.getTypeParameters()[0]);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <E> TypeToken<List<E>> getListTokenFromSet(TypeToken<?> type) {
-        // Get the inner type out of the type token
-        TypeToken<?> innerType = this.getInnerToken(type);
-
-        // Put it into the new list token
-        return new TypeToken<List<E>>() {}.where(new TypeParameter<E>() {}, (TypeToken<E>)innerType);
+    public void serialize(@NotNull TypeToken<?> type, byte[] obj, ConfigurationNode value) throws ObjectMappingException {
+        List<Byte> bytes = Bytes.asList(obj);
+        value.setValue(this.ttlb, bytes);
     }
 }
