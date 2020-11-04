@@ -96,6 +96,10 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
 
             final T content = mapper.bindToNew().populate(node);
 
+            if (SeleneUtils.isFileEmpty(file)) {
+                this.writeFileContent(file, content);
+            }
+
             return Exceptional.ofNullable(content);
         } catch (IOException | IllegalArgumentException | ObjectMappingException | UnsupportedFileException e) {
             return Exceptional.of(e);
@@ -116,6 +120,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
 
             mapper.bind(content).serialize(node);
             loader.save(node);
+
             return Exceptional.of(true);
         } catch (UnsupportedFileException | IOException | ObjectMappingException e) {
             return Exceptional.of(false, e);
@@ -145,7 +150,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @NotNull
     @Override
     public Path getDataFile(@NotNull Extension extension, @NotNull String file) {
-        return this.createPathIfNotExists(
+        return this.createFileIfNotExists(
                 this.getFileType().asPath(
                         this.getDataDir().resolve(extension.id()),
                         file
@@ -156,7 +161,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @NotNull
     @Override
     public Path getConfigFile(@NotNull Extension extension, @NotNull String file) {
-        return this.createPathIfNotExists(
+        return this.createFileIfNotExists(
                 this.getFileType().asPath(
                         this.getExtensionConfigsDir().resolve(extension.id()),
                         file

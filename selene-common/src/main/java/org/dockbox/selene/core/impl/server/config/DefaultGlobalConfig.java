@@ -17,65 +17,99 @@
 
 package org.dockbox.selene.core.impl.server.config;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.server.config.ConfigKeys;
+import org.dockbox.selene.core.server.IntegratedExtension;
+import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.ServerReference;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
+import org.dockbox.selene.core.server.properties.InjectableType;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.file.Path;
+
+import ninja.leaping.configurate.objectmapping.Setting;
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @Singleton
-public class DefaultGlobalConfig implements GlobalConfig {
+@ConfigSerializable
+public class DefaultGlobalConfig extends ServerReference implements GlobalConfig, InjectableType {
 
-    private final Map<String, Object> configMap = new HashMap<>();
+    @Inject
+    private transient ConfigurateManager configurateManager;
+    @Inject
+    private transient IntegratedExtension integratedExtension;
 
-//    @Inject
-//    public DefaultGlobalConfig(ConfigManager cm) {
-//        this.configMap = cm.getConfigContents(Server.getServer());
-//    }
+    @Setting(
+            value = "default-language",
+            comment = "The default language for all players and the console."
+    )
+    private Language defaultLanguage = Language.EN_US;
+
+    @Setting(
+            value = "allow-stacktraces",
+            comment = "Whether or not stacktraces should print if a exception is thrown."
+    )
+    private boolean stacktracesAllowed = true;
+
+    @Setting(
+            value = "friendly-exceptions",
+            comment = "Indicates whether or not to provide a clear user-friendly view of exceptions."
+    )
+    private boolean friendlyExceptions = true;
 
     @NotNull
     @Override
     public Language getDefaultLanguage() {
-        String cfg = this.getSetting(ConfigKeys.GLOBAL_CONFIG.getKey());
-        return cfg == null ? Language.EN_US : Language.valueOf(cfg.toUpperCase());
+        return this.defaultLanguage;
     }
 
     @Override
     public boolean getStacktracesAllowed() {
-        String cfg = this.getSetting(ConfigKeys.ALLOW_STACKTRACES.getKey());
-//        return Boolean.parseBoolean(cfg);
-        return true;
+        return this.stacktracesAllowed;
     }
 
     @NotNull
     @Override
     public ExceptionLevels getExceptionLevel() {
-        String cfg = this.getSetting(ConfigKeys.EXCEPTION_LEVEL.getKey());
-        try {
-            return ExceptionLevels.valueOf(cfg.toUpperCase());
-        } catch (NullPointerException | IllegalArgumentException e) {
-            return ExceptionLevels.FRIENDLY;
+        return this.friendlyExceptions ? ExceptionLevels.FRIENDLY : ExceptionLevels.MINIMAL;
+    }
+
+    private boolean isConstructed;
+
+    private void copyValues(GlobalConfig config) {
+        if (null == config) {
+            Selene.log().warn("Cannot copy values of empty configuration, using default values.");
+        } else {
+            this.defaultLanguage = config.getDefaultLanguage();
+            this.friendlyExceptions = ExceptionLevels.FRIENDLY == config.getExceptionLevel();
+            this.stacktracesAllowed = config.getStacktracesAllowed();
         }
+        this.isConstructed = true;
     }
 
     @Override
-    public String getSetting(@NotNull String key) {
-        String[] steps = key.split("\\.");
-        Object next = this.configMap.get(steps[0]);
-        for (int i = 0; i < steps.length; i++) {
-            String step = steps[i];
-            if (next instanceof Map && i < steps.length-1) {
-                next = ((Map<?, ?>) next).get(step);
-            } else {
-                if (next == null) return null;
-                else return String.valueOf(next);
-            }
+    public boolean canEnable() {
+        return !this.isConstructed;
+    }
+
+    @Override
+    public void stateEnabling(InjectorProperty<?>... properties) {
+        Extension extension = super.getExtension(this.integratedExtension.getClass());
+        if (null == extension) {
+            throw new IllegalStateException("Integrated extension not annotated as such.");
         }
-        return null;
+
+        Path configPath = this.configurateManager.getConfigFile(extension);
+        GlobalConfig globalConfig = this.configurateManager
+                .getFileContent(configPath, DefaultGlobalConfig.class)
+                .orElse(null);
+        this.copyValues(globalConfig);
     }
 }
