@@ -242,7 +242,7 @@ public abstract class Selene {
         }
 
         // Inject properties if applicable
-        if (typeInstance instanceof InjectableType) {
+        if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable()) {
             ((InjectableType) typeInstance).stateEnabling(additionalProperties);
         }
 

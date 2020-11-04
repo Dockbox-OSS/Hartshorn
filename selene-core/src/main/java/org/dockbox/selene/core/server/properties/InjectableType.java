@@ -19,6 +19,8 @@ package org.dockbox.selene.core.server.properties;
 
 public interface InjectableType {
 
-    void injectProperties(InjectorProperty<?>... properties);
+    boolean canEnable();
+
+    void stateEnabling(InjectorProperty<?>... properties);
 
 }
