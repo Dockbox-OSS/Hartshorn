@@ -17,11 +17,8 @@
 
 package org.dockbox.selene.sponge.util.command;
 
-import com.boydti.fawe.object.FawePlayer;
 import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.extension.input.ParserContext;
 
 import org.dockbox.selene.core.command.CommandRunnerFunction;
 import org.dockbox.selene.core.command.context.CommandValue;
@@ -34,16 +31,11 @@ import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.events.EventBus;
-import org.dockbox.selene.core.util.extension.Extension;
-import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.args.ArgumentParseException;
-import org.spongepowered.api.command.args.CommandArgs;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.CommandFlags;
@@ -51,7 +43,6 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -65,8 +56,6 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Nullable;
-
 @SuppressWarnings("unchecked")
 @Singleton
 public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArgumentTypeValue> {
@@ -78,7 +67,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         try {
             return new SpongeArgumentTypeValue(type, permission.get(), key);
         } catch (IllegalArgumentException e) {
-            return new SpongeArgumentTypeValue(Arguments.OTHER.toString(), permission.get(), key);
+            return new SpongeArgumentTypeValue("string", permission.get(), key);
         }
     }
 
@@ -313,76 +302,6 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             );
         }
         return seleneCtx;
-    }
-
-    public static class FaweArgument extends CommandElement {
-
-        enum FaweTypes {
-            PATTERN, MASK
-        }
-
-        private final FaweTypes type;
-
-        FaweArgument(@Nullable Text key, FaweTypes type) {
-            super(key);
-            this.type = type;
-        }
-
-        @Nullable
-        @Override
-        protected Object parseValue(@NotNull CommandSource source, @NotNull CommandArgs args) {
-            try {
-                FawePlayer<?> fawePlayer = FawePlayer.wrap(source);
-                ParserContext pctx = new ParserContext();
-                pctx.setActor(fawePlayer.getPlayer());
-                pctx.setWorld(fawePlayer.getWorld());
-                pctx.setSession(fawePlayer.getSession());
-
-                switch (this.type) {
-                    case PATTERN:
-                        String patternRaw = args.getRaw();
-                        return WorldEdit.getInstance().getPatternFactory().parseFromInput(patternRaw, pctx);
-                    case MASK:
-                        String maskRaw = args.getRaw();
-                        return WorldEdit.getInstance().getMaskFactory().parseFromInput(maskRaw, pctx);
-                }
-            } catch (Throwable e) {
-                Selene.getServer().except("Failed to parse WorldEdit argument", e);
-            }
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public List<String> complete(
-                @NotNull CommandSource src,
-                @NotNull CommandArgs args,
-                @NotNull CommandContext context) {
-            return new ArrayList<>();
-        }
-    }
-
-    public static class ExtensionArgument extends CommandElement {
-
-        ExtensionArgument(@Nullable Text key) {
-            super(key);
-        }
-
-        @Nullable
-        @Override
-        protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
-            Optional<Extension> octx = Selene.getInstance(ExtensionManager.class).getHeader(args.next());
-            return octx.orElse(null);
-        }
-
-        @NotNull
-        @Override
-        public List<String> complete(
-                @NotNull CommandSource src,
-                @NotNull CommandArgs args,
-                @NotNull CommandContext context) {
-            return Selene.getInstance(ExtensionManager.class).getRegisteredExtensionIds();
-        }
     }
 
 }
