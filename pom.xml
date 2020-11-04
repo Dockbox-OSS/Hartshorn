@@ -30,7 +30,7 @@
     <modules>
         <module>selene-core</module>
         <module>selene-common</module>
-        <module>sponge-112</module>
+        <module>sponge</module>
         <module>extensions</module>
         <module>sponge-extensions</module>
     </modules>

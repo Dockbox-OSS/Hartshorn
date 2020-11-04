@@ -23,27 +23,22 @@ import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.ProvisionException;
-import com.google.inject.util.Modules;
 
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
-import org.dockbox.selene.core.server.properties.InjectableType;
-import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
-import org.dockbox.selene.core.util.environment.MinecraftVersion;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper;
 import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
+import org.dockbox.selene.core.util.files.ConfigurateManager;
+import org.dockbox.selene.core.util.inject.AbstractCommonInjector;
 import org.dockbox.selene.core.util.inject.AbstractExceptionInjector;
 import org.dockbox.selene.core.util.inject.AbstractModuleInjector;
 import org.dockbox.selene.core.util.inject.AbstractUtilInjector;
-import org.dockbox.selene.core.util.inject.SeleneInjectModule;
 import org.dockbox.selene.core.util.library.LibraryArtifact;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,15 +55,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  The global {@link Selene} instance used to grant access to various components.
@@ -76,7 +65,89 @@ import java.util.stream.Collectors;
 @SuppressWarnings("ClassWithTooManyMethods")
 public abstract class Selene {
 
-    private static final Logger log = LoggerFactory.getLogger(Selene.class);
+    /**
+     Low-level interface, used by the default IntegratedExtension as indicated by the mappings provided by the platform
+     implementation. Used to access the extension when {@link Selene} is used
+     in a {@link ServerReference} method call.
+     */
+    public interface IntegratedExtension {
+    }
+
+    /**
+     Server type definitions containing display names, minimum/preferred versions, and whether or not the platform
+     provides access to Native Minecraft Sources (NMS).
+     */
+    public enum ServerType {
+        SPONGE("SpongePowered", true, true, "1.12.2-2555-7.1.0-BETA-2815", "1.12.2-2838-7.2.2-RC0"),
+        MAGMA("Magma", true, true, "Not (yet) supported", "Not (yet) supported"),
+        SPIGOT("Spigot", true, false, "Not (yet) supported", "Not (yet) supported"),
+        PAPER("Paper", true, false, "Not (yet) supported", "Not (yet) supported"),
+        JUNIT("JUnit Testing", true, true, "5.3.2", "5.3.2"),
+        OTHER("Other", true, false, "Not (yet) supported", "Not (yet) supported");
+
+        private final String displayName;
+        private final boolean hasNMSAccess;
+        private final boolean isModded;
+        private final String minimumVersion;
+        private final String preferredVersion;
+
+        ServerType(String displayName, boolean hasNMSAccess, boolean isModded, String minimumVersion, String preferredVersion) {
+            this.displayName = displayName;
+            this.hasNMSAccess = hasNMSAccess;
+            this.isModded = isModded;
+            this.minimumVersion = minimumVersion;
+            this.preferredVersion = preferredVersion;
+        }
+
+        /**
+         Gets the display name of the platform in a human readable format
+
+         @return the display name
+         */
+        public String getDisplayName() {
+            return this.displayName;
+        }
+
+        /**
+         Returns whether or not the platform provides access to NMS.
+
+         @return the boolean
+         */
+        public boolean hasNMSAccess() {
+            return this.hasNMSAccess;
+        }
+
+        /**
+         Gets minimum version.
+
+         @return the minimum version
+         */
+        public String getMinimumVersion() {
+            return this.minimumVersion;
+        }
+
+        /**
+         Gets preferred version.
+
+         @return the preferred version
+         */
+        public String getPreferredVersion() {
+            return this.preferredVersion;
+        }
+
+        /**
+         Returns whether or not the platform provides access to a mod loader.
+         This can be especially useful when using {@link ConfigurateManager#getModdedPlatformModsConfigDir()} as it
+         may return {@link Optional#empty()} depending on the availability mods on the platform.
+
+         @return the boolean
+         */
+        public boolean isModded() {
+            return this.isModded;
+        }
+    }
+
+    private final Logger log = LoggerFactory.getLogger(Selene.class);
     private String version;
     private LocalDateTime lastUpdate;
     /**
@@ -87,18 +158,21 @@ public abstract class Selene {
 
     private static Selene instance;
 
-    private final transient List<AbstractModule> injectorModules = new CopyOnWriteArrayList<>();
+    private Injector injector;
 
     /**
-     Instantiates {@link Selene}, creating a local injector based on the provided {@link SeleneInjectModule}.
+     Instantiates {@link Selene}, creating a local injector based on the provided {@link AbstractCommonInjector}.
      Also verifies dependency artifacts and injector bindings. Proceeds to {@link Selene#construct()} once verified.
 
      @param injector
      the injector provided by the Selene implementation
      */
-    protected Selene(SeleneInjectModule injector) {
+    protected Selene(AbstractCommonInjector injector) {
         this.verifyArtifacts();
-        this.injectorModules.add(injector);
+
+        this.injector = Guice.createInjector(injector);
+
+        this.verifyInjectorBindings();
         this.construct();
     }
 
@@ -119,9 +193,13 @@ public abstract class Selene {
             AbstractUtilInjector utilInjector
     ) {
         this.verifyArtifacts();
-        if (null != moduleInjector) this.injectorModules.add(moduleInjector);
-        if (null != exceptionInjector) this.injectorModules.add(exceptionInjector);
-        if (null != utilInjector) this.injectorModules.add(utilInjector);
+
+        this.injector = Guice.createInjector();
+        if (null != moduleInjector) this.injector = this.injector.createChildInjector(moduleInjector);
+        if (null != exceptionInjector) this.injector = this.injector.createChildInjector(exceptionInjector);
+        if (null != utilInjector) this.injector = this.injector.createChildInjector(utilInjector);
+
+        this.verifyInjectorBindings();
         this.construct();
     }
 
@@ -131,23 +209,13 @@ public abstract class Selene {
     }
 
     private void verifyInjectorBindings() {
-        for (Class<?> bindingType : SeleneInjectModule.Companion.getRequiredBindings()) {
+        for (Class<?> bindingType : AbstractCommonInjector.Companion.getRequiredBindings()) {
             try {
-                this.createInjector().getBinding(bindingType);
+                this.injector.getBinding(bindingType);
             } catch (ConfigurationException e) {
                 log().error("Missing binding for " + bindingType.getCanonicalName() + "! While it is possible to inject it later, it is recommended to do so through the default platform injector!");
             }
         }
-    }
-
-    private Injector createInjector(AbstractModule... additionalModules) {
-        Module collectedModule = Modules
-                .override(this.injectorModules)
-                .with(Arrays.stream(additionalModules)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList()));
-
-        return Guice.createInjector(collectedModule);
     }
 
     /**
@@ -155,9 +223,6 @@ public abstract class Selene {
      Once done sets the static instance equal to this instance.
      */
     protected void construct() {
-
-        this.verifyInjectorBindings();
-
         String tVer = "dev";
         LocalDateTime tLU = LocalDateTime.now();
 
@@ -187,18 +252,6 @@ public abstract class Selene {
         Selene.instance = this;
     }
 
-    public static <T> T getInstance(Class<T> type, InjectorProperty<?>... additionalProperties) {
-        return getInstance(type, type, additionalProperties);
-    }
-
-    public static <T> T getInstance(Class<T> type, Object extension, InjectorProperty<?>... additionalProperties) {
-        if (null != extension) {
-            return getInstance(type, extension.getClass(), additionalProperties);
-        } else {
-            return getInstance(type, additionalProperties);
-        }
-    }
-
     /**
      Gets an instance of a provided {@link Class} type. If the type is annotated with {@link Extension} it is ran
      through the {@link ExtensionManager} instance to obtain the instance. If it is not annotated as such, it is ran
@@ -212,78 +265,11 @@ public abstract class Selene {
 
      @return The instance, if present. Otherwise returns null
      */
-    public static <T> T getInstance(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
-        T typeInstance = null;
-
-        // Prepare modules
-        ExtensionModule extensionModule = null;
-        if (extension.isAnnotationPresent(Extension.class)) {
-            extensionModule = getServer().getExtensionModule(extension, extension.getAnnotation(Extension.class), null);
-        }
-
-        AbstractModule propertyModule = new AbstractModule() {
-            @Override
-            protected void configure() {
-                this.bind(InjectorProperty[].class).toInstance(additionalProperties);
-            }
-        };
-
-        // Attempt to get extension instance and get the extension module
+    public static <T> T getInstance(Class<T> type) {
         if (type.isAnnotationPresent(Extension.class)) {
-            typeInstance = getInstance(ExtensionManager.class).getInstance(type).orElse(null);
+            return getInstance(ExtensionManager.class).getInstance(type).orElse(null);
         }
-
-        Injector injector = getServer().createInjector(extensionModule, propertyModule);
-        try {
-            typeInstance = injector.getInstance(type);
-        } catch (ProvisionException e) {
-            log().error("Could not create instance using registered injector " + injector + " for [" + type + "]", e);
-        } catch (ConfigurationException ignored) {
-        }
-
-        // Inject properties if applicable
-        if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable()) {
-            ((InjectableType) typeInstance).stateEnabling(additionalProperties);
-        }
-
-        // May be null, but we have used all possible injectors, it's up to the developer now
-        return typeInstance;
-    }
-
-    public Injector createExtensionInjector(Object instance) {
-        if (null != instance && instance.getClass().isAnnotationPresent(Extension.class)) {
-            Optional<ExtensionContext> context = getInstance(ExtensionManager.class).getContext(instance.getClass());
-            Extension extension;
-            extension = context
-                    .map(ExtensionContext::getExtension)
-                    .orElseGet(() -> instance.getClass().getAnnotation(Extension.class));
-            return this.createExtensionInjector(instance, extension, context.orElse(null));
-        }
-        return this.createInjector();
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> ExtensionModule getExtensionModule(T instance, Extension header, ExtensionContext context) {
-        ExtensionModule module = new ExtensionModule();
-
-        if (null != instance) {
-            if (instance instanceof Class<?>) {
-                module.acceptBinding(Logger.class, LoggerFactory.getLogger((Class<?>) instance));
-            } else {
-                module.acceptBinding(Logger.class, LoggerFactory.getLogger(instance.getClass()));
-                module.acceptBinding((Class<T>) instance.getClass(), instance);
-            }
-        }
-        if (null != header)
-            module.acceptBinding(Extension.class, header);
-        if (null != context)
-            module.acceptBinding(ExtensionContext.class, context);
-
-        return module;
-    }
-
-    public Injector createExtensionInjector(Object instance, Extension header, ExtensionContext context) {
-        return this.createInjector(this.getExtensionModule(instance, header, context));
+        return instance.injector.getInstance(type);
     }
 
     /**
@@ -308,30 +294,17 @@ public abstract class Selene {
                 this.bind(contract).to(implementation);
             }
         };
-        getServer().injectorModules.add(localModule);
+        instance.injector = instance.injector.createChildInjector(localModule);
     }
 
-    public <T> T injectMembers(T type) {
-        if (null != type) {
-            createInjector().injectMembers(type);
-        }
+    /**
+     Gets the injector used for instance mapping. Holds both implementation provided mappings and manually created
+     mappings.
 
-        return type;
-    }
-
-    public <T> T injectMembers(T type, Object extensionInstance) {
-        if (null != type) {
-            if (null != extensionInstance && extensionInstance.getClass().isAnnotationPresent(Extension.class)) {
-                this.createExtensionInjector(extensionInstance).injectMembers(type);
-            } else {
-                this.createInjector().injectMembers(type);
-            }
-        }
-        return type;
-    }
-
-    private Map<Key<?>, Binding<?>> getAllBindings() {
-        return new ConcurrentHashMap<>(this.createInjector().getAllBindings());
+     @return The injector
+     */
+    public Injector getInjector() {
+        return this.injector;
     }
 
     /**
@@ -340,7 +313,7 @@ public abstract class Selene {
      @param consumer
      The consumer to apply
      */
-    private void initIntegratedExtensions(Consumer<ExtensionContext> consumer) {
+    protected void initIntegratedExtensions(Consumer<ExtensionContext> consumer) {
         getInstance(ExtensionManager.class).initialiseExtensions().forEach(consumer);
     }
 
@@ -360,7 +333,7 @@ public abstract class Selene {
         ExtensionManager cm = getInstance(ExtensionManager.class);
         DiscordUtils du = getInstance(DiscordUtils.class);
 
-        this.initIntegratedExtensions(this.getExtensionContextConsumer(cb, eb, cm, du));
+        this.initIntegratedExtensions(this.getConsumer("integrated", cb, eb, cm, du));
 
         getInstance(EventBus.class).post(new ServerEvent.Init());
     }
@@ -371,19 +344,13 @@ public abstract class Selene {
      */
     protected void debugRegisteredInstances() {
         log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
-        AtomicInteger unprovisionedTypes = new AtomicInteger();
-        this.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
-            try {
-                Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
-                Class<?> providerType = binding.getProvider().get().getClass();
+        this.getInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
+            Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
+            Class<?> providerType = binding.getProvider().get().getClass();
 
-                if (!keyType.equals(providerType) && null != providerType)
-                    log().info("  - \u00A77" + keyType.getSimpleName() + ": \u00A78" + providerType.getCanonicalName());
-            } catch (ProvisionException | AssertionError e) {
-                unprovisionedTypes.getAndIncrement();
-            }
+            if (!keyType.equals(providerType))
+                log().info("  - \u00A77" + keyType.getSimpleName() + ": \u00A78" + providerType.getCanonicalName());
         });
-        log().info("  \u00A77.. and " + unprovisionedTypes.get() + " unprovisioned types.");
 
         log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded extensions: ");
         ExtensionManager em = getInstance(ExtensionManager.class);
@@ -415,10 +382,10 @@ public abstract class Selene {
         });
     }
 
-    private Consumer<ExtensionContext> getExtensionContextConsumer(CommandBus cb, EventBus eb, ExtensionManager em, DiscordUtils du) {
+    private Consumer<ExtensionContext> getConsumer(String contextType, CommandBus cb, EventBus eb, ExtensionManager em, DiscordUtils du) {
         return (ExtensionContext ctx) -> {
             Class<?> type = ctx.getExtensionClass();
-            log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
+            log().info("Found type [" + type.getCanonicalName() + "] in " + contextType + " context");
             Optional<?> oi = em.getInstance(type);
             oi.ifPresent(i -> {
                 Package pkg = i.getClass().getPackage();
@@ -444,7 +411,7 @@ public abstract class Selene {
      */
     @NotNull
     public Logger getLog() {
-        return log;
+        return this.log;
     }
 
     /**
@@ -525,7 +492,7 @@ public abstract class Selene {
      @return The {@link Logger}
      */
     public static Logger log() {
-        return log;
+        return getServer().getLog();
     }
 
     /**
@@ -567,6 +534,6 @@ public abstract class Selene {
 
      @return The Minecraft version
      */
-    public abstract MinecraftVersion getMinecraftVersion();
+    public abstract String getMinecraftVersion();
 
 }

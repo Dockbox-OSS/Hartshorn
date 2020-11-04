@@ -35,7 +35,7 @@ public interface ResourceEntry extends Formattable {
     void setValue(String value);
 
     default String plain(){
-        return this.getValue().replaceAll("[$|&][0-9a-fklmnor]", "");
+        return this.getValue().replace("[$|&][0-9a-fklmnor]", "");
     }
 
     default String asString() {

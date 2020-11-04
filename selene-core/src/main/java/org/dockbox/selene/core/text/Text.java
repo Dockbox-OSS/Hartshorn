@@ -166,7 +166,6 @@ public class Text {
     }
 
     public static Text of(Object... objects) {
-        if (0 == objects.length) return new Text("");
         return new Text(objects);
     }
 

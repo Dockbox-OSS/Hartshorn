@@ -226,15 +226,5 @@ public final class Exceptional<T> {
         }
         return "Exceptional.empty";
     }
-
-    public Exceptional<T> orElseSupply(Supplier<T> defaultValue) {
-        if (this.isAbsent()) {
-            if (this.errorPresent()) {
-                return Exceptional.of(defaultValue.get(), this.throwable);
-            } else {
-                return Exceptional.of(defaultValue.get());
-            }
-        }
-        return this;
-    }
+    
 }

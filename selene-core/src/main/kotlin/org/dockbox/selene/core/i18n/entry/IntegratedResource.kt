@@ -66,38 +66,6 @@ enum class IntegratedResource(private var value: String): ResourceEntry {
 
     // Warnings
     IN_ACTIVE_COOLDOWN("$4You are in cooldown! Please wait before performing this action again."),
-
-    // Enchantments
-    AQUA_AFFINITY("Aqua Affinity"),
-    BANE_OF_ARTHROPODS("Bane Of Arthropods"),
-    BINDING_CURSE("Binding Curse"),
-    BLAST_PROTECTION("Blast Protection"),
-    DEPTH_STRIDER("Depth Strider"),
-    EFFICIENCY("Efficiency"),
-    FEATHER_FALLING("Feather Falling"),
-    FIRE_ASPECT("Fire Aspect"),
-    FIRE_PROTECTION("Fire Protection"),
-    FLAME("Flame"),
-    FORTUNE("Fortune"),
-    FROST_WALKER("Frost Walker"),
-    INFINITY("Infinity"),
-    KNOCKBACK("Knockback"),
-    LOOTING("Looting"),
-    LUCK_OF_THE_SEA("Luck Of The Sea"),
-    LURE("Lure"),
-    MENDING("Mending"),
-    POWER("Power"),
-    PROJECTILE_PROTECTION("Projectile Protection"),
-    PROTECTION("Protection"),
-    PUNCH("Punch"),
-    RESPIRATION("Respiration"),
-    SHARPNESS("Sharpness"),
-    SILK_TOUCH("Silk Touch"),
-    SMITE("Smite"),
-    SWEEPING("Sweeping"),
-    THORNS("Thorns"),
-    UNBREAKING("Unbreaking"),
-    VANISHING_CURSE("Vanishing Curse"),
     ;
 
     private var translations: MutableMap<Language, String> = ConcurrentHashMap()

@@ -18,8 +18,6 @@
 package org.dockbox.selene.test;
 
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.ServerType;
-import org.dockbox.selene.core.util.environment.MinecraftVersion;
 import org.dockbox.selene.core.util.library.LibraryArtifact;
 import org.dockbox.selene.test.util.TestInjector;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +46,7 @@ public class SeleneTestImpl extends Selene {
     }
 
     @Override
-    public MinecraftVersion getMinecraftVersion() {
-        return MinecraftVersion.INDEV;
+    public String getMinecraftVersion() {
+        return "indev";
     }
 }

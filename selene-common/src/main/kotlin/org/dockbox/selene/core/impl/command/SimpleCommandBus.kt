@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import java.util.stream.Collectors
-import kotlin.collections.ArrayList
 import org.dockbox.selene.core.annotations.Command
 import org.dockbox.selene.core.annotations.FromSource
 import org.dockbox.selene.core.command.CommandBus
@@ -55,11 +54,14 @@ import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.text.Text
 import org.dockbox.selene.core.text.actions.ClickAction
 import org.dockbox.selene.core.text.actions.HoverAction
-import org.dockbox.selene.core.util.SeleneUtils
+import org.dockbox.selene.core.util.Utils
 import org.dockbox.selene.core.util.extension.Extension
 import org.dockbox.selene.core.util.extension.ExtensionManager
 
 abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
+    enum class Arguments {
+        BOOL, DOUBLE, ENTITY, INTEGER, LOCATION, LONG, PLAYER, EXTENSION, REMAININGSTRING, STRING, USER, UUID, VECTOR, WORLD, EDITSESSION, MASK, PATTERN, REGION, OTHER
+    }
 
     protected val parentCommandPrefix: String = "@m"
 
@@ -89,22 +91,19 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                 methods.add(method)
             }
         }
-
         val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(methods)
         Arrays.stream(registrations)
                 .forEach { registration ->
                     Arrays.stream(registration.aliases)
-                            .forEach { alias -> registerSingleMethodRegistration(registration, alias) }
+                            .forEach { alias ->
+                                val context: String = registration.command.usage
+                                val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
+                                registerCommand(next, registration.permissions, object : CommandRunnerFunction {
+                                    override fun run(src: CommandSource, ctx: CommandContext) = processRunnableCommand(registration, src, ctx)
+                                })
+                                Selene.log().info("Registered singular command : /$alias")
+                            }
                 }
-    }
-
-    private fun registerSingleMethodRegistration(registration: MethodCommandRegistration, alias: String) {
-        val context: String = registration.command.usage
-        val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
-        registerCommand(next, registration.permissions, object : CommandRunnerFunction {
-            override fun run(src: CommandSource, ctx: CommandContext) = processRunnableCommand(registration, src, ctx)
-        })
-        Selene.log().info("Registered singular command : /$alias")
     }
 
     private fun processRunnableCommand(registration: MethodCommandRegistration, src: CommandSource, ctx: CommandContext) {
@@ -114,7 +113,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             else if (result.isPresent) src.sendWithPrefix(result.get())
         }
 
-        if (registration.command.requireConfirm && src is Identifiable<*>) {
+        if (registration.command.requireConfirm && src is Identifiable) {
             confirmableCommands[src.uniqueId] = runnable
 
             val confirmMessage = Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE)
@@ -122,9 +121,6 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                     .onHover(HoverAction.ShowText(Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE_HOVER)))
 
             src.sendWithPrefix(confirmMessage)
-
-            /* If the source cannot be identified we cannot ensure the
-               confirmer is the same source as the original executor */
         } else runnable.run()
     }
 
@@ -138,9 +134,23 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                         src.sendWithPrefix("This command requires arguments!")
             })
 
-            Arrays.stream(registration.subcommands)
-                    .forEach { subRegistration -> registerMethodRegistration(subRegistration, alias, parentRunner) }
+            Arrays.stream(registration.subcommands).forEach { subRegistration ->
 
+                val methodRunner = object : CommandRunnerFunction {
+                    override fun run(src: CommandSource, ctx: CommandContext) = processRunnableCommand(subRegistration, src, ctx)
+                }
+
+                Arrays.stream(subRegistration.aliases).forEach {
+                    if (it != "") {
+                        // Sub commands need the parent command in the context so it can register correctly
+                        val context: String = it + ' ' + subRegistration.command.usage
+                        val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
+                        registerCommand(next, subRegistration.permissions, methodRunner)
+                    } else {
+                        parentRunner.set(methodRunner)
+                    }
+                }
+            }
             val context: String = registration.command.usage
             val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else alias
             registerCommand("*$next", registration.permissions, parentRunner.get())
@@ -149,23 +159,6 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             val subcommands: MutableList<String> = ArrayList()
             Arrays.stream(registration.subcommands).forEach { subcommands.addAll(it.aliases) }
             Selene.log().info("Registered command : /{} {}", alias, java.lang.String.join("|", subcommands))
-        }
-    }
-
-    private fun registerMethodRegistration(registration: MethodCommandRegistration, alias: String, parentRunner: AtomicReference<CommandRunnerFunction>) {
-        val methodRunner = object : CommandRunnerFunction {
-            override fun run(src: CommandSource, ctx: CommandContext) = processRunnableCommand(registration, src, ctx)
-        }
-
-        Arrays.stream(registration.aliases).forEach {
-            if (it != "") {
-                // Sub commands need the parent command in the context so it can register correctly
-                val context: String = it + ' ' + registration.command.usage
-                val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
-                registerCommand(next, registration.permissions, methodRunner)
-            } else {
-                parentRunner.set(methodRunner)
-            }
         }
     }
 
@@ -229,14 +222,14 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     private fun checkSenderInCooldown(sender: CommandSource, ctx: CommandContext, method: Method): Boolean {
         val command = method.getAnnotation(Command::class.java)
         if (command.cooldownDuration < 0) return false
-        if (sender is Identifiable<*>) {
+        if (sender is Identifiable) {
             val registrationId = getRegistrationId(sender, ctx)
-            return (SeleneUtils.isInCooldown(registrationId))
+            return (Utils.isInCooldown(registrationId))
         }
         return false
     }
 
-    private fun getRegistrationId(sender: Identifiable<*>, ctx: CommandContext): String {
+    private fun getRegistrationId(sender: Identifiable, ctx: CommandContext): String {
         val uuid = sender.uniqueId
         val alias = ctx.alias
         return "$uuid$$alias"
@@ -284,9 +277,9 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             }
 
             val command = method.getAnnotation(Command::class.java)
-            if (command.cooldownDuration > 0 && sender is Identifiable<*>) {
+            if (command.cooldownDuration > 0 && sender is Identifiable) {
                 val registrationId = getRegistrationId(sender, ctx)
-                SeleneUtils.cooldown(registrationId, command.cooldownDuration, command.cooldownUnit)
+                Utils.cooldown(registrationId, command.cooldownDuration, command.cooldownUnit)
             }
             method.invoke(o, *finalArgs.toTypedArray())
             Exceptional.empty() // No error message to return
@@ -340,13 +333,17 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         type = vm.group(2)
         permission = try {
             vm.group(3)
-        } catch (e: Exception) {
+        } catch (e: NullPointerException) {
             Permission.GLOBAL_BYPASS.get()
         }
         if (type == null) type = key
 
         return getArgumentValue(type, Permission.of(permission), key)
     }
+
+    protected abstract fun getArgumentValue(type: String, permissions: AbstractPermission, key: String): A
+    abstract fun registerCommandNoArgs(command: String, permissions: AbstractPermission, runner: CommandRunnerFunction)
+    protected abstract fun convertContext(ctx: C, sender: CommandSource, command: String?): SimpleCommandContext
 
     open fun registerCommandArgsAndOrChild(command: String, permission: AbstractPermission, runner: CommandRunnerFunction) {
         Selene.log().debug(String.format("Registering command '%s' with singular permission (%s)", command, permission.get()))
@@ -361,9 +358,6 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         }
     }
 
-    protected abstract fun getArgumentValue(type: String, permissions: AbstractPermission, key: String): A
-    protected abstract fun registerCommandNoArgs(command: String, permissions: AbstractPermission, runner: CommandRunnerFunction)
-    protected abstract fun convertContext(ctx: C, sender: CommandSource, command: String?): SimpleCommandContext
     protected abstract fun registerChildCommand(command: String, runner: CommandRunnerFunction, usagePart: String, permissions: AbstractPermission)
     protected abstract fun registerSingleMethodCommand(command: String, runner: CommandRunnerFunction, usagePart: String, permissions: AbstractPermission)
     protected abstract fun registerParentCommand(command: String, runner: CommandRunnerFunction, permissions: AbstractPermission)

@@ -20,7 +20,7 @@ package org.dockbox.selene.integrated;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.ExternalResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.util.Utils;
 
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
 enum IntegratedServerResources {
@@ -34,7 +34,7 @@ enum IntegratedServerResources {
     static final ResourceEntry EXTENSION_ROW_HOVER = new ExternalResourceEntry("$2Details for '$1{0}$2'", "selene.info.extension.hover");
     static final ResourceEntry EXTENSION_INFO_BLOCK = new ExternalResourceEntry(
             String.join("",
-                    SeleneUtils.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20), "\n",
+                    Utils.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20), "\n",
                     "$2Name : $1{0}", "\n",
                     "$2ID : $1{1}", "\n",
                     "$2Description : $1{2}", "\n",
@@ -45,7 +45,7 @@ enum IntegratedServerResources {
                     "$2Author(s) : $1{7}", "\n",
                     "$2Type : $1{8}", "\n",
                     "$2Source : $1{9}", "\n",
-                    SeleneUtils.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20)
+                    Utils.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20)
             ), "selene.info.extension.block");
     static final ResourceEntry EXTENSION_UNKNOWN = new ExternalResourceEntry("$4Could not find extension with ID '{0}'", "selene.info.extension.unknown");
     static final ResourceEntry LANG_SWITCHED = new ExternalResourceEntry("$1Your preferred language has been switched to: $2{0}", "i18n.lang.updated");
