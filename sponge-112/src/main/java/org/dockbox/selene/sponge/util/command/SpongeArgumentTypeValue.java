@@ -19,7 +19,7 @@ package org.dockbox.selene.sponge.util.command;
 
 import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
-import org.dockbox.selene.core.impl.command.convert.impl.DefaultArgumentConverters;
+import org.dockbox.selene.core.impl.command.convert.impl.ArgumentConverterRegistry;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
@@ -40,8 +40,8 @@ import java.util.List;
 public class SpongeArgumentTypeValue extends AbstractArgumentValue<CommandElement> {
 
     public SpongeArgumentTypeValue(String type, String permission, String key) throws IllegalArgumentException {
-        super(DefaultArgumentConverters.getConverter(type.toLowerCase()), permission, key);
-        if (!DefaultArgumentConverters.hasConverter(type.toLowerCase())) {
+        super(ArgumentConverterRegistry.getConverter(type.toLowerCase()), permission, key);
+        if (!ArgumentConverterRegistry.hasConverter(type.toLowerCase())) {
             try {
                 Class<?> clazz = Class.forName(type);
                 if (clazz.isEnum()) {

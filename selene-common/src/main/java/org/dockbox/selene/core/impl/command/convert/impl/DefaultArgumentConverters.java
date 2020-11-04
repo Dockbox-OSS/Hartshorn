@@ -22,6 +22,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
+import org.dockbox.selene.core.exceptions.ConstraintException;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
 import org.dockbox.selene.core.impl.command.parse.LocationArgumentParser;
 import org.dockbox.selene.core.impl.command.parse.PlayerArgumentParser;
@@ -48,11 +49,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("ClassWithTooManyFields")
-public final class DefaultArgumentConverters {
+public final class ArgumentConverterRegistry {
 
     private static transient final Collection<ArgumentConverter<?>> CONVERTERS = new CopyOnWriteArrayList<>();
 
-    private DefaultArgumentConverters() {
+    private ArgumentConverterRegistry() {
     }
 
     public static boolean hasConverter(String key) {

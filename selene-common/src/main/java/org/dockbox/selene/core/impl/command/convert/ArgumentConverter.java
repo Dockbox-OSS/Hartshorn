@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.impl.command.convert;
 
-import org.dockbox.selene.core.impl.command.convert.impl.DefaultArgumentConverters;
+import org.dockbox.selene.core.impl.command.convert.impl.ArgumentConverterRegistry;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.CommandSource;
 
@@ -35,7 +35,7 @@ public abstract class ArgumentConverter<T> {
             throw new IllegalArgumentException("Cannot create argument converter without at least one key");
         this.keys = keys;
         this.type = type;
-        DefaultArgumentConverters.registerConverter(this);
+        ArgumentConverterRegistry.registerConverter(this);
     }
 
     public List<String> getKeys() {
