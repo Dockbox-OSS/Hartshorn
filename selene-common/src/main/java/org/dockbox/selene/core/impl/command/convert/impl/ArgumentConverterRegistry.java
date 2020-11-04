@@ -70,6 +70,24 @@ public final class ArgumentConverterRegistry {
                 .findFirst();
     }
 
+
+    public static boolean hasConverter(Class<?> type) {
+        return getOptionalConverter(type).isPresent();
+    }
+
+
+    public static <T> ArgumentConverter<T> getConverter(Class<T> type) {
+        return getOptionalConverter(type).orElse(null);
+    }
+
+    private static <T> Optional<ArgumentConverter<T>> getOptionalConverter(Class<T> type) {
+        //noinspection unchecked
+        return CONVERTERS.stream()
+                .filter(converter -> converter.getType().isAssignableFrom(type))
+                .map(converter -> (ArgumentConverter<T>) converter)
+                .findFirst();
+    }
+
     public static void registerConverter(ArgumentConverter<?> converter) {
         for (String key : converter.getKeys()) {
             for (ArgumentConverter<?> existingConverter : CONVERTERS) {

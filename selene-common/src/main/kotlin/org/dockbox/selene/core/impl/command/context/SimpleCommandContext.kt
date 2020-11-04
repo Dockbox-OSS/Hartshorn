@@ -28,21 +28,16 @@ import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.selene.core.command.parse.rules.Rule
 import org.dockbox.selene.core.command.parse.rules.Split
 import org.dockbox.selene.core.command.parse.rules.Strict
-import org.dockbox.selene.core.i18n.common.ResourceEntry
-import org.dockbox.selene.core.impl.command.parse.BooleanArgumentParser
-import org.dockbox.selene.core.impl.command.parse.CharArgumentParser
+import org.dockbox.selene.core.impl.command.convert.ArgumentConverter
+import org.dockbox.selene.core.impl.command.convert.impl.ArgumentConverterRegistry
 import org.dockbox.selene.core.impl.command.parse.DoubleArgumentParser
 import org.dockbox.selene.core.impl.command.parse.EnumArgumentParser
 import org.dockbox.selene.core.impl.command.parse.FloatArgumentParser
 import org.dockbox.selene.core.impl.command.parse.IntegerArgumentParser
 import org.dockbox.selene.core.impl.command.parse.ListArgumentParser
-import org.dockbox.selene.core.impl.command.parse.LocationArgumentParser
 import org.dockbox.selene.core.impl.command.parse.LongArgumentParser
 import org.dockbox.selene.core.impl.command.parse.MapArgumentParser
-import org.dockbox.selene.core.impl.command.parse.PlayerArgumentParser
-import org.dockbox.selene.core.impl.command.parse.ResourceArgumentParser
 import org.dockbox.selene.core.impl.command.parse.ShortArgumentParser
-import org.dockbox.selene.core.impl.command.parse.WorldArgumentParser
 import org.dockbox.selene.core.objects.location.Location
 import org.dockbox.selene.core.objects.location.World
 import org.dockbox.selene.core.objects.optional.Exceptional
@@ -151,6 +146,10 @@ open class SimpleCommandContext(
         field.set(instance, null)
     }
 
+    private fun getRawArgument(key: String): Optional<CommandValue.Argument<*>> {
+        return Arrays.stream(args).filter { it.key == key }.findFirst().map { CommandValue.Argument(it.value, it.key) }
+    }
+
     private fun tryGetValue(field: Field): Exceptional<*> {
         val oa = getArgument(field.name)
         if (!oa.isPresent) return Exceptional.empty<String>()
@@ -171,16 +170,6 @@ open class SimpleCommandContext(
         }
 
         when (field.type) {
-
-            Player::class.java -> Exceptional.ofOptional(PlayerArgumentParser().parse(arg))
-            World::class.java -> return Exceptional.ofOptional(WorldArgumentParser().parse(arg))
-            Location::class.java -> return Exceptional.ofOptional(LocationArgumentParser().parse(arg))
-
-            Boolean::class.java -> return Exceptional.ofOptional(BooleanArgumentParser().parse(arg))
-            Char::class.java -> return Exceptional.ofOptional(CharArgumentParser().parse(arg))
-
-            // If anyone knows how to move functions with in/out types extending Number (Or Comparable<* : Number>)
-            // please feel free to change/optimize this.
             Double::class.java -> {
                 return Exceptional.ofOptional(DoubleArgumentParser().parse(arg).map {
                     if (minMax != null) when {
@@ -242,11 +231,20 @@ open class SimpleCommandContext(
                 if (field.isAnnotationPresent(Split::class.java)) parser.setRowDelimiter(field.getAnnotation(Split::class.java).delimiter)
                 return Exceptional.ofOptional(parser.parse(arg))
             }
-
-            ResourceEntry::class.java -> return Exceptional.ofOptional(ResourceArgumentParser().parse(arg))
             SimpleCommandContext::class.java -> return Exceptional.of(this)
+        }
 
-            else -> Selene.log().warn("Field of type [" + field.type.canonicalName + "] has no parser for automatic tryGetValue")
+        val roa = getRawArgument(field.name)
+        if (!oa.isPresent) return Exceptional.empty<String>()
+        val rarg = roa.get()
+
+        if (rarg.value!!::class.java == field.type) {
+            return Exceptional.of(rarg.value)
+        }
+
+        val converter: ArgumentConverter<*>? = ArgumentConverterRegistry.getConverter(field.type);
+        if (converter != null) {
+            return converter.convert(sender, arg.value)
         }
 
         return Exceptional.empty<String>()
