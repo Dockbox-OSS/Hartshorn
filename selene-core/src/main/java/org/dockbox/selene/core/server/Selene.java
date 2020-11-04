@@ -23,7 +23,9 @@ import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.Module;
 import com.google.inject.ProvisionException;
+import com.google.inject.util.Modules;
 
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
@@ -59,12 +61,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  The global {@link Selene} instance used to grant access to various components.
@@ -83,8 +87,7 @@ public abstract class Selene {
 
     private static Selene instance;
 
-    private final transient List<Injector> injectors = new CopyOnWriteArrayList<>();
-    private Injector mainInjector;
+    private final transient List<AbstractModule> injectorModules = new CopyOnWriteArrayList<>();
 
     /**
      Instantiates {@link Selene}, creating a local injector based on the provided {@link SeleneInjectModule}.
@@ -95,7 +98,7 @@ public abstract class Selene {
      */
     protected Selene(SeleneInjectModule injector) {
         this.verifyArtifacts();
-        this.mainInjector = Guice.createInjector(injector);
+        this.injectorModules.add(injector);
         this.construct();
     }
 
@@ -116,10 +119,9 @@ public abstract class Selene {
             AbstractUtilInjector utilInjector
     ) {
         this.verifyArtifacts();
-        this.mainInjector = Guice.createInjector();
-        if (null != moduleInjector) this.mainInjector = this.mainInjector.createChildInjector(moduleInjector);
-        if (null != exceptionInjector) this.mainInjector = this.mainInjector.createChildInjector(exceptionInjector);
-        if (null != utilInjector) this.mainInjector = this.mainInjector.createChildInjector(utilInjector);
+        if (null != moduleInjector) this.injectorModules.add(moduleInjector);
+        if (null != exceptionInjector) this.injectorModules.add(exceptionInjector);
+        if (null != utilInjector) this.injectorModules.add(utilInjector);
         this.construct();
     }
 
@@ -131,11 +133,21 @@ public abstract class Selene {
     private void verifyInjectorBindings() {
         for (Class<?> bindingType : SeleneInjectModule.Companion.getRequiredBindings()) {
             try {
-                this.mainInjector.getBinding(bindingType);
+                this.createInjector().getBinding(bindingType);
             } catch (ConfigurationException e) {
                 log().error("Missing binding for " + bindingType.getCanonicalName() + "! While it is possible to inject it later, it is recommended to do so through the default platform injector!");
             }
         }
+    }
+
+    private Injector createInjector(AbstractModule... additionalModules) {
+        Module collectedModule = Modules
+                .override(this.injectorModules)
+                .with(Arrays.stream(additionalModules)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList()));
+
+        return Guice.createInjector(collectedModule);
     }
 
     /**
@@ -145,7 +157,6 @@ public abstract class Selene {
     protected void construct() {
 
         this.verifyInjectorBindings();
-        this.upgradeInjectors(this.mainInjector);
 
         String tVer = "dev";
         LocalDateTime tLU = LocalDateTime.now();
@@ -203,8 +214,13 @@ public abstract class Selene {
      */
     public static <T> T getInstance(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
         T typeInstance = null;
+
         // Prepare modules
         ExtensionModule extensionModule = null;
+        if (extension.isAnnotationPresent(Extension.class)) {
+            extensionModule = getServer().getExtensionModule(extension, extension.getAnnotation(Extension.class), null);
+        }
+
         AbstractModule propertyModule = new AbstractModule() {
             @Override
             protected void configure() {
@@ -217,49 +233,17 @@ public abstract class Selene {
             typeInstance = getInstance(ExtensionManager.class).getInstance(type).orElse(null);
         }
 
-        if (extension.isAnnotationPresent(Extension.class)) {
-            extensionModule = getServer().getExtensionModule(extension, extension.getAnnotation(Extension.class), null);
-        }
-
-        // If the instance didn't exist, or wasn't a extension, attempt to use any known injector to create one
-        if (null == typeInstance && null != getServer()) {
-            for (Injector injector : getServer().getInjectors()) {
-                try {
-                    typeInstance = injector.getInstance(type);
-                    if (null != typeInstance)
-                        break;
-                } catch (ConfigurationException | ProvisionException ignored) {
-                }
-            }
-        }
-
-        // Prepare the local injector, depending on whether or not the extension was present
-        Injector localInjector;
-        if (null == extensionModule) {
-            localInjector = Guice.createInjector(propertyModule);
-        } else {
-            localInjector = Guice.createInjector(propertyModule, extensionModule);
-        }
-
-        // If the current instance was not created using a existing injector, try it again with our local injector
-        if (null == typeInstance) {
-            try {
-                typeInstance = localInjector.getInstance(type);
-            } catch (ConfigurationException | ProvisionException ignored) {
-            }
-        }
-
-        // Always inject members afterwards, even if the instance was created using another injector
-        localInjector.injectMembers(typeInstance);
-
-        // Inject all members using all known injectors
-        if (null != typeInstance && null != getServer()) {
-            typeInstance = getServer().injectMembers(typeInstance);
+        Injector injector = getServer().createInjector(extensionModule, propertyModule);
+        try {
+            typeInstance = injector.getInstance(type);
+        } catch (ProvisionException e) {
+            log().error("Could not create instance using registered injector " + injector + " for [" + type + "]", e);
+        } catch (ConfigurationException ignored) {
         }
 
         // Inject properties if applicable
         if (typeInstance instanceof InjectableType) {
-            ((InjectableType) typeInstance).injectProperties(additionalProperties);
+            ((InjectableType) typeInstance).stateEnabling(additionalProperties);
         }
 
         // May be null, but we have used all possible injectors, it's up to the developer now
@@ -275,30 +259,31 @@ public abstract class Selene {
                     .orElseGet(() -> instance.getClass().getAnnotation(Extension.class));
             return this.createExtensionInjector(instance, extension, context.orElse(null));
         }
-        return this.mainInjector;
+        return this.createInjector();
     }
 
+    @SuppressWarnings("unchecked")
     private <T> ExtensionModule getExtensionModule(T instance, Extension header, ExtensionContext context) {
         ExtensionModule module = new ExtensionModule();
+
         if (null != instance) {
             if (instance instanceof Class<?>) {
-                module.bind(Logger.class).toInstance(LoggerFactory.getLogger((Class<?>) instance));
+                module.acceptBinding(Logger.class, LoggerFactory.getLogger((Class<?>) instance));
             } else {
-                module.bind(Logger.class).toInstance(LoggerFactory.getLogger(instance.getClass()));
-                //noinspection unchecked
-                module.bind((Class<T>) instance.getClass()).toInstance(instance);
+                module.acceptBinding(Logger.class, LoggerFactory.getLogger(instance.getClass()));
+                module.acceptBinding((Class<T>) instance.getClass(), instance);
             }
         }
         if (null != header)
-            module.bind(Extension.class).toInstance(header);
+            module.acceptBinding(Extension.class, header);
         if (null != context)
-            module.bind(ExtensionContext.class).toInstance(context);
+            module.acceptBinding(ExtensionContext.class, context);
 
         return module;
     }
 
     public Injector createExtensionInjector(Object instance, Extension header, ExtensionContext context) {
-        return this.mainInjector.createChildInjector(this.getExtensionModule(instance, header, context));
+        return this.createInjector(this.getExtensionModule(instance, header, context));
     }
 
     /**
@@ -323,24 +308,12 @@ public abstract class Selene {
                 this.bind(contract).to(implementation);
             }
         };
-        getServer().mainInjector = getServer().mainInjector.createChildInjector(localModule);
-    }
-
-    /**
-     Gets the injector used for instance mapping. Holds both implementation provided mappings and manually created
-     mappings.
-
-     @return The injector
-     */
-    private List<Injector> getInjectors() {
-        return this.injectors;
+        getServer().injectorModules.add(localModule);
     }
 
     public <T> T injectMembers(T type) {
         if (null != type) {
-            for (Injector injector : this.getInjectors()) {
-                injector.injectMembers(type);
-            }
+            createInjector().injectMembers(type);
         }
 
         return type;
@@ -348,29 +321,17 @@ public abstract class Selene {
 
     public <T> T injectMembers(T type, Object extensionInstance) {
         if (null != type) {
-            for (Injector injector : this.getInjectors()) {
-                injector.injectMembers(type);
-            }
-
             if (null != extensionInstance && extensionInstance.getClass().isAnnotationPresent(Extension.class)) {
                 this.createExtensionInjector(extensionInstance).injectMembers(type);
+            } else {
+                this.createInjector().injectMembers(type);
             }
         }
-
         return type;
     }
 
-    protected void upgradeInjectors(Injector injector) {
-        if (null != injector)
-            this.getInjectors().add(injector);
-    }
-
     private Map<Key<?>, Binding<?>> getAllBindings() {
-        Map<Key<?>, Binding<?>> bindingsMap = new ConcurrentHashMap<>();
-        for (Injector injector : this.getInjectors()) {
-            bindingsMap.putAll(injector.getAllBindings());
-        }
-        return bindingsMap;
+        return new ConcurrentHashMap<>(this.createInjector().getAllBindings());
     }
 
     /**
