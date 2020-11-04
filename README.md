@@ -1,4 +1,5 @@
-# Selene
+# <img src="https://user-images.githubusercontent.com/10957963/97993406-57ef9480-1de4-11eb-8fa0-54bb8380cf94.png" width="300"/>  
+
 ![ci-status](https://api.travis-ci.com/GuusLieben/Selene.svg?branch=api-7.1-1.12.2) 
 ![minecraft](https://img.shields.io/badge/Minecraft-1.12.2-lightgrey)
 ![sponge-api](https://img.shields.io/badge/SpongeAPI-7.2-yellow)  
