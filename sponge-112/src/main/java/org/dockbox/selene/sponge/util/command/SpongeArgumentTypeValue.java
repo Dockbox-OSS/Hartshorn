@@ -21,6 +21,7 @@ import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
 import org.dockbox.selene.core.impl.command.convert.impl.DefaultArgumentConverters;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -79,16 +80,20 @@ public class SpongeArgumentTypeValue extends AbstractArgumentValue<CommandElemen
         protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
             return this.argument.convert(
                     SpongeConversionUtil.fromSponge(source).get(),
-                    args.getRaw()
-            );
+                    args.next()
+            ).orElse(null);
         }
 
         @Override
         public List<String> complete(@NotNull CommandSource src, CommandArgs args, @NotNull CommandContext context) {
-            return new ArrayList<>(this.argument.getSuggestions(
-                    SpongeConversionUtil.fromSponge(src).get(),
-                    args.getRaw()
-            ));
+            try {
+                return new ArrayList<>(this.argument.getSuggestions(
+                        SpongeConversionUtil.fromSponge(src).get(),
+                        args.next()
+                ));
+            } catch (ArgumentParseException e) {
+                return SeleneUtils.emptyList();
+            }
         }
     }
 }
