@@ -20,6 +20,7 @@ package org.dockbox.selene.core.impl.util.files.serialize;
 import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.server.Selene;
 
 import java.util.Collection;
 import java.util.Set;
@@ -44,22 +45,23 @@ import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 @SuppressWarnings("rawtypes")
 public final class SeleneTypeSerializers {
 
-    static {
-        new SerializerInformation<>(Language.class, LanguageTypeSerializer::new);
-        new SerializerInformation<>(byte[].class, ByteArrayTypeSerializer::new);
-        new SerializerInformation<>(int[].class, IntArrayTypeSerializer::new);
-        new SerializerInformation<>(short[].class, ShortArrayTypeSerializer::new);
-        new SerializerInformation<>(Pattern.class, PatternTypeSerializer::new);
-        new PredicateSerializerInformation<>(Set.class, SetTypeSerializer::new);
-    }
-
     /**
      The transient {@link Collection} holding all known {@link SerializerInformation} instances, which can be
      used to register the associated {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializer}s.
      */
     static final transient Collection<SerializerInformation<?>> serializerInformation = new CopyOnWriteArrayList<>();
 
-    private SeleneTypeSerializers() {
+    static {
+        try {
+            new SerializerInformation<>(Language.class, LanguageTypeSerializer::new);
+            new SerializerInformation<>(byte[].class, ByteArrayTypeSerializer::new);
+            new SerializerInformation<>(int[].class, IntArrayTypeSerializer::new);
+            new SerializerInformation<>(short[].class, ShortArrayTypeSerializer::new);
+            new SerializerInformation<>(Pattern.class, PatternTypeSerializer::new);
+            new PredicateSerializerInformation<>(Set.class, SetTypeSerializer::new);
+        } catch (Exception e) {
+            Selene.getServer().except("Failed to initialize serializer information", e);
+        }
     }
 
     /**

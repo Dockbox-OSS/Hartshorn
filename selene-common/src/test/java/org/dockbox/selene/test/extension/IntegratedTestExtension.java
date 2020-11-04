@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.test.extension;
 
-import org.dockbox.selene.core.server.Selene.IntegratedExtension;
+import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.util.extension.Extension;
 
 @Extension(

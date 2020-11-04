@@ -21,14 +21,13 @@ import org.dockbox.selene.core.impl.util.files.mapping.NeutrinoObjectMapper;
 import org.dockbox.selene.core.impl.util.files.mapping.NeutrinoObjectMapperFactory;
 import org.dockbox.selene.core.impl.util.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.core.util.files.FileType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import ninja.leaping.configurate.ConfigurationNode;
@@ -97,9 +96,13 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
 
             final T content = mapper.bindToNew().populate(node);
 
+            if (SeleneUtils.isFileEmpty(file)) {
+                this.writeFileContent(file, content);
+            }
+
             return Exceptional.ofNullable(content);
         } catch (IOException | IllegalArgumentException | ObjectMappingException | UnsupportedFileException e) {
-            return Exceptional.of(null, e);
+            return Exceptional.of(e);
         }
     }
 
@@ -117,6 +120,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
 
             mapper.bind(content).serialize(node);
             loader.save(node);
+
             return Exceptional.of(true);
         } catch (UnsupportedFileException | IOException | ObjectMappingException e) {
             return Exceptional.of(false, e);
@@ -146,7 +150,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @NotNull
     @Override
     public Path getDataFile(@NotNull Extension extension, @NotNull String file) {
-        return this.createPathIfNotExists(
+        return this.createFileIfNotExists(
                 this.getFileType().asPath(
                         this.getDataDir().resolve(extension.id()),
                         file
@@ -157,7 +161,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @NotNull
     @Override
     public Path getConfigFile(@NotNull Extension extension, @NotNull String file) {
-        return this.createPathIfNotExists(
+        return this.createFileIfNotExists(
                 this.getFileType().asPath(
                         this.getExtensionConfigsDir().resolve(extension.id()),
                         file
@@ -168,22 +172,13 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @NotNull
     @Override
     public Path createPathIfNotExists(@NotNull Path path) {
-        if (!path.toFile().exists()) path.toFile().mkdirs();
-        return path;
+        return SeleneUtils.createPathIfNotExists(path);
     }
 
     @NotNull
     @Override
     public Path createFileIfNotExists(@NotNull Path file) {
-        if (!Files.exists(file)) {
-            try {
-                Files.createDirectories(file.getParent());
-                Files.createFile(file);
-            } catch (IOException ex) {
-                Selene.getServer().except("Could not create file '" + file.getFileName() + "'", ex);
-            }
-        }
-        return file;
+        return SeleneUtils.createFileIfNotExists(file);
     }
 
 }

@@ -17,11 +17,7 @@
 
 package org.dockbox.selene.core.objects.targets
 
-import org.dockbox.selene.core.util.uuid.UUIDUtil
 import java.util.*
+import org.dockbox.selene.core.objects.keys.KeyHolder
 
-open class Identifiable(open var uniqueId: UUID, open var name: String) : Target {
-
-    object None : Identifiable(UUIDUtil.empty, "None")
-
-}
+open class Identifiable<T:Identifiable<T>>(open var uniqueId: UUID, open var name: String) : Target, KeyHolder<T>

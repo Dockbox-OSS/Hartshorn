@@ -1,4 +1,5 @@
 org.dockbox.selene.core.i18n.common
+org.dockbox.selene.core.impl.objects.keys
 org.dockbox.selene.core.impl.server.config
 org.dockbox.selene.core.impl.util.discord
 org.dockbox.selene.core.impl.util.events
@@ -9,6 +10,9 @@ org.dockbox.selene.core.impl.util.files.mapping
 org.dockbox.selene.core.impl.util.files.process
 org.dockbox.selene.core.impl.util.files.serialize
 org.dockbox.selene.core.impl.util.files.util
+org.dockbox.selene.core.objects
+org.dockbox.selene.core.objects.item
+org.dockbox.selene.core.objects.keys
 org.dockbox.selene.core.objects.optional
 org.dockbox.selene.core.server
 org.dockbox.selene.core.text
@@ -22,8 +26,10 @@ org.dockbox.selene.integrated
 org.dockbox.selene.ptime
 org.dockbox.selene.sponge
 org.dockbox.selene.sponge.listeners
+org.dockbox.selene.sponge.object.item
 org.dockbox.selene.sponge.text.navigation
 org.dockbox.selene.sponge.util
 org.dockbox.selene.sponge.util.command
+org.dockbox.selene.sponge.util.construct
 org.dockbox.selene.sponge.util.discord
 org.dockbox.selene.sponge.util.thread
