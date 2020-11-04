@@ -21,6 +21,7 @@ import org.dockbox.selene.core.i18n.common.Language
 
 interface GlobalConfig {
 
+    fun getSetting(key: String): String?
     fun getDefaultLanguage(): Language
     fun getStacktracesAllowed(): Boolean
     fun getExceptionLevel(): ExceptionLevels
