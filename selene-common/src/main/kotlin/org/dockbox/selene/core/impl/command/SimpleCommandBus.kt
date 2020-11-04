@@ -59,8 +59,9 @@ import org.dockbox.selene.core.util.extension.Extension
 import org.dockbox.selene.core.util.extension.ExtensionManager
 
 abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
+
     enum class Arguments {
-        BOOL, DOUBLE, ENTITY, INTEGER, LOCATION, LONG, PLAYER, EXTENSION, REMAININGSTRING, STRING, USER, UUID, VECTOR, WORLD, EDITSESSION, MASK, PATTERN, REGION, OTHER
+        BOOL, DOUBLE, ENTITY, INTEGER, LOCATION, LONG, PLAYER, EXTENSION, REMAININGSTRING, STRING, USER, UUID, VECTOR, WORLD, MASK, PATTERN, OTHER
     }
 
     protected val parentCommandPrefix: String = "@m"
@@ -91,19 +92,22 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                 methods.add(method)
             }
         }
+
         val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(methods)
         Arrays.stream(registrations)
                 .forEach { registration ->
                     Arrays.stream(registration.aliases)
-                            .forEach { alias ->
-                                val context: String = registration.command.usage
-                                val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
-                                registerCommand(next, registration.permissions, object : CommandRunnerFunction {
-                                    override fun run(src: CommandSource, ctx: CommandContext) = processRunnableCommand(registration, src, ctx)
-                                })
-                                Selene.log().info("Registered singular command : /$alias")
-                            }
+                            .forEach { alias -> registerSingleMethodRegistration(registration, alias) }
                 }
+    }
+
+    private fun registerSingleMethodRegistration(registration: MethodCommandRegistration, alias: String) {
+        val context: String = registration.command.usage
+        val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
+        registerCommand(next, registration.permissions, object : CommandRunnerFunction {
+            override fun run(src: CommandSource, ctx: CommandContext) = processRunnableCommand(registration, src, ctx)
+        })
+        Selene.log().info("Registered singular command : /$alias")
     }
 
     private fun processRunnableCommand(registration: MethodCommandRegistration, src: CommandSource, ctx: CommandContext) {
@@ -121,6 +125,9 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                     .onHover(HoverAction.ShowText(Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE_HOVER)))
 
             src.sendWithPrefix(confirmMessage)
+
+            /* If the source cannot be identified we cannot ensure the
+               confirmer is the same source as the original executor */
         } else runnable.run()
     }
 
@@ -134,23 +141,9 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                         src.sendWithPrefix("This command requires arguments!")
             })
 
-            Arrays.stream(registration.subcommands).forEach { subRegistration ->
+            Arrays.stream(registration.subcommands)
+                    .forEach { subRegistration -> registerMethodRegistration(subRegistration, alias, parentRunner) }
 
-                val methodRunner = object : CommandRunnerFunction {
-                    override fun run(src: CommandSource, ctx: CommandContext) = processRunnableCommand(subRegistration, src, ctx)
-                }
-
-                Arrays.stream(subRegistration.aliases).forEach {
-                    if (it != "") {
-                        // Sub commands need the parent command in the context so it can register correctly
-                        val context: String = it + ' ' + subRegistration.command.usage
-                        val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
-                        registerCommand(next, subRegistration.permissions, methodRunner)
-                    } else {
-                        parentRunner.set(methodRunner)
-                    }
-                }
-            }
             val context: String = registration.command.usage
             val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else alias
             registerCommand("*$next", registration.permissions, parentRunner.get())
@@ -159,6 +152,23 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             val subcommands: MutableList<String> = ArrayList()
             Arrays.stream(registration.subcommands).forEach { subcommands.addAll(it.aliases) }
             Selene.log().info("Registered command : /{} {}", alias, java.lang.String.join("|", subcommands))
+        }
+    }
+
+    private fun registerMethodRegistration(registration: MethodCommandRegistration, alias: String, parentRunner: AtomicReference<CommandRunnerFunction>) {
+        val methodRunner = object : CommandRunnerFunction {
+            override fun run(src: CommandSource, ctx: CommandContext) = processRunnableCommand(registration, src, ctx)
+        }
+
+        Arrays.stream(registration.aliases).forEach {
+            if (it != "") {
+                // Sub commands need the parent command in the context so it can register correctly
+                val context: String = it + ' ' + registration.command.usage
+                val next = if (context.contains(" ")) context.replaceFirst(context.substring(0, context.indexOf(' ')).toRegex(), alias) else context
+                registerCommand(next, registration.permissions, methodRunner)
+            } else {
+                parentRunner.set(methodRunner)
+            }
         }
     }
 
@@ -341,10 +351,6 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         return getArgumentValue(type, Permission.of(permission), key)
     }
 
-    protected abstract fun getArgumentValue(type: String, permissions: AbstractPermission, key: String): A
-    abstract fun registerCommandNoArgs(command: String, permissions: AbstractPermission, runner: CommandRunnerFunction)
-    protected abstract fun convertContext(ctx: C, sender: CommandSource, command: String?): SimpleCommandContext
-
     open fun registerCommandArgsAndOrChild(command: String, permission: AbstractPermission, runner: CommandRunnerFunction) {
         Selene.log().debug(String.format("Registering command '%s' with singular permission (%s)", command, permission.get()))
         val parts = command.split(" ".toRegex()).toTypedArray()
@@ -358,6 +364,9 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
         }
     }
 
+    protected abstract fun getArgumentValue(type: String, permissions: AbstractPermission, key: String): A
+    protected abstract fun registerCommandNoArgs(command: String, permissions: AbstractPermission, runner: CommandRunnerFunction)
+    protected abstract fun convertContext(ctx: C, sender: CommandSource, command: String?): SimpleCommandContext
     protected abstract fun registerChildCommand(command: String, runner: CommandRunnerFunction, usagePart: String, permissions: AbstractPermission)
     protected abstract fun registerSingleMethodCommand(command: String, runner: CommandRunnerFunction, usagePart: String, permissions: AbstractPermission)
     protected abstract fun registerParentCommand(command: String, runner: CommandRunnerFunction, permissions: AbstractPermission)
