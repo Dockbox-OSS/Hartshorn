@@ -71,6 +71,13 @@ public final class ArgumentConverterRegistry {
     }
 
     public static void registerConverter(ArgumentConverter<?> converter) {
+        for (String key : converter.getKeys()) {
+            for (ArgumentConverter<?> existingConverter : CONVERTERS) {
+                if (existingConverter.getKeys().contains(key)) {
+                    throw new ConstraintException("Duplicate argument key '" + key + "' found while registering converter");
+                }
+            }
+        }
         CONVERTERS.add(converter);
     }
 
