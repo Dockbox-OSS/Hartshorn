@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import java.util.stream.Collectors
+import kotlin.collections.ArrayList
 import org.dockbox.selene.core.annotations.Command
 import org.dockbox.selene.core.annotations.FromSource
 import org.dockbox.selene.core.command.CommandBus
@@ -59,10 +60,6 @@ import org.dockbox.selene.core.util.extension.Extension
 import org.dockbox.selene.core.util.extension.ExtensionManager
 
 abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
-
-    enum class Arguments {
-        BOOL, DOUBLE, ENTITY, INTEGER, LOCATION, LONG, PLAYER, EXTENSION, REMAININGSTRING, STRING, USER, UUID, VECTOR, WORLD, MASK, PATTERN, OTHER
-    }
 
     protected val parentCommandPrefix: String = "@m"
 

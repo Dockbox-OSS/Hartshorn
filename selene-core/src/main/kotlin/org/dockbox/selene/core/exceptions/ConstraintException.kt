@@ -15,18 +15,6 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.impl.command
+package org.dockbox.selene.core.exceptions
 
-import org.dockbox.selene.core.impl.command.convert.ArgumentConverter
-
-@Suppress("LeakingThis")
-abstract class AbstractArgumentValue<T>(argument: ArgumentConverter<*>?, protected var permission: String?, key: String) {
-
-    var element: T
-    protected abstract fun parseArgument(argument: ArgumentConverter<*>?, key: String?): T
-    abstract val argument: T
-
-    init {
-        element = parseArgument(argument, key)
-    }
-}
+class ConstraintException(message: String) : RuntimeException(message)

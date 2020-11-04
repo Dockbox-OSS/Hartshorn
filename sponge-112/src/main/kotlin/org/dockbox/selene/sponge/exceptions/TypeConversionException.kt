@@ -17,5 +17,4 @@
 
 package org.dockbox.selene.sponge.exceptions
 
-class TypeConversionException(message: String?) : RuntimeException(message) {
-}
+class TypeConversionException(message: String?) : RuntimeException(message)
