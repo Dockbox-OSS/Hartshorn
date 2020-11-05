@@ -22,6 +22,6 @@ import org.dockbox.selene.core.objects.targets.CommandSource
 
 class NativeCommandEvent(
         source: CommandSource,
-        alias: String,
-        arguments: Array<String>
+        val alias: String,
+        val arguments: Array<String>
 ) : AbstractTargetCancellableEvent(source)
