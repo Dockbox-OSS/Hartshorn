@@ -17,11 +17,45 @@
 
 package org.dockbox.selene.core.events.chat
 
+import org.dockbox.selene.core.annotations.Filter
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
+import org.dockbox.selene.core.objects.events.Filterable
 import org.dockbox.selene.core.objects.targets.CommandSource
+import org.dockbox.selene.core.util.events.FilterTypes
 
 class NativeCommandEvent(
         source: CommandSource,
         val alias: String,
         val arguments: Array<String>
-) : AbstractTargetCancellableEvent(source)
+) : AbstractTargetCancellableEvent(source), Filterable {
+
+    override fun isApplicable(filter: Filter): Boolean {
+        if (filter.param in arrayOf("alias", "command")) {
+            return filter.type.test(filter.value, alias)
+        } else if (filter.param in arrayOf("args", "arguments")) {
+            val expectedArguments = filter.value.split(" ")
+            if (filter.type == FilterTypes.EQUALS) {
+                for (expectedArg in expectedArguments) {
+                    if (!arguments.contains(expectedArg)) return false
+                }
+                return true
+
+            } else if (filter.type == FilterTypes.CONTAINS) {
+                for (expectedArg in expectedArguments) {
+                    if (arguments.contains(expectedArg)) return true
+                }
+                return false
+            }
+        }
+        return false
+    }
+
+    override fun acceptedFilters(): List<FilterTypes> {
+        return FilterTypes.commonStringTypes()
+    }
+
+    override fun acceptedParams(): List<String> {
+        return arrayListOf("alias", "args", "arguments", "command")
+    }
+
+}
