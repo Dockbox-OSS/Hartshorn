@@ -25,7 +25,9 @@ import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.dockbox.selene.core.util.environment.MinecraftVersion;
 import org.dockbox.selene.core.util.library.LibraryArtifact;
+import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
+import org.dockbox.selene.sponge.listeners.SpongePlayerListener;
 import org.dockbox.selene.sponge.listeners.SpongeServerEventListener;
 import org.dockbox.selene.sponge.util.inject.SpongeCommonInjector;
 import org.jetbrains.annotations.NotNull;
@@ -79,9 +81,20 @@ public class SeleneSponge112Impl extends Selene {
     @Listener
     public void onServerInit(GameInitializationEvent event) {
         // TODO GuusLieben, attempt to convert injector to raw bindings
-//        super.upgradeInjectors(this.spongeInjector);
-        Sponge.getEventManager().registerListeners(this, new SpongeServerEventListener());
+//      super.upgradeInjectors(this.spongeInjector);
+        this.registerListeners(
+                getInstance(SpongeCommandListener.class),
+                getInstance(SpongeServerEventListener.class),
+                getInstance(SpongeDiscordListener.class),
+                getInstance(SpongePlayerListener.class)
+        );
         super.init();
+    }
+
+    private void registerListeners(Object... listeners) {
+        for (Object obj : listeners) {
+            Sponge.getEventManager().registerListeners(this, obj);
+        }
     }
 
     @Listener

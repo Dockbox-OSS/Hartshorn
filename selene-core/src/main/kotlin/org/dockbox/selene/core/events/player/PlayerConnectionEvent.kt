@@ -17,12 +17,13 @@
 
 package org.dockbox.selene.core.events.player
 
+import java.net.InetSocketAddress
 import org.dockbox.selene.core.objects.events.Targetable
 import org.dockbox.selene.core.objects.targets.Target
 
-abstract class PlayerConnectionEvent(private val target: Target) : Targetable {
+abstract class PlayerConnectionEvent(private val target: Target?) : Targetable {
 
-    override fun getTarget(): Target {
+    override fun getTarget(): Target? {
         return this.target
     }
 
@@ -32,6 +33,12 @@ abstract class PlayerConnectionEvent(private val target: Target) : Targetable {
 
     class Join(target: Target) : PlayerConnectionEvent(target)
     class Leave(target: Target) : PlayerConnectionEvent(target)
-    class Ping(target: Target) : PlayerConnectionEvent(target)
+    class Auth(address: InetSocketAddress, host: InetSocketAddress) : PlayerConnectionEvent(null) {
+
+        override fun getTarget(): Target {
+            throw UnsupportedOperationException("Cannot get target while authenticating")
+        }
+
+    }
 
 }

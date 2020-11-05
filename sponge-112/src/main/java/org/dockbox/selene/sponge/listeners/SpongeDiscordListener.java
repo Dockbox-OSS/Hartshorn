@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.sponge.listeners;
 
+import com.google.inject.Inject;
+
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.DisconnectEvent;
 import net.dv8tion.jda.api.events.ReconnectedEvent;
@@ -64,7 +66,8 @@ import java.util.Optional;
 
 public class SpongeDiscordListener extends ListenerAdapter {
 
-    private final EventBus bus = Selene.getInstance(EventBus.class);
+    @Inject
+    private EventBus bus;
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
