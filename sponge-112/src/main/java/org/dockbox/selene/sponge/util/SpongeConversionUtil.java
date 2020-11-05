@@ -18,7 +18,9 @@
 package org.dockbox.selene.sponge.util;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.flowpowered.math.vector.Vector3i;
 
+import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
@@ -267,7 +269,18 @@ public enum SpongeConversionUtil {
 
     @NotNull
     public static org.dockbox.selene.core.objects.location.World fromSponge(World world) {
-        return new SpongeWorld(world.getUniqueId(), world.getName());
+        Vector3i vector3i = world.getProperties().getSpawnPosition();
+        Vector3D spawnLocation = new Vector3D(vector3i.getX(), vector3i.getY(), vector3i.getZ());
+
+        return new SpongeWorld(
+                world.getUniqueId(),
+                world.getName(),
+                world.getProperties().loadOnStartup(),
+                spawnLocation,
+                world.getProperties().getSeed(),
+                fromSponge(world.getProperties().getGameMode()),
+                world.getProperties().getGameRules()
+        );
     }
 
     @NotNull
@@ -277,5 +290,21 @@ public enum SpongeConversionUtil {
         } catch (IllegalArgumentException | NullPointerException e) {
             return Gamemode.OTHER;
         }
+    }
+
+    @NotNull
+    public static WorldCreatingProperties fromSponge(org.spongepowered.api.world.storage.WorldProperties worldProperties) {
+        Vector3i vector3i = worldProperties.getSpawnPosition();
+        Vector3D spawnLocation = new Vector3D(vector3i.getX(), vector3i.getY(), vector3i.getZ());
+
+        return new WorldCreatingProperties(
+                worldProperties.getWorldName(),
+                worldProperties.getUniqueId(),
+                worldProperties.loadOnStartup(),
+                spawnLocation,
+                worldProperties.getSeed(),
+                fromSponge(worldProperties.getGameMode()),
+                worldProperties.getGameRules()
+        );
     }
 }
