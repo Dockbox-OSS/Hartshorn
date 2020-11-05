@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.core.impl.util.events;
 
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
+
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.events.IWrapper;
@@ -49,8 +52,17 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
             throws SecurityException {
         List<InvokeWrapper> invokeWrappers = new CopyOnWriteArrayList<>();
         for (Class<?> param : method.getParameterTypes()) {
-            Class<? extends Event> eventType = (Class<? extends Event>) param;
-            invokeWrappers.add(new InvokeWrapper(instance, eventType, method, priority));
+            if (Event.class.isAssignableFrom(param)) {
+                Class<? extends Event> eventType = (Class<? extends Event>) param;
+                invokeWrappers.add(new InvokeWrapper(instance, eventType, method, priority));
+            } else if (com.sk89q.worldedit.event.Event.class.isAssignableFrom(param)) {
+                WorldEdit.getInstance().getEventBus().subscribe(param,
+                        new MethodEventHandler(
+                                Priority.EARLY,
+                                instance,
+                                method
+                        ));
+            }
         }
         return invokeWrappers;
     }
@@ -81,6 +93,9 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                 if (type.isAssignableFrom(event.getClass())) {
                     args.add(event);
                 } else args.add(null);
+            }
+            if (!this.method.isAccessible()) {
+                this.method.setAccessible(true);
             }
             this.method.invoke(this.listener, args.toArray());
         } catch (Throwable e) {

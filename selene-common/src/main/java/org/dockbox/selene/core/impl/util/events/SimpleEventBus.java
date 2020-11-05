@@ -132,7 +132,7 @@ public class SimpleEventBus implements EventBus {
         }
 
         for (Class<?> param : method.getParameterTypes()) {
-            if (!Event.class.isAssignableFrom(param)) {
+            if (!Event.class.isAssignableFrom(param) && !com.sk89q.worldedit.event.Event.class.isAssignableFrom(param)) {
                 throw new IllegalArgumentException("Parameter must be a subclass of the Event class: " + method.toGenericString());
             }
         }
