@@ -34,7 +34,6 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
@@ -73,7 +72,7 @@ public class SeleneSponge112Impl extends Selene {
 
     /**
      Sponge Listener method, registers additional listeners present in
-     {@link org.dockbox.selene.sponge.listeners.SpongeServerEventListener}.
+     {@link org.dockbox.selene.sponge.listeners.SpongeServerListener}.
 
      @param event
      Sponge's initialization event
@@ -82,7 +81,7 @@ public class SeleneSponge112Impl extends Selene {
     public void onServerInit(GameInitializationEvent event) {
         // TODO GuusLieben, attempt to convert injector to raw bindings
 //      super.upgradeInjectors(this.spongeInjector);
-        this.registerListeners(
+        this.registerSpongeListeners(
                 getInstance(SpongeCommandListener.class),
                 getInstance(SpongeServerListener.class),
                 getInstance(SpongeDiscordListener.class),
@@ -91,15 +90,10 @@ public class SeleneSponge112Impl extends Selene {
         super.init();
     }
 
-    private void registerListeners(Object... listeners) {
+    private void registerSpongeListeners(Object... listeners) {
         for (Object obj : listeners) {
             Sponge.getEventManager().registerListeners(this, obj);
         }
-    }
-
-    @Listener
-    public void onServerStarted(GameStartedServerEvent event) {
-        super.debugRegisteredInstances();
     }
 
     /**
@@ -111,7 +105,7 @@ public class SeleneSponge112Impl extends Selene {
      @param event
      the event
      */
-    @Listener(order = Order.LAST)
+    @Listener
     public void onServerStartedLate(GameStartedServerEvent event) {
         Optional<JDA> oj = getInstance(DiscordUtils.class).getJDA();
         if (oj.isPresent()) {
@@ -132,7 +126,6 @@ public class SeleneSponge112Impl extends Selene {
                     .async()
                     .submit(this);
         }
-
     }
 
     @NotNull
@@ -144,7 +137,8 @@ public class SeleneSponge112Impl extends Selene {
     @Override
     protected LibraryArtifact[] getPlatformArtifacts() {
         // Define libraries to download, specifically targeting Sponge.
-        // At the time of writing there are no additional libraries required for Sponge.
+        // At the time of writing there are no additional libraries required for Sponge that aren't already shaded
+        // or marked as a dependency through Sponge.
         return new LibraryArtifact[0];
     }
 
