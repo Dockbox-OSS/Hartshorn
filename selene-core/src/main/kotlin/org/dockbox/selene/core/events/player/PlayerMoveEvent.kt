@@ -28,5 +28,6 @@ abstract class PlayerMoveEvent(target: Player) : AbstractTargetCancellableEvent(
     class Fly(target: Player) : PlayerMoveEvent(target)
     class Crouch(target: Player) : PlayerMoveEvent(target)
     class Spawn(target: Player, val spawnLocation: Location) : PlayerMoveEvent(target)
+    class PlayerWarpEvent(target: Player, val warp: org.dockbox.selene.core.objects.location.Warp) : PlayerMoveEvent(target)
 
 }

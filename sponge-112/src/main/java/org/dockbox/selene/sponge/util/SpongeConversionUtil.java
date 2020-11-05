@@ -24,6 +24,7 @@ import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.location.Warp;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.CommandSource;
 import org.dockbox.selene.core.objects.tuple.Vector3D;
@@ -305,6 +306,19 @@ public enum SpongeConversionUtil {
                 worldProperties.getSeed(),
                 fromSponge(worldProperties.getGameMode()),
                 worldProperties.getGameRules()
+        );
+    }
+
+    public static Warp fromSponge(io.github.nucleuspowered.nucleus.api.nucleusdata.Warp warp) {
+        org.dockbox.selene.core.objects.location.Location location = warp.getLocation()
+                .map(SpongeConversionUtil::fromSponge)
+                .orElse(org.dockbox.selene.core.objects.location.Location.Companion.getEMPTY());
+
+        return new Warp(
+                warp.getDescription().map(Text::toString),
+                warp.getCategory(),
+                location,
+                warp.getName()
         );
     }
 }

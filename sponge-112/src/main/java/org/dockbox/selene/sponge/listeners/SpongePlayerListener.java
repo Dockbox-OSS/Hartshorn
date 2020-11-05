@@ -56,4 +56,15 @@ public class SpongePlayerListener {
         this.bus.post(event);
     }
 
+    @Listener
+    public void onPlayerWarp(NucleusWarpEvent.Use warpEvent) {
+        Warp warp = SpongeConversionUtil.fromSponge(warpEvent.getWarp());
+        User user = warpEvent.getTargetUser();
+        Event event = new PlayerWarpEvent(
+                new SpongePlayer(user.getUniqueId(), user.getName()),
+                warp
+        );
+        this.bus.post(event);
+    }
+
 }
