@@ -29,6 +29,7 @@ import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.CommandSource;
 import org.dockbox.selene.core.objects.tuple.Vector3D;
 import org.dockbox.selene.core.objects.user.Gamemode;
+import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
@@ -41,7 +42,6 @@ import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.source.ConsoleSource;
-import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
@@ -51,7 +51,6 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.serializer.TextSerializers;
-import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -68,7 +67,9 @@ public enum SpongeConversionUtil {
     @NotNull
     public static <T> Optional<?> autoDetectFromSponge(T object) {
         // CommandSource, Location, World, Gamemode
-        if (object instanceof org.spongepowered.api.command.CommandSource) {
+        if (object instanceof org.spongepowered.api.entity.living.player.Player) {
+            return Optional.of(fromSponge((org.spongepowered.api.entity.living.player.Player) object));
+        } else if (object instanceof org.spongepowered.api.command.CommandSource) {
             return fromSponge((org.spongepowered.api.command.CommandSource) object).toOptional();
         } else if (object instanceof Location) {
             return Optional.of(fromSponge((Location) object));
@@ -77,7 +78,7 @@ public enum SpongeConversionUtil {
         } else if (object instanceof GameMode) {
             return Optional.of(fromSponge((GameMode) object));
         } else if (object instanceof User) {
-            return Optional.of(new SpongePlayer(((Identifiable) object).getUniqueId(), ((Tamer) object).getName()));
+            return Optional.of(fromSponge((User) object));
         } else if (object instanceof ItemStack) {
             return Optional.of(fromSponge((ItemStack) object));
         } else if (object instanceof Enchantment) {
@@ -260,11 +261,22 @@ public enum SpongeConversionUtil {
         return builder.build();
     }
 
+
+    @NotNull
+    public static Player fromSponge(org.spongepowered.api.entity.living.player.Player player) {
+        return fromSponge((User) player);
+    }
+
+    @NotNull
+    public static Player fromSponge(org.spongepowered.api.entity.living.player.User player) {
+        return new SpongePlayer(player.getUniqueId(), player.getName());
+    }
+
     @NotNull
     public static Exceptional<CommandSource> fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
         if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.Companion.getInstance());
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
-            return Exceptional.of(new SpongePlayer(((Identifiable) commandSource).getUniqueId(), commandSource.getName()));
+            return Exceptional.of(fromSponge((org.spongepowered.api.entity.living.player.Player) commandSource));
         return Exceptional.of(new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'"));
     }
 

@@ -19,10 +19,9 @@ package org.dockbox.selene.core.events.chat
 
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
 import org.dockbox.selene.core.objects.targets.MessageReceiver
+import org.dockbox.selene.core.text.Text
 
 class SendChatEvent(
         target: MessageReceiver,
-        val isGlobalChat: Boolean,
-        val message: String,
-        val channel: String?
+        val message: Text
 ) : AbstractTargetCancellableEvent(target)

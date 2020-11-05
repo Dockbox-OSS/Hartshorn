@@ -19,6 +19,7 @@ package org.dockbox.selene.core.events.player
 
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
 import org.dockbox.selene.core.objects.location.Location
+import org.dockbox.selene.core.objects.location.World
 import org.dockbox.selene.core.objects.user.Player
 
 abstract class PlayerMoveEvent(target: Player) : AbstractTargetCancellableEvent(target) {
@@ -26,5 +27,6 @@ abstract class PlayerMoveEvent(target: Player) : AbstractTargetCancellableEvent(
     class PlayerTeleportEvent(target: Player, val oldLocation: Location, val newLocation: Location) : PlayerMoveEvent(target)
     class PlayerSpawnEvent(target: Player, val spawnLocation: Location) : PlayerMoveEvent(target)
     class PlayerWarpEvent(target: Player, val warp: org.dockbox.selene.core.objects.location.Warp) : PlayerMoveEvent(target)
+    class PlayerSwitchWorldEvent(target: Player, val oldWorld: World, val newWorld: World) : PlayerMoveEvent(target)
 
 }
