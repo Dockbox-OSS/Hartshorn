@@ -19,8 +19,10 @@ package org.dockbox.selene.sponge.objects.targets
 
 import com.boydti.fawe.FaweAPI
 import com.boydti.fawe.`object`.FawePlayer
+import com.google.common.eventbus.EventBus
 import java.util.*
 import java.util.function.Function
+import org.dockbox.selene.core.events.chat.SendMessageEvent
 import org.dockbox.selene.core.i18n.common.Language
 import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.i18n.entry.IntegratedResource
@@ -93,12 +95,18 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun send(text: Text) {
-        if (spongePlayer.referenceExists()) spongePlayer.reference.get().sendMessage(SpongeConversionUtil.toSponge(text))
+        if (spongePlayer.referenceExists()) {
+            if (canProceedAfterEvent(text))
+                spongePlayer.reference.get().sendMessage(SpongeConversionUtil.toSponge(text))
+        }
     }
 
     override fun send(text: CharSequence) {
-        if (spongePlayer.referenceExists()) spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
-                IntegratedResource.parseColors(text)))
+        if (spongePlayer.referenceExists()) {
+            val message = of(text)
+            if (canProceedAfterEvent(message))
+                spongePlayer.reference.get().sendMessage(SpongeConversionUtil.toSponge(message))
+        }
     }
 
     override fun sendWithPrefix(text: ResourceEntry) {
@@ -107,19 +115,30 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun sendWithPrefix(text: Text) {
-        if (spongePlayer.referenceExists()) spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
-                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
-                SpongeConversionUtil.toSponge(text)
-        )
-        )
+        if (spongePlayer.referenceExists()) {
+            if (canProceedAfterEvent(text))
+                spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
+                        SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
+                        SpongeConversionUtil.toSponge(text))
+                )
+        }
     }
 
     override fun sendWithPrefix(text: CharSequence) {
-        if (spongePlayer.referenceExists()) spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
-                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
-                org.spongepowered.api.text.Text.of(text)
-        )
-        )
+        if (spongePlayer.referenceExists()) {
+            val message = of(text)
+            if (canProceedAfterEvent(message))
+                spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
+                        SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
+                        SpongeConversionUtil.toSponge(message))
+                )
+        }
+    }
+
+    private fun canProceedAfterEvent(text: Text): Boolean {
+        val event = SendMessageEvent(this, text)
+        Selene.getInstance(EventBus::class.java).post(event)
+        return !event.isCancelled();
     }
 
     override fun sendPagination(pagination: Pagination) {
