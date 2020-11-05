@@ -20,7 +20,10 @@ package org.dockbox.selene.core.impl.util.events;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 
+import org.dockbox.selene.core.annotations.Filter;
+import org.dockbox.selene.core.annotations.Filters;
 import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.objects.events.Filterable;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.events.IWrapper;
 
@@ -97,10 +100,37 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
             if (!this.method.isAccessible()) {
                 this.method.setAccessible(true);
             }
-            this.method.invoke(this.listener, args.toArray());
+
+            if (this.filtersMatch(event)) {
+                this.method.invoke(this.listener, args.toArray());
+            }
         } catch (Throwable e) {
             Selene.getServer().except("Failed to invoke method", e);
         }
+    }
+
+    private boolean filtersMatch(Event event) {
+        if (event instanceof Filterable) {
+            if (this.method.isAnnotationPresent(Filter.class)) {
+                Filter filter = this.method.getAnnotation(Filter.class);
+                return this.testFilter(filter, (Filterable) event);
+            } else if (this.method.isAnnotationPresent(Filters.class)) {
+                Filters filters = this.method.getAnnotation(Filters.class);
+                for (Filter filter : filters.value()) {
+                    if (!this.testFilter(filter, (Filterable) event)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean testFilter(Filter filter, Filterable event) {
+        if (event.acceptedParams().contains(filter.param()) && event.acceptedFilters().contains(filter.type())) {
+            return event.isApplicable(filter);
+        }
+        return false;
     }
 
     @Override
