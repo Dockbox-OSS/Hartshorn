@@ -28,7 +28,7 @@ import org.dockbox.selene.core.util.library.LibraryArtifact;
 import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.selene.sponge.listeners.SpongePlayerListener;
-import org.dockbox.selene.sponge.listeners.SpongeServerEventListener;
+import org.dockbox.selene.sponge.listeners.SpongeServerListener;
 import org.dockbox.selene.sponge.util.inject.SpongeCommonInjector;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Platform.Component;
@@ -84,7 +84,7 @@ public class SeleneSponge112Impl extends Selene {
 //      super.upgradeInjectors(this.spongeInjector);
         this.registerListeners(
                 getInstance(SpongeCommandListener.class),
-                getInstance(SpongeServerEventListener.class),
+                getInstance(SpongeServerListener.class),
                 getInstance(SpongeDiscordListener.class),
                 getInstance(SpongePlayerListener.class)
         );
