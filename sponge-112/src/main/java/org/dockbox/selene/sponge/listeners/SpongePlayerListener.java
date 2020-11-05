@@ -19,16 +19,22 @@ package org.dockbox.selene.sponge.listeners;
 
 import com.google.inject.Inject;
 
-import org.dockbox.selene.core.events.player.PlayerConnectionEvent.Auth;
-import org.dockbox.selene.core.events.player.PlayerConnectionEvent.Join;
-import org.dockbox.selene.core.events.player.PlayerConnectionEvent.Leave;
+import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerAuthEvent;
+import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerJoinEvent;
+import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerLeaveEvent;
+import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerWarpEvent;
 import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.objects.location.Warp;
 import org.dockbox.selene.core.util.events.EventBus;
+import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.network.RemoteConnection;
+
+import io.github.nucleuspowered.nucleus.api.events.NucleusWarpEvent;
 
 public class SpongePlayerListener {
 
@@ -38,21 +44,21 @@ public class SpongePlayerListener {
     @Listener
     public void onPlayerConnected(ClientConnectionEvent.Join joinEvent) {
         Player sp = joinEvent.getTargetEntity();
-        Event event = new Join(SpongeConversionUtil.fromSponge(sp).orElse(null));
+        Event event = new PlayerJoinEvent(SpongeConversionUtil.fromSponge(sp).orElse(null));
         this.bus.post(event);
     }
 
     @Listener
     public void onPlayerDisconnected(ClientConnectionEvent.Disconnect disconnectEvent) {
         Player sp = disconnectEvent.getTargetEntity();
-        Event event = new Leave(SpongeConversionUtil.fromSponge(sp).orElse(null));
+        Event event = new PlayerLeaveEvent(SpongeConversionUtil.fromSponge(sp).orElse(null));
         this.bus.post(event);
     }
 
     @Listener
     public void onPlayerAuthenticating(ClientConnectionEvent.Auth authEvent) {
         RemoteConnection connection = authEvent.getConnection();
-        Event event = new Auth(connection.getAddress(), connection.getVirtualHost());
+        Event event = new PlayerAuthEvent(connection.getAddress(), connection.getVirtualHost());
         this.bus.post(event);
     }
 

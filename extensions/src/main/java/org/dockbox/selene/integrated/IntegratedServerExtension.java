@@ -21,7 +21,7 @@ import org.dockbox.selene.core.annotations.Command;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
-import org.dockbox.selene.core.events.server.ServerEvent.Reload;
+import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.impl.command.parse.LanguageArgumentParser;
@@ -136,12 +136,12 @@ public class IntegratedServerExtension extends ServerReference implements Integr
             Exceptional<?> oi = Exceptional.ofOptional(Selene.getInstance(ExtensionManager.class).getInstance(e.id()));
 
             oi.ifPresent(o -> {
-                eb.post(new Reload(), o.getClass());
+                eb.post(new ServerReloadEvent(), o.getClass());
                 src.send(IntegratedServerResources.EXTENSION_RELOAD_SUCCESSFUL.format(e.name()));
             }).ifAbsent(() ->
                     src.send(IntegratedServerResources.EXTENSION_RELOAD_FAILED.format(e.name())));
         } else {
-            eb.post(new Reload());
+            eb.post(new ServerReloadEvent());
             src.send(IntegratedServerResources.FULL_RELOAD_SUCCESSFUL);
         }
     }

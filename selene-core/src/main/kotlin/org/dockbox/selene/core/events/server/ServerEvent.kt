@@ -21,9 +21,9 @@ import org.dockbox.selene.core.objects.events.Event
 
 abstract class ServerEvent : Event {
 
-    class Init : ServerEvent()
-    class Reload : ServerEvent()
-    class Starting : ServerEvent()
-    class Started : ServerEvent()
+    class ServerInitEvent : ServerEvent()
+    class ServerReloadEvent : ServerEvent()
+    class ServerStartingEvent : ServerEvent()
+    class ServerStartedEvent : ServerEvent()
 
 }

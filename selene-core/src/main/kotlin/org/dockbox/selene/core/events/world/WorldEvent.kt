@@ -26,10 +26,10 @@ import org.dockbox.selene.core.objects.user.Gamemode
 
 abstract class WorldEvent : AbstractCancellableEvent() {
 
-    class Load(world: World) : WorldEvent()
-    class Unload(world: World) : WorldEvent()
-    class Save(world: World) : WorldEvent()
-    class Creating(properties: WorldCreatingProperties) : WorldEvent()
+    class WorldLoadEvent(world: World) : WorldEvent()
+    class WorldUnloadEvent(world: World) : WorldEvent()
+    class WorldSaveEvent(world: World) : WorldEvent()
+    class WorldCreatingEvent(properties: WorldCreatingProperties) : WorldEvent()
 
     class WorldCreatingProperties(
             val name: String,

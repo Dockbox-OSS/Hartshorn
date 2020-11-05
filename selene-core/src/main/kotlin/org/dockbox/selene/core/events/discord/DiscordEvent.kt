@@ -17,25 +17,29 @@
 
 package org.dockbox.selene.core.events.discord
 
-import net.dv8tion.jda.api.entities.*
-import org.dockbox.selene.core.objects.events.Event
 import java.util.*
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.MessageReaction
+import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.entities.User
+import org.dockbox.selene.core.objects.events.Event
 
 abstract class DiscordEvent : Event {
 
-    class ChatReceived(
+    class DiscordChatReceivedEvent(
             val author: User,
             val message: Message,
             val guild: Guild,
             val channel: TextChannel
     ): DiscordEvent()
 
-    class PrivateChatReceived(
+    class DiscordPrivateChatReceivedEvent(
             val author: User,
             val message: Message
     ): DiscordEvent()
 
-    class ReactionAdded(
+    class DiscordReactionAddedEvent(
             val author: User,
             val message: Message,
             val reaction: MessageReaction
@@ -44,39 +48,39 @@ abstract class DiscordEvent : Event {
         fun getEmoteName(): String = reaction.reactionEmote.name
     }
 
-    class ChatDeleted(
+    class DiscordChatDeletedEvent(
             val messageId: String
     ) : DiscordEvent()
 
-    class PrivateChatDeleted(
+    class DiscordPrivateChatDeletedEvent(
             val messageId: String
     ) : DiscordEvent()
 
-    class ChatUpdated(
+    class DiscordChatUpdatedEvent(
             val author: User,
             val message: Message
     ) : DiscordEvent()
 
-    class PrivateChatUpdated(
+    class DiscordPrivateChatUpdatedEvent(
             val author: User,
             val message: Message
     ) : DiscordEvent()
 
-    class Banned(val user: User, val guild: Guild) : DiscordEvent()
+    class DiscordUserBannedEvent(val user: User, val guild: Guild) : DiscordEvent()
 
-    class Unbanned(val user: User, val guild: Guild) : DiscordEvent()
+    class DiscordUserUnbannedEvent(val user: User, val guild: Guild) : DiscordEvent()
 
-    class Joined(val user: User, val guild: Guild) : DiscordEvent()
+    class DiscordUserJoinedEvent(val user: User, val guild: Guild) : DiscordEvent()
 
-    class Left(val user: User, val guild: Guild) : DiscordEvent()
+    class DiscordUserLeftEvent(val user: User, val guild: Guild) : DiscordEvent()
 
-    class NicknameChanged(
+    class DiscordUserNicknameChangedEvent(
             val user: User,
             val oldNickname: Optional<String>,
             val newNickname: Optional<String>
     ) : DiscordEvent()
 
-    class Disconnected : DiscordEvent()
+    class DiscordBotDisconnectedEvent : DiscordEvent()
 
-    class Reconnected : DiscordEvent()
+    class DiscordBotReconnectedEvent : DiscordEvent()
 }

@@ -19,9 +19,9 @@ package org.dockbox.selene.sponge.listeners;
 
 import com.google.inject.Inject;
 
-import org.dockbox.selene.core.events.server.ServerEvent.Reload;
-import org.dockbox.selene.core.events.server.ServerEvent.Started;
-import org.dockbox.selene.core.events.server.ServerEvent.Starting;
+import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
+import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
+import org.dockbox.selene.core.events.server.ServerEvent.ServerStartingEvent;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
@@ -35,17 +35,17 @@ public class SpongeServerListener {
 
     @Listener
     public void onServerStarting(GameStartingServerEvent event) {
-        this.bus.post(new Starting());
+        this.bus.post(new ServerStartingEvent());
     }
 
     @Listener
     public void onServerStarted(GameStartedServerEvent event) {
-        this.bus.post(new Started());
+        this.bus.post(new ServerStartedEvent());
     }
 
     @Listener
     public void onServerReload(GameReloadEvent event) {
-        this.bus.post(new Reload());
+        this.bus.post(new ServerReloadEvent());
     }
 
 }

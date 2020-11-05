@@ -23,11 +23,8 @@ import org.dockbox.selene.core.objects.user.Player
 
 abstract class PlayerMoveEvent(target: Player) : AbstractTargetCancellableEvent(target) {
 
-    class Teleport(target: Player, val oldLocation: Location, val newLocation: Location) : PlayerMoveEvent(target)
-    class Walk(target: Player) : PlayerMoveEvent(target)
-    class Fly(target: Player) : PlayerMoveEvent(target)
-    class Crouch(target: Player) : PlayerMoveEvent(target)
-    class Spawn(target: Player, val spawnLocation: Location) : PlayerMoveEvent(target)
+    class PlayerTeleportEvent(target: Player, val oldLocation: Location, val newLocation: Location) : PlayerMoveEvent(target)
+    class PlayerSpawnEvent(target: Player, val spawnLocation: Location) : PlayerMoveEvent(target)
     class PlayerWarpEvent(target: Player, val warp: org.dockbox.selene.core.objects.location.Warp) : PlayerMoveEvent(target)
 
 }

@@ -19,10 +19,10 @@ package org.dockbox.selene.sponge.listeners;
 
 import com.google.inject.Inject;
 
-import org.dockbox.selene.core.events.world.WorldEvent.Creating;
-import org.dockbox.selene.core.events.world.WorldEvent.Load;
-import org.dockbox.selene.core.events.world.WorldEvent.Save;
-import org.dockbox.selene.core.events.world.WorldEvent.Unload;
+import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingEvent;
+import org.dockbox.selene.core.events.world.WorldEvent.WorldLoadEvent;
+import org.dockbox.selene.core.events.world.WorldEvent.WorldSaveEvent;
+import org.dockbox.selene.core.events.world.WorldEvent.WorldUnloadEvent;
 import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.location.World;
@@ -43,7 +43,7 @@ public class SpongeWorldListener {
     @Listener
     public void onWorldLoaded(LoadWorldEvent loadEvent) {
         World world = SpongeConversionUtil.fromSponge(loadEvent.getTargetWorld());
-        Cancellable event = new Load(world);
+        Cancellable event = new WorldLoadEvent(world);
         this.bus.post(event);
         loadEvent.setCancelled(event.isCancelled());
     }
@@ -51,7 +51,7 @@ public class SpongeWorldListener {
     @Listener
     public void onWorldUnloaded(UnloadWorldEvent unloadEvent) {
         World world = SpongeConversionUtil.fromSponge(unloadEvent.getTargetWorld());
-        Cancellable event = new Unload(world);
+        Cancellable event = new WorldUnloadEvent(world);
         this.bus.post(event);
         unloadEvent.setCancelled(event.isCancelled());
     }
@@ -59,7 +59,7 @@ public class SpongeWorldListener {
     @Listener
     public void onWorldSaved(SaveWorldEvent saveEvent) {
         World world = SpongeConversionUtil.fromSponge(saveEvent.getTargetWorld());
-        Cancellable event = new Save(world);
+        Cancellable event = new WorldSaveEvent(world);
         this.bus.post(event);
         saveEvent.setCancelled(event.isCancelled());
     }
@@ -67,7 +67,7 @@ public class SpongeWorldListener {
     @Listener
     public void onWorldCreating(ConstructWorldPropertiesEvent constructEvent) {
         WorldProperties swp = constructEvent.getWorldProperties();
-        Event event = new Creating(SpongeConversionUtil.fromSponge(swp));
+        Event event = new WorldCreatingEvent(SpongeConversionUtil.fromSponge(swp));
         this.bus.post(event);
     }
 

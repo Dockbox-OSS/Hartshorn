@@ -30,7 +30,7 @@ import com.google.inject.util.Modules;
 import org.dockbox.selene.core.annotations.Listener;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
-import org.dockbox.selene.core.events.server.ServerEvent.Started;
+import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
@@ -365,7 +365,7 @@ public abstract class Selene {
 
         this.initIntegratedExtensions(this.getExtensionContextConsumer(cb, eb, cm, du));
 
-        getInstance(EventBus.class).post(new ServerEvent.Init());
+        getInstance(EventBus.class).post(new ServerEvent.ServerInitEvent());
     }
 
     /**
@@ -373,7 +373,7 @@ public abstract class Selene {
      This method is typically only used when starting the server.
      */
     @Listener
-    protected void debugRegisteredInstances(Started event) {
+    protected void debugRegisteredInstances(ServerStartedEvent event) {
         log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
         AtomicInteger unprovisionedTypes = new AtomicInteger();
         this.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
