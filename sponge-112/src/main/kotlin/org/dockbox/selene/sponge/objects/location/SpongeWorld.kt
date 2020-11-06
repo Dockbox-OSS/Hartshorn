@@ -20,7 +20,7 @@ package org.dockbox.selene.sponge.objects.location
 import com.flowpowered.math.vector.Vector3i
 import java.util.*
 import org.dockbox.selene.core.objects.location.World
-import org.dockbox.selene.core.objects.tuple.Vector3D
+import org.dockbox.selene.core.objects.tuple.Vector3N
 import org.dockbox.selene.core.objects.user.Gamemode
 import org.dockbox.selene.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
@@ -29,7 +29,7 @@ class SpongeWorld(
         worldUniqueId: UUID,
         name: String,
         loadOnStartup: Boolean,
-        spawnPosition: Vector3D,
+        spawnPosition: Vector3N,
         seed: Long,
         defaultGamemode: Gamemode,
         gamerules: MutableMap<String, String>
@@ -80,15 +80,15 @@ class SpongeWorld(
             field = value
         }
 
-    override var spawnPosition: Vector3D = spawnPosition
+    override var spawnPosition: Vector3N = spawnPosition
         get() {
             return if (referenceExists()) {
                 val vector3i = getReference()!!.properties.spawnPosition
-                Vector3D(vector3i.x, vector3i.y, vector3i.z)
+                Vector3N(vector3i.x, vector3i.y, vector3i.z)
             } else field
         }
         set(value) {
-            if (referenceExists()) getReference()!!.properties.spawnPosition = Vector3i(value.x.toInt(), value.y.toInt(), value.z.toInt())
+            if (referenceExists()) getReference()!!.properties.spawnPosition = Vector3i(value.getXi(), value.getYi(), value.getZi())
             field = value
         }
 

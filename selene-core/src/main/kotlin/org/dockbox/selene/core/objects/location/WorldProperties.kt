@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.core.objects.location
 
-import org.dockbox.selene.core.objects.tuple.Vector3D
+import org.dockbox.selene.core.objects.tuple.Vector3N
 import org.dockbox.selene.core.objects.user.Gamemode
 
 abstract class WorldProperties(
         open var loadOnStartup: Boolean,
-        open var spawnPosition: Vector3D,
+        open var spawnPosition: Vector3N,
         open var seed: Long,
         open var defaultGamemode: Gamemode,
         val gamerules: MutableMap<String, String>) {

@@ -21,7 +21,7 @@ import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.selene.core.objects.location.Location
-import org.dockbox.selene.core.objects.tuple.Vector3D
+import org.dockbox.selene.core.objects.tuple.Vector3N
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.util.world.WorldStorageService
 
@@ -32,7 +32,7 @@ class LocationArgumentParser : AbstractTypeArgumentParser<Location>() {
         val x = xyzw[0].toIntOrNull() ?: return Optional.empty()
         val y = xyzw[1].toIntOrNull() ?: return Optional.empty()
         val z = xyzw[2].toIntOrNull() ?: return Optional.empty()
-        val vector = Vector3D(x, y, z)
+        val vector = Vector3N(x, y, z)
 
         val w = xyzw[3]
         val ws = Selene.getInstance(WorldStorageService::class.java)

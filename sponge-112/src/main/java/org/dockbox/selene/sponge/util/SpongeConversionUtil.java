@@ -27,7 +27,7 @@ import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Warp;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.CommandSource;
-import org.dockbox.selene.core.objects.tuple.Vector3D;
+import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.objects.user.Gamemode;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.text.actions.ClickAction;
@@ -183,7 +183,7 @@ public enum SpongeConversionUtil {
         Exceptional<World> world = toSponge(location.getWorld());
         if (world.errorPresent()) return Exceptional.of(world.getError());
         if (!world.isPresent()) return Exceptional.empty();
-        Vector3d vector3d = new Vector3d(location.getX().doubleValue(), location.getY().doubleValue(), location.getZ().doubleValue());
+        Vector3d vector3d = new Vector3d(location.getVectorLoc().getXd(), location.getVectorLoc().getYd(), location.getVectorLoc().getZd());
         return Exceptional.of(new Location<>(world.get(), vector3d));
     }
 
@@ -208,8 +208,8 @@ public enum SpongeConversionUtil {
     @NotNull
     public static org.dockbox.selene.core.objects.location.Location fromSponge(Location<World> location) {
         org.dockbox.selene.core.objects.location.World world = fromSponge(location.getExtent());
-        Vector3D vector3D = new Vector3D(location.getX(), location.getY(), location.getZ());
-        return new org.dockbox.selene.core.objects.location.Location(vector3D, world);
+        Vector3N vector3N = new Vector3N(location.getX(), location.getY(), location.getZ());
+        return new org.dockbox.selene.core.objects.location.Location(vector3N, world);
     }
 
     @NotNull
@@ -283,7 +283,7 @@ public enum SpongeConversionUtil {
     @NotNull
     public static org.dockbox.selene.core.objects.location.World fromSponge(World world) {
         Vector3i vector3i = world.getProperties().getSpawnPosition();
-        Vector3D spawnLocation = new Vector3D(vector3i.getX(), vector3i.getY(), vector3i.getZ());
+        Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
 
         return new SpongeWorld(
                 world.getUniqueId(),
@@ -308,7 +308,7 @@ public enum SpongeConversionUtil {
     @NotNull
     public static WorldCreatingProperties fromSponge(org.spongepowered.api.world.storage.WorldProperties worldProperties) {
         Vector3i vector3i = worldProperties.getSpawnPosition();
-        Vector3D spawnLocation = new Vector3D(vector3i.getX(), vector3i.getY(), vector3i.getZ());
+        Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
 
         return new WorldCreatingProperties(
                 worldProperties.getWorldName(),

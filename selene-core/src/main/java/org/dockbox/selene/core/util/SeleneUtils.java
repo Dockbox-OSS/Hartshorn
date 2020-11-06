@@ -19,6 +19,7 @@ package org.dockbox.selene.core.util;
 
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.tuple.Triad;
+import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -648,8 +649,19 @@ public enum SeleneUtils {
         return file;
     }
 
-    public enum HttpStatus
-    {
+    public static boolean isInCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
+        return x_min <= x && x <= x_max && y_min <= y && y <= y_max && z_min <= z && z <= z_max;
+    }
+
+    public static boolean isInCuboidRegion(Vector3N min, Vector3N max, Vector3N vec) {
+        return isInCuboidRegion(
+                min.getXi(), max.getXi(),
+                min.getYi(), max.getYi(),
+                min.getZi(), max.getZi(),
+                vec.getXi(), vec.getYi(), vec.getZi());
+    }
+
+    public enum HttpStatus {
         ;
         // 1xx Informational
         public static final Integer CONTINUE = 100;

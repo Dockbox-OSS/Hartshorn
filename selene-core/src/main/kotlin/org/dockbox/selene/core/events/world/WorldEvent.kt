@@ -21,7 +21,7 @@ import java.util.*
 import org.dockbox.selene.core.events.AbstractCancellableEvent
 import org.dockbox.selene.core.objects.location.World
 import org.dockbox.selene.core.objects.location.WorldProperties
-import org.dockbox.selene.core.objects.tuple.Vector3D
+import org.dockbox.selene.core.objects.tuple.Vector3N
 import org.dockbox.selene.core.objects.user.Gamemode
 
 abstract class WorldEvent : AbstractCancellableEvent() {
@@ -35,7 +35,7 @@ abstract class WorldEvent : AbstractCancellableEvent() {
             val name: String,
             val uniqueId: UUID,
             loadOnStartup: Boolean,
-            spawnPosition: Vector3D,
+            spawnPosition: Vector3N,
             seed: Long,
             defaultGamemode: Gamemode,
             gamerules: MutableMap<String, String>

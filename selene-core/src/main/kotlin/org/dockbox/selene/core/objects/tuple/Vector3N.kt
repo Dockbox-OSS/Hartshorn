@@ -17,4 +17,11 @@
 
 package org.dockbox.selene.core.objects.tuple
 
-open class Vector3D(open var x: Number, open var y: Number, open var z: Number)
+open class Vector3N(x: Number, var y: Number, z: Number): Vector2N(x, z) {
+
+    fun getYd(): Double = y.toDouble()
+    fun getYf(): Float = y.toFloat()
+    fun getYi(): Int = y.toInt()
+    fun getYl(): Long = y.toLong()
+
+}
