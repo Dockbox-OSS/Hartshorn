@@ -11,7 +11,8 @@ import java.util.function.Predicate;
 public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier<?>, RegistryColumn<V>>
 {
     /**
-     * Adds a column of data to the Registry. <B>Note</B> this will override an existing column if they share the same {@link RegistryIdentifier}
+     * Adds a column of data to the Registry. <B>Note</B> this will override an existing column
+     * if they share the same {@link RegistryIdentifier}
      *
      * @param columnID The {@link RegistryIdentifier} for which to add this data added under.
      * @param values A safe varargs of type {@link V} to be added.
@@ -23,7 +24,8 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
     }
 
     /**
-     * Adds a column of data to the Registry. <B>Note</B> this will override an existing column if they share the same {@link RegistryIdentifier}
+     * Adds a column of data to the Registry. <B>Note</B> this will override an existing column
+     * if they share the same {@link RegistryIdentifier}
      *
      * @param columnID The {@link RegistryIdentifier} for which to add this data added under.
      * @param values A collection of type {@link V} or its children to be added.
@@ -34,8 +36,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
         return this;
     }
     /**
-     * Adds data to the Registry
-     * . If the columnID does not exist, it creates a new column, otherwise it
+     * Adds data to the Registry. If the columnID does not exist, it creates a new column, otherwise it
      * adds the data to the existing column.
      *
      * @param columnID The {@link RegistryIdentifier} for which this data will be added to.
@@ -48,8 +49,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
     }
 
     /**
-     * Adds data to the Registry
-     * . If the columnID does not exist, it creates a new column, otherwise it
+     * Adds data to the Registry. If the columnID does not exist, it creates a new column, otherwise it
      * adds the data to the existing column.
      *
      * @param columnID The {@link RegistryIdentifier} for which this data will be added to.
@@ -67,13 +67,10 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
     }
 
     /**
-     * Adds another Registry
-     * to this one. If the added Registry
-     * contains the same {@link RegistryIdentifier}s, then that
+     * Adds another Registry to this one. If the added Registry contains the same {@link RegistryIdentifier}s, then that
      * data will be added to the existing columns.
      *
-     * @param otherRegistry The other Registry
-     *                     to add to this one.
+     * @param otherRegistry The other Registry to add to this one.
      * @return Itself.
      */
     public Registry<V> addRegistry(@NotNull Registry<? extends V> otherRegistry) {
@@ -84,8 +81,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
     }
 
     /**
-     * @param columnIDs A varargs of {@link RegistryIdentifier}s to remove from the Registry
-     *                 if contained.
+     * @param columnIDs A varargs of {@link RegistryIdentifier}s to remove from the Registry if contained.
      * @return Itself.
      */
     public Registry<V> removeColumns(@NotNull RegistryIdentifier<?>... columnIDs) {
@@ -96,8 +92,8 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
     }
 
     /**
-     * @param columnIDs A varargs of {@link RegistryIdentifier}s to check if contained in the Registry
-     *                  .
+     * @param columnIDs A varargs of {@link RegistryIdentifier}s to check if contained in the Registry.
+     *
      * @return True if all of the {@link RegistryIdentifier}s are contained, otherwise false.
      */
     public boolean containsColumns(RegistryIdentifier<?>... columnIDs) {
@@ -108,11 +104,9 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
     }
 
     /**
-     * Gets all the matching columns in the Registry
-     * if contained.
+     * Gets all the matching columns in the Registry if contained.
      *
-     * @param columnIDs A varargs of {@link RegistryIdentifier}s to return from the Registry
-     *                 if contained.
+     * @param columnIDs A varargs of {@link RegistryIdentifier}s to return from the Registry if contained.
      * @return
      * All the matching columns data combined into a single {@link RegistryColumn}. If no matches are found, an empty
      * {@link RegistryColumn} will be returned.
@@ -128,8 +122,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
     }
 
     /**
-     * @return All the data in the Registry
-     * combined into a single {@link RegistryColumn<V>}
+     * @return All the data in the Registry combined into a single {@link RegistryColumn<V>}
      */
     public RegistryColumn<V> getAllData() {
         RegistryColumn<V> result = new RegistryColumn<>();
@@ -140,8 +133,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
     }
 
     /**
-     * Filter the Registry
-     * by its columns. Note this creates a new Registry and doesn't modify itself.
+     * Filter the Registry by its columns. Note this creates a new Registry and doesn't modify itself.
      *
      * @param filter
      * The filter accepts a {@link RegistryIdentifier} and returns true to keep that column, false to remove it.
@@ -160,8 +152,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
     }
 
     /**
-     * Filter the Registry
-     * by its values. Note this creates a new Registry and doesn't modify itself.
+     * Filter the Registry by its values. Note this creates a new Registry and doesn't modify itself.
      *
      * @param filter
      * The filter accepts a value of type {@link V} or its parents and returns true to keep that value, false to remove it.

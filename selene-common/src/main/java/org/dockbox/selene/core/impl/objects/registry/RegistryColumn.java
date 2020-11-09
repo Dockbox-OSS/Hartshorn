@@ -65,16 +65,49 @@ public class RegistryColumn<T> extends ArrayList<T>
     }
 
     /**
+     * Attempts to cast the values to the specified type {@link K}. If the value is not an instance of type
+     * {@link K} then it is not added to the resulting RegistryColumn.
+     *
+     * @param clazz The class of the type to convert to.
+     * @param <K> The type of the new RegistryColumn
+     * @return A new RegistryColumn which contains all the values of the previous RegistryColumn that could be converted.
+     */
+    public <K extends T> RegistryColumn<K> convertTo(Class<K> clazz) {
+        RegistryColumn<K> result = new RegistryColumn<>();
+
+        for (T value : this) {
+            if (clazz.isInstance(value)) {
+                @SuppressWarnings("unchecked")
+                K convertedValue = (K)value;
+                result.add(convertedValue);
+            }
+        }
+        return result;
+    }
+
+    /**
      * Finds the first value which matches the provided predicate.
      *
      * @param predicate
      * The predicate takes in a value of type {@link T} or its parents and returns true if that value is a match,
      * otherwise it returns false.
-     * @return An Exceptional containing the value of the first match, if one is found.
+     * @return An {@link Exceptional} containing the value of the first match, if one is found.
      */
     public Exceptional<T> firstMatch(Predicate<? super T> predicate) {
         for (T value : this) {
             if (predicate.test(value)) return Exceptional.of(value);
+        }
+        return Exceptional.empty();
+    }
+
+    /**
+     * Safely returns the first element in the RegistryColumn.
+     *
+     * @return An {@link Exceptional} containing the first element in the RegistryColumn, if one is found.
+     */
+    public Exceptional<T> first() {
+        if (!super.isEmpty()) {
+            return Exceptional.of(super.get(0));
         }
         return Exceptional.empty();
     }
