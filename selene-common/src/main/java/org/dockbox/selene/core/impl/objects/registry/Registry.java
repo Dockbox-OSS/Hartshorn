@@ -8,8 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.function.Predicate;
 
-public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier<?>, RegistryColumn<V>>
-{
+public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier<?>, RegistryColumn<V>> {
     /**
      * Adds a column of data to the Registry. <B>Note</B> this will override an existing column
      * if they share the same {@link RegistryIdentifier}
@@ -136,15 +135,15 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * Filter the Registry by its columns. Note this creates a new Registry and doesn't modify itself.
      *
      * @param filter
-     * The filter accepts a {@link RegistryIdentifier} and returns true to keep that column, false to remove it.
+     * The filter accepts a {@link RegistryIdentifier} and returns false to keep that column, true to remove it.
      * The columns which pass the filter are stored in a <b>new</b> Registry.
      * @return The new Registry containing the filtered columns.
      */
-    public Registry<V> filterColumns(Predicate<RegistryIdentifier<?>> filter) {
+    public Registry<V> removeColumnsIf(Predicate<RegistryIdentifier<?>> filter) {
         Registry<V> registry = new Registry<>();
 
         for (RegistryIdentifier<?> columnID : super.keySet()) {
-            if (filter.test(columnID)) {
+            if (!filter.test(columnID)) {
                 registry.addColumn(columnID, super.get(columnID));
             }
         }
@@ -155,17 +154,17 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * Filter the Registry by its values. Note this creates a new Registry and doesn't modify itself.
      *
      * @param filter
-     * The filter accepts a value of type {@link V} or its parents and returns true to keep that value, false to remove it.
+     * The filter accepts a value of type {@link V} or its parents and returns false to keep that value, true to remove it.
      * The values which pass the filter are stored in a <b>new</b> Registry. If no values in a particular column pass the
      * filter, it is still added to the new Registry, it will simply contain no values.
      * @return The new Registry containing the filtered values.
      */
-    public Registry<V> filterValues(Predicate<? super V> filter) {
+    public Registry<V> removeValuesIf(Predicate<? super V> filter) {
         Registry<V> registry = new Registry<>();
 
         for (RegistryIdentifier<?> columnID : super.keySet()) {
             RegistryColumn<V> column = new RegistryColumn<>(super.get(columnID));
-            column.filter(filter);
+            column.removeValueIf(filter);
             registry.addColumn(columnID, column);
         }
         return registry;

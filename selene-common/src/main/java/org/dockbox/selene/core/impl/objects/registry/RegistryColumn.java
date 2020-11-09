@@ -7,8 +7,7 @@ import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class RegistryColumn<T> extends ArrayList<T>
-{
+public class RegistryColumn<T> extends ArrayList<T> {
     public RegistryColumn() {
         super();
     }
@@ -21,11 +20,11 @@ public class RegistryColumn<T> extends ArrayList<T>
      * Filters the RegistryColumn based on the provided filter.
      *
      * @param filter
-     * The filter accepts a value of type {@link T} or its parents and returns true to keep that value,
-     * false to remove it.
+     * The filter accepts a value of type {@link T} or its parents and returns false to keep that value,
+     * true to remove it.
      * @return Itself
      */
-    public RegistryColumn<T> filter(Predicate<? super T> filter) {
+    public RegistryColumn<T> removeValueIf(Predicate<? super T> filter) {
         super.removeIf(filter);
         return this;
     }

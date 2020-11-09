@@ -71,7 +71,7 @@ public class RegistryTests
     public void testThatRegistryCanBeFilteredByColumn() {
         Registry<Registry<String>> testRegistry = this.buildTestRegistry();
 
-        Registry<Registry<String>> result = testRegistry.filterColumns(i -> TestIdentifier.BRICK != i);
+        Registry<Registry<String>> result = testRegistry.removeColumnsIf(i -> TestIdentifier.BRICK == i);
 
         Assert.assertTrue(result.containsColumns(TestIdentifier.SANDSTONE, TestIdentifier.COBBLESTONE));
         Assert.assertFalse(result.containsColumns(TestIdentifier.BRICK));
@@ -81,7 +81,7 @@ public class RegistryTests
     public void testThatRegistryCanBeFilteredByValue() {
         Registry<Registry<String>> testRegistry = this.buildTestRegistry();
 
-        Registry<Registry<String>> result = testRegistry.filterValues(r -> 2 >= r.size());
+        Registry<Registry<String>> result = testRegistry.removeValuesIf(r -> 2 <= r.size());
         int brickColumnSize = result.getMatchingColumns(TestIdentifier.BRICK).size();
 
         Assert.assertTrue(result.containsColumns(TestIdentifier.BRICK, TestIdentifier.SANDSTONE, TestIdentifier.COBBLESTONE));
@@ -94,17 +94,17 @@ public class RegistryTests
 
         Registry<Registry<String>> secondRegistry = new Registry<Registry<String>>()
             .addColumn(TestIdentifier.SANDSTONE, new Registry<String>()
-                .addColumn(TestIdentifier.STAIR, "Sandstone Slab2"))
+                .addColumn(TestIdentifier.STAIR, "Sandstone Stair2"))
             .addColumn(TestIdentifier.WOOD, new Registry<String>()
-                .addColumn(TestIdentifier.SLAB, "Wooden Slab1"));
+                .addColumn(TestIdentifier.STAIR, "Wooden Stair1"));
 
         testRegistry.addRegistry(secondRegistry);
         List<String> result = testRegistry
             .getMatchingColumns(TestIdentifier.SANDSTONE, TestIdentifier.WOOD)
             .mapToSingleList(r -> r.getMatchingColumns(TestIdentifier.STAIR));
 
-        Assert.assertTrue(result.contains("Sandstone Slab1"));
-        Assert.assertTrue(result.contains("Sandstone Slab2"));
-        Assert.assertTrue(result.contains("Wooden Slab1"));
+        Assert.assertTrue(result.contains("Sandstone Stair1"));
+        Assert.assertTrue(result.contains("Sandstone Stair2"));
+        Assert.assertTrue(result.contains("Wooden Stair1"));
     }
 }
