@@ -20,6 +20,12 @@ package org.dockbox.selene.sponge.listeners;
 import com.google.inject.Inject;
 
 import org.dockbox.selene.core.events.chat.SendChatEvent;
+import org.dockbox.selene.core.events.moderation.BanEvent.IpBannedEvent;
+import org.dockbox.selene.core.events.moderation.BanEvent.IpUnbannedEvent;
+import org.dockbox.selene.core.events.moderation.BanEvent.NameBannedEvent;
+import org.dockbox.selene.core.events.moderation.BanEvent.NameUnbannedEvent;
+import org.dockbox.selene.core.events.moderation.BanEvent.PlayerBannedEvent;
+import org.dockbox.selene.core.events.moderation.BanEvent.PlayerUnbannedEvent;
 import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerAuthEvent;
 import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerJoinEvent;
 import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerLeaveEvent;
@@ -40,11 +46,20 @@ import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.message.MessageChannelEvent;
+import org.spongepowered.api.event.network.BanIpEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.event.network.PardonIpEvent;
+import org.spongepowered.api.event.user.BanUserEvent;
+import org.spongepowered.api.event.user.PardonUserEvent;
 import org.spongepowered.api.network.RemoteConnection;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.util.ban.Ban;
 import org.spongepowered.api.world.World;
 
+import io.github.nucleuspowered.nucleus.api.events.NucleusMuteEvent;
+import io.github.nucleuspowered.nucleus.api.events.NucleusNameBanEvent;
+import io.github.nucleuspowered.nucleus.api.events.NucleusNoteEvent;
+import io.github.nucleuspowered.nucleus.api.events.NucleusWarnEvent;
 import io.github.nucleuspowered.nucleus.api.events.NucleusWarpEvent;
 
 public class SpongePlayerListener {
@@ -65,8 +80,8 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerAuthenticating(ClientConnectionEvent.Auth authEvent, @Getter(
-            "getConnection") RemoteConnection connection) {
+    public void onPlayerAuthenticating(ClientConnectionEvent.Auth authEvent,
+                                       @Getter("getConnection") RemoteConnection connection) {
         Event event = new PlayerAuthEvent(connection.getAddress(), connection.getVirtualHost());
         this.bus.post(event);
     }
@@ -83,8 +98,10 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerTeleport(MoveEntityEvent.Teleport teleportEvent, @First Player player, @Getter(
-            "getFromTransform") Transform<World> from, @Getter("getToTransform") Transform<World> to) {
+    public void onPlayerTeleport(MoveEntityEvent.Teleport teleportEvent,
+                                 @First Player player,
+                                 @Getter("getFromTransform") Transform<World> from,
+                                 @Getter("getToTransform") Transform<World> to) {
         Location fromLocation = SpongeConversionUtil.fromSponge(from.getLocation());
         Location toLocation = SpongeConversionUtil.fromSponge(to.getLocation());
 
@@ -105,13 +122,111 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerChat(MessageChannelEvent.Chat chatEvent, @First Player player, @Getter("getMessage") Text message) {
+    public void onPlayerChat(MessageChannelEvent.Chat chatEvent,
+                             @First Player player,
+                             @Getter("getMessage") Text message) {
         Cancellable event = new SendChatEvent(
                 SpongeConversionUtil.fromSponge(player),
                 SpongeConversionUtil.fromSponge(chatEvent.getMessage())
         );
         this.bus.post(event);
         chatEvent.setCancelled(event.isCancelled());
+    }
+
+    @Listener
+    public void onPlayerBanned(BanUserEvent event,
+                               @First Player player,
+                               @Getter("getBan") Ban.Profile profile,
+                               @Getter("getSource") Object source
+    ) {
+        PlayerBannedEvent selene; // TODO GuusLieben, implement
+    }
+
+    @Listener
+    public void onIPBanned(BanIpEvent event,
+                           @Getter("getBan") Ban.Ip profile,
+                           @Getter("getSource") Object source
+    ) {
+        IpBannedEvent selene; // TODO GuusLieben, implement
+    }
+
+    @Listener
+    public void onNameBanned(NucleusNameBanEvent.Banned event,
+                             @Getter("getEntry") String name,
+                             @Getter("getReason") String reason,
+                             @Getter("getSource") Object source
+    ) {
+        NameBannedEvent selene; // TODO GuusLieben, implement
+    }
+
+    @Listener
+    public void onPlayerWarned(NucleusWarnEvent.Warned event,
+                               @Getter("getTargetUser") User user,
+                               @Getter("getReason") String reason,
+                               @Getter("getSource") Object source
+    ) {
+        // TODO GuusLieben, implement
+    }
+
+    @Listener
+    public void onPlayerNoted(NucleusNoteEvent.Created event,
+                              @Getter("getTargetUser") User user,
+                              @Getter("getNote") String note,
+                              @Getter("getSource") Object source
+    ) {
+        // TODO GuusLieben, implement
+    }
+
+    @Listener
+    public void onPlayerMuted(NucleusMuteEvent.Muted event,
+                              @Getter("getTargetUser") User user,
+                              @Getter("getReason") Text reason,
+                              @Getter("getSource") Object source
+    ) {
+        // TODO GuusLieben, MultiChat replaces this event. Look into Bungee hooking if possible
+    }
+
+    @Listener
+    public void onPlayerUnbanned(PardonUserEvent event,
+                                 @First Player player,
+                                 @Getter("getBan") Ban.Profile profile,
+                                 @Getter("getSource") Object source
+    ) {
+        PlayerUnbannedEvent selene; // TODO GuusLieben, implement
+    }
+
+    @Listener
+    public void onIPUnbanned(PardonIpEvent event,
+                             @Getter("getBan") Ban.Ip profile,
+                             @Getter("getSource") Object source
+    ) {
+        IpUnbannedEvent selene; // TODO GuusLieben, implement
+    }
+
+    @Listener
+    public void onNameUnbanned(NucleusNameBanEvent.Unbanned event,
+                               @Getter("getEntry") String name,
+                               @Getter("getReason") String reason,
+                               @Getter("getSource") Object source
+    ) {
+        NameUnbannedEvent selene; // TODO GuusLieben, implement
+    }
+
+    @Listener
+    public void onWarnExpired(NucleusWarnEvent.Expired event,
+                              @Getter("getTargetUser") User user,
+                              @Getter("getReason") String reason,
+                              @Getter("getSource") Object source
+    ) {
+        // TODO GuusLieben, implement
+    }
+
+    @Listener
+    public void onMuteExpired(NucleusMuteEvent.Unmuted event,
+                              @Getter("getTargetUser") User user,
+                              @Getter("getSource") Object source
+    ) {
+        // TODO GuusLieben, MultiChat replaces this event. Look into Bungee hooking if possible
     }
 
 }
