@@ -23,7 +23,7 @@
 
     <groupId>org.dockbox.selene</groupId>
     <artifactId>sponge-112</artifactId>
-    <version>${parent.version}</version>
+    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <parent>
@@ -56,22 +56,22 @@
         <dependency>
             <groupId>org.dockbox.selene</groupId>
             <artifactId>selene-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.dockbox.selene</groupId>
             <artifactId>selene-common</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.dockbox.selene</groupId>
             <artifactId>extensions</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.dockbox.selene</groupId>
             <artifactId>sponge-extensions</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <!-- Platform -->
