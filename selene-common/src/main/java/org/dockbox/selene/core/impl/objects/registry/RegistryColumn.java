@@ -109,7 +109,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
         if (!super.isEmpty()) {
             return Exceptional.of(super.get(0));
         }
-        return Exceptional.empty();
+        return Exceptional.of(new IndexOutOfBoundsException());
     }
 }
 
