@@ -18,20 +18,43 @@
 package org.dockbox.selene.core.server;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.binder.AnnotatedBindingBuilder;
+
+import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 final class ExtensionModule extends AbstractModule {
 
-    ExtensionModule() {
+    private static final class InternalBinding<T> {
+
+        private final Class<T> sourceClass;
+        private final T instance;
+
+        private InternalBinding(Class<T> sourceClass, T instance) {
+            this.sourceClass = sourceClass;
+            this.instance = instance;
+        }
+
+        public Class<T> getSourceClass() {
+            return this.sourceClass;
+        }
+
+        public T getInstance() {
+            return this.instance;
+        }
     }
+
+    private final Collection<InternalBinding<Object>> bindings = new CopyOnWriteArrayList<>();
 
     @Override
     protected void configure() {
-        // To be done externally
+        this.bindings.forEach(binding ->
+                this.bind(binding.getSourceClass()).toInstance(binding.getInstance()));
     }
 
-    @Override
-    public <T> AnnotatedBindingBuilder<T> bind(Class<T> clazz) {
-        return super.bind(clazz);
+    @SuppressWarnings("unchecked")
+    public <T> void acceptBinding(Class<T> sourceClass, T instance) {
+        InternalBinding<T> binding = new InternalBinding<>(sourceClass, instance);
+        this.bindings.add((InternalBinding<Object>) binding);
     }
+
 }

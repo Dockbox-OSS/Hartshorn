@@ -33,6 +33,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -549,9 +550,17 @@ public enum SeleneUtils {
         return null != instance && null != type && type.isAssignableFrom(instance.getClass());
     }
 
+    public static boolean isFileEmpty(@NotNull Path file) {
+        return Files.exists(file) && 0 <= file.toFile().length();
+    }
+
     public <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
         Object[] merged =  Stream.of(arrayOne, arrayTwo).flatMap(Stream::of).toArray(Object[]::new);
         return this.convertGenericArray(merged);
+    }
+
+    public static <T> List<T> emptyList() {
+        return new ArrayList<T>();
     }
 
     @SuppressWarnings("unchecked")
