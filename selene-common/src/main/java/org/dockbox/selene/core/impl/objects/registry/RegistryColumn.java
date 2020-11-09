@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class RegistryColumn<T> extends ArrayList<T> {
+
     public RegistryColumn() {
         super();
     }

@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class RegistryTests
-{
+public class RegistryTests {
+
     private Registry<Registry<String>> buildTestRegistry() {
         return new Registry<Registry<String>>()
             .addColumn(TestIdentifier.BRICK, new Registry<String>()

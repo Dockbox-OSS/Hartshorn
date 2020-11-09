@@ -6,9 +6,11 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier<?>, RegistryColumn<V>> {
+
     /**
      * Adds a column of data to the Registry. <B>Note</B> this will override an existing column
      * if they share the same {@link RegistryIdentifier}
@@ -72,10 +74,8 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * @param otherRegistry The other Registry to add to this one.
      * @return Itself.
      */
-    public Registry<V> addRegistry(@NotNull Registry<? extends V> otherRegistry) {
-        for (RegistryIdentifier<?> columnID : otherRegistry.keySet()) {
-            this.addData(columnID, otherRegistry.get(columnID));
-        }
+    public Registry<V> addRegistry(@NotNull Map<RegistryIdentifier<?>, RegistryColumn<V>> otherRegistry) {
+        otherRegistry.forEach(this::addData);
         return this;
     }
 
