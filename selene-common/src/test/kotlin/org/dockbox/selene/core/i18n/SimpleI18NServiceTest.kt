@@ -26,7 +26,7 @@ internal class SimpleI18NServiceTest {
     private val defaultKey: String = "test.custom"
     private val defaultValue: String = "Sample line"
 
-    // TODO: Rewrite tests
+    // TODO: Rewrite tests (Java)
 
     @Test
     fun addTranslationRegistry() {
