@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier<?>, RegistryColumn<V>> {
@@ -135,7 +136,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * Filter the Registry by its columns. Note this creates a new Registry and doesn't modify itself.
      *
      * @param filter
-     * The filter accepts a {@link RegistryIdentifier} and returns false to keep that column, true to remove it.
+     * The filter accepts a {@link RegistryIdentifier} and returns true to remove that column, false to keep it.
      * The columns which pass the filter are stored in a <b>new</b> Registry.
      * @return The new Registry containing the filtered columns.
      */
@@ -151,10 +152,29 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
     }
 
     /**
+     * Filter the Registry by its columns. Note this creates a new Registry and doesn't modify itself.
+     *
+     * @param biFilter
+     * The biFilter accepts a {@link RegistryIdentifier}, along with its {@link RegistryColumn} and returns true to
+     * remove that column, false to keep it. The columns which pass the filter are stored in a <b>new</b> Registry.
+     * @return The new Registry containing the filtered columns.
+     */
+    public Registry<V> removeColumnsIf(BiPredicate<RegistryIdentifier<?>, RegistryColumn<? super V>> biFilter) {
+        Registry<V> registry = new Registry<>();
+
+        super.forEach((columnID, column) -> {
+            if (!biFilter.test(columnID, column)) {
+                registry.addColumn(columnID, column);
+            }
+        });
+        return registry;
+    }
+
+    /**
      * Filter the Registry by its values. Note this creates a new Registry and doesn't modify itself.
      *
      * @param filter
-     * The filter accepts a value of type {@link V} or its parents and returns false to keep that value, true to remove it.
+     * The filter accepts a value of type {@link V} or its parents and returns true to remove that column, false to keep it.
      * The values which pass the filter are stored in a <b>new</b> Registry. If no values in a particular column pass the
      * filter, it is still added to the new Registry, it will simply contain no values.
      * @return The new Registry containing the filtered values.
@@ -167,6 +187,27 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
             column.removeValueIf(filter);
             registry.addColumn(columnID, column);
         }
+        return registry;
+    }
+
+    /**
+     * Filter the Registry by its values. Note this creates a new Registry and doesn't modify itself.
+     *
+     * @param biFilter
+     * The biFilter accepts a {@link RegistryIdentifier} (The columnID of the value), along with a value of type {@link V}
+     * or its parents and returns true to remove that column, false to keep it. The values which pass the filter are stored
+     * in a <b>new</b> Registry. If no values in a particular column pass the filter, it is still added to the new Registry,
+     * it will simply contain no values.
+     * @return The new Registry containing the filtered values.
+     */
+    public Registry<V> removeValuesIf(BiPredicate<RegistryIdentifier<?>, ? super V> biFilter) {
+        Registry<V> registry = new Registry<>();
+
+        super.forEach((columnID, column) -> column.forEach(v -> {
+            if (!biFilter.test(columnID, v)) {
+                registry.addData(columnID, v);
+            }
+        }));
         return registry;
     }
 }

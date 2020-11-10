@@ -101,15 +101,22 @@ public class RegistryColumn<T> extends ArrayList<T> {
     }
 
     /**
+     * Safely get an element by wrapping it within an {@link Exceptional}.
+     *
+     * @param index The index of the element to retrieve.
+     * @return An {@link Exceptional} containing the element at the provided index in the RegistryColumn, if one is found.
+     */
+    public Exceptional<T> getSafely(int index) {
+        return Exceptional.ofSupplier(() -> super.get(index));
+    }
+
+    /**
      * Safely returns the first element in the RegistryColumn.
      *
      * @return An {@link Exceptional} containing the first element in the RegistryColumn, if one is found.
      */
     public Exceptional<T> first() {
-        if (!super.isEmpty()) {
-            return Exceptional.of(super.get(0));
-        }
-        return Exceptional.of(new IndexOutOfBoundsException());
+        return this.getSafely(0);
     }
 }
 
