@@ -23,17 +23,31 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
 class PredicateSerializerInformation<T> extends SerializerInformation<T> {
 
-    PredicateSerializerInformation(Class<T> type, Supplier<TypeSerializer<?>> serializer) {
+    private final TypeToken<?> typeToken;
+
+    PredicateSerializerInformation(Class<T> type, Supplier<TypeSerializer<?>> serializer, TypeToken<?> typeToken) {
         super(type, serializer);
+        this.typeToken = typeToken;
+    }
+
+    @Override
+    public TypeToken<T> getTypeToken() {
+        return (TypeToken<T>) this.typeToken;
     }
 
     @Override
     public BiConsumer<TypeToken<T>, TypeSerializer<T>> getConsumer() {
-        return (token, serializer) -> TypeSerializers.getDefaultSerializers().registerPredicate(typeToken ->
+        return this.getConsumer(TypeSerializers.getDefaultSerializers());
+    }
+
+    @Override
+    public BiConsumer<TypeToken<T>, TypeSerializer<T>> getConsumer(TypeSerializerCollection tsc) {
+        return (token, serializer) -> tsc.registerPredicate(typeToken ->
                         token.getRawType().isAssignableFrom(typeToken.getRawType()),
                 serializer
         );
