@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) 2020 Guus Lieben
+ *
+ *  This framework is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as
+ *  published by the Free Software Foundation, either version 2.1 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ *  the GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
 package org.dockbox.selene.core.impl.objects.registry;
 
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +27,7 @@ import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier<?>, RegistryColumn<V>> {
+public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier, RegistryColumn<V>> {
 
     /**
      * Adds a column of data to the Registry. <B>Note</B> this will override an existing column
@@ -21,7 +38,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * @return Itself.
      */
     @SafeVarargs
-    public final Registry<V> addColumn(RegistryIdentifier<?> columnID, V... values) {
+    public final Registry<V> addColumn(RegistryIdentifier columnID, V... values) {
         return this.addColumn(columnID, Arrays.asList(values));
     }
 
@@ -33,7 +50,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * @param values A collection of type {@link V} or its children to be added.
      * @return Itself.
      */
-    public Registry<V> addColumn(RegistryIdentifier<?> columnID, Collection<? extends V> values) {
+    public Registry<V> addColumn(RegistryIdentifier columnID, Collection<? extends V> values) {
         super.put(columnID, new RegistryColumn<>(values));
         return this;
     }
@@ -46,7 +63,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * @return Itself.
      */
     @SafeVarargs
-    public final Registry<V> addData(RegistryIdentifier<?> columnID, V... values) {
+    public final Registry<V> addData(RegistryIdentifier columnID, V... values) {
         return this.addData(columnID, Arrays.asList(values));
     }
 
@@ -58,7 +75,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * @param values A collection of type {@link V} or its children to be added.
      * @return Itself.
      */
-    public Registry<V> addData(RegistryIdentifier<?> columnID, Collection<? extends V> values) {
+    public Registry<V> addData(RegistryIdentifier columnID, Collection<? extends V> values) {
         if (super.containsKey(columnID)) {
             super.get(columnID).addAll(values);
         }
@@ -75,7 +92,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * @param otherRegistry The other Registry to add to this one.
      * @return Itself.
      */
-    public Registry<V> addRegistry(@NotNull Map<RegistryIdentifier<?>, RegistryColumn<V>> otherRegistry) {
+    public Registry<V> addRegistry(@NotNull Map<RegistryIdentifier, RegistryColumn<V>> otherRegistry) {
         otherRegistry.forEach(this::addData);
         return this;
     }
@@ -84,8 +101,8 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * @param columnIDs A varargs of {@link RegistryIdentifier}s to remove from the Registry if contained.
      * @return Itself.
      */
-    public Registry<V> removeColumns(@NotNull RegistryIdentifier<?>... columnIDs) {
-        for (RegistryIdentifier<?> columnID : columnIDs) {
+    public Registry<V> removeColumns(@NotNull RegistryIdentifier... columnIDs) {
+        for (RegistryIdentifier columnID : columnIDs) {
             super.remove(columnID);
         }
         return this;
@@ -96,8 +113,8 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      *
      * @return True if all of the {@link RegistryIdentifier}s are contained, otherwise false.
      */
-    public boolean containsColumns(RegistryIdentifier<?>... columnIDs) {
-        for (RegistryIdentifier<?> columnID : columnIDs) {
+    public boolean containsColumns(RegistryIdentifier... columnIDs) {
+        for (RegistryIdentifier columnID : columnIDs) {
             if (!super.containsKey(columnID)) return false;
         }
         return true;
@@ -111,9 +128,9 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * All the matching columns data combined into a single {@link RegistryColumn}. If no matches are found, an empty
      * {@link RegistryColumn} will be returned.
      */
-    public RegistryColumn<V> getMatchingColumns(RegistryIdentifier<?>... columnIDs) {
+    public RegistryColumn<V> getMatchingColumns(RegistryIdentifier... columnIDs) {
         RegistryColumn<V> result = new RegistryColumn<>();
-        for (RegistryIdentifier<?> columnID : columnIDs) {
+        for (RegistryIdentifier columnID : columnIDs) {
             if (super.containsKey(columnID)) {
                 result.addAll(super.get(columnID));
             }
@@ -140,10 +157,10 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * The columns which pass the filter are stored in a <b>new</b> Registry.
      * @return The new Registry containing the filtered columns.
      */
-    public Registry<V> removeColumnsIf(Predicate<RegistryIdentifier<?>> filter) {
+    public Registry<V> removeColumnsIf(Predicate<RegistryIdentifier> filter) {
         Registry<V> registry = new Registry<>();
 
-        for (RegistryIdentifier<?> columnID : super.keySet()) {
+        for (RegistryIdentifier columnID : super.keySet()) {
             if (!filter.test(columnID)) {
                 registry.addColumn(columnID, super.get(columnID));
             }
@@ -159,7 +176,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * remove that column, false to keep it. The columns which pass the filter are stored in a <b>new</b> Registry.
      * @return The new Registry containing the filtered columns.
      */
-    public Registry<V> removeColumnsIf(BiPredicate<RegistryIdentifier<?>, RegistryColumn<? super V>> biFilter) {
+    public Registry<V> removeColumnsIf(BiPredicate<RegistryIdentifier, RegistryColumn<? super V>> biFilter) {
         Registry<V> registry = new Registry<>();
 
         super.forEach((columnID, column) -> {
@@ -182,7 +199,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
     public Registry<V> removeValuesIf(Predicate<? super V> filter) {
         Registry<V> registry = new Registry<>();
 
-        for (RegistryIdentifier<?> columnID : super.keySet()) {
+        for (RegistryIdentifier columnID : super.keySet()) {
             RegistryColumn<V> column = new RegistryColumn<>(super.get(columnID));
             column.removeValueIf(filter);
             registry.addColumn(columnID, column);
@@ -200,7 +217,7 @@ public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier
      * it will simply contain no values.
      * @return The new Registry containing the filtered values.
      */
-    public Registry<V> removeValuesIf(BiPredicate<RegistryIdentifier<?>, ? super V> biFilter) {
+    public Registry<V> removeValuesIf(BiPredicate<RegistryIdentifier, ? super V> biFilter) {
         Registry<V> registry = new Registry<>();
 
         super.forEach((columnID, column) -> column.forEach(v -> {
