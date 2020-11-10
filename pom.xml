@@ -61,7 +61,7 @@
         <worldedit.version>6.1.4-SNAPSHOT</worldedit.version>
         <plotsquared.version>3.1</plotsquared.version>
         <!-- Framework/Library versions-->
-        <configurate.version>3.6.1</configurate.version>
+        <configurate.version>3.7.2</configurate.version>
         <slf4j.version>1.7.25</slf4j.version>
         <jda.version>4.1.1_155</jda.version>
         <!-- Testing versions -->
