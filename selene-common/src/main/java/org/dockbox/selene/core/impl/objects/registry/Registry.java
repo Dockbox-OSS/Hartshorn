@@ -19,7 +19,6 @@ package org.dockbox.selene.core.impl.objects.registry;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,7 +26,7 @@ import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-public class Registry<V extends Serializable> extends HashMap<RegistryIdentifier, RegistryColumn<V>> {
+public class Registry<V> extends HashMap<RegistryIdentifier, RegistryColumn<V>> {
 
     /**
      * Adds a column of data to the Registry. <B>Note</B> this will override an existing column
