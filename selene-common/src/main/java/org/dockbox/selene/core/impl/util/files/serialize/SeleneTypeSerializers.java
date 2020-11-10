@@ -88,4 +88,15 @@ public final class SeleneTypeSerializers {
         }
     }
 
+    /**
+     Registers all known {@link SerializerInformation} instances using their associated
+     {@link java.util.function.BiConsumer}. Usually this targets specific
+     {@link ninja.leaping.configurate.objectmapping.ObjectMapper}s.
+     */
+    public static void registerTypeSerializers(TypeSerializerCollection tsc) {
+        for (SerializerInformation serializer : serializerInformation) {
+            serializer.getConsumer(tsc).accept(serializer.getTypeToken(), serializer.getTypeSerializer());
+        }
+    }
+
 }
