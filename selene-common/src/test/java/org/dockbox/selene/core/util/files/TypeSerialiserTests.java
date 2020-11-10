@@ -25,10 +25,10 @@ import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.impl.util.files.serialize.ByteArrayTypeSerializer;
-import org.dockbox.selene.core.impl.util.files.serialize.IntArrayTypeSerializer;
-import org.dockbox.selene.core.impl.util.files.serialize.SetTypeSerializer;
-import org.dockbox.selene.core.impl.util.files.serialize.ShortArrayTypeSerializer;
+import org.dockbox.selene.core.impl.objects.registry.Registry;
+import org.dockbox.selene.core.impl.objects.registry.RegistryColumn;
+import org.dockbox.selene.core.impl.util.files.serialize.SeleneTypeSerializers;
+import org.dockbox.selene.test.object.TestIdentifier;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -41,36 +41,33 @@ import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollectio
 
 public class TypeSerialiserTests {
 
-    private TestConfigurationLoader getSetTestLoader() {
-        TestConfigurationLoader.Builder tclb = TestConfigurationLoader.builder();
-        TypeSerializerCollection tsc = tclb.getDefaultOptions().getSerializers();
-        tsc.registerPredicate(
-                typeToken -> Set.class.isAssignableFrom(typeToken.getRawType()),
-                new SetTypeSerializer()
-        );
-
-        tclb.setDefaultOptions(tclb.getDefaultOptions().setSerializers(tsc));
-        return tclb.build();
+    private TestConfigurationLoader getTestLoader() {
+        TestConfigurationLoader.Builder tlb = TestConfigurationLoader.builder();
+        TypeSerializerCollection tsc = tlb.getDefaultOptions().getSerializers().newChild();
+        SeleneTypeSerializers.registerTypeSerializers(tsc);
+        tlb.setDefaultOptions(tlb.getDefaultOptions().setSerializers(tsc));
+        return tlb.build();
     }
 
-    private TestConfigurationLoader getArrayTestLoader() {
-        TestConfigurationLoader.Builder tclb = TestConfigurationLoader.builder();
-        TypeSerializerCollection tsc = tclb.getDefaultOptions().getSerializers();
-        tsc.registerType(new TypeToken<byte[]>() {}, new ByteArrayTypeSerializer());
-        tsc.registerType(new TypeToken<short[]>() {}, new ShortArrayTypeSerializer());
-        tsc.registerType(new TypeToken<int[]>() {}, new IntArrayTypeSerializer());
-
-        tclb.setDefaultOptions(tclb.getDefaultOptions().setSerializers(tsc)
-            .setAcceptedTypes(Sets.newHashSet(Byte.class, Integer.class, Short.class)));
-        return tclb.build();
+    private Registry<Registry<String>> buildTestRegistry() {
+        return new Registry<Registry<String>>()
+                .addColumn(TestIdentifier.BRICK, new Registry<String>()
+                        .addColumn(TestIdentifier.FULLBLOCK, "Brick Fullblock1", "Brick Fullblock2")
+                        .addColumn(TestIdentifier.STAIR, "Brick Stair1")
+                        .addColumn(TestIdentifier.SLAB, "Brick Slab1"))
+                .addColumn(TestIdentifier.SANDSTONE, new Registry<String>()
+                        .addColumn(TestIdentifier.FULLBLOCK, "Sandstone Fullblock1")
+                        .addColumn(TestIdentifier.STAIR, "Sandstone Stair1"))
+                .addColumn(TestIdentifier.COBBLESTONE, new Registry<String>()
+                        .addColumn(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock1"));
     }
 
     @Test
     public void testThatByteArraysCanBeSerialised() throws ObjectMappingException {
         byte[] array = { 4, -2 };
 
-        TestConfigurationLoader tcl = this.getArrayTestLoader();
-        ConfigurationNode cn = tcl.createEmptyNode().setValue(new TypeToken<byte[]>() {}, array);
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<byte[]>() {}, array);
 
         List<Byte> ls = cn.getList(TypeToken.of(Byte.class));
         Assert.assertTrue(ls.contains((byte)4));
@@ -79,8 +76,8 @@ public class TypeSerialiserTests {
 
     @Test
     public void testThatByteArraysCanBeDeserialised() throws ObjectMappingException {
-        TestConfigurationLoader tcl = this.getArrayTestLoader();
-        ConfigurationNode cn = tcl.createEmptyNode().setValue(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
 
         byte[] ls = cn.getValue(new TypeToken<byte[]>() {});
         Assert.assertEquals(2, ls.length);
@@ -93,8 +90,8 @@ public class TypeSerialiserTests {
     public void testThatShortArraysCanBeSerialised() throws ObjectMappingException {
         short[] array = { 4, -2 };
 
-        TestConfigurationLoader tcl = this.getArrayTestLoader();
-        ConfigurationNode cn = tcl.createEmptyNode().setValue(new TypeToken<short[]>() {}, array);
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<short[]>() {}, array);
 
         List<Short> ls = cn.getList(TypeToken.of(Short.class));
         Assert.assertTrue(ls.contains((short)4));
@@ -103,8 +100,8 @@ public class TypeSerialiserTests {
 
     @Test
     public void testThatShortArraysCanBeDeserialised() throws ObjectMappingException {
-        TestConfigurationLoader tcl = this.getArrayTestLoader();
-        ConfigurationNode cn = tcl.createEmptyNode().setValue(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
 
         short[] ls = cn.getValue(new TypeToken<short[]>() {});
         Assert.assertEquals(2, ls.length);
@@ -117,8 +114,8 @@ public class TypeSerialiserTests {
     public void testThatIntArraysCanBeSerialised() throws ObjectMappingException {
         int[] array = { 4, -2 };
 
-        TestConfigurationLoader tcl = this.getArrayTestLoader();
-        ConfigurationNode cn = tcl.createEmptyNode().setValue(new TypeToken<int[]>() {}, array);
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<int[]>() {}, array);
 
         List<Integer> ls = cn.getList(TypeToken.of(Integer.class));
         Assert.assertTrue(ls.contains(4));
@@ -127,8 +124,8 @@ public class TypeSerialiserTests {
 
     @Test
     public void testThatIntArraysCanBeDeserialised() throws ObjectMappingException {
-        TestConfigurationLoader tcl = this.getArrayTestLoader();
-        ConfigurationNode cn = tcl.createEmptyNode().setValue(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
 
         int[] ls = cn.getValue(new TypeToken<int[]>() {});
         Assert.assertEquals(2, ls.length);
@@ -139,8 +136,8 @@ public class TypeSerialiserTests {
 
     @Test
     public void testThatSetsCanBeSerialised() throws ObjectMappingException {
-        TestConfigurationLoader tcl = this.getSetTestLoader();
-        ConfigurationNode cn = tcl.createEmptyNode().setValue(new TypeToken<Set<String>>() {}, Sets.newHashSet("test", "test2"));
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<Set<String>>() {}, Sets.newHashSet("test", "test2"));
 
         List<String> ls = cn.getList(TypeToken.of(String.class));
         Assert.assertTrue(ls.contains("test"));
@@ -149,8 +146,8 @@ public class TypeSerialiserTests {
 
     @Test
     public void testThatSetsCanBeDeserialised() throws ObjectMappingException {
-        TestConfigurationLoader tcl = this.getSetTestLoader();
-        ConfigurationNode cn = tcl.createEmptyNode().setValue(new TypeToken<List<String>>() {}, Lists.newArrayList("test", "test", "test2"));
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<List<String>>() {}, Lists.newArrayList("test", "test", "test2"));
 
         Set<String> ls = cn.getValue(new TypeToken<Set<String>>() {});
         Assert.assertEquals(2, ls.size());
@@ -160,8 +157,8 @@ public class TypeSerialiserTests {
 
     @Test
     public void testThatLanguagesCanBeSerialised() throws ObjectMappingException {
-        TestConfigurationLoader tcl = this.getSetTestLoader();
-        ConfigurationNode cn = tcl.createEmptyNode().setValue(new TypeToken<Language>() {}, Language.NL_NL);
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<Language>() {}, Language.NL_NL);
 
         Language ls = cn.getValue(TypeToken.of(Language.class));
         Assert.assertEquals(ls.getCode(), Language.NL_NL.getCode());
@@ -170,11 +167,38 @@ public class TypeSerialiserTests {
 
     @Test
     public void testThatLanguagesCanBeDeserialised() throws ObjectMappingException {
-        TestConfigurationLoader tcl = this.getSetTestLoader();
-        ConfigurationNode cn = tcl.createEmptyNode().setValue(new TypeToken<Language>() {}, Language.NL_NL);
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<Language>() {}, Language.NL_NL);
 
-        Language ls = cn.getValue(new TypeToken<Language>() {});
+        Language ls = cn.getValue(TypeToken.of(Language.class));
         Assert.assertEquals(ls.getCode(), Language.NL_NL.getCode());
         Assert.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
+    }
+
+    @Test
+    public void testThatRegistryCanBeSerialised() throws ObjectMappingException {
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<Registry<Registry<String>>>() {}, this.buildTestRegistry());
+
+        Registry<Registry<String>> reg = cn.getValue(new TypeToken<Registry<Registry<String>>>() {});
+
+        RegistryColumn<Registry<String>> result = reg.getAllData();
+
+        Assert.assertNotNull(result);
+        Assert.assertEquals(3, result.size());
+    }
+
+    @Test
+    public void testThatRegistryCanBeDeserialised() throws ObjectMappingException {
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<Registry<Registry<String>>>() {}, this.buildTestRegistry());
+
+        Registry<Registry<String>> reg = cn.getValue(new TypeToken<Registry<Registry<String>>>() {});
+
+        List<String> result = reg.getMatchingColumns(TestIdentifier.BRICK)
+                .mapToSingleList(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
+
+        Assert.assertTrue(result.contains("Brick Fullblock1"));
+        Assert.assertTrue(result.contains("Brick Fullblock2"));
     }
 }

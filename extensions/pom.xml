@@ -23,7 +23,7 @@
 
     <groupId>org.dockbox.selene</groupId>
     <artifactId>extensions</artifactId>
-    <version>${parent.version}</version>
+    <version>${project.parent.version}</version>
 
     <parent>
         <groupId>org.dockbox</groupId>
@@ -37,12 +37,12 @@
         <dependency>
             <groupId>org.dockbox.selene</groupId>
             <artifactId>selene-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.dockbox.selene</groupId>
             <artifactId>selene-common</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
     </dependencies>
 

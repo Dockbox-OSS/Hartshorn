@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Test
 
 class WorldEditBlockParserTest {
 
+    // TODO GuusLieben, rewrite in Java
+
     @Test
     fun parseHasExpectedSize() {
         val blocks = generateBlockList()

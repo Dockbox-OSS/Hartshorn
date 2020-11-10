@@ -23,6 +23,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
 class SerializerInformation<T> {
@@ -44,6 +45,10 @@ class SerializerInformation<T> {
     }
 
     public BiConsumer<TypeToken<T>, TypeSerializer<T>> getConsumer() {
-        return TypeSerializers.getDefaultSerializers()::registerType;
+        return this.getConsumer(TypeSerializers.getDefaultSerializers());
+    }
+
+    public BiConsumer<TypeToken<T>, TypeSerializer<T>> getConsumer(TypeSerializerCollection tsc) {
+        return tsc::registerType;
     }
 }
