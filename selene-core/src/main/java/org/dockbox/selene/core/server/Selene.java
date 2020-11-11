@@ -33,6 +33,7 @@ import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.dockbox.selene.core.util.environment.MinecraftVersion;
 import org.dockbox.selene.core.util.events.EventBus;
@@ -66,7 +67,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -319,7 +319,7 @@ public abstract class Selene {
 
     public <T> T injectMembers(T type) {
         if (null != type) {
-            createInjector().injectMembers(type);
+            this.createInjector().injectMembers(type);
         }
 
         return type;
@@ -337,7 +337,20 @@ public abstract class Selene {
     }
 
     private Map<Key<?>, Binding<?>> getAllBindings() {
-        return new ConcurrentHashMap<>(this.createInjector().getAllBindings());
+        Map<Key<?>, Binding<?>> bindings = new ConcurrentHashMap<>();
+        this.createInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
+            try {
+                Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
+                Class<?> providerType = binding.getProvider().get().getClass();
+
+                if (!keyType.equals(providerType) && null != providerType)
+                    bindings.put(key, binding);
+            } catch (ProvisionException | AssertionError ignored) {
+            }
+        });
+
+        // TODO, SeleneUtils unmodifiableMap
+        return bindings;
     }
 
     /**
@@ -355,11 +368,7 @@ public abstract class Selene {
      appropriate {@link EventBus}, {@link CommandBus}, and {@link DiscordUtils} instances.
      */
     protected void init() {
-        log().info("\u00A7e ,-,");
-        log().info("\u00A7e/.(");
-        log().info("\u00A7e\\ {");
-        log().info("\u00A7e `-`");
-        log().info("     \u00A77Initiating \u00A7bSelene " + this.getVersion());
+        log().info("\u00A77Loading \u00A7bSelene " + this.getVersion());
 
         EventBus eb = getInstance(EventBus.class);
         CommandBus cb = getInstance(CommandBus.class);
@@ -376,52 +385,110 @@ public abstract class Selene {
      This method is typically only used when starting the server.
      */
     protected void debugRegisteredInstances() {
-        log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
-        AtomicInteger unprovisionedTypes = new AtomicInteger();
-        this.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
-            try {
-                Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
-                Class<?> providerType = binding.getProvider().get().getClass();
+        /* String constants */
+        final List<String> astronaut = Arrays.asList(
+                "                                    ",
+                "                                    ",
+                "             _..._                  ",
+                "           .'     '.      _         ",
+                "          /    .-\"\"-\\   _/ \\        ",
+                "        .-|   /:.   |  |   |        ",
+                "        |  \\  |:.   /.-'-./         ",
+                "        | .-'-;:__.'    =/          ",
+                "       .'=   *=|  GL _.='           ",
+                "      /  _ .   |    ;               ",
+                "     ;-.-'|     \\   |               ",
+                "    /   | \\     _\\  _\\              ",
+                "    \\__/'._;.   ==' ==\\             ",
+                "             \\     \\   |            ",
+                "             /     /   /            ",
+                "             /-._/ -._/             ",
+                "             \\   '\\   \\             ",
+                "              '-._/.__/             "
+        );
 
-                if (!keyType.equals(providerType) && null != providerType)
-                    log().info("  - \u00A77" + keyType.getSimpleName() + ": \u00A78" + providerType.getCanonicalName());
-            } catch (ProvisionException | AssertionError e) {
-                unprovisionedTypes.getAndIncrement();
-            }
-        });
-        log().info("  \u00A77.. and " + unprovisionedTypes.get() + " unprovisioned types.");
+        final String separator = "\u00A73===============================================";
+        final String lateIndent = "                                    ";
 
-        log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded extensions: ");
+        /* Selene information */
+        final List<String> lines = new ArrayList<>();
+        lines.add(separator);
+        lines.add(this.formatDottedLine("Selene Version") + this.getVersion());
+        lines.add(this.formatDottedLine("Minecraft Version") + this.getMinecraftVersion().getReadableVersionString());
+        lines.add(this.formatDottedLine("Platform Version") + this.getPlatformVersion());
+        lines.add(separator);
+
+        /* Extension information */
         ExtensionManager em = getInstance(ExtensionManager.class);
+        int extensionCount = em.getRegisteredExtensionIds().size();
+        lines.add(this.formatDottedLine("Extensions") + "\u00A77(" + extensionCount + ')');
         em.getRegisteredExtensionIds().forEach(ext -> {
             Optional<Extension> header = em.getHeader(ext);
             if (header.isPresent()) {
                 Extension ex = header.get();
-                log().info("  - \u00A77" + ex.name());
-                log().info("  | - \u00A77ID: \u00A78" + ex.id());
-                log().info("  | - \u00A77UUID: \u00A78" + ex.uniqueId());
-                log().info("  | - \u00A77Authors: \u00A78" + Arrays.toString(ex.authors()));
-                log().info("  | - \u00A77Version: \u00A78" + ex.version());
-                log().info("  | - \u00A77URL: \u00A78" + ex.url());
-                log().info("  | - \u00A77Requires NMS: \u00A78" + ex.requiresNMS());
-                log().info("  | - \u00A77Dependencies: \u00A78" + Arrays.toString(ex.dependencies()));
-            } else {
-                log().info("  - \u00A77" + ext + " \u00A78(No header)");
+                lines.add("  " + this.formatDottedLine(ex.name()) + ex.description());
             }
         });
 
-        log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded event handlers: ");
-        getInstance(EventBus.class).getListenerToInvokers().forEach((listener, invokers) -> {
+        lines.add(separator);
+
+        /* Event listener information */
+        EventBus eb = getInstance(EventBus.class);
+        int listenerCount = eb.getListenerToInvokers().size();
+        lines.add(this.formatDottedLine("Event handlers") + "\u00A77(" + listenerCount + ')');
+        eb.getListenerToInvokers().forEach((listener, invokers) -> {
             Class<?> type;
             if (listener instanceof Class) type = (Class<?>) listener;
             else type = listener.getClass();
 
-            log().info("  - \u00A77" + type.getCanonicalName());
-            invokers.forEach(invoker -> log().info("  | - \u00A77" + invoker.getEventType().getSimpleName() + ": \u00A78" + invoker.getMethod().getName()));
+            /* Listener type */
+            lines.add("  " + this.formatDottedLine(type.getSimpleName()) + "\u00A77(" + invokers.size() + ')');
+
+            /* Listener method(s) */
+            invokers.forEach(invoker -> lines.add("    " + this.formatDottedLine(
+                    invoker.getEventType().getSimpleName(), '7') + invoker.getMethod().getName()));
         });
+
+        lines.add(separator);
+
+        /* Binding information */
+        int bindingCount = this.getAllBindings().size();
+        lines.add(this.formatDottedLine("Bindings") + "\u00A77(" + bindingCount + ')');
+        this.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
+            Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
+            Class<?> providerType = binding.getProvider().get().getClass();
+            lines.add("  " + this.formatDottedLine(keyType.getSimpleName()) + providerType.getSimpleName());
+        });
+
+        lines.add(separator);
+
+        /* Merging lines with the logo */
+        StringBuilder builder = new StringBuilder("\n");
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            if (i < astronaut.size()) {
+                builder.append("\u00A7e").append(astronaut.get(i));
+            } else {
+                builder.append(lateIndent);
+            }
+            builder.append(line).append("\n");
+        }
+        log.info(builder.toString());
     }
 
-    private Consumer<ExtensionContext> getExtensionContextConsumer(CommandBus cb, EventBus eb, ExtensionManager em, DiscordUtils du) {
+    private String formatDottedLine(String title, char overrideColorCode) {
+        final int extensionLineDotCount = 30;
+        int lineDotCount = extensionLineDotCount < title.length() ? 0 : extensionLineDotCount - title.length();
+        String dots = SeleneUtils.repeat("\u00A77.", lineDotCount);
+        return " \u00A77- \u00A7" + overrideColorCode + title + dots + "\u00A7f: \u00A78";
+    }
+
+    private String formatDottedLine(String title) {
+        return formatDottedLine(title, 'f');
+    }
+
+    private Consumer<ExtensionContext> getExtensionContextConsumer(CommandBus cb, EventBus eb, ExtensionManager
+            em, DiscordUtils du) {
         return (ExtensionContext ctx) -> {
             Class<?> type = ctx.getExtensionClass();
             log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
