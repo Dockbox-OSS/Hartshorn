@@ -82,9 +82,13 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                     args.add(event);
                 } else args.add(null);
             }
-            this.method.invoke(this.listener, args.toArray());
+            try {
+                this.method.invoke(this.listener, args.toArray());
+            } catch (Throwable e) {
+                Selene.getServer().except(e.getCause().getMessage(), e.getCause());
+            }
         } catch (Throwable e) {
-            Selene.getServer().except("Failed to invoke method", e);
+            Selene.getServer().except("Failed to invoke method '" + method.getName() + "' with object '" + this.listener + "'", e);
         }
     }
 
