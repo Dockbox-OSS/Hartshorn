@@ -18,13 +18,14 @@
 package org.dockbox.selene.core.util.threads;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 /**
  A low-level interface for easy thread-based actions. For all cases this should only be
- accessed through {@link org.dockbox.selene.core.server.Selene#getInstance(Class)}.
+ accessed through {@link org.dockbox.selene.core.server.Selene#getInstance(Class, InjectorProperty[])}}.
  */
 public interface ThreadUtils {
 

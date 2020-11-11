@@ -23,8 +23,8 @@ import org.dockbox.selene.core.objects.targets.Target
 
 abstract class PlayerConnectionEvent(private val target: Target?) : Targetable {
 
-    override fun getTarget(): Target? {
-        return this.target
+    override fun getTarget(): Target {
+        return this.target!!
     }
 
     override fun setTarget(target: Target) {

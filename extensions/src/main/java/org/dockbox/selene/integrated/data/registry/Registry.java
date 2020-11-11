@@ -138,7 +138,7 @@ public class Registry<V> extends HashMap<RegistryIdentifier, RegistryColumn<V>> 
     }
 
     /**
-     * @return All the data in the Registry combined into a single {@link RegistryColumn<V>}
+     * @return All the data in the Registry combined into a single {@link RegistryColumn}
      */
     public RegistryColumn<V> getAllData() {
         RegistryColumn<V> result = new RegistryColumn<>();

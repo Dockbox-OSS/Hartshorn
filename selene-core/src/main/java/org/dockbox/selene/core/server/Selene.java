@@ -207,8 +207,14 @@ public abstract class Selene {
 
      @param <T>
      The type parameter for the instance to return
+     @param extension
+     The type of the extension to lookup, this is only used for extension-specific bindings if the type is annotated
+     with {@link Extension}
      @param type
      The type of the instance
+     @param additionalProperties
+     The additional properties which can optionally be injected in the type, if the type implements
+     {@link InjectableType}
 
      @return The instance, if present. Otherwise returns null
      */
