@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.impl.objects.registry;
+package org.dockbox.selene.integrated.data.registry;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -26,11 +26,11 @@ import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
-class PredicateSerializerInformation<T> extends SerializerInformation<T> {
+public class PredicateSerializerInformation<T> extends SerializerInformation<T> {
 
     private final TypeToken<?> typeToken;
 
-    PredicateSerializerInformation(Class<T> type, Supplier<TypeSerializer<?>> serializer, TypeToken<?> typeToken) {
+    public PredicateSerializerInformation(Class<T> type, Supplier<TypeSerializer<?>> serializer, TypeToken<?> typeToken) {
         super(type, serializer);
         this.typeToken = typeToken;
     }

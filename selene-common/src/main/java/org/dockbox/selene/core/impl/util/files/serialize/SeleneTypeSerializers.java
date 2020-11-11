@@ -20,7 +20,6 @@ package org.dockbox.selene.core.impl.util.files.serialize;
 import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.impl.objects.registry.Registry;
 import org.dockbox.selene.core.server.Selene;
 
 import java.util.Collection;
@@ -59,8 +58,6 @@ public final class SeleneTypeSerializers {
             new SerializerInformation<>(int[].class, IntArrayTypeSerializer::new);
             new SerializerInformation<>(short[].class, ShortArrayTypeSerializer::new);
             new SerializerInformation<>(Pattern.class, PatternTypeSerializer::new);
-            new PredicateSerializerInformation<>(Registry.class, RegistrySerializer::new, new TypeToken<Registry<?>>() {
-            });
             new PredicateSerializerInformation<>(Set.class, SetTypeSerializer::new, new TypeToken<Set<?>>() {
             });
         } catch (Exception e) {
