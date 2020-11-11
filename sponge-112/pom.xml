@@ -57,21 +57,25 @@
             <groupId>org.dockbox.selene</groupId>
             <artifactId>selene-core</artifactId>
             <version>${project.parent.version}</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.dockbox.selene</groupId>
             <artifactId>selene-common</artifactId>
             <version>${project.parent.version}</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.dockbox.selene</groupId>
             <artifactId>extensions</artifactId>
             <version>${project.parent.version}</version>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.dockbox.selene</groupId>
             <artifactId>sponge-extensions</artifactId>
             <version>${project.parent.version}</version>
+            <type>jar</type>
         </dependency>
 
         <!-- Platform -->
@@ -133,6 +137,32 @@
                         </goals>
                         <configuration>
                             <minimizeJar>true</minimizeJar>
+                            <filters>
+                                <filter>
+                                    <artifact>org.dockbox.selene:selene-core</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.dockbox.selene:selene-common</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.dockbox.selene:extensions</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.dockbox.selene:sponge-extensions</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
                             <relocations>
                                 <relocation>
                                     <pattern>com.fasterxml.jackson</pattern>
