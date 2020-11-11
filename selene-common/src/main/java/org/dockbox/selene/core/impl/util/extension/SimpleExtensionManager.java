@@ -91,7 +91,7 @@ public class SimpleExtensionManager implements ExtensionManager {
     @Override
     public List<ExtensionContext> initialiseExtensions() {
         Reflections integratedReflections = new Reflections("org.dockbox.selene");
-        Set<Class<?>> annotatedTypes = integratedReflections.getTypesAnnotatedWith(Extension.class);
+        Set<Class<?>> annotatedTypes = integratedReflections.getTypesAnnotatedWith(Extension.class, true);
         Selene.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
         return annotatedTypes.stream().map(type -> {
 
