@@ -18,7 +18,6 @@
 package org.dockbox.selene.integrated.data.registry;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.integrated.data.TestIdentifier;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 

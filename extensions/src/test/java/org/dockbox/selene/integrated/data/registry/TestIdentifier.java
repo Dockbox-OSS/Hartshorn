@@ -15,9 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data;
-
-import org.dockbox.selene.integrated.data.registry.RegistryIdentifier;
+package org.dockbox.selene.integrated.data.registry;
 
 public enum TestIdentifier implements RegistryIdentifier {
     BRICK, SANDSTONE, COBBLESTONE, WOOD, FULLBLOCK, STAIR, SLAB;
