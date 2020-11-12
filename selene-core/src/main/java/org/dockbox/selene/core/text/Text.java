@@ -56,8 +56,8 @@ public class Text {
         }
     }
 
-    private static final char legacySectionSymbol = '&';
-    private static final char sectionSymbol = '\u00A7';
+    public static final char legacySectionSymbol = '&';
+    public static final char sectionSymbol = '\u00A7';
     private static final String styleChars = "01234567890abcdefklmnor";
 
     private String text;
