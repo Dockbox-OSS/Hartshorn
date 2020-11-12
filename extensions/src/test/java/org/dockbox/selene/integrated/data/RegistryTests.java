@@ -15,10 +15,10 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.registry;
+package org.dockbox.selene.integrated.data;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.integrated.data.TestIdentifier;
+import org.dockbox.selene.integrated.data.registry.Registry;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 

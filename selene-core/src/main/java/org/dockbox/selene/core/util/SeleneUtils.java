@@ -600,21 +600,9 @@ public enum SeleneUtils {
         return Collections.unmodifiableList(asList(objects));
     }
 
-    public static <T> List<T> asUnmodifiableList(Collection<T> collection) {
-        return Collections.unmodifiableList(new ArrayList<>(collection));
-    }
-
     @SafeVarargs
     public static <T> Set<T> asUnmodifiableSet(T... objects) {
         return Collections.unmodifiableSet(asSet(objects));
-    }
-
-    public static <T> Set<T> asUnmodifiableSet(Collection<T> collection) {
-        return Collections.unmodifiableSet(new HashSet<>(collection));
-    }
-
-    public static <K, V> Map<K, V> asUnmodifiableMap(Map<K, V> map) {
-        return Collections.unmodifiableMap(map);
     }
 
     public static boolean throwsException(Runnable runnable) {
