@@ -17,21 +17,21 @@
 
 package org.dockbox.selene.integrated.data.table;
 
-import org.dockbox.selene.core.annotations.Placeholder;
+import org.dockbox.selene.integrated.data.table.annotations.Ignore;
+import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@Placeholder(description = "Advanced relational table type, see https://github.com/GuusLieben/Selene/issues/124",
-             by = "GuusLieben", assignee = "Coulis")
 @SuppressWarnings("unchecked")
 public class Table {
 
-    private final Collection<Row> rows;
+    private final List<TableRow> rows;
     private final ColumnIdentifier<?>[] identifiers;
 
     public Table(ColumnIdentifier<?>... columns) {
@@ -39,14 +39,14 @@ public class Table {
         this.rows = new CopyOnWriteArrayList<>();
     }
 
-    public void addRow(Row row) {
+    public void addRow(TableRow row) {
         // Check if the row has the same amount of column as this table
-        if (row.keySet().size() != this.identifiers.length)
+        if (row.getColumns().size() != this.identifiers.length)
             throw new IllegalArgumentException("Illegal magic!");
 
         // Check if the row has the same columns with the same order
         int index = 0;
-        for (ColumnIdentifier<?> rowColumn : row.keySet()) {
+        for (ColumnIdentifier<?> rowColumn : row.getColumns()) {
             ColumnIdentifier<?> tableColumn = this.identifiers[index];
             if (rowColumn != tableColumn)
                 throw new IllegalArgumentException("Column '" + rowColumn + "' did not match expected type '" + tableColumn + "'");
@@ -57,21 +57,24 @@ public class Table {
     }
 
     public <T> Table addRow(Object object) {
-        Row row = new Row();
+        TableRow row = new TableRow();
 
-        for (Field field : object.getClass().getFields()) {
+        for (Field field : object.getClass().getDeclaredFields()) {
             if (!field.isAnnotationPresent(Ignore.class)) {
                 try {
+                    // TODO, add a @ColumnIdentifier annotation holding a constant ColumnIdentifier. If that is present
+                    //  on a type, use that ColumnIdentifier here, otherwise fall back to the current behavior.
                     ColumnIdentifier<T> identifier = this.getIdentifier(field.getName());
                     if (null != identifier) {
                         row.addValue(identifier, (T) field.get(object));
                     }
-                } catch (IllegalAccessError | ClassCastException | IllegalAccessException ignored) {
+                } catch (IllegalAccessError | ClassCastException | IllegalAccessException e) {
+                    throw new IllegalArgumentException(e);
                 }
             }
         }
 
-        if (row.size() != this.identifiers.length) {
+        if (row.getColumns().size() != this.identifiers.length) {
             throw new IllegalArgumentException("Missing Columns!");
         }
         this.rows.add(row);
@@ -79,27 +82,34 @@ public class Table {
     }
 
     public Table addRow(Object... values) {
-        if (values.length != this.identifiers.length) throw new IllegalArgumentException("Not allowed");
+        if (values.length != this.identifiers.length)
+            throw new IllegalArgumentException("Amount of given values does not meet amount of column headers");
 
-        Row row = new Row();
+        TableRow row = new TableRow();
         for (int i = 0; i < this.identifiers.length; i++) {
-            try {
-                ColumnIdentifier identifier = this.identifiers[i];
+            ColumnIdentifier identifier = this.identifiers[i];
+            Object value = values[i];
+            if (identifier.getType().isAssignableFrom(value.getClass()))
                 row.addValue(identifier, values[i]);
-            } catch (ClassCastException e) {
-                throw new IllegalArgumentException(String.format("The value: %s, is not of the correct type.", values[i]), e);
-            }
+            else // TODO, can we move this to TableRow? So we can ensure other classes can't insert mismatched types either
+                throw new IllegalArgumentException(
+                        String.format("The value: %s, is not of the correct type. (Expected: %s, but got %s)",
+                                values[i],
+                                identifier.getType().getSimpleName(),
+                                value.getClass().getSimpleName()
+                        ));
         }
         this.rows.add(row);
         return this;
     }
 
+    // TODO, several lookup methods (e.g. match, contains, etc)
     public <T> Table lookup(ColumnIdentifier<? extends ColumnIdentifier<?>> column, T filter) {
         if (!this.hasColumn(column))
             throw new IllegalArgumentException("Cannot lookup a column which does not exist");
 
-        Collection<Row> filteredRows = new ArrayList<>();
-        for (Row row : this.rows) {
+        Collection<TableRow> filteredRows = new ArrayList<>();
+        for (TableRow row : this.rows) {
             Object value = row.getValue(column);
             if (value == filter || value.equals(filter)) {
                 filteredRows.add(row);
@@ -110,14 +120,15 @@ public class Table {
         return lookupTable;
     }
 
-    public <T> Collection<Row> merge(Table otherTable, ColumnIdentifier<?> column) {
+    // TODO, several merge methods (e.g. keepAll, keepColumns(A, B), [ preferOriginal, preferOther (when reaching column identifiers which are the same but may have different values) ]
+    public <T> Collection<TableRow> merge(Table otherTable, ColumnIdentifier<T> column) {
         if (this.hasColumn(column) && otherTable.hasColumn(column)) {
-            Collection<Row> mergedRows = new ArrayList<>();
+            Collection<TableRow> mergedRows = new ArrayList<>();
             this.rows.forEach(row -> {
                 Object value = row.getValue(column);
-                Row mergedRow = new Row();
+                TableRow mergedRow = new TableRow();
 
-                for (ColumnIdentifier<?> columnIdentifier : row.keySet()) {
+                for (ColumnIdentifier<?> columnIdentifier : row.getColumns()) {
                     ColumnIdentifier<T> identifier = (ColumnIdentifier<T>) columnIdentifier;
                     T val = row.getValue(identifier);
                     mergedRow.addValue(identifier, val);
@@ -127,8 +138,8 @@ public class Table {
                     Object otherValue = other_row.getValue(column);
                     return otherValue == value || otherValue.equals(value);
                 }).forEach(matchingRow -> {
-                    // Yes this will override any other columns matching the same identifier, we don't have to care
-                    for (ColumnIdentifier<?> columnIdentifier : matchingRow.keySet()) {
+                    // This will override any other columns matching the same identifier
+                    for (ColumnIdentifier<?> columnIdentifier : matchingRow.getColumns()) {
                         ColumnIdentifier<T> identifier = (ColumnIdentifier<T>) columnIdentifier;
                         T val = row.getValue(identifier);
                         mergedRow.addValue(identifier, val);
@@ -143,7 +154,7 @@ public class Table {
         throw new IllegalArgumentException("Column '" + column + "' does not exist in both tables");
     }
 
-    public Collection<Row> getRows() {
+    public List<TableRow> getRows() {
         return this.rows;
     }
 
