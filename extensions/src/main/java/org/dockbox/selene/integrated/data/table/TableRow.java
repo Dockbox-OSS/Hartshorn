@@ -30,16 +30,7 @@ public class TableRow {
     public TableRow() { }
 
     public <T> TableRow addValue(ColumnIdentifier<T> column, T value) {
-        if (column.getType().isAssignableFrom(value.getClass()))
-            this.data.put(column, value);
-        else
-            throw new IllegalArgumentException(
-                String.format("The value: %s, is not of the correct type. (Expected: %s, but got %s)",
-                    value,
-                    column.getType().getSimpleName(),
-                    value.getClass().getSimpleName()
-                ));
-
+        this.data.put(column, value);
         return this;
     }
 
