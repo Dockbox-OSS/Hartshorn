@@ -147,6 +147,25 @@ public enum SeleneUtils {
         return s1.trim().equalsIgnoreCase(s2.trim());
     }
 
+    public static boolean equal(Object expected, Object actual) {
+        if (expected != null || actual != null) {
+            return !(expected == null || !expected.equals(actual));
+        }
+        return false;
+    }
+
+    public static boolean same(Object expected, Object actual) {
+        return expected == actual;
+    }
+
+    public static boolean notEqual(Object expected, Object actual) {
+        return !equal(expected, actual);
+    }
+
+    public static boolean notSame(Object expected, Object actual) {
+        return !same(expected, actual);
+    }
+
     public static boolean hasContent(final String s) {
         return !(0 == trimLength(s));    // faster than returning !isEmpty()
     }
