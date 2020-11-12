@@ -64,9 +64,9 @@ public class Table {
                 try {
                     // TODO, add a @ColumnIdentifier annotation holding a constant ColumnIdentifier. If that is present
                     //  on a type, use that ColumnIdentifier here, otherwise fall back to the current behavior.
-                    ColumnIdentifier<T> identifier = this.getIdentifier(field.getName());
+                    ColumnIdentifier identifier = this.getIdentifier(field.getName());
                     if (null != identifier) {
-                        row.addValue(identifier, (T) field.get(object));
+                        row.addValue(identifier, field.get(object));
                     }
                 } catch (IllegalAccessError | ClassCastException | IllegalAccessException e) {
                     throw new IllegalArgumentException(e);
@@ -89,15 +89,7 @@ public class Table {
         for (int i = 0; i < this.identifiers.length; i++) {
             ColumnIdentifier identifier = this.identifiers[i];
             Object value = values[i];
-            if (identifier.getType().isAssignableFrom(value.getClass()))
-                row.addValue(identifier, values[i]);
-            else // TODO, can we move this to TableRow? So we can ensure other classes can't insert mismatched types either
-                throw new IllegalArgumentException(
-                        String.format("The value: %s, is not of the correct type. (Expected: %s, but got %s)",
-                                values[i],
-                                identifier.getType().getSimpleName(),
-                                value.getClass().getSimpleName()
-                        ));
+            row.addValue(identifier, value);
         }
         this.rows.add(row);
         return this;
@@ -128,23 +120,15 @@ public class Table {
                 Object value = row.getValue(column);
                 TableRow mergedRow = new TableRow();
 
-                for (ColumnIdentifier<?> columnIdentifier : row.getColumns()) {
-                    ColumnIdentifier<T> identifier = (ColumnIdentifier<T>) columnIdentifier;
-                    T val = row.getValue(identifier);
-                    mergedRow.addValue(identifier, val);
-                }
+                row.getColumns().forEach((ColumnIdentifier c) -> row.addValue(c, row.getValue(c)));
 
                 otherTable.rows.stream().filter(other_row -> {
                     Object otherValue = other_row.getValue(column);
                     return otherValue == value || otherValue.equals(value);
-                }).forEach(matchingRow -> {
+                }).forEach(matchingRow -> matchingRow.getColumns()
                     // This will override any other columns matching the same identifier
-                    for (ColumnIdentifier<?> columnIdentifier : matchingRow.getColumns()) {
-                        ColumnIdentifier<T> identifier = (ColumnIdentifier<T>) columnIdentifier;
-                        T val = row.getValue(identifier);
-                        mergedRow.addValue(identifier, val);
-                    }
-                });
+                    .forEach((ColumnIdentifier c) -> mergedRow.addValue(c, matchingRow.getValue(c)))
+                );
 
                 mergedRows.add(mergedRow);
             });
@@ -167,10 +151,10 @@ public class Table {
     }
 
     @Nullable
-    private <T> ColumnIdentifier<T> getIdentifier(@NonNls String fieldName) throws ClassCastException {
-        for (ColumnIdentifier<?> columnIdentifier : this.identifiers) {
+    private ColumnIdentifier getIdentifier(@NonNls String fieldName) throws ClassCastException {
+        for (ColumnIdentifier columnIdentifier : this.identifiers) {
             if (columnIdentifier.getColumnName().equalsIgnoreCase(fieldName)) {
-                return (ColumnIdentifier<T>) columnIdentifier;
+                return columnIdentifier;
             }
         }
         return null;
