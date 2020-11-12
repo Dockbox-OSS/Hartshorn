@@ -53,6 +53,7 @@ import org.dockbox.selene.core.events.discord.DiscordEvent.ReactionAdded;
 import org.dockbox.selene.core.events.discord.DiscordEvent.Reconnected;
 import org.dockbox.selene.core.events.discord.DiscordEvent.Unbanned;
 import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.dockbox.selene.core.util.events.EventBus;
@@ -62,7 +63,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class SpongeDiscordListener extends ListenerAdapter {
 
@@ -180,8 +180,8 @@ public class SpongeDiscordListener extends ListenerAdapter {
     public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
         Event nce = new NicknameChanged(
                 event.getUser(),
-                Optional.ofNullable(event.getOldNickname()),
-                Optional.ofNullable(event.getNewNickname())
+                Exceptional.ofNullable(event.getOldNickname()),
+                Exceptional.ofNullable(event.getNewNickname())
         );
         this.bus.post(nce);
     }

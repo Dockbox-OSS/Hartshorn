@@ -20,12 +20,13 @@ package org.dockbox.selene.core.impl.command.parse
 import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
+import org.dockbox.selene.core.impl.util.player.DefaultPlayerStorageService
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.objects.user.Player
 import org.dockbox.selene.core.server.Selene
-import org.dockbox.selene.core.impl.util.player.DefaultPlayerStorageService
 
 class PlayerArgumentParser : AbstractTypeArgumentParser<Player>() {
-    override fun parse(commandValue: CommandValue<String>): Optional<Player> {
+    override fun parse(commandValue: CommandValue<String>): Exceptional<Player> {
         val v = commandValue.value
         val ps = Selene.getInstance(DefaultPlayerStorageService::class.java)
         val op = ps.getPlayer(v)
@@ -35,7 +36,7 @@ class PlayerArgumentParser : AbstractTypeArgumentParser<Player>() {
                 val uuid = UUID.fromString(v)
                 ps.getPlayer(uuid)
             } catch (e: IllegalArgumentException) {
-                Optional.empty()
+                Exceptional.empty()
             }
         }
     }

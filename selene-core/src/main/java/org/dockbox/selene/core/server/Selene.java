@@ -29,6 +29,7 @@ import com.google.inject.util.Modules;
 
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
@@ -63,7 +64,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -258,7 +258,7 @@ public abstract class Selene {
 
     public Injector createExtensionInjector(Object instance) {
         if (null != instance && instance.getClass().isAnnotationPresent(Extension.class)) {
-            Optional<ExtensionContext> context = getInstance(ExtensionManager.class).getContext(instance.getClass());
+            Exceptional<ExtensionContext> context = getInstance(ExtensionManager.class).getContext(instance.getClass());
             Extension extension;
             extension = context
                     .map(ExtensionContext::getExtension)
@@ -423,7 +423,7 @@ public abstract class Selene {
         int extensionCount = em.getRegisteredExtensionIds().size();
         lines.add(this.formatDottedLine("Extensions") + "\u00A77(" + extensionCount + ')');
         em.getRegisteredExtensionIds().forEach(ext -> {
-            Optional<Extension> header = em.getHeader(ext);
+            Exceptional<Extension> header = em.getHeader(ext);
             if (header.isPresent()) {
                 Extension ex = header.get();
                 lines.add("  " + this.formatDottedLine(ex.name()) + ex.description());
@@ -492,7 +492,7 @@ public abstract class Selene {
         return (ExtensionContext ctx) -> {
             Class<?> type = ctx.getExtensionClass();
             log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
-            Optional<?> oi = em.getInstance(type);
+            Exceptional<?> oi = em.getInstance(type);
             oi.ifPresent(i -> {
                 Package pkg = i.getClass().getPackage();
                 if (null != pkg) {

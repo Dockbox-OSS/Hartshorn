@@ -20,6 +20,7 @@ package org.dockbox.selene.sponge;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
@@ -40,7 +41,6 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -113,7 +113,7 @@ public class SeleneSponge112Impl extends Selene {
      */
     @Listener(order = Order.LAST)
     public void onServerStartedLate(GameStartedServerEvent event) {
-        Optional<JDA> oj = getInstance(DiscordUtils.class).getJDA();
+        Exceptional<JDA> oj = getInstance(DiscordUtils.class).getJDA();
         if (oj.isPresent()) {
             JDA jda = oj.get();
             // Avoid registering it twice if the scheduler outside this condition is executing this twice.

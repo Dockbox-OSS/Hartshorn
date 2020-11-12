@@ -19,12 +19,13 @@ package org.dockbox.selene.sponge.objects.location
 
 import java.util.*
 import org.dockbox.selene.core.objects.location.World
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.spongepowered.api.Sponge
 
 class SpongeWorld(worldUniqueId: UUID, name: String) : World(worldUniqueId, name) {
-    private val reference = ThreadLocal<Optional<org.spongepowered.api.world.World?>>()
+    private val reference = ThreadLocal<Exceptional<org.spongepowered.api.world.World?>>()
     private fun refreshReference() {
-        if (reference.get().isPresent) reference.set(Sponge.getServer().getWorld(worldUniqueId))
+        if (reference.get().isPresent) reference.set(Exceptional.of(Sponge.getServer().getWorld(worldUniqueId)))
     }
 
     fun getReference(): org.spongepowered.api.world.World? {

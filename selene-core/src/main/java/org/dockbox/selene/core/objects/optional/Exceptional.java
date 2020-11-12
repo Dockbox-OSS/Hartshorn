@@ -80,7 +80,7 @@ public final class Exceptional<T> {
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Exceptional<T> ofOptional(Optional<T> optional) {
+    public static <T> Exceptional<T> of(Optional<T> optional) {
         return optional.map(Exceptional::of).orElseGet(Exceptional::empty);
     }
 
@@ -190,10 +190,6 @@ public final class Exceptional<T> {
             throw new NoSuchElementException("No value present");
         }
         return this.throwable;
-    }
-
-    public Optional<T> toOptional() {
-        return Optional.ofNullable(this.value);
     }
 
     @Override

@@ -22,6 +22,7 @@ import java.util.function.Function
 import java.util.stream.Collectors
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.server.Selene
 
 /**
@@ -61,7 +62,7 @@ open class ListArgumentParser<R> : AbstractTypeArgumentParser<List<R>> {
         this.minMax = minMax
     }
 
-    override fun parse(commandValue: CommandValue<String>): Optional<List<R>> {
+    override fun parse(commandValue: CommandValue<String>): Exceptional<List<R>> {
         val v = commandValue.value
         var list = v.split(this.delimiter)
 
@@ -74,15 +75,15 @@ open class ListArgumentParser<R> : AbstractTypeArgumentParser<List<R>> {
 
         if (null != converterFun) {
             val finalList = list.stream().map(converterFun).collect(Collectors.toList())
-            return Optional.of(finalList)
+            return Exceptional.of(finalList)
         }
 
         return try {
             @Suppress("UNCHECKED_CAST")
-            Optional.of(list as List<R>)
+            Exceptional.of(list as List<R>)
         } catch (e: ClassCastException) {
             Selene.log().warn("Could not cast list parsing result. Ensure you passed a parser if not using String as generic type!")
-            Optional.of(ArrayList())
+            Exceptional.of(ArrayList())
         }
     }
 }

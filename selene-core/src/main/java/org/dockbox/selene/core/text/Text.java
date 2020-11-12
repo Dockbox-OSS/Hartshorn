@@ -18,6 +18,7 @@
 package org.dockbox.selene.core.text;
 
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.actions.ClickAction;
@@ -29,7 +30,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -170,18 +170,18 @@ public class Text {
         return new Text(objects);
     }
 
-    public Optional<String> generateHash(HashMethod method) {
+    public Exceptional<String> generateHash(HashMethod method) {
         try {
             MessageDigest md = MessageDigest.getInstance(method.toString());
             md.update(this.toStringValue().getBytes());
-            return Optional.of(DatatypeConverter.printHexBinary(md.digest()).toUpperCase());
+            return Exceptional.of(DatatypeConverter.printHexBinary(md.digest()).toUpperCase());
         } catch (NoSuchAlgorithmException e) {
             Selene.getServer().except("No algorithm implementation present for " + method.toString() + ". " +
                             "This algorithm should be implemented by every implementation of the Java platform! " +
                             "See https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html",
                     e);
         }
-        return Optional.empty();
+        return Exceptional.empty();
     }
 
     @Override

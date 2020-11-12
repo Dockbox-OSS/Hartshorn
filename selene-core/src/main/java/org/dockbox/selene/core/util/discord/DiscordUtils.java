@@ -26,17 +26,16 @@ import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.selene.core.events.discord.DiscordCommandContext;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.text.Text;
-
-import java.util.Optional;
 
 public interface DiscordUtils {
 
-    Optional<JDA> getJDA();
-    Optional<TextChannel> getGlobalTextChannel();
+    Exceptional<JDA> getJDA();
+    Exceptional<TextChannel> getGlobalTextChannel();
     boolean checkMessageExists(String messageId, String channelId);
-    Optional<Category> getLoggingCategory();
-    Optional<Guild> getGuild();
+    Exceptional<Category> getLoggingCategory();
+    Exceptional<Guild> getGuild();
 
     void sendToTextChannel(Text text, MessageChannel channel);
     void sendToTextChannel(CharSequence text, MessageChannel channel);

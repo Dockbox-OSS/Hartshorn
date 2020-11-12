@@ -23,21 +23,20 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import org.dockbox.selene.core.impl.util.discord.DefaultDiscordUtils;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 public class SpongeDiscordUtils extends DefaultDiscordUtils {
 
     @NotNull
     @Override
-    public Optional<JDA> getJDA() {
-        return Optional.ofNullable(MagiBridge.getInstance().getJDA());
+    public Exceptional<JDA> getJDA() {
+        return Exceptional.ofNullable(MagiBridge.getInstance().getJDA());
     }
 
     @NotNull
     @Override
-    public Optional<TextChannel> getGlobalTextChannel() {
+    public Exceptional<TextChannel> getGlobalTextChannel() {
         String channelId = MagiBridge.getInstance().getConfig().CHANNELS.MAIN_CHANNEL;
         return this.getJDA().map(jda -> jda.getTextChannelById(channelId));
     }

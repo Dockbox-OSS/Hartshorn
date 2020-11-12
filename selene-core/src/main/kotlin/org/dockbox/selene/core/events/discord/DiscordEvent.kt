@@ -17,9 +17,13 @@
 
 package org.dockbox.selene.core.events.discord
 
-import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.entities.Guild
+import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.MessageReaction
+import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.entities.User
 import org.dockbox.selene.core.objects.events.Event
-import java.util.*
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 abstract class DiscordEvent : Event {
 
@@ -72,8 +76,8 @@ abstract class DiscordEvent : Event {
 
     class NicknameChanged(
             val user: User,
-            val oldNickname: Optional<String>,
-            val newNickname: Optional<String>
+            val oldNickname: Exceptional<String>,
+            val newNickname: Exceptional<String>
     ) : DiscordEvent()
 
     class Disconnected : DiscordEvent()

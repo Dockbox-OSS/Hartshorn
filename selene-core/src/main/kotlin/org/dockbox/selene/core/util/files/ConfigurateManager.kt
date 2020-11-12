@@ -18,7 +18,6 @@
 package org.dockbox.selene.core.util.files
 
 import java.nio.file.Path
-import java.util.*
 import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.util.extension.Extension
 
@@ -132,9 +131,9 @@ abstract class ConfigurateManager(val fileType: FileType) {
      *
      * Depending on the platform this directory may not be present.
      *
-     * @return A [Optional] object containing either a [Path] reference to a directory, or nothing.
+     * @return A [Exceptional] object containing either a [Path] reference to a directory, or nothing.
      */
-    abstract fun getModDir(): Optional<Path>
+    abstract fun getModDir(): Exceptional<Path>
 
     /**
      * Get the base plugin directory of a platform file system. The exact location is decided by the top-level
@@ -158,9 +157,9 @@ abstract class ConfigurateManager(val fileType: FileType) {
      *
      * Depending on the platform this directory may not be present.
      *
-     * @return A [Optional] object containing either a [Path] reference to a directory, or nothing.
+     * @return A [Exceptional] object containing either a [Path] reference to a directory, or nothing.
      */
-    abstract fun getModdedPlatformModsConfigDir(): Optional<Path>
+    abstract fun getModdedPlatformModsConfigDir(): Exceptional<Path>
 
     /**
      * Get the configuration folder for extensions directory of a platform file system. The exact location is decided

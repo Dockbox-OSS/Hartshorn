@@ -54,7 +54,6 @@ import org.spongepowered.api.world.World;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -63,30 +62,30 @@ public enum SpongeConversionUtil {
     ;
 
     @NotNull
-    public static <T> Optional<?> autoDetectFromSponge(T object) {
+    public static <T> Exceptional<?> autoDetectFromSponge(T object) {
         // CommandSource, Location, World, Gamemode
         if (object instanceof org.spongepowered.api.command.CommandSource) {
-            return fromSponge((org.spongepowered.api.command.CommandSource) object).toOptional();
+            return fromSponge((org.spongepowered.api.command.CommandSource) object);
         } else if (object instanceof Location) {
-            return Optional.of(fromSponge((Location) object));
+            return Exceptional.of(fromSponge((Location) object));
         } else if (object instanceof World) {
-            return Optional.of(fromSponge((World) object));
+            return Exceptional.of(fromSponge((World) object));
         } else if (object instanceof GameMode) {
-            return Optional.of(fromSponge((GameMode) object));
+            return Exceptional.of(fromSponge((GameMode) object));
         } else if (object instanceof User) {
-            return Optional.of(new SpongePlayer(((Identifiable) object).getUniqueId(), ((Tamer) object).getName()));
+            return Exceptional.of(new SpongePlayer(((Identifiable) object).getUniqueId(), ((Tamer) object).getName()));
         } else if (object instanceof ItemStack) {
-            return Optional.of(fromSponge((ItemStack) object));
+            return Exceptional.of(fromSponge((ItemStack) object));
         } else if (object instanceof Enchantment) {
-            return fromSponge((Enchantment) object).toOptional();
+            return fromSponge((Enchantment) object);
         }
-        return Optional.empty();
+        return Exceptional.empty();
     }
 
     @NotNull
-    public static Optional<Enchantment> toSponge(Enchant enchantment) {
+    public static Exceptional<Enchantment> toSponge(Enchant enchantment) {
         // TODO GuusLieben, enchantment conversion (also update ItemStack conversions)
-        return Optional.empty();
+        return Exceptional.empty();
     }
 
     @NotNull
@@ -111,13 +110,13 @@ public enum SpongeConversionUtil {
                 // from TextSerializers won't be needed, but to ensure no trailing codes are left we use it here anyway.
                 pb.append(TextSerializers.FORMATTING_CODE.deserialize(IntegratedResource.Companion.parseColors(part.toLegacy())));
 
-                Optional<org.spongepowered.api.text.action.ClickAction<?>> clickAction = toSponge(part.getClickAction());
+                Exceptional<org.spongepowered.api.text.action.ClickAction<?>> clickAction = toSponge(part.getClickAction());
                 clickAction.ifPresent(pb::onClick);
 
-                Optional<org.spongepowered.api.text.action.HoverAction<?>> hoverAction = toSponge(part.getHoverAction());
+                Exceptional<org.spongepowered.api.text.action.HoverAction<?>> hoverAction = toSponge(part.getHoverAction());
                 hoverAction.ifPresent(pb::onHover);
 
-                Optional<org.spongepowered.api.text.action.ShiftClickAction<?>> shiftClickAction = toSponge(part.getShiftClickAction());
+                Exceptional<org.spongepowered.api.text.action.ShiftClickAction<?>> shiftClickAction = toSponge(part.getShiftClickAction());
                 shiftClickAction.ifPresent(pb::onShiftClick);
 
                 b.append(pb.build());
@@ -129,40 +128,40 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    private static Optional<org.spongepowered.api.text.action.ShiftClickAction<?>> toSponge(ShiftClickAction<?> action) {
-        if (null == action) return Optional.empty();
+    private static Exceptional<org.spongepowered.api.text.action.ShiftClickAction<?>> toSponge(ShiftClickAction<?> action) {
+        if (null == action) return Exceptional.empty();
         Object result = action.getResult();
         if (action instanceof ShiftClickAction.InsertText) {
-            return Optional.of(TextActions.insertText(((org.dockbox.selene.core.text.Text) result).toPlain()));
+            return Exceptional.of(TextActions.insertText(((org.dockbox.selene.core.text.Text) result).toPlain()));
         }
-        return Optional.empty();
+        return Exceptional.empty();
     }
 
     @NotNull
-    private static Optional<org.spongepowered.api.text.action.HoverAction<?>> toSponge(HoverAction<?> action) {
-        if (null == action) return Optional.empty();
+    private static Exceptional<org.spongepowered.api.text.action.HoverAction<?>> toSponge(HoverAction<?> action) {
+        if (null == action) return Exceptional.empty();
         Object result = action.getResult();
         if (action instanceof HoverAction.ShowText) {
-            return Optional.of(TextActions.showText(toSponge(((org.dockbox.selene.core.text.Text) result))));
+            return Exceptional.of(TextActions.showText(toSponge(((org.dockbox.selene.core.text.Text) result))));
         }
         // TODO: Once implemented; ShowItem, ShowEntity
-        return Optional.empty();
+        return Exceptional.empty();
     }
 
     @NotNull
-    private static Optional<org.spongepowered.api.text.action.ClickAction<?>> toSponge(ClickAction<?> action) {
-        if (null == action) return Optional.empty();
+    private static Exceptional<org.spongepowered.api.text.action.ClickAction<?>> toSponge(ClickAction<?> action) {
+        if (null == action) return Exceptional.empty();
         Object result = action.getResult();
         if (action instanceof ClickAction.OpenUrl) {
-            return Optional.of(TextActions.openUrl((URL) result));
+            return Exceptional.of(TextActions.openUrl((URL) result));
         } else if (action instanceof ClickAction.RunCommand) {
-            return Optional.of(TextActions.runCommand((String) result));
+            return Exceptional.of(TextActions.runCommand((String) result));
         } else if (action instanceof ClickAction.ChangePage) {
-            return Optional.of(TextActions.changePage((int) result));
+            return Exceptional.of(TextActions.changePage((int) result));
         } else if (action instanceof ClickAction.SuggestCommand) {
-            return Optional.of(TextActions.suggestCommand((String) result));
+            return Exceptional.of(TextActions.suggestCommand((String) result));
         } else if (action instanceof ClickAction.ExecuteCallback) {
-            return Optional.of(TextActions.executeCallback(commandSource -> {
+            return Exceptional.of(TextActions.executeCallback(commandSource -> {
                 Consumer<CommandSource> consumer = ((ClickAction.ExecuteCallback) action).getResult();
                 try {
                     fromSponge(commandSource).ifPresent(consumer).rethrow();
@@ -171,7 +170,7 @@ public enum SpongeConversionUtil {
                 }
             }));
         }
-        return Optional.empty();
+        return Exceptional.empty();
     }
 
     @NotNull

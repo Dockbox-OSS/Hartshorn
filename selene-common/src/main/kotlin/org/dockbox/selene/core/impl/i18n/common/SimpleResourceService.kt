@@ -26,6 +26,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable
 import org.dockbox.selene.core.i18n.common.Language
 import org.dockbox.selene.core.i18n.common.ResourceService
 import org.dockbox.selene.core.i18n.entry.ExternalResourceEntry
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.server.ServerReference
 import org.dockbox.selene.core.util.files.ConfigurateManager
@@ -90,7 +91,7 @@ class SimpleResourceService : ResourceService, ServerReference() {
             .replace("/".toRegex(), "_")
             .toUpperCase()
 
-    override fun getExternalResource(key: String): Optional<ExternalResourceEntry> {
-        return Optional.ofNullable(knownEntries.firstOrNull { it.getKey() == createValidKey(key) })
+    override fun getExternalResource(key: String): Exceptional<ExternalResourceEntry> {
+        return Exceptional.ofNullable(knownEntries.firstOrNull { it.getKey() == createValidKey(key) })
     }
 }

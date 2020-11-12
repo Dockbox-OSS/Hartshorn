@@ -19,12 +19,12 @@ package org.dockbox.selene.core.impl.command.parse
 
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
-import java.util.*
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 class CharArgumentParser : AbstractTypeArgumentParser<Char>() {
-    override fun parse(commandValue: CommandValue<String>): Optional<Char> {
+    override fun parse(commandValue: CommandValue<String>): Exceptional<Char> {
         val len = commandValue.value.length
-        return if ( len == 0 || len > 1) Optional.empty()
-        else Optional.of(commandValue.value[0])
+        return if ( len == 0 || len > 1) Exceptional.empty()
+        else Exceptional.of(commandValue.value[0])
     }
 }
