@@ -196,7 +196,6 @@ public class Table {
 
     // TODO : Contains
     // TODO : Matches
-    // TODO : Select
     // TODO : OrderBy
     // TODO : Find
     // TODO : ToList
