@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class Table {
 
     private final List<TableRow> rows;
