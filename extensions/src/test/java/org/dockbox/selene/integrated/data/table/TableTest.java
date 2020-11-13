@@ -63,7 +63,8 @@ public class TableTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testThrowsExceptionOnTypeMismatch() {
-        this.getTable().addRow("3", 1);
+        Table table = getTable();
+        table.addRow("3", 1);
     }
 
     @Test

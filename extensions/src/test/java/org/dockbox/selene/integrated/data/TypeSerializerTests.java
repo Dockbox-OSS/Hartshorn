@@ -22,6 +22,7 @@ import com.google.common.reflect.TypeToken;
 import org.dockbox.selene.core.impl.util.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.integrated.data.registry.Registry;
 import org.dockbox.selene.integrated.data.registry.RegistryColumn;
+import org.dockbox.selene.integrated.data.registry.TestIdentifier;
 import org.dockbox.selene.integrated.data.serializers.RegistrySerializer;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
