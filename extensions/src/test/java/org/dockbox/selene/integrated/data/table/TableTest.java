@@ -17,6 +17,10 @@
 
 package org.dockbox.selene.integrated.data.table;
 
+import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
+import org.dockbox.selene.integrated.data.table.identifiers.TestColumnIdentifiers;
+import org.dockbox.selene.integrated.data.table.objects.IdentifiedUser;
+import org.dockbox.selene.integrated.data.table.objects.User;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,15 +30,45 @@ public class TableTest {
         return new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME);
     }
 
+    @Test
+    public void testSelectColumnOfTable() {
+        Table table = this.getTable();
+        table.addRow(new IdentifiedUser(1, "coulis"));
+
+        ColumnIdentifier<?>[] supposedColumns = {TestColumnIdentifiers.NAME};
+
+        Table selectedTable = table.select(TestColumnIdentifiers.NAME);
+
+        // Check if table's identifiers have been removed properly
+        Assert.assertArrayEquals(selectedTable.getIdentifiers(), supposedColumns);
+        // Check if table rows' columns have been removed properly
+        Assert.assertEquals(this.getTable().getRows().get(0).getColumns().size(), 1);
+    }
+
+    @Test
+    public void testWorkingIdentifiedFields() {
+        Table table = this.getTable();
+        table.addRow(new IdentifiedUser(1, "coulis"));
+
+        Assert.assertEquals(1, table.getRows().size());
+        TableRow row = table.getRows().get(0);
+        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME), "coulis");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testWronglyIdentifiedFields() {
+        Table table = this.getTable();
+        table.addRow(new IdentifiedUser(1, "coulis"));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testThrowsExceptionOnTypeMismatch() {
-        Table table = getTable();
-        getTable().addRow("3", 1);
+        this.getTable().addRow("3", 1);
     }
 
     @Test
     public void testAcceptsTypeFields() {
-        Table table = getTable();
+        Table table = this.getTable();
         table.addRow(new User(1, "pumbas600"));
 
         Assert.assertEquals(1, table.getRows().size());
@@ -54,7 +88,7 @@ public class TableTest {
 
     @Test
     public void testAcceptsValidVarargs() {
-        Table table = getTable();
+        Table table = this.getTable();
         table.addRow(2, "Diggy");
 
         Assert.assertEquals(1, table.getRows().size());
@@ -62,5 +96,5 @@ public class TableTest {
         Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME), "Diggy");
     }
 
-    // TODO, Lookup and merge tests (also see TODO's in Table for Merge/Lookup methods)
+    // TODO, Where and merge tests (also see TODO's in Table for Merge/where methods)
 }

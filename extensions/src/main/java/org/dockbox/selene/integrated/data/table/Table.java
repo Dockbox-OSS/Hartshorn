@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.integrated.data.table;
 
+import org.dockbox.selene.integrated.data.table.annotations.Identifier;
 import org.dockbox.selene.integrated.data.table.annotations.Ignore;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
 import org.jetbrains.annotations.NonNls;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,7 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Table {
 
     private final List<TableRow> rows;
-    private final ColumnIdentifier<?>[] identifiers;
+    private ColumnIdentifier<?>[] identifiers;
 
     public Table(ColumnIdentifier<?>... columns) {
         this.identifiers = columns;
@@ -56,18 +58,28 @@ public class Table {
         this.rows.add(row);
     }
 
-    public <T> Table addRow(Object object) {
+    public Table addRow(Object object) {
         TableRow row = new TableRow();
 
         for (Field field : object.getClass().getDeclaredFields()) {
             if (!field.isAnnotationPresent(Ignore.class)) {
                 try {
-                    // TODO, add a @ColumnIdentifier annotation holding a constant ColumnIdentifier. If that is present
-                    //  on a type, use that ColumnIdentifier here, otherwise fall back to the current behavior.
-                    ColumnIdentifier identifier = this.getIdentifier(field.getName());
-                    if (null != identifier) {
-                        row.addValue(identifier, field.get(object));
-                    }
+                    ColumnIdentifier columnIdentifier = null;
+
+                    // Try to grab the column identifier from the Identifier annotation of the field (if present)
+                    Identifier identifier = field.getAnnotation(Identifier.class);
+                    if (null != identifier)
+                        columnIdentifier = this.getIdentifier(identifier.columnIdentifier());
+
+                    // If no Identifier annotation was present, try to grab it using the field name
+                    if (null != columnIdentifier)
+                        columnIdentifier = this.getIdentifier(field.getName());
+
+                    // No column identifier was found
+                    if (null == columnIdentifier)
+                        throw new IllegalArgumentException("Unknown column identifier for field named : " + field.getName());
+
+                    row.addValue(columnIdentifier, field.get(object));
                 } catch (IllegalAccessError | ClassCastException | IllegalAccessException e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -95,8 +107,7 @@ public class Table {
         return this;
     }
 
-    // TODO, several lookup methods (e.g. match, contains, etc)
-    public <T> Table lookup(ColumnIdentifier<? extends ColumnIdentifier<?>> column, T filter) {
+    public <T> Table where(ColumnIdentifier<? extends ColumnIdentifier<?>> column, T filter) {
         if (!this.hasColumn(column))
             throw new IllegalArgumentException("Cannot lookup a column which does not exist");
 
@@ -112,7 +123,6 @@ public class Table {
         return lookupTable;
     }
 
-    // TODO, several merge methods (e.g. keepAll, keepColumns(A, B), [ preferOriginal, preferOther (when reaching column identifiers which are the same but may have different values) ]
     public <T> Collection<TableRow> merge(Table otherTable, ColumnIdentifier<T> column) {
         if (this.hasColumn(column) && otherTable.hasColumn(column)) {
             Collection<TableRow> mergedRows = new ArrayList<>();
@@ -138,6 +148,30 @@ public class Table {
         throw new IllegalArgumentException("Column '" + column + "' does not exist in both tables");
     }
 
+    public Table select(ColumnIdentifier<?>... columns) {
+        Table table = this;
+        List<ColumnIdentifier<?>> tmp = Arrays.asList(this.identifiers);
+
+        this.rows.forEach(row -> {
+            for (ColumnIdentifier<?> columnIdentifier : columns) {
+                if(!row.getColumns().contains(columnIdentifier)) {
+                    row.getColumns().remove(columnIdentifier);
+                }
+            }
+        });
+
+        for (ColumnIdentifier<?> column : columns) {
+            tmp.remove(column);
+        }
+        table.identifiers = (ColumnIdentifier<?>[]) tmp.toArray();
+
+        return table;
+    }
+
+    public ColumnIdentifier<?>[] getIdentifiers() {
+        return this.identifiers;
+    }
+
     public List<TableRow> getRows() {
         return this.rows;
     }
@@ -159,4 +193,17 @@ public class Table {
         }
         return null;
     }
+
+    // TODO : Contains
+    // TODO : Matches
+    // TODO : Select
+    // TODO : OrderBy
+    // TODO : Find
+    // TODO : ToList
+    // TODO : ToArray
+    // TODO : Count
+    // TODO : First
+    // TODO : Last
+    // TODO, several merge methods (e.g. keepAll, keepColumns(A, B), [ preferOriginal, preferOther (when reaching column identifiers which are the same but may have different values) ]
+
 }

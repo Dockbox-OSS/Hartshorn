@@ -15,15 +15,17 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.table;
+package org.dockbox.selene.integrated.data.table.identifiers;
 
+import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
+import org.dockbox.selene.integrated.data.table.column.SimpleColumnIdentifier;
 
-public class User {
-    public int numeralId;
-    public String name;
+import java.util.UUID;
 
-    User(int numeralId, String name) {
-        this.numeralId = numeralId;
-        this.name = name;
-    }
+public class TestColumnIdentifiers {
+
+    public static final ColumnIdentifier<String> NAME = new SimpleColumnIdentifier<>("name", String.class);
+    public static final ColumnIdentifier<UUID> UUID = new SimpleColumnIdentifier<>("uniqueId", java.util.UUID.class);
+    public static final ColumnIdentifier<Integer> NUMERAL_ID = new SimpleColumnIdentifier<>("numeralId", Integer.class);
+
 }
