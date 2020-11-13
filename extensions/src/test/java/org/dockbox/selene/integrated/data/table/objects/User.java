@@ -19,6 +19,7 @@ package org.dockbox.selene.integrated.data.table.objects;
 
 
 public class User {
+
     public int numeralId;
     public String name;
 
@@ -26,4 +27,5 @@ public class User {
         this.numeralId = numeralId;
         this.name = name;
     }
+
 }

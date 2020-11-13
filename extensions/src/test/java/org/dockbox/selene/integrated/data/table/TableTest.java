@@ -52,7 +52,7 @@ public class TableTest {
 
         Assert.assertEquals(1, table.getRows().size());
         TableRow row = table.getRows().get(0);
-        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME), "coulis");
+        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME).get(), "coulis");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -73,7 +73,7 @@ public class TableTest {
 
         Assert.assertEquals(1, table.getRows().size());
         TableRow row = table.getRows().get(0);
-        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME), "pumbas600");
+        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME).get(), "pumbas600");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -83,7 +83,7 @@ public class TableTest {
 
         Assert.assertEquals(1, table.getRows().size());
         TableRow row = table.getRows().get(0);
-        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME), "pumbas600");
+        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME).get(), "pumbas600");
     }
 
     @Test
@@ -93,7 +93,7 @@ public class TableTest {
 
         Assert.assertEquals(1, table.getRows().size());
         TableRow row = table.getRows().get(0);
-        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME), "Diggy");
+        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME).get(), "Diggy");
     }
 
     // TODO, Where and merge tests (also see TODO's in Table for Merge/where methods)

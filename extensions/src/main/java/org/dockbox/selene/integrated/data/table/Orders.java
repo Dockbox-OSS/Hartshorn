@@ -15,20 +15,19 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.table.objects;
+package org.dockbox.selene.integrated.data.table;
 
-import org.dockbox.selene.integrated.data.table.annotations.Identifier;
+public enum Orders {
+    ASC(1), DESC(-1);
 
-public class WronglyIdentifiedUser {
+    private final int order;
 
-    public int Id;
+    Orders(int order) {
+        this.order = order;
+    }
 
-    @Identifier("name")
-    public String displayedName;
-
-    public WronglyIdentifiedUser(int id, String name) {
-        this.Id = id;
-        this.displayedName = name;
+    public int getOrder() {
+        return this.order;
     }
 
 }

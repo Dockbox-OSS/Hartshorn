@@ -21,47 +21,51 @@ import org.dockbox.selene.integrated.data.table.annotations.Identifier;
 import org.dockbox.selene.integrated.data.table.annotations.Ignore;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@SuppressWarnings("unchecked")
 public class Table {
 
     private final List<TableRow> rows;
-    private ColumnIdentifier<?>[] identifiers;
+    private final ColumnIdentifier<?>[] identifiers;
 
     public Table(ColumnIdentifier<?>... columns) {
         this.identifiers = columns;
         this.rows = new CopyOnWriteArrayList<>();
     }
 
+    /**
+     * @param row Row object to add to the table
+     */
     public void addRow(TableRow row) {
         // Check if the row has the same amount of column as this table
         if (row.getColumns().size() != this.identifiers.length)
-            throw new IllegalArgumentException("Illegal magic!");
+            throw new IllegalArgumentException("The row does not have the same amount of columns as the table");
 
         // Check if the row has the same columns with the same order
         int index = 0;
-        for (ColumnIdentifier<?> rowColumn : row.getColumns()) {
+        for (ColumnIdentifier<?> column : row.getColumns()) {
             ColumnIdentifier<?> tableColumn = this.identifiers[index];
-            if (rowColumn != tableColumn)
-                throw new IllegalArgumentException("Column '" + rowColumn + "' did not match expected type '" + tableColumn + "'");
-            index++;
+            if (column != tableColumn)
+                throw new IllegalArgumentException("Column '" + column.getColumnName() + "' did not match expected type '" + tableColumn.getColumnName() + "'");
         }
 
         this.rows.add(row);
     }
 
-    public Table addRow(Object object) {
+    /**
+     * @param object Object to "try to" add as a row to the table
+     */
+    public void addRow(Object object) {
         TableRow row = new TableRow();
 
-        for (Field field : object.getClass().getDeclaredFields()) {
+        for (Field field : object.getClass().getFields()) {
             if (!field.isAnnotationPresent(Ignore.class)) {
                 try {
                     ColumnIdentifier columnIdentifier = null;
@@ -69,7 +73,7 @@ public class Table {
                     // Try to grab the column identifier from the Identifier annotation of the field (if present)
                     Identifier identifier = field.getAnnotation(Identifier.class);
                     if (null != identifier)
-                        columnIdentifier = this.getIdentifier(identifier.columnIdentifier());
+                        columnIdentifier = this.getIdentifier(identifier.value());
 
                     // If no Identifier annotation was present, try to grab it using the field name
                     if (null != columnIdentifier)
@@ -90,10 +94,12 @@ public class Table {
             throw new IllegalArgumentException("Missing Columns!");
         }
         this.rows.add(row);
-        return this;
     }
 
-    public Table addRow(Object... values) {
+    /**
+     * @param values Objects to "try to" add as rows to the table
+     */
+    public void addRow(Object... values) {
         if (values.length != this.identifiers.length)
             throw new IllegalArgumentException("Amount of given values does not meet amount of column headers");
 
@@ -104,12 +110,17 @@ public class Table {
             row.addValue(identifier, value);
         }
         this.rows.add(row);
-        return this;
     }
 
-    public <T> Table where(ColumnIdentifier<? extends ColumnIdentifier<?>> column, T filter) {
+    /**
+     * @param column Indicates which column is used to search through the table
+     * @param filter Indicates what value to search for
+     * @param <T> Indicates the class that both the Identifier and the Filter must have
+     * @return Returns the new table with the filter applied
+     */
+    public <T> Table where(ColumnIdentifier<? extends ColumnIdentifier<T>> column, T filter) {
         if (!this.hasColumn(column))
-            throw new IllegalArgumentException("Cannot lookup a column which does not exist");
+            throw new IllegalArgumentException("Cannot look up a column that does not exist");
 
         Collection<TableRow> filteredRows = new ArrayList<>();
         for (TableRow row : this.rows) {
@@ -123,7 +134,13 @@ public class Table {
         return lookupTable;
     }
 
-    public <T> Collection<TableRow> merge(Table otherTable, ColumnIdentifier<T> column) {
+    /**
+     * @param otherTable Indicates the second table to merge with
+     * @param column Indicates the column of the second table to merge to the first table
+     * @param <T> Indicates the data type of the column
+     * @return Return the merged table
+     */
+    public <T> Collection<TableRow> merge(@NotNull Table otherTable, ColumnIdentifier<T> column) {
         if (this.hasColumn(column) && otherTable.hasColumn(column)) {
             Collection<TableRow> mergedRows = new ArrayList<>();
             this.rows.forEach(row -> {
@@ -148,33 +165,70 @@ public class Table {
         throw new IllegalArgumentException("Column '" + column + "' does not exist in both tables");
     }
 
+    /**
+     * @param columns Indicates the columns to select
+     * @return Return the new table with only the selected columns
+     */
     public Table select(ColumnIdentifier<?>... columns) {
-        Table table = this;
-        List<ColumnIdentifier<?>> tmp = Arrays.asList(this.identifiers);
+        Table table = new Table(columns);
 
         this.rows.forEach(row -> {
-            for (ColumnIdentifier<?> columnIdentifier : columns) {
-                if(!row.getColumns().contains(columnIdentifier)) {
-                    row.getColumns().remove(columnIdentifier);
-                }
+            TableRow tmpRow = new TableRow();
+            for (ColumnIdentifier<?> column : columns) {
+                row.getColumns().stream().filter(column::equals).forEach(tCol -> {
+                    tmpRow.addValue(column, row.getValue(column));
+                });
             }
         });
-
-        for (ColumnIdentifier<?> column : columns) {
-            tmp.remove(column);
-        }
-        table.identifiers = (ColumnIdentifier<?>[]) tmp.toArray();
 
         return table;
     }
 
+    /**
+     * @return Return the table's identifiers
+     */
     public ColumnIdentifier<?>[] getIdentifiers() {
         return this.identifiers;
     }
 
+    /**
+     * @return Return the table's rows
+     */
     public List<TableRow> getRows() {
         return this.rows;
     }
+
+    /**
+     * @return Return the table's row count
+     */
+    public int count() {
+        return this.rows.size();
+    }
+
+    /**
+     * @return Return the first row of the table
+     */
+    public TableRow first() {
+        return this.rows.get(0);
+    }
+
+    /**
+     * @return Return the last row of the table
+     */
+    public TableRow last() {
+        return this.rows.get(this.count() - 1);
+    }
+
+//    /**
+//     * @param column Indicates the column to order by
+//     * @param order Indicates what way to order the table by
+//     */
+//    public void orderBy(ColumnIdentifier<?> column, Orders order) {
+//        if(!this.hasColumn(column))
+//            throw new IllegalArgumentException("Table does not contains column named : " + column.getColumnName());
+//
+//
+//    }
 
     private boolean hasColumn(ColumnIdentifier<?> column) {
         for (ColumnIdentifier<?> identifier : this.identifiers) {
@@ -194,15 +248,8 @@ public class Table {
         return null;
     }
 
-    // TODO : Contains
-    // TODO : Matches
-    // TODO : OrderBy
-    // TODO : Find
-    // TODO : ToList
-    // TODO : ToArray
-    // TODO : Count
-    // TODO : First
-    // TODO : Last
+    // TODO : Contains      Search through the rows and see if the table contains a certain row
+    // TODO : OrderBy       Order the rows by a certain column
     // TODO, several merge methods (e.g. keepAll, keepColumns(A, B), [ preferOriginal, preferOther (when reaching column identifiers which are the same but may have different values) ]
 
 }
