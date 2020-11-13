@@ -349,8 +349,7 @@ public abstract class Selene {
             }
         });
 
-        // TODO, SeleneUtils unmodifiableMap
-        return bindings;
+        return SeleneUtils.asUnmodifiableMap(bindings);
     }
 
     /**
