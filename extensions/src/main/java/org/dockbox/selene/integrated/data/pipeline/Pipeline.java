@@ -20,7 +20,7 @@ public class Pipeline<I, O> {
         return this;
     }
 
-    public Pipeline<?, ?> of(IPipe<?, ?>... pipes) {
+    public <T, R> Pipeline<T, R> of(IPipe<?, ?>... pipes) {
         if (0 != pipes.length) {
             Pipeline lastPipeline = this;
 
@@ -31,7 +31,7 @@ public class Pipeline<I, O> {
             }
             return lastPipeline;
         }
-        return this;
+        return (Pipeline<T, R>)this;
     }
 
     public <K> Pipeline<O, K> addPipe(IPipe<O, K> nextPipe) {
@@ -67,7 +67,7 @@ public class Pipeline<I, O> {
         }
 
         // If this pipeline was cancelled by the current pipe, don't continue to execute subsequent pipes.
-        if (this.isCancelled) {
+        if (!this.isCancelled) {
             if (null != this.nextPipeline) {
                 this.nextPipeline.execute(this.output, error);
             }
@@ -100,22 +100,22 @@ public class Pipeline<I, O> {
         return this.output;
     }
 
-    public Pipeline<?, ?> firstPipeline() {
+    public <T, R> Pipeline<T, R> firstPipeline() {
         Pipeline<?, ?> firstPipeline = this;
 
         while (null != firstPipeline.previousPipeline) {
             firstPipeline = firstPipeline.previousPipeline;
         }
-        return firstPipeline;
+        return (Pipeline<T, R>)firstPipeline;
     }
 
-    public Pipeline<?, ?> lastPipeline() {
+    public <T, R> Pipeline<T, R> lastPipeline() {
         Pipeline<?, ?> lastPipeline = this;
 
         while (null != lastPipeline.nextPipeline) {
             lastPipeline = lastPipeline.nextPipeline;
         }
-        return lastPipeline;
+        return (Pipeline<T, R>)lastPipeline;
     }
 
     public void cancel() {

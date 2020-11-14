@@ -5,9 +5,8 @@ import org.junit.Test;
 
 public class PipelineTests {
 
-    @Test
-    public void pipelineTest() {
-        int output = new Pipeline<String, String>().of(
+    private Pipeline<?, String> getPipeline() {
+        return new Pipeline<String, String>().of(
             NonmodifingPipe.of(
                 (input, throwable) -> System.out.println(String.format("First pipe found: %s", input)))
         ).addPipe(
@@ -18,12 +17,10 @@ public class PipelineTests {
         ).addPipe(
             ExceptionalPipe.of(exceptional -> {
                 exceptional.ifErrorPresent(Throwable::printStackTrace);
-                System.out.println(exceptional);
                 return exceptional.orElseGet(() -> -1);
             })
         ).addPipe(
             CancelablePipe.of((cancelPipeline, input, throwable) -> {
-                System.out.println(input);
                 if (4 > input) {
                     cancelPipeline.run();
                     System.out.println("Cancelled pipeline");
@@ -31,11 +28,36 @@ public class PipelineTests {
                 return input;
             })
         ).addPipe(
-            NonmodifingPipe.of((input, throwable) ->
+            Pipe.of((input, throwable) -> {
                 System.out.println(String.format("At the end of the pipeline with: %s and %s",
-                    input, throwable)))
-        ).process("1");
+                    input, throwable));
+                return input.toString();
+            })
+        );
+    }
 
-        Assert.assertEquals(output, 8);
+    @Test
+    public void cancelPipelineTest() {
+        Object output = this.getPipeline().process("1");
+        Assert.assertEquals(Integer.class, output.getClass());
+        Assert.assertEquals(2, output);
+    }
+
+    @Test
+    public void addingMultiplePipesTest() {
+        String output = (String)this.getPipeline().of(
+            Pipe.of((input, throwable) -> Integer.parseInt((String)input)),
+            NonmodifingPipe.of((input, throwable) -> System.out.println(input.getClass()))
+        ).addPipe(
+            ExceptionalPipe.of(exceptional -> {
+                System.out.println(exceptional);
+                exceptional.ifErrorPresent(Throwable::printStackTrace);
+                return exceptional.isPresent() ? exceptional.get().toString() : "Empty";
+            })
+        ).addPipeline(
+            this.getPipeline().firstPipeline()
+        ).process("3");
+
+        Assert.assertEquals("12", output);
     }
 }
