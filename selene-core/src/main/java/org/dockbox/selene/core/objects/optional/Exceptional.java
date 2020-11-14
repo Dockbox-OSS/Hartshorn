@@ -72,7 +72,10 @@ public final class Exceptional<T> {
     }
 
     public static <T> Exceptional<T> ofNullable(T value, Throwable throwable) {
-        return null == value || null == throwable ? empty() : of(value, throwable);
+        if (null == value && null == throwable) return empty();
+        if (null == value) return of(throwable);
+        if (null == throwable) return of(value);
+        else return of(value, throwable);
     }
 
     public static <T> Exceptional<T> ofNullable(T value) {
