@@ -36,6 +36,8 @@ import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.Warp;
+import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.entity.Transform;
@@ -55,6 +57,9 @@ import org.spongepowered.api.network.RemoteConnection;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.ban.Ban;
 import org.spongepowered.api.world.World;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import io.github.nucleuspowered.nucleus.api.events.NucleusMuteEvent;
 import io.github.nucleuspowered.nucleus.api.events.NucleusNameBanEvent;
@@ -134,12 +139,24 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerBanned(BanUserEvent event,
+    public void onPlayerBanned(BanUserEvent banEvent,
                                @First Player player,
                                @Getter("getBan") Ban.Profile profile,
                                @Getter("getSource") Object source
     ) {
-        PlayerBannedEvent selene; // TODO GuusLieben, implement
+        if (source instanceof org.spongepowered.api.command.CommandSource) {
+            SpongeConversionUtil.fromSponge((org.spongepowered.api.command.CommandSource) source).ifPresent(convertedSource -> {
+                Cancellable event = new PlayerBannedEvent(
+                        SpongeConversionUtil.fromSponge(player),
+                        Exceptional.ofOptional(profile.getReason().map(Text::toPlain)),
+                        convertedSource,
+                        Exceptional.ofOptional(profile.getExpirationDate().map(instant -> LocalDateTime.ofInstant(instant, ZoneId.systemDefault()))),
+                        Exceptional.of(LocalDateTime.ofInstant(profile.getCreationDate(), ZoneId.systemDefault()))
+                );
+                this.bus.post(event);
+                if (event.isCancelled()) this.logUnsupportedCancel(event);
+            });
+        }
     }
 
     @Listener
@@ -227,6 +244,10 @@ public class SpongePlayerListener {
                               @Getter("getSource") Object source
     ) {
         // TODO GuusLieben, MultiChat replaces this event. Look into Bungee hooking if possible
+    }
+
+    private void logUnsupportedCancel(Cancellable event) {
+        Selene.log().warn("Attempted to cancel event of type '" + event.getClass().getSimpleName() + "', but this is not supported on this platform!");
     }
 
 }
