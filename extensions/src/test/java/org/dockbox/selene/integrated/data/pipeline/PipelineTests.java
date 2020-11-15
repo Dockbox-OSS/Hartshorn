@@ -3,6 +3,8 @@ package org.dockbox.selene.integrated.data.pipeline;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 public class PipelineTests {
 
     private Pipeline<?, String> getPipeline() {
@@ -45,17 +47,17 @@ public class PipelineTests {
 
     @Test
     public void addingMultiplePipesTest() {
-        String output = (String)this.getPipeline().of(
-            Pipe.of((input, throwable) -> Integer.parseInt((String)input)),
+        String output = (String)this.getPipeline().of(Arrays.asList(
+            Pipe.of((input, throwable) -> Integer.parseInt((String) input)),
             NonmodifingPipe.of((input, throwable) -> System.out.println(input.getClass()))
-        ).addPipe(
+        )).addPipe(
             ExceptionalPipe.of(exceptional -> {
                 System.out.println(exceptional);
                 exceptional.ifErrorPresent(Throwable::printStackTrace);
                 return exceptional.isPresent() ? exceptional.get().toString() : "Empty";
             })
         ).addPipeline(
-            this.getPipeline().firstPipeline()
+            this.getPipeline().getFirstPipeline()
         ).process("3");
 
         Assert.assertEquals("12", output);
