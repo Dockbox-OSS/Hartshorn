@@ -158,7 +158,7 @@ public class SpongePlayerListener {
                         convertedSource,
                         SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
                         SeleneUtils.toLocalDateTime(profile.getCreationDate())
-                );
+                ).post();
                 banEvent.setCancelled(event.isCancelled());
             });
         }
@@ -177,8 +177,8 @@ public class SpongePlayerListener {
                         Exceptional.ofNullable(reason),
                         convertedSource,
                         Exceptional.empty(),
-                        Exceptional.of(LocalDateTime.now())
-                );
+                        LocalDateTime.now()
+                ).post();
                 if (event.isCancelled()) this.logUnsupportedCancel(event);
             });
         }

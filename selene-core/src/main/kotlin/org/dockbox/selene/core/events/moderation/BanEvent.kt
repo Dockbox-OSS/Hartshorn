@@ -29,7 +29,7 @@ abstract class BanEvent<T>(
         val reason: Exceptional<String>,
         val source: CommandSource,
         val expiration: Exceptional<LocalDateTime>,
-        val creation: Exceptional<LocalDateTime>
+        val creation: LocalDateTime
 ) : AbstractCancellableEvent() {
 
     class PlayerBannedEvent(
@@ -37,7 +37,7 @@ abstract class BanEvent<T>(
             reason: Exceptional<String>,
             source: CommandSource,
             expiration: Exceptional<LocalDateTime>,
-            creation: Exceptional<LocalDateTime>
+            creation: LocalDateTime
     ) : BanEvent<Target>(target, reason, source, expiration, creation)
 
     class IpBannedEvent(
@@ -45,7 +45,7 @@ abstract class BanEvent<T>(
             reason: Exceptional<String>,
             source: CommandSource,
             expiration: Exceptional<LocalDateTime>,
-            creation: Exceptional<LocalDateTime>
+            creation: LocalDateTime
     ) : BanEvent<InetAddress>(host, reason, source, expiration, creation)
 
     class NameBannedEvent(
@@ -53,7 +53,7 @@ abstract class BanEvent<T>(
             reason: Exceptional<String>,
             source: CommandSource,
             expiration: Exceptional<LocalDateTime>,
-            creation: Exceptional<LocalDateTime>
+            creation: LocalDateTime
     ) : BanEvent<String>(name, reason, source, expiration, creation)
 
     class PlayerUnbannedEvent(
@@ -61,7 +61,7 @@ abstract class BanEvent<T>(
             reason: Exceptional<String>,
             source: CommandSource,
             expiration: Exceptional<LocalDateTime>,
-            creation: Exceptional<LocalDateTime>
+            creation: LocalDateTime
     ) : BanEvent<Target>(target, reason, source, expiration, creation)
 
     class IpUnbannedEvent(
@@ -69,7 +69,7 @@ abstract class BanEvent<T>(
             reason: Exceptional<String>,
             source: CommandSource,
             expiration: Exceptional<LocalDateTime>,
-            creation: Exceptional<LocalDateTime>
+            creation: LocalDateTime
     ) : BanEvent<InetAddress>(host, reason, source, expiration, creation)
 
     class NameUnbannedEvent(
@@ -77,6 +77,6 @@ abstract class BanEvent<T>(
             reason: Exceptional<String>,
             source: CommandSource,
             expiration: Exceptional<LocalDateTime>,
-            creation: Exceptional<LocalDateTime>
+            creation: LocalDateTime
     ) : BanEvent<String>(name, reason, source, expiration, creation)
 }

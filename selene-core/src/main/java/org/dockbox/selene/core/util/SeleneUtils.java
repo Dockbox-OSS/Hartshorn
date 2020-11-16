@@ -665,14 +665,12 @@ public enum SeleneUtils {
                 vec.getXi(), vec.getYi(), vec.getZi());
     }
 
-    public static Exceptional<LocalDateTime> toLocalDateTime(Instant dt) {
-        return Exceptional.of(LocalDateTime.ofInstant(dt, ZoneId.systemDefault()));
+    public static LocalDateTime toLocalDateTime(Instant dt) {
+        return LocalDateTime.ofInstant(dt, ZoneId.systemDefault());
     }
 
     public static Exceptional<LocalDateTime> toLocalDateTime(Optional<Instant> optionalInstant) {
-        if (optionalInstant.isPresent()) {
-            return toLocalDateTime(optionalInstant.get());
-        } return Exceptional.empty();
+        return Exceptional.ofOptional(optionalInstant).map(SeleneUtils::toLocalDateTime);
     }
 
     public enum HttpStatus {
