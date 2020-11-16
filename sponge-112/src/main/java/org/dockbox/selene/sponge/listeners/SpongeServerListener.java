@@ -35,17 +35,17 @@ public class SpongeServerListener {
 
     @Listener
     public void onServerStarting(GameStartingServerEvent event) {
-        this.bus.post(new ServerStartingEvent());
+        new ServerStartingEvent().post();
     }
 
     @Listener
     public void onServerStarted(GameStartedServerEvent event) {
-        this.bus.post(new ServerStartedEvent());
+        new ServerStartedEvent().post();
     }
 
     @Listener
     public void onServerReload(GameReloadEvent event) {
-        this.bus.post(new ServerReloadEvent());
+        new ServerReloadEvent().post();
     }
 
 }

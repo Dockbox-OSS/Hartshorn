@@ -18,6 +18,7 @@
 package org.dockbox.selene.core.util;
 
 import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
@@ -32,7 +33,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +46,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -659,6 +663,16 @@ public enum SeleneUtils {
                 min.getYi(), max.getYi(),
                 min.getZi(), max.getZi(),
                 vec.getXi(), vec.getYi(), vec.getZi());
+    }
+
+    public static Exceptional<LocalDateTime> toLocalDateTime(Instant dt) {
+        return Exceptional.of(LocalDateTime.ofInstant(dt, ZoneId.systemDefault()));
+    }
+
+    public static Exceptional<LocalDateTime> toLocalDateTime(Optional<Instant> optionalInstant) {
+        if (optionalInstant.isPresent()) {
+            return toLocalDateTime(optionalInstant.get());
+        } return Exceptional.empty();
     }
 
     public enum HttpStatus {

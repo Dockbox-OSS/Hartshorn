@@ -22,4 +22,8 @@ interface Cancellable : Event {
     fun isCancelled(): Boolean
     fun setCancelled(cancelled: Boolean)
 
+    override fun post(): Cancellable {
+        super.post()
+        return this
+    }
 }

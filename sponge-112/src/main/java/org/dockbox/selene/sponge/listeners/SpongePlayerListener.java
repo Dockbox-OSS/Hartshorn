@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.sponge.listeners;
 
-import com.google.inject.Inject;
-
 import org.dockbox.selene.core.events.chat.SendChatEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.IpBannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.IpUnbannedEvent;
@@ -33,12 +31,11 @@ import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerSwitchWorldEv
 import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerTeleportEvent;
 import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerWarpEvent;
 import org.dockbox.selene.core.objects.events.Cancellable;
-import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.Warp;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.events.EventBus;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
@@ -58,9 +55,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.ban.Ban;
 import org.spongepowered.api.world.World;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-
 import io.github.nucleuspowered.nucleus.api.events.NucleusMuteEvent;
 import io.github.nucleuspowered.nucleus.api.events.NucleusNameBanEvent;
 import io.github.nucleuspowered.nucleus.api.events.NucleusNoteEvent;
@@ -69,26 +63,20 @@ import io.github.nucleuspowered.nucleus.api.events.NucleusWarpEvent;
 
 public class SpongePlayerListener {
 
-    @Inject
-    private EventBus bus;
-
     @Listener
     public void onPlayerConnected(ClientConnectionEvent.Join joinEvent, @First Player sp) {
-        Event event = new PlayerJoinEvent(SpongeConversionUtil.fromSponge(sp));
-        this.bus.post(event);
+        new PlayerJoinEvent(SpongeConversionUtil.fromSponge(sp)).post();
     }
 
     @Listener
     public void onPlayerDisconnected(ClientConnectionEvent.Disconnect disconnectEvent, @First Player sp) {
-        Event event = new PlayerLeaveEvent(SpongeConversionUtil.fromSponge(sp));
-        this.bus.post(event);
+        new PlayerLeaveEvent(SpongeConversionUtil.fromSponge(sp)).post();
     }
 
     @Listener
     public void onPlayerAuthenticating(ClientConnectionEvent.Auth authEvent,
                                        @Getter("getConnection") RemoteConnection connection) {
-        Event event = new PlayerAuthEvent(connection.getAddress(), connection.getVirtualHost());
-        this.bus.post(event);
+        new PlayerAuthEvent(connection.getAddress(), connection.getVirtualHost()).post();
     }
 
     @Listener
@@ -97,8 +85,7 @@ public class SpongePlayerListener {
         Cancellable event = new PlayerWarpEvent(
                 SpongeConversionUtil.fromSponge(user),
                 warp
-        );
-        this.bus.post(event);
+        ).post();
         warpEvent.setCancelled(event.isCancelled());
     }
 
@@ -112,15 +99,13 @@ public class SpongePlayerListener {
 
         Cancellable event = new PlayerTeleportEvent(
                 SpongeConversionUtil.fromSponge(player),
-                fromLocation, toLocation);
-        this.bus.post(event);
+                fromLocation, toLocation).post();
         teleportEvent.setCancelled(event.isCancelled());
 
         if (!fromLocation.getWorld().equals(toLocation.getWorld()) && !event.isCancelled()) {
             Cancellable worldEvent = new PlayerSwitchWorldEvent(
                     SpongeConversionUtil.fromSponge(player),
-                    fromLocation.getWorld(), toLocation.getWorld());
-            this.bus.post(worldEvent);
+                    fromLocation.getWorld(), toLocation.getWorld()).post();
 
             teleportEvent.setCancelled(worldEvent.isCancelled());
         }
@@ -133,8 +118,7 @@ public class SpongePlayerListener {
         Cancellable event = new SendChatEvent(
                 SpongeConversionUtil.fromSponge(player),
                 SpongeConversionUtil.fromSponge(chatEvent.getMessage())
-        );
-        this.bus.post(event);
+        ).post();
         chatEvent.setCancelled(event.isCancelled());
     }
 
@@ -150,10 +134,9 @@ public class SpongePlayerListener {
                         SpongeConversionUtil.fromSponge(player),
                         Exceptional.ofOptional(profile.getReason().map(Text::toPlain)),
                         convertedSource,
-                        Exceptional.ofOptional(profile.getExpirationDate().map(instant -> LocalDateTime.ofInstant(instant, ZoneId.systemDefault()))),
-                        Exceptional.of(LocalDateTime.ofInstant(profile.getCreationDate(), ZoneId.systemDefault()))
-                );
-                this.bus.post(event);
+                        SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
+                        SeleneUtils.toLocalDateTime(profile.getCreationDate())
+                ).post();
                 if (event.isCancelled()) this.logUnsupportedCancel(event);
             });
         }

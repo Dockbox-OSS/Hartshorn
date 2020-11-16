@@ -17,4 +17,12 @@
 
 package org.dockbox.selene.core.objects.events
 
-interface Event
+import com.google.common.eventbus.EventBus
+import org.dockbox.selene.core.server.Selene
+
+interface Event {
+    fun post(): Event {
+        Selene.getInstance(EventBus::class.java).post(this)
+        return this
+    }
+}

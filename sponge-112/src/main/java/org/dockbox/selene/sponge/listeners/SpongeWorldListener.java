@@ -24,7 +24,6 @@ import org.dockbox.selene.core.events.world.WorldEvent.WorldLoadEvent;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldSaveEvent;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldUnloadEvent;
 import org.dockbox.selene.core.objects.events.Cancellable;
-import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
@@ -43,32 +42,28 @@ public class SpongeWorldListener {
     @Listener
     public void onWorldLoaded(LoadWorldEvent loadEvent) {
         World world = SpongeConversionUtil.fromSponge(loadEvent.getTargetWorld());
-        Cancellable event = new WorldLoadEvent(world);
-        this.bus.post(event);
+        Cancellable event = new WorldLoadEvent(world).post();
         loadEvent.setCancelled(event.isCancelled());
     }
 
     @Listener
     public void onWorldUnloaded(UnloadWorldEvent unloadEvent) {
         World world = SpongeConversionUtil.fromSponge(unloadEvent.getTargetWorld());
-        Cancellable event = new WorldUnloadEvent(world);
-        this.bus.post(event);
+        Cancellable event = new WorldUnloadEvent(world).post();
         unloadEvent.setCancelled(event.isCancelled());
     }
 
     @Listener
     public void onWorldSaved(SaveWorldEvent saveEvent) {
         World world = SpongeConversionUtil.fromSponge(saveEvent.getTargetWorld());
-        Cancellable event = new WorldSaveEvent(world);
-        this.bus.post(event);
+        Cancellable event = new WorldSaveEvent(world).post();
         saveEvent.setCancelled(event.isCancelled());
     }
 
     @Listener
     public void onWorldCreating(ConstructWorldPropertiesEvent constructEvent) {
         WorldProperties swp = constructEvent.getWorldProperties();
-        Event event = new WorldCreatingEvent(SpongeConversionUtil.fromSponge(swp));
-        this.bus.post(event);
+        new WorldCreatingEvent(SpongeConversionUtil.fromSponge(swp)).post();
     }
 
 }

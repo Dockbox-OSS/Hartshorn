@@ -17,20 +17,14 @@
 
 package org.dockbox.selene.sponge.listeners;
 
-import com.google.inject.Inject;
-
 import org.dockbox.selene.core.events.chat.NativeCommandEvent;
 import org.dockbox.selene.core.objects.events.Cancellable;
-import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.command.SendCommandEvent;
 
 public class SpongeCommandListener {
-
-    @Inject
-    private EventBus bus;
 
     @Listener
     public void onNativeCommand(SendCommandEvent commandEvent) {
@@ -42,8 +36,7 @@ public class SpongeCommandListener {
                     SpongeConversionUtil.fromSponge((CommandSource) commandEvent.getSource()).orElse(null),
                     command,
                     args);
-            this.bus.post(event);
-            commandEvent.setCancelled(event.isCancelled());
+            commandEvent.setCancelled(event.post().isCancelled());
         }
     }
 
