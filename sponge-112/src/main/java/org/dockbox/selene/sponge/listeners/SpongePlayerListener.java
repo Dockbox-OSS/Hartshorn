@@ -37,6 +37,7 @@ import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
@@ -54,6 +55,8 @@ import org.spongepowered.api.network.RemoteConnection;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.ban.Ban;
 import org.spongepowered.api.world.World;
+
+import java.time.LocalDateTime;
 
 import io.github.nucleuspowered.nucleus.api.events.NucleusMuteEvent;
 import io.github.nucleuspowered.nucleus.api.events.NucleusNameBanEvent;
@@ -128,8 +131,8 @@ public class SpongePlayerListener {
                                @Getter("getBan") Ban.Profile profile,
                                @Getter("getSource") Object source
     ) {
-        if (source instanceof org.spongepowered.api.command.CommandSource) {
-            SpongeConversionUtil.fromSponge((org.spongepowered.api.command.CommandSource) source).ifPresent(convertedSource -> {
+        if (source instanceof CommandSource) {
+            SpongeConversionUtil.fromSponge((CommandSource) source).ifPresent(convertedSource -> {
                 Cancellable event = new PlayerBannedEvent(
                         SpongeConversionUtil.fromSponge(player),
                         Exceptional.ofOptional(profile.getReason().map(Text::toPlain)),
@@ -143,20 +146,42 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onIPBanned(BanIpEvent event,
+    public void onIPBanned(BanIpEvent banEvent,
                            @Getter("getBan") Ban.Ip profile,
                            @Getter("getSource") Object source
     ) {
-        IpBannedEvent selene; // TODO GuusLieben, implement
+        if (source instanceof CommandSource) {
+            SpongeConversionUtil.fromSponge((CommandSource) source).ifPresent(convertedSource -> {
+                Cancellable event = new IpBannedEvent(
+                        profile.getAddress(),
+                        Exceptional.ofOptional(profile.getReason().map(Text::toPlain)),
+                        convertedSource,
+                        SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
+                        SeleneUtils.toLocalDateTime(profile.getCreationDate())
+                );
+                banEvent.setCancelled(event.isCancelled());
+            });
+        }
     }
 
     @Listener
-    public void onNameBanned(NucleusNameBanEvent.Banned event,
+    public void onNameBanned(NucleusNameBanEvent.Banned banEvent,
                              @Getter("getEntry") String name,
                              @Getter("getReason") String reason,
                              @Getter("getSource") Object source
     ) {
-        NameBannedEvent selene; // TODO GuusLieben, implement
+        if (source instanceof CommandSource) {
+            SpongeConversionUtil.fromSponge((CommandSource) source).ifPresent(convertedSource -> {
+                Cancellable event = new NameBannedEvent(
+                        name,
+                        Exceptional.ofNullable(reason),
+                        convertedSource,
+                        Exceptional.empty(),
+                        Exceptional.of(LocalDateTime.now())
+                );
+                if (event.isCancelled()) this.logUnsupportedCancel(event);
+            });
+        }
     }
 
     @Listener

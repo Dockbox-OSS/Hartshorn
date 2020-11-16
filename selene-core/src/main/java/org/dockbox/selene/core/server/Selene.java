@@ -229,11 +229,6 @@ public abstract class Selene {
             }
         };
 
-        // Attempt to get extension instance and get the extension module
-        if (type.isAnnotationPresent(Extension.class)) {
-            typeInstance = getInstance(ExtensionManager.class).getInstance(type).orElse(null);
-        }
-
         Injector injector = getServer().createInjector(extensionModule, propertyModule);
         try {
             typeInstance = injector.getInstance(type);
