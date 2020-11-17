@@ -24,6 +24,7 @@ import org.dockbox.selene.core.events.moderation.BanEvent.NameBannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.NameUnbannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.PlayerBannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.PlayerUnbannedEvent;
+import org.dockbox.selene.core.events.moderation.WarnEvent;
 import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerAuthEvent;
 import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerJoinEvent;
 import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerLeaveEvent;
@@ -185,12 +186,21 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerWarned(NucleusWarnEvent.Warned event,
+    public void onPlayerWarned(NucleusWarnEvent.Warned warnEvent,
                                @Getter("getTargetUser") User user,
                                @Getter("getReason") String reason,
                                @Getter("getSource") Object source
     ) {
-        // TODO GuusLieben, implement
+        if (source instanceof CommandSource) {
+            SpongeConversionUtil.fromSponge((CommandSource) source).ifPresent(convertedSource -> {
+                new WarnEvent.PlayerWarnedEvent(
+                        SpongeConversionUtil.fromSponge(user),
+                        reason,
+                        convertedSource,
+                        LocalDateTime.now()
+                ).post();
+            });
+        }
     }
 
     @Listener
