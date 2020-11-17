@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.core.objects.optional;
 
+import org.dockbox.selene.core.objects.ConstructNotifier;
+
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -26,7 +28,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 @SuppressWarnings("AssignmentToNull")
-public final class Exceptional<T> {
+public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
 
     private static final Exceptional<?> EMPTY = new Exceptional<>();
 
@@ -34,21 +36,25 @@ public final class Exceptional<T> {
     private final Throwable throwable;
 
     private Exceptional() {
+        super(Exceptional.class);
         this.value = null;
         this.throwable = null;
     }
 
     private Exceptional(T value) {
+        super(Exceptional.class);
         this.value = Objects.requireNonNull(value);
         this.throwable = null;
     }
 
     private Exceptional(T value, Throwable throwable) {
+        super(Exceptional.class);
         this.value = Objects.requireNonNull(value);
         this.throwable = Objects.requireNonNull(throwable);
     }
 
     private Exceptional(Throwable throwable) {
+        super(Exceptional.class);
         this.value = null;
         this.throwable = Objects.requireNonNull(throwable);
     }

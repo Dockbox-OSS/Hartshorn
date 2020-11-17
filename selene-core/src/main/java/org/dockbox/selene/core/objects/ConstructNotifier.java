@@ -15,22 +15,14 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.annotations;
+package org.dockbox.selene.core.objects;
 
-import org.dockbox.selene.core.util.events.FilterTypes;
+import org.dockbox.selene.core.events.object.ObjectConstructedEvent;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+@SuppressWarnings("unchecked")
+public abstract class ConstructNotifier<T extends ConstructNotifier> {
 
-@Repeatable(Filters.class)
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Filter {
-    String param();
-    String value() default "";
-    Class<?> target() default Void.class;
-    FilterTypes type() default FilterTypes.EQUALS;
+    protected ConstructNotifier(Class<T> type) {
+        new ObjectConstructedEvent<>(type, (T) this).post();
+    }
 }
