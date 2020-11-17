@@ -21,6 +21,7 @@ import org.dockbox.selene.core.annotations.Filter
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
 import org.dockbox.selene.core.objects.events.Filterable
 import org.dockbox.selene.core.objects.targets.CommandSource
+import org.dockbox.selene.core.util.SeleneUtils
 import org.dockbox.selene.core.util.events.FilterTypes
 
 class NativeCommandEvent(
@@ -55,7 +56,7 @@ class NativeCommandEvent(
     }
 
     override fun acceptedParams(): List<String> {
-        return arrayListOf("alias", "args", "arguments", "command")
+        return SeleneUtils.asUnmodifiableList("alias", "args", "arguments", "command")
     }
 
 }
