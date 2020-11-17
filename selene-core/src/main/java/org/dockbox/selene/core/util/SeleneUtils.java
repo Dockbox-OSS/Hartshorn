@@ -22,9 +22,12 @@ import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
+import org.jetbrains.annotations.UnmodifiableView;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -58,13 +61,14 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@SuppressWarnings({"ClassWithTooManyMethods", "OverlyComplexClass"})
+@SuppressWarnings("OverlyComplexClass")
 public enum SeleneUtils {
     ;
 
     private static final Random random = new Random();
 
     private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
+    public static final int MAXIMUM_DECIMALS = 15;
 
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
         if (isInCooldown(o) && !overwriteExisting) return;
@@ -96,6 +100,7 @@ public enum SeleneUtils {
                 .collect(Collectors.toList());
     }
 
+    @Contract(pure = true)
     @Nullable
     public static Event getFirstFiredEvent(Event... events) {
         for (Event event : events) {
@@ -112,10 +117,12 @@ public enum SeleneUtils {
     };
     public static final String FOLDER_SEPARATOR = "/";
 
+    @Contract(value = "null -> true", pure = true)
     public static boolean isEmpty(String value) {
         return null == value || value.isEmpty();
     }
 
+    @Contract(value = "null -> false", pure = true)
     public static boolean isNotEmpty(String value) {
         return null != value && !value.isEmpty();
     }
@@ -124,6 +131,7 @@ public enum SeleneUtils {
         return isEmpty(value) ? value : (value.substring(0, 1).toUpperCase() + value.substring(1));
     }
 
+    @Contract(pure = true)
     public static boolean equals(@NonNls final String str1, @NonNls final String str2) {
         if (null == str1 || null == str2) {
             //noinspection StringEquality
@@ -132,6 +140,7 @@ public enum SeleneUtils {
         return str1.equals(str2);
     }
 
+    @Contract(pure = true)
     public static boolean equalsIgnoreCase(@NonNls final String s1, @NonNls final String s2) {
         if (null == s1 || null == s2) {
             //noinspection StringEquality
@@ -168,6 +177,7 @@ public enum SeleneUtils {
         return (null == s) ? 0 : s.trim().length();
     }
 
+    @Contract(pure = true)
     public static int lastIndexOf(String path, char ch) {
         if (null == path) {
             return -1;
@@ -175,6 +185,7 @@ public enum SeleneUtils {
         return path.lastIndexOf(ch);
     }
 
+    @NotNull
     @SuppressWarnings("MagicNumber")
     public static byte[] decode(CharSequence s) {
         int len = s.length();
@@ -194,6 +205,7 @@ public enum SeleneUtils {
         return bytes;
     }
 
+    @NotNull
     @SuppressWarnings("MagicNumber")
     public static String encode(byte[] bytes) {
         StringBuilder sb = new StringBuilder(bytes.length << 1);
@@ -204,10 +216,13 @@ public enum SeleneUtils {
         return sb.toString();
     }
 
+    @Contract(pure = true)
     public static int[] range(int max) {
         return range(0, max);
     }
 
+    @NotNull
+    @Contract(pure = true)
     public static int[] range(int min, int max) {
         int[] range = new int[(max-min)+1]; // +1 as both min and max are inclusive
         for (int i = min; i <= max; i++) {
@@ -216,12 +231,14 @@ public enum SeleneUtils {
         return range;
     }
 
+    @NotNull
     public static String repeat(String string, int amount) {
         StringBuilder sb = new StringBuilder();
         for (int ignored : range(1, amount)) sb.append(string);
         return sb.toString();
     }
 
+    @Contract(pure = true)
     @SuppressWarnings("MagicNumber")
     private static char convertDigit(int value) {
         return _hex[value & 0x0f];
@@ -243,7 +260,8 @@ public enum SeleneUtils {
         return count;
     }
 
-    public static String wildcardToRegexString(CharSequence wildcard) {
+    @NotNull
+    public static String wildcardToRegexString(@NotNull CharSequence wildcard) {
         StringBuilder s = new StringBuilder(wildcard.length());
         s.append('^');
         for (int i = 0, is = wildcard.length(); i < is; i++) {
@@ -391,6 +409,7 @@ public enum SeleneUtils {
         return distanceMatrix[srcLen][targetLen];
     }
 
+    @NotNull
     public static String getRandomString(int minLen, int maxLen) {
         StringBuilder s = new StringBuilder();
         int length = minLen + random.nextInt(maxLen - minLen + 1);
@@ -400,12 +419,14 @@ public enum SeleneUtils {
         return s.toString();
     }
 
+    @NotNull
     @SuppressWarnings({"BooleanParameter", "MagicNumber"})
     public static String getRandomChar(boolean upper) {
         int r = random.nextInt(26);
         return upper ? "" + (char) ((int) 'A' + r) : "" + (char) ((int) 'a' + r);
     }
 
+    @NotNull
     public static byte[] getBytes(String s, String encoding) {
         try {
             return null == s ? new byte[0] : s.getBytes(encoding);
@@ -415,14 +436,17 @@ public enum SeleneUtils {
     }
 
 
+    @NotNull
     public static String createUtf8String(byte[] bytes) {
         return createString(bytes, "UTF-8");
     }
 
+    @NotNull
     public static byte[] getUTF8Bytes(String s) {
         return getBytes(s, "UTF-8");
     }
 
+    @NotNull
     public static String createString(byte[] bytes, String encoding) {
         try {
             return null == bytes ? "" : new String(bytes, encoding);
@@ -431,6 +455,7 @@ public enum SeleneUtils {
         }
     }
 
+    @NotNull
     public static String createUTF8String(byte[] bytes) {
         return createString(bytes, "UTF-8");
     }
@@ -447,6 +472,7 @@ public enum SeleneUtils {
         return hash;
     }
 
+    @Contract(pure = true)
     public static long minimum(long... values) {
         int len = values.length;
         long current = values[0];
@@ -454,6 +480,7 @@ public enum SeleneUtils {
         return current;
     }
 
+    @Contract(pure = true)
     public static long maximum(long... values) {
         int len = values.length;
         long current = values[0];
@@ -461,6 +488,7 @@ public enum SeleneUtils {
         return current;
     }
 
+    @Contract(pure = true)
     public static double minimum(double... values) {
         int len = values.length;
         double current = values[0];
@@ -468,6 +496,7 @@ public enum SeleneUtils {
         return current;
     }
 
+    @Contract(pure = true)
     public static double maximum(double... values) {
         int len = values.length;
         double current = values[0];
@@ -503,6 +532,7 @@ public enum SeleneUtils {
         return e;
     }
 
+    @Contract("null -> true")
     public static boolean isEmpty(final Object array) {
         return null == array || 0 == Array.getLength(array);
     }
@@ -511,6 +541,7 @@ public enum SeleneUtils {
         return null == array ? 0 : Array.getLength(array);
     }
 
+    @Contract("null -> null")
     public static <T> T @Nullable [] shallowCopy(final T[] array) {
         if (null == array) {
             return null;
@@ -541,6 +572,7 @@ public enum SeleneUtils {
         return dest;
     }
 
+    @Contract(value = "_, _, _ -> new", pure = true)
     public static <T> T[] getArraySubset(T[] array, int start, int end) {
         return Arrays.copyOfRange(array, start, end);
     }
@@ -556,6 +588,7 @@ public enum SeleneUtils {
         return array;
     }
 
+    @Contract("null, _ -> false; !null, null -> false")
     public static <T> boolean isGenericInstanceOf(T instance, Class<?> type) {
         return null != instance && null != type && type.isAssignableFrom(instance.getClass());
     }
@@ -570,7 +603,7 @@ public enum SeleneUtils {
     }
 
     public static <T> List<T> emptyList() {
-        return new ArrayList<T>();
+        return new ArrayList<>();
     }
 
     @SuppressWarnings("unchecked")
@@ -586,7 +619,7 @@ public enum SeleneUtils {
     }
 
     public static double round(double value, int decimalPlaces) {
-        if (Double.isNaN(value) || Double.isInfinite(value) || decimalPlaces > 15) {
+        if (Double.isNaN(value) || Double.isInfinite(value) || MAXIMUM_DECIMALS < decimalPlaces) {
             return value;
         }
 
@@ -595,24 +628,48 @@ public enum SeleneUtils {
         return decimal.doubleValue();
     }
 
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
     @SafeVarargs
     public static <T> List<T> asList(T... objects) {
         return Arrays.asList(objects);
     }
 
+    @NotNull
+    @Contract("_ -> new")
     @SafeVarargs
     public static <T> Set<T> asSet(T... objects) {
         return new HashSet<>(asList(objects));
     }
 
+    @UnmodifiableView
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
     @SafeVarargs
     public static <T> List<T> asUnmodifiableList(T... objects) {
         return Collections.unmodifiableList(asList(objects));
     }
 
+    @UnmodifiableView
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
     @SafeVarargs
     public static <T> Set<T> asUnmodifiableSet(T... objects) {
         return Collections.unmodifiableSet(asSet(objects));
+    }
+
+    @UnmodifiableView
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static <T> List<T> asUnmodifiableList(List<T> objects) {
+        return Collections.unmodifiableList(objects);
+    }
+
+    @UnmodifiableView
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static <T> Set<T> asUnmodifiableSet(Set<T> objects) {
+        return Collections.unmodifiableSet(objects);
     }
 
     public static boolean throwsException(Runnable runnable) {
@@ -641,11 +698,14 @@ public enum SeleneUtils {
         return !throwsException(runnable, exception);
     }
 
+    @NotNull
+    @Contract("_ -> param1")
     public static Path createPathIfNotExists(@NotNull Path path) {
         if (!path.toFile().exists()) path.toFile().mkdirs();
         return path;
     }
 
+    @Contract("_ -> param1")
     public static Path createFileIfNotExists(@NotNull Path file) {
         if (!Files.exists(file)) {
             try {
@@ -658,6 +718,8 @@ public enum SeleneUtils {
         return file;
     }
 
+    @SuppressWarnings("OverlyComplexBooleanExpression")
+    @Contract(pure = true)
     public static boolean isInCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
         return x_min <= x && x <= x_max && y_min <= y && y <= y_max && z_min <= z && z <= z_max;
     }
@@ -670,10 +732,13 @@ public enum SeleneUtils {
                 vec.getXi(), vec.getYi(), vec.getZi());
     }
 
+    @NotNull
+    @Contract("_ -> new")
     public static LocalDateTime toLocalDateTime(Instant dt) {
         return LocalDateTime.ofInstant(dt, ZoneId.systemDefault());
     }
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Exceptional<LocalDateTime> toLocalDateTime(Optional<Instant> optionalInstant) {
         return Exceptional.ofOptional(optionalInstant).map(SeleneUtils::toLocalDateTime);
     }
