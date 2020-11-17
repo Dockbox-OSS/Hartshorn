@@ -28,7 +28,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
@@ -50,6 +54,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -671,6 +676,34 @@ public enum SeleneUtils {
 
     public static Exceptional<LocalDateTime> toLocalDateTime(Optional<Instant> optionalInstant) {
         return Exceptional.ofOptional(optionalInstant).map(SeleneUtils::toLocalDateTime);
+    }
+
+    @NotNull
+    @Unmodifiable
+    public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule, boolean skipParents) {
+        List<Method> annotatedMethods = new ArrayList<>();
+        for (Method method : asList(skipParents ? clazz.getMethods() : clazz.getDeclaredMethods())) {
+            if (!method.isAccessible()) method.setAccessible(true);
+            if (method.isAnnotationPresent(annotation) && rule.test(method.getAnnotation(annotation))) {
+                annotatedMethods.add(method);
+            }
+        }
+        return asUnmodifiableList(annotatedMethods);
+    }
+
+    @NotNull
+    @Unmodifiable
+    public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule) {
+        return getAnnotedMethods(clazz, annotation, rule, false);
+    }
+
+    public static <T> T getInstance(Class<T> clazz) {
+        try {
+            Constructor<T> ctor = clazz.getConstructor();
+            return ctor.newInstance();
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            return Selene.getInstance(clazz);
+        }
     }
 
     public enum HttpStatus {

@@ -18,7 +18,6 @@
 package org.dockbox.selene.core.impl.command.context
 
 import com.sk89q.worldedit.util.command.argument.MissingArgumentException
-import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.util.*
 import org.dockbox.selene.core.annotations.FromSource
@@ -45,6 +44,7 @@ import org.dockbox.selene.core.objects.targets.CommandSource
 import org.dockbox.selene.core.objects.targets.Locatable
 import org.dockbox.selene.core.objects.user.Player
 import org.dockbox.selene.core.server.Selene
+import org.dockbox.selene.core.util.SeleneUtils
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
@@ -118,8 +118,7 @@ open class SimpleCommandContext(
     override fun <T> tryCreate(type: Class<T>): Exceptional<T> {
         try {
             val argumentKeys = this.args.map { it.key }
-            val ctor: Constructor<T> = type.getConstructor() as Constructor<T>
-            val instance: T = ctor.newInstance()
+            val instance: T = SeleneUtils.getInstance(type)
             type.declaredFields.forEach { field ->
                 run {
                     if (!argumentKeys.contains(field.name)) throwOrSetNull(field, instance)
