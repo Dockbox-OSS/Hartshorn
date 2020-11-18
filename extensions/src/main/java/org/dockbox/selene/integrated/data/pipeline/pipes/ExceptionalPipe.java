@@ -1,9 +1,10 @@
-package org.dockbox.selene.integrated.data.pipeline;
+package org.dockbox.selene.integrated.data.pipeline.pipes;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.integrated.data.pipeline.Pipeline;
 
 @FunctionalInterface
-public interface ExceptionalPipe<I, O> extends IPipe<I, O>{
+public interface ExceptionalPipe<I, O> extends IPipe<I, O> {
 
     O execute(Exceptional<I> exceptional);
 

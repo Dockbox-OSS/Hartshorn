@@ -1,7 +1,9 @@
-package org.dockbox.selene.integrated.data.pipeline;
+package org.dockbox.selene.integrated.data.pipeline.pipes;
+
+import org.dockbox.selene.integrated.data.pipeline.Pipeline;
 
 @FunctionalInterface
-public interface Pipe<I, O> extends IPipe<I, O>{
+public interface Pipe<I, O> extends IPipe<I, O> {
 
     O execute(I input, Throwable throwable);
 

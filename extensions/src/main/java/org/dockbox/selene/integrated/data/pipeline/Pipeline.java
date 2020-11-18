@@ -1,6 +1,7 @@
 package org.dockbox.selene.integrated.data.pipeline;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -149,9 +150,10 @@ public class Pipeline<I, O> {
 
     public Exceptional<Pipeline<?, ?>> getPipelineAt(int index) {
         Pipeline<?, ?> currentPipeline;
-        int currentIndex = 0;
+        int currentIndex;
 
         if (0 <= index) {
+            currentIndex = 0;
             currentPipeline = this.getFirstPipeline();
 
             while (index != currentIndex) {
@@ -164,6 +166,7 @@ public class Pipeline<I, O> {
         }
         // Allows you to get a pipeline using a negative index, which works backwards.
         else {
+            currentIndex = -1;
             currentPipeline = this.getLastPipeline();
 
             while (index != currentIndex) {
@@ -199,7 +202,17 @@ public class Pipeline<I, O> {
     }
 
     public void removeFirstPipeOf(Class<? extends IPipe<?, ?>> pipeType) {
-        //TODO: Find and remove first instance of pipetype.
+        Pipeline<?, ?> currentPipeline = this.getFirstPipeline();
+
+        do {
+            if (currentPipeline.currentPipe.getClass().isAssignableFrom(pipeType)) {
+                this.removePipeline(currentPipeline);
+                break;
+            }
+
+            currentPipeline = currentPipeline.nextPipeline;
+        } while (null != currentPipeline);
+
     }
 
     public boolean isFirst() {

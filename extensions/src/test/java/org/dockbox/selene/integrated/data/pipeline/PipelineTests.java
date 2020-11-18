@@ -1,5 +1,9 @@
 package org.dockbox.selene.integrated.data.pipeline;
 
+import org.dockbox.selene.integrated.data.pipeline.pipes.CancelablePipe;
+import org.dockbox.selene.integrated.data.pipeline.pipes.ExceptionalPipe;
+import org.dockbox.selene.integrated.data.pipeline.pipes.NonmodifingPipe;
+import org.dockbox.selene.integrated.data.pipeline.pipes.Pipe;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -61,5 +65,25 @@ public class PipelineTests {
         ).process("3");
 
         Assert.assertEquals("12", output);
+    }
+
+    @Test
+    public void test() {
+        Pipeline<Integer, String> pipeline = new Pipeline<Integer, Integer>().of(
+            Pipe.of((input, throwable) -> input + 1
+        )).addPipe(
+            CancelablePipe.of((cancelPipeline, input, throwable) -> {
+                if (3 < input)  cancelPipeline.run();
+                return input;
+            }
+        )).addPipe(
+            Pipe.of((input, throwable) -> String.valueOf(input)
+        ));
+
+        //This works fine
+        String output1 = pipeline.process(1);
+
+        //This creates a ClassCastException
+        String output2 = pipeline.process(4);
     }
 }

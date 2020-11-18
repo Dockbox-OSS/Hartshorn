@@ -1,4 +1,6 @@
-package org.dockbox.selene.integrated.data.pipeline;
+package org.dockbox.selene.integrated.data.pipeline.pipes;
+
+import org.dockbox.selene.integrated.data.pipeline.Pipeline;
 
 @FunctionalInterface
 public interface NonmodifingPipe<I> extends IPipe<I, I> {
