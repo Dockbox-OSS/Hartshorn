@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.impl.util.events;
 
+import com.google.inject.Inject;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 
@@ -141,9 +142,14 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                     }
                 }
 
-                if (wrapSafe) args.add(Exceptional.of(finalArg));
+                if (wrapSafe) args.add(Exceptional.ofNullable(finalArg));
                 else args.add(finalArg);
 
+            } else if (type.isAnnotationPresent(Inject.class)) {
+                Object instance = Selene.getInstance(type);
+                if (wrapSafe) args.add(Exceptional.ofNullable(instance));
+                else args.add(instance);
+                
             } else {
                 if (wrapSafe) args.add(Exceptional.empty());
                 else args.add(null);
