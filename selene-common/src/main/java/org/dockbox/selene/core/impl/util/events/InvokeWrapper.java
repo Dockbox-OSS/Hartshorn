@@ -88,18 +88,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
     @Override
     public void invoke(Event event) throws RuntimeException {
         try {
-            Collection<Event> args = new ArrayList<>();
-            // As event listeners support having multiple event parameters, it may be there are event parameters which
-            // we do not have here. If the parameter type is equal to, or a super class of our event we will add it to
-            // the argument list. If it is neither, null will be injected.
-            for (Class<?> type : this.method.getParameterTypes()) {
-                if (type.isAssignableFrom(event.getClass())) {
-                    args.add(event);
-                } else args.add(null);
-            }
-            if (!this.method.isAccessible()) {
-                this.method.setAccessible(true);
-            }
+            Collection<Object> args = this.getEventArgs(event);
 
             if (this.filtersMatch(event)) {
                 this.method.invoke(this.listener, args.toArray());
@@ -107,6 +96,34 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
         } catch (Throwable e) {
             Selene.getServer().except("Failed to invoke method", e);
         }
+    }
+
+    @NotNull
+    private Collection<Object> getEventArgs(Event event) throws SkipEventException {
+        Collection<Object> args = new ArrayList<>();
+        for (Class<?> type : this.method.getParameterTypes()) {
+
+            if (type.isAssignableFrom(event.getClass())) {
+                args.add(event);
+
+            } else if (type.isAnnotationPresent(Getter.class)) {
+                Getter getter = type.getAnnotation(Getter.class);
+                AtomicReference<Object> arg = new AtomicReference<>(null);
+                SeleneUtils.getMethodValue(event, getter.value(), type)
+                        .ifPresent(arg::set);
+
+                Object finalArg = arg.get();
+
+                args.add(finalArg);
+
+            } else {
+                args.add(null);
+            }
+        }
+        if (!this.method.isAccessible()) {
+            this.method.setAccessible(true);
+        }
+        return args;
     }
 
     private boolean filtersMatch(Event event) {
