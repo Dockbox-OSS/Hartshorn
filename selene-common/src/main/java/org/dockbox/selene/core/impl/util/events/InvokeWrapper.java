@@ -23,10 +23,12 @@ import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import org.dockbox.selene.core.annotations.Filter;
 import org.dockbox.selene.core.annotations.Filters;
 import org.dockbox.selene.core.annotations.Getter;
+import org.dockbox.selene.core.annotations.IsCancelled;
 import org.dockbox.selene.core.annotations.Provided;
 import org.dockbox.selene.core.annotations.SkipIf;
 import org.dockbox.selene.core.annotations.WrapSafe;
 import org.dockbox.selene.core.exceptions.SkipEventException;
+import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.events.Filterable;
 import org.dockbox.selene.core.objects.optional.Exceptional;
@@ -104,13 +106,30 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                 this.method.setAccessible(true);
             }
 
-            if (this.filtersMatch(event)) {
+            if (this.filtersMatch(event) && this.acceptsState(event)) {
                 this.method.invoke(this.listener, args.toArray());
             }
         } catch (SkipEventException ignored) {
         } catch (Throwable e) {
             Selene.getServer().except("Failed to invoke method", e);
         }
+    }
+
+    private boolean acceptsState(Event event) {
+        if (event instanceof Cancellable) {
+            Cancellable cancellable = (Cancellable) event;
+            if (this.method.isAnnotationPresent(IsCancelled.class)) {
+                switch (this.method.getAnnotation(IsCancelled.class).value()) {
+                    case TRUE:
+                        return cancellable.isCancelled();
+                    case FALSE: // Default behavior
+                        return !cancellable.isCancelled();
+                    case UNDEFINED: // Either is accepted
+                        return true;
+                }
+            } else return !cancellable.isCancelled();
+        }
+        return true;
     }
 
     @NotNull
