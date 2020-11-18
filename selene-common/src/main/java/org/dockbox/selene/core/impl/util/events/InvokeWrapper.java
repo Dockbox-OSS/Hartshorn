@@ -100,6 +100,10 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
         try {
             Collection<Object> args = this.getEventArgs(event);
 
+            if (!this.method.isAccessible()) {
+                this.method.setAccessible(true);
+            }
+
             if (this.filtersMatch(event)) {
                 this.method.invoke(this.listener, args.toArray());
             }
@@ -120,42 +124,12 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                 args.add(event);
 
             } else if (type.isAnnotationPresent(Getter.class)) {
-                Getter getter = type.getAnnotation(Getter.class);
-                AtomicReference<Object> arg = new AtomicReference<>(null);
-                SeleneUtils.getMethodValue(event, getter.value(), type)
-                        .ifPresent(arg::set);
-
-                Object finalArg = arg.get();
-
-                if (type.isAnnotationPresent(SkipIf.class)) {
-                    SkipIf skip = type.getAnnotation(SkipIf.class);
-                    switch (skip.value()) {
-                        case NULL:
-                            if (null == finalArg) throw new SkipEventException();
-                            break;
-                        case EMPTY:
-                            if (SeleneUtils.isEmpty(finalArg)) throw new SkipEventException();
-                            break;
-                        case ZERO:
-                            if (finalArg instanceof Number && 0 == ((Number) finalArg).floatValue())
-                                throw new SkipEventException();
-                            break;
-                    }
-                }
-
+                Object finalArg = this.getterArgument(event, type);
                 if (wrapSafe) args.add(Exceptional.ofNullable(finalArg));
                 else args.add(finalArg);
 
             } else if (type.isAnnotationPresent(Provided.class)) {
-                Provided provided = type.getAnnotation(Provided.class);
-
-                Class<?> extensionClass = type;
-                if (Void.class != provided.value() && provided.value().isAnnotationPresent(Extension.class)) {
-                    extensionClass = provided.value();
-                } else if (this.listener.getClass().isAnnotationPresent(Extension.class)) {
-                    extensionClass = this.listener.getClass();
-                }
-                Object instance = Selene.getInstance(type, extensionClass);
+                Object instance = this.providedArgument(type);
                 if (wrapSafe) args.add(Exceptional.ofNullable(instance));
                 else args.add(instance);
 
@@ -164,11 +138,51 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                 else args.add(null);
             }
         }
-        if (!this.method.isAccessible()) {
-            this.method.setAccessible(true);
-        }
         return args;
     }
+
+    private Object getterArgument(Event event, Class<?> type) throws SkipEventException {
+        Getter getter = type.getAnnotation(Getter.class);
+        AtomicReference<Object> arg = new AtomicReference<>(null);
+        SeleneUtils.getMethodValue(event, getter.value(), type)
+                .ifPresent(arg::set);
+
+        Object finalArg = arg.get();
+
+        this.verifySkip(type, finalArg);
+        return finalArg;
+    }
+
+    private void verifySkip(Class<?> type, Object finalArg) throws SkipEventException {
+        if (type.isAnnotationPresent(SkipIf.class)) {
+            SkipIf skip = type.getAnnotation(SkipIf.class);
+            switch (skip.value()) {
+                case NULL:
+                    if (null == finalArg) throw new SkipEventException();
+                    break;
+                case EMPTY:
+                    if (SeleneUtils.isEmpty(finalArg)) throw new SkipEventException();
+                    break;
+                case ZERO:
+                    if (finalArg instanceof Number && 0 == ((Number) finalArg).floatValue())
+                        throw new SkipEventException();
+                    break;
+            }
+        }
+    }
+
+    private Object providedArgument(Class<?> type) {
+        Provided provided = type.getAnnotation(Provided.class);
+
+        Class<?> extensionClass = type;
+        if (Void.class != provided.value() && provided.value().isAnnotationPresent(Extension.class)) {
+            extensionClass = provided.value();
+        } else if (this.listener.getClass().isAnnotationPresent(Extension.class)) {
+            extensionClass = this.listener.getClass();
+        }
+        return Selene.getInstance(type, extensionClass);
+    }
+
 
     private boolean filtersMatch(Event event) {
         if (event instanceof Filterable) {
