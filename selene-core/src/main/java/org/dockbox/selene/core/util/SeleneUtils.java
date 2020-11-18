@@ -131,6 +131,16 @@ public enum SeleneUtils {
         return isEmpty(value) ? value : (value.substring(0, 1).toUpperCase() + value.substring(1));
     }
 
+    public static boolean isEmpty(Object object) {
+        if (null == object) return true;
+        if (object instanceof String) return isEmpty((String) object);
+        else if (object instanceof Collection) return ((Collection<?>) object).isEmpty();
+        else if (object instanceof Map) return ((Map<?, ?>) object).isEmpty();
+        else if (hasMethod(object, "isEmpty"))
+            return getMethodValue(object, "isEmpty", Boolean.class).orElse(false);
+        else return false;
+    }
+
     @Contract(pure = true)
     public static boolean equals(@NonNls final String str1, @NonNls final String str2) {
         if (null == str1 || null == str2) {
@@ -533,11 +543,11 @@ public enum SeleneUtils {
     }
 
     @Contract("null -> true")
-    public static boolean isEmpty(final Object array) {
+    public static boolean isEmpty(final Object... array) {
         return null == array || 0 == Array.getLength(array);
     }
 
-    public static int size(final Object array) {
+    public static int size(final Object... array) {
         return null == array ? 0 : Array.getLength(array);
     }
 
@@ -771,6 +781,12 @@ public enum SeleneUtils {
         }
     }
 
+    public static boolean hasMethod(Object instance, String method) {
+        for (Method m : instance.getClass().getDeclaredMethods()) {
+            if (m.getName().equals(method)) return true;
+        }
+        return false;
+    }
     public enum HttpStatus {
         ;
         // 1xx Informational

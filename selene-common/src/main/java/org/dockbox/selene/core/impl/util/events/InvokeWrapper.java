@@ -102,8 +102,10 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
     private Collection<Object> getEventArgs(Event event) throws SkipEventException {
         Collection<Object> args = new ArrayList<>();
         for (Class<?> type : this.method.getParameterTypes()) {
+            boolean wrapSafe = type.isAnnotationPresent(WrapSafe.class);
 
             if (type.isAssignableFrom(event.getClass())) {
+                if (wrapSafe) Selene.log().warn("Event parameter cannot be wrapped");
                 args.add(event);
 
             } else if (type.isAnnotationPresent(Getter.class)) {
@@ -114,10 +116,12 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
 
                 Object finalArg = arg.get();
 
-                args.add(finalArg);
+                if (wrapSafe) args.add(Exceptional.of(finalArg));
+                else args.add(finalArg);
 
             } else {
-                args.add(null);
+                if (wrapSafe) args.add(Exceptional.empty());
+                else args.add(null);
             }
         }
         if (!this.method.isAccessible()) {
