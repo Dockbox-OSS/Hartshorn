@@ -33,6 +33,7 @@ import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.events.IWrapper;
+import org.dockbox.selene.core.util.extension.Extension;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.invoke.MethodHandles.Lookup;
@@ -146,7 +147,15 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                 else args.add(finalArg);
 
             } else if (type.isAnnotationPresent(Provided.class)) {
-                Object instance = Selene.getInstance(type);
+                Provided provided = type.getAnnotation(Provided.class);
+
+                Class<?> extensionClass = type;
+                if (Void.class != provided.value() && provided.value().isAnnotationPresent(Extension.class)) {
+                    extensionClass = provided.value();
+                } else if (this.listener.getClass().isAnnotationPresent(Extension.class)) {
+                    extensionClass = this.listener.getClass();
+                }
+                Object instance = Selene.getInstance(type, extensionClass);
                 if (wrapSafe) args.add(Exceptional.ofNullable(instance));
                 else args.add(instance);
 
