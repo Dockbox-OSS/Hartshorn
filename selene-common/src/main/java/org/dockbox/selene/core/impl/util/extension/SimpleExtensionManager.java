@@ -21,6 +21,7 @@ import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionContext.ComponentType;
@@ -28,7 +29,6 @@ import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.dockbox.selene.core.util.extension.status.ExtensionStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -38,7 +38,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -90,8 +89,8 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public List<ExtensionContext> initialiseExtensions() {
-        Reflections integratedReflections = new Reflections("org.dockbox.selene");
-        Set<Class<?>> annotatedTypes = integratedReflections.getTypesAnnotatedWith(Extension.class);
+        Collection<Class<?>> annotatedTypes = SeleneUtils
+                .getAnnotatedTypes("org.dockbox.selene", Extension.class);
         Selene.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
         return annotatedTypes.stream().map(type -> {
 
@@ -152,14 +151,6 @@ public class SimpleExtensionManager implements ExtensionManager {
                     context.addStatus(entry, ExtensionStatus.FAILED);
                     return false;
                 }
-
-                // Due to the way external .jar files are injected Reflections sometimes causes issues when using the Package instance
-                Reflections ref = new Reflections(dependentPackage);
-                Set<Class<?>> extensions = ref.getTypesAnnotatedWith(Extension.class);
-                if (!extensions.isEmpty())
-                    Selene.log().warn("Detected " + extensions.size() + " extensions in dependent package " + dependentPackage + ". " +
-                            "Common code shared by extensions should be implemented in Selene, extensions should NEVER depend on each other.");
-
             } catch (Throwable e) {
                 // Package.getPackage(String) typically returns null if no package with that name is present, this clause is a fail-safe and should
                 // technically never be reached. If it is reached we explicitly need to mention the package to prevent future issues (by reporting this).

@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.reflections.Reflections;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -772,6 +773,16 @@ public enum SeleneUtils {
         return getAnnotedMethods(clazz, annotation, rule, false);
     }
 
+    public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation, boolean skipParents) {
+        Reflections reflections = new Reflections(prefix);
+        Set<Class<?>> types = reflections.getTypesAnnotatedWith(annotation, !skipParents);
+        return new ArrayList<>(types);
+    }
+
+    public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation) {
+        return getAnnotatedTypes(prefix, annotation, false);
+    }
+
     public static <T> T getInstance(Class<T> clazz) {
         try {
             Constructor<T> ctor = clazz.getConstructor();
@@ -787,6 +798,18 @@ public enum SeleneUtils {
         }
         return false;
     }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Exceptional<T> getMethodValue(Object instance, String method, Class<T> expectedType) {
+        try {
+            Method m = instance.getClass().getDeclaredMethod(method);
+            T value = (T) m.invoke(instance);
+            return Exceptional.ofNullable(value);
+        } catch (ClassCastException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            return Exceptional.empty();
+        }
+    }
+
     public enum HttpStatus {
         ;
         // 1xx Informational
