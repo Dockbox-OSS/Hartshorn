@@ -22,10 +22,17 @@ import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 
 import org.dockbox.selene.core.annotations.Filter;
 import org.dockbox.selene.core.annotations.Filters;
+import org.dockbox.selene.core.annotations.Getter;
+import org.dockbox.selene.core.annotations.SkipIf;
+import org.dockbox.selene.core.annotations.WrapSafe;
+import org.dockbox.selene.core.exceptions.SkipEventException;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.events.Filterable;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.events.IWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
@@ -35,6 +42,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
     public static final Comparator<InvokeWrapper> COMPARATOR = (o1, o2) -> {
@@ -93,6 +101,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
             if (this.filtersMatch(event)) {
                 this.method.invoke(this.listener, args.toArray());
             }
+        } catch (SkipEventException ignored) {
         } catch (Throwable e) {
             Selene.getServer().except("Failed to invoke method", e);
         }
@@ -115,6 +124,22 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                         .ifPresent(arg::set);
 
                 Object finalArg = arg.get();
+
+                if (type.isAnnotationPresent(SkipIf.class)) {
+                    SkipIf skip = type.getAnnotation(SkipIf.class);
+                    switch (skip.value()) {
+                        case NULL:
+                            if (null == finalArg) throw new SkipEventException();
+                            break;
+                        case EMPTY:
+                            if (SeleneUtils.isEmpty(finalArg)) throw new SkipEventException();
+                            break;
+                        case ZERO:
+                            if (finalArg instanceof Number && 0 == ((Number) finalArg).floatValue())
+                                throw new SkipEventException();
+                            break;
+                    }
+                }
 
                 if (wrapSafe) args.add(Exceptional.of(finalArg));
                 else args.add(finalArg);
