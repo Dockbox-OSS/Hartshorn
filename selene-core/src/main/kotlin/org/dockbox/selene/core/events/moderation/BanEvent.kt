@@ -60,23 +60,20 @@ abstract class BanEvent<T>(
             target: Target,
             reason: Exceptional<String>,
             source: CommandSource,
-            expiration: Exceptional<LocalDateTime>,
             creation: LocalDateTime
-    ) : BanEvent<Target>(target, reason, source, expiration, creation)
+    ) : BanEvent<Target>(target, reason, source, Exceptional.empty(), creation)
 
     class IpUnbannedEvent(
             host: InetAddress,
             reason: Exceptional<String>,
             source: CommandSource,
-            expiration: Exceptional<LocalDateTime>,
             creation: LocalDateTime
-    ) : BanEvent<InetAddress>(host, reason, source, expiration, creation)
+    ) : BanEvent<InetAddress>(host, reason, source, Exceptional.empty(), creation)
 
     class NameUnbannedEvent(
             name: String,
             reason: Exceptional<String>,
             source: CommandSource,
-            expiration: Exceptional<LocalDateTime>,
             creation: LocalDateTime
-    ) : BanEvent<String>(name, reason, source, expiration, creation)
+    ) : BanEvent<String>(name, reason, source, Exceptional.empty(), creation)
 }
