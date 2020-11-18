@@ -24,6 +24,7 @@ import org.dockbox.selene.core.events.moderation.BanEvent.NameBannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.NameUnbannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.PlayerBannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.PlayerUnbannedEvent;
+import org.dockbox.selene.core.events.moderation.NoteEvent;
 import org.dockbox.selene.core.events.moderation.WarnEvent;
 import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerAuthEvent;
 import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerJoinEvent;
@@ -58,6 +59,7 @@ import org.spongepowered.api.util.ban.Ban;
 import org.spongepowered.api.world.World;
 
 import java.time.LocalDateTime;
+import java.util.function.Consumer;
 
 import io.github.nucleuspowered.nucleus.api.events.NucleusMuteEvent;
 import io.github.nucleuspowered.nucleus.api.events.NucleusNameBanEvent;
@@ -185,16 +187,14 @@ public class SpongePlayerListener {
                                @Getter("getReason") String reason,
                                @Getter("getSource") Object source
     ) {
-        if (source instanceof CommandSource) {
-            SpongeConversionUtil.fromSponge((CommandSource) source).ifPresent(convertedSource -> {
-                new WarnEvent.PlayerWarnedEvent(
-                        SpongeConversionUtil.fromSponge(user),
-                        reason,
-                        convertedSource,
-                        LocalDateTime.now()
-                ).post();
-            });
-        }
+        this.postIfCommandSource(source, convertedSource -> {
+            new WarnEvent.PlayerWarnedEvent(
+                    SpongeConversionUtil.fromSponge(user),
+                    reason,
+                    convertedSource,
+                    LocalDateTime.now()
+            ).post();
+        });
     }
 
     @Listener
@@ -203,7 +203,13 @@ public class SpongePlayerListener {
                               @Getter("getNote") String note,
                               @Getter("getSource") Object source
     ) {
-        // TODO GuusLieben, implement
+        this.postIfCommandSource(source, convertedSource -> {
+            new NoteEvent.PlayerNotedEvent(
+                    SpongeConversionUtil.fromSponge(user),
+                    note,
+                    convertedSource
+            ).post();
+        });
     }
 
     @Listener
