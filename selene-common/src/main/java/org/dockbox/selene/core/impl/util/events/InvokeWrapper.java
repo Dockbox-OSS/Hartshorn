@@ -20,6 +20,7 @@ package org.dockbox.selene.core.impl.util.events;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 
+import org.dockbox.selene.core.annotations.AsyncEvent;
 import org.dockbox.selene.core.annotations.Filter;
 import org.dockbox.selene.core.annotations.Filters;
 import org.dockbox.selene.core.annotations.Getter;
@@ -36,6 +37,7 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.events.IWrapper;
 import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.core.util.threads.ThreadUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.invoke.MethodHandles.Lookup;
@@ -46,6 +48,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
@@ -107,11 +110,24 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
             }
 
             if (this.filtersMatch(event) && this.acceptsState(event)) {
-                this.method.invoke(this.listener, args.toArray());
+                Runnable eventRunner = () -> {
+                    try {
+                        this.method.invoke(this.listener, args.toArray());
+                    } catch (Throwable e) {
+                        Selene.getServer().except("Could not finish event runner", e);
+                    }
+                };
+
+                ThreadUtils tu = Selene.getInstance(ThreadUtils.class);
+                if (this.method.isAnnotationPresent(AsyncEvent.class)) {
+                    tu.performAsync(eventRunner);
+                } else {
+                    tu.performSync(eventRunner).get();
+                }
             }
         } catch (SkipEventException ignored) {
-        } catch (Throwable e) {
-            Selene.getServer().except("Failed to invoke method", e);
+        } catch (InterruptedException | ExecutionException e) {
+            Selene.getServer().except("Sync event execution interrupted", e);
         }
     }
 
