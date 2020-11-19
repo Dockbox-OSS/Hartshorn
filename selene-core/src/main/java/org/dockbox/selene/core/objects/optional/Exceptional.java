@@ -22,6 +22,7 @@ import org.dockbox.selene.core.objects.ConstructNotifier;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -86,13 +87,13 @@ public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Exceptional<T> ofOptional(Optional<T> optional) {
+    public static <T> Exceptional<T> of(Optional<T> optional) {
         return optional.map(Exceptional::of).orElseGet(Exceptional::empty);
     }
 
-    public static <T> Exceptional<T> ofSupplier(Supplier<T> supplier) {
+    public static <T> Exceptional<T> of(Callable<T> supplier) {
         try {
-            return ofNullable(supplier.get());
+            return ofNullable(supplier.call());
         } catch (Throwable t) {
             return of(t);
         }

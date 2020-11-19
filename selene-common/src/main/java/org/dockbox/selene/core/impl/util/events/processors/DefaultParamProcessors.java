@@ -84,7 +84,7 @@ public enum DefaultParamProcessors {
             return object;
         }
         if (object instanceof Exceptional<?>) return object;
-        if (object instanceof Optional<?>) return Exceptional.ofOptional((Optional<?>) object);
+        if (object instanceof Optional<?>) return Exceptional.of((Optional<?>) object);
 
         return Exceptional.ofNullable(object);
     }),

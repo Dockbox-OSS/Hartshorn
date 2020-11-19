@@ -751,7 +751,7 @@ public enum SeleneUtils {
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static Exceptional<LocalDateTime> toLocalDateTime(Optional<Instant> optionalInstant) {
-        return Exceptional.ofOptional(optionalInstant).map(SeleneUtils::toLocalDateTime);
+        return Exceptional.of(optionalInstant).map(SeleneUtils::toLocalDateTime);
     }
 
     @NotNull

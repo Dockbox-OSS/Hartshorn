@@ -219,7 +219,7 @@ public enum SpongeConversionUtil {
             if (null != wref) return Exceptional.of(wref);
         }
 
-        return Exceptional.ofSupplier(() -> Sponge.getServer().getWorld(world.getWorldUniqueId())
+        return Exceptional.of(() -> Sponge.getServer().getWorld(world.getWorldUniqueId())
                 .orElseThrow(() -> new RuntimeException("World reference not present on server")));
     }
 

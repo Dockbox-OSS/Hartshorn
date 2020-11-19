@@ -64,7 +64,7 @@ public interface KeyHolder<T> {
      if <em>this</em> does not match the constraint of the given {@link Key}.
      */
     default <A> Exceptional<A> getValue(Key<T, A> key) {
-        return Exceptional.ofSupplier(() -> key.getFrom((T) this));
+        return Exceptional.of(() -> key.getFrom((T) this));
     }
 
 }

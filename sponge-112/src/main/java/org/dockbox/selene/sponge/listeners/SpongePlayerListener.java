@@ -139,7 +139,7 @@ public class SpongePlayerListener {
         this.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new PlayerBannedEvent(
                     SpongeConversionUtil.fromSponge(player),
-                    Exceptional.ofOptional(profile.getReason().map(Text::toPlain)),
+                    Exceptional.of(profile.getReason().map(Text::toPlain)),
                     convertedSource,
                     SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
                     SeleneUtils.toLocalDateTime(profile.getCreationDate())
@@ -156,7 +156,7 @@ public class SpongePlayerListener {
         this.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new IpBannedEvent(
                     profile.getAddress(),
-                    Exceptional.ofOptional(profile.getReason().map(Text::toPlain)),
+                    Exceptional.of(profile.getReason().map(Text::toPlain)),
                     convertedSource,
                     SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
                     SeleneUtils.toLocalDateTime(profile.getCreationDate())
@@ -232,7 +232,7 @@ public class SpongePlayerListener {
         this.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new PlayerUnbannedEvent(
                     SpongeConversionUtil.fromSponge(player),
-                    Exceptional.ofOptional(profile.getReason().map(Text::toPlain)),
+                    Exceptional.of(profile.getReason().map(Text::toPlain)),
                     convertedSource,
                     SeleneUtils.toLocalDateTime(profile.getCreationDate())
             ).post();
@@ -248,7 +248,7 @@ public class SpongePlayerListener {
         this.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new IpUnbannedEvent(
                     profile.getAddress(),
-                    Exceptional.ofOptional(profile.getReason().map(Text::toPlain)),
+                    Exceptional.of(profile.getReason().map(Text::toPlain)),
                     convertedSource,
                     SeleneUtils.toLocalDateTime(profile.getCreationDate())
             ).post();
