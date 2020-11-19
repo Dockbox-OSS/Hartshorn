@@ -151,11 +151,6 @@
             <artifactId>configurate-core</artifactId>
             <version>${configurate.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.spongepowered</groupId>
-            <artifactId>mixin</artifactId>
-            <version>0.8.1</version>
-        </dependency>
 
         <!-- Typically included by platforms -->
         <dependency>
