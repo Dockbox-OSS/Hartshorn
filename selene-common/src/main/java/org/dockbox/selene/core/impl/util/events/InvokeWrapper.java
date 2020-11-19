@@ -166,7 +166,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
 
     private Object processObjectForStage(@Nullable Object argument, Parameter parameter, Event event, EventStage stage, EventBus bus) throws SkipEventException {
         for (Annotation annotation : parameter.getAnnotations()) {
-            AbstractEventParamProcessor<Annotation> processor = bus.getParameterProcessor((Class<Annotation>) annotation.getClass());
+            AbstractEventParamProcessor<Annotation> processor = bus.getParameterProcessor((Class<Annotation>) annotation.getClass(), stage);
             if (null == processor) continue;
 
             EventStage targetStage = processor.targetStage();

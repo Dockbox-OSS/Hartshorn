@@ -25,6 +25,7 @@ import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.events.AbstractEventParamProcessor;
 import org.dockbox.selene.core.util.events.EventBus;
+import org.dockbox.selene.core.util.events.EventStage;
 import org.dockbox.selene.core.util.events.IWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,7 +46,8 @@ public class SimpleEventBus implements EventBus {
 
     protected static final HandlerRegistry handlerRegistry = new HandlerRegistry();
 
-    protected static final Map<Class<? extends Annotation>, AbstractEventParamProcessor<?>> parameterProcessors = new HashMap<>();
+    // TODO: Refactor to Registry structure once S124 is accepted
+    protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = new HashMap<>();
 
     protected static Lookup defaultLookup = AccessHelper.defaultLookup();
 
@@ -145,19 +147,23 @@ public class SimpleEventBus implements EventBus {
     }
 
     @Override
-    public void registerProcessor(@NotNull AbstractEventParamProcessor<?> processor) {
-        SimpleEventBus.parameterProcessors.putIfAbsent(processor.getAnnotationClass(), processor);
+    public void registerProcessor(@NotNull AbstractEventParamProcessor<?> processor, EventStage stage) {
+        parameterProcessors.putIfAbsent(processor.getAnnotationClass(), new HashMap<>());
+        parameterProcessors.get(processor.getAnnotationClass()).put(stage, processor);
     }
 
     @Nullable
     @Override
-    public <T extends Annotation> AbstractEventParamProcessor<T> getParameterProcessor(@NotNull Class<T> annotation) {
+    public <T extends Annotation> AbstractEventParamProcessor<T> getParameterProcessor(@NotNull Class<T> annotation, EventStage stage) {
         if (SimpleEventBus.parameterProcessors.isEmpty()) {
             for (DefaultParamProcessors processor : DefaultParamProcessors.values()) {
-                this.registerProcessor(processor.getProcessor());
+                this.registerProcessor(processor.getProcessor(), processor.getStage());
             }
         }
 
-        return (AbstractEventParamProcessor<T>) SimpleEventBus.parameterProcessors.getOrDefault(annotation, null);
+        if (parameterProcessors.containsKey(annotation)) {
+            return (AbstractEventParamProcessor<T>) parameterProcessors.get(annotation).get(stage);
+        }
+        return null;
     }
 }

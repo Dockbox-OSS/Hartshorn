@@ -101,13 +101,15 @@ public enum DefaultParamProcessors {
         } else return object; // Already unwrapped
     });
 
+    private final EventStage stage;
     private final Supplier<AbstractEventParamProcessor<?>> processorSupplier;
 
     <A extends Annotation> DefaultParamProcessors(Class<A> annotationClass, AbstractEnumEventParamProcessor<A> processor) {
-        this(annotationClass, null, processor);
+        this(annotationClass, EventStage.NORMAL, processor);
     }
 
     <A extends Annotation> DefaultParamProcessors(Class<A> annotationClass, EventStage stage, AbstractEnumEventParamProcessor<A> processor) {
+        this.stage = stage;
         this.processorSupplier = () -> new AbstractEventParamProcessor<A>() {
             @Override
             public @NotNull Class<A> getAnnotationClass() {
@@ -126,8 +128,8 @@ public enum DefaultParamProcessors {
         };
     }
 
-    DefaultParamProcessors(Supplier<AbstractEventParamProcessor<?>> processorSupplier) {
-        this.processorSupplier = processorSupplier;
+    public EventStage getStage() {
+        return this.stage;
     }
 
     public AbstractEventParamProcessor<?> getProcessor() {
