@@ -21,27 +21,27 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 
 import org.dockbox.selene.core.annotations.AsyncEvent;
+import org.dockbox.selene.core.annotations.EventStage;
+import org.dockbox.selene.core.annotations.EventStage.Stage;
 import org.dockbox.selene.core.annotations.Filter;
 import org.dockbox.selene.core.annotations.Filters;
-import org.dockbox.selene.core.annotations.Getter;
 import org.dockbox.selene.core.annotations.IsCancelled;
-import org.dockbox.selene.core.annotations.Provided;
-import org.dockbox.selene.core.annotations.SkipIf;
-import org.dockbox.selene.core.annotations.WrapSafe;
 import org.dockbox.selene.core.exceptions.SkipEventException;
 import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.events.Filterable;
-import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.util.events.AbstractEventParamProcessor;
+import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.events.IWrapper;
-import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.threads.ThreadUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -49,7 +49,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
     public static final Comparator<InvokeWrapper> COMPARATOR = (o1, o2) -> {
@@ -150,74 +149,34 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
 
     @NotNull
     private Collection<Object> getEventArgs(Event event) throws SkipEventException {
+        EventBus bus = Selene.getInstance(EventBus.class);
+
         Collection<Object> args = new ArrayList<>();
-        for (Class<?> type : this.method.getParameterTypes()) {
-            boolean wrapSafe = type.isAnnotationPresent(WrapSafe.class);
+        for (Parameter parameter : this.method.getParameters()) {
+            Object argument = null;
+            if (parameter.getType().isAssignableFrom(event.getClass())) argument = event;
 
-            if (type.isAssignableFrom(event.getClass())) {
-                if (wrapSafe) Selene.log().warn("Event parameter cannot be wrapped");
-                args.add(event);
-
-            } else if (type.isAnnotationPresent(Getter.class)) {
-                Object finalArg = this.getterArgument(event, type);
-                if (wrapSafe) args.add(Exceptional.ofNullable(finalArg));
-                else args.add(finalArg);
-
-            } else if (type.isAnnotationPresent(Provided.class)) {
-                Object instance = this.providedArgument(type);
-                if (wrapSafe) args.add(Exceptional.ofNullable(instance));
-                else args.add(instance);
-
-            } else {
-                if (wrapSafe) args.add(Exceptional.empty());
-                else args.add(null);
+            for (Stage stage : Stage.values()) {
+                argument = this.processObjectForStage(argument, parameter, event, stage, bus);
             }
+            args.add(argument);
         }
+
         return args;
     }
 
-    private Object getterArgument(Event event, Class<?> type) throws SkipEventException {
-        Getter getter = type.getAnnotation(Getter.class);
-        AtomicReference<Object> arg = new AtomicReference<>(null);
-        SeleneUtils.getMethodValue(event, getter.value(), type)
-                .ifPresent(arg::set);
-
-        Object finalArg = arg.get();
-
-        this.verifySkip(type, finalArg);
-        return finalArg;
-    }
-
-    private void verifySkip(Class<?> type, Object finalArg) throws SkipEventException {
-        if (type.isAnnotationPresent(SkipIf.class)) {
-            SkipIf skip = type.getAnnotation(SkipIf.class);
-            switch (skip.value()) {
-                case NULL:
-                    if (null == finalArg) throw new SkipEventException();
-                    break;
-                case EMPTY:
-                    if (SeleneUtils.isEmpty(finalArg)) throw new SkipEventException();
-                    break;
-                case ZERO:
-                    if (finalArg instanceof Number && 0 == ((Number) finalArg).floatValue())
-                        throw new SkipEventException();
-                    break;
+    private Object processObjectForStage(@Nullable Object argument, Parameter parameter, Event event, EventStage.Stage stage, EventBus bus) throws SkipEventException {
+        for (Annotation annotation : parameter.getAnnotations()) {
+            if (annotation.getClass().isAnnotationPresent(EventStage.class)) {
+                EventStage eventStage = annotation.getClass().getAnnotation(EventStage.class);
+                if (eventStage.value() != stage) continue;
+                AbstractEventParamProcessor<Annotation> processor = bus.getParameterProcessor((Class<Annotation>) annotation.getClass());
+                if (null == processor) continue;
+                argument = processor.process(argument, annotation, event, parameter, this);
             }
         }
+        return argument;
     }
-
-    private Object providedArgument(Class<?> type) {
-        Provided provided = type.getAnnotation(Provided.class);
-
-        Class<?> extensionClass = type;
-        if (Void.class != provided.value() && provided.value().isAnnotationPresent(Extension.class)) {
-            extensionClass = provided.value();
-        } else if (this.listener.getClass().isAnnotationPresent(Extension.class)) {
-            extensionClass = this.listener.getClass();
-        }
-        return Selene.getInstance(type, extensionClass);
-    }
-
 
     private boolean filtersMatch(Event event) {
         if (event instanceof Filterable) {
