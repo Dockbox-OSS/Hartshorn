@@ -20,4 +20,4 @@ package org.dockbox.selene.core.objects.targets
 import java.util.*
 import org.dockbox.selene.core.objects.keys.KeyHolder
 
-open class Identifiable<T:Identifiable<T>>(open val uniqueId: UUID, open val name: String) : Target, KeyHolder<T>
+open class Identifiable<T:Identifiable<T>>(open var uniqueId: UUID, open var name: String) : Target, KeyHolder<T>

@@ -44,7 +44,7 @@ public class FaweSourceProcessor extends AbstractEventParamProcessor<FaweSource>
     public @Nullable Object process(Object object, FaweSource annotation, Event event, Parameter parameter, IWrapper wrapper) throws SkipEventException {
         if (object instanceof Player) {
             Exceptional<FawePlayer<?>> player = ((Player) object).getFawePlayer();
-            if (player.isPresent()) return pIlayer.get();
+            if (player.isPresent()) return player.get();
         }
         throw new SkipEventException();
     }

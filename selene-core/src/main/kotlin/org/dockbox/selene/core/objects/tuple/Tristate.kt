@@ -15,11 +15,11 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.objects.tuple;
+package org.dockbox.selene.core.objects.tuple
 
 /**
  Represents a state which can be either true, false, or undefined.
  */
-public enum Tristate {
+enum class Tristate {
     TRUE, FALSE, UNDEFINED
 }
