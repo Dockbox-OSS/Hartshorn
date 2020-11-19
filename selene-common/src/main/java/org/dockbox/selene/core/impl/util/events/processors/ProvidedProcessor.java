@@ -38,6 +38,8 @@ public class ProvidedProcessor extends AbstractEventParamProcessor<Provided> {
 
     @Override
     public @Nullable Object process(Object object, Provided annotation, Event event, Parameter parameter, IWrapper wrapper) throws SkipEventException {
+        if (null != object && !annotation.overrideExisting()) return object;
+
         Class<?> extensionClass = parameter.getType();
         if (Void.class != annotation.value() && annotation.value().isAnnotationPresent(Extension.class)) {
             extensionClass = annotation.value();

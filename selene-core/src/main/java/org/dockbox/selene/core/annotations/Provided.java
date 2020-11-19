@@ -26,4 +26,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface Provided {
     Class<?> value() default Void.class;
+    boolean overrideExisting() default false;
 }

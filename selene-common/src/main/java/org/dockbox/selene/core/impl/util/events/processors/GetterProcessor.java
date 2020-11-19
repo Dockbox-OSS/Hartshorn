@@ -38,6 +38,8 @@ public class GetterProcessor extends AbstractEventParamProcessor<Getter> {
 
     @Override
     public @Nullable Object process(Object object, Getter annotation, Event event, Parameter parameter, IWrapper wrapper) throws SkipEventException {
+        if (null != object && !annotation.overrideExisting()) return object;
+        
         AtomicReference<Object> arg = new AtomicReference<>(null);
         SeleneUtils.getMethodValue(event, annotation.value(), parameter.getType())
                 .ifPresent(arg::set);

@@ -26,4 +26,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface Getter {
     String value();
+    boolean overrideExisting() default false;
 }
