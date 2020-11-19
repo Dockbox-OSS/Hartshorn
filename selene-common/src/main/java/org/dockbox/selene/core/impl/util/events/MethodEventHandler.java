@@ -71,8 +71,7 @@ public class MethodEventHandler extends EventHandler {
 
         MethodEventHandler that = (MethodEventHandler) o;
 
-        if (!this.method.equals(that.method)) return false;
-        return Objects.equals(this.object, that.object);
+        return this.method.equals(that.method) && Objects.equals(this.object, that.object);
     }
 
     @Override
