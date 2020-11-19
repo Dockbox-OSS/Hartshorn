@@ -30,6 +30,11 @@ public abstract class AbstractEventParamProcessor<A extends Annotation> {
     @NotNull
     public abstract Class<A> getAnnotationClass();
 
+    @NotNull
+    public EventStage targetStage() {
+        return EventStage.NORMAL;
+    }
+
     @Nullable
     public abstract Object process(Object object, A annotation, Event event, Parameter parameter, IWrapper wrapper) throws SkipEventException;
 

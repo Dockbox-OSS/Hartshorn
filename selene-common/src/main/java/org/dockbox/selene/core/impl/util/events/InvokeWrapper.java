@@ -21,8 +21,6 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 
 import org.dockbox.selene.core.annotations.AsyncEvent;
-import org.dockbox.selene.core.annotations.EventStage;
-import org.dockbox.selene.core.annotations.EventStage.Stage;
 import org.dockbox.selene.core.annotations.Filter;
 import org.dockbox.selene.core.annotations.Filters;
 import org.dockbox.selene.core.annotations.IsCancelled;
@@ -33,6 +31,7 @@ import org.dockbox.selene.core.objects.events.Filterable;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.events.AbstractEventParamProcessor;
 import org.dockbox.selene.core.util.events.EventBus;
+import org.dockbox.selene.core.util.events.EventStage;
 import org.dockbox.selene.core.util.events.IWrapper;
 import org.dockbox.selene.core.util.threads.ThreadUtils;
 import org.jetbrains.annotations.NotNull;
@@ -156,7 +155,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
             Object argument = null;
             if (parameter.getType().isAssignableFrom(event.getClass())) argument = event;
 
-            for (Stage stage : Stage.values()) {
+            for (EventStage stage : EventStage.values()) {
                 argument = this.processObjectForStage(argument, parameter, event, stage, bus);
             }
             args.add(argument);
@@ -165,15 +164,14 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
         return args;
     }
 
-    private Object processObjectForStage(@Nullable Object argument, Parameter parameter, Event event, EventStage.Stage stage, EventBus bus) throws SkipEventException {
+    private Object processObjectForStage(@Nullable Object argument, Parameter parameter, Event event, EventStage stage, EventBus bus) throws SkipEventException {
         for (Annotation annotation : parameter.getAnnotations()) {
-            if (annotation.getClass().isAnnotationPresent(EventStage.class)) {
-                EventStage eventStage = annotation.getClass().getAnnotation(EventStage.class);
-                if (eventStage.value() != stage) continue;
-                AbstractEventParamProcessor<Annotation> processor = bus.getParameterProcessor((Class<Annotation>) annotation.getClass());
-                if (null == processor) continue;
-                argument = processor.process(argument, annotation, event, parameter, this);
-            }
+            AbstractEventParamProcessor<Annotation> processor = bus.getParameterProcessor((Class<Annotation>) annotation.getClass());
+            if (null == processor) continue;
+
+            EventStage targetStage = processor.targetStage();
+            if (targetStage != stage) continue;
+            argument = processor.process(argument, annotation, event, parameter, this);
         }
         return argument;
     }

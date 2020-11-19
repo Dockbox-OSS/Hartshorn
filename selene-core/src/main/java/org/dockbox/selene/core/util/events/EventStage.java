@@ -15,19 +15,8 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.annotations;
+package org.dockbox.selene.core.util.events;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.ANNOTATION_TYPE)
-public @interface EventStage {
-    Stage value() default Stage.NORMAL;
-
-    enum Stage {
-        EARLY, NORMAL, LATE
-    }
+public enum EventStage {
+    EARLY, NORMAL, LATE
 }

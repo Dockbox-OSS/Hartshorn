@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.core.annotations;
 
-import org.dockbox.selene.core.annotations.EventStage.Stage;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -26,6 +24,5 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-@EventStage(Stage.LATE)
 public @interface UnwrapOrSkip {
 }
