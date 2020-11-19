@@ -25,7 +25,8 @@ public enum DefaultParamProcessors {
     GETTER(GetterProcessor::new),
     PROVIDED(ProvidedProcessor::new),
     SKIP_IF(SkipIfProcessor::new),
-    WRAP_SAFE(WrapSafeProcessor::new);
+    WRAP_SAFE(WrapSafeProcessor::new),
+    UNWRAP_OR_SKIP(UnwrapOrSkipProcessor::new);
 
     private final Supplier<AbstractEventParamProcessor<?>> processorSupplier;
 
