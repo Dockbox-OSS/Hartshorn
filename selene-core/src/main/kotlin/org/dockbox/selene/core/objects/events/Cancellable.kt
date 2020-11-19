@@ -17,9 +17,24 @@
 
 package org.dockbox.selene.core.objects.events
 
+/**
+ * Low level event type which can be cancelled, usually this cancellable state is respected by the underlying
+ * implementation.
+ */
 interface Cancellable : Event {
 
+    /**
+     * Indicates whether or not the event is currently cancelled
+     *
+     * @return The cancelled state
+     */
     fun isCancelled(): Boolean
+
+    /**
+     * Sets the cancelled state of the event
+     *
+     * @param cancelled Whether or not the event should be cancelled
+     */
     fun setCancelled(cancelled: Boolean)
 
     override fun post(): Cancellable {

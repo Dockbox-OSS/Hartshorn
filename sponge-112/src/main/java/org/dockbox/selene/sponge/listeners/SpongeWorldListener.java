@@ -48,8 +48,7 @@ public class SpongeWorldListener {
 
     @Listener
     public void onWorldUnloaded(UnloadWorldEvent unloadEvent) {
-        World world = SpongeConversionUtil.fromSponge(unloadEvent.getTargetWorld());
-        Cancellable event = new WorldUnloadEvent(world).post();
+        Cancellable event = new WorldUnloadEvent(unloadEvent.getTargetWorld().getUniqueId()).post();
         unloadEvent.setCancelled(event.isCancelled());
     }
 

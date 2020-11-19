@@ -19,4 +19,12 @@ package org.dockbox.selene.core.objects.location
 
 import java.util.*
 
+/**
+ * Represents a warp, a virtual location inside a world, with descriptive properties.
+ *
+ * @property description The description of the warp
+ * @property category The category in which the warp is categorized
+ * @property location The location of the warp
+ * @property name The name of the warp
+ */
 class Warp(val description: Optional<String>, val category: Optional<String>, val location: Location, val name: String)

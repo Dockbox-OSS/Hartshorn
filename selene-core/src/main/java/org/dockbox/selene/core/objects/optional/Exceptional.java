@@ -28,6 +28,19 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+/**
+ * A container object which may or may not contain a non-null value. If a value is present, {@code isPresent()} will
+ * return {@code true} and {@code get()} will return the value. If no value is present, {@code isAbsent()} will
+ * return {@code false}.
+ *
+ * Additional methods that depend on the presence or absence of a contained value are provided, such as
+ * {@link #orElse(java.lang.Object) orElse()} (return a default value if value not present) and
+ * {@link #ifPresent(java.util.function.Consumer) ifPresent()} (execute a block of code if the value is present).
+ *
+ * This is a extended type of {@link Optional}, providing additional support for {@link Exception} checks and actions.
+ * Additionally it allows for more abilities to construct the type from a {@link Callable}, {@link Optional} and to
+ * create from a {@link Throwable} instance.
+ */
 @SuppressWarnings("AssignmentToNull")
 public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
 

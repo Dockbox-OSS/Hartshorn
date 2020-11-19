@@ -17,6 +17,12 @@
 
 package org.dockbox.selene.core.objects.tuple
 
+/**
+ * Represents a 2D point on a x-, and z-axis. All axis points can be represented as any numeral value.
+ *
+ * @property x The x-axis point
+ * @property z The z-axis point
+ */
 open class Vector2N(var x: Number, var z: Number) {
 
     fun getXd(): Double = x.toDouble()

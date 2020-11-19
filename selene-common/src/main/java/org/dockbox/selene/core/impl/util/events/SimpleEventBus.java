@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
-import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -39,17 +38,28 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ A simple default implementation of {@link EventBus}, used for internal event posting and handling.
+ */
 @Singleton
 @SuppressWarnings({"unchecked", "EqualsWithItself", "VolatileArrayField"})
 public class SimpleEventBus implements EventBus {
+
+    /**
+     A map of all listening objects with their associated {@link IWrapper}s.
+     */
     protected static final Map<Object, Set<IWrapper>> listenerToInvokers = new HashMap<>();
 
+    /**
+     The internal registry of handlers for each event.
+     */
     protected static final HandlerRegistry handlerRegistry = new HandlerRegistry();
 
+    /**
+     The internal map of {@link AbstractEventParamProcessor}s per annotation per stage.
+     */
     // TODO: Refactor to Registry structure once S124 is accepted
     protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = new HashMap<>();
-
-    protected static Lookup defaultLookup = AccessHelper.defaultLookup();
 
     @NotNull
     @Override
@@ -63,15 +73,21 @@ public class SimpleEventBus implements EventBus {
         return handlerRegistry;
     }
 
+    /**
+     Subscribes all event listeners in a object instance. Typically event listeners are methods annotated with
+     {@link Listener}.
+
+     @param object The instance of the listener
+     */
     @Override
-    public void subscribe(Object object, @NotNull Lookup lookup) throws IllegalArgumentException, SecurityException {
+    public void subscribe(Object object) {
         if (!object.equals(object)) return;
         if (listenerToInvokers.containsKey(object)) {
             return;  // Already registered
         }
 
-        Set<IWrapper> invokers = getInvokers(object, lookup);
-        if(invokers.isEmpty()) {
+        Set<IWrapper> invokers = getInvokers(object);
+        if (invokers.isEmpty()) {
             return; // Doesn't contain any listener methods
         }
         Selene.log().info("Registered {} as event listener", object.getClass().toGenericString());
@@ -81,11 +97,11 @@ public class SimpleEventBus implements EventBus {
         }
     }
 
-    @Override
-    public void subscribe(@NotNull Object object) throws IllegalArgumentException, SecurityException {
-        this.subscribe(object, defaultLookup);
-    }
+    /**
+     Unsubscribes all event listeners in a object instance.
 
+     @param object The instance of the listener
+     */
     @Override
     public void unsubscribe(Object object) {
         if (!object.equals(object)) return;
@@ -109,19 +125,43 @@ public class SimpleEventBus implements EventBus {
         this.post(event, null);
     }
 
-    protected static Set<IWrapper> getInvokers(Object object, Lookup lookup)
-            throws IllegalArgumentException, SecurityException {
+    /**
+     Gets all {@link IWrapper} instances for a given listener instance.
+
+     @param object
+     The listener instance
+
+     @return The invokers
+     */
+    protected static Set<IWrapper> getInvokers(Object object) {
         Set<IWrapper> result = new LinkedHashSet<>();
         for (Method method : AccessHelper.getMethodsRecursively(object.getClass())) {
             Listener annotation = AccessHelper.getAnnotationRecursively(method, Listener.class);
             if (annotation != null) {
                 checkListenerMethod(method, false);
-                result.addAll(InvokeWrapper.create(object, method, annotation.value().getPriority(), lookup));
+                result.addAll(InvokeWrapper.create(object, method, annotation.value().getPriority()));
             }
         }
         return result;
     }
 
+    /**
+     Checks if a method is a valid listener method. A method is only valid if it:
+     <ul>
+        <li>Is annotated with {@link Listener}</li>
+        <li>Is not static</li>
+        <li>Is not abstract</li>
+        <li>Has at least one parameter which is a subcless of {@link Event}</li>
+     </ul>
+
+     @param method
+     the method
+     @param checkAnnotation
+     the check annotation
+
+     @throws IllegalArgumentException
+     the illegal argument exception
+     */
     protected static void checkListenerMethod(Method method, boolean checkAnnotation) throws IllegalArgumentException {
         if (checkAnnotation && !AccessHelper.isAnnotationPresentRecursively(method, Listener.class)) {
             throw new IllegalArgumentException("Needs @Listener annotation: " + method.toGenericString());

@@ -21,4 +21,10 @@ import org.dockbox.selene.core.events.AbstractTargetEvent
 import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.objects.user.Player
 
+/**
+ * The event fired when a [Player] is kicked from the server.
+ *
+ * @param player The [Player] being kicked
+ * @param reason The reason, if provided
+ */
 class KickEvent(player: Player, reason: Exceptional<String>) : AbstractTargetEvent(player)

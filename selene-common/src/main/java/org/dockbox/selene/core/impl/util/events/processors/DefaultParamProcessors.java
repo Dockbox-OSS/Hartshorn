@@ -26,6 +26,7 @@ import org.dockbox.selene.core.exceptions.SkipEventException;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.events.AbstractEventParamProcessor;
 import org.dockbox.selene.core.util.events.EventStage;
@@ -40,8 +41,20 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
+/**
+ Parameter annotation processor definitions for internal event listener parameter annotations. This enumeration only
+ contains definitions for internal annotations, processors for annotations applied by extensions should be defined in
+ the responsible extension.
+ */
 public enum DefaultParamProcessors {
-    GETTER(Getter.class, EventStage.EARLY, (object, annotation, event, parameter, wrapper) -> {
+    /**
+     The processor definition for {@link Getter}. Tries to obtain a value through a getter method inside the provided
+     {@link Event} instance. If no method exists <code>null</code> is returned. This processor is performed in a {@link EventStage#POPULATE}
+     stage, making it the first available option to provide the object value. It is possible there is another annotation
+     processed before this if it is in the same stage, in which case the processor respects the value of
+     {@link Provided#overrideExisting()}.
+     */
+    GETTER(Getter.class, EventStage.POPULATE, (object, annotation, event, parameter, wrapper) -> {
         if (null != object && !annotation.overrideExisting()) return object;
 
         AtomicReference<Object> arg = new AtomicReference<>(null);
@@ -50,7 +63,14 @@ public enum DefaultParamProcessors {
         return arg.get();
     }),
 
-    PROVIDED(Provided.class, EventStage.EARLY, (object, annotation, event, parameter, wrapper) -> {
+    /**
+     The processor definition for {@link Provided}. Tries to obtain a value through {@link Selene#getInstance(Class, InjectorProperty[])}.
+     If no instance is found <code>null</code> is returned. This processor is performed in a {@link EventStage#POPULATE}
+     stage, making it the first available option to provide the object value. It is possible there is another annotation
+     processed before this if it is in the same stage, in which case the processor respects the value of
+     {@link Provided#overrideExisting()}.
+     */
+    PROVIDED(Provided.class, EventStage.POPULATE, (object, annotation, event, parameter, wrapper) -> {
         if (null != object && !annotation.overrideExisting()) return object;
 
         Class<?> extensionClass = parameter.getType();
@@ -62,7 +82,19 @@ public enum DefaultParamProcessors {
         return Selene.getInstance(parameter.getType(), extensionClass);
     }),
 
-    SKIP_IF(SkipIf.class, EventStage.LATE, (object, annotation, event, parameter, wrapper) -> {
+    /**
+     The processor definition for {@link SkipIf}. Filters the value of the provided object based on a given
+     {@link SkipIf.Type}, which either:
+     <ul>
+     <li>Performs a <code>null</code> check.</li>
+     <li>
+     Checks if the object is empty (applies to {@link java.util.Collection}s, {@link String}s, and any type with a
+     method <code>isEmpty</code> which returns a {@link Boolean}.
+     </li>
+     <li>Checks if the object is a instance of {@link Number} and is equal to <code>0</code>.</li>
+     </ul>
+     */
+    SKIP_IF(SkipIf.class, EventStage.FILTER, (object, annotation, event, parameter, wrapper) -> {
         switch (annotation.value()) {
             case NULL:
                 if (null == object) throw new SkipEventException();
@@ -78,7 +110,12 @@ public enum DefaultParamProcessors {
         return object;
     }),
 
-    WRAP_SAFE(WrapSafe.class, EventStage.LATE, (object, annotation, event, parameter, wrapper) -> {
+    /**
+     The processor definition for {@link WrapSafe}. Wraps the final object in a instance of {@link Exceptional}. If the
+     object is a instance of {@link Exceptional} it is returned 'as is'. If the object is a instance of {@link Optional}
+     it is converted to a {@link Exceptional}.
+     */
+    WRAP_SAFE(WrapSafe.class, EventStage.FILTER, (object, annotation, event, parameter, wrapper) -> {
         if (parameter.getType().isAssignableFrom(event.getClass())) {
             Selene.log().warn("Event parameter cannot be wrapped");
             return object;
@@ -89,23 +126,32 @@ public enum DefaultParamProcessors {
         return Exceptional.ofNullable(object);
     }),
 
-    UNWRAP_OR_SKIP(UnwrapOrSkip.class, EventStage.LATE, (object, annotation, event, parameter, wrapper) -> {
+    /**
+     The processor definition for {@link UnwrapOrSkip}. Attempts to unwrap the final object if it is a instance of
+     {@link Exceptional} or {@link Optional}. If the type is <code>null</code> or the value is not present, it respects
+     {@link UnwrapOrSkip#skipIfNull()} to skip the event or return <code>null</code>.
+     If the value is already unwrapped and not <code>null</code> it is returned 'as is'
+     */
+    UNWRAP_OR_SKIP(UnwrapOrSkip.class, EventStage.FILTER, (object, annotation, event, parameter, wrapper) -> {
         if (object instanceof Exceptional<?>) {
             if (((Exceptional<?>) object).isPresent()) return ((Exceptional<?>) object).get();
-            else throw new SkipEventException();
+            else if (annotation.skipIfNull()) throw new SkipEventException();
 
         } else if (object instanceof Optional<?>) {
             if (((Optional<?>) object).isPresent()) return ((Optional<?>) object).get();
-            else throw new SkipEventException();
+            else if (annotation.skipIfNull()) throw new SkipEventException();
 
-        } else return object; // Already unwrapped
+        } else if (null == object && annotation.skipIfNull()) {
+            throw new SkipEventException();
+        }
+        return object; // Already unwrapped
     });
 
     private final EventStage stage;
     private final Supplier<AbstractEventParamProcessor<?>> processorSupplier;
 
     <A extends Annotation> DefaultParamProcessors(Class<A> annotationClass, AbstractEnumEventParamProcessor<A> processor) {
-        this(annotationClass, EventStage.NORMAL, processor);
+        this(annotationClass, EventStage.PROCESS, processor);
     }
 
     <A extends Annotation> DefaultParamProcessors(Class<A> annotationClass, EventStage stage, AbstractEnumEventParamProcessor<A> processor) {
@@ -128,10 +174,20 @@ public enum DefaultParamProcessors {
         };
     }
 
+    /**
+     Gets the {@link EventStage} at which the processor is to be performed.
+
+     @return The stage
+     */
     public EventStage getStage() {
         return this.stage;
     }
 
+    /**
+     Gets a new instance of a {@link AbstractEventParamProcessor} based on the supplier definition.
+
+     @return The processor
+     */
     public AbstractEventParamProcessor<?> getProcessor() {
         return this.processorSupplier.get();
     }

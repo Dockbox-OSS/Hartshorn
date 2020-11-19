@@ -24,6 +24,15 @@ import org.dockbox.selene.core.objects.targets.CommandSource
 import org.dockbox.selene.core.util.SeleneUtils
 import org.dockbox.selene.core.util.events.FilterTypes
 
+/**
+ * The event fired when a command is executed natively through the implemented platform. This typically includes both
+ * external commands and commands defined within Selene.
+ *
+ * @property alias The alias of the executed command
+ * @property arguments The arguments provided in the command, split by the space character
+ *
+ * @param source The executing source
+ */
 class NativeCommandEvent(
         source: CommandSource,
         val alias: String,

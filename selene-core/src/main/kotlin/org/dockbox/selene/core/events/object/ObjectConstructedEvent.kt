@@ -23,8 +23,21 @@ import org.dockbox.selene.core.objects.events.Filterable
 import org.dockbox.selene.core.util.SeleneUtils
 import org.dockbox.selene.core.util.events.FilterTypes
 
+/**
+ * The event fired when a new type instance is constructed. Typically this only includes types which extend
+ * [org.dockbox.selene.core.objects.ConstructNotifier], unless the type manually fires the event.
+ *
+ * @param T The type of the instance created
+ * @property type The [Class] instance indicating the type of the instance
+ * @property instance The created instance
+ */
 class ObjectConstructedEvent<T>(val type: Class<T>, val instance: T) : Event, Filterable {
 
+    /**
+     * Get the canonical name of the instance type. Typically this is only used in [ObjectConstructedEvent.isApplicable].
+     *
+     * @return The canonical name of the instance type.
+     */
     fun getTypeName(): String = type.canonicalName
 
     override fun isApplicable(filter: Filter): Boolean {

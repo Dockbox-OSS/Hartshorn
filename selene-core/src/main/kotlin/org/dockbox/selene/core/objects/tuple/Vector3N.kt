@@ -17,6 +17,16 @@
 
 package org.dockbox.selene.core.objects.tuple
 
+
+/**
+ * Represents a 3D point on a x-, y-, and z-axis. All axis points can be represented as any numeral value.
+ *
+ * @property y The y-axis point
+ * @constructor
+ *
+ * @param x The x-axis point
+ * @param z The z-axis point
+ */
 open class Vector3N(x: Number, var y: Number, z: Number): Vector2N(x, z) {
 
     fun getYd(): Double = y.toDouble()

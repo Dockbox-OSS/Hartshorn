@@ -30,6 +30,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Parameter;
 
+
+/**
+ Converts a {@link Player} instance into a {@link FawePlayer}, or skips the listener.
+ */
 public class FaweSourceProcessor extends AbstractEventParamProcessor<FaweSource> {
     @Override
     public @NotNull Class<FaweSource> getAnnotationClass() {
@@ -40,7 +44,7 @@ public class FaweSourceProcessor extends AbstractEventParamProcessor<FaweSource>
     public @Nullable Object process(Object object, FaweSource annotation, Event event, Parameter parameter, IWrapper wrapper) throws SkipEventException {
         if (object instanceof Player) {
             Exceptional<FawePlayer<?>> player = ((Player) object).getFawePlayer();
-            if (player.isPresent()) return player.get();
+            if (player.isPresent()) return pIlayer.get();
         }
         throw new SkipEventException();
     }

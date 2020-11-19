@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.annotations;
 
+import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.tuple.Tristate;
 
 import java.lang.annotation.ElementType;
@@ -24,6 +25,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ Indicates whether or not to call a event depending on it's cancelled state (if the event is a instance of
+ {@link Cancellable}). There are three options: <code>TRUE</code> which only calls the listener if the event is
+ cancelled, <code>FALSE</code> which only calls the listener if the event is not cancelled (default), and
+ <code>UNDEFINED</code> which calls the listener in either case.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface IsCancelled {

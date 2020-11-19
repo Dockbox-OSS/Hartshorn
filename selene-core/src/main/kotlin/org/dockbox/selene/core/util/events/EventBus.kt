@@ -17,13 +17,11 @@
 
 package org.dockbox.selene.core.util.events
 
-import java.lang.invoke.MethodHandles
 import org.dockbox.selene.core.objects.events.Event
 
 interface EventBus {
 
     fun subscribe(`object`: Any)
-    fun subscribe(`object`: Any, lookup: MethodHandles.Lookup)
     fun unsubscribe(`object`: Any)
     fun post(event: Event, target: Class<*>)
     fun post(event: Event)

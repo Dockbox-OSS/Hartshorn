@@ -20,6 +20,15 @@ package org.dockbox.selene.core.objects.location
 import org.dockbox.selene.core.objects.tuple.Vector3N
 import org.dockbox.selene.core.objects.user.Gamemode
 
+/**
+ * Represents the properties or metadata of a world.
+ *
+ * @property loadOnStartup Whether or not the world should load when the server is starting
+ * @property spawnPosition The position at which players should spawn when first joining the world, or when they die
+ * @property seed The seed used when generating the world
+ * @property defaultGamemode The default [Gamemode] of the world
+ * @property gamerules The gamerules applied to the world, typically this is a snapshot of the gamerules of a world
+ */
 abstract class WorldProperties(
         open var loadOnStartup: Boolean,
         open var spawnPosition: Vector3N,

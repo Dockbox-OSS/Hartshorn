@@ -24,13 +24,51 @@ import org.dockbox.selene.core.objects.location.WorldProperties
 import org.dockbox.selene.core.objects.tuple.Vector3N
 import org.dockbox.selene.core.objects.user.Gamemode
 
+/**
+ * The abstract type which can be used to listen to all world related events.
+ */
 abstract class WorldEvent : AbstractCancellableEvent() {
 
+    /**
+     * The event fired when a world is loaded.
+     *
+     * @param world The world which is loaded
+     */
     class WorldLoadEvent(world: World) : WorldEvent()
-    class WorldUnloadEvent(world: World) : WorldEvent()
+
+    /**
+     * The event fired when a world is unloaded.
+     *
+     * @param uniqueId The unique identifier of the world
+     */
+    class WorldUnloadEvent(uniqueId: UUID) : WorldEvent()
+
+    /**
+     * The event fired when a world is being saved.
+     *
+     * @param world The world which is being saved
+     */
     class WorldSaveEvent(world: World) : WorldEvent()
+
+    /**
+     * The event fired when a new world is being created.
+     *
+     * @param properties The properties used to create the new world
+     */
     class WorldCreatingEvent(properties: WorldCreatingProperties) : WorldEvent()
 
+    /**
+     * The available properties used when a world is being created or generated.
+     *
+     * @property name The name of the world
+     * @property uniqueId The unique ID of the world
+     *
+     * @param loadOnStartup Whether or not the world should load when the server starts
+     * @param spawnPosition The position at which players should spawn when they join the world
+     * @param seed The seed used when generating the world
+     * @param defaultGamemode The default gamemode of the world
+     * @param gamerules The gamerules which are applied to the world
+     */
     class WorldCreatingProperties(
             val name: String,
             val uniqueId: UUID,

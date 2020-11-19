@@ -20,10 +20,32 @@ package org.dockbox.selene.core.objects.events
 import org.dockbox.selene.core.annotations.Filter
 import org.dockbox.selene.core.util.events.FilterTypes
 
+/**
+ * A low level type which accepts a [Filter] to be applied to it.
+ */
 interface Filterable {
 
+    /**
+     * Indicates whether or not the implementation and its properties match a given [Filter].
+     *
+     * @param filter The filter to apply
+     * @return Whether or not the filter applies
+     */
     fun isApplicable(filter: Filter): Boolean
+
+    /**
+     * Gets the list of accepted [FilterTypes] for the implementation
+     *
+     * @return The list of [FilterTypes]
+     */
     fun acceptedFilters(): List<FilterTypes>
+
+    /**
+     * Gets the list of accepts parameters for the implementation. Typically this includes aliases for several
+     * different parameters.
+     *
+     * @return The accepted parameters
+     */
     fun acceptedParams(): List<String>
 
 }

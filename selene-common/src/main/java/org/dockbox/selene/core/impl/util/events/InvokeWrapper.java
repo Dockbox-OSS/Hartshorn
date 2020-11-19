@@ -38,7 +38,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
-import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -49,6 +48,11 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
+
+/**
+ Wrapper type for future invokation of a {@link Method} listening for {@link Event} posting.
+ This type is responsible for filtering and invoking a {@link Method} when a supported {@link Event} is fired.
+ */
 public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
     public static final Comparator<InvokeWrapper> COMPARATOR = (o1, o2) -> {
         if (fastEqual(o1, o2)) return 0;
@@ -64,8 +68,21 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
         throw new AssertionError();  // ensures the comparator will never return 0 if the two wrapper aren't equal
     };
 
-    public static List<InvokeWrapper> create(Object instance, Method method, int priority, Lookup lookup)
-            throws SecurityException {
+
+    /**
+     Creates one or more {@link InvokeWrapper}s (depending on how many event parameters are present) for a given
+     method and instance.
+
+     @param instance
+     The instance which is used when invoking the method.
+     @param method
+     The method to store for invokation.
+     @param priority
+     The priority at which the event is fired.
+
+     @return The list of {@link InvokeWrapper}s
+     */
+    public static List<InvokeWrapper> create(Object instance, Method method, int priority) {
         List<InvokeWrapper> invokeWrappers = new CopyOnWriteArrayList<>();
         for (Class<?> param : method.getParameterTypes()) {
             if (Event.class.isAssignableFrom(param)) {
@@ -103,6 +120,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
         try {
             Collection<Object> args = this.getEventArgs(event);
 
+            // Listener methods may be private or protected, before invoking it we need to ensure it is accessible.
             if (!this.method.isAccessible()) {
                 this.method.setAccessible(true);
             }
@@ -112,6 +130,11 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                     try {
                         this.method.invoke(this.listener, args.toArray());
                     } catch (Throwable e) {
+                        /*
+                        Typically this is caused by a exception thrown inside the event itself. It is possible that
+                        the arguments provided to Method#invoke are incorrect, depending on external annotation
+                        processors.
+                        */
                         Selene.getServer().except("Could not finish event runner", e);
                     }
                 };
@@ -124,12 +147,21 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                 }
             }
         } catch (SkipEventException ignored) {
+            /*
+            SkipEventException can be thrown by (a) AbstractEventParamProcessor(s), indicating the method should
+            not be invoked. Usually this is because of a filter application of the processor.
+            */
         } catch (InterruptedException | ExecutionException e) {
             Selene.getServer().except("Sync event execution interrupted", e);
         }
     }
 
     private boolean acceptsState(Event event) {
+        /*
+        If a event can be cancelled, listeners can indicate their preference on whether or not they wish to listen for
+        events which are cancelled or non-cancelled, or either. If the event cannot be cancelled this always returns
+        true.
+        */
         if (event instanceof Cancellable) {
             Cancellable cancellable = (Cancellable) event;
             if (this.method.isAnnotationPresent(IsCancelled.class)) {
@@ -152,9 +184,17 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
 
         Collection<Object> args = new ArrayList<>();
         for (Parameter parameter : this.method.getParameters()) {
+            /*
+            Arguments always default to null if it is not assignable from the event type provided, and should be
+            populated by annotation processors.
+            */
             Object argument = null;
             if (parameter.getType().isAssignableFrom(event.getClass())) argument = event;
 
+            /*
+            To allow for the addition of future stages, we only use the enum values provided directly. This way we can
+            avoid having to modify this type if future stages are added to EventStage.
+            */
             for (EventStage stage : EventStage.values()) {
                 argument = this.processObjectForStage(argument, parameter, event, stage, bus);
             }
@@ -166,9 +206,17 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
 
     private Object processObjectForStage(@Nullable Object argument, Parameter parameter, Event event, EventStage stage, EventBus bus) throws SkipEventException {
         for (Annotation annotation : parameter.getAnnotations()) {
+            /*
+            A annotation may be decorative or provide meta-data, rather than be a processor indicator. If no processor
+            is available continue looking up the next annotation (if any).
+            */
             AbstractEventParamProcessor<Annotation> processor = bus.getParameterProcessor((Class<Annotation>) annotation.getClass(), stage);
             if (null == processor) continue;
 
+            /*
+            Ensure we are in the expected stage for the processor, as different processors may wish to act on different
+            stages of the event construction for the same parameter annotation.
+            */
             EventStage targetStage = processor.targetStage();
             if (targetStage != stage) continue;
             argument = processor.process(argument, annotation, event, parameter, this);
@@ -177,10 +225,16 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
     }
 
     private boolean filtersMatch(Event event) {
+        /*
+        If a event is Filterable and has one or more Filter annotations, we test for these filters to decide whether
+        or not we can invoke this method. These filters act on the given filter and event, and unlike paramater
+        annotation processors do not have access to the InvokeWrapper, Method or listener objects.
+        */
         if (event instanceof Filterable) {
             if (this.method.isAnnotationPresent(Filter.class)) {
                 Filter filter = this.method.getAnnotation(Filter.class);
                 return this.testFilter(filter, (Filterable) event);
+
             } else if (this.method.isAnnotationPresent(Filters.class)) {
                 Filters filters = this.method.getAnnotation(Filters.class);
                 for (Filter filter : filters.value()) {

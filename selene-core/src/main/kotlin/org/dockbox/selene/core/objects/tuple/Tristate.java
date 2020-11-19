@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.core.objects.tuple;
 
+/**
+ Represents a state which can be either true, false, or undefined.
+ */
 public enum Tristate {
     TRUE, FALSE, UNDEFINED
 }

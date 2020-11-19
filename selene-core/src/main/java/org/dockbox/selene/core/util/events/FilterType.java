@@ -17,6 +17,10 @@
 
 package org.dockbox.selene.core.util.events;
 
+
+/**
+ A low level type used to test if a value matches a rule applied to a expected value.
+ */
 @FunctionalInterface
 public interface FilterType {
     boolean test(Object expected, Object actual);

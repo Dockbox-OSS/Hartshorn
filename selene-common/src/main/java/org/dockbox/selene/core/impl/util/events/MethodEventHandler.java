@@ -26,7 +26,9 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
- * Invokes a {@link Method} to dispatch an event.
+ * Invokes a {@link Method} to dispatch an event. This type is a modified version of WorldEdit's
+ * {@link com.sk89q.worldedit.util.eventbus.MethodEventHandler} so it handles exceptions appropriately according to
+ * Selene conventions.
  */
 public class MethodEventHandler extends EventHandler {
 

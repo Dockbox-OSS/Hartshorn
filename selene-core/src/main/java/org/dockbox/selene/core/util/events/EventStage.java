@@ -17,6 +17,10 @@
 
 package org.dockbox.selene.core.util.events;
 
+/**
+ The stages in which event arguments are constructed, processed, and filtered. These are typically used in
+ {@link AbstractEventParamProcessor}s to indicate when the processor should be active.
+ */
 public enum EventStage {
-    EARLY, NORMAL, LATE
+    POPULATE, PROCESS, FILTER
 }

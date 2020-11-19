@@ -21,6 +21,13 @@ import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
 import org.dockbox.selene.core.objects.targets.MessageReceiver
 import org.dockbox.selene.core.text.Text
 
+/**
+ * The event fired when Selene is about to send a message to any [MessageReceiver].
+ *
+ * @property message The message
+ *
+ * @param target The target message receiver
+ */
 class SendMessageEvent(
         target: MessageReceiver,
         val message: Text

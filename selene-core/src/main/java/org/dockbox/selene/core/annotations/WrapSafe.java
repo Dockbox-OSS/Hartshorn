@@ -17,11 +17,16 @@
 
 package org.dockbox.selene.core.annotations;
 
+import org.dockbox.selene.core.objects.optional.Exceptional;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ Wraps the parameter in a {@link Exceptional} instance, unless the parameter is the event.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface WrapSafe {

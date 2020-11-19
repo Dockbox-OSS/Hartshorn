@@ -22,8 +22,26 @@ import org.dockbox.selene.core.events.AbstractTargetEvent
 import org.dockbox.selene.core.objects.targets.CommandSource
 import org.dockbox.selene.core.objects.user.Player
 
+/**
+ * The abstract type which can be used to listen to all player warning related events.
+ *
+ * @property reason The reason of the warning
+ * @property source The [CommandSource] executing the warning
+ *
+ * @param player The target player being warned
+ */
 abstract class WarnEvent(player: Player, val reason: String, val source: CommandSource) : AbstractTargetEvent(player) {
 
+    /**
+     * The event fired when a player is warned
+     *
+     * @property creation
+     * @constructor
+     *
+     * @param player The target player being warned
+     * @param reason The reason of the warning
+     * @param source The [CommandSource] executing the warning
+     */
     class PlayerWarnedEvent(
             player: Player,
             reason: String,
@@ -31,6 +49,16 @@ abstract class WarnEvent(player: Player, val reason: String, val source: Command
             val creation: LocalDateTime
     ) : WarnEvent(player, reason, source)
 
+    /**
+     * The event fired when a warning expires. This can be either a automatic expiration based on a time constraint, or
+     * it being deleted by another [CommandSource].
+     *
+     * @constructor
+     *
+     * @param player The target player being warned
+     * @param reason The reason of the warning
+     * @param source The [CommandSource] executing the warning
+     */
     class PlayerWarningExpired(
             player: Player,
             reason: String,
