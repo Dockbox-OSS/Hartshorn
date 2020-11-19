@@ -38,8 +38,9 @@ public class MethodEventHandler extends EventHandler {
     /**
      * Create a new event handler.
      *
-     * @param priority the priority
-     * @param method the method
+     * @param priority The priority at which the handler should be executed
+     * @param object The listener object in which the method is invoked
+     * @param method The method which is invoked
      */
     public MethodEventHandler(Priority priority, Object object, Method method) {
         super(priority);

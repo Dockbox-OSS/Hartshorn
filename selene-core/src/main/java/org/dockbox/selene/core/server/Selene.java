@@ -210,6 +210,10 @@ public abstract class Selene {
      The type parameter for the instance to return
      @param type
      The type of the instance
+     @param extension
+     The type of the extension if extension specific bindings are to be used
+     @param additionalProperties
+     The properties to be passed into the type either during or after construction
 
      @return The instance, if present. Otherwise returns null
      */
@@ -366,6 +370,8 @@ public abstract class Selene {
     /**
      Prints information about registered instances. This includes injection bindings, extensions, and event handlers.
      This method is typically only used when starting the server.
+
+     @param event The server event indicating the server started
      */
     @Listener
     protected void debugRegisteredInstances(ServerStartedEvent event) {

@@ -61,6 +61,8 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
      * Create a new object mapper of a given type
      *
      * @param clazz The type this object mapper will work with
+     * @param constructor The constructor which is to be used when constructing types
+     * @param commentProcessor The comment processor
      * @throws ObjectMappingException if the provided class is in someway invalid
      */
     public NeutrinoObjectMapper(Class<T> clazz,
