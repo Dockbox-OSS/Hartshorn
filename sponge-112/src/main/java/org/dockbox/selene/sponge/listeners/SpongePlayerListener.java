@@ -24,6 +24,7 @@ import org.dockbox.selene.core.events.moderation.BanEvent.NameBannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.NameUnbannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.PlayerBannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.PlayerUnbannedEvent;
+import org.dockbox.selene.core.events.moderation.KickEvent;
 import org.dockbox.selene.core.events.moderation.NoteEvent;
 import org.dockbox.selene.core.events.moderation.WarnEvent;
 import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerAuthEvent;
@@ -45,6 +46,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
+import org.spongepowered.api.event.entity.living.humanoid.player.KickPlayerEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.message.MessageChannelEvent;
@@ -293,6 +295,17 @@ public class SpongePlayerListener {
     ) {
         // TODO GuusLieben, MultiChat replaces this event. Look into Bungee hooking if possible
     }
+
+    @Listener
+    public void onPlayerKicked(KickPlayerEvent event,
+                               @Getter("getTargetEntity") Player player,
+                               @Getter("getSource") Object source
+    ) {
+        this.postIfCommandSource(source, convertedSource -> {
+            new KickEvent(SpongeConversionUtil.fromSponge(player), Exceptional.empty()).post();
+        });
+    }
+
 
     private void logUnsupportedCancel(Cancellable event) {
         Selene.log().warn("Attempted to cancel event of type '" + event.getClass().getSimpleName() + "', but this is not supported on this platform!");
