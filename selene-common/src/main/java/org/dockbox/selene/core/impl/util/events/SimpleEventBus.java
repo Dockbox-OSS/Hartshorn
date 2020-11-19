@@ -20,6 +20,7 @@ package org.dockbox.selene.core.impl.util.events;
 import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.annotations.Listener;
+import org.dockbox.selene.core.impl.util.events.processors.DefaultParamProcessors;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.events.AbstractEventParamProcessor;
@@ -151,6 +152,12 @@ public class SimpleEventBus implements EventBus {
     @Nullable
     @Override
     public <T extends Annotation> AbstractEventParamProcessor<T> getParameterProcessor(@NotNull Class<T> annotation) {
+        if (SimpleEventBus.parameterProcessors.isEmpty()) {
+            for (DefaultParamProcessors processor : DefaultParamProcessors.values()) {
+                this.registerProcessor(processor.getProcessor());
+            }
+        }
+
         return (AbstractEventParamProcessor<T>) SimpleEventBus.parameterProcessors.getOrDefault(annotation, null);
     }
 }
