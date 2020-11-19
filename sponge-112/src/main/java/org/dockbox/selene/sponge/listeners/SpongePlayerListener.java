@@ -272,12 +272,18 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onWarnExpired(NucleusWarnEvent.Expired event,
+    public void onWarnExpired(NucleusWarnEvent.Expired warnEvent,
                               @Getter("getTargetUser") User user,
                               @Getter("getReason") String reason,
                               @Getter("getSource") Object source
     ) {
-        // TODO GuusLieben, implement
+        this.postIfCommandSource(source, convertedSource -> {
+            new WarnEvent.PlayerWarningExpired(
+                    SpongeConversionUtil.fromSponge(user),
+                    reason,
+                    convertedSource
+            ).post();
+        });
     }
 
     @Listener
