@@ -17,18 +17,114 @@
 
 package org.dockbox.selene.core.impl.util.events.processors;
 
+import org.dockbox.selene.core.annotations.Getter;
+import org.dockbox.selene.core.annotations.Provided;
+import org.dockbox.selene.core.annotations.SkipIf;
+import org.dockbox.selene.core.annotations.UnwrapOrSkip;
+import org.dockbox.selene.core.annotations.WrapSafe;
+import org.dockbox.selene.core.exceptions.SkipEventException;
+import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.events.AbstractEventParamProcessor;
+import org.dockbox.selene.core.util.events.EventStage;
+import org.dockbox.selene.core.util.events.IWrapper;
+import org.dockbox.selene.core.util.extension.Extension;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Parameter;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public enum DefaultParamProcessors {
-    GETTER(GetterProcessor::new),
-    PROVIDED(ProvidedProcessor::new),
-    SKIP_IF(SkipIfProcessor::new),
-    WRAP_SAFE(WrapSafeProcessor::new),
-    UNWRAP_OR_SKIP(UnwrapOrSkipProcessor::new);
+    GETTER(Getter.class, EventStage.EARLY, (object, annotation, event, parameter, wrapper) -> {
+        if (null != object && !annotation.overrideExisting()) return object;
+
+        AtomicReference<Object> arg = new AtomicReference<>(null);
+        SeleneUtils.getMethodValue(event, annotation.value(), parameter.getType())
+                .ifPresent(arg::set);
+        return arg.get();
+    }),
+
+    PROVIDED(Provided.class, EventStage.EARLY, (object, annotation, event, parameter, wrapper) -> {
+        if (null != object && !annotation.overrideExisting()) return object;
+
+        Class<?> extensionClass = parameter.getType();
+        if (Void.class != annotation.value() && annotation.value().isAnnotationPresent(Extension.class)) {
+            extensionClass = annotation.value();
+        } else if (wrapper.getListener().getClass().isAnnotationPresent(Extension.class)) {
+            extensionClass = wrapper.getListener().getClass();
+        }
+        return Selene.getInstance(parameter.getType(), extensionClass);
+    }),
+
+    SKIP_IF(SkipIf.class, EventStage.LATE, (object, annotation, event, parameter, wrapper) -> {
+        switch (annotation.value()) {
+            case NULL:
+                if (null == object) throw new SkipEventException();
+                break;
+            case EMPTY:
+                if (SeleneUtils.isEmpty(object)) throw new SkipEventException();
+                break;
+            case ZERO:
+                if (object instanceof Number && 0 == ((Number) object).floatValue())
+                    throw new SkipEventException();
+                break;
+        }
+        return object;
+    }),
+
+    WRAP_SAFE(WrapSafe.class, EventStage.LATE, (object, annotation, event, parameter, wrapper) -> {
+        if (parameter.getType().isAssignableFrom(event.getClass())) {
+            Selene.log().warn("Event parameter cannot be wrapped");
+            return object;
+        }
+        if (object instanceof Exceptional<?>) return object;
+        if (object instanceof Optional<?>) return Exceptional.ofOptional((Optional<?>) object);
+
+        return Exceptional.ofNullable(object);
+    }),
+
+    UNWRAP_OR_SKIP(UnwrapOrSkip.class, EventStage.LATE, (object, annotation, event, parameter, wrapper) -> {
+        if (object instanceof Exceptional<?>) {
+            if (((Exceptional<?>) object).isPresent()) return ((Exceptional<?>) object).get();
+            else throw new SkipEventException();
+
+        } else if (object instanceof Optional<?>) {
+            if (((Optional<?>) object).isPresent()) return ((Optional<?>) object).get();
+            else throw new SkipEventException();
+
+        } else return object; // Already unwrapped
+    });
 
     private final Supplier<AbstractEventParamProcessor<?>> processorSupplier;
+
+    <A extends Annotation> DefaultParamProcessors(Class<A> annotationClass, AbstractEnumEventParamProcessor<A> processor) {
+        this(annotationClass, null, processor);
+    }
+
+    <A extends Annotation> DefaultParamProcessors(Class<A> annotationClass, EventStage stage, AbstractEnumEventParamProcessor<A> processor) {
+        this.processorSupplier = () -> new AbstractEventParamProcessor<A>() {
+            @Override
+            public @NotNull Class<A> getAnnotationClass() {
+                return annotationClass;
+            }
+
+            @Override
+            public @NotNull EventStage targetStage() {
+                return null == stage ? super.targetStage() : stage;
+            }
+
+            @Override
+            public @Nullable Object process(Object object, A annotation, Event event, Parameter parameter, IWrapper wrapper) throws SkipEventException {
+                return processor.process(object, annotation, event, parameter, wrapper);
+            }
+        };
+    }
 
     DefaultParamProcessors(Supplier<AbstractEventParamProcessor<?>> processorSupplier) {
         this.processorSupplier = processorSupplier;
@@ -36,5 +132,10 @@ public enum DefaultParamProcessors {
 
     public AbstractEventParamProcessor<?> getProcessor() {
         return this.processorSupplier.get();
+    }
+
+    @FunctionalInterface
+    private interface AbstractEnumEventParamProcessor<A extends Annotation> {
+        Object process(Object object, A annotation, Event event, Parameter parameter, IWrapper wrapper) throws SkipEventException;
     }
 }
