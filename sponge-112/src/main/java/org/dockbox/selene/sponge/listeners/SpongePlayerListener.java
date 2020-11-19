@@ -123,7 +123,7 @@ public class SpongePlayerListener {
                              @Getter("getMessage") Text message) {
         Cancellable event = new SendChatEvent(
                 SpongeConversionUtil.fromSponge(player),
-                SpongeConversionUtil.fromSponge(chatEvent.getMessage())
+                SpongeConversionUtil.fromSponge(message)
         ).post();
         chatEvent.setCancelled(event.isCancelled());
     }
