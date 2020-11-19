@@ -147,17 +147,20 @@ public class SimpleEventBus implements EventBus {
     }
 
     @Override
-    public void registerProcessor(@NotNull AbstractEventParamProcessor<?> processor, EventStage stage) {
-        parameterProcessors.putIfAbsent(processor.getAnnotationClass(), new HashMap<>());
-        parameterProcessors.get(processor.getAnnotationClass()).put(stage, processor);
+    public void registerProcessors(@NotNull AbstractEventParamProcessor<?> @NotNull ... processors) {
+        for (AbstractEventParamProcessor<?> processor : processors) {
+            parameterProcessors.putIfAbsent(processor.getAnnotationClass(), new HashMap<>());
+            parameterProcessors.get(processor.getAnnotationClass()).put(processor.targetStage(), processor);
+        }
     }
+
 
     @Nullable
     @Override
     public <T extends Annotation> AbstractEventParamProcessor<T> getParameterProcessor(@NotNull Class<T> annotation, EventStage stage) {
         if (SimpleEventBus.parameterProcessors.isEmpty()) {
             for (DefaultParamProcessors processor : DefaultParamProcessors.values()) {
-                this.registerProcessor(processor.getProcessor(), processor.getStage());
+                this.registerProcessors(processor.getProcessor());
             }
         }
 

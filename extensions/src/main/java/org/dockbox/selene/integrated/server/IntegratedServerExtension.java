@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated;
+package org.dockbox.selene.integrated.server;
 
 import org.dockbox.selene.core.annotations.Command;
 import org.dockbox.selene.core.command.CommandBus;
@@ -133,7 +133,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
             }
 
             Extension e = oarg.get().getValue();
-            Exceptional<?> oi = Exceptional.ofOptional(Selene.getInstance(ExtensionManager.class).getInstance(e.id()));
+            Exceptional<?> oi = Exceptional.of(Selene.getInstance(ExtensionManager.class).getInstance(e.id()));
 
             oi.ifPresent(o -> {
                 eb.post(new ServerReloadEvent(), o.getClass());
@@ -156,7 +156,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
 
         // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
         // argument here is just a confirmation that the source is correct.
-        Exceptional.ofOptional(ouuid)
+        Exceptional.of(ouuid)
                 .ifPresent(uuid -> {
                     if (((Identifiable<?>) src).getUniqueId().equals(uuid))
                         super.getInstance(CommandBus.class).confirmLastCommand(uuid);

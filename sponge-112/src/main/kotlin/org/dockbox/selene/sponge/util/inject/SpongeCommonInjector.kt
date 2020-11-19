@@ -39,7 +39,7 @@ import org.dockbox.selene.core.util.player.PlayerStorageService
 import org.dockbox.selene.core.util.text.BroadcastService
 import org.dockbox.selene.core.util.threads.ThreadUtils
 import org.dockbox.selene.core.util.world.WorldStorageService
-import org.dockbox.selene.integrated.IntegratedServerExtension
+import org.dockbox.selene.integrated.server.IntegratedServerExtension
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus
 import org.dockbox.selene.sponge.util.construct.SpongeConstructionUtil
 import org.dockbox.selene.sponge.util.discord.SpongeDiscordUtils

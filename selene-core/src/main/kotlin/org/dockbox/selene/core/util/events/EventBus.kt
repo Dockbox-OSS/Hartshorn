@@ -29,7 +29,7 @@ interface EventBus {
     fun post(event: Event)
     fun getHandlerRegistry(): IHandlerRegistry
     fun getListenerToInvokers(): Map<Any, Set<IWrapper>>
-    fun registerProcessor(processor: AbstractEventParamProcessor<*>, stage: EventStage)
+    fun registerProcessors(vararg processors: AbstractEventParamProcessor<*>)
     fun <T : Annotation> getParameterProcessor(annotation: Class<T>, stage: EventStage): AbstractEventParamProcessor<T>?
 
 }
