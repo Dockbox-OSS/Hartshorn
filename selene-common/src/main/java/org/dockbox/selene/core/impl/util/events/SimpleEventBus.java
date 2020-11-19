@@ -22,10 +22,13 @@ import com.google.inject.Singleton;
 import org.dockbox.selene.core.annotations.Listener;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.events.AbstractEventParamProcessor;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.events.IWrapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -40,6 +43,8 @@ public class SimpleEventBus implements EventBus {
     protected static final Map<Object, Set<IWrapper>> listenerToInvokers = new HashMap<>();
 
     protected static final HandlerRegistry handlerRegistry = new HandlerRegistry();
+
+    protected static final Map<Class<? extends Annotation>, AbstractEventParamProcessor<?>> parameterProcessors = new HashMap<>();
 
     protected static Lookup defaultLookup = AccessHelper.defaultLookup();
 
@@ -75,7 +80,7 @@ public class SimpleEventBus implements EventBus {
 
     @Override
     public void subscribe(@NotNull Object object) throws IllegalArgumentException, SecurityException {
-        subscribe(object, defaultLookup);
+        this.subscribe(object, defaultLookup);
     }
 
     @Override
@@ -136,5 +141,16 @@ public class SimpleEventBus implements EventBus {
                 throw new IllegalArgumentException("Parameter must be a subclass of the Event class: " + method.toGenericString());
             }
         }
+    }
+
+    @Override
+    public void registerProcessor(@NotNull AbstractEventParamProcessor<?> processor) {
+        SimpleEventBus.parameterProcessors.putIfAbsent(processor.getAnnotationClass(), processor);
+    }
+
+    @Nullable
+    @Override
+    public <T extends Annotation> AbstractEventParamProcessor<T> getParameterProcessor(@NotNull Class<T> annotation) {
+        return (AbstractEventParamProcessor<T>) SimpleEventBus.parameterProcessors.getOrDefault(annotation, null);
     }
 }
