@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.integrated.data.table;
 
+import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.annotations.Identifier;
 import org.dockbox.selene.integrated.data.table.annotations.Ignore;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
@@ -141,6 +143,7 @@ public class Table {
      * @param <T> Indicates the data type of the column
      * @return Return the merged table
      */
+    // TODO, several merge methods (e.g. keepAll, keepColumns(A, B), [ preferOriginal, preferOther (when reaching column identifiers which are the same but may have different values) ]
     public <T> Collection<TableRow> merge(@NotNull Table otherTable, ColumnIdentifier<T> column) {
         if (this.hasColumn(column) && otherTable.hasColumn(column)) {
             Collection<TableRow> mergedRows = new ArrayList<>();
@@ -249,8 +252,13 @@ public class Table {
         return null;
     }
 
-    // TODO : Contains      Search through the rows and see if the table contains a certain row
-    // TODO : OrderBy       Order the rows by a certain column
-    // TODO, several merge methods (e.g. keepAll, keepColumns(A, B), [ preferOriginal, preferOther (when reaching column identifiers which are the same but may have different values) ]
+    public boolean hasRow(TableRow row) {
+        for (TableRow tableRow : this.getRows()) {
+            if (tableRow == row) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
