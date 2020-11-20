@@ -184,6 +184,7 @@ public class Table {
                     tmpRow.addValue(column, row.getValue(column).get());
                 });
             }
+            table.addRow(tmpRow);
         });
 
         return table;
