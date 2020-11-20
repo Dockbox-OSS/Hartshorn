@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.integrated.data.table;
 
+import org.dockbox.selene.integrated.data.table.behavior.Merge;
+import org.dockbox.selene.integrated.data.table.behavior.Order;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
 import org.dockbox.selene.integrated.data.table.identifiers.TestColumnIdentifiers;
 import org.dockbox.selene.integrated.data.table.objects.IdentifiedUser;
@@ -25,15 +27,15 @@ import org.dockbox.selene.integrated.data.table.objects.WronglyIdentifiedUser;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TableTest {
+public class TableTests {
 
-    private Table getTable() {
+    private Table createTestTable() {
         return new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME);
     }
 
     @Test
     public void testSelectColumnOfTable() {
-        Table table = this.getTable();
+        Table table = this.createTestTable();
         table.addRow(new IdentifiedUser(1, "coulis"));
 
         ColumnIdentifier<?>[] expectedColumns = {TestColumnIdentifiers.NAME};
@@ -48,7 +50,7 @@ public class TableTest {
 
     @Test
     public void testWorkingIdentifiedFields() {
-        Table table = this.getTable();
+        Table table = this.createTestTable();
         table.addRow(new IdentifiedUser(1, "coulis"));
 
         Assert.assertEquals(1, table.getRows().size());
@@ -58,19 +60,19 @@ public class TableTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testWronglyIdentifiedFields() {
-        Table table = this.getTable();
+        Table table = this.createTestTable();
         table.addRow(new WronglyIdentifiedUser(1, "coulis"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testThrowsExceptionOnTypeMismatch() {
-        Table table = this.getTable();
+        Table table = this.createTestTable();
         table.addRow("3", 1);
     }
 
     @Test
     public void testAcceptsTypeFields() {
-        Table table = this.getTable();
+        Table table = this.createTestTable();
         table.addRow(new User(1, "pumbas600"));
 
         Assert.assertEquals(1, table.getRows().size());
@@ -90,7 +92,7 @@ public class TableTest {
 
     @Test
     public void testAcceptsValidVarargs() {
-        Table table = this.getTable();
+        Table table = this.createTestTable();
         table.addRow(2, "Diggy");
 
         Assert.assertEquals(1, table.getRows().size());
@@ -100,38 +102,38 @@ public class TableTest {
 
     @Test
     public void testOrderByDesc() {
-        Table table = this.getTable();
+        Table table = this.createTestTable();
         table.addRow(2, "Diggy");
         table.addRow(3, "pumbas600");
         table.addRow(1, "coulis");
 
-        table.orderBy(TestColumnIdentifiers.NUMERAL_ID, Orders.DESC); // Expected: 3, 2, 1
+        table.orderBy(TestColumnIdentifiers.NUMERAL_ID, Order.DESC); // Expected: 3, 2, 1
         Assert.assertSame(3, table.first().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
         Assert.assertSame(1, table.last().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
     }
 
     @Test
     public void testOrderByAsc() {
-        Table table = this.getTable();
+        Table table = this.createTestTable();
         table.addRow(2, "Diggy");
         table.addRow(3, "pumbas600");
         table.addRow(1, "coulis");
 
-        table.orderBy(TestColumnIdentifiers.NUMERAL_ID, Orders.ASC); // Expected: 1, 2, 3
+        table.orderBy(TestColumnIdentifiers.NUMERAL_ID, Order.ASC); // Expected: 1, 2, 3
         Assert.assertSame(1, table.first().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
         Assert.assertSame(3, table.last().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testOrderByDoesNotAcceptInvalidColumn() {
-        Table table = this.getTable();
+        Table table = this.createTestTable();
         table.addRow(2, "Diggy");
-        table.orderBy(TestColumnIdentifiers.UUID, Orders.ASC);
+        table.orderBy(TestColumnIdentifiers.UUID, Order.ASC);
     }
 
     @Test
     public void testWhere() {
-        Table table = this.getTable();
+        Table table = this.createTestTable();
         table.addRow(2, "Diggy");
         table.addRow(3, "pumbas600");
         table.addRow(1, "coulis");
@@ -140,5 +142,20 @@ public class TableTest {
         Assert.assertEquals(1, where.getRows().size());
     }
 
-    // TODO, Where and merge tests (also see TODO's in Table for Merge/where methods)
+    @Test
+    public void testJoinPreferOriginal() {
+        Table original = this.createTestTable();
+        original.addRow(1, "coulis");
+        original.addRow(2, "NotDiggy");
+
+        Table other = this.createTestTable();
+        other.addRow(2, "Diggy");
+        other.addRow(3, "pumbas600");
+
+        Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_ORIGINAL);
+        Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 2);
+        Assert.assertEquals(3, joined.getRows().size());
+        Assert.assertEquals("NotDiggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
+    }
+
 }
