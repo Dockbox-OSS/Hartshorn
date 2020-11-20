@@ -97,5 +97,29 @@ public class TableTest {
         Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME).get(), "Diggy");
     }
 
+    @Test
+    public void testOrderByDesc() {
+        Table table = this.getTable();
+        table.addRow(2, "Diggy");
+        table.addRow(3, "pumbas600");
+        table.addRow(1, "coulis");
+
+        table.orderBy(TestColumnIdentifiers.NUMERAL_ID, Orders.DESC); // Expected: 3, 2, 1
+        Assert.assertSame(3, table.first().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
+        Assert.assertSame(1, table.last().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
+    }
+
+    @Test
+    public void testOrderByAsc() {
+        Table table = this.getTable();
+        table.addRow(2, "Diggy");
+        table.addRow(3, "pumbas600");
+        table.addRow(1, "coulis");
+
+        table.orderBy(TestColumnIdentifiers.NUMERAL_ID, Orders.ASC); // Expected: 1, 2, 3
+        Assert.assertSame(1, table.first().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
+        Assert.assertSame(3, table.last().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
+    }
+
     // TODO, Where and merge tests (also see TODO's in Table for Merge/where methods)
 }
