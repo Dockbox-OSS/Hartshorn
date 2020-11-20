@@ -54,9 +54,9 @@ public class Table {
         // Check if the row has the same columns with the same order
         int index = 0;
         for (ColumnIdentifier<?> column : row.getColumns()) {
-            ColumnIdentifier<?> tableColumn = this.identifiers[index];
-            if (column != tableColumn)
-                throw new IllegalArgumentException("Column '" + column.getColumnName() + "' did not match expected type '" + tableColumn.getColumnName() + "'");
+            if (!this.hasColumn(column)) {
+                throw new IllegalArgumentException("Column '" + column.getColumnName() + "' is not contained in table");
+            }
         }
 
         this.rows.add(row);
@@ -121,14 +121,15 @@ public class Table {
      * @param <T> Indicates the class that both the Identifier and the Filter must have
      * @return Returns the new table with the filter applied
      */
-    public <T> Table where(ColumnIdentifier<? extends ColumnIdentifier<T>> column, T filter) {
+    public <T> Table where(ColumnIdentifier<T> column, T filter) {
         if (!this.hasColumn(column))
             throw new IllegalArgumentException("Cannot look up a column that does not exist");
 
         Collection<TableRow> filteredRows = new ArrayList<>();
         for (TableRow row : this.rows) {
-            Object value = row.getValue(column);
-            if (value == filter || value.equals(filter)) {
+            Exceptional<T> value = row.getValue(column);
+            if (!value.isPresent()) continue;
+            if (value.get() == filter || value.get().equals(filter)) {
                 filteredRows.add(row);
             }
         }
