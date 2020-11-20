@@ -129,5 +129,16 @@ public class TableTest {
         table.orderBy(TestColumnIdentifiers.UUID, Orders.ASC);
     }
 
+    @Test
+    public void testWhere() {
+        Table table = this.getTable();
+        table.addRow(2, "Diggy");
+        table.addRow(3, "pumbas600");
+        table.addRow(1, "coulis");
+
+        Table where = table.where(TestColumnIdentifiers.NUMERAL_ID, 1);
+        Assert.assertEquals(1, where.getRows().size());
+    }
+
     // TODO, Where and merge tests (also see TODO's in Table for Merge/where methods)
 }
