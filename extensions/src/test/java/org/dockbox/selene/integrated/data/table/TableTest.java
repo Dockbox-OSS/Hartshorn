@@ -43,7 +43,7 @@ public class TableTest {
         // Check if table's identifiers have been removed properly
         Assert.assertArrayEquals(expectedColumns, selectedTable.getIdentifiers());
         // Check if table rows' columns have been removed properly
-        Assert.assertEquals(1, this.getTable().getRows().get(0).getColumns().size());
+        Assert.assertEquals(1, selectedTable.getRows().get(0).getColumns().size());
     }
 
     @Test
