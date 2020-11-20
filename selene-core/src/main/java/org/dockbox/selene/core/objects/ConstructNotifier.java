@@ -18,6 +18,7 @@
 package org.dockbox.selene.core.objects;
 
 import org.dockbox.selene.core.events.object.ObjectConstructedEvent;
+import org.dockbox.selene.core.server.Selene;
 
 /**
  A low level type which automatically fires {@link ObjectConstructedEvent} in the first step of the constructor.
@@ -28,6 +29,7 @@ import org.dockbox.selene.core.events.object.ObjectConstructedEvent;
 public abstract class ConstructNotifier<T extends ConstructNotifier> {
 
     protected ConstructNotifier(Class<T> type) {
-        new ObjectConstructedEvent<>(type, (T) this).post();
+        if (null != Selene.getServer())
+            new ObjectConstructedEvent<>(type, (T) this).post();
     }
 }

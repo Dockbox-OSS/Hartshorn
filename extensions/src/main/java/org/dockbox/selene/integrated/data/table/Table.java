@@ -177,7 +177,7 @@ public class Table {
             TableRow tmpRow = new TableRow();
             for (ColumnIdentifier<?> column : columns) {
                 row.getColumns().stream().filter(column::equals).forEach(tCol -> {
-                    tmpRow.addValue(column, row.getValue(column));
+                    tmpRow.addValue(column, row.getValue(column).get());
                 });
             }
         });

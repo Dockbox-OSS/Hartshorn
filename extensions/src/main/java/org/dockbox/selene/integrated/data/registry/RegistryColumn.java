@@ -124,7 +124,7 @@ public class RegistryColumn<T> extends ArrayList<T> {
      * @return An {@link Exceptional} containing the element at the provided index in the RegistryColumn, if one is found.
      */
     public Exceptional<T> getSafely(int index) {
-        return Exceptional.ofSupplier(() -> super.get(index));
+        return Exceptional.of(() -> super.get(index));
     }
 
     /**
