@@ -21,6 +21,7 @@ import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
 import org.dockbox.selene.integrated.data.table.identifiers.TestColumnIdentifiers;
 import org.dockbox.selene.integrated.data.table.objects.IdentifiedUser;
 import org.dockbox.selene.integrated.data.table.objects.User;
+import org.dockbox.selene.integrated.data.table.objects.WronglyIdentifiedUser;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,14 +36,14 @@ public class TableTest {
         Table table = this.getTable();
         table.addRow(new IdentifiedUser(1, "coulis"));
 
-        ColumnIdentifier<?>[] supposedColumns = {TestColumnIdentifiers.NAME};
+        ColumnIdentifier<?>[] expectedColumns = {TestColumnIdentifiers.NAME};
 
         Table selectedTable = table.select(TestColumnIdentifiers.NAME);
 
         // Check if table's identifiers have been removed properly
-        Assert.assertArrayEquals(selectedTable.getIdentifiers(), supposedColumns);
+        Assert.assertArrayEquals(expectedColumns, selectedTable.getIdentifiers());
         // Check if table rows' columns have been removed properly
-        Assert.assertEquals(this.getTable().getRows().get(0).getColumns().size(), 1);
+        Assert.assertEquals(1, this.getTable().getRows().get(0).getColumns().size());
     }
 
     @Test
@@ -52,18 +53,18 @@ public class TableTest {
 
         Assert.assertEquals(1, table.getRows().size());
         TableRow row = table.getRows().get(0);
-        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME).get(), "coulis");
+        Assert.assertEquals("coulis", row.getValue(TestColumnIdentifiers.NAME).get());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testWronglyIdentifiedFields() {
         Table table = this.getTable();
-        table.addRow(new IdentifiedUser(1, "coulis"));
+        table.addRow(new WronglyIdentifiedUser(1, "coulis"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testThrowsExceptionOnTypeMismatch() {
-        Table table = getTable();
+        Table table = this.getTable();
         table.addRow("3", 1);
     }
 
@@ -74,7 +75,7 @@ public class TableTest {
 
         Assert.assertEquals(1, table.getRows().size());
         TableRow row = table.getRows().get(0);
-        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME).get(), "pumbas600");
+        Assert.assertEquals("pumbas600", row.getValue(TestColumnIdentifiers.NAME).get());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -84,7 +85,7 @@ public class TableTest {
 
         Assert.assertEquals(1, table.getRows().size());
         TableRow row = table.getRows().get(0);
-        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME).get(), "pumbas600");
+        Assert.assertEquals("pumbas600", row.getValue(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
@@ -94,7 +95,7 @@ public class TableTest {
 
         Assert.assertEquals(1, table.getRows().size());
         TableRow row = table.getRows().get(0);
-        Assert.assertEquals(row.getValue(TestColumnIdentifiers.NAME).get(), "Diggy");
+        Assert.assertEquals("Diggy", row.getValue(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
