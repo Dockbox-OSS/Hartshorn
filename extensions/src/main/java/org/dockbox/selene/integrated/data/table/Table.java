@@ -77,7 +77,7 @@ public class Table {
                         columnIdentifier = this.getIdentifier(identifier.value());
 
                     // If no Identifier annotation was present, try to grab it using the field name
-                    if (null != columnIdentifier)
+                    if (null == columnIdentifier)
                         columnIdentifier = this.getIdentifier(field.getName());
 
                     // No column identifier was found
