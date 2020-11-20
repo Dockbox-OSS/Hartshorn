@@ -15,14 +15,14 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.table;
+package org.dockbox.selene.integrated.data.table.behavior;
 
-public enum Orders {
+public enum Order {
     ASC(1), DESC(-1);
 
     private final int order;
 
-    Orders(int order) {
+    Order(int order) {
         this.order = order;
     }
 

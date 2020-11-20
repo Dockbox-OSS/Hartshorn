@@ -21,6 +21,8 @@ import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.annotations.Identifier;
 import org.dockbox.selene.integrated.data.table.annotations.Ignore;
+import org.dockbox.selene.integrated.data.table.behavior.Merge;
+import org.dockbox.selene.integrated.data.table.behavior.Order;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -139,40 +142,90 @@ public class Table {
     }
 
     /**
-     * @param otherTable Indicates the second table to merge with
-     * @param column Indicates the column of the second table to merge to the first table
-     * @param <T> Indicates the data type of the column
-     * @return Return the merged table
+     @param otherTable
+     Indicates the second table to merge with
+     @param column
+     Indicates the column of the second table to merge to the first table
+     @param <T>
+     Indicates the data type of the column
+
+     @return Return the merged table
      */
-    // TODO, several merge methods (e.g. keepAll, keepColumns(A, B), [ preferOriginal, preferOther (when reaching column identifiers which are the same but may have different values) ]
-    public <T> Collection<TableRow> merge(@NotNull Table otherTable, ColumnIdentifier<T> column) {
+    public <T> Table join(@NotNull Table otherTable, ColumnIdentifier<T> column, Merge merge) {
         if (this.hasColumn(column) && otherTable.hasColumn(column)) {
-            Collection<TableRow> mergedRows = new ArrayList<>();
-            this.rows.forEach(row -> {
-                Object value = row.getValue(column);
-                TableRow mergedRow = new TableRow();
+            {
+                List<ColumnIdentifier<?>> mergedIdentifiers = new ArrayList<>();
+                for (ColumnIdentifier<?> identifier : SeleneUtils.addAll(this.getIdentifiers(), otherTable.getIdentifiers())) {
+                    if (mergedIdentifiers.contains(identifier)) continue;
+                    mergedIdentifiers.add(identifier);
+                }
 
-                row.getColumns().forEach((ColumnIdentifier c) -> row.addValue(c, row.getValue(c)));
+                Table joinedTable = new Table(mergedIdentifiers.toArray(new ColumnIdentifier<?>[0]));
+                for (TableRow row : this.getRows()) {
+                    try {
+                        List<TableRow> matchingRows = this.getMatchingRows(row, otherTable, column);
 
-                otherTable.rows.stream().filter(other_row -> {
-                    Object otherValue = other_row.getValue(column);
-                    return otherValue == value || otherValue.equals(value);
-                }).forEach(matchingRow -> matchingRow.getColumns()
-                    // This will override any other columns matching the same identifier
-                    .forEach((ColumnIdentifier c) -> mergedRow.addValue(c, matchingRow.getValue(c)))
-                );
+                        TableRow joinedRow = new TableRow();
+                        for (ColumnIdentifier<?> identifier : this.getIdentifiers()) {
+                            joinedRow.addValue(identifier, row.getValue(identifier).get());
+                        }
+                        for (ColumnIdentifier<?> identifier : otherTable.getIdentifiers()) {
+                            for (TableRow matchingRow : matchingRows) {
+                            /*
+                             If there is already a value present on this row, look up if we want to keep the existing,
+                             or use the new value.
+                             */
+                                if (!joinedRow.getValue(identifier).isPresent() || Merge.PREFER_ORIGINAL != merge) {
+                                    joinedRow.addValue(identifier, matchingRow.getValue(identifier).get());
+                                }
+                            }
+                        }
+                        joinedTable.addRow(joinedRow);
+                    } catch (IllegalArgumentException e) {
+                        continue;
+                    }
+                }
 
-                mergedRows.add(mergedRow);
-            });
+                /*
+                 It is possible not all foreign rows had a matching value, if that is the case we will add them here if
+                 possible (if the foreign table has no additional identifiers which we cannot populate here.
+                 */
+                for (TableRow row : otherTable.getRows()) {
+                    try {
+                        List<TableRow> matchingRows = this.getMatchingRows(row, this, column);
+                        if (matchingRows.isEmpty()) {
+                            if (!Arrays.equals(this.getIdentifiers(), otherTable.getIdentifiers())) {
+                                throw new IllegalArgumentException("Remaining rows were found in the foreign table, but identifiers are not equal. Cannot insert null values!");
+                            }
+                            joinedTable.addRow(row);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        continue;
+                    }
+                }
 
-            return mergedRows;
+                return joinedTable;
+            }
         }
         throw new IllegalArgumentException("Column '" + column + "' does not exist in both tables");
     }
 
+    private <T> List<TableRow> getMatchingRows(TableRow row, Table otherTable, ColumnIdentifier<T> column) {
+        Exceptional<?> exceptionalValue = row.getValue(column);
+        // No way to join on value if it is not present. Technically this should not be possible as a NPE
+        // is typically thrown if a null value is added to a row.
+        if (exceptionalValue.isAbsent())
+            throw new IllegalArgumentException("No value present for " + column.getColumnName());
+        T expectedValue = (T) exceptionalValue.get();
+
+        return otherTable.where(column, expectedValue).getRows();
+    }
+
     /**
-     * @param columns Indicates the columns to select
-     * @return Return the new table with only the selected columns
+     @param columns
+     Indicates the columns to select
+
+     @return Return the new table with only the selected columns
      */
     public Table select(ColumnIdentifier<?>... columns) {
         Table table = new Table(columns);
@@ -231,7 +284,7 @@ public class Table {
      @param order
      Indicates what way to order the table by
      */
-    public void orderBy(ColumnIdentifier<?> column, Orders order) {
+    public void orderBy(ColumnIdentifier<?> column, Order order) {
         if (!this.hasColumn(column))
             throw new IllegalArgumentException("Table does not contains column named : " + column.getColumnName());
 
@@ -241,7 +294,7 @@ public class Table {
         this.rows.sort((r1, r2) -> {
             Comparable c1 = (Comparable) r1.getValue(column).get();
             Comparable c2 = (Comparable) r2.getValue(column).get();
-            return Orders.ASC == order ? c1.compareTo(c2) : c2.compareTo(c1);
+            return Order.ASC == order ? c1.compareTo(c2) : c2.compareTo(c1);
         });
     }
 
