@@ -20,12 +20,17 @@ package org.dockbox.selene.integrated.data.table;
 import org.dockbox.selene.integrated.data.table.behavior.Merge;
 import org.dockbox.selene.integrated.data.table.behavior.Order;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
+import org.dockbox.selene.integrated.data.table.exceptions.EmptyEntryException;
+import org.dockbox.selene.integrated.data.table.exceptions.IdentifierMismatchException;
+import org.dockbox.selene.integrated.data.table.exceptions.UnknownIdentifierException;
 import org.dockbox.selene.integrated.data.table.identifiers.TestColumnIdentifiers;
 import org.dockbox.selene.integrated.data.table.objects.IdentifiedUser;
 import org.dockbox.selene.integrated.data.table.objects.User;
 import org.dockbox.selene.integrated.data.table.objects.WronglyIdentifiedUser;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.UUID;
 
 public class TableTests {
 
@@ -58,7 +63,7 @@ public class TableTests {
         Assert.assertEquals("coulis", row.getValue(TestColumnIdentifiers.NAME).get());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = UnknownIdentifierException.class)
     public void testWronglyIdentifiedFields() {
         Table table = this.createTestTable();
         table.addRow(new WronglyIdentifiedUser(1, "coulis"));
@@ -80,7 +85,7 @@ public class TableTests {
         Assert.assertEquals("pumbas600", row.getValue(TestColumnIdentifiers.NAME).get());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = UnknownIdentifierException.class)
     public void testThrowsExceptionOnMissingTypeField() {
         Table table = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME, TestColumnIdentifiers.UUID);
         table.addRow(new User(1, "pumbas600"));
@@ -143,7 +148,7 @@ public class TableTests {
     }
 
     @Test
-    public void testJoinPreferOriginal() {
+    public void testJoinPreferOriginal() throws EmptyEntryException, IdentifierMismatchException {
         Table original = this.createTestTable();
         original.addRow(1, "coulis");
         original.addRow(2, "NotDiggy");
@@ -158,4 +163,47 @@ public class TableTests {
         Assert.assertEquals("NotDiggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
     }
 
+    @Test
+    public void testJoinPreferForeign() throws EmptyEntryException, IdentifierMismatchException {
+        Table original = this.createTestTable();
+        original.addRow(1, "coulis");
+        original.addRow(2, "NotDiggy");
+
+        Table other = this.createTestTable();
+        other.addRow(2, "Diggy");
+        other.addRow(3, "pumbas600");
+
+        Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN);
+        Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 2);
+        Assert.assertEquals(3, joined.getRows().size());
+        Assert.assertEquals("Diggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
+    }
+
+    @Test(expected = EmptyEntryException.class)
+    public void testJoinThrowsExceptionOnEmptyEntry() throws EmptyEntryException, IdentifierMismatchException {
+        Table original = this.createTestTable();
+        original.addRow(1, "coulis");
+        original.addRow(2, "NotDiggy");
+
+        Table other = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME, TestColumnIdentifiers.UUID);
+        other.addRow(2, "Diggy", UUID.randomUUID());
+        other.addRow(3, "pumbas600", UUID.randomUUID());
+
+        Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, false);
+    }
+
+    @Test
+    public void testJoinPopulatesNullOnEmptyEntry() throws EmptyEntryException, IdentifierMismatchException {
+        Table original = this.createTestTable();
+        original.addRow(1, "coulis");
+        original.addRow(2, "NotDiggy");
+
+        Table other = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME, TestColumnIdentifiers.UUID);
+        other.addRow(2, "Diggy", UUID.randomUUID());
+        other.addRow(3, "pumbas600", UUID.randomUUID());
+
+        Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, true);
+        Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 1);
+        Assert.assertFalse(whereLookup.first().get().getValue(TestColumnIdentifiers.UUID).isPresent());
+    }
 }
