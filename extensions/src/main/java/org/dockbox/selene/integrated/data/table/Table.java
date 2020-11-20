@@ -223,20 +223,29 @@ public class Table {
         return Exceptional.of(() -> this.rows.get(this.count() - 1));
     }
 
-//    /**
-//     * @param column Indicates the column to order by
-//     * @param order Indicates what way to order the table by
-//     */
-//    public void orderBy(ColumnIdentifier<?> column, Orders order) {
-//        if(!this.hasColumn(column))
-//            throw new IllegalArgumentException("Table does not contains column named : " + column.getColumnName());
-//
-//
-//    }
+    /**
+     @param column
+     Indicates the column to order by
+     @param order
+     Indicates what way to order the table by
+     */
+    public void orderBy(ColumnIdentifier<?> column, Orders order) {
+        if (!this.hasColumn(column))
+            throw new IllegalArgumentException("Table does not contains column named : " + column.getColumnName());
 
-    private boolean hasColumn(ColumnIdentifier<?> column) {
+        if (!Comparable.class.isAssignableFrom(column.getType()))
+            throw new IllegalArgumentException("Column does not contain a comparable data type : " + column.getColumnName());
+
+        this.rows.sort((r1, r2) -> {
+            Comparable c1 = (Comparable) r1.getValue(column).get();
+            Comparable c2 = (Comparable) r2.getValue(column).get();
+            return Orders.ASC == order ? c1.compareTo(c2) : c2.compareTo(c1);
+        });
+    }
+
+    public boolean hasColumn(ColumnIdentifier<?> column) {
         for (ColumnIdentifier<?> identifier : this.identifiers) {
-            if(identifier == column)
+            if (identifier == column)
                 return true;
         }
         return false;
