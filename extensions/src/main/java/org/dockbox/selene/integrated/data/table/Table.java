@@ -196,7 +196,7 @@ public class Table {
      * @return Return the table's rows
      */
     public List<TableRow> getRows() {
-        return this.rows;
+        return SeleneUtils.asUnmodifiableList(this.rows);
     }
 
     /**
@@ -207,17 +207,17 @@ public class Table {
     }
 
     /**
-     * @return Return the first row of the table
+     @return Return the first row of the table
      */
-    public TableRow first() {
-        return this.rows.get(0);
+    public Exceptional<TableRow> first() {
+        return Exceptional.of(() -> this.rows.get(0));
     }
 
     /**
-     * @return Return the last row of the table
+     @return Return the last row of the table
      */
-    public TableRow last() {
-        return this.rows.get(this.count() - 1);
+    public Exceptional<TableRow> last() {
+        return Exceptional.of(() -> this.rows.get(this.count() - 1));
     }
 
 //    /**
