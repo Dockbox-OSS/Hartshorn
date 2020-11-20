@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.core.objects.location
 
-import org.dockbox.selene.core.objects.tuple.Vector3D
+import org.dockbox.selene.core.objects.tuple.Vector3N
 
-class Location(var vectorLoc: Vector3D, var world: World) {
+class Location(var vectorLoc: Vector3N, var world: World) {
 
     fun getX(): Number {
         return vectorLoc.x
@@ -46,6 +46,6 @@ class Location(var vectorLoc: Vector3D, var world: World) {
     }
 
     companion object {
-        val EMPTY: Location = Location(Vector3D(0, 0, 0), World.empty)
+        val EMPTY: Location = Location(Vector3N(0, 0, 0), World.empty)
     }
 }

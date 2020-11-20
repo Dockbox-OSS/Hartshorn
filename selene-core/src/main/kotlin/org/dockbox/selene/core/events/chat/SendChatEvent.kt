@@ -19,10 +19,16 @@ package org.dockbox.selene.core.events.chat
 
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
 import org.dockbox.selene.core.objects.targets.MessageReceiver
+import org.dockbox.selene.core.text.Text
 
+/**
+ * The event fired when a player sends a message in chat.
+ *
+ * @property message The message
+ *
+ * @param target The source of the message
+ */
 class SendChatEvent(
         target: MessageReceiver,
-        val isGlobalChat: Boolean,
-        val message: String,
-        val channel: String?
+        val message: Text
 ) : AbstractTargetCancellableEvent(target)

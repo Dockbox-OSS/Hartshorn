@@ -86,6 +86,13 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongecommon</artifactId>
+            <version>${sponge.api.version}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/spongecommon-1.12.2-7.3.0-dev.jar</systemPath>
+        </dependency>
 
         <!-- Platform plugins -->
         <dependency>

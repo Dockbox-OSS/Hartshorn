@@ -19,14 +19,52 @@ package org.dockbox.selene.core.events.player
 
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
 import org.dockbox.selene.core.objects.location.Location
+import org.dockbox.selene.core.objects.location.World
 import org.dockbox.selene.core.objects.user.Player
 
+/**
+ * The abstract type which can be used to listen to all player movement related events.
+ *
+ * @param target The player targeted by the event
+ */
 abstract class PlayerMoveEvent(target: Player) : AbstractTargetCancellableEvent(target) {
 
-    class Teleport(target: Player, val oldLocation: Location, val newLocation: Location) : PlayerMoveEvent(target)
-    class Walk(target: Player) : PlayerMoveEvent(target)
-    class Fly(target: Player) : PlayerMoveEvent(target)
-    class Crouch(target: Player) : PlayerMoveEvent(target)
-    class Spawn(target: Player, val spawnLocation: Location) : PlayerMoveEvent(target)
+    /**
+     * The event fired when a player is teleported to another location
+     *
+     * @property oldLocation The previous location of the player
+     * @property newLocation The new location of the player
+     *
+     * @param target The player targeted by the event
+     */
+    class PlayerTeleportEvent(target: Player, val oldLocation: Location, val newLocation: Location) : PlayerMoveEvent(target)
+
+    /**
+     * The event fired when a player is teleported to the spawn location.
+     *
+     * @property spawnLocation The spawn location, typically for a specific world
+     *
+     * @param target The player targeted by the event
+     */
+    class PlayerSpawnEvent(target: Player, val spawnLocation: Location) : PlayerMoveEvent(target)
+
+    /**
+     * The event fired when a player is teleported using a [org.dockbox.selene.core.objects.location.Warp].
+     *
+     * @property warp The warp the player teleported to
+     *
+     * @param target The player targeted by the event
+     */
+    class PlayerWarpEvent(target: Player, val warp: org.dockbox.selene.core.objects.location.Warp) : PlayerMoveEvent(target)
+
+    /**
+     * The event fired when a player switches to another world. Typically this is fired after [PlayerTeleportEvent].
+     *
+     * @property oldWorld The previous world of the player
+     * @property newWorld The new location of the player
+     *
+     * @param target The player targeted by the event
+     */
+    class PlayerSwitchWorldEvent(target: Player, val oldWorld: World, val newWorld: World) : PlayerMoveEvent(target)
 
 }

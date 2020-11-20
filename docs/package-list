@@ -1,3 +1,4 @@
+org.dockbox.selene.core.annotations
 org.dockbox.selene.core.i18n.common
 org.dockbox.selene.core.impl.command.convert
 org.dockbox.selene.core.impl.command.convert.impl
@@ -5,6 +6,7 @@ org.dockbox.selene.core.impl.objects.keys
 org.dockbox.selene.core.impl.server.config
 org.dockbox.selene.core.impl.util.discord
 org.dockbox.selene.core.impl.util.events
+org.dockbox.selene.core.impl.util.events.processors
 org.dockbox.selene.core.impl.util.extension
 org.dockbox.selene.core.impl.util.files
 org.dockbox.selene.core.impl.util.files.annotations
@@ -26,10 +28,9 @@ org.dockbox.selene.core.util.events
 org.dockbox.selene.core.util.extension
 org.dockbox.selene.core.util.threads
 org.dockbox.selene.coulis
-org.dockbox.selene.integrated.data
-org.dockbox.selene.integrated.data.registry
-org.dockbox.selene.integrated.data.serializers
-org.dockbox.selene.integrated.data.table
+org.dockbox.selene.integrated.event
+org.dockbox.selene.integrated.event.processors
+org.dockbox.selene.integrated.event.worldedit
 org.dockbox.selene.integrated.server
 org.dockbox.selene.ptime
 org.dockbox.selene.sponge
