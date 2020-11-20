@@ -18,7 +18,6 @@
 package org.dockbox.selene.core.impl.command.context
 
 import com.sk89q.worldedit.util.command.argument.MissingArgumentException
-import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.util.*
 import org.dockbox.selene.core.annotations.FromSource
@@ -45,6 +44,7 @@ import org.dockbox.selene.core.objects.targets.CommandSource
 import org.dockbox.selene.core.objects.targets.Locatable
 import org.dockbox.selene.core.objects.user.Player
 import org.dockbox.selene.core.server.Selene
+import org.dockbox.selene.core.util.SeleneUtils
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
@@ -118,8 +118,7 @@ open class SimpleCommandContext(
     override fun <T> tryCreate(type: Class<T>): Exceptional<T> {
         try {
             val argumentKeys = this.args.map { it.key }
-            val ctor: Constructor<T> = type.getConstructor() as Constructor<T>
-            val instance: T = ctor.newInstance()
+            val instance: T = SeleneUtils.getInstance(type)
             type.declaredFields.forEach { field ->
                 run {
                     if (!argumentKeys.contains(field.name)) throwOrSetNull(field, instance)
@@ -157,8 +156,8 @@ open class SimpleCommandContext(
         if (field.isAnnotationPresent(FromSource::class.java)) {
             when (field.type) {
                 Player::class.java -> if (this.sender is Player) return Exceptional.of(this.sender)
-                World::class.java -> if (this.sender is Locatable) return Exceptional.ofOptional(this.world)
-                Location::class.java -> if (this.sender is Locatable) return Exceptional.ofOptional(this.location)
+                World::class.java -> if (this.sender is Locatable) return Exceptional.of(this.world)
+                Location::class.java -> if (this.sender is Locatable) return Exceptional.of(this.location)
                 CommandSource::class.java -> return Exceptional.of(this.sender)
                 else -> Selene.log().warn("Field '" + field.name + "' has FromSource annotation and type [" + field.type.canonicalName + "]")
             }
@@ -171,7 +170,7 @@ open class SimpleCommandContext(
 
         when (field.type) {
             Double::class.java -> {
-                return Exceptional.ofOptional(DoubleArgumentParser().parse(arg).map {
+                return Exceptional.of(DoubleArgumentParser().parse(arg).map {
                     if (minMax != null) when {
                         it < minMax.min -> minMax.min
                         it > minMax.max -> minMax.max
@@ -180,7 +179,7 @@ open class SimpleCommandContext(
                 })
             }
             Float::class.java -> {
-                return Exceptional.ofOptional(FloatArgumentParser().parse(arg).map {
+                return Exceptional.of(FloatArgumentParser().parse(arg).map {
                     if (minMax != null) when {
                         it < minMax.min -> minMax.min
                         it > minMax.max -> minMax.max
@@ -189,7 +188,7 @@ open class SimpleCommandContext(
                 })
             }
             Integer::class.java -> {
-                return Exceptional.ofOptional(IntegerArgumentParser().parse(arg).map {
+                return Exceptional.of(IntegerArgumentParser().parse(arg).map {
                     if (minMax != null) when {
                         it < minMax.min -> minMax.min
                         it > minMax.max -> minMax.max
@@ -198,7 +197,7 @@ open class SimpleCommandContext(
                 })
             }
             Long::class.java -> {
-                return Exceptional.ofOptional(LongArgumentParser().parse(arg).map {
+                return Exceptional.of(LongArgumentParser().parse(arg).map {
                     if (minMax != null) when {
                         it < minMax.min -> minMax.min
                         it > minMax.max -> minMax.max
@@ -207,7 +206,7 @@ open class SimpleCommandContext(
                 })
             }
             Short::class.java -> {
-                return Exceptional.ofOptional(ShortArgumentParser().parse(arg).map {
+                return Exceptional.of(ShortArgumentParser().parse(arg).map {
                     if (minMax != null) when {
                         it < minMax.min -> minMax.min
                         it > minMax.max -> minMax.max
@@ -223,13 +222,13 @@ open class SimpleCommandContext(
                     val listMinMax: ListArgumentParser.MinMax = ListArgumentParser.MinMax(minMax.min, minMax.max)
                     parser.setMinMax(listMinMax)
                 }
-                return Exceptional.ofOptional(parser.parse(arg))
+                return Exceptional.of(parser.parse(arg))
             }
 
             Map::class.java -> {
                 val parser = MapArgumentParser()
                 if (field.isAnnotationPresent(Split::class.java)) parser.setRowDelimiter(field.getAnnotation(Split::class.java).delimiter)
-                return Exceptional.ofOptional(parser.parse(arg))
+                return Exceptional.of(parser.parse(arg))
             }
             SimpleCommandContext::class.java -> return Exceptional.of(this)
         }

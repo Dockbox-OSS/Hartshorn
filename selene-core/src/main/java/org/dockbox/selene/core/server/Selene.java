@@ -27,8 +27,10 @@ import com.google.inject.Module;
 import com.google.inject.ProvisionException;
 import com.google.inject.util.Modules;
 
+import org.dockbox.selene.core.annotations.Listener;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
+import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
@@ -47,7 +49,6 @@ import org.dockbox.selene.core.util.inject.SeleneInjectModule;
 import org.dockbox.selene.core.util.library.LibraryArtifact;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -209,6 +210,10 @@ public abstract class Selene {
      The type parameter for the instance to return
      @param type
      The type of the instance
+     @param extension
+     The type of the extension if extension specific bindings are to be used
+     @param additionalProperties
+     The properties to be passed into the type either during or after construction
 
      @return The instance, if present. Otherwise returns null
      */
@@ -227,11 +232,6 @@ public abstract class Selene {
                 this.bind(InjectorProperty[].class).toInstance(additionalProperties);
             }
         };
-
-        // Attempt to get extension instance and get the extension module
-        if (type.isAnnotationPresent(Extension.class)) {
-            typeInstance = getInstance(ExtensionManager.class).getInstance(type).orElse(null);
-        }
 
         Injector injector = getServer().createInjector(extensionModule, propertyModule);
         try {
@@ -360,16 +360,21 @@ public abstract class Selene {
         ExtensionManager cm = getInstance(ExtensionManager.class);
         DiscordUtils du = getInstance(DiscordUtils.class);
 
+        eb.subscribe(this);
+
         this.initIntegratedExtensions(this.getExtensionContextConsumer(cb, eb, cm, du));
 
-        getInstance(EventBus.class).post(new ServerEvent.Init());
+        getInstance(EventBus.class).post(new ServerEvent.ServerInitEvent());
     }
 
     /**
      Prints information about registered instances. This includes injection bindings, extensions, and event handlers.
      This method is typically only used when starting the server.
+
+     @param event The server event indicating the server started
      */
-    protected void debugRegisteredInstances() {
+    @Listener
+    protected void debugRegisteredInstances(ServerStartedEvent event) {
         log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
         AtomicInteger unprovisionedTypes = new AtomicInteger();
         this.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
@@ -427,11 +432,6 @@ public abstract class Selene {
                     eb.subscribe(i);
                     cb.register(i);
                     du.registerCommandListener(i);
-
-                    Reflections ref = new Reflections(pkg.getName());
-                    ref.getTypesAnnotatedWith(org.dockbox.selene.core.annotations.Listener.class).stream()
-                            .filter(it -> !it.isAnnotationPresent(Extension.class))
-                            .forEach(eb::subscribe);
                 }
             });
         };

@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 import org.dockbox.selene.core.annotations.Command
 import org.dockbox.selene.core.annotations.FromSource
@@ -79,16 +78,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     }
 
     override fun registerSingleMethodCommands(clazz: Class<*>) {
-        val methods: MutableList<Method> = ArrayList<Method>()
-        for (method in clazz.declaredMethods) {
-            method.isAccessible = true
-            if (method.isAnnotationPresent(Command::class.java)) {
-                val command = method.getAnnotation(Command::class.java)
-                if (clazz.isAnnotationPresent(Command::class.java) && !command.single) continue
-
-                methods.add(method)
-            }
-        }
+        val methods: MutableCollection<Method> = SeleneUtils.getAnnotedMethods(clazz, Command::class.java) { it.single }
 
         val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(methods)
         Arrays.stream(registrations)
@@ -171,15 +161,9 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
 
     override fun createClassRegistration(clazz: Class<*>): ClassCommandRegistration {
         val information: Triad<Command, AbstractPermission, Array<String>> = getCommandInformation(clazz)
-        val methods: Array<Method> = clazz.declaredMethods
-        val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(Arrays
-                .stream(methods)
-                .filter { it.isAnnotationPresent(Command::class.java) }
-                .filter {
-                    val command = it.getAnnotation(Command::class.java)
-                    return@filter !command.single // Do not register single method commands as subcommands
-                }
-                .collect(Collectors.toList()))
+        val methods: MutableCollection<Method> = SeleneUtils.getAnnotedMethods(clazz, Command::class.java) { !it.single }
+
+        val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(methods)
         return ClassCommandRegistration(information.third[0], information.third, information.second, information.first, clazz, registrations)
     }
 

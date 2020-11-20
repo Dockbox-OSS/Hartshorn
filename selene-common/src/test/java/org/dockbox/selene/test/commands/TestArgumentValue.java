@@ -25,16 +25,16 @@ import org.jetbrains.annotations.Nullable;
 public class TestArgumentValue extends AbstractArgumentValue<String> {
 
     public TestArgumentValue(@Nullable ArgumentConverter<?> argument, @Nullable String permission, @NotNull String key) {
-        super(argument, permission, key);
-    }
-
-    @Override
-    protected String parseArgument(@Nullable ArgumentConverter<?> argument, @Nullable String key) {
-        throw new UnsupportedOperationException("ArgumentValue is not testable in common implementations, and should only be tested in the platform implementation");
+        super(argument, permission, key, key);
     }
 
     @Override
     public String getArgument() {
+        throw new UnsupportedOperationException("ArgumentValue is not testable in common implementations, and should only be tested in the platform implementation");
+    }
+
+    @Override
+    protected String parseArgument(@Nullable ArgumentConverter<?> argument, @Nullable String key, @Nullable String type) {
         throw new UnsupportedOperationException("ArgumentValue is not testable in common implementations, and should only be tested in the platform implementation");
     }
 }

@@ -25,14 +25,15 @@ import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.dockbox.selene.core.util.environment.MinecraftVersion;
 import org.dockbox.selene.core.util.library.LibraryArtifact;
+import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
-import org.dockbox.selene.sponge.listeners.SpongeServerEventListener;
+import org.dockbox.selene.sponge.listeners.SpongePlayerListener;
+import org.dockbox.selene.sponge.listeners.SpongeServerListener;
 import org.dockbox.selene.sponge.util.inject.SpongeCommonInjector;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
@@ -71,7 +72,7 @@ public class SeleneSponge112Impl extends Selene {
 
     /**
      Sponge Listener method, registers additional listeners present in
-     {@link org.dockbox.selene.sponge.listeners.SpongeServerEventListener}.
+     {@link org.dockbox.selene.sponge.listeners.SpongeServerListener}.
 
      @param event
      Sponge's initialization event
@@ -79,14 +80,20 @@ public class SeleneSponge112Impl extends Selene {
     @Listener
     public void onServerInit(GameInitializationEvent event) {
         // TODO GuusLieben, attempt to convert injector to raw bindings
-//        super.upgradeInjectors(this.spongeInjector);
-        Sponge.getEventManager().registerListeners(this, new SpongeServerEventListener());
+//      super.upgradeInjectors(this.spongeInjector);
+        this.registerSpongeListeners(
+                getInstance(SpongeCommandListener.class),
+                getInstance(SpongeServerListener.class),
+                getInstance(SpongeDiscordListener.class),
+                getInstance(SpongePlayerListener.class)
+        );
         super.init();
     }
 
-    @Listener
-    public void onServerStarted(GameStartedServerEvent event) {
-        super.debugRegisteredInstances();
+    private void registerSpongeListeners(Object... listeners) {
+        for (Object obj : listeners) {
+            Sponge.getEventManager().registerListeners(this, obj);
+        }
     }
 
     /**
@@ -98,7 +105,7 @@ public class SeleneSponge112Impl extends Selene {
      @param event
      the event
      */
-    @Listener(order = Order.LAST)
+    @Listener
     public void onServerStartedLate(GameStartedServerEvent event) {
         Optional<JDA> oj = getInstance(DiscordUtils.class).getJDA();
         if (oj.isPresent()) {
@@ -119,7 +126,6 @@ public class SeleneSponge112Impl extends Selene {
                     .async()
                     .submit(this);
         }
-
     }
 
     @NotNull
@@ -131,7 +137,8 @@ public class SeleneSponge112Impl extends Selene {
     @Override
     protected LibraryArtifact[] getPlatformArtifacts() {
         // Define libraries to download, specifically targeting Sponge.
-        // At the time of writing there are no additional libraries required for Sponge.
+        // At the time of writing there are no additional libraries required for Sponge that aren't already shaded
+        // or marked as a dependency through Sponge.
         return new LibraryArtifact[0];
     }
 

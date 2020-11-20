@@ -17,21 +17,55 @@
 
 package org.dockbox.selene.core.events.player
 
+import java.net.InetSocketAddress
 import org.dockbox.selene.core.objects.events.Targetable
 import org.dockbox.selene.core.objects.targets.Target
 
-abstract class PlayerConnectionEvent(private val target: Target) : Targetable {
+/**
+ * The abstract type which can be used to listen to all player movement related events.
+ *
+ * @param target The target of the event
+ */
+abstract class PlayerConnectionEvent(private val target: Target?) : Targetable {
 
     override fun getTarget(): Target {
-        return this.target
+        return this.target!!
     }
 
     override fun setTarget(target: Target) {
         throw UnsupportedOperationException("Cannot change target of connection event")
     }
 
-    class Join(target: Target) : PlayerConnectionEvent(target)
-    class Leave(target: Target) : PlayerConnectionEvent(target)
-    class Ping(target: Target) : PlayerConnectionEvent(target)
+    /**
+     * The event fired when a player connected to the server.
+     *
+     * @param target The player targeted by the event
+     */
+    class PlayerJoinEvent(target: Target) : PlayerConnectionEvent(target)
+
+    /**
+     * The event fired when a player disconnected from the server.
+     *
+     * @constructor
+     *
+     * @param target The player targeted by the event
+     */
+    class PlayerLeaveEvent(target: Target) : PlayerConnectionEvent(target)
+
+    /**
+     * The event fired when a remote location is attempting to authenticate to the server.
+     *
+     * @constructor
+     *
+     * @param address The network address which is being authenticated to
+     * @param host The network address of the host attempting to authenticate
+     */
+    class PlayerAuthEvent(address: InetSocketAddress, host: InetSocketAddress) : PlayerConnectionEvent(null) {
+
+        override fun getTarget(): Target {
+            throw UnsupportedOperationException("Cannot get target while authenticating")
+        }
+
+    }
 
 }
