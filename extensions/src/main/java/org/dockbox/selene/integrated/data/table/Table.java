@@ -24,6 +24,9 @@ import org.dockbox.selene.integrated.data.table.annotations.Ignore;
 import org.dockbox.selene.integrated.data.table.behavior.Merge;
 import org.dockbox.selene.integrated.data.table.behavior.Order;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
+import org.dockbox.selene.integrated.data.table.exceptions.EmptyEntryException;
+import org.dockbox.selene.integrated.data.table.exceptions.IdentifierMismatchException;
+import org.dockbox.selene.integrated.data.table.exceptions.UnknownIdentifierException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,16 +52,16 @@ public class Table {
     /**
      * @param row Row object to add to the table
      */
-    public void addRow(TableRow row) {
+    public void addRow(TableRow row) throws IdentifierMismatchException {
         // Check if the row has the same amount of column as this table
         if (row.getColumns().size() != this.identifiers.length)
-            throw new IllegalArgumentException("The row does not have the same amount of columns as the table");
+            throw new IdentifierMismatchException("The row does not have the same amount of columns as the table");
 
         // Check if the row has the same columns with the same order
         int index = 0;
         for (ColumnIdentifier<?> column : row.getColumns()) {
             if (!this.hasColumn(column)) {
-                throw new IllegalArgumentException("Column '" + column.getColumnName() + "' is not contained in table");
+                throw new IdentifierMismatchException("Column '" + column.getColumnName() + "' is not contained in table");
             }
         }
 
@@ -87,7 +90,7 @@ public class Table {
 
                     // No column identifier was found
                     if (null == columnIdentifier)
-                        throw new IllegalArgumentException("Unknown column identifier for field named : " + field.getName());
+                        throw new UnknownIdentifierException("Unknown column identifier for field named : " + field.getName());
 
                     row.addValue(columnIdentifier, field.get(object));
                 } catch (IllegalAccessError | ClassCastException | IllegalAccessException e) {
@@ -97,7 +100,7 @@ public class Table {
         }
 
         if (row.getColumns().size() != this.identifiers.length) {
-            throw new IllegalArgumentException("Missing Columns!");
+            throw new UnknownIdentifierException("Missing Columns!");
         }
         this.rows.add(row);
     }
@@ -126,7 +129,7 @@ public class Table {
      */
     public <T> Table where(ColumnIdentifier<T> column, T filter) {
         if (!this.hasColumn(column))
-            throw new IllegalArgumentException("Cannot look up a column that does not exist");
+            throw new UnknownIdentifierException("Cannot look up a column that does not exist");
 
         Collection<TableRow> filteredRows = new ArrayList<>();
         for (TableRow row : this.rows) {
@@ -137,8 +140,18 @@ public class Table {
             }
         }
         Table lookupTable = new Table(this.identifiers);
-        filteredRows.forEach(lookupTable::addRow);
+        for (TableRow filteredRow : filteredRows) {
+            try {
+                lookupTable.addRow(filteredRow);
+            } catch (IdentifierMismatchException e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
         return lookupTable;
+    }
+
+    public <T> Table join(@NotNull Table otherTable, ColumnIdentifier<T> column, Merge merge) throws EmptyEntryException, IdentifierMismatchException {
+        return this.join(otherTable, column, merge, false);
     }
 
     /**
@@ -148,66 +161,97 @@ public class Table {
      Indicates the column of the second table to merge to the first table
      @param <T>
      Indicates the data type of the column
+     @param merge
+     Indicates the behavior when a existing value is found
+     @param populateEmptyEntries
+     Indicates whether empty entries are pupulated (with null) or a error is thrown
 
      @return Return the merged table
      */
-    public <T> Table join(@NotNull Table otherTable, ColumnIdentifier<T> column, Merge merge) {
+    public <T> Table join(@NotNull Table otherTable, ColumnIdentifier<T> column, Merge merge, boolean populateEmptyEntries) throws EmptyEntryException, IdentifierMismatchException {
         if (this.hasColumn(column) && otherTable.hasColumn(column)) {
-            {
-                List<ColumnIdentifier<?>> mergedIdentifiers = new ArrayList<>();
-                for (ColumnIdentifier<?> identifier : SeleneUtils.addAll(this.getIdentifiers(), otherTable.getIdentifiers())) {
-                    if (mergedIdentifiers.contains(identifier)) continue;
-                    mergedIdentifiers.add(identifier);
-                }
+            List<ColumnIdentifier<?>> mergedIdentifiers = new ArrayList<>();
+            for (ColumnIdentifier<?> identifier : SeleneUtils.addAll(this.getIdentifiers(), otherTable.getIdentifiers())) {
+                if (mergedIdentifiers.contains(identifier)) continue;
+                mergedIdentifiers.add(identifier);
+            }
 
-                Table joinedTable = new Table(mergedIdentifiers.toArray(new ColumnIdentifier<?>[0]));
-                for (TableRow row : this.getRows()) {
-                    try {
-                        List<TableRow> matchingRows = this.getMatchingRows(row, otherTable, column);
+            Table joinedTable = new Table(mergedIdentifiers.toArray(new ColumnIdentifier<?>[0]));
+            for (TableRow row : this.getRows()) {
+                try {
+                    List<TableRow> matchingRows = this.getMatchingRows(row, otherTable, column);
 
-                        TableRow joinedRow = new TableRow();
-                        for (ColumnIdentifier<?> identifier : this.getIdentifiers()) {
-                            joinedRow.addValue(identifier, row.getValue(identifier).get());
-                        }
-                        for (ColumnIdentifier<?> identifier : otherTable.getIdentifiers()) {
-                            for (TableRow matchingRow : matchingRows) {
+                    TableRow joinedRow = new TableRow();
+                    for (ColumnIdentifier<?> identifier : this.getIdentifiers()) {
+                        joinedRow.addValue(identifier, row.getValue(identifier).get());
+                    }
+                    for (ColumnIdentifier<?> identifier : otherTable.getIdentifiers()) {
+                        for (TableRow matchingRow : matchingRows) {
                             /*
                              If there is already a value present on this row, look up if we want to keep the existing,
                              or use the new value.
                              */
-                                if (!joinedRow.getValue(identifier).isPresent() || Merge.PREFER_ORIGINAL != merge) {
-                                    joinedRow.addValue(identifier, matchingRow.getValue(identifier).get());
-                                }
+                            if (!joinedRow.getValue(identifier).isPresent() || Merge.PREFER_FOREIGN == merge) {
+                                joinedRow.addValue(identifier, matchingRow.getValue(identifier).get());
+
                             }
                         }
-                        joinedTable.addRow(joinedRow);
-                    } catch (IllegalArgumentException e) {
-                        continue;
-                    }
-                }
 
-                /*
-                 It is possible not all foreign rows had a matching value, if that is the case we will add them here if
-                 possible (if the foreign table has no additional identifiers which we cannot populate here.
-                 */
-                for (TableRow row : otherTable.getRows()) {
-                    try {
-                        List<TableRow> matchingRows = this.getMatchingRows(row, this, column);
-                        if (matchingRows.isEmpty()) {
-                            if (!Arrays.equals(this.getIdentifiers(), otherTable.getIdentifiers())) {
-                                throw new IllegalArgumentException("Remaining rows were found in the foreign table, but identifiers are not equal. Cannot insert null values!");
+                        /*
+                         If there was no value filled by either this table instance, or the foreign table, try to
+                          populate it with null. If that is not allowed throw a exception.
+                        */
+                        if (!joinedRow.getValue(identifier).isPresent()) {
+                            if (populateEmptyEntries) {
+                                joinedRow.addValue(identifier, null);
+                            } else {
+                                throw new EmptyEntryException("Could not populate empty entry for column " + identifier.getColumnName());
                             }
-                            joinedTable.addRow(row);
                         }
-                    } catch (IllegalArgumentException e) {
-                        continue;
                     }
-                }
 
-                return joinedTable;
+                    joinedTable.addRow(joinedRow);
+                } catch (IllegalArgumentException e) {
+                    continue;
+                }
+            }
+
+            /*
+             It is possible not all foreign rows had a matching value, if that is the case we will add them here if
+             possible (if the foreign table has no additional identifiers which we cannot populate here.
+             */
+            for (TableRow row : otherTable.getRows()) {
+                try {
+                    List<TableRow> matchingRows = this.getMatchingRows(row, joinedTable, column);
+                    if (matchingRows.isEmpty()) {
+                        this.tryPopulateMissingEntry(otherTable, populateEmptyEntries, mergedIdentifiers, joinedTable, row);
+                    }
+                } catch (IdentifierMismatchException e) {
+                    continue;
+                }
+            }
+
+            return joinedTable;
+        }
+        throw new IdentifierMismatchException("Column '" + column + "' does not exist in both tables");
+
+    }
+
+    private void tryPopulateMissingEntry(@NotNull Table otherTable, boolean populateEmptyEntries, List<
+            ColumnIdentifier<?>> mergedIdentifiers, Table joinedTable, TableRow row) throws IdentifierMismatchException {
+        if (!Arrays.equals(this.getIdentifiers(), otherTable.getIdentifiers())) {
+            if (populateEmptyEntries) {
+                for (ColumnIdentifier<?> identifier : mergedIdentifiers) {
+                    Exceptional<?> exceptionalValue = row.getValue(identifier);
+                    exceptionalValue
+                            .ifPresent(value -> row.addValue(identifier, value))
+                            .ifAbsent(() -> row.addValue(identifier, null));
+                }
+            } else {
+                throw new IdentifierMismatchException("Remaining rows were found in the foreign table, but identifiers are not equal. Cannot insert null values!");
             }
         }
-        throw new IllegalArgumentException("Column '" + column + "' does not exist in both tables");
+        joinedTable.addRow(row);
     }
 
     private <T> List<TableRow> getMatchingRows(TableRow row, Table otherTable, ColumnIdentifier<T> column) {
@@ -215,7 +259,7 @@ public class Table {
         // No way to join on value if it is not present. Technically this should not be possible as a NPE
         // is typically thrown if a null value is added to a row.
         if (exceptionalValue.isAbsent())
-            throw new IllegalArgumentException("No value present for " + column.getColumnName());
+            throw new IndexOutOfBoundsException("No value present for " + column.getColumnName());
         T expectedValue = (T) exceptionalValue.get();
 
         return otherTable.where(column, expectedValue).getRows();
@@ -237,7 +281,11 @@ public class Table {
                     tmpRow.addValue(column, row.getValue(column).get());
                 });
             }
-            table.addRow(tmpRow);
+            try {
+                table.addRow(tmpRow);
+            } catch (IdentifierMismatchException e) {
+                throw new IllegalArgumentException(e);
+            }
         });
 
         return table;
