@@ -122,5 +122,12 @@ public class TableTest {
         Assert.assertSame(3, table.last().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testOrderByDoesNotAcceptInvalidColumn() {
+        Table table = this.getTable();
+        table.addRow(2, "Diggy");
+        table.orderBy(TestColumnIdentifiers.UUID, Orders.ASC);
+    }
+
     // TODO, Where and merge tests (also see TODO's in Table for Merge/where methods)
 }
