@@ -31,7 +31,6 @@ import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
@@ -236,15 +235,13 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
             SimpleCommandContext ctx = this.convertContext(args, sender, command);
 
-            EventBus eb = Selene.getInstance(EventBus.class);
-            Cancellable ceb = new CommandEvent.Before(sender, ctx);
-            eb.post(ceb);
+            Cancellable ceb = new CommandEvent.Before(sender, ctx).post();
 
             if (!ceb.isCancelled()) {
                 if (src instanceof Player) runner.run(sender, ctx);
                 else runner.run(SpongeConsole.Companion.getInstance(), ctx);
 
-                eb.post(new CommandEvent.After(sender, ctx));
+                new CommandEvent.After(sender, ctx).post();
             }
 
             return CommandResult.success();

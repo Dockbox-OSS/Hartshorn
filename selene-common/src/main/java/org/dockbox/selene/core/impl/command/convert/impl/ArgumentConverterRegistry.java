@@ -204,10 +204,7 @@ public final class ArgumentConverterRegistry {
     public static final ArgumentConverter<Extension> EXTENSION = new ConstantArgumentConverter<>(
             new String[]{"extension", "ext"},
             Extension.class,
-            s -> {
-                Exceptional<Extension> octx = Selene.getInstance(ExtensionManager.class).getHeader(s);
-                return octx;
-            },
+            s -> Selene.getInstance(ExtensionManager.class).getHeader(s),
             Selene.getInstance(ExtensionManager.class).getRegisteredExtensionIds()
                     .toArray(new String[0])
     );

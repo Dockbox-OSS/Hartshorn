@@ -17,12 +17,25 @@
 
 package org.dockbox.selene.sponge.objects.location
 
+import com.flowpowered.math.vector.Vector3i
 import java.util.*
 import org.dockbox.selene.core.objects.location.World
 import org.dockbox.selene.core.objects.optional.Exceptional
+import org.dockbox.selene.core.objects.tuple.Vector3N
+import org.dockbox.selene.core.objects.user.Gamemode
+import org.dockbox.selene.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
 
-class SpongeWorld(worldUniqueId: UUID, name: String) : World(worldUniqueId, name) {
+class SpongeWorld(
+        worldUniqueId: UUID,
+        name: String,
+        loadOnStartup: Boolean,
+        spawnPosition: Vector3N,
+        seed: Long,
+        defaultGamemode: Gamemode,
+        gamerules: MutableMap<String, String>
+) : World(worldUniqueId, name, loadOnStartup, spawnPosition, seed, defaultGamemode, gamerules) {
+
     private val reference = ThreadLocal<Exceptional<org.spongepowered.api.world.World?>>()
     private fun refreshReference() {
         if (reference.get().isPresent) reference.set(Exceptional.of(Sponge.getServer().getWorld(worldUniqueId)))
@@ -58,4 +71,43 @@ class SpongeWorld(worldUniqueId: UUID, name: String) : World(worldUniqueId, name
             getReference()!!.isLoaded
         } else false
     }
+
+    override var loadOnStartup: Boolean = loadOnStartup
+        get() {
+            return if (referenceExists()) getReference()!!.properties.loadOnStartup() else field
+        }
+        set(value) {
+            if (referenceExists()) getReference()!!.properties.setLoadOnStartup(value)
+            field = value
+        }
+
+    override var spawnPosition: Vector3N = spawnPosition
+        get() {
+            return if (referenceExists()) {
+                val vector3i = getReference()!!.properties.spawnPosition
+                Vector3N(vector3i.x, vector3i.y, vector3i.z)
+            } else field
+        }
+        set(value) {
+            if (referenceExists()) getReference()!!.properties.spawnPosition = Vector3i(value.getXi(), value.getYi(), value.getZi())
+            field = value
+        }
+
+    override var seed: Long = seed
+        get() {
+            return if (referenceExists()) getReference()!!.properties.seed else field
+        }
+        set(value) {
+            if (referenceExists()) getReference()!!.properties.seed = value
+            field = value
+        }
+
+    override var defaultGamemode: Gamemode = defaultGamemode
+        get() {
+            return if (referenceExists()) SpongeConversionUtil.fromSponge(getReference()!!.properties.gameMode) else field
+        }
+        set(value) {
+            if (referenceExists()) getReference()!!.properties.gameMode = SpongeConversionUtil.toSponge(value)
+            field = value
+        }
 }

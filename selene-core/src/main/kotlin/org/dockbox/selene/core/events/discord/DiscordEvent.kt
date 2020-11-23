@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.events.discord
 
+import java.util.*
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageReaction
@@ -25,62 +26,158 @@ import net.dv8tion.jda.api.entities.User
 import org.dockbox.selene.core.objects.events.Event
 import org.dockbox.selene.core.objects.optional.Exceptional
 
+/**
+ * The abstract type which can be used to listen to all Discord related events.
+ */
 abstract class DiscordEvent : Event {
 
-    class ChatReceived(
+    /**
+     * The event fired when a chat message is received from Discord.
+     *
+     * @property author The author of the message
+     * @property message The message
+     * @property guild The Discord guild in which the message was received
+     * @property channel The Discord channel in which the message was received
+     */
+    class DiscordChatReceivedEvent(
             val author: User,
             val message: Message,
             val guild: Guild,
             val channel: TextChannel
     ): DiscordEvent()
 
-    class PrivateChatReceived(
+    /**
+     * The event fired when a private chat message is received from Discord. This only includes messages sent to the
+     * bot in direct messages.
+     *
+     * @property author The author of the message
+     * @property message The message
+     */
+    class DiscordPrivateChatReceivedEvent(
             val author: User,
             val message: Message
     ): DiscordEvent()
 
-    class ReactionAdded(
+    /**
+     * The event fired when a reaction is added to a message.
+     *
+     * @property author The author that added the reaction
+     * @property message The message the reaction was added to
+     * @property reaction The reaction which was added
+     */
+    class DiscordReactionAddedEvent(
             val author: User,
             val message: Message,
             val reaction: MessageReaction
     ): DiscordEvent() {
+        /**
+         * Gets the ID of the emote which is represented by the [MessageReaction].
+         *
+         * @return
+         */
         fun getEmoteId(): String = reaction.reactionEmote.id
+
+        /**
+         * Gets the name of the emote which is represented by the [MessageReaction].
+         *
+         * @return
+         */
         fun getEmoteName(): String = reaction.reactionEmote.name
     }
 
-    class ChatDeleted(
+    /**
+     * The event fired when a message is deleted.
+     *
+     * @property messageId The ID of the message.
+     */
+    class DiscordChatDeletedEvent(
             val messageId: String
     ) : DiscordEvent()
 
-    class PrivateChatDeleted(
+    /**
+     * The event fired when a private chat message is deleted.
+     *
+     * @property messageId The ID of the message
+     */
+    class DiscordPrivateChatDeletedEvent(
             val messageId: String
     ) : DiscordEvent()
 
-    class ChatUpdated(
+    /**
+     * The event fired when a message was updated.
+     *
+     * @property author The author of the message
+     * @property message The new value of the message
+     */
+    class DiscordChatUpdatedEvent(
             val author: User,
             val message: Message
     ) : DiscordEvent()
 
-    class PrivateChatUpdated(
+    /**
+     * The event fired when a private message was updated.
+     *
+     * @property author The author of the message
+     * @property message The new value of the message
+     */
+    class DiscordPrivateChatUpdatedEvent(
             val author: User,
             val message: Message
     ) : DiscordEvent()
 
-    class Banned(val user: User, val guild: Guild) : DiscordEvent()
+    /**
+     * The event fired when a user is banned from a Discord guild.
+     *
+     * @property user The banned user
+     * @property guild The guild the user was banned from
+     * @constructor Create empty Discord user banned event
+     */
+    class DiscordUserBannedEvent(val user: User, val guild: Guild) : DiscordEvent()
 
-    class Unbanned(val user: User, val guild: Guild) : DiscordEvent()
+    /**
+     * The event fired when a user is unbanned/pardonned from a Discord guild.
+     *
+     * @property user The unbanned user.
+     * @property guild The guild the user was unbanned from
+     */
+    class DiscordUserUnbannedEvent(val user: User, val guild: Guild) : DiscordEvent()
 
-    class Joined(val user: User, val guild: Guild) : DiscordEvent()
+    /**
+     * The event fired when a new user joins a Discord guild.
+     *
+     * @property user The user which joined the guild
+     * @property guild The guild the user joined
+     */
+    class DiscordUserJoinedEvent(val user: User, val guild: Guild) : DiscordEvent()
 
-    class Left(val user: User, val guild: Guild) : DiscordEvent()
+    /**
+     * The event fired when a user leaves a Discord guild.
+     *
+     * @property user The user which left the guild
+     * @property guild The guild the user left
+     */
+    class DiscordUserLeftEvent(val user: User, val guild: Guild) : DiscordEvent()
 
-    class NicknameChanged(
+    /**
+     * The event fired when a user's nickname is changed.
+     *
+     * @property user The user of which the nickname changed
+     * @property oldNickname The previous value of the nickname
+     * @property newNickname The new (and current) value of the nickname
+     */
+    class DiscordUserNicknameChangedEvent(
             val user: User,
             val oldNickname: Exceptional<String>,
             val newNickname: Exceptional<String>
     ) : DiscordEvent()
 
-    class Disconnected : DiscordEvent()
+    /**
+     * The event fired when the Discord bot disconnects from Discord.
+     */
+    class DiscordBotDisconnectedEvent : DiscordEvent()
 
-    class Reconnected : DiscordEvent()
+    /**
+     * The event fired when the Discord bot (re)connects to Discord.
+     */
+    class DiscordBotReconnectedEvent : DiscordEvent()
 }
