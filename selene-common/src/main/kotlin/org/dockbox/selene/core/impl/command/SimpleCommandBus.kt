@@ -258,8 +258,8 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             } else if (c == Selene::class.java || c.isAssignableFrom(Selene::class.java) || Selene::class.java.isAssignableFrom(c)) {
                 o = Selene.getServer()
             } else {
-                var extension: Optional<*>? = null
-                if (c.isAnnotationPresent(Extension::class.java) && Selene.getInstance(ExtensionManager::class.java).getInstance(c).also { extension = it }.isPresent) {
+                var extension: Exceptional<*>? = null
+                if (c.isAnnotationPresent(Extension::class.java) && Selene.getInstance(ExtensionManager::class.java).getInstance(c).also { extension = Exceptional.of(it) }.isPresent) {
                     // Extension can be asserted as not-null as it is re-assigned inside the condition for instance presence
                     o = extension!!.get()
                 } else {

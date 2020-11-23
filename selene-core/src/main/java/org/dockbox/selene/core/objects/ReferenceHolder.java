@@ -21,23 +21,22 @@ import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
-import java.util.Optional;
 import java.util.function.Function;
 
 public abstract class ReferenceHolder<T> {
 
     private transient WeakReference<T> reference;
 
-    protected ReferenceHolder(@NotNull Optional<T> reference) {
+    protected ReferenceHolder(@NotNull Exceptional<T> reference) {
         this.setReference(reference);
     }
 
-    protected void setReference(@NotNull Optional<T> reference) {
+    protected void setReference(@NotNull Exceptional<T> reference) {
         this.reference = reference.map(WeakReference::new).orElseGet(() -> new WeakReference<>(null));
     }
 
     public Exceptional<T> getReference() {
-        Optional<T> updated = this.getUpdateReferenceTask().apply(this.reference.get());
+        Exceptional<T> updated = this.getUpdateReferenceTask().apply(this.reference.get());
         updated.ifPresent(t -> this.reference = new WeakReference<>(t));
         return Exceptional.ofNullable(this.reference.get());
     }
@@ -46,7 +45,7 @@ public abstract class ReferenceHolder<T> {
         return this.getReference().isPresent();
     }
 
-    public abstract Function<T, Optional<T>> getUpdateReferenceTask();
+    public abstract Function<T, Exceptional<T>> getUpdateReferenceTask();
 
     public abstract Class<?> getReferenceType();
 }

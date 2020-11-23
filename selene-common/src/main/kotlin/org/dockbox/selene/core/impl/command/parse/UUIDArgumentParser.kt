@@ -20,18 +20,19 @@ package org.dockbox.selene.core.impl.command.parse
 import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.util.uuid.UUIDUtil
 
 class UUIDArgumentParser : AbstractTypeArgumentParser<UUID>() {
 
-    override fun parse(commandValue: CommandValue<String>): Optional<UUID> {
+    override fun parse(commandValue: CommandValue<String>): Exceptional<UUID> {
         val value = commandValue.value
-        if (value == "") return Optional.of(UUIDUtil.empty)
+        if (value == "") return Exceptional.of(UUIDUtil.empty)
 
         return try {
-            Optional.of(UUID.fromString(value))
+            Exceptional.of(UUID.fromString(value))
         } catch (e: IllegalArgumentException) {
-            Optional.of(UUIDUtil.empty)
+            Exceptional.of(UUIDUtil.empty)
         }
     }
 

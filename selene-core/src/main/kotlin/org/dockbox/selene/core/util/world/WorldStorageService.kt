@@ -19,12 +19,13 @@ package org.dockbox.selene.core.util.world
 
 import java.util.*
 import org.dockbox.selene.core.objects.location.World
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 abstract class WorldStorageService {
 
     abstract fun getLoadedWorlds(): List<World>
     abstract fun getAllWorldUUIDs(): List<UUID>
 
-    abstract fun getWorld(name: String): Optional<World>
-    abstract fun getWorld(uuid: UUID): Optional<World>
+    abstract fun getWorld(name: String): Exceptional<World>
+    abstract fun getWorld(uuid: UUID): Exceptional<World>
 }

@@ -56,8 +56,8 @@ open class SimpleCommandContext(
         // Location and world are snapshots of the location of our CommandSource at the time the command was processed.
         // This way developers can ensure location data does not change while the command is being performed.
         internal open val sender: @NotNull CommandSource,
-        internal open val location: @Nullable Optional<Location>,
-        internal open val world: @Nullable Optional<World>,
+        internal open val location: @Nullable Exceptional<Location>,
+        internal open val world: @Nullable Exceptional<World>,
         internal open val permissions: Array<String>
 ) : CommandContext {
 
@@ -70,32 +70,32 @@ open class SimpleCommandContext(
     override val flagCount: Int
         get() = flags.size
 
-    override fun getArgument(key: String): Optional<CommandValue.Argument<String>> {
-        return Arrays.stream(args).filter { it.key == key }.findFirst().map { CommandValue.Argument(it.value.toString(), it.key) }
+    override fun getArgument(key: String): Exceptional<CommandValue.Argument<String>> {
+        return Exceptional.of(Arrays.stream(args).filter { it.key == key }.findFirst()).map { CommandValue.Argument(it.value.toString(), it.key) }
     }
 
-    override fun <T> getArgument(key: String, type: Class<T>): Optional<CommandValue.Argument<T>> {
-        return Arrays.stream(args).filter { it.key == key }.findFirst().map { it as CommandValue.Argument<T> }
+    override fun <T> getArgument(key: String, type: Class<T>): Exceptional<CommandValue.Argument<T>> {
+        return Exceptional.of(Arrays.stream(args).filter { it.key == key }.findFirst()).map { it as CommandValue.Argument<T> }
     }
 
-    override fun <T> getArgumentAndParse(key: String, parser: AbstractTypeArgumentParser<T>): Optional<T> {
+    override fun <T> getArgumentAndParse(key: String, parser: AbstractTypeArgumentParser<T>): Exceptional<T> {
         val optionalArg = getArgument(key)
         return if (optionalArg.isPresent) parser.parse(optionalArg.get())
-        else Optional.empty()
+        else Exceptional.empty()
     }
 
-    override fun getFlag(key: String): Optional<CommandValue.Flag<String>> {
-        return Arrays.stream(flags).filter { it.key == key }.findFirst().map { CommandValue.Flag(it.value.toString(), it.key) }
+    override fun getFlag(key: String): Exceptional<CommandValue.Flag<String>> {
+        return Exceptional.of(Arrays.stream(flags).filter { it.key == key }.findFirst()).map { CommandValue.Flag(it.value.toString(), it.key) }
     }
 
-    override fun <T> getFlag(key: String, type: Class<T>): Optional<CommandValue.Flag<T>> {
-        return Arrays.stream(flags).filter { it.key == key }.findFirst().map { it as CommandValue.Flag<T> }
+    override fun <T> getFlag(key: String, type: Class<T>): Exceptional<CommandValue.Flag<T>> {
+        return Exceptional.of(Arrays.stream(flags).filter { it.key == key }.findFirst()).map { it as CommandValue.Flag<T> }
     }
 
-    override fun <T> getFlagAndParse(key: String, parser: AbstractTypeArgumentParser<T>): Optional<T> {
+    override fun <T> getFlagAndParse(key: String, parser: AbstractTypeArgumentParser<T>): Exceptional<T> {
         val optionalArg = getFlag(key)
         return if (optionalArg.isPresent) parser.parse(optionalArg.get())
-        else Optional.empty()
+        else Exceptional.empty()
     }
 
     override fun hasArgument(key: String): Boolean {
@@ -106,7 +106,7 @@ open class SimpleCommandContext(
         return Arrays.stream(flags).anyMatch { it.key == key }
     }
 
-    override fun <T> getValue(key: String, type: Class<T>, valType: CommandValue.Type): Optional<CommandValue<T>> {
+    override fun <T> getValue(key: String, type: Class<T>, valType: CommandValue.Type): Exceptional<CommandValue<T>> {
         val arr = when (valType) {
             CommandValue.Type.ARGUMENT -> args as Array<CommandValue<*>>
             CommandValue.Type.FLAG -> flags as Array<CommandValue<*>>
@@ -145,8 +145,8 @@ open class SimpleCommandContext(
         field.set(instance, null)
     }
 
-    private fun getRawArgument(key: String): Optional<CommandValue.Argument<*>> {
-        return Arrays.stream(args).filter { it.key == key }.findFirst().map { CommandValue.Argument(it.value, it.key) }
+    private fun getRawArgument(key: String): Exceptional<CommandValue.Argument<*>> {
+        return Exceptional.of(Arrays.stream(args).filter { it.key == key }.findFirst()).map { CommandValue.Argument(it.value, it.key) }
     }
 
     private fun tryGetValue(field: Field): Exceptional<*> {
@@ -249,17 +249,17 @@ open class SimpleCommandContext(
         return Exceptional.empty<String>()
     }
 
-    private fun <T, A : CommandValue<T>> getValueAs(key: String, type: Class<T>, values: Array<CommandValue<*>>): Optional<A> {
-        val candidate: Optional<CommandValue<*>> = Arrays.stream(values).filter { it.key == key }.findFirst()
+    private fun <T, A : CommandValue<T>> getValueAs(key: String, type: Class<T>, values: Array<CommandValue<*>>): Exceptional<A> {
+        val candidate: Exceptional<CommandValue<*>> = Exceptional.of(Arrays.stream(values).filter { it.key == key }.findFirst())
         if (candidate.isPresent) {
             val commandValue: CommandValue<*> = candidate.get()
-            if (commandValue.value!!.javaClass == type) return Optional.of(commandValue as A)
+            if (commandValue.value!!.javaClass == type) return Exceptional.of(commandValue as A)
         }
-        return Optional.empty()
+        return Exceptional.empty()
     }
 
     companion object {
         val ENUM_ARGUMENT_PARSER: EnumArgumentParser = EnumArgumentParser()
-        val EMPTY: SimpleCommandContext = SimpleCommandContext("", emptyArray(), emptyArray(), CommandSource.None, Optional.empty(), Optional.empty(), emptyArray())
+        val EMPTY: SimpleCommandContext = SimpleCommandContext("", emptyArray(), emptyArray(), CommandSource.None, Exceptional.empty(), Exceptional.empty(), emptyArray())
     }
 }

@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.i18n.common
 
 import org.dockbox.selene.core.i18n.entry.ExternalResourceEntry
-import java.util.*
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 interface ResourceService {
 
@@ -26,6 +26,6 @@ interface ResourceService {
     fun getResourceMap(lang: Language): Map<String, String>
     fun getTranslations(entry: ExternalResourceEntry): Map<Language, String>
     fun createValidKey(raw: String): String
-    fun getExternalResource(key: String): Optional<ExternalResourceEntry>
+    fun getExternalResource(key: String): Exceptional<ExternalResourceEntry>
 
 }

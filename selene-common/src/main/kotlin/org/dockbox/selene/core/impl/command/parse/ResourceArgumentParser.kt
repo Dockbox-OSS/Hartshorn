@@ -22,12 +22,12 @@ import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.i18n.common.ResourceService
 import org.dockbox.selene.core.i18n.entry.IntegratedResource
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.server.Selene
-import java.util.*
 
 class ResourceArgumentParser : AbstractTypeArgumentParser<ResourceEntry>() {
 
-    override fun parse(commandValue: CommandValue<String>): Optional<ResourceEntry> {
+    override fun parse(commandValue: CommandValue<String>): Exceptional<ResourceEntry> {
         var k = commandValue.value
         val rs = Selene.getInstance(ResourceService::class.java)
         k = rs.createValidKey(k)
@@ -36,9 +36,9 @@ class ResourceArgumentParser : AbstractTypeArgumentParser<ResourceEntry>() {
         if (or.isPresent) return or.map { it as ResourceEntry }
 
         return try {
-            Optional.of(IntegratedResource.valueOf(k))
+            Exceptional.of(IntegratedResource.valueOf(k))
         } catch (e: IllegalArgumentException) {
-            Optional.empty()
+            Exceptional.empty()
         }
     }
 }

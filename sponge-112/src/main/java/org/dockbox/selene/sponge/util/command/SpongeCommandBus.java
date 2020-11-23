@@ -28,6 +28,7 @@ import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
 import org.dockbox.selene.core.impl.command.SimpleCommandBus;
 import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
 import org.dockbox.selene.core.objects.events.Cancellable;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
@@ -51,7 +52,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -161,7 +161,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     private Object getValue(Object obj) {
-        Optional<?> oo = SpongeConversionUtil.autoDetectFromSponge(obj);
+        Exceptional<?> oo = SpongeConversionUtil.autoDetectFromSponge(obj);
         return oo.isPresent() ? oo.get() : obj; // oo.orElse() cannot be cast due to generic ? type
     }
 
@@ -286,7 +286,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                     command,
                     arguments.toArray(new CommandValue.Argument<?>[0]),
                     flags.toArray(new CommandValue.Flag<?>[0]),
-                    sender, Optional.of(loc), Optional.of(world),
+                    sender, Exceptional.of(loc), Exceptional.of(world),
                     new String[0]
             );
         } else {
@@ -294,7 +294,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                     command,
                     arguments.toArray(new CommandValue.Argument<?>[0]),
                     flags.toArray(new CommandValue.Flag<?>[0]),
-                    sender, Optional.empty(), Optional.empty(),
+                    sender, Exceptional.empty(), Exceptional.empty(),
                     new String[0]
             );
         }

@@ -43,7 +43,6 @@ import org.dockbox.selene.core.util.player.PlayerStorageService;
 import org.dockbox.selene.core.util.world.WorldStorageService;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -64,10 +63,10 @@ public final class ArgumentConverterRegistry {
         return getOptionalConverter(key).orElse(null);
     }
 
-    private static Optional<ArgumentConverter<?>> getOptionalConverter(String key) {
-        return CONVERTERS.stream()
+    private static Exceptional<ArgumentConverter<?>> getOptionalConverter(String key) {
+        return Exceptional.of(CONVERTERS.stream()
                 .filter(converter -> converter.getKeys().contains(key))
-                .findFirst();
+                .findFirst());
     }
 
 
@@ -80,12 +79,12 @@ public final class ArgumentConverterRegistry {
         return getOptionalConverter(type).orElse(null);
     }
 
-    private static <T> Optional<ArgumentConverter<T>> getOptionalConverter(Class<T> type) {
+    private static <T> Exceptional<ArgumentConverter<T>> getOptionalConverter(Class<T> type) {
         //noinspection unchecked
-        return CONVERTERS.stream()
+        return Exceptional.of(CONVERTERS.stream()
                 .filter(converter -> converter.getType().isAssignableFrom(type))
                 .map(converter -> (ArgumentConverter<T>) converter)
-                .findFirst();
+                .findFirst());
     }
 
     public static void registerConverter(ArgumentConverter<?> converter) {
@@ -178,10 +177,9 @@ public final class ArgumentConverterRegistry {
             Mask.class,
             (source, s) -> {
                 if (source instanceof Player) {
-                    return Exceptional.of(
-                            new WorldEditMaskParser(((Player) source).getFawePlayer()
-                                    .orElse(null))
-                                    .parse(new CommandValue.Argument<>(s, "mask")));
+                    return new WorldEditMaskParser(((Player) source).getFawePlayer()
+                            .orElse(null))
+                            .parse(new CommandValue.Argument<>(s, "mask"));
                 }
                 return Exceptional.empty();
             },
@@ -193,10 +191,9 @@ public final class ArgumentConverterRegistry {
             Pattern.class,
             (source, s) -> {
                 if (source instanceof Player) {
-                    return Exceptional.of(
-                            new WorldEditPatternParser(((Player) source).getFawePlayer()
-                                    .orElse(null))
-                                    .parse(new Argument<>(s, "pattern")));
+                    return new WorldEditPatternParser(((Player) source).getFawePlayer()
+                            .orElse(null))
+                            .parse(new Argument<>(s, "pattern"));
                 }
                 return Exceptional.empty();
             },
@@ -207,10 +204,7 @@ public final class ArgumentConverterRegistry {
     public static final ArgumentConverter<Extension> EXTENSION = new ConstantArgumentConverter<>(
             new String[]{"extension", "ext"},
             Extension.class,
-            s -> {
-                Optional<Extension> octx = Selene.getInstance(ExtensionManager.class).getHeader(s);
-                return Exceptional.of(octx);
-            },
+            s -> Selene.getInstance(ExtensionManager.class).getHeader(s),
             Selene.getInstance(ExtensionManager.class).getRegisteredExtensionIds()
                     .toArray(new String[0])
     );

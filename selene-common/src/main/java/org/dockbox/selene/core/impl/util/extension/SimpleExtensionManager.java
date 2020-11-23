@@ -19,6 +19,7 @@ package org.dockbox.selene.core.impl.util.extension;
 
 import com.google.inject.Singleton;
 
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
@@ -37,7 +38,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -50,40 +50,40 @@ public class SimpleExtensionManager implements ExtensionManager {
 
     @NotNull
     @Override
-    public Optional<ExtensionContext> getContext(@NotNull Class<?> type) {
+    public Exceptional<ExtensionContext> getContext(@NotNull Class<?> type) {
         for (SimpleExtensionContext ctx : globalContexts) {
             Class<?> componentClassType = ctx.getExtensionClass();
-            if (componentClassType.equals(type)) return Optional.of(ctx);
+            if (componentClassType.equals(type)) return Exceptional.of(ctx);
         }
-        return Optional.empty();
+        return Exceptional.empty();
     }
 
     @NotNull
     @Override
-    public Optional<ExtensionContext> getContext(@NonNls @NotNull String id) {
+    public Exceptional<ExtensionContext> getContext(@NonNls @NotNull String id) {
         for (SimpleExtensionContext ctx : globalContexts) {
-            if (ctx.getExtension().id().equals(id)) return Optional.of(ctx);
+            if (ctx.getExtension().id().equals(id)) return Exceptional.of(ctx);
         }
-        return Optional.empty();
+        return Exceptional.empty();
     }
 
     @NotNull
     @Override
-    public <T> Optional<T> getInstance(@NotNull Class<T> type) {
+    public <T> Exceptional<T> getInstance(@NotNull Class<T> type) {
         Selene.log().debug("Instance requested for [" + type.getCanonicalName() +"]");
         for (Object o : instanceMappings.values()) {
             if (null != o && o.getClass().equals(type))
                 // Condition meets requirement for checked cast
                 //noinspection unchecked
-                return Optional.of((T) o);
+                return Exceptional.of((T) o);
         }
-        return Optional.empty();
+        return Exceptional.empty();
     }
 
     @NotNull
     @Override
-    public Optional<?> getInstance(@NotNull String id) {
-        return Optional.ofNullable(instanceMappings.get(id));
+    public Exceptional<?> getInstance(@NotNull String id) {
+        return Exceptional.ofNullable(instanceMappings.get(id));
     }
 
     @NotNull
@@ -114,13 +114,13 @@ public class SimpleExtensionManager implements ExtensionManager {
 
     @NotNull
     @Override
-    public Optional<Extension> getHeader(@NotNull Class<?> type) {
-        return Optional.ofNullable(type.getAnnotation(Extension.class));
+    public Exceptional<Extension> getHeader(@NotNull Class<?> type) {
+        return Exceptional.ofNullable(type.getAnnotation(Extension.class));
     }
 
     @NotNull
     @Override
-    public Optional<Extension> getHeader(@NotNull String id) {
+    public Exceptional<Extension> getHeader(@NotNull String id) {
         return this.getInstance(id).map(i -> i.getClass().getAnnotation(Extension.class));
     }
 

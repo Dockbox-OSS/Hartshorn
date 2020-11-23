@@ -45,6 +45,8 @@ import org.spongepowered.api.data.key.Keys
 import org.spongepowered.api.entity.living.player.gamemode.GameModes
 import org.spongepowered.api.item.inventory.Inventory
 import org.spongepowered.api.item.inventory.ItemStack
+import org.spongepowered.api.item.inventory.Slot
+import org.spongepowered.api.item.inventory.entity.MainPlayerInventory
 import org.spongepowered.api.item.inventory.property.SlotPos
 import org.spongepowered.api.item.inventory.query.QueryOperationTypes
 import org.spongepowered.api.service.permission.SubjectData
@@ -53,9 +55,9 @@ import org.spongepowered.api.util.Tristate
 
 class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     
-    private val spongePlayer = FieldReferenceHolder(Sponge.getServer().getPlayer(uniqueId), Function() {
-        return@Function if (it == null) Sponge.getServer().getPlayer(uniqueId)
-        else Optional.empty()
+    private val spongePlayer = FieldReferenceHolder(Exceptional.of(Sponge.getServer().getPlayer(uniqueId)), Function() {
+        return@Function if (it == null) Exceptional.of(Sponge.getServer().getPlayer(uniqueId))
+        else Exceptional.empty()
     }, org.spongepowered.api.entity.living.player.Player::class.java)
 
     override fun isOnline(): Boolean {
@@ -218,10 +220,14 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
         }
         if (spongePlayer.referenceExists()) {
             spongePlayer.reference.ifPresent {
-                val inventory = it.inventory.query<Inventory>(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotPos.of(column, row)))
-                val spItem = SpongeConversionUtil.toSponge(item as Item<ItemStack>)
-                Selene.log().info("Type: " + spItem.type)
-                inventory.set(spItem)
+                val main: Inventory = it.inventory.query(MainPlayerInventory::class.java)
+                val slotOptional = (main as MainPlayerInventory).getSlot(SlotPos.of(column, row))
+                slotOptional.ifPresent { slot: Slot ->
+                    slot.offer(SpongeConversionUtil.toSponge(item as Item<ItemStack>))
+                }
+                if (!slotOptional.isPresent) {
+                    println("Not present!")
+                }
             }
         }
     }

@@ -30,6 +30,7 @@ import com.google.inject.util.Modules;
 import org.dockbox.selene.core.annotations.Listener;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
@@ -63,7 +64,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -252,7 +252,7 @@ public abstract class Selene {
 
     public Injector createExtensionInjector(Object instance) {
         if (null != instance && instance.getClass().isAnnotationPresent(Extension.class)) {
-            Optional<ExtensionContext> context = getInstance(ExtensionManager.class).getContext(instance.getClass());
+            Exceptional<ExtensionContext> context = getInstance(ExtensionManager.class).getContext(instance.getClass());
             Extension extension;
             extension = context
                     .map(ExtensionContext::getExtension)
@@ -331,7 +331,18 @@ public abstract class Selene {
     }
 
     private Map<Key<?>, Binding<?>> getAllBindings() {
-        return new ConcurrentHashMap<>(this.createInjector().getAllBindings());
+        Map<Key<?>, Binding<?>> bindings = new ConcurrentHashMap<>();
+        this.createInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
+            try {
+                Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
+                Class<?> providerType = binding.getProvider().get().getClass();
+
+                if (!keyType.equals(providerType) && null != providerType)
+                    bindings.put(key, binding);
+            } catch (ProvisionException | AssertionError ignored) {
+            }
+        });
+        return bindings;
     }
 
     /**
@@ -393,7 +404,7 @@ public abstract class Selene {
         log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded extensions: ");
         ExtensionManager em = getInstance(ExtensionManager.class);
         em.getRegisteredExtensionIds().forEach(ext -> {
-            Optional<Extension> header = em.getHeader(ext);
+            Exceptional<Extension> header = em.getHeader(ext);
             if (header.isPresent()) {
                 Extension ex = header.get();
                 log().info("  - \u00A77" + ex.name());
@@ -424,7 +435,7 @@ public abstract class Selene {
         return (ExtensionContext ctx) -> {
             Class<?> type = ctx.getExtensionClass();
             log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
-            Optional<?> oi = em.getInstance(type);
+            Exceptional<?> oi = em.getInstance(type);
             oi.ifPresent(i -> {
                 Package pkg = i.getClass().getPackage();
                 if (null != pkg) {

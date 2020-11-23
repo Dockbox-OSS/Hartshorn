@@ -17,19 +17,19 @@
 
 package org.dockbox.selene.core.impl.command.parse
 
-import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractArgumentParser
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 class EnumArgumentParser : AbstractArgumentParser() {
 
     @Suppress("UNCHECKED_CAST")
-    override fun <A> parse(commandValue: CommandValue<String>, type: Class<A>?): Optional<A> {
+    override fun <A> parse(commandValue: CommandValue<String>, type: Class<A>?): Exceptional<A> {
         if (type!!.isEnum) {
             val enumConstants = type.enumConstants as Array<out Enum<*>>
-            return Optional.ofNullable(enumConstants.first { it.name == commandValue.value }) as Optional<A>
+            return Exceptional.ofNullable(enumConstants.first { it.name == commandValue.value }) as Exceptional<A>
         }
-        return Optional.empty()
+        return Exceptional.empty()
     }
 
 }

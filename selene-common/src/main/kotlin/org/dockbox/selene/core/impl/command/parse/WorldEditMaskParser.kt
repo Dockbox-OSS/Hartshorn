@@ -21,17 +21,17 @@ import com.boydti.fawe.`object`.FawePlayer
 import com.sk89q.worldedit.WorldEdit
 import com.sk89q.worldedit.extension.input.ParserContext
 import com.sk89q.worldedit.function.mask.Mask
-import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 class WorldEditMaskParser(val player: FawePlayer<*>) : AbstractTypeArgumentParser<Mask>() {
-    override fun parse(commandValue: CommandValue<String>): Optional<Mask> {
+    override fun parse(commandValue: CommandValue<String>): Exceptional<Mask> {
         val v = commandValue.value
         val pctx = ParserContext()
         pctx.actor = player.player
         pctx.world = player.world
         pctx.session = player.session
-        return Optional.ofNullable(WorldEdit.getInstance().maskFactory.parseFromInput(v, pctx))
+        return Exceptional.ofNullable(WorldEdit.getInstance().maskFactory.parseFromInput(v, pctx))
     }
 }

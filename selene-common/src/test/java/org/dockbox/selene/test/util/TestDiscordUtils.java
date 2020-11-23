@@ -21,22 +21,21 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import org.dockbox.selene.core.impl.util.discord.DefaultDiscordUtils;
-
-import java.util.Optional;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 
 /**
- Provides empty {@link Optional} instances, as testing with the {@link JDA} is seemingly impossible without providing
+ Provides empty {@link Exceptional} instances, as testing with the {@link JDA} is seemingly impossible without providing
  a Discord server and bot for this purpose.
  */
 public class TestDiscordUtils extends DefaultDiscordUtils {
 
     @Override
-    public Optional<JDA> getJDA() {
-        return Optional.empty();
+    public Exceptional<JDA> getJDA() {
+        return Exceptional.empty();
     }
 
     @Override
-    public Optional<TextChannel> getGlobalTextChannel() {
-        return Optional.empty();
+    public Exceptional<TextChannel> getGlobalTextChannel() {
+        return Exceptional.empty();
     }
 }

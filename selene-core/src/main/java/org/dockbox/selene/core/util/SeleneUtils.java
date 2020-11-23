@@ -176,6 +176,25 @@ public enum SeleneUtils {
         return s1.trim().equalsIgnoreCase(s2.trim());
     }
 
+    public static boolean equal(Object expected, Object actual) {
+        if (expected != null || actual != null) {
+            return !(expected == null || !expected.equals(actual));
+        }
+        return false;
+    }
+
+    public static boolean same(Object expected, Object actual) {
+        return expected == actual;
+    }
+
+    public static boolean notEqual(Object expected, Object actual) {
+        return !equal(expected, actual);
+    }
+
+    public static boolean notSame(Object expected, Object actual) {
+        return !same(expected, actual);
+    }
+
     public static boolean hasContent(final String s) {
         return !(0 == trimLength(s));    // faster than returning !isEmpty()
     }
@@ -661,12 +680,28 @@ public enum SeleneUtils {
         return Collections.unmodifiableList(asList(objects));
     }
 
+    public static <T> List<T> asUnmodifiableList(Collection<T> collection) {
+        return Collections.unmodifiableList(new ArrayList<>(collection));
+    }
+
     @UnmodifiableView
     @NotNull
     @Contract(value = "_ -> new", pure = true)
     @SafeVarargs
     public static <T> Set<T> asUnmodifiableSet(T... objects) {
         return Collections.unmodifiableSet(asSet(objects));
+    }
+
+    public static <T> Collection<T> asUnmodifiableCollection(T... collection) {
+        return Collections.unmodifiableCollection(Arrays.asList(collection));
+    }
+
+    public static <T> Collection<T> asUnmodifiableCollection(Collection<T> collection) {
+        return Collections.unmodifiableCollection(collection);
+    }
+
+    public static <K, V> Map<K, V> asUnmodifiableMap(Map<K, V> map) {
+        return Collections.unmodifiableMap(map);
     }
 
     @UnmodifiableView
@@ -727,6 +762,11 @@ public enum SeleneUtils {
             }
         }
         return file;
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static boolean unwrap(Optional<Boolean> optional) {
+        return optional.isPresent() && optional.get();
     }
 
     @SuppressWarnings("OverlyComplexBooleanExpression")

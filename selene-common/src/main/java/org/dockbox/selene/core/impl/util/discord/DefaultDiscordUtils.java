@@ -32,6 +32,7 @@ import org.dockbox.selene.core.annotations.DiscordCommand.ListeningLevel;
 import org.dockbox.selene.core.events.discord.DiscordCommandContext;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
@@ -43,7 +44,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class DefaultDiscordUtils implements DiscordUtils {
@@ -64,15 +64,15 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
     @NotNull
     @Override
-    public Optional<Category> getLoggingCategory() {
+    public Exceptional<Category> getLoggingCategory() {
         if (this.getJDA().isPresent())
-            return Optional.ofNullable(this.getJDA().get().getCategoryById("638683800167251998"));
-        return Optional.empty();
+            return Exceptional.ofNullable(this.getJDA().get().getCategoryById("638683800167251998"));
+        return Exceptional.empty();
     }
 
     @NotNull
     @Override
-    public Optional<Guild> getGuild() {
+    public Exceptional<Guild> getGuild() {
         return this.getGlobalTextChannel().map(GuildChannel::getGuild);
     }
 
@@ -161,7 +161,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
             if (!userPermitted) {
 
                 // Ensure the role exists at all
-                Optional<Role> or = this.getGuild().map(guild -> guild.getRoleById(annotation.minimumRankId()));
+                Exceptional<Role> or = this.getGuild().map(guild -> guild.getRoleById(annotation.minimumRankId()));
                 if (!or.isPresent()) return;
 
                 // Ensure the player has the required role

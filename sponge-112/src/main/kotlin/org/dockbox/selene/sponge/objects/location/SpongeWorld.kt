@@ -20,6 +20,7 @@ package org.dockbox.selene.sponge.objects.location
 import com.flowpowered.math.vector.Vector3i
 import java.util.*
 import org.dockbox.selene.core.objects.location.World
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.objects.tuple.Vector3N
 import org.dockbox.selene.core.objects.user.Gamemode
 import org.dockbox.selene.sponge.util.SpongeConversionUtil
@@ -35,9 +36,9 @@ class SpongeWorld(
         gamerules: MutableMap<String, String>
 ) : World(worldUniqueId, name, loadOnStartup, spawnPosition, seed, defaultGamemode, gamerules) {
 
-    private val reference = ThreadLocal<Optional<org.spongepowered.api.world.World?>>()
+    private val reference = ThreadLocal<Exceptional<org.spongepowered.api.world.World?>>()
     private fun refreshReference() {
-        if (reference.get().isPresent) reference.set(Sponge.getServer().getWorld(worldUniqueId))
+        if (reference.get().isPresent) reference.set(Exceptional.of(Sponge.getServer().getWorld(worldUniqueId)))
     }
 
     fun getReference(): org.spongepowered.api.world.World? {

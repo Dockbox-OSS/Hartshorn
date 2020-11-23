@@ -18,13 +18,13 @@
 package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.core.impl.util.files.DefaultConfigurateManager;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.util.files.FileType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 
 public class TestConfigurateManager extends DefaultConfigurateManager {
 
@@ -61,8 +61,8 @@ public class TestConfigurateManager extends DefaultConfigurateManager {
 
     @NotNull
     @Override
-    public Optional<Path> getModDir() {
-        return Optional.of(this.tempDirRoot.resolve("mods"));
+    public Exceptional<Path> getModDir() {
+        return Exceptional.of(this.tempDirRoot.resolve("mods"));
     }
 
     @NotNull
@@ -79,8 +79,8 @@ public class TestConfigurateManager extends DefaultConfigurateManager {
 
     @NotNull
     @Override
-    public Optional<Path> getModdedPlatformModsConfigDir() {
-        return Optional.of(this.tempDirRoot.resolve("config/mods"));
+    public Exceptional<Path> getModdedPlatformModsConfigDir() {
+        return Exceptional.of(this.tempDirRoot.resolve("config/mods"));
     }
 
     @NotNull

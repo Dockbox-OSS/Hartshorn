@@ -17,14 +17,14 @@
 
 package org.dockbox.selene.core.impl.command.parse
 
-import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.selene.core.i18n.common.Language
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 class LanguageArgumentParser : AbstractTypeArgumentParser<Language>() {
 
-    override fun parse(commandValue: CommandValue<String>): Optional<Language> {
+    override fun parse(commandValue: CommandValue<String>): Exceptional<Language> {
         val l = commandValue.value.toUpperCase()
         var lang: Language? = null
         try {
@@ -40,7 +40,7 @@ class LanguageArgumentParser : AbstractTypeArgumentParser<Language>() {
                     run { if (v.nameEnglish.toUpperCase() == l || v.nameLocalized.toUpperCase() == l) lang = v }
                 }
 
-        return Optional.ofNullable(lang)
+        return Exceptional.ofNullable(lang)
     }
 
 }

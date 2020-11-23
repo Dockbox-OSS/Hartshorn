@@ -212,10 +212,6 @@ public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
         return this.throwable;
     }
 
-    public Optional<T> toOptional() {
-        return Optional.ofNullable(this.value);
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.entities.MessageReaction
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
 import org.dockbox.selene.core.objects.events.Event
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 /**
  * The abstract type which can be used to listen to all Discord related events.
@@ -166,8 +167,8 @@ abstract class DiscordEvent : Event {
      */
     class DiscordUserNicknameChangedEvent(
             val user: User,
-            val oldNickname: Optional<String>,
-            val newNickname: Optional<String>
+            val oldNickname: Exceptional<String>,
+            val newNickname: Exceptional<String>
     ) : DiscordEvent()
 
     /**

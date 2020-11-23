@@ -51,6 +51,7 @@ import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserLeftEvent;
 import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserNicknameChangedEvent;
 import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserUnbannedEvent;
 import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.jetbrains.annotations.NotNull;
@@ -59,7 +60,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class SpongeDiscordListener extends ListenerAdapter {
 
@@ -168,8 +168,8 @@ public class SpongeDiscordListener extends ListenerAdapter {
     public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
         Event nce = new DiscordUserNicknameChangedEvent(
                 event.getUser(),
-                Optional.ofNullable(event.getOldNickname()),
-                Optional.ofNullable(event.getNewNickname())
+                Exceptional.ofNullable(event.getOldNickname()),
+                Exceptional.ofNullable(event.getNewNickname())
         ).post();
     }
 }

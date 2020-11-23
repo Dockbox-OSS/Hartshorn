@@ -21,17 +21,18 @@ import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.selene.core.objects.location.Location
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.objects.tuple.Vector3N
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.util.world.WorldStorageService
 
 class LocationArgumentParser : AbstractTypeArgumentParser<Location>() {
-    override fun parse(commandValue: CommandValue<String>): Optional<Location> {
+    override fun parse(commandValue: CommandValue<String>): Exceptional<Location> {
         val xyzw = commandValue.value.split(',')
-        if (xyzw.size != 4) return Optional.empty()
-        val x = xyzw[0].toIntOrNull() ?: return Optional.empty()
-        val y = xyzw[1].toIntOrNull() ?: return Optional.empty()
-        val z = xyzw[2].toIntOrNull() ?: return Optional.empty()
+        if (xyzw.size != 4) return Exceptional.empty()
+        val x = xyzw[0].toIntOrNull() ?: return Exceptional.empty()
+        val y = xyzw[1].toIntOrNull() ?: return Exceptional.empty()
+        val z = xyzw[2].toIntOrNull() ?: return Exceptional.empty()
         val vector = Vector3N(x, y, z)
 
         val w = xyzw[3]
@@ -43,13 +44,13 @@ class LocationArgumentParser : AbstractTypeArgumentParser<Location>() {
                 val uuid = UUID.fromString(w)
                 ws.getWorld(uuid)
             } catch (e: IllegalArgumentException) {
-                Optional.empty()
+                Exceptional.empty()
             }
         }
 
-        return if (!world.isPresent) Optional.empty()
+        return if (!world.isPresent) Exceptional.empty()
         else {
-            Optional.of(Location(vector, world.get()))
+            Exceptional.of(Location(vector, world.get()))
         }
     }
 }

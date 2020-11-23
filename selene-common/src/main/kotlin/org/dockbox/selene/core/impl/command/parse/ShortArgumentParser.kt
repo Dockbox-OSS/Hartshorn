@@ -19,10 +19,10 @@ package org.dockbox.selene.core.impl.command.parse
 
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
-import java.util.*
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 class ShortArgumentParser : AbstractTypeArgumentParser<Short>() {
-    override fun parse(commandValue: CommandValue<String>): Optional<Short> {
-        return Optional.ofNullable(commandValue.value.toShortOrNull())
+    override fun parse(commandValue: CommandValue<String>): Exceptional<Short> {
+        return Exceptional.ofNullable(commandValue.value.toShortOrNull())
     }
 }

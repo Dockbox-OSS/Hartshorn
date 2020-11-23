@@ -18,13 +18,13 @@
 package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.core.objects.location.World;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.util.world.WorldStorageService;
 import org.dockbox.selene.test.object.TestWorld;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -51,14 +51,14 @@ public class TestWorldStorageService extends WorldStorageService {
 
     @NotNull
     @Override
-    public Optional<World> getWorld(@NotNull String name) {
-        return Optional.empty();
+    public Exceptional<World> getWorld(@NotNull String name) {
+        return Exceptional.empty();
     }
 
     @NotNull
     @Override
-    public Optional<World> getWorld(@NotNull UUID uuid) {
-        return Optional.empty();
+    public Exceptional<World> getWorld(@NotNull UUID uuid) {
+        return Exceptional.empty();
     }
 
 }

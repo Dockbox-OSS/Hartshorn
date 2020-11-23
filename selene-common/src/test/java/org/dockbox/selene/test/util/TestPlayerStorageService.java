@@ -18,6 +18,7 @@
 package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.util.player.PlayerStorageService;
 import org.dockbox.selene.test.object.TestPlayer;
@@ -26,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -57,14 +57,14 @@ public class TestPlayerStorageService implements PlayerStorageService {
 
     @NotNull
     @Override
-    public Optional<Player> getPlayer(@NonNls @NotNull String name) {
-        return this.knownPlayers.stream().filter(p -> p.getName().equals(name)).findFirst();
+    public Exceptional<Player> getPlayer(@NonNls @NotNull String name) {
+        return Exceptional.of(this.knownPlayers.stream().filter(p -> p.getName().equals(name)).findFirst());
     }
 
     @NotNull
     @Override
-    public Optional<Player> getPlayer(@NotNull UUID uuid) {
-        return this.knownPlayers.stream().filter(p -> p.getUniqueId().equals(uuid)).findFirst();
+    public Exceptional<Player> getPlayer(@NotNull UUID uuid) {
+        return Exceptional.of(this.knownPlayers.stream().filter(p -> p.getUniqueId().equals(uuid)).findFirst());
     }
 
     @Override

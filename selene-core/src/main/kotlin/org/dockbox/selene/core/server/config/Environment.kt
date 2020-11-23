@@ -15,14 +15,8 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.impl.command.parse
+package org.dockbox.selene.core.server.config
 
-import org.dockbox.selene.core.command.context.CommandValue
-import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
-import org.dockbox.selene.core.objects.optional.Exceptional
-
-class FloatArgumentParser : AbstractTypeArgumentParser<Float>() {
-    override fun parse(commandValue: CommandValue<String>): Exceptional<Float> {
-        return Exceptional.ofNullable(commandValue.value.toFloatOrNull())
-    }
+enum class Environment(val allowsDebugging: Boolean) {
+    PRODUCTION(false), DEVELOPMENT(true)
 }

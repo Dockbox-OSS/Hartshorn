@@ -19,6 +19,7 @@ package org.dockbox.selene.sponge.util.world
 
 import java.util.*
 import org.dockbox.selene.core.objects.location.World
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.util.world.WorldStorageService
 import org.dockbox.selene.sponge.util.SpongeConversionUtil
 import org.spongepowered.api.Sponge
@@ -32,11 +33,11 @@ class SpongeWorldStorageService : WorldStorageService() {
         return Sponge.getServer().allWorldProperties.map { it.uniqueId }
     }
 
-    override fun getWorld(name: String): Optional<World> {
-        return Sponge.getServer().loadWorld(name).map { SpongeConversionUtil.fromSponge(it) }
+    override fun getWorld(name: String): Exceptional<World> {
+        return Exceptional.of(Sponge.getServer().loadWorld(name)).map { SpongeConversionUtil.fromSponge(it) }
     }
 
-    override fun getWorld(uuid: UUID): Optional<World> {
-        return Sponge.getServer().loadWorld(uuid).map { SpongeConversionUtil.fromSponge(it) }
+    override fun getWorld(uuid: UUID): Exceptional<World> {
+        return Exceptional.of(Sponge.getServer().loadWorld(uuid)).map { SpongeConversionUtil.fromSponge(it) }
     }
 }
