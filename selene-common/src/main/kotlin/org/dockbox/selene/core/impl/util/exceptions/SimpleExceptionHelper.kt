@@ -52,7 +52,8 @@ class SimpleExceptionHelper : ExceptionHelper {
             if (message != null && "" != message) Selene.log().error("Message: $message")
             if (exception.stackTrace.isNotEmpty()) {
                 val root = exception.stackTrace[0]
-                Selene.log().error("Location: " + root.fileName + " line " + root.lineNumber)
+                val line = if (root.lineNumber > 0) "line " + root.lineNumber else "(internal call)"
+                Selene.log().error("Location: " + root.fileName + " " + line)
                 if (stacktrace != null && stacktrace) {
                     var nextException = exception
                     while (null != nextException) {

@@ -22,7 +22,6 @@ import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.server.IntegratedExtension;
-import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerReference;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
@@ -84,9 +83,7 @@ public class DefaultGlobalConfig extends ServerReference implements GlobalConfig
     private boolean isConstructed;
 
     private void copyValues(GlobalConfig config) {
-        if (null == config) {
-            Selene.log().warn("Cannot copy values of empty configuration, using default values.");
-        } else {
+        if (null != config) {
             this.defaultLanguage = config.getDefaultLanguage();
             this.friendlyExceptions = ExceptionLevels.FRIENDLY == config.getExceptionLevel();
             this.stacktracesAllowed = config.getStacktracesAllowed();

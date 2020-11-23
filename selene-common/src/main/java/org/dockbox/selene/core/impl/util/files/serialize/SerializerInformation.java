@@ -26,11 +26,12 @@ import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
-class SerializerInformation<T> {
+public class SerializerInformation<T> {
+
     private final Class<T> type;
     private final Supplier<TypeSerializer<?>> serializer;
 
-    SerializerInformation(Class<T> type, Supplier<TypeSerializer<?>> serializer) {
+    public SerializerInformation(Class<T> type, Supplier<TypeSerializer<?>> serializer) {
         this.type = type;
         this.serializer = serializer;
         SeleneTypeSerializers.addSerializerInformation(this);

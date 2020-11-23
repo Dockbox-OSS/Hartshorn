@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.core.impl.util.files;
 
+import com.google.common.reflect.TypeToken;
+
 import org.dockbox.selene.core.impl.util.files.mapping.NeutrinoObjectMapper;
 import org.dockbox.selene.core.impl.util.files.mapping.NeutrinoObjectMapperFactory;
 import org.dockbox.selene.core.impl.util.files.serialize.SeleneTypeSerializers;
@@ -36,6 +38,7 @@ import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 import ninja.leaping.configurate.xml.XMLConfigurationLoader;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
@@ -86,10 +89,10 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @Override
     public <T> Exceptional<T> getFileContent(@NotNull Path file, @NotNull Class<T> type) {
         try {
-            this.verifyConfigurateType(type);
-
             final ConfigurationLoader<?> loader = this.getConfigurationLoader(file);
             final ConfigurationNode node = loader.load();
+            this.verifyConfigurateType(type, node);
+
             final NeutrinoObjectMapper<T> mapper = NeutrinoObjectMapperFactory.builder()
                     .build(true)
                     .getMapper(type);
@@ -110,10 +113,11 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @Override
     public <T> Exceptional<Boolean> writeFileContent(@NotNull Path file, @NotNull T content) {
         try {
-            this.verifyConfigurateType(content.getClass());
 
             final ConfigurationLoader<?> loader = this.getConfigurationLoader(file);
             final ConfigurationNode node = loader.load();
+            this.verifyConfigurateType(content.getClass(), node);
+
             @SuppressWarnings("unchecked") final NeutrinoObjectMapper<T> mapper = NeutrinoObjectMapperFactory.builder()
                     .build(true)
                     .getMapper((Class<T>) content.getClass());
@@ -127,12 +131,17 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
         }
     }
 
-    private final <T> void verifyConfigurateType(Class<T> type) throws IllegalArgumentException {
-        if (!type.isAnnotationPresent(ConfigSerializable.class)) {
-            throw new IllegalArgumentException(
-                    "Configuration type [" + type.getCanonicalName() + "] should be annotated with " +
-                            "ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable");
-        }
+    private final <T> void verifyConfigurateType(Class<T> type, ConfigurationNode node) throws IllegalArgumentException {
+        if (type.isAnnotationPresent(ConfigSerializable.class)) return; // Valid
+
+        TypeSerializer<T> serializer = node.getOptions().getSerializers().get(TypeToken.of(type));
+        if (serializer != null) return; // Valid
+
+        throw new IllegalArgumentException(
+                "Configuration type [" + type.getCanonicalName() + "] should be annotated with " +
+                        "ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable" +
+                " or have a valid ninja.leaping.configurate.objectmapping.serialize.TypeSerializer " +
+                " registered for it.");
     }
 
     @NotNull

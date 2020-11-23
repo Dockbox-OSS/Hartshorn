@@ -15,13 +15,13 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.impl.util.files.serialize;
+package org.dockbox.selene.integrated.data.serializers;
 
 import com.google.common.reflect.TypeToken;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
-import org.dockbox.selene.core.impl.objects.registry.Registry;
+import org.dockbox.selene.integrated.data.registry.Registry;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -25,10 +25,7 @@ import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.impl.objects.registry.Registry;
-import org.dockbox.selene.core.impl.objects.registry.RegistryColumn;
 import org.dockbox.selene.core.impl.util.files.serialize.SeleneTypeSerializers;
-import org.dockbox.selene.test.object.TestIdentifier;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -47,19 +44,6 @@ public class TypeSerialiserTests {
         SeleneTypeSerializers.registerTypeSerializers(tsc);
         tlb.setDefaultOptions(tlb.getDefaultOptions().setSerializers(tsc));
         return tlb.build();
-    }
-
-    private Registry<Registry<String>> buildTestRegistry() {
-        return new Registry<Registry<String>>()
-                .addColumn(TestIdentifier.BRICK, new Registry<String>()
-                        .addColumn(TestIdentifier.FULLBLOCK, "Brick Fullblock1", "Brick Fullblock2")
-                        .addColumn(TestIdentifier.STAIR, "Brick Stair1")
-                        .addColumn(TestIdentifier.SLAB, "Brick Slab1"))
-                .addColumn(TestIdentifier.SANDSTONE, new Registry<String>()
-                        .addColumn(TestIdentifier.FULLBLOCK, "Sandstone Fullblock1")
-                        .addColumn(TestIdentifier.STAIR, "Sandstone Stair1"))
-                .addColumn(TestIdentifier.COBBLESTONE, new Registry<String>()
-                        .addColumn(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock1"));
     }
 
     @Test
@@ -173,32 +157,5 @@ public class TypeSerialiserTests {
         Language ls = cn.getValue(TypeToken.of(Language.class));
         Assert.assertEquals(ls.getCode(), Language.NL_NL.getCode());
         Assert.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
-    }
-
-    @Test
-    public void testThatRegistryCanBeSerialised() throws ObjectMappingException {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<Registry<Registry<String>>>() {}, this.buildTestRegistry());
-
-        Registry<Registry<String>> reg = cn.getValue(new TypeToken<Registry<Registry<String>>>() {});
-
-        RegistryColumn<Registry<String>> result = reg.getAllData();
-
-        Assert.assertNotNull(result);
-        Assert.assertEquals(3, result.size());
-    }
-
-    @Test
-    public void testThatRegistryCanBeDeserialised() throws ObjectMappingException {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<Registry<Registry<String>>>() {}, this.buildTestRegistry());
-
-        Registry<Registry<String>> reg = cn.getValue(new TypeToken<Registry<Registry<String>>>() {});
-
-        List<String> result = reg.getMatchingColumns(TestIdentifier.BRICK)
-                .mapToSingleList(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
-
-        Assert.assertTrue(result.contains("Brick Fullblock1"));
-        Assert.assertTrue(result.contains("Brick Fullblock2"));
     }
 }
