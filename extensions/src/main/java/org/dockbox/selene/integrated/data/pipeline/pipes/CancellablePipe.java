@@ -3,7 +3,7 @@ package org.dockbox.selene.integrated.data.pipeline.pipes;
 import org.dockbox.selene.integrated.data.pipeline.Pipeline;
 
 @FunctionalInterface
-public interface CancelablePipe<I, O> extends IPipe<I, O> {
+public interface CancellablePipe<I, O> extends IPipe<I, O> {
 
     O execute(Runnable cancelPipeline, I input, Throwable throwable);
 
@@ -13,11 +13,16 @@ public interface CancelablePipe<I, O> extends IPipe<I, O> {
     }
 
     @Override
+    default Class<CancellablePipe> getType() {
+        return CancellablePipe.class;
+    }
+
+    @Override
     default String pipeName() {
         return "Cancelable Pipe";
     }
 
-    static <I, O> CancelablePipe<I, O> of(CancelablePipe<I, O> pipe) {
+    static <I, O> CancellablePipe<I, O> of(CancellablePipe<I, O> pipe) {
         return pipe;
     }
 }

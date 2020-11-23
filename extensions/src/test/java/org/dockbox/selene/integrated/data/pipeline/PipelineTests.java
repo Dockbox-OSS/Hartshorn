@@ -1,6 +1,6 @@
 package org.dockbox.selene.integrated.data.pipeline;
 
-import org.dockbox.selene.integrated.data.pipeline.pipes.CancelablePipe;
+import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.ExceptionalPipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.NonmodifingPipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.Pipe;
@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 public class PipelineTests {
 
-    private Pipeline<?, String> getPipeline() {
+    private Pipeline<Integer, String> getPipeline() {
         return new Pipeline<String, String>().of(
             NonmodifingPipe.of(
                 (input, throwable) -> System.out.println(String.format("First pipe found: %s", input)))
@@ -26,7 +26,7 @@ public class PipelineTests {
                 return exceptional.orElseGet(() -> -1);
             })
         ).addPipe(
-            CancelablePipe.of((cancelPipeline, input, throwable) -> {
+            CancellablePipe.of((cancelPipeline, input, throwable) -> {
                 if (4 > input) {
                     cancelPipeline.run();
                     System.out.println("Cancelled pipeline");
@@ -62,7 +62,7 @@ public class PipelineTests {
             })
         ).addPipeline(
             this.getPipeline().getFirstPipeline()
-        ).process("3");
+        ).process("3").get();
 
         Assert.assertEquals("12", output);
     }
@@ -72,7 +72,7 @@ public class PipelineTests {
         Pipeline<Integer, String> pipeline = new Pipeline<Integer, Integer>().of(
             Pipe.of((input, throwable) -> input + 1
         )).addPipe(
-            CancelablePipe.of((cancelPipeline, input, throwable) -> {
+            CancellablePipe.of((cancelPipeline, input, throwable) -> {
                 if (3 < input)  cancelPipeline.run();
                 return input;
             }
@@ -81,9 +81,33 @@ public class PipelineTests {
         ));
 
         //This works fine
-        String output1 = pipeline.process(1);
+        String output1 = pipeline.process(1).get();
 
         //This creates a ClassCastException
-        String output2 = pipeline.process(4);
+        String output2 = pipeline.process(4).orElseGet(() -> ":)");
+    }
+
+    @Test
+    public void fixedPipelineTest() {
+        new FixedPipeline<Integer>().addPipe(
+            Pipe.of((input, throwable) -> input + 1)
+        ).addPipe(
+            CancellablePipe.of(
+                (cancelPipeline, input, throwable) -> input - 2)
+        ).process(3);
+    }
+
+    @Test
+    public void pipelineInteratorTest() {
+        Pipeline<Integer, String> pipeline = this.getPipeline();
+        pipeline.process("3");
+
+        int count = 0;
+
+        for (Pipeline<?, ?> pipe : pipeline) {
+            count++;
+        }
+
+        Assert.assertEquals(5, count);
     }
 }

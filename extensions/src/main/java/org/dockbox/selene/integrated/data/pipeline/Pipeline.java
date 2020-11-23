@@ -3,14 +3,17 @@ package org.dockbox.selene.integrated.data.pipeline;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 @SuppressWarnings("unchecked")
 /*
  * The Pipeline class is designed around a Doubly Linked List data structure.
  */
-public class Pipeline<I, O> {
+public class Pipeline<I, O> implements Iterable<Pipeline<?,?>>{
 
     private IPipe<I, O> currentPipe;
 
@@ -20,7 +23,7 @@ public class Pipeline<I, O> {
     private boolean isCancelled;
     private O output;
 
-    public Pipeline<I, O> of(IPipe<I, O> pipe) {
+    public Pipeline<I, O> of(@NotNull IPipe<I, O> pipe) {
         this.currentPipe = pipe;
         return this;
     }
@@ -39,7 +42,7 @@ public class Pipeline<I, O> {
         return (Pipeline<T, R>)this;
     }
 
-    public <K> Pipeline<O, K> addPipe(IPipe<O, K> nextPipe) {
+    public <K> Pipeline<O, K> addPipe(@NotNull IPipe<O, K> nextPipe) {
         Pipeline<O, K> nextPipeline = new Pipeline<>();
         nextPipeline.of(nextPipe);
 
@@ -85,11 +88,11 @@ public class Pipeline<I, O> {
         }
     }
 
-    public O process(Object input) {
+    public Exceptional<O> process(Object input) {
         return this.process(input, null);
     }
 
-    public O process(Object input, Throwable throwable) {
+    public Exceptional<O> process(Object input, Throwable throwable) {
         Pipeline firstPipeline = this.getFirstPipeline();
 
         try {
@@ -102,7 +105,12 @@ public class Pipeline<I, O> {
 
         // If the pipeline was called to process the input from here, return the output of
         // this pipe in the pipeline, even if its not the last pipe.
-        return this.output;
+        return Exceptional.of(this.output);
+    }
+
+    @Nullable
+    public O processUnsafe(Object input) {
+        return this.process(input).get();
     }
 
     @NotNull
@@ -188,8 +196,7 @@ public class Pipeline<I, O> {
 
     public Pipeline<I, O> removePipeAt(int index) {
         this.getPipelineAt(index)
-            .ifPresent(this::removePipeline
-        );
+            .ifPresent(this::removePipeline);
         return this;
     }
 
@@ -215,6 +222,21 @@ public class Pipeline<I, O> {
 
     }
 
+    @Nullable
+    public Pipeline<O, ?> getNextPipeline() {
+        return this.nextPipeline;
+    }
+
+    @Nullable
+    public Pipeline<?, I> getPreviousPipeline() {
+        return this.previousPipeline;
+    }
+
+    @Nullable
+    public O getOutput() {
+        return this.output;
+    }
+
     public boolean isFirst() {
         return null == this.previousPipeline;
     }
@@ -234,4 +256,47 @@ public class Pipeline<I, O> {
         p.nextPipeline = null;
         p.previousPipeline = null;
     }
+
+    //region iterator
+
+    @NotNull
+    @Override
+    public Iterator<Pipeline<?, ?>> iterator() {
+        return new PipelineIterator(this.getFirstPipeline());
+    }
+
+    static class PipelineIterator implements Iterator<Pipeline<?,?>> {
+
+        private Pipeline<?, ?> currentPipeline;
+
+        PipelineIterator(Pipeline<?,?> pipeline) {
+            this.currentPipeline = pipeline;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return null != this.currentPipeline;
+        }
+
+        @Override
+        public Pipeline<?, ?> next() {
+            Pipeline<?,?> pipeline = this.currentPipeline;
+            this.currentPipeline = this.currentPipeline.getNextPipeline();
+            return pipeline;
+        }
+
+        @Override
+        public void remove() {
+            this.currentPipeline.removePipe();
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super Pipeline<?, ?>> action) {
+            for (Pipeline<?, ?> pipeline : this.currentPipeline) {
+                action.accept(pipeline);
+            }
+        }
+    }
+
+    //endregion
 }
