@@ -178,7 +178,7 @@ public final class ArgumentConverterRegistry {
             Mask.class,
             (source, s) -> {
                 if (source instanceof Player) {
-                    return Exceptional.ofOptional(
+                    return Exceptional.of(
                             new WorldEditMaskParser(((Player) source).getFawePlayer()
                                     .orElse(null))
                                     .parse(new CommandValue.Argument<>(s, "mask")));
@@ -193,7 +193,7 @@ public final class ArgumentConverterRegistry {
             Pattern.class,
             (source, s) -> {
                 if (source instanceof Player) {
-                    return Exceptional.ofOptional(
+                    return Exceptional.of(
                             new WorldEditPatternParser(((Player) source).getFawePlayer()
                                     .orElse(null))
                                     .parse(new Argument<>(s, "pattern")));
@@ -209,7 +209,7 @@ public final class ArgumentConverterRegistry {
             Extension.class,
             s -> {
                 Optional<Extension> octx = Selene.getInstance(ExtensionManager.class).getHeader(s);
-                return Exceptional.ofOptional(octx);
+                return Exceptional.of(octx);
             },
             Selene.getInstance(ExtensionManager.class).getRegisteredExtensionIds()
                     .toArray(new String[0])

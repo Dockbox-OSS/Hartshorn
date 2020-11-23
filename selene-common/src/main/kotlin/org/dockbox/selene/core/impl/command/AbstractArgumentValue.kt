@@ -20,13 +20,13 @@ package org.dockbox.selene.core.impl.command
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter
 
 @Suppress("LeakingThis")
-abstract class AbstractArgumentValue<T>(argument: ArgumentConverter<*>?, protected var permission: String?, key: String) {
+abstract class AbstractArgumentValue<T>(argument: ArgumentConverter<*>?, protected var permission: String?, key: String, type: String) {
 
     var element: T
-    protected abstract fun parseArgument(argument: ArgumentConverter<*>?, key: String?): T
+    protected abstract fun parseArgument(argument: ArgumentConverter<*>?, key: String?, type: String?): T
     abstract val argument: T
 
     init {
-        element = parseArgument(argument, key)
+        element = parseArgument(argument, key, type)
     }
 }

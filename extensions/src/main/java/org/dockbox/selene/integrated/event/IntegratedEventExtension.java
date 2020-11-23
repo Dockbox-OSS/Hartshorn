@@ -1,0 +1,66 @@
+/*
+ *  Copyright (C) 2020 Guus Lieben
+ *
+ *  This framework is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as
+ *  published by the Free Software Foundation, either version 2.1 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ *  the GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
+package org.dockbox.selene.integrated.event;
+
+import com.boydti.fawe.object.FawePlayer;
+
+import org.dockbox.selene.core.annotations.Filter;
+import org.dockbox.selene.core.annotations.Getter;
+import org.dockbox.selene.core.annotations.Listener;
+import org.dockbox.selene.core.events.chat.NativeCommandEvent;
+import org.dockbox.selene.core.events.server.ServerEvent.ServerStartingEvent;
+import org.dockbox.selene.core.objects.events.Cancellable;
+import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.events.EventBus;
+import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.integrated.event.processors.FaweSource;
+import org.dockbox.selene.integrated.event.processors.FaweSourceProcessor;
+import org.dockbox.selene.integrated.event.worldedit.WorldEditCopyEvent;
+import org.dockbox.selene.integrated.event.worldedit.WorldEditPasteEvent;
+
+@Extension(id = "selene-events", name = "Selene Events", description = "Provides additional events for Selene",
+           authors = "GuusLieben", uniqueId = "d212fa88-12d5-472a-ba1d-fd194dcf8e9a")
+public class IntegratedEventExtension {
+
+    @Listener
+    public void onServerStart(ServerStartingEvent event) {
+        Selene.getInstance(EventBus.class).registerProcessors(new FaweSourceProcessor());
+    }
+
+    @Listener
+    @Filter(param = "alias", value = "/copy")
+    public void onWorldEditCopy(NativeCommandEvent nce,
+                                @Getter("getSource") @FaweSource FawePlayer<?> fawePlayer,
+                                @Getter("getSource") Player player
+    ) {
+        Cancellable event = new WorldEditCopyEvent(fawePlayer, player).post();
+        nce.setCancelled(event.isCancelled());
+    }
+
+    @Listener
+    @Filter(param = "alias", value = "/paste")
+    public void onWorldEditPaste(NativeCommandEvent nce,
+                                @Getter("getSource") @FaweSource FawePlayer<?> fawePlayer,
+                                @Getter("getSource") Player player
+    ) {
+        Cancellable event = new WorldEditPasteEvent(fawePlayer, player).post();
+        nce.setCancelled(event.isCancelled());
+    }
+
+}

@@ -18,9 +18,20 @@
 package org.dockbox.selene.core.objects.location
 
 import java.util.*
+import kotlin.collections.HashMap
+import org.dockbox.selene.core.objects.tuple.Vector3N
+import org.dockbox.selene.core.objects.user.Gamemode
 import org.dockbox.selene.core.util.uuid.UUIDUtil
 
-abstract class World(open var worldUniqueId: UUID, open var name: String) {
+abstract class World(
+        open var worldUniqueId: UUID,
+        open var name: String,
+        loadOnStartup: Boolean,
+        spawnPosition: Vector3N,
+        seed: Long,
+        defaultGamemode: Gamemode,
+        gamerules: MutableMap<String, String>
+) : WorldProperties(loadOnStartup, spawnPosition, seed, defaultGamemode, gamerules) {
 
     abstract fun getPlayerCount(): Int
     abstract fun unload(): Boolean
@@ -31,7 +42,15 @@ abstract class World(open var worldUniqueId: UUID, open var name: String) {
         val empty: World = EmptyWorld()
     }
 
-    private class EmptyWorld : World(UUIDUtil.empty, "EMPTY") {
+    private class EmptyWorld : World(
+            UUIDUtil.empty,
+            "EMPTY",
+            false,
+            Vector3N(0, 0, 0),
+            -1,
+            Gamemode.SURVIVAL,
+            HashMap()
+    ) {
         override fun getPlayerCount(): Int = 0
         override fun unload(): Boolean = true
         override fun load(): Boolean = true

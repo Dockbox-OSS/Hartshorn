@@ -39,7 +39,4 @@ class SimpleExtensionContext(override var type: ExtensionContext.ComponentType, 
     override fun getStatus(clazz: Class<*>): ExtensionStatus? {
         return if (entryStatus.containsKey(clazz)) entryStatus[clazz] else null
     }
-
-
-
 }

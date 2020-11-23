@@ -19,11 +19,32 @@ package org.dockbox.selene.core.events.server
 
 import org.dockbox.selene.core.objects.events.Event
 
+/**
+ * The abstract type which can be used to listen to all server related events.
+ */
 abstract class ServerEvent : Event {
 
-    class Init : ServerEvent()
-    class Reload : ServerEvent()
-    class Starting : ServerEvent()
-    class Started : ServerEvent()
+    /**
+     * The event fired when the server is initiating/initializing. Typically this is the first event to be fired.
+     */
+    class ServerInitEvent : ServerEvent()
+
+    /**
+     * The event fired when a server-wide reload is performed.
+     */
+    class ServerReloadEvent : ServerEvent()
+
+    /**
+     * The event fired when the server is starting. Typically this is fired after [ServerInitEvent] and before
+     * [ServerStartedEvent].
+     */
+    class ServerStartingEvent : ServerEvent()
+
+    /**
+     * The event fired when the server is done starting. Typically this is the last event to be fired.
+     *
+     * @constructor Create empty Server started event
+     */
+    class ServerStartedEvent : ServerEvent()
 
 }

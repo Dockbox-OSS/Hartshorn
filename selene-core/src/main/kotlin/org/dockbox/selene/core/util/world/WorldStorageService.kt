@@ -18,9 +18,7 @@
 package org.dockbox.selene.core.util.world
 
 import java.util.*
-import org.dockbox.selene.core.objects.location.Location
 import org.dockbox.selene.core.objects.location.World
-import org.dockbox.selene.core.objects.tuple.Vector3D
 
 abstract class WorldStorageService {
 

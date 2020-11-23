@@ -40,7 +40,7 @@ import java.util.List;
 public class SpongeArgumentTypeValue extends AbstractArgumentValue<CommandElement> {
 
     public SpongeArgumentTypeValue(String type, String permission, String key) throws IllegalArgumentException {
-        super(ArgumentConverterRegistry.getConverter(type.toLowerCase()), permission, key);
+        super(ArgumentConverterRegistry.getConverter(type.toLowerCase()), permission, key, type.toLowerCase());
         if (!ArgumentConverterRegistry.hasConverter(type.toLowerCase())) {
             try {
                 Class<?> clazz = Class.forName(type);
@@ -56,7 +56,10 @@ public class SpongeArgumentTypeValue extends AbstractArgumentValue<CommandElemen
 
     @Nullable
     @Override
-    protected CommandElement parseArgument(ArgumentConverter<?> argument, String key) {
+    protected CommandElement parseArgument(ArgumentConverter<?> argument, String key, String type) {
+        if ("remaining".equals(type) || "remainingstring".equals(type)) {
+            return GenericArguments.remainingJoinedStrings(Text.of(key));
+        }
         return new SeleneConverterElement(key, argument);
     }
 

@@ -18,14 +18,18 @@
 package org.dockbox.selene.sponge.util;
 
 import com.flowpowered.math.vector.Vector3d;
+import com.flowpowered.math.vector.Vector3i;
 
+import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.location.Warp;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.CommandSource;
-import org.dockbox.selene.core.objects.tuple.Vector3D;
+import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.objects.user.Gamemode;
+import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
@@ -38,7 +42,6 @@ import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.source.ConsoleSource;
-import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
@@ -48,7 +51,6 @@ import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.serializer.TextSerializers;
-import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -65,7 +67,9 @@ public enum SpongeConversionUtil {
     @NotNull
     public static <T> Optional<?> autoDetectFromSponge(T object) {
         // CommandSource, Location, World, Gamemode
-        if (object instanceof org.spongepowered.api.command.CommandSource) {
+        if (object instanceof org.spongepowered.api.entity.living.player.Player) {
+            return Optional.of(fromSponge((org.spongepowered.api.entity.living.player.Player) object));
+        } else if (object instanceof org.spongepowered.api.command.CommandSource) {
             return fromSponge((org.spongepowered.api.command.CommandSource) object).toOptional();
         } else if (object instanceof Location) {
             return Optional.of(fromSponge((Location) object));
@@ -74,7 +78,7 @@ public enum SpongeConversionUtil {
         } else if (object instanceof GameMode) {
             return Optional.of(fromSponge((GameMode) object));
         } else if (object instanceof User) {
-            return Optional.of(new SpongePlayer(((Identifiable) object).getUniqueId(), ((Tamer) object).getName()));
+            return Optional.of(fromSponge((User) object));
         } else if (object instanceof ItemStack) {
             return Optional.of(fromSponge((ItemStack) object));
         } else if (object instanceof Enchantment) {
@@ -179,7 +183,7 @@ public enum SpongeConversionUtil {
         Exceptional<World> world = toSponge(location.getWorld());
         if (world.errorPresent()) return Exceptional.of(world.getError());
         if (!world.isPresent()) return Exceptional.empty();
-        Vector3d vector3d = new Vector3d(location.getX().doubleValue(), location.getY().doubleValue(), location.getZ().doubleValue());
+        Vector3d vector3d = new Vector3d(location.getVectorLoc().getXd(), location.getVectorLoc().getYd(), location.getVectorLoc().getZd());
         return Exceptional.of(new Location<>(world.get(), vector3d));
     }
 
@@ -204,8 +208,8 @@ public enum SpongeConversionUtil {
     @NotNull
     public static org.dockbox.selene.core.objects.location.Location fromSponge(Location<World> location) {
         org.dockbox.selene.core.objects.location.World world = fromSponge(location.getExtent());
-        Vector3D vector3D = new Vector3D(location.getX(), location.getY(), location.getZ());
-        return new org.dockbox.selene.core.objects.location.Location(vector3D, world);
+        Vector3N vector3N = new Vector3N(location.getX(), location.getY(), location.getZ());
+        return new org.dockbox.selene.core.objects.location.Location(vector3N, world);
     }
 
     @NotNull
@@ -215,7 +219,7 @@ public enum SpongeConversionUtil {
             if (null != wref) return Exceptional.of(wref);
         }
 
-        return Exceptional.ofSupplier(() -> Sponge.getServer().getWorld(world.getWorldUniqueId())
+        return Exceptional.of(() -> Sponge.getServer().getWorld(world.getWorldUniqueId())
                 .orElseThrow(() -> new RuntimeException("World reference not present on server")));
     }
 
@@ -257,17 +261,39 @@ public enum SpongeConversionUtil {
         return builder.build();
     }
 
+
+    @NotNull
+    public static Player fromSponge(org.spongepowered.api.entity.living.player.Player player) {
+        return fromSponge((User) player);
+    }
+
+    @NotNull
+    public static Player fromSponge(org.spongepowered.api.entity.living.player.User player) {
+        return new SpongePlayer(player.getUniqueId(), player.getName());
+    }
+
     @NotNull
     public static Exceptional<CommandSource> fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
         if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.Companion.getInstance());
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
-            return Exceptional.of(new SpongePlayer(((Identifiable) commandSource).getUniqueId(), commandSource.getName()));
+            return Exceptional.of(fromSponge((org.spongepowered.api.entity.living.player.Player) commandSource));
         return Exceptional.of(new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'"));
     }
 
     @NotNull
     public static org.dockbox.selene.core.objects.location.World fromSponge(World world) {
-        return new SpongeWorld(world.getUniqueId(), world.getName());
+        Vector3i vector3i = world.getProperties().getSpawnPosition();
+        Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
+
+        return new SpongeWorld(
+                world.getUniqueId(),
+                world.getName(),
+                world.getProperties().loadOnStartup(),
+                spawnLocation,
+                world.getProperties().getSeed(),
+                fromSponge(world.getProperties().getGameMode()),
+                world.getProperties().getGameRules()
+        );
     }
 
     @NotNull
@@ -277,5 +303,34 @@ public enum SpongeConversionUtil {
         } catch (IllegalArgumentException | NullPointerException e) {
             return Gamemode.OTHER;
         }
+    }
+
+    @NotNull
+    public static WorldCreatingProperties fromSponge(org.spongepowered.api.world.storage.WorldProperties worldProperties) {
+        Vector3i vector3i = worldProperties.getSpawnPosition();
+        Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
+
+        return new WorldCreatingProperties(
+                worldProperties.getWorldName(),
+                worldProperties.getUniqueId(),
+                worldProperties.loadOnStartup(),
+                spawnLocation,
+                worldProperties.getSeed(),
+                fromSponge(worldProperties.getGameMode()),
+                worldProperties.getGameRules()
+        );
+    }
+
+    public static Warp fromSponge(io.github.nucleuspowered.nucleus.api.nucleusdata.Warp warp) {
+        org.dockbox.selene.core.objects.location.Location location = warp.getLocation()
+                .map(SpongeConversionUtil::fromSponge)
+                .orElse(org.dockbox.selene.core.objects.location.Location.Companion.getEMPTY());
+
+        return new Warp(
+                warp.getDescription().map(Text::toString),
+                warp.getCategory(),
+                location,
+                warp.getName()
+        );
     }
 }
