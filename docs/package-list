@@ -28,6 +28,14 @@ org.dockbox.selene.core.util.events
 org.dockbox.selene.core.util.extension
 org.dockbox.selene.core.util.threads
 org.dockbox.selene.coulis
+org.dockbox.selene.integrated.data
+org.dockbox.selene.integrated.data.registry
+org.dockbox.selene.integrated.data.serializers
+org.dockbox.selene.integrated.data.table
+org.dockbox.selene.integrated.data.table.annotations
+org.dockbox.selene.integrated.data.table.behavior
+org.dockbox.selene.integrated.data.table.column
+org.dockbox.selene.integrated.data.table.exceptions
 org.dockbox.selene.integrated.event
 org.dockbox.selene.integrated.event.processors
 org.dockbox.selene.integrated.event.worldedit

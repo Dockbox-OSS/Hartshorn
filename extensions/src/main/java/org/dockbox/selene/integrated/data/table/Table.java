@@ -247,7 +247,7 @@ public class Table {
      Rows from the origin and the foreign table are merged into single rows. If a column exists in both tables, the
      {@link Merge} behavior indicates which to keep.
 
-     If a row does not have a matching row in the other table while new columns are created, {@param populateEmptyEntries}
+     If a row does not have a matching row in the other table while new columns are created, {@code populateEmptyEntries}
      indicates whether to treat this is a illegal state, or populate the entry with null.
 
      @param <T>
@@ -445,6 +445,8 @@ public class Table {
      Orders (sorts) a table based on a given column. Requires the data type of the {@link ColumnIdentifier} to be a
      implementation of {@link Comparable}. This modifies the existing table.
 
+     @param <T>
+     The type constraint indicating this method only accepts implementations of {@link Comparable}
      @param column
      Indicates the column to order by
      @param order
