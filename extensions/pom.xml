@@ -57,10 +57,17 @@
 
         <!-- SQL Extension dependencies -->
         <dependency>
-        <groupId>org.javalite</groupId>
-        <artifactId>activejdbc</artifactId>
-        <version>${javalite.version}</version>
-    </dependency>
+            <groupId>org.javalite</groupId>
+            <artifactId>activejdbc</artifactId>
+            <version>${javalite.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.32.3.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
