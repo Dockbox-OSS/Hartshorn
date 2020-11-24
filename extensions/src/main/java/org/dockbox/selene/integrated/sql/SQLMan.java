@@ -19,14 +19,13 @@ package org.dockbox.selene.integrated.sql;
 
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
-import org.dockbox.selene.integrated.sql.exceptions.TableMoficationException;
 
 import java.nio.file.Path;
 
 public interface SQLMan {
 
-    Table getTable(String name) throws TableMoficationException, InvalidConnectionException;
-    Table getTable(Path filePath, String name) throws TableMoficationException, InvalidConnectionException;
+    Table getTable(String name) throws InvalidConnectionException;
+    Table getTable(Path filePath, String name) throws InvalidConnectionException;
 
     void store(String name, Table table);
     void store(Path filePath, String name, Table table);

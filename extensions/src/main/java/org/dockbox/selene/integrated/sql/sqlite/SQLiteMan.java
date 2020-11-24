@@ -27,18 +27,20 @@ import org.dockbox.selene.integrated.data.table.column.SimpleColumnIdentifier;
 import org.dockbox.selene.integrated.data.table.exceptions.IdentifierMismatchException;
 import org.dockbox.selene.integrated.sql.SQLMan;
 import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
-import org.dockbox.selene.integrated.sql.exceptions.TableMoficationException;
 import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.RowProcessor;
 
 import java.nio.file.Path;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SQLiteMan implements SQLMan, InjectableType {
 
     public static final String PATH_KEY = "sqliteFilePath";
+    private static final String SELECT_ALL = "select * from ";
     private Path filePath;
 
     @Override
@@ -54,19 +56,15 @@ public class SQLiteMan implements SQLMan, InjectableType {
     }
 
     @Override
-    public Table getTable(String name) throws TableMoficationException, InvalidConnectionException {
+    public Table getTable(String name) throws InvalidConnectionException {
         return this.getTable(this.filePath, name);
     }
 
     @Override
-    public Table getTable(Path filePath, String name) throws TableMoficationException, InvalidConnectionException {
+    public Table getTable(Path filePath, String name) throws InvalidConnectionException {
         this.startTransaction();
-
-        DynamicModel model = new DynamicModel();
-        model.setTableName(name);
-
-        List<DynamicModel> modelList = DynamicModel.findAll();
-        Table table = this.convertToTable(modelList);
+        RowProcessor processor = Base.find(SELECT_ALL + name); // TODO, find a solution for .find params not being parsed properly
+        Table table = this.convertToTable(processor);
 
         this.endTransaction();
         return table;
@@ -96,32 +94,42 @@ public class SQLiteMan implements SQLMan, InjectableType {
         Base.close();
     }
 
-    private Table convertToTable(List<DynamicModel> models) {
-        if (models.isEmpty()) return new Table();
-        List<ColumnIdentifier<?>> columns = this.getColumnIdentifiers(models.get(0));
-        Table table = new Table(columns);
-        this.populateTable(table, models);
+    private Table convertToTable(RowProcessor processor) {
+        List<Map<String, Object>> rows = this.convertToRows(processor);
+        if (rows.isEmpty()) return new Table();
+        List<ColumnIdentifier<?>> identifiers = this.getColumnIdentifiers(rows.get(0));
+        Table table = new Table(identifiers);
+        this.populateTable(table, rows);
         return table;
     }
 
-    private List<ColumnIdentifier<?>> getColumnIdentifiers(DynamicModel model) {
+    private List<Map<String, Object>> convertToRows(RowProcessor processor) {
+        List<Map<String, Object>> rows = new ArrayList<>();
+        processor.with((next) -> {
+            rows.add(next);
+            return true;
+        });
+        return rows;
+    }
+
+    private List<ColumnIdentifier<?>> getColumnIdentifiers(Map<String, Object> row) {
         List<ColumnIdentifier<?>> identifiers = new ArrayList<>();
-        model.getAttributes().forEach((key, attr) -> {
+        row.forEach((key, attr) -> {
             identifiers.add(new SimpleColumnIdentifier<>(key, attr.getClass()));
         });
         return identifiers;
     }
 
-    private void populateTable(final Table table, final Iterable<DynamicModel> models) {
-        models.forEach(model -> {
+    private void populateTable(final Table table, final List<Map<String, Object>> rows) {
+        rows.forEach(row -> {
             try {
-                TableRow row = new TableRow();
-                model.getAttributes().forEach((key, attr) -> {
+                TableRow tableRow = new TableRow();
+                row.forEach((key, attr) -> {
                     ColumnIdentifier<?> identifier = table.getIdentifier(key);
                     if (null != identifier)
-                        row.addValue(identifier, attr);
+                        tableRow.addValue(identifier, attr);
                 });
-                table.addRow(row);
+                table.addRow(tableRow);
             } catch (IdentifierMismatchException e) {
                 throw new IllegalStateException("Loaded identifiers did not match while populating table", e);
             }
