@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.integrated.sql.sqlite;
 
+import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
@@ -34,6 +36,7 @@ import java.nio.file.Path;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,11 +44,12 @@ public class SQLiteMan implements SQLMan, InjectableType {
 
     public static final String PATH_KEY = "sqliteFilePath";
     private static final String SELECT_ALL = "select * from ";
+    private final Map<String, ColumnIdentifier<?>> identifiers = new HashMap<>();
     private Path filePath;
 
     @Override
     public boolean canEnable() {
-        return true;
+        return null == this.filePath;
     }
 
     @Override
@@ -53,6 +57,11 @@ public class SQLiteMan implements SQLMan, InjectableType {
         SeleneUtils.getPropertyValue(PATH_KEY, Path.class, properties)
                 .ifPresent(path -> this.filePath = path)
                 .orElseThrow(() -> new IllegalArgumentException("Missing value for '" + PATH_KEY + "'"));
+        SeleneUtils.getSubProperties(SQLColumnProperty.class, properties)
+                .forEach(property -> {
+                    Tuple<String, ColumnIdentifier<?>> identifier = property.getObject();
+                    this.identifiers.put(identifier.getFirst(), identifier.getSecond());
+                });
     }
 
     @Override
@@ -115,7 +124,10 @@ public class SQLiteMan implements SQLMan, InjectableType {
     private List<ColumnIdentifier<?>> getColumnIdentifiers(Map<String, Object> row) {
         List<ColumnIdentifier<?>> identifiers = new ArrayList<>();
         row.forEach((key, attr) -> {
-            identifiers.add(new SimpleColumnIdentifier<>(key, attr.getClass()));
+            identifiers.add(
+                    this.tryGetColumn(key)
+                            .orElseGet(() -> new SimpleColumnIdentifier<>(key, attr.getClass()))
+            );
         });
         return identifiers;
     }
@@ -125,7 +137,8 @@ public class SQLiteMan implements SQLMan, InjectableType {
             try {
                 TableRow tableRow = new TableRow();
                 row.forEach((key, attr) -> {
-                    ColumnIdentifier<?> identifier = table.getIdentifier(key);
+                    ColumnIdentifier<?> identifier = this.tryGetColumn(key)
+                            .orElseGet(() -> table.getIdentifier(key));
                     if (null != identifier)
                         tableRow.addValue(identifier, attr);
                 });
@@ -134,5 +147,9 @@ public class SQLiteMan implements SQLMan, InjectableType {
                 throw new IllegalStateException("Loaded identifiers did not match while populating table", e);
             }
         });
+    }
+
+    private Exceptional<ColumnIdentifier<?>> tryGetColumn(String key) {
+        return Exceptional.ofNullable(this.identifiers.get(key));
     }
 }
