@@ -32,7 +32,7 @@ class SQLiteManTest {
         String path = "src/test/resources/storage.db";
         File file = new File(path);
         SQLiteMan man = new SQLiteMan();
-        man.stateEnabling(new SimpleProperty<>(file.toPath(), SQLiteMan.PATH_KEY));
+        man.stateEnabling(new SQLitePathProperty(file.toPath()));
         return man;
     }
 
