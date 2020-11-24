@@ -71,7 +71,7 @@ public class SQLiteMan implements SQLMan, InjectableType {
 
     @Override
     public Table getTable(Path filePath, String name) throws InvalidConnectionException {
-        this.startTransaction();
+        this.startTransaction(filePath);
         RowProcessor processor = Base.find(SELECT_ALL + name); // TODO, find a solution for .find params not being parsed properly
         Table table = this.convertToTable(processor);
 
@@ -89,13 +89,13 @@ public class SQLiteMan implements SQLMan, InjectableType {
         // TODO, Implementation
     }
 
-    private void startTransaction() throws InvalidConnectionException {
+    private void startTransaction(Path filePath) throws InvalidConnectionException {
         try {
             Class.forName("org.sqlite.JDBC");
             // Attaches the connection to the current thread. TODO: add specific note for developers that this should be used async as much as possible
-            Base.attach(DriverManager.getConnection("jdbc:sqlite:" + this.filePath.toFile().getAbsolutePath()));
+            Base.attach(DriverManager.getConnection("jdbc:sqlite:" + filePath.toFile().getAbsolutePath()));
         } catch (ClassNotFoundException | SQLException e) {
-            throw new InvalidConnectionException("Could not open connection to '" + this.filePath.toFile().getAbsolutePath(), e);
+            throw new InvalidConnectionException("Could not open connection to '" + filePath.toFile().getAbsolutePath(), e);
         }
     }
 
@@ -123,16 +123,14 @@ public class SQLiteMan implements SQLMan, InjectableType {
 
     private List<ColumnIdentifier<?>> getColumnIdentifiers(Map<String, Object> row) {
         List<ColumnIdentifier<?>> identifiers = new ArrayList<>();
-        row.forEach((key, attr) -> {
-            identifiers.add(
-                    this.tryGetColumn(key)
-                            .orElseGet(() -> new SimpleColumnIdentifier<>(key, attr.getClass()))
-            );
-        });
+        row.forEach((key, attr) -> identifiers.add(
+                this.tryGetColumn(key)
+                        .orElseGet(() -> new SimpleColumnIdentifier<>(key, attr.getClass()))
+        ));
         return identifiers;
     }
 
-    private void populateTable(final Table table, final List<Map<String, Object>> rows) {
+    private void populateTable(final Table table, final Iterable<Map<String, Object>> rows) {
         rows.forEach(row -> {
             try {
                 TableRow tableRow = new TableRow();
