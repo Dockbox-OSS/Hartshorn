@@ -22,6 +22,7 @@ import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -848,6 +849,27 @@ public enum SeleneUtils {
         } catch (ClassCastException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             return Exceptional.empty();
         }
+    }
+
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public static <T> InjectorProperty<T> getProperty(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
+        for (InjectorProperty<?> property : properties) {
+            if (property.getKey().equals(key)
+                    && null != property.getObject()
+                    && property.getObject().getClass().isAssignableFrom(expectedType)
+            ) {
+                return (InjectorProperty<T>) property;
+            }
+        }
+        return null;
+    }
+
+    public static <T> Exceptional<T> getPropertyValue(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
+        InjectorProperty<T> property = getProperty(key, expectedType, properties);
+        if (null != property) {
+            return Exceptional.of(property::getObject);
+        } return Exceptional.empty();
     }
 
     public enum HttpStatus {
