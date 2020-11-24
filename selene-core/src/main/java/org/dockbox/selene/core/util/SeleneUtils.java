@@ -857,7 +857,7 @@ public enum SeleneUtils {
         for (InjectorProperty<?> property : properties) {
             if (property.getKey().equals(key)
                     && null != property.getObject()
-                    && property.getObject().getClass().isAssignableFrom(expectedType)
+                    && expectedType.isAssignableFrom(property.getObject().getClass())
             ) {
                 return (InjectorProperty<T>) property;
             }
