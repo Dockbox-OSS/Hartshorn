@@ -94,7 +94,7 @@ public class PipelineTests {
         ).addPipe(
             CancellablePipe.of(
                 (cancelPipeline, input, throwable) -> input - 2)
-        ).process(3);
+        ).process(4);
     }
 
     @Test
