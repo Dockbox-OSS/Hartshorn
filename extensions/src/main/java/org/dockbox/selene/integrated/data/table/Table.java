@@ -70,6 +70,11 @@ public class Table {
         this.rows = new CopyOnWriteArrayList<>();
     }
 
+    public Table(Collection<ColumnIdentifier<?>> columns) {
+        this.identifiers = columns.toArray(new ColumnIdentifier[0]);
+        this.rows = new CopyOnWriteArrayList<>();
+    }
+
     /**
      Adds a row to the table if the column identifiers are equal in length and type. If the row has more or less column
      identifiers it is not accepted into the table. If a row has a column which is not contained in this table it is not
@@ -486,7 +491,7 @@ public class Table {
     }
 
     @Nullable
-    private ColumnIdentifier getIdentifier(@NonNls String fieldName) throws ClassCastException {
+    public ColumnIdentifier getIdentifier(@NonNls String fieldName) throws ClassCastException {
         for (ColumnIdentifier columnIdentifier : this.identifiers) {
             if (columnIdentifier.getColumnName().equalsIgnoreCase(fieldName)) {
                 return columnIdentifier;
