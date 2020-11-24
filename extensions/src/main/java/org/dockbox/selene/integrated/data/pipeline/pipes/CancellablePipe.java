@@ -1,6 +1,6 @@
 package org.dockbox.selene.integrated.data.pipeline.pipes;
 
-import org.dockbox.selene.integrated.data.pipeline.Pipeline;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 
 @FunctionalInterface
 public interface CancellablePipe<I, O> extends IPipe<I, O> {
@@ -8,8 +8,8 @@ public interface CancellablePipe<I, O> extends IPipe<I, O> {
     O execute(Runnable cancelPipeline, I input, Throwable throwable);
 
     @Override
-    default O apply(Pipeline<I, O> pipeline, I input, Throwable throwable) {
-        return this.execute(pipeline::cancel, input, throwable);
+    default O apply(Exceptional<I> input) {
+        return this.execute(null, input.get(), input.orElseExcept(null));
     }
 
     @Override

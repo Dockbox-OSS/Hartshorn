@@ -110,4 +110,28 @@ public class PipelineTests {
 
         Assert.assertEquals(5, count);
     }
+
+    @Test
+    public void convertablePipelineTest() {
+        float output = new ConvertiblePipeline<Integer, Integer>()
+            .addPipe(
+                Pipe.of((input, throwable) -> input + 2)
+            ).convertPipeline(
+                integer -> (float)integer
+            ).addPipe(
+                Pipe.of((input, throwable) -> input / 2F)
+            ).processUnsafely(1);
+
+        float output2 = new ConvertiblePipelineSource<Integer>()
+            .addPipe(
+                Pipe.of((input, throwable) -> input + 2)
+            ).convertPipeline(
+                integer -> (float)integer
+            ).addPipe(
+                Pipe.of((input, throwable) -> input / 2F)
+            ).processUnsafely(1);
+
+        Assert.assertEquals(1.5F, output, 0.0);
+        Assert.assertEquals(1.5F, output2, 0.0);
+    }
 }

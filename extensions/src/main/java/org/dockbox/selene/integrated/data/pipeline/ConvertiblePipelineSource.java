@@ -6,20 +6,13 @@ import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FixedPipeline<I> extends AbstractPipeline<I, I> {
-
-    @SafeVarargs
-    @Override
-    public final FixedPipeline<I> addPipes(@NotNull IPipe<I, I>... pipes) {
-        return (FixedPipeline<I>)super.addPipes(pipes);
-    }
+public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
 
     @Override
     public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable) {
         Exceptional<I> exceptionalInput = Exceptional.ofNullable(input, throwable);
 
         for (IPipe<I, I> pipe : this.pipes) {
-
             exceptionalInput = super.processPipe(pipe, exceptionalInput);
 
             //If the pipelines been cancelled, stop processing any further pipes.

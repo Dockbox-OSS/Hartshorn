@@ -1,6 +1,6 @@
 package org.dockbox.selene.integrated.data.pipeline.exceptions;
 
-public class IllegalPipelineConverterException extends Exception {
+public class IllegalPipelineConverterException extends IllegalArgumentException {
 
     public IllegalPipelineConverterException(String errorMessage, Throwable throwable) {
         super(errorMessage, throwable);

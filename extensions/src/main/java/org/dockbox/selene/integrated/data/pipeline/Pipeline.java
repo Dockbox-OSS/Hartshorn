@@ -63,7 +63,7 @@ public class Pipeline<I, O> implements Iterable<Pipeline<?,?>>{
     private void execute(I input, Throwable throwable) {
         Throwable error = null;
         try {
-            this.output = this.currentPipe.apply(this, input, throwable);
+            this.output = this.currentPipe.apply(Exceptional.ofNullable(input, throwable));
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(
                 String.format("Couldn't pass forward the input %s to pipe: %s",

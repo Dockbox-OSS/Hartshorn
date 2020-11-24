@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.BiFunction;
 
 @SuppressWarnings("AssignmentToNull")
 public final class Exceptional<T> {
@@ -133,19 +134,32 @@ public final class Exceptional<T> {
     public<U> Exceptional<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
         if (!this.isPresent())
-            return empty();
+            return this.errorPresent() ? of(this.throwable) : empty();
         else {
-            return Exceptional.ofNullable(mapper.apply(this.value));
+            return ofNullable(mapper.apply(this.value), this.throwable);
         }
     }
 
     public<U> Exceptional<U> flatMap(Function<? super T, Exceptional<U>> mapper) {
         Objects.requireNonNull(mapper);
         if (!this.isPresent())
-            return empty();
+            return this.errorPresent() ? of(this.throwable) : empty();
         else {
             return Objects.requireNonNull(mapper.apply(this.value));
         }
+    }
+
+    public<U> Exceptional<U> flatMap(BiFunction<? super T, Throwable, Exceptional<U>> mapper) {
+        Objects.requireNonNull(mapper);
+        if (!this.isPresent())
+            return this.errorPresent() ? of(this.throwable) : empty();
+        else {
+            return Objects.requireNonNull(mapper.apply(this.value, this.throwable));
+        }
+    }
+
+    public Throwable orElseExcept(Throwable other) {
+        return null != this.throwable ? this.throwable : other;
     }
 
     public T orElse(T other) {
@@ -233,9 +247,9 @@ public final class Exceptional<T> {
     public Exceptional<T> orElseSupply(Supplier<T> defaultValue) {
         if (this.isAbsent()) {
             if (this.errorPresent()) {
-                return Exceptional.of(defaultValue.get(), this.throwable);
+                return of(defaultValue.get(), this.throwable);
             } else {
-                return Exceptional.of(defaultValue.get());
+                return of(defaultValue.get());
             }
         }
         return this;

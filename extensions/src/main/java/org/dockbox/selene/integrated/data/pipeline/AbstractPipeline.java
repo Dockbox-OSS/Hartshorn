@@ -2,7 +2,6 @@ package org.dockbox.selene.integrated.data.pipeline;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.CancelledPipelineException;
-import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineConverterException;
 import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +41,7 @@ public abstract class AbstractPipeline<P, I> {
                 return cancellablePipe.execute(this::cancelPipeline, input.get(), input.getError());
             }
             else {
-                return pipe.apply(null, input.get(), input.getError());
+                return pipe.apply(input);
             }
         });
 
@@ -50,6 +49,10 @@ public abstract class AbstractPipeline<P, I> {
             //Reset it straight after its been detected for next time the pipeline's used.
             this.isCancelled = false;
             output = Exceptional.of(new CancelledPipelineException("Pipeline has been cancelled."));
+        }
+        else if (output.errorPresent()){
+            // Pass the input forwards.
+            output = Exceptional.ofNullable(input.orElse(null), output.getError());
         }
 
         return output;
