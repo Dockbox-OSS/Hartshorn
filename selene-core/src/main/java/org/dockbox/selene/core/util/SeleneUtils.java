@@ -869,7 +869,17 @@ public enum SeleneUtils {
         InjectorProperty<T> property = getProperty(key, expectedType, properties);
         if (null != property) {
             return Exceptional.of(property::getObject);
-        } return Exceptional.empty();
+        }
+        return Exceptional.empty();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends InjectorProperty<?>> List<T> getSubProperties(Class<T> propertyFilter, InjectorProperty<?>... properties) {
+        List<T> values = new ArrayList<>();
+        for (InjectorProperty<?> property : properties) {
+            if (propertyFilter.isAssignableFrom(property.getClass())) values.add((T) property);
+        }
+        return values;
     }
 
     public enum HttpStatus {
