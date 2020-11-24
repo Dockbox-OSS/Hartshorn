@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.integrated.sql.sqlite;
 
-import org.dockbox.selene.core.impl.server.properties.SimpleProperty;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.sql.SQLMan;
 import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
@@ -25,22 +24,38 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.nio.file.Path;
 
 class SQLiteManTest {
 
-    private SQLMan getSQLiteMan() {
+    private Path getTestFile() {
         String path = "src/test/resources/storage.db";
-        File file = new File(path);
+        return new File(path).toPath();
+    }
+
+    private SQLiteMan getSQLiteMan(boolean enableState) {
         SQLiteMan man = new SQLiteMan();
-        man.stateEnabling(new SQLitePathProperty(file.toPath()));
+        if (enableState)
+            man.stateEnabling(new SQLitePathProperty(this.getTestFile()));
         return man;
     }
 
     @Test
     public void testGetTable() throws InvalidConnectionException {
-        SQLMan man = this.getSQLiteMan();
+        SQLMan man = this.getSQLiteMan(true);
         Table plots = man.getTable("plot");
         Assert.assertEquals(2301, plots.count());
     }
 
+    @Test
+    public void testIdentifierProperties() throws InvalidConnectionException {
+        SQLiteMan man = this.getSQLiteMan(false);
+        man.stateEnabling(
+                new SQLitePathProperty(this.getTestFile()),
+                new SQLColumnProperty("world", SQLiteColumnIdentifiers.PLOT_WORLD)
+        );
+        Table plots = man.getTable("plot");
+        Table worlds = plots.where(SQLiteColumnIdentifiers.PLOT_WORLD, "*");
+        Assert.assertEquals(161, worlds.count());
+    }
 }
