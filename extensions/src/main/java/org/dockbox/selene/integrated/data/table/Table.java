@@ -465,7 +465,7 @@ public class Table {
         if (!this.hasColumn(column))
             throw new IllegalArgumentException("Table does not contains column named : " + column.getColumnName());
 
-        if (!Comparable.class.isAssignableFrom(column.getType()))
+        if (!SeleneUtils.isAssignableFrom(Comparable.class, column.getType()))
             throw new IllegalArgumentException("Column does not contain a comparable data type : " + column.getColumnName());
 
         this.rows.sort((r1, r2) -> {

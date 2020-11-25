@@ -116,7 +116,7 @@ public enum DefaultParamProcessors {
      it is converted to a {@link Exceptional}.
      */
     WRAP_SAFE(WrapSafe.class, EventStage.FILTER, (object, annotation, event, parameter, wrapper) -> {
-        if (parameter.getType().isAssignableFrom(event.getClass())) {
+        if (SeleneUtils.isAssignableFrom(parameter.getType(), event.getClass())) {
             Selene.log().warn("Event parameter cannot be wrapped");
             return object;
         }

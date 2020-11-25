@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.core.util.events;
 
+import org.dockbox.selene.core.util.SeleneUtils;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -121,8 +123,8 @@ public enum FilterTypes implements FilterType {
         if (null == expected || null == actual || null == expectedType) {
             return false;
         }
-        return expectedType.isAssignableFrom(expected.getClass())
-                && expectedType.isAssignableFrom(actual.getClass());
+        return SeleneUtils.isAssignableFrom(expectedType, expected.getClass())
+                && SeleneUtils.isAssignableFrom(expectedType, actual.getClass());
     }
 
     private static boolean eitherNull(Object expected, Object actual) {

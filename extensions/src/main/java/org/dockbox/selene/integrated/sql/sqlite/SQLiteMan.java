@@ -61,7 +61,7 @@ public class SQLiteMan implements SQLMan, InjectableType {
         SeleneUtils.getSubProperties(SQLColumnProperty.class, properties)
                 .forEach(property -> {
                     Tuple<String, ColumnIdentifier<?>> identifier = property.getObject();
-                    this.identifiers.put(identifier.getFirst(), identifier.getSecond());
+                    this.identifiers.put(identifier.getKey(), identifier.getValue());
                 });
     }
 

@@ -40,7 +40,7 @@ public class TableRow {
     @NotNull
     public TableRow addValue(@NotNull ColumnIdentifier<?> column, @Nullable Object value) {
         // Make sure both the Identifier and the Value are both the same type
-        if (null == value || column.getType().isAssignableFrom(value.getClass()))
+        if (null == value || SeleneUtils.isAssignableTo(column.getType(), value.getClass()))
             this.data.put(column, value);
         else
             throw new IllegalArgumentException(

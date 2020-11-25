@@ -97,7 +97,7 @@ public enum SeleneUtils {
         if (isInCooldown(o) && !overwriteExisting) return;
         activeCooldowns.put(o, new Triad<>(LocalDateTime.now(), duration, timeUnit));
     }
-    
+
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit) {
         cooldown(o, duration, timeUnit, false);
     }
@@ -642,7 +642,7 @@ public enum SeleneUtils {
 
     @Contract("null, _ -> false; !null, null -> false")
     public static <T> boolean isGenericInstanceOf(T instance, Class<?> type) {
-        return null != instance && null != type && type.isAssignableFrom(instance.getClass());
+        return null != instance && null != type && isAssignableFrom(type, instance.getClass());
     }
 
     public static boolean isFileEmpty(@NotNull Path file) {
@@ -754,7 +754,7 @@ public enum SeleneUtils {
             runnable.run();
             return false;
         } catch (Throwable t) {
-            return exception.isAssignableFrom(t.getClass());
+            return isAssignableFrom(exception, t.getClass());
         }
     }
 
@@ -878,7 +878,7 @@ public enum SeleneUtils {
         for (InjectorProperty<?> property : properties) {
             if (property.getKey().equals(key)
                     && null != property.getObject()
-                    && expectedType.isAssignableFrom(property.getObject().getClass())
+                    && isAssignableFrom(expectedType, property.getObject().getClass())
             ) {
                 return (InjectorProperty<T>) property;
             }
@@ -898,7 +898,7 @@ public enum SeleneUtils {
     public static <T extends InjectorProperty<?>> List<T> getSubProperties(Class<T> propertyFilter, InjectorProperty<?>... properties) {
         List<T> values = new ArrayList<>();
         for (InjectorProperty<?> property : properties) {
-            if (propertyFilter.isAssignableFrom(property.getClass())) values.add((T) property);
+            if (isAssignableFrom(propertyFilter, property.getClass())) values.add((T) property);
         }
         return values;
     }
@@ -906,7 +906,6 @@ public enum SeleneUtils {
     public static <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map, T instance) {
         Get<String, Object> insensitiveMap = new CaseInsensitiveMap<>(map);
 
-//        T instance = SeleneUtils.getInstance(type);
         if (null == instance) return Exceptional.empty();
 
         try {
@@ -916,7 +915,7 @@ public enum SeleneUtils {
                 String propertyName = getFieldPropertyName(field);
                 if (insensitiveMap.containsKey(propertyName)) {
                     Object value = insensitiveMap.get(propertyName);
-                    if (field.getType().isAssignableFrom(value.getClass())) {
+                    if (isAssignableFrom(field.getType(), value.getClass())) {
                         field.set(instance, value);
                     }
                 }
@@ -934,7 +933,11 @@ public enum SeleneUtils {
         return primitiveWrapperMap.get(primitive) == targetClass;
     }
 
-    public static boolean isAssignableTo(Class<?> from, Class<?> to) {
+    public static boolean isEitherAssignableFrom(Class<?> to, Class<?> from) {
+        return isAssignableFrom(from, to) || isAssignableFrom(to, from);
+    }
+
+    public static boolean isAssignableFrom(Class<?> to, Class<?> from) {
         if (to.isAssignableFrom(from)) {
             return true;
         }

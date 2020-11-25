@@ -20,6 +20,7 @@ package org.dockbox.selene.integrated.data;
 import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.impl.util.files.serialize.SeleneTypeSerializers;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.registry.Registry;
 import org.dockbox.selene.integrated.data.registry.RegistryColumn;
 import org.dockbox.selene.integrated.data.registry.TestIdentifier;
@@ -40,8 +41,8 @@ public class TypeSerializerTests {
         TypeSerializerCollection tsc = tlb.getDefaultOptions().getSerializers().newChild();
         SeleneTypeSerializers.registerTypeSerializers(tsc);
         tsc.registerPredicate(typeToken ->
-                new TypeToken<Registry<?>>() {
-                }.getRawType().isAssignableFrom(typeToken.getRawType()), new RegistrySerializer());
+                SeleneUtils.isAssignableFrom(new TypeToken<Registry<?>>() {
+                }.getRawType(), typeToken.getRawType()), new RegistrySerializer());
         tlb.setDefaultOptions(tlb.getDefaultOptions().setSerializers(tsc));
         return tlb.build();
     }
