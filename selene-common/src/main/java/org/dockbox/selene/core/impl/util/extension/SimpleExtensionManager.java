@@ -104,12 +104,12 @@ public class SimpleExtensionManager implements ExtensionManager {
 
             return new Tuple<>(context, type);
         }).filter(tuple -> {
-            if (this.createComponentInstance(tuple.getSecond(), tuple.getFirst())) {
-                globalContexts.add(tuple.getFirst());
+            if (this.createComponentInstance(tuple.getValue(), tuple.getKey())) {
+                globalContexts.add(tuple.getKey());
                 return true;
             }
             return false;
-        }).map(Tuple::getFirst).collect(Collectors.toList());
+        }).map(Tuple::getKey).collect(Collectors.toList());
     }
 
     @NotNull
