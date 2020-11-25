@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.integrated.sql.sqlite;
 
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.sql.SQLMan;
 import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
@@ -57,5 +58,16 @@ class SQLiteManTest {
         Table plots = man.getTable("plot");
         Table worlds = plots.where(SQLiteColumnIdentifiers.PLOT_WORLD, "*");
         Assert.assertEquals(161, worlds.count());
+    }
+
+    @Test
+    public void testTableConversion() throws InvalidConnectionException {
+        SQLiteMan man = this.getSQLiteMan(true);
+        Table plots = man.getTable("plot");
+
+        long count = plots.getRowsAs(PlotEntry.class).stream()
+                .filter(Exceptional::isPresent)
+                .count();
+        Assert.assertEquals(2301, count);
     }
 }
