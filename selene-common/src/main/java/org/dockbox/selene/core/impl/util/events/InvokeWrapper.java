@@ -20,7 +20,7 @@ package org.dockbox.selene.core.impl.util.events;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 
-import org.dockbox.selene.core.annotations.AsyncEvent;
+import org.dockbox.selene.core.annotations.Async;
 import org.dockbox.selene.core.annotations.Filter;
 import org.dockbox.selene.core.annotations.Filters;
 import org.dockbox.selene.core.annotations.IsCancelled;
@@ -141,7 +141,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                 };
 
                 ThreadUtils tu = Selene.getInstance(ThreadUtils.class);
-                if (this.method.isAnnotationPresent(AsyncEvent.class)) {
+                if (this.method.isAnnotationPresent(Async.class)) {
                     tu.performAsync(eventRunner);
                 } else {
                     tu.performSync(eventRunner).get();
