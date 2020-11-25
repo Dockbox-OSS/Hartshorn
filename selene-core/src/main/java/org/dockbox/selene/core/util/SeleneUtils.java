@@ -17,13 +17,12 @@
 
 package org.dockbox.selene.core.util;
 
-import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.collections4.Get;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
+import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
@@ -56,10 +55,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
@@ -79,19 +80,32 @@ public enum SeleneUtils {
     public static final int MAXIMUM_DECIMALS = 15;
 
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap =
-            mapOf(boolean.class, Boolean.class,
-                    byte.class, Byte.class,
-                    char.class, Character.class,
-                    double.class, Double.class,
-                    float.class, Float.class,
-                    int.class, Integer.class,
-                    long.class, Long.class,
-                    short.class, Short.class);
+            ofEntries(entry(boolean.class, Boolean.class),
+                    entry(byte.class, Byte.class),
+                    entry(char.class, Character.class),
+                    entry(double.class, Double.class),
+                    entry(float.class, Float.class),
+                    entry(int.class, Integer.class),
+                    entry(long.class, Long.class),
+                    entry(short.class, Short.class));
 
-    private static Map<Object, Object> mapOf(Object... values) {
-        // TODO
+    @SafeVarargs
+    @SuppressWarnings("varargs")
+    static <K, V> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
+        if (entries.length == 0) { // implicit null check of entries array
+            return Collections.emptyMap();
+        } else {
+            Map<K, V> map = new HashMap<>();
+            for (Entry<? extends K, ? extends V> entry : entries) {
+                map.put(entry.getKey(), entry.getValue());
+            }
+            return map;
+        }
     }
 
+    static <K, V> Entry<K, V> entry(K k, V v) {
+        return new Tuple<>(k, v);
+    }
 
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
         if (isInCooldown(o) && !overwriteExisting) return;
