@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 /**
  A relational table type which can easily create weak relations to other tables. Relations are non-strict references so
@@ -515,6 +516,10 @@ public class Table {
             }
         }
         return false;
+    }
+
+    public void forEach(Consumer<TableRow> consumer) {
+        this.getRows().forEach(consumer);
     }
 
 }
