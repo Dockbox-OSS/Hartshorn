@@ -17,12 +17,17 @@
 
 package org.dockbox.selene.core.util;
 
+import com.google.common.collect.ImmutableMap;
+
+import org.apache.commons.collections4.Get;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.entity.FieldProperty;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +41,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -71,6 +77,21 @@ public enum SeleneUtils {
 
     private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
     public static final int MAXIMUM_DECIMALS = 15;
+
+    private static final Map<Class<?>, Class<?>> primitiveWrapperMap =
+            mapOf(boolean.class, Boolean.class,
+                    byte.class, Byte.class,
+                    char.class, Character.class,
+                    double.class, Double.class,
+                    float.class, Float.class,
+                    int.class, Integer.class,
+                    long.class, Long.class,
+                    short.class, Short.class);
+
+    private static Map<Object, Object> mapOf(Object... values) {
+        // TODO
+    }
+
 
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
         if (isInCooldown(o) && !overwriteExisting) return;
@@ -880,6 +901,56 @@ public enum SeleneUtils {
             if (propertyFilter.isAssignableFrom(property.getClass())) values.add((T) property);
         }
         return values;
+    }
+
+    public static <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map, T instance) {
+        Get<String, Object> insensitiveMap = new CaseInsensitiveMap<>(map);
+
+//        T instance = SeleneUtils.getInstance(type);
+        if (null == instance) return Exceptional.empty();
+
+        try {
+            for (Field field : type.getDeclaredFields()) {
+                if (!field.isAccessible()) field.setAccessible(true);
+
+                String propertyName = getFieldPropertyName(field);
+                if (insensitiveMap.containsKey(propertyName)) {
+                    Object value = insensitiveMap.get(propertyName);
+                    if (field.getType().isAssignableFrom(value.getClass())) {
+                        field.set(instance, value);
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            return Exceptional.of(instance, e);
+        }
+        return Exceptional.of(instance);
+    }
+
+    public static boolean isPrimitiveWrapperOf(Class<?> targetClass, Class<?> primitive) {
+        if (!primitive.isPrimitive()) {
+            throw new IllegalArgumentException("First argument has to be primitive type");
+        }
+        return primitiveWrapperMap.get(primitive) == targetClass;
+    }
+
+    public static boolean isAssignableTo(Class<?> from, Class<?> to) {
+        if (to.isAssignableFrom(from)) {
+            return true;
+        }
+        if (from.isPrimitive()) {
+            return isPrimitiveWrapperOf(to, from);
+        }
+        if (to.isPrimitive()) {
+            return isPrimitiveWrapperOf(from, to);
+        }
+        return false;
+    }
+
+    private static String getFieldPropertyName(Field field) {
+        return field.isAnnotationPresent(FieldProperty.class)
+                ? field.getAnnotation(FieldProperty.class).value()
+                : field.getName();
     }
 
     public enum HttpStatus {
