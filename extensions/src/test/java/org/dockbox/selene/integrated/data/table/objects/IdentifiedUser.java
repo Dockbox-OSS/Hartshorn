@@ -31,4 +31,6 @@ public class IdentifiedUser {
         this.displayedName = name;
     }
 
+    public IdentifiedUser() {
+    }
 }
