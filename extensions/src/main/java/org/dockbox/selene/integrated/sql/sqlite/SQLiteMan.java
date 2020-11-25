@@ -57,6 +57,7 @@ public class SQLiteMan implements SQLMan, InjectableType {
         SeleneUtils.getPropertyValue(PATH_KEY, Path.class, properties)
                 .ifPresent(path -> this.filePath = path)
                 .orElseThrow(() -> new IllegalArgumentException("Missing value for '" + PATH_KEY + "'"));
+
         SeleneUtils.getSubProperties(SQLColumnProperty.class, properties)
                 .forEach(property -> {
                     Tuple<String, ColumnIdentifier<?>> identifier = property.getObject();
@@ -69,6 +70,16 @@ public class SQLiteMan implements SQLMan, InjectableType {
         return this.getTable(this.filePath, name);
     }
 
+    /**
+     Attempts to obtain a given table from a given SQLite {@link Path}. If the table does not exist, an empty
+     {@link Table} is returned.
+
+     @param filePath The location of the SQLite file
+     @param name The name of the table
+     @return An empty or populated {@link Table} instance
+     @throws InvalidConnectionException
+     When a connection could not be opened, e.g. when the file does not exist or if it is protected
+     */
     @Override
     public Table getTable(Path filePath, String name) throws InvalidConnectionException {
         this.startTransaction(filePath);
@@ -92,7 +103,7 @@ public class SQLiteMan implements SQLMan, InjectableType {
     private void startTransaction(Path filePath) throws InvalidConnectionException {
         try {
             Class.forName("org.sqlite.JDBC");
-            // Attaches the connection to the current thread. TODO: add specific note for developers that this should be used async as much as possible
+            // Attaches the connection to the current thread
             Base.attach(DriverManager.getConnection("jdbc:sqlite:" + filePath.toFile().getAbsolutePath()));
         } catch (ClassNotFoundException | SQLException e) {
             throw new InvalidConnectionException("Could not open connection to '" + filePath.toFile().getAbsolutePath(), e);
