@@ -20,8 +20,8 @@ package org.dockbox.selene.integrated.data.table;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.integrated.data.table.annotations.Identifier;
-import org.dockbox.selene.integrated.data.table.annotations.Ignore;
+import org.dockbox.selene.core.objects.entity.Property;
+import org.dockbox.selene.core.objects.entity.Ignore;
 import org.dockbox.selene.integrated.data.table.behavior.Merge;
 import org.dockbox.selene.integrated.data.table.behavior.Order;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
@@ -41,6 +41,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
+
 /**
  A relational table type which can easily create weak relations to other tables. Relations are non-strict references so
  either table can be disposed of without affecting the origin.
@@ -56,6 +58,7 @@ import java.util.stream.Collectors;
  @author Simbolduc, GuusLieben
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
+@ConfigSerializable
 public class Table {
 
     private final List<TableRow> rows;
@@ -108,7 +111,7 @@ public class Table {
     /**
      Generates a {@link TableRow} from a given object based on the objects {@link Field}s. By default the field name is
      used to look up a matching column identifier which is present inside the table. If the field is annotated with
-     {@link Identifier} the contained {@link ColumnIdentifier} is used instead.
+     {@link Property} the contained {@link ColumnIdentifier} is used instead.
 
      If the field is annotated with {@link Ignore} the field will not be converted to a column entry in the row.
      One attempt will be made to make the field accessible if it is not already.
@@ -131,7 +134,7 @@ public class Table {
                     ColumnIdentifier columnIdentifier = null;
 
                     // Try to grab the column identifier from the Identifier annotation of the field (if present)
-                    Identifier identifier = field.getAnnotation(Identifier.class);
+                    Property identifier = field.getAnnotation(Property.class);
                     if (null != identifier)
                         columnIdentifier = this.getIdentifier(identifier.value());
 
@@ -541,8 +544,8 @@ public class Table {
         try {
             for (Field field : type.getDeclaredFields()) {
                 String fieldName = field.getName();
-                if (field.isAnnotationPresent(Identifier.class)) {
-                    fieldName = field.getAnnotation(Identifier.class).value();
+                if (field.isAnnotationPresent(Property.class)) {
+                    fieldName = field.getAnnotation(Property.class).value();
                 }
                 ColumnIdentifier<?> identifier = this.getIdentifier(fieldName);
                 Object value = row.getValue(identifier).orElse(null);

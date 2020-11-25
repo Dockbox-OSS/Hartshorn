@@ -19,6 +19,7 @@ package org.dockbox.selene.core.util;
 
 import org.apache.commons.collections4.Get;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
+import org.dockbox.selene.core.objects.entity.Property;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
@@ -26,7 +27,6 @@ import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.util.entity.FieldProperty;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -968,9 +968,9 @@ public enum SeleneUtils {
         return false;
     }
 
-    private static String getFieldPropertyName(Field field) {
-        return field.isAnnotationPresent(FieldProperty.class)
-                ? field.getAnnotation(FieldProperty.class).value()
+    public static String getFieldPropertyName(Field field) {
+        return field.isAnnotationPresent(Property.class)
+                ? field.getAnnotation(Property.class).value()
                 : field.getName();
     }
 
