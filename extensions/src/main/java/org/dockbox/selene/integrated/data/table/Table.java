@@ -18,6 +18,7 @@
 package org.dockbox.selene.integrated.data.table;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.annotations.Identifier;
 import org.dockbox.selene.integrated.data.table.annotations.Ignore;
@@ -38,6 +39,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  A relational table type which can easily create weak relations to other tables. Relations are non-strict references so
@@ -520,6 +522,38 @@ public class Table {
 
     public void forEach(Consumer<TableRow> consumer) {
         this.getRows().forEach(consumer);
+    }
+
+    public <T> List<Exceptional<T>> getRowsAs(Class<T> type) {
+        return this.getRows().stream()
+                .map(row -> this.convertRowTo(type, row, false))
+                .collect(Collectors.toList());
+    }
+
+    public <T> List<Exceptional<T>> getRowAsInjectable(Class<T> type) {
+        return this.getRows().stream()
+                .map(row -> this.convertRowTo(type, row, true))
+                .collect(Collectors.toList());
+    }
+
+    private <T> Exceptional<T> convertRowTo(Class<T> type, TableRow row, boolean injectable) {
+        T instance = injectable ? Selene.getInstance(type) : SeleneUtils.getInstance(type);
+        try {
+            for (Field field : type.getDeclaredFields()) {
+                String fieldName = field.getName();
+                if (field.isAnnotationPresent(Identifier.class)) {
+                    fieldName = field.getAnnotation(Identifier.class).value();
+                }
+                ColumnIdentifier<?> identifier = this.getIdentifier(fieldName);
+                Object value = row.getValue(identifier).orElse(null);
+                if (null == value || SeleneUtils.isAssignableFrom(field.getType(), value.getClass())) {
+                    field.set(instance, value);
+                }
+            }
+        } catch (IllegalAccessException e) {
+            return Exceptional.of(e);
+        }
+        return Exceptional.ofNullable(instance);
     }
 
 }

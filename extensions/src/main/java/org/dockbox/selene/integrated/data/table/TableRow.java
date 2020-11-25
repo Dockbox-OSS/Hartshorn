@@ -40,7 +40,7 @@ public class TableRow {
     @NotNull
     public TableRow addValue(@NotNull ColumnIdentifier<?> column, @Nullable Object value) {
         // Make sure both the Identifier and the Value are both the same type
-        if (null == value || SeleneUtils.isAssignableTo(column.getType(), value.getClass()))
+        if (null == value || SeleneUtils.isAssignableFrom(column.getType(), value.getClass()))
             this.data.put(column, value);
         else
             throw new IllegalArgumentException(
@@ -79,5 +79,12 @@ public class TableRow {
     @NotNull
     public Set<ColumnIdentifier<?>> getColumns() {
         return SeleneUtils.asUnmodifiableSet(this.data.keySet());
+    }
+
+    @Override
+    public String toString() {
+        return "TableRow{" +
+                "data=" + data +
+                '}';
     }
 }
