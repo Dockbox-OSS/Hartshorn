@@ -17,11 +17,10 @@
 
 package org.dockbox.selene.integrated.data.table;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.objects.entity.Property;
 import org.dockbox.selene.core.objects.entity.Ignore;
+import org.dockbox.selene.core.objects.entity.Property;
+import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.behavior.Merge;
 import org.dockbox.selene.integrated.data.table.behavior.Order;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
@@ -540,23 +539,10 @@ public class Table {
     }
 
     private <T> Exceptional<T> convertRowTo(Class<T> type, TableRow row, boolean injectable) {
-        T instance = injectable ? Selene.getInstance(type) : SeleneUtils.getInstance(type);
-        try {
-            for (Field field : type.getDeclaredFields()) {
-                String fieldName = field.getName();
-                if (field.isAnnotationPresent(Property.class)) {
-                    fieldName = field.getAnnotation(Property.class).value();
-                }
-                ColumnIdentifier<?> identifier = this.getIdentifier(fieldName);
-                Object value = row.getValue(identifier).orElse(null);
-                if (null == value || SeleneUtils.isAssignableFrom(field.getType(), value.getClass())) {
-                    field.set(instance, value);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            return Exceptional.of(e);
-        }
-        return Exceptional.ofNullable(instance);
+        return SeleneUtils.tryCreate(type, fieldName -> {
+            ColumnIdentifier<?> identifier = this.getIdentifier(fieldName);
+            return row.getValue(identifier).orElse(null);
+        }, injectable);
     }
 
 }

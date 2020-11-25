@@ -26,4 +26,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Property {
     String value();
+    String setter() default "";
+    Class<?> accepts() default Void.class;
 }

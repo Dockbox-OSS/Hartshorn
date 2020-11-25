@@ -19,6 +19,7 @@ package org.dockbox.selene.core.util;
 
 import org.apache.commons.collections4.Get;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
+import org.dockbox.selene.core.objects.entity.Ignore;
 import org.dockbox.selene.core.objects.entity.Property;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.optional.Exceptional;
@@ -66,6 +67,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -873,7 +875,11 @@ public enum SeleneUtils {
     }
 
     public static boolean hasMethod(Object instance, String method) {
-        for (Method m : instance.getClass().getDeclaredMethods()) {
+        return hasMethod(instance.getClass(), method);
+    }
+
+    public static boolean hasMethod(Class<?> type, @NonNls String method) {
+        for (Method m : type.getDeclaredMethods()) {
             if (m.getName().equals(method)) return true;
         }
         return false;
@@ -921,7 +927,8 @@ public enum SeleneUtils {
         return values;
     }
 
-    public static <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map, T instance) {
+    public static <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map) {
+        T instance = getInstance(type);
         Get<String, Object> insensitiveMap = new CaseInsensitiveMap<>(map);
 
         if (null == instance) return Exceptional.empty();
@@ -942,6 +949,43 @@ public enum SeleneUtils {
             return Exceptional.of(instance, e);
         }
         return Exceptional.of(instance);
+    }
+
+    public static <T> Exceptional<T> tryCreate(Class<T> type, Function<String, Object> valueCollector, boolean inject) {
+        T instance = inject ? Selene.getInstance(type) : SeleneUtils.getInstance(type);
+        if (null != instance)
+            try {
+                for (Field field : type.getDeclaredFields()) {
+                    if (!field.isAccessible()) field.setAccessible(true);
+                    if (field.isAnnotationPresent(Ignore.class)) continue;
+                    String fieldName = field.getName();
+                    if (field.isAnnotationPresent(Property.class))
+                        fieldName = field.getAnnotation(Property.class).value();
+                    Object value = valueCollector.apply(fieldName);
+                    if (null == value) continue;
+
+                    boolean useFieldDirect = true;
+                    if (field.isAnnotationPresent(Property.class)) {
+                        Property property = field.getAnnotation(Property.class);
+
+                        //noinspection CallToSuspiciousStringMethod
+                        if (!"".equals(property.setter()) && hasMethod(type, property.setter())) {
+                            Class<?> parameterType = field.getType();
+                            if (!Void.class.equals(property.accepts())) parameterType = property.accepts();
+
+                            Method method = type.getMethod(property.setter(), parameterType);
+                            method.invoke(instance, value);
+                            useFieldDirect = false;
+                        }
+                    }
+
+                    if (useFieldDirect && isAssignableFrom(field.getType(), value.getClass()))
+                        field.set(instance, value);
+                }
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                return Exceptional.of(e);
+            }
+        return Exceptional.ofNullable(instance);
     }
 
     public static boolean isPrimitiveWrapperOf(Class<?> targetClass, Class<?> primitive) {
