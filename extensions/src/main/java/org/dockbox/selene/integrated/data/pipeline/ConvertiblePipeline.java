@@ -1,7 +1,7 @@
 package org.dockbox.selene.integrated.data.pipeline;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.integrated.data.pipeline.exceptions.CancelledPipelineException;
+import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipeException;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineConverterException;
 import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;
 import org.jetbrains.annotations.NotNull;
@@ -11,12 +11,12 @@ import java.util.function.Function;
 
 public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
 
-    protected ConvertiblePipeline() { }
-
     private ConvertiblePipeline<P, ?> previousPipeline;
     private ConvertiblePipeline<P, ?> nextPipeline;
 
     private Function<? super I, ?> converter;
+
+    protected ConvertiblePipeline() { }
 
     @Override
     public ConvertiblePipeline<P, I> addPipe(@NotNull IPipe<I, I> pipe) {
@@ -32,38 +32,37 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     @SuppressWarnings("unchecked")
     @Override
     public Exceptional<I> process(@NotNull P input, @Nullable Throwable throwable) {
-
         Exceptional<I> exceptionalInput;
         if (null != this.previousPipeline) {
             exceptionalInput = this.previousPipeline.processConverted(input, throwable);
         }
         else {
+            //As this is
             exceptionalInput = Exceptional.ofNullable((I)input, throwable);
         }
 
-        for (IPipe<I, I> pipe : this.pipes) {
-            exceptionalInput = super.processPipe(pipe, exceptionalInput);
-
-            //If the pipelines been cancelled, stop processing any further pipes.
-            if (exceptionalInput.errorPresent() &&
-                exceptionalInput.getError().getClass().isAssignableFrom(CancelledPipelineException.class))
-                break;
-        }
-
-        return exceptionalInput;
+        return super.process(exceptionalInput);
     }
 
     @Override
-    public void setCancellable(boolean isCancellable) {
+    public ConvertiblePipeline<P, I> setCancellable(boolean isCancellable) {
         //Only allow this pipeline to be cancellable if theres not a pipeline after this.
         this.isCancellable = null == this.nextPipeline && isCancellable;
+        return this;
     }
 
     @SuppressWarnings("unchecked")
-    private <K> Exceptional<K> processConverted(@NotNull P input, @Nullable Throwable throwable) throws IllegalPipelineConverterException {
-        Exceptional<I> output = this.process(input, throwable);
-        return (Exceptional<K>) output.map(this.converter);
+    private <K> Exceptional<K> processConverted(@NotNull P input, @Nullable Throwable throwable) throws IllegalPipeException {
+        Exceptional<I> result = this.process(input, throwable);
+        Exceptional<K> output = (Exceptional<K>) result.map(this.converter);
 
+        //If the mapper returns null (If it wasn't already null)
+        if (result.isPresent() && !output.isPresent()) {
+            throw new IllegalPipelineConverterException(
+                String.format("The pipeline converter returned null. [Input: %s, Output: %s]",
+                    result, output));
+        }
+        return output;
     }
 
     public <K> ConvertiblePipeline<P, K> convertPipeline(Function<? super I, ? extends K> converter) {
@@ -73,8 +72,10 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
         nextPipeline.previousPipeline = this;
         this.nextPipeline = nextPipeline;
 
+        //If the current pipeline is cancellable, make the next pipeline cancellable.
+        nextPipeline.setCancellable(this.isCancellable);
+        //As it is no longer the final pipeline, this is no longer cancellable.
         this.setCancellable(false);
-
         return nextPipeline;
     }
 

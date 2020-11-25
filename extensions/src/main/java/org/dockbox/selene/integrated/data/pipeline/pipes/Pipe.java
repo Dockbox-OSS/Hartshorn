@@ -9,7 +9,7 @@ public interface Pipe<I, O> extends IPipe<I, O> {
 
     @Override
     default O apply(Exceptional<I> input) {
-        return this.execute(input.get(), input.orElseExcept(null));
+        return this.execute(input.orElse(null), input.orElseExcept(null));
     }
 
     static <I, O> Pipe<I, O> of(Pipe<I, O> pipe) {

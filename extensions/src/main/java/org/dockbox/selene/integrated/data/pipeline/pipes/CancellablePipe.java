@@ -17,11 +17,6 @@ public interface CancellablePipe<I, O> extends IPipe<I, O> {
         return CancellablePipe.class;
     }
 
-    @Override
-    default String pipeName() {
-        return "Cancelable Pipe";
-    }
-
     static <I, O> CancellablePipe<I, O> of(CancellablePipe<I, O> pipe) {
         return pipe;
     }

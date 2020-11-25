@@ -8,10 +8,6 @@ public interface IPipe<I, O> {
 
     //So that you can identify the type, if created through a lambda expression.
     default Class<? extends IPipe> getType() {
-        return this.getClass();
-    }
-
-    default String pipeName() {
-        return this.getClass().getSimpleName();
+        return IPipe.class;
     }
 }

@@ -1,7 +1,7 @@
 package org.dockbox.selene.integrated.data.pipeline;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.integrated.data.pipeline.exceptions.CancelledPipelineException;
+import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipeException;
 import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ public abstract class AbstractPipeline<P, I> {
 
     public AbstractPipeline<P, I> addPipe(@NotNull IPipe<I, I> pipe) {
         if (!this.isCancellable && pipe.getType().isAssignableFrom(CancellablePipe.class)) {
-            throw new IllegalArgumentException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
+            throw new IllegalPipeException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
         }
 
         this.pipes.add(pipe);
@@ -33,29 +33,41 @@ public abstract class AbstractPipeline<P, I> {
 
     public abstract Exceptional<I> process (@NotNull P input, @Nullable Throwable throwable);
 
-    protected Exceptional<I> processPipe(IPipe<I, I> pipe, Exceptional<I> input) {
-        Exceptional<I> output = Exceptional.ofSupplier(() -> {
-            //Check if the pipelines an instance of the Cancellable pipeline or not.
-            if (pipe instanceof CancellablePipe) {
-                CancellablePipe<I, I> cancellablePipe = (CancellablePipe<I, I>) pipe;
-                return cancellablePipe.execute(this::cancelPipeline, input.get(), input.getError());
-            }
-            else {
-                return pipe.apply(input);
-            }
-        });
+    protected Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput) {
+        for (IPipe<I, I> pipe : this.pipes) {
 
-        if (this.isCancellable && this.isCancelled) {
-            //Reset it straight after its been detected for next time the pipeline's used.
-            this.isCancelled = false;
-            output = Exceptional.of(new CancelledPipelineException("Pipeline has been cancelled."));
-        }
-        else if (output.errorPresent()){
-            // Pass the input forwards.
-            output = Exceptional.ofNullable(input.orElse(null), output.getError());
+            //This occurs when a pipeline is converted, previously allowed cancellable pipes are now illegal.
+            if (pipe instanceof CancellablePipe && !this.isCancellable)
+                throw new IllegalPipeException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
+
+            //Create a temporary final version that can be used within the supplier.
+            final Exceptional<I> finalInput = exceptionalInput;
+
+            exceptionalInput = Exceptional.ofSupplier(() -> {
+                //Check if the pipelines an instance of the Cancellable pipeline or not.
+                if (pipe instanceof CancellablePipe) {
+                    CancellablePipe<I, I> cancellablePipe = (CancellablePipe<I, I>) pipe;
+                    return cancellablePipe.execute(this::cancelPipeline, finalInput.orElse(null), finalInput.orElseExcept(null));
+                }
+                else {
+                    return pipe.apply(finalInput);
+                }
+            });
+
+            //If the pipelines been cancelled, stop processing any further pipes.
+            if (this.isCancellable && this.isCancelled) {
+                //Reset it straight after its been detected for next time the pipeline's used.
+                this.isCancelled = false;
+                break;
+            }
+            //If there was an error, the supplier won't have captured any input, so we'll try and
+            //pass the previous input forwards.
+            else if (exceptionalInput.errorPresent()){
+                exceptionalInput = Exceptional.ofNullable(finalInput.orElse(null), exceptionalInput.getError());
+            }
         }
 
-        return output;
+        return exceptionalInput;
     }
 
     public I processUnsafely(@NotNull P input) {
@@ -70,8 +82,9 @@ public abstract class AbstractPipeline<P, I> {
         this.isCancelled = true;
     }
 
-    public void setCancellable(boolean isCancellable) {
+    public AbstractPipeline<P, I> setCancellable(boolean isCancellable) {
         this.isCancellable = isCancellable;
+        return this;
     }
 
     public void removePipeAt(int index) {
