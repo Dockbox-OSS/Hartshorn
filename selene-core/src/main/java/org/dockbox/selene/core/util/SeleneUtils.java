@@ -91,7 +91,7 @@ public enum SeleneUtils {
 
     @SafeVarargs
     @SuppressWarnings("varargs")
-    static <K, V> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
+    public static <K, V> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
         if (entries.length == 0) { // implicit null check of entries array
             return Collections.emptyMap();
         } else {
@@ -103,7 +103,7 @@ public enum SeleneUtils {
         }
     }
 
-    static <K, V> Entry<K, V> entry(K k, V v) {
+    public static <K, V> Entry<K, V> entry(K k, V v) {
         return new Tuple<>(k, v);
     }
 
@@ -661,6 +661,10 @@ public enum SeleneUtils {
 
     public static boolean isFileEmpty(@NotNull Path file) {
         return Files.exists(file) && 0 <= file.toFile().length();
+    }
+
+    public static <T> Collection<T> singletonList(T mockWorld) {
+        return Collections.singletonList(mockWorld);
     }
 
     public <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
