@@ -27,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public abstract class AbstractPipeline<P, I> {
@@ -36,7 +35,7 @@ public abstract class AbstractPipeline<P, I> {
     private boolean isCancellable, isCancelled;
 
     public AbstractPipeline<P, I> addPipe(@NotNull IPipe<I, I> pipe) {
-        if (!this.isCancellable() && CancellablePipe.class.isAssignableFrom(pipe.getType())) {
+        if (!this.isCancellable() && SeleneUtils.isAssignableFrom(CancellablePipe.class, pipe.getType())) {
             throw new IllegalPipelineException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
         }
 

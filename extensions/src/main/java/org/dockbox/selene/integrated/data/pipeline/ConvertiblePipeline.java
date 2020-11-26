@@ -19,8 +19,9 @@ package org.dockbox.selene.integrated.data.pipeline;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineException;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineConverterException;
+import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineException;
 import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,7 +63,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
         if (null == this.previousPipeline) {
             //This should never be called, unless this class was used initially instead of ConvertiblePipelineSource.
             //(Which shouldn't be possible due to the protected constructor).
-            if (this.inputClass.isAssignableFrom(input.getClass())) {
+            if (SeleneUtils.isAssignableFrom(this.inputClass, input.getClass())) {
                 exceptionalInput = Exceptional.ofNullable((I) input, throwable);
             }
             else {
@@ -126,7 +127,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
             return (ConvertiblePipeline<P, K>)this;
         }
         else {
-            if (inputClass.isAssignableFrom(this.previousPipeline.inputClass)) {
+            if (SeleneUtils.isAssignableFrom(inputClass, this.previousPipeline.inputClass)) {
                 this.previousPipeline.nextPipeline = null;
                 this.previousPipeline.converter = null;
                 return (ConvertiblePipeline<P, K>) this.previousPipeline;
