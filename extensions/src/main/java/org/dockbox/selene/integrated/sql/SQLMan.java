@@ -168,6 +168,21 @@ public abstract class SQLMan<T> implements InjectableType {
             ctx.dropTableIfExists(DSL.table(name)).execute();
         });
     }
+    public <C> void deleteIf(String name, ColumnIdentifier<C> identifier, C value) throws InvalidConnectionException {
+        this.deleteIf(this.getDefaultTarget(), name, identifier, value);
+    }
+    public <C> void deleteIf(T target, String name, ColumnIdentifier<C> identifier, C value) throws InvalidConnectionException {
+        this.withContext(target, ctx -> {
+            ctx.delete(DSL.table(name))
+                    .where(this.getNamedField(identifier).eq(value))
+                    .execute();
+        });
+    }
+
+    private <C> Field<C> getNamedField(ColumnIdentifier<C> identifier) {
+        return DSL.field(identifier.getColumnName(), identifier.getType());
+    }
+
     private <R> R withContext(T target, Function<DSLContext, R> function) throws InvalidConnectionException {
         DSLContext ctx = this.getContext(target);
         R r = function.apply(ctx);
