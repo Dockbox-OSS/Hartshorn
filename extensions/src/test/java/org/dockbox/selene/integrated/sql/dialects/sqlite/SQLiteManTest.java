@@ -15,12 +15,13 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.sql.sqlite;
+package org.dockbox.selene.integrated.sql.dialects.sqlite;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.sql.SQLMan;
 import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
+import org.dockbox.selene.integrated.sql.properties.SQLColumnProperty;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,7 @@ class SQLiteManTest {
 
     @Test
     public void testGetTable() throws InvalidConnectionException {
-        SQLMan man = this.getSQLiteMan(true);
+        SQLMan<?> man = this.getSQLiteMan(true);
         Table plots = man.getTable("plot");
         Assert.assertEquals(2301, plots.count());
     }

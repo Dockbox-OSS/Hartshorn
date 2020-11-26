@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.sql.sqlite;
+package org.dockbox.selene.integrated.sql.dialects.sqlite;
 
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
 import org.dockbox.selene.integrated.data.table.column.SimpleColumnIdentifier;
