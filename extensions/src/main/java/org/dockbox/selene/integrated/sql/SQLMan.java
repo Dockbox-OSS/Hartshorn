@@ -19,7 +19,6 @@ package org.dockbox.selene.integrated.sql;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
-import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.Table;
@@ -45,7 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class SQLMan<T> implements ISQLMan<T>, InjectableType {
+public abstract class SQLMan<T> implements ISQLMan<T> {
 
     private final Map<String, ColumnIdentifier<?>> identifiers = new HashMap<>();
     private Boolean resetOnStore;

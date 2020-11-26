@@ -20,7 +20,7 @@ package org.dockbox.selene.integrated.sql.dialects.sqlite;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.data.table.identifiers.TestColumnIdentifiers;
-import org.dockbox.selene.integrated.sql.SQLMan;
+import org.dockbox.selene.integrated.sql.ISQLMan;
 import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
 import org.dockbox.selene.integrated.sql.properties.SQLColumnProperty;
 import org.junit.Assert;
@@ -36,8 +36,8 @@ class SQLiteManTest {
         return new File(path).toPath();
     }
 
-    private SQLiteMan getSQLiteMan(boolean enableState) {
-        SQLiteMan man = new SQLiteMan();
+    private ISQLMan<?> getSQLiteMan(boolean enableState) {
+        ISQLMan<?> man = new SQLiteMan();
         if (enableState)
             man.stateEnabling(new SQLitePathProperty(this.getTestFile()));
         return man;
@@ -45,14 +45,14 @@ class SQLiteManTest {
 
     @Test
     public void testGetTable() throws InvalidConnectionException {
-        SQLMan<?> man = this.getSQLiteMan(true);
+        ISQLMan<?> man = this.getSQLiteMan(true);
         Table plots = man.getTable("plot");
         Assert.assertEquals(2301, plots.count());
     }
 
     @Test
     public void testIdentifierProperties() throws InvalidConnectionException {
-        SQLiteMan man = this.getSQLiteMan(false);
+        ISQLMan<?> man = this.getSQLiteMan(false);
         man.stateEnabling(
                 new SQLitePathProperty(this.getTestFile()),
                 new SQLColumnProperty("world", SQLiteColumnIdentifiers.PLOT_WORLD)
@@ -64,7 +64,7 @@ class SQLiteManTest {
 
     @Test
     public void testTableConversion() throws InvalidConnectionException {
-        SQLiteMan man = this.getSQLiteMan(true);
+        ISQLMan<?> man = this.getSQLiteMan(true);
         Table plots = man.getTable("plot");
 
         long count = plots.getRowsAs(PlotEntry.class).stream()
@@ -76,7 +76,7 @@ class SQLiteManTest {
     @Test
     void testStore() throws InvalidConnectionException {
         Table table = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME);
-        SQLiteMan man = this.getSQLiteMan(false);
+        ISQLMan<?> man = this.getSQLiteMan(false);
         man.stateEnabling(
                 new SQLitePathProperty(this.getTestFile()),
                 new SQLColumnProperty("numeralId", TestColumnIdentifiers.NUMERAL_ID));

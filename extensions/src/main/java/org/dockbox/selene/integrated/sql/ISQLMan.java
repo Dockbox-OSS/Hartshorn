@@ -17,11 +17,12 @@
 
 package org.dockbox.selene.integrated.sql;
 
+import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
 import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
 
-public interface ISQLMan<T> {
+public interface ISQLMan<T> extends InjectableType {
 
     Table getTable(String name) throws InvalidConnectionException;
     Table getTable(String name, T target) throws InvalidConnectionException;
