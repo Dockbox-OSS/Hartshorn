@@ -70,7 +70,7 @@ public abstract class AbstractPipeline<P, I> {
             //Create a temporary final version that can be used within the supplier.
             final Exceptional<I> finalInput = exceptionalInput;
 
-            exceptionalInput = Exceptional.ofSupplier(() -> {
+            exceptionalInput = Exceptional.of(() -> {
                 //Check if the pipelines an instance of the Cancellable pipeline or not.
                 if (pipe instanceof CancellablePipe) {
                     CancellablePipe<I, I> cancellablePipe = (CancellablePipe<I, I>) pipe;
