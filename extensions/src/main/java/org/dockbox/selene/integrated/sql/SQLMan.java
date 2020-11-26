@@ -62,10 +62,16 @@ public abstract class SQLMan<T> implements InjectableType {
     }
 
     public Table getTable(String name, T target) throws InvalidConnectionException {
-        Result<Record> results = this.getContext(target).select().from(name).fetch();
-        return this.convertToTable(results);
+        return this.withContext(target, ctx -> {
+            Result<Record> results = ctx.select().from(name).fetch();
+            try {
+                ctx.parsingConnection().close();
+            } catch (SQLException e) {
+                throw new IllegalStateException("Could not release connection to '" + target + "'", e);
+            }
+            return this.convertToTable(results);
+        });
     }
-
 
     private Table convertToTable(Result<Record> results) {
         if (results.isEmpty()) return new Table();
@@ -116,12 +122,13 @@ public abstract class SQLMan<T> implements InjectableType {
         this.store(this.getDefaultTarget(), name, table);
     }
     public void store(T target, String name, Table table) throws InvalidConnectionException {
-        DSLContext ctx = this.getContext(target);
-        Field<?>[] fields = this.convertIdentifiersToFields(table);
-        this.createTableIfNotExists(name, ctx, fields);
-        InsertValuesStepN<?> insertStep = ctx.insertInto(DSL.table(name))
-                .columns();
-        this.populateRemoteTable(insertStep, table, fields);
+        this.withContext(target, ctx -> {
+            Field<?>[] fields = this.convertIdentifiersToFields(table);
+            this.createTableIfNotExists(name, ctx, fields);
+            InsertValuesStepN<?> insertStep = ctx.insertInto(DSL.table(name))
+                    .columns();
+            this.populateRemoteTable(insertStep, table, fields);
+        });
     }
 
     private Field<?>[] convertIdentifiersToFields(Table table) {
@@ -152,6 +159,28 @@ public abstract class SQLMan<T> implements InjectableType {
     private void createTableIfNotExists(String name, DSLContext ctx, Field<?>[] fields) {
         ctx.createTableIfNotExists(name).columns(fields).execute();
     }
+
+    private <R> R withContext(T target, Function<DSLContext, R> function) throws InvalidConnectionException {
+        DSLContext ctx = this.getContext(target);
+        R r = function.apply(ctx);
+        this.closeConnection(ctx);
+        return r;
+    }
+
+    private void withContext(T target, Consumer<DSLContext> consumer) throws InvalidConnectionException {
+        DSLContext ctx = this.getContext(target);
+        consumer.accept(ctx);
+        this.closeConnection(ctx);
+    }
+
+    private void closeConnection(DSLContext ctx) {
+        try {
+            ctx.parsingConnection().close();
+        } catch (SQLException e) {
+            throw new IllegalStateException("Could not release connection!", e);
+        }
+    }
+
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         SeleneUtils.getSubProperties(SQLColumnProperty.class, properties)
