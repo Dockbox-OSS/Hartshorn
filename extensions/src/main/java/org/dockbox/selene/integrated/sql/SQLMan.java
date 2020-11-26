@@ -160,6 +160,14 @@ public abstract class SQLMan<T> implements InjectableType {
         ctx.createTableIfNotExists(name).columns(fields).execute();
     }
 
+    public void drop(String name) throws InvalidConnectionException {
+        this.drop(this.getDefaultTarget(), name);
+    }
+    public void drop(T target, String name) throws InvalidConnectionException {
+        this.withContext(target, ctx -> {
+            ctx.dropTableIfExists(DSL.table(name)).execute();
+        });
+    }
     private <R> R withContext(T target, Function<DSLContext, R> function) throws InvalidConnectionException {
         DSLContext ctx = this.getContext(target);
         R r = function.apply(ctx);
