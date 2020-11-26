@@ -17,22 +17,23 @@
 
 package org.dockbox.selene.core.objects;
 
-import java.util.Optional;
+import org.dockbox.selene.core.objects.optional.Exceptional;
+
 import java.util.function.Function;
 
 public class FieldReferenceHolder<T> extends ReferenceHolder<T> {
 
-    private final Function<T, Optional<T>> updateRefTask;
+    private final Function<T, Exceptional<T>> updateRefTask;
     private final Class<T> type;
 
-    public FieldReferenceHolder(Optional<T> reference, Function<T, Optional<T>> updateRefTask, Class<T> type) {
+    public FieldReferenceHolder(Exceptional<T> reference, Function<T, Exceptional<T>> updateRefTask, Class<T> type) {
         super(reference);
         this.updateRefTask = updateRefTask;
         this.type = type;
     }
 
     @Override
-    public Function<T, Optional<T>> getUpdateReferenceTask() {
+    public Function<T, Exceptional<T>> getUpdateReferenceTask() {
         return this.updateRefTask;
     }
 

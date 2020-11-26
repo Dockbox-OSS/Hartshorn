@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.util.player
 
-import com.google.inject.Singleton
 import java.util.*
 import java.util.stream.Collectors
 import org.dockbox.selene.core.impl.util.player.DefaultPlayerStorageService
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.objects.user.Player
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer
 import org.spongepowered.api.Sponge
@@ -32,25 +32,25 @@ class SpongePlayerStorageService : DefaultPlayerStorageService() {
         return Sponge.getServer().onlinePlayers.stream().map { SpongePlayer(it.uniqueId, it.name) }.collect(Collectors.toList())
     }
 
-    override fun getPlayer(name: String): Optional<Player> {
-        val osp = Sponge.getServer().getPlayer(name)
+    override fun getPlayer(name: String): Exceptional<Player> {
+        val osp = Exceptional.of(Sponge.getServer().getPlayer(name))
         return getPlayer(osp, name)
     }
 
-    override fun getPlayer(uuid: UUID): Optional<Player> {
-        val osp = Sponge.getServer().getPlayer(uuid)
+    override fun getPlayer(uuid: UUID): Exceptional<Player> {
+        val osp = Exceptional.of(Sponge.getServer().getPlayer(uuid))
         return getPlayer(osp, uuid)
     }
 
-    private fun getPlayer(osp: Optional<org.spongepowered.api.entity.living.player.Player>, obj: Any): Optional<Player> {
+    private fun getPlayer(osp: Exceptional<org.spongepowered.api.entity.living.player.Player>, obj: Any): Exceptional<Player> {
         return if (osp.isPresent) {
             osp.map { SpongePlayer(it.uniqueId, it.name) }
         } else {
-            var player = Optional.empty<Player>()
-            val ouss = Sponge.getServiceManager().provide(UserStorageService::class.java)
+            var player = Exceptional.empty<Player>()
+            val ouss = Exceptional.of(Sponge.getServiceManager().provide(UserStorageService::class.java))
             val ou =
-                    if (obj is UUID) ouss.flatMap { it[obj] }
-                    else ouss.flatMap { it[obj.toString()] }
+                    if (obj is UUID) ouss.flatMap { Exceptional.of(it[obj]) }
+                    else ouss.flatMap { Exceptional.of(it[obj.toString()]) }
             if (ou.isPresent) player = ou.map { SpongePlayer(it.uniqueId, it.name) }
             player
         }

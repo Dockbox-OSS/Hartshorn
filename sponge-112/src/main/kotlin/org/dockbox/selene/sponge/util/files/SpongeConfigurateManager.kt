@@ -18,8 +18,8 @@
 package org.dockbox.selene.sponge.util.files
 
 import java.nio.file.Path
-import java.util.*
 import org.dockbox.selene.core.impl.util.files.DefaultConfigurateManager
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.util.files.FileType
 import org.spongepowered.api.Sponge
 
@@ -42,8 +42,8 @@ class SpongeConfigurateManager : DefaultConfigurateManager(FileType.YAML) {
         return createPathIfNotExists(getServerRoot().resolve("extensions/"))
     }
 
-    override fun getModDir(): Optional<Path> {
-        return Optional.of(createPathIfNotExists(getServerRoot().resolve("mods/")))
+    override fun getModDir(): Exceptional<Path> {
+        return Exceptional.of(createPathIfNotExists(getServerRoot().resolve("mods/")))
     }
 
     override fun getPluginDir(): Path {
@@ -54,8 +54,8 @@ class SpongeConfigurateManager : DefaultConfigurateManager(FileType.YAML) {
         return getServerRoot().resolve("config/extensions/")
     }
 
-    override fun getModdedPlatformModsConfigDir(): Optional<Path> {
-        return Optional.of(getServerRoot().resolve("config/"))
+    override fun getModdedPlatformModsConfigDir(): Exceptional<Path> {
+        return Exceptional.of(getServerRoot().resolve("config/"))
     }
 
     override fun getPlatformPluginsConfigDir(): Path {

@@ -23,6 +23,7 @@ import com.google.inject.Singleton;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.ServerReference;
+import org.dockbox.selene.core.server.config.Environment;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
@@ -62,6 +63,12 @@ public class DefaultGlobalConfig extends ServerReference implements GlobalConfig
             comment = "Indicates whether or not to provide a clear user-friendly view of exceptions."
     )
     private boolean friendlyExceptions = true;
+
+    @Setting(
+            value = "environment-level",
+            comment = "Indicates the environment Selene is running in. The development environment usually allows for additional debugging options."
+    )
+    private Environment environment = Environment.DEVELOPMENT;
 
     @NotNull
     @Override
@@ -108,5 +115,11 @@ public class DefaultGlobalConfig extends ServerReference implements GlobalConfig
                 .getFileContent(configPath, DefaultGlobalConfig.class)
                 .orElse(null);
         this.copyValues(globalConfig);
+    }
+
+    @NotNull
+    @Override
+    public Environment getEnvironment() {
+        return this.environment;
     }
 }

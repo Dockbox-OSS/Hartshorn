@@ -28,9 +28,9 @@ import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
 import org.dockbox.selene.core.impl.command.SimpleCommandBus;
 import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
 import org.dockbox.selene.core.objects.events.Cancellable;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -154,15 +153,15 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     private void defineExecutorOrChild(CommandSpec.Builder spec, Tuple<String, CommandSpec> child) {
-        if (super.getParentCommandPrefix().equals(child.getFirst())) {
-            spec.executor(child.getSecond().getExecutor());
+        if (super.getParentCommandPrefix().equals(child.getKey())) {
+            spec.executor(child.getValue().getExecutor());
         } else {
-            spec.child(child.getSecond(), child.getFirst());
+            spec.child(child.getValue(), child.getKey());
         }
     }
 
     private Object getValue(Object obj) {
-        Optional<?> oo = SpongeConversionUtil.autoDetectFromSponge(obj);
+        Exceptional<?> oo = SpongeConversionUtil.autoDetectFromSponge(obj);
         return oo.isPresent() ? oo.get() : obj; // oo.orElse() cannot be cast due to generic ? type
     }
 
@@ -236,15 +235,13 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
             SimpleCommandContext ctx = this.convertContext(args, sender, command);
 
-            EventBus eb = Selene.getInstance(EventBus.class);
-            Cancellable ceb = new CommandEvent.Before(sender, ctx);
-            eb.post(ceb);
+            Cancellable ceb = new CommandEvent.Before(sender, ctx).post();
 
             if (!ceb.isCancelled()) {
                 if (src instanceof Player) runner.run(sender, ctx);
                 else runner.run(SpongeConsole.Companion.getInstance(), ctx);
 
-                eb.post(new CommandEvent.After(sender, ctx));
+                new CommandEvent.After(sender, ctx).post();
             }
 
             return CommandResult.success();
@@ -289,7 +286,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                     command,
                     arguments.toArray(new CommandValue.Argument<?>[0]),
                     flags.toArray(new CommandValue.Flag<?>[0]),
-                    sender, Optional.of(loc), Optional.of(world),
+                    sender, Exceptional.of(loc), Exceptional.of(world),
                     new String[0]
             );
         } else {
@@ -297,7 +294,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                     command,
                     arguments.toArray(new CommandValue.Argument<?>[0]),
                     flags.toArray(new CommandValue.Flag<?>[0]),
-                    sender, Optional.empty(), Optional.empty(),
+                    sender, Exceptional.empty(), Exceptional.empty(),
                     new String[0]
             );
         }

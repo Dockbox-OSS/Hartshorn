@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.objects.tuple
 
-class Tuple<K, V>(var first: K, var second: V) {
+class Tuple<K, V>(override val key: K, override val value: V) : Map.Entry<K, V> {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -27,18 +27,18 @@ class Tuple<K, V>(var first: K, var second: V) {
             return false
         }
         val other = other as Tuple<*, *>
-        return first == other.first && second == other.second
+        return key == other.key && value == other.value
     }
 
     override fun hashCode(): Int {
-        var result = first?.hashCode() ?: 0
-        result = 31 * result + (second?.hashCode() ?: 0)
+        var result = key?.hashCode() ?: 0
+        result = 31 * result + (value?.hashCode() ?: 0)
         return result
     }
 
     companion object {
-        fun <K, V> of(first: K, second: V): Tuple<K, V> {
-            return Tuple(first, second)
+        fun <K, V> of(key: K, value: V): Tuple<K, V> {
+            return Tuple(key, value)
         }
     }
 

@@ -20,13 +20,13 @@ package org.dockbox.selene.core.objects.item;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.ReferenceHolder;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.construct.ConstructionUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Optional;
 
 @SuppressWarnings("rawtypes")
 public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<Item> {
@@ -34,15 +34,15 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
     private String id;
 
     protected Item(@NotNull T reference) {
-        super(Optional.of(reference));
+        super(Exceptional.of(reference));
         this.id = this.getId();
     }
 
     protected Item(String id, int amount) {
-        super(Optional.empty());
+        super(Exceptional.empty());
         this.id = id;
         T type = this.getById(id, amount);
-        super.setReference(Optional.of(type));
+        super.setReference(Exceptional.of(type));
     }
 
     protected abstract T getById(String id, int amount);

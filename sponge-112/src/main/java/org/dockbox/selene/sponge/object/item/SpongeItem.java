@@ -35,7 +35,6 @@ import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -77,7 +76,7 @@ public class SpongeItem extends Item<ItemStack> {
     @Override
     public Text getDisplayName(Language language) {
         Exceptional<ItemStack> ref = this.getReference();
-        Optional<Text> name = ref.map(i -> i.get(Keys.DISPLAY_NAME)).get().map(SpongeConversionUtil::fromSponge);
+        Exceptional<Text> name = Exceptional.of(ref.map(i -> i.get(Keys.DISPLAY_NAME)).get()).map(SpongeConversionUtil::fromSponge);
         if (name.isPresent()) return name.get();
 
         Exceptional<String> translatedName = ref.map(i -> i.getTranslation().get());
@@ -153,15 +152,15 @@ public class SpongeItem extends Item<ItemStack> {
     private void performOnEnchantmentData(Enchant enchant, BiConsumer<EnchantmentData, Enchantment> action) {
         this.getReference().ifPresent(itemStack -> {
             EnchantmentData enchantmentData = itemStack.getOrCreate(EnchantmentData.class).get();
-            @NotNull Optional<org.spongepowered.api.item.enchantment.Enchantment> enchantment =
+            @NotNull Exceptional<org.spongepowered.api.item.enchantment.Enchantment> enchantment =
                     SpongeConversionUtil.toSponge(enchant);
             enchantment.ifPresent(e -> action.accept(enchantmentData, e));
         });
     }
 
     @Override
-    public Function<ItemStack, Optional<ItemStack>> getUpdateReferenceTask() {
-        return Optional::ofNullable;
+    public Function<ItemStack, Exceptional<ItemStack>> getUpdateReferenceTask() {
+        return Exceptional::ofNullable;
     }
 
     @Override

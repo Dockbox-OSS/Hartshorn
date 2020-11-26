@@ -17,18 +17,18 @@
 
 package org.dockbox.selene.core.util.extension
 
-import java.util.*
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 interface ExtensionManager {
 
-    fun getContext(type: Class<*>): Optional<ExtensionContext>
-    fun getContext(id: String): Optional<ExtensionContext>
+    fun getContext(type: Class<*>): Exceptional<ExtensionContext>
+    fun getContext(id: String): Exceptional<ExtensionContext>
 
-    fun getHeader(type: Class<*>): Optional<Extension>
-    fun getHeader(id: String): Optional<Extension>
+    fun getHeader(type: Class<*>): Exceptional<Extension>
+    fun getHeader(id: String): Exceptional<Extension>
 
-    fun <T> getInstance(type: Class<T>): Optional<T>
-    fun getInstance(id: String): Optional<*>
+    fun <T> getInstance(type: Class<T>): Exceptional<T>
+    fun getInstance(id: String): Exceptional<*>
 
     fun initialiseExtensions(): List<ExtensionContext>
 

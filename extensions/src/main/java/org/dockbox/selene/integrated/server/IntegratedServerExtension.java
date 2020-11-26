@@ -21,19 +21,20 @@ import org.dockbox.selene.core.annotations.Command;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
-import org.dockbox.selene.core.events.server.ServerEvent.Reload;
+import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.impl.command.parse.LanguageArgumentParser;
 import org.dockbox.selene.core.impl.command.parse.UUIDArgumentParser;
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.objects.user.Player;
-import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.IntegratedExtension;
-import org.dockbox.selene.core.server.ServerType;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerReference;
+import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction.RunCommand;
 import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
@@ -47,7 +48,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Extension(
@@ -96,14 +96,14 @@ public class IntegratedServerExtension extends ServerReference implements Integr
     @Command(aliases = "extension", usage = "extension <id{Extension}>")
     public void debugExtension(MessageReceiver src, CommandContext ctx) {
         super.consumeWithInstance(ExtensionManager.class, em -> {
-            Optional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
+            Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
                 return;
             }
 
             Extension e = oarg.get().getValue();
-            Optional<ExtensionContext> oec = em.getContext(e.id());
+            Exceptional<ExtensionContext> oec = em.getContext(e.id());
 
             if (!oec.isPresent()) {
                 src.sendWithPrefix(IntegratedServerResources.EXTENSION_UNKNOWN.format(oarg.get().getValue()));
@@ -126,22 +126,22 @@ public class IntegratedServerExtension extends ServerReference implements Integr
     public void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = super.getInstance(EventBus.class);
         if (ctx.hasArgument("id")) {
-            Optional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
+            Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
                 return;
             }
 
             Extension e = oarg.get().getValue();
-            Exceptional<?> oi = Exceptional.ofOptional(Selene.getInstance(ExtensionManager.class).getInstance(e.id()));
+            Exceptional<?> oi = Selene.getInstance(ExtensionManager.class).getInstance(e.id());
 
             oi.ifPresent(o -> {
-                eb.post(new Reload(), o.getClass());
+                eb.post(new ServerReloadEvent(), o.getClass());
                 src.send(IntegratedServerResources.EXTENSION_RELOAD_SUCCESSFUL.format(e.name()));
             }).ifAbsent(() ->
                     src.send(IntegratedServerResources.EXTENSION_RELOAD_FAILED.format(e.name())));
         } else {
-            eb.post(new Reload());
+            eb.post(new ServerReloadEvent());
             src.send(IntegratedServerResources.FULL_RELOAD_SUCCESSFUL);
         }
     }
@@ -152,11 +152,11 @@ public class IntegratedServerExtension extends ServerReference implements Integr
             src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
             return;
         }
-        Optional<UUID> ouuid = ctx.getArgumentAndParse("uuid", new UUIDArgumentParser());
+        Exceptional<UUID> ouuid = ctx.getArgumentAndParse("uuid", new UUIDArgumentParser());
 
         // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
         // argument here is just a confirmation that the source is correct.
-        Exceptional.ofOptional(ouuid)
+        ouuid
                 .ifPresent(uuid -> {
                     if (((Identifiable<?>) src).getUniqueId().equals(uuid))
                         super.getInstance(CommandBus.class).confirmLastCommand(uuid);
@@ -194,10 +194,10 @@ public class IntegratedServerExtension extends ServerReference implements Integr
 
     @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", single = true)
     public void switchLang(MessageReceiver src, CommandContext ctx) {
-        Optional<Language> ol = ctx.getArgumentAndParse("language", new LanguageArgumentParser());
+        Exceptional<Language> ol = ctx.getArgumentAndParse("language", new LanguageArgumentParser());
         @Nullable Player target;
 
-        Optional<Argument<Player>> op = ctx.getArgument("player", Player.class);
+        Exceptional<Argument<Player>> op = ctx.getArgument("player", Player.class);
         if (op.isPresent()) target = op.get().getValue();
         else if (src instanceof Player) target = (Player) src;
         else {

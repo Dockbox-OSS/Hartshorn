@@ -19,6 +19,7 @@ package org.dockbox.selene.core.command.parse
 
 import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 abstract class AbstractArgumentParser : AbstractParser() {
     /**
@@ -32,6 +33,6 @@ abstract class AbstractArgumentParser : AbstractParser() {
      * @return the optional type of the generic type. Should return [Optional.empty] if
      * null or if the value could not be parsed.
     </A> */
-    abstract fun <A> parse(commandValue: CommandValue<String>, type: Class<A>?): Optional<A>
+    abstract fun <A> parse(commandValue: CommandValue<String>, type: Class<A>?): Exceptional<A>
 
 }

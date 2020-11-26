@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.core.command.context
 
-import java.util.*
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.selene.core.objects.optional.Exceptional
 
@@ -27,18 +26,18 @@ interface CommandContext {
     val argumentCount: Int
     val flagCount: Int
 
-    fun getArgument(key: String): Optional<CommandValue.Argument<String>>
-    fun <T> getArgument(key: String, type: Class<T>): Optional<CommandValue.Argument<T>>
-    fun <T> getArgumentAndParse(key: String, parser: AbstractTypeArgumentParser<T>): Optional<T>
+    fun getArgument(key: String): Exceptional<CommandValue.Argument<String>>
+    fun <T> getArgument(key: String, type: Class<T>): Exceptional<CommandValue.Argument<T>>
+    fun <T> getArgumentAndParse(key: String, parser: AbstractTypeArgumentParser<T>): Exceptional<T>
 
-    fun getFlag(key: String): Optional<CommandValue.Flag<String>>
-    fun <T> getFlag(key: String, type: Class<T>): Optional<CommandValue.Flag<T>>
-    fun <T> getFlagAndParse(key: String, parser: AbstractTypeArgumentParser<T>): Optional<T>
+    fun getFlag(key: String): Exceptional<CommandValue.Flag<String>>
+    fun <T> getFlag(key: String, type: Class<T>): Exceptional<CommandValue.Flag<T>>
+    fun <T> getFlagAndParse(key: String, parser: AbstractTypeArgumentParser<T>): Exceptional<T>
 
     fun hasArgument(key: String): Boolean
     fun hasFlag(key: String): Boolean
 
-    fun <T> getValue(key: String, type: Class<T>, valType: CommandValue.Type): Optional<CommandValue<T>>
+    fun <T> getValue(key: String, type: Class<T>, valType: CommandValue.Type): Exceptional<CommandValue<T>>
     fun <T> tryCreate(type: Class<T>): Exceptional<T>
 
 }

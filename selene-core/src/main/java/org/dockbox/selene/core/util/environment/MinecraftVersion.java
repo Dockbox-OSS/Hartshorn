@@ -29,7 +29,6 @@ public enum MinecraftVersion {
     private final String readableVersionString;
 
     MinecraftVersion(String readableVersionString) {
-
         this.readableVersionString = readableVersionString;
     }
 

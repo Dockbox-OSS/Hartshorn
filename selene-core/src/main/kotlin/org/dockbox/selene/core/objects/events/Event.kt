@@ -17,4 +17,21 @@
 
 package org.dockbox.selene.core.objects.events
 
-interface Event
+import com.google.common.eventbus.EventBus
+import org.dockbox.selene.core.server.Selene
+
+
+/**
+ * A low level type which is used when subscribing to, posting, or modifying events.
+ */
+interface Event {
+    /**
+     * Posts the event directly to the implementation of [EventBus], obtained through [Selene.getInstance]
+     *
+     * @return Itself
+     */
+    fun post(): Event {
+        Selene.getInstance(EventBus::class.java).post(this)
+        return this
+    }
+}

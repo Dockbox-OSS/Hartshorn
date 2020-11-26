@@ -19,8 +19,10 @@ package org.dockbox.selene.sponge.objects.targets
 
 import com.boydti.fawe.FaweAPI
 import com.boydti.fawe.`object`.FawePlayer
+import com.google.common.eventbus.EventBus
 import java.util.*
 import java.util.function.Function
+import org.dockbox.selene.core.events.chat.SendMessageEvent
 import org.dockbox.selene.core.i18n.common.Language
 import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.i18n.entry.IntegratedResource
@@ -43,6 +45,8 @@ import org.spongepowered.api.data.key.Keys
 import org.spongepowered.api.entity.living.player.gamemode.GameModes
 import org.spongepowered.api.item.inventory.Inventory
 import org.spongepowered.api.item.inventory.ItemStack
+import org.spongepowered.api.item.inventory.Slot
+import org.spongepowered.api.item.inventory.entity.MainPlayerInventory
 import org.spongepowered.api.item.inventory.property.SlotPos
 import org.spongepowered.api.item.inventory.query.QueryOperationTypes
 import org.spongepowered.api.service.permission.SubjectData
@@ -51,9 +55,9 @@ import org.spongepowered.api.util.Tristate
 
 class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     
-    private val spongePlayer = FieldReferenceHolder(Sponge.getServer().getPlayer(uniqueId), Function() {
-        return@Function if (it == null) Sponge.getServer().getPlayer(uniqueId)
-        else Optional.empty()
+    private val spongePlayer = FieldReferenceHolder(Exceptional.of(Sponge.getServer().getPlayer(uniqueId)), Function() {
+        return@Function if (it == null) Exceptional.of(Sponge.getServer().getPlayer(uniqueId))
+        else Exceptional.empty()
     }, org.spongepowered.api.entity.living.player.Player::class.java)
 
     override fun isOnline(): Boolean {
@@ -93,12 +97,18 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun send(text: Text) {
-        if (spongePlayer.referenceExists()) spongePlayer.reference.get().sendMessage(SpongeConversionUtil.toSponge(text))
+        if (spongePlayer.referenceExists()) {
+            if (canProceedAfterEvent(text))
+                spongePlayer.reference.get().sendMessage(SpongeConversionUtil.toSponge(text))
+        }
     }
 
     override fun send(text: CharSequence) {
-        if (spongePlayer.referenceExists()) spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
-                IntegratedResource.parseColors(text)))
+        if (spongePlayer.referenceExists()) {
+            val message = of(text)
+            if (canProceedAfterEvent(message))
+                spongePlayer.reference.get().sendMessage(SpongeConversionUtil.toSponge(message))
+        }
     }
 
     override fun sendWithPrefix(text: ResourceEntry) {
@@ -107,19 +117,30 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
     }
 
     override fun sendWithPrefix(text: Text) {
-        if (spongePlayer.referenceExists()) spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
-                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
-                SpongeConversionUtil.toSponge(text)
-        )
-        )
+        if (spongePlayer.referenceExists()) {
+            if (canProceedAfterEvent(text))
+                spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
+                        SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
+                        SpongeConversionUtil.toSponge(text))
+                )
+        }
     }
 
     override fun sendWithPrefix(text: CharSequence) {
-        if (spongePlayer.referenceExists()) spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
-                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
-                org.spongepowered.api.text.Text.of(text)
-        )
-        )
+        if (spongePlayer.referenceExists()) {
+            val message = of(text)
+            if (canProceedAfterEvent(message))
+                spongePlayer.reference.get().sendMessage(org.spongepowered.api.text.Text.of(
+                        SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
+                        SpongeConversionUtil.toSponge(message))
+                )
+        }
+    }
+
+    private fun canProceedAfterEvent(text: Text): Boolean {
+        val event = SendMessageEvent(this, text)
+        Selene.getInstance(EventBus::class.java).post(event)
+        return !event.isCancelled();
     }
 
     override fun sendPagination(pagination: Pagination) {
@@ -199,10 +220,14 @@ class SpongePlayer(uniqueId: UUID, name: String) : Player(uniqueId, name) {
         }
         if (spongePlayer.referenceExists()) {
             spongePlayer.reference.ifPresent {
-                val inventory = it.inventory.query<Inventory>(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotPos.of(column, row)))
-                val spItem = SpongeConversionUtil.toSponge(item as Item<ItemStack>)
-                Selene.log().info("Type: " + spItem.type)
-                inventory.set(spItem)
+                val main: Inventory = it.inventory.query(MainPlayerInventory::class.java)
+                val slotOptional = (main as MainPlayerInventory).getSlot(SlotPos.of(column, row))
+                slotOptional.ifPresent { slot: Slot ->
+                    slot.offer(SpongeConversionUtil.toSponge(item as Item<ItemStack>))
+                }
+                if (!slotOptional.isPresent) {
+                    println("Not present!")
+                }
             }
         }
     }

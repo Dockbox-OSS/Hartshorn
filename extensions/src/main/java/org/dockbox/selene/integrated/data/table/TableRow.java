@@ -17,8 +17,11 @@
 
 package org.dockbox.selene.integrated.data.table;
 
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -29,29 +32,59 @@ public class TableRow {
 
     public TableRow() { }
 
-    public <T> TableRow addValue(ColumnIdentifier<T> column, T value) {
-        if (column.getType().isAssignableFrom(value.getClass()))
+    /**
+     * @param column Indicates which columns to assign the value to
+     * @param value Indicates the valiue of the column
+     * @return The instance of this TableRow
+     */
+    @NotNull
+    public TableRow addValue(@NotNull ColumnIdentifier<?> column, @Nullable Object value) {
+        // Make sure both the Identifier and the Value are both the same type
+        if (null == value || SeleneUtils.isAssignableFrom(column.getType(), value.getClass()))
             this.data.put(column, value);
         else
             throw new IllegalArgumentException(
-                String.format("The value: %s, is not of the correct type. (Expected: %s, but got %s)",
-                    value,
-                    column.getType().getSimpleName(),
-                    value.getClass().getSimpleName()
-                ));
-
+                    String.format("The value: %s, is not of the correct type. (Expected: %s, but got %s)",
+                            value,
+                            column.getType().getSimpleName(),
+                            value.getClass().getSimpleName()
+                    ));
         return this;
     }
 
-    public <T> T getValue(ColumnIdentifier<T> column) {
-        return (T) this.data.get(column);
+    /**
+     * @param column Indicates which columns to get the value from
+     * @param <T> Indicates what class type of object is used and returned
+     * @return Return a Nullable value of the asked column
+     */
+    @NotNull
+    public <T> Exceptional<T> getValue(@NotNull ColumnIdentifier<T> column) {
+        if(null == this.data.get(column))
+            return Exceptional.empty();
+
+        return Exceptional.of((T) this.data.get(column));
     }
 
+    /**
+     * @return Return a set of the values of the columns of the row
+     */
+    @NotNull
     public Set<Object> getValues() {
         return SeleneUtils.asUnmodifiableSet(this.data.values());
     }
 
+    /**
+     * @return Return a set of keys of the row
+     */
+    @NotNull
     public Set<ColumnIdentifier<?>> getColumns() {
-        return this.data.keySet();
+        return SeleneUtils.asUnmodifiableSet(this.data.keySet());
+    }
+
+    @Override
+    public String toString() {
+        return "TableRow{" +
+                "data=" + data +
+                '}';
     }
 }

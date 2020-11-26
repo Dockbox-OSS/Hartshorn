@@ -19,6 +19,8 @@ package org.dockbox.selene.core.impl.util.files.serialize;
 
 import com.google.common.reflect.TypeToken;
 
+import org.dockbox.selene.core.util.SeleneUtils;
+
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -48,7 +50,7 @@ public class PredicateSerializerInformation<T> extends SerializerInformation<T> 
     @Override
     public BiConsumer<TypeToken<T>, TypeSerializer<T>> getConsumer(TypeSerializerCollection tsc) {
         return (token, serializer) -> tsc.registerPredicate(typeToken ->
-                        token.getRawType().isAssignableFrom(typeToken.getRawType()),
+                        SeleneUtils.isAssignableFrom(token.getRawType(), typeToken.getRawType()),
                 serializer
         );
     }

@@ -19,10 +19,10 @@ package org.dockbox.selene.core.impl.command.parse
 
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
-import java.util.*
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 class LongArgumentParser : AbstractTypeArgumentParser<Long>() {
-    override fun parse(commandValue: CommandValue<String>): Optional<Long> {
-        return Optional.ofNullable(commandValue.value.toLongOrNull())
+    override fun parse(commandValue: CommandValue<String>): Exceptional<Long> {
+        return Exceptional.ofNullable(commandValue.value.toLongOrNull())
     }
 }

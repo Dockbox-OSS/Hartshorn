@@ -21,11 +21,12 @@ import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
 import org.dockbox.selene.core.objects.location.World
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.util.world.WorldStorageService
 
 class WorldArgumentParser : AbstractTypeArgumentParser<World>() {
-    override fun parse(commandValue: CommandValue<String>): Optional<World> {
+    override fun parse(commandValue: CommandValue<String>): Exceptional<World> {
         val v = commandValue.value
         val ws = Selene.getInstance(WorldStorageService::class.java)
         val ow = ws.getWorld(v)
@@ -35,7 +36,7 @@ class WorldArgumentParser : AbstractTypeArgumentParser<World>() {
                 val uuid = UUID.fromString(v)
                 ws.getWorld(uuid)
             } catch (e: IllegalArgumentException) {
-                Optional.empty()
+                Exceptional.empty()
             }
         }
     }

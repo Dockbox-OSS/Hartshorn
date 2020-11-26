@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.core.command.parse
 
-import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 @FunctionalInterface
 interface ParserFunction<T> {
-    fun parse(value: CommandValue<*>, type: Class<T>?): Optional<T>
+    fun parse(value: CommandValue<*>, type: Class<T>?): Exceptional<T>
 }

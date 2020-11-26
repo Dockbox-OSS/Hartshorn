@@ -19,13 +19,14 @@ package org.dockbox.selene.core.util.player
 
 import java.util.*
 import org.dockbox.selene.core.i18n.common.Language
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.objects.user.Player
 
 interface PlayerStorageService {
 
     fun getOnlinePlayers(): List<Player>
-    fun getPlayer(name: String): Optional<Player>
-    fun getPlayer(uuid: UUID): Optional<Player>
+    fun getPlayer(name: String): Exceptional<Player>
+    fun getPlayer(uuid: UUID): Exceptional<Player>
 
     fun setLanguagePreference(uuid: UUID, lang: Language)
     fun getLanguagePreference(uuid: UUID): Language

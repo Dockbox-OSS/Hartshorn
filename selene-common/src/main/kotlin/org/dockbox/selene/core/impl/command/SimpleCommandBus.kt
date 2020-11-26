@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 import org.dockbox.selene.core.annotations.Command
 import org.dockbox.selene.core.annotations.FromSource
@@ -79,16 +78,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
     }
 
     override fun registerSingleMethodCommands(clazz: Class<*>) {
-        val methods: MutableList<Method> = ArrayList<Method>()
-        for (method in clazz.declaredMethods) {
-            method.isAccessible = true
-            if (method.isAnnotationPresent(Command::class.java)) {
-                val command = method.getAnnotation(Command::class.java)
-                if (clazz.isAnnotationPresent(Command::class.java) && !command.single) continue
-
-                methods.add(method)
-            }
-        }
+        val methods: MutableCollection<Method> = SeleneUtils.getAnnotedMethods(clazz, Command::class.java) { it.single }
 
         val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(methods)
         Arrays.stream(registrations)
@@ -171,15 +161,9 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
 
     override fun createClassRegistration(clazz: Class<*>): ClassCommandRegistration {
         val information: Triad<Command, AbstractPermission, Array<String>> = getCommandInformation(clazz)
-        val methods: Array<Method> = clazz.declaredMethods
-        val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(Arrays
-                .stream(methods)
-                .filter { it.isAnnotationPresent(Command::class.java) }
-                .filter {
-                    val command = it.getAnnotation(Command::class.java)
-                    return@filter !command.single // Do not register single method commands as subcommands
-                }
-                .collect(Collectors.toList()))
+        val methods: MutableCollection<Method> = SeleneUtils.getAnnotedMethods(clazz, Command::class.java) { !it.single }
+
+        val registrations: Array<MethodCommandRegistration> = createSingleMethodRegistrations(methods)
         return ClassCommandRegistration(information.third[0], information.third, information.second, information.first, clazz, registrations)
     }
 
@@ -201,14 +185,14 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             for (type in parameterTypes) {
                 val defaultTypeAssignable = AtomicBoolean(false)
                 for (ct in commandTypes) {
-                    if (type.isAssignableFrom(ct) || ct.isAssignableFrom(type)) {
+                    if (SeleneUtils.isEitherAssignableFrom(ct, type)) {
                         defaultTypeAssignable.set(true)
                         break
                     }
                 }
                 val locationTypeAssignable = AtomicBoolean(false)
                 for (lt in locationTypes) {
-                    if (type.isAssignableFrom(lt) || lt.isAssignableFrom(type)) {
+                    if (SeleneUtils.isEitherAssignableFrom(lt, type)) {
                         locationTypeAssignable.set(true)
                         break
                     }
@@ -252,7 +236,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             val finalArgs: MutableList<Any> = ArrayList()
 
             for (parameterType in method.parameterTypes) {
-                if (parameterType.isAssignableFrom(CommandSource::class.java) || CommandSource::class.java.isAssignableFrom(parameterType)) {
+                if (SeleneUtils.isEitherAssignableFrom(CommandSource::class.java, parameterType)) {
                     if (parameterType == Player::class.java) {
                         if (sender is Player) finalArgs.add(sender)
                         else return Exceptional.of(IllegalSourceException("Command can only be ran by players!"))
@@ -261,7 +245,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                         else return Exceptional.of(IllegalSourceException("Command can only be ran by the console!"))
                     } else finalArgs.add(sender)
                 }
-                else if (parameterType == CommandContext::class.java || CommandContext::class.java.isAssignableFrom(parameterType)) {
+                else if (SeleneUtils.isEitherAssignableFrom(CommandContext::class.java, parameterType)) {
                     finalArgs.add(ctx)
                 } else {
                     throw IllegalStateException("Method requested parameter type '" + parameterType.toGenericString() + "' which is not provided")
@@ -271,11 +255,11 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             val o: Any
             if (registration.sourceInstance != null && registration.sourceInstance !is Method) {
                 o = registration.sourceInstance!!
-            } else if (c == Selene::class.java || c.isAssignableFrom(Selene::class.java) || Selene::class.java.isAssignableFrom(c)) {
+            } else if (c == Selene::class.java || SeleneUtils.isEitherAssignableFrom(Selene::class.java, c)) {
                 o = Selene.getServer()
             } else {
-                var extension: Optional<*>? = null
-                if (c.isAnnotationPresent(Extension::class.java) && Selene.getInstance(ExtensionManager::class.java).getInstance(c).also { extension = it }.isPresent) {
+                var extension: Exceptional<*>? = null
+                if (c.isAnnotationPresent(Extension::class.java) && Selene.getInstance(ExtensionManager::class.java).getInstance(c).also { extension = Exceptional.of(it) }.isPresent) {
                     // Extension can be asserted as not-null as it is re-assigned inside the condition for instance presence
                     o = extension!!.get()
                 } else {

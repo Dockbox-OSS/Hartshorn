@@ -18,7 +18,6 @@
 package org.dockbox.selene.core.util.files
 
 import java.nio.file.Path
-import java.util.*
 import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.util.extension.Extension
 
@@ -103,6 +102,17 @@ abstract class ConfigurateManager(val fileType: FileType) {
     abstract fun getDataDir(): Path
 
     /**
+     * Get the data directory for a given [Extension]. The exact location is decided by the top-level implementation
+     * of this type.
+     *
+     * @param extension The [Extension] providing identification
+     * @return A [Path] reference to the data directory
+     */
+    fun getDataDir(extension: Extension): Path {
+        return getDataDir().resolve(extension.id)
+    }
+
+    /**
      * Get the base log directory of a platform file system. The exact location is decided by the top-level
      * implementation of this type.
      *
@@ -132,9 +142,9 @@ abstract class ConfigurateManager(val fileType: FileType) {
      *
      * Depending on the platform this directory may not be present.
      *
-     * @return A [Optional] object containing either a [Path] reference to a directory, or nothing.
+     * @return A [Exceptional] object containing either a [Path] reference to a directory, or nothing.
      */
-    abstract fun getModDir(): Optional<Path>
+    abstract fun getModDir(): Exceptional<Path>
 
     /**
      * Get the base plugin directory of a platform file system. The exact location is decided by the top-level
@@ -153,14 +163,25 @@ abstract class ConfigurateManager(val fileType: FileType) {
     abstract fun getExtensionConfigsDir(): Path
 
     /**
+     * Get the configuration directory for a given [Extension]. The exact location is decided by the top-level
+     * implementation of this type.
+     *
+     * @param extension The [Extension] providing identification
+     * @return A [Path] reference to the configuration directory
+     */
+    fun getExtensionConfigDir(extension: Extension): Path {
+        return getExtensionConfigsDir().resolve(extension.id)
+    }
+
+    /**
      * Get the configuration folder for extensions directory of a platform file system. The exact location is decided
      * by the top-level implementation of this type.
      *
      * Depending on the platform this directory may not be present.
      *
-     * @return A [Optional] object containing either a [Path] reference to a directory, or nothing.
+     * @return A [Exceptional] object containing either a [Path] reference to a directory, or nothing.
      */
-    abstract fun getModdedPlatformModsConfigDir(): Optional<Path>
+    abstract fun getModdedPlatformModsConfigDir(): Exceptional<Path>
 
     /**
      * Get the configuration folder for extensions directory of a platform file system. The exact location is decided

@@ -19,8 +19,10 @@ package org.dockbox.selene.core.impl.util.extension;
 
 import com.google.inject.Singleton;
 
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionContext.ComponentType;
@@ -28,7 +30,6 @@ import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.dockbox.selene.core.util.extension.status.ExtensionStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -37,8 +38,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -51,47 +50,47 @@ public class SimpleExtensionManager implements ExtensionManager {
 
     @NotNull
     @Override
-    public Optional<ExtensionContext> getContext(@NotNull Class<?> type) {
+    public Exceptional<ExtensionContext> getContext(@NotNull Class<?> type) {
         for (SimpleExtensionContext ctx : globalContexts) {
             Class<?> componentClassType = ctx.getExtensionClass();
-            if (componentClassType.equals(type)) return Optional.of(ctx);
+            if (componentClassType.equals(type)) return Exceptional.of(ctx);
         }
-        return Optional.empty();
+        return Exceptional.empty();
     }
 
     @NotNull
     @Override
-    public Optional<ExtensionContext> getContext(@NonNls @NotNull String id) {
+    public Exceptional<ExtensionContext> getContext(@NonNls @NotNull String id) {
         for (SimpleExtensionContext ctx : globalContexts) {
-            if (ctx.getExtension().id().equals(id)) return Optional.of(ctx);
+            if (ctx.getExtension().id().equals(id)) return Exceptional.of(ctx);
         }
-        return Optional.empty();
+        return Exceptional.empty();
     }
 
     @NotNull
     @Override
-    public <T> Optional<T> getInstance(@NotNull Class<T> type) {
+    public <T> Exceptional<T> getInstance(@NotNull Class<T> type) {
         Selene.log().debug("Instance requested for [" + type.getCanonicalName() +"]");
         for (Object o : instanceMappings.values()) {
             if (null != o && o.getClass().equals(type))
                 // Condition meets requirement for checked cast
                 //noinspection unchecked
-                return Optional.of((T) o);
+                return Exceptional.of((T) o);
         }
-        return Optional.empty();
+        return Exceptional.empty();
     }
 
     @NotNull
     @Override
-    public Optional<?> getInstance(@NotNull String id) {
-        return Optional.ofNullable(instanceMappings.get(id));
+    public Exceptional<?> getInstance(@NotNull String id) {
+        return Exceptional.ofNullable(instanceMappings.get(id));
     }
 
     @NotNull
     @Override
     public List<ExtensionContext> initialiseExtensions() {
-        Reflections integratedReflections = new Reflections("org.dockbox.selene");
-        Set<Class<?>> annotatedTypes = integratedReflections.getTypesAnnotatedWith(Extension.class, true);
+        Collection<Class<?>> annotatedTypes = SeleneUtils
+                .getAnnotatedTypes("org.dockbox.selene", Extension.class);
         Selene.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
         return annotatedTypes.stream().map(type -> {
 
@@ -105,23 +104,23 @@ public class SimpleExtensionManager implements ExtensionManager {
 
             return new Tuple<>(context, type);
         }).filter(tuple -> {
-            if (this.createComponentInstance(tuple.getSecond(), tuple.getFirst())) {
-                globalContexts.add(tuple.getFirst());
+            if (this.createComponentInstance(tuple.getValue(), tuple.getKey())) {
+                globalContexts.add(tuple.getKey());
                 return true;
             }
             return false;
-        }).map(Tuple::getFirst).collect(Collectors.toList());
+        }).map(Tuple::getKey).collect(Collectors.toList());
     }
 
     @NotNull
     @Override
-    public Optional<Extension> getHeader(@NotNull Class<?> type) {
-        return Optional.ofNullable(type.getAnnotation(Extension.class));
+    public Exceptional<Extension> getHeader(@NotNull Class<?> type) {
+        return Exceptional.ofNullable(type.getAnnotation(Extension.class));
     }
 
     @NotNull
     @Override
-    public Optional<Extension> getHeader(@NotNull String id) {
+    public Exceptional<Extension> getHeader(@NotNull String id) {
         return this.getInstance(id).map(i -> i.getClass().getAnnotation(Extension.class));
     }
 
@@ -152,14 +151,6 @@ public class SimpleExtensionManager implements ExtensionManager {
                     context.addStatus(entry, ExtensionStatus.FAILED);
                     return false;
                 }
-
-                // Due to the way external .jar files are injected Reflections sometimes causes issues when using the Package instance
-                Reflections ref = new Reflections(dependentPackage);
-                Set<Class<?>> extensions = ref.getTypesAnnotatedWith(Extension.class);
-                if (!extensions.isEmpty())
-                    Selene.log().warn("Detected " + extensions.size() + " extensions in dependent package " + dependentPackage + ". " +
-                            "Common code shared by extensions should be implemented in Selene, extensions should NEVER depend on each other.");
-
             } catch (Throwable e) {
                 // Package.getPackage(String) typically returns null if no package with that name is present, this clause is a fail-safe and should
                 // technically never be reached. If it is reached we explicitly need to mention the package to prevent future issues (by reporting this).

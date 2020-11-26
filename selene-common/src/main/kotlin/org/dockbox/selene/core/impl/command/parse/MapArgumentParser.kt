@@ -19,9 +19,8 @@ package org.dockbox.selene.core.impl.command.parse
 
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
+import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.server.Selene
-import java.util.*
-import kotlin.collections.HashMap
 
 class MapArgumentParser : AbstractTypeArgumentParser<Map<String, String>>() {
 
@@ -37,10 +36,10 @@ class MapArgumentParser : AbstractTypeArgumentParser<Map<String, String>>() {
     }
 
 
-    override fun parse(commandValue: CommandValue<String>): Optional<Map<String, String>> {
+    override fun parse(commandValue: CommandValue<String>): Exceptional<Map<String, String>> {
         if (rowDelimiter == valueDelimiter) {
             Selene.log().warn("Row and value delimiter cannot be equal!")
-            return Optional.empty()
+            return Exceptional.empty()
         }
 
         val v = commandValue.value
@@ -54,6 +53,6 @@ class MapArgumentParser : AbstractTypeArgumentParser<Map<String, String>>() {
             }
         }
 
-        return Optional.of(map)
+        return Exceptional.of(map)
     }
 }

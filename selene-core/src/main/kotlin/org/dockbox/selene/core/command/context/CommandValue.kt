@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.core.command.context
 
-import java.util.*
 import org.dockbox.selene.core.command.parse.ParserFunction
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 abstract class CommandValue<T>(val value: T,
                                val key: String) {
@@ -31,7 +31,7 @@ abstract class CommandValue<T>(val value: T,
         return this as Flag<T>
     }
 
-    fun <P> parse(parseFunction: ParserFunction<P>, type: Class<P>): Optional<P> {
+    fun <P> parse(parseFunction: ParserFunction<P>, type: Class<P>): Exceptional<P> {
         return parseFunction.parse(this, type)
     }
 

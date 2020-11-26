@@ -24,5 +24,6 @@ interface GlobalConfig {
     fun getDefaultLanguage(): Language
     fun getStacktracesAllowed(): Boolean
     fun getExceptionLevel(): ExceptionLevels
+    fun getEnvironment(): Environment
 
 }

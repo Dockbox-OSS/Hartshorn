@@ -17,16 +17,16 @@
 
 package org.dockbox.selene.core.impl.command.parse
 
-import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 class BooleanArgumentParser : AbstractTypeArgumentParser<Boolean>() {
-    override fun parse(commandValue: CommandValue<String>): Optional<Boolean> {
+    override fun parse(commandValue: CommandValue<String>): Exceptional<Boolean> {
         return when (commandValue.value.toLowerCase()) {
-            "true" -> Optional.of(true)
-            "false" -> Optional.of(false)
-            else -> Optional.empty()
+            "true" -> Exceptional.of(true)
+            "false" -> Exceptional.of(false)
+            else -> Exceptional.empty()
         }
     }
 }

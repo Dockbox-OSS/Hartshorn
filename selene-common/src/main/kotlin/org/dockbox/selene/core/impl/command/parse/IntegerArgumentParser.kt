@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.core.impl.command.parse
 
-import java.util.*
 import org.dockbox.selene.core.command.context.CommandValue
 import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
+import org.dockbox.selene.core.objects.optional.Exceptional
 
 class IntegerArgumentParser : AbstractTypeArgumentParser<Int>() {
-    override fun parse(commandValue: CommandValue<String>): Optional<Int> {
-        return Optional.ofNullable(commandValue.value.toIntOrNull())
+    override fun parse(commandValue: CommandValue<String>): Exceptional<Int> {
+        return Exceptional.ofNullable(commandValue.value.toIntOrNull())
     }
 }

@@ -1,9 +1,9 @@
 # <img src="https://user-images.githubusercontent.com/10957963/97993406-57ef9480-1de4-11eb-8fa0-54bb8380cf94.png" width="300"/>  
 
-![ci-status](https://api.travis-ci.com/GuusLieben/Selene.svg?branch=api-7.1-1.12.2) 
-![minecraft](https://img.shields.io/badge/Minecraft-1.12.2-lightgrey)
-![sponge-api](https://img.shields.io/badge/SpongeAPI-7.2-yellow)  
-[![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1)  
+[![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1)
+![Build status](https://github.com/GuusLieben/Selene/workflows/Build%20status/badge.svg)  
+![minecraft](https://img.shields.io/badge/Minecraft-1.12.2-green)
+![sponge-api](https://img.shields.io/badge/SpongeAPI-7.2-green)  
 
 **Project is in pre-alpha stages, please note there might be major changes without special notice**
 

@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.sponge.listeners;
 
-import com.google.inject.Inject;
-
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.DisconnectEvent;
 import net.dv8tion.jda.api.events.ReconnectedEvent;
@@ -39,46 +37,45 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import org.dockbox.selene.core.events.discord.DiscordCommandContext;
 import org.dockbox.selene.core.events.discord.DiscordEvent;
-import org.dockbox.selene.core.events.discord.DiscordEvent.Banned;
-import org.dockbox.selene.core.events.discord.DiscordEvent.ChatDeleted;
-import org.dockbox.selene.core.events.discord.DiscordEvent.ChatUpdated;
-import org.dockbox.selene.core.events.discord.DiscordEvent.Disconnected;
-import org.dockbox.selene.core.events.discord.DiscordEvent.Joined;
-import org.dockbox.selene.core.events.discord.DiscordEvent.Left;
-import org.dockbox.selene.core.events.discord.DiscordEvent.NicknameChanged;
-import org.dockbox.selene.core.events.discord.DiscordEvent.PrivateChatDeleted;
-import org.dockbox.selene.core.events.discord.DiscordEvent.PrivateChatReceived;
-import org.dockbox.selene.core.events.discord.DiscordEvent.PrivateChatUpdated;
-import org.dockbox.selene.core.events.discord.DiscordEvent.ReactionAdded;
-import org.dockbox.selene.core.events.discord.DiscordEvent.Reconnected;
-import org.dockbox.selene.core.events.discord.DiscordEvent.Unbanned;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordBotDisconnectedEvent;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordBotReconnectedEvent;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordChatDeletedEvent;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordChatUpdatedEvent;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordPrivateChatDeletedEvent;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordPrivateChatReceivedEvent;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordPrivateChatUpdatedEvent;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordReactionAddedEvent;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserBannedEvent;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserJoinedEvent;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserLeftEvent;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserNicknameChangedEvent;
+import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserUnbannedEvent;
 import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
-import org.dockbox.selene.core.util.events.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 public class SpongeDiscordListener extends ListenerAdapter {
 
-    @Inject
-    private EventBus bus;
-
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        Event cre = new DiscordEvent.ChatReceived(event.getAuthor(), event.getMessage(), event.getGuild(), event.getChannel());
-        this.bus.post(cre);
+        new DiscordEvent.DiscordChatReceivedEvent(
+                event.getAuthor(),
+                event.getMessage(),
+                event.getGuild(),
+                event.getChannel()
+        ).post();
     }
 
     @Override
     public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event) {
-        Event pcre = new PrivateChatReceived(event.getAuthor(), event.getMessage());
-        this.bus.post(pcre);
+        new DiscordPrivateChatReceivedEvent(event.getAuthor(), event.getMessage()).post();
     }
 
     @Override
@@ -112,77 +109,67 @@ public class SpongeDiscordListener extends ListenerAdapter {
         event.getTextChannel().retrieveMessageById(event.getMessageId()).queue(message -> {
             User user = event.getJDA().getUserById(event.getUserId());
             if (null != user) {
-                Event rae = new ReactionAdded(user, message, event.getReaction());
-                this.bus.post(rae);
+                new DiscordReactionAddedEvent(user, message, event.getReaction()).post();
             }
         });
     }
 
     @Override
     public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
-        Event cde = new ChatDeleted(event.getMessageId());
-        this.bus.post(cde);
+        new DiscordChatDeletedEvent(event.getMessageId()).post();
     }
 
     @Override
     public void onPrivateMessageDelete(@NotNull PrivateMessageDeleteEvent event) {
-        Event pcde = new PrivateChatDeleted(event.getMessageId());
-        this.bus.post(pcde);
+        new DiscordPrivateChatDeletedEvent(event.getMessageId()).post();
     }
 
     @Override
     public void onReconnect(@NotNull ReconnectedEvent event) {
-        this.bus.post(new Reconnected());
+        new DiscordBotReconnectedEvent().post();
     }
 
     @Override
     public void onDisconnect(@NotNull DisconnectEvent event) {
-        this.bus.post(new Disconnected());
+        new DiscordBotDisconnectedEvent().post();
     }
 
     @Override
     public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
-        Event cue = new ChatUpdated(event.getAuthor(), event.getMessage());
-        this.bus.post(cue);
+        new DiscordChatUpdatedEvent(event.getAuthor(), event.getMessage()).post();
     }
 
     @Override
     public void onPrivateMessageUpdate(@NotNull PrivateMessageUpdateEvent event) {
-        Event pcue = new PrivateChatUpdated(event.getAuthor(), event.getMessage());
-        this.bus.post(pcue);
+        new DiscordPrivateChatUpdatedEvent(event.getAuthor(), event.getMessage()).post();
     }
 
     @Override
     public void onGuildBan(@NotNull GuildBanEvent event) {
-        Event be = new Banned(event.getUser(), event.getGuild());
-        this.bus.post(be);
+        new DiscordUserBannedEvent(event.getUser(), event.getGuild()).post();
     }
 
     @Override
     public void onGuildUnban(@NotNull GuildUnbanEvent event) {
-        Event ue = new Unbanned(event.getUser(), event.getGuild());
-        this.bus.post(ue);
+        new DiscordUserUnbannedEvent(event.getUser(), event.getGuild()).post();
     }
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        Event je = new Joined(event.getUser(), event.getGuild());
-        this.bus.post(je);
+        new DiscordUserJoinedEvent(event.getUser(), event.getGuild()).post();
     }
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
-        Event le = new Left(event.getUser(), event.getGuild());
-        this.bus.post(le);
+        new DiscordUserLeftEvent(event.getUser(), event.getGuild()).post();
     }
 
     @Override
     public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
-        Event nce = new NicknameChanged(
+        Event nce = new DiscordUserNicknameChangedEvent(
                 event.getUser(),
-                Optional.ofNullable(event.getOldNickname()),
-                Optional.ofNullable(event.getNewNickname())
-        );
-        this.bus.post(nce);
+                Exceptional.ofNullable(event.getOldNickname()),
+                Exceptional.ofNullable(event.getNewNickname())
+        ).post();
     }
 }
