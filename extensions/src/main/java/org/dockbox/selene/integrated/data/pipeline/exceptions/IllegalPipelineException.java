@@ -15,21 +15,15 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline.pipes;
+package org.dockbox.selene.integrated.data.pipeline.exceptions;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
+public class IllegalPipelineException extends IllegalArgumentException {
 
-@FunctionalInterface
-public interface Pipe<I, O> extends IPipe<I, O> {
-
-    O execute(I input, Throwable throwable);
-
-    @Override
-    default O apply(Exceptional<I> input) {
-        return this.execute(input.orElse(null), input.orElseExcept(null));
+    public IllegalPipelineException(String errorMessage, Throwable throwable) {
+        super(errorMessage, throwable);
     }
 
-    static <I, O> Pipe<I, O> of(Pipe<I, O> pipe) {
-        return pipe;
+    public IllegalPipelineException(String errorMessage) {
+        super(errorMessage);
     }
 }
