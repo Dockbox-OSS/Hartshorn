@@ -44,8 +44,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public abstract class SQLMan<T> implements ISQLMan<T>, InjectableType {
 
@@ -127,12 +125,12 @@ public abstract class SQLMan<T> implements ISQLMan<T>, InjectableType {
 
     @Override
     public void store(String name, Table table) throws InvalidConnectionException {
-        this.store(this.getDefaultTarget(), name, table, resetOnStore);
+        this.store(this.getDefaultTarget(), name, table, this.resetOnStore);
     }
 
     @Override
     public void store(T target, String name, Table table) throws InvalidConnectionException {
-        this.store(target, name, table, resetOnStore);
+        this.store(target, name, table, this.resetOnStore);
     }
 
     public void store(String name, Table table, boolean reset) throws InvalidConnectionException {
@@ -141,6 +139,8 @@ public abstract class SQLMan<T> implements ISQLMan<T>, InjectableType {
 
     public void store(T target, String name, Table table, boolean reset) throws InvalidConnectionException {
         this.withContext(target, ctx -> {
+            if (reset) this.drop(target, name);
+
             Field<?>[] fields = this.convertIdentifiersToFields(table);
             this.createTableIfNotExists(name, ctx, fields);
             InsertValuesStepN<?> insertStep = ctx.insertInto(DSL.table(name))
@@ -208,14 +208,14 @@ public abstract class SQLMan<T> implements ISQLMan<T>, InjectableType {
         return DSL.field(identifier.getColumnName(), identifier.getType());
     }
 
-    private <R> R withContext(T target, Function<DSLContext, R> function) throws InvalidConnectionException {
+    private <R> R withContext(T target, DSLFunction<R> function) throws InvalidConnectionException {
         DSLContext ctx = this.getContext(target);
-        R r = function.apply(ctx);
+        R r = function.accept(ctx);
         this.closeConnection(ctx);
         return r;
     }
 
-    private void withContext(T target, Consumer<DSLContext> consumer) throws InvalidConnectionException {
+    private void withContext(T target, DSLConsumer consumer) throws InvalidConnectionException {
         DSLContext ctx = this.getContext(target);
         consumer.accept(ctx);
         this.closeConnection(ctx);
