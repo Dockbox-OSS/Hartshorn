@@ -31,19 +31,22 @@ import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
 import org.dockbox.selene.integrated.sql.properties.SQLColumnProperty;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.InsertValuesStepN;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 
-import java.nio.file.Path;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-public abstract class SQLMan<T> implements InjectableType {
+public abstract class SQLMan<T> implements ISQLMan<T>, InjectableType {
 
     private final Map<String, ColumnIdentifier<?>> identifiers = new HashMap<>();
 
@@ -57,10 +60,12 @@ public abstract class SQLMan<T> implements InjectableType {
 
     protected abstract T getDefaultTarget();
 
+    @Override
     public Table getTable(String name) throws InvalidConnectionException {
         return this.getTable(name, this.getDefaultTarget());
     }
 
+    @Override
     public Table getTable(String name, T target) throws InvalidConnectionException {
         return this.withContext(target, ctx -> {
             Result<Record> results = ctx.select().from(name).fetch();
@@ -118,9 +123,12 @@ public abstract class SQLMan<T> implements InjectableType {
         return Exceptional.ofNullable(this.identifiers.get(key));
     }
 
+    @Override
     public void store(String name, Table table) throws InvalidConnectionException {
         this.store(this.getDefaultTarget(), name, table);
     }
+
+    @Override
     public void store(T target, String name, Table table) throws InvalidConnectionException {
         this.withContext(target, ctx -> {
             Field<?>[] fields = this.convertIdentifiersToFields(table);
@@ -160,17 +168,24 @@ public abstract class SQLMan<T> implements InjectableType {
         ctx.createTableIfNotExists(name).columns(fields).execute();
     }
 
+    @Override
     public void drop(String name) throws InvalidConnectionException {
         this.drop(this.getDefaultTarget(), name);
     }
+
+    @Override
     public void drop(T target, String name) throws InvalidConnectionException {
         this.withContext(target, ctx -> {
             ctx.dropTableIfExists(DSL.table(name)).execute();
         });
     }
+
+    @Override
     public <C> void deleteIf(String name, ColumnIdentifier<C> identifier, C value) throws InvalidConnectionException {
         this.deleteIf(this.getDefaultTarget(), name, identifier, value);
     }
+
+    @Override
     public <C> void deleteIf(T target, String name, ColumnIdentifier<C> identifier, C value) throws InvalidConnectionException {
         this.withContext(target, ctx -> {
             ctx.delete(DSL.table(name))
