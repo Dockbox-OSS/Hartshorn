@@ -23,6 +23,7 @@ import org.dockbox.selene.core.annotations.Listener;
 import org.dockbox.selene.core.impl.util.events.processors.DefaultParamProcessors;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.events.AbstractEventParamProcessor;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.events.EventStage;
@@ -180,7 +181,7 @@ public class SimpleEventBus implements EventBus {
         }
 
         for (Class<?> param : method.getParameterTypes()) {
-            if (!Event.class.isAssignableFrom(param) && !com.sk89q.worldedit.event.Event.class.isAssignableFrom(param)) {
+            if (!SeleneUtils.isAssignableFrom(Event.class, param) && !SeleneUtils.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
                 throw new IllegalArgumentException("Parameter must be a subclass of the Event class: " + method.toGenericString());
             }
         }

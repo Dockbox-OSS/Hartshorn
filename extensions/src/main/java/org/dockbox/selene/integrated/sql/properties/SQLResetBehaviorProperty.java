@@ -15,15 +15,27 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.table.annotations;
+package org.dockbox.selene.integrated.sql.properties;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Identifier {
-    String value();
+public class SQLResetBehaviorProperty implements InjectorProperty<Boolean> {
+
+    public static String KEY = "resetBeforeStore";
+
+    private final boolean reset;
+
+    public SQLResetBehaviorProperty(boolean reset) {
+        this.reset = reset;
+    }
+
+    @Override
+    public String getKey() {
+        return SQLResetBehaviorProperty.KEY;
+    }
+
+    @Override
+    public Boolean getObject() {
+        return this.reset;
+    }
 }

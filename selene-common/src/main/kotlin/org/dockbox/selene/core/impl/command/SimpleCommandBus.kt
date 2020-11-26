@@ -185,14 +185,14 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             for (type in parameterTypes) {
                 val defaultTypeAssignable = AtomicBoolean(false)
                 for (ct in commandTypes) {
-                    if (type.isAssignableFrom(ct) || ct.isAssignableFrom(type)) {
+                    if (SeleneUtils.isEitherAssignableFrom(ct, type)) {
                         defaultTypeAssignable.set(true)
                         break
                     }
                 }
                 val locationTypeAssignable = AtomicBoolean(false)
                 for (lt in locationTypes) {
-                    if (type.isAssignableFrom(lt) || lt.isAssignableFrom(type)) {
+                    if (SeleneUtils.isEitherAssignableFrom(lt, type)) {
                         locationTypeAssignable.set(true)
                         break
                     }
@@ -236,7 +236,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             val finalArgs: MutableList<Any> = ArrayList()
 
             for (parameterType in method.parameterTypes) {
-                if (parameterType.isAssignableFrom(CommandSource::class.java) || CommandSource::class.java.isAssignableFrom(parameterType)) {
+                if (SeleneUtils.isEitherAssignableFrom(CommandSource::class.java, parameterType)) {
                     if (parameterType == Player::class.java) {
                         if (sender is Player) finalArgs.add(sender)
                         else return Exceptional.of(IllegalSourceException("Command can only be ran by players!"))
@@ -245,7 +245,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
                         else return Exceptional.of(IllegalSourceException("Command can only be ran by the console!"))
                     } else finalArgs.add(sender)
                 }
-                else if (parameterType == CommandContext::class.java || CommandContext::class.java.isAssignableFrom(parameterType)) {
+                else if (SeleneUtils.isEitherAssignableFrom(CommandContext::class.java, parameterType)) {
                     finalArgs.add(ctx)
                 } else {
                     throw IllegalStateException("Method requested parameter type '" + parameterType.toGenericString() + "' which is not provided")
@@ -255,7 +255,7 @@ abstract class SimpleCommandBus<C, A : AbstractArgumentValue<*>?> : CommandBus {
             val o: Any
             if (registration.sourceInstance != null && registration.sourceInstance !is Method) {
                 o = registration.sourceInstance!!
-            } else if (c == Selene::class.java || c.isAssignableFrom(Selene::class.java) || Selene::class.java.isAssignableFrom(c)) {
+            } else if (c == Selene::class.java || SeleneUtils.isEitherAssignableFrom(Selene::class.java, c)) {
                 o = Selene.getServer()
             } else {
                 var extension: Exceptional<*>? = null

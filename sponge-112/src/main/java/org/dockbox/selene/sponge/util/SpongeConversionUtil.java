@@ -70,7 +70,6 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -81,27 +80,25 @@ import java.util.stream.Collectors;
 public enum SpongeConversionUtil {
     ;
 
-    private static final Map<TextColor, Character> textColors = new HashMap<>();
-
-    static {
-        textColors.put(TextColors.BLACK, '0');
-        textColors.put(TextColors.DARK_BLUE, '1');
-        textColors.put(TextColors.DARK_GREEN, '2');
-        textColors.put(TextColors.DARK_AQUA, '3');
-        textColors.put(TextColors.DARK_RED, '4');
-        textColors.put(TextColors.DARK_PURPLE, '5');
-        textColors.put(TextColors.GOLD, '6');
-        textColors.put(TextColors.GRAY, '7');
-        textColors.put(TextColors.DARK_GRAY, '8');
-        textColors.put(TextColors.BLUE, '9');
-        textColors.put(TextColors.GREEN, 'a');
-        textColors.put(TextColors.AQUA, 'b');
-        textColors.put(TextColors.RED, 'c');
-        textColors.put(TextColors.LIGHT_PURPLE, 'd');
-        textColors.put(TextColors.YELLOW, 'e');
-        textColors.put(TextColors.WHITE, 'f');
-        textColors.put(TextColors.RESET, 'r');
-    }
+    private static final Map<TextColor, Character> textColors = SeleneUtils.ofEntries(
+            SeleneUtils.entry(TextColors.BLACK, '0'),
+            SeleneUtils.entry(TextColors.DARK_BLUE, '1'),
+            SeleneUtils.entry(TextColors.DARK_GREEN, '2'),
+            SeleneUtils.entry(TextColors.DARK_AQUA, '3'),
+            SeleneUtils.entry(TextColors.DARK_RED, '4'),
+            SeleneUtils.entry(TextColors.DARK_PURPLE, '5'),
+            SeleneUtils.entry(TextColors.GOLD, '6'),
+            SeleneUtils.entry(TextColors.GRAY, '7'),
+            SeleneUtils.entry(TextColors.DARK_GRAY, '8'),
+            SeleneUtils.entry(TextColors.BLUE, '9'),
+            SeleneUtils.entry(TextColors.GREEN, 'a'),
+            SeleneUtils.entry(TextColors.AQUA, 'b'),
+            SeleneUtils.entry(TextColors.RED, 'c'),
+            SeleneUtils.entry(TextColors.LIGHT_PURPLE, 'd'),
+            SeleneUtils.entry(TextColors.YELLOW, 'e'),
+            SeleneUtils.entry(TextColors.WHITE, 'f'),
+            SeleneUtils.entry(TextColors.RESET, 'r')
+    );
 
     @NotNull
     public static <T> Exceptional<?> autoDetectFromSponge(T object) {

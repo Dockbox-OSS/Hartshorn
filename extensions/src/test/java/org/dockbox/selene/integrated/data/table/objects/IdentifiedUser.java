@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.integrated.data.table.objects;
 
-import org.dockbox.selene.integrated.data.table.annotations.Identifier;
+import org.dockbox.selene.core.objects.entity.Property;
 
 public class IdentifiedUser {
 
     public int numeralId;
 
-    @Identifier(value = "name")
+    @Property("name")
     public String displayedName;
 
     public IdentifiedUser(int id, String name) {
@@ -31,4 +31,6 @@ public class IdentifiedUser {
         this.displayedName = name;
     }
 
+    public IdentifiedUser() {
+    }
 }

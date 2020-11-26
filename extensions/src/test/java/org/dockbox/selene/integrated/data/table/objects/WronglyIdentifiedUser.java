@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.integrated.data.table.objects;
 
-import org.dockbox.selene.integrated.data.table.annotations.Identifier;
+import org.dockbox.selene.core.objects.entity.Property;
 
 public class WronglyIdentifiedUser {
 
     public int Id;
 
-    @Identifier("name")
+    @Property("name")
     public String displayedName;
 
     public WronglyIdentifiedUser(int id, String name) {

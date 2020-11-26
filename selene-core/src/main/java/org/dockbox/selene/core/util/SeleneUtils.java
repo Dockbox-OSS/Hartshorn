@@ -17,11 +17,17 @@
 
 package org.dockbox.selene.core.util;
 
+import org.apache.commons.collections4.Get;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
+import org.dockbox.selene.core.objects.entity.Ignore;
+import org.dockbox.selene.core.objects.entity.Property;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
+import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +41,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -49,15 +56,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -71,11 +81,39 @@ public enum SeleneUtils {
     private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
     public static final int MAXIMUM_DECIMALS = 15;
 
+    private static final Map<Class<?>, Class<?>> primitiveWrapperMap =
+            ofEntries(entry(boolean.class, Boolean.class),
+                    entry(byte.class, Byte.class),
+                    entry(char.class, Character.class),
+                    entry(double.class, Double.class),
+                    entry(float.class, Float.class),
+                    entry(int.class, Integer.class),
+                    entry(long.class, Long.class),
+                    entry(short.class, Short.class));
+
+    @SafeVarargs
+    @SuppressWarnings("varargs")
+    public static <K, V> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
+        if (entries.length == 0) { // implicit null check of entries array
+            return Collections.emptyMap();
+        } else {
+            Map<K, V> map = new HashMap<>();
+            for (Entry<? extends K, ? extends V> entry : entries) {
+                map.put(entry.getKey(), entry.getValue());
+            }
+            return map;
+        }
+    }
+
+    public static <K, V> Entry<K, V> entry(K k, V v) {
+        return new Tuple<>(k, v);
+    }
+
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
         if (isInCooldown(o) && !overwriteExisting) return;
         activeCooldowns.put(o, new Triad<>(LocalDateTime.now(), duration, timeUnit));
     }
-    
+
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit) {
         cooldown(o, duration, timeUnit, false);
     }
@@ -620,11 +658,15 @@ public enum SeleneUtils {
 
     @Contract("null, _ -> false; !null, null -> false")
     public static <T> boolean isGenericInstanceOf(T instance, Class<?> type) {
-        return null != instance && null != type && type.isAssignableFrom(instance.getClass());
+        return null != instance && null != type && isAssignableFrom(type, instance.getClass());
     }
 
     public static boolean isFileEmpty(@NotNull Path file) {
         return Files.exists(file) && 0 <= file.toFile().length();
+    }
+
+    public static <T> Collection<T> singletonList(T mockWorld) {
+        return Collections.singletonList(mockWorld);
     }
 
     public <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
@@ -732,7 +774,7 @@ public enum SeleneUtils {
             runnable.run();
             return false;
         } catch (Throwable t) {
-            return exception.isAssignableFrom(t.getClass());
+            return isAssignableFrom(exception, t.getClass());
         }
     }
 
@@ -833,7 +875,11 @@ public enum SeleneUtils {
     }
 
     public static boolean hasMethod(Object instance, String method) {
-        for (Method m : instance.getClass().getDeclaredMethods()) {
+        return hasMethod(instance.getClass(), method);
+    }
+
+    public static boolean hasMethod(Class<?> type, @NonNls String method) {
+        for (Method m : type.getDeclaredMethods()) {
             if (m.getName().equals(method)) return true;
         }
         return false;
@@ -848,6 +894,128 @@ public enum SeleneUtils {
         } catch (ClassCastException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             return Exceptional.empty();
         }
+    }
+
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public static <T> InjectorProperty<T> getProperty(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
+        for (InjectorProperty<?> property : properties) {
+            if (property.getKey().equals(key)
+                    && null != property.getObject()
+                    && isAssignableFrom(expectedType, property.getObject().getClass())
+            ) {
+                return (InjectorProperty<T>) property;
+            }
+        }
+        return null;
+    }
+
+    public static <T> Exceptional<T> getPropertyValue(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
+        InjectorProperty<T> property = getProperty(key, expectedType, properties);
+        if (null != property) {
+            return Exceptional.of(property::getObject);
+        }
+        return Exceptional.empty();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends InjectorProperty<?>> List<T> getSubProperties(Class<T> propertyFilter, InjectorProperty<?>... properties) {
+        List<T> values = new ArrayList<>();
+        for (InjectorProperty<?> property : properties) {
+            if (isAssignableFrom(propertyFilter, property.getClass())) values.add((T) property);
+        }
+        return values;
+    }
+
+    public static <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map) {
+        T instance = getInstance(type);
+        Get<String, Object> insensitiveMap = new CaseInsensitiveMap<>(map);
+
+        if (null == instance) return Exceptional.empty();
+
+        try {
+            for (Field field : type.getDeclaredFields()) {
+                if (!field.isAccessible()) field.setAccessible(true);
+
+                String propertyName = getFieldPropertyName(field);
+                if (insensitiveMap.containsKey(propertyName)) {
+                    Object value = insensitiveMap.get(propertyName);
+                    if (isAssignableFrom(field.getType(), value.getClass())) {
+                        field.set(instance, value);
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            return Exceptional.of(instance, e);
+        }
+        return Exceptional.of(instance);
+    }
+
+    public static <T> Exceptional<T> tryCreate(Class<T> type, Function<String, Object> valueCollector, boolean inject) {
+        T instance = inject ? Selene.getInstance(type) : SeleneUtils.getInstance(type);
+        if (null != instance)
+            try {
+                for (Field field : type.getDeclaredFields()) {
+                    if (!field.isAccessible()) field.setAccessible(true);
+                    if (field.isAnnotationPresent(Ignore.class)) continue;
+                    String fieldName = field.getName();
+                    if (field.isAnnotationPresent(Property.class))
+                        fieldName = field.getAnnotation(Property.class).value();
+                    Object value = valueCollector.apply(fieldName);
+                    if (null == value) continue;
+
+                    boolean useFieldDirect = true;
+                    if (field.isAnnotationPresent(Property.class)) {
+                        Property property = field.getAnnotation(Property.class);
+
+                        //noinspection CallToSuspiciousStringMethod
+                        if (!"".equals(property.setter()) && hasMethod(type, property.setter())) {
+                            Class<?> parameterType = field.getType();
+                            if (!Void.class.equals(property.accepts())) parameterType = property.accepts();
+
+                            Method method = type.getMethod(property.setter(), parameterType);
+                            method.invoke(instance, value);
+                            useFieldDirect = false;
+                        }
+                    }
+
+                    if (useFieldDirect && isAssignableFrom(field.getType(), value.getClass()))
+                        field.set(instance, value);
+                }
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                return Exceptional.of(e);
+            }
+        return Exceptional.ofNullable(instance);
+    }
+
+    public static boolean isPrimitiveWrapperOf(Class<?> targetClass, Class<?> primitive) {
+        if (!primitive.isPrimitive()) {
+            throw new IllegalArgumentException("First argument has to be primitive type");
+        }
+        return primitiveWrapperMap.get(primitive) == targetClass;
+    }
+
+    public static boolean isEitherAssignableFrom(Class<?> to, Class<?> from) {
+        return isAssignableFrom(from, to) || isAssignableFrom(to, from);
+    }
+
+    public static boolean isAssignableFrom(Class<?> to, Class<?> from) {
+        if (to.isAssignableFrom(from)) {
+            return true;
+        }
+        if (from.isPrimitive()) {
+            return isPrimitiveWrapperOf(to, from);
+        }
+        if (to.isPrimitive()) {
+            return isPrimitiveWrapperOf(from, to);
+        }
+        return false;
+    }
+
+    public static String getFieldPropertyName(Field field) {
+        return field.isAnnotationPresent(Property.class)
+                ? field.getAnnotation(Property.class).value()
+                : field.getName();
     }
 
     public enum HttpStatus {

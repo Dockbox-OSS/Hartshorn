@@ -82,7 +82,7 @@ public final class ArgumentConverterRegistry {
     private static <T> Exceptional<ArgumentConverter<T>> getOptionalConverter(Class<T> type) {
         //noinspection unchecked
         return Exceptional.of(CONVERTERS.stream()
-                .filter(converter -> converter.getType().isAssignableFrom(type))
+                .filter(converter -> SeleneUtils.isAssignableFrom(converter.getType(), type))
                 .map(converter -> (ArgumentConverter<T>) converter)
                 .findFirst());
     }

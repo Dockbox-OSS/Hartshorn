@@ -102,6 +102,17 @@ abstract class ConfigurateManager(val fileType: FileType) {
     abstract fun getDataDir(): Path
 
     /**
+     * Get the data directory for a given [Extension]. The exact location is decided by the top-level implementation
+     * of this type.
+     *
+     * @param extension The [Extension] providing identification
+     * @return A [Path] reference to the data directory
+     */
+    fun getDataDir(extension: Extension): Path {
+        return getDataDir().resolve(extension.id)
+    }
+
+    /**
      * Get the base log directory of a platform file system. The exact location is decided by the top-level
      * implementation of this type.
      *
@@ -150,6 +161,17 @@ abstract class ConfigurateManager(val fileType: FileType) {
      * @return A [Path] reference to a directory
      */
     abstract fun getExtensionConfigsDir(): Path
+
+    /**
+     * Get the configuration directory for a given [Extension]. The exact location is decided by the top-level
+     * implementation of this type.
+     *
+     * @param extension The [Extension] providing identification
+     * @return A [Path] reference to the configuration directory
+     */
+    fun getExtensionConfigDir(extension: Extension): Path {
+        return getExtensionConfigsDir().resolve(extension.id)
+    }
 
     /**
      * Get the configuration folder for extensions directory of a platform file system. The exact location is decided

@@ -153,10 +153,10 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     private void defineExecutorOrChild(CommandSpec.Builder spec, Tuple<String, CommandSpec> child) {
-        if (super.getParentCommandPrefix().equals(child.getFirst())) {
-            spec.executor(child.getSecond().getExecutor());
+        if (super.getParentCommandPrefix().equals(child.getKey())) {
+            spec.executor(child.getValue().getExecutor());
         } else {
-            spec.child(child.getSecond(), child.getFirst());
+            spec.child(child.getValue(), child.getKey());
         }
     }
 

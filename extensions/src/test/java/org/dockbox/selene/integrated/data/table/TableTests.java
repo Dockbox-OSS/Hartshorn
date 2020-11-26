@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.integrated.data.table;
 
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.integrated.data.table.behavior.Merge;
 import org.dockbox.selene.integrated.data.table.behavior.Order;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
@@ -30,7 +31,9 @@ import org.dockbox.selene.integrated.data.table.objects.WronglyIdentifiedUser;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class TableTests {
 
@@ -205,5 +208,17 @@ public class TableTests {
         Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, true);
         Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 1);
         Assert.assertFalse(whereLookup.first().get().getValue(TestColumnIdentifiers.UUID).isPresent());
+    }
+
+    @Test
+    public void testRowCanConvertToValidType() {
+        Table table = this.createTestTable();
+        table.addRow(1, "coulis");
+
+        List<IdentifiedUser> users = table.getRowsAs(IdentifiedUser.class).stream()
+                .filter(Exceptional::isPresent)
+                .map(Exceptional::get)
+                .collect(Collectors.toList());
+        users.forEach(user -> System.out.println(user.displayedName));
     }
 }

@@ -15,14 +15,27 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.table.annotations;
+package org.dockbox.selene.integrated.sql.dialects.sqlite;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.LOCAL_VARIABLE, ElementType.FIELD})
-public @interface Ignore { }
+import java.nio.file.Path;
 
+public class SQLitePathProperty implements InjectorProperty<Path> {
+
+    private final Path path;
+
+    public SQLitePathProperty(Path path) {
+        this.path = path;
+    }
+
+    @Override
+    public String getKey() {
+        return SQLiteMan.PATH_KEY;
+    }
+
+    @Override
+    public Path getObject() {
+        return this.path;
+    }
+}

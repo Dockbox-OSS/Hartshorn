@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.integrated.data.table;
 
+import org.dockbox.selene.core.objects.entity.Ignore;
+import org.dockbox.selene.core.objects.entity.Property;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.integrated.data.table.annotations.Identifier;
-import org.dockbox.selene.integrated.data.table.annotations.Ignore;
 import org.dockbox.selene.integrated.data.table.behavior.Merge;
 import org.dockbox.selene.integrated.data.table.behavior.Order;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
@@ -37,6 +37,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 /**
  A relational table type which can easily create weak relations to other tables. Relations are non-strict references so
@@ -53,6 +57,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  @author Simbolduc, GuusLieben
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
+@ConfigSerializable
 public class Table {
 
     private final List<TableRow> rows;
@@ -67,6 +72,11 @@ public class Table {
      */
     public Table(ColumnIdentifier<?>... columns) {
         this.identifiers = columns;
+        this.rows = new CopyOnWriteArrayList<>();
+    }
+
+    public Table(Collection<ColumnIdentifier<?>> columns) {
+        this.identifiers = columns.toArray(new ColumnIdentifier[0]);
         this.rows = new CopyOnWriteArrayList<>();
     }
 
@@ -100,7 +110,7 @@ public class Table {
     /**
      Generates a {@link TableRow} from a given object based on the objects {@link Field}s. By default the field name is
      used to look up a matching column identifier which is present inside the table. If the field is annotated with
-     {@link Identifier} the contained {@link ColumnIdentifier} is used instead.
+     {@link Property} the contained {@link ColumnIdentifier} is used instead.
 
      If the field is annotated with {@link Ignore} the field will not be converted to a column entry in the row.
      One attempt will be made to make the field accessible if it is not already.
@@ -123,7 +133,7 @@ public class Table {
                     ColumnIdentifier columnIdentifier = null;
 
                     // Try to grab the column identifier from the Identifier annotation of the field (if present)
-                    Identifier identifier = field.getAnnotation(Identifier.class);
+                    Property identifier = field.getAnnotation(Property.class);
                     if (null != identifier)
                         columnIdentifier = this.getIdentifier(identifier.value());
 
@@ -459,7 +469,7 @@ public class Table {
         if (!this.hasColumn(column))
             throw new IllegalArgumentException("Table does not contains column named : " + column.getColumnName());
 
-        if (!Comparable.class.isAssignableFrom(column.getType()))
+        if (!SeleneUtils.isAssignableFrom(Comparable.class, column.getType()))
             throw new IllegalArgumentException("Column does not contain a comparable data type : " + column.getColumnName());
 
         this.rows.sort((r1, r2) -> {
@@ -486,7 +496,7 @@ public class Table {
     }
 
     @Nullable
-    private ColumnIdentifier getIdentifier(@NonNls String fieldName) throws ClassCastException {
+    public ColumnIdentifier getIdentifier(@NonNls String fieldName) throws ClassCastException {
         for (ColumnIdentifier columnIdentifier : this.identifiers) {
             if (columnIdentifier.getColumnName().equalsIgnoreCase(fieldName)) {
                 return columnIdentifier;
@@ -510,6 +520,29 @@ public class Table {
             }
         }
         return false;
+    }
+
+    public void forEach(Consumer<TableRow> consumer) {
+        this.getRows().forEach(consumer);
+    }
+
+    public <T> List<Exceptional<T>> getRowsAs(Class<T> type) {
+        return this.getRows().stream()
+                .map(row -> this.convertRowTo(type, row, false))
+                .collect(Collectors.toList());
+    }
+
+    public <T> List<Exceptional<T>> getRowAsInjectable(Class<T> type) {
+        return this.getRows().stream()
+                .map(row -> this.convertRowTo(type, row, true))
+                .collect(Collectors.toList());
+    }
+
+    private <T> Exceptional<T> convertRowTo(Class<T> type, TableRow row, boolean injectable) {
+        return SeleneUtils.tryCreate(type, fieldName -> {
+            ColumnIdentifier<?> identifier = this.getIdentifier(fieldName);
+            return row.getValue(identifier).orElse(null);
+        }, injectable);
     }
 
 }

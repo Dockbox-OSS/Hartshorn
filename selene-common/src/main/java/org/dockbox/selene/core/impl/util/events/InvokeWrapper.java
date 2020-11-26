@@ -20,7 +20,7 @@ package org.dockbox.selene.core.impl.util.events;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 
-import org.dockbox.selene.core.annotations.AsyncEvent;
+import org.dockbox.selene.core.annotations.Async;
 import org.dockbox.selene.core.annotations.Filter;
 import org.dockbox.selene.core.annotations.Filters;
 import org.dockbox.selene.core.annotations.IsCancelled;
@@ -29,6 +29,7 @@ import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.events.Filterable;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.events.AbstractEventParamProcessor;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.events.EventStage;
@@ -85,10 +86,10 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
     public static List<InvokeWrapper> create(Object instance, Method method, int priority) {
         List<InvokeWrapper> invokeWrappers = new CopyOnWriteArrayList<>();
         for (Class<?> param : method.getParameterTypes()) {
-            if (Event.class.isAssignableFrom(param)) {
+            if (SeleneUtils.isAssignableFrom(Event.class, param)) {
                 Class<? extends Event> eventType = (Class<? extends Event>) param;
                 invokeWrappers.add(new InvokeWrapper(instance, eventType, method, priority));
-            } else if (com.sk89q.worldedit.event.Event.class.isAssignableFrom(param)) {
+            } else if (SeleneUtils.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
                 WorldEdit.getInstance().getEventBus().subscribe(param,
                         new MethodEventHandler(
                                 Priority.EARLY,
@@ -140,7 +141,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                 };
 
                 ThreadUtils tu = Selene.getInstance(ThreadUtils.class);
-                if (this.method.isAnnotationPresent(AsyncEvent.class)) {
+                if (this.method.isAnnotationPresent(Async.class)) {
                     tu.performAsync(eventRunner);
                 } else {
                     tu.performSync(eventRunner).get();
@@ -189,7 +190,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
             populated by annotation processors.
             */
             Object argument = null;
-            if (parameter.getType().isAssignableFrom(event.getClass())) argument = event;
+            if (SeleneUtils.isAssignableFrom(parameter.getType(), event.getClass())) argument = event;
 
             /*
             To allow for the addition of future stages, we only use the enum values provided directly. This way we can
