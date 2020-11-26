@@ -19,6 +19,7 @@ package org.dockbox.selene.integrated.sql.dialects.sqlite;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.integrated.data.table.Table;
+import org.dockbox.selene.integrated.data.table.identifiers.TestColumnIdentifiers;
 import org.dockbox.selene.integrated.sql.SQLMan;
 import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
 import org.dockbox.selene.integrated.sql.properties.SQLColumnProperty;
@@ -70,5 +71,21 @@ class SQLiteManTest {
                 .filter(Exceptional::isPresent)
                 .count();
         Assert.assertEquals(2301, count);
+    }
+
+    @Test
+    void testStore() throws InvalidConnectionException {
+        Table table = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME);
+        SQLiteMan man = this.getSQLiteMan(false);
+        man.stateEnabling(
+                new SQLitePathProperty(this.getTestFile()),
+                new SQLColumnProperty("numeralId", TestColumnIdentifiers.NUMERAL_ID));
+
+        table.addRow(2, "Diggy");
+        table.addRow(3, "pumbas600");
+        table.addRow(1, "coulis");
+
+        man.store("developers", table);
+        man.drop("developers");
     }
 }
