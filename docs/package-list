@@ -4,6 +4,7 @@ org.dockbox.selene.core.impl.command.convert
 org.dockbox.selene.core.impl.command.convert.impl
 org.dockbox.selene.core.impl.objects.keys
 org.dockbox.selene.core.impl.server.config
+org.dockbox.selene.core.impl.server.properties
 org.dockbox.selene.core.impl.util.discord
 org.dockbox.selene.core.impl.util.events
 org.dockbox.selene.core.impl.util.events.processors
@@ -15,6 +16,7 @@ org.dockbox.selene.core.impl.util.files.process
 org.dockbox.selene.core.impl.util.files.serialize
 org.dockbox.selene.core.impl.util.files.util
 org.dockbox.selene.core.objects
+org.dockbox.selene.core.objects.entity
 org.dockbox.selene.core.objects.item
 org.dockbox.selene.core.objects.keys
 org.dockbox.selene.core.objects.optional
@@ -32,7 +34,6 @@ org.dockbox.selene.integrated.data
 org.dockbox.selene.integrated.data.registry
 org.dockbox.selene.integrated.data.serializers
 org.dockbox.selene.integrated.data.table
-org.dockbox.selene.integrated.data.table.annotations
 org.dockbox.selene.integrated.data.table.behavior
 org.dockbox.selene.integrated.data.table.column
 org.dockbox.selene.integrated.data.table.exceptions
@@ -40,6 +41,11 @@ org.dockbox.selene.integrated.event
 org.dockbox.selene.integrated.event.processors
 org.dockbox.selene.integrated.event.worldedit
 org.dockbox.selene.integrated.server
+org.dockbox.selene.integrated.sql
+org.dockbox.selene.integrated.sql.dialects.sqlite
+org.dockbox.selene.integrated.sql.exceptions
+org.dockbox.selene.integrated.sql.properties
+org.dockbox.selene.oldplots
 org.dockbox.selene.ptime
 org.dockbox.selene.sponge
 org.dockbox.selene.sponge.listeners
