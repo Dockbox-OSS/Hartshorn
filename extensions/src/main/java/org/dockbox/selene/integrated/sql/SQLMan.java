@@ -66,9 +66,6 @@ public abstract class SQLMan<T> implements InjectableType {
         return this.convertToTable(results);
     }
 
-    public void store(String name, Table table) {}
-
-    public void store(Path filePath, String name, Table table) {}
 
     private Table convertToTable(Result<Record> results) {
         if (results.isEmpty()) return new Table();
@@ -115,6 +112,46 @@ public abstract class SQLMan<T> implements InjectableType {
         return Exceptional.ofNullable(this.identifiers.get(key));
     }
 
+    public void store(String name, Table table) throws InvalidConnectionException {
+        this.store(this.getDefaultTarget(), name, table);
+    }
+    public void store(T target, String name, Table table) throws InvalidConnectionException {
+        DSLContext ctx = this.getContext(target);
+        Field<?>[] fields = this.convertIdentifiersToFields(table);
+        this.createTableIfNotExists(name, ctx, fields);
+        InsertValuesStepN<?> insertStep = ctx.insertInto(DSL.table(name))
+                .columns();
+        this.populateRemoteTable(insertStep, table, fields);
+    }
+
+    private Field<?>[] convertIdentifiersToFields(Table table) {
+        Field<?>[] fields = new Field[table.getIdentifiers().length];
+        ColumnIdentifier<?>[] tableIdentifiers = table.getIdentifiers();
+        for (int i = 0; i < tableIdentifiers.length; i++) {
+            ColumnIdentifier<?> identifier = tableIdentifiers[i];
+            fields[i] = DSL.field(identifier.getColumnName(), identifier.getType());
+        }
+        return fields;
+    }
+
+    private void populateRemoteTable(InsertValuesStepN<?> insertStep, Table table, Field<?>[] fields) {
+        table.getRows().forEach(row -> {
+            Object[] values = new Object[fields.length];
+            for (int i = 0; i < fields.length; i++) {
+                Field<?> field = fields[i];
+                ColumnIdentifier<?> identifier = table.getIdentifier(field.getName());
+                if (null != identifier) {
+                    values[i] = row.getValue(identifier).orElse(null);
+                } else values[i] = null;
+            }
+            insertStep.values(values);
+        });
+        insertStep.execute();
+    }
+
+    private void createTableIfNotExists(String name, DSLContext ctx, Field<?>[] fields) {
+        ctx.createTableIfNotExists(name).columns(fields).execute();
+    }
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         SeleneUtils.getSubProperties(SQLColumnProperty.class, properties)
