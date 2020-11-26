@@ -29,6 +29,7 @@ import org.dockbox.selene.integrated.data.table.column.SimpleColumnIdentifier;
 import org.dockbox.selene.integrated.data.table.exceptions.IdentifierMismatchException;
 import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
 import org.dockbox.selene.integrated.sql.properties.SQLColumnProperty;
+import org.dockbox.selene.integrated.sql.properties.SQLResetBehaviorProperty;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.InsertValuesStepN;
@@ -49,6 +50,7 @@ import java.util.function.Function;
 public abstract class SQLMan<T> implements ISQLMan<T>, InjectableType {
 
     private final Map<String, ColumnIdentifier<?>> identifiers = new HashMap<>();
+    private Boolean resetOnStore;
 
     protected DSLContext getContext(T target) throws InvalidConnectionException {
         return DSL.using(this.getConnection(target), this.getDialect());
@@ -125,11 +127,19 @@ public abstract class SQLMan<T> implements ISQLMan<T>, InjectableType {
 
     @Override
     public void store(String name, Table table) throws InvalidConnectionException {
-        this.store(this.getDefaultTarget(), name, table);
+        this.store(this.getDefaultTarget(), name, table, resetOnStore);
     }
 
     @Override
     public void store(T target, String name, Table table) throws InvalidConnectionException {
+        this.store(target, name, table, resetOnStore);
+    }
+
+    public void store(String name, Table table, boolean reset) throws InvalidConnectionException {
+        this.store(this.getDefaultTarget(), name, table, reset);
+    }
+
+    public void store(T target, String name, Table table, boolean reset) throws InvalidConnectionException {
         this.withContext(target, ctx -> {
             Field<?>[] fields = this.convertIdentifiersToFields(table);
             this.createTableIfNotExists(name, ctx, fields);
@@ -226,6 +236,12 @@ public abstract class SQLMan<T> implements ISQLMan<T>, InjectableType {
                     Tuple<String, ColumnIdentifier<?>> identifier = property.getObject();
                     this.identifiers.put(identifier.getKey(), identifier.getValue());
                 });
+
+        this.resetOnStore = SeleneUtils.getPropertyValue(
+                SQLResetBehaviorProperty.KEY,
+                Boolean.class,
+                properties)
+                .orElse(true);
     }
 
     @Override

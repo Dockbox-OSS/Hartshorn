@@ -29,6 +29,9 @@ public interface ISQLMan<T> {
     void store(String name, Table table) throws InvalidConnectionException;
     void store(T target, String name, Table table) throws InvalidConnectionException;
 
+    void store(String name, Table table, boolean reset) throws InvalidConnectionException;
+    void store(T target, String name, Table table, boolean reset) throws InvalidConnectionException;
+
     void drop(String name) throws InvalidConnectionException;
     void drop(T target, String name) throws InvalidConnectionException;
 
