@@ -57,11 +57,20 @@
 
         <!-- SQL Extension dependencies -->
         <dependency>
-            <groupId>org.javalite</groupId>
-            <artifactId>activejdbc</artifactId>
-            <version>${javalite.version}</version>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>3.14.3</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-meta</artifactId>
+            <version>3.14.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <version>3.14.3</version>
+        </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>

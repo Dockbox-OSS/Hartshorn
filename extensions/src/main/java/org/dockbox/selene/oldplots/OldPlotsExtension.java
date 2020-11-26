@@ -29,9 +29,9 @@ import org.dockbox.selene.core.util.construct.ConstructionUtil;
 import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.integrated.data.table.Table;
-import org.dockbox.selene.integrated.sql.sqlite.SQLColumnProperty;
-import org.dockbox.selene.integrated.sql.sqlite.SQLiteMan;
-import org.dockbox.selene.integrated.sql.sqlite.SQLitePathProperty;
+import org.dockbox.selene.integrated.sql.properties.SQLColumnProperty;
+import org.dockbox.selene.integrated.sql.dialects.sqlite.SQLiteMan;
+import org.dockbox.selene.integrated.sql.dialects.sqlite.SQLitePathProperty;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

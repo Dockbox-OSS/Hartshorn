@@ -15,27 +15,29 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.sql.sqlite;
+package org.dockbox.selene.integrated.sql.properties;
 
+import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
 
-import java.nio.file.Path;
+public class SQLColumnProperty implements InjectorProperty<Tuple<String, ColumnIdentifier<?>>> {
+    private final String originColumnName;
+    private final ColumnIdentifier<?> toColumn;
 
-public class SQLitePathProperty implements InjectorProperty<Path> {
+    public SQLColumnProperty(String originColumnName, ColumnIdentifier<?> toColumn) {
 
-    private final Path path;
-
-    public SQLitePathProperty(Path path) {
-        this.path = path;
+        this.originColumnName = originColumnName;
+        this.toColumn = toColumn;
     }
 
     @Override
     public String getKey() {
-        return SQLiteMan.PATH_KEY;
+        return this.originColumnName;
     }
 
     @Override
-    public Path getObject() {
-        return this.path;
+    public Tuple<String, ColumnIdentifier<?>> getObject() {
+        return new Tuple<>(this.originColumnName, this.toColumn);
     }
 }
