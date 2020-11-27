@@ -108,6 +108,11 @@
             <name>Spring Lib M Repository</name>
             <url>https://repo.spring.io/libs-milestone/</url>
         </repository>
+        <repository>
+            <id>jcenter</id>
+            <name>jcenter-bintray</name>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
     </repositories>
 
     <dependencies>
