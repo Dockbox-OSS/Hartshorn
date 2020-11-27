@@ -218,7 +218,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
                 // If the identifier in our table is null, it is possible we are working with a filtered row. In this
                 // case we accept null into the remote table.
                 if (null != identifier) {
-                    values[i] = row.getValue(identifier).orElse(null);
+                    values[i] = row.getValue(identifier).orNull();
                 } else values[i] = null;
             }
             insertStep.values(values);

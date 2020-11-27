@@ -113,7 +113,7 @@ public class DefaultGlobalConfig extends ServerReference implements GlobalConfig
         Path configPath = this.configurateManager.getConfigFile(extension);
         GlobalConfig globalConfig = this.configurateManager
                 .getFileContent(configPath, DefaultGlobalConfig.class)
-                .orElse(null);
+                .orNull();
         this.copyValues(globalConfig);
     }
 

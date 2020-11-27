@@ -257,7 +257,7 @@ public abstract class Selene {
             extension = context
                     .map(ExtensionContext::getExtension)
                     .orElseGet(() -> instance.getClass().getAnnotation(Extension.class));
-            return this.createExtensionInjector(instance, extension, context.orElse(null));
+            return this.createExtensionInjector(instance, extension, context.orNull());
         }
         return this.createInjector();
     }

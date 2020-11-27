@@ -60,7 +60,7 @@ public final class ArgumentConverterRegistry {
     }
 
     public static ArgumentConverter<?> getConverter(String key) {
-        return getOptionalConverter(key).orElse(null);
+        return getOptionalConverter(key).orNull();
     }
 
     private static Exceptional<ArgumentConverter<?>> getOptionalConverter(String key) {
@@ -76,7 +76,7 @@ public final class ArgumentConverterRegistry {
 
 
     public static <T> ArgumentConverter<T> getConverter(Class<T> type) {
-        return getOptionalConverter(type).orElse(null);
+        return getOptionalConverter(type).orNull();
     }
 
     private static <T> Exceptional<ArgumentConverter<T>> getOptionalConverter(Class<T> type) {
@@ -178,7 +178,7 @@ public final class ArgumentConverterRegistry {
             (source, s) -> {
                 if (source instanceof Player) {
                     return new WorldEditMaskParser(((Player) source).getFawePlayer()
-                            .orElse(null))
+                            .orNull())
                             .parse(new CommandValue.Argument<>(s, "mask"));
                 }
                 return Exceptional.empty();
@@ -192,7 +192,7 @@ public final class ArgumentConverterRegistry {
             (source, s) -> {
                 if (source instanceof Player) {
                     return new WorldEditPatternParser(((Player) source).getFawePlayer()
-                            .orElse(null))
+                            .orNull())
                             .parse(new Argument<>(s, "pattern"));
                 }
                 return Exceptional.empty();

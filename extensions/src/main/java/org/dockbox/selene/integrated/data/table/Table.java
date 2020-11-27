@@ -541,7 +541,7 @@ public class Table {
     private <T> Exceptional<T> convertRowTo(Class<T> type, TableRow row, boolean injectable) {
         return SeleneUtils.tryCreate(type, fieldName -> {
             ColumnIdentifier<?> identifier = this.getIdentifier(fieldName);
-            return row.getValue(identifier).orElse(null);
+            return row.getValue(identifier).orNull();
         }, injectable);
     }
 

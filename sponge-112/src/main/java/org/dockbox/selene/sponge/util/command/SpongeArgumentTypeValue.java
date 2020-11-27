@@ -84,7 +84,7 @@ public class SpongeArgumentTypeValue extends AbstractArgumentValue<CommandElemen
             return this.argument.convert(
                     SpongeConversionUtil.fromSponge(source).get(),
                     args.next()
-            ).orElse(null);
+            ).orNull();
         }
 
         @Override
