@@ -81,7 +81,7 @@ public enum SeleneUtils {
     public static final int MAXIMUM_DECIMALS = 15;
 
     private static final Random random = new Random();
-    private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = SeleneUtils.emptyConcurrentMap();
+    private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = emptyConcurrentMap();
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap =
             ofEntries(entry(boolean.class, Boolean.class),
                     entry(byte.class, Byte.class),
@@ -98,7 +98,7 @@ public enum SeleneUtils {
         if (entries.length == 0) { // implicit null check of entries array
             return Collections.emptyMap();
         } else {
-            Map<K, V> map = SeleneUtils.emptyMap();
+            Map<K, V> map = emptyMap();
             for (Entry<? extends K, ? extends V> entry : entries) {
                 map.put(entry.getKey(), entry.getValue());
             }
@@ -748,7 +748,7 @@ public enum SeleneUtils {
     }
 
     public static <T> List<T> asUnmodifiableList(Collection<T> collection) {
-        return Collections.unmodifiableList(SeleneUtils.emptyList());
+        return Collections.unmodifiableList(emptyList());
     }
 
     @UnmodifiableView
@@ -864,7 +864,7 @@ public enum SeleneUtils {
     @NotNull
     @Unmodifiable
     public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule, boolean skipParents) {
-        List<Method> annotatedMethods = SeleneUtils.emptyList();
+        List<Method> annotatedMethods = emptyList();
         for (Method method : asList(skipParents ? clazz.getMethods() : clazz.getDeclaredMethods())) {
             if (!method.isAccessible()) method.setAccessible(true);
             if (method.isAnnotationPresent(annotation) && rule.test(method.getAnnotation(annotation))) {
@@ -945,7 +945,7 @@ public enum SeleneUtils {
 
     @SuppressWarnings("unchecked")
     public static <T extends InjectorProperty<?>> List<T> getSubProperties(Class<T> propertyFilter, InjectorProperty<?>... properties) {
-        List<T> values = SeleneUtils.emptyList();
+        List<T> values = emptyList();
         for (InjectorProperty<?> property : properties) {
             if (isAssignableFrom(propertyFilter, property.getClass())) values.add((T) property);
         }
@@ -977,7 +977,7 @@ public enum SeleneUtils {
     }
 
     public static <T> Exceptional<T> tryCreate(Class<T> type, Function<String, Object> valueCollector, boolean inject) {
-        T instance = inject ? Selene.getInstance(type) : SeleneUtils.getInstance(type);
+        T instance = inject ? Selene.getInstance(type) : getInstance(type);
         if (null != instance)
             try {
                 for (Field field : type.getDeclaredFields()) {
@@ -996,7 +996,7 @@ public enum SeleneUtils {
                         //noinspection CallToSuspiciousStringMethod
                         if (!"".equals(property.setter()) && hasMethod(type, property.setter())) {
                             Class<?> parameterType = field.getType();
-                            if (SeleneUtils.isNotVoid(property.accepts())) parameterType = property.accepts();
+                            if (isNotVoid(property.accepts())) parameterType = property.accepts();
 
                             Method method = type.getMethod(property.setter(), parameterType);
                             method.invoke(instance, value);
