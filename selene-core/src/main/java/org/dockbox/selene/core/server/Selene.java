@@ -30,12 +30,13 @@ import com.google.inject.util.Modules;
 import org.dockbox.selene.core.annotations.Listener;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
-import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.dockbox.selene.core.util.environment.MinecraftVersion;
 import org.dockbox.selene.core.util.events.EventBus;
@@ -53,19 +54,22 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -188,6 +192,18 @@ public abstract class Selene {
         Selene.instance = this;
     }
 
+    public static <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties) {
+        return Exceptional.ofNullable(getInstance(type, additionalProperties));
+    }
+
+    public static <T> Exceptional<T> getInstanceSafe(Class<T> type, Object extension, InjectorProperty<?>... additionalProperties) {
+        return Exceptional.ofNullable(getInstance(type, extension, additionalProperties));
+    }
+
+    public static <T> Exceptional<T> getInstanceSafe(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
+        return Exceptional.ofNullable(getInstance(type, extension, additionalProperties));
+    }
+
     public static <T> T getInstance(Class<T> type, InjectorProperty<?>... additionalProperties) {
         return getInstance(type, type, additionalProperties);
     }
@@ -220,6 +236,14 @@ public abstract class Selene {
     public static <T> T getInstance(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
         T typeInstance = null;
 
+        // Extensions are initially created using #getInstance here (assuming SimpleExtensionManager or a derivative is
+        // bound to ExtensionManager). Therefore it may not yet be present in the ExtensionManager's registry. In which
+        // case `null` is (re-)assigned to typeInstance so that it can be created through the generated
+        // extension-specific injector.
+        if (type.isAnnotationPresent(Extension.class)) {
+            typeInstance = getInstance(ExtensionManager.class).getInstance(type).orNull();
+        }
+
         // Prepare modules
         ExtensionModule extensionModule = null;
         if (extension.isAnnotationPresent(Extension.class)) {
@@ -234,11 +258,15 @@ public abstract class Selene {
         };
 
         Injector injector = getServer().createInjector(extensionModule, propertyModule);
-        try {
-            typeInstance = injector.getInstance(type);
-        } catch (ProvisionException e) {
-            log().error("Could not create instance using registered injector " + injector + " for [" + type + "]", e);
-        } catch (ConfigurationException ignored) {
+        // Type instance can be present if it is a extension. These instances are also created using Guice injectors
+        // and therefore do not need late member injection here.
+        if (null == typeInstance) {
+            try {
+                typeInstance = injector.getInstance(type);
+            } catch (ProvisionException e) {
+                log().error("Could not create instance using registered injector " + injector + " for [" + type + "]", e);
+            } catch (ConfigurationException ignored) {
+            }
         }
 
         // Inject properties if applicable
@@ -289,7 +317,7 @@ public abstract class Selene {
     /**
      Creates a custom binding for a given contract and implementation using a custom {@link AbstractModule}. Requires
      the implementation to extend the contract type.
-
+     <p>
      The binding is created by Guice, and can be annotated using Guice supported annotations (e.g.
      {@link com.google.inject.Singleton})
 
@@ -382,7 +410,8 @@ public abstract class Selene {
      Prints information about registered instances. This includes injection bindings, extensions, and event handlers.
      This method is typically only used when starting the server.
 
-     @param event The server event indicating the server started
+     @param event
+     The server event indicating the server started
      */
     @Listener
     protected void debugRegisteredInstances(ServerStartedEvent event) {
@@ -435,7 +464,7 @@ public abstract class Selene {
         return (ExtensionContext ctx) -> {
             Class<?> type = ctx.getExtensionClass();
             log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
-            Exceptional<?> oi = em.getInstance(type);
+            Exceptional<?> oi = getInstanceSafe(type);
             oi.ifPresent(i -> {
                 Package pkg = i.getClass().getPackage();
                 if (null != pkg) {
@@ -579,5 +608,21 @@ public abstract class Selene {
      @return The Minecraft version
      */
     public abstract MinecraftVersion getMinecraftVersion();
+
+    public static Exceptional<Path> getResourceFile(String name) {
+        try {
+            URL resourceUrl = Selene.class.getClassLoader().getResource(name);
+            // Warning suppressed relates to potential NPE on `resourceUrl#toURI`. This is caught and handled directly
+            // and can thus be suppressed safely.
+            @SuppressWarnings("ConstantConditions") Path resourcePath = Paths.get(resourceUrl.toURI());
+            File resourceFile = resourcePath.toFile();
+            if (resourceFile.isFile()) {
+                return Exceptional.of(resourcePath);
+            }
+        } catch (URISyntaxException | NullPointerException e) {
+            return Exceptional.of(e);
+        }
+        return Exceptional.empty();
+    }
 
 }
