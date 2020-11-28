@@ -29,7 +29,7 @@ public class RealWorldUnitTest {
 
     @Test
     public void testUrl() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("http")
                 .maybe("s")

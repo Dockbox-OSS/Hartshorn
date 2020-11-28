@@ -31,7 +31,7 @@ import static org.dockbox.selene.core.util.regex.matchers.TestsExactMatcher.matc
 public class BasicFunctionalityUnitTest {
     @Test
     public void testSomething() {
-        VerbalExpression testRegex = new VerbalExpression.Builder().something().build();
+        VerbalExpression testRegex = VerbalExpression.regex().something().build();
 
         Assert.assertThat("Null object doesn't have something", testRegex, CoreMatchers.not(TestMatchMatcher.matchesTo(null)));
         Assert.assertThat("empty string doesn't have something", testRegex, CoreMatchers.not(TestMatchMatcher.matchesTo("")));
@@ -40,7 +40,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testAnything() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .anything()
                 .build();
@@ -52,7 +52,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testAnythingBut() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .anythingBut("w")
                 .build();
@@ -65,7 +65,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testSomethingBut() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .somethingButNot("a")
                 .build();
 
@@ -77,7 +77,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testStartOfLine() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .build();
@@ -110,7 +110,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testEndOfLine() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .find("a")
                 .endOfLine()
                 .build();
@@ -135,7 +135,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testMaybe() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .maybe("b")
@@ -150,7 +150,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testAnyOf() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .anyOf("xyz")
@@ -171,7 +171,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testOr() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("abc")
                 .or("def")
@@ -183,7 +183,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testLineBreak() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("abc")
                 .lineBreak()
@@ -197,7 +197,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testMacintoshLineBreak() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("abc")
                 .lineBreak()
@@ -209,14 +209,14 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testBr() {
-        VerbalExpression testRegexBr = new VerbalExpression.Builder()
+        VerbalExpression testRegexBr = VerbalExpression.regex()
                 .startOfLine()
                 .then("abc")
                 .br()
                 .then("def")
                 .build();
 
-        VerbalExpression testRegexLineBr = new VerbalExpression.Builder()
+        VerbalExpression testRegexLineBr = VerbalExpression.regex()
                 .startOfLine()
                 .then("abc")
                 .lineBreak()
@@ -228,7 +228,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testTab() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .tab()
                 .then("abc")
@@ -240,7 +240,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testWord() {
-       VerbalExpression testRegex = new VerbalExpression.Builder()
+       VerbalExpression testRegex = VerbalExpression.regex()
                     .startOfLine()
                     .word()
                     .build();
@@ -251,15 +251,15 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testMultipleNoRange() {
-       VerbalExpression testRegexStringOnly = new VerbalExpression.Builder()
+       VerbalExpression testRegexStringOnly = VerbalExpression.regex()
                     .startOfLine()
                     .multiple("abc")
                     .build();
-       VerbalExpression testRegexStringAndNull = new VerbalExpression.Builder()
+       VerbalExpression testRegexStringAndNull = VerbalExpression.regex()
                            .startOfLine()
                            .multiple("abc", null)
                            .build();
-       VerbalExpression testRegexMoreThan2Ints = new VerbalExpression.Builder()
+       VerbalExpression testRegexMoreThan2Ints = VerbalExpression.regex()
                            .startOfLine()
                            .multiple("abc", 2, 4, 8)
                            .build();
@@ -280,7 +280,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testMultipleFrom() {
-       VerbalExpression testRegexFrom = new VerbalExpression.Builder()
+       VerbalExpression testRegexFrom = VerbalExpression.regex()
                            .startOfLine()
                            .multiple("abc", 2)
                            .build();
@@ -296,7 +296,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testMultipleFromTo() {
-       VerbalExpression testRegexFromTo = new VerbalExpression.Builder()
+       VerbalExpression testRegexFromTo = VerbalExpression.regex()
                            .startOfLine()
                            .multiple("abc", 2, 4)
                            .build();
@@ -314,13 +314,13 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testWithAnyCase() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .build();
 
         Assert.assertThat("not case insensitive", testRegex, CoreMatchers.not(TestMatchMatcher.matchesTo("A")));
-        testRegex = new VerbalExpression.Builder()
+        testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .withAnyCase()
@@ -365,7 +365,7 @@ public class BasicFunctionalityUnitTest {
 
         Assert.assertThat("b is on the second line", testRegex, TestMatchMatcher.matchesTo("a\nb"));
 
-        testRegex = new VerbalExpression.Builder()
+        testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .br()
@@ -380,7 +380,7 @@ public class BasicFunctionalityUnitTest {
     @Test
     public void testGetText() {
         String testString = "123 https://www.google.com 456";
-        VerbalExpression testRegex = new VerbalExpression.Builder().add("http")
+        VerbalExpression testRegex = VerbalExpression.regex().add("http")
                 .maybe("s")
                 .then("://")
                 .then("www.")
@@ -675,7 +675,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testOneOf() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .oneOf("abc", "def")
                 .build();
