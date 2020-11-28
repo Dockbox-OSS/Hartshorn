@@ -39,7 +39,7 @@ import org.dockbox.selene.core.text.actions.ShiftClickAction;
 import org.dockbox.selene.core.text.navigation.Pagination;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.exceptions.TypeConversionException;
-import org.dockbox.selene.sponge.object.item.SpongeItem;
+import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
@@ -276,7 +276,7 @@ public enum SpongeConversionUtil {
     @NotNull
     public static Exceptional<World> toSponge(org.dockbox.selene.core.objects.location.World world) {
         if (world instanceof SpongeWorld) {
-            World wref = ((SpongeWorld) world).getReference();
+            World wref = ((SpongeWorld) world).getReferenceWorld();
             if (null != wref) return Exceptional.of(wref);
         }
 
@@ -386,7 +386,7 @@ public enum SpongeConversionUtil {
 
     @NotNull
     public static Exceptional<CommandSource> fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
-        if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.Companion.getInstance());
+        if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.getInstance());
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
             return Exceptional.of(fromSponge((org.spongepowered.api.entity.living.player.Player) commandSource));
         return Exceptional.of(new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'"));

@@ -237,7 +237,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
             if (!ceb.isCancelled()) {
                 if (src instanceof Player) runner.run(sender, ctx);
-                else runner.run(SpongeConsole.Companion.getInstance(), ctx);
+                else runner.run(SpongeConsole.getInstance(), ctx);
 
                 new CommandEvent.After(sender, ctx).post();
             }

@@ -20,7 +20,7 @@ package org.dockbox.selene.sponge.util.construct;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.text.navigation.PaginationBuilder;
 import org.dockbox.selene.core.util.construct.ConstructionUtil;
-import org.dockbox.selene.sponge.object.item.SpongeItem;
+import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
 import org.jetbrains.annotations.NotNull;
 
