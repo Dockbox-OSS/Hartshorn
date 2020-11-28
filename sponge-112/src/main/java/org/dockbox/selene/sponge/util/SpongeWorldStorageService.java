@@ -8,19 +8,20 @@ import org.spongepowered.api.Sponge;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class SpongeWorldStorageService extends WorldStorageService {
 
     @NotNull
     @Override
     public List<World> getLoadedWorlds() {
-        return Sponge.getServer().getWorlds().map(world -> SpongeConversionUtil.fromSponge(world));
+        return Sponge.getServer().getWorlds().stream().map(world -> SpongeConversionUtil.fromSponge(world)).collect(Collectors.toList());
     }
 
     @NotNull
     @Override
     public List<UUID> getAllWorldUUIDs() {
-        return Sponge.getServer().getAllWorldProperties().map(world -> world.uniqueId);
+        return Sponge.getServer().getAllWorldProperties().stream().map(world -> world.getUniqueId()).collect(Collectors.toList());
     }
 
     @NotNull
