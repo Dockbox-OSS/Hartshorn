@@ -30,7 +30,7 @@ import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.selene.sponge.listeners.SpongePlayerListener;
 import org.dockbox.selene.sponge.listeners.SpongeServerListener;
-import org.dockbox.selene.sponge.util.inject.SpongeCommonInjector;
+import org.dockbox.selene.sponge.util.SpongeInjector;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Sponge;
@@ -63,11 +63,11 @@ public class SeleneSponge112Impl extends Selene {
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
 
     /**
-     Creates a new Selene instance using the {@link org.dockbox.selene.sponge.util.inject.SpongeCommonInjector} bindings
+     Creates a new Selene instance using the {@link org.dockbox.selene.sponge.util.SpongeInjector} bindings
      providing utilities.
      */
     public SeleneSponge112Impl() {
-        super(new SpongeCommonInjector());
+        super(new SpongeInjector());
     }
 
     /**
