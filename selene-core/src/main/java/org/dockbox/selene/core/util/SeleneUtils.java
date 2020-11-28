@@ -76,11 +76,10 @@ import java.util.stream.Stream;
 public enum SeleneUtils {
     ;
 
-    private static final Random random = new Random();
-
-    private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
     public static final int MAXIMUM_DECIMALS = 15;
 
+    private static final Random random = new Random();
+    private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap =
             ofEntries(entry(boolean.class, Boolean.class),
                     entry(byte.class, Byte.class),
@@ -971,7 +970,7 @@ public enum SeleneUtils {
                         //noinspection CallToSuspiciousStringMethod
                         if (!"".equals(property.setter()) && hasMethod(type, property.setter())) {
                             Class<?> parameterType = field.getType();
-                            if (!Void.class.equals(property.accepts())) parameterType = property.accepts();
+                            if (SeleneUtils.isNotVoid(property.accepts())) parameterType = property.accepts();
 
                             Method method = type.getMethod(property.setter(), parameterType);
                             method.invoke(instance, value);
@@ -1016,6 +1015,10 @@ public enum SeleneUtils {
         return field.isAnnotationPresent(Property.class)
                 ? field.getAnnotation(Property.class).value()
                 : field.getName();
+    }
+
+    public static boolean isNotVoid(Class<?> type) {
+        return !(type.equals(Void.class) || type == Void.TYPE);
     }
 
     public enum HttpStatus {
