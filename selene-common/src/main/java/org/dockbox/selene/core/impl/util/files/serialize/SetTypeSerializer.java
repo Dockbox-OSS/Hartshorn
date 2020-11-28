@@ -23,10 +23,9 @@ package org.dockbox.selene.core.impl.util.files.serialize;
 import com.google.common.reflect.TypeParameter;
 import com.google.common.reflect.TypeToken;
 
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -38,12 +37,12 @@ public class SetTypeSerializer implements TypeSerializer<Set<?>> {
 
     @Override
     public Set<?> deserialize(@NotNull TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
-        return new HashSet<>(value.getList(this.getInnerToken(type)));
+        return SeleneUtils.asSet(value.getList(this.getInnerToken(type)));
     }
 
     @Override
     public void serialize(@NotNull TypeToken<?> type, Set<?> obj, ConfigurationNode value) throws ObjectMappingException {
-        value.setValue(this.getListTokenFromSet(type), new ArrayList<>(obj));
+        value.setValue(this.getListTokenFromSet(type), SeleneUtils.emptyList());
     }
 
     private TypeToken<?> getInnerToken(TypeToken<?> type) {

@@ -20,9 +20,9 @@ package org.dockbox.selene.test.object;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.objects.user.Gamemode;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
 
@@ -31,7 +31,7 @@ public class TestWorld extends World {
     private boolean isLoaded = false;
 
     public TestWorld(@NotNull UUID worldUniqueId, @NotNull String name) {
-        super(worldUniqueId, name, false, new Vector3N(0, 0, 0), -1, Gamemode.SURVIVAL, new HashMap<>());
+        super(worldUniqueId, name, false, new Vector3N(0, 0, 0), -1, Gamemode.SURVIVAL, SeleneUtils.emptyMap());
     }
 
     @Override

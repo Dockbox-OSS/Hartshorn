@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("ClassWithTooManyFields")
 public final class ArgumentConverterRegistry {
 
-    private static transient final Collection<ArgumentConverter<?>> CONVERTERS = new CopyOnWriteArrayList<>();
+    private static transient final Collection<ArgumentConverter<?>> CONVERTERS = SeleneUtils.emptyConcurrentList();
 
     private ArgumentConverterRegistry() {
     }

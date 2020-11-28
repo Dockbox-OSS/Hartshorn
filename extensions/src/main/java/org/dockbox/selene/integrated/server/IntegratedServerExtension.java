@@ -26,7 +26,6 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.impl.command.parse.LanguageArgumentParser;
 import org.dockbox.selene.core.impl.command.parse.UUIDArgumentParser;
-import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
@@ -39,6 +38,7 @@ import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction.RunCommand;
 import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
 import org.dockbox.selene.core.text.navigation.PaginationBuilder;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.construct.ConstructionUtil;
 import org.dockbox.selene.core.util.events.EventBus;
 import org.dockbox.selene.core.util.extension.Extension;
@@ -46,7 +46,6 @@ import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,7 +66,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
         super.consumeWithInstance(ExtensionManager.class, em -> {
             PaginationBuilder pb = super.getInstance(ConstructionUtil.class).paginationBuilder();
 
-            List<Text> content = new ArrayList<>();
+            List<Text> content = SeleneUtils.emptyList();
             content.add(Text.of(IntegratedServerResources.SERVER_HEADER.format(Selene.getServer().getVersion())));
             content.add(Text.of(IntegratedServerResources.SERVER_UPDATE.format(Selene.getServer().getLastUpdate())));
             content.add(Text.of(IntegratedServerResources.SERVER_AUTHORS.format(String.join(",", Selene.getServer().getAuthors()))));

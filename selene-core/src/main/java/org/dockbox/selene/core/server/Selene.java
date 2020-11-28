@@ -88,7 +88,7 @@ public abstract class Selene {
 
     private static Selene instance;
 
-    private final transient List<AbstractModule> injectorModules = new CopyOnWriteArrayList<>();
+    private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
 
     /**
      Instantiates {@link Selene}, creating a local injector based on the provided {@link SeleneInjectModule}.
@@ -331,7 +331,7 @@ public abstract class Selene {
     }
 
     private Map<Key<?>, Binding<?>> getAllBindings() {
-        Map<Key<?>, Binding<?>> bindings = new ConcurrentHashMap<>();
+        Map<Key<?>, Binding<?>> bindings = SeleneUtils.emptyConcurrentMap();
         this.createInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
             try {
                 Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
@@ -549,7 +549,7 @@ public abstract class Selene {
     }
 
     private LibraryArtifact[] getAllArtifacts() {
-        List<LibraryArtifact> artifacts = new ArrayList<>(Arrays.asList(this.getPlatformArtifacts()));
+        List<LibraryArtifact> artifacts = SeleneUtils.asList(this.getPlatformArtifacts());
         artifacts.add(new LibraryArtifact("org.reflections", "reflections", "0.9.11"));
         artifacts.add(new LibraryArtifact("com.fasterxml.jackson.core", "jackson-databind", "2.9.8"));
         artifacts.add(new LibraryArtifact("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", "2.9.8"));

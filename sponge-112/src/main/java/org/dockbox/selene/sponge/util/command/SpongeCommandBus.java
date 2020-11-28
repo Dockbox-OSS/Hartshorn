@@ -31,6 +31,7 @@ import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
@@ -45,10 +46,7 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -59,7 +57,7 @@ import java.util.regex.Pattern;
 @Singleton
 public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArgumentTypeValue> {
 
-    private static final Map<String, List<Tuple<String, CommandSpec>>> childsPerAlias = new HashMap<>();
+    private static final Map<String, List<Tuple<String, CommandSpec>>> childsPerAlias = SeleneUtils.emptyMap();
 
     @Override
     protected SpongeArgumentTypeValue getArgumentValue(@NotNull String type, @NotNull AbstractPermission permission, @NotNull String key) {
@@ -98,7 +96,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         else spec.executor(this.buildExecutor(runner, command));
 
         String alias = command.substring(0, command.indexOf(' '));
-        List<Tuple<String, CommandSpec>> aliases = childsPerAlias.getOrDefault(alias, new ArrayList<>());
+        List<Tuple<String, CommandSpec>> aliases = childsPerAlias.getOrDefault(alias, SeleneUtils.emptyList());
         aliases.add(new Tuple<>(usagePart, spec.build()));
         childsPerAlias.put(alias, aliases);
     }
@@ -139,7 +137,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     private void registerValidatedParentCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, CommandSpec.Builder spec, String registeredCmd) {
-        List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, new ArrayList<>());
+        List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, SeleneUtils.emptyList());
         childs.forEach(child -> this.defineExecutorOrChild(spec, child));
         spec.executor(this.buildExecutor(runner, command));
 
@@ -166,7 +164,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     private CommandElement[] parseArguments(CharSequence argString) {
-        List<CommandElement> elements = new LinkedList<>();
+        List<CommandElement> elements = SeleneUtils.emptyList();
         CommandFlags.Builder cflags = null;
         Matcher m = Companion.getArgFinder().matcher(argString);
         while (m.find()) {
@@ -263,8 +261,8 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             return SimpleCommandContext.Companion.getEMPTY();
         }
 
-        List<CommandValue.Argument<?>> arguments = new ArrayList<>();
-        List<CommandValue.Flag<?>> flags = new ArrayList<>();
+        List<CommandValue.Argument<?>> arguments = SeleneUtils.emptyList();
+        List<CommandValue.Flag<?>> flags = SeleneUtils.emptyList();
 
         assert null != command : "Context carrier command was null";
         parsedArgs.asMap().forEach((s, o) -> o.forEach(obj -> {

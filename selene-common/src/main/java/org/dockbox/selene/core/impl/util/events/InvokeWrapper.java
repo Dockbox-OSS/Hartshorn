@@ -41,12 +41,10 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
 
@@ -84,7 +82,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
      @return The list of {@link InvokeWrapper}s
      */
     public static List<InvokeWrapper> create(Object instance, Method method, int priority) {
-        List<InvokeWrapper> invokeWrappers = new CopyOnWriteArrayList<>();
+        List<InvokeWrapper> invokeWrappers = SeleneUtils.emptyConcurrentList();
         for (Class<?> param : method.getParameterTypes()) {
             if (SeleneUtils.isAssignableFrom(Event.class, param)) {
                 Class<? extends Event> eventType = (Class<? extends Event>) param;
@@ -183,7 +181,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
     private Collection<Object> getEventArgs(Event event) throws SkipEventException {
         EventBus bus = Selene.getInstance(EventBus.class);
 
-        Collection<Object> args = new ArrayList<>();
+        Collection<Object> args = SeleneUtils.emptyList();
         for (Parameter parameter : this.method.getParameters()) {
             /*
             Arguments always default to null if it is not assignable from the event type provided, and should be

@@ -17,14 +17,14 @@
 
 package org.dockbox.selene.core.impl.util.events;
 
+import org.dockbox.selene.core.util.SeleneUtils;
+
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -52,7 +52,7 @@ public final class AccessHelper {
             final Class<?>[] params = method.getParameterTypes();
 
             Class<?> declaringClass = method.getDeclaringClass();
-            for (Class<?> supertype : computeAllSupertypes(declaringClass, new LinkedHashSet<>())) {
+            for (Class<?> supertype : computeAllSupertypes(declaringClass, SeleneUtils.emptySet())) {
                 try {
                     Method m = supertype.getDeclaredMethod(name, params);
 
@@ -69,7 +69,7 @@ public final class AccessHelper {
     }
 
     static Set<Class<?>> computeAllSupertypes(Class<?> current, Set<Class<?>> set) {
-        Set<Class<?>> next = new LinkedHashSet<>();
+        Set<Class<?>> next = SeleneUtils.emptySet();
         Class<?> superclass = current.getSuperclass();
         if (superclass != Object.class && superclass != null) {
             set.add(superclass);
@@ -125,7 +125,7 @@ public final class AccessHelper {
         }
 
         try {
-            Set<MethodWrapper> set = new LinkedHashSet<>();
+            Set<MethodWrapper> set = SeleneUtils.emptySet();
             Class<?> current = cls;
             do {
                 Method[] methods = current.getDeclaredMethods();
@@ -137,11 +137,11 @@ public final class AccessHelper {
 
             // Guava equivalent:       Lists.transform(set, w -> w.method);
             // Stream API equivalent:  set.stream().map(w -> w.method).collect(Collectors.toList());
-            List<Method> result = new ArrayList<>(set.size());
+            List<Method> result = SeleneUtils.emptyList();
             for (MethodWrapper methodWrapper : set) result.add(methodWrapper.method);
             return result;
         } catch (Throwable e) {
-            return new ArrayList<>();
+            return SeleneUtils.emptyList();
         }
     }
 

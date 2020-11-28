@@ -18,14 +18,14 @@
 package org.dockbox.selene.core.impl.util.events;
 
 import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.events.IHandler;
 import org.dockbox.selene.core.util.events.IHandlerRegistry;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public final class HandlerRegistry implements IHandlerRegistry {
-    private final Map<Class<? extends Event>, IHandler> handlers = new HashMap<>();
+    private final Map<Class<? extends Event>, IHandler> handlers = SeleneUtils.emptyMap();
 
     @Override
     public IHandler getHandler(Class<? extends Event> type) {
