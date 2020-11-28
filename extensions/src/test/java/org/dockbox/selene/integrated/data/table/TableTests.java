@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.integrated.data.table;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.integrated.data.table.behavior.Merge;
 import org.dockbox.selene.integrated.data.table.behavior.Order;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
@@ -28,12 +27,10 @@ import org.dockbox.selene.integrated.data.table.identifiers.TestColumnIdentifier
 import org.dockbox.selene.integrated.data.table.objects.IdentifiedUser;
 import org.dockbox.selene.integrated.data.table.objects.User;
 import org.dockbox.selene.integrated.data.table.objects.WronglyIdentifiedUser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class TableTests {
 
@@ -51,9 +48,9 @@ public class TableTests {
         Table selectedTable = table.select(TestColumnIdentifiers.NAME);
 
         // Check if table's identifiers have been removed properly
-        Assert.assertArrayEquals(expectedColumns, selectedTable.getIdentifiers());
+        Assertions.assertArrayEquals(expectedColumns, selectedTable.getIdentifiers());
         // Check if table rows' columns have been removed properly
-        Assert.assertEquals(1, selectedTable.getRows().get(0).getColumns().size());
+        Assertions.assertEquals(1, selectedTable.getRows().get(0).getColumns().size());
     }
 
     @Test
@@ -61,21 +58,25 @@ public class TableTests {
         Table table = this.createTestTable();
         table.addRow(new IdentifiedUser(1, "coulis"));
 
-        Assert.assertEquals(1, table.getRows().size());
+        Assertions.assertEquals(1, table.getRows().size());
         TableRow row = table.getRows().get(0);
-        Assert.assertEquals("coulis", row.getValue(TestColumnIdentifiers.NAME).get());
+        Assertions.assertEquals("coulis", row.getValue(TestColumnIdentifiers.NAME).get());
     }
 
-    @Test(expected = UnknownIdentifierException.class)
+    @Test
     public void testWronglyIdentifiedFields() {
-        Table table = this.createTestTable();
-        table.addRow(new WronglyIdentifiedUser(1, "coulis"));
+        Assertions.assertThrows(UnknownIdentifierException.class, () -> {
+            Table table = this.createTestTable();
+            table.addRow(new WronglyIdentifiedUser(1, "coulis"));
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testThrowsExceptionOnTypeMismatch() {
-        Table table = this.createTestTable();
-        table.addRow("3", 1);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            Table table = this.createTestTable();
+            table.addRow("3", 1);
+        });
     }
 
     @Test
@@ -83,19 +84,21 @@ public class TableTests {
         Table table = this.createTestTable();
         table.addRow(new User(1, "pumbas600"));
 
-        Assert.assertEquals(1, table.getRows().size());
+        Assertions.assertEquals(1, table.getRows().size());
         TableRow row = table.getRows().get(0);
-        Assert.assertEquals("pumbas600", row.getValue(TestColumnIdentifiers.NAME).get());
+        Assertions.assertEquals("pumbas600", row.getValue(TestColumnIdentifiers.NAME).get());
     }
 
-    @Test(expected = UnknownIdentifierException.class)
+    @Test
     public void testThrowsExceptionOnMissingTypeField() {
-        Table table = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME, TestColumnIdentifiers.UUID);
-        table.addRow(new User(1, "pumbas600"));
+        Assertions.assertThrows(UnknownIdentifierException.class, () -> {
+            Table table = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME, TestColumnIdentifiers.UUID);
+            table.addRow(new User(1, "pumbas600"));
 
-        Assert.assertEquals(1, table.getRows().size());
-        TableRow row = table.getRows().get(0);
-        Assert.assertEquals("pumbas600", row.getValue(TestColumnIdentifiers.NAME).get());
+            Assertions.assertEquals(1, table.getRows().size());
+            TableRow row = table.getRows().get(0);
+            Assertions.assertEquals("pumbas600", row.getValue(TestColumnIdentifiers.NAME).get());
+        });
     }
 
     @Test
@@ -103,9 +106,9 @@ public class TableTests {
         Table table = this.createTestTable();
         table.addRow(2, "Diggy");
 
-        Assert.assertEquals(1, table.getRows().size());
+        Assertions.assertEquals(1, table.getRows().size());
         TableRow row = table.getRows().get(0);
-        Assert.assertEquals("Diggy", row.getValue(TestColumnIdentifiers.NAME).get());
+        Assertions.assertEquals("Diggy", row.getValue(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
@@ -116,8 +119,8 @@ public class TableTests {
         table.addRow(1, "coulis");
 
         table.orderBy(TestColumnIdentifiers.NUMERAL_ID, Order.DESC); // Expected: 3, 2, 1
-        Assert.assertSame(3, table.first().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
-        Assert.assertSame(1, table.last().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
+        Assertions.assertSame(3, table.first().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
+        Assertions.assertSame(1, table.last().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
     }
 
     @Test
@@ -128,15 +131,17 @@ public class TableTests {
         table.addRow(1, "coulis");
 
         table.orderBy(TestColumnIdentifiers.NUMERAL_ID, Order.ASC); // Expected: 1, 2, 3
-        Assert.assertSame(1, table.first().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
-        Assert.assertSame(3, table.last().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
+        Assertions.assertSame(1, table.first().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
+        Assertions.assertSame(3, table.last().get().getValue(TestColumnIdentifiers.NUMERAL_ID).get());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testOrderByDoesNotAcceptInvalidColumn() {
-        Table table = this.createTestTable();
-        table.addRow(2, "Diggy");
-        table.orderBy(TestColumnIdentifiers.UUID, Order.ASC);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            Table table = this.createTestTable();
+            table.addRow(2, "Diggy");
+            table.orderBy(TestColumnIdentifiers.UUID, Order.ASC);
+        });
     }
 
     @Test
@@ -147,7 +152,7 @@ public class TableTests {
         table.addRow(1, "coulis");
 
         Table where = table.where(TestColumnIdentifiers.NUMERAL_ID, 1);
-        Assert.assertEquals(1, where.getRows().size());
+        Assertions.assertEquals(1, where.getRows().size());
     }
 
     @Test
@@ -162,8 +167,8 @@ public class TableTests {
 
         Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_ORIGINAL);
         Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 2);
-        Assert.assertEquals(3, joined.getRows().size());
-        Assert.assertEquals("NotDiggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
+        Assertions.assertEquals(3, joined.getRows().size());
+        Assertions.assertEquals("NotDiggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
@@ -178,21 +183,23 @@ public class TableTests {
 
         Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN);
         Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 2);
-        Assert.assertEquals(3, joined.getRows().size());
-        Assert.assertEquals("Diggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
+        Assertions.assertEquals(3, joined.getRows().size());
+        Assertions.assertEquals("Diggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
     }
 
-    @Test(expected = EmptyEntryException.class)
-    public void testJoinThrowsExceptionOnEmptyEntry() throws EmptyEntryException, IdentifierMismatchException {
-        Table original = this.createTestTable();
-        original.addRow(1, "coulis");
-        original.addRow(2, "NotDiggy");
+    @Test
+    public void testJoinThrowsExceptionOnEmptyEntry() {
+        Assertions.assertThrows(EmptyEntryException.class, () -> {
+            Table original = this.createTestTable();
+            original.addRow(1, "coulis");
+            original.addRow(2, "NotDiggy");
 
-        Table other = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME, TestColumnIdentifiers.UUID);
-        other.addRow(2, "Diggy", UUID.randomUUID());
-        other.addRow(3, "pumbas600", UUID.randomUUID());
+            Table other = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME, TestColumnIdentifiers.UUID);
+            other.addRow(2, "Diggy", UUID.randomUUID());
+            other.addRow(3, "pumbas600", UUID.randomUUID());
 
-        Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, false);
+            original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, false);
+        });
     }
 
     @Test
@@ -207,18 +214,16 @@ public class TableTests {
 
         Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, true);
         Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 1);
-        Assert.assertFalse(whereLookup.first().get().getValue(TestColumnIdentifiers.UUID).isPresent());
+        Assertions.assertFalse(whereLookup.first().get().getValue(TestColumnIdentifiers.UUID).isPresent());
     }
 
     @Test
     public void testRowCanConvertToValidType() {
-        Table table = this.createTestTable();
-        table.addRow(1, "coulis");
+        Assertions.assertDoesNotThrow(() -> {
+            Table table = this.createTestTable();
+            table.addRow(1, "coulis");
 
-        List<IdentifiedUser> users = table.getRowsAs(IdentifiedUser.class).stream()
-                .filter(Exceptional::isPresent)
-                .map(Exceptional::get)
-                .collect(Collectors.toList());
-        users.forEach(user -> System.out.println(user.displayedName));
+            table.getRowsAs(IdentifiedUser.class);
+        });
     }
 }

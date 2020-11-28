@@ -25,7 +25,7 @@ import org.dockbox.selene.integrated.data.registry.Registry;
 import org.dockbox.selene.integrated.data.registry.RegistryColumn;
 import org.dockbox.selene.integrated.data.registry.TestIdentifier;
 import org.dockbox.selene.integrated.data.serializers.RegistrySerializer;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -69,8 +69,8 @@ public class TypeSerializerTests {
 
         RegistryColumn<Registry<String>> result = reg.getAllData();
 
-        Assert.assertNotNull(result);
-        Assert.assertEquals(3, result.size());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(3, result.size());
     }
 
     @Test
@@ -83,8 +83,8 @@ public class TypeSerializerTests {
         List<String> result = reg.getMatchingColumns(TestIdentifier.BRICK)
                 .mapToSingleList(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
 
-        Assert.assertTrue(result.contains("Brick Fullblock1"));
-        Assert.assertTrue(result.contains("Brick Fullblock2"));
+        Assertions.assertTrue(result.contains("Brick Fullblock1"));
+        Assertions.assertTrue(result.contains("Brick Fullblock2"));
     }
 
 }
