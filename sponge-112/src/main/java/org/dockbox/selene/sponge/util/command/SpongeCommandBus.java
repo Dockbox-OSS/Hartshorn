@@ -107,7 +107,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         spec.permission(permission.get());
 
         Selene.log().debug("Found single method command '" + commandPart + "'");
-        if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(command.substring(0, command.indexOf(' '))))
+        if (!SimpleCommandBus.getRegisteredCommands().contains(command.substring(0, command.indexOf(' '))))
             this.registerValidatedSingleMethodCommand(command, runner, commandPart, spec);
     }
 
@@ -121,18 +121,17 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 Selene.getServer(),
                 spec.build(),
                 alias);
-        SimpleCommandBus.Companion.getRegisteredCommands().add(alias);
+        SimpleCommandBus.getRegisteredCommands().add(alias);
     }
 
     @Override
-    @SuppressWarnings("CallToSuspiciousStringMethod")
     protected void registerParentCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, AbstractPermission permission) {
         CommandSpec.Builder spec = CommandSpec.builder();
         spec.permission(permission.get());
 
         String registeredCmd = command.substring(1);
         if (command.contains(" ")) registeredCmd = command.substring(1, command.indexOf(' '));
-        if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(registeredCmd))
+        if (!SimpleCommandBus.getRegisteredCommands().contains(registeredCmd))
             this.registerValidatedParentCommand(command, runner, spec, registeredCmd);
     }
 
@@ -147,11 +146,11 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         } catch (IllegalArgumentException e) {
             Selene.getServer().except(e.getMessage(), e);
         }
-        SimpleCommandBus.Companion.getRegisteredCommands().add(registeredCmd);
+        SimpleCommandBus.getRegisteredCommands().add(registeredCmd);
     }
 
     private void defineExecutorOrChild(CommandSpec.Builder spec, Tuple<String, CommandSpec> child) {
-        if (super.getParentCommandPrefix().equals(child.getKey())) {
+        if (getParentCommandPrefix().equals(child.getKey())) {
             spec.executor(child.getValue().getExecutor());
         } else {
             spec.child(child.getValue(), child.getKey());
@@ -166,16 +165,16 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     private CommandElement[] parseArguments(CharSequence argString) {
         List<CommandElement> elements = SeleneUtils.emptyList();
         CommandFlags.Builder cflags = null;
-        Matcher m = Companion.getArgFinder().matcher(argString);
+        Matcher m = getArgFinder().matcher(argString);
         while (m.find()) {
             String part = m.group();
-            Matcher ma = Companion.getArgument().matcher(part);
+            Matcher ma = getArgument().matcher(part);
             if (ma.matches()) {
                 boolean optional = '[' == ma.group(1).charAt(0);
                 String argUnp = ma.group(2);
                 CommandElement[] result = this.parseArguments(argUnp);
                 if (0 == result.length) {
-                    SpongeArgumentTypeValue satv = this.argValue(ma.group(2));
+                    SpongeArgumentTypeValue satv = this.getArgumentValue(ma.group(2));
                     CommandElement permEl = satv.getArgument();
                     result = new CommandElement[]{permEl};
                 }
@@ -186,7 +185,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                     elements.add(el);
                 }
             } else {
-                Matcher mf = Companion.getFlag().matcher(part);
+                Matcher mf = getFlag().matcher(part);
                 if (mf.matches()) {
                     if (null == cflags) cflags = GenericArguments.flags();
                     this.parseFlag(cflags, mf.group(1), mf.group(2));
@@ -209,7 +208,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 flags.flag(name);
             }
         } else {
-            AbstractArgumentValue<CommandElement> av = this.argValue(value);
+            AbstractArgumentValue<CommandElement> av = this.getArgumentValue(value);
             if (0 <= name.indexOf(':')) {
                 Selene.getServer().except("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
