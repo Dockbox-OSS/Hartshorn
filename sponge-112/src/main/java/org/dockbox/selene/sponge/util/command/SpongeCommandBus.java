@@ -258,7 +258,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             parsedArgs = (Multimap<String, Object>) parsedArgsF.get(ctx);
         } catch (IllegalAccessException | ClassCastException | NoSuchFieldException e) {
             Selene.getServer().except("Could not load parsed arguments from Sponge command context", e);
-            return SimpleCommandContext.Companion.getEMPTY();
+            return SimpleCommandContext.EMPTY;
         }
 
         List<CommandValue.Argument<?>> arguments = SeleneUtils.emptyList();

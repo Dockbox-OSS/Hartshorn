@@ -44,7 +44,6 @@ import org.dockbox.selene.core.util.world.WorldStorageService;
 
 import java.util.Collection;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("ClassWithTooManyFields")

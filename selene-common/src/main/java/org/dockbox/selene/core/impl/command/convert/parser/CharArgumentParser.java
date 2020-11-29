@@ -15,18 +15,18 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.impl.command.parse
+package org.dockbox.selene.core.impl.command.convert.parser;
 
-import org.dockbox.selene.core.command.context.CommandValue
-import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser
-import org.dockbox.selene.core.objects.optional.Exceptional
+import org.dockbox.selene.core.command.context.CommandValue;
+import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser;
+import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.jetbrains.annotations.NotNull;
 
-class BooleanArgumentParser : AbstractTypeArgumentParser<Boolean>() {
-    override fun parse(commandValue: CommandValue<String>): Exceptional<Boolean> {
-        return when (commandValue.value.toLowerCase()) {
-            "true" -> Exceptional.of(true)
-            "false" -> Exceptional.of(false)
-            else -> Exceptional.empty()
-        }
+public class CharArgumentParser extends AbstractTypeArgumentParser<Character> {
+    @NotNull
+    @Override
+    public Exceptional<Character> parse(@NotNull CommandValue<String> commandValue) {
+        int length = commandValue.getValue().length();
+        return 1 == length ? Exceptional.of(commandValue.getValue().charAt(0)) : Exceptional.empty();
     }
 }

@@ -15,14 +15,17 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.command.parse.rules
+package org.dockbox.selene.core.impl.command.convert.parser;
 
-object Rule {
+import org.dockbox.selene.core.command.context.CommandValue;
+import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser;
+import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.jetbrains.annotations.NotNull;
 
-    annotation class MinMax(
-            val min: Int = -1,
-            val max: Int = -1,
-    )
-
-    // Reserved for future rules
+public class BooleanArgumentParser extends AbstractTypeArgumentParser<Boolean> {
+    @NotNull
+    @Override
+    public Exceptional<Boolean> parse(@NotNull CommandValue<String> commandValue) {
+        return Exceptional.of(commandValue.getValue()).map(Boolean::parseBoolean);
+    }
 }

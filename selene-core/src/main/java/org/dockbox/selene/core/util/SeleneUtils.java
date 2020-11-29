@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.core.util;
 
-import org.apache.commons.collections4.Get;
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.dockbox.selene.core.objects.entity.Ignore;
 import org.dockbox.selene.core.objects.entity.Property;
 import org.dockbox.selene.core.objects.events.Event;
@@ -958,41 +956,28 @@ public enum SeleneUtils {
         return values;
     }
 
-    public static <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map) {
-        T instance = getInstance(type);
-        Get<String, Object> insensitiveMap = new CaseInsensitiveMap<>(map);
-
-        if (null == instance) return Exceptional.empty();
-
-        try {
-            for (Field field : type.getDeclaredFields()) {
-                if (!field.isAccessible()) field.setAccessible(true);
-
-                String propertyName = getFieldPropertyName(field);
-                if (insensitiveMap.containsKey(propertyName)) {
-                    Object value = insensitiveMap.get(propertyName);
-                    if (isAssignableFrom(field.getType(), value.getClass())) {
-                        field.set(instance, value);
-                    }
-                }
-            }
-        } catch (IllegalAccessException e) {
-            return Exceptional.of(instance, e);
-        }
-        return Exceptional.of(instance);
+    public static <T> Exceptional<T> tryCreateFromRaw(Class<T> type, Function<Field, Object> valueCollector, boolean inject) {
+        return tryCreate(type, valueCollector, inject, Provision.FIELD);
     }
 
-    public static <T> Exceptional<T> tryCreate(Class<T> type, Function<String, Object> valueCollector, boolean inject) {
+    public static <T> Exceptional<T> tryCreateFromProcessed(Class<T> type, Function<String, Object> valueCollector, boolean inject) {
+        return tryCreate(type, valueCollector, inject, Provision.FIELD_NAME);
+    }
+
+    private static <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision) {
         T instance = inject ? Selene.getInstance(type) : getInstance(type);
         if (null != instance)
             try {
                 for (Field field : type.getDeclaredFields()) {
                     if (!field.isAccessible()) field.setAccessible(true);
                     if (field.isAnnotationPresent(Ignore.class)) continue;
-                    String fieldName = field.getName();
-                    if (field.isAnnotationPresent(Property.class))
-                        fieldName = field.getAnnotation(Property.class).value();
-                    Object value = valueCollector.apply(fieldName);
+                    Object value;
+                    if (Provision.FIELD == provision) {
+                        value = valueCollector.apply((A) field);
+                    } else {
+                        String fieldName = processFieldName(field);
+                        value = valueCollector.apply((A) fieldName);
+                    }
                     if (null == value) continue;
 
                     boolean useFieldDirect = true;
@@ -1017,6 +1002,17 @@ public enum SeleneUtils {
                 return Exceptional.of(e);
             }
         return Exceptional.ofNullable(instance);
+    }
+
+    public static <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map) {
+        return tryCreateFromProcessed(type, key -> map.getOrDefault(key, null), true);
+    }
+
+    public static String processFieldName(Field field) {
+        String fieldName = field.getName();
+        if (field.isAnnotationPresent(Property.class))
+            fieldName = field.getAnnotation(Property.class).value();
+        return fieldName;
     }
 
     public static boolean isPrimitiveWrapperOf(Class<?> targetClass, Class<?> primitive) {
@@ -1051,6 +1047,10 @@ public enum SeleneUtils {
 
     public static boolean isNotVoid(Class<?> type) {
         return !(type.equals(Void.class) || type == Void.TYPE);
+    }
+
+    public enum Provision {
+        FIELD, FIELD_NAME
     }
 
     public enum HttpStatus {
