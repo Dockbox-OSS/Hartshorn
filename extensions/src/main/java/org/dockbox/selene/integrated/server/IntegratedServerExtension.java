@@ -24,7 +24,7 @@ import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.impl.command.parse.LanguageArgumentParser;
+import org.dockbox.selene.core.impl.command.convert.parser.TypeArgumentParsers.LanguageParser;
 import org.dockbox.selene.core.impl.command.parse.UUIDArgumentParser;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.Identifiable;
@@ -193,7 +193,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
 
     @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", single = true)
     public void switchLang(MessageReceiver src, CommandContext ctx) {
-        Exceptional<Language> ol = ctx.getArgumentAndParse("language", new LanguageArgumentParser());
+        Exceptional<Language> ol = ctx.getArgumentAndParse("language", new LanguageParser());
         @Nullable Player target;
 
         Exceptional<Argument<Player>> op = ctx.getArgument("player", Player.class);

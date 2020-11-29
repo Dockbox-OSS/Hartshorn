@@ -18,6 +18,7 @@
 package org.dockbox.selene.core.impl.command.parse
 
 import org.dockbox.selene.core.command.context.CommandValue
+import org.dockbox.selene.core.impl.command.convert.parser.TypeArgumentParsers
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 
@@ -42,26 +43,16 @@ internal class ListArgumentParserTest {
     @Test
     fun parseDelimiterWorks() {
         val commandvalue: CommandValue<String> = CommandValue.Argument("1:2:3", "mock_arg")
-        val parser: ListArgumentParser<Int> = ListArgumentParser(Integer::parseInt)
+        val parser: TypeArgumentParsers.ListParser<Int> = TypeArgumentParsers.ListParser(Integer::parseInt)
         parser.setDelimiter(':')
 
         val list = parser.parse(commandvalue).get()
         Assert.assertEquals(3, list.size)
     }
 
-    @Test
-    fun parseMaxIsExclusive() {
-        val commandvalue: CommandValue<String> = CommandValue.Argument("1,2,3", "mock_arg")
-        val parser: ListArgumentParser<Int> = ListArgumentParser(Integer::parseInt)
-        parser.setMinMax(ListArgumentParser.MinMax(0, 1))
-
-        val list = parser.parse(commandvalue).get()
-        Assert.assertEquals(1, list.size)
-    }
-
     private fun generateList(): List<Int> {
         val commandvalue: CommandValue<String> = CommandValue.Argument("1,2,3", "mock_arg")
-        val parser: ListArgumentParser<Int> = ListArgumentParser(Integer::parseInt)
+        val parser: TypeArgumentParsers.ListParser<Int> = TypeArgumentParsers.ListParser(Integer::parseInt)
 
         return parser.parse(commandvalue).get()
     }

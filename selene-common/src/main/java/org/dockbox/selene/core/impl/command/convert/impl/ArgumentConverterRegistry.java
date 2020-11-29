@@ -24,10 +24,10 @@ import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.exceptions.ConstraintException;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
-import org.dockbox.selene.core.impl.command.parse.LocationArgumentParser;
-import org.dockbox.selene.core.impl.command.parse.PlayerArgumentParser;
-import org.dockbox.selene.core.impl.command.parse.UUIDArgumentParser;
-import org.dockbox.selene.core.impl.command.parse.WorldArgumentParser;
+import org.dockbox.selene.core.impl.command.convert.parser.TypeArgumentParsers.LocationParser;
+import org.dockbox.selene.core.impl.command.convert.parser.TypeArgumentParsers.PlayerParser;
+import org.dockbox.selene.core.impl.command.convert.parser.TypeArgumentParsers.UuidParser;
+import org.dockbox.selene.core.impl.command.convert.parser.TypeArgumentParsers.WorldParser;
 import org.dockbox.selene.core.impl.command.parse.WorldEditMaskParser;
 import org.dockbox.selene.core.impl.command.parse.WorldEditPatternParser;
 import org.dockbox.selene.core.objects.location.Location;
@@ -126,7 +126,7 @@ public final class ArgumentConverterRegistry {
 
     public static final ArgumentConverter<Player> PLAYER = new ParserArgumentConverter<>(
             Player.class,
-            PlayerArgumentParser::new,
+            PlayerParser::new,
             s -> Selene.getInstance(PlayerStorageService.class).getOnlinePlayers().stream()
                     .map(Player::getName)
                     .filter(n -> n.startsWith(s))
@@ -136,21 +136,21 @@ public final class ArgumentConverterRegistry {
 
     public static final ArgumentConverter<UUID> UUID = new ParserArgumentConverter<>(
             UUID.class,
-            UUIDArgumentParser::new,
+            UuidParser::new,
             s -> SeleneUtils.emptyList(),
             "uuid", "uniqueid"
     );
 
     public static final ArgumentConverter<Location> LOCATION = new ParserArgumentConverter<>(
             Location.class,
-            LocationArgumentParser::new,
+            LocationParser::new,
             s -> SeleneUtils.emptyList(),
             "location", "loc", "position", "pos"
     );
 
     public static final ArgumentConverter<World> WORLD = new ParserArgumentConverter<>(
             World.class,
-            WorldArgumentParser::new,
+            WorldParser::new,
             s -> Selene.getInstance(WorldStorageService.class).getLoadedWorlds().stream()
                     .map(World::getName)
                     .filter(n -> n.startsWith(s))

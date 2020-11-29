@@ -19,6 +19,7 @@ package org.dockbox.selene.core.impl.command.parse
 
 import com.sk89q.worldedit.blocks.BaseBlock
 import java.util.function.Function
+import org.dockbox.selene.core.impl.command.convert.parser.TypeArgumentParsers
 
 /**
  * Parses a list of block ID's, separated by ',' into a list of [BaseBlock] instances. If the block ID is in the format
@@ -30,7 +31,7 @@ import java.util.function.Function
  *
  * @constructor Create empty World edit block parser
  */
-class WorldEditBlockParser : ListArgumentParser<BaseBlock?>(Function {
+class WorldEditBlockParser : TypeArgumentParsers.ListParser<BaseBlock?>(Function {
     val idData = it.replace(" ", "").split(":")
     if (idData.isNotEmpty()) {
         var data = 0
