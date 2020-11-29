@@ -42,7 +42,7 @@ public class SetTypeSerializer implements TypeSerializer<Set<?>> {
 
     @Override
     public void serialize(@NotNull TypeToken<?> type, Set<?> obj, ConfigurationNode value) throws ObjectMappingException {
-        value.setValue(this.getListTokenFromSet(type), SeleneUtils.emptyList());
+        value.setValue(this.getListTokenFromSet(type), SeleneUtils.asList(obj));
     }
 
     private TypeToken<?> getInnerToken(TypeToken<?> type) {
