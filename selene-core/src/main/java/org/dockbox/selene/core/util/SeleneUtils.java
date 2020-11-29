@@ -739,6 +739,12 @@ public enum SeleneUtils {
         return new HashSet<>(asList(objects));
     }
 
+    @NotNull
+    @Contract(value = "_ -> new")
+    public static <T> Set<T> asSet(Collection<T> collection) {
+        return new HashSet<>(collection);
+    }
+
     @UnmodifiableView
     @NotNull
     @Contract(value = "_ -> new", pure = true)
