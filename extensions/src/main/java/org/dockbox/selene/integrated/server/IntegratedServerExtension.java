@@ -24,8 +24,8 @@ import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.impl.command.convert.parser.TypeArgumentParsers.LanguageParser;
-import org.dockbox.selene.core.impl.command.parse.UUIDArgumentParser;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LanguageParser;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.UuidParser;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
@@ -151,7 +151,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
             src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
             return;
         }
-        Exceptional<UUID> ouuid = ctx.getArgumentAndParse("uuid", new UUIDArgumentParser());
+        Exceptional<UUID> ouuid = ctx.getArgumentAndParse("uuid", new UuidParser());
 
         // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
         // argument here is just a confirmation that the source is correct.

@@ -23,7 +23,7 @@ import com.sk89q.worldedit.regions.Region;
 import org.dockbox.selene.core.annotations.Command;
 import org.dockbox.selene.core.annotations.Placeholder;
 import org.dockbox.selene.core.command.context.CommandContext;
-import org.dockbox.selene.core.impl.command.convert.parser.TypeArgumentParsers.ListParser;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.ListParser;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.user.Player;
 

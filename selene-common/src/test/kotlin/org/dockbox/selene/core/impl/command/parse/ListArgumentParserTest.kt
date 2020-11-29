@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.impl.command.parse
 
 import org.dockbox.selene.core.command.context.CommandValue
-import org.dockbox.selene.core.impl.command.convert.parser.TypeArgumentParsers
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 

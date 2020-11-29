@@ -15,7 +15,14 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.impl.command.convert.parser;
+package org.dockbox.selene.core.impl.command.convert;
+
+import com.boydti.fawe.object.FawePlayer;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.extension.input.ParserContext;
+import com.sk89q.worldedit.function.mask.Mask;
+import com.sk89q.worldedit.function.pattern.Pattern;
 
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.parse.AbstractArgumentParser;
@@ -289,6 +296,76 @@ public class TypeArgumentParsers {
             }
 
             return Exceptional.of(map);
+        }
+    }
+
+    /**
+     * Parses a list of block ID's, separated by ',' into a list of [BaseBlock] instances. If the block ID is in the format
+     * 'id:data' it will use the data from the block ID, otherwise it defaults to zero (0).
+     *
+     * Delimiter is always ','
+     *
+     * Does not support named ID's like 'minecraft:stone'. Does not support patterns or masks.
+     *
+     * @constructor Create empty World edit block parser
+     */
+    public static class WorldEditBlockParser extends ListParser<BaseBlock> {
+
+        public WorldEditBlockParser() {
+            super(value -> {
+                String[] idData = value.replace(" ", "").split(":");
+                if (idData.length > 0) {
+                    int data = 0;
+                    if (idData.length == 2) data = Integer.parseInt(idData[1]);
+                    return new BaseBlock(Integer.parseInt(idData[0]), data);
+                }
+                //noinspection ReturnOfNull
+                return null;
+            });
+        }
+    }
+
+    public static class WorldEditMaskParser extends AbstractTypeArgumentParser<Mask> {
+
+        private final FawePlayer<?> player;
+
+        public WorldEditMaskParser(FawePlayer<?> player) {
+            this.player = player;
+        }
+
+        @NotNull
+        @Override
+        public Exceptional<Mask> parse(@NotNull CommandValue<String> commandValue) {
+            ParserContext ctx = new ParserContext();
+            ctx.setActor(this.player.getPlayer());
+            ctx.setWorld(this.player.getWorld());
+            ctx.setSession(this.player.getSession());
+            return Exceptional.of(() -> WorldEdit.getInstance()
+                    .getMaskFactory()
+                    .parseFromInput(commandValue.getValue(), ctx)
+            );
+        }
+    }
+
+    public static class WorldEditPatternParser extends AbstractTypeArgumentParser<Pattern> {
+
+        private final FawePlayer<?> player;
+
+        public WorldEditPatternParser(FawePlayer<?> player) {
+            this.player = player;
+        }
+
+        @NotNull
+        @Override
+        public Exceptional<Pattern> parse(@NotNull CommandValue<String> commandValue) {
+            ParserContext ctx = new ParserContext();
+            ctx.setActor(this.player.getPlayer());
+            ctx.setWorld(this.player.getWorld());
+            ctx.setSession(this.player.getSession());
+            return Exceptional.of(() -> WorldEdit.getInstance()
+                    .getPatternFactory()
+                    .parseFromInput(commandValue.getValue(), ctx)
+            );
         }
     }
 }
