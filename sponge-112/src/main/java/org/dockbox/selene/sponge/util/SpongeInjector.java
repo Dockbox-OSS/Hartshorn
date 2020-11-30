@@ -19,7 +19,7 @@ package org.dockbox.selene.sponge.util;
 
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.i18n.common.ResourceService;
-import org.dockbox.selene.core.impl.i18n.common.SimpleResourceService;
+import org.dockbox.selene.core.impl.util.SimpleResourceService;
 import org.dockbox.selene.core.impl.server.config.DefaultGlobalConfig;
 import org.dockbox.selene.core.impl.util.events.SimpleEventBus;
 import org.dockbox.selene.core.impl.util.SimpleExceptionHelper;
