@@ -19,6 +19,7 @@ package org.dockbox.selene.core.impl.util.extension;
 
 import com.google.inject.Singleton;
 
+import org.dockbox.selene.core.impl.util.SimpleExtensionContext;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;

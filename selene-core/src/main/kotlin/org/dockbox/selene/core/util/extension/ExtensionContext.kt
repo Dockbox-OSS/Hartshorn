@@ -23,7 +23,6 @@ interface ExtensionContext {
 
     var type: ComponentType
     var source: String
-    var entryStatus: MutableMap<Class<*>, ExtensionStatus>
     var extensionClass: Class<*>
     var extension: Extension
 

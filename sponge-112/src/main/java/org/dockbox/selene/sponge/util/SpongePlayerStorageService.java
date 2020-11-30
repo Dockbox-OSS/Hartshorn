@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.core.impl.util.player.DefaultPlayerStorageService;
+import org.dockbox.selene.core.impl.util.DefaultPlayerStorageService;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
