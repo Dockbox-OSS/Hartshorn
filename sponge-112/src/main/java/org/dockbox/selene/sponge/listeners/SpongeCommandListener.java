@@ -33,7 +33,7 @@ public class SpongeCommandListener {
             String argsJoined = commandEvent.getArguments();
             String[] args = argsJoined.split(" ");
             Cancellable event = new NativeCommandEvent(
-                    SpongeConversionUtil.fromSponge((CommandSource) commandEvent.getSource()).orElse(null),
+                    SpongeConversionUtil.fromSponge((CommandSource) commandEvent.getSource()).orNull(),
                     command,
                     args);
             commandEvent.setCancelled(event.post().isCancelled());

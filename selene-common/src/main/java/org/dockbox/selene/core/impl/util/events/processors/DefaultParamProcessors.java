@@ -74,7 +74,7 @@ public enum DefaultParamProcessors {
         if (null != object && !annotation.overrideExisting()) return object;
 
         Class<?> extensionClass = parameter.getType();
-        if (Void.class != annotation.value() && annotation.value().isAnnotationPresent(Extension.class)) {
+        if (SeleneUtils.isNotVoid(annotation.value()) && annotation.value().isAnnotationPresent(Extension.class)) {
             extensionClass = annotation.value();
         } else if (wrapper.getListener().getClass().isAnnotationPresent(Extension.class)) {
             extensionClass = wrapper.getListener().getClass();

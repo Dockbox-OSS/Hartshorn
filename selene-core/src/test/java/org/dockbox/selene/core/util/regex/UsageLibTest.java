@@ -33,7 +33,7 @@ public class UsageLibTest {
     @Test
     public void staticFabricsRetunSameAsConstructorExpressions() {
         VerbalExpression regexViaFactory = VerbalExpression.regex().anything().build();
-        VerbalExpression regexViaConstructor = new VerbalExpression.Builder().anything().build();
+        VerbalExpression regexViaConstructor = VerbalExpression.regex().anything().build();
 
         Assert.assertThat("Factory builder method produce not same as constructor regex",
                 regexViaFactory.toString(), CoreMatchers.equalTo(regexViaConstructor.toString()));

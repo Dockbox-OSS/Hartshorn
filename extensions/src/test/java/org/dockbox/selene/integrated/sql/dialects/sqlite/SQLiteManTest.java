@@ -23,7 +23,7 @@ import org.dockbox.selene.integrated.data.table.identifiers.TestColumnIdentifier
 import org.dockbox.selene.integrated.sql.ISQLMan;
 import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
 import org.dockbox.selene.integrated.sql.properties.SQLColumnProperty;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -47,7 +47,7 @@ class SQLiteManTest {
     public void testGetTable() throws InvalidConnectionException {
         ISQLMan<?> man = this.getSQLiteMan(true);
         Table plots = man.getTable("plot");
-        Assert.assertEquals(2301, plots.count());
+        Assertions.assertEquals(2301, plots.count());
     }
 
     @Test
@@ -59,7 +59,7 @@ class SQLiteManTest {
         );
         Table plots = man.getTable("plot");
         Table worlds = plots.where(SQLiteColumnIdentifiers.PLOT_WORLD, "*");
-        Assert.assertEquals(161, worlds.count());
+        Assertions.assertEquals(161, worlds.count());
     }
 
     @Test
@@ -70,7 +70,7 @@ class SQLiteManTest {
         long count = plots.getRowsAs(PlotEntry.class).stream()
                 .filter(Exceptional::isPresent)
                 .count();
-        Assert.assertEquals(2301, count);
+        Assertions.assertEquals(2301, count);
     }
 
     @Test

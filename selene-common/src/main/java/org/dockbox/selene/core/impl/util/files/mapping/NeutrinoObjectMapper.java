@@ -32,9 +32,9 @@ import org.dockbox.selene.core.impl.util.files.process.SettingProcessor;
 import org.dockbox.selene.core.impl.util.files.process.SettingProcessorCache;
 import org.dockbox.selene.core.impl.util.files.util.ClassConstructor;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -279,7 +279,7 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
 
     protected static class PreprocessedFieldData extends FieldData {
 
-        private final Collection<SettingProcessor> processors = new ArrayList<>();
+        private final Collection<SettingProcessor> processors = SeleneUtils.emptyList();
 
         protected PreprocessedFieldData(Field field, String comment, ClassConstructor<SettingProcessor> processorClassConstructor)
                 throws ObjectMappingException, IllegalArgumentException {

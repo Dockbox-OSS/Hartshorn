@@ -18,7 +18,7 @@
 package org.dockbox.selene.integrated.data.registry;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -45,8 +45,8 @@ public class RegistryTests {
         List<String> result = testRegistry.getMatchingColumns(TestIdentifier.BRICK)
             .mapToSingleList(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
 
-        Assert.assertTrue(result.contains("Brick Fullblock1"));
-        Assert.assertTrue(result.contains("Brick Fullblock2"));
+        Assertions.assertTrue(result.contains("Brick Fullblock1"));
+        Assertions.assertTrue(result.contains("Brick Fullblock2"));
     }
 
     @Test
@@ -67,9 +67,9 @@ public class RegistryTests {
         Registry<String> cobblestoneRegistry = eCobblestoneRegistry.get();
         List<String> fullblocks = cobblestoneRegistry.getMatchingColumns(TestIdentifier.FULLBLOCK);
 
-        Assert.assertTrue(cobblestoneRegistry.containsColumns(TestIdentifier.STAIR));
-        Assert.assertTrue(fullblocks.contains("Cobblestone Fullblock2"));
-        Assert.assertEquals(2, fullblocks.size());
+        Assertions.assertTrue(cobblestoneRegistry.containsColumns(TestIdentifier.STAIR));
+        Assertions.assertTrue(fullblocks.contains("Cobblestone Fullblock2"));
+        Assertions.assertEquals(2, fullblocks.size());
     }
 
     @Test
@@ -78,8 +78,8 @@ public class RegistryTests {
 
         testRegistry.removeColumns(TestIdentifier.BRICK, TestIdentifier.SANDSTONE);
 
-        Assert.assertFalse(testRegistry.containsColumns(TestIdentifier.BRICK));
-        Assert.assertFalse(testRegistry.containsColumns(TestIdentifier.SANDSTONE));
+        Assertions.assertFalse(testRegistry.containsColumns(TestIdentifier.BRICK));
+        Assertions.assertFalse(testRegistry.containsColumns(TestIdentifier.SANDSTONE));
     }
 
     @Test
@@ -88,8 +88,8 @@ public class RegistryTests {
 
         Registry<Registry<String>> result = testRegistry.removeColumnsIf(i -> TestIdentifier.BRICK == i);
 
-        Assert.assertTrue(result.containsColumns(TestIdentifier.SANDSTONE, TestIdentifier.COBBLESTONE));
-        Assert.assertFalse(result.containsColumns(TestIdentifier.BRICK));
+        Assertions.assertTrue(result.containsColumns(TestIdentifier.SANDSTONE, TestIdentifier.COBBLESTONE));
+        Assertions.assertFalse(result.containsColumns(TestIdentifier.BRICK));
     }
 
     @Test
@@ -99,8 +99,8 @@ public class RegistryTests {
         Registry<Registry<String>> result = testRegistry.removeValuesIf(r -> 2 <= r.size());
         int brickColumnSize = result.getMatchingColumns(TestIdentifier.BRICK).size();
 
-        Assert.assertTrue(result.containsColumns(TestIdentifier.BRICK, TestIdentifier.SANDSTONE, TestIdentifier.COBBLESTONE));
-        Assert.assertEquals(0, brickColumnSize);
+        Assertions.assertTrue(result.containsColumns(TestIdentifier.BRICK, TestIdentifier.SANDSTONE, TestIdentifier.COBBLESTONE));
+        Assertions.assertEquals(0, brickColumnSize);
     }
 
     @Test
@@ -118,8 +118,8 @@ public class RegistryTests {
             .getMatchingColumns(TestIdentifier.SANDSTONE, TestIdentifier.WOOD)
             .mapToSingleList(r -> r.getMatchingColumns(TestIdentifier.STAIR));
 
-        Assert.assertTrue(result.contains("Sandstone Stair1"));
-        Assert.assertTrue(result.contains("Sandstone Stair2"));
-        Assert.assertTrue(result.contains("Wooden Stair1"));
+        Assertions.assertTrue(result.contains("Sandstone Stair1"));
+        Assertions.assertTrue(result.contains("Sandstone Stair2"));
+        Assertions.assertTrue(result.contains("Wooden Stair1"));
     }
 }

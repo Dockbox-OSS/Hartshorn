@@ -33,20 +33,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @Singleton
 public class SimpleExtensionManager implements ExtensionManager {
 
-    private static final Collection<SimpleExtensionContext> globalContexts = new CopyOnWriteArrayList<>();
-    private static final Map<String, Object> instanceMappings = new ConcurrentHashMap<>();
+    private static final Collection<SimpleExtensionContext> globalContexts = SeleneUtils.emptyConcurrentList();
+    private static final Map<String, Object> instanceMappings = SeleneUtils.emptyConcurrentMap();
 
     @NotNull
     @Override
@@ -127,12 +123,12 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public List<String> getRegisteredExtensionIds() {
-        return new ArrayList<>(instanceMappings.keySet());
+        return SeleneUtils.asList(instanceMappings.keySet());
     }
 
     private <T> boolean createComponentInstance(Class<T> entry, ExtensionContext context) {
         Extension header = entry.getAnnotation(Extension.class);
-        List<Extension> existingHeaders = new LinkedList<>();
+        List<Extension> existingHeaders = SeleneUtils.emptyList();
         globalContexts.forEach(ctx -> existingHeaders.add(ctx.getExtension()));
         //noinspection CallToSuspiciousStringMethod
         if (existingHeaders.stream().anyMatch(e -> e.uniqueId().equals(header.uniqueId()))) {

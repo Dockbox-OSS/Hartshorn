@@ -48,7 +48,7 @@ public class ParserArgumentConverter<T> extends ArgumentConverter<T> {
         return Exceptional.ofNullable(
                 this.parser.get()
                         .parse(new Argument<>(argument, super.getKeys().get(0)))
-                        .orElse(null)
+                        .orNull()
         );
     }
 

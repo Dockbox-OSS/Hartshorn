@@ -21,10 +21,10 @@ import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -49,7 +49,7 @@ public final class SeleneTypeSerializers {
      The transient {@link Collection} holding all known {@link SerializerInformation} instances, which can be
      used to register the associated {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializer}s.
      */
-    static final transient Collection<SerializerInformation<?>> serializerInformation = new CopyOnWriteArrayList<>();
+    static final transient Collection<SerializerInformation<?>> serializerInformation = SeleneUtils.emptyConcurrentList();
 
     static {
         try {

@@ -30,6 +30,7 @@ import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.navigation.Pagination;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.player.PlayerStorageService;
 import org.dockbox.selene.test.SeleneTestImpl;
 import org.dockbox.selene.test.util.TestPlayerStorageService;
@@ -37,14 +38,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class TestPlayer extends Player {
     private boolean online = false;
     private Gamemode gamemode = Gamemode.SURVIVAL;
     private Language language = Language.EN_US;
     private Location location = Location.Companion.getEMPTY();
-    private final Map<String, Boolean> permissions = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> permissions = SeleneUtils.emptyConcurrentMap();
 
     public TestPlayer(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
