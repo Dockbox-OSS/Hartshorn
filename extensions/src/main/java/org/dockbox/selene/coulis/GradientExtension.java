@@ -41,7 +41,7 @@ public class GradientExtension {
                 .get();
 
         Exceptional<FawePlayer<?>> ofp = src.getFawePlayer();
-        Region region = ofp.map(FawePlayer::getSelection).orElse(null);
+        Region region = ofp.map(FawePlayer::getSelection).orNull();
 
         if (null == region || null == region.getWorld()) {
             src.send("$4Invalid region");

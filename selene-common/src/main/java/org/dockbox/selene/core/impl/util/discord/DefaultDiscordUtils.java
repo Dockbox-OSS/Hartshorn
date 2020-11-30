@@ -36,6 +36,7 @@ import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.discord.DiscordUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,11 +45,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class DefaultDiscordUtils implements DiscordUtils {
 
-    private static final Map<String, Triad<DiscordCommand, Method, Object>> commandMethods = new ConcurrentHashMap<>();
+    private static final Map<String, Triad<DiscordCommand, Method, Object>> commandMethods = SeleneUtils.emptyConcurrentMap();
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String WILDCARD = "*";
 

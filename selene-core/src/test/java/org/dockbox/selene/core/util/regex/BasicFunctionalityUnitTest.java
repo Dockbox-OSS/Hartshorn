@@ -17,17 +17,21 @@
 
 package org.dockbox.selene.core.util.regex;
 
+import org.dockbox.selene.core.util.regex.matchers.EqualToRegexMatcher;
 import org.dockbox.selene.core.util.regex.matchers.TestMatchMatcher;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
 
+import static org.dockbox.selene.core.util.regex.matchers.TestsExactMatcher.matchesExactly;
+
 public class BasicFunctionalityUnitTest {
     @Test
     public void testSomething() {
-        VerbalExpression testRegex = new VerbalExpression.Builder().something().build();
+        VerbalExpression testRegex = VerbalExpression.regex().something().build();
 
         Assert.assertThat("Null object doesn't have something", testRegex, CoreMatchers.not(TestMatchMatcher.matchesTo(null)));
         Assert.assertThat("empty string doesn't have something", testRegex, CoreMatchers.not(TestMatchMatcher.matchesTo("")));
@@ -36,7 +40,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testAnything() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .anything()
                 .build();
@@ -48,7 +52,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testAnythingBut() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .anythingBut("w")
                 .build();
@@ -61,7 +65,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testSomethingBut() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .somethingButNot("a")
                 .build();
 
@@ -73,7 +77,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testStartOfLine() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .build();
@@ -106,7 +110,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testEndOfLine() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .find("a")
                 .endOfLine()
                 .build();
@@ -131,7 +135,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testMaybe() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .maybe("b")
@@ -146,7 +150,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testAnyOf() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .anyOf("xyz")
@@ -159,15 +163,15 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testAnySameAsAnyOf() {
-        VerbalExpression any = regex().any("abc").build();
-        VerbalExpression anyOf = regex().anyOf("abc").build();
+        VerbalExpression any = VerbalExpression.regex().any("abc").build();
+        VerbalExpression anyOf = VerbalExpression.regex().anyOf("abc").build();
 
         Assert.assertThat("any differs from anyOf", any.toString(), CoreMatchers.equalTo(anyOf.toString()));
     }
 
     @Test
     public void testOr() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("abc")
                 .or("def")
@@ -179,7 +183,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testLineBreak() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("abc")
                 .lineBreak()
@@ -193,7 +197,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testMacintoshLineBreak() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("abc")
                 .lineBreak()
@@ -205,14 +209,14 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testBr() {
-        VerbalExpression testRegexBr = new VerbalExpression.Builder()
+        VerbalExpression testRegexBr = VerbalExpression.regex()
                 .startOfLine()
                 .then("abc")
                 .br()
                 .then("def")
                 .build();
 
-        VerbalExpression testRegexLineBr = new VerbalExpression.Builder()
+        VerbalExpression testRegexLineBr = VerbalExpression.regex()
                 .startOfLine()
                 .then("abc")
                 .lineBreak()
@@ -224,7 +228,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testTab() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .tab()
                 .then("abc")
@@ -236,7 +240,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testWord() {
-       VerbalExpression testRegex = new VerbalExpression.Builder()
+       VerbalExpression testRegex = VerbalExpression.regex()
                     .startOfLine()
                     .word()
                     .build();
@@ -247,15 +251,15 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testMultipleNoRange() {
-       VerbalExpression testRegexStringOnly = new VerbalExpression.Builder()
+       VerbalExpression testRegexStringOnly = VerbalExpression.regex()
                     .startOfLine()
                     .multiple("abc")
                     .build();
-       VerbalExpression testRegexStringAndNull = new VerbalExpression.Builder()
+       VerbalExpression testRegexStringAndNull = VerbalExpression.regex()
                            .startOfLine()
                            .multiple("abc", null)
                            .build();
-       VerbalExpression testRegexMoreThan2Ints = new VerbalExpression.Builder()
+       VerbalExpression testRegexMoreThan2Ints = VerbalExpression.regex()
                            .startOfLine()
                            .multiple("abc", 2, 4, 8)
                            .build();
@@ -276,7 +280,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testMultipleFrom() {
-       VerbalExpression testRegexFrom = new VerbalExpression.Builder()
+       VerbalExpression testRegexFrom = VerbalExpression.regex()
                            .startOfLine()
                            .multiple("abc", 2)
                            .build();
@@ -292,7 +296,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testMultipleFromTo() {
-       VerbalExpression testRegexFromTo = new VerbalExpression.Builder()
+       VerbalExpression testRegexFromTo = VerbalExpression.regex()
                            .startOfLine()
                            .multiple("abc", 2, 4)
                            .build();
@@ -305,18 +309,18 @@ public class BasicFunctionalityUnitTest {
        Assert.assertThat("abc exactly 4 times", testRegexFromTo,
                     TestMatchMatcher.matchesTo("abcabcabcabc"));
        Assert.assertThat("abc more than 4 times", testRegexFromTo,
-                    not(matchesExactly("abcabcabcabcabc")));
+               IsNot.not(matchesExactly("abcabcabcabcabc")));
     }
 
     @Test
     public void testWithAnyCase() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .build();
 
         Assert.assertThat("not case insensitive", testRegex, CoreMatchers.not(TestMatchMatcher.matchesTo("A")));
-        testRegex = new VerbalExpression.Builder()
+        testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .withAnyCase()
@@ -328,7 +332,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testWithAnyCaseTurnOnThenTurnOff() {
-        VerbalExpression testRegex = regex()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .withAnyCase()
                 .startOfLine()
                 .then("a")
@@ -340,7 +344,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testWithAnyCaseIsFalse() {
-        VerbalExpression testRegex = regex()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .withAnyCase(false)
@@ -351,7 +355,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testSearchOneLine() {
-        VerbalExpression testRegex = regex()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .br()
@@ -361,7 +365,7 @@ public class BasicFunctionalityUnitTest {
 
         Assert.assertThat("b is on the second line", testRegex, TestMatchMatcher.matchesTo("a\nb"));
 
-        testRegex = new VerbalExpression.Builder()
+        testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .then("a")
                 .br()
@@ -376,7 +380,7 @@ public class BasicFunctionalityUnitTest {
     @Test
     public void testGetText() {
         String testString = "123 https://www.google.com 456";
-        VerbalExpression testRegex = new VerbalExpression.Builder().add("http")
+        VerbalExpression testRegex = VerbalExpression.regex().add("http")
                 .maybe("s")
                 .then("://")
                 .then("www.")
@@ -389,7 +393,7 @@ public class BasicFunctionalityUnitTest {
     @Test
     public void testStartCapture() {
         String text = "aaabcd";
-        VerbalExpression regex = regex()
+        VerbalExpression regex = VerbalExpression.regex()
                 .find("a").count(3)
                 .capture().find("b").anything().build();
 
@@ -401,7 +405,7 @@ public class BasicFunctionalityUnitTest {
     public void testStartNamedCapture() {
         String text = "test@example.com";
         String captureName = "domain";
-        VerbalExpression regex = regex()
+        VerbalExpression regex = VerbalExpression.regex()
                 .find("@")
                 .capture(captureName).anything().build();
 
@@ -412,22 +416,22 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void captIsSameAsCapture() {
-        Assert.assertThat("Capt produce different than capture regex", regex().capt().build().toString(),
-                CoreMatchers.equalTo(regex().capture().build().toString()));
+        Assert.assertThat("Capt produce different than capture regex", VerbalExpression.regex().capt().build().toString(),
+                CoreMatchers.equalTo(VerbalExpression.regex().capture().build().toString()));
     }
 
     @Test
     public void namedCaptIsSameAsNamedCapture() {
         String name = "test";
         Assert.assertThat("Named-capt produce different than named-capture regex",
-                regex().capt(name).build().toString(),
-                CoreMatchers.equalTo(regex().capture(name).build().toString()));
+                VerbalExpression.regex().capt(name).build().toString(),
+                CoreMatchers.equalTo(VerbalExpression.regex().capture(name).build().toString()));
     }
 
     @Test
     public void shouldReturnEmptyStringWhenNoGroupFound() {
         String text = "abc";
-        VerbalExpression regex = regex().find("d").capture().find("e").build();
+        VerbalExpression regex = VerbalExpression.regex().find("d").capture().find("e").build();
 
         Assert.assertThat("regex don't match string", regex.getText(text), CoreMatchers.equalTo(""));
         Assert.assertThat("first captured group not empty string", regex.getText(text, 1), CoreMatchers.equalTo(""));
@@ -440,7 +444,7 @@ public class BasicFunctionalityUnitTest {
         String text2c = "abcce";
         String text1c = "abce";
 
-        VerbalExpression regex = regex().find("c").count(2, 3).build();
+        VerbalExpression regex = VerbalExpression.regex().find("c").count(2, 3).build();
 
         Assert.assertThat("regex don't match string", regex.getText(text4c), CoreMatchers.equalTo("ccc"));
         Assert.assertThat("regex don't match string", regex.getText(text2c), CoreMatchers.equalTo("cc"));
@@ -450,7 +454,7 @@ public class BasicFunctionalityUnitTest {
     @Test
     public void testEndCapture() {
         String text = "aaabcd";
-        VerbalExpression regex = regex()
+        VerbalExpression regex = VerbalExpression.regex()
                 .find("a")
                 .capture().find("b").anything().endCapture().then("cd").build();
 
@@ -462,7 +466,7 @@ public class BasicFunctionalityUnitTest {
     public void testEndNamedCapture() {
         String text = "aaabcd";
         String captureName = "str";
-        VerbalExpression regex = regex()
+        VerbalExpression regex = VerbalExpression.regex()
                 .find("a")
                 .capture(captureName).find("b").anything().endCapture()
                 .then("cd").build();
@@ -475,7 +479,7 @@ public class BasicFunctionalityUnitTest {
     @Test
     public void testMultiplyCapture() {
         String text = "aaabcd";
-        VerbalExpression regex = regex()
+        VerbalExpression regex = VerbalExpression.regex()
                 .find("a").count(1)
                 .capture().find("b").endCapture().anything().capture().find("d").build();
 
@@ -488,7 +492,7 @@ public class BasicFunctionalityUnitTest {
         String text = "aaabcd";
         String captureName1 = "str1";
         String captureName2 = "str2";
-        VerbalExpression regex = regex()
+        VerbalExpression regex = VerbalExpression.regex()
                 .find("a").count(1)
                 .capture(captureName1).find("b").endCapture()
                 .anything().capture(captureName2).find("d").build();
@@ -501,14 +505,14 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testOrWithCapture() {
-        VerbalExpression testRegex = regex()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .capture()
                 .find("abc")
                 .or("def")
                 .build();
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("defzzz"));
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
-        Assert.assertThat("Doesn't start with abc or def", testRegex, not(matchesExactly("xyzabcefg")));
+        Assert.assertThat("Doesn't start with abc or def", testRegex, IsNot.not(matchesExactly("xyzabcefg")));
 
         Assert.assertThat(testRegex.getText("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcnull"));
         Assert.assertThat(testRegex.getText("xxxdefzzz", 1), CoreMatchers.equalTo("null"));
@@ -518,7 +522,7 @@ public class BasicFunctionalityUnitTest {
     @Test
     public void testOrWithNamedCapture() {
         String captureName = "test";
-        VerbalExpression testRegex = regex()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .capture(captureName)
                 .find("abc")
                 .or("def")
@@ -526,7 +530,7 @@ public class BasicFunctionalityUnitTest {
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("defzzz"));
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
         Assert.assertThat("Doesn't start with abc or def",
-                testRegex, not(matchesExactly("xyzabcefg")));
+                testRegex, IsNot.not(matchesExactly("xyzabcefg")));
 
         Assert.assertThat(testRegex.getText("xxxabcdefzzz", captureName),
                 CoreMatchers.equalTo("abcnull"));
@@ -538,7 +542,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testOrWithClosedCapture() {
-        VerbalExpression testRegex = regex()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .capture()
                 .find("abc")
                 .endCapt()
@@ -546,7 +550,7 @@ public class BasicFunctionalityUnitTest {
                 .build();
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("defzzz"));
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
-        Assert.assertThat("Doesn't start with abc or def", testRegex, not(matchesExactly("xyzabcefg")));
+        Assert.assertThat("Doesn't start with abc or def", testRegex, IsNot.not(matchesExactly("xyzabcefg")));
 
         Assert.assertThat(testRegex.getText("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcnull"));
         Assert.assertThat(testRegex.getText("xxxdefzzz", 1), CoreMatchers.equalTo("null"));
@@ -556,7 +560,7 @@ public class BasicFunctionalityUnitTest {
     @Test
     public void testOrWithClosedNamedCapture() {
         String captureName = "test";
-        VerbalExpression testRegex = regex()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .capture(captureName)
                 .find("abc")
                 .endCapt()
@@ -565,7 +569,7 @@ public class BasicFunctionalityUnitTest {
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("defzzz"));
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
         Assert.assertThat("Doesn't start with abc or def",
-                testRegex, not(matchesExactly("xyzabcefg")));
+                testRegex, IsNot.not(matchesExactly("xyzabcefg")));
 
         Assert.assertThat(testRegex.getText("xxxabcdefzzz", captureName),
                 CoreMatchers.equalTo("abcnull"));
@@ -577,8 +581,8 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void addRegexBuilderWrapsItWithUnsavedGroup() throws Exception {
-        VerbalExpression regex = regex()
-                .add(regex().capt().find("string").count(2).endCapt().count(1).digit()).count(2).build();
+        VerbalExpression regex = VerbalExpression.regex()
+                .add(VerbalExpression.regex().capt().find("string").count(2).endCapt().count(1).digit()).count(2).build();
 
         Assert.assertThat("Added regex builder don't wrapped with unsaved group",
                 regex.toString(), CoreMatchers.startsWith("(?:((?:string"));
@@ -587,26 +591,26 @@ public class BasicFunctionalityUnitTest {
         String example2digit = "stringstring11";
 
         Assert.assertThat(regex, matchesExactly(example + example));
-        Assert.assertThat(regex, not(matchesExactly(example2digit)));
+        Assert.assertThat(regex, IsNot.not(matchesExactly(example2digit)));
     }
 
     @Test
     public void multiplyWith1NumProduceSameAsCountResult() throws Exception {
-        VerbalExpression regex = regex().multiple("a", 1).build();
+        VerbalExpression regex = VerbalExpression.regex().multiple("a", 1).build();
 
-        Assert.assertThat(regex, equalToRegex(regex().find("a").count(1)));
+        Assert.assertThat(regex, EqualToRegexMatcher.equalToRegex(VerbalExpression.regex().find("a").count(1)));
     }
 
     @Test
     public void multiplyWith2NumProduceSameAsCountRangeResult() throws Exception {
-        VerbalExpression regex = regex().multiple("a", 1, 2).build();
+        VerbalExpression regex = VerbalExpression.regex().multiple("a", 1, 2).build();
 
-        Assert.assertThat(regex, equalToRegex(regex().find("a").count(1, 2)));
+        Assert.assertThat(regex, EqualToRegexMatcher.equalToRegex(VerbalExpression.regex().find("a").count(1, 2)));
     }
 
     @Test
     public void atLeast1HaveSameEffectAsOneOrMore() throws Exception {
-        VerbalExpression regex = regex().find("a").atLeast(1).build();
+        VerbalExpression regex = VerbalExpression.regex().find("a").atLeast(1).build();
 
         String matched = "aaaaaa";
         String oneMatchedExactly = "a";
@@ -615,14 +619,14 @@ public class BasicFunctionalityUnitTest {
 
         Assert.assertThat(regex, matchesExactly(matched));
         Assert.assertThat(regex, matchesExactly(oneMatchedExactly));
-        Assert.assertThat(regex, not(matchesExactly(oneMatched)));
+        Assert.assertThat(regex, IsNot.not(matchesExactly(oneMatched)));
         Assert.assertThat(regex, TestMatchMatcher.matchesTo(oneMatched));
         Assert.assertThat(regex, CoreMatchers.not(TestMatchMatcher.matchesTo(empty)));
     }
 
     @Test
     public void oneOreMoreSameAsAtLeast1() throws Exception {
-        VerbalExpression regexWithOneOrMore = regex().find("a").oneOrMore().build();
+        VerbalExpression regexWithOneOrMore = VerbalExpression.regex().find("a").oneOrMore().build();
 
         String matched = "aaaaaa";
         String oneMatchedExactly = "a";
@@ -631,14 +635,14 @@ public class BasicFunctionalityUnitTest {
 
         Assert.assertThat(regexWithOneOrMore, matchesExactly(matched));
         Assert.assertThat(regexWithOneOrMore, matchesExactly(oneMatchedExactly));
-        Assert.assertThat(regexWithOneOrMore, not(matchesExactly(oneMatched)));
+        Assert.assertThat(regexWithOneOrMore, IsNot.not(matchesExactly(oneMatched)));
         Assert.assertThat(regexWithOneOrMore, TestMatchMatcher.matchesTo(oneMatched));
         Assert.assertThat(regexWithOneOrMore, CoreMatchers.not(TestMatchMatcher.matchesTo(empty)));
     }
 
     @Test
     public void atLeast0HaveSameEffectAsZeroOrMore() throws Exception {
-        VerbalExpression regex = regex().find("a").atLeast(0).build();
+        VerbalExpression regex = VerbalExpression.regex().find("a").atLeast(0).build();
 
         String matched = "aaaaaa";
         String oneMatchedExactly = "a";
@@ -647,14 +651,14 @@ public class BasicFunctionalityUnitTest {
 
         Assert.assertThat(regex, matchesExactly(matched));
         Assert.assertThat(regex, matchesExactly(oneMatchedExactly));
-        Assert.assertThat(regex, not(matchesExactly(oneMatched)));
+        Assert.assertThat(regex, IsNot.not(matchesExactly(oneMatched)));
         Assert.assertThat(regex, TestMatchMatcher.matchesTo(empty));
         Assert.assertThat(regex, matchesExactly(empty));
     }
 
     @Test
     public void zeroOreMoreSameAsAtLeast0() throws Exception {
-        VerbalExpression regexWithOneOrMore = regex().find("a").zeroOrMore().build();
+        VerbalExpression regexWithOneOrMore = VerbalExpression.regex().find("a").zeroOrMore().build();
 
         String matched = "aaaaaa";
         String oneMatchedExactly = "a";
@@ -663,7 +667,7 @@ public class BasicFunctionalityUnitTest {
 
         Assert.assertThat(regexWithOneOrMore, matchesExactly(matched));
         Assert.assertThat(regexWithOneOrMore, matchesExactly(oneMatchedExactly));
-        Assert.assertThat(regexWithOneOrMore, not(matchesExactly(oneMatched)));
+        Assert.assertThat(regexWithOneOrMore, IsNot.not(matchesExactly(oneMatched)));
         Assert.assertThat(regexWithOneOrMore, TestMatchMatcher.matchesTo(oneMatched));
         Assert.assertThat(regexWithOneOrMore, TestMatchMatcher.matchesTo(empty));
         Assert.assertThat(regexWithOneOrMore, matchesExactly(empty));
@@ -671,7 +675,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testOneOf() {
-        VerbalExpression testRegex = new VerbalExpression.Builder()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .startOfLine()
                 .oneOf("abc", "def")
                 .build();
@@ -683,13 +687,13 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testOneOfWithCapture() {
-        VerbalExpression testRegex = regex()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .capture()
                 .oneOf("abc", "def")
                 .build();
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("defzzz"));
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
-        Assert.assertThat("Doesn't start with abc or def", testRegex, not(matchesExactly("xyzabcefg")));
+        Assert.assertThat("Doesn't start with abc or def", testRegex, IsNot.not(matchesExactly("xyzabcefg")));
 
         Assert.assertThat(testRegex.getText("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcdef"));
         Assert.assertThat(testRegex.getText("xxxdefzzz", 1), CoreMatchers.equalTo("def"));
@@ -698,14 +702,14 @@ public class BasicFunctionalityUnitTest {
     @Test
     public void testOneOfWithNamedCapture() {
         String captureName = "test";
-        VerbalExpression testRegex = regex()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .capture(captureName)
                 .oneOf("abc", "def")
                 .build();
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("defzzz"));
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
         Assert.assertThat("Doesn't start with abc or def",
-                testRegex, not(matchesExactly("xyzabcefg")));
+                testRegex, IsNot.not(matchesExactly("xyzabcefg")));
 
         Assert.assertThat(testRegex.getText("xxxabcdefzzz", captureName),
                 CoreMatchers.equalTo("abcdef"));
@@ -715,14 +719,14 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testOneOfWithClosedCapture() {
-        VerbalExpression testRegex = regex()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .capture()
                 .oneOf("abc", "def")
                 .endCapt()
                 .build();
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("defzzz"));
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
-        Assert.assertThat("Doesn't start with abc or def", testRegex, not(matchesExactly("xyzabcefg")));
+        Assert.assertThat("Doesn't start with abc or def", testRegex, IsNot.not(matchesExactly("xyzabcefg")));
 
         Assert.assertThat(testRegex.getText("xxxabcdefzzz", 1), CoreMatchers.equalTo("abcdef"));
         Assert.assertThat(testRegex.getText("xxxdefzzz", 1), CoreMatchers.equalTo("def"));
@@ -731,7 +735,7 @@ public class BasicFunctionalityUnitTest {
     @Test
     public void testOneOfWithClosedNamedCapture() {
         String captureName = "test";
-        VerbalExpression testRegex = regex()
+        VerbalExpression testRegex = VerbalExpression.regex()
                 .capture(captureName)
                 .oneOf("abc", "def")
                 .endCapt()
@@ -739,7 +743,7 @@ public class BasicFunctionalityUnitTest {
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("defzzz"));
         Assert.assertThat("Starts with abc or def", testRegex, TestMatchMatcher.matchesTo("abczzz"));
         Assert.assertThat("Doesn't start with abc or def",
-                testRegex, not(matchesExactly("xyzabcefg")));
+                testRegex, IsNot.not(matchesExactly("xyzabcefg")));
 
         Assert.assertThat(testRegex.getText("xxxabcdefzzz", captureName),
                 CoreMatchers.equalTo("abcdef"));
@@ -749,8 +753,8 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void shouldAddMaybeWithOneOfFromAnotherBuilder() {
-	VerbalExpression.Builder namePrefix = regex().oneOf("Mr.", "Ms.");
-	VerbalExpression name = regex()
+	VerbalExpression.Builder namePrefix = VerbalExpression.regex().oneOf("Mr.", "Ms.");
+	VerbalExpression name = VerbalExpression.regex()
 		.maybe(namePrefix)
 		.space()
 		.zeroOrMore()
@@ -766,7 +770,7 @@ public class BasicFunctionalityUnitTest {
     @Test
     public void testListOfTextGroups() {
         String text = "SampleHelloWorldString";
-        VerbalExpression regex = regex()
+        VerbalExpression regex = VerbalExpression.regex()
                 .capt()
                 .oneOf("Hello", "World")
                 .endCapt()
@@ -786,7 +790,7 @@ public class BasicFunctionalityUnitTest {
 
     @Test
     public void testWordBoundary() {
-        VerbalExpression regex = regex()
+        VerbalExpression regex = VerbalExpression.regex()
                 .capture()
                 .wordBoundary().then("o").word().oneOrMore().wordBoundary()
                 .endCapture()

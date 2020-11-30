@@ -23,12 +23,12 @@ import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class TableRow {
 
-    private final HashMap<ColumnIdentifier<?>, Object> data = new HashMap<>();
+    private final Map<ColumnIdentifier<?>, Object> data = SeleneUtils.emptyMap();
 
     public TableRow() { }
 

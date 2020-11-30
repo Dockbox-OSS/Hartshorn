@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -36,7 +35,7 @@ import java.util.stream.Collectors;
 public class Handler implements IHandler {
     private final Class<? extends Event> eventType;
 
-    private final Set<Handler> supertypeHandlers = new HashSet<>();
+    private final Set<Handler> supertypeHandlers = SeleneUtils.emptySet();
 
     private final SortedSet<InvokeWrapper> invokers = new TreeSet<>(InvokeWrapper.COMPARATOR);
 

@@ -75,7 +75,6 @@ public final class NeutrinoObjectMapperFactory implements ObjectMapperFactory {
     }
     private static NeutrinoObjectMapperFactory INSTANCE;
 
-    @Deprecated
     public static ObjectMapperFactory getInstance() {
         if (null == INSTANCE) {
             INSTANCE = new NeutrinoObjectMapperFactory(false, Setting::comment, Class::newInstance);

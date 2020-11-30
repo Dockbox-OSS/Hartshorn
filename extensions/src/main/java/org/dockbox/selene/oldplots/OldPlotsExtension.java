@@ -25,16 +25,16 @@ import org.dockbox.selene.core.server.ServerReference;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.construct.ConstructionUtil;
 import org.dockbox.selene.core.util.extension.Extension;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.integrated.data.table.Table;
-import org.dockbox.selene.integrated.sql.properties.SQLColumnProperty;
 import org.dockbox.selene.integrated.sql.dialects.sqlite.SQLiteMan;
 import org.dockbox.selene.integrated.sql.dialects.sqlite.SQLitePathProperty;
+import org.dockbox.selene.integrated.sql.properties.SQLColumnProperty;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 @Extension(id = "oldplots", name = "OldPlots",
@@ -64,7 +64,7 @@ public class OldPlotsExtension extends ServerReference {
         Table plots = man.getTable("plot");
         plots = plots.where(OldPlotsIdentifiers.UUID, source.getUniqueId().toString());
 
-        List<Text> plotContent = new ArrayList<>();
+        List<Text> plotContent = SeleneUtils.emptyList();
         plots.forEach(row -> {
             // ID, world, x,y
             Text plotLine = Text.of("$3 - $2#{0} : $1{1}$2, $1{2},{3}");

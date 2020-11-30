@@ -24,6 +24,7 @@ import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -134,8 +135,8 @@ public class SpongeItem extends Item<ItemStack> {
     @Override
     public List<Enchant> getEnchantments() {
         List<org.spongepowered.api.item.enchantment.Enchantment> enchantments = this.getReference()
-                .map(i -> i.get(Keys.ITEM_ENCHANTMENTS).orElse(new ArrayList<>()))
-                .orElse(new ArrayList<>());
+                .map(i -> i.get(Keys.ITEM_ENCHANTMENTS).orElse(SeleneUtils.emptyList()))
+                .orElse(SeleneUtils.emptyList());
         return enchantments.stream().map(SpongeConversionUtil::fromSponge).filter(Exceptional::isPresent).map(Exceptional::get).collect(Collectors.toList());
     }
 

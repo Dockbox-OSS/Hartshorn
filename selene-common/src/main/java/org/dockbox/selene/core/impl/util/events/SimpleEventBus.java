@@ -34,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +48,7 @@ public class SimpleEventBus implements EventBus {
     /**
      A map of all listening objects with their associated {@link IWrapper}s.
      */
-    protected static final Map<Object, Set<IWrapper>> listenerToInvokers = new HashMap<>();
+    protected static final Map<Object, Set<IWrapper>> listenerToInvokers = SeleneUtils.emptyMap();
 
     /**
      The internal registry of handlers for each event.
@@ -60,7 +59,7 @@ public class SimpleEventBus implements EventBus {
      The internal map of {@link AbstractEventParamProcessor}s per annotation per stage.
      */
     // TODO: Refactor to Registry structure once S124 is accepted
-    protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = new HashMap<>();
+    protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = SeleneUtils.emptyMap();
 
     @NotNull
     @Override
@@ -135,7 +134,7 @@ public class SimpleEventBus implements EventBus {
      @return The invokers
      */
     protected static Set<IWrapper> getInvokers(Object object) {
-        Set<IWrapper> result = new LinkedHashSet<>();
+        Set<IWrapper> result = SeleneUtils.emptySet();
         for (Method method : AccessHelper.getMethodsRecursively(object.getClass())) {
             Listener annotation = AccessHelper.getAnnotationRecursively(method, Listener.class);
             if (annotation != null) {
@@ -190,7 +189,7 @@ public class SimpleEventBus implements EventBus {
     @Override
     public void registerProcessors(@NotNull AbstractEventParamProcessor<?> @NotNull ... processors) {
         for (AbstractEventParamProcessor<?> processor : processors) {
-            parameterProcessors.putIfAbsent(processor.getAnnotationClass(), new HashMap<>());
+            parameterProcessors.putIfAbsent(processor.getAnnotationClass(), SeleneUtils.emptyMap());
             parameterProcessors.get(processor.getAnnotationClass()).put(processor.targetStage(), processor);
         }
     }

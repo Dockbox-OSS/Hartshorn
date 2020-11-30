@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -72,12 +71,12 @@ public class Table {
      */
     public Table(ColumnIdentifier<?>... columns) {
         this.identifiers = columns;
-        this.rows = new CopyOnWriteArrayList<>();
+        this.rows = SeleneUtils.emptyConcurrentList();
     }
 
     public Table(Collection<ColumnIdentifier<?>> columns) {
         this.identifiers = columns.toArray(new ColumnIdentifier[0]);
-        this.rows = new CopyOnWriteArrayList<>();
+        this.rows = SeleneUtils.emptyConcurrentList();
     }
 
     /**
@@ -207,7 +206,7 @@ public class Table {
         if (!this.hasColumn(column))
             throw new UnknownIdentifierException("Cannot look up a column that does not exist");
 
-        Collection<TableRow> filteredRows = new ArrayList<>();
+        Collection<TableRow> filteredRows = SeleneUtils.emptyList();
         for (TableRow row : this.rows) {
             Exceptional<T> value = row.getValue(column);
             if (!value.isPresent()) continue;
@@ -280,7 +279,7 @@ public class Table {
      */
     public <T> Table join(@NotNull Table otherTable, ColumnIdentifier<T> column, Merge merge, boolean populateEmptyEntries) throws EmptyEntryException, IdentifierMismatchException {
         if (this.hasColumn(column) && otherTable.hasColumn(column)) {
-            List<ColumnIdentifier<?>> mergedIdentifiers = new ArrayList<>();
+            List<ColumnIdentifier<?>> mergedIdentifiers = SeleneUtils.emptyList();
             for (ColumnIdentifier<?> identifier : SeleneUtils.addAll(this.getIdentifiers(), otherTable.getIdentifiers())) {
                 if (mergedIdentifiers.contains(identifier)) continue;
                 mergedIdentifiers.add(identifier);
@@ -541,7 +540,7 @@ public class Table {
     private <T> Exceptional<T> convertRowTo(Class<T> type, TableRow row, boolean injectable) {
         return SeleneUtils.tryCreate(type, fieldName -> {
             ColumnIdentifier<?> identifier = this.getIdentifier(fieldName);
-            return row.getValue(identifier).orElse(null);
+            return row.getValue(identifier).orNull();
         }, injectable);
     }
 

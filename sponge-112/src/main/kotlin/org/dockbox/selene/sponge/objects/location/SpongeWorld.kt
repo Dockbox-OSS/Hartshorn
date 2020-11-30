@@ -42,7 +42,7 @@ class SpongeWorld(
     }
 
     fun getReference(): org.spongepowered.api.world.World? {
-        return reference.get().orElse(null)
+        return reference.get().orNull()
     }
 
     private fun referenceExists(): Boolean {

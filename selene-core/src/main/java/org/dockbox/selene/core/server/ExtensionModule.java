@@ -19,8 +19,9 @@ package org.dockbox.selene.core.server;
 
 import com.google.inject.AbstractModule;
 
+import org.dockbox.selene.core.util.SeleneUtils;
+
 import java.util.Collection;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 final class ExtensionModule extends AbstractModule {
 
@@ -43,7 +44,7 @@ final class ExtensionModule extends AbstractModule {
         }
     }
 
-    private final Collection<InternalBinding<Object>> bindings = new CopyOnWriteArrayList<>();
+    private final Collection<InternalBinding<Object>> bindings = SeleneUtils.emptyConcurrentList();
 
     @Override
     protected void configure() {

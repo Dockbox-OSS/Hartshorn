@@ -33,7 +33,6 @@ import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.text.Text;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -84,13 +83,13 @@ public class SpongeArgumentTypeValue extends AbstractArgumentValue<CommandElemen
             return this.argument.convert(
                     SpongeConversionUtil.fromSponge(source).get(),
                     args.next()
-            ).orElse(null);
+            ).orNull();
         }
 
         @Override
         public List<String> complete(@NotNull CommandSource src, CommandArgs args, @NotNull CommandContext context) {
             try {
-                return new ArrayList<>(this.argument.getSuggestions(
+                return SeleneUtils.asList(this.argument.getSuggestions(
                         SpongeConversionUtil.fromSponge(src).get(),
                         args.next()
                 ));

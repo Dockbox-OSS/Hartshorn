@@ -23,7 +23,6 @@ package org.dockbox.selene.core.util.regex;
 
 import org.dockbox.selene.core.util.SeleneUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -892,7 +891,7 @@ public final class VerbalExpression {
      @return list of extracted groups
      */
     public List<String> getTextGroups(final String toTest, final int group) {
-        List<String> groups = new ArrayList<>();
+        List<String> groups = SeleneUtils.emptyList();
         Matcher m = this.pattern.matcher(toTest);
         while (m.find()) {
             groups.add(m.group(group));

@@ -67,6 +67,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -76,11 +78,10 @@ import java.util.stream.Stream;
 public enum SeleneUtils {
     ;
 
-    private static final Random random = new Random();
-
-    private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = new ConcurrentHashMap<>();
     public static final int MAXIMUM_DECIMALS = 15;
 
+    private static final Random random = new Random();
+    private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = emptyConcurrentMap();
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap =
             ofEntries(entry(boolean.class, Boolean.class),
                     entry(byte.class, Byte.class),
@@ -97,7 +98,7 @@ public enum SeleneUtils {
         if (entries.length == 0) { // implicit null check of entries array
             return Collections.emptyMap();
         } else {
-            Map<K, V> map = new HashMap<>();
+            Map<K, V> map = emptyMap();
             for (Entry<? extends K, ? extends V> entry : entries) {
                 map.put(entry.getKey(), entry.getValue());
             }
@@ -674,8 +675,28 @@ public enum SeleneUtils {
         return this.convertGenericArray(merged);
     }
 
+    public static <T> List<T> emptyConcurrentList() {
+        return new CopyOnWriteArrayList<>();
+    }
+
+    public static <T> Set<T> emptyConcurrentSet() {
+        return ConcurrentHashMap.newKeySet();
+    }
+
+    public static <K, V> ConcurrentMap<K, V> emptyConcurrentMap() {
+        return new ConcurrentHashMap<>();
+    }
+
     public static <T> List<T> emptyList() {
         return new ArrayList<>();
+    }
+
+    public static <T> Set<T> emptySet() {
+        return new HashSet<>();
+    }
+
+    public static <K, V> Map<K, V> emptyMap() {
+        return new HashMap<>();
     }
 
     @SuppressWarnings("unchecked")
@@ -704,7 +725,11 @@ public enum SeleneUtils {
     @Contract(value = "_ -> new", pure = true)
     @SafeVarargs
     public static <T> List<T> asList(T... objects) {
-        return Arrays.asList(objects);
+        return asList(Arrays.asList(objects));
+    }
+
+    public static <T> List<T> asList(Collection<T> collection) {
+        return new ArrayList<>(collection);
     }
 
     @NotNull
@@ -712,6 +737,12 @@ public enum SeleneUtils {
     @SafeVarargs
     public static <T> Set<T> asSet(T... objects) {
         return new HashSet<>(asList(objects));
+    }
+
+    @NotNull
+    @Contract(value = "_ -> new")
+    public static <T> Set<T> asSet(Collection<T> collection) {
+        return new HashSet<>(collection);
     }
 
     @UnmodifiableView
@@ -723,7 +754,7 @@ public enum SeleneUtils {
     }
 
     public static <T> List<T> asUnmodifiableList(Collection<T> collection) {
-        return Collections.unmodifiableList(new ArrayList<>(collection));
+        return Collections.unmodifiableList(emptyList());
     }
 
     @UnmodifiableView
@@ -839,7 +870,7 @@ public enum SeleneUtils {
     @NotNull
     @Unmodifiable
     public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule, boolean skipParents) {
-        List<Method> annotatedMethods = new ArrayList<>();
+        List<Method> annotatedMethods = emptyList();
         for (Method method : asList(skipParents ? clazz.getMethods() : clazz.getDeclaredMethods())) {
             if (!method.isAccessible()) method.setAccessible(true);
             if (method.isAnnotationPresent(annotation) && rule.test(method.getAnnotation(annotation))) {
@@ -858,7 +889,7 @@ public enum SeleneUtils {
     public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation, boolean skipParents) {
         Reflections reflections = new Reflections(prefix);
         Set<Class<?>> types = reflections.getTypesAnnotatedWith(annotation, !skipParents);
-        return new ArrayList<>(types);
+        return asList(types);
     }
 
     public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation) {
@@ -920,7 +951,7 @@ public enum SeleneUtils {
 
     @SuppressWarnings("unchecked")
     public static <T extends InjectorProperty<?>> List<T> getSubProperties(Class<T> propertyFilter, InjectorProperty<?>... properties) {
-        List<T> values = new ArrayList<>();
+        List<T> values = emptyList();
         for (InjectorProperty<?> property : properties) {
             if (isAssignableFrom(propertyFilter, property.getClass())) values.add((T) property);
         }
@@ -952,7 +983,7 @@ public enum SeleneUtils {
     }
 
     public static <T> Exceptional<T> tryCreate(Class<T> type, Function<String, Object> valueCollector, boolean inject) {
-        T instance = inject ? Selene.getInstance(type) : SeleneUtils.getInstance(type);
+        T instance = inject ? Selene.getInstance(type) : getInstance(type);
         if (null != instance)
             try {
                 for (Field field : type.getDeclaredFields()) {
@@ -971,7 +1002,7 @@ public enum SeleneUtils {
                         //noinspection CallToSuspiciousStringMethod
                         if (!"".equals(property.setter()) && hasMethod(type, property.setter())) {
                             Class<?> parameterType = field.getType();
-                            if (!Void.class.equals(property.accepts())) parameterType = property.accepts();
+                            if (isNotVoid(property.accepts())) parameterType = property.accepts();
 
                             Method method = type.getMethod(property.setter(), parameterType);
                             method.invoke(instance, value);
@@ -1016,6 +1047,10 @@ public enum SeleneUtils {
         return field.isAnnotationPresent(Property.class)
                 ? field.getAnnotation(Property.class).value()
                 : field.getName();
+    }
+
+    public static boolean isNotVoid(Class<?> type) {
+        return !(type.equals(Void.class) || type == Void.TYPE);
     }
 
     public enum HttpStatus {

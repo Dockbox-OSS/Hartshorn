@@ -39,8 +39,6 @@ import org.jooq.impl.DSL;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +53,7 @@ import java.util.Map;
  */
 public abstract class SQLMan<T> implements ISQLMan<T> {
 
-    private final Map<String, ColumnIdentifier<?>> identifiers = new HashMap<>();
+    private final Map<String, ColumnIdentifier<?>> identifiers = SeleneUtils.emptyMap();
     private Boolean resetOnStore;
 
     /**
@@ -138,7 +136,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     }
 
     private List<ColumnIdentifier<?>> getIdentifiers(Result<Record> results) {
-        List<ColumnIdentifier<?>> identifiers = new ArrayList<>();
+        List<ColumnIdentifier<?>> identifiers = SeleneUtils.emptyList();
         for (Field<?> field : results.get(0).fields()) {
             String name = field.getName();
 
@@ -218,7 +216,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
                 // If the identifier in our table is null, it is possible we are working with a filtered row. In this
                 // case we accept null into the remote table.
                 if (null != identifier) {
-                    values[i] = row.getValue(identifier).orElse(null);
+                    values[i] = row.getValue(identifier).orNull();
                 } else values[i] = null;
             }
             insertStep.values(values);

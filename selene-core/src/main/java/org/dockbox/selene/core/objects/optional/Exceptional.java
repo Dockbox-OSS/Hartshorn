@@ -186,6 +186,10 @@ public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
         return null != this.value ? this.value : other;
     }
 
+    public T orNull() {
+        return orElse(null);
+    }
+
     public T orElseGet(Supplier<? extends T> other) {
         return null != this.value ? this.value : other.get();
     }

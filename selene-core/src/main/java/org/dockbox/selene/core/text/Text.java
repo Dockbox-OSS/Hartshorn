@@ -24,13 +24,12 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.DatatypeConverter;
@@ -64,7 +63,7 @@ public class Text {
     private ClickAction<?> clickAction;
     private HoverAction<?> hoverAction;
     private ShiftClickAction<?> shiftClickAction;
-    private final List<Text> extra = new CopyOnWriteArrayList<>();
+    private final List<Text> extra = SeleneUtils.emptyConcurrentList();
 
     public Text(Object... objects) {
         if (0 < objects.length) {
@@ -154,7 +153,7 @@ public class Text {
     }
 
     public List<Text> getParts() {
-        List<Text> parts = new ArrayList<>();
+        List<Text> parts = SeleneUtils.emptyList();
         parts.add(this);
         parts.addAll(this.getExtra());
         return parts;
