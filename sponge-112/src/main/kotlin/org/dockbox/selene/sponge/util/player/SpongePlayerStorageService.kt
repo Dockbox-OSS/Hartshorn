@@ -49,8 +49,9 @@ class SpongePlayerStorageService : DefaultPlayerStorageService() {
             var player = Exceptional.empty<Player>()
             val ouss = Exceptional.of(Sponge.getServiceManager().provide(UserStorageService::class.java))
             val ou =
-                    if (obj is UUID) ouss.flatMap { Exceptional.of(it[obj]) }
-                    else ouss.flatMap { Exceptional.of(it[obj.toString()]) }
+                    if (obj is UUID) {
+                        ouss.flatMap { uss -> run { Exceptional.of(uss[obj]) } }
+                    } else ouss.flatMap { uss -> run { Exceptional.of(uss[obj.toString()]) } }
             if (ou.isPresent) player = ou.map { SpongePlayer(it.uniqueId, it.name) }
             player
         }
