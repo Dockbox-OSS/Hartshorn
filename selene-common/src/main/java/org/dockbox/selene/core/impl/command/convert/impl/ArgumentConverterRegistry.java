@@ -24,6 +24,7 @@ import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.exceptions.ConstraintException;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.DurationParser;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LocationParser;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.PlayerParser;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.UuidParser;
@@ -42,6 +43,7 @@ import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.dockbox.selene.core.util.player.PlayerStorageService;
 import org.dockbox.selene.core.util.world.WorldStorageService;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -206,6 +208,13 @@ public final class ArgumentConverterRegistry {
             s -> Selene.getInstance(ExtensionManager.class).getHeader(s),
             Selene.getInstance(ExtensionManager.class).getRegisteredExtensionIds()
                     .toArray(new String[0])
+    );
+
+    public static final ArgumentConverter<Duration> DURATION = new ConstantArgumentConverter<>(
+            new String[]{"duration", "time"},
+            Duration.class,
+            s -> new DurationParser().parse(new Argument<>(s, "duration")).orElse(Duration.ZERO),
+            Duration.ZERO
     );
 
 }

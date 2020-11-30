@@ -43,12 +43,15 @@ import org.dockbox.selene.core.util.player.PlayerStorageService;
 import org.dockbox.selene.core.util.world.WorldStorageService;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 public class TypeArgumentParsers {
@@ -232,7 +235,7 @@ public class TypeArgumentParsers {
      Additionally, allows you to pass a Function<String, R> which parses the String values before they are are returned
      as a List.
 
-     @param R
+     @param <R>
      The return type
      */
     public static class ListParser<R> extends AbstractTypeArgumentParser<List<R>> {
@@ -287,8 +290,8 @@ public class TypeArgumentParsers {
 
             Map<String, String> map = SeleneUtils.emptyConcurrentMap();
             for (String entry : commandValue.getValue().split(this.rowDelimiter + "")) {
-                if (entry.contains(this.valueDelimiter +"")) {
-                    String[] kv = entry.split(this.valueDelimiter +"");
+                if (entry.contains(this.valueDelimiter + "")) {
+                    String[] kv = entry.split(this.valueDelimiter + "");
                     if (2 == kv.length) {
                         map.put(kv[0], kv[1]);
                     }
@@ -300,14 +303,12 @@ public class TypeArgumentParsers {
     }
 
     /**
-     * Parses a list of block ID's, separated by ',' into a list of [BaseBlock] instances. If the block ID is in the format
-     * 'id:data' it will use the data from the block ID, otherwise it defaults to zero (0).
-     *
-     * Delimiter is always ','
-     *
-     * Does not support named ID's like 'minecraft:stone'. Does not support patterns or masks.
-     *
-     * @constructor Create empty World edit block parser
+     Parses a list of block ID's, separated by ',' into a list of [BaseBlock] instances. If the block ID is in the format
+     'id:data' it will use the data from the block ID, otherwise it defaults to zero (0).
+     <p>
+     Delimiter is always ','
+     <p>
+     Does not support named ID's like 'minecraft:stone'. Does not support patterns or masks.
      */
     public static class WorldEditBlockParser extends ListParser<BaseBlock> {
 
@@ -366,6 +367,52 @@ public class TypeArgumentParsers {
                     .getPatternFactory()
                     .parseFromInput(commandValue.getValue(), ctx)
             );
+        }
+    }
+
+    public static class DurationParser extends AbstractTypeArgumentParser<Duration> {
+
+        private final java.util.regex.Pattern minorTimeString =
+                java.util.regex.Pattern.compile("^\\d+$");
+        private final java.util.regex.Pattern timeString =
+                java.util.regex.Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
+
+        private static final int secondsInMinute = 60;
+        private static final int secondsInHour = 60 * DurationParser.secondsInMinute;
+        private static final int secondsInDay = 24 * DurationParser.secondsInHour;
+        private static final int secondsInWeek = 7 * DurationParser.secondsInDay;
+
+        @NotNull
+        @Override
+        public Exceptional<Duration> parse(@NotNull CommandValue<String> commandValue) {
+            String s = commandValue.getValue();
+            // First, if just digits, return the number in seconds.
+
+            if (this.minorTimeString.matcher(s).matches()) {
+                return Exceptional.of(Duration.ofSeconds(Long.parseUnsignedLong(s)));
+            }
+
+            Matcher m = this.timeString.matcher(s);
+            if (m.matches()) {
+                long time = this.amount(m.group(2), DurationParser.secondsInWeek);
+                time += this.amount(m.group(4), DurationParser.secondsInDay);
+                time += this.amount(m.group(6), DurationParser.secondsInHour);
+                time += this.amount(m.group(8), DurationParser.secondsInMinute);
+                time += this.amount(m.group(10), 1);
+
+                if (time > 0) {
+                    return Exceptional.of(Duration.ofSeconds(time));
+                }
+            }
+            return Exceptional.empty();
+        }
+
+        private long amount(@Nullable String g, int multipler) {
+            if (null != g && !g.isEmpty()) {
+                return multipler * Long.parseUnsignedLong(g);
+            }
+
+            return 0;
         }
     }
 }
