@@ -30,14 +30,14 @@ import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.util.exceptions.ExceptionHelper;
+import org.dockbox.selene.core.ExceptionHelper;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.core.util.inject.SeleneInjectModule;
 import org.dockbox.selene.core.util.player.PlayerStorageService;
-import org.dockbox.selene.core.util.text.BroadcastService;
+import org.dockbox.selene.core.BroadcastService;
 import org.dockbox.selene.core.ThreadUtils;
-import org.dockbox.selene.core.util.world.WorldStorageService;
+import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.test.extension.IntegratedTestExtension;
 
 public class TestInjector extends SeleneInjectModule {

@@ -64,6 +64,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -77,6 +78,7 @@ public enum SeleneUtils {
     ;
 
     public static final int MAXIMUM_DECIMALS = 15;
+    public static final UUID EMPTY_UUID = UUID.fromString("00000000-1111-2222-3333-000000000000");
 
     private static final Random random = new Random();
     private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = emptyConcurrentMap();

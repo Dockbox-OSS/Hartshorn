@@ -40,7 +40,7 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.util.player.PlayerStorageService;
-import org.dockbox.selene.core.util.world.WorldStorageService;
+import org.dockbox.selene.core.WorldStorageService;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

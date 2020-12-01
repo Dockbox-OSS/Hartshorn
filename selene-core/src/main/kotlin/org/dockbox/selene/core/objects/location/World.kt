@@ -19,9 +19,9 @@ package org.dockbox.selene.core.objects.location
 
 import java.util.*
 import kotlin.collections.HashMap
+import org.dockbox.selene.core.SeleneUtils
 import org.dockbox.selene.core.objects.tuple.Vector3N
 import org.dockbox.selene.core.objects.user.Gamemode
-import org.dockbox.selene.core.util.uuid.UUIDUtil
 
 abstract class World(
         open var worldUniqueId: UUID,
@@ -43,7 +43,7 @@ abstract class World(
     }
 
     private class EmptyWorld : World(
-            UUIDUtil.empty,
+            SeleneUtils.EMPTY_UUID,
             "EMPTY",
             false,
             Vector3N(0, 0, 0),

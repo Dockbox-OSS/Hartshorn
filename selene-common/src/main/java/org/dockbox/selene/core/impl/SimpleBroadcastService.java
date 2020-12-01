@@ -22,7 +22,7 @@ import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.player.PlayerStorageService;
-import org.dockbox.selene.core.util.text.BroadcastService;
+import org.dockbox.selene.core.BroadcastService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;

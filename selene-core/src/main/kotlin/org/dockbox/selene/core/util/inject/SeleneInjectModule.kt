@@ -22,11 +22,11 @@ import org.dockbox.selene.core.i18n.common.ResourceService
 import org.dockbox.selene.core.server.config.GlobalConfig
 import org.dockbox.selene.core.DiscordUtils
 import org.dockbox.selene.core.events.EventBus
-import org.dockbox.selene.core.util.exceptions.ExceptionHelper
+import org.dockbox.selene.core.ExceptionHelper
 import org.dockbox.selene.core.util.extension.ExtensionManager
 import org.dockbox.selene.core.util.files.ConfigurateManager
 import org.dockbox.selene.core.util.player.PlayerStorageService
-import org.dockbox.selene.core.util.text.BroadcastService
+import org.dockbox.selene.core.BroadcastService
 
 abstract class SeleneInjectModule : AbstractModule() {
 

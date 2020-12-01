@@ -41,7 +41,7 @@ import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.dockbox.selene.core.util.player.PlayerStorageService;
-import org.dockbox.selene.core.util.world.WorldStorageService;
+import org.dockbox.selene.core.WorldStorageService;
 
 import java.time.Duration;
 import java.util.Collection;

@@ -40,7 +40,7 @@ import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.util.exceptions.ExceptionHelper;
+import org.dockbox.selene.core.ExceptionHelper;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionManager;

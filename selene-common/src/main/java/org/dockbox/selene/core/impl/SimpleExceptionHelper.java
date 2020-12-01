@@ -19,7 +19,7 @@ package org.dockbox.selene.core.impl;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.exceptions.ExceptionHelper;
+import org.dockbox.selene.core.ExceptionHelper;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +50,7 @@ public class SimpleExceptionHelper implements ExceptionHelper {
     private static final String separator = "========================================";
 
     @Override
-    public void printFriendly(@NonNls @Nullable String message, @Nullable Throwable exception, @Nullable Boolean stacktrace) {
+    public void printFriendly(@NonNls @Nullable String message, @Nullable Throwable exception, boolean stacktrace) {
         Selene.log().error(SimpleExceptionHelper.separator);
         if (null != exception) {
             Selene.log().error("Exception: " + exception.getClass().getCanonicalName());
@@ -61,7 +61,7 @@ public class SimpleExceptionHelper implements ExceptionHelper {
                 String line = 0 < root.getLineNumber() ? "line " + root.getLineNumber() : "(internal call)";
                 Selene.log().error("Location: " + root.getFileName() + " " + line);
 
-                if (null != stacktrace && stacktrace) {
+                if (stacktrace) {
                     Throwable nextException = exception;
                     while (null != nextException) {
                         StackTraceElement[] trace = nextException.getStackTrace();
@@ -78,11 +78,11 @@ public class SimpleExceptionHelper implements ExceptionHelper {
     }
 
     @Override
-    public void printMinimal(@NonNls @Nullable String message, @Nullable Throwable exception, @Nullable Boolean stacktrace) {
+    public void printMinimal(@NonNls @Nullable String message, @Nullable Throwable exception, boolean stacktrace) {
         Selene.log().error(SimpleExceptionHelper.separator);
         if (null != exception && null != message && !"".equals(message)) {
             Selene.log().error(exception.getClass().getSimpleName() + ": " + message);
-            if (null != stacktrace && stacktrace) Selene.log().error(Arrays.toString(exception.getStackTrace()));
+            if (stacktrace) Selene.log().error(Arrays.toString(exception.getStackTrace()));
         }
     }
 

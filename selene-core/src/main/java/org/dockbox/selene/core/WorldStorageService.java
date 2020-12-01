@@ -15,17 +15,17 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util.world
+package org.dockbox.selene.core;
 
-import java.util.*
-import org.dockbox.selene.core.objects.location.World
-import org.dockbox.selene.core.objects.optional.Exceptional
+import org.dockbox.selene.core.objects.location.World;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 
-abstract class WorldStorageService {
+import java.util.List;
+import java.util.UUID;
 
-    abstract fun getLoadedWorlds(): List<World>
-    abstract fun getAllWorldUUIDs(): List<UUID>
-
-    abstract fun getWorld(name: String): Exceptional<World>
-    abstract fun getWorld(uuid: UUID): Exceptional<World>
+public interface WorldStorageService {
+    List<World> getLoadedWorlds();
+    List<UUID> getAllWorldUUIDs();
+    Exceptional<World> getWorld(String name);
+    Exceptional<World> getWorld(UUID uuid);
 }
