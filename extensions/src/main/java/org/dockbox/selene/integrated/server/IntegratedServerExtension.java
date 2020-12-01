@@ -41,8 +41,8 @@ import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction.RunCommand;
 import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
 import org.dockbox.selene.core.text.navigation.PaginationBuilder;
-import org.dockbox.selene.core.util.extension.ExtensionContext;
-import org.dockbox.selene.core.util.extension.ExtensionManager;
+import org.dockbox.selene.core.extension.ExtensionContext;
+import org.dockbox.selene.core.extension.ExtensionManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -113,7 +113,6 @@ public class IntegratedServerExtension implements IntegratedExtension {
                         0 == e.dependencies().length ? "None" : String.join("$3, $1", e.dependencies()),
                         e.requiresNMS(),
                         String.join("$3, $1", e.authors()),
-                        ec.getType().getString(),
                         ec.getSource()
                 )));
             }

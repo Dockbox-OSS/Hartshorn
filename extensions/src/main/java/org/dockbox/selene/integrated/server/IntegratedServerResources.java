@@ -43,8 +43,7 @@ enum IntegratedServerResources {
                     "$2Dependencies : $1{5}", "\n",
                     "$2Requires NMS : $1{6}", "\n",
                     "$2Author(s) : $1{7}", "\n",
-                    "$2Type : $1{8}", "\n",
-                    "$2Source : $1{9}", "\n",
+                    "$2Source : $1{8}", "\n",
                     SeleneUtils.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20)
             ), "selene.info.extension.block");
     static final ResourceEntry EXTENSION_UNKNOWN = new ExternalResourceEntry("$4Could not find extension with ID '{0}'", "selene.info.extension.unknown");

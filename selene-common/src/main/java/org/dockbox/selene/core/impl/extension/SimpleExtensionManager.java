@@ -25,10 +25,9 @@ import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.util.extension.ExtensionContext;
-import org.dockbox.selene.core.util.extension.ExtensionContext.ComponentType;
-import org.dockbox.selene.core.util.extension.ExtensionManager;
-import org.dockbox.selene.core.util.extension.status.ExtensionStatus;
+import org.dockbox.selene.core.extension.ExtensionContext;
+import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.extension.ExtensionStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,7 +92,6 @@ public class SimpleExtensionManager implements ExtensionManager {
 
             Selene.log().info(" - [" + type.getCanonicalName() + "]");
             SimpleExtensionContext context = new SimpleExtensionContext(
-                    ComponentType.INTERNAL_CLASS,
                     type.getCanonicalName(),
                     type,
                     type.getAnnotation(Extension.class)

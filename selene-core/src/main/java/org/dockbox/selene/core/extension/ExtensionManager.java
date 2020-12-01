@@ -15,24 +15,26 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util.extension
+package org.dockbox.selene.core.extension;
 
-import org.dockbox.selene.core.annotations.extension.Extension
-import org.dockbox.selene.core.util.extension.status.ExtensionStatus
+import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 
-interface ExtensionContext {
+import java.util.List;
 
-    var type: ComponentType
-    var source: String
-    var extensionClass: Class<*>
-    var extension: Extension
+public interface ExtensionManager {
 
-    fun addStatus(clazz: Class<*>, status: ExtensionStatus)
-    fun getStatus(clazz: Class<*>): ExtensionStatus?
+    Exceptional<ExtensionContext> getContext(Class<?> type);
+    Exceptional<ExtensionContext> getContext(String id);
 
-    enum class ComponentType(var string: String) {
-        INTERNAL_CLASS("Internal class"),
-        UNKNOWN("Unknown")
-    }
+    Exceptional<Extension> getHeader(Class<?> type);
+    Exceptional<Extension> getHeader(String id);
+
+    <T> Exceptional<T> getInstance(Class<T> type);
+    <T> Exceptional<T> getInstance(String id);
+
+    List<ExtensionContext> initialiseExtensions();
+
+    List<String> getRegisteredExtensionIds();
 
 }

@@ -32,7 +32,7 @@ import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.ExceptionHelper;
-import org.dockbox.selene.core.util.extension.ExtensionManager;
+import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.core.util.inject.SeleneInjectModule;
 import org.dockbox.selene.core.util.player.PlayerStorageService;

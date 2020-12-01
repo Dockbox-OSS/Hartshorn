@@ -28,7 +28,7 @@ import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.util.extension.ExtensionManager;
+import org.dockbox.selene.core.extension.ExtensionManager;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;

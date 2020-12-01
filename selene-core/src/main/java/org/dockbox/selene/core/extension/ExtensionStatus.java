@@ -15,10 +15,9 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util.extension.status
+package org.dockbox.selene.core.extension;
 
-enum class ExtensionStatus(val intValue: Int) {
-
+public enum ExtensionStatus {
     LOADED(1), FAILED(2), DISABLED(3), ERRORED(4),
 
     // Deprecated values are the negative equivalent of the values above, so they can easily be obtained using their intValue
@@ -26,14 +25,18 @@ enum class ExtensionStatus(val intValue: Int) {
     DEPRECATED_LOADED(-1), DEPRECATED_FAILED(-2), DEPRECATED_DISABLED(-3), DEPRECATED_ERRORED(-4)
     ;
 
-    companion object {
-        fun of(intValue: Int): ExtensionStatus {
-            return try {
-                values().first() { it.intValue == intValue }
-            } catch (e: NoSuchElementException) {
-                FAILED
-            }
-        }
+    private final int intValue;
+
+    ExtensionStatus(int intValue) {
+        this.intValue = intValue;
     }
 
+    public int getIntValue() {
+        return this.intValue;
+    }
+
+    public static ExtensionStatus of(int intValue) {
+        for (ExtensionStatus value : values()) if (value.intValue == intValue) return value;
+        return FAILED;
+    }
 }

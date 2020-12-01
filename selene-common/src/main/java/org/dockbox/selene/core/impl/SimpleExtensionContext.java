@@ -20,8 +20,8 @@ package org.dockbox.selene.core.impl;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.util.extension.ExtensionContext;
-import org.dockbox.selene.core.util.extension.status.ExtensionStatus;
+import org.dockbox.selene.core.extension.ExtensionContext;
+import org.dockbox.selene.core.extension.ExtensionStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +29,6 @@ import java.util.Map;
 
 public class SimpleExtensionContext implements ExtensionContext {
 
-    private ExtensionContext.ComponentType type;
     private String source;
     private Class<?> extensionClass;
     private Extension extension;
@@ -38,22 +37,10 @@ public class SimpleExtensionContext implements ExtensionContext {
     // only contain one value, however external extensions multiple classes marked as @Extension may be present.
     private final Map<Class<?>, ExtensionStatus> entryStatus = SeleneUtils.emptyConcurrentMap();
 
-    public SimpleExtensionContext(ComponentType type, String source, Class<?> extensionClass, Extension extension) {
-        this.setType(type);
+    public SimpleExtensionContext(String source, Class<?> extensionClass, Extension extension) {
         this.setSource(source);
         this.setExtensionClass(extensionClass);
         this.setExtension(extension);
-    }
-
-    @NotNull
-    @Override
-    public ComponentType getType() {
-        return this.type;
-    }
-
-    @Override
-    public void setType(@NotNull ExtensionContext.ComponentType type) {
-        this.type = type;
     }
 
     @NotNull
@@ -96,7 +83,7 @@ public class SimpleExtensionContext implements ExtensionContext {
                 + "]! Deprecated statuses should only be assigned automatically on annotation presence!");
 
         if (clazz.isAnnotationPresent(Deprecated.class))
-            this.entryStatus.put(clazz, ExtensionStatus.Companion.of(-status.getIntValue()));
+            this.entryStatus.put(clazz, ExtensionStatus.of(-status.getIntValue()));
         else this.entryStatus.put(clazz, status);
     }
 
