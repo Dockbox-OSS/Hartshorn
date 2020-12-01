@@ -15,29 +15,18 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.util;
+package org.dockbox.selene.core.exceptions.global;
 
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.text.navigation.PaginationBuilder;
-import org.dockbox.selene.core.ConstructionUtil;
-import org.jetbrains.annotations.NotNull;
-
-public class TestConstructionUtil implements ConstructionUtil {
-    @NotNull
-    @Override
-    public PaginationBuilder paginationBuilder() {
-        throw new UnsupportedOperationException("Pagination is not testable in common implementations, and should only be tested in the platform implementation");
+public class UncheckedSeleneException extends RuntimeException {
+    public UncheckedSeleneException(String message) {
+        super(message);
     }
 
-    @NotNull
-    @Override
-    public Item<?> item(@NotNull String id, int amount) {
-        return null;
+    public UncheckedSeleneException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    @NotNull
-    @Override
-    public Item<?> item(@NotNull String id) {
-        return null;
+    public UncheckedSeleneException(Throwable cause) {
+        super(cause);
     }
 }

@@ -15,6 +15,13 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.exceptions
+package org.dockbox.selene.core;
 
-class IllegalSourceException(s: String) : RuntimeException(s)
+import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.text.navigation.PaginationBuilder;
+
+public interface ConstructionUtil {
+    PaginationBuilder paginationBuilder();
+    Item<?> item(String id, int amount);
+    Item<?> item(String id);
+}

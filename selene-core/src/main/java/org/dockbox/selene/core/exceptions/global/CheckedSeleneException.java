@@ -15,6 +15,18 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.exceptions
+package org.dockbox.selene.core.exceptions.global;
 
-class ConstraintException(message: String) : RuntimeException(message)
+public class CheckedSeleneException extends Exception {
+    public CheckedSeleneException(String message) {
+        super(message);
+    }
+
+    public CheckedSeleneException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public CheckedSeleneException(Throwable cause) {
+        super(cause);
+    }
+}

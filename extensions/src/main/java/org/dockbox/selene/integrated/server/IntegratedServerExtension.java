@@ -39,7 +39,7 @@ import org.dockbox.selene.core.text.actions.ClickAction.RunCommand;
 import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
 import org.dockbox.selene.core.text.navigation.PaginationBuilder;
 import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.util.construct.ConstructionUtil;
+import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;

@@ -15,10 +15,13 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.exceptions
+package org.dockbox.selene.core.exceptions;
 
-/**
- * Checked exception which indicates if a event method or listener should be skipped. If the exception is thrown, the
- * method should not be invoked. This is to be respected by the underlying [org.dockbox.selene.core.util.events.EventBus].
- */
-class SkipEventException : Exception()
+import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
+
+public class ConfirmFailedException extends CheckedSeleneException {
+
+    public ConfirmFailedException(String message) {
+        super(message);
+    }
+}

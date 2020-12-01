@@ -28,7 +28,7 @@ import org.dockbox.selene.core.impl.SimpleBroadcastService;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.config.GlobalConfig;
-import org.dockbox.selene.core.util.construct.ConstructionUtil;
+import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.util.exceptions.ExceptionHelper;

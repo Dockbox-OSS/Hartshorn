@@ -15,16 +15,16 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util.construct
+package org.dockbox.selene.core.exceptions;
 
-import org.dockbox.selene.core.objects.item.Item
-import org.dockbox.selene.core.text.navigation.PaginationBuilder
+import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 
-interface ConstructionUtil {
-
-    fun paginationBuilder(): PaginationBuilder
-
-    fun item(id: String, amount: Int): Item<*>
-    fun item(id: String): Item<*>
-
+/**
+ * Checked exception which indicates if a event method or listener should be skipped. If the exception is thrown, the
+ * method should not be invoked. This is to be respected by the underlying [org.dockbox.selene.core.util.events.EventBus].
+ */
+public class SkipEventException extends CheckedSeleneException {
+    public SkipEventException() {
+        super("Skipping event");
+    }
 }
