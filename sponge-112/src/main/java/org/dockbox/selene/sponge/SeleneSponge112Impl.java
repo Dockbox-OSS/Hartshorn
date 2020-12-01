@@ -20,12 +20,11 @@ package org.dockbox.selene.sponge;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
+import org.dockbox.selene.core.DiscordUtils;
+import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
-import org.dockbox.selene.core.DiscordUtils;
-import org.dockbox.selene.core.MinecraftVersion;
-import org.dockbox.selene.core.util.library.LibraryArtifact;
 import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.selene.sponge.listeners.SpongePlayerListener;
@@ -132,14 +131,6 @@ public class SeleneSponge112Impl extends Selene {
     @Override
     public ServerType getServerType() {
         return ServerType.SPONGE;
-    }
-
-    @Override
-    protected LibraryArtifact[] getPlatformArtifacts() {
-        // Define libraries to download, specifically targeting Sponge.
-        // At the time of writing there are no additional libraries required for Sponge that aren't already shaded
-        // or marked as a dependency through Sponge.
-        return new LibraryArtifact[0];
     }
 
     @Override

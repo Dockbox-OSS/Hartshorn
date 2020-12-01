@@ -15,20 +15,22 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util.player
+package org.dockbox.selene.core;
 
-import java.util.*
-import org.dockbox.selene.core.i18n.common.Language
-import org.dockbox.selene.core.objects.optional.Exceptional
-import org.dockbox.selene.core.objects.user.Player
+import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.user.Player;
 
-interface PlayerStorageService {
+import java.util.List;
+import java.util.UUID;
 
-    fun getOnlinePlayers(): List<Player>
-    fun getPlayer(name: String): Exceptional<Player>
-    fun getPlayer(uuid: UUID): Exceptional<Player>
+public interface PlayerStorageService {
 
-    fun setLanguagePreference(uuid: UUID, lang: Language)
-    fun getLanguagePreference(uuid: UUID): Language
+    List<Player> getOnlinePlayers();
+    Exceptional<Player> getPlayer(String name);
+    Exceptional<Player> getPlayer(UUID uuid);
+
+    void setLanguagePreference(UUID uuid, Language language);
+    Language getLanguagePreference(UUID uuid);
 
 }

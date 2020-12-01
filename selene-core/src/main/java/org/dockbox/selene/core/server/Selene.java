@@ -27,28 +27,23 @@ import com.google.inject.Module;
 import com.google.inject.ProvisionException;
 import com.google.inject.util.Modules;
 
+import org.dockbox.selene.core.DiscordUtils;
+import org.dockbox.selene.core.ExceptionHelper;
+import org.dockbox.selene.core.MinecraftVersion;
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.event.Listener;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.CommandBus;
+import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
+import org.dockbox.selene.core.extension.ExtensionContext;
+import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.DiscordUtils;
-import org.dockbox.selene.core.MinecraftVersion;
-import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.ExceptionHelper;
-import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.extension.ExtensionContext;
-import org.dockbox.selene.core.extension.ExtensionManager;
-import org.dockbox.selene.core.util.inject.AbstractExceptionInjector;
-import org.dockbox.selene.core.util.inject.AbstractModuleInjector;
-import org.dockbox.selene.core.util.inject.AbstractUtilInjector;
-import org.dockbox.selene.core.util.inject.SeleneInjectModule;
-import org.dockbox.selene.core.util.library.LibraryArtifact;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -94,48 +89,19 @@ public abstract class Selene {
     private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
 
     /**
-     Instantiates {@link Selene}, creating a local injector based on the provided {@link SeleneInjectModule}.
+     Instantiates {@link Selene}, creating a local injector based on the provided {@link SeleneInjectConfiguration}.
      Also verifies dependency artifacts and injector bindings. Proceeds to {@link Selene#construct()} once verified.
 
      @param injector
      the injector provided by the Selene implementation
      */
-    protected Selene(SeleneInjectModule injector) {
-        this.verifyArtifacts();
+    protected Selene(SeleneInjectConfiguration injector) {
         this.injectorModules.add(injector);
         this.construct();
     }
 
-    /**
-     Instantiates {@link Selene}, creating a local injector based on the provided {@link AbstractModule}s.
-     Also verifies dependency artifacts and injector bindings. Proceeds to {@link Selene#construct()} once verified.
-
-     @param moduleInjector
-     the module injector
-     @param exceptionInjector
-     the exception injector
-     @param utilInjector
-     the util injector
-     */
-    protected Selene(
-            AbstractModuleInjector moduleInjector,
-            AbstractExceptionInjector exceptionInjector,
-            AbstractUtilInjector utilInjector
-    ) {
-        this.verifyArtifacts();
-        if (null != moduleInjector) this.injectorModules.add(moduleInjector);
-        if (null != exceptionInjector) this.injectorModules.add(exceptionInjector);
-        if (null != utilInjector) this.injectorModules.add(utilInjector);
-        this.construct();
-    }
-
-    private void verifyArtifacts() {
-        // TODO: Maven repository verification
-//        for (LibraryArtifact artifact : this.getAllArtifacts()) { }
-    }
-
     private void verifyInjectorBindings() {
-        for (Class<?> bindingType : SeleneInjectModule.Companion.getRequiredBindings()) {
+        for (Class<?> bindingType : SeleneInjectConfiguration.REQUIRED_BINDINGS) {
             try {
                 this.createInjector().getBinding(bindingType);
             } catch (ConfigurationException e) {
@@ -159,7 +125,6 @@ public abstract class Selene {
      Once done sets the static instance equal to this instance.
      */
     protected void construct() {
-
         this.verifyInjectorBindings();
 
         String tVer = "dev";
@@ -575,24 +540,6 @@ public abstract class Selene {
     public static Selene getServer() {
         return instance;
     }
-
-    private LibraryArtifact[] getAllArtifacts() {
-        List<LibraryArtifact> artifacts = SeleneUtils.asList(this.getPlatformArtifacts());
-        artifacts.add(new LibraryArtifact("org.reflections", "reflections", "0.9.11"));
-        artifacts.add(new LibraryArtifact("com.fasterxml.jackson.core", "jackson-databind", "2.9.8"));
-        artifacts.add(new LibraryArtifact("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", "2.9.8"));
-        artifacts.add(new LibraryArtifact("com.fasterxml.jackson.datatype", "jackson-datatype-jsr310", "2.9.8"));
-        artifacts.add(new LibraryArtifact("org.apache.commons", "commons-collections4", "4.1"));
-        return artifacts.toArray(new LibraryArtifact[0]);
-    }
-
-    /**
-     Get the library artifacts of platform specific dependencies. These are usually only used to check whether or not
-     the dependencies are present during construction stages.
-
-     @return The array of libary artifacts
-     */
-    protected abstract LibraryArtifact[] getPlatformArtifacts();
 
     /**
      Gets the used version of the implementation platform.

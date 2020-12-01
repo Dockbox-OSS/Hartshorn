@@ -21,7 +21,7 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.util.player.PlayerStorageService;
+import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.test.object.TestPlayer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;

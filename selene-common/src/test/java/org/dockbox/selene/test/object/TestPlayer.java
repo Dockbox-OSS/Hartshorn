@@ -31,7 +31,7 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.navigation.Pagination;
 import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.util.player.PlayerStorageService;
+import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.test.SeleneTestImpl;
 import org.dockbox.selene.test.util.TestPlayerStorageService;
 import org.jetbrains.annotations.NotNull;

@@ -40,7 +40,7 @@ import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.extension.ExtensionManager;
-import org.dockbox.selene.core.util.player.PlayerStorageService;
+import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.WorldStorageService;
 
 import java.time.Duration;
