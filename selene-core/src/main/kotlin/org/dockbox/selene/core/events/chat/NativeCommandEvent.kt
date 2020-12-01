@@ -21,8 +21,8 @@ import org.dockbox.selene.core.annotations.event.filter.Filter
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
 import org.dockbox.selene.core.objects.events.Filterable
 import org.dockbox.selene.core.objects.targets.CommandSource
-import org.dockbox.selene.core.util.SeleneUtils
-import org.dockbox.selene.core.util.events.FilterTypes
+import org.dockbox.selene.core.SeleneUtils
+import org.dockbox.selene.core.events.processing.FilterTypes
 
 /**
  * The event fired when a command is executed natively through the implemented platform. This typically includes both

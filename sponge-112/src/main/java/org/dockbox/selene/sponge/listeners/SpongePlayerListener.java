@@ -38,7 +38,7 @@ import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.Warp;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.Transform;

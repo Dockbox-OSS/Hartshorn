@@ -25,7 +25,7 @@ import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.impl.util.files.serialize.SeleneTypeSerializers;
+import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 

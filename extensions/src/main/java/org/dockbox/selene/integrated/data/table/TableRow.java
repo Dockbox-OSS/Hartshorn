@@ -18,7 +18,7 @@
 package org.dockbox.selene.integrated.data.table;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

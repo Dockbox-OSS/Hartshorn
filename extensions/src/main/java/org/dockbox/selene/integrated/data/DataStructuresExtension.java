@@ -20,7 +20,7 @@ package org.dockbox.selene.integrated.data;
 import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.integrated.data.registry.Registry;
-import org.dockbox.selene.core.impl.util.files.serialize.PredicateSerializerInformation;
+import org.dockbox.selene.core.impl.files.serialize.PredicateSerializerInformation;
 import org.dockbox.selene.integrated.data.serializers.RegistrySerializer;
 import org.dockbox.selene.core.annotations.extension.Extension;
 

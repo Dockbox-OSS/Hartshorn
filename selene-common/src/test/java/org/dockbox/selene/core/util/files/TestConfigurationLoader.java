@@ -20,7 +20,7 @@
  */
 package org.dockbox.selene.core.util.files;
 
-import org.dockbox.selene.core.impl.util.files.mapping.NeutrinoObjectMapperFactory;
+import org.dockbox.selene.core.impl.files.mapping.NeutrinoObjectMapperFactory;
 import org.jetbrains.annotations.NotNull;
 import org.mockito.Mockito;
 

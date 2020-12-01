@@ -20,7 +20,7 @@ package org.dockbox.selene.integrated.server;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.ExternalResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.SeleneUtils;
 
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
 enum IntegratedServerResources {

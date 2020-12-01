@@ -35,7 +35,7 @@ import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.navigation.Pagination;
-import org.dockbox.selene.core.util.events.EventBus;
+import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.util.player.PlayerStorageService;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;

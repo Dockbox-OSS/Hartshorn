@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.core.impl.util.files.DefaultConfigurateManager;
+import org.dockbox.selene.core.impl.files.DefaultConfigurateManager;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.core.util.files.FileType;

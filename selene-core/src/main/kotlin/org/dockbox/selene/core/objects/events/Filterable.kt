@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.objects.events
 
 import org.dockbox.selene.core.annotations.event.filter.Filter
-import org.dockbox.selene.core.util.events.FilterTypes
+import org.dockbox.selene.core.events.processing.FilterTypes
 
 /**
  * A low level type which accepts a [Filter] to be applied to it.

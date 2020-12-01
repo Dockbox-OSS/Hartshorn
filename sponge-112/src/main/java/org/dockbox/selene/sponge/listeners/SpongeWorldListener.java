@@ -25,7 +25,7 @@ import org.dockbox.selene.core.events.world.WorldEvent.WorldSaveEvent;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldUnloadEvent;
 import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.util.events.EventBus;
+import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.world.ConstructWorldPropertiesEvent;

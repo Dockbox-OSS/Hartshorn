@@ -23,7 +23,7 @@ import net.dv8tion.jda.api.entities.User
 import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.server.ServerReference
 import org.dockbox.selene.core.text.Text
-import org.dockbox.selene.core.util.discord.DiscordUtils
+import org.dockbox.selene.core.DiscordUtils
 
 class DiscordCommandContext(val author: User, val channel: MessageChannel, val timeReceived: LocalDateTime, val command: String, val arguments: Array<String>) : ServerReference() {
 

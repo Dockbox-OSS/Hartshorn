@@ -20,8 +20,8 @@ package org.dockbox.selene.core.events.`object`
 import org.dockbox.selene.core.annotations.event.filter.Filter
 import org.dockbox.selene.core.objects.events.Event
 import org.dockbox.selene.core.objects.events.Filterable
-import org.dockbox.selene.core.util.SeleneUtils
-import org.dockbox.selene.core.util.events.FilterTypes
+import org.dockbox.selene.core.SeleneUtils
+import org.dockbox.selene.core.events.processing.FilterTypes
 
 /**
  * The event fired when a new type instance is constructed. Typically this only includes types which extend

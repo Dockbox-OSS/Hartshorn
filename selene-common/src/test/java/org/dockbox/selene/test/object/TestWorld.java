@@ -20,7 +20,7 @@ package org.dockbox.selene.test.object;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.objects.user.Gamemode;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;

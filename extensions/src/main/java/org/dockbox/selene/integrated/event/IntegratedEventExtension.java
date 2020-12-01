@@ -27,7 +27,7 @@ import org.dockbox.selene.core.events.server.ServerEvent.ServerStartingEvent;
 import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.events.EventBus;
+import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.integrated.event.processors.FaweSource;
 import org.dockbox.selene.integrated.event.processors.FaweSourceProcessor;

@@ -20,7 +20,7 @@ package org.dockbox.selene.test.util;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import org.dockbox.selene.core.impl.util.DefaultDiscordUtils;
+import org.dockbox.selene.core.impl.DefaultDiscordUtils;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 
 /**
