@@ -449,7 +449,7 @@ public abstract class Selene {
         });
 
         log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded event handlers: ");
-        getInstance(EventBus.class).getListenerToInvokers().forEach((listener, invokers) -> {
+        getInstance(EventBus.class).getListenersToInvokers().forEach((listener, invokers) -> {
             Class<?> type;
             if (listener instanceof Class) type = (Class<?>) listener;
             else type = listener.getClass();

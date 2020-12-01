@@ -26,7 +26,7 @@ public class AbstractCommandRegistration<T> {
     private final String[] aliases;
     private final AbstractPermission permission;
     private final Command command;
-    private final T sourceInstance;
+    private T sourceInstance;
 
     public AbstractCommandRegistration(String primaryAlias, String[] aliases, AbstractPermission permission, Command command, T sourceInstance) {
         this.primaryAlias = primaryAlias;
@@ -54,5 +54,9 @@ public class AbstractCommandRegistration<T> {
 
     public T getSourceInstance() {
         return this.sourceInstance;
+    }
+
+    public void setSourceInstance(T sourceInstance) {
+        this.sourceInstance = sourceInstance;
     }
 }

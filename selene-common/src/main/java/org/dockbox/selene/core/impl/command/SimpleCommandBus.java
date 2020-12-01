@@ -101,14 +101,14 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
         String next = usage.contains(" ")
                 ? usage.replaceFirst(usage.substring(0, usage.indexOf(' ')), alias)
                 : usage;
-        this.registerCommand(next, registration.getPermissions(), (src, ctx) ->
+        this.registerCommand(next, registration.getPermission(), (src, ctx) ->
                 this.processRunnableCommand(registration, src, ctx));
         Selene.log().info("Registered singular command : {}", alias);
     }
 
     private void processRunnableCommand(MethodCommandRegistration registration, CommandSource src, CommandContext ctx) {
         Runnable runnable = () -> {
-            Exceptional<IntegratedResource> result = this.invoke(registration.getMethod(), src, ctx, registration);
+            Exceptional<IntegratedResource> result = this.invoke(registration.getSourceInstance(), src, ctx, registration);
             if (result.errorPresent())
                 src.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(result.getError().getMessage()));
             else if (result.isPresent()) src.sendWithPrefix(result.get());
@@ -132,7 +132,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
     public void registerClassCommand(@NotNull Class<?> clazz, @NotNull Object instance) {
         ClassCommandRegistration registration = this.createClassRegistration(clazz);
         Arrays.stream(registration.getAliases()).forEach(alias -> {
-            if (instance instanceof Class) registration.setSourceInstance(instance);
+            if (instance instanceof Class) registration.setSourceInstance((Class<?>) instance);
 
             AtomicReference<CommandRunner> parentRunner = new AtomicReference<>((src, ctx) -> {
                 src.sendWithPrefix("This command requires arguments!");// TODO, ResourceEntry
@@ -143,7 +143,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
 
             String usage = registration.getCommand().usage();
             String next = usage.contains(" ") ? usage.replaceFirst(usage.substring(0, usage.indexOf(' ')), alias) : alias;
-            this.registerCommand('*' + next, registration.getPermissions(), parentRunner.get());
+            this.registerCommand('*' + next, registration.getPermission(), parentRunner.get());
 
             List<String> subcommands = SeleneUtils.emptyList();
             Arrays.stream(registration.getSubcommands()).forEach(sub -> subcommands.addAll(SeleneUtils.asList(sub.getAliases())));
@@ -160,7 +160,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
                 // Sub commands need the parent command in the context so it can register correctly
                 String usage = rAlias + ' ' + registration.getCommand().usage();
                 String next = usage.contains(" ") ? usage.replace(usage.substring(0, usage.indexOf(' ')), alias) : usage;
-                this.registerCommand(next, registration.getPermissions(), methodRunner);
+                this.registerCommand(next, registration.getPermission(), methodRunner);
             }
         });
     }

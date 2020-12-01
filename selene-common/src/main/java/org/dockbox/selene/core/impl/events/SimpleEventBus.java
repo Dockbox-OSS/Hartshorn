@@ -62,7 +62,7 @@ public class SimpleEventBus implements EventBus {
 
     @NotNull
     @Override
-    public Map<Object, Set<IWrapper>> getListenerToInvokers() {
+    public Map<Object, Set<IWrapper>> getListenersToInvokers() {
         return listenerToInvokers;
     }
 
@@ -196,7 +196,7 @@ public class SimpleEventBus implements EventBus {
 
     @Nullable
     @Override
-    public <T extends Annotation> AbstractEventParamProcessor<T> getParameterProcessor(@NotNull Class<T> annotation, EventStage stage) {
+    public <T extends Annotation> AbstractEventParamProcessor<T> getParamProcessor(@NotNull Class<T> annotation, EventStage stage) {
         if (SimpleEventBus.parameterProcessors.isEmpty()) {
             for (DefaultParamProcessors processor : DefaultParamProcessors.values()) {
                 this.registerProcessors(processor.getProcessor());
