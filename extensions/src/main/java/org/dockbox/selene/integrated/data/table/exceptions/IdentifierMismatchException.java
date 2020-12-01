@@ -17,7 +17,9 @@
 
 package org.dockbox.selene.integrated.data.table.exceptions;
 
-public class IdentifierMismatchException extends Exception {
+import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
+
+public class IdentifierMismatchException extends CheckedSeleneException {
     public IdentifierMismatchException(String message) {
         super(message);
     }
