@@ -25,8 +25,8 @@ import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
 import org.dockbox.selene.core.command.context.CommandValue;
-import org.dockbox.selene.core.command.parse.AbstractArgumentParser;
-import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser;
+import org.dockbox.selene.core.command.parsing.ArgumentParser;
+import org.dockbox.selene.core.command.parsing.TypeParser;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.common.ResourceService;
@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
 
 public class TypeArgumentParsers {
 
-    public static class CharacterParser extends AbstractTypeArgumentParser<Character> {
+    public static class CharacterParser extends TypeParser<Character> {
         @NotNull
         @Override
         public Exceptional<Character> parse(@NotNull CommandValue<String> commandValue) {
@@ -65,7 +65,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class BooleanParser extends AbstractTypeArgumentParser<Boolean> {
+    public static class BooleanParser extends TypeParser<Boolean> {
         @NotNull
         @Override
         public Exceptional<Boolean> parse(@NotNull CommandValue<String> commandValue) {
@@ -73,7 +73,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class DoubleParser extends AbstractTypeArgumentParser<Double> {
+    public static class DoubleParser extends TypeParser<Double> {
         @NotNull
         @Override
         public Exceptional<Double> parse(@NotNull CommandValue<String> commandValue) {
@@ -81,7 +81,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class EnumParser extends AbstractArgumentParser {
+    public static class EnumParser extends ArgumentParser {
         @NotNull
         @SuppressWarnings({"unchecked", "CallToSuspiciousStringMethod"})
         public <A> Exceptional<A> parse(@NotNull CommandValue<String> commandValue, @NotNull Class<A> type) {
@@ -96,7 +96,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class FloatParser extends AbstractTypeArgumentParser<Float> {
+    public static class FloatParser extends TypeParser<Float> {
         @NotNull
         @Override
         public Exceptional<Float> parse(@NotNull CommandValue<String> commandValue) {
@@ -104,7 +104,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class IntegerParser extends AbstractTypeArgumentParser<Integer> {
+    public static class IntegerParser extends TypeParser<Integer> {
         @NotNull
         @Override
         public Exceptional<Integer> parse(@NotNull CommandValue<String> commandValue) {
@@ -112,7 +112,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class LanguageParser extends AbstractTypeArgumentParser<Language> {
+    public static class LanguageParser extends TypeParser<Language> {
         @NotNull
         @Override
         public Exceptional<Language> parse(@NotNull CommandValue<String> commandValue) {
@@ -130,7 +130,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class LongParser extends AbstractTypeArgumentParser<Long> {
+    public static class LongParser extends TypeParser<Long> {
         @NotNull
         @Override
         public Exceptional<Long> parse(@NotNull CommandValue<String> commandValue) {
@@ -138,7 +138,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class ShortParser extends AbstractTypeArgumentParser<Short> {
+    public static class ShortParser extends TypeParser<Short> {
         @NotNull
         @Override
         public Exceptional<Short> parse(@NotNull CommandValue<String> commandValue) {
@@ -146,7 +146,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class UuidParser extends AbstractTypeArgumentParser<UUID> {
+    public static class UuidParser extends TypeParser<UUID> {
         @NotNull
         @Override
         public Exceptional<UUID> parse(@NotNull CommandValue<String> commandValue) {
@@ -154,7 +154,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class VectorParser extends AbstractTypeArgumentParser<Vector3N> {
+    public static class VectorParser extends TypeParser<Vector3N> {
         @NotNull
         @Override
         public Exceptional<Vector3N> parse(@NotNull CommandValue<String> commandValue) {
@@ -169,7 +169,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class LocationParser extends AbstractTypeArgumentParser<Location> {
+    public static class LocationParser extends TypeParser<Location> {
         @NotNull
         @Override
         public Exceptional<Location> parse(@NotNull CommandValue<String> commandValue) {
@@ -185,7 +185,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class WorldParser extends AbstractTypeArgumentParser<World> {
+    public static class WorldParser extends TypeParser<World> {
         @NotNull
         @Override
         public Exceptional<World> parse(@NotNull CommandValue<String> commandValue) {
@@ -198,7 +198,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class ResourceEntryParser extends AbstractTypeArgumentParser<ResourceEntry> {
+    public static class ResourceEntryParser extends TypeParser<ResourceEntry> {
         @NotNull
         @Override
         public Exceptional<ResourceEntry> parse(@NotNull CommandValue<String> commandValue) {
@@ -214,7 +214,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class PlayerParser extends AbstractTypeArgumentParser<Player> {
+    public static class PlayerParser extends TypeParser<Player> {
         @NotNull
         @Override
         public Exceptional<Player> parse(@NotNull CommandValue<String> commandValue) {
@@ -238,7 +238,7 @@ public class TypeArgumentParsers {
      @param <R>
      The return type
      */
-    public static class ListParser<R> extends AbstractTypeArgumentParser<List<R>> {
+    public static class ListParser<R> extends TypeParser<List<R>> {
 
         private final Function<String, R> converter;
         private char delimiter = ',';
@@ -266,7 +266,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class MapParser extends AbstractTypeArgumentParser<Map<String, String>> {
+    public static class MapParser extends TypeParser<Map<String, String>> {
 
         private char rowDelimiter = ',';
         private char valueDelimiter = '=';
@@ -326,7 +326,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class WorldEditMaskParser extends AbstractTypeArgumentParser<Mask> {
+    public static class WorldEditMaskParser extends TypeParser<Mask> {
 
         private final FawePlayer<?> player;
 
@@ -348,7 +348,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class WorldEditPatternParser extends AbstractTypeArgumentParser<Pattern> {
+    public static class WorldEditPatternParser extends TypeParser<Pattern> {
 
         private final FawePlayer<?> player;
 
@@ -370,7 +370,7 @@ public class TypeArgumentParsers {
         }
     }
 
-    public static class DurationParser extends AbstractTypeArgumentParser<Duration> {
+    public static class DurationParser extends TypeParser<Duration> {
 
         private final java.util.regex.Pattern minorTimeString =
                 java.util.regex.Pattern.compile("^\\d+$");

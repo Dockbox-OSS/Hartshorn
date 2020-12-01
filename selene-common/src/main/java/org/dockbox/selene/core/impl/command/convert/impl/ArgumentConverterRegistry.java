@@ -180,7 +180,7 @@ public final class ArgumentConverterRegistry {
                 if (source instanceof Player) {
                     return new WorldEditMaskParser(((Player) source).getFawePlayer()
                             .orNull())
-                            .parse(new CommandValue.Argument<>(s, "mask"));
+                            .parse(new Argument<>(s, "mask"));
                 }
                 return Exceptional.empty();
             },

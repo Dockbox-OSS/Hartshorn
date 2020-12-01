@@ -20,7 +20,7 @@ package org.dockbox.selene.core.impl.command;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.command.FromSource;
 import org.dockbox.selene.core.command.CommandBus;
-import org.dockbox.selene.core.command.CommandRunnerFunction;
+import org.dockbox.selene.core.command.CommandRunner;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.registry.AbstractCommandRegistration;
 import org.dockbox.selene.core.command.registry.ClassCommandRegistration;
@@ -134,7 +134,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
         Arrays.stream(registration.getAliases()).forEach(alias -> {
             if (instance instanceof Class) registration.setSourceInstance(instance);
 
-            AtomicReference<CommandRunnerFunction> parentRunner = new AtomicReference<>((src, ctx) -> {
+            AtomicReference<CommandRunner> parentRunner = new AtomicReference<>((src, ctx) -> {
                 src.sendWithPrefix("This command requires arguments!");// TODO, ResourceEntry
             });
 
@@ -151,8 +151,8 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
         });
     }
 
-    private void registerMethodRegistration(MethodCommandRegistration registration, String alias, AtomicReference<CommandRunnerFunction> parentRunner) {
-        CommandRunnerFunction methodRunner = (src, ctx) -> this.processRunnableCommand(registration, src, ctx);
+    private void registerMethodRegistration(MethodCommandRegistration registration, String alias, AtomicReference<CommandRunner> parentRunner) {
+        CommandRunner methodRunner = (src, ctx) -> this.processRunnableCommand(registration, src, ctx);
         Arrays.stream(registration.getAliases()).forEach((@NonNls String rAlias) -> {
             if ("".equals(rAlias)) {
                 parentRunner.set(methodRunner);
@@ -231,13 +231,13 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
     }
 
     @Override
-    public void registerCommand(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunnerFunction runner) {
+    public void registerCommand(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunner runner) {
         if (0 > command.indexOf(' ') && !command.startsWith(parentCommandPrefix))
             this.registerCommand(command, permission, runner);
         else this.registerCommandArgsAndOrChild(command, permission, runner);
     }
 
-    protected void registerCommandArgsAndOrChild(String command, AbstractPermission permission, CommandRunnerFunction runner) {
+    protected void registerCommandArgsAndOrChild(String command, AbstractPermission permission, CommandRunner runner) {
         Selene.log().debug("Registering command '{}' with singluar permission ({})", command, permission.get());
         String[] parts = command.split(" ");
         String part = 1 < parts.length ? parts[1] : null;
@@ -398,11 +398,11 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
 
     protected abstract SimpleCommandContext convertContext(C ctx, CommandSource sender, String command);
 
-    protected abstract void registerCommandNoArgs(String command, AbstractPermission permission, CommandRunnerFunction runner);
+    protected abstract void registerCommandNoArgs(String command, AbstractPermission permission, CommandRunner runner);
 
-    protected abstract void registerChildCommand(String command, CommandRunnerFunction runner, String usage, AbstractPermission permission);
+    protected abstract void registerChildCommand(String command, CommandRunner runner, String usage, AbstractPermission permission);
 
-    protected abstract void registerSingleMethodCommand(String command, CommandRunnerFunction runner, String usage, AbstractPermission permission);
+    protected abstract void registerSingleMethodCommand(String command, CommandRunner runner, String usage, AbstractPermission permission);
 
-    protected abstract void registerParentCommand(String command, CommandRunnerFunction runner, AbstractPermission permission);
+    protected abstract void registerParentCommand(String command, CommandRunner runner, AbstractPermission permission);
 }

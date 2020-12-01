@@ -20,8 +20,10 @@ package org.dockbox.selene.sponge.util.command;
 import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.command.CommandRunnerFunction;
+import org.dockbox.selene.core.command.CommandRunner;
 import org.dockbox.selene.core.command.context.CommandValue;
+import org.dockbox.selene.core.command.context.CommandValue.Flag;
+import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.events.chat.CommandEvent;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
@@ -69,7 +71,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     @Override
-    public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunnerFunction runner) {
+    public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunner runner) {
         Sponge.getCommandManager().register(
                 Selene.getServer(),
                 CommandSpec.builder()
@@ -80,7 +82,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     @Override
-    protected void registerChildCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, String usagePart, AbstractPermission permission) {
+    protected void registerChildCommand(@NotNull String command, @NotNull CommandRunner runner, String usagePart, AbstractPermission permission) {
         CommandSpec.Builder spec = CommandSpec.builder();
         spec.permission(permission.get());
 
@@ -102,7 +104,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     @Override
-    protected void registerSingleMethodCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, String commandPart, AbstractPermission permission) {
+    protected void registerSingleMethodCommand(@NotNull String command, @NotNull CommandRunner runner, String commandPart, AbstractPermission permission) {
         CommandSpec.Builder spec = CommandSpec.builder();
         spec.permission(permission.get());
 
@@ -111,7 +113,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             this.registerValidatedSingleMethodCommand(command, runner, commandPart, spec);
     }
 
-    private void registerValidatedSingleMethodCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, String commandPart, CommandSpec.Builder spec) {
+    private void registerValidatedSingleMethodCommand(@NotNull String command, @NotNull CommandRunner runner, String commandPart, CommandSpec.Builder spec) {
         String alias = command.substring(0, command.indexOf(' '));
         Selene.log().debug("Registering single method command '" + commandPart + "' to Sponge");
         spec
@@ -125,7 +127,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     @Override
-    protected void registerParentCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, AbstractPermission permission) {
+    protected void registerParentCommand(@NotNull String command, @NotNull CommandRunner runner, AbstractPermission permission) {
         CommandSpec.Builder spec = CommandSpec.builder();
         spec.permission(permission.get());
 
@@ -135,7 +137,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             this.registerValidatedParentCommand(command, runner, spec, registeredCmd);
     }
 
-    private void registerValidatedParentCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, CommandSpec.Builder spec, String registeredCmd) {
+    private void registerValidatedParentCommand(@NotNull String command, @NotNull CommandRunner runner, CommandSpec.Builder spec, String registeredCmd) {
         List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, SeleneUtils.emptyList());
         childs.forEach(child -> this.defineExecutorOrChild(spec, child));
         spec.executor(this.buildExecutor(runner, command));
@@ -223,7 +225,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         else return GenericArguments.seq(elements);
     }
 
-    private CommandExecutor buildExecutor(CommandRunnerFunction runner, String command) {
+    private CommandExecutor buildExecutor(CommandRunner runner, String command) {
         return (src, args) -> {
             org.dockbox.selene.core.objects.targets.CommandSource sender = SpongeConversionUtil
                     .fromSponge(src)
@@ -266,8 +268,8 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         assert null != command : "Context carrier command was null";
         parsedArgs.asMap().forEach((s, o) -> o.forEach(obj -> {
             if (Pattern.compile("-(-?" + s + ")").matcher(command).find())
-                flags.add(new CommandValue.Flag<>(this.getValue(obj), s));
-            else arguments.add(new CommandValue.Argument<>(this.getValue(obj), s));
+                flags.add(new Flag<>(this.getValue(obj), s));
+            else arguments.add(new Argument<>(this.getValue(obj), s));
         }));
 
         return this.getContext(sender, arguments, flags, command);

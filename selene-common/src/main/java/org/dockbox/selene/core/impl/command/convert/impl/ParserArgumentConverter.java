@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.impl.command.convert.impl;
 
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
-import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser;
+import org.dockbox.selene.core.command.parsing.TypeParser;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.targets.CommandSource;
@@ -29,12 +29,12 @@ import java.util.function.Supplier;
 
 public class ParserArgumentConverter<T> extends ArgumentConverter<T> {
 
-    private final Supplier<AbstractTypeArgumentParser<T>> parser;
+    private final Supplier<TypeParser<T>> parser;
     private final Function<String, Collection<String>> suggestionConverter;
 
     public ParserArgumentConverter(
             Class<T> type,
-            Supplier<AbstractTypeArgumentParser<T>> parser,
+            Supplier<TypeParser<T>> parser,
             Function<String, Collection<String>> suggestionConverter,
             String... keys
     ) {

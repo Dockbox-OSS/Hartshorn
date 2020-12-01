@@ -22,7 +22,7 @@ import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.command.context.CommandValue.Flag;
-import org.dockbox.selene.core.command.parse.AbstractTypeArgumentParser;
+import org.dockbox.selene.core.command.parsing.TypeParser;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.optional.Exceptional;
@@ -100,7 +100,7 @@ public class SimpleCommandContext implements CommandContext {
                 Arrays.stream(this.args)
                         .filter(arg -> arg.getKey().equals(key))
                         .findFirst()
-        ).map(arg -> new CommandValue.Argument<>(arg.getValue().toString(), arg.getKey()));
+        ).map(arg -> new Argument<>(arg.getValue().toString(), arg.getKey()));
     }
 
     @NotNull
@@ -115,7 +115,7 @@ public class SimpleCommandContext implements CommandContext {
 
     @NotNull
     @Override
-    public <T> Exceptional<T> getArgumentAndParse(@NotNull String key, @NotNull AbstractTypeArgumentParser<T> parser) {
+    public <T> Exceptional<T> getArgumentAndParse(@NotNull String key, @NotNull TypeParser<T> parser) {
         Exceptional<Argument<String>> optionalArg = this.getArgument(key);
         return optionalArg.map(parser::parse).map(Exceptional::orNull);
     }
@@ -142,7 +142,7 @@ public class SimpleCommandContext implements CommandContext {
 
     @NotNull
     @Override
-    public <T> Exceptional<T> getFlagAndParse(@NotNull String key, @NotNull AbstractTypeArgumentParser<T> parser) {
+    public <T> Exceptional<T> getFlagAndParse(@NotNull String key, @NotNull TypeParser<T> parser) {
         @NotNull Exceptional<Flag<String>> optionalFlag = this.getFlag(key);
         return optionalFlag.map(parser::parse).map(Exceptional::orNull);
     }
