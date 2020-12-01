@@ -27,7 +27,7 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
-import org.dockbox.selene.core.util.files.ConfigurateManager;
+import org.dockbox.selene.core.files.ConfigurateManager;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.sql.dialects.sqlite.SQLiteMan;
 import org.dockbox.selene.integrated.sql.dialects.sqlite.SQLitePathProperty;

@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.util;
 
+import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.impl.files.DefaultConfigurateManager;
 import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.util.files.ConfigurateManager;
-import org.dockbox.selene.core.util.files.FileType;
+import org.dockbox.selene.core.files.ConfigurateManager;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 

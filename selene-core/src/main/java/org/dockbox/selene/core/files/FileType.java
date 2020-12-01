@@ -15,16 +15,14 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util.files
+package org.dockbox.selene.core.files;
 
-import java.nio.file.Path
+import java.nio.file.Path;
 
 /**
  * Enumerated values containing the file extensions for several commonly used file types.
- *
- * @property extension The file extension
  */
-enum class FileType(val extension: String) {
+public enum FileType {
 
     // Minecraft native formats
     ANVIL("mca"),
@@ -56,27 +54,37 @@ enum class FileType(val extension: String) {
     LOG("log")
     ;
 
+    private final String extension;
+
+    FileType(String extension) {
+        this.extension = extension;
+    }
+
     /**
-     * Converts a given filename (without the file extension present) to a [String] value holding the correct format.
+     * Converts a given filename (without the file extension present) to a {@link String} value holding the correct format.
      *
      * @param file The filename without a file extension present
      * @return The generated filename with extension
      */
-    fun asFileName(file: String): String {
-        return "$file.$extension"
+    public String asFileName(String file) {
+        return file + '.' + this.extension;
     }
 
     /**
-     * Converts a given filename (without the file extension present), combined with a [Path] reference to a directory,
-     * to a new [Path] reference to a file. If the file did not yet exist, it is created.
+     * Converts a given filename (without the file extension present), combined with a {@link Path} reference to a directory,
+     * to a new {@link Path} reference to a file. If the file did not yet exist, it is created.
      *
-     * Assumes the parent [Path] already exists.
+     * Assumes the parent {@link Path} already exists.
      *
      * @param parent The parent directory
      * @param file The filename without a file extension present
-     * @return The [Path] reference to a file
+     * @return The {@link Path} reference to a file
      */
-    fun asPath(parent: Path, file: String): Path {
-        return parent.resolve(asFileName(file))
+    public Path asPath(Path parent, String file) {
+        return parent.resolve(this.asFileName(file));
+    }
+
+    public String getExtension() {
+        return this.extension;
     }
 }

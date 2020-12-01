@@ -35,7 +35,7 @@ import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 /**
  Serializer definitions which can be (globally) registered for all types using
  {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializers}. Within Selene, this targets
- {@link org.dockbox.selene.core.util.files.ConfigurateManager}.
+ {@link org.dockbox.selene.core.files.ConfigurateManager}.
  Due to the requirement of generic constraints, a static final transient {@link java.util.Collection} is used.
  Insances of {@link SerializerInformation} are automatically registered to {@link #serializerInformation}, and
  therefore do not need to be declared as fields.

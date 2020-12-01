@@ -25,7 +25,7 @@ import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.i18n.entry.ExternalResourceEntry;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.files.ConfigurateManager;
+import org.dockbox.selene.core.files.ConfigurateManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 

@@ -29,7 +29,7 @@ import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.util.files.ConfigurateManager;
+import org.dockbox.selene.core.files.ConfigurateManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;

@@ -19,14 +19,14 @@ package org.dockbox.selene.core.impl.files;
 
 import com.google.common.reflect.TypeToken;
 
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.impl.files.mapping.NeutrinoObjectMapper;
 import org.dockbox.selene.core.impl.files.mapping.NeutrinoObjectMapperFactory;
 import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.util.files.ConfigurateManager;
-import org.dockbox.selene.core.util.files.FileType;
+import org.dockbox.selene.core.files.ConfigurateManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
