@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core;
 
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.objects.entity.Ignore;
 import org.dockbox.selene.core.objects.entity.Property;
 import org.dockbox.selene.core.objects.events.Event;
@@ -24,8 +25,10 @@ import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
+import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -68,6 +71,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -293,9 +297,9 @@ public enum SeleneUtils {
     @NotNull
     @Contract(pure = true)
     public static int[] range(int min, int max) {
-        int[] range = new int[(max-min)+1]; // +1 as both min and max are inclusive
+        int[] range = new int[(max - min) + 1]; // +1 as both min and max are inclusive
         for (int i = min; i <= max; i++) {
-            range[i-min] = i;
+            range[i - min] = i;
         }
         return range;
     }
@@ -671,7 +675,7 @@ public enum SeleneUtils {
     }
 
     public <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
-        Object[] merged =  Stream.of(arrayOne, arrayTwo).flatMap(Stream::of).toArray(Object[]::new);
+        Object[] merged = Stream.of(arrayOne, arrayTwo).flatMap(Stream::of).toArray(Object[]::new);
         return this.convertGenericArray(merged);
     }
 
@@ -1049,6 +1053,34 @@ public enum SeleneUtils {
 
     public static boolean isNotVoid(Class<?> type) {
         return !(type.equals(Void.class) || type == Void.TYPE);
+    }
+
+    @Nullable
+    public static Extension getExtension(Class<?> type) {
+        if (null == type) return null;
+        if (type.equals(Selene.class)) return getExtension(Selene.getInstance(IntegratedExtension.class).getClass());
+        Extension extension = type.getAnnotation(Extension.class);
+        extension = null != extension ? extension : getExtension(type.getSuperclass());
+        if (null == extension)
+            extension = Selene.getInstanceSafe(ExtensionManager.class).map(em -> em.getHeader(type).orNull()).orNull();
+        return extension;
+    }
+
+    @Nullable
+    public static <T> T runWithExtension(Class<?> type, Function<Extension, T> function) {
+        Extension extension = getExtension(type);
+        if (null != extension) return function.apply(extension);
+        return null;
+    }
+
+    public static void runWithExtension(Class<?> type, Consumer<Extension> consumer) {
+        Extension extension = getExtension(type);
+        if (null != extension) consumer.accept(extension);
+    }
+
+    public static <T> void runWithInstance(Class<T> type, Consumer<T> consumer) {
+        T instance = Selene.getInstance(type);
+        if (null != instance) consumer.accept(instance);
     }
 
     public enum Provision {

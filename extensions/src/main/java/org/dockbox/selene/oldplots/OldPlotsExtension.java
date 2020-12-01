@@ -17,17 +17,16 @@
 
 package org.dockbox.selene.oldplots;
 
+import org.dockbox.selene.core.ConstructionUtil;
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.ServerReference;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
-import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.ConstructionUtil;
-import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.sql.dialects.sqlite.SQLiteMan;
@@ -40,7 +39,7 @@ import java.util.List;
 @Extension(id = "oldplots", name = "OldPlots",
            description = "Provides a easy way to interact with old plot worlds and registrations",
            authors = "GuusLieben", uniqueId = "aa4a7056-8cb3-48f0-b196-a4601eceeb5b")
-public class OldPlotsExtension extends ServerReference {
+public class OldPlotsExtension {
 
     @Command(aliases = {"oldplots", "olp"}, usage = "oldplots <player{Player}>", rawPermission = "selene.oldplots.list")
     public void oldPlotsCommand(Player source, CommandContext ctx) throws Throwable {
@@ -48,7 +47,7 @@ public class OldPlotsExtension extends ServerReference {
         Player player = ctx.getArgument("player", Player.class).rethrow().get().getValue();
         SQLiteMan man = new SQLiteMan();
         Path path = Selene.getInstance(ConfigurateManager.class)
-                .getDataDir(super.getExtension(OldPlotsExtension.class));
+                .getDataDir(SeleneUtils.getExtension(OldPlotsExtension.class));
 
         if (man.canEnable()) {
             man.stateEnabling(

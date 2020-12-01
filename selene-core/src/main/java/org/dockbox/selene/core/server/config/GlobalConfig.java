@@ -15,11 +15,13 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.server.config
+package org.dockbox.selene.core.server.config;
 
-enum class ConfigKeys(val key: String) {
-    PLAYER_LANGUAGE("language"),
-    GLOBAL_CONFIG("global.language"),
-    ALLOW_STACKTRACES("exceptions.stacktraces"),
-    EXCEPTION_LEVEL("exceptions.level")
+import org.dockbox.selene.core.i18n.common.Language;
+
+public interface GlobalConfig {
+    Language getDefaultLanguage();
+    boolean getStacktracesAllowed();
+    ExceptionLevels getExceptionLevel();
+    Environment getEnvironment();
 }

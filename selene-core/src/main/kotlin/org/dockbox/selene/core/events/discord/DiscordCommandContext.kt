@@ -20,35 +20,35 @@ package org.dockbox.selene.core.events.discord
 import java.time.LocalDateTime
 import net.dv8tion.jda.api.entities.MessageChannel
 import net.dv8tion.jda.api.entities.User
-import org.dockbox.selene.core.i18n.common.ResourceEntry
-import org.dockbox.selene.core.server.ServerReference
-import org.dockbox.selene.core.text.Text
 import org.dockbox.selene.core.DiscordUtils
+import org.dockbox.selene.core.i18n.common.ResourceEntry
+import org.dockbox.selene.core.server.Selene
+import org.dockbox.selene.core.text.Text
 
-class DiscordCommandContext(val author: User, val channel: MessageChannel, val timeReceived: LocalDateTime, val command: String, val arguments: Array<String>) : ServerReference() {
+class DiscordCommandContext(val author: User, val channel: MessageChannel, val timeReceived: LocalDateTime, val command: String, val arguments: Array<String>) {
 
     fun sendToChannel(text: Text) {
-        getInstance(DiscordUtils::class.java).sendToTextChannel(text, this.channel)
+        Selene.getInstance(DiscordUtils::class.java).sendToTextChannel(text, this.channel)
     }
 
     fun sendToChannel(text: CharSequence) {
-        getInstance(DiscordUtils::class.java).sendToTextChannel(text, this.channel)
+        Selene.getInstance(DiscordUtils::class.java).sendToTextChannel(text, this.channel)
     }
 
     fun sendToChannel(text: ResourceEntry) {
-        getInstance(DiscordUtils::class.java).sendToTextChannel(text, this.channel)
+        Selene.getInstance(DiscordUtils::class.java).sendToTextChannel(text, this.channel)
     }
 
     fun sendToAuthor(text: Text) {
-        getInstance(DiscordUtils::class.java).sendToUser(text, this.author)
+        Selene.getInstance(DiscordUtils::class.java).sendToUser(text, this.author)
     }
 
     fun sendToAuthor(text: CharSequence) {
-        getInstance(DiscordUtils::class.java).sendToUser(text, this.author)
+        Selene.getInstance(DiscordUtils::class.java).sendToUser(text, this.author)
     }
 
     fun sendToAuthor(text: ResourceEntry) {
-        getInstance(DiscordUtils::class.java).sendToUser(text, this.author)
+        Selene.getInstance(DiscordUtils::class.java).sendToUser(text, this.author)
     }
 
 }

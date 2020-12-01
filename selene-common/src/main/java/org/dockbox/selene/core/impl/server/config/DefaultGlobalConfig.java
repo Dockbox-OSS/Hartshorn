@@ -20,15 +20,15 @@ package org.dockbox.selene.core.impl.server.config;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.server.IntegratedExtension;
-import org.dockbox.selene.core.server.ServerReference;
 import org.dockbox.selene.core.server.config.Environment;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +39,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @Singleton
 @ConfigSerializable
-public class DefaultGlobalConfig extends ServerReference implements GlobalConfig, InjectableType {
+public class DefaultGlobalConfig implements GlobalConfig, InjectableType {
 
     @Inject
     private transient ConfigurateManager configurateManager;
@@ -105,7 +105,7 @@ public class DefaultGlobalConfig extends ServerReference implements GlobalConfig
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Extension extension = super.getExtension(this.integratedExtension.getClass());
+        Extension extension = SeleneUtils.getExtension(this.integratedExtension.getClass());
         if (null == extension) {
             throw new IllegalStateException("Integrated extension not annotated as such.");
         }

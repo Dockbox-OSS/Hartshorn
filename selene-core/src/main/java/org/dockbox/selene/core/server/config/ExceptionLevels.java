@@ -15,8 +15,8 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.server.config
+package org.dockbox.selene.core.server.config;
 
-enum class Environment(val allowsDebugging: Boolean) {
-    PRODUCTION(false), DEVELOPMENT(true)
+public enum ExceptionLevels {
+    FRIENDLY, MINIMAL
 }

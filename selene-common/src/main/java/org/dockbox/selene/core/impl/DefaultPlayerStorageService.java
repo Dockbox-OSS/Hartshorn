@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.core.impl;
 
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.ServerReference;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.core.util.player.PlayerStorageService;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ import java.util.UUID;
 import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
-public abstract class DefaultPlayerStorageService extends ServerReference implements PlayerStorageService {
+public abstract class DefaultPlayerStorageService implements PlayerStorageService {
 
     @Override
     public void setLanguagePreference(@NotNull UUID uuid, @NotNull Language lang) {
@@ -55,7 +55,7 @@ public abstract class DefaultPlayerStorageService extends ServerReference implem
     @SuppressWarnings("ConstantConditions")
     private UserDataModel getUserData(UUID uuid) {
         ConfigurateManager cm = Selene.getInstance(ConfigurateManager.class);
-        Path file = cm.getDataFile(super.getExtension(Selene.class), "userdata/" + uuid);
+        Path file = cm.getDataFile(SeleneUtils.getExtension(Selene.class), "userdata/" + uuid);
         Exceptional<UserDataModel> userDataModel = cm.getFileContent(file, UserDataModel.class);
         return userDataModel.orElse(new UserDataModel());
     }
@@ -63,7 +63,7 @@ public abstract class DefaultPlayerStorageService extends ServerReference implem
     @SuppressWarnings("ConstantConditions")
     private void updateUserData(UUID uuid, UserDataModel userData) {
         ConfigurateManager cm = Selene.getInstance(ConfigurateManager.class);
-        Path file = cm.getDataFile(super.getExtension(Selene.class), "userdata/" + uuid);
+        Path file = cm.getDataFile(SeleneUtils.getExtension(Selene.class), "userdata/" + uuid);
         cm.writeFileContent(file, userData);
     }
 

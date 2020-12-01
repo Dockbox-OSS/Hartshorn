@@ -17,10 +17,14 @@
 
 package org.dockbox.selene.integrated.server;
 
+import org.dockbox.selene.core.ConstructionUtil;
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
+import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
@@ -32,16 +36,11 @@ import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.ServerReference;
 import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction.RunCommand;
 import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
 import org.dockbox.selene.core.text.navigation.PaginationBuilder;
-import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.ConstructionUtil;
-import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.jetbrains.annotations.Nullable;
@@ -58,13 +57,13 @@ import java.util.UUID;
         uniqueId = "a8a96336-06bd-4521-99d4-5682a4f75e0a"
 )
 @Command(aliases = {"selene", "darwin"}, usage = "selene")
-public class IntegratedServerExtension extends ServerReference implements IntegratedExtension {
+public class IntegratedServerExtension implements IntegratedExtension {
 
     // Parent command
     @Command(aliases = "", usage = "")
     public void debugExtensions(MessageReceiver source) {
-        super.consumeWithInstance(ExtensionManager.class, em -> {
-            PaginationBuilder pb = super.getInstance(ConstructionUtil.class).paginationBuilder();
+        SeleneUtils.runWithInstance(ExtensionManager.class, em -> {
+            PaginationBuilder pb = Selene.getInstance(ConstructionUtil.class).paginationBuilder();
 
             List<Text> content = SeleneUtils.emptyList();
             content.add(Text.of(IntegratedServerResources.SERVER_HEADER.format(Selene.getServer().getVersion())));
@@ -94,7 +93,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
 
     @Command(aliases = "extension", usage = "extension <id{Extension}>")
     public void debugExtension(MessageReceiver src, CommandContext ctx) {
-        super.consumeWithInstance(ExtensionManager.class, em -> {
+        SeleneUtils.runWithInstance(ExtensionManager.class, em -> {
             Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
@@ -123,7 +122,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
 
     @Command(aliases = "reload", usage = "reload [id{Extension}]", confirm = true)
     public void reload(MessageReceiver src, CommandContext ctx) {
-        EventBus eb = super.getInstance(EventBus.class);
+        EventBus eb = Selene.getInstance(EventBus.class);
         if (ctx.hasArgument("id")) {
             Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
@@ -158,7 +157,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
         ouuid
                 .ifPresent(uuid -> {
                     if (((Identifiable<?>) src).getUniqueId().equals(uuid))
-                        super.getInstance(CommandBus.class).confirmLastCommand(uuid);
+                        Selene.getInstance(CommandBus.class).confirmLastCommand(uuid);
                     else
                         src.send(IntegratedResource.CONFIRM_EXPIRED);
                 })

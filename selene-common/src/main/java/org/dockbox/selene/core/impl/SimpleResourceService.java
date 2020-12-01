@@ -19,13 +19,12 @@ package org.dockbox.selene.core.impl;
 
 import com.google.inject.Singleton;
 
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.i18n.entry.ExternalResourceEntry;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.ServerReference;
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +36,7 @@ import ninja.leaping.configurate.objectmapping.Setting;
 import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @Singleton
-public class SimpleResourceService extends ServerReference implements ResourceService {
+public class SimpleResourceService implements ResourceService {
 
     private final Map<Language, Map<String, String>> resourceMaps = SeleneUtils.emptyConcurrentMap();
     private final List<ExternalResourceEntry> knownEntries = SeleneUtils.emptyConcurrentList();
@@ -62,7 +61,7 @@ public class SimpleResourceService extends ServerReference implements ResourceSe
         ConfigurateManager cm = Selene.getInstance(ConfigurateManager.class);
         Exceptional<ResourceConfig> config = cm.getFileContent(
                 cm.getConfigFile(
-                        super.getExtension(Selene.class),
+                        SeleneUtils.getExtension(Selene.class),
                         lang.getCode()
                 ), ResourceConfig.class);
 
