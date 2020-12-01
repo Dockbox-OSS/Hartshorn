@@ -24,7 +24,7 @@ import org.dockbox.selene.core.impl.util.files.mapping.NeutrinoObjectMapperFacto
 import org.dockbox.selene.core.impl.util.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.core.util.files.FileType;
 import org.jetbrains.annotations.NotNull;

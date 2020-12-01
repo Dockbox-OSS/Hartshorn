@@ -20,8 +20,8 @@ package org.dockbox.selene.coulis;
 import com.boydti.fawe.object.FawePlayer;
 import com.sk89q.worldedit.regions.Region;
 
-import org.dockbox.selene.core.annotations.Command;
-import org.dockbox.selene.core.annotations.Placeholder;
+import org.dockbox.selene.core.annotations.command.Command;
+import org.dockbox.selene.core.annotations.extension.Placeholder;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.ListParser;
 import org.dockbox.selene.core.objects.optional.Exceptional;

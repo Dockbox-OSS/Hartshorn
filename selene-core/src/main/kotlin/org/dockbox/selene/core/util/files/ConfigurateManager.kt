@@ -19,7 +19,7 @@ package org.dockbox.selene.core.util.files
 
 import java.nio.file.Path
 import org.dockbox.selene.core.objects.optional.Exceptional
-import org.dockbox.selene.core.util.extension.Extension
+import org.dockbox.selene.core.annotations.extension.Extension
 
 /**
  * Low-level interface defining functionality to interact with Configurate based file types. While this type encourages

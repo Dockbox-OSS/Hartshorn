@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.core.impl.util.events.processors;
 
-import org.dockbox.selene.core.annotations.Getter;
-import org.dockbox.selene.core.annotations.Provided;
-import org.dockbox.selene.core.annotations.SkipIf;
-import org.dockbox.selene.core.annotations.UnwrapOrSkip;
-import org.dockbox.selene.core.annotations.WrapSafe;
+import org.dockbox.selene.core.annotations.event.processing.Getter;
+import org.dockbox.selene.core.annotations.event.processing.Provided;
+import org.dockbox.selene.core.annotations.event.processing.SkipIf;
+import org.dockbox.selene.core.annotations.event.processing.UnwrapOrSkip;
+import org.dockbox.selene.core.annotations.event.processing.WrapSafe;
 import org.dockbox.selene.core.exceptions.SkipEventException;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.objects.optional.Exceptional;
@@ -31,7 +31,7 @@ import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.events.AbstractEventParamProcessor;
 import org.dockbox.selene.core.util.events.EventStage;
 import org.dockbox.selene.core.util.events.IWrapper;
-import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

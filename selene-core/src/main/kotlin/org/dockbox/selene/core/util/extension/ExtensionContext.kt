@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.util.extension
 
+import org.dockbox.selene.core.annotations.extension.Extension
 import org.dockbox.selene.core.util.extension.status.ExtensionStatus
 
 interface ExtensionContext {

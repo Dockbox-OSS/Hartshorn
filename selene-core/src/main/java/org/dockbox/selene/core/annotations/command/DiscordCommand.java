@@ -15,19 +15,24 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.annotations;
+package org.dockbox.selene.core.annotations.command;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
-/**
- Repeatable wrapper for {@link Filter}.
- */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Filters {
-    Filter[] value();
+public @interface DiscordCommand {
+    String command();
+    String channelId();
+    String minimumRankId();
+    ListeningLevel listeningLevel() default ListeningLevel.BOTH;
+
+    enum ListeningLevel {
+        PRIVATE_ONLY,
+        CHANNEL_ONLY,
+        BOTH
+    }
 }

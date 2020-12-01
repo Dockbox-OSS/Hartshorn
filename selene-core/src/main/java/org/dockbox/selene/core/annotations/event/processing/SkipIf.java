@@ -15,23 +15,22 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.annotations;
-
-import org.dockbox.selene.core.objects.optional.Exceptional;
+package org.dockbox.selene.core.annotations.event.processing;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Optional;
 
 /**
- Attempts to unwrap the final object if it is a instance of {@link Exceptional} or {@link Optional}. If the type is
- <code>null</code> or the value is not present, it respects {@link UnwrapOrSkip#skipIfNull()} to skip the event or
- return <code>null</code>. If the value is already unwrapped and not <code>null</code> it is returned 'as is'.
+ Skips the event listener if the given parameter is one of the possible types (null, zero, or empty).
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface UnwrapOrSkip {
-    boolean skipIfNull() default false;
+public @interface SkipIf {
+    Type value() default Type.NULL;
+
+    enum Type {
+        NULL, EMPTY, ZERO
+    }
 }

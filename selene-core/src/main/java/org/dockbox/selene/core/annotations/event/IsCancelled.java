@@ -15,26 +15,24 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.annotations;
+package org.dockbox.selene.core.annotations.event;
 
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.objects.events.Cancellable;
+import org.dockbox.selene.core.objects.tuple.Tristate;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
- Tries to get the instance of the type through {@link Selene#getInstance}. Supports extension-specific injected types
- if the listener is a extension and no value is provided. If {@link #value()} is provided, and is a extension,
- the provided class is offered as the extension. By default this will not override any pre-existing value unless
- {@link #overrideExisting()} is set to true.
-
+ Indicates whether or not to call a event depending on it's cancelled state (if the event is a instance of
+ {@link Cancellable}). There are three options: <code>TRUE</code> which only calls the listener if the event is
+ cancelled, <code>FALSE</code> which only calls the listener if the event is not cancelled (default), and
+ <code>UNDEFINED</code> which calls the listener in either case.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface Provided {
-    Class<?> value() default Void.class;
-    boolean overrideExisting() default false;
+@Target(ElementType.METHOD)
+public @interface IsCancelled {
+    Tristate value() default Tristate.FALSE;
 }

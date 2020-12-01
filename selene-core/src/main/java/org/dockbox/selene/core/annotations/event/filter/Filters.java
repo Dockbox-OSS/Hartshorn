@@ -15,20 +15,19 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.annotations;
+package org.dockbox.selene.core.annotations.event.filter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
- Tries to obtain the value of a given (getter) method, or null for any parameter but event. By default this will not
- override any pre-existing value unless {@link #overrideExisting()} is set to <code>true</code>.
+ Repeatable wrapper for {@link Filter}.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface Getter {
-    String value();
-    boolean overrideExisting() default false;
+@Target(ElementType.METHOD)
+public @interface Filters {
+    Filter[] value();
 }

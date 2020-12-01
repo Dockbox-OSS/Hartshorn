@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.util.events;
 
+import org.dockbox.selene.core.annotations.event.filter.Filter;
 import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Arrays;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 /**
- The default filter types used in {@link org.dockbox.selene.core.annotations.Filter}. These typically compare the given
+ The default filter types used in {@link Filter}. These typically compare the given
  value of a event property to a expected value.
  */
 public enum FilterTypes implements FilterType {

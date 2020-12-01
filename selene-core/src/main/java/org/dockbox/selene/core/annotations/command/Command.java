@@ -15,19 +15,25 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.annotations;
+package org.dockbox.selene.core.annotations.command;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.i18n.permissions.Permission;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.time.temporal.ChronoUnit;
 
-/**
- Wraps the parameter in a {@link Exceptional} instance, unless the parameter is the event.
- */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface WrapSafe {
+@Target({ElementType.TYPE, ElementType.METHOD})
+public @interface Command {
+    String[] aliases();
+    String usage();
+    Permission permission() default Permission.GLOBAL_BYPASS;
+    String rawPermission() default "";
+    long cooldownDuration() default -1;
+    ChronoUnit cooldownUnit() default ChronoUnit.SECONDS;
+    boolean inherit() default false;
+    boolean confirm() default false;
 }

@@ -15,16 +15,20 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.extension;
+package org.dockbox.selene.core.annotations.event.processing;
 
-import org.dockbox.selene.core.server.IntegratedExtension;
-import org.dockbox.selene.core.annotations.extension.Extension;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Extension(
-        id = "junitExtension",
-        name = "JUnit Test Extension",
-        description = "Provides a mocked test extension",
-        authors = "GuusLieben",
-        uniqueId = "44574eca-90ba-4ec4-9a5f-14f035d5480b")
-public class IntegratedTestExtension implements IntegratedExtension {
+/**
+ Tries to obtain the value of a given (getter) method, or null for any parameter but event. By default this will not
+ override any pre-existing value unless {@link #overrideExisting()} is set to <code>true</code>.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+public @interface Getter {
+    String value();
+    boolean overrideExisting() default false;
 }

@@ -19,7 +19,7 @@ package org.dockbox.selene.core.impl.util;
 
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.status.ExtensionStatus;
 import org.jetbrains.annotations.NotNull;

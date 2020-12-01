@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.command.registry
 
 import java.lang.reflect.Method
-import org.dockbox.selene.core.annotations.Command
+import org.dockbox.selene.core.annotations.command.Command
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission
 
 class MethodCommandRegistration(primaryAlias: String,

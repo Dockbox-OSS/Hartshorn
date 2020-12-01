@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.impl.command.context;
 
-import org.dockbox.selene.core.annotations.FromSource;
+import org.dockbox.selene.core.annotations.command.FromSource;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;

@@ -19,7 +19,7 @@ package org.dockbox.selene.core.server
 
 import java.util.function.Consumer
 import java.util.function.Function
-import org.dockbox.selene.core.util.extension.Extension
+import org.dockbox.selene.core.annotations.extension.Extension
 
 abstract class ServerReference {
 

@@ -15,6 +15,29 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.annotations
+package org.dockbox.selene.core.annotations.event;
 
-annotation class Placeholder(val description: String, val by: String, val assignee: String)
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface Listener {
+    Priority value() default Priority.NORMAL;
+
+    enum Priority {
+        LAST(0x14), LATE(0xf), NORMAL(0xa), EARLY(0x5), FIRST(0x0);
+
+        private final int priority;
+
+        Priority(int priority) {
+            this.priority = priority;
+        }
+
+        public int getPriority() {
+            return this.priority;
+        }
+    }
+}

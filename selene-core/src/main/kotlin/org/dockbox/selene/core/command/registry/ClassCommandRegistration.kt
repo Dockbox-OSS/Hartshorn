@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.command.registry
 
-import org.dockbox.selene.core.annotations.Command
+import org.dockbox.selene.core.annotations.command.Command
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission
 
 class ClassCommandRegistration(primaryAlias: String,

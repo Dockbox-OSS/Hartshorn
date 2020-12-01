@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util.extension;
+package org.dockbox.selene.core.annotations.command;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,15 +23,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Extension {
-    String id();
-    String name();
-    String version() default "unknown";
-    String description();
-    String url() default "none";
-    String[] authors();
-    String[] dependencies() default {};
-    boolean requiresNMS() default false;
-    String uniqueId();
+@Target(ElementType.PARAMETER)
+public @interface FromSource {
 }

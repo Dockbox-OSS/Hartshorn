@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.core.impl.command;
 
-import org.dockbox.selene.core.annotations.Command;
-import org.dockbox.selene.core.annotations.FromSource;
+import org.dockbox.selene.core.annotations.command.Command;
+import org.dockbox.selene.core.annotations.command.FromSource;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.CommandRunnerFunction;
 import org.dockbox.selene.core.command.context.CommandContext;
@@ -90,7 +90,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
 
     @Override
     public void registerSingleMethodCommands(@NotNull Class<?> clazz) {
-        Collection<Method> methods = SeleneUtils.getAnnotedMethods(clazz, Command.class, Command::single);
+        Collection<Method> methods = SeleneUtils.getAnnotedMethods(clazz, Command.class, c -> !c.inherit());
         MethodCommandRegistration[] registrations = this.createSingleMethodRegistrations(methods);
         Arrays.stream(registrations).forEach(registration -> Arrays.stream(registration.getAliases())
                 .forEach(alias -> this.registerSingleMethodRegistration(registration, alias)));
@@ -114,7 +114,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
             else if (result.isPresent()) src.sendWithPrefix(result.get());
         };
 
-        if (registration.getCommand().requireConfirm() && src instanceof Identifiable) {
+        if (registration.getCommand().confirm() && src instanceof Identifiable) {
             this.confirmableCommands.put(((Identifiable<?>) src).getUniqueId(), runnable);
 
             Text confirmMessage = Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE)
@@ -169,7 +169,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
     @Override
     public ClassCommandRegistration createClassRegistration(@NotNull Class<?> clazz) {
         Triad<Command, AbstractPermission, String[]> information = this.getCommandInformation(clazz);
-        Collection<Method> methods = SeleneUtils.getAnnotedMethods(clazz, Command.class, Command::single);
+        Collection<Method> methods = SeleneUtils.getAnnotedMethods(clazz, Command.class, c -> !c.inherit());
         MethodCommandRegistration[] registrations = this.createSingleMethodRegistrations(methods);
         return new ClassCommandRegistration(
                 information.getThird()[0],
@@ -184,9 +184,9 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
     private Triad<Command, AbstractPermission, String[]> getCommandInformation(AnnotatedElement element) {
         Command command = element.getAnnotation(Command.class);
         @SuppressWarnings("CallToSuspiciousStringMethod")
-        AbstractPermission permission = "".equals(command.permissionKey())
+        AbstractPermission permission = "".equals(command.rawPermission())
                 ? command.permission()
-                : new ExternalPermission(command.permissionKey());
+                : new ExternalPermission(command.rawPermission());
         return new Triad<>(command, permission, command.aliases());
     }
 

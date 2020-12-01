@@ -19,7 +19,7 @@ package org.dockbox.selene.core.impl.util.events;
 
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.annotations.Listener;
+import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.impl.util.events.processors.DefaultParamProcessors;
 import org.dockbox.selene.core.objects.events.Event;
 import org.dockbox.selene.core.server.Selene;
@@ -34,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 

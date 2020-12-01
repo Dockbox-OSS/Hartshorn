@@ -21,9 +21,9 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 
 import org.dockbox.selene.core.annotations.Async;
-import org.dockbox.selene.core.annotations.Filter;
-import org.dockbox.selene.core.annotations.Filters;
-import org.dockbox.selene.core.annotations.IsCancelled;
+import org.dockbox.selene.core.annotations.event.filter.Filter;
+import org.dockbox.selene.core.annotations.event.filter.Filters;
+import org.dockbox.selene.core.annotations.event.IsCancelled;
 import org.dockbox.selene.core.exceptions.SkipEventException;
 import org.dockbox.selene.core.objects.events.Cancellable;
 import org.dockbox.selene.core.objects.events.Event;

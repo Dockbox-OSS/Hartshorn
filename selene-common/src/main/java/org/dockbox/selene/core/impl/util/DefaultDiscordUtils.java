@@ -27,8 +27,8 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
-import org.dockbox.selene.core.annotations.DiscordCommand;
-import org.dockbox.selene.core.annotations.DiscordCommand.ListeningLevel;
+import org.dockbox.selene.core.annotations.command.DiscordCommand;
+import org.dockbox.selene.core.annotations.command.DiscordCommand.ListeningLevel;
 import org.dockbox.selene.core.events.discord.DiscordCommandContext;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;

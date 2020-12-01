@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.oldplots;
 
-import org.dockbox.selene.core.annotations.Command;
+import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.server.Selene;
@@ -27,7 +27,7 @@ import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.construct.ConstructionUtil;
-import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.util.files.ConfigurateManager;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.sql.dialects.sqlite.SQLiteMan;
@@ -42,7 +42,7 @@ import java.util.List;
            authors = "GuusLieben", uniqueId = "aa4a7056-8cb3-48f0-b196-a4601eceeb5b")
 public class OldPlotsExtension extends ServerReference {
 
-    @Command(aliases = {"oldplots", "olp"}, usage = "oldplots <player{Player}>", permissionKey = "selene.oldplots.list")
+    @Command(aliases = {"oldplots", "olp"}, usage = "oldplots <player{Player}>", rawPermission = "selene.oldplots.list")
     public void oldPlotsCommand(Player source, CommandContext ctx) throws Throwable {
         if (!ctx.hasArgument("player")) source.sendWithPrefix("$4No valid player provided!");
         Player player = ctx.getArgument("player", Player.class).rethrow().get().getValue();

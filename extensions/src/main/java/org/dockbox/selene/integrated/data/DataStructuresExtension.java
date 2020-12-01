@@ -22,7 +22,7 @@ import com.google.common.reflect.TypeToken;
 import org.dockbox.selene.integrated.data.registry.Registry;
 import org.dockbox.selene.core.impl.util.files.serialize.PredicateSerializerInformation;
 import org.dockbox.selene.integrated.data.serializers.RegistrySerializer;
-import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.core.annotations.extension.Extension;
 
 @Extension(id = "datastructures", name = "Additional data structures",
            description = "Provides additional data structures for specific usages",

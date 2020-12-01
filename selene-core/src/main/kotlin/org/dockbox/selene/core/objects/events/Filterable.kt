@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.objects.events
 
-import org.dockbox.selene.core.annotations.Filter
+import org.dockbox.selene.core.annotations.event.filter.Filter
 import org.dockbox.selene.core.util.events.FilterTypes
 
 /**

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.server;
 
-import org.dockbox.selene.core.annotations.Command;
+import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
@@ -41,7 +41,7 @@ import org.dockbox.selene.core.text.navigation.PaginationBuilder;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.util.construct.ConstructionUtil;
 import org.dockbox.selene.core.util.events.EventBus;
-import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.util.extension.ExtensionContext;
 import org.dockbox.selene.core.util.extension.ExtensionManager;
 import org.jetbrains.annotations.Nullable;
@@ -121,7 +121,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
         });
     }
 
-    @Command(aliases = "reload", usage = "reload [id{Extension}]", requireConfirm = true)
+    @Command(aliases = "reload", usage = "reload [id{Extension}]", confirm = true)
     public void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = super.getInstance(EventBus.class);
         if (ctx.hasArgument("id")) {
@@ -191,7 +191,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
         ));
     }
 
-    @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", single = true)
+    @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", inherit = false)
     public void switchLang(MessageReceiver src, CommandContext ctx) {
         Exceptional<Language> ol = ctx.getArgumentAndParse("language", new LanguageParser());
         @Nullable Player target;
