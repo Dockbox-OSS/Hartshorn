@@ -118,8 +118,8 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
             this.confirmableCommands.put(((Identifiable<?>) src).getUniqueId(), runnable);
 
             Text confirmMessage = Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE)
-                    .onClick(new ClickAction.RunCommand("/selene confirm " + ((Identifiable<?>) src).getUniqueId()))
-                    .onHover(new HoverAction.ShowText(Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE_HOVER)));
+                    .onClick(ClickAction.runCommand("/selene confirm " + ((Identifiable<?>) src).getUniqueId()))
+                    .onHover(HoverAction.showText(Text.of(IntegratedResource.CONFIRM_COMMAND_MESSAGE_HOVER)));
 
             src.sendWithPrefix(confirmMessage);
 

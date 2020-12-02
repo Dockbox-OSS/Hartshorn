@@ -36,7 +36,7 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
-import org.dockbox.selene.core.text.navigation.Pagination;
+import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.sponge.exceptions.TypeConversionException;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
@@ -149,7 +149,7 @@ public enum SpongeConversionUtil {
         if (null != pagination.getFooter()) builder.footer(toSponge(pagination.getFooter()));
 
         builder.padding(toSponge(pagination.getPadding()));
-        builder.linesPerPage(pagination.getLinesPerPage().intValue());
+        builder.linesPerPage(pagination.getLinesPerPage());
         List<Text> convertedContent = pagination.getContent().stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList());
         builder.contents(convertedContent);
         return builder.build();
@@ -322,7 +322,7 @@ public enum SpongeConversionUtil {
     @SuppressWarnings("OverlyStrongTypeCast")
     private static Exceptional<ShiftClickAction<?>> fromSponge(org.spongepowered.api.text.action.ShiftClickAction<?> shiftClickAction) {
         if (shiftClickAction instanceof InsertText) {
-            return Exceptional.of(new ShiftClickAction.InsertText(org.dockbox.selene.core.text.Text.of(
+            return Exceptional.of(ShiftClickAction.insertText(org.dockbox.selene.core.text.Text.of(
                     ((InsertText) shiftClickAction).getResult()))
             );
         } else return Exceptional.empty();
@@ -331,26 +331,26 @@ public enum SpongeConversionUtil {
     @SuppressWarnings("OverlyStrongTypeCast")
     private static Exceptional<HoverAction<?>> fromSponge(org.spongepowered.api.text.action.HoverAction<?> hoverAction) {
         if (hoverAction instanceof ShowText) {
-            return Exceptional.of(new HoverAction.ShowText(fromSponge(((ShowText) hoverAction).getResult())));
+            return Exceptional.of(HoverAction.showText(fromSponge(((ShowText) hoverAction).getResult())));
         } else return Exceptional.empty();
     }
 
     @SuppressWarnings("OverlyStrongTypeCast")
     private static Exceptional<ClickAction<?>> fromSponge(org.spongepowered.api.text.action.ClickAction<?> clickAction) {
         if (clickAction instanceof OpenUrl) {
-            return Exceptional.of(new ClickAction.OpenUrl(((OpenUrl) clickAction).getResult()));
+            return Exceptional.of(ClickAction.openUrl(((OpenUrl) clickAction).getResult()));
 
         } else if (clickAction instanceof RunCommand) {
-            return Exceptional.of(new ClickAction.RunCommand((((RunCommand) clickAction).getResult())));
+            return Exceptional.of(ClickAction.runCommand((((RunCommand) clickAction).getResult())));
 
         } else if (clickAction instanceof ChangePage) {
-            return Exceptional.of(new ClickAction.ChangePage((((ChangePage) clickAction).getResult())));
+            return Exceptional.of(ClickAction.changePage((((ChangePage) clickAction).getResult())));
 
         } else if (clickAction instanceof SuggestCommand) {
-            return Exceptional.of(new ClickAction.SuggestCommand((((SuggestCommand) clickAction).getResult())));
+            return Exceptional.of(ClickAction.suggestCommand((((SuggestCommand) clickAction).getResult())));
 
         } else if (clickAction instanceof ExecuteCallback) {
-            return Exceptional.of(new ClickAction.ExecuteCallback(src -> toSponge(src)
+            return Exceptional.of(ClickAction.executeCallback(src -> toSponge(src)
                     .ifPresent(ssrc -> ((ExecuteCallback) clickAction).getResult().accept(ssrc))
                     .ifAbsent(() -> Selene.log().warn("Attempted to execute callback with unknown source type '" + src + "', is it convertable?"))
             ));

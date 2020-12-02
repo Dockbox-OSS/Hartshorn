@@ -15,24 +15,28 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.text.navigation;
+package org.dockbox.selene.core.text.pagination;
 
-import org.dockbox.selene.core.text.pagination.Pagination;
-import org.dockbox.selene.core.text.pagination.PaginationBuilder;
-import org.jetbrains.annotations.NotNull;
+import org.dockbox.selene.core.objects.targets.MessageReceiver;
+import org.dockbox.selene.core.text.Text;
 
-public class SpongePaginationBuilder extends PaginationBuilder {
+import java.util.List;
 
-    @NotNull
-    @Override
-    public Pagination build() {
-        return new SpongePagination(
-                super.getPadding(),
-                super.getLinesPerPage(),
-                super.getHeader(),
-                super.getFooter(),
-                super.getTitle(),
-                super.getContent()
-        );
-    }
+public interface Pagination {
+    
+    void send(MessageReceiver receiver);
+
+    Text getPadding();
+    int getLinesPerPage();
+    Text getHeader();
+    Text getFooter();
+    Text getTitle();
+    List<Text> getContent();
+
+    void setPadding(Text padding);
+    void setLinesPerPage(int linesPerPage);
+    void setHeader(Text header);
+    void setFooter(Text footer);
+    void setTitle(Text title);
+    void setContent(List<Text> content);
 }

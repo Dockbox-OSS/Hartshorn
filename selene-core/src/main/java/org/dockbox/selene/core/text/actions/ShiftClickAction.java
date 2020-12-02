@@ -15,24 +15,24 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.text.navigation;
+package org.dockbox.selene.core.text.actions;
 
-import org.dockbox.selene.core.text.pagination.Pagination;
-import org.dockbox.selene.core.text.pagination.PaginationBuilder;
-import org.jetbrains.annotations.NotNull;
+import org.dockbox.selene.core.text.Text;
 
-public class SpongePaginationBuilder extends PaginationBuilder {
+@SuppressWarnings("ClassReferencesSubclass")
+public class ShiftClickAction<R> extends TextAction<R> {
 
-    @NotNull
-    @Override
-    public Pagination build() {
-        return new SpongePagination(
-                super.getPadding(),
-                super.getLinesPerPage(),
-                super.getHeader(),
-                super.getFooter(),
-                super.getTitle(),
-                super.getContent()
-        );
+    private ShiftClickAction(R result) {
+        super(result);
+    }
+
+    public static final class InsertText extends ShiftClickAction<Text> {
+        private InsertText(Text result) {
+            super(result);
+        }
+    }
+
+    public static InsertText insertText(Text text) {
+        return new InsertText(text);
     }
 }

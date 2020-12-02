@@ -22,7 +22,7 @@ import com.magitechserver.magibridge.util.BridgeCommandSource;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.objects.discord.DiscordCommandSource;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.text.navigation.Pagination;
+import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;

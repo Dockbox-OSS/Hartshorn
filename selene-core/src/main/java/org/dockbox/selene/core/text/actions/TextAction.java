@@ -15,24 +15,17 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.text.navigation;
+package org.dockbox.selene.core.text.actions;
 
-import org.dockbox.selene.core.text.pagination.Pagination;
-import org.dockbox.selene.core.text.pagination.PaginationBuilder;
-import org.jetbrains.annotations.NotNull;
+public abstract class TextAction<R> {
 
-public class SpongePaginationBuilder extends PaginationBuilder {
+    private final R result;
 
-    @NotNull
-    @Override
-    public Pagination build() {
-        return new SpongePagination(
-                super.getPadding(),
-                super.getLinesPerPage(),
-                super.getHeader(),
-                super.getFooter(),
-                super.getTitle(),
-                super.getContent()
-        );
+    protected TextAction(R result) {
+        this.result = result;
+    }
+
+    public R getResult() {
+        return this.result;
     }
 }

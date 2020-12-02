@@ -18,7 +18,7 @@
 package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.text.navigation.PaginationBuilder;
+import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.ConstructionUtil;
 import org.jetbrains.annotations.NotNull;
 

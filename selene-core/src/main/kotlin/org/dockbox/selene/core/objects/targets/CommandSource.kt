@@ -19,7 +19,7 @@ package org.dockbox.selene.core.objects.targets
 
 import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.text.Text
-import org.dockbox.selene.core.text.navigation.Pagination
+import org.dockbox.selene.core.text.pagination.Pagination
 
 interface CommandSource : MessageReceiver {
 

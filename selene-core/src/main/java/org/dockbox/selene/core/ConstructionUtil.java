@@ -18,7 +18,7 @@
 package org.dockbox.selene.core;
 
 import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.text.navigation.PaginationBuilder;
+import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 
 public interface ConstructionUtil {
     PaginationBuilder paginationBuilder();

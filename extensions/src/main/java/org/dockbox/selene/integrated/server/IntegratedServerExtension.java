@@ -26,6 +26,8 @@ import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
+import org.dockbox.selene.core.extension.ExtensionContext;
+import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LanguageParser;
@@ -38,11 +40,9 @@ import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.text.actions.ClickAction.RunCommand;
-import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
-import org.dockbox.selene.core.text.navigation.PaginationBuilder;
-import org.dockbox.selene.core.extension.ExtensionContext;
-import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.text.actions.ClickAction;
+import org.dockbox.selene.core.text.actions.HoverAction;
+import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -78,7 +78,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
                     );
 
             pb.title(IntegratedServerResources.PAGINATION_TITLE.asText());
-            pb.contents(content);
+            pb.content(content);
 
             source.sendPagination(pb.build());
         });
@@ -86,8 +86,8 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     private Text generateText(Extension e) {
         Text line = Text.of(IntegratedServerResources.EXTENSION_ROW.format(e.name(), e.id()));
-        line.onClick(new RunCommand("/dserver extension " + e.id()));
-        line.onHover(new ShowText(Text.of(IntegratedServerResources.EXTENSION_ROW_HOVER.format(e.name()))));
+        line.onClick(ClickAction.runCommand("/dserver extension " + e.id()));
+        line.onHover(HoverAction.showText(Text.of(IntegratedServerResources.EXTENSION_ROW_HOVER.format(e.name()))));
         return line;
     }
 
