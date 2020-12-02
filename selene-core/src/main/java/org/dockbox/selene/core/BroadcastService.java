@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core;
 
-import org.dockbox.selene.core.i18n.permissions.Permission;
+import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.core.objects.user.Player;
 import org.dockbox.selene.core.text.Text;
 
@@ -28,10 +28,10 @@ public interface BroadcastService {
     void broadcastPublic(Text message);
     void broadcastWithFilter(Text message, Predicate<Player> filter);
 
-    void broadcastForPermission(Text message, Permission permission);
+    void broadcastForPermission(Text message, AbstractPermission permission);
     void broadcastForPermission(Text message, String permission);
 
-    void broadcastForPermissionWithFilter(Text message, Permission permission, Predicate<Player> filter);
+    void broadcastForPermissionWithFilter(Text message, AbstractPermission permission, Predicate<Player> filter);
     void broadcastForPermissionWithFilter(Text message, String permission, Predicate<Player> filter);
 
 }

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.objects.targets
 
-import org.dockbox.selene.core.i18n.permissions.Permission
+import org.dockbox.selene.core.i18n.permissions.AbstractPermission
 
 interface PermissionHolder : Target {
 
@@ -25,14 +25,14 @@ interface PermissionHolder : Target {
     fun hasAnyPermission(vararg permissions: String): Boolean
     fun hasAllPermissions(vararg permissions: String): Boolean
 
-    fun hasPermission(permission: Permission): Boolean
-    fun hasAnyPermission(vararg permissions: Permission): Boolean
-    fun hasAllPermissions(vararg permissions: Permission): Boolean
+    fun hasPermission(permission: AbstractPermission): Boolean
+    fun hasAnyPermission(vararg permissions: AbstractPermission): Boolean
+    fun hasAllPermissions(vararg permissions: AbstractPermission): Boolean
 
     fun setPermission(permission: String, value: Boolean)
     fun setPermissions(value: Boolean, vararg permissions: String)
 
-    fun setPermission(permission: Permission, value: Boolean)
-    fun setPermissions(value: Boolean, vararg permissions: Permission)
+    fun setPermission(permission: AbstractPermission, value: Boolean)
+    fun setPermissions(value: Boolean, vararg permissions: AbstractPermission)
 
 }

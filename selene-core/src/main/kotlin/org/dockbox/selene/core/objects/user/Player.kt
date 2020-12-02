@@ -20,7 +20,7 @@ package org.dockbox.selene.core.objects.user
 import com.boydti.fawe.`object`.FawePlayer
 import java.util.*
 import org.dockbox.selene.core.i18n.common.Language
-import org.dockbox.selene.core.i18n.permissions.Permission
+import org.dockbox.selene.core.i18n.permissions.AbstractPermission
 import org.dockbox.selene.core.objects.optional.Exceptional
 import org.dockbox.selene.core.objects.targets.CommandSource
 import org.dockbox.selene.core.objects.targets.Identifiable
@@ -40,25 +40,25 @@ abstract class Player(uniqueId: UUID, name: String) : Identifiable<Player>(uniqu
     abstract fun getLanguage(): Language
     abstract fun setLanguage(lang: Language)
 
-    override fun hasPermission(permission: Permission): Boolean {
+    override fun hasPermission(permission: AbstractPermission): Boolean {
         return hasPermission(permission.get())
     }
 
-    override fun hasAnyPermission(vararg permissions: Permission): Boolean {
+    override fun hasAnyPermission(vararg permissions: AbstractPermission): Boolean {
         for (permission in permissions) if (hasPermission(permission)) return true
         return false
     }
 
-    override fun hasAllPermissions(vararg permissions: Permission): Boolean {
+    override fun hasAllPermissions(vararg permissions: AbstractPermission): Boolean {
         for (permission in permissions) if (!hasPermission(permission)) return false
         return true
     }
 
-    override fun setPermission(permission: Permission, value: Boolean) {
+    override fun setPermission(permission: AbstractPermission, value: Boolean) {
         setPermission(permission.get(), value)
     }
 
-    override fun setPermissions(value: Boolean, vararg permissions: Permission) {
+    override fun setPermissions(value: Boolean, vararg permissions: AbstractPermission) {
         for (permission in permissions) setPermission(permission, value)
     }
 }

@@ -41,7 +41,7 @@ import java.util.List;
            authors = "GuusLieben", uniqueId = "aa4a7056-8cb3-48f0-b196-a4601eceeb5b")
 public class OldPlotsExtension {
 
-    @Command(aliases = {"oldplots", "olp"}, usage = "oldplots <player{Player}>", rawPermission = "selene.oldplots.list")
+    @Command(aliases = {"oldplots", "olp"}, usage = "oldplots <player{Player}>", permission = "selene.oldplots.list")
     public void oldPlotsCommand(Player source, CommandContext ctx) throws Throwable {
         if (!ctx.hasArgument("player")) source.sendWithPrefix("$4No valid player provided!");
         Player player = ctx.getArgument("player", Player.class).rethrow().get().getValue();

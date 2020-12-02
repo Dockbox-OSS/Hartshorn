@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.impl.command;
 
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.command.FromSource;
 import org.dockbox.selene.core.command.CommandBus;
@@ -29,7 +30,6 @@ import org.dockbox.selene.core.exceptions.ConfirmFailedException;
 import org.dockbox.selene.core.exceptions.IllegalSourceException;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
-import org.dockbox.selene.core.i18n.permissions.ExternalPermission;
 import org.dockbox.selene.core.i18n.permissions.Permission;
 import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
 import org.dockbox.selene.core.objects.location.Location;
@@ -44,7 +44,6 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
-import org.dockbox.selene.core.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -183,10 +182,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
 
     private Triad<Command, AbstractPermission, String[]> getCommandInformation(AnnotatedElement element) {
         Command command = element.getAnnotation(Command.class);
-        @SuppressWarnings("CallToSuspiciousStringMethod")
-        AbstractPermission permission = "".equals(command.rawPermission())
-                ? command.permission()
-                : new ExternalPermission(command.rawPermission());
+        AbstractPermission permission = new Permission(command.permission());
         return new Triad<>(command, permission, command.aliases());
     }
 
@@ -357,9 +353,9 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
         if (2 <= vm.groupCount()) type = vm.group(2);
         else type = "String";
         if (3 <= vm.groupCount()) permission = vm.group(3);
-        else permission = Permission.GLOBAL_BYPASS.get();
+        else permission = Selene.GLOBAL_BYPASS.get();
 
-        return this.getArgumentValue(type, Permission.Companion.of(permission), key);
+        return this.getArgumentValue(type, new Permission(permission), key);
     }
 
     public Map<UUID, Runnable> getConfirmableCommands() {

@@ -15,8 +15,18 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.i18n.permissions
+package org.dockbox.selene.core.i18n.permissions;
 
-open class ExternalPermission(private val key: String) : AbstractPermission {
-    override fun get(): String = this.key
+public class Permission implements AbstractPermission {
+
+    private final String key;
+
+    public Permission(String key) {
+        this.key = key;
+    }
+
+    @Override
+    public String get() {
+        return this.key;
+    }
 }

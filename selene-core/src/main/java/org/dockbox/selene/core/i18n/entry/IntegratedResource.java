@@ -1,31 +1,31 @@
 /*
- * Copyright (C) 2020 Guus Lieben
+ *  Copyright (C) 2020 Guus Lieben
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 2.1 of the
- * License, or (at your option) any later version.
+ *  This framework is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as
+ *  published by the Free Software Foundation, either version 2.1 of the
+ *  License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ *  the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.i18n.entry
+package org.dockbox.selene.core.i18n.entry;
 
-import java.util.concurrent.ConcurrentHashMap
-import org.dockbox.selene.core.i18n.common.Language
-import org.dockbox.selene.core.i18n.common.ResourceEntry
-import org.dockbox.selene.core.objects.user.Player
-import org.dockbox.selene.core.server.Selene
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.i18n.common.ResourceEntry;
+import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.server.Selene;
 
+import java.util.Map;
 
-enum class IntegratedResource(private var value: String): ResourceEntry {
-
+public enum IntegratedResource implements ResourceEntry {
     // Color formats
     COLOR_PRIMARY("b"),
     COLOR_SECONDARY("3"),
@@ -100,35 +100,41 @@ enum class IntegratedResource(private var value: String): ResourceEntry {
     VANISHING_CURSE("Vanishing Curse"),
     ;
 
-    private var translations: MutableMap<Language, String> = ConcurrentHashMap()
+    private String value;
+    private final Map<Language, String> translations = SeleneUtils.emptyConcurrentMap();
 
-    fun getValue(player: Player): String {
-        return getValue(player.getLanguage())
+    IntegratedResource(String value) {
+        this.value = value;
     }
 
-    override fun getValue(): String {
-        return getValue(Selene.getServer().getGlobalConfig().getDefaultLanguage())
+    public String getValue(Player player) {
+        return this.getValue(player.getLanguage());
     }
 
-    override fun getValue(lang: Language): String {
-        return if (translations.containsKey(lang)) translations[lang]!!
-        else this.value
+    @Override
+    public String getValue() {
+        return this.getValue(Selene.getServer().getGlobalConfig().getDefaultLanguage());
     }
 
-    override fun setValue(value: String) {
-        this.translations[Selene.getServer().getGlobalConfig().getDefaultLanguage()] = value
-        this.value = value
+    @Override
+    public String getValue(Language lang) {
+        if (this.translations.containsKey(lang)) return this.translations.get(lang);
+        return this.value;
     }
 
-    fun setLanguageValue(lang: Language, value: String) {
-        this.translations[lang] = value
-        if (lang == Selene.getServer().getGlobalConfig().getDefaultLanguage()) this.value = value
+    @Override
+    public void setValue(String value) {
+        this.translations.put(Selene.getServer().getGlobalConfig().getDefaultLanguage(), value);
+        this.value = value;
     }
 
-    companion object {
-        fun parseColors(input: CharSequence): String {
-            return IntegratedResource.NONE.parseColors(input.toString())
-        }
+    public void setLanguageValue(Language lang, String value) {
+        this.translations.put(lang, value);
+        if (lang == Selene.getServer().getGlobalConfig().getDefaultLanguage()) this.value = value;
+    }
+
+    public static String parse(CharSequence input) {
+        return NONE.parseColors(input.toString());
     }
 
 }

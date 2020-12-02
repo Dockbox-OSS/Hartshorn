@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.core.annotations.command;
 
-import org.dockbox.selene.core.i18n.permissions.Permission;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -30,8 +28,7 @@ import java.time.temporal.ChronoUnit;
 public @interface Command {
     String[] aliases();
     String usage();
-    Permission permission() default Permission.GLOBAL_BYPASS;
-    String rawPermission() default "";
+    String permission() default "";
     long cooldownDuration() default -1;
     ChronoUnit cooldownUnit() default ChronoUnit.SECONDS;
     boolean inherit() default false;

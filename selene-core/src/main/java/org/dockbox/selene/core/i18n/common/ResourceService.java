@@ -15,27 +15,19 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.i18n.permissions
+package org.dockbox.selene.core.i18n.common;
 
+import org.dockbox.selene.core.i18n.entry.Resource;
+import org.dockbox.selene.core.objects.optional.Exceptional;
 
-enum class Permission(private var value: String) : AbstractPermission {
+import java.util.Map;
 
-    GLOBAL_BYPASS("selene.admin.bypass-all");
+public interface ResourceService {
 
-    override fun get(): String {
-        return this.value
-    }
+    void init();
+    Map<String, String> getResourceMap(Language lang);
+    Map<Language, String> getTranslations(Resource entry);
+    String createValidKey(String raw);
+    Exceptional<Resource> getExternalResource(String key);
 
-    companion object {
-
-        private val map = values().associateBy(Permission::value)
-
-        fun of(perm: String): AbstractPermission {
-            return if (map.containsKey(perm))
-                map[perm] ?: error("Node key is present but was absent on return")
-            else return object : AbstractPermission {
-                override fun get(): String = perm
-            }
-        }
-    }
 }

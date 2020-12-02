@@ -19,7 +19,7 @@ package org.dockbox.selene.core.objects.targets
 
 import org.dockbox.selene.core.i18n.common.ResourceEntry
 import org.dockbox.selene.core.i18n.entry.IntegratedResource
-import org.dockbox.selene.core.i18n.permissions.Permission
+import org.dockbox.selene.core.i18n.permissions.AbstractPermission
 import org.dockbox.selene.core.server.Selene
 import org.dockbox.selene.core.text.Text
 
@@ -35,22 +35,22 @@ abstract class Console : CommandSource, PermissionHolder {
 
     override fun hasAllPermissions(vararg permissions: String): Boolean = true
 
-    override fun hasPermission(permission: Permission): Boolean = true
+    override fun hasPermission(permission: AbstractPermission): Boolean = true
 
-    override fun hasAnyPermission(vararg permissions: Permission): Boolean = true
+    override fun hasAnyPermission(vararg permissions: AbstractPermission): Boolean = true
 
-    override fun hasAllPermissions(vararg permissions: Permission): Boolean = true
+    override fun hasAllPermissions(vararg permissions: AbstractPermission): Boolean = true
 
     override fun setPermission(permission: String, value: Boolean) = Unit
 
     override fun setPermissions(value: Boolean, vararg permissions: String) = Unit
 
-    override fun setPermission(permission: Permission, value: Boolean) = Unit
+    override fun setPermission(permission: AbstractPermission, value: Boolean) = Unit
 
-    override fun setPermissions(value: Boolean, vararg permissions: Permission) = Unit
+    override fun setPermissions(value: Boolean, vararg permissions: AbstractPermission) = Unit
 
     override fun send(text: ResourceEntry) {
-        val formattedValue = IntegratedResource.parseColors(text.getValue(Selene.getServer().globalConfig.getDefaultLanguage()))
+        val formattedValue = IntegratedResource.parse(text.getValue(Selene.getServer().globalConfig.getDefaultLanguage()))
         send(formattedValue)
     }
 

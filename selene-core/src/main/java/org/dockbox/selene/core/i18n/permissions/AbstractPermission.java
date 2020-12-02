@@ -15,13 +15,11 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.i18n.common
+package org.dockbox.selene.core.i18n.permissions;
 
-enum class Language(val code: String, val nameEnglish: String, val nameLocalized: String) {
+import org.dockbox.selene.core.i18n.common.Formattable;
 
-    EN_US("en_US", "English", "US"),
-    NL_NL("nl_NL", "Dutch", "Nederlands"),
-    FR_FR("fr_FR", "French", "Français"),
-    DE_DE("en_US", "German", "Deutsch")
-
+@FunctionalInterface
+public interface AbstractPermission extends Formattable {
+    String get();
 }

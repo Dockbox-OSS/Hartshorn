@@ -22,7 +22,7 @@ import com.google.inject.Singleton;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceService;
-import org.dockbox.selene.core.i18n.entry.ExternalResourceEntry;
+import org.dockbox.selene.core.i18n.entry.Resource;
 import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.files.ConfigurateManager;
@@ -39,7 +39,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class SimpleResourceService implements ResourceService {
 
     private final Map<Language, Map<String, String>> resourceMaps = SeleneUtils.emptyConcurrentMap();
-    private final List<ExternalResourceEntry> knownEntries = SeleneUtils.emptyConcurrentList();
+    private final List<Resource> knownEntries = SeleneUtils.emptyConcurrentList();
 
     @ConfigSerializable
     static class ResourceConfig {
@@ -73,7 +73,7 @@ public class SimpleResourceService implements ResourceService {
 
     @NotNull
     @Override
-    public Map<Language, String> getTranslations(@NotNull ExternalResourceEntry entry) {
+    public Map<Language, String> getTranslations(@NotNull Resource entry) {
         @NonNls String code = entry.getKey();
         this.knownEntries.add(entry);
         Map<Language, String> resourceMap = SeleneUtils.emptyConcurrentMap();
@@ -97,7 +97,7 @@ public class SimpleResourceService implements ResourceService {
 
     @NotNull
     @Override
-    public Exceptional<ExternalResourceEntry> getExternalResource(@NotNull String key) {
+    public Exceptional<Resource> getExternalResource(@NotNull String key) {
         @NonNls @NotNull String finalKey = this.createValidKey(key);
         return Exceptional.of(this.knownEntries.stream().filter(entry -> entry.getKey().equals(finalKey)).findFirst());
     }
