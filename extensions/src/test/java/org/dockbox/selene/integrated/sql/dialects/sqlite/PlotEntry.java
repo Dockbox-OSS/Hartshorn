@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.sql.dialects.sqlite;
 
-import org.dockbox.selene.core.objects.entity.Property;
+import org.dockbox.selene.core.annotations.entity.Property;
 
 public class PlotEntry {
 

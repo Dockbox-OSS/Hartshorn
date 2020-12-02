@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.command.context;
 
 import org.dockbox.selene.core.command.parsing.Parser;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 
 @SuppressWarnings("ClassReferencesSubclass")
 public class CommandValue<T> {

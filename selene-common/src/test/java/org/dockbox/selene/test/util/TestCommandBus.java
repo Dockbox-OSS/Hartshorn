@@ -21,7 +21,7 @@ import org.dockbox.selene.core.command.CommandRunner;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.core.impl.command.SimpleCommandBus;
 import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
-import org.dockbox.selene.core.objects.targets.CommandSource;
+import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.test.commands.TestArgumentValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

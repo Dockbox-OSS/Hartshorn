@@ -18,10 +18,10 @@
 package org.dockbox.selene.core;
 
 import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.objects.entity.Ignore;
-import org.dockbox.selene.core.objects.entity.Property;
-import org.dockbox.selene.core.objects.events.Event;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.annotations.entity.Ignore;
+import org.dockbox.selene.core.annotations.entity.Property;
+import org.dockbox.selene.core.events.parents.Event;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.objects.tuple.Vector3N;

@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.core.events
 
-import org.dockbox.selene.core.objects.events.Cancellable
-import org.dockbox.selene.core.objects.events.Targetable
+import org.dockbox.selene.core.events.parents.Cancellable
+import org.dockbox.selene.core.events.parents.Targetable
 import org.dockbox.selene.core.objects.targets.Target
 
 abstract class AbstractTargetCancellableEvent(private var target: Target) : Cancellable, Targetable {

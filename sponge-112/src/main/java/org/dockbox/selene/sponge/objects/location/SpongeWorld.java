@@ -19,11 +19,12 @@ package org.dockbox.selene.sponge.objects.location;
 
 import com.flowpowered.math.vector.Vector3i;
 
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.FieldReferenceHolder;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
-import org.dockbox.selene.core.objects.user.Gamemode;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -41,8 +42,8 @@ public class SpongeWorld extends World {
         else return Exceptional.empty();
     }, org.spongepowered.api.world.World.class);
 
-    public SpongeWorld(@NotNull UUID worldUniqueId, @NotNull String name, boolean loadOnStartup, @NotNull Vector3N spawnPosition, long seed, @NotNull Gamemode defaultGamemode, @NotNull Map<String, String> gamerules) {
-        super(worldUniqueId, name, loadOnStartup, spawnPosition, seed, defaultGamemode, gamerules);
+    public SpongeWorld(@NotNull UUID worldUniqueId, @NotNull String name, boolean loadOnStartup, @NotNull Vector3N spawnPosition, long seed, @NotNull Gamemode defaultGamemode) {
+        super(worldUniqueId, name, loadOnStartup, spawnPosition, seed, defaultGamemode);
     }
 
     @Override
@@ -129,6 +130,14 @@ public class SpongeWorld extends World {
     }
 
     @Override
+    public Map<String, String> getGamerules() {
+        if (this.worldReference.referenceExists()) {
+            return this.worldReference.getReference().get().getProperties().getGameRules();
+        }
+        return SeleneUtils.emptyMap();
+    }
+
+    @Override
     public void setDefaultGamemode(@NotNull Gamemode defaultGamemode) {
         if (this.worldReference.referenceExists()) {
             this.worldReference.getReference().get().getProperties()
@@ -138,5 +147,12 @@ public class SpongeWorld extends World {
 
     public org.spongepowered.api.world.World getReferenceWorld() {
         return this.worldReference.getReference().orNull();
+    }
+
+    @Override
+    public void setGamerule(String key, String value) {
+        if (this.worldReference.referenceExists()) {
+            this.worldReference.getReference().get().getProperties().setGameRule(key, value);
+        }
     }
 }

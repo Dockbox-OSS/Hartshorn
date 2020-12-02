@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.command.parsing;
 
 import org.dockbox.selene.core.command.context.CommandValue;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 
 public abstract class ArgumentParser extends AbstractParser {
 

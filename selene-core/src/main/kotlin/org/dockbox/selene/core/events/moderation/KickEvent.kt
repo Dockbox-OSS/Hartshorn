@@ -18,8 +18,8 @@
 package org.dockbox.selene.core.events.moderation
 
 import org.dockbox.selene.core.events.AbstractTargetEvent
-import org.dockbox.selene.core.objects.optional.Exceptional
-import org.dockbox.selene.core.objects.user.Player
+import org.dockbox.selene.core.objects.Exceptional
+import org.dockbox.selene.core.objects.player.Player
 
 /**
  * The event fired when a [Player] is kicked from the server.

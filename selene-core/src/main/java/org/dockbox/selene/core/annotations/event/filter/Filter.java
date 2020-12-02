@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.annotations.event.filter;
 
-import org.dockbox.selene.core.objects.events.Filterable;
+import org.dockbox.selene.core.events.parents.Filterable;
 import org.dockbox.selene.core.events.processing.FilterTypes;
 
 import java.lang.annotation.ElementType;

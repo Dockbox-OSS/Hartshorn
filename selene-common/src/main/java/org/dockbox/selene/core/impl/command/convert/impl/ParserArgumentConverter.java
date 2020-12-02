@@ -20,8 +20,8 @@ package org.dockbox.selene.core.impl.command.convert.impl;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.command.parsing.TypeParser;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.targets.CommandSource;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.command.source.CommandSource;
 
 import java.util.Collection;
 import java.util.function.Function;

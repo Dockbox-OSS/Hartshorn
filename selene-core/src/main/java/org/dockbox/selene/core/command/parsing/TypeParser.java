@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.command.parsing;
 
 import org.dockbox.selene.core.command.context.CommandValue;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 
 /**
  * Low-level class to perform {@link CommandValue} conversions into a given generic type T

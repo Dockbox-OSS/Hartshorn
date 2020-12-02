@@ -20,7 +20,7 @@ package org.dockbox.selene.core.command;
 import org.dockbox.selene.core.command.registry.ClassCommandRegistration;
 import org.dockbox.selene.core.command.registry.MethodCommandRegistration;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 
 import java.lang.reflect.Method;
 import java.util.Collection;

@@ -19,7 +19,7 @@ package org.dockbox.selene.core.events.chat
 
 import org.dockbox.selene.core.command.context.CommandContext
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
-import org.dockbox.selene.core.objects.targets.CommandSource
+import org.dockbox.selene.core.command.source.CommandSource
 
 abstract class CommandEvent(
         source: CommandSource,

@@ -18,7 +18,7 @@
 package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.test.object.TestWorld;

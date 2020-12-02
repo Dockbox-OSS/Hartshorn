@@ -19,8 +19,8 @@ package org.dockbox.selene.core.events.chat
 
 import org.dockbox.selene.core.annotations.event.filter.Filter
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
-import org.dockbox.selene.core.objects.events.Filterable
-import org.dockbox.selene.core.objects.targets.CommandSource
+import org.dockbox.selene.core.events.parents.Filterable
+import org.dockbox.selene.core.command.source.CommandSource
 import org.dockbox.selene.core.SeleneUtils
 import org.dockbox.selene.core.events.processing.FilterTypes
 

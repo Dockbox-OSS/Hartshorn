@@ -18,7 +18,7 @@
 package org.dockbox.selene.core;
 
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.text.Text;
 
 import java.util.function.Predicate;

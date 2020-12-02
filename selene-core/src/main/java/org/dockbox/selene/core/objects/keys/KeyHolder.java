@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.objects.keys;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 
 

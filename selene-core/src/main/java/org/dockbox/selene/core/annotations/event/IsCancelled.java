@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.annotations.event;
 
-import org.dockbox.selene.core.objects.events.Cancellable;
+import org.dockbox.selene.core.events.parents.Cancellable;
 import org.dockbox.selene.core.objects.tuple.Tristate;
 
 import java.lang.annotation.ElementType;

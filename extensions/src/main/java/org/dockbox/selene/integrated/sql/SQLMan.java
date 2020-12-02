@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.sql;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.SeleneUtils;

@@ -24,8 +24,8 @@ import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Placeholder;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.ListParser;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.player.Player;
 
 import java.util.List;
 

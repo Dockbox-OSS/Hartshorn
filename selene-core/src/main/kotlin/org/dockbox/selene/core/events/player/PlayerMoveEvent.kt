@@ -20,7 +20,7 @@ package org.dockbox.selene.core.events.player
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
 import org.dockbox.selene.core.objects.location.Location
 import org.dockbox.selene.core.objects.location.World
-import org.dockbox.selene.core.objects.user.Player
+import org.dockbox.selene.core.objects.player.Player
 
 /**
  * The abstract type which can be used to listen to all player movement related events.

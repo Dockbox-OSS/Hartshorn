@@ -20,7 +20,7 @@ package org.dockbox.selene.core.impl;
 import org.dockbox.selene.core.BroadcastService;
 import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.jetbrains.annotations.NotNull;

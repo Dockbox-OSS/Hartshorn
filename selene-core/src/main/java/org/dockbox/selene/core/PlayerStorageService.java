@@ -18,8 +18,8 @@
 package org.dockbox.selene.core;
 
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.player.Player;
 
 import java.util.List;
 import java.util.UUID;

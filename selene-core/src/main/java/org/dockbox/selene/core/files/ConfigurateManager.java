@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.files;
 
 import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 
 import java.nio.file.Path;
 

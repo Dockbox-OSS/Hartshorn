@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.events
 
-import org.dockbox.selene.core.objects.events.Cancellable
+import org.dockbox.selene.core.events.parents.Cancellable
 
 abstract class AbstractCancellableEvent : Cancellable {
     private var isCancelled = false

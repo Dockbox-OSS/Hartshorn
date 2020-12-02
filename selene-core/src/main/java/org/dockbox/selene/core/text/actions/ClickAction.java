@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.text.actions;
 
-import org.dockbox.selene.core.objects.targets.CommandSource;
+import org.dockbox.selene.core.command.source.CommandSource;
 
 import java.net.URL;
 import java.util.function.Consumer;

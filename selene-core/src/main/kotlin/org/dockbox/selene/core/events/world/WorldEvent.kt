@@ -18,11 +18,12 @@
 package org.dockbox.selene.core.events.world
 
 import java.util.*
+import org.dockbox.selene.core.SeleneUtils
 import org.dockbox.selene.core.events.AbstractCancellableEvent
 import org.dockbox.selene.core.objects.location.World
 import org.dockbox.selene.core.objects.location.WorldProperties
+import org.dockbox.selene.core.objects.player.Gamemode
 import org.dockbox.selene.core.objects.tuple.Vector3N
-import org.dockbox.selene.core.objects.user.Gamemode
 
 /**
  * The abstract type which can be used to listen to all world related events.
@@ -76,7 +77,22 @@ abstract class WorldEvent : AbstractCancellableEvent() {
             spawnPosition: Vector3N,
             seed: Long,
             defaultGamemode: Gamemode,
-            gamerules: MutableMap<String, String>
-    ) : WorldProperties(loadOnStartup, spawnPosition, seed, defaultGamemode, gamerules)
+            properties: Map<String, String>
+    ) : WorldProperties(loadOnStartup, spawnPosition, seed, defaultGamemode) {
+
+        private val rules: MutableMap<String, String> = SeleneUtils.emptyConcurrentMap();
+
+        override fun setGamerule(key: String, value: String) {
+            rules[key] = value
+        }
+
+        override fun getGamerules(): MutableMap<String, String> {
+            return rules
+        }
+
+        init {
+            properties.forEach { (k,v) -> setGamerule(k, v) }
+        }
+    }
 
 }

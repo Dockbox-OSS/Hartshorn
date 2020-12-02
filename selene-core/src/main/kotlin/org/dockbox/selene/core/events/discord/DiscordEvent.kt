@@ -17,14 +17,13 @@
 
 package org.dockbox.selene.core.events.discord
 
-import java.util.*
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.MessageReaction
 import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.User
-import org.dockbox.selene.core.objects.events.Event
-import org.dockbox.selene.core.objects.optional.Exceptional
+import org.dockbox.selene.core.events.parents.Event
+import org.dockbox.selene.core.objects.Exceptional
 
 /**
  * The abstract type which can be used to listen to all Discord related events.

@@ -18,8 +18,8 @@
 package org.dockbox.selene.core.events.moderation
 
 import org.dockbox.selene.core.events.AbstractTargetEvent
-import org.dockbox.selene.core.objects.targets.CommandSource
-import org.dockbox.selene.core.objects.user.Player
+import org.dockbox.selene.core.command.source.CommandSource
+import org.dockbox.selene.core.objects.player.Player
 
 /**
  * The abstract type which can be used to listen to all player note related events.

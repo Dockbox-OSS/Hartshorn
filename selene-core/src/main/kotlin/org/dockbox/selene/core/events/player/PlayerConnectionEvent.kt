@@ -18,7 +18,8 @@
 package org.dockbox.selene.core.events.player
 
 import java.net.InetSocketAddress
-import org.dockbox.selene.core.objects.events.Targetable
+import org.dockbox.selene.core.events.parents.Event
+import org.dockbox.selene.core.events.parents.Targetable
 import org.dockbox.selene.core.objects.targets.Target
 
 /**
@@ -26,7 +27,7 @@ import org.dockbox.selene.core.objects.targets.Target
  *
  * @param target The target of the event
  */
-abstract class PlayerConnectionEvent(private val target: Target?) : Targetable {
+abstract class PlayerConnectionEvent(private val target: Target?) : Targetable, Event {
 
     override fun getTarget(): Target {
         return this.target!!

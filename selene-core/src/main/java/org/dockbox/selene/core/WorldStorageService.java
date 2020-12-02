@@ -18,7 +18,7 @@
 package org.dockbox.selene.core;
 
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 
 import java.util.List;
 import java.util.UUID;

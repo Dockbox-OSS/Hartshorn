@@ -21,7 +21,7 @@ import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.command.context.CommandValue.Flag;
 import org.dockbox.selene.core.command.context.CommandValue.Type;
 import org.dockbox.selene.core.command.parsing.TypeParser;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 
 public interface CommandContext {
 

@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.integrated.data.table;
 
-import org.dockbox.selene.core.objects.entity.Ignore;
-import org.dockbox.selene.core.objects.entity.Property;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.annotations.entity.Ignore;
+import org.dockbox.selene.core.annotations.entity.Property;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.behavior.Merge;
 import org.dockbox.selene.integrated.data.table.behavior.Order;

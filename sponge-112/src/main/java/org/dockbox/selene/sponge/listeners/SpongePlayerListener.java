@@ -33,10 +33,10 @@ import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerLeaveEv
 import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerSwitchWorldEvent;
 import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerTeleportEvent;
 import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerWarpEvent;
-import org.dockbox.selene.core.objects.events.Cancellable;
+import org.dockbox.selene.core.events.parents.Cancellable;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.Warp;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
@@ -311,7 +311,7 @@ public class SpongePlayerListener {
         Selene.log().warn("Attempted to cancel event of type '" + event.getClass().getSimpleName() + "', but this is not supported on this platform!");
     }
 
-    private void postIfCommandSource(Object source, Consumer<org.dockbox.selene.core.objects.targets.CommandSource> consumer) {
+    private void postIfCommandSource(Object source, Consumer<org.dockbox.selene.core.command.source.CommandSource> consumer) {
         if (source instanceof CommandSource) {
             SpongeConversionUtil.fromSponge((CommandSource) source).ifPresent(consumer);
         }

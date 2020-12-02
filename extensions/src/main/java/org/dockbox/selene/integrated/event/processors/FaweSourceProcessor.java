@@ -20,9 +20,9 @@ package org.dockbox.selene.integrated.event.processors;
 import com.boydti.fawe.object.FawePlayer;
 
 import org.dockbox.selene.core.exceptions.SkipEventException;
-import org.dockbox.selene.core.objects.events.Event;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.events.parents.Event;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
 import org.dockbox.selene.core.events.handling.IWrapper;
 import org.jetbrains.annotations.NotNull;

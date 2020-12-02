@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.events.server
 
-import org.dockbox.selene.core.objects.events.Event
+import org.dockbox.selene.core.events.parents.Event
 
 /**
  * The abstract type which can be used to listen to all server related events.

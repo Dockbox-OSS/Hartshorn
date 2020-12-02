@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.events.processing;
 
 import org.dockbox.selene.core.exceptions.SkipEventException;
-import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.events.handling.EventStage;
 import org.dockbox.selene.core.events.handling.IWrapper;
 import org.jetbrains.annotations.NotNull;

@@ -18,7 +18,7 @@
 package org.dockbox.selene.sponge.objects.targets;
 
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.objects.targets.Console;
+import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;

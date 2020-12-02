@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -68,7 +68,7 @@ public interface ExceptionHelper {
 
     /**
      * Runs a given function accepting a given value, returning a potential result wrapped in a
-     * [org.dockbox.selene.core.objects.optional.Exceptional]. The exceptional should wrap the exception if
+     * [org.dockbox.selene.core.objects.Exceptional]. The exceptional should wrap the exception if
      * present. Handles any possible exceptions using default behavior for the implementation. Usually this will
      * be logging to a console or file.
      *
@@ -100,7 +100,7 @@ public interface ExceptionHelper {
 
     /**
      * Runs a given function accepting a given value, returning a potential result wrapped in a
-     * [org.dockbox.selene.core.objects.optional.Exceptional]. The exceptional should wrap the exception if
+     * [org.dockbox.selene.core.objects.Exceptional]. The exceptional should wrap the exception if
      * present. Handles any possible exceptions using a given consumer.
      *
      * @param <T> The type of the value to be consumed

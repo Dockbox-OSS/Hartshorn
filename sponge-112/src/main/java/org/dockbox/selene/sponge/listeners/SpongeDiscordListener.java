@@ -50,8 +50,8 @@ import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserJoinedEven
 import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserLeftEvent;
 import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserNicknameChangedEvent;
 import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserUnbannedEvent;
-import org.dockbox.selene.core.objects.events.Event;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.events.parents.Event;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.DiscordUtils;

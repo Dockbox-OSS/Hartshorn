@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.events.handling;
 
-import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.events.parents.Event;
 
 import java.lang.reflect.Method;
 import java.util.List;

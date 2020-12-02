@@ -17,10 +17,11 @@
 
 package org.dockbox.selene.core.events
 
-import org.dockbox.selene.core.objects.events.Targetable
+import org.dockbox.selene.core.events.parents.Event
+import org.dockbox.selene.core.events.parents.Targetable
 import org.dockbox.selene.core.objects.targets.Target
 
-abstract class AbstractTargetEvent(private var target: Target) : Targetable {
+abstract class AbstractTargetEvent(private var target: Target) : Targetable, Event {
     override fun getTarget(): Target {
         return target
     }

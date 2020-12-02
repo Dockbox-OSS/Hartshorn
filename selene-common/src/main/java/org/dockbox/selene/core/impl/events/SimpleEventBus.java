@@ -21,7 +21,7 @@ import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.impl.events.processors.DefaultParamProcessors;
-import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;

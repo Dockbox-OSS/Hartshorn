@@ -26,7 +26,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.selene.core.events.discord.DiscordCommandContext;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.text.Text;
 
 public interface DiscordUtils {

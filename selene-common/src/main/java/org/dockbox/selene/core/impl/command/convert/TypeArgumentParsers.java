@@ -33,9 +33,9 @@ import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.SeleneUtils;
@@ -179,7 +179,7 @@ public class TypeArgumentParsers {
             }).orElse(new Vector3N(0, 0, 0));
 
             World world = new WorldParser().parse(new CommandValue<String>(xyzw[3], commandValue.getKey()) {
-            }).orElse(World.Companion.getEmpty());
+            }).orElse(World.empty());
 
             return Exceptional.of(new Location(vec, world));
         }

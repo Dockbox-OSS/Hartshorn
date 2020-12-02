@@ -25,13 +25,13 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.FieldReferenceHolder;
-import org.dockbox.selene.core.objects.events.Cancellable;
+import org.dockbox.selene.core.events.parents.Cancellable;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.user.Gamemode;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.player.Gamemode;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
@@ -181,7 +181,7 @@ public class SpongePlayer extends Player {
     public Location getLocation() {
         if (this.spongePlayer.referenceExists())
             return SpongeConversionUtil.fromSponge(this.spongePlayer.getReference().get().getLocation());
-        else return Location.Companion.getEMPTY();
+        else return Location.empty();
     }
 
     @Override
@@ -270,23 +270,7 @@ public class SpongePlayer extends Player {
     }
 
     @Override
-    public boolean hasAnyPermission(@NotNull String... permissions) {
-        for (String permission : permissions) {
-            if (this.hasPermission(permission)) return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean hasAllPermissions(@NotNull String... permissions) {
-        for (String permission : permissions) {
-            if (!this.hasPermission(permission)) return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void setPermission(@NotNull String permission, boolean value) {
+    public void setPermission(String permission, boolean value) {
         if (this.spongePlayer.referenceExists())
             this.spongePlayer.getReference().get().getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, permission, Tristate.fromBoolean(value));
         else Sponge.getServiceManager().provide(UserStorageService.class)
@@ -295,13 +279,6 @@ public class SpongePlayer extends Player {
                     user.getSubjectData()
                             .setPermission(SubjectData.GLOBAL_CONTEXT, permission, Tristate.fromBoolean(value));
                 });
-    }
-
-    @Override
-    public void setPermissions(boolean value, @NotNull String... permissions) {
-        for (String permission : permissions) {
-            this.setPermissions(value, permission);
-        }
     }
 
     private boolean canProceedAfterEvent(Text text) {

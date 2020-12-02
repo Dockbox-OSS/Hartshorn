@@ -21,7 +21,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import org.dockbox.selene.core.impl.DefaultDiscordUtils;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 
 /**
  Provides empty {@link Exceptional} instances, as testing with the {@link JDA} is seemingly impossible without providing

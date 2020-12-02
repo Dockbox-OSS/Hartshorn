@@ -25,13 +25,13 @@ import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Warp;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.targets.CommandSource;
-import org.dockbox.selene.core.objects.targets.Console;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.command.source.CommandSource;
+import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
-import org.dockbox.selene.core.objects.user.Gamemode;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.player.Gamemode;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
@@ -397,15 +397,16 @@ public enum SpongeConversionUtil {
         Vector3i vector3i = world.getProperties().getSpawnPosition();
         Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
 
-        return new SpongeWorld(
+        org.dockbox.selene.core.objects.location.World spongeWorld = new SpongeWorld(
                 world.getUniqueId(),
                 world.getName(),
                 world.getProperties().loadOnStartup(),
                 spawnLocation,
                 world.getProperties().getSeed(),
-                fromSponge(world.getProperties().getGameMode()),
-                world.getProperties().getGameRules()
+                fromSponge(world.getProperties().getGameMode())
         );
+        world.getProperties().getGameRules().forEach(spongeWorld::setGamerule);
+        return spongeWorld;
     }
 
     @NotNull
@@ -436,11 +437,11 @@ public enum SpongeConversionUtil {
     public static Warp fromSponge(io.github.nucleuspowered.nucleus.api.nucleusdata.Warp warp) {
         org.dockbox.selene.core.objects.location.Location location = warp.getLocation()
                 .map(SpongeConversionUtil::fromSponge)
-                .orElse(org.dockbox.selene.core.objects.location.Location.Companion.getEMPTY());
+                .orElse(org.dockbox.selene.core.objects.location.Location.empty());
 
         return new Warp(
-                warp.getDescription().map(Text::toString),
-                warp.getCategory(),
+                Exceptional.of(warp.getDescription().map(Text::toString)),
+                Exceptional.of(warp.getCategory()),
                 location,
                 warp.getName()
         );

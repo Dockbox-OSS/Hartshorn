@@ -20,7 +20,6 @@ package org.dockbox.selene.core.impl.command.convert.impl;
 import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
-import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.exceptions.ConstraintException;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
@@ -33,8 +32,8 @@ import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.WorldEdi
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.WorldParser;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.SeleneUtils;

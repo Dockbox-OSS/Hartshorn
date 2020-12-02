@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.test.util;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.ThreadUtils;
 
 import java.util.concurrent.Callable;

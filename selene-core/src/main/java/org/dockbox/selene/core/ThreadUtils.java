@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 
 import java.util.concurrent.Callable;

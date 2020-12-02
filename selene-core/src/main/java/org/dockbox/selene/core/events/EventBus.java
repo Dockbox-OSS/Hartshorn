@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.events;
 
-import org.dockbox.selene.core.objects.events.Event;
+import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.events.handling.EventStage;
 import org.dockbox.selene.core.events.handling.IHandlerRegistry;
 import org.dockbox.selene.core.events.handling.IWrapper;
