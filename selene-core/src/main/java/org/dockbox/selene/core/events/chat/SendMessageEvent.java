@@ -15,18 +15,29 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.events.chat
+package org.dockbox.selene.core.events.chat;
 
-import org.dockbox.selene.core.command.context.CommandContext
-import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
-import org.dockbox.selene.core.command.source.CommandSource
+import org.dockbox.selene.core.events.AbstractTargetCancellableEvent;
+import org.dockbox.selene.core.objects.targets.MessageReceiver;
+import org.dockbox.selene.core.text.Text;
 
-abstract class CommandEvent(
-        source: CommandSource,
-        val context: CommandContext
-) : AbstractTargetCancellableEvent(source) {
+/**
+ * The event fired when Selene is about to send a message to any {@link MessageReceiver}.
+ */
+public class SendMessageEvent extends AbstractTargetCancellableEvent {
 
-    class Before(source: CommandSource, context: CommandContext) : CommandEvent(source, context)
-    class After(source: CommandSource, context: CommandContext) : CommandEvent(source, context)
+    private Text message;
 
+    public SendMessageEvent(MessageReceiver target, Text message) {
+        super(target);
+        this.message = message;
+    }
+
+    public Text getMessage() {
+        return this.message;
+    }
+
+    public void setMessage(Text message) {
+        this.message = message;
+    }
 }

@@ -141,7 +141,7 @@ public enum FilterTypes implements FilterType {
 
      @return The list of {@link FilterTypes}
      */
-    public static List<FilterTypes> commonStringTypes() {
+    public static List<FilterType> commonStringTypes() {
         return Arrays.asList(CONTAINS, EQUALS, NOT_CONTAINS, NOT_EQUAL);
     }
 
@@ -150,7 +150,7 @@ public enum FilterTypes implements FilterType {
 
      @return The list of {@link FilterTypes}
      */
-    public static List<FilterTypes> commonNumberTypes() {
+    public static List<FilterType> commonNumberTypes() {
         return Arrays.asList(GREATER_THAN, LESS_THAN, LESS_OR_EQUAL, GREATER_OR_EQUAL, NOT_EQUAL, EQUALS);
     }
 }

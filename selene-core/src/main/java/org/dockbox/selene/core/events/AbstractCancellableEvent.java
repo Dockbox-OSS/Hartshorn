@@ -15,21 +15,22 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.events.chat
+package org.dockbox.selene.core.events;
 
-import org.dockbox.selene.core.events.AbstractTargetCancellableEvent
-import org.dockbox.selene.core.objects.targets.MessageReceiver
-import org.dockbox.selene.core.text.Text
+import org.dockbox.selene.core.events.parents.Cancellable;
 
-/**
- * The event fired when Selene is about to send a message to any [MessageReceiver].
- *
- * @property message The message
- *
- * @param target The target message receiver
- */
-class SendMessageEvent(
-        target: MessageReceiver,
-        val message: Text
-) : AbstractTargetCancellableEvent(target)
+@SuppressWarnings("AbstractClassWithoutAbstractMethods")
+public abstract class AbstractCancellableEvent implements Cancellable {
 
+    private boolean isCancelled = false;
+
+    @Override
+    public boolean isCancelled() {
+        return this.isCancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancelled) {
+        this.isCancelled = cancelled;
+    }
+}

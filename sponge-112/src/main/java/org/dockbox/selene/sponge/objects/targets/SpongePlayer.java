@@ -20,23 +20,22 @@ package org.dockbox.selene.sponge.objects.targets;
 import com.boydti.fawe.FaweAPI;
 import com.boydti.fawe.object.FawePlayer;
 
+import org.dockbox.selene.core.PlayerStorageService;
+import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.chat.SendMessageEvent;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.FieldReferenceHolder;
-import org.dockbox.selene.core.events.parents.Cancellable;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
-import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -208,8 +207,9 @@ public class SpongePlayer extends Player {
     @Override
     public void send(@NotNull Text text) {
         if (this.spongePlayer.referenceExists()) {
-            if (this.canProceedAfterEvent(text))
-                this.spongePlayer.getReference().get().sendMessage(SpongeConversionUtil.toSponge(text));
+            this.postEventPre(text).ifPresent(msg -> {
+                this.spongePlayer.getReference().get().sendMessage(SpongeConversionUtil.toSponge(msg));
+            });
         }
     }
 
@@ -217,8 +217,9 @@ public class SpongePlayer extends Player {
     public void send(@NotNull CharSequence text) {
         if (this.spongePlayer.referenceExists()) {
             Text message = Text.of(text);
-            if (this.canProceedAfterEvent(message))
-                this.spongePlayer.getReference().get().sendMessage(SpongeConversionUtil.toSponge(message));
+            this.postEventPre(message).ifPresent(msg -> {
+                this.spongePlayer.getReference().get().sendMessage(SpongeConversionUtil.toSponge(msg));
+            });
         }
     }
 
@@ -231,11 +232,12 @@ public class SpongePlayer extends Player {
     @Override
     public void sendWithPrefix(@NotNull Text text) {
         if (this.spongePlayer.referenceExists()) {
-            if (this.canProceedAfterEvent(text))
+            this.postEventPre(text).ifPresent(msg -> {
                 this.spongePlayer.getReference().get().sendMessage(org.spongepowered.api.text.Text.of(
                         SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
-                        SpongeConversionUtil.toSponge(text))
+                        SpongeConversionUtil.toSponge(msg))
                 );
+            });
         }
     }
 
@@ -243,11 +245,12 @@ public class SpongePlayer extends Player {
     public void sendWithPrefix(@NotNull CharSequence text) {
         if (this.spongePlayer.referenceExists()) {
             Text message = Text.of(text);
-            if (this.canProceedAfterEvent(message))
+            this.postEventPre(message).ifPresent(msg -> {
                 this.spongePlayer.getReference().get().sendMessage(org.spongepowered.api.text.Text.of(
                         SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
-                        SpongeConversionUtil.toSponge(message))
+                        SpongeConversionUtil.toSponge(msg))
                 );
+            });
         }
     }
 
@@ -281,9 +284,11 @@ public class SpongePlayer extends Player {
                 });
     }
 
-    private boolean canProceedAfterEvent(Text text) {
-        Cancellable event = new SendMessageEvent(this, text);
+    private Exceptional<Text> postEventPre(Text text) {
+        SendMessageEvent event = new SendMessageEvent(this, text);
         Selene.getInstance(EventBus.class).post(event);
-        return !event.isCancelled();
+        text = event.getMessage();
+        if (event.isCancelled()) return Exceptional.empty();
+        else return Exceptional.ofNullable(text);
     }
 }
