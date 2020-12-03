@@ -37,7 +37,7 @@ public abstract class AbstractPipeline<P, I> {
     /**
      * Add a non-null {@link IPipe} to the pipeline. If the added pipe is a {@link CancellablePipe}
      * and the pipeline is not cancellable, then it will throw an {@link IllegalPipelineException}.
-     * @param pipe The {@link IPipe} to add to the pipeline.
+     * @param pipe The non-null {@link IPipe} to add to the pipeline.
      * @return Itself.
      */
     public AbstractPipeline<P, I> addPipe(@NotNull IPipe<I, I> pipe) {
@@ -51,7 +51,7 @@ public abstract class AbstractPipeline<P, I> {
 
     /**
      * Adds a non-null array of {@link IPipe}s to the pipeline by internally calling {@link AbstractPipeline#addPipes(Iterable)}.
-     * @param pipes The array of {@link IPipe}s to add to the pipeline.
+     * @param pipes The non-null array of {@link IPipe}s to add to the pipeline.
      * @return Itself.
      */
     public AbstractPipeline<P, I> addPipes(@NotNull IPipe<I, I>[] pipes) {
@@ -61,7 +61,7 @@ public abstract class AbstractPipeline<P, I> {
     /**
      * Adds a non-null {@link Iterable} of {@link IPipe}s to the pipeline by internally calling
      * {@link AbstractPipeline#addPipe} on each pipe.
-     * @param pipes The {@link Iterable} of {@link IPipe}s to add to the pipeline.
+     * @param pipes The non-null {@link Iterable} of {@link IPipe}s to add to the pipeline.
      * @return Itself.
      */
     public AbstractPipeline<P, I> addPipes(@NotNull Iterable<IPipe<I, I>> pipes) {
@@ -73,7 +73,7 @@ public abstract class AbstractPipeline<P, I> {
 
     /**
      * Adds a {@link AbstractPipeline}'s {@link IPipe}s to this current pipeline by internally calling {@link AbstractPipeline#addPipes(Iterable)}.
-     * @param pipeline The {@link AbstractPipeline} whos {@link IPipe}s should be added to this pipeline.
+     * @param pipeline The non-null {@link AbstractPipeline} whos {@link IPipe}s should be added to this pipeline.
      * @return Itself.
      */
     public AbstractPipeline<P, I> addPipeline(@NotNull AbstractPipeline<?, I> pipeline) {
@@ -82,8 +82,8 @@ public abstract class AbstractPipeline<P, I> {
 
     /**
      * An abstract method which defines how an {@link P} input and a {@link Throwable} should be processed.
-     * @param input The input value.
-     * @param throwable The input throwable.
+     * @param input The non-null input value.
+     * @param throwable The nullable input {@link Throwable}.
      * @return An {@link Exceptional} of the output.
      */
     public abstract Exceptional<I> process (@NotNull P input, @Nullable Throwable throwable);
@@ -94,7 +94,7 @@ public abstract class AbstractPipeline<P, I> {
      * {@link IPipe} throws an error while processing the input, the pipeline will try and automatically pass the input
      * value on to the next {@link IPipe} in the pipeline, althong with the error thrown.
      *
-     * @param exceptionalInput An {@link Exceptional} which contains the input value and throwable.
+     * @param exceptionalInput A non-null {@link Exceptional} which contains the input value and throwable.
      * @return
      * An {@link Exceptional} containing an optional output value after it has been passed through each {@link IPipe} in
      * the pipeline. If the value is not present, the output will contain an {@link Throwable} describing why.
@@ -139,7 +139,7 @@ public abstract class AbstractPipeline<P, I> {
     /**
      * Unsafely processes a non-null {@link P} input by calling {@link AbstractPipeline#process(Object, Throwable)} and
      * unwrapping the output value without checking if its present.
-     * @param input The {@link P} input to be processed by the pipeline.
+     * @param input The non-null {@link P} input to be processed by the pipeline.
      * @return The {@link I} output of processing the input, unwrapped from the {@link Exceptional} without checking if its present.
      */
     public I processUnsafe(@NotNull P input) {
@@ -148,7 +148,7 @@ public abstract class AbstractPipeline<P, I> {
 
     /**
      * Processes a non-null {@link P} input by internally calling {@link AbstractPipeline#process(Object, Throwable)}.
-     * @param input The {@link P} input to be processed by the pipeline.
+     * @param input The non-null {@link P} input to be processed by the pipeline.
      * @return An {@link Exceptional} containing the output. If the output is not present it will contain a throwable describing why.
      */
     public Exceptional<I> process(@NotNull P input) {

@@ -24,7 +24,10 @@ public interface IPipe<I, O> {
 
     O apply(Exceptional<I> input);
 
-    //So that you can identify the type, if created through a lambda expression.
+    /**
+     * If this method is overridden, you can then call it to get the {@link Class} of the pipe, even when created by a lamda expression.
+     * @return The {@link Class} of the pipe.
+     */
     default Class<? extends IPipe> getType() {
         return IPipe.class;
     }

@@ -23,10 +23,20 @@ import org.jetbrains.annotations.Nullable;
 
 public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
 
+    /**
+     * Calls the super constructor to instantiate a new convertible pipeline.
+     * @param inputClass The {@link Class} of the input type {@link I}.
+     */
     protected ConvertiblePipelineSource(Class<I> inputClass) {
         super(inputClass);
     }
 
+    /**
+     * Processes an input by first wrapping it in an {@link Exceptional}.
+     * @param input The non-null {@link I} input to be processed by the pipeline.
+     * @param throwable A nullable {@link Throwable} that may wish to be passed in.
+     * @return An {@link Exceptional} containing the output. If the output is not present it will contain a throwable describing why.
+     */
     @Override
     public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable) {
         Exceptional<I> exceptionalInput = Exceptional.ofNullable(input, throwable);
