@@ -142,8 +142,8 @@ public class SpongePlayerListener {
         this.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new PlayerBannedEvent(
                     SpongeConversionUtil.fromSponge(player),
-                    Exceptional.of(profile.getReason().map(Text::toPlain)),
                     convertedSource,
+                    Exceptional.of(profile.getReason().map(Text::toPlain)),
                     SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
                     SeleneUtils.toLocalDateTime(profile.getCreationDate())
             ).post();
@@ -159,8 +159,8 @@ public class SpongePlayerListener {
         this.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new IpBannedEvent(
                     profile.getAddress(),
-                    Exceptional.of(profile.getReason().map(Text::toPlain)),
                     convertedSource,
+                    Exceptional.of(profile.getReason().map(Text::toPlain)),
                     SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
                     SeleneUtils.toLocalDateTime(profile.getCreationDate())
             ).post();
@@ -177,8 +177,8 @@ public class SpongePlayerListener {
         this.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new NameBannedEvent(
                     name,
-                    Exceptional.ofNullable(reason),
                     convertedSource,
+                    Exceptional.ofNullable(reason),
                     Exceptional.empty(),
                     LocalDateTime.now()
             ).post();
@@ -211,13 +211,11 @@ public class SpongePlayerListener {
                               @Getter("getNote") String note,
                               @Getter("getSource") Object source
     ) {
-        this.postIfCommandSource(source, convertedSource -> {
-            new NoteEvent.PlayerNotedEvent(
-                    SpongeConversionUtil.fromSponge(user),
-                    convertedSource,
-                    note
-            ).post();
-        });
+        this.postIfCommandSource(source, convertedSource -> new NoteEvent.PlayerNotedEvent(
+                SpongeConversionUtil.fromSponge(user),
+                convertedSource,
+                note
+        ).post());
     }
 
     @Listener
@@ -238,8 +236,8 @@ public class SpongePlayerListener {
         this.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new PlayerUnbannedEvent(
                     SpongeConversionUtil.fromSponge(player),
-                    Exceptional.of(profile.getReason().map(Text::toPlain)),
                     convertedSource,
+                    Exceptional.of(profile.getReason().map(Text::toPlain)),
                     SeleneUtils.toLocalDateTime(profile.getCreationDate())
             ).post();
             if (event.isCancelled()) this.logUnsupportedCancel(event);
@@ -254,8 +252,8 @@ public class SpongePlayerListener {
         this.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new IpUnbannedEvent(
                     profile.getAddress(),
-                    Exceptional.of(profile.getReason().map(Text::toPlain)),
                     convertedSource,
+                    Exceptional.of(profile.getReason().map(Text::toPlain)),
                     SeleneUtils.toLocalDateTime(profile.getCreationDate())
             ).post();
             pardonEvent.setCancelled(event.isCancelled());
@@ -271,8 +269,8 @@ public class SpongePlayerListener {
         this.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new NameUnbannedEvent(
                     name,
-                    Exceptional.of(reason),
                     convertedSource,
+                    Exceptional.of(reason),
                     LocalDateTime.now()
             ).post();
             if (event.isCancelled()) this.logUnsupportedCancel(event);
@@ -285,13 +283,11 @@ public class SpongePlayerListener {
                               @Getter("getReason") String reason,
                               @Getter("getSource") Object source
     ) {
-        this.postIfCommandSource(source, convertedSource -> {
-            new WarnEvent.PlayerWarningExpired(
-                    SpongeConversionUtil.fromSponge(user),
-                    convertedSource,
-                    reason
-            ).post();
-        });
+        this.postIfCommandSource(source, convertedSource -> new WarnEvent.PlayerWarningExpired(
+                SpongeConversionUtil.fromSponge(user),
+                convertedSource,
+                reason
+        ).post());
     }
 
     @Listener
@@ -307,11 +303,8 @@ public class SpongePlayerListener {
                                @Getter("getTargetEntity") Player player,
                                @Getter("getSource") Object source
     ) {
-        this.postIfCommandSource(source, convertedSource -> {
-            new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional.empty()).post();
-        });
+        this.postIfCommandSource(source, convertedSource -> new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional.empty()).post());
     }
-
 
     private void logUnsupportedCancel(Cancellable event) {
         Selene.log().warn("Attempted to cancel event of type '" + event.getClass().getSimpleName() + "', but this is not supported on this platform!");
