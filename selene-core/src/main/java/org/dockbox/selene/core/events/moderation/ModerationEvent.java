@@ -15,16 +15,22 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.events.moderation
+package org.dockbox.selene.core.events.moderation;
 
-import org.dockbox.selene.core.events.AbstractTargetEvent
-import org.dockbox.selene.core.objects.Exceptional
-import org.dockbox.selene.core.objects.player.Player
+import org.dockbox.selene.core.command.source.CommandSource;
+import org.dockbox.selene.core.events.AbstractTargetEvent;
+import org.dockbox.selene.core.objects.player.Player;
 
-/**
- * The event fired when a [Player] is kicked from the server.
- *
- * @param player The [Player] being kicked
- * @param reason The reason, if provided
- */
-class KickEvent(player: Player, reason: Exceptional<String>) : AbstractTargetEvent(player)
+public abstract class ModerationEvent extends AbstractTargetEvent {
+
+    private final CommandSource source;
+
+    protected ModerationEvent(Player player, CommandSource source) {
+        super(player);
+        this.source = source;
+    }
+
+    public CommandSource getSource() {
+        return this.source;
+    }
+}

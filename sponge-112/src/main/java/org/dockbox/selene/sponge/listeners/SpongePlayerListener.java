@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.sponge.listeners;
 
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.events.chat.SendChatEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.IpBannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.IpUnbannedEvent;
@@ -27,19 +28,21 @@ import org.dockbox.selene.core.events.moderation.BanEvent.PlayerUnbannedEvent;
 import org.dockbox.selene.core.events.moderation.KickEvent;
 import org.dockbox.selene.core.events.moderation.NoteEvent;
 import org.dockbox.selene.core.events.moderation.WarnEvent;
+import org.dockbox.selene.core.events.moderation.WarnEvent.PlayerWarnedEvent;
+import org.dockbox.selene.core.events.parents.Cancellable;
+import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerAuthEvent;
 import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerJoinEvent;
 import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerLeaveEvent;
 import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerSwitchWorldEvent;
 import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerTeleportEvent;
 import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerWarpEvent;
-import org.dockbox.selene.core.events.parents.Cancellable;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.Warp;
-import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.jetbrains.annotations.NonNls;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
@@ -186,16 +189,19 @@ public class SpongePlayerListener {
     @Listener
     public void onPlayerWarned(NucleusWarnEvent.Warned warnEvent,
                                @Getter("getTargetUser") User user,
-                               @Getter("getReason") String reason,
+                               @NonNls @Getter("getReason") String reason,
                                @Getter("getSource") Object source
     ) {
         this.postIfCommandSource(source, convertedSource -> {
-            new WarnEvent.PlayerWarnedEvent(
+            PlayerWarnedEvent event = new WarnEvent.PlayerWarnedEvent(
                     SpongeConversionUtil.fromSponge(user),
-                    reason,
                     convertedSource,
-                    LocalDateTime.now()
-            ).post();
+                    reason,
+                    LocalDateTime.now());
+            event.post();
+            if (!event.getReason().equals(reason)) {
+                this.logUnsupportedModification(event, "reason");
+            }
         });
     }
 
@@ -208,8 +214,8 @@ public class SpongePlayerListener {
         this.postIfCommandSource(source, convertedSource -> {
             new NoteEvent.PlayerNotedEvent(
                     SpongeConversionUtil.fromSponge(user),
-                    note,
-                    convertedSource
+                    convertedSource,
+                    note
             ).post();
         });
     }
@@ -282,8 +288,8 @@ public class SpongePlayerListener {
         this.postIfCommandSource(source, convertedSource -> {
             new WarnEvent.PlayerWarningExpired(
                     SpongeConversionUtil.fromSponge(user),
-                    reason,
-                    convertedSource
+                    convertedSource,
+                    reason
             ).post();
         });
     }
@@ -302,13 +308,17 @@ public class SpongePlayerListener {
                                @Getter("getSource") Object source
     ) {
         this.postIfCommandSource(source, convertedSource -> {
-            new KickEvent(SpongeConversionUtil.fromSponge(player), Exceptional.empty()).post();
+            new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional.empty()).post();
         });
     }
 
 
     private void logUnsupportedCancel(Cancellable event) {
         Selene.log().warn("Attempted to cancel event of type '" + event.getClass().getSimpleName() + "', but this is not supported on this platform!");
+    }
+
+    private void logUnsupportedModification(Event event, String property) {
+        Selene.log().warn("Attempted to modify value '" + property + "' event of type '" + event.getClass().getSimpleName() + "', but this is not supported on this platform!");
     }
 
     private void postIfCommandSource(Object source, Consumer<org.dockbox.selene.core.command.source.CommandSource> consumer) {
