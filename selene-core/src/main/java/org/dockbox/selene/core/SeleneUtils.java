@@ -17,18 +17,23 @@
 
 package org.dockbox.selene.core;
 
-import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.annotations.entity.Ignore;
 import org.dockbox.selene.core.annotations.entity.Property;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.events.parents.Event;
+import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.keys.PersistentDataKey;
+import org.dockbox.selene.core.objects.keys.data.DoublePersistentDataKey;
+import org.dockbox.selene.core.objects.keys.data.IntegerPersistentDataKey;
+import org.dockbox.selene.core.objects.keys.data.StringPersistentDataKey;
+import org.dockbox.selene.core.objects.keys.data.TypedPersistentDataKey;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.extension.ExtensionManager;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -61,6 +66,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -1081,6 +1087,30 @@ public enum SeleneUtils {
     public static <T> void runWithInstance(Class<T> type, Consumer<T> consumer) {
         T instance = Selene.getInstance(type);
         if (null != instance) consumer.accept(instance);
+    }
+
+    public static String convertToExtensionIdString(String name, Extension extension) {
+        name = name.toLowerCase(Locale.ROOT)
+                .replaceAll("[ .]", "")
+                .replaceAll("-", "_");
+        return extension.id() + ':' + name;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> PersistentDataKey<T> dataKeyOf(Class<T> type, String name, Extension extension) {
+        if (type.equals(String.class))
+            return (PersistentDataKey<T>) StringPersistentDataKey.of(name, extension);
+        else if (isAssignableFrom(Integer.class, type)) {
+            return (PersistentDataKey<T>) IntegerPersistentDataKey.of(name, extension);
+        } else if (isAssignableFrom(Double.class, type)) {
+            return (PersistentDataKey<T>) DoublePersistentDataKey.of(name, extension);
+        }
+
+        return new TypedPersistentDataKey<>(
+                name,
+                convertToExtensionIdString(name, extension),
+                extension,
+                type);
     }
 
     public enum Provision {

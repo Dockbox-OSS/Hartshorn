@@ -20,24 +20,24 @@ package org.dockbox.selene.sponge.util;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.Console;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Warp;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.command.source.CommandSource;
-import org.dockbox.selene.core.objects.Console;
-import org.dockbox.selene.core.objects.targets.Identifiable;
-import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
 import org.dockbox.selene.core.text.pagination.Pagination;
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.sponge.exceptions.TypeConversionException;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
@@ -114,7 +114,7 @@ public enum SpongeConversionUtil {
         } else if (object instanceof GameMode) {
             return Exceptional.of(fromSponge((GameMode) object));
         } else if (object instanceof User) {
-            return Exceptional.of(new SpongePlayer(((Identifiable) object).getUniqueId(), ((Tamer) object).getName()));
+            return Exceptional.of(new SpongePlayer(((Identifiable<?>) object).getUniqueId(), ((Tamer) object).getName()));
         } else if (object instanceof ItemStack) {
             return Exceptional.of(fromSponge((ItemStack) object));
         } else if (object instanceof Enchantment) {

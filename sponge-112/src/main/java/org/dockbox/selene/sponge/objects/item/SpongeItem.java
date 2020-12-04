@@ -17,14 +17,15 @@
 
 package org.dockbox.selene.sponge.objects.item;
 
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -35,7 +36,9 @@ import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -167,5 +170,24 @@ public class SpongeItem extends Item<ItemStack> {
     @Override
     public Class<?> getReferenceType() {
         return ItemStack.class;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
+        Object result = this.getReference().map(itemStack -> itemStack.get(SpongeItemData.ITEM_KEY).orElse(null));
+        if (SeleneUtils.isAssignableFrom(dataKey.getDataType(), result.getClass())) {
+            return Exceptional.of((T) result);
+        }
+        return Exceptional.empty();
+    }
+
+    @Override
+    public <T> void set(PersistentDataKey<T> dataKey, T value) {
+        this.getReference().ifPresent(itemStack -> {
+            Map<String, Object> data = itemStack.getOrElse(SpongeItemData.ITEM_KEY, new HashMap<>());
+            data.put(dataKey.getDataKeyId(), value);
+            itemStack.offer(SpongeItemData.ITEM_KEY, data);
+        });
     }
 }

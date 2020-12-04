@@ -27,8 +27,6 @@ import org.dockbox.selene.core.text.Text;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public final class GenericKeys {
@@ -44,23 +42,6 @@ public final class GenericKeys {
     public static final Key<Item, List<Text>> LORE = new GenericKey<>(Item::setLore, Item::getLore);
 
     private GenericKeys() {
-    }
-
-    private static final class GenericKey<K, A> extends Key<K, A> {
-
-        /**
-         Instantiates a new Key using a given setter and getter.@param setter
-         The setter, accepting two values. The first being the type to apply to, constrained using type parameter {@link K}.
-         The second being the value to apply, constrained using type parameter {@link A}.
-
-         @param getter
-         The getter, accepting one value, and returning another. The accepting value being the type to retrieve from,
-         constrained using type parameter {@link K}. The return value being the value retreived from the type, constrained
-         using type parameter {@link A}.
-         */
-        private GenericKey(BiConsumer<K, A> setter, Function<K, A> getter) {
-            super(setter, getter);
-        }
     }
 
 }
