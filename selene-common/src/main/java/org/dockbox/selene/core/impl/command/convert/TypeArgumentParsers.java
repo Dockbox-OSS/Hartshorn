@@ -232,7 +232,7 @@ public class TypeArgumentParsers {
      to decide when to create a new entry, by default this is ','. Also allows you to use @MinMax attributes to set
      a minimum/maximum for sublist sizes.
      <p>
-     Additionally, allows you to pass a Function<String, R> which parses the String values before they are are returned
+     Additionally, allows you to pass a {@link Function Function[String, R]} which parses the String values before they are are returned
      as a List.
 
      @param <R>

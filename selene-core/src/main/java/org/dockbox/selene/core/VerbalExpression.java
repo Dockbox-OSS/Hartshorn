@@ -95,7 +95,7 @@ public final class VerbalExpression {
          Everything added to the expression should go trough this method
          (keep in mind when creating your own methods).
          All existing methods already use this, so for basic usage, you can just ignore this method.
-         <p/>
+
          Example:
          regex().add("\n.*").build() // produce exact "\n.*" regexp
 
@@ -667,7 +667,6 @@ public final class VerbalExpression {
 
         /**
          Adds named-capture - open brace to current position and closed to suffixes
-         <p>
          <pre>Example:{@code
         String text = "test@example.com";
         VerbalExpression regex = regex()
@@ -675,6 +674,8 @@ public final class VerbalExpression {
         .capture("domain").anything().build();
         regex.getText(text, "domain"); // => "example.com"
         }</pre>
+
+         @param name The name to capture
 
          @return this builder
 
@@ -702,6 +703,8 @@ public final class VerbalExpression {
 
         /**
          Shortcut for {@link #capture(String)}
+
+         @param name The name to capture
 
          @return this builder
 

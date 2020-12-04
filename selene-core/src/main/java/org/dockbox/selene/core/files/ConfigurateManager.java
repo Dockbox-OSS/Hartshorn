@@ -26,8 +26,6 @@ import java.nio.file.Path;
  * Low-level interface defining functionality to interact with Configurate based file types. While this type encourages
  * the usage of Configurate based instances, it is possible to create implementations for alternative configuration
  * libraries and/or frameworks.
- *
- * @constructor Create the manager with a given {@link FileType}
  */
 public abstract class ConfigurateManager {
 

@@ -136,6 +136,8 @@ public abstract class DiscordEvent implements Event {
 
         /**
          * Gets the ID of the emote which is represented by the {@link MessageReaction}.
+         *
+         * @return The ID of the emote (can usually be parsed to a {@link Long}
          */
         public String getEmoteId() {
             return this.getReaction().getReactionEmote().getId();
@@ -143,6 +145,8 @@ public abstract class DiscordEvent implements Event {
 
         /**
          * Gets the name of the emote which is represented by the {@link MessageReaction}.
+         *
+         * @return The name of the emote
          */
         public String getEmoteName() {
             return this.getReaction().getReactionEmote().getName();
