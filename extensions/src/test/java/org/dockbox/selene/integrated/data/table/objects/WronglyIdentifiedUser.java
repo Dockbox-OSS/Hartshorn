@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.data.table.objects;
 
-import org.dockbox.selene.core.objects.entity.Property;
+import org.dockbox.selene.core.annotations.entity.Property;
 
 public class WronglyIdentifiedUser {
 

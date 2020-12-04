@@ -24,14 +24,14 @@ import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.user.Gamemode;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.player.Gamemode;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.text.navigation.Pagination;
-import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.util.player.PlayerStorageService;
+import org.dockbox.selene.core.text.pagination.Pagination;
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.test.SeleneTestImpl;
 import org.dockbox.selene.test.util.TestPlayerStorageService;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +43,7 @@ public class TestPlayer extends Player {
     private boolean online = false;
     private Gamemode gamemode = Gamemode.SURVIVAL;
     private Language language = Language.EN_US;
-    private Location location = Location.Companion.getEMPTY();
+    private Location location = null;
     private final Map<String, Boolean> permissions = SeleneUtils.emptyConcurrentMap();
 
     public TestPlayer(@NotNull UUID uniqueId, @NotNull String name) {

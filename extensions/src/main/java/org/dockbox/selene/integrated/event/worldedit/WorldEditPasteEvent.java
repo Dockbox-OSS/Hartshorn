@@ -22,8 +22,8 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.session.ClipboardHolder;
 
 import org.dockbox.selene.core.events.AbstractCancellableEvent;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.player.Player;
 /**
  Cancellable event which is executed when a player performs a paste action using WorldEdit.
  */

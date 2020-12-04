@@ -20,31 +20,31 @@ package org.dockbox.selene.core.impl.command.convert.impl;
 import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
-import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.exceptions.ConstraintException;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
-import org.dockbox.selene.core.impl.command.parse.LocationArgumentParser;
-import org.dockbox.selene.core.impl.command.parse.PlayerArgumentParser;
-import org.dockbox.selene.core.impl.command.parse.UUIDArgumentParser;
-import org.dockbox.selene.core.impl.command.parse.WorldArgumentParser;
-import org.dockbox.selene.core.impl.command.parse.WorldEditMaskParser;
-import org.dockbox.selene.core.impl.command.parse.WorldEditPatternParser;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.DurationParser;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LocationParser;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.PlayerParser;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.UuidParser;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.WorldEditMaskParser;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.WorldEditPatternParser;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.WorldParser;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.util.extension.Extension;
-import org.dockbox.selene.core.util.extension.ExtensionManager;
-import org.dockbox.selene.core.util.player.PlayerStorageService;
-import org.dockbox.selene.core.util.world.WorldStorageService;
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.PlayerStorageService;
+import org.dockbox.selene.core.WorldStorageService;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("ClassWithTooManyFields")
@@ -127,7 +127,7 @@ public final class ArgumentConverterRegistry {
 
     public static final ArgumentConverter<Player> PLAYER = new ParserArgumentConverter<>(
             Player.class,
-            PlayerArgumentParser::new,
+            PlayerParser::new,
             s -> Selene.getInstance(PlayerStorageService.class).getOnlinePlayers().stream()
                     .map(Player::getName)
                     .filter(n -> n.startsWith(s))
@@ -137,21 +137,21 @@ public final class ArgumentConverterRegistry {
 
     public static final ArgumentConverter<UUID> UUID = new ParserArgumentConverter<>(
             UUID.class,
-            UUIDArgumentParser::new,
+            UuidParser::new,
             s -> SeleneUtils.emptyList(),
             "uuid", "uniqueid"
     );
 
     public static final ArgumentConverter<Location> LOCATION = new ParserArgumentConverter<>(
             Location.class,
-            LocationArgumentParser::new,
+            LocationParser::new,
             s -> SeleneUtils.emptyList(),
             "location", "loc", "position", "pos"
     );
 
     public static final ArgumentConverter<World> WORLD = new ParserArgumentConverter<>(
             World.class,
-            WorldArgumentParser::new,
+            WorldParser::new,
             s -> Selene.getInstance(WorldStorageService.class).getLoadedWorlds().stream()
                     .map(World::getName)
                     .filter(n -> n.startsWith(s))
@@ -179,7 +179,7 @@ public final class ArgumentConverterRegistry {
                 if (source instanceof Player) {
                     return new WorldEditMaskParser(((Player) source).getFawePlayer()
                             .orNull())
-                            .parse(new CommandValue.Argument<>(s, "mask"));
+                            .parse(new Argument<>(s, "mask"));
                 }
                 return Exceptional.empty();
             },
@@ -207,6 +207,13 @@ public final class ArgumentConverterRegistry {
             s -> Selene.getInstance(ExtensionManager.class).getHeader(s),
             Selene.getInstance(ExtensionManager.class).getRegisteredExtensionIds()
                     .toArray(new String[0])
+    );
+
+    public static final ArgumentConverter<Duration> DURATION = new ConstantArgumentConverter<>(
+            new String[]{"duration", "time"},
+            Duration.class,
+            s -> new DurationParser().parse(new Argument<>(s, "duration")).orElse(Duration.ZERO),
+            Duration.ZERO
     );
 
 }

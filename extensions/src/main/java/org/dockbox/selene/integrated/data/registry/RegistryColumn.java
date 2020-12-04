@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.data.registry;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 
 import java.util.ArrayList;
 import java.util.Collection;

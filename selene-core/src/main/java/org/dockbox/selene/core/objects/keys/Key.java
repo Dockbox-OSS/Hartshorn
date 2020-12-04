@@ -77,10 +77,10 @@ public abstract class Key<K, A> {
 
     /**
      Resolves the correct parent type for a given key, so it can be applied safely. This is useful when applying
-     keys to supertypes which extend from multiple Keyholders, like {@link org.dockbox.selene.core.objects.user.Player}.
+     keys to supertypes which extend from multiple Keyholders, like {@link org.dockbox.selene.core.objects.player.Player}.
      This method applies a constraint on the type, so that the supertype has to extend type parameter {@link K}, so
      we can ensure no {@link ClassCastException} will be thrown. This also prevents us from applying a {@link Key} made
-     for e.g. {@link org.dockbox.selene.core.objects.item.Item} to a {@link org.dockbox.selene.core.objects.user.Player}.
+     for e.g. {@link org.dockbox.selene.core.objects.item.Item} to a {@link org.dockbox.selene.core.objects.player.Player}.
 
      @param <T>
      The type parameter indicating the supertype to resolve

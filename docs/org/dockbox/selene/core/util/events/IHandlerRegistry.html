@@ -50,8 +50,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.util.events"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.util.events"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.events"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.events"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?org/dockbox/selene/core/util/events/IHandlerRegistry.html" target="_top">Frames</a></li>
@@ -93,7 +93,7 @@ var activeTableTab = "activeTableTab";
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">org.dockbox.selene.core.util.events</div>
+<div class="subTitle">org.dockbox.selene.core.events</div>
 <h2 title="Interface IHandlerRegistry" class="title">Interface IHandlerRegistry</h2>
 </div>
 <div class="contentContainer">
@@ -102,7 +102,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Known Implementing Classes:</dt>
-<dd><a href="../../../../../../org/dockbox/selene/core/impl/util/events/HandlerRegistry.html" title="class in org.dockbox.selene.core.impl.util.events">HandlerRegistry</a></dd>
+<dd><a href="../../../../../../org/dockbox/selene/core/impl/util/events/HandlerRegistry.html" title="class in org.dockbox.selene.core.impl.events">HandlerRegistry</a></dd>
 </dl>
 <hr>
 <br>
@@ -127,14 +127,14 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/dockbox/selene/core/util/events/IHandlerRegistry.html#computeHierarchy-org.dockbox.selene.core.util.events.IHandler-">computeHierarchy</a></span>(<a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.util.events">IHandler</a>&nbsp;subject)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/dockbox/selene/core/util/events/IHandlerRegistry.html#computeHierarchy-org.dockbox.selene.core.events.handling.IHandler-">computeHierarchy</a></span>(<a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.events">IHandler</a>&nbsp;subject)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.util.events">IHandler</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/dockbox/selene/core/util/events/IHandlerRegistry.html#getHandler-java.lang.Class-">getHandler</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends org.dockbox.selene.core.objects.events.Event&gt;&nbsp;type)</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.events">IHandler</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/dockbox/selene/core/util/events/IHandlerRegistry.html#getHandler-java.lang.Class-">getHandler</a></span>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends org.dockbox.selene.core.events.parents.Event&gt;&nbsp;type)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends org.dockbox.selene.core.objects.events.Event&gt;,<a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.util.events">IHandler</a>&gt;</code></td>
+<td class="colFirst"><code><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends org.dockbox.selene.core.events.parents.Event&gt;,<a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.events">IHandler</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/dockbox/selene/core/util/events/IHandlerRegistry.html#getHandlers--">getHandlers</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
@@ -158,16 +158,16 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>getHandler</h4>
-<pre><a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.util.events">IHandler</a>&nbsp;getHandler(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends org.dockbox.selene.core.objects.events.Event&gt;&nbsp;type)</pre>
+<pre><a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.events">IHandler</a>&nbsp;getHandler(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends org.dockbox.selene.core.events.parents.Event&gt;&nbsp;type)</pre>
 </li>
 </ul>
-<a name="computeHierarchy-org.dockbox.selene.core.util.events.IHandler-">
+<a name="computeHierarchy-org.dockbox.selene.core.events.handling.IHandler-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>computeHierarchy</h4>
-<pre>boolean&nbsp;computeHierarchy(<a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.util.events">IHandler</a>&nbsp;subject)</pre>
+<pre>boolean&nbsp;computeHierarchy(<a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.events">IHandler</a>&nbsp;subject)</pre>
 </li>
 </ul>
 <a name="getHandlers--">
@@ -176,7 +176,7 @@ var activeTableTab = "activeTableTab";
 <ul class="blockListLast">
 <li class="blockList">
 <h4>getHandlers</h4>
-<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends org.dockbox.selene.core.objects.events.Event&gt;,<a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.util.events">IHandler</a>&gt;&nbsp;getHandlers()</pre>
+<pre><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html?is-external=true" title="class or interface in java.util">Map</a>&lt;<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html?is-external=true" title="class or interface in java.lang">Class</a>&lt;? extends org.dockbox.selene.core.events.parents.Event&gt;,<a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.events">IHandler</a>&gt;&nbsp;getHandlers()</pre>
 </li>
 </ul>
 </li>
@@ -207,8 +207,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.util.events"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.util.events"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../../org/dockbox/selene/core/util/events/IHandler.html" title="interface in org.dockbox.selene.core.events"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.events"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?org/dockbox/selene/core/util/events/IHandlerRegistry.html" target="_top">Frames</a></li>

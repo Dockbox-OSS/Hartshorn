@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.core.objects;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
-
 import java.util.function.Function;
 
 public class FieldReferenceHolder<T> extends ReferenceHolder<T> {

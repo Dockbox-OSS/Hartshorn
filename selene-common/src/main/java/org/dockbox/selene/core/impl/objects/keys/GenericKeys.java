@@ -21,8 +21,8 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.Key;
 import org.dockbox.selene.core.objects.targets.Identifiable;
-import org.dockbox.selene.core.objects.user.Gamemode;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.player.Gamemode;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.text.Text;
 
 import java.util.List;

@@ -17,30 +17,30 @@
 
 package org.dockbox.selene.test.util;
 
+import org.dockbox.selene.core.BroadcastService;
+import org.dockbox.selene.core.ConstructionUtil;
+import org.dockbox.selene.core.DiscordUtils;
+import org.dockbox.selene.core.ExceptionHelper;
+import org.dockbox.selene.core.PlayerStorageService;
+import org.dockbox.selene.core.ThreadUtils;
+import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.core.command.CommandBus;
+import org.dockbox.selene.core.events.EventBus;
+import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.files.ConfigurateManager;
 import org.dockbox.selene.core.i18n.common.ResourceService;
-import org.dockbox.selene.core.impl.i18n.common.SimpleResourceService;
+import org.dockbox.selene.core.impl.SimpleBroadcastService;
+import org.dockbox.selene.core.impl.SimpleExceptionHelper;
+import org.dockbox.selene.core.impl.SimpleResourceService;
+import org.dockbox.selene.core.impl.events.SimpleEventBus;
+import org.dockbox.selene.core.impl.extension.SimpleExtensionManager;
 import org.dockbox.selene.core.impl.server.config.DefaultGlobalConfig;
-import org.dockbox.selene.core.impl.util.events.SimpleEventBus;
-import org.dockbox.selene.core.impl.util.exceptions.SimpleExceptionHelper;
-import org.dockbox.selene.core.impl.util.extension.SimpleExtensionManager;
-import org.dockbox.selene.core.impl.util.text.SimpleBroadcastService;
 import org.dockbox.selene.core.server.IntegratedExtension;
+import org.dockbox.selene.core.server.SeleneInjectConfiguration;
 import org.dockbox.selene.core.server.config.GlobalConfig;
-import org.dockbox.selene.core.util.construct.ConstructionUtil;
-import org.dockbox.selene.core.util.discord.DiscordUtils;
-import org.dockbox.selene.core.util.events.EventBus;
-import org.dockbox.selene.core.util.exceptions.ExceptionHelper;
-import org.dockbox.selene.core.util.extension.ExtensionManager;
-import org.dockbox.selene.core.util.files.ConfigurateManager;
-import org.dockbox.selene.core.util.inject.SeleneInjectModule;
-import org.dockbox.selene.core.util.player.PlayerStorageService;
-import org.dockbox.selene.core.util.text.BroadcastService;
-import org.dockbox.selene.core.util.threads.ThreadUtils;
-import org.dockbox.selene.core.util.world.WorldStorageService;
 import org.dockbox.selene.test.extension.IntegratedTestExtension;
 
-public class TestInjector extends SeleneInjectModule {
+public class TestInjector extends SeleneInjectConfiguration {
 
     @Override
     protected void configureExceptionInject() {

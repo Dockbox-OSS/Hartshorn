@@ -19,6 +19,7 @@ package org.dockbox.selene.core.impl.command.parse
 
 import com.sk89q.worldedit.blocks.BaseBlock
 import org.dockbox.selene.core.command.context.CommandValue
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 
@@ -49,7 +50,7 @@ class WorldEditBlockParserTest {
     @Test
     fun parseKeepsBlockData() {
         val commandvalue: CommandValue<String> = CommandValue.Argument("1:2,2,3", "mock_arg")
-        val parser = WorldEditBlockParser()
+        val parser = TypeArgumentParsers.WorldEditBlockParser()
         val blocks = parser.parse(commandvalue).get()
 
         Assert.assertEquals(2, blocks[0]!!.data)
@@ -57,7 +58,7 @@ class WorldEditBlockParserTest {
 
     private fun generateBlockList(): List<BaseBlock?> {
         val commandvalue: CommandValue<String> = CommandValue.Argument("1,2,3", "mock_arg")
-        val parser = WorldEditBlockParser()
+        val parser = TypeArgumentParsers.WorldEditBlockParser()
         return parser.parse(commandvalue).get()
     }
 

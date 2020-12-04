@@ -18,9 +18,9 @@
 package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.util.world.WorldStorageService;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.test.object.TestWorld;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class TestWorldStorageService extends WorldStorageService {
+public class TestWorldStorageService implements WorldStorageService {
 
     private final Collection<World> worlds = SeleneUtils.singletonList(new TestWorld(UUID.randomUUID(), "MockWorld"));
 

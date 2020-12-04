@@ -21,8 +21,8 @@ package org.dockbox.selene.core.util.files;
 
 import com.google.common.reflect.TypeToken;
 
-import org.dockbox.selene.core.impl.util.files.annotations.ProcessSetting;
-import org.dockbox.selene.core.impl.util.files.process.SettingProcessor;
+import org.dockbox.selene.core.impl.files.annotations.ProcessSetting;
+import org.dockbox.selene.core.impl.files.process.SettingProcessor;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 

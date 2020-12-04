@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.sponge.text.navigation;
 
-import org.dockbox.selene.core.text.navigation.Pagination;
-import org.dockbox.selene.core.text.navigation.PaginationBuilder;
+import org.dockbox.selene.core.text.pagination.Pagination;
+import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.jetbrains.annotations.NotNull;
 
 public class SpongePaginationBuilder extends PaginationBuilder {
@@ -32,7 +32,7 @@ public class SpongePaginationBuilder extends PaginationBuilder {
                 super.getHeader(),
                 super.getFooter(),
                 super.getTitle(),
-                super.getContents()
+                super.getContent()
         );
     }
 }

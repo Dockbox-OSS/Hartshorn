@@ -21,7 +21,7 @@ import com.boydti.fawe.object.FawePlayer;
 import com.sk89q.worldedit.regions.Region;
 
 import org.dockbox.selene.core.events.AbstractCancellableEvent;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.player.Player;
 
 /**
  Cancellable event which is executed when a player performs a copy action using WorldEdit.

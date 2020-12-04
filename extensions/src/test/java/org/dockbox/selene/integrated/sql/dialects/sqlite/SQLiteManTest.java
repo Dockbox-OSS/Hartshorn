@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.sql.dialects.sqlite;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.data.table.identifiers.TestColumnIdentifiers;
 import org.dockbox.selene.integrated.sql.ISQLMan;

@@ -19,7 +19,7 @@ package org.dockbox.selene.core.i18n.common;
 
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.SeleneUtils;
 
 import java.util.Map;
 

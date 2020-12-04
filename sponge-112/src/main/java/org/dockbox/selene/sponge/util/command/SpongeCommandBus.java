@@ -20,18 +20,22 @@ package org.dockbox.selene.sponge.util.command;
 import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.command.CommandRunnerFunction;
+import org.dockbox.selene.core.command.CommandRunner;
 import org.dockbox.selene.core.command.context.CommandValue;
+import org.dockbox.selene.core.command.context.CommandValue.Flag;
+import org.dockbox.selene.core.command.context.CommandValue.Argument;
+import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.events.chat.CommandEvent;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
 import org.dockbox.selene.core.impl.command.SimpleCommandBus;
 import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
-import org.dockbox.selene.core.objects.events.Cancellable;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.events.parents.Cancellable;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +73,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     @Override
-    public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunnerFunction runner) {
+    public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunner runner) {
         Sponge.getCommandManager().register(
                 Selene.getServer(),
                 CommandSpec.builder()
@@ -80,7 +84,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     @Override
-    protected void registerChildCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, String usagePart, AbstractPermission permission) {
+    protected void registerChildCommand(@NotNull String command, @NotNull CommandRunner runner, String usagePart, AbstractPermission permission) {
         CommandSpec.Builder spec = CommandSpec.builder();
         spec.permission(permission.get());
 
@@ -102,16 +106,16 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     }
 
     @Override
-    protected void registerSingleMethodCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, String commandPart, AbstractPermission permission) {
+    protected void registerSingleMethodCommand(@NotNull String command, @NotNull CommandRunner runner, String commandPart, AbstractPermission permission) {
         CommandSpec.Builder spec = CommandSpec.builder();
         spec.permission(permission.get());
 
         Selene.log().debug("Found single method command '" + commandPart + "'");
-        if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(command.substring(0, command.indexOf(' '))))
+        if (!SimpleCommandBus.getRegisteredCommands().contains(command.substring(0, command.indexOf(' '))))
             this.registerValidatedSingleMethodCommand(command, runner, commandPart, spec);
     }
 
-    private void registerValidatedSingleMethodCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, String commandPart, CommandSpec.Builder spec) {
+    private void registerValidatedSingleMethodCommand(@NotNull String command, @NotNull CommandRunner runner, String commandPart, CommandSpec.Builder spec) {
         String alias = command.substring(0, command.indexOf(' '));
         Selene.log().debug("Registering single method command '" + commandPart + "' to Sponge");
         spec
@@ -121,22 +125,21 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 Selene.getServer(),
                 spec.build(),
                 alias);
-        SimpleCommandBus.Companion.getRegisteredCommands().add(alias);
+        SimpleCommandBus.getRegisteredCommands().add(alias);
     }
 
     @Override
-    @SuppressWarnings("CallToSuspiciousStringMethod")
-    protected void registerParentCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, AbstractPermission permission) {
+    protected void registerParentCommand(@NotNull String command, @NotNull CommandRunner runner, AbstractPermission permission) {
         CommandSpec.Builder spec = CommandSpec.builder();
         spec.permission(permission.get());
 
         String registeredCmd = command.substring(1);
         if (command.contains(" ")) registeredCmd = command.substring(1, command.indexOf(' '));
-        if (!SimpleCommandBus.Companion.getRegisteredCommands().contains(registeredCmd))
+        if (!SimpleCommandBus.getRegisteredCommands().contains(registeredCmd))
             this.registerValidatedParentCommand(command, runner, spec, registeredCmd);
     }
 
-    private void registerValidatedParentCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, CommandSpec.Builder spec, String registeredCmd) {
+    private void registerValidatedParentCommand(@NotNull String command, @NotNull CommandRunner runner, CommandSpec.Builder spec, String registeredCmd) {
         List<Tuple<String, CommandSpec>> childs = childsPerAlias.getOrDefault(registeredCmd, SeleneUtils.emptyList());
         childs.forEach(child -> this.defineExecutorOrChild(spec, child));
         spec.executor(this.buildExecutor(runner, command));
@@ -147,11 +150,11 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         } catch (IllegalArgumentException e) {
             Selene.getServer().except(e.getMessage(), e);
         }
-        SimpleCommandBus.Companion.getRegisteredCommands().add(registeredCmd);
+        SimpleCommandBus.getRegisteredCommands().add(registeredCmd);
     }
 
     private void defineExecutorOrChild(CommandSpec.Builder spec, Tuple<String, CommandSpec> child) {
-        if (super.getParentCommandPrefix().equals(child.getKey())) {
+        if (getParentCommandPrefix().equals(child.getKey())) {
             spec.executor(child.getValue().getExecutor());
         } else {
             spec.child(child.getValue(), child.getKey());
@@ -166,16 +169,16 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     private CommandElement[] parseArguments(CharSequence argString) {
         List<CommandElement> elements = SeleneUtils.emptyList();
         CommandFlags.Builder cflags = null;
-        Matcher m = Companion.getArgFinder().matcher(argString);
+        Matcher m = getArgFinder().matcher(argString);
         while (m.find()) {
             String part = m.group();
-            Matcher ma = Companion.getArgument().matcher(part);
+            Matcher ma = getArgument().matcher(part);
             if (ma.matches()) {
                 boolean optional = '[' == ma.group(1).charAt(0);
                 String argUnp = ma.group(2);
                 CommandElement[] result = this.parseArguments(argUnp);
                 if (0 == result.length) {
-                    SpongeArgumentTypeValue satv = this.argValue(ma.group(2));
+                    SpongeArgumentTypeValue satv = this.getArgumentValue(ma.group(2));
                     CommandElement permEl = satv.getArgument();
                     result = new CommandElement[]{permEl};
                 }
@@ -186,7 +189,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                     elements.add(el);
                 }
             } else {
-                Matcher mf = Companion.getFlag().matcher(part);
+                Matcher mf = getFlag().matcher(part);
                 if (mf.matches()) {
                     if (null == cflags) cflags = GenericArguments.flags();
                     this.parseFlag(cflags, mf.group(1), mf.group(2));
@@ -209,7 +212,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
                 flags.flag(name);
             }
         } else {
-            AbstractArgumentValue<CommandElement> av = this.argValue(value);
+            AbstractArgumentValue<CommandElement> av = this.getArgumentValue(value);
             if (0 <= name.indexOf(':')) {
                 Selene.getServer().except("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
@@ -224,9 +227,9 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         else return GenericArguments.seq(elements);
     }
 
-    private CommandExecutor buildExecutor(CommandRunnerFunction runner, String command) {
+    private CommandExecutor buildExecutor(CommandRunner runner, String command) {
         return (src, args) -> {
-            org.dockbox.selene.core.objects.targets.CommandSource sender = SpongeConversionUtil
+            CommandSource sender = SpongeConversionUtil
                     .fromSponge(src)
                     .orElseThrow(() ->
                             new IllegalArgumentException("Command sender is not a console or a player, did a plugin call me?"));
@@ -237,7 +240,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
 
             if (!ceb.isCancelled()) {
                 if (src instanceof Player) runner.run(sender, ctx);
-                else runner.run(SpongeConsole.Companion.getInstance(), ctx);
+                else runner.run(SpongeConsole.getInstance(), ctx);
 
                 new CommandEvent.After(sender, ctx).post();
             }
@@ -249,7 +252,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
     @NotNull
     @Override
     protected SimpleCommandContext convertContext(CommandContext ctx,
-                                                  @NotNull org.dockbox.selene.core.objects.targets.CommandSource sender,
+                                                  @NotNull CommandSource sender,
                                                   @org.jetbrains.annotations.Nullable String command) {
         Multimap<String, Object> parsedArgs;
         try {
@@ -258,7 +261,7 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
             parsedArgs = (Multimap<String, Object>) parsedArgsF.get(ctx);
         } catch (IllegalAccessException | ClassCastException | NoSuchFieldException e) {
             Selene.getServer().except("Could not load parsed arguments from Sponge command context", e);
-            return SimpleCommandContext.Companion.getEMPTY();
+            return SimpleCommandContext.EMPTY;
         }
 
         List<CommandValue.Argument<?>> arguments = SeleneUtils.emptyList();
@@ -267,19 +270,19 @@ public class SpongeCommandBus extends SimpleCommandBus<CommandContext, SpongeArg
         assert null != command : "Context carrier command was null";
         parsedArgs.asMap().forEach((s, o) -> o.forEach(obj -> {
             if (Pattern.compile("-(-?" + s + ")").matcher(command).find())
-                flags.add(new CommandValue.Flag<>(this.getValue(obj), s));
-            else arguments.add(new CommandValue.Argument<>(this.getValue(obj), s));
+                flags.add(new Flag<>(this.getValue(obj), s));
+            else arguments.add(new Argument<>(this.getValue(obj), s));
         }));
 
         return this.getContext(sender, arguments, flags, command);
     }
 
     @NotNull
-    private SimpleCommandContext getContext(org.dockbox.selene.core.objects.targets.@NotNull CommandSource sender, List<CommandValue.Argument<?>> arguments, List<CommandValue.Flag<?>> flags, String command) {
+    private SimpleCommandContext getContext(@NotNull CommandSource sender, List<CommandValue.Argument<?>> arguments, List<CommandValue.Flag<?>> flags, String command) {
         SimpleCommandContext seleneCtx;
-        if (sender instanceof org.dockbox.selene.core.objects.user.Player) {
-            org.dockbox.selene.core.objects.location.Location loc = ((org.dockbox.selene.core.objects.user.Player) sender).getLocation();
-            org.dockbox.selene.core.objects.location.World world = ((org.dockbox.selene.core.objects.user.Player) sender).getLocation().getWorld();
+        if (sender instanceof org.dockbox.selene.core.objects.player.Player) {
+            org.dockbox.selene.core.objects.location.Location loc = ((Locatable) sender).getLocation();
+            org.dockbox.selene.core.objects.location.World world = ((Locatable) sender).getLocation().getWorld();
             seleneCtx = new SimpleCommandContext(
                     command,
                     arguments.toArray(new CommandValue.Argument<?>[0]),

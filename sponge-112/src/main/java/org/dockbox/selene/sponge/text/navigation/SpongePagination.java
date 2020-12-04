@@ -19,7 +19,7 @@ package org.dockbox.selene.sponge.text.navigation;
 
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.text.navigation.Pagination;
+import org.dockbox.selene.core.text.pagination.Pagination;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -27,14 +27,13 @@ import java.util.List;
 public class SpongePagination implements Pagination {
 
     private Text padding;
-    private Number linesPerPage;
+    private int linesPerPage;
     private Text header;
     private Text footer;
     private Text title;
     private List<Text> content;
 
-    SpongePagination(Text padding, Number linesPerPage, Text header, Text footer, Text title, List<Text> content) {
-
+    SpongePagination(Text padding, int linesPerPage, Text header, Text footer, Text title, List<Text> content) {
         this.padding = padding;
         this.linesPerPage = linesPerPage;
         this.header = header;
@@ -61,12 +60,12 @@ public class SpongePagination implements Pagination {
 
     @NotNull
     @Override
-    public Number getLinesPerPage() {
+    public int getLinesPerPage() {
         return this.linesPerPage;
     }
 
     @Override
-    public void setLinesPerPage(@NotNull Number linesPerPage) {
+    public void setLinesPerPage(@NotNull int linesPerPage) {
         this.linesPerPage = linesPerPage;
     }
 
@@ -110,7 +109,7 @@ public class SpongePagination implements Pagination {
     }
 
     @Override
-    public void setContent(@NotNull List<? extends Text> content) {
-        this.content = (List<Text>) content;
+    public void setContent(@NotNull List<Text> content) {
+        this.content = content;
     }
 }

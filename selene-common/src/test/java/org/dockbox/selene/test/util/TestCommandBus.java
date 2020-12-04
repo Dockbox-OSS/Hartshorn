@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.test.util;
 
-import org.dockbox.selene.core.command.CommandRunnerFunction;
+import org.dockbox.selene.core.command.CommandRunner;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.core.impl.command.SimpleCommandBus;
 import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
-import org.dockbox.selene.core.objects.targets.CommandSource;
+import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.test.commands.TestArgumentValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,22 +29,22 @@ import org.jetbrains.annotations.Nullable;
 public class TestCommandBus extends SimpleCommandBus<SimpleCommandContext, TestArgumentValue> {
 
     @Override
-    public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permissions, @NotNull CommandRunnerFunction runner) {
+    public void registerCommandNoArgs(@NotNull String command, @NotNull AbstractPermission permissions, @NotNull CommandRunner runner) {
         throw new UnsupportedOperationException("CommandBus is not testable in common implementations, and should only be tested in the platform implementation");
     }
 
     @Override
-    protected void registerChildCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, @NotNull String usagePart, @NotNull AbstractPermission permissions) {
+    protected void registerChildCommand(@NotNull String command, @NotNull CommandRunner runner, @NotNull String usagePart, @NotNull AbstractPermission permissions) {
         throw new UnsupportedOperationException("CommandBus is not testable in common implementations, and should only be tested in the platform implementation");
     }
 
     @Override
-    protected void registerSingleMethodCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, @NotNull String usagePart, @NotNull AbstractPermission permissions) {
+    protected void registerSingleMethodCommand(@NotNull String command, @NotNull CommandRunner runner, @NotNull String usagePart, @NotNull AbstractPermission permissions) {
         throw new UnsupportedOperationException("CommandBus is not testable in common implementations, and should only be tested in the platform implementation");
     }
 
     @Override
-    protected void registerParentCommand(@NotNull String command, @NotNull CommandRunnerFunction runner, @NotNull AbstractPermission permissions) {
+    protected void registerParentCommand(@NotNull String command, @NotNull CommandRunner runner, @NotNull AbstractPermission permissions) {
         throw new UnsupportedOperationException("CommandBus is not testable in common implementations, and should only be tested in the platform implementation");
     }
 

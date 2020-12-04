@@ -19,8 +19,8 @@ package org.dockbox.selene.integrated.data;
 
 import com.google.common.reflect.TypeToken;
 
-import org.dockbox.selene.core.impl.util.files.serialize.SeleneTypeSerializers;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.integrated.data.registry.Registry;
 import org.dockbox.selene.integrated.data.registry.RegistryColumn;
 import org.dockbox.selene.integrated.data.registry.TestIdentifier;

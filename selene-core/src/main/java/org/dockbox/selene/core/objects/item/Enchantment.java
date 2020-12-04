@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.objects.item;
 
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.util.environment.MinecraftVersion;
+import org.dockbox.selene.core.MinecraftVersion;
 
 public enum Enchantment {
 
