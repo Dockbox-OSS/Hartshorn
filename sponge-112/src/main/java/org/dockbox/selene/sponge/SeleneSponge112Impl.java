@@ -39,6 +39,7 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -90,8 +91,12 @@ public class SeleneSponge112Impl extends Selene {
     }
 
     private void registerSpongeListeners(Object... listeners) {
+        System.out.println(Arrays.toString(listeners));
         for (Object obj : listeners) {
-            Sponge.getEventManager().registerListeners(this, obj);
+            if (null != obj)
+                Sponge.getEventManager().registerListeners(this, obj);
+            else
+                log().warn("Attempted to register 'null' listener");
         }
     }
 
