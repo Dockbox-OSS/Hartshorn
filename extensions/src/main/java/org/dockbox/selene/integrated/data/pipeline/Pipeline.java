@@ -17,8 +17,7 @@
 
 package org.dockbox.selene.integrated.data.pipeline;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.integrated.data.pipeline;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineException;
 import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;

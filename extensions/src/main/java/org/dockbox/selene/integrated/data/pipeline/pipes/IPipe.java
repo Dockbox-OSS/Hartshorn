@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.data.pipeline.pipes;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 
 @FunctionalInterface
 public interface IPipe<I, O> {
