@@ -23,18 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Pipeline<I> extends AbstractPipeline<I, I> {
-
-    /**
-     * Internally calls {@link AbstractPipeline#addPipes(IPipe[])} and returns itself.
-     * @param pipes The non-null varargs of {@link IPipe}s to add to the pipeline.
-     * @return Itself.
-     */
-    @SafeVarargs
-    @Override
-    public final AbstractPipeline<I, I> addPipes(@NotNull IPipe<I, I>... pipes) {
-        return super.addPipes(pipes);
-    }
-
     /**
      * Processes an input by first wrapping it in an {@link Exceptional} and then internally calling
      * {@link AbstractPipeline#process(Exceptional)}.

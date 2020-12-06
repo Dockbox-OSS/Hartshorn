@@ -25,13 +25,12 @@ import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractPipeline<P, I> {
 
-    private List<IPipe<I, I>> pipes = new ArrayList<>();
+    private List<IPipe<I, I>> pipes = SeleneUtils.emptyList();
     private boolean isCancellable, isCancelled;
 
     /**
@@ -47,6 +46,16 @@ public abstract class AbstractPipeline<P, I> {
 
         this.pipes.add(pipe);
         return this;
+    }
+
+    /**
+     * Internally calls {@link AbstractPipeline#addPipes(IPipe[])} and returns itself.
+     * @param pipes The non-null varargs of {@link IPipe}s to add to the pipeline.
+     * @return Itself.
+     */
+    @SafeVarargs
+    public final AbstractPipeline<P, I> addVarargPipes(@NotNull IPipe<I, I>... pipes) {
+        return this.addPipes(pipes);
     }
 
     /**
@@ -102,15 +111,15 @@ public abstract class AbstractPipeline<P, I> {
     protected Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput) {
         for (IPipe<I, I> pipe : this.getPipes()) {
 
-            //This occurs when a pipeline is converted, previously allowed cancellable pipes are now illegal.
+            // This occurs when a pipeline is converted, previously allowed cancellable pipes are now illegal.
             if (pipe instanceof CancellablePipe && !this.isCancellable())
                 throw new IllegalPipelineException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
 
-            //Create a temporary final version that can be used within the supplier.
+            // Create a temporary final version that can be used within the supplier.
             final Exceptional<I> finalInput = exceptionalInput;
 
             exceptionalInput = Exceptional.of(() -> {
-                //Check if the pipelines an instance of the Cancellable pipeline or not.
+                // Check if the pipelines an instance of the Cancellable pipeline or not.
                 if (pipe instanceof CancellablePipe) {
                     CancellablePipe<I, I> cancellablePipe = (CancellablePipe<I, I>) pipe;
                     return cancellablePipe.execute(this::cancelPipeline, finalInput.orElse(null), finalInput.orElseExcept(null));
@@ -120,14 +129,14 @@ public abstract class AbstractPipeline<P, I> {
                 }
             });
 
-            //If the pipelines been cancelled, stop processing any further pipes.
+            // If the pipelines been cancelled, stop processing any further pipes.
             if (this.isCancellable() && this.isCancelled) {
-                //Reset it straight after its been detected for next time the pipeline's used.
+                // Reset it straight after its been detected for next time the pipeline's used.
                 this.isCancelled = false;
                 break;
             }
-            //If there was an error, the supplier won't have captured any input, so we'll try and
-            //pass the previous input forwards.
+            // If there was an error, the supplier won't have captured any input, so we'll try and
+            // pass the previous input forwards.
             else if (exceptionalInput.errorPresent()){
                 exceptionalInput = Exceptional.ofNullable(finalInput.orElse(null), exceptionalInput.getError());
             }
@@ -143,7 +152,7 @@ public abstract class AbstractPipeline<P, I> {
      * @return The {@link I} output of processing the input, unwrapped from the {@link Exceptional} without checking if its present.
      */
     public I processUnsafe(@NotNull P input) {
-        return this.process(input, null).get();
+        return this.process(input).orNull();
     }
 
     /**
@@ -173,11 +182,14 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /**
-     * Removes a {@link IPipe} from the pipeline at the specified index.
+     * Removes a {@link IPipe} from the pipeline at the specified index. If the specified index is out of bounds,
+     * nothing will be removed.
      * @param index The index of the {@link IPipe} to remove.
      */
     public void removePipeAt(int index) {
-        this.pipes.remove(index);
+        if (this.pipes.size() > index) {
+            this.pipes.remove(index);
+        }
     }
 
     /**

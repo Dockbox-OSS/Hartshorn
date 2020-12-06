@@ -26,7 +26,7 @@ public interface CancellablePipe<I, O> extends IPipe<I, O> {
 
     @Override
     default O apply(Exceptional<I> input) {
-        return this.execute(null, input.get(), input.orElseExcept(null));
+        return this.execute(null, input.orNull(), input.orElseExcept(null));
     }
 
     @Override

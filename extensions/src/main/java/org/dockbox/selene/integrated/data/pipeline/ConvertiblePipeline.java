@@ -18,7 +18,6 @@
 package org.dockbox.selene.integrated.data.pipeline;
 
 import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineConverterException;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineException;
@@ -88,20 +87,20 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     @Override
     public Exceptional<I> process(@NotNull P input, @Nullable Throwable throwable) {
         Exceptional<I> exceptionalInput;
-        if (null == this.previousPipeline) {
-            //This should never be called, unless this class was used initially instead of ConvertiblePipelineSource.
-            //(Which shouldn't be possible due to the protected constructor).
-            if (SeleneUtils.isAssignableFrom(this.inputClass, input.getClass())) {
+        if (null == this.getPreviousPipeline()) {
+            // This should never be called, unless this class was used initially instead of ConvertiblePipelineSource.
+            // (Which shouldn't be possible due to the protected constructor).
+            if (SeleneUtils.isAssignableFrom(this.getInputClass(), input.getClass())) {
                 exceptionalInput = Exceptional.ofNullable((I) input, throwable);
             }
             else {
                 throw new IllegalPipelineException(
                     String.format("Pipeline sources types don't match. [Expected: %s, Actual: %s]",
-                        this.inputClass, input.getClass()));
+                        this.getInputClass().getCanonicalName(), input.getClass().getCanonicalName()));
             }
         }
         else {
-            exceptionalInput = this.previousPipeline.processConverted(input, throwable);
+            exceptionalInput = this.getPreviousPipeline().processConverted(input, throwable);
         }
 
         return super.process(exceptionalInput);
@@ -109,15 +108,15 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
 
     /**
      * Set if this pipeline can be cancelled.
-     * <b>NOTE:</b> A pipeline can only be cancelled if it is the last pipeline Doesn't have a pipeline after it).
+     * <b>Note:</b> A pipeline can only be cancelled if it is the last pipeline Doesn't have a pipeline after it).
      * When you convert the pipeline to another type, it automatically sets the current pipeline to not cancellable.
      * @param isCancellable A boolean describing if the pipeline is cancellable or not.
      * @return Itself.
      */
     @Override
     public ConvertiblePipeline<P, I> setCancellable(boolean isCancellable) {
-        //Only allow this pipeline to be cancellable if theres not a pipeline after this.
-        super.setCancellable(null == this.nextPipeline && super.isCancellable());
+        // Only allow this pipeline to be cancellable if theres not a pipeline after this.
+        super.setCancellable(null == this.getNextPipeline() && isCancellable);
         return this;
     }
 
@@ -135,7 +134,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
         Exceptional<I> result = this.process(input, throwable);
         Exceptional<K> output = (Exceptional<K>) result.map(this.converter);
 
-        //If the mapper returns null (If it wasn't already null)
+        // If the mapper returns null (If it wasn't already null)
         if (result.isPresent() && !output.isPresent()) {
             throw new IllegalPipelineConverterException(
                 String.format("The pipeline converter returned null. [Input: %s, Output: %s]",
@@ -145,7 +144,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     }
 
     /**
-     * Converts the pipeline to a different type. <b>NOTE:</b> When you convert a pipeline, this automatically makes it
+     * Converts the pipeline to a different type. <b>Note:</b> When you convert a pipeline, this automatically makes it
      * uncancellable and so will throw an {@link IllegalPipelineException} if you try and process an input with any
      * {@link org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe}s in this pipeline.
      * @param converter A {@link Function} that takes in an {@link I} input and returns a converted {@link K} output.
@@ -154,20 +153,15 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * @return A pipeline of the new type.
      */
     public <K> ConvertiblePipeline<P, K> convertPipeline(Function<? super I, K> converter, Class<K> inputClass) {
-        if (this.inputClass.equals(inputClass)) {
-            Selene.log().warn(
-                "The use of a converter is unnecessary as the pipeline doesn't change type. Consider using a pipe instead.");
-        }
-
         this.converter = converter;
 
         ConvertiblePipeline<P, K> nextPipeline = new ConvertiblePipeline<>(inputClass);
-        nextPipeline.previousPipeline = this;
-        this.nextPipeline = nextPipeline;
+        nextPipeline.setPreviousPipeline(this);
+        this.setNextPipeline(nextPipeline);
 
-        //If the current pipeline is cancellable, make the next pipeline cancellable.
+        // If the current pipeline is cancellable, make the next pipeline cancellable.
         nextPipeline.setCancellable(this.isCancellable());
-        //As it is no longer the final pipeline, this is no longer cancellable.
+        // As it is no longer the final pipeline, this is no longer cancellable.
         this.setCancellable(false);
         return nextPipeline;
     }
@@ -182,41 +176,93 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     public <K> ConvertiblePipeline<P, K> removePipeline(Class<K> previousClass) {
         super.clearPipes();
 
-        if (null == this.previousPipeline) {
+        if (null == this.getPreviousPipeline()) {
+            this.clearPipelineConnections();
             return (ConvertiblePipeline<P, K>)this;
         }
         else {
-            if (SeleneUtils.isAssignableFrom(previousClass, this.previousPipeline.inputClass)) {
-                this.previousPipeline.nextPipeline = null;
-                this.previousPipeline.converter = null;
+            if (SeleneUtils.isAssignableFrom(previousClass, this.getPreviousPipeline().getInputClass())) {
+                ConvertiblePipeline<P, K> previousPipeline = (ConvertiblePipeline<P, K>) this.getPreviousPipeline();
+                this.clearPipelineConnections();
 
-                if (null != this.nextPipeline) {
-                    this.nextPipeline.previousPipeline = null;
-                    this.nextPipeline = null;
-                    this.converter = null;
-                }
-
-                return (ConvertiblePipeline<P, K>) this.previousPipeline;
+                return previousPipeline;
             }
             else {
                 throw new IllegalArgumentException(
                     String.format("Input class was not correct. [Expected: %s, Actual: %s]",
-                        this.previousPipeline.inputClass, previousClass));
+                        this.getPreviousPipeline().getInputClass().getCanonicalName(), previousClass.getCanonicalName()));
             }
+
         }
     }
 
     /**
-     * Calculates the size of the pipeline by recursively getting the size of the previous pipeline. <b>NOTE:</b> The
+     * Clears all the references and converters between this pipeline and the next / previous pipelines.
+     */
+    protected void clearPipelineConnections() {
+        if (null != this.getPreviousPipeline()) {
+            this.getPreviousPipeline().setNextPipeline(null);
+            this.getPreviousPipeline().converter = null;
+            this.setPreviousPipeline(null);
+        }
+
+        if (null != this.getNextPipeline())  {
+            this.getNextPipeline().setPreviousPipeline(null);
+            this.setNextPipeline(null);
+            this.converter = null;
+        }
+    }
+
+    /**
+     * Calculates the size of the pipeline by recursively getting the size of the previous pipeline. <b>Note:</b> The
      * size includes the number of converters in the pipeline too.
      * @return The number of {@link IPipe} and converters in the pipeline.
      */
     @Override
     public int size() {
         int size = super.size();
-        if (null != this.previousPipeline) size += this.previousPipeline.size();
+        if (null != this.getPreviousPipeline()) size += this.getPreviousPipeline().size();
         if (null != this.converter) size++;
 
         return size;
+    }
+
+    /**
+     * Setter function to set the previous pipeline.
+     * @param previousPipeline The previous pipeline.
+     */
+    protected void setPreviousPipeline(@Nullable ConvertiblePipeline<P, ?> previousPipeline) {
+        this.previousPipeline = previousPipeline;
+    }
+
+    /**
+     * Setter function to set the next pipeline.
+     * @param nextPipeline The next pipeline.
+     */
+    protected void setNextPipeline(@Nullable ConvertiblePipeline<P, ?> nextPipeline) {
+        this.nextPipeline = nextPipeline;
+    }
+
+    /**
+     * @return The next pipeline or null if there isn't one.
+     */
+    @Nullable
+    protected ConvertiblePipeline<P, ?> getNextPipeline() {
+        return this.nextPipeline;
+    }
+
+    /**
+     * @return The previous pipeline or null if there isn't one.
+     */
+    @Nullable
+    protected ConvertiblePipeline<P, ?> getPreviousPipeline() {
+        return this.previousPipeline;
+    }
+
+    /**
+     * @return A {@link Class} of the input type for this pipeline.
+     */
+    public Class<I> getInputClass() {
+        return this.inputClass;
     }
 }
