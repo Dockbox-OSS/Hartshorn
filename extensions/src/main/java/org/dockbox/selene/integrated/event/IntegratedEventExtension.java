@@ -19,16 +19,16 @@ package org.dockbox.selene.integrated.event;
 
 import com.boydti.fawe.object.FawePlayer;
 
-import org.dockbox.selene.core.annotations.Filter;
-import org.dockbox.selene.core.annotations.Getter;
-import org.dockbox.selene.core.annotations.Listener;
+import org.dockbox.selene.core.annotations.event.filter.Filter;
+import org.dockbox.selene.core.annotations.event.processing.Getter;
+import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.events.chat.NativeCommandEvent;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerStartingEvent;
-import org.dockbox.selene.core.objects.events.Cancellable;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.events.parents.Cancellable;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.events.EventBus;
-import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.core.events.EventBus;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.integrated.event.processors.FaweSource;
 import org.dockbox.selene.integrated.event.processors.FaweSourceProcessor;
 import org.dockbox.selene.integrated.event.worldedit.WorldEditCopyEvent;

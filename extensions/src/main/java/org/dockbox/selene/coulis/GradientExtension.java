@@ -20,12 +20,12 @@ package org.dockbox.selene.coulis;
 import com.boydti.fawe.object.FawePlayer;
 import com.sk89q.worldedit.regions.Region;
 
-import org.dockbox.selene.core.annotations.Command;
-import org.dockbox.selene.core.annotations.Placeholder;
+import org.dockbox.selene.core.annotations.command.Command;
+import org.dockbox.selene.core.annotations.extension.Placeholder;
 import org.dockbox.selene.core.command.context.CommandContext;
-import org.dockbox.selene.core.impl.command.parse.ListArgumentParser;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.ListParser;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.player.Player;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class GradientExtension {
         if (!ctx.hasArgument("blocks")) return;
 
         List<? extends Integer> blocks = ctx.getArgumentAndParse("blocks",
-                new ListArgumentParser<>(Integer::parseInt))
+                new ListParser<>(Integer::parseInt))
                 .get();
 
         Exceptional<FawePlayer<?>> ofp = src.getFawePlayer();

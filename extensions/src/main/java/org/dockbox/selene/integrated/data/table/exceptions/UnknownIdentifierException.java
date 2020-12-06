@@ -17,7 +17,9 @@
 
 package org.dockbox.selene.integrated.data.table.exceptions;
 
-public class UnknownIdentifierException extends RuntimeException {
+import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
+
+public class UnknownIdentifierException extends UncheckedSeleneException {
     public UnknownIdentifierException(String message) {
         super(message);
     }

@@ -25,21 +25,21 @@ import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Warp;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.objects.targets.CommandSource;
-import org.dockbox.selene.core.objects.targets.Console;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.command.source.CommandSource;
+import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
-import org.dockbox.selene.core.objects.user.Gamemode;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.player.Gamemode;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
-import org.dockbox.selene.core.text.navigation.Pagination;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.text.pagination.Pagination;
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.sponge.exceptions.TypeConversionException;
-import org.dockbox.selene.sponge.object.item.SpongeItem;
+import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
@@ -149,7 +149,7 @@ public enum SpongeConversionUtil {
         if (null != pagination.getFooter()) builder.footer(toSponge(pagination.getFooter()));
 
         builder.padding(toSponge(pagination.getPadding()));
-        builder.linesPerPage(pagination.getLinesPerPage().intValue());
+        builder.linesPerPage(pagination.getLinesPerPage());
         List<Text> convertedContent = pagination.getContent().stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList());
         builder.contents(convertedContent);
         return builder.build();
@@ -175,7 +175,7 @@ public enum SpongeConversionUtil {
                 Text.Builder pb = Text.builder();
                 // Wrapping in parseColors first so internal color codes are parsed as well. Technically the FormattingCode
                 // from TextSerializers won't be needed, but to ensure no trailing codes are left we use it here anyway.
-                pb.append(TextSerializers.FORMATTING_CODE.deserialize(IntegratedResource.Companion.parseColors(part.toLegacy())));
+                pb.append(TextSerializers.FORMATTING_CODE.deserialize(IntegratedResource.parse(part.toLegacy())));
 
                 Exceptional<org.spongepowered.api.text.action.ClickAction<?>> clickAction = toSponge(part.getClickAction());
                 clickAction.ifPresent(pb::onClick);
@@ -276,7 +276,7 @@ public enum SpongeConversionUtil {
     @NotNull
     public static Exceptional<World> toSponge(org.dockbox.selene.core.objects.location.World world) {
         if (world instanceof SpongeWorld) {
-            World wref = ((SpongeWorld) world).getReference();
+            World wref = ((SpongeWorld) world).getReferenceWorld();
             if (null != wref) return Exceptional.of(wref);
         }
 
@@ -322,7 +322,7 @@ public enum SpongeConversionUtil {
     @SuppressWarnings("OverlyStrongTypeCast")
     private static Exceptional<ShiftClickAction<?>> fromSponge(org.spongepowered.api.text.action.ShiftClickAction<?> shiftClickAction) {
         if (shiftClickAction instanceof InsertText) {
-            return Exceptional.of(new ShiftClickAction.InsertText(org.dockbox.selene.core.text.Text.of(
+            return Exceptional.of(ShiftClickAction.insertText(org.dockbox.selene.core.text.Text.of(
                     ((InsertText) shiftClickAction).getResult()))
             );
         } else return Exceptional.empty();
@@ -331,26 +331,26 @@ public enum SpongeConversionUtil {
     @SuppressWarnings("OverlyStrongTypeCast")
     private static Exceptional<HoverAction<?>> fromSponge(org.spongepowered.api.text.action.HoverAction<?> hoverAction) {
         if (hoverAction instanceof ShowText) {
-            return Exceptional.of(new HoverAction.ShowText(fromSponge(((ShowText) hoverAction).getResult())));
+            return Exceptional.of(HoverAction.showText(fromSponge(((ShowText) hoverAction).getResult())));
         } else return Exceptional.empty();
     }
 
     @SuppressWarnings("OverlyStrongTypeCast")
     private static Exceptional<ClickAction<?>> fromSponge(org.spongepowered.api.text.action.ClickAction<?> clickAction) {
         if (clickAction instanceof OpenUrl) {
-            return Exceptional.of(new ClickAction.OpenUrl(((OpenUrl) clickAction).getResult()));
+            return Exceptional.of(ClickAction.openUrl(((OpenUrl) clickAction).getResult()));
 
         } else if (clickAction instanceof RunCommand) {
-            return Exceptional.of(new ClickAction.RunCommand((((RunCommand) clickAction).getResult())));
+            return Exceptional.of(ClickAction.runCommand((((RunCommand) clickAction).getResult())));
 
         } else if (clickAction instanceof ChangePage) {
-            return Exceptional.of(new ClickAction.ChangePage((((ChangePage) clickAction).getResult())));
+            return Exceptional.of(ClickAction.changePage((((ChangePage) clickAction).getResult())));
 
         } else if (clickAction instanceof SuggestCommand) {
-            return Exceptional.of(new ClickAction.SuggestCommand((((SuggestCommand) clickAction).getResult())));
+            return Exceptional.of(ClickAction.suggestCommand((((SuggestCommand) clickAction).getResult())));
 
         } else if (clickAction instanceof ExecuteCallback) {
-            return Exceptional.of(new ClickAction.ExecuteCallback(src -> toSponge(src)
+            return Exceptional.of(ClickAction.executeCallback(src -> toSponge(src)
                     .ifPresent(ssrc -> ((ExecuteCallback) clickAction).getResult().accept(ssrc))
                     .ifAbsent(() -> Selene.log().warn("Attempted to execute callback with unknown source type '" + src + "', is it convertable?"))
             ));
@@ -386,7 +386,7 @@ public enum SpongeConversionUtil {
 
     @NotNull
     public static Exceptional<CommandSource> fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
-        if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.Companion.getInstance());
+        if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.getInstance());
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
             return Exceptional.of(fromSponge((org.spongepowered.api.entity.living.player.Player) commandSource));
         return Exceptional.of(new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'"));
@@ -397,15 +397,16 @@ public enum SpongeConversionUtil {
         Vector3i vector3i = world.getProperties().getSpawnPosition();
         Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
 
-        return new SpongeWorld(
+        org.dockbox.selene.core.objects.location.World spongeWorld = new SpongeWorld(
                 world.getUniqueId(),
                 world.getName(),
                 world.getProperties().loadOnStartup(),
                 spawnLocation,
                 world.getProperties().getSeed(),
-                fromSponge(world.getProperties().getGameMode()),
-                world.getProperties().getGameRules()
+                fromSponge(world.getProperties().getGameMode())
         );
+        world.getProperties().getGameRules().forEach(spongeWorld::setGamerule);
+        return spongeWorld;
     }
 
     @NotNull
@@ -436,11 +437,11 @@ public enum SpongeConversionUtil {
     public static Warp fromSponge(io.github.nucleuspowered.nucleus.api.nucleusdata.Warp warp) {
         org.dockbox.selene.core.objects.location.Location location = warp.getLocation()
                 .map(SpongeConversionUtil::fromSponge)
-                .orElse(org.dockbox.selene.core.objects.location.Location.Companion.getEMPTY());
+                .orElse(org.dockbox.selene.core.objects.location.Location.empty());
 
         return new Warp(
-                warp.getDescription().map(Text::toString),
-                warp.getCategory(),
+                Exceptional.of(warp.getDescription().map(Text::toString)),
+                Exceptional.of(warp.getCategory()),
                 location,
                 warp.getName()
         );

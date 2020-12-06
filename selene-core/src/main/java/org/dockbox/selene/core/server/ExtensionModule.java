@@ -19,7 +19,7 @@ package org.dockbox.selene.core.server;
 
 import com.google.inject.AbstractModule;
 
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.SeleneUtils;
 
 import java.util.Collection;
 

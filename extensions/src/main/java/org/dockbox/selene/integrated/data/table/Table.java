@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.integrated.data.table;
 
-import org.dockbox.selene.core.objects.entity.Ignore;
-import org.dockbox.selene.core.objects.entity.Property;
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.annotations.entity.Ignore;
+import org.dockbox.selene.core.annotations.entity.Property;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.behavior.Merge;
 import org.dockbox.selene.integrated.data.table.behavior.Order;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
@@ -35,7 +35,6 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -538,7 +537,7 @@ public class Table {
     }
 
     private <T> Exceptional<T> convertRowTo(Class<T> type, TableRow row, boolean injectable) {
-        return SeleneUtils.tryCreate(type, fieldName -> {
+        return SeleneUtils.tryCreateFromProcessed(type, fieldName -> {
             ColumnIdentifier<?> identifier = this.getIdentifier(fieldName);
             return row.getValue(identifier).orNull();
         }, injectable);

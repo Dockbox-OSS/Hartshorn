@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.ptime;
 
-import org.dockbox.selene.core.annotations.Placeholder;
-import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.core.annotations.extension.Placeholder;
+import org.dockbox.selene.core.annotations.extension.Extension;
 
 @Extension(
         id = "ptime",

@@ -18,7 +18,7 @@
 package org.dockbox.selene.test.extension;
 
 import org.dockbox.selene.core.server.IntegratedExtension;
-import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.core.annotations.extension.Extension;
 
 @Extension(
         id = "junitExtension",

@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.core.objects;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;

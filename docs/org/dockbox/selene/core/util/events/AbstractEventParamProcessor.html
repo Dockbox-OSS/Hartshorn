@@ -51,7 +51,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html" title="enum in org.dockbox.selene.core.util.events"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html" title="enum in org.dockbox.selene.core.events"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?org/dockbox/selene/core/util/events/AbstractEventParamProcessor.html" target="_top">Frames</a></li>
@@ -93,7 +93,7 @@ var activeTableTab = "activeTableTab";
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">org.dockbox.selene.core.util.events</div>
+<div class="subTitle">org.dockbox.selene.core.events</div>
 <h2 title="Class AbstractEventParamProcessor" class="title">Class AbstractEventParamProcessor&lt;A extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation">Annotation</a>&gt;</h2>
 </div>
 <div class="contentContainer">
@@ -101,7 +101,7 @@ var activeTableTab = "activeTableTab";
 <li><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</a></li>
 <li>
 <ul class="inheritance">
-<li>org.dockbox.selene.core.util.events.AbstractEventParamProcessor&lt;A&gt;</li>
+<li>org.dockbox.selene.core.events.processing.AbstractEventParamProcessor&lt;A&gt;</li>
 </ul>
 </li>
 </ul>
@@ -120,7 +120,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public abstract class <span class="typeNameLabel">AbstractEventParamProcessor&lt;A extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation">Annotation</a>&gt;</span>
 extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></pre>
-<div class="block">A low level type used to process a given <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation"><code>Annotation</code></a> type. Typically this is only used by <a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.util.events"><code>IWrapper</code></a>
+<div class="block">A low level type used to process a given <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Annotation.html?is-external=true" title="class or interface in java.lang.annotation"><code>Annotation</code></a> type. Typically this is only used by <a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.events"><code>IWrapper</code></a>
  implementations to populate, filter, or skip parameter arguments.</div>
 </li>
 </ul>
@@ -166,19 +166,19 @@ extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>abstract @Nullable <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/dockbox/selene/core/util/events/AbstractEventParamProcessor.html#process-java.lang.Object-A-org.dockbox.selene.core.objects.events.Event-java.lang.reflect.Parameter-org.dockbox.selene.core.util.events.IWrapper-">process</a></span>(@Nullable <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;object,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/dockbox/selene/core/util/events/AbstractEventParamProcessor.html#process-java.lang.Object-A-org.dockbox.selene.core.events.events.Event-java.lang.reflect.Parameter-org.dockbox.selene.core.events.handling.IWrapper-">process</a></span>(@Nullable <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;object,
        <a href="../../../../../../org/dockbox/selene/core/util/events/AbstractEventParamProcessor.html" title="type parameter in AbstractEventParamProcessor">A</a>&nbsp;annotation,
-       org.dockbox.selene.core.objects.events.Event&nbsp;event,
+       org.dockbox.selene.core.events.parents.Event&nbsp;event,
        <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Parameter.html?is-external=true" title="class or interface in java.lang.reflect">Parameter</a>&nbsp;parameter,
-       <a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.util.events">IWrapper</a>&nbsp;wrapper)</code>
+       <a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.events">IWrapper</a>&nbsp;wrapper)</code>
 <div class="block">Processes the given object based on available information in the given <code>Annotation</code>, <code>Event</code>,
-     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Parameter.html?is-external=true" title="class or interface in java.lang.reflect"><code>Parameter</code></a>} and/or <a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.util.events"><code>IWrapper</code></a>.</div>
+     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Parameter.html?is-external=true" title="class or interface in java.lang.reflect"><code>Parameter</code></a>} and/or <a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.events"><code>IWrapper</code></a>.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>@NotNull <a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html" title="enum in org.dockbox.selene.core.util.events">EventStage</a></code></td>
+<td class="colFirst"><code>@NotNull <a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html" title="enum in org.dockbox.selene.core.events">EventStage</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../org/dockbox/selene/core/util/events/AbstractEventParamProcessor.html#targetStage--">targetStage</a></span>()</code>
-<div class="block">Gets the target <a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html" title="enum in org.dockbox.selene.core.util.events"><code>EventStage</code></a> in which this processor should be applied.</div>
+<div class="block">Gets the target <a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html" title="enum in org.dockbox.selene.core.events"><code>EventStage</code></a> in which this processor should be applied.</div>
 </td>
 </tr>
 </table>
@@ -243,8 +243,8 @@ public abstract&nbsp;@NotNull <a href="https://docs.oracle.com/javase/8/docs/api
 <li class="blockList">
 <h4>targetStage</h4>
 <pre>@NotNull
-public&nbsp;@NotNull <a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html" title="enum in org.dockbox.selene.core.util.events">EventStage</a>&nbsp;targetStage()</pre>
-<div class="block">Gets the target <a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html" title="enum in org.dockbox.selene.core.util.events"><code>EventStage</code></a> in which this processor should be applied.
+public&nbsp;@NotNull <a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html" title="enum in org.dockbox.selene.core.events">EventStage</a>&nbsp;targetStage()</pre>
+<div class="block">Gets the target <a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html" title="enum in org.dockbox.selene.core.events"><code>EventStage</code></a> in which this processor should be applied.
      Defaults to <a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html#PROCESS"><code>EventStage.PROCESS</code></a>.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -252,9 +252,9 @@ public&nbsp;@NotNull <a href="../../../../../../org/dockbox/selene/core/util/eve
 </dl>
 </li>
 </ul>
-<a name="process-java.lang.Object-java.lang.annotation.Annotation-org.dockbox.selene.core.objects.events.Event-java.lang.reflect.Parameter-org.dockbox.selene.core.util.events.IWrapper-">
+<a name="process-java.lang.Object-java.lang.annotation.Annotation-org.dockbox.selene.core.events.events.Event-java.lang.reflect.Parameter-org.dockbox.selene.core.events.handling.IWrapper-">
 <!--   -->
-</a><a name="process-java.lang.Object-A-org.dockbox.selene.core.objects.events.Event-java.lang.reflect.Parameter-org.dockbox.selene.core.util.events.IWrapper-">
+</a><a name="process-java.lang.Object-A-org.dockbox.selene.core.events.events.Event-java.lang.reflect.Parameter-org.dockbox.selene.core.events.handling.IWrapper-">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -264,12 +264,12 @@ public&nbsp;@NotNull <a href="../../../../../../org/dockbox/selene/core/util/eve
 public abstract&nbsp;@Nullable <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;process(@Nullable
                                                     @Nullable <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</a>&nbsp;object,
                                                     <a href="../../../../../../org/dockbox/selene/core/util/events/AbstractEventParamProcessor.html" title="type parameter in AbstractEventParamProcessor">A</a>&nbsp;annotation,
-                                                    org.dockbox.selene.core.objects.events.Event&nbsp;event,
+                                                    org.dockbox.selene.core.events.parents.Event&nbsp;event,
                                                     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Parameter.html?is-external=true" title="class or interface in java.lang.reflect">Parameter</a>&nbsp;parameter,
-                                                    <a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.util.events">IWrapper</a>&nbsp;wrapper)
+                                                    <a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.events">IWrapper</a>&nbsp;wrapper)
                                              throws org.dockbox.selene.core.exceptions.SkipEventException</pre>
 <div class="block">Processes the given object based on available information in the given <code>Annotation</code>, <code>Event</code>,
-     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Parameter.html?is-external=true" title="class or interface in java.lang.reflect"><code>Parameter</code></a>} and/or <a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.util.events"><code>IWrapper</code></a>.
+     <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/reflect/Parameter.html?is-external=true" title="class or interface in java.lang.reflect"><code>Parameter</code></a>} and/or <a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.events"><code>IWrapper</code></a>.
      If the parameter does not meet expectations, or should not be used in a given listener method,
      <code>SkipEventException</code> is thrown.</div>
 <dl>
@@ -278,7 +278,7 @@ public abstract&nbsp;@Nullable <a href="https://docs.oracle.com/javase/8/docs/ap
 <dd><code>annotation</code> - The annotation containing the definition of how the processor should act.</dd>
 <dd><code>event</code> - The event for which the listener can be invoked.</dd>
 <dd><code>parameter</code> - The parameter on which the annotation is applied.</dd>
-<dd><code>wrapper</code> - The <a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.util.events"><code>IWrapper</code></a> which contains the invoking definition.</dd>
+<dd><code>wrapper</code> - The <a href="../../../../../../org/dockbox/selene/core/util/events/IWrapper.html" title="interface in org.dockbox.selene.core.events"><code>IWrapper</code></a> which contains the invoking definition.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>The processed object</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -315,7 +315,7 @@ public abstract&nbsp;@Nullable <a href="https://docs.oracle.com/javase/8/docs/ap
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html" title="enum in org.dockbox.selene.core.util.events"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../../org/dockbox/selene/core/util/events/EventStage.html" title="enum in org.dockbox.selene.core.events"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?org/dockbox/selene/core/util/events/AbstractEventParamProcessor.html" target="_top">Frames</a></li>

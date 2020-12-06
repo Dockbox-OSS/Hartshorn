@@ -18,13 +18,13 @@
 package org.dockbox.selene.core.text;
 
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.SeleneUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

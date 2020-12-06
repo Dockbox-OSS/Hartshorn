@@ -20,10 +20,10 @@ package org.dockbox.selene.core.objects.item;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.ReferenceHolder;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.util.construct.ConstructionUtil;
+import org.dockbox.selene.core.ConstructionUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

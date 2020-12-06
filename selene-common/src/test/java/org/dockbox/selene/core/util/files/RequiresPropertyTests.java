@@ -19,9 +19,9 @@
  */
 package org.dockbox.selene.core.util.files;
 
-import org.dockbox.selene.core.impl.util.files.annotations.Default;
-import org.dockbox.selene.core.impl.util.files.annotations.RequiresProperty;
-import org.dockbox.selene.core.impl.util.files.mapping.NeutrinoObjectMapperFactory;
+import org.dockbox.selene.core.impl.files.annotations.Default;
+import org.dockbox.selene.core.impl.files.annotations.RequiresProperty;
+import org.dockbox.selene.core.impl.files.mapping.NeutrinoObjectMapperFactory;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 

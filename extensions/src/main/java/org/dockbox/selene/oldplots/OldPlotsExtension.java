@@ -17,18 +17,17 @@
 
 package org.dockbox.selene.oldplots;
 
-import org.dockbox.selene.core.annotations.Command;
+import org.dockbox.selene.core.ConstructionUtil;
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.command.Command;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.context.CommandContext;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.files.ConfigurateManager;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.ServerReference;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
-import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
-import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.util.construct.ConstructionUtil;
-import org.dockbox.selene.core.util.extension.Extension;
-import org.dockbox.selene.core.util.files.ConfigurateManager;
+import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.sql.dialects.sqlite.SQLiteMan;
 import org.dockbox.selene.integrated.sql.dialects.sqlite.SQLitePathProperty;
@@ -40,15 +39,15 @@ import java.util.List;
 @Extension(id = "oldplots", name = "OldPlots",
            description = "Provides a easy way to interact with old plot worlds and registrations",
            authors = "GuusLieben", uniqueId = "aa4a7056-8cb3-48f0-b196-a4601eceeb5b")
-public class OldPlotsExtension extends ServerReference {
+public class OldPlotsExtension {
 
-    @Command(aliases = {"oldplots", "olp"}, usage = "oldplots <player{Player}>", permissionKey = "selene.oldplots.list")
+    @Command(aliases = {"oldplots", "olp"}, usage = "oldplots <player{Player}>", permission = "selene.oldplots.list")
     public void oldPlotsCommand(Player source, CommandContext ctx) throws Throwable {
         if (!ctx.hasArgument("player")) source.sendWithPrefix("$4No valid player provided!");
         Player player = ctx.getArgument("player", Player.class).rethrow().get().getValue();
         SQLiteMan man = new SQLiteMan();
         Path path = Selene.getInstance(ConfigurateManager.class)
-                .getDataDir(super.getExtension(OldPlotsExtension.class));
+                .getDataDir(SeleneUtils.getExtension(OldPlotsExtension.class));
 
         if (man.canEnable()) {
             man.stateEnabling(
@@ -69,15 +68,15 @@ public class OldPlotsExtension extends ServerReference {
             // ID, world, x,y
             Text plotLine = Text.of("$3 - $2#{0} : $1{1}$2, $1{2},{3}");
             // ID
-            plotLine.onClick(new ClickAction.RunCommand("/oldplots teleport {0}"));
+            plotLine.onClick(ClickAction.runCommand("/oldplots teleport {0}"));
             // World, x,y
-            plotLine.onHover(new ShowText(Text.of("$1Teleport to $2{0}, {1};{2}")));
+            plotLine.onHover(HoverAction.showText(Text.of("$1Teleport to $2{0}, {1};{2}")));
             plotContent.add(plotLine);
         });
 
         Selene.getInstance(ConstructionUtil.class)
                 .paginationBuilder()
-                .contents(plotContent)
+                .content(plotContent)
                 // Player name
                 .title(Text.of("$1OldPlots for {0}"))
                 .build()

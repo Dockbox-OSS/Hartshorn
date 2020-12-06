@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.integrated.sql.exceptions;
 
-import java.io.IOException;
+import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 
-public class InvalidConnectionException extends IOException {
+public class InvalidConnectionException extends CheckedSeleneException {
     public InvalidConnectionException(String message, Throwable cause) {
         super(message, cause);
     }

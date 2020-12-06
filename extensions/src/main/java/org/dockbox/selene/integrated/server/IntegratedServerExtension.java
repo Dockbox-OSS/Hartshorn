@@ -17,33 +17,32 @@
 
 package org.dockbox.selene.integrated.server;
 
-import org.dockbox.selene.core.annotations.Command;
+import org.dockbox.selene.core.ConstructionUtil;
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.command.Command;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
+import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
+import org.dockbox.selene.core.extension.ExtensionContext;
+import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.impl.command.parse.LanguageArgumentParser;
-import org.dockbox.selene.core.impl.command.parse.UUIDArgumentParser;
-import org.dockbox.selene.core.objects.optional.Exceptional;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LanguageParser;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.UuidParser;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
-import org.dockbox.selene.core.objects.user.Player;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.ServerReference;
 import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.text.actions.ClickAction.RunCommand;
-import org.dockbox.selene.core.text.actions.HoverAction.ShowText;
-import org.dockbox.selene.core.text.navigation.PaginationBuilder;
-import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.util.construct.ConstructionUtil;
-import org.dockbox.selene.core.util.events.EventBus;
-import org.dockbox.selene.core.util.extension.Extension;
-import org.dockbox.selene.core.util.extension.ExtensionContext;
-import org.dockbox.selene.core.util.extension.ExtensionManager;
+import org.dockbox.selene.core.text.actions.ClickAction;
+import org.dockbox.selene.core.text.actions.HoverAction;
+import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -58,13 +57,13 @@ import java.util.UUID;
         uniqueId = "a8a96336-06bd-4521-99d4-5682a4f75e0a"
 )
 @Command(aliases = {"selene", "darwin"}, usage = "selene")
-public class IntegratedServerExtension extends ServerReference implements IntegratedExtension {
+public class IntegratedServerExtension implements IntegratedExtension {
 
     // Parent command
     @Command(aliases = "", usage = "")
     public void debugExtensions(MessageReceiver source) {
-        super.consumeWithInstance(ExtensionManager.class, em -> {
-            PaginationBuilder pb = super.getInstance(ConstructionUtil.class).paginationBuilder();
+        SeleneUtils.runWithInstance(ExtensionManager.class, em -> {
+            PaginationBuilder pb = Selene.getInstance(ConstructionUtil.class).paginationBuilder();
 
             List<Text> content = SeleneUtils.emptyList();
             content.add(Text.of(IntegratedServerResources.SERVER_HEADER.format(Selene.getServer().getVersion())));
@@ -79,7 +78,7 @@ public class IntegratedServerExtension extends ServerReference implements Integr
                     );
 
             pb.title(IntegratedServerResources.PAGINATION_TITLE.asText());
-            pb.contents(content);
+            pb.content(content);
 
             source.sendPagination(pb.build());
         });
@@ -87,14 +86,14 @@ public class IntegratedServerExtension extends ServerReference implements Integr
 
     private Text generateText(Extension e) {
         Text line = Text.of(IntegratedServerResources.EXTENSION_ROW.format(e.name(), e.id()));
-        line.onClick(new RunCommand("/dserver extension " + e.id()));
-        line.onHover(new ShowText(Text.of(IntegratedServerResources.EXTENSION_ROW_HOVER.format(e.name()))));
+        line.onClick(ClickAction.runCommand("/dserver extension " + e.id()));
+        line.onHover(HoverAction.showText(Text.of(IntegratedServerResources.EXTENSION_ROW_HOVER.format(e.name()))));
         return line;
     }
 
     @Command(aliases = "extension", usage = "extension <id{Extension}>")
     public void debugExtension(MessageReceiver src, CommandContext ctx) {
-        super.consumeWithInstance(ExtensionManager.class, em -> {
+        SeleneUtils.runWithInstance(ExtensionManager.class, em -> {
             Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
@@ -114,16 +113,15 @@ public class IntegratedServerExtension extends ServerReference implements Integr
                         0 == e.dependencies().length ? "None" : String.join("$3, $1", e.dependencies()),
                         e.requiresNMS(),
                         String.join("$3, $1", e.authors()),
-                        ec.getType().getString(),
                         ec.getSource()
                 )));
             }
         });
     }
 
-    @Command(aliases = "reload", usage = "reload [id{Extension}]", requireConfirm = true)
+    @Command(aliases = "reload", usage = "reload [id{Extension}]", confirm = true)
     public void reload(MessageReceiver src, CommandContext ctx) {
-        EventBus eb = super.getInstance(EventBus.class);
+        EventBus eb = Selene.getInstance(EventBus.class);
         if (ctx.hasArgument("id")) {
             Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
@@ -151,14 +149,14 @@ public class IntegratedServerExtension extends ServerReference implements Integr
             src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
             return;
         }
-        Exceptional<UUID> ouuid = ctx.getArgumentAndParse("uuid", new UUIDArgumentParser());
+        Exceptional<UUID> ouuid = ctx.getArgumentAndParse("uuid", new UuidParser());
 
         // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
         // argument here is just a confirmation that the source is correct.
         ouuid
                 .ifPresent(uuid -> {
                     if (((Identifiable<?>) src).getUniqueId().equals(uuid))
-                        super.getInstance(CommandBus.class).confirmLastCommand(uuid);
+                        Selene.getInstance(CommandBus.class).confirmLastCommand(uuid);
                     else
                         src.send(IntegratedResource.CONFIRM_EXPIRED);
                 })
@@ -191,9 +189,9 @@ public class IntegratedServerExtension extends ServerReference implements Integr
         ));
     }
 
-    @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", single = true)
+    @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", inherit = false)
     public void switchLang(MessageReceiver src, CommandContext ctx) {
-        Exceptional<Language> ol = ctx.getArgumentAndParse("language", new LanguageArgumentParser());
+        Exceptional<Language> ol = ctx.getArgumentAndParse("language", new LanguageParser());
         @Nullable Player target;
 
         Exceptional<Argument<Player>> op = ctx.getArgument("player", Player.class);

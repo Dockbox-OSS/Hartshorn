@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.core.server;
 
-import org.dockbox.selene.core.objects.optional.Exceptional;
-import org.dockbox.selene.core.util.files.ConfigurateManager;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.files.ConfigurateManager;
 
 /**
  Server type definitions containing display names, minimum/preferred versions, and whether or not the platform

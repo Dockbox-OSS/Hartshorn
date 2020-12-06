@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.core.annotations;
 
+import org.dockbox.selene.core.events.handling.IWrapper;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,7 +26,7 @@ import java.lang.annotation.Target;
 
 /**
  Indicates that a event or command method should be invoked asynchronously. This is not a direct garantee the method is
- indeed invoked asynchronously, as this is up to the implementation of {@link org.dockbox.selene.core.util.events.IWrapper}
+ indeed invoked asynchronously, as this is up to the implementation of {@link IWrapper}
  to respect.
  */
 @Retention(RetentionPolicy.RUNTIME)

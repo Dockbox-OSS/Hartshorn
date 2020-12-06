@@ -21,7 +21,7 @@ import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
 import org.dockbox.selene.core.impl.command.convert.impl.ArgumentConverterRegistry;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

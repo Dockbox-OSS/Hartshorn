@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.sql;
 
-import org.dockbox.selene.core.util.extension.Extension;
+import org.dockbox.selene.core.annotations.extension.Extension;
 
 /**
  Registers the SQL Extension to Selene. While no logic happens inside this class, this does indicate to server owners

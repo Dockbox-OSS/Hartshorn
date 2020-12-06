@@ -99,9 +99,9 @@
  <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html?is-external=true" title="class or interface in java.lang.annotation">@Target</a>(<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/Target.html?is-external=true#value--" title="class or interface in java.lang.annotation">value</a>=<a href="https://docs.oracle.com/javase/8/docs/api/java/lang/annotation/ElementType.html?is-external=true#METHOD" title="class or interface in java.lang.annotation">METHOD</a>)
 public @interface <span class="memberNameLabel">Filter</span></pre>
 <div class="block">Indicates whether or not to call an event based on a given filter. A filter includes the parameter to perform a filter
- on, the <a href="../../../../../org/dockbox/selene/core/util/events/FilterTypes.html" title="enum in org.dockbox.selene.core.util.events"><code>FilterTypes</code></a> to use, and the value it should match. Only applies if a event is an instance of
+ on, the <a href="../../../../../org/dockbox/selene/core/util/events/FilterTypes.html" title="enum in org.dockbox.selene.core.events"><code>FilterTypes</code></a> to use, and the value it should match. Only applies if a event is an instance of
  <code>Filterable</code>. Any event implementing <code>Filterable</code> can provide a list of supported params and
- <a href="../../../../../org/dockbox/selene/core/util/events/FilterTypes.html" title="enum in org.dockbox.selene.core.util.events"><code>FilterTypes</code></a>. It is up to the event to indicate the exact filter implementation based on the information provided.</div>
+ <a href="../../../../../org/dockbox/selene/core/util/events/FilterTypes.html" title="enum in org.dockbox.selene.core.events"><code>FilterTypes</code></a>. It is up to the event to indicate the exact filter implementation based on the information provided.</div>
 </li>
 </ul>
 </div>
@@ -144,7 +144,7 @@ public @interface <span class="memberNameLabel">Filter</span></pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../org/dockbox/selene/core/annotations/Filter.html#target--">target</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../../org/dockbox/selene/core/util/events/FilterTypes.html" title="enum in org.dockbox.selene.core.util.events">FilterTypes</a></code></td>
+<td class="colFirst"><code><a href="../../../../../org/dockbox/selene/core/util/events/FilterTypes.html" title="enum in org.dockbox.selene.core.events">FilterTypes</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../org/dockbox/selene/core/annotations/Filter.html#type--">type</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
@@ -217,10 +217,10 @@ public @interface <span class="memberNameLabel">Filter</span></pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>type</h4>
-<pre>public abstract&nbsp;<a href="../../../../../org/dockbox/selene/core/util/events/FilterTypes.html" title="enum in org.dockbox.selene.core.util.events">FilterTypes</a>&nbsp;type</pre>
+<pre>public abstract&nbsp;<a href="../../../../../org/dockbox/selene/core/util/events/FilterTypes.html" title="enum in org.dockbox.selene.core.events">FilterTypes</a>&nbsp;type</pre>
 <dl>
 <dt>Default:</dt>
-<dd>org.dockbox.selene.core.util.events.FilterTypes.EQUALS</dd>
+<dd>org.dockbox.selene.core.events.processing.FilterTypes.EQUALS</dd>
 </dl>
 </li>
 </ul>
