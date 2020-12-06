@@ -23,9 +23,7 @@ import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.Module;
 import com.google.inject.ProvisionException;
-import com.google.inject.util.Modules;
 
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.ExceptionHelper;
@@ -60,7 +58,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -95,11 +95,11 @@ public abstract class Selene {
      Instantiates {@link Selene}, creating a local injector based on the provided {@link SeleneInjectConfiguration}.
      Also verifies dependency artifacts and injector bindings. Proceeds to {@link Selene#construct()} once verified.
 
-     @param injector
+     @param moduleConfiguration
      the injector provided by the Selene implementation
      */
-    protected Selene(SeleneInjectConfiguration injector) {
-        this.injectorModules.add(injector);
+    protected Selene(SeleneInjectConfiguration moduleConfiguration) {
+        this.injectorModules.add(moduleConfiguration);
         this.construct();
     }
 
@@ -114,13 +114,11 @@ public abstract class Selene {
     }
 
     private Injector createInjector(AbstractModule... additionalModules) {
-        Module collectedModule = Modules
-                .override(this.injectorModules)
-                .with(Arrays.stream(additionalModules)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList()));
-
-        return Guice.createInjector(collectedModule);
+        Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
+        modules.addAll(Arrays.stream(additionalModules)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
+        return Guice.createInjector(modules);
     }
 
     /**
@@ -208,7 +206,10 @@ public abstract class Selene {
         // case `null` is (re-)assigned to typeInstance so that it can be created through the generated
         // extension-specific injector.
         if (type.isAnnotationPresent(Extension.class)) {
-            typeInstance = getInstance(ExtensionManager.class).getInstance(type).orNull();
+            typeInstance = getInstanceSafe(ExtensionManager.class)
+                    .map(extensionManager -> extensionManager.getInstance(type).orNull())
+                    .orNull();
+
         }
 
         // Prepare modules
@@ -233,6 +234,7 @@ public abstract class Selene {
             } catch (ProvisionException e) {
                 log().error("Could not create instance using registered injector " + injector + " for [" + type + "]", e);
             } catch (ConfigurationException ignored) {
+                log().warn("Configuration error while attempting to create instance for [" + type + "] : " + injector);
             }
         }
 
@@ -261,14 +263,8 @@ public abstract class Selene {
     private <T> ExtensionModule getExtensionModule(T instance, Extension header, ExtensionContext context) {
         ExtensionModule module = new ExtensionModule();
 
-        if (null != instance) {
-            if (instance instanceof Class<?>) {
-                module.acceptBinding(Logger.class, LoggerFactory.getLogger((Class<?>) instance));
-            } else {
-                module.acceptBinding(Logger.class, LoggerFactory.getLogger(instance.getClass()));
-                module.acceptBinding((Class<T>) instance.getClass(), instance);
-            }
-        }
+        if (!(null == instance || instance instanceof Class<?>))
+            module.acceptBinding((Class<T>) instance.getClass(), instance);
         if (null != header)
             module.acceptBinding(Extension.class, header);
         if (null != context)

@@ -31,6 +31,6 @@ public @interface Command {
     String permission() default "";
     long cooldownDuration() default -1;
     ChronoUnit cooldownUnit() default ChronoUnit.SECONDS;
-    boolean inherit() default false;
+    boolean inherit() default true;
     boolean confirm() default false;
 }
