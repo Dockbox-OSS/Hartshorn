@@ -69,7 +69,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
     private static final Pattern argument = Pattern.compile("([\\[<])(.+)[\\]>]"); //g1: <[  g2: run argFinder, if nothing it's a value
     private static final Pattern value = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?"); //g1: name  g2: if present type, other wise use g1
     private static final Pattern subcommand = Pattern.compile("[a-z]*");
-    private static final String parentCommandPrefix = "$:";
+    private static final String parentCommandPrefix = "#";
 
     @Override
     public void register(@NotNull Object @NotNull ... objs) {
@@ -100,6 +100,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
         String next = usage.contains(" ")
                 ? usage.replaceFirst(usage.substring(0, usage.indexOf(' ')), alias)
                 : usage;
+        System.out.println("Registering single method registration");
         this.registerCommand(next, registration.getPermission(), (src, ctx) ->
                 this.processRunnableCommand(registration, src, ctx));
         Selene.log().info("Registered singular command : {}", alias);
@@ -131,6 +132,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
     public void registerClassCommand(@NotNull Class<?> clazz, @NotNull Object instance) {
         ClassCommandRegistration registration = this.createClassRegistration(clazz);
         Arrays.stream(registration.getAliases()).forEach(alias -> {
+            System.out.println("Alias for " + clazz.getCanonicalName() + ": " + alias);
             if (instance instanceof Class) registration.setSourceInstance((Class<?>) instance);
 
             AtomicReference<CommandRunner> parentRunner = new AtomicReference<>((src, ctx) -> {
@@ -142,7 +144,8 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
 
             String usage = registration.getCommand().usage();
             String next = usage.contains(" ") ? usage.replaceFirst(usage.substring(0, usage.indexOf(' ')), alias) : alias;
-            this.registerCommand('*' + next, registration.getPermission(), parentRunner.get());
+            System.out.println("Registering class registration");
+            this.registerCommand(parentCommandPrefix + next, registration.getPermission(), parentRunner.get());
 
             List<String> subcommands = SeleneUtils.emptyList();
             Arrays.stream(registration.getSubcommands()).forEach(sub -> subcommands.addAll(SeleneUtils.asList(sub.getAliases())));
@@ -150,16 +153,18 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
         });
     }
 
-    private void registerMethodRegistration(MethodCommandRegistration registration, String alias, AtomicReference<CommandRunner> parentRunner) {
+    private void registerMethodRegistration(MethodCommandRegistration registration, String parentAlias, AtomicReference<CommandRunner> parentRunner) {
         CommandRunner methodRunner = (src, ctx) -> this.processRunnableCommand(registration, src, ctx);
-        Arrays.stream(registration.getAliases()).forEach((@NonNls String rAlias) -> {
-            if ("".equals(rAlias)) {
+        Arrays.stream(registration.getAliases()).forEach((@NonNls String registrationAlias) -> {
+            if ("".equals(registrationAlias)) {
                 parentRunner.set(methodRunner);
             } else {
                 // Sub commands need the parent command in the context so it can register correctly
-                String usage = rAlias + ' ' + registration.getCommand().usage();
-                String next = usage.contains(" ") ? usage.replace(usage.substring(0, usage.indexOf(' ')), alias) : usage;
-                this.registerCommand(next, registration.getPermission(), methodRunner);
+                String usage = registration.getCommand().usage();
+                String next = usage.contains(" ") ? usage.replaceFirst(usage.substring(0, usage.indexOf(' ')), registrationAlias) : registrationAlias;
+                next = parentAlias + ' ' + next;
+                System.out.println("Registering method registration (parent: " + parentAlias + ", child: " + next);
+                this.registerCommand(usage, registration.getPermission(), methodRunner);
             }
         });
     }
@@ -168,7 +173,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
     @Override
     public ClassCommandRegistration createClassRegistration(@NotNull Class<?> clazz) {
         Triad<Command, AbstractPermission, String[]> information = this.getCommandInformation(clazz);
-        Collection<Method> methods = SeleneUtils.getAnnotedMethods(clazz, Command.class, c -> !c.inherit());
+        Collection<Method> methods = SeleneUtils.getAnnotedMethods(clazz, Command.class, Command::inherit);
         MethodCommandRegistration[] registrations = this.createSingleMethodRegistrations(methods);
         return new ClassCommandRegistration(
                 information.getThird()[0],
@@ -229,7 +234,7 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
     @Override
     public void registerCommand(@NotNull String command, @NotNull AbstractPermission permission, @NotNull CommandRunner runner) {
         if (0 > command.indexOf(' ') && !command.startsWith(parentCommandPrefix))
-            this.registerCommand(command, permission, runner);
+            this.registerCommandNoArgs(command, permission, runner);
         else this.registerCommandArgsAndOrChild(command, permission, runner);
     }
 
@@ -238,10 +243,13 @@ public abstract class SimpleCommandBus<C, A extends AbstractArgumentValue<?>> im
         String[] parts = command.split(" ");
         String part = 1 < parts.length ? parts[1] : null;
         if (null != part && subcommand.matcher(part).matches()) {
+            System.out.println("Child: " + command);
             this.registerChildCommand(command, runner, part, permission);
         } else if (command.startsWith(parentCommandPrefix)) {
+            System.out.println("Parent: " + command);
             this.registerParentCommand(command, runner, permission);
         } else {
+            System.out.println("Single: " + command);
             this.registerSingleMethodCommand(command, runner, part, permission);
         }
     }
