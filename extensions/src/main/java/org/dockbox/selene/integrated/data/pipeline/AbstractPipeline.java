@@ -26,7 +26,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractPipeline<P, I> {
 
@@ -146,7 +148,7 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /**
-     * Unsafely processes a non-null {@link P} input by calling {@link AbstractPipeline#process(Object, Throwable)} and
+     * Unsafely processes an {@link P} input by calling {@link AbstractPipeline#process(Object, Throwable)} and
      * unwrapping the output value without checking if its present.
      * @param input The non-null {@link P} input to be processed by the pipeline.
      * @return The {@link I} output of processing the input, unwrapped from the {@link Exceptional} without checking if its present.
@@ -156,12 +158,54 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /**
-     * Processes a non-null {@link P} input by internally calling {@link AbstractPipeline#process(Object, Throwable)}.
+     * Processes an {@link P} input by internally calling {@link AbstractPipeline#process(Object, Throwable)}.
      * @param input The non-null {@link P} input to be processed by the pipeline.
      * @return An {@link Exceptional} containing the output. If the output is not present it will contain a throwable describing why.
      */
     public Exceptional<I> process(@NotNull P input) {
         return this.process(input, null);
+    }
+
+    /**
+     * Processes a {@link Collection} of {@link P} by internally calling {@link AbstractPipeline#process(Object)}
+     * on each input in the {@link Collection} and returns the result as a {@link List} of {@link Exceptional}.
+     * @param inputs The non-null {@link Collection} of {@link P} to be processed by the pipeline.
+     * @return A {@link Collection} of {@link Exceptional} containing the processed ouput of each input.
+     */
+    public List<Exceptional<I>> processAll(@NotNull Collection<P> inputs) {
+        return inputs
+            .stream()
+            .map(this::process)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Processes a {@link Collection} of {@link P} by internally calling {@link AbstractPipeline#process(Object)}
+     * on each input in the {@link Collection} and returns the non-null results as a {@link List} of {@link I}.
+     * @param inputs The non-null {@link Collection} of {@link P} to be processed by the pipeline.
+     * @return A {@link Collection} of {@link I} containing the processed ouput of each input, if not null.
+     */
+    public List<I> processAllSafe(@NotNull Collection<P> inputs) {
+        return inputs
+            .stream()
+            .map(this::process)
+            .filter(Exceptional::isPresent)
+            .map(Exceptional::get)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Processes a {@link Collection} of {@link P} by internally calling {@link AbstractPipeline#process(Object)}
+     * on each input in the {@link Collection} and returns the result as a {@link List} of {@link I}, including null values.
+     * @param inputs The non-null {@link Collection} of {@link P} to be processed by the pipeline.
+     * @return A {@link Collection} of {@link I} containing the processed ouput of each input, even if its null.
+     */
+    public List<I> processAllUnsafe(@NotNull Collection<P> inputs) {
+        return inputs
+            .stream()
+            .map(this::process)
+            .map(Exceptional::orNull)
+            .collect(Collectors.toList());
     }
 
     /**

@@ -8,6 +8,9 @@ import org.dockbox.selene.integrated.data.pipeline.pipes.Pipe;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class PipelineTests {
 
     @Test
@@ -101,5 +104,14 @@ public class PipelineTests {
 
         Assert.assertEquals(11, output);
 
+    }
+
+    @Test
+    public void processingCollectionInputsTest() {
+        List<Integer> output = new Pipeline<Integer>()
+            .addPipe(InputPipe.of(input -> 0 == input % 2 ? input : null))
+            .addPipe(InputPipe.of(input -> input * 2))
+            .processAllSafe(Arrays.asList(1,2,3,4,5,6,7,8,9,10));
+        Assert.assertEquals(Arrays.asList(4,8,12,16,20), output);
     }
 }

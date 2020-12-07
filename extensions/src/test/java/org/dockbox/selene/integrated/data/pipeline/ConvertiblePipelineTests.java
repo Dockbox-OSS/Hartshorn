@@ -20,9 +20,13 @@ package org.dockbox.selene.integrated.data.pipeline;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineException;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineConverterException;
 import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
+import org.dockbox.selene.integrated.data.pipeline.pipes.InputPipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.Pipe;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ConvertiblePipelineTests {
 
@@ -147,5 +151,15 @@ public class ConvertiblePipelineTests {
             ).size();
 
         Assert.assertEquals(4, size);
+    }
+
+    @Test
+    public void processingCollectionInputsTest() {
+        List<Integer> output = new ConvertiblePipelineSource<>(String.class)
+            .convertPipeline(Integer::valueOf, Integer.class)
+            .addPipe(InputPipe.of(input -> input * input))
+            .processAllSafe(Arrays.asList("1", "2", "3", "4", "5"));
+
+        Assert.assertEquals(Arrays.asList(1, 4, 9, 16, 25), output);
     }
 }

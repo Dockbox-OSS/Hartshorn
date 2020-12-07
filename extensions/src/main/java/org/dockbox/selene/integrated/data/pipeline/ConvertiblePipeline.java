@@ -148,14 +148,14 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * uncancellable and so will throw an {@link IllegalPipelineException} if you try and process an input with any
      * {@link org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe}s in this pipeline.
      * @param converter A {@link Function} that takes in an {@link I} input and returns a converted {@link K} output.
-     * @param inputClass An {@link Class} of the type of the new pipeline.
+     * @param outputClass An {@link Class} of the type of the new pipeline.
      * @param <K> The type of the new pipeline.
      * @return A pipeline of the new type.
      */
-    public <K> ConvertiblePipeline<P, K> convertPipeline(Function<? super I, K> converter, Class<K> inputClass) {
+    public <K> ConvertiblePipeline<P, K> convertPipeline(Function<? super I, K> converter, Class<K> outputClass) {
         this.converter = converter;
 
-        ConvertiblePipeline<P, K> nextPipeline = new ConvertiblePipeline<>(inputClass);
+        ConvertiblePipeline<P, K> nextPipeline = new ConvertiblePipeline<>(outputClass);
         nextPipeline.setPreviousPipeline(this);
         this.setNextPipeline(nextPipeline);
 
