@@ -15,32 +15,36 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.impl.command;
+package org.dockbox.selene.core.impl.command.values;
 
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
+import org.dockbox.selene.core.impl.command.convert.impl.ArgumentConverterRegistry;
 
 public abstract class AbstractArgumentValue<T> {
 
-    protected T element;
-    protected String permission;
+    private final String permission;
+    private T value;
 
-    public AbstractArgumentValue(ArgumentConverter<?> argument, String permission, String key, String type) {
-        this.element = this.parseArgument(argument, key, type);
+    protected AbstractArgumentValue(String permission, String key, String type) {
+        ArgumentConverter<?> converter = ArgumentConverterRegistry.getConverter(type.toLowerCase());
+        this.value = this.parseValue(converter, key, type);
         this.permission = permission;
     }
 
-    protected abstract T parseArgument(ArgumentConverter<?> argument, String key, String type);
-    public abstract T getArgument();
-
-    public T getElement() {
-        return this.element;
-    }
+    protected abstract T parseValue(ArgumentConverter<?> converter, String key, String type);
 
     public String getPermission() {
         return this.permission;
     }
 
-    public void setElement(T element) {
-        this.element = element;
+    public abstract AbstractArgumentElement<T> getElement();
+
+    public T getValue() {
+        return this.value;
     }
+
+    public void setValue(T value) {
+        this.value = value;
+    }
+
 }

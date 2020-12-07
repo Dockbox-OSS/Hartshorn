@@ -15,14 +15,34 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.command;
+package org.dockbox.selene.core.impl.command.values;
 
-import org.dockbox.selene.core.objects.Exceptional;
+public abstract class AbstractArgumentElement<T> {
 
-public interface CommandBus {
+    private T reference;
 
-    void register(Object... objs);
-    void apply();
-    Exceptional<Boolean> confirmCommand(String confirmId);
+    protected AbstractArgumentElement(T reference) {
+        this.reference = reference;
+    }
+
+    @SafeVarargs
+    protected AbstractArgumentElement(AbstractArgumentElement<T>... elements) {
+        this.ofElements(elements);
+    }
+
+    protected AbstractArgumentElement() {
+    }
+
+    public T getReference() {
+        return this.reference;
+    }
+
+    public void setReference(T reference) {
+        this.reference = reference;
+    }
+
+    public abstract AbstractArgumentElement<T> asOptional();
+
+    protected abstract void ofElements(AbstractArgumentElement<T>[] elements);
 
 }

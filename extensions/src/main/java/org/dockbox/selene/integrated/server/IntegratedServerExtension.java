@@ -21,7 +21,6 @@ import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.events.EventBus;
@@ -29,13 +28,15 @@ import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LanguageParser;
-import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.UuidParser;
+import org.dockbox.selene.core.impl.command.DefaultCommandBus;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.keys.PersistentDataKey;
+import org.dockbox.selene.core.objects.keys.data.StringPersistentDataKey;
+import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
-import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
@@ -46,7 +47,6 @@ import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.UUID;
 
 @Extension(
         id = "selene",
@@ -143,22 +143,23 @@ public class IntegratedServerExtension implements IntegratedExtension {
         }
     }
 
-    @Command(aliases = "confirm", usage = "confirm <uuid{String}>")
+    @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>")
     public void confirm(MessageReceiver src, CommandContext ctx) {
         if (!(src instanceof Identifiable)) {
             src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
             return;
         }
-        Exceptional<UUID> ouuid = ctx.getArgumentAndParse("uuid", new UuidParser());
+        Exceptional<Argument<String>> optionalCooldownId = ctx.getArgument("cooldownId");
 
         // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
         // argument here is just a confirmation that the source is correct.
-        ouuid
-                .ifPresent(uuid -> {
-                    if (((Identifiable<?>) src).getUniqueId().equals(uuid))
-                        Selene.getInstance(CommandBus.class).confirmLastCommand(uuid);
-                    else
-                        src.send(IntegratedResource.CONFIRM_EXPIRED);
+        optionalCooldownId
+                .ifPresent(cooldownId -> {
+                    String cid = cooldownId.getValue();
+                    // TODO, refactor to CommandBus
+                    Selene.getInstance(DefaultCommandBus.class).confirmCommand(cid).ifAbsent(() -> {
+                        src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
+                    });
                 })
                 .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));
     }
