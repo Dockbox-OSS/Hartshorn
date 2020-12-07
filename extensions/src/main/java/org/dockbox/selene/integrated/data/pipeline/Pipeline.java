@@ -22,10 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Pipeline<I> extends AbstractPipeline<I, I> {
+
     /**
      * Processes an input by first wrapping it in an {@link Exceptional} and then internally calling
      * {@link AbstractPipeline#process(Exceptional)}.
-     * @param input The non-null input value.
+     * @param input The non-null {@link I input} value.
      * @param throwable The nullable input {@link Throwable}.
      * @return An {@link Exceptional} containing the output. If the output is not present it will contain a throwable describing why.
      */

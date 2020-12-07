@@ -37,7 +37,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
 
     /**
      * A private constructor for the pipeline as all convertible pipelines should be instantiated initally as {@link ConvertiblePipelineSource}
-     * @param inputClass The {@link Class} of the input type {@link I}
+     * @param inputClass The {@link Class} of the {@link I input} type.
      */
     protected ConvertiblePipeline(Class<I> inputClass) {
         this.inputClass = inputClass;
@@ -78,10 +78,10 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * Processes an input by recursively calling the process method of the previous pipeline. This will eventually call
      * the {@link ConvertiblePipelineSource#process(Object, Throwable)}, which will stop the recursive calling of previous
      * pipelines. If somehow, a convertible pipeline is used as the source of the pipeline, then it will attempt to cast
-     * the {@link P} input to {@link I}. 
+     * the {@link P input} to {@link I}.
      * @param input The non-null input value.
      * @param throwable The nullable input {@link Throwable}.
-     * @return An {@link Exceptional} containing the output. If the output is not present it will contain a throwable describing why.
+     * @return An {@link Exceptional} containing the {@link I output}. If the output is not present it will contain a throwable describing why.
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -123,7 +123,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     /**
      * Takes an input and internally processes it by calling {@link ConvertiblePipeline#process(Object, Throwable)} and
      * then converting the output using the converter provided in {@link ConvertiblePipeline#convertPipeline(Function, Class)}.
-     * @param input The non-null {@link P} input to be processed by the pipeline.
+     * @param input The non-null {@link P input} to be processed by the pipeline.
      * @param throwable An nullable {@link Throwable} that may have been thrown while processing the input.
      * @param <K> The type of the next pipeline.
      * @return An {@link Exceptional} of type {@link K} containing the converted output.
@@ -147,7 +147,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * Converts the pipeline to a different type. <b>Note:</b> When you convert a pipeline, this automatically makes it
      * uncancellable and so will throw an {@link IllegalPipelineException} if you try and process an input with any
      * {@link org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe}s in this pipeline.
-     * @param converter A {@link Function} that takes in an {@link I} input and returns a converted {@link K} output.
+     * @param converter A {@link Function} that takes in an {@link I input} and returns a converted {@link K output}.
      * @param outputClass An {@link Class} of the type of the new pipeline.
      * @param <K> The type of the new pipeline.
      * @return A pipeline of the new type.
@@ -260,7 +260,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     }
 
     /**
-     * @return A {@link Class} of the input type for this pipeline.
+     * @return A {@link Class} of the {@link I input} type for this pipeline.
      */
     public Class<I> getInputClass() {
         return this.inputClass;
