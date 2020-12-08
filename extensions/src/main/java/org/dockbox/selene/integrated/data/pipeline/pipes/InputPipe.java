@@ -5,10 +5,10 @@ import org.dockbox.selene.core.objects.Exceptional;
 @FunctionalInterface
 public interface InputPipe<I, O> extends IPipe<I, O> {
 
-    O execute (I input);
+    O execute (I input) throws Exception;
 
     @Override
-    default O apply(Exceptional<I> input) {
+    default O apply(Exceptional<I> input) throws Exception {
         return this.execute(input.orNull());
     }
 

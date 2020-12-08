@@ -22,7 +22,7 @@ import org.dockbox.selene.core.objects.Exceptional;
 @FunctionalInterface
 public interface IPipe<I, O> {
 
-    O apply(Exceptional<I> input);
+    O apply(Exceptional<I> input) throws Exception;
 
     /**
      * If this method is overridden, you can then call it to get the {@link Class} of the pipe, even when created by a lamda expression.

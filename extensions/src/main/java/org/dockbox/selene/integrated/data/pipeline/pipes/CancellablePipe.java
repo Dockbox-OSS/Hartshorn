@@ -22,10 +22,10 @@ import org.dockbox.selene.core.objects.Exceptional;
 @FunctionalInterface
 public interface CancellablePipe<I, O> extends IPipe<I, O> {
 
-    O execute(Runnable cancelPipeline, I input, Throwable throwable);
+    O execute(Runnable cancelPipeline, I input, Throwable throwable) throws Exception;
 
     @Override
-    default O apply(Exceptional<I> input) {
+    default O apply(Exceptional<I> input) throws Exception{
         return this.execute(null, input.orNull(), input.orElseExcept(null));
     }
 
