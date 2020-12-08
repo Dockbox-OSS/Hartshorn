@@ -87,7 +87,7 @@ public class SpongeCommandBus extends DefaultCommandBus {
             if (abstractCommand instanceof MethodCommandContext) {
                 MethodCommandContext methodContext = (MethodCommandContext) abstractCommand;
                 if (!methodContext.getCommand().inherit()) {
-                    spec = this.buildNonInheritedMethodExecutor(methodContext, alias);
+                    spec = this.buildContextExecutor(methodContext, alias).build();
                 } else {
                     Selene.log().error("Found direct method registration of inherited command! " + methodContext.getLocation());
                 }
@@ -107,7 +107,20 @@ public class SpongeCommandBus extends DefaultCommandBus {
         });
     }
 
-    private CommandSpec buildNonInheritedMethodExecutor(MethodCommandContext context, String alias) {
+    private CommandSpec buildInheritedContextExecutor(CommandInheritanceContext context, String alias) {
+        CommandSpec.Builder builder = this.buildContextExecutor(context, alias);
+        context.getInheritedCommands().forEach(inheritedContext -> {
+            inheritedContext.getAliases().forEach(inheritedAlias -> {
+                builder.child(
+                        this.buildContextExecutor(inheritedContext, inheritedAlias).build(),
+                        inheritedAlias
+                );
+            });
+        });
+        return builder.build();
+    }
+
+    private CommandSpec.Builder buildContextExecutor(AbstractRegistrationContext context, String alias) {
         CommandSpec.Builder builder = CommandSpec.builder();
 
         List<AbstractArgumentElement<?>> elements = super.parseArguments(context.getCommand().usage());
@@ -122,15 +135,7 @@ public class SpongeCommandBus extends DefaultCommandBus {
         builder.permission(context.getCommand().permission());
         builder.executor(this.buildExecutor(context, alias));
 
-        return builder.build();
-    }
-
-    private CommandSpec buildInheritedContextExecutor(CommandInheritanceContext context, String alias) {
-        //  ============================
-        //   TODO GuusLieben, Create
-        //    implementation
-        //  ============================
-        return CommandSpec.builder().build();
+        return builder;
     }
 
     private CommandExecutor buildExecutor(AbstractRegistrationContext registrationContext, String command) {
