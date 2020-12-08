@@ -221,7 +221,7 @@ public abstract class DefaultCommandBus implements CommandBus {
                 }
             }
         }
-        if (null == cflags) return SeleneUtils.emptyList();
+        if (null == cflags) return elements;
         else return cflags.buildAndCombines(this.wrapElements(elements));
     }
 
