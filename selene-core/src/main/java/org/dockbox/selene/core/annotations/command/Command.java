@@ -32,5 +32,6 @@ public @interface Command {
     long cooldownDuration() default -1;
     ChronoUnit cooldownUnit() default ChronoUnit.SECONDS;
     boolean inherit() default true;
+    boolean extend() default false;
     boolean confirm() default false;
 }

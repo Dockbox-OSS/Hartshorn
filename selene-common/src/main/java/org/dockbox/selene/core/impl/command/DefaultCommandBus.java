@@ -52,6 +52,7 @@ public abstract class DefaultCommandBus implements CommandBus {
 
     private final Map<String, AbstractRegistrationContext> registrations = SeleneUtils.emptyConcurrentMap();
     private final Map<String, ConfirmableQueueItem> confirmQueue = SeleneUtils.emptyConcurrentMap();
+    private final Map<String, List<CommandInheritanceContext>> queuedAliases = SeleneUtils.emptyConcurrentMap();
 
     @Override
     public void register(Object... objs) {
@@ -59,14 +60,56 @@ public abstract class DefaultCommandBus implements CommandBus {
             if (null == obj) continue;
             if (!(obj instanceof Class<?>)) obj = obj.getClass();
             List<AbstractRegistrationContext> contexts = this.createContexts((Class<?>) obj);
-            contexts.forEach(context ->
-                    context.getAliases().forEach(alias -> {
-                        if (this.registrations.containsKey(alias))
-                            Selene.log().warn("Registering duplicate alias '" + alias + "'");
-                        this.registrations.put(alias, context);
-                    })
-            );
+
+            for (AbstractRegistrationContext context : contexts) {
+                for (String alias : context.getAliases()) {
+
+                    if (context instanceof CommandInheritanceContext) {
+                        if (context.getCommand().extend()) {
+                            if (this.registrations.containsKey(alias))
+                                this.addExtendingAliasToRegistration(alias, (CommandInheritanceContext) context);
+                            else this.queueAliasRegistration(alias, (CommandInheritanceContext) context);
+
+                            continue;
+                        } else {
+                            this.queuedAliases
+                                    .getOrDefault(alias, SeleneUtils.emptyConcurrentList())
+                                    .forEach(extendingContext ->
+                                            this.addExtendingContextToRegistration(
+                                                    extendingContext,
+                                                    (CommandInheritanceContext) context)
+                                    );
+                        }
+                    }
+
+                    if (this.registrations.containsKey(alias))
+                        Selene.log().warn("Registering duplicate alias '" + alias + "'");
+
+                    this.registrations.put(alias, context);
+                }
+            }
         }
+    }
+
+    private void addExtendingAliasToRegistration(String alias, CommandInheritanceContext extendingContext) {
+        AbstractRegistrationContext context = this.registrations.get(alias);
+        this.addExtendingContextToRegistration(extendingContext, (CommandInheritanceContext) context);
+        this.registrations.put(alias, context);
+    }
+
+    private void addExtendingContextToRegistration(CommandInheritanceContext extendingContext, CommandInheritanceContext context) {
+        extendingContext.getInheritedCommands().forEach(context::addInheritedCommand);
+    }
+
+    private void queueAliasRegistration(String alias, CommandInheritanceContext context) {
+        List<CommandInheritanceContext> contexts =
+                this.queuedAliases.getOrDefault(alias, SeleneUtils.emptyConcurrentList());
+        contexts.add(context);
+        this.queuedAliases.put(alias, contexts);
+    }
+
+    protected void clearAliasQueue() {
+        this.queuedAliases.clear();
     }
 
     private List<AbstractRegistrationContext> createContexts(Class<?> parent) {
