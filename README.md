@@ -8,12 +8,6 @@
 **Project is in pre-alpha stages, please note there might be major changes without explicit notice**  
 **First release candidate for Selene is expected to be available 2021.1 (Q1)**
 
-```
-A WIP branch to restructure DarwinCore/DarwinServer to a cleaner architecture under a new name.
-Selene will primarily use Kotlin for utilities, with stricter stylechecks than present in earlier versions.
-Selene currently targets Minecraft 1.12.2 and Sponge 7.x. Paper/Bukkit implementations are not yet supported.
-```
-
 # Project structure
 The project uses both Kotlin and Java in a multi-module configuration. Each module contains Java sources at `/src/main/java/`
 and Kotlin sources at `/src/main/kotlin/`. Resources in `/src/main/resources/` are shared across both sources. Tests
