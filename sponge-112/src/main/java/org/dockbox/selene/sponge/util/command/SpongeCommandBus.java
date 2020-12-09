@@ -123,7 +123,7 @@ public class SpongeCommandBus extends DefaultCommandBus {
     private CommandSpec.Builder buildContextExecutor(AbstractRegistrationContext context, String alias) {
         CommandSpec.Builder builder = CommandSpec.builder();
 
-        List<AbstractArgumentElement<?>> elements = super.parseArguments(context.getCommand().usage());
+        List<AbstractArgumentElement<?>> elements = super.parseArgumentElements(context.getCommand().usage());
         List<CommandElement> commandElements = elements.stream()
                 .filter(element -> element instanceof SpongeArgumentElement)
                 .map(element -> (SpongeArgumentElement) element)

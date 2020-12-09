@@ -64,23 +64,8 @@ public abstract class DefaultCommandBus implements CommandBus {
             for (AbstractRegistrationContext context : contexts) {
                 for (String alias : context.getAliases()) {
 
-                    if (context instanceof CommandInheritanceContext) {
-                        if (context.getCommand().extend()) {
-                            if (this.registrations.containsKey(alias))
-                                this.addExtendingAliasToRegistration(alias, (CommandInheritanceContext) context);
-                            else this.queueAliasRegistration(alias, (CommandInheritanceContext) context);
-
-                            continue;
-                        } else {
-                            this.queuedAliases
-                                    .getOrDefault(alias, SeleneUtils.emptyConcurrentList())
-                                    .forEach(extendingContext ->
-                                            this.addExtendingContextToRegistration(
-                                                    extendingContext,
-                                                    (CommandInheritanceContext) context)
-                                    );
-                        }
-                    }
+                    if (context instanceof CommandInheritanceContext
+                            && this.prepareInheritanceContext(context, alias)) continue;
 
                     if (this.registrations.containsKey(alias))
                         Selene.log().warn("Registering duplicate alias '" + alias + "'");
@@ -89,6 +74,25 @@ public abstract class DefaultCommandBus implements CommandBus {
                 }
             }
         }
+    }
+
+    private boolean prepareInheritanceContext(AbstractRegistrationContext context, String alias) {
+        if (context.getCommand().extend()) {
+            if (this.registrations.containsKey(alias))
+                this.addExtendingAliasToRegistration(alias, (CommandInheritanceContext) context);
+            else this.queueAliasRegistration(alias, (CommandInheritanceContext) context);
+
+            return true;
+        } else {
+            this.queuedAliases
+                    .getOrDefault(alias, SeleneUtils.emptyConcurrentList())
+                    .forEach(extendingContext ->
+                            this.addExtendingContextToRegistration(
+                                    extendingContext,
+                                    (CommandInheritanceContext) context)
+                    );
+        }
+        return false;
     }
 
     private void addExtendingAliasToRegistration(String alias, CommandInheritanceContext extendingContext) {
@@ -175,71 +179,81 @@ public abstract class DefaultCommandBus implements CommandBus {
         String type;
         String key;
         String permission;
-        Matcher vm = DefaultCommandBus.ARGUMENT_META.matcher(argumentDefinition);
-        if (!vm.matches() || 0 == vm.groupCount())
+        Matcher argumentMetaMatcher = DefaultCommandBus.ARGUMENT_META.matcher(argumentDefinition);
+        if (!argumentMetaMatcher.matches() || 0 == argumentMetaMatcher.groupCount())
             Selene.getServer().except("Unknown argument specification " + argumentDefinition + ", use Type or Name{Type} or Name{Type:Permission}");
 
-        if (1 <= vm.groupCount()) key = vm.group(1);
+        if (1 <= argumentMetaMatcher.groupCount()) key = argumentMetaMatcher.group(1);
         else throw new IllegalArgumentException("Missing key argument in specification '" + argumentDefinition + "'");
-        if (2 <= vm.groupCount()) type = vm.group(2);
+
+        if (2 <= argumentMetaMatcher.groupCount()) type = argumentMetaMatcher.group(2);
         else type = DefaultCommandBus.DEFAULT_TYPE;
-        if (3 <= vm.groupCount()) permission = vm.group(3);
+
+        if (3 <= argumentMetaMatcher.groupCount()) permission = argumentMetaMatcher.group(3);
         else permission = Selene.GLOBAL_BYPASS.get();
 
         return this.generateGenericArgument(type, key, permission);
     }
 
-    protected List<AbstractArgumentElement<?>> parseArguments(CharSequence argString) {
+    protected List<AbstractArgumentElement<?>> parseArgumentElements(CharSequence argString) {
         List<AbstractArgumentElement<?>> elements = SeleneUtils.emptyList();
-        AbstractFlagCollection<?> cflags = null;
-        Matcher m = GENERIC_ARGUMENT.matcher(argString);
-        while (m.find()) {
-            String part = m.group();
-            Matcher ma = ARGUMENT.matcher(part);
-            if (ma.matches()) {
-                boolean optional = '[' == ma.group(1).charAt(0);
-                String argUnp = ma.group(2);
-                List<AbstractArgumentElement<?>> result = this.parseArguments(argUnp);
-                if (result.isEmpty()) {
-                    AbstractArgumentValue<?> satv = this.generateGenericArgument(ma.group(2));
-                    AbstractArgumentElement<?> permEl = satv.getElement(); // TODO: Type constraint with value
-                    result = SeleneUtils.asList(permEl);
-                }
-                AbstractArgumentElement<?> el = this.wrapElements(result);
-                if (optional) {
-                    elements.add(el.asOptional());
-                } else {
-                    elements.add(el);
-                }
+        AbstractFlagCollection<?> flagCollection = null;
+        Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(argString);
+        while (genericArgumentMatcher.find()) {
+            String part = genericArgumentMatcher.group();
+            Matcher argumentMatcher = ARGUMENT.matcher(part);
+            if (argumentMatcher.matches()) {
+                this.extractArguments(elements, argumentMatcher);
             } else {
-                Matcher mf = FLAG.matcher(part);
-                if (mf.matches()) {
-                    if (null == cflags) cflags = this.createEmptyFlagCollection();
-                    this.parseFlag(cflags, mf.group(1), mf.group(2));
-                } else {
-                    Selene.getServer().except("Argument type was not recognized for `" + part + "`");
-                }
+                Matcher flagMatcher = FLAG.matcher(part);
+                flagCollection = this.getAbstractFlagCollection(flagCollection, flagMatcher);
             }
         }
-        if (null == cflags) return elements;
-        else return cflags.buildAndCombines(this.wrapElements(elements));
+        if (null == flagCollection) return elements;
+        else return flagCollection.buildAndCombines(this.wrapElements(elements));
+    }
+
+    private AbstractFlagCollection<?> getAbstractFlagCollection(AbstractFlagCollection<?> flagCollection, Matcher flagMatcher) {
+        if (flagMatcher.matches()) {
+            if (null == flagCollection) flagCollection = this.createEmptyFlagCollection();
+            this.parseFlag(flagCollection, flagMatcher.group(1), flagMatcher.group(2));
+        }
+        return flagCollection;
+    }
+
+    private void extractArguments(List<AbstractArgumentElement<?>> elements, Matcher argumentMatcher) {
+        boolean optional = '[' == argumentMatcher.group(1).charAt(0);
+        String argumentMeta = argumentMatcher.group(2);
+        List<AbstractArgumentElement<?>> result = this.parseArgumentElements(argumentMeta);
+        if (result.isEmpty()) {
+            AbstractArgumentValue<?> argumentValue = this.generateGenericArgument(argumentMatcher.group(2));
+            AbstractArgumentElement<?> argumentElement = argumentValue.getElement();
+            result = SeleneUtils.asList(argumentElement);
+        }
+        AbstractArgumentElement<?> argumentElement = this.wrapElements(result);
+        if (optional) {
+            elements.add(argumentElement.asOptional());
+        } else {
+            elements.add(argumentElement);
+        }
     }
 
     private void parseFlag(AbstractFlagCollection<?> flags, String name, String value) {
         if (null == value) {
             int at;
             if (0 <= (at = name.indexOf(':'))) {
-                String a = name.substring(0, at), b = name.substring(at + 1);
-                flags.addNamedPermissionFlag(a, b);
+                name = name.substring(0, at);
+                String permission = name.substring(at + 1);
+                flags.addNamedPermissionFlag(name, permission);
             } else {
                 flags.addNamedFlag(name);
             }
         } else {
-            AbstractArgumentValue<?> av = this.generateGenericArgument(value);
+            AbstractArgumentValue<?> argumentValue = this.generateGenericArgument(value);
             if (0 <= name.indexOf(':')) {
                 Selene.getServer().except("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
-            flags.addValueBasedFlag(name, av);
+            flags.addValueBasedFlag(name, argumentValue);
         }
     }
 
