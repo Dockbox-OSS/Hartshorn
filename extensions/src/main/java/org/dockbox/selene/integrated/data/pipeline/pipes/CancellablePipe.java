@@ -17,16 +17,16 @@
 
 package org.dockbox.selene.integrated.data.pipeline.pipes;
 
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.integrated.data.pipeline.AbstractPipeline;
 
 @FunctionalInterface
-public interface CancellablePipe<I, O> extends IPipe<I, O> {
+public interface CancellablePipe<I, O> extends ComplexPipe<I, O> {
 
     O execute(Runnable cancelPipeline, I input, Throwable throwable) throws Exception;
 
     @Override
-    default O apply(Exceptional<I> input) throws Exception{
-        return this.execute(null, input.orNull(), input.orElseExcept(null));
+    default O handle(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception{
+        return this.execute(pipeline::cancelPipeline, input, throwable);
     }
 
     @Override

@@ -17,12 +17,19 @@
 
 package org.dockbox.selene.integrated.data.pipeline.pipes;
 
-public interface IPipe<I, O> {
-    /**
-     * If this method is overridden, you can then call it to get the {@link Class} of the pipe, even when created by a lamda expression.
-     * @return The {@link Class} of the pipe.
-     */
+import org.dockbox.selene.core.objects.Exceptional;
+
+@FunctionalInterface
+public interface StandardPipe<I, O> extends IPipe<I, O> {
+
+    O apply(Exceptional<I> input) throws Exception;
+
+    @Override
     default Class<? extends IPipe> getType() {
-        return IPipe.class;
+        return StandardPipe.class;
+    }
+
+    static <I, O> StandardPipe<I, O> of(StandardPipe<I, O> pipe) {
+        return pipe;
     }
 }

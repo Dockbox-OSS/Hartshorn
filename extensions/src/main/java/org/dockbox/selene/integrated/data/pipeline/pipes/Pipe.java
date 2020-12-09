@@ -20,7 +20,7 @@ package org.dockbox.selene.integrated.data.pipeline.pipes;
 import org.dockbox.selene.core.objects.Exceptional;
 
 @FunctionalInterface
-public interface Pipe<I, O> extends IPipe<I, O> {
+public interface Pipe<I, O> extends StandardPipe<I, O> {
 
     O execute(I input, Throwable throwable) throws Exception;
 

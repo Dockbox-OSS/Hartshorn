@@ -3,7 +3,7 @@ package org.dockbox.selene.integrated.data.pipeline.pipes;
 import org.dockbox.selene.core.objects.Exceptional;
 
 @FunctionalInterface
-public interface ListenerPipe<I> extends IPipe<I, I> {
+public interface ListenerPipe<I> extends StandardPipe<I, I> {
 
     void execute(I input) throws Exception;
 

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.data.pipeline;
 
-import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineException;
+import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipeException;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineConverterException;
 import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.InputPipe;
@@ -56,7 +56,7 @@ public class ConvertiblePipelineTests {
             ).process("Look");
     }
 
-    @Test(expected = IllegalPipelineException.class)
+    @Test(expected = IllegalPipeException.class)
     public void convertiblePipelineIllegalPipeExceptionTest() {
         new ConvertiblePipelineSource<>(Integer.class)
             .addPipe(
@@ -69,7 +69,7 @@ public class ConvertiblePipelineTests {
             ).process(4);
     }
 
-    @Test(expected = IllegalPipelineException.class)
+    @Test(expected = IllegalPipeException.class)
     public void illegalPipeExceptionWhenConvertingPipelineTest() {
         new ConvertiblePipelineSource<>(Integer.class)
             .setCancellable(true)
@@ -161,5 +161,13 @@ public class ConvertiblePipelineTests {
             .processAllSafe(Arrays.asList("1", "2", "3", "4", "5"));
 
         Assert.assertEquals(Arrays.asList(1, 4, 9, 16, 25), output);
+    }
+
+    @Test(expected = IllegalPipeException.class)
+    public void IllegalPipeTest() {
+        new ConvertiblePipelineSource<>(Integer.class)
+            .addPipe(InputPipe.of(input -> input + 2))
+            .addPipe(IllegalPipeTest.of(input -> input * 2))
+            .process(3);
     }
 }

@@ -17,10 +17,19 @@
 
 package org.dockbox.selene.integrated.data.pipeline.pipes;
 
-@FunctionalInterface
-public interface ExceptionalPipe<I, O> extends IPipe<I, O> {
+import org.dockbox.selene.integrated.data.pipeline.AbstractPipeline;
 
-    static <I, O> ExceptionalPipe<I, O> of(ExceptionalPipe<I, O> pipe) {
+@FunctionalInterface
+public interface ComplexPipe<I, O> extends IPipe<I, O> {
+
+    O handle(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception;
+
+    @Override
+    default Class<? extends IPipe> getType() {
+        return ComplexPipe.class;
+    }
+
+    static <I, O> ComplexPipe<I, O> of(ComplexPipe<I, O> pipe) {
         return pipe;
     }
 }

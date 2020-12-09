@@ -1,10 +1,10 @@
 package org.dockbox.selene.integrated.data.pipeline;
 
-import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineException;
-import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
-import org.dockbox.selene.integrated.data.pipeline.pipes.ExceptionalPipe;
+import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipeException;
 import org.dockbox.selene.integrated.data.pipeline.pipes.InputPipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.Pipe;
+import org.dockbox.selene.integrated.data.pipeline.pipes.StandardPipe;
+import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ public class PipelineTests {
             .addVarargPipes(
                 Pipe.of((input, throwable) -> input * 2),
                 Pipe.of(((input, throwable) -> input - 3)))
-            .addPipe(ExceptionalPipe.of(input -> input.orElse(-1)))
+            .addPipe(StandardPipe.of(input -> input.orElse(-1)))
             .processUnsafe(5);
 
         Assert.assertEquals(9, result);
@@ -43,7 +43,7 @@ public class PipelineTests {
     public void passingInputForwardOnErrorTest() {
         int output = new Pipeline<Integer>()
             .addPipe(InputPipe.of(input -> 1 / input))
-            .addPipe(ExceptionalPipe.of(input ->  input.orElse(1)))
+            .addPipe(StandardPipe.of(input ->  input.orElse(1)))
             .processUnsafe(0);
 
         Assert.assertEquals(0, output);
@@ -53,7 +53,7 @@ public class PipelineTests {
     public void errorCatchingTest() {
         int output = new Pipeline<Integer>()
             .addPipe(InputPipe.of(input -> 1 / input))
-            .addPipe(ExceptionalPipe.of(input -> {
+            .addPipe(StandardPipe.of(input -> {
                 if (input.errorPresent()) return -1;
                 else return input.orElse(1);
             })).processUnsafe(0);
@@ -61,7 +61,7 @@ public class PipelineTests {
         Assert.assertEquals(-1, output);
     }
 
-    @Test(expected = IllegalPipelineException.class)
+    @Test(expected = IllegalPipeException.class)
     public void uncancellablePipelineTest() {
         new Pipeline<Float>()
             .addPipe(InputPipe.of(input -> input + 1F))

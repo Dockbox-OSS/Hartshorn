@@ -19,9 +19,11 @@ package org.dockbox.selene.integrated.data.pipeline;
 
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineException;
+import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipeException;
 import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
+import org.dockbox.selene.integrated.data.pipeline.pipes.ComplexPipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;
+import org.dockbox.selene.integrated.data.pipeline.pipes.StandardPipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,13 +39,13 @@ public abstract class AbstractPipeline<P, I> {
 
     /**
      * Add a non-null {@link IPipe} to the pipeline. If the added pipe is a {@link CancellablePipe}
-     * and the pipeline is not cancellable, then it will throw an {@link IllegalPipelineException}.
+     * and the pipeline is not cancellable, then it will throw an {@link IllegalPipeException}.
      * @param pipe The non-null {@link IPipe} to add to the pipeline.
      * @return Itself.
      */
     public AbstractPipeline<P, I> addPipe(@NotNull IPipe<I, I> pipe) {
         if (!this.isCancellable() && SeleneUtils.isAssignableFrom(CancellablePipe.class, pipe.getType())) {
-            throw new IllegalPipelineException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
+            throw new IllegalPipeException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
         }
 
         this.pipes.add(pipe);
@@ -109,25 +111,35 @@ public abstract class AbstractPipeline<P, I> {
      * @return
      * An {@link Exceptional} containing an optional output value after it has been passed through each {@link IPipe} in
      * the pipeline. If the value is not present, the output will contain an {@link Throwable} describing why.
+     * @throws IllegalPipeException If the pipe being processed does not derive from {@link StandardPipe} or {@link ComplexPipe}
      */
     protected Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput) {
         for (IPipe<I, I> pipe : this.getPipes()) {
 
+            // If the pipe doesn't extend one of these interfaces, then it cannot be properly handled by this method.
+            if (!(pipe instanceof StandardPipe || pipe instanceof ComplexPipe))
+                throw new IllegalPipeException(String.format(
+                    "The entered pipe does not derive from %s or %s and is therefore not properly handled. [Actual: %s]",
+                    StandardPipe.class.getCanonicalName(), ComplexPipe.class.getCanonicalName(), pipe.getClass().getCanonicalName()
+                ));
+
+
             // This occurs when a pipeline is converted, previously allowed cancellable pipes are now illegal.
             if (pipe instanceof CancellablePipe && !this.isCancellable())
-                throw new IllegalPipelineException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
+                throw new IllegalPipeException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
 
             // Create a temporary final version that can be used within the supplier.
             final Exceptional<I> finalInput = exceptionalInput;
 
             exceptionalInput = Exceptional.of(() -> {
-                // Check if the pipelines an instance of the Cancellable pipeline or not.
-                if (pipe instanceof CancellablePipe) {
-                    CancellablePipe<I, I> cancellablePipe = (CancellablePipe<I, I>) pipe;
-                    return cancellablePipe.execute(this::cancelPipeline, finalInput.orElse(null), finalInput.orElseExcept(null));
+                if (pipe instanceof ComplexPipe) {
+                    ComplexPipe<I, I> cancellablePipe = (ComplexPipe<I, I>)pipe;
+                    return cancellablePipe.handle(this, finalInput.orElse(null), finalInput.orElseExcept(null));
                 }
+
                 else {
-                    return pipe.apply(finalInput);
+                    StandardPipe<I, I> standardPipe = (StandardPipe<I, I>)pipe;
+                    return standardPipe.apply(finalInput);
                 }
             });
 
@@ -211,7 +223,7 @@ public abstract class AbstractPipeline<P, I> {
     /**
      * Cancels the pipeline which prevents it from processing any further {@link IPipe}s.
      */
-    protected void cancelPipeline() {
+    public void cancelPipeline() {
         if (this.isCancellable()) this.isCancelled = true;
     }
 
