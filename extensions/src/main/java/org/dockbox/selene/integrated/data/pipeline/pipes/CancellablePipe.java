@@ -25,7 +25,7 @@ public interface CancellablePipe<I, O> extends ComplexPipe<I, O> {
     O execute(Runnable cancelPipeline, I input, Throwable throwable) throws Exception;
 
     @Override
-    default O handle(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception{
+    default O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception{
         return this.execute(pipeline::cancelPipeline, input, throwable);
     }
 

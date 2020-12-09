@@ -134,7 +134,7 @@ public abstract class AbstractPipeline<P, I> {
             exceptionalInput = Exceptional.of(() -> {
                 if (pipe instanceof ComplexPipe) {
                     ComplexPipe<I, I> cancellablePipe = (ComplexPipe<I, I>)pipe;
-                    return cancellablePipe.handle(this, finalInput.orElse(null), finalInput.orElseExcept(null));
+                    return cancellablePipe.apply(this, finalInput.orElse(null), finalInput.orElseExcept(null));
                 }
 
                 else {

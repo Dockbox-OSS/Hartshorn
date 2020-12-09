@@ -22,7 +22,7 @@ import org.dockbox.selene.integrated.data.pipeline.AbstractPipeline;
 @FunctionalInterface
 public interface ComplexPipe<I, O> extends IPipe<I, O> {
 
-    O handle(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception;
+    O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception;
 
     @Override
     default Class<? extends IPipe> getType() {
