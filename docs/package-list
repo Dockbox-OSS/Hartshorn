@@ -34,6 +34,8 @@ org.dockbox.selene.core.impl.command
 org.dockbox.selene.core.impl.command.context
 org.dockbox.selene.core.impl.command.convert
 org.dockbox.selene.core.impl.command.convert.impl
+org.dockbox.selene.core.impl.command.registration
+org.dockbox.selene.core.impl.command.values
 org.dockbox.selene.core.impl.events
 org.dockbox.selene.core.impl.events.processors
 org.dockbox.selene.core.impl.extension
@@ -49,6 +51,7 @@ org.dockbox.selene.core.impl.server.properties
 org.dockbox.selene.core.objects
 org.dockbox.selene.core.objects.item
 org.dockbox.selene.core.objects.keys
+org.dockbox.selene.core.objects.keys.data
 org.dockbox.selene.core.objects.location
 org.dockbox.selene.core.objects.player
 org.dockbox.selene.core.objects.targets
@@ -87,3 +90,4 @@ org.dockbox.selene.sponge.objects.targets
 org.dockbox.selene.sponge.text.navigation
 org.dockbox.selene.sponge.util
 org.dockbox.selene.sponge.util.command
+org.dockbox.selene.sponge.util.command.values
