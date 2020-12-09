@@ -161,6 +161,13 @@ public class SpongeItem extends Item<ItemStack> {
         this.performOnEnchantmentData(enchant, (EnchantmentData::remove));
     }
 
+    @Override
+    public boolean isBlock() {
+        return this.getReference()
+                .map(itemStack -> itemStack.getType().getBlock().isPresent())
+                .orElse(false);
+    }
+
     private void performOnEnchantmentData(Enchant enchant, BiConsumer<EnchantmentData, Enchantment> action) {
         this.getReference().ifPresent(itemStack -> {
             EnchantmentData enchantmentData = itemStack.getOrCreate(EnchantmentData.class).get();

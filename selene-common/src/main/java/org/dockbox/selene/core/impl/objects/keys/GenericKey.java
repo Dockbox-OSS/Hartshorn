@@ -22,7 +22,7 @@ import org.dockbox.selene.core.objects.keys.Key;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-final class GenericKey<K, A> extends Key<K, A> {
+public final class GenericKey<K, A> extends Key<K, A> {
 
     /**
      Instantiates a new Key using a given setter and getter.@param setter
@@ -34,7 +34,7 @@ final class GenericKey<K, A> extends Key<K, A> {
      constrained using type parameter {@link K}. The return value being the value retreived from the type, constrained
      using type parameter {@link A}.
      */
-    GenericKey(BiConsumer<K, A> setter, Function<K, A> getter) {
+    public GenericKey(BiConsumer<K, A> setter, Function<K, A> getter) {
         super(setter, getter);
     }
 }

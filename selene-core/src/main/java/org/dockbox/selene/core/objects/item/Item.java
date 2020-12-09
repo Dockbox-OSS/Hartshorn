@@ -87,6 +87,8 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
 
     public abstract void removeEnchant(Enchant enchant);
 
+    public abstract boolean isBlock();
+
     public static Item<?> of(String id, int amount) {
         return Selene.getInstance(ConstructionUtil.class).item(id, amount);
     }
