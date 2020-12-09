@@ -105,9 +105,9 @@ public abstract class DefaultCommandBus implements CommandBus {
      - Name{Type:Permission}
      */
     private static final Pattern ELEMENT_VALUE = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?");
+    private static final Map<String, ConfirmableQueueItem> confirmQueue = SeleneUtils.emptyConcurrentMap();
 
     private final Map<String, AbstractRegistrationContext> registrations = SeleneUtils.emptyConcurrentMap();
-    private final Map<String, ConfirmableQueueItem> confirmQueue = SeleneUtils.emptyConcurrentMap();
     private final Map<String, List<CommandInheritanceContext>> queuedAliases = SeleneUtils.emptyConcurrentMap();
 
     @Override
@@ -250,8 +250,8 @@ public abstract class DefaultCommandBus implements CommandBus {
     }
 
     public Exceptional<Boolean> confirmCommand(String confirmId) {
-        if (this.confirmQueue.containsKey(confirmId)) {
-            ConfirmableQueueItem confirmableQueueItem = this.confirmQueue.get(confirmId);
+        if (DefaultCommandBus.confirmQueue.containsKey(confirmId)) {
+            ConfirmableQueueItem confirmableQueueItem = DefaultCommandBus.confirmQueue.get(confirmId);
             if (confirmableQueueItem.getSource() instanceof CommandSource) {
                 confirmableQueueItem.getCommand().call(
                         (CommandSource) confirmableQueueItem.getSource(),
@@ -264,39 +264,42 @@ public abstract class DefaultCommandBus implements CommandBus {
     }
 
     protected void queueConfirmable(String identifier, ConfirmableQueueItem queueItem) {
-        this.confirmQueue.put(identifier, queueItem);
+        DefaultCommandBus.confirmQueue.put(identifier, queueItem);
     }
 
     protected AbstractArgumentValue<?> generateArgumentValue(String argumentDefinition, String defaultPermission) {
         String type = DefaultCommandBus.DEFAULT_TYPE;
         String key;
         String permission = defaultPermission;
-        Matcher argumentMetaMatcher = DefaultCommandBus.ELEMENT_VALUE.matcher(argumentDefinition);
-        if (!argumentMetaMatcher.matches() || 0 == argumentMetaMatcher.groupCount())
+        Matcher elementValue = DefaultCommandBus.ELEMENT_VALUE.matcher(argumentDefinition);
+        if (!elementValue.matches() || 0 == elementValue.groupCount())
             Selene.getServer().except("Unknown argument specification " + argumentDefinition + ", use Type or Name{Type} or Name{Type:Permission}");
 
         /*
          Group one specifies either the name of the value (if two or more groups are matched), or the type if only one
          group matched.
          */
-        if (1 <= argumentMetaMatcher.groupCount()) {
-            if (1 == argumentMetaMatcher.groupCount()) type = argumentMetaMatcher.group(1);
-            key = argumentMetaMatcher.group(1);
+        if (1 <= elementValue.groupCount()) {
+            String g1 = elementValue.group(1);
+            if (1 == elementValue.groupCount()) type = g1;
+            key = g1;
         } else throw new IllegalArgumentException("Missing key argument in specification '" + argumentDefinition + "'");
 
         /*
          Group two matches the type if two or more groups are present. This overwrites the default value if applicable.
          */
-        if (2 <= argumentMetaMatcher.groupCount()) type = argumentMetaMatcher.group(2);
+        if (2 <= elementValue.groupCount() && null != elementValue.group(2))
+            type = elementValue.group(2);
 
         /*
          Group three matches the permission if three groups are present. If the third group is not present, the default
          permission is used. Usually the default permission is provided by the original command registration (which
          defaults to Selene#GLOBAL_OVERRIDE if none is explicitly specified).
          */
-        if (3 <= argumentMetaMatcher.groupCount()) permission = argumentMetaMatcher.group(3);
+        if (3 <= elementValue.groupCount() && null != elementValue.group(3))
+            permission = elementValue.group(3);
 
-        return this.generateArgumentValue(type, key, permission);
+        return this.generateArgumentValue(type, permission, key);
     }
 
     protected List<AbstractArgumentElement<?>> parseArgumentElements(CharSequence argString, String defaultPermission) {
@@ -380,10 +383,10 @@ public abstract class DefaultCommandBus implements CommandBus {
 
     protected void callCommandContext(AbstractRegistrationContext registrationContext, String command, CommandSource sender, CommandContext ctx) {
         /*
-             If the command sender can be identified we can queue the command for confirmation. If the sender cannot be
-             identified we cannot ensure the same command source is the one confirming the command, so we execute it as
-             usual. The only sender with a bypass on this rule is the console.
-             */
+         If the command sender can be identified we can queue the command for confirmation. If the sender cannot be
+         identified we cannot ensure the same command source is the one confirming the command, so we execute it as
+         usual. The only sender with a bypass on this rule is the console.
+         */
         if (registrationContext.getCommand().confirm() && sender instanceof Identifiable && !(sender instanceof Console)) {
             String registrationId = registrationContext.getRegistrationId((Identifiable<?>) sender, ctx);
             ConfirmableQueueItem queueItem =
@@ -393,6 +396,8 @@ public abstract class DefaultCommandBus implements CommandBus {
             Text confirmText = IntegratedResource.CONFIRM_COMMAND_MESSAGE.asText();
             confirmText.onHover(HoverAction.showText(IntegratedResource.CONFIRM_COMMAND_MESSAGE_HOVER.asText()));
             confirmText.onClick(ClickAction.runCommand("/selene confirm " + registrationId));
+            sender.sendWithPrefix(confirmText);
+
         } else {
             Exceptional<IntegratedResource> response = this.callCommandWithEvents(
                     sender, ctx, command, registrationContext);

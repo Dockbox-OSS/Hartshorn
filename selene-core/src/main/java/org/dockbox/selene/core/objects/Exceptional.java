@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.core.objects;
 
+import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
+
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -204,6 +206,15 @@ public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
     public Exceptional<T> rethrow() throws Throwable {
         if (null != this.throwable)
             throw this.throwable;
+        return this;
+    }
+
+    public Exceptional<T> rethrowUnchecked() {
+        if (null != this.throwable) {
+            if (this.throwable instanceof RuntimeException)
+                throw (RuntimeException) this.throwable;
+            else throw new UncheckedSeleneException(this.throwable);
+        }
         return this;
     }
 

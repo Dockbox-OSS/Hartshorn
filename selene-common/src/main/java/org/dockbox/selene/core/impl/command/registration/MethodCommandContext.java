@@ -78,7 +78,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         List<Object> finalArgs = SeleneUtils.emptyList();
 
         for (Class<?> parameterType : this.getMethod().getParameterTypes()) {
-            if (SeleneUtils.isAssignableFrom(CommandSource.class, parameterType)) {
+            if (SeleneUtils.isEitherAssignableFrom(CommandSource.class, parameterType)) {
                 if (parameterType.equals(Player.class)) {
                     if (source instanceof Player) finalArgs.add(source);
                     else throw new IllegalSourceException("Command can only be ran by players");
@@ -86,10 +86,10 @@ public class MethodCommandContext extends AbstractRegistrationContext {
                     if (source instanceof Console) finalArgs.add(source);
                     else throw new IllegalSourceException("Command can only be ran by the console");
                 } else finalArgs.add(source);
-            } else if (SeleneUtils.isAssignableFrom(CommandContext.class, parameterType)) {
+            } else if (SeleneUtils.isEitherAssignableFrom(CommandContext.class, parameterType)) {
                 finalArgs.add(context);
             } else {
-                throw new IllegalStateException("Method requested parameter type '" + parameterType.toGenericString() + "' which is not provided");
+                throw new IllegalStateException("Method requested parameter type '" + parameterType.getSimpleName() + "' which is not provided");
             }
         }
         return finalArgs;

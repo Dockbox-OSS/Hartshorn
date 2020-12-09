@@ -30,7 +30,7 @@ import org.spongepowered.api.text.Text;
 public class SpongeArgumentValue extends AbstractArgumentValue<CommandElement> {
 
     public SpongeArgumentValue(String type, String permission, String key) throws IllegalArgumentException {
-        super(type, permission, key);
+        super(permission, key, type);
         if (!ArgumentConverterRegistry.hasConverter(type.toLowerCase())) {
             try {
                 Class<?> clazz = Class.forName(type);

@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.integrated.server;
 
-import org.dockbox.selene.core.i18n.common.ResourceEntry;
-import org.dockbox.selene.core.i18n.entry.Resource;
-import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.i18n.common.ResourceEntry;
+import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.i18n.entry.Resource;
 
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
 enum IntegratedServerResources {
@@ -53,6 +53,7 @@ enum IntegratedServerResources {
     static final ResourceEntry EXTENSION_RELOAD_FAILED = new Resource("$4Failed to reload '{0}'", "selene.reload.single.fail");
     static final ResourceEntry FULL_RELOAD_SUCCESSFUL = new Resource("$1Successfully reloaded all extensions", "selene.reload.all");
     static final ResourceEntry CONFIRM_INVALID_ID = new Resource("$4Could not confirm command: Invalid runner ID", "selene.confirm.invalid.id");
+    static final ResourceEntry CONFIRM_FAILED = new Resource("$4Could not confirm command", "selene.confirm.invalid.other");
     static final ResourceEntry CONFIRM_WRONG_SOURCE = new Resource("$4This command can only be used by identifiable sources (players, console) matching the original source of the command", "selene.confirm.invalid.source");
     static final ResourceEntry PLATFORM_INFORMATION = new Resource(
             "$2Platform: $1{0} $3(version: {1})\n" +

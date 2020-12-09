@@ -18,6 +18,7 @@
 package org.dockbox.selene.sponge.util.command;
 
 import com.google.common.collect.Multimap;
+import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.command.context.CommandValue;
@@ -53,6 +54,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Singleton
 public class SpongeCommandBus extends DefaultCommandBus {
 
     @Override

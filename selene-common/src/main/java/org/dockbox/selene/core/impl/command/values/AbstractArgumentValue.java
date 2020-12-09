@@ -19,6 +19,7 @@ package org.dockbox.selene.core.impl.command.values;
 
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
 import org.dockbox.selene.core.impl.command.convert.impl.ArgumentConverterRegistry;
+import org.dockbox.selene.core.objects.Exceptional;
 
 public abstract class AbstractArgumentValue<T> {
 
@@ -26,8 +27,10 @@ public abstract class AbstractArgumentValue<T> {
     private T value;
 
     protected AbstractArgumentValue(String permission, String key, String type) {
-        ArgumentConverter<?> converter = ArgumentConverterRegistry.getConverter(type.toLowerCase());
-        this.value = this.parseValue(converter, key, type);
+        Exceptional<ArgumentConverter<?>> converter = ArgumentConverterRegistry.getOptionalConverter(type.toLowerCase());
+        if (converter.isPresent())
+            this.value = this.parseValue(converter.get(), key, type);
+
         this.permission = permission;
     }
 

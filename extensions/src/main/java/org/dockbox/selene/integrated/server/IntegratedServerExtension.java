@@ -21,6 +21,7 @@ import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.events.EventBus;
@@ -29,7 +30,6 @@ import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LanguageParser;
-import org.dockbox.selene.core.impl.command.DefaultCommandBus;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
@@ -157,9 +157,8 @@ public class IntegratedServerExtension implements IntegratedExtension {
         optionalCooldownId
                 .ifPresent(cooldownId -> {
                     String cid = cooldownId.getValue();
-                    // TODO, refactor to CommandBus
-                    Selene.getInstance(DefaultCommandBus.class).confirmCommand(cid).ifAbsent(() -> {
-                        src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
+                    Selene.getInstance(CommandBus.class).confirmCommand(cid).ifAbsent(() -> {
+                        src.send(IntegratedServerResources.CONFIRM_FAILED);
                     });
                 })
                 .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));
