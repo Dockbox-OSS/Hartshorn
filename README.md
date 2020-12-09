@@ -66,8 +66,7 @@ Documentation is typically pre-built in `/docs/` in this repository, and is avai
 all sources within Selene. To generate these JavaDocs yourself, use `mvn javadoc:aggregate`.
 
 ## Development Server
-Selene contains pre-made servers for its supported platforms, with automatic build distributions towards those platforms.
-To get started, download [servers.zip](http://darwin.dockbox.org/stor/servers.zip). After downloading, extract the folder into the root directory of your project.
+Selene contains pre-made servers for its supported platforms, with automatic build distributions towards those platforms. These servers are included in the `servers` submodule. Depending on your Git client these may not be cloned directly, to ensure their availability use `git clone --recurse-submodules https://github.com/GuusLieben/Selene.git`.
 
 To run the server, we recommend using [IntelliJ IDEA](https://www.jetbrains.com/idea/). 
 
