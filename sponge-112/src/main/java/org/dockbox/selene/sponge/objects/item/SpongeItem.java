@@ -29,14 +29,15 @@ import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.item.EnchantmentData;
+import org.spongepowered.api.data.value.mutable.MapValue;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -44,6 +45,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class SpongeItem extends Item<ItemStack> {
+
+
+    public static final String ID = "item_data";
+    public static final String NAME = "Selene Item Data";
+    public static final String QUERY = "SeleneItemData";
+
+    public static Key<MapValue<String, Object>> ITEM_KEY;
 
     public static final int DEFAULT_STACK_SIZE = 64;
 
@@ -175,19 +183,30 @@ public class SpongeItem extends Item<ItemStack> {
     @SuppressWarnings("unchecked")
     @Override
     public <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
-        Object result = this.getReference().map(itemStack -> itemStack.get(SpongeItemData.ITEM_KEY).orElse(null));
-        if (SeleneUtils.isAssignableFrom(dataKey.getDataType(), result.getClass())) {
-            return Exceptional.of((T) result);
-        }
+        Exceptional<MutableSpongeItemData> result = this.getReference()
+                .map(itemStack -> itemStack.get(MutableSpongeItemData.class).orElse(null));
+
+        if (result.isAbsent()) return Exceptional.empty();
+
+        MutableSpongeItemData data = result.get();
+        if (!data.getData().containsKey(dataKey.getDataKeyId())) return Exceptional.empty();
+
+        Object value = data.getData().get(dataKey.getDataKeyId());
+        if (SeleneUtils.isAssignableFrom(dataKey.getDataType(), value.getClass()))
+            return Exceptional.of((T) value);
+
         return Exceptional.empty();
     }
 
     @Override
     public <T> void set(PersistentDataKey<T> dataKey, T value) {
         this.getReference().ifPresent(itemStack -> {
-            Map<String, Object> data = itemStack.getOrElse(SpongeItemData.ITEM_KEY, new HashMap<>());
+            Map<String, Object> data = itemStack.get(MutableSpongeItemData.class).orElse(new MutableSpongeItemData()).getData();
             data.put(dataKey.getDataKeyId(), value);
-            itemStack.offer(SpongeItemData.ITEM_KEY, data);
+
+            MutableSpongeItemData spongeItemData = new MutableSpongeItemData();
+            spongeItemData.fillData(data);
+            itemStack.offer(spongeItemData);
         });
     }
 }
