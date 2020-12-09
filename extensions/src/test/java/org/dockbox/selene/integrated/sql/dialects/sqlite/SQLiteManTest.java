@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.integrated.sql.dialects.sqlite;
 
+import com.google.common.io.Files;
+
+import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.data.table.identifiers.TestColumnIdentifiers;
@@ -24,16 +27,32 @@ import org.dockbox.selene.integrated.sql.ISQLMan;
 import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
 import org.dockbox.selene.integrated.sql.properties.SQLColumnProperty;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 class SQLiteManTest {
 
+    private static Path file;
+
     private Path getTestFile() {
-        String path = "src/test/resources/storage.db";
-        return new File(path).toPath();
+        return SQLiteManTest.file;
+    }
+
+    @BeforeAll
+    public static void prepare() {
+        String path = "src/test/resources/";
+        File file = new File(path + "storage.db");
+        try {
+            File copy = File.createTempFile("tmp", null);
+            Files.copy(file, copy);
+            SQLiteManTest.file = copy.toPath();
+        } catch (IOException e) {
+            throw new UncheckedSeleneException(e);
+        }
     }
 
     private ISQLMan<?> getSQLiteMan(boolean enableState) {

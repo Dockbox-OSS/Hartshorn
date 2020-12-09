@@ -22,6 +22,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.exceptions.ConstraintException;
+import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.DurationParser;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LocationParser;
@@ -44,6 +45,7 @@ import org.dockbox.selene.core.WorldStorageService;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -60,13 +62,15 @@ public final class ArgumentConverterRegistry {
     }
 
     public static ArgumentConverter<?> getConverter(String key) {
-        return getOptionalConverter(key).orNull();
+        return getOptionalConverter(key).rethrowUnchecked().orNull();
     }
 
-    private static Exceptional<ArgumentConverter<?>> getOptionalConverter(String key) {
-        return Exceptional.of(CONVERTERS.stream()
+    public static Exceptional<ArgumentConverter<?>> getOptionalConverter(String key) {
+        Optional<ArgumentConverter<?>> optional =CONVERTERS.stream()
                 .filter(converter -> converter.getKeys().contains(key))
-                .findFirst());
+                .findFirst();
+        if (optional.isPresent()) return Exceptional.of(optional);
+        else return Exceptional.of(new UncheckedSeleneException("No converter present"));
     }
 
 

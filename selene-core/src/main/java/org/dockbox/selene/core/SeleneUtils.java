@@ -750,7 +750,7 @@ public enum SeleneUtils {
     }
 
     @NotNull
-    @Contract(value = "_ -> new")
+    @Contract("_ -> new")
     public static <T> Set<T> asSet(Collection<T> collection) {
         return new HashSet<>(collection);
     }

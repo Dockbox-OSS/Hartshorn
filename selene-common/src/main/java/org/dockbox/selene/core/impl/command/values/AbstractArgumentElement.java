@@ -15,25 +15,34 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.commands;
+package org.dockbox.selene.core.impl.command.values;
 
-import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
+public abstract class AbstractArgumentElement<T> {
 
-public class TestArgumentValue extends AbstractArgumentValue<String> {
+    private T reference;
 
-    public TestArgumentValue(String permission, String key, String type) {
-        super(permission, key, type);
+    protected AbstractArgumentElement(T reference) {
+        this.reference = reference;
     }
 
-    @Override
-    protected String parseValue(ArgumentConverter<?> converter, String key, String type) {
-        return null;
+    @SafeVarargs
+    protected AbstractArgumentElement(AbstractArgumentElement<T>... elements) {
+        this.ofElements(elements);
     }
 
-    @Override
-    public AbstractArgumentElement<String> getElement() {
-        return null;
+    protected AbstractArgumentElement() {
     }
+
+    public T getReference() {
+        return this.reference;
+    }
+
+    public void setReference(T reference) {
+        this.reference = reference;
+    }
+
+    public abstract AbstractArgumentElement<T> asOptional();
+
+    protected abstract void ofElements(AbstractArgumentElement<T>[] elements);
+
 }

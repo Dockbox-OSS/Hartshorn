@@ -51,7 +51,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
 
     @Override
     protected void configureExtensionInject() {
-        this.bind(ExtensionManager.class).to(SimpleExtensionManager.class);
+        this.bind(ExtensionManager.class).toInstance(new SimpleExtensionManager());
         this.bind(IntegratedExtension.class).to(IntegratedServerExtension.class);
     }
 
@@ -64,7 +64,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
 
     @Override
     protected void configurePlatformInject() {
-        this.bind(CommandBus.class).to(SpongeCommandBus.class);
+        this.bind(CommandBus.class).toInstance(new SpongeCommandBus());
         this.bind(ConfigurateManager.class).to(SpongeConfigurateManager.class);
         this.bind(PlayerStorageService.class).to(SpongePlayerStorageService.class);
         this.bind(WorldStorageService.class).to(SpongeWorldStorageService.class);
@@ -73,9 +73,9 @@ public class SpongeInjector extends SeleneInjectConfiguration {
     @Override
     protected void configureDefaultInject() {
         this.bind(BroadcastService.class).to(SimpleBroadcastService.class);
-        this.bind(EventBus.class).to(SimpleEventBus.class);
-        this.bind(GlobalConfig.class).to(DefaultGlobalConfig.class);
-        this.bind(ResourceService.class).to(SimpleResourceService.class);
+        this.bind(EventBus.class).toInstance(new SimpleEventBus());
+        this.bind(GlobalConfig.class).toInstance(new DefaultGlobalConfig());
+        this.bind(ResourceService.class).toInstance(new SimpleResourceService());
         this.bind(Logger.class).toInstance(Selene.log());
     }
 }
