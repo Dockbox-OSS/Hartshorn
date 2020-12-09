@@ -67,7 +67,7 @@ public class SpongeCommandBus extends DefaultCommandBus {
     }
 
     @Override
-    protected AbstractArgumentValue<?> generateGenericArgument(String type, String permission, String key) {
+    protected AbstractArgumentValue<?> generateArgumentValue(String type, String permission, String key) {
         try {
             return new SpongeArgumentValue(type, permission, key);
         } catch (IllegalArgumentException e) {
@@ -82,6 +82,11 @@ public class SpongeCommandBus extends DefaultCommandBus {
 
     @Override
     public void apply() {
+        /*
+         Each context is separately registered based on its alias(es). While it is possible to use
+         AbstractRegistrationContext#getAliases to register all aliases at once, some command implementations may wish
+         to be aware of the used alias.
+         */
         this.getRegistrations().forEach((alias, abstractCommand) -> {
             CommandSpec spec = null;
             if (abstractCommand instanceof MethodCommandContext) {
@@ -105,6 +110,7 @@ public class SpongeCommandBus extends DefaultCommandBus {
             else
                 Selene.log().warn("Could not generate executor for '" + alias + "'. Any errors logged above.");
         });
+        super.clearAliasQueue();
     }
 
     private CommandSpec buildInheritedContextExecutor(CommandInheritanceContext context, String alias) {
@@ -123,7 +129,7 @@ public class SpongeCommandBus extends DefaultCommandBus {
     private CommandSpec.Builder buildContextExecutor(AbstractRegistrationContext context, String alias) {
         CommandSpec.Builder builder = CommandSpec.builder();
 
-        List<AbstractArgumentElement<?>> elements = super.parseArgumentElements(context.getCommand().usage());
+        List<AbstractArgumentElement<?>> elements = super.parseArgumentElements(context.getCommand().usage(), context.getCommand().permission());
         List<CommandElement> commandElements = elements.stream()
                 .filter(element -> element instanceof SpongeArgumentElement)
                 .map(element -> (SpongeArgumentElement) element)
@@ -140,10 +146,15 @@ public class SpongeCommandBus extends DefaultCommandBus {
 
     private CommandExecutor buildExecutor(AbstractRegistrationContext registrationContext, String command) {
         return (src, args) -> {
+            /*
+             Command sources need to be convertable so that they can be identified by command implementations. While it
+             is possible for extensions to implement CommandSources, these should never be used to execute commands.
+             Only the console, players, and Discord command sources can be converted natively.
+             */
             CommandSource sender = SpongeConversionUtil
                     .fromSponge(src)
                     .orElseThrow(() ->
-                            new IllegalArgumentException("Command sender is not a console or a player, did a plugin call me?"));
+                            new IllegalArgumentException("Command sender is not a convertable source type, did a plugin call me?"));
 
             SimpleCommandContext ctx = this.createCommandContext(args, sender, command);
             Exceptional<IntegratedResource> response = this.callCommandWithEvents(
@@ -162,6 +173,10 @@ public class SpongeCommandBus extends DefaultCommandBus {
             String command,
             AbstractRegistrationContext registrationContext
     ) {
+        /*
+         Extensions are allowed to modify and/or cancel commands before and after the command has initially been
+         executed. To allow this we need to ensure separate events are posted at these stages.
+         */
         Cancellable ceb = new CommandEvent.Before(sender, context).post();
 
         if (!ceb.isCancelled()) {
@@ -176,6 +191,10 @@ public class SpongeCommandBus extends DefaultCommandBus {
     private SimpleCommandContext createCommandContext(CommandContext ctx,
                                                       @NotNull CommandSource sender,
                                                       @Nullable String command) {
+        /*
+         Sponge's CommandContext does not expose parsed arguments by default, so Reflections are needed to access these
+         so that they can be converted.
+         */
         Multimap<String, Object> parsedArgs;
         try {
             Field parsedArgsF = ctx.getClass().getDeclaredField("parsedArgs");
@@ -191,6 +210,10 @@ public class SpongeCommandBus extends DefaultCommandBus {
 
         assert null != command : "Context carrier command was null";
         parsedArgs.asMap().forEach((s, o) -> o.forEach(obj -> {
+            /*
+             Simple pattern check to see if a parsed element is a flag. As these elements are already parsed the pattern
+             does not have to check for anything but the flag prefix (-f or --flag).
+             */
             if (Pattern.compile("-(-?" + s + ")").matcher(command).find())
                 flags.add(new Flag<>(this.tryConvertObject(obj), s));
             else arguments.add(new Argument<>(this.tryConvertObject(obj), s));
@@ -200,6 +223,10 @@ public class SpongeCommandBus extends DefaultCommandBus {
     }
 
     private Object tryConvertObject(Object obj) {
+        /*
+         This converts non-native (JDK) types to Selene usable types. Converters can be applied later to further convert
+         and/or modify these objects.
+         */
         Exceptional<?> oo = SpongeConversionUtil.autoDetectFromSponge(obj);
         return oo.isPresent() ? oo.get() : obj; // oo.orElse() cannot be cast due to generic ? type
     }
@@ -207,7 +234,7 @@ public class SpongeCommandBus extends DefaultCommandBus {
     @NotNull
     private SimpleCommandContext constructCommandContext(@NotNull CommandSource sender, List<CommandValue.Argument<?>> arguments, List<CommandValue.Flag<?>> flags, String command) {
         SimpleCommandContext seleneContext;
-        if (sender instanceof org.dockbox.selene.core.objects.player.Player) {
+        if (sender instanceof Locatable) {
             org.dockbox.selene.core.objects.location.Location loc = ((Locatable) sender).getLocation();
             org.dockbox.selene.core.objects.location.World world = ((Locatable) sender).getLocation().getWorld();
             seleneContext = new SimpleCommandContext(

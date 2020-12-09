@@ -389,6 +389,7 @@ public enum SpongeConversionUtil {
         if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.getInstance());
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
             return Exceptional.of(fromSponge((org.spongepowered.api.entity.living.player.Player) commandSource));
+        // TODO: MagiBridge source
         return Exceptional.of(new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'"));
     }
 

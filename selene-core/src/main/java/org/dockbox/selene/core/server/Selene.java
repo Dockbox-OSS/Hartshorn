@@ -37,7 +37,6 @@ import org.dockbox.selene.core.events.server.ServerEvent;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
-import org.dockbox.selene.core.i18n.permissions.Permission;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
@@ -76,7 +75,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("ClassWithTooManyMethods")
 public abstract class Selene {
 
-    public static Permission GLOBAL_BYPASS = new Permission("selene.admin.bypass-all");
+    public static final String GLOBAL_BYPASS = "selene.admin.bypass-all";
 
     private static final Logger log = LoggerFactory.getLogger(Selene.class);
     private String version;
