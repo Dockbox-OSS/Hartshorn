@@ -64,3 +64,22 @@ if they are expected to be on the platform, these dependencies differ per platfo
 Documentation is typically pre-built in `/docs/` in this repository, and is available at 
 [https://guuslieben.github.io/Selene/](https://guuslieben.github.io/Selene/). This contains the aggregated JavaDocs for
 all sources within Selene. To generate these JavaDocs yourself, use `mvn javadoc:aggregate`.
+
+## Development Server
+Selene contains pre-made servers for its supported platforms, with automatic build distributions towards those platforms.
+To get started, download [servers.zip](http://darwin.dockbox.org/stor/servers.zip). After downloading, extract the folder into the root directory of your project.
+
+To run the server, we recommend using [IntelliJ IDEA](https://www.jetbrains.com/idea/). 
+
+### Sponge 1.12
+Create a configuration to activate a JAR Application as follows:
+- Go to Run > Edit Configurations
+- Add a new configuration (Alt+Insert on Windows)
+- Select 'JAR Application'
+- For 'Path to JAR' select `${your working directory}\servers\sponge-112\forge-1.12.2-2709.jar`
+- For 'VM Options' enter your preferred flags, it is recommended to run the development server with at least 3GB of allocatable memory (`-Xmx3G`)
+- For 'Working directory' select `${your working directory}\servers\sponge-112\`
+- Leave the JRE and classpath settings as default
+- Add Maven Goal `-DskipTests=true clean install` to run 'Before launch'
+
+![image](https://user-images.githubusercontent.com/10957963/101648084-c1913d00-3a39-11eb-9d90-37c8ef7cdd69.png)
