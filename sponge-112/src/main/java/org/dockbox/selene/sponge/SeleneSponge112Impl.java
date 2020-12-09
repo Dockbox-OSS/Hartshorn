@@ -53,8 +53,7 @@ import java.util.concurrent.TimeUnit;
         dependencies = {
                 @Dependency(id = "plotsquared"),
                 @Dependency(id = "nucleus"),
-                @Dependency(id = "luckperms"),
-                @Dependency(id = "spotlin")
+                @Dependency(id = "luckperms")
         }
 )
 public class SeleneSponge112Impl extends Selene {
