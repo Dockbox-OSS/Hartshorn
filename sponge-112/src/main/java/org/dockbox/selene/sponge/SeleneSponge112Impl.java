@@ -53,8 +53,7 @@ import java.util.concurrent.TimeUnit;
         dependencies = {
                 @Dependency(id = "plotsquared"),
                 @Dependency(id = "nucleus"),
-                @Dependency(id = "luckperms"),
-                @Dependency(id = "spotlin")
+                @Dependency(id = "luckperms")
         }
 )
 public class SeleneSponge112Impl extends Selene {
@@ -91,7 +90,10 @@ public class SeleneSponge112Impl extends Selene {
 
     private void registerSpongeListeners(Object... listeners) {
         for (Object obj : listeners) {
-            Sponge.getEventManager().registerListeners(this, obj);
+            if (null != obj)
+                Sponge.getEventManager().registerListeners(this, obj);
+            else
+                log().warn("Attempted to register 'null' listener");
         }
     }
 

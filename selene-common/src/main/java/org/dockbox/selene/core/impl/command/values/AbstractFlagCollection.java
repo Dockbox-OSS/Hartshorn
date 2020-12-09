@@ -15,25 +15,31 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.commands;
+package org.dockbox.selene.core.impl.command.values;
 
-import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
+import java.util.List;
 
-public class TestArgumentValue extends AbstractArgumentValue<String> {
+public abstract class AbstractFlagCollection<T> {
 
-    public TestArgumentValue(String permission, String key, String type) {
-        super(permission, key, type);
+    private T reference;
+
+    protected AbstractFlagCollection(T reference) {
+        this.reference = reference;
     }
 
-    @Override
-    protected String parseValue(ArgumentConverter<?> converter, String key, String type) {
-        return null;
+    protected AbstractFlagCollection() {
     }
 
-    @Override
-    public AbstractArgumentElement<String> getElement() {
-        return null;
+    public T getReference() {
+        return this.reference;
     }
+
+    public void setReference(T reference) {
+        this.reference = reference;
+    }
+
+    public abstract void addNamedFlag(String name);
+    public abstract void addNamedPermissionFlag(String name, String permission);
+    public abstract void addValueBasedFlag(String name, AbstractArgumentValue<?> value);
+    public abstract List<AbstractArgumentElement<?>> buildAndCombines(AbstractArgumentElement<?> element);
 }

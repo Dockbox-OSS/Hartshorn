@@ -17,10 +17,18 @@
 
 package org.dockbox.selene.core.server;
 
+import org.dockbox.selene.core.annotations.command.Command;
+import org.dockbox.selene.core.command.context.CommandContext;
+import org.dockbox.selene.core.objects.targets.MessageReceiver;
+
 /**
  Low-level interface, used by the default IntegratedExtension as indicated by the mappings provided by the platform
  implementation. Used to access the extension when {@link Selene} is used
  in a {@link org.dockbox.selene.core.SeleneUtils#getExtension(Class) SeleneUtils' getExtension} method call.
  */
 public interface IntegratedExtension {
+
+    @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>")
+    void confirm(MessageReceiver src, CommandContext ctx);
+
 }

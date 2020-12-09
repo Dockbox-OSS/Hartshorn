@@ -17,25 +17,12 @@
 
 package org.dockbox.selene.core.command;
 
-import org.dockbox.selene.core.command.registry.ClassCommandRegistration;
-import org.dockbox.selene.core.command.registry.MethodCommandRegistration;
-import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.core.objects.Exceptional;
-
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.UUID;
 
 public interface CommandBus {
 
     void register(Object... objs);
-    void registerSingleMethodCommands(Class<?> clazz);
-    void registerClassCommand(Class<?> clazz, Object instance);
-
-    ClassCommandRegistration createClassRegistration(Class<?> clazz);
-    MethodCommandRegistration[] createSingleMethodRegistrations(Collection<Method> methods);
-
-    void registerCommand(String command, AbstractPermission permission, CommandRunner runner);
-    Exceptional<Boolean> confirmLastCommand(UUID uuid);
+    void apply();
+    Exceptional<Boolean> confirmCommand(String confirmId);
 
 }

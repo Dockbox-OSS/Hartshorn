@@ -15,25 +15,19 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.commands;
+package org.dockbox.selene.core.objects.keys.data;
 
-import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.extension.Extension;
 
-public class TestArgumentValue extends AbstractArgumentValue<String> {
+public final class StringPersistentDataKey extends TypedPersistentDataKey<String> {
 
-    public TestArgumentValue(String permission, String key, String type) {
-        super(permission, key, type);
+    private StringPersistentDataKey(String name, String id, Extension extension) {
+        super(name, id, extension, String.class);
     }
 
-    @Override
-    protected String parseValue(ArgumentConverter<?> converter, String key, String type) {
-        return null;
-    }
-
-    @Override
-    public AbstractArgumentElement<String> getElement() {
-        return null;
+    public static StringPersistentDataKey of(String name, Extension extension) {
+        String id = SeleneUtils.convertToExtensionIdString(name, extension);
+        return new StringPersistentDataKey(name, id, extension);
     }
 }

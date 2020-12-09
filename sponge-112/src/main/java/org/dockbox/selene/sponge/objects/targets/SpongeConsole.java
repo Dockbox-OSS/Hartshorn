@@ -25,14 +25,17 @@ import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
-public class SpongeConsole extends Console {
+public final class SpongeConsole extends Console {
 
-    // TODO: Move to Console
-    public static final Console instance = new SpongeConsole();
+    private static Console instance;
 
-    private SpongeConsole() {}
+    private SpongeConsole() {
+        if (null != instance) throw new IllegalStateException("Console has already been initialized!");
+        instance = this;
+    }
 
     public static Console getInstance() {
+        if (null == instance) return new SpongeConsole();
         return instance;
     }
 

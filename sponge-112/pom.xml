@@ -192,6 +192,32 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target name="Copy build artifact to development server">
+                                <delete>
+                                    <fileset dir="../servers/sponge-112/plugins" includes="selene-sponge-112*.jar" />
+                                </delete>
+
+                                <copy todir="../servers/sponge-112/plugins">
+                                    <fileset dir="${project.build.directory}" includes="*.jar">
+                                        <filename regex="^selene-sponge-112*.*"/>
+                                    </fileset>
+                                </copy>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

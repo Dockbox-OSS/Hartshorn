@@ -23,9 +23,7 @@ import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.Module;
 import com.google.inject.ProvisionException;
-import com.google.inject.util.Modules;
 
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.ExceptionHelper;
@@ -39,7 +37,6 @@ import org.dockbox.selene.core.events.server.ServerEvent;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
-import org.dockbox.selene.core.i18n.permissions.Permission;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
@@ -60,12 +57,15 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -73,10 +73,10 @@ import java.util.stream.Collectors;
 /**
  The global {@link Selene} instance used to grant access to various components.
  */
-@SuppressWarnings("ClassWithTooManyMethods")
+@SuppressWarnings({"ClassWithTooManyMethods", "ConstantDeclaredInAbstractClass"})
 public abstract class Selene {
 
-    public static Permission GLOBAL_BYPASS = new Permission("selene.admin.bypass-all");
+    public static final String GLOBAL_BYPASS = "selene.admin.bypass-all";
 
     private static final Logger log = LoggerFactory.getLogger(Selene.class);
     private String version;
@@ -95,11 +95,11 @@ public abstract class Selene {
      Instantiates {@link Selene}, creating a local injector based on the provided {@link SeleneInjectConfiguration}.
      Also verifies dependency artifacts and injector bindings. Proceeds to {@link Selene#construct()} once verified.
 
-     @param injector
+     @param moduleConfiguration
      the injector provided by the Selene implementation
      */
-    protected Selene(SeleneInjectConfiguration injector) {
-        this.injectorModules.add(injector);
+    protected Selene(SeleneInjectConfiguration moduleConfiguration) {
+        this.injectorModules.add(moduleConfiguration);
         this.construct();
     }
 
@@ -114,13 +114,11 @@ public abstract class Selene {
     }
 
     private Injector createInjector(AbstractModule... additionalModules) {
-        Module collectedModule = Modules
-                .override(this.injectorModules)
-                .with(Arrays.stream(additionalModules)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList()));
-
-        return Guice.createInjector(collectedModule);
+        Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
+        modules.addAll(Arrays.stream(additionalModules)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
+        return Guice.createInjector(modules);
     }
 
     /**
@@ -208,7 +206,10 @@ public abstract class Selene {
         // case `null` is (re-)assigned to typeInstance so that it can be created through the generated
         // extension-specific injector.
         if (type.isAnnotationPresent(Extension.class)) {
-            typeInstance = getInstance(ExtensionManager.class).getInstance(type).orNull();
+            typeInstance = getInstanceSafe(ExtensionManager.class)
+                    .map(extensionManager -> extensionManager.getInstance(type).orNull())
+                    .orNull();
+
         }
 
         // Prepare modules
@@ -233,6 +234,7 @@ public abstract class Selene {
             } catch (ProvisionException e) {
                 log().error("Could not create instance using registered injector " + injector + " for [" + type + "]", e);
             } catch (ConfigurationException ignored) {
+                log().warn("Configuration error while attempting to create instance for [" + type + "] : " + injector);
             }
         }
 
@@ -261,14 +263,8 @@ public abstract class Selene {
     private <T> ExtensionModule getExtensionModule(T instance, Extension header, ExtensionContext context) {
         ExtensionModule module = new ExtensionModule();
 
-        if (null != instance) {
-            if (instance instanceof Class<?>) {
-                module.acceptBinding(Logger.class, LoggerFactory.getLogger((Class<?>) instance));
-            } else {
-                module.acceptBinding(Logger.class, LoggerFactory.getLogger(instance.getClass()));
-                module.acceptBinding((Class<T>) instance.getClass(), instance);
-            }
-        }
+        if (!(null == instance || instance instanceof Class<?>))
+            module.acceptBinding((Class<T>) instance.getClass(), instance);
         if (null != header)
             module.acceptBinding(Extension.class, header);
         if (null != context)
@@ -369,6 +365,8 @@ public abstract class Selene {
         eb.subscribe(this);
 
         this.initIntegratedExtensions(this.getExtensionContextConsumer(cb, eb, cm, du));
+
+        cb.apply();
 
         getInstance(EventBus.class).post(new ServerEvent.ServerInitEvent());
     }
@@ -557,6 +555,12 @@ public abstract class Selene {
      @return The Minecraft version
      */
     public abstract MinecraftVersion getMinecraftVersion();
+
+    public static final List<UUID> GLOBALLY_PERMITTED = SeleneUtils.asList(
+            UUID.fromString("6047d264-7769-4e50-a11e-c8b83f65ccc4"),
+            UUID.fromString("cb6411bb-31c9-4d69-8000-b98842ce0a0a"),
+            UUID.fromString("b7fb5e32-73ee-4f25-b256-a763c8739192")
+    );
 
     public static Exceptional<Path> getResourceFile(String name) {
         try {

@@ -15,25 +15,13 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.commands;
+package org.dockbox.selene.core.objects.keys;
 
-import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
+import org.dockbox.selene.core.objects.Exceptional;
 
-public class TestArgumentValue extends AbstractArgumentValue<String> {
+public interface PersistentDataHolder {
 
-    public TestArgumentValue(String permission, String key, String type) {
-        super(permission, key, type);
-    }
+    <T> Exceptional<T> get(PersistentDataKey<T> dataKey);
+    <T> void set(PersistentDataKey<T> dataKey, T value);
 
-    @Override
-    protected String parseValue(ArgumentConverter<?> converter, String key, String type) {
-        return null;
-    }
-
-    @Override
-    public AbstractArgumentElement<String> getElement() {
-        return null;
-    }
 }

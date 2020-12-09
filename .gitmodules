@@ -1,0 +1,3 @@
+[submodule "servers"]
+	path = servers
+	url = https://github.com/GuusLieben/Selene-Servers.git
