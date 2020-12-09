@@ -19,6 +19,7 @@ package org.dockbox.selene.sponge.util;
 
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
+import com.magitechserver.magibridge.util.BridgeCommandSource;
 
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.command.source.CommandSource;
@@ -39,6 +40,7 @@ import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
 import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.sponge.exceptions.TypeConversionException;
+import org.dockbox.selene.sponge.objects.discord.MagiBridgeCommandSource;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
@@ -389,7 +391,8 @@ public enum SpongeConversionUtil {
         if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.getInstance());
         else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
             return Exceptional.of(fromSponge((org.spongepowered.api.entity.living.player.Player) commandSource));
-        // TODO: MagiBridge source
+        else if (commandSource instanceof BridgeCommandSource)
+            return Exceptional.of(new MagiBridgeCommandSource((BridgeCommandSource) commandSource));
         return Exceptional.of(new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'"));
     }
 
