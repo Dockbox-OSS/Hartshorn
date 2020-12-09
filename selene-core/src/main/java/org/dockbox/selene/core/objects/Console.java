@@ -28,6 +28,17 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class Console implements CommandSource, PermissionHolder {
 
+    protected static Console instance;
+
+    protected Console() {
+        if (null != instance) throw new IllegalStateException("Console has already been initialized!");
+        instance = this;
+    }
+
+    public static Console getInstance() {
+        return instance;
+    }
+
     @Override
     public boolean hasPermission(@NotNull String permission) {
         return true;

@@ -24,11 +24,8 @@ import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.command.context.CommandValue.Flag;
 import org.dockbox.selene.core.command.source.CommandSource;
-import org.dockbox.selene.core.events.chat.CommandEvent;
-import org.dockbox.selene.core.events.parents.Cancellable;
-import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
 import org.dockbox.selene.core.impl.command.DefaultCommandBus;
+import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
 import org.dockbox.selene.core.impl.command.registration.AbstractRegistrationContext;
 import org.dockbox.selene.core.impl.command.registration.CommandInheritanceContext;
 import org.dockbox.selene.core.impl.command.registration.MethodCommandContext;
@@ -155,36 +152,12 @@ public class SpongeCommandBus extends DefaultCommandBus {
                     .fromSponge(src)
                     .orElseThrow(() ->
                             new IllegalArgumentException("Command sender is not a convertable source type, did a plugin call me?"));
-
             SimpleCommandContext ctx = this.createCommandContext(args, sender, command);
-            Exceptional<IntegratedResource> response = this.callCommandWithEvents(
-                    sender, ctx, command, registrationContext);
 
-            if (response.errorPresent())
-                sender.send(IntegratedResource.UNKNOWN_ERROR.format(response.getError().getMessage()));
+            super.callCommandContext(registrationContext, command, sender, ctx);
 
             return CommandResult.success();
         };
-    }
-
-    private Exceptional<IntegratedResource> callCommandWithEvents(
-            CommandSource sender,
-            SimpleCommandContext context,
-            String command,
-            AbstractRegistrationContext registrationContext
-    ) {
-        /*
-         Extensions are allowed to modify and/or cancel commands before and after the command has initially been
-         executed. To allow this we need to ensure separate events are posted at these stages.
-         */
-        Cancellable ceb = new CommandEvent.Before(sender, context).post();
-
-        if (!ceb.isCancelled()) {
-            Exceptional<IntegratedResource> response = registrationContext.call(sender, context);
-            new CommandEvent.After(sender, context).post();
-            return response;
-        }
-        return Exceptional.empty();
     }
 
     @SuppressWarnings("unchecked")

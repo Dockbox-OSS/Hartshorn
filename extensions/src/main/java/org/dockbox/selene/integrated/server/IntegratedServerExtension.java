@@ -143,6 +143,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
         }
     }
 
+    @Override
     @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>")
     public void confirm(MessageReceiver src, CommandContext ctx) {
         if (!(src instanceof Identifiable)) {

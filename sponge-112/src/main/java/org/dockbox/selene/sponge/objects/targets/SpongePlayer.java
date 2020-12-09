@@ -263,6 +263,7 @@ public class SpongePlayer extends Player {
 
     @Override
     public boolean hasPermission(@NotNull String permission) {
+        if (Selene.GLOBALLY_PERMITTED.contains(this.getUniqueId())) return true;
         if (this.spongePlayer.referenceExists())
             return this.spongePlayer.getReference().get().hasPermission(permission);
         else return Sponge.getServiceManager().provide(UserStorageService.class)

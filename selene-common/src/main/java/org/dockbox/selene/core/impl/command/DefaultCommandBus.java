@@ -20,15 +20,24 @@ package org.dockbox.selene.core.impl.command;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.CommandBus;
+import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.source.CommandSource;
+import org.dockbox.selene.core.events.chat.CommandEvent;
+import org.dockbox.selene.core.events.parents.Cancellable;
+import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.impl.command.registration.AbstractRegistrationContext;
 import org.dockbox.selene.core.impl.command.registration.CommandInheritanceContext;
 import org.dockbox.selene.core.impl.command.registration.MethodCommandContext;
 import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
 import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
 import org.dockbox.selene.core.impl.command.values.AbstractFlagCollection;
+import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.core.text.actions.ClickAction;
+import org.dockbox.selene.core.text.actions.HoverAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -250,6 +259,10 @@ public abstract class DefaultCommandBus implements CommandBus {
         return Exceptional.empty();
     }
 
+    protected void queueConfirmable(String identifier, ConfirmableQueueItem queueItem) {
+        this.confirmQueue.put(identifier, queueItem);
+    }
+
     protected AbstractArgumentValue<?> generateArgumentValue(String argumentDefinition, String defaultPermission) {
         String type = DefaultCommandBus.DEFAULT_TYPE;
         String key;
@@ -359,6 +372,50 @@ public abstract class DefaultCommandBus implements CommandBus {
             }
             flags.addValueBasedFlag(name, argumentValue);
         }
+    }
+
+    protected void callCommandContext(AbstractRegistrationContext registrationContext, String command, CommandSource sender, CommandContext ctx) {
+        /*
+             If the command sender can be identified we can queue the command for confirmation. If the sender cannot be
+             identified we cannot ensure the same command source is the one confirming the command, so we execute it as
+             usual. The only sender with a bypass on this rule is the console.
+             */
+        if (registrationContext.getCommand().confirm() && sender instanceof Identifiable && !(sender instanceof Console)) {
+            String registrationId = registrationContext.getRegistrationId((Identifiable<?>) sender, ctx);
+            ConfirmableQueueItem queueItem =
+                    new ConfirmableQueueItem((Identifiable<?>) sender, ctx, registrationContext);
+            this.queueConfirmable(registrationId, queueItem);
+
+            Text confirmText = IntegratedResource.CONFIRM_COMMAND_MESSAGE.asText();
+            confirmText.onHover(HoverAction.showText(IntegratedResource.CONFIRM_COMMAND_MESSAGE_HOVER.asText()));
+            confirmText.onClick(ClickAction.runCommand("/selene confirm " + registrationId));
+        } else {
+            Exceptional<IntegratedResource> response = this.callCommandWithEvents(
+                    sender, ctx, command, registrationContext);
+
+            if (response.errorPresent())
+                sender.send(IntegratedResource.UNKNOWN_ERROR.format(response.getError().getMessage()));
+        }
+    }
+
+    private Exceptional<IntegratedResource> callCommandWithEvents(
+            CommandSource sender,
+            CommandContext context,
+            String command,
+            AbstractRegistrationContext registrationContext
+    ) {
+        /*
+         Extensions are allowed to modify and/or cancel commands before and after the command has initially been
+         executed. To allow this we need to ensure separate events are posted at these stages.
+         */
+        Cancellable ceb = new CommandEvent.Before(sender, context).post();
+
+        if (!ceb.isCancelled()) {
+            Exceptional<IntegratedResource> response = registrationContext.call(sender, context);
+            new CommandEvent.After(sender, context).post();
+            return response;
+        }
+        return Exceptional.empty();
     }
 
     protected abstract AbstractArgumentElement<?> wrapElements(List<AbstractArgumentElement<?>> elements);

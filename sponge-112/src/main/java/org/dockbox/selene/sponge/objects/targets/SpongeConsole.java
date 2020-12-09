@@ -25,16 +25,13 @@ import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
-public class SpongeConsole extends Console {
+public final class SpongeConsole extends Console {
 
-    // TODO: Move to Console
-    public static final Console instance = new SpongeConsole();
-
-    private SpongeConsole() {}
-
-    public static Console getInstance() {
-        return instance;
+    static {
+        instance = new SpongeConsole();
     }
+
+    private SpongeConsole() { }
 
     @Override
     public void execute(@NotNull String command) {

@@ -51,9 +51,10 @@ public enum IntegratedResource implements ResourceEntry {
     DISCORD_COMMAND_NOT_PERMITTED("You are not permitted to use that command!"),
     DISCORD_COMMAND_ERRORED("Sorry, I could not start that command. Please report this in our support channel."),
 
-    // CommandBus Confirmation
+    // CommandBus
     CONFIRM_COMMAND_MESSAGE("$1This command requires confirmation, click $2[here] $1to confirm"),
     CONFIRM_COMMAND_MESSAGE_HOVER("$1Confirm running command"),
+    MISSING_ARGUMENTS("$4The command requires arguments"),
 
     // Default characters
     DEFAULT_SEPARATOR(" - "),

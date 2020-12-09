@@ -42,13 +42,8 @@ public class CommandInheritanceContext extends AbstractRegistrationContext {
                 .findFirst()
         );
 
-        inheritedCommand
-                .ifPresent(ctx -> ctx.call(source, context))
-                .ifAbsent(() -> {
-                    source.sendWithPrefix("$4The command requires arguments"); // TODO, ResourceEntry
-                });
-
-        return Exceptional.empty(); // TODO, return ResourceEntry ifAbsent
+        inheritedCommand.ifPresent(ctx -> ctx.call(source, context));
+        return inheritedCommand.isAbsent() ? Exceptional.of(IntegratedResource.MISSING_ARGUMENTS) : Exceptional.empty();
     }
 
     public List<MethodCommandContext> getInheritedCommands() {
