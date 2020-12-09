@@ -182,14 +182,14 @@ public class SpongeCommandBus extends DefaultCommandBus {
         List<CommandValue.Flag<?>> flags = SeleneUtils.emptyList();
 
         assert null != command : "Context carrier command was null";
-        parsedArgs.asMap().forEach((s, o) -> o.forEach(obj -> {
+        parsedArgs.asMap().forEach((key, parsedArguments) -> parsedArguments.forEach(obj -> {
             /*
              Simple pattern check to see if a parsed element is a flag. As these elements are already parsed the pattern
              does not have to check for anything but the flag prefix (-f or --flag).
              */
-            if (Pattern.compile("-(-?" + s + ")").matcher(command).find())
-                flags.add(new Flag<>(this.tryConvertObject(obj), s));
-            else arguments.add(new Argument<>(this.tryConvertObject(obj), s));
+            if (Pattern.compile("-(-?" + key + ")").matcher(command).find())
+                flags.add(new Flag<>(this.tryConvertObject(obj), key));
+            else arguments.add(new Argument<>(this.tryConvertObject(obj), key));
         }));
 
         return this.constructCommandContext(sender, arguments, flags, command);

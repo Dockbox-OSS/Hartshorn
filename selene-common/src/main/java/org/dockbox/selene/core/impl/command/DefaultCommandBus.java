@@ -197,8 +197,12 @@ public abstract class DefaultCommandBus implements CommandBus {
             contexts.add(this.extractCommandInheritanceContext(parent));
 
         @NotNull @Unmodifiable Collection<Method> nonInheritedMethods =
-                SeleneUtils.getAnnotedMethods(parent, Command.class, c -> !c.inherit() || isParentRegistration);
-        nonInheritedMethods.forEach(method -> contexts.add(this.extractNonInheritedContext(method)));
+                SeleneUtils.getAnnotedMethods(parent, Command.class, c -> !c.inherit() || !isParentRegistration);
+        nonInheritedMethods.forEach(method -> {
+            MethodCommandContext context = this.extractNonInheritedContext(method);
+            if (null != context)
+                contexts.add(context);
+        });
 
         return contexts;
     }
