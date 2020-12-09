@@ -21,6 +21,7 @@ import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.impl.command.registration.AbstractRegistrationContext;
 import org.dockbox.selene.core.impl.command.registration.CommandInheritanceContext;
 import org.dockbox.selene.core.impl.command.registration.MethodCommandContext;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.test.util.TestCommandBus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -51,11 +52,39 @@ class DefaultCommandBusTests {
                 .findFirst();
 
         Optional<MethodCommandContext> contextOptional = inheritanceContext.getInheritedCommands().stream()
-                .filter(inheritedContext -> inheritedContext.getAliases().contains("noargs"))
+                .filter(inheritedContext -> inheritedContext.getAliases().contains("child"))
                 .findFirst();
 
         Assertions.assertTrue(extendedContextOptional.isPresent());
         Assertions.assertTrue(contextOptional.isPresent());
+    }
+
+    @Test
+    public void parentCommandIsPresent() {
+        AbstractRegistrationContext context = bus.getRegistrations().get("example");
+        Assertions.assertTrue(context instanceof CommandInheritanceContext);
+
+        CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) context;
+        Exceptional<MethodCommandContext> parentContext = inheritanceContext.getParentExecutor();
+        Assertions.assertTrue(parentContext.isPresent());
+    }
+
+    @Test
+    public void nonInheritedCommandIsPresent() {
+        AbstractRegistrationContext context = bus.getRegistrations().get("noninherit");
+        Assertions.assertTrue(context instanceof MethodCommandContext);
+    }
+
+    @Test
+    public void nonInheritedCommandIsNotPresentInParent() {
+        AbstractRegistrationContext sampleContext = bus.getRegistrations().get("sample");
+        Assertions.assertTrue(sampleContext instanceof CommandInheritanceContext);
+
+        CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) sampleContext;
+        Optional<MethodCommandContext> inheritedCommandContext = inheritanceContext.getInheritedCommands().stream()
+                .filter(inheritedContext -> inheritedContext.getAliases().contains("noninherit"))
+                .findFirst();
+        Assertions.assertFalse(inheritedCommandContext.isPresent());
     }
 
     @Command(aliases = {"example", "sample"}, usage = "example")
@@ -64,14 +93,8 @@ class DefaultCommandBusTests {
         @Command(aliases = "", usage = "")
         public void mainCommand() { }
 
-        @Command(aliases = "optionalarg", usage = "optionalarg [argument]")
-        public void childWithOptionalArgument() { }
-
-        @Command(aliases = "requiredarg", usage = "requiredarg <argument>")
-        public void childWithRequiredArgument() { }
-
-        @Command(aliases = "noargs", usage = "noargs")
-        public void childWithoutArgument() { }
+        @Command(aliases = "child", usage = "child")
+        public void subCommand() { }
 
         @Command(aliases = "noninherit", usage = "noninherit", inherit = false)
         public void nonInheritedChild() { }
