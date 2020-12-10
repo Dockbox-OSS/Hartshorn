@@ -17,6 +17,10 @@
 
 package org.dockbox.selene.core.objects.keys;
 
+import org.dockbox.selene.core.i18n.common.ResourceEntry;
+import org.dockbox.selene.core.i18n.entry.FakeResource;
+import org.dockbox.selene.core.i18n.entry.Resource;
+
 public final class TransactionResult {
 
     public enum Status {
@@ -26,9 +30,9 @@ public final class TransactionResult {
     private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, "");
 
     private final Status status;
-    private final String message;
+    private final ResourceEntry message;
 
-    private TransactionResult(Status status, String message) {
+    private TransactionResult(Status status, ResourceEntry message) {
         this.status = status;
         this.message = message;
     }
@@ -37,7 +41,7 @@ public final class TransactionResult {
         return this.status;
     }
 
-    public String getMessage() {
+    public ResourceEntry getMessage() {
         return this.message;
     }
 
@@ -49,12 +53,12 @@ public final class TransactionResult {
         return TransactionResult.SUCCESS;
     }
 
-    public static TransactionResult fail(String message) {
+    public static TransactionResult fail(ResourceEntry message) {
         return new TransactionResult(Status.FAILURE, message);
     }
 
     public static TransactionResult fail(Throwable cause) {
-        return new TransactionResult(Status.FAILURE, cause.getMessage());
+        return new TransactionResult(Status.FAILURE, new FakeResource(cause.getMessage()));
     }
 
 }
