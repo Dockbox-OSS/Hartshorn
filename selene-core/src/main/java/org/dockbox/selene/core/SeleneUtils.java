@@ -1096,6 +1096,10 @@ public enum SeleneUtils {
         return extension.id() + ':' + name;
     }
 
+    public static <T> PersistentDataKey<T> dataKeyOf(Class<T> type, String name, Class<?> owningClass) {
+        return dataKeyOf(type, name, getExtension(owningClass));
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> PersistentDataKey<T> dataKeyOf(Class<T> type, String name, Extension extension) {
         if (type.equals(String.class))

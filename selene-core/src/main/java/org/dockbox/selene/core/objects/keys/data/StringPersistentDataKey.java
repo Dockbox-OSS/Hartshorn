@@ -30,4 +30,9 @@ public final class StringPersistentDataKey extends TypedPersistentDataKey<String
         String id = SeleneUtils.convertToExtensionIdString(name, extension);
         return new StringPersistentDataKey(name, id, extension);
     }
+
+    public static StringPersistentDataKey of(String name, Class<?> owningClass) {
+        Extension extension = SeleneUtils.getExtension(owningClass);
+        return of(name, extension);
+    }
 }
