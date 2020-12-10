@@ -19,7 +19,6 @@ package org.dockbox.selene.core.objects.keys;
 
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.FakeResource;
-import org.dockbox.selene.core.i18n.entry.Resource;
 
 public final class TransactionResult {
 
@@ -27,7 +26,7 @@ public final class TransactionResult {
         FAILURE, SUCCESS
     }
 
-    private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, "");
+    private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, new FakeResource(""));
 
     private final Status status;
     private final ResourceEntry message;

@@ -229,8 +229,8 @@ public class SpongeItem extends Item<ItemStack> {
             spongeItemData.fillData(data);
             DataTransactionResult result = itemStack.offer(spongeItemData);
             if (result.isSuccessful()) return TransactionResult.success();
-            else return TransactionResult.fail("Could not apply key to this item");
-        }).orElseGet(() -> TransactionResult.fail("Item reference lost"));
+            else return TransactionResult.fail(IntegratedResource.KEY_BINDING_FAILED);
+        }).orElseGet(() -> TransactionResult.fail(IntegratedResource.LOST_REFERENCE));
     }
 
     @Override

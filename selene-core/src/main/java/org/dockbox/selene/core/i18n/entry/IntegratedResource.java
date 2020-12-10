@@ -45,6 +45,8 @@ public enum IntegratedResource implements ResourceEntry {
 
     // - Generic common error message
     UNKNOWN_ERROR("$1An error occurred. {0}"),
+    KEY_BINDING_FAILED("$4Key cannot be applied to this type"),
+    LOST_REFERENCE("$4Reference to object lost"),
 
     // Discord
     DISCORD_COMMAND_UNKNOWN("Sorry, I don't know what to do with that command!"),

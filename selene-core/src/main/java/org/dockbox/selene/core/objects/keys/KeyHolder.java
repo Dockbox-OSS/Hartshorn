@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.objects.keys;
 
+import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 
@@ -50,7 +51,7 @@ The applied value.
             return key.set((T) this, appliedValue);
         } catch (ClassCastException e) {
             Selene.getServer().except("Attempted to apply " + key + " to non-supporting type " + this, e);
-            return TransactionResult.fail("Key cannot be applied to this type");
+            return TransactionResult.fail(IntegratedResource.KEY_BINDING_FAILED);
         }
     }
 
