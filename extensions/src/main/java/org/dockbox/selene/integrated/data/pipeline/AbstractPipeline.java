@@ -252,9 +252,7 @@ public abstract class AbstractPipeline<P, I> {
      * Removes the last {@link IPipe} from the pipeline. If there are no {@link IPipe}s in the pipeline, this does nothing.
      */
     public void removeLastPipe() {
-        if (!this.pipes.isEmpty()) {
-            this.pipes.remove(this.pipes.size() - 1);
-        }
+        this.removePipeAt(this.size() - 1);
     }
 
     /**
