@@ -24,11 +24,13 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
+import org.dockbox.selene.core.objects.keys.TransactionResult;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.item.EnchantmentData;
@@ -206,14 +208,16 @@ public class SpongeItem extends Item<ItemStack> {
     }
 
     @Override
-    public <T> void set(PersistentDataKey<T> dataKey, T value) {
-        this.getReference().ifPresent(itemStack -> {
+    public <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
+        return this.getReference().map(itemStack -> {
             Map<String, Object> data = itemStack.get(MutableSpongeItemData.class).orElse(new MutableSpongeItemData()).getData();
             data.put(dataKey.getDataKeyId(), value);
 
             MutableSpongeItemData spongeItemData = new MutableSpongeItemData();
             spongeItemData.fillData(data);
-            itemStack.offer(spongeItemData);
-        });
+            DataTransactionResult result = itemStack.offer(spongeItemData);
+            if (result.isSuccessful()) return TransactionResult.success();
+            else return TransactionResult.fail("Could not apply key to this item");
+        }).orElseGet(() -> TransactionResult.fail("Item reference lost"));
     }
 }

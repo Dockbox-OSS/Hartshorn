@@ -34,20 +34,22 @@ import org.dockbox.selene.core.server.Selene;
 public interface KeyHolder<T> {
 
     /**
-     Apply a given value of type {@link A} using a given {@link Key} type to the implementation of this interface.
-
-     @param <A>
+     Apply a given value of type {@link A} using a given {@link Key} type to the implementation of this interface.@param <A>
      The type parameter of the value to apply, constrained by the type parameter of the given {@link Key}.
      @param key
-     The key to apply, providing the constraints for the type to apply to and the type of the applied value.
+ The key to apply, providing the constraints for the type to apply to and the type of the applied value.
      @param appliedValue
-     The applied value.
+The applied value.
+     @return
+
+
      */
-    default <A> void applyKey(Key<T, A> key, A appliedValue) {
+    default <A> TransactionResult set(Key<T, A> key, A appliedValue) {
         try {
-            key.applyTo((T) this, appliedValue);
+            return key.applyTo((T) this, appliedValue);
         } catch (ClassCastException e) {
             Selene.getServer().except("Attempted to apply " + key + " to non-supporting type " + this, e);
+            return TransactionResult.fail("Key cannot be applied to this type");
         }
     }
 
@@ -63,8 +65,8 @@ public interface KeyHolder<T> {
      @return The value wrapped in a {@link Exceptional}, which will contain a {@link ClassCastException}
      if <em>this</em> does not match the constraint of the given {@link Key}.
      */
-    default <A> Exceptional<A> getValue(Key<T, A> key) {
-        return Exceptional.of(() -> key.getFrom((T) this));
+    default <A> Exceptional<A> get(Key<T, A> key) {
+        return key.getFrom((T) this);
     }
 
 }

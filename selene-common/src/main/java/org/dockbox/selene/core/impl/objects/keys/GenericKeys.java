@@ -31,15 +31,15 @@ import java.util.UUID;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public final class GenericKeys {
 
-    public static final Key<Identifiable, UUID> UNIQUE_ID = new GenericKey<>(Identifiable::setUniqueId, Identifiable::getUniqueId);
-    public static final Key<Identifiable, String> NAME = new GenericKey<>(Identifiable::setName, Identifiable::getName);
+    public static final Key<Identifiable, UUID> UNIQUE_ID = GenericKey.ofUnsafe(Identifiable::setUniqueId, Identifiable::getUniqueId);
+    public static final Key<Identifiable, String> NAME = GenericKey.ofUnsafe(Identifiable::setName, Identifiable::getName);
 
-    public static final Key<Player, Gamemode> GAMEMODE = new GenericKey<>(Player::setGamemode, Player::getGamemode);
-    public static final Key<Player, Language> LANGUAGE = new GenericKey<>(Player::setLanguage, Player::getLanguage);
+    public static final Key<Player, Gamemode> GAMEMODE = GenericKey.ofUnsafe(Player::setGamemode, Player::getGamemode);
+    public static final Key<Player, Language> LANGUAGE = GenericKey.ofUnsafe(Player::setLanguage, Player::getLanguage);
 
-    public static final Key<Item, Text> DISPLAY_NAME = new GenericKey<>(Item::setDisplayName, Item::getDisplayName);
-    public static final Key<Item, Integer> AMOUNT = new GenericKey<>(Item::setAmount, Item::getAmount);
-    public static final Key<Item, List<Text>> LORE = new GenericKey<>(Item::setLore, Item::getLore);
+    public static final Key<Item, Text> DISPLAY_NAME = GenericKey.ofUnsafe(Item::setDisplayName, Item::getDisplayName);
+    public static final Key<Item, Integer> AMOUNT = GenericKey.ofUnsafe(Item::setAmount, Item::getAmount);
+    public static final Key<Item, List<Text>> LORE = GenericKey.ofUnsafe(Item::setLore, Item::getLore);
 
     private GenericKeys() {
     }

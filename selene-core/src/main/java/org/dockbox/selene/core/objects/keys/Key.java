@@ -17,7 +17,9 @@
 
 package org.dockbox.selene.core.objects.keys;
 
-import java.util.function.BiConsumer;
+import org.dockbox.selene.core.objects.Exceptional;
+
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -32,8 +34,8 @@ import java.util.function.Function;
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class Key<K, A> {
 
-    private final BiConsumer<K, A> setter;
-    private final Function<K, A> getter;
+    private final BiFunction<K, A, TransactionResult> setter;
+    private final Function<K, Exceptional<A>> getter;
 
     /**
      Instantiates a new Key using a given setter and getter.
@@ -46,7 +48,7 @@ public abstract class Key<K, A> {
      constrained using type parameter {@link K}. The return value being the value retreived from the type, constrained
      using type parameter {@link A}.
      */
-    protected Key(BiConsumer<K, A> setter, Function<K, A> getter) {
+    protected Key(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
         this.setter = setter;
         this.getter = getter;
     }
@@ -59,8 +61,8 @@ public abstract class Key<K, A> {
      @param appliedValue
      The value to apply, constrained by type parameter {@link A}.
      */
-    public void applyTo(K keyType, A appliedValue) {
-        this.setter.accept(keyType, appliedValue);
+    public TransactionResult applyTo(K keyType, A appliedValue) {
+        return this.setter.apply(keyType, appliedValue);
     }
 
     /**
@@ -71,7 +73,7 @@ public abstract class Key<K, A> {
 
      @return The retrieved value, constrained by type parameter {@link A}.
      */
-    public A getFrom(K keyType) {
+    public Exceptional<A> getFrom(K keyType) {
         return this.getter.apply(keyType);
     }
 

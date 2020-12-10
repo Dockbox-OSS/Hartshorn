@@ -22,6 +22,6 @@ import org.dockbox.selene.core.objects.Exceptional;
 public interface PersistentDataHolder {
 
     <T> Exceptional<T> get(PersistentDataKey<T> dataKey);
-    <T> void set(PersistentDataKey<T> dataKey, T value);
+    <T> TransactionResult set(PersistentDataKey<T> dataKey, T value);
 
 }

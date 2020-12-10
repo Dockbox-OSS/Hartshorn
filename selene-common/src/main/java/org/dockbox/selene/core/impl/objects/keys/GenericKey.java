@@ -17,9 +17,12 @@
 
 package org.dockbox.selene.core.impl.objects.keys;
 
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.keys.Key;
+import org.dockbox.selene.core.objects.keys.TransactionResult;
 
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class GenericKey<K, A> extends Key<K, A> {
@@ -34,7 +37,30 @@ public final class GenericKey<K, A> extends Key<K, A> {
      constrained using type parameter {@link K}. The return value being the value retreived from the type, constrained
      using type parameter {@link A}.
      */
-    public GenericKey(BiConsumer<K, A> setter, Function<K, A> getter) {
+    private GenericKey(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
         super(setter, getter);
+    }
+
+    private GenericKey(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter) {
+        super((t, u) -> {
+            setter.accept(t, u);
+            return TransactionResult.success();
+        }, getter);
+    }
+
+    public static <K, A> GenericKey<K, A> of(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter) {
+        return new GenericKey<>(setter, getter);
+    }
+
+    public static <K, A> GenericKey<K, A> ofChecked(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
+        return new GenericKey<>(setter, getter);
+    }
+
+    public static <K, A> GenericKey<K, A> ofUnsafe(BiConsumer<K, A> setter, Function<K, A> getter) {
+        return new GenericKey<>(setter, k -> Exceptional.of(() -> getter.apply(k)));
+    }
+
+    public static <K, A> GenericKey<K, A> ofUnsafeChecked(BiFunction<K, A, TransactionResult> setter, Function<K, A> getter) {
+        return new GenericKey<>(setter, k -> Exceptional.of(() -> getter.apply(k)));
     }
 }
