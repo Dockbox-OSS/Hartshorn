@@ -62,9 +62,13 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
 
     public abstract void setDisplayName(Text displayName);
 
+    public abstract void removeDisplayName();
+
     public abstract void setLore(List<Text> lore);
 
     public abstract void addLore(Text lore);
+
+    public abstract void removeLore();
 
     public abstract void setAmount(int amount);
 

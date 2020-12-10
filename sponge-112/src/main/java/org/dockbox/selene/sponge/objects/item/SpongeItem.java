@@ -33,7 +33,9 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.DisplayNameData;
 import org.spongepowered.api.data.manipulator.mutable.item.EnchantmentData;
+import org.spongepowered.api.data.manipulator.mutable.item.LoreData;
 import org.spongepowered.api.data.value.mutable.MapValue;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.enchantment.Enchantment;
@@ -42,12 +44,12 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class SpongeItem extends Item<ItemStack> {
-
 
     public static final String ID = "item_data";
     public static final String NAME = "Selene Item Data";
@@ -116,6 +118,11 @@ public class SpongeItem extends Item<ItemStack> {
     }
 
     @Override
+    public void removeDisplayName() {
+        this.getReference().ifPresent(i -> i.remove(DisplayNameData.class));
+    }
+
+    @Override
     public void setLore(List<Text> lore) {
         this.getReference().ifPresent(i -> i.offer(Keys.ITEM_LORE, lore.stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList())));
     }
@@ -125,6 +132,11 @@ public class SpongeItem extends Item<ItemStack> {
         List<Text> existing = this.getLore();
         existing.add(lore);
         this.setLore(existing);
+    }
+
+    @Override
+    public void removeLore() {
+        this.getReference().ifPresent(i -> i.remove(LoreData.class));
     }
 
     @Override
