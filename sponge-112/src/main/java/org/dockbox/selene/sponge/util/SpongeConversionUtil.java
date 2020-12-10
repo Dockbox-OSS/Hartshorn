@@ -460,4 +460,10 @@ public enum SpongeConversionUtil {
         else if (handType == HandTypes.OFF_HAND) return Hand.OFF_HAND;
         throw new UncheckedSeleneException("Invalid value in context '" + handType + "'");
     }
+
+    public static HandType toSponge(Hand hand) {
+        if (Hand.MAIN_HAND == hand) return HandTypes.MAIN_HAND;
+        if (Hand.OFF_HAND == hand) return HandTypes.OFF_HAND;
+        throw new UncheckedSeleneException("Invalid value in context '" + hand + "'");
+    }
 }

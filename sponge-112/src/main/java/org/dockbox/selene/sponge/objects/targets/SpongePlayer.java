@@ -38,6 +38,7 @@ import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
+import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -46,12 +47,10 @@ import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
-import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.Slot;
 import org.spongepowered.api.item.inventory.entity.MainPlayerInventory;
 import org.spongepowered.api.item.inventory.property.SlotPos;
-import org.spongepowered.api.item.inventory.query.QueryOperationTypes;
 import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.util.Tristate;
@@ -139,6 +138,14 @@ public class SpongePlayer extends Player {
         }).orElse(Item.AIR);
     }
 
+    @SuppressWarnings("OverlyStrongTypeCast")
+    @Override
+    public void setItemInHand(Hand hand, Item<?> item) {
+        this.spongePlayer.getReference().ifPresent(player -> {
+            player.setItemInHand(SpongeConversionUtil.toSponge(hand), SpongeConversionUtil.toSponge((SpongeItem) item));
+        });
+    }
+
     @Override
     public boolean isSneaking() {
         return this.spongePlayer.getReference().map(p -> p.get(Keys.IS_SNEAKING).orElse(false))
@@ -173,8 +180,8 @@ public class SpongePlayer extends Player {
         }
         if (this.spongePlayer.referenceExists()) {
             this.spongePlayer.getReference().ifPresent(player -> {
-                Inventory main = player.getInventory().query(MainPlayerInventory.class);
-                Optional<Slot> slotOptional = ((MainPlayerInventory) main).getSlot(SlotPos.of(column, row));
+                MainPlayerInventory main = player.getInventory().query(MainPlayerInventory.class);
+                Optional<Slot> slotOptional = main.getSlot(SlotPos.of(column, row));
                 slotOptional.ifPresent(slot ->
                         slot.offer(SpongeConversionUtil.toSponge((Item<ItemStack>) item))
                 );
@@ -191,10 +198,12 @@ public class SpongePlayer extends Player {
     public Exceptional<Item<?>> getItemAt(int row, int column) {
         if (this.spongePlayer.referenceExists()) {
             return this.spongePlayer.getReference().map(player -> {
-                Slot slot = player.getInventory().query(QueryOperationTypes.INVENTORY_PROPERTY.of(SlotPos.of(column, row)));
-                return slot.peek().map(SpongeConversionUtil::fromSponge)
-                        .map(item -> (Item) item)
-                        .orElseGet(() -> Item.of("0"));
+                MainPlayerInventory main = player.getInventory().query(MainPlayerInventory.class);
+                Exceptional<Slot> optionalSlot = Exceptional.of(main.getSlot(SlotPos.of(column, row)));
+                return optionalSlot.map(slot ->
+                        slot.peek().map(SpongeConversionUtil::fromSponge)
+                                .map(item -> (Item) item)
+                                .orElseGet(() -> Item.of("0"))).orNull();
             });
         }
         return Exceptional.of(new IllegalStateException("Player reference lost"));

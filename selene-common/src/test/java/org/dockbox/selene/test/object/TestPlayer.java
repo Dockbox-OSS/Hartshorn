@@ -184,6 +184,11 @@ public class TestPlayer extends Player {
     }
 
     @Override
+    public void setItemInHand(Hand hand, Item<?> item) {
+
+    }
+
+    @Override
     public boolean isSneaking() {
         return false;
     }

@@ -107,6 +107,8 @@ public abstract class Player
 
     public abstract Item<?> getItemInHand(Hand hand);
 
+    public abstract void setItemInHand(Hand hand, Item<?> item);
+
     @Override
     public int hashCode() {
         return this.getUniqueId().hashCode();
