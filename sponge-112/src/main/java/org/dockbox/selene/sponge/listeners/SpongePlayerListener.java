@@ -344,9 +344,10 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerInteracted(HandInteractEvent event,
-                                   @Getter("getSource") Player player) {
+    public void onPlayerInteractedAir(HandInteractEvent event,
+                                      @Getter("getSource") Player player) {
         if (event instanceof InteractBlockEvent || event instanceof InteractEntityEvent) return;
+        if (event.getInteractionPoint().isPresent()) return;
 
         Sneaking sneaking = player.get(Keys.IS_SNEAKING).orElse(false) ? Sneaking.SNEAKING : Sneaking.STANDING;
         ClickType type;
