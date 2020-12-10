@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.tools.exceptions;
+package org.dockbox.selene.integrated.tools;
 
 import org.dockbox.selene.core.events.AbstractCancellableEvent;
 import org.dockbox.selene.core.objects.item.Item;
@@ -23,7 +23,6 @@ import org.dockbox.selene.core.objects.player.ClickType;
 import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.player.Sneaking;
-import org.dockbox.selene.integrated.tools.ItemTool;
 
 public class ToolInteractionEvent extends AbstractCancellableEvent {
 

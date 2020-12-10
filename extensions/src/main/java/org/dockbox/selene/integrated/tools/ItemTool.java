@@ -24,7 +24,6 @@ import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.player.Sneaking;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.integrated.tools.exceptions.ToolInteractionEvent;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.List;

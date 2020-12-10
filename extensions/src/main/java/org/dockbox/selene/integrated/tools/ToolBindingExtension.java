@@ -18,7 +18,6 @@
 package org.dockbox.selene.integrated.tools;
 
 import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent;
@@ -29,12 +28,7 @@ import org.dockbox.selene.core.objects.keys.Key;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.dockbox.selene.core.objects.keys.TransactionResult;
 import org.dockbox.selene.core.objects.keys.data.StringPersistentDataKey;
-import org.dockbox.selene.core.objects.player.ClickType;
-import org.dockbox.selene.core.objects.player.Hand;
-import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.player.Sneaking;
-import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.integrated.tools.exceptions.ToolInteractionEvent;
 
 import java.util.Map;
 import java.util.UUID;
@@ -127,30 +121,6 @@ public class ToolBindingExtension {
             tool.perform(event.getTarget(), itemInHand);
             event.setCancelled(true); // To prevent block/entity damage
         }
-    }
-
-    @Command(aliases = "toolbind", usage = "toolbind")
-    public void bindCommand(Player player) {
-        Item<?> item = Item.of("minecraft:stick");
-        ItemTool tool = ItemTool.builder()
-                .only(player)
-                .only(ClickType.SECONDARY)
-                .only(Sneaking.SNEAKING)
-                .name(Text.of("$1Magic wand"))
-                .lore(SeleneUtils.asList(Text.of("$2Lore, yo!")))
-                .perform((p, i) -> p.send("Performed action with " + i.getId()))
-                .build();
-        item.set(ToolBindingExtension.TOOL, tool);
-        player.giveItem(item);
-        player.send("Tada! Your very own magic wand");
-    }
-
-    @Command(aliases = "clearbind", usage = "clearbind")
-    public void clearCommand(Player player) {
-        Item<?> item = player.getItemInHand(Hand.MAIN_HAND);
-        item.remove(ToolBindingExtension.TOOL);
-        player.setItemInHand(Hand.MAIN_HAND, item);
-        player.send("Cleared!");
     }
 
 }
