@@ -30,6 +30,7 @@ import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.dockbox.selene.core.objects.keys.TransactionResult;
 import org.dockbox.selene.core.objects.keys.data.StringPersistentDataKey;
 import org.dockbox.selene.core.objects.player.ClickType;
+import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.player.Sneaking;
 import org.dockbox.selene.core.text.Text;
@@ -48,9 +49,11 @@ public class ToolBindingExtension {
 
     public static final Key<Item, ItemTool> TOOL = GenericKey.ofChecked(
             // Not possible to use method references here due to instance being initialized later
-            (item, tool) -> instance.applyToolKey(item, tool),
-            item -> instance.obtainToolKey(item)
+            (item, tool) -> instance.setTool(item, tool),
+            item -> instance.getTool(item),
+            item -> instance.removeTool(item)
     );
+
     private static final PersistentDataKey<String> PERSISTENT_TOOL =
             StringPersistentDataKey.of("toolbinding", ToolBindingExtension.class);
 
@@ -60,7 +63,7 @@ public class ToolBindingExtension {
         instance = this;
     }
 
-    public TransactionResult applyToolKey(Item<?> item, ItemTool tool) {
+    private TransactionResult setTool(Item<?> item, ItemTool tool) {
         if (item.isBlock()) return TransactionResult.fail("Tool cannot be bound to blocks");
         if (item == Item.AIR) return TransactionResult.fail("Tool cannot be bound to hand");
         if (item.get(PERSISTENT_TOOL).isPresent())
@@ -77,7 +80,7 @@ public class ToolBindingExtension {
         return result;
     }
 
-    public Exceptional<ItemTool> obtainToolKey(Item item) {
+    private Exceptional<ItemTool> getTool(Item item) {
         Exceptional<String> identifier = item.get(PERSISTENT_TOOL);
         if (identifier.isAbsent()) return Exceptional.empty();
 
@@ -86,6 +89,18 @@ public class ToolBindingExtension {
         ItemTool itemTool = this.registry.get(registryIdentifier);
 
         return Exceptional.ofNullable(itemTool);
+    }
+
+    private void removeTool(Item item) {
+        Exceptional<String> identifier = item.get(PERSISTENT_TOOL);
+        if (identifier.isAbsent()) return;
+
+        Exceptional<ItemTool> tool = this.getTool(item);
+        if (tool.isAbsent()) return;
+
+        item.remove(PERSISTENT_TOOL);
+        this.registry.remove(identifier.get());
+        tool.get().reset(item);
     }
 
     @Listener
@@ -110,6 +125,7 @@ public class ToolBindingExtension {
             toolInteractionEvent.post();
             if (toolInteractionEvent.isCancelled()) return;
             tool.perform(event.getTarget(), itemInHand);
+            event.setCancelled(true); // To prevent block/entity damage
         }
     }
 
@@ -126,6 +142,15 @@ public class ToolBindingExtension {
                 .build();
         item.set(ToolBindingExtension.TOOL, tool);
         player.giveItem(item);
+        player.send("Tada! Your very own magic wand");
+    }
+
+    @Command(aliases = "clearbind", usage = "clearbind")
+    public void clearCommand(Player player) {
+        Item<?> item = player.getItemInHand(Hand.MAIN_HAND);
+        item.remove(ToolBindingExtension.TOOL);
+        player.setItemInHand(Hand.MAIN_HAND, item);
+        player.send("Cleared!");
     }
 
 }

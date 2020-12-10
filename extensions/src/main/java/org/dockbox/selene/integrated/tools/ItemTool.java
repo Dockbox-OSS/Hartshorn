@@ -60,6 +60,11 @@ public class ItemTool {
         if (null != this.lore) item.setLore(this.lore);
     }
 
+    public void reset(Item item) {
+        item.removeDisplayName();
+        item.removeLore();
+    }
+
     public static ToolBuilder builder() { return new ToolBuilder(); }
 
     public static final class ToolBuilder {
