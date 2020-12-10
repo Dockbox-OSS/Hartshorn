@@ -32,6 +32,8 @@ import java.util.List;
 @SuppressWarnings("rawtypes")
 public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<Item>, PersistentDataHolder {
 
+    public static Item<?> AIR = Item.of("minecraft:air");
+
     private String id;
 
     protected Item(@NotNull T reference) {
