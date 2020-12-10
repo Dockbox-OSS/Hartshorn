@@ -24,6 +24,7 @@ import com.magitechserver.magibridge.util.BridgeCommandSource;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
+import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.Exceptional;
@@ -31,6 +32,7 @@ import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Warp;
 import org.dockbox.selene.core.objects.player.Gamemode;
+import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
@@ -48,6 +50,8 @@ import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.source.ConsoleSource;
+import org.spongepowered.api.data.type.HandType;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
@@ -449,5 +453,11 @@ public enum SpongeConversionUtil {
                 location,
                 warp.getName()
         );
+    }
+
+    public static Hand fromSponge(HandType handType) {
+        if (handType == HandTypes.MAIN_HAND) return Hand.MAIN_HAND;
+        else if (handType == HandTypes.OFF_HAND) return Hand.OFF_HAND;
+        throw new UncheckedSeleneException("Invalid value in context '" + handType + "'");
     }
 }

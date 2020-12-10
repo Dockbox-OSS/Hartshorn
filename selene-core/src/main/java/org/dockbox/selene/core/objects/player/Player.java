@@ -19,10 +19,11 @@ package org.dockbox.selene.core.objects.player;
 
 import com.boydti.fawe.object.FawePlayer;
 
+import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.command.source.CommandSource;
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.InventoryHolder;
 import org.dockbox.selene.core.objects.targets.Locatable;
@@ -36,7 +37,7 @@ public abstract class Player
         extends Identifiable<Player>
         implements CommandSource, PermissionHolder, Locatable, InventoryHolder {
 
-    public Player(@NotNull UUID uniqueId, @NotNull String name) {
+    protected Player(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
     }
 
@@ -104,5 +105,21 @@ public abstract class Player
         }
     }
 
+    public abstract Item<?> getItemInHand(Hand hand);
+
+    @Override
+    public int hashCode() {
+        return this.getUniqueId().hashCode();
+    }
+
+    @SuppressWarnings("OverlyStrongTypeCast")
+    @Override
+    public boolean equals(Object obj) {
+        if (null == obj) return false;
+        if (obj instanceof Player) return this.getUniqueId().equals(((Player) obj).getUniqueId());
+        return false;
+    }
+
+    public abstract boolean isSneaking();
 
 }

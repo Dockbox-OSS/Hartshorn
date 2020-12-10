@@ -23,6 +23,7 @@ import com.boydti.fawe.object.FawePlayer;
 import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.chat.SendMessageEvent;
+import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
@@ -32,6 +33,7 @@ import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Gamemode;
+import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
@@ -40,6 +42,8 @@ import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.type.HandType;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.item.inventory.Inventory;
@@ -111,6 +115,34 @@ public class SpongePlayer extends Player {
     @Override
     public void setLanguage(@NotNull Language lang) {
         Selene.getInstance(PlayerStorageService.class).setLanguagePreference(this.getUniqueId(), lang);
+    }
+
+    @Override
+    public Item<?> getItemInHand(Hand hand) {
+        return this.spongePlayer.getReference().map(player -> {
+            HandType handType;
+            switch (hand) {
+                case MAIN_HAND:
+                    handType = HandTypes.MAIN_HAND;
+                    break;
+                case OFF_HAND:
+                    handType = HandTypes.OFF_HAND;
+                    break;
+                default:
+                    throw new UncheckedSeleneException("Unsupported value in context '" + hand + "'");
+            }
+            Optional<ItemStack> itemStack = player.getItemInHand(handType);
+            if (itemStack.isPresent()) {
+                return SpongeConversionUtil.fromSponge(itemStack.get());
+            }
+            return Item.AIR;
+        }).orElse(Item.AIR);
+    }
+
+    @Override
+    public boolean isSneaking() {
+        return this.spongePlayer.getReference().map(p -> p.get(Keys.IS_SNEAKING).orElse(false))
+                .orElse(false);
     }
 
     @Override
