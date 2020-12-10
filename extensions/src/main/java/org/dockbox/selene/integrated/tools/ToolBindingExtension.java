@@ -33,6 +33,7 @@ import org.dockbox.selene.core.objects.player.ClickType;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.player.Sneaking;
 import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.integrated.tools.exceptions.ToolInteractionEvent;
 
 import java.util.Map;
 import java.util.UUID;
@@ -87,11 +88,44 @@ public class ToolBindingExtension {
         return Exceptional.ofNullable(itemTool);
     }
 
+    @Listener
+    public void onPlayerInteracted(PlayerInteractEvent event) {
+        Item<?> itemInHand = event.getTarget().getItemInHand(event.getHand());
+        if (itemInHand == Item.AIR || itemInHand.isBlock()) return;
+
+        Exceptional<String> identifier = itemInHand.get(PERSISTENT_TOOL);
+        if (identifier.isAbsent()) return;
+        if (!this.registry.containsKey(identifier.get())) return;
+        ItemTool tool = this.registry.get(identifier.get());
+
+        ToolInteractionEvent toolInteractionEvent = new ToolInteractionEvent(
+                event.getTarget(),
+                itemInHand,
+                tool,
+                event.getHand(),
+                event.getClientClickType(),
+                event.getTarget().isSneaking() ? Sneaking.SNEAKING : Sneaking.STANDING);
+
+        if (tool.accepts(toolInteractionEvent)) {
+            toolInteractionEvent.post();
+            if (toolInteractionEvent.isCancelled()) return;
+            tool.perform(event.getTarget(), itemInHand);
+        }
     }
 
-    public static ItemTool obtainToolKey(Item<?> item) {
-        // TODO
-        return new ItemTool();
+    @Command(aliases = "toolbind", usage = "toolbind")
+    public void bindCommand(Player player) {
+        Item<?> item = Item.of("minecraft:stick");
+        ItemTool tool = ItemTool.builder()
+                .only(player)
+                .only(ClickType.SECONDARY)
+                .only(Sneaking.SNEAKING)
+                .name(Text.of("$1Magic wand"))
+                .lore(SeleneUtils.asList(Text.of("$2Lore, yo!")))
+                .perform((p, i) -> p.send("Performed action with " + i.getId()))
+                .build();
+        item.set(ToolBindingExtension.TOOL, tool);
+        player.giveItem(item);
     }
 
 }
