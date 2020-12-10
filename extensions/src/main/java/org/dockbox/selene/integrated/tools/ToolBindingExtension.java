@@ -21,6 +21,8 @@ import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent;
+import org.dockbox.selene.core.i18n.common.ResourceEntry;
+import org.dockbox.selene.core.i18n.entry.Resource;
 import org.dockbox.selene.core.impl.objects.keys.GenericKey;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
@@ -49,7 +51,11 @@ public class ToolBindingExtension {
     );
 
     private static final PersistentDataKey<String> PERSISTENT_TOOL =
-            StringPersistentDataKey.of("toolbinding", ToolBindingExtension.class);
+            StringPersistentDataKey.of("Tool Binding", ToolBindingExtension.class);
+
+    private static final ResourceEntry TOOL_ERROR_BLOCK = new Resource("Tool cannot be bound to blocks", "toolbinding.error.block");
+    private static final ResourceEntry TOOL_ERROR_HAND = new Resource("Tool cannot be bound to hand", "toolbinding.error.hand");
+    private static final ResourceEntry TOOL_ERROR_DUPLICATE = new Resource("There is already a tool bound to this item", "toolbinding.error.duplicate");
 
     private final Map<String, ItemTool> registry = SeleneUtils.emptyConcurrentMap();
 
@@ -58,10 +64,10 @@ public class ToolBindingExtension {
     }
 
     private TransactionResult setTool(Item<?> item, ItemTool tool) {
-        if (item.isBlock()) return TransactionResult.fail("Tool cannot be bound to blocks");
-        if (item == Item.AIR) return TransactionResult.fail("Tool cannot be bound to hand");
+        if (item.isBlock()) return TransactionResult.fail(TOOL_ERROR_BLOCK);
+        if (item == Item.AIR) return TransactionResult.fail(TOOL_ERROR_HAND);
         if (item.get(PERSISTENT_TOOL).isPresent())
-            return TransactionResult.fail("There is already a tool bound to this item");
+            return TransactionResult.fail(TOOL_ERROR_DUPLICATE);
 
         String bindingId = UUID.randomUUID().toString();
 
