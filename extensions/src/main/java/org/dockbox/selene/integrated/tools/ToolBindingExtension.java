@@ -17,36 +17,76 @@
 
 package org.dockbox.selene.integrated.tools;
 
-import com.google.inject.Inject;
-
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.command.Command;
+import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent;
 import org.dockbox.selene.core.impl.objects.keys.GenericKey;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.Key;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
+import org.dockbox.selene.core.objects.keys.TransactionResult;
 import org.dockbox.selene.core.objects.keys.data.StringPersistentDataKey;
+import org.dockbox.selene.core.objects.player.ClickType;
+import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.objects.player.Sneaking;
+import org.dockbox.selene.core.text.Text;
 
+import java.util.Map;
+import java.util.UUID;
+
+@SuppressWarnings("rawtypes")
 @Extension(id = "toolbinding", name = "Tool Binding",
            description = "Adds the ability to bind commands to tools and items",
            authors = "GuusLieben", uniqueId = "287292f6-05f1-46a1-815b-b180f1488854")
 public class ToolBindingExtension {
 
-    // TODO GuusLieben, implementation of external key registration
-    @SuppressWarnings("rawtypes")
-    public static final Key<Item, ItemTool> TOOL = new GenericKey<>(
-            ToolBindingExtension::applyToolKey,
-            ToolBindingExtension::obtainToolKey
+    private static ToolBindingExtension instance;
+
+    public static final Key<Item, ItemTool> TOOL = GenericKey.ofChecked(
+            // Not possible to use method references here due to instance being initialized later
+            (item, tool) -> instance.applyToolKey(item, tool),
+            item -> instance.obtainToolKey(item)
     );
+    private static final PersistentDataKey<String> PERSISTENT_TOOL =
+            StringPersistentDataKey.of("toolbinding", ToolBindingExtension.class);
 
-    @Inject
-    private Extension extension;
+    private final Map<String, ItemTool> registry = SeleneUtils.emptyConcurrentMap();
 
-    private final PersistentDataKey<String> PERSISTENT_TOOL =
-            StringPersistentDataKey.of("toolbinding", this.extension);
+    public ToolBindingExtension() {
+        instance = this;
+    }
 
-    public static void applyToolKey(Item<?> item, ItemTool tool) {
-        if (item.isBlock()) return;
-        // TODO
+    public TransactionResult applyToolKey(Item<?> item, ItemTool tool) {
+        if (item.isBlock()) return TransactionResult.fail("Tool cannot be bound to blocks");
+        if (item == Item.AIR) return TransactionResult.fail("Tool cannot be bound to hand");
+        if (item.get(PERSISTENT_TOOL).isPresent())
+            return TransactionResult.fail("There is already a tool bound to this item");
+
+        String bindingId = UUID.randomUUID().toString();
+
+        TransactionResult result = item.set(PERSISTENT_TOOL, bindingId);
+        if (result.isSuccessfull()) {
+            this.registry.put(bindingId, tool);
+            tool.prepare(item);
+        }
+
+        return result;
+    }
+
+    public Exceptional<ItemTool> obtainToolKey(Item item) {
+        Exceptional<String> identifier = item.get(PERSISTENT_TOOL);
+        if (identifier.isAbsent()) return Exceptional.empty();
+
+        String registryIdentifier = identifier.get();
+        if (!this.registry.containsKey(registryIdentifier)) return Exceptional.empty();
+        ItemTool itemTool = this.registry.get(registryIdentifier);
+
+        return Exceptional.ofNullable(itemTool);
+    }
+
     }
 
     public static ItemTool obtainToolKey(Item<?> item) {
