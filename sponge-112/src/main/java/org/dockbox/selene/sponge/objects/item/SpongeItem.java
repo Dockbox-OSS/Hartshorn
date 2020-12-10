@@ -220,4 +220,19 @@ public class SpongeItem extends Item<ItemStack> {
             else return TransactionResult.fail("Could not apply key to this item");
         }).orElseGet(() -> TransactionResult.fail("Item reference lost"));
     }
+
+    @Override
+    public <T> void remove(PersistentDataKey<T> dataKey) {
+        this.getReference().ifPresent(itemStack -> {
+            Optional<MutableSpongeItemData> result = itemStack.get(MutableSpongeItemData.class);
+            if (!result.isPresent()) return; // No data to remove
+
+            MutableSpongeItemData data = result.get();
+            if (!data.getData().containsKey(dataKey.getDataKeyId())) return; // Already removed
+
+            data.getData().remove(dataKey.getDataKeyId());
+
+            itemStack.offer(data);
+        });
+    }
 }

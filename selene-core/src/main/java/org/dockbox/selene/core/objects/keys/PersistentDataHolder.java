@@ -23,5 +23,6 @@ public interface PersistentDataHolder {
 
     <T> Exceptional<T> get(PersistentDataKey<T> dataKey);
     <T> TransactionResult set(PersistentDataKey<T> dataKey, T value);
+    <T> void remove(PersistentDataKey<T> dataKey);
 
 }

@@ -23,6 +23,7 @@ import org.dockbox.selene.core.objects.keys.TransactionResult;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class GenericKey<K, A> extends Key<K, A> {
@@ -38,14 +39,22 @@ public final class GenericKey<K, A> extends Key<K, A> {
      using type parameter {@link A}.
      */
     private GenericKey(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
-        super(setter, getter);
+        this(setter, getter, k -> {});
     }
 
     private GenericKey(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter) {
+        this(setter, getter, k -> {});
+    }
+
+    public GenericKey(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
+        super(setter, getter, remover);
+    }
+
+    public GenericKey(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
         super((t, u) -> {
             setter.accept(t, u);
             return TransactionResult.success();
-        }, getter);
+        }, getter, remover);
     }
 
     public static <K, A> GenericKey<K, A> of(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter) {
@@ -62,5 +71,21 @@ public final class GenericKey<K, A> extends Key<K, A> {
 
     public static <K, A> GenericKey<K, A> ofUnsafeChecked(BiFunction<K, A, TransactionResult> setter, Function<K, A> getter) {
         return new GenericKey<>(setter, k -> Exceptional.of(() -> getter.apply(k)));
+    }
+
+    public static <K, A> GenericKey<K, A> of(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
+        return new GenericKey<>(setter, getter, remover);
+    }
+
+    public static <K, A> GenericKey<K, A> ofChecked(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
+        return new GenericKey<>(setter, getter, remover);
+    }
+
+    public static <K, A> GenericKey<K, A> ofUnsafe(BiConsumer<K, A> setter, Function<K, A> getter, Consumer<K> remover) {
+        return new GenericKey<>(setter, k -> Exceptional.of(() -> getter.apply(k)), remover);
+    }
+
+    public static <K, A> GenericKey<K, A> ofUnsafeChecked(BiFunction<K, A, TransactionResult> setter, Function<K, A> getter, Consumer<K> remover) {
+        return new GenericKey<>(setter, k -> Exceptional.of(() -> getter.apply(k)), remover);
     }
 }
