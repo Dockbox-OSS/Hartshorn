@@ -21,6 +21,7 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.command.context.CommandValue.Flag;
@@ -87,10 +88,11 @@ public class SpongeCommandBus extends DefaultCommandBus {
          to be aware of the used alias.
          */
         this.getRegistrations().forEach((alias, abstractCommand) -> {
+            Selene.log().info("Attempting to register /" + alias);
             CommandSpec spec = null;
             if (abstractCommand instanceof MethodCommandContext) {
                 MethodCommandContext methodContext = (MethodCommandContext) abstractCommand;
-                if (!methodContext.getCommand().inherit()) {
+                if (!methodContext.getCommand().inherit() || !methodContext.getDeclaringClass().isAnnotationPresent(Command.class)) {
                     spec = this.buildContextExecutor(methodContext, alias).build();
                 } else {
                     Selene.log().error("Found direct method registration of inherited command! " + methodContext.getLocation());
@@ -104,9 +106,10 @@ public class SpongeCommandBus extends DefaultCommandBus {
                 Selene.log().error("Found unknown context type [" + abstractCommand.getClass().getCanonicalName() + "]");
             }
 
-            if (null != spec)
+            if (null != spec) {
                 Sponge.getCommandManager().register(Selene.getServer(), spec, alias);
-            else
+                Selene.log().info("Registered /" + alias);
+            } else
                 Selene.log().warn("Could not generate executor for '" + alias + "'. Any errors logged above.");
         });
         super.clearAliasQueue();
@@ -114,6 +117,7 @@ public class SpongeCommandBus extends DefaultCommandBus {
 
     private CommandSpec buildInheritedContextExecutor(CommandInheritanceContext context, String alias) {
         CommandSpec.Builder builder = this.buildContextExecutor(context, alias);
+        Selene.log().info("Children for /" + alias);
         context.getInheritedCommands().forEach(inheritedContext -> {
             inheritedContext.getAliases().forEach(inheritedAlias -> {
                 builder.child(
@@ -139,6 +143,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
 
         builder.permission(context.getCommand().permission());
         builder.executor(this.buildExecutor(context, alias));
+
+        Selene.log().info("- " + alias);
 
         return builder;
     }
