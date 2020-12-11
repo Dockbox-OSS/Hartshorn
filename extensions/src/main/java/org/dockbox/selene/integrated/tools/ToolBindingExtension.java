@@ -23,11 +23,10 @@ import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.Resource;
-import org.dockbox.selene.core.impl.objects.keys.GenericKey;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.keys.Key;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
+import org.dockbox.selene.core.objects.keys.RemovableKey;
 import org.dockbox.selene.core.objects.keys.TransactionResult;
 import org.dockbox.selene.core.objects.keys.data.StringPersistentDataKey;
 import org.dockbox.selene.core.objects.player.Sneaking;
@@ -43,7 +42,7 @@ public class ToolBindingExtension {
 
     private static ToolBindingExtension instance;
 
-    public static final Key<Item, ItemTool> TOOL = GenericKey.ofChecked(
+    public static final RemovableKey<Item, ItemTool> TOOL = SeleneUtils.checkedDynamicKeyOf(
             // Not possible to use method references here due to instance being initialized later
             (item, tool) -> instance.setTool(item, tool),
             item -> instance.getTool(item),
