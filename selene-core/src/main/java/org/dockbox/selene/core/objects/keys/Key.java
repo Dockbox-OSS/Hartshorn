@@ -20,7 +20,6 @@ package org.dockbox.selene.core.objects.keys;
 import org.dockbox.selene.core.objects.Exceptional;
 
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -37,7 +36,6 @@ public abstract class Key<K, A> {
 
     private final BiFunction<K, A, TransactionResult> setter;
     private final Function<K, Exceptional<A>> getter;
-    private final Consumer<K> remover;
 
     /**
      Instantiates a new Key using a given setter and getter.
@@ -51,14 +49,11 @@ public abstract class Key<K, A> {
      using type parameter {@link A}.
      */
     protected Key(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
-        this(setter, getter, k -> {});
-    }
-
-    protected Key(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
         this.setter = setter;
         this.getter = getter;
-        this.remover = remover;
     }
+
+
 
     /**
      Apply a given value of type parameter {@link A} to a given type constrained by type parameter {@link K}.
@@ -82,10 +77,6 @@ public abstract class Key<K, A> {
      */
     public Exceptional<A> get(K keyType) {
         return this.getter.apply(keyType);
-    }
-
-    public void remove(K keyType) {
-        this.remover.accept(keyType);
     }
 
     /**

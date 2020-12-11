@@ -31,8 +31,8 @@ import org.dockbox.selene.core.server.Selene;
  @param <T>
  The type which the {@link Key} can modify.
  */
-@SuppressWarnings("unchecked")
-public interface KeyHolder<T> {
+@SuppressWarnings({"unchecked", "rawtypes"})
+public interface KeyHolder<T extends KeyHolder> {
 
     /**
      Apply a given value of type {@link A} using a given {@link Key} type to the implementation of this interface.@param <A>
@@ -71,7 +71,7 @@ The applied value.
         return key.get((T) this);
     }
 
-    default <A> void remove(Key<T, A> key) {
+    default <A> void remove(RemovableKey<T, A> key) {
         key.remove((T) this);
     }
 
