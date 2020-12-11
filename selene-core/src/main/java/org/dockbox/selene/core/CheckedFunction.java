@@ -15,14 +15,11 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.objects.keys;
+package org.dockbox.selene.core;
 
-import org.dockbox.selene.core.objects.Exceptional;
+@FunctionalInterface
+public interface CheckedFunction<T, R> {
 
-public interface PersistentDataHolder {
-
-    <T> Exceptional<T> get(PersistentDataKey<T> dataKey);
-    <T> TransactionResult set(PersistentDataKey<T> dataKey, T value);
-    <T> void remove(PersistentDataKey<T> dataKey);
+    R apply(T t) throws Exception;
 
 }

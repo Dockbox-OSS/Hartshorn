@@ -15,24 +15,29 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.objects.keys.data;
+package org.dockbox.selene.core.objects.keys;
 
 import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.objects.Exceptional;
 
-public final class StringPersistentDataKey extends TypedPersistentDataKey<String> {
+import java.util.Map;
 
-    private StringPersistentDataKey(String name, String id, Extension extension) {
-        super(name, id, extension, String.class);
-    }
+public class TestKeys {
 
-    public static StringPersistentDataKey of(String name, Extension extension) {
-        String id = SeleneUtils.convertToExtensionIdString(name, extension);
-        return new StringPersistentDataKey(name, id, extension);
-    }
+    private static final Map<Object, String> localRegistry = SeleneUtils.emptyMap();
 
-    public static StringPersistentDataKey of(String name, Class<?> owningClass) {
-        Extension extension = SeleneUtils.getExtension(owningClass);
-        return of(name, extension);
-    }
+    public static final Key<TestKeyHolder, String> HOLDER_KEY = SeleneUtils.dynamicKeyOf(
+            localRegistry::put,
+            testKeyHolder ->
+                    Exceptional.ofNullable(localRegistry.getOrDefault(testKeyHolder, null))
+    );
+
+    public static final Key<TestNonKeyHolder, String> NON_HOLDER_KEY = SeleneUtils.dynamicKeyOf(
+            localRegistry::put,
+            testKeyHolder ->
+                    Exceptional.ofNullable(localRegistry.getOrDefault(testKeyHolder, null))
+    );
+
+
+
 }

@@ -1,34 +1,32 @@
 # Description
+[comment]: <> (Please include a summary of the change and which issue is fixed. Please also include relevant motivation and context. List any dependencies that are required for this change.)
 
-Please include a summary of the change and which issue is fixed. Please also include relevant motivation and context. List any dependencies that are required for this change.
-
-Fixes # (issue)
+Fixes #issue
 
 ## Type of change
-
-Please delete options that are not relevant.
-
+[comment]: <> (Please delete options that are not relevant.)
 - [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature / enhancement (non-breaking change which adds functionality)
+- [ ] New core feature
+- [ ] New extension
+- [ ] Enhancement of existing functionality
+
+## Status
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] This change requires a documentation update
 
 # How Has This Been Tested?
-
-Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration
-
-- [ ] Unit testing
-- [ ] Run testing
-- [ ] Compat testing
+[comment]: <> (Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. Please also list any relevant details for your test configuration)
+- [ ] Unit testing (tested using JUnit)
+- [ ] Run testing (tested by running on a platform)
 - [ ] Other: 
 
 **Test Configuration**:
-* Sponge version:
-* Forge version:
-* Java version:
+* Platform: 
+* Platform API version:  
+* Forge version: 
+* Java version: 
 
 # Checklist:
-
 - [ ] My code follows the style guidelines of this project
 - [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas

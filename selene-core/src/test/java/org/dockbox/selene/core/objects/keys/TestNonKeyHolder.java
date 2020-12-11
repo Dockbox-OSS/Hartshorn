@@ -17,12 +17,8 @@
 
 package org.dockbox.selene.core.objects.keys;
 
-import org.dockbox.selene.core.objects.Exceptional;
+public class TestNonKeyHolder {
 
-public interface PersistentDataHolder {
-
-    <T> Exceptional<T> get(PersistentDataKey<T> dataKey);
-    <T> TransactionResult set(PersistentDataKey<T> dataKey, T value);
-    <T> void remove(PersistentDataKey<T> dataKey);
+    // Nothing needs to be done here
 
 }

@@ -32,6 +32,8 @@ import java.util.List;
 @SuppressWarnings("rawtypes")
 public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<Item>, PersistentDataHolder {
 
+    public static Item<?> AIR = Item.of("minecraft:air");
+
     private String id;
 
     protected Item(@NotNull T reference) {
@@ -60,9 +62,13 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
 
     public abstract void setDisplayName(Text displayName);
 
+    public abstract void removeDisplayName();
+
     public abstract void setLore(List<Text> lore);
 
     public abstract void addLore(Text lore);
+
+    public abstract void removeLore();
 
     public abstract void setAmount(int amount);
 
@@ -86,6 +92,8 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
     public abstract void addEnchant(Enchant enchant);
 
     public abstract void removeEnchant(Enchant enchant);
+
+    public abstract boolean isBlock();
 
     public static Item<?> of(String id, int amount) {
         return Selene.getInstance(ConstructionUtil.class).item(id, amount);

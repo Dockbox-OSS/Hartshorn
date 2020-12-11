@@ -15,14 +15,31 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.objects.keys;
+package org.dockbox.selene.core.i18n.entry;
 
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.i18n.common.ResourceEntry;
 
-public interface PersistentDataHolder {
+public class FakeResource implements ResourceEntry {
 
-    <T> Exceptional<T> get(PersistentDataKey<T> dataKey);
-    <T> TransactionResult set(PersistentDataKey<T> dataKey, T value);
-    <T> void remove(PersistentDataKey<T> dataKey);
+    private String value;
 
+    public FakeResource(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String getValue() {
+        return this.value;
+    }
+
+    @Override
+    public String getValue(Language lang) {
+        return this.value;
+    }
+
+    @Override
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

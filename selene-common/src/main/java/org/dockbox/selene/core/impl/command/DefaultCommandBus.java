@@ -245,7 +245,7 @@ public abstract class DefaultCommandBus implements CommandBus {
 
     private @Nullable MethodCommandContext extractNonInheritedContext(Method method) {
         Command command = method.getAnnotation(Command.class);
-        if (command.inherit()) return null;
+        if (command.inherit() && method.getDeclaringClass().isAnnotationPresent(Command.class)) return null;
         return new MethodCommandContext(command, method);
     }
 

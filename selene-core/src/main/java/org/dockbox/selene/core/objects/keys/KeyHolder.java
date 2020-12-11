@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.objects.keys;
 
+import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 
@@ -30,24 +31,27 @@ import org.dockbox.selene.core.server.Selene;
  @param <T>
  The type which the {@link Key} can modify.
  */
-@SuppressWarnings("unchecked")
-public interface KeyHolder<T> {
+@SuppressWarnings({"unchecked", "rawtypes"})
+public interface KeyHolder<T extends KeyHolder> {
 
     /**
-     Apply a given value of type {@link A} using a given {@link Key} type to the implementation of this interface.
-
-     @param <A>
+     Apply a given value of type {@link A} using a given {@link Key} type to the implementation of this interface.@param <A>
      The type parameter of the value to apply, constrained by the type parameter of the given {@link Key}.
      @param key
-     The key to apply, providing the constraints for the type to apply to and the type of the applied value.
+ The key to apply, providing the constraints for the type to apply to and the type of the applied value.
      @param appliedValue
-     The applied value.
+The applied value.
+     @return The transaction result. If the transaction failed the {@link TransactionResult} will provide a
+     {@link TransactionResult#getMessage() message}.
+
+
      */
-    default <A> void applyKey(Key<T, A> key, A appliedValue) {
+    default <A> TransactionResult set(Key<T, A> key, A appliedValue) {
         try {
-            key.applyTo((T) this, appliedValue);
+            return key.set((T) this, appliedValue);
         } catch (ClassCastException e) {
             Selene.getServer().except("Attempted to apply " + key + " to non-supporting type " + this, e);
+            return TransactionResult.fail(IntegratedResource.KEY_BINDING_FAILED);
         }
     }
 
@@ -63,8 +67,12 @@ public interface KeyHolder<T> {
      @return The value wrapped in a {@link Exceptional}, which will contain a {@link ClassCastException}
      if <em>this</em> does not match the constraint of the given {@link Key}.
      */
-    default <A> Exceptional<A> getValue(Key<T, A> key) {
-        return Exceptional.of(() -> key.getFrom((T) this));
+    default <A> Exceptional<A> get(Key<T, A> key) {
+        return key.get((T) this);
+    }
+
+    default <A> void remove(RemovableKey<T, A> key) {
+        key.remove((T) this);
     }
 
 }

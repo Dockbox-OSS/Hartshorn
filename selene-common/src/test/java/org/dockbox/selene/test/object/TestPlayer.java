@@ -26,6 +26,7 @@ import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Gamemode;
+import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
@@ -175,6 +176,21 @@ public class TestPlayer extends Player {
     @Override
     public void setPermissions(boolean value, @NotNull String... permissions) {
         for (String perm : permissions) this.setPermission(perm, value);
+    }
+
+    @Override
+    public Item<?> getItemInHand(Hand hand) {
+        return Item.AIR;
+    }
+
+    @Override
+    public void setItemInHand(Hand hand, Item<?> item) {
+
+    }
+
+    @Override
+    public boolean isSneaking() {
+        return false;
     }
 
     @Override
