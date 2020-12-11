@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NonNls;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @SuppressWarnings("rawtypes")
@@ -38,12 +39,15 @@ public class ItemTool {
     private final List<Text> lore;
     private final BiConsumer<Player, Item> consumer;
     private final List<Predicate<ToolInteractionEvent>> filters;
+    private final List<Consumer<Item<?>>> modifiers;
 
-    public ItemTool(Text name, List<Text> lore, BiConsumer<Player, Item> consumer, List<Predicate<ToolInteractionEvent>> filters) {
+    public ItemTool(Text name, List<Text> lore, BiConsumer<Player, Item> consumer,
+                    List<Predicate<ToolInteractionEvent>> filters, List<Consumer<Item<?>>> modifiers) {
         this.name = name;
         this.lore = lore;
         this.consumer = consumer;
         this.filters = filters;
+        this.modifiers = modifiers;
     }
 
     public boolean accepts(ToolInteractionEvent event) {
@@ -57,6 +61,7 @@ public class ItemTool {
     public void prepare(Item item) {
         if (null != this.name) item.setDisplayName(this.name);
         if (null != this.lore) item.setLore(this.lore);
+        this.modifiers.forEach(modifiers -> modifiers.accept(item));
     }
 
     public void reset(Item item) {
@@ -71,6 +76,7 @@ public class ItemTool {
         private Text name;
         private List<Text> lore;
         private final List<Predicate<ToolInteractionEvent>> filters = SeleneUtils.emptyConcurrentList();
+        private final List<Consumer<Item<?>>> modifiers = SeleneUtils.emptyConcurrentList();
 
         private ToolBuilder() {}
 
@@ -119,7 +125,7 @@ public class ItemTool {
             return this;
         }
 
-        public ToolBuilder name (Text name) {
+        public ToolBuilder name(Text name) {
             this.name = name;
             return this;
         }
@@ -129,8 +135,13 @@ public class ItemTool {
             return this;
         }
 
+        public ToolBuilder modify(Consumer<Item<?>> modifier) {
+            this.modifiers.add(modifier);
+            return this;
+        }
+
         public ItemTool build() {
-            return new ItemTool(this.name, this.lore, this.consumer, this.filters);
+            return new ItemTool(this.name, this.lore, this.consumer, this.filters, this.modifiers);
         }
     }
 }
