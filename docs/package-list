@@ -6,6 +6,7 @@ org.dockbox.selene.core.annotations.event
 org.dockbox.selene.core.annotations.event.filter
 org.dockbox.selene.core.annotations.event.processing
 org.dockbox.selene.core.annotations.extension
+org.dockbox.selene.core.annotations.i18n
 org.dockbox.selene.core.command
 org.dockbox.selene.core.command.context
 org.dockbox.selene.core.command.parsing
@@ -19,6 +20,7 @@ org.dockbox.selene.core.events.moderation
 org.dockbox.selene.core.events.object
 org.dockbox.selene.core.events.parents
 org.dockbox.selene.core.events.player
+org.dockbox.selene.core.events.player.interact
 org.dockbox.selene.core.events.processing
 org.dockbox.selene.core.events.server
 org.dockbox.selene.core.events.world
@@ -78,6 +80,7 @@ org.dockbox.selene.integrated.sql
 org.dockbox.selene.integrated.sql.dialects.sqlite
 org.dockbox.selene.integrated.sql.exceptions
 org.dockbox.selene.integrated.sql.properties
+org.dockbox.selene.integrated.tools
 org.dockbox.selene.oldplots
 org.dockbox.selene.ptime
 org.dockbox.selene.sponge

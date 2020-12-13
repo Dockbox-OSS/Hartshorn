@@ -35,15 +35,17 @@ import org.dockbox.selene.core.server.Selene;
 public interface KeyHolder<T extends KeyHolder> {
 
     /**
-     Apply a given value of type {@link A} using a given {@link Key} type to the implementation of this interface.@param <A>
+     Apply a given value of type {@link A} using a given {@link Key} type to the implementation of this interface.
      The type parameter of the value to apply, constrained by the type parameter of the given {@link Key}.
+
+     @param <A>
+     The type parameter of the applied value.
      @param key
- The key to apply, providing the constraints for the type to apply to and the type of the applied value.
+    The key to apply, providing the constraints for the type to apply to and the type of the applied value.
      @param appliedValue
-The applied value.
+    The applied value.
      @return The transaction result. If the transaction failed the {@link TransactionResult} will provide a
      {@link TransactionResult#getMessage() message}.
-
 
      */
     default <A> TransactionResult set(Key<T, A> key, A appliedValue) {

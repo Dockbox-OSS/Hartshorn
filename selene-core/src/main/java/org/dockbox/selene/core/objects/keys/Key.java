@@ -62,6 +62,9 @@ public abstract class Key<K, A> {
      The data holder, constrained by type parameter {@link K}.
      @param appliedValue
      The value to apply, constrained by type parameter {@link A}.
+
+     @return The transaction result containing a {@link org.dockbox.selene.core.i18n.common.ResourceEntry} if a failure
+     occurred.
      */
     public TransactionResult set(K keyType, A appliedValue) {
         return this.setter.apply(keyType, appliedValue);
