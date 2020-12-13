@@ -37,6 +37,7 @@ import org.dockbox.selene.core.events.server.ServerEvent;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
@@ -77,6 +78,7 @@ import java.util.stream.Collectors;
 public abstract class Selene {
 
     public static final String GLOBAL_BYPASS = "selene.admin.bypass-all";
+    public static final String PACKAGE_PREFIX = "org.dockbox.selene";
 
     private static final Logger log = LoggerFactory.getLogger(Selene.class);
     private String version;
@@ -365,10 +367,14 @@ public abstract class Selene {
         eb.subscribe(this);
 
         this.initIntegratedExtensions(this.getExtensionContextConsumer(cb, eb, cm, du));
-
+        this.initResources();
         cb.apply();
 
         getInstance(EventBus.class).post(new ServerEvent.ServerInitEvent());
+    }
+
+    private void initResources() {
+        getInstance(ResourceService.class).init();
     }
 
     /**
@@ -501,16 +507,22 @@ public abstract class Selene {
      @param e
      Zero or more exceptions (varargs)
      */
-    public void except(@Nullable String msg, @Nullable Throwable... e) {
-        for (Throwable throwable : e) {
-            boolean stacktraces = this.getGlobalConfig().getStacktracesAllowed();
-            ExceptionHelper eh = getInstance(ExceptionHelper.class);
+    public static void except(@Nullable String msg, @Nullable Throwable... e) {
+        if (null != getServer()) {
+            for (Throwable throwable : e) {
+                boolean stacktraces = getServer().getGlobalConfig().getStacktracesAllowed();
+                ExceptionHelper eh = getInstance(ExceptionHelper.class);
 
-            if (ExceptionLevels.FRIENDLY == this.getGlobalConfig().getExceptionLevel()) {
-                eh.printFriendly(msg, throwable, stacktraces);
-            } else {
-                eh.printMinimal(msg, throwable, stacktraces);
+                if (ExceptionLevels.FRIENDLY == getServer().getGlobalConfig().getExceptionLevel()) {
+                    eh.printFriendly(msg, throwable, stacktraces);
+                } else {
+                    eh.printMinimal(msg, throwable, stacktraces);
+                }
             }
+        } else {
+            log().error("Selene has not been initialised! Logging natively");
+            log().error(msg);
+            for (Throwable throwable : e) log().error(Arrays.toString(throwable.getStackTrace()));
         }
     }
 

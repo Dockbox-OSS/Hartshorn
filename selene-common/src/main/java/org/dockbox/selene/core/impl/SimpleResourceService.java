@@ -20,15 +20,20 @@ package org.dockbox.selene.core.impl;
 import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.i18n.Resources;
+import org.dockbox.selene.core.files.ConfigurateManager;
 import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.i18n.entry.Resource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.files.ConfigurateManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +44,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class SimpleResourceService implements ResourceService {
 
     private final Map<Language, Map<String, String>> resourceMaps = SeleneUtils.emptyConcurrentMap();
-    private final List<Resource> knownEntries = SeleneUtils.emptyConcurrentList();
+    private final List<ResourceEntry> knownEntries = SeleneUtils.emptyConcurrentList();
 
     @ConfigSerializable
     static class ResourceConfig {
@@ -49,6 +54,29 @@ public class SimpleResourceService implements ResourceService {
 
     @Override
     public void init() {
+        Collection<Class<?>> resourceProviders = SeleneUtils.getAnnotatedTypes(Selene.PACKAGE_PREFIX, Resources.class);
+        resourceProviders.forEach(provider -> {
+            if (provider.isEnum()) {
+                for (Enum<?> e : SeleneUtils.getEnumValues(provider)) {
+                    if (SeleneUtils.isAssignableFrom(ResourceEntry.class, e.getClass())) {
+                        ResourceEntry resource = (ResourceEntry) e;
+                        this.knownEntries.add(resource);
+                    }
+                }
+            } else {
+                for (Field field : SeleneUtils.getStaticFields(provider)) {
+                    if (SeleneUtils.isAssignableFrom(ResourceEntry.class, field.getType())) {
+                        try {
+                            if (!field.isAccessible()) field.setAccessible(true);
+                            ResourceEntry resource = (ResourceEntry) field.get(null);
+                            this.knownEntries.add(resource);
+                        } catch (IllegalAccessException e) {
+                            Selene.except("Could not access static resource", e);
+                        }
+                    }
+                }
+            }
+        });
         this.getResourceMap(Selene.getServer().getGlobalConfig().getDefaultLanguage());
     }
 
@@ -58,15 +86,37 @@ public class SimpleResourceService implements ResourceService {
         if (this.resourceMaps.containsKey(lang)) return this.resourceMaps.get(lang);
 
         ConfigurateManager cm = Selene.getInstance(ConfigurateManager.class);
-        Exceptional<ResourceConfig> config = cm.getFileContent(
-                cm.getConfigFile(
-                        SeleneUtils.getExtension(Selene.class),
-                        lang.getCode()
-                ), ResourceConfig.class);
+        Path languageConfigFile = cm.getConfigFile(
+                SeleneUtils.getExtension(Selene.class),
+                lang.getCode()
+        );
+        Map<String, String> resources;
+        if (languageConfigFile.toFile().exists() && !SeleneUtils.isFileEmpty(languageConfigFile)) {
+            resources = this.getResourcesForFile(languageConfigFile, cm, lang);
+        } else {
+            resources = this.createDefaultResourceFile(cm, languageConfigFile);
+        }
+        this.resourceMaps.put(lang, resources);
+        return resources;
+    }
+
+    @NotNull
+    private Map<String, String> createDefaultResourceFile(ConfigurateManager cm, Path languageConfigFile) {
+        Map<String, String> resources = SeleneUtils.emptyConcurrentMap();
+        this.knownEntries.forEach(resource -> {
+            resources.put(resource.getKey(), resource.getValue());
+        });
+        ResourceConfig config = new ResourceConfig();
+        config.translations = resources;
+        cm.writeFileContent(languageConfigFile, config);
+        return resources;
+    }
+
+    private Map<String, String> getResourcesForFile(Path file, ConfigurateManager cm, Language lang) {
+        Exceptional<ResourceConfig> config = cm.getFileContent(file, ResourceConfig.class);
 
         Map<String, String> resources = SeleneUtils.emptyConcurrentMap();
         config.ifPresent(cfg -> resources.putAll(cfg.translations));
-        this.resourceMaps.put(lang, resources);
         return resources;
     }
 
@@ -76,11 +126,12 @@ public class SimpleResourceService implements ResourceService {
         @NonNls String code = entry.getKey();
         this.knownEntries.add(entry);
         Map<Language, String> resourceMap = SeleneUtils.emptyConcurrentMap();
-        this.resourceMaps.forEach((lang, values) -> {
-            if (lang.getCode().equals(code)) {
-                values.forEach((key, value) -> resourceMap.put(lang, value));
+        for (Language language : Language.values()) {
+            Map<String, String> resources = this.resourceMaps.getOrDefault(language, SeleneUtils.emptyMap());
+            if (resources.containsKey(entry.getKey())) {
+                resourceMap.put(language, resources.get(entry.getKey()));
             }
-        });
+        }
         return resourceMap;
     }
 
@@ -96,7 +147,7 @@ public class SimpleResourceService implements ResourceService {
 
     @NotNull
     @Override
-    public Exceptional<Resource> getExternalResource(@NotNull String key) {
+    public Exceptional<ResourceEntry> getExternalResource(@NotNull String key) {
         @NonNls @NotNull String finalKey = this.createValidKey(key);
         return Exceptional.of(this.knownEntries.stream().filter(entry -> entry.getKey().equals(finalKey)).findFirst());
     }

@@ -273,7 +273,7 @@ public abstract class DefaultCommandBus implements CommandBus {
         String permission = defaultPermission;
         Matcher elementValue = DefaultCommandBus.ELEMENT_VALUE.matcher(argumentDefinition);
         if (!elementValue.matches() || 0 == elementValue.groupCount())
-            Selene.getServer().except("Unknown argument specification " + argumentDefinition + ", use Type or Name{Type} or Name{Type:Permission}");
+            Selene.except("Unknown argument specification " + argumentDefinition + ", use Type or Name{Type} or Name{Type:Permission}");
 
         /*
          Group one specifies either the name of the value (if two or more groups are matched), or the type if only one
@@ -375,7 +375,7 @@ public abstract class DefaultCommandBus implements CommandBus {
         } else {
             AbstractArgumentValue<?> argumentValue = this.generateArgumentValue(value, defaultPermission);
             if (0 <= name.indexOf(':')) {
-                Selene.getServer().except("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
+                Selene.except("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
             flags.addValueBasedFlag(name, argumentValue);
         }

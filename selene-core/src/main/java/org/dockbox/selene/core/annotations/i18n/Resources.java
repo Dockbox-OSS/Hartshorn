@@ -15,36 +15,15 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.i18n.entry;
+package org.dockbox.selene.core.annotations.i18n;
 
-import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.i18n.common.ResourceEntry;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class FakeResource implements ResourceEntry {
-
-    private String value;
-
-    public FakeResource(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public String getValue() {
-        return this.value;
-    }
-
-    @Override
-    public String getValue(Language lang) {
-        return this.value;
-    }
-
-    @Override
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    @Override
-    public String getKey() {
-        return "selene.fakeresource";
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Resources {
+    Class<?> responsibleExtension();
 }

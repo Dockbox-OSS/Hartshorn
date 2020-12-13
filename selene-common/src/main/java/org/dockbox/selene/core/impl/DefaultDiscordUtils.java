@@ -114,10 +114,10 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                 Constructor<?> ctor = ((Class<?>) instance).getConstructor();
                 obj = ctor.newInstance();
             } catch (NoSuchMethodException e) {
-                Selene.getServer().except("Could not find constructor for Discord listener [" + ((Class<?>) instance).getCanonicalName() + "]");
+                Selene.except("Could not find constructor for Discord listener [" + ((Class<?>) instance).getCanonicalName() + "]");
                 return;
             } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-                Selene.getServer().except("Could not instantiate Discord listener [" + ((Class<?>) instance).getCanonicalName() + "]");
+                Selene.except("Could not instantiate Discord listener [" + ((Class<?>) instance).getCanonicalName() + "]");
                 return;
             }
         }
@@ -183,7 +183,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                 method.invoke(instance, context);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 context.sendToChannel(IntegratedResource.DISCORD_COMMAND_ERRORED);
-                Selene.getServer().except("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass().getCanonicalName() + "]");
+                Selene.except("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass().getCanonicalName() + "]");
             }
         } else context.sendToChannel(IntegratedResource.DISCORD_COMMAND_UNKNOWN);
     }

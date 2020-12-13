@@ -52,6 +52,7 @@ public class Resource implements ResourceEntry {
         this.value = value;
     }
 
+    @Override
     public String getKey() {
         return this.key;
     }

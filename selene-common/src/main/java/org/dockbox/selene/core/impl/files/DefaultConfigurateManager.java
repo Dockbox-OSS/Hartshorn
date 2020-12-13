@@ -21,13 +21,14 @@ import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.files.ConfigurateManager;
 import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.impl.files.mapping.NeutrinoObjectMapper;
 import org.dockbox.selene.core.impl.files.mapping.NeutrinoObjectMapperFactory;
 import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.files.ConfigurateManager;
 import org.jetbrains.annotations.NotNull;
+import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -72,7 +73,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     private final ConfigurationLoader<?> getConfigurationLoader(Path file) throws UnsupportedFileException {
         switch (this.getFileType()) {
             case YAML:
-                return YAMLConfigurationLoader.builder().setPath(file).build();
+                return YAMLConfigurationLoader.builder().setPath(file).setFlowStyle(FlowStyle.BLOCK).build();
             case JSON:
                 return GsonConfigurationLoader.builder().setPath(file).build();
             case XML:

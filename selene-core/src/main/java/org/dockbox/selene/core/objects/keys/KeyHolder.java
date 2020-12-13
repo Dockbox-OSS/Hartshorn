@@ -50,7 +50,7 @@ The applied value.
         try {
             return key.set((T) this, appliedValue);
         } catch (ClassCastException e) {
-            Selene.getServer().except("Attempted to apply " + key + " to non-supporting type " + this, e);
+            Selene.except("Attempted to apply " + key + " to non-supporting type " + this, e);
             return TransactionResult.fail(IntegratedResource.KEY_BINDING_FAILED);
         }
     }

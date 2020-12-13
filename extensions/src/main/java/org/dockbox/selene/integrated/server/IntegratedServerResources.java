@@ -18,11 +18,13 @@
 package org.dockbox.selene.integrated.server;
 
 import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.i18n.entry.Resource;
 
 @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
+@Resources(responsibleExtension = IntegratedServerExtension.class)
 enum IntegratedServerResources {
     ;
     static final ResourceEntry PAGINATION_TITLE = new Resource("$1Selene Server Info", "selene.pagination.title");

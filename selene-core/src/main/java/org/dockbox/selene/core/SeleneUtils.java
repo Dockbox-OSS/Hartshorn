@@ -54,6 +54,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
@@ -847,7 +848,7 @@ public enum SeleneUtils {
                 Files.createDirectories(file.getParent());
                 Files.createFile(file);
             } catch (IOException ex) {
-                Selene.getServer().except("Could not create file '" + file.getFileName() + "'", ex);
+                Selene.except("Could not create file '" + file.getFileName() + "'", ex);
             }
         }
         return file;
@@ -1062,6 +1063,32 @@ public enum SeleneUtils {
         return field.isAnnotationPresent(Property.class)
                 ? field.getAnnotation(Property.class).value()
                 : field.getName();
+    }
+
+    public static Collection<Field> getStaticFields(Class<?> type) {
+        Field[] declaredFields = type.getDeclaredFields();
+        Collection<Field> staticFields = emptyList();
+        for (Field field : declaredFields) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                staticFields.add(field);
+            }
+        }
+        return staticFields;
+    }
+
+    public static Collection<? extends Enum<?>> getEnumValues(Class<?> type) {
+        if (!type.isEnum()) return emptyList();
+        Collection<Enum<?>> constants = emptyList();
+        try {
+            Field f = type.getDeclaredField("$VALUES");
+            if (!f.isAccessible()) f.setAccessible(true);
+            Object o = f.get(null);
+            Enum<?>[] e = (Enum<?>[]) o;
+            constants.addAll(Arrays.asList(e));
+        } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException | ClassCastException e) {
+            Selene.log().warn("Error obtaining enum constants in " + type.getCanonicalName(), e);
+        }
+        return constants;
     }
 
     public static boolean isNotVoid(Class<?> type) {

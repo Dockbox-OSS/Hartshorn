@@ -88,18 +88,18 @@ public class SimpleExceptionHelper implements ExceptionHelper {
 
     @Override
     public void handleSafe(@NotNull Runnable runnable) {
-        this.handleSafe(runnable, e -> Selene.getServer().except(e.getMessage(), e));
+        this.handleSafe(runnable, e -> Selene.except(e.getMessage(), e));
     }
 
     @Override
     public <T> void handleSafe(@NotNull Consumer<T> consumer, T value) {
-        this.handleSafe(consumer, value, e -> Selene.getServer().except(e.getMessage(), e));
+        this.handleSafe(consumer, value, e -> Selene.except(e.getMessage(), e));
     }
 
     @Override
     @NotNull
     public <T, R> Exceptional<R> handleSafe(@NotNull Function<T, R> function, T value) {
-        return this.handleSafe(function, value, e -> Selene.getServer().except(e.getMessage(), e));
+        return this.handleSafe(function, value, e -> Selene.except(e.getMessage(), e));
     }
 
     @Override
