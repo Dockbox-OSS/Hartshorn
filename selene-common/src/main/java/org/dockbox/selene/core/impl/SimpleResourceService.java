@@ -23,6 +23,7 @@ import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.files.ConfigurateManager;
 import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.i18n.entry.Resource;
 import org.dockbox.selene.core.objects.Exceptional;
@@ -43,7 +44,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class SimpleResourceService implements ResourceService {
 
     private final Map<Language, Map<String, String>> resourceMaps = SeleneUtils.emptyConcurrentMap();
-    private final List<Resource> knownEntries = SeleneUtils.emptyConcurrentList();
+    private final List<ResourceEntry> knownEntries = SeleneUtils.emptyConcurrentList();
 
     @ConfigSerializable
     static class ResourceConfig {
@@ -55,14 +56,23 @@ public class SimpleResourceService implements ResourceService {
     public void init() {
         Collection<Class<?>> resourceProviders = SeleneUtils.getAnnotatedTypes(Selene.PACKAGE_PREFIX, Resources.class);
         resourceProviders.forEach(provider -> {
-            for (Field field : SeleneUtils.getStaticFields(provider)) {
-                if (SeleneUtils.isAssignableFrom(Resource.class, field.getType())) {
-                    try {
-                        if (!field.isAccessible()) field.setAccessible(true);
-                        Resource resource = (Resource) field.get(null);
+            if (provider.isEnum()) {
+                for (Enum<?> e : SeleneUtils.getEnumValues(provider)) {
+                    if (SeleneUtils.isAssignableFrom(ResourceEntry.class, e.getClass())) {
+                        ResourceEntry resource = (ResourceEntry) e;
                         this.knownEntries.add(resource);
-                    } catch (IllegalAccessException e) {
-                        Selene.except("Could not access static resource", e);
+                    }
+                }
+            } else {
+                for (Field field : SeleneUtils.getStaticFields(provider)) {
+                    if (SeleneUtils.isAssignableFrom(ResourceEntry.class, field.getType())) {
+                        try {
+                            if (!field.isAccessible()) field.setAccessible(true);
+                            ResourceEntry resource = (ResourceEntry) field.get(null);
+                            this.knownEntries.add(resource);
+                        } catch (IllegalAccessException e) {
+                            Selene.except("Could not access static resource", e);
+                        }
                     }
                 }
             }
@@ -80,11 +90,14 @@ public class SimpleResourceService implements ResourceService {
                 SeleneUtils.getExtension(Selene.class),
                 lang.getCode()
         );
-        if (languageConfigFile.toFile().exists()) {
-            return this.getResourcesForFile(languageConfigFile, cm, lang);
+        Map<String, String> resources;
+        if (languageConfigFile.toFile().exists() && !SeleneUtils.isFileEmpty(languageConfigFile)) {
+            resources = this.getResourcesForFile(languageConfigFile, cm, lang);
         } else {
-            return this.createDefaultResourceFile(cm, languageConfigFile);
+            resources = this.createDefaultResourceFile(cm, languageConfigFile);
         }
+        this.resourceMaps.put(lang, resources);
+        return resources;
     }
 
     @NotNull
@@ -104,7 +117,6 @@ public class SimpleResourceService implements ResourceService {
 
         Map<String, String> resources = SeleneUtils.emptyConcurrentMap();
         config.ifPresent(cfg -> resources.putAll(cfg.translations));
-        this.resourceMaps.put(lang, resources);
         return resources;
     }
 
@@ -135,7 +147,7 @@ public class SimpleResourceService implements ResourceService {
 
     @NotNull
     @Override
-    public Exceptional<Resource> getExternalResource(@NotNull String key) {
+    public Exceptional<ResourceEntry> getExternalResource(@NotNull String key) {
         @NonNls @NotNull String finalKey = this.createValidKey(key);
         return Exceptional.of(this.knownEntries.stream().filter(entry -> entry.getKey().equals(finalKey)).findFirst());
     }

@@ -1076,6 +1076,21 @@ public enum SeleneUtils {
         return staticFields;
     }
 
+    public static Collection<? extends Enum<?>> getEnumValues(Class<?> type) {
+        if (!type.isEnum()) return emptyList();
+        Collection<Enum<?>> constants = emptyList();
+        try {
+            Field f = type.getDeclaredField("$VALUES");
+            if (!f.isAccessible()) f.setAccessible(true);
+            Object o = f.get(null);
+            Enum<?>[] e = (Enum<?>[]) o;
+            constants.addAll(Arrays.asList(e));
+        } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException | ClassCastException e) {
+            Selene.log().warn("Error obtaining enum constants in " + type.getCanonicalName(), e);
+        }
+        return constants;
+    }
+
     public static boolean isNotVoid(Class<?> type) {
         return !(type.equals(Void.class) || type == Void.TYPE);
     }
