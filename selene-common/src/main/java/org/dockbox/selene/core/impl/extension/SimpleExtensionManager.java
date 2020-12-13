@@ -149,7 +149,7 @@ public class SimpleExtensionManager implements ExtensionManager {
             } catch (Throwable e) {
                 // Package.getPackage(String) typically returns null if no package with that name is present, this clause is a fail-safe and should
                 // technically never be reached. If it is reached we explicitly need to mention the package to prevent future issues (by reporting this).
-                Selene.getServer().except("Failed to obtain package [" + dependentPackage + "].", e);
+                Selene.except("Failed to obtain package [" + dependentPackage + "].", e);
             }
         }
 

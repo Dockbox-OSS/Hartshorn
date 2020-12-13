@@ -66,10 +66,10 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         } catch (IllegalSourceException e) {
             return Exceptional.of(e);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            Selene.getServer().except("Failed to invoke command", e.getCause());
+            Selene.except("Failed to invoke command", e.getCause());
             return Exceptional.of(e);
         } catch (Throwable e) {
-            Selene.getServer().except("Failed to invoke command", e);
+            Selene.except("Failed to invoke command", e);
             return Exceptional.of(e);
         }
     }

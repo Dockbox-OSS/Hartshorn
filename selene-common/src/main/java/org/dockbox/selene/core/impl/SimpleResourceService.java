@@ -62,7 +62,7 @@ public class SimpleResourceService implements ResourceService {
                         Resource resource = (Resource) field.get(null);
                         this.knownEntries.add(resource);
                     } catch (IllegalAccessException e) {
-                        Selene.getServer().except("Could not access static resource", e);
+                        Selene.except("Could not access static resource", e);
                     }
                 }
             }

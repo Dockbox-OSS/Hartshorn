@@ -507,16 +507,22 @@ public abstract class Selene {
      @param e
      Zero or more exceptions (varargs)
      */
-    public void except(@Nullable String msg, @Nullable Throwable... e) {
-        for (Throwable throwable : e) {
-            boolean stacktraces = this.getGlobalConfig().getStacktracesAllowed();
-            ExceptionHelper eh = getInstance(ExceptionHelper.class);
+    public static void except(@Nullable String msg, @Nullable Throwable... e) {
+        if (null != getServer()) {
+            for (Throwable throwable : e) {
+                boolean stacktraces = getServer().getGlobalConfig().getStacktracesAllowed();
+                ExceptionHelper eh = getInstance(ExceptionHelper.class);
 
-            if (ExceptionLevels.FRIENDLY == this.getGlobalConfig().getExceptionLevel()) {
-                eh.printFriendly(msg, throwable, stacktraces);
-            } else {
-                eh.printMinimal(msg, throwable, stacktraces);
+                if (ExceptionLevels.FRIENDLY == getServer().getGlobalConfig().getExceptionLevel()) {
+                    eh.printFriendly(msg, throwable, stacktraces);
+                } else {
+                    eh.printMinimal(msg, throwable, stacktraces);
+                }
             }
+        } else {
+            log().error("Selene has not been initialised! Logging natively");
+            log().error(msg);
+            for (Throwable throwable : e) log().error(Arrays.toString(throwable.getStackTrace()));
         }
     }
 
