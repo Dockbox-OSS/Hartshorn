@@ -20,6 +20,7 @@ package org.dockbox.selene.integrated.tools;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.Resource;
@@ -38,6 +39,7 @@ import java.util.UUID;
 @Extension(id = "toolbinding", name = "Tool Binding",
            description = "Adds the ability to bind commands to tools and items",
            authors = "GuusLieben", uniqueId = "287292f6-05f1-46a1-815b-b180f1488854")
+@Resources(responsibleExtension = ToolBindingExtension.class)
 public class ToolBindingExtension {
 
     private static ToolBindingExtension instance;
