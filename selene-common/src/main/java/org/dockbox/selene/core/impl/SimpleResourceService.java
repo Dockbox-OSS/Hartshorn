@@ -20,15 +20,19 @@ package org.dockbox.selene.core.impl;
 import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.i18n.Resources;
+import org.dockbox.selene.core.files.ConfigurateManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.i18n.entry.Resource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.files.ConfigurateManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +53,20 @@ public class SimpleResourceService implements ResourceService {
 
     @Override
     public void init() {
+        Collection<Class<?>> resourceProviders = SeleneUtils.getAnnotatedTypes(Selene.PACKAGE_PREFIX, Resources.class);
+        resourceProviders.forEach(provider -> {
+            for (Field field : SeleneUtils.getStaticFields(provider)) {
+                if (SeleneUtils.isAssignableFrom(Resource.class, field.getType())) {
+                    try {
+                        if (!field.isAccessible()) field.setAccessible(true);
+                        Resource resource = (Resource) field.get(null);
+                        this.knownEntries.add(resource);
+                    } catch (IllegalAccessException e) {
+                        Selene.getServer().except("Could not access static resource", e);
+                    }
+                }
+            }
+        });
         this.getResourceMap(Selene.getServer().getGlobalConfig().getDefaultLanguage());
     }
 
@@ -58,11 +76,31 @@ public class SimpleResourceService implements ResourceService {
         if (this.resourceMaps.containsKey(lang)) return this.resourceMaps.get(lang);
 
         ConfigurateManager cm = Selene.getInstance(ConfigurateManager.class);
-        Exceptional<ResourceConfig> config = cm.getFileContent(
-                cm.getConfigFile(
-                        SeleneUtils.getExtension(Selene.class),
-                        lang.getCode()
-                ), ResourceConfig.class);
+        Path languageConfigFile = cm.getConfigFile(
+                SeleneUtils.getExtension(Selene.class),
+                lang.getCode()
+        );
+        if (languageConfigFile.toFile().exists()) {
+            return this.getResourcesForFile(languageConfigFile, cm, lang);
+        } else {
+            return this.createDefaultResourceFile(cm, languageConfigFile);
+        }
+    }
+
+    @NotNull
+    private Map<String, String> createDefaultResourceFile(ConfigurateManager cm, Path languageConfigFile) {
+        Map<String, String> resources = SeleneUtils.emptyConcurrentMap();
+        this.knownEntries.forEach(resource -> {
+            resources.put(resource.getKey(), resource.getValue());
+        });
+        ResourceConfig config = new ResourceConfig();
+        config.translations = resources;
+        cm.writeFileContent(languageConfigFile, config);
+        return resources;
+    }
+
+    private Map<String, String> getResourcesForFile(Path file, ConfigurateManager cm, Language lang) {
+        Exceptional<ResourceConfig> config = cm.getFileContent(file, ResourceConfig.class);
 
         Map<String, String> resources = SeleneUtils.emptyConcurrentMap();
         config.ifPresent(cfg -> resources.putAll(cfg.translations));
@@ -76,11 +114,12 @@ public class SimpleResourceService implements ResourceService {
         @NonNls String code = entry.getKey();
         this.knownEntries.add(entry);
         Map<Language, String> resourceMap = SeleneUtils.emptyConcurrentMap();
-        this.resourceMaps.forEach((lang, values) -> {
-            if (lang.getCode().equals(code)) {
-                values.forEach((key, value) -> resourceMap.put(lang, value));
+        for (Language language : Language.values()) {
+            Map<String, String> resources = this.resourceMaps.getOrDefault(language, SeleneUtils.emptyMap());
+            if (resources.containsKey(entry.getKey())) {
+                resourceMap.put(language, resources.get(entry.getKey()));
             }
-        });
+        }
         return resourceMap;
     }
 

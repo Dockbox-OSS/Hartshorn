@@ -37,6 +37,7 @@ import org.dockbox.selene.core.events.server.ServerEvent;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
@@ -77,6 +78,7 @@ import java.util.stream.Collectors;
 public abstract class Selene {
 
     public static final String GLOBAL_BYPASS = "selene.admin.bypass-all";
+    public static final String PACKAGE_PREFIX = "org.dockbox.selene";
 
     private static final Logger log = LoggerFactory.getLogger(Selene.class);
     private String version;
@@ -365,10 +367,14 @@ public abstract class Selene {
         eb.subscribe(this);
 
         this.initIntegratedExtensions(this.getExtensionContextConsumer(cb, eb, cm, du));
-
+        this.initResources();
         cb.apply();
 
         getInstance(EventBus.class).post(new ServerEvent.ServerInitEvent());
+    }
+
+    private void initResources() {
+        getInstance(ResourceService.class).init();
     }
 
     /**

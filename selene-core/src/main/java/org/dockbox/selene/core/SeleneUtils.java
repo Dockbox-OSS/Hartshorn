@@ -54,6 +54,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
@@ -1062,6 +1063,17 @@ public enum SeleneUtils {
         return field.isAnnotationPresent(Property.class)
                 ? field.getAnnotation(Property.class).value()
                 : field.getName();
+    }
+
+    public static Collection<Field> getStaticFields(Class<?> type) {
+        Field[] declaredFields = type.getDeclaredFields();
+        Collection<Field> staticFields = emptyList();
+        for (Field field : declaredFields) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                staticFields.add(field);
+            }
+        }
+        return staticFields;
     }
 
     public static boolean isNotVoid(Class<?> type) {
