@@ -93,4 +93,5 @@ public interface ResourceEntry extends Formattable {
                 .replace("$4", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_ERROR.plain()));
     }
 
+    String getKey();
 }

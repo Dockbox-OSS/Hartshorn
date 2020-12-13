@@ -42,4 +42,9 @@ public class FakeResource implements ResourceEntry {
     public void setValue(String value) {
         this.value = value;
     }
+
+    @Override
+    public String getKey() {
+        return "selene.fakeresource";
+    }
 }
