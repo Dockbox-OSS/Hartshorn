@@ -41,14 +41,14 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
         this.id = this.getId();
     }
 
-    protected Item(String id, int amount) {
+    protected Item(String id, int meta) {
         super(Exceptional.empty());
         this.id = id;
-        T type = this.getById(id, amount);
+        T type = this.getById(id, meta);
         super.setReference(Exceptional.of(type));
     }
 
-    protected abstract T getById(String id, int amount);
+    protected abstract T getById(String id, int meta);
 
     public abstract Text getDisplayName(Language language);
 
@@ -95,8 +95,8 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
 
     public abstract boolean isBlock();
 
-    public static Item<?> of(String id, int amount) {
-        return Selene.getInstance(ConstructionUtil.class).item(id, amount);
+    public static Item<?> of(String id, int meta) {
+        return Selene.getInstance(ConstructionUtil.class).item(id, meta);
     }
 
     public static Item<?> of(String id) {

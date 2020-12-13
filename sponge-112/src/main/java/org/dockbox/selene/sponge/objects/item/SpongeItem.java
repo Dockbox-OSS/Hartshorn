@@ -25,7 +25,6 @@ import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.dockbox.selene.core.objects.keys.TransactionResult;
-import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +39,7 @@ import org.spongepowered.api.data.value.mutable.MapValue;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,26 +67,22 @@ public class SpongeItem extends Item<ItemStack> {
         super(id, 1);
     }
 
-    public SpongeItem(String id, int amount) {
-        super(id, amount);
+    public SpongeItem(String id, int meta) {
+        super(id, meta);
     }
 
     @Override
-    protected ItemStack getById(String id, int amount) {
-        if (this.isNumericalId(id)) {
-            Selene.log().warn("The usage of numerical ID's is not recommended! This will be removed as of 1.13");
-        }
-
-        ItemStack itemStack = Sponge.getGame().getRegistry()
+    protected ItemStack getById(String id, int meta) {
+        ItemStack stack = Sponge.getGame().getRegistry()
                 .getType(ItemType.class, id)
-                .map(it -> ItemStack.of(it, amount))
+                .map(ItemStack::of)
                 .orElse(ItemStack.empty());
 
-        return itemStack;
-    }
+        stack = ItemStack.builder()
+                .fromContainer(stack.toContainer().set(Constants.ItemStack.DAMAGE_VALUE, meta))
+                .build();
 
-    private boolean isNumericalId(String id) {
-        return id.matches("[0-9|:]+");
+        return stack;
     }
 
     @Override
