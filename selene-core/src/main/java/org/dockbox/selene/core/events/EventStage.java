@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.events.handling;
+package org.dockbox.selene.core.events;
 
 import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
 

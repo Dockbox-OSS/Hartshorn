@@ -933,11 +933,21 @@ public enum SeleneUtils {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> Exceptional<T> getMethodValue(Object instance, String method, Class<T> expectedType) {
+    @SuppressWarnings({"unchecked"})
+    public static <T> Exceptional<T> getMethodValue(Object instance, String method, Class<T> expectedType, Object... args) {
+        Class<?>[] argTypes = new Class<?>[args.length];
+        for (int i = 0; i < args.length; i++) {
+            argTypes[i] = args[i].getClass();
+        }
+        return getMethodValue(instance.getClass(), instance, method, expectedType, argTypes, args);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public static <T> Exceptional<T> getMethodValue(Class<?> methodHolder, Object instance, String method, Class<T> expectedType, Class<?>[] argumentTypes, Object... args) {
         try {
-            Method m = instance.getClass().getDeclaredMethod(method);
-            T value = (T) m.invoke(instance);
+            Method m = methodHolder.getDeclaredMethod(method, argumentTypes);
+            if (!m.isAccessible()) m.setAccessible(true);
+            T value = (T) m.invoke(instance, args);
             return Exceptional.ofNullable(value);
         } catch (ClassCastException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             return Exceptional.empty();
@@ -1093,6 +1103,75 @@ public enum SeleneUtils {
 
     public static boolean isNotVoid(Class<?> type) {
         return !(type.equals(Void.class) || type == Void.TYPE);
+    }
+
+    public static <T extends Annotation> boolean isAnnotationPresentRecursively(Method method, Class<T> annotationClass)
+            throws SecurityException {
+        return getAnnotationRecursively(method, annotationClass) != null;
+    }
+
+    public static <T extends Annotation> T getAnnotationRecursively(Method method, Class<T> annotationClass)
+            throws SecurityException {
+        T result;
+        if (null == (result = method.getAnnotation(annotationClass))) {
+            final String name = method.getName();
+            final Class<?>[] params = method.getParameterTypes();
+
+            Class<?> declaringClass = method.getDeclaringClass();
+            for (Class<?> supertype : getSupertypes(declaringClass)) {
+                try {
+                    Method m = supertype.getDeclaredMethod(name, params);
+
+                    // Static method doesn't override
+                    if (Modifier.isStatic(m.getModifiers())) break;
+
+                    if (null != (result = m.getAnnotation(annotationClass))) break;
+                } catch (NoSuchMethodException ignored) {
+                    // Current class doesn't have this method
+                }
+            }
+        }
+        return result;
+    }
+
+    public static Collection<Class<?>> getSupertypes(Class<?> current) {
+        Set<Class<?>> supertypes = emptySet();
+        Set<Class<?>> next = emptySet();
+        Class<?> superclass = current.getSuperclass();
+        if (Object.class != superclass && null != superclass) {
+            supertypes.add(superclass);
+            next.add(superclass);
+        }
+        for (Class<?> interfaceClass : current.getInterfaces()) {
+            supertypes.add(interfaceClass);
+            next.add(interfaceClass);
+        }
+        for (Class<?> cls : next) {
+            supertypes.addAll(getSupertypes(cls));
+        }
+        return supertypes;
+    }
+
+    public static List<Method> getMethodsRecursively(Class<?> cls) throws SecurityException {
+        try {
+            Set<InternalMethodWrapper> set = SeleneUtils.emptySet();
+            Class<?> current = cls;
+            do {
+                Method[] methods = current.getDeclaredMethods();
+                for (Method m : methods) {
+                    // if there's already a method that is overriding the current method, add() will return false
+                    set.add(new InternalMethodWrapper(m));
+                }
+            } while (Object.class != (current = current.getSuperclass()) && null != current);
+
+            // Guava equivalent:       Lists.transform(set, w -> w.method);
+            // Stream API equivalent:  set.stream().map(w -> w.method).collect(Collectors.toList());
+            List<Method> result = SeleneUtils.emptyList();
+            for (InternalMethodWrapper methodWrapper : set) result.add(methodWrapper.method);
+            return result;
+        } catch (Throwable e) {
+            return SeleneUtils.emptyList();
+        }
     }
 
     @Nullable

@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.impl.events;
+package org.dockbox.selene.core.impl.events.handle;
 
 import com.google.common.base.Preconditions;
 import com.sk89q.worldedit.util.eventbus.EventHandler;
@@ -30,7 +30,7 @@ import java.util.Objects;
  * {@link com.sk89q.worldedit.util.eventbus.MethodEventHandler} so it handles exceptions appropriately according to
  * Selene conventions.
  */
-public class MethodEventHandler extends EventHandler {
+public class EventMethodHandler extends EventHandler {
 
     private final Object object;
     private final Method method;
@@ -42,7 +42,7 @@ public class MethodEventHandler extends EventHandler {
      * @param object The listener object in which the method is invoked
      * @param method The method which is invoked
      */
-    public MethodEventHandler(Priority priority, Object object, Method method) {
+    public EventMethodHandler(Priority priority, Object object, Method method) {
         super(priority);
         Preconditions.checkNotNull(method);
         this.object = object;
@@ -72,7 +72,7 @@ public class MethodEventHandler extends EventHandler {
         if (this == o) return true;
         if (null == o || this.getClass() != o.getClass()) return false;
 
-        MethodEventHandler that = (MethodEventHandler) o;
+        EventMethodHandler that = (EventMethodHandler) o;
 
         return this.method.equals(that.method) && Objects.equals(this.object, that.object);
     }

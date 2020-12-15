@@ -20,14 +20,16 @@ package org.dockbox.selene.core.impl.events;
 import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.annotations.event.Listener;
+import org.dockbox.selene.core.events.EventWrapper;
+import org.dockbox.selene.core.impl.events.handle.EventHandlerRegistry;
+import org.dockbox.selene.core.impl.events.handle.SimpleEventWrapper;
 import org.dockbox.selene.core.impl.events.processors.DefaultParamProcessors;
 import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
 import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.events.handling.EventStage;
-import org.dockbox.selene.core.events.handling.IWrapper;
+import org.dockbox.selene.core.events.EventStage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,14 +47,14 @@ import java.util.Set;
 public class SimpleEventBus implements EventBus {
 
     /**
-     A map of all listening objects with their associated {@link IWrapper}s.
+     A map of all listening objects with their associated {@link EventWrapper}s.
      */
-    protected static final Map<Object, Set<IWrapper>> listenerToInvokers = SeleneUtils.emptyMap();
+    protected static final Map<Object, Set<EventWrapper>> listenerToInvokers = SeleneUtils.emptyMap();
 
     /**
      The internal registry of handlers for each event.
      */
-    protected static final HandlerRegistry handlerRegistry = new HandlerRegistry();
+    protected static final EventHandlerRegistry handlerRegistry = new EventHandlerRegistry();
 
     /**
      The internal map of {@link AbstractEventParamProcessor}s per annotation per stage.
@@ -62,14 +64,8 @@ public class SimpleEventBus implements EventBus {
 
     @NotNull
     @Override
-    public Map<Object, Set<IWrapper>> getListenersToInvokers() {
+    public Map<Object, Set<EventWrapper>> getListenersToInvokers() {
         return listenerToInvokers;
-    }
-
-    @NotNull
-    @Override
-    public HandlerRegistry getHandlerRegistry() {
-        return handlerRegistry;
     }
 
     /**
@@ -85,13 +81,13 @@ public class SimpleEventBus implements EventBus {
             return;  // Already registered
         }
 
-        Set<IWrapper> invokers = getInvokers(object);
+        Set<EventWrapper> invokers = getInvokers(object);
         if (invokers.isEmpty()) {
             return; // Doesn't contain any listener methods
         }
         Selene.log().info("Registered {} as event listener", object.getClass().toGenericString());
         listenerToInvokers.put(object, invokers);
-        for (IWrapper invoker : invokers) {
+        for (EventWrapper invoker : invokers) {
             handlerRegistry.getHandler(invoker.getEventType()).subscribe(invoker);
         }
     }
@@ -104,12 +100,12 @@ public class SimpleEventBus implements EventBus {
     @Override
     public void unsubscribe(Object object) {
         if (!object.equals(object)) return;
-        Set<IWrapper> invokers = listenerToInvokers.remove(object);
+        Set<EventWrapper> invokers = listenerToInvokers.remove(object);
         if (invokers == null || invokers.isEmpty()) {
             return; // Not registered
         }
 
-        for (IWrapper invoker : invokers) {
+        for (EventWrapper invoker : invokers) {
             handlerRegistry.getHandler(invoker.getEventType()).unsubscribe(invoker);
         }
     }
@@ -125,20 +121,20 @@ public class SimpleEventBus implements EventBus {
     }
 
     /**
-     Gets all {@link IWrapper} instances for a given listener instance.
+     Gets all {@link EventWrapper} instances for a given listener instance.
 
      @param object
      The listener instance
 
      @return The invokers
      */
-    protected static Set<IWrapper> getInvokers(Object object) {
-        Set<IWrapper> result = SeleneUtils.emptySet();
-        for (Method method : AccessHelper.getMethodsRecursively(object.getClass())) {
-            Listener annotation = AccessHelper.getAnnotationRecursively(method, Listener.class);
+    protected static Set<EventWrapper> getInvokers(Object object) {
+        Set<EventWrapper> result = SeleneUtils.emptySet();
+        for (Method method : SeleneUtils.getMethodsRecursively(object.getClass())) {
+            Listener annotation = SeleneUtils.getAnnotationRecursively(method, Listener.class);
             if (annotation != null) {
                 checkListenerMethod(method, false);
-                result.addAll(InvokeWrapper.create(object, method, annotation.value().getPriority()));
+                result.addAll(SimpleEventWrapper.create(object, method, annotation.value().getPriority()));
             }
         }
         return result;
@@ -162,7 +158,7 @@ public class SimpleEventBus implements EventBus {
      the illegal argument exception
      */
     protected static void checkListenerMethod(Method method, boolean checkAnnotation) throws IllegalArgumentException {
-        if (checkAnnotation && !AccessHelper.isAnnotationPresentRecursively(method, Listener.class)) {
+        if (checkAnnotation && !SeleneUtils.isAnnotationPresentRecursively(method, Listener.class)) {
             throw new IllegalArgumentException("Needs @Listener annotation: " + method.toGenericString());
         }
 

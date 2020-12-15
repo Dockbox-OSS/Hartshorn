@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.impl.events;
+package org.dockbox.selene.core.impl.events.handle;
 
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
@@ -27,8 +27,8 @@ import org.dockbox.selene.core.annotations.event.IsCancelled;
 import org.dockbox.selene.core.annotations.event.filter.Filter;
 import org.dockbox.selene.core.annotations.event.filter.Filters;
 import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.events.handling.EventStage;
-import org.dockbox.selene.core.events.handling.IWrapper;
+import org.dockbox.selene.core.events.EventStage;
+import org.dockbox.selene.core.events.EventWrapper;
 import org.dockbox.selene.core.events.parents.Cancellable;
 import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.events.parents.Filterable;
@@ -51,8 +51,8 @@ import java.util.Objects;
  Wrapper type for future invokation of a {@link Method} listening for {@link Event} posting.
  This type is responsible for filtering and invoking a {@link Method} when a supported {@link Event} is fired.
  */
-public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
-    public static final Comparator<InvokeWrapper> COMPARATOR = (o1, o2) -> {
+public class SimpleEventWrapper implements Comparable<SimpleEventWrapper>, EventWrapper {
+    public static final Comparator<SimpleEventWrapper> COMPARATOR = (o1, o2) -> {
         if (fastEqual(o1, o2)) return 0;
 
         // @formatter:off
@@ -68,7 +68,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
 
 
     /**
-     Creates one or more {@link InvokeWrapper}s (depending on how many event parameters are present) for a given
+     Creates one or more {@link SimpleEventWrapper}s (depending on how many event parameters are present) for a given
      method and instance.
 
      @param instance
@@ -78,17 +78,17 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
      @param priority
      The priority at which the event is fired.
 
-     @return The list of {@link InvokeWrapper}s
+     @return The list of {@link SimpleEventWrapper}s
      */
-    public static List<InvokeWrapper> create(Object instance, Method method, int priority) {
-        List<InvokeWrapper> invokeWrappers = SeleneUtils.emptyConcurrentList();
+    public static List<SimpleEventWrapper> create(Object instance, Method method, int priority) {
+        List<SimpleEventWrapper> invokeWrappers = SeleneUtils.emptyConcurrentList();
         for (Class<?> param : method.getParameterTypes()) {
             if (SeleneUtils.isAssignableFrom(Event.class, param)) {
                 Class<? extends Event> eventType = (Class<? extends Event>) param;
-                invokeWrappers.add(new InvokeWrapper(instance, eventType, method, priority));
+                invokeWrappers.add(new SimpleEventWrapper(instance, eventType, method, priority));
             } else if (SeleneUtils.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
                 WorldEdit.getInstance().getEventBus().subscribe(param,
-                        new MethodEventHandler(
+                        new EventMethodHandler(
                                 Priority.EARLY,
                                 instance,
                                 method
@@ -106,7 +106,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
 
     private final int priority;
 
-    InvokeWrapper(Object listener, Class<? extends Event> eventType, Method method, int priority) {
+    private SimpleEventWrapper(Object listener, Class<? extends Event> eventType, Method method, int priority) {
         this.listener = listener;
         this.eventType = eventType;
         this.method = method;
@@ -251,15 +251,15 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
     }
 
     @Override
-    public int compareTo(InvokeWrapper o) {
+    public int compareTo(SimpleEventWrapper o) {
         return COMPARATOR.compare(this, o);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof InvokeWrapper)) return false;
-        return fastEqual(this, (InvokeWrapper) o);
+        if (!(o instanceof SimpleEventWrapper)) return false;
+        return fastEqual(this, (SimpleEventWrapper) o);
     }
 
     @Override
@@ -271,7 +271,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
         return n;
     }
 
-    private static boolean fastEqual(InvokeWrapper o1, InvokeWrapper o2) {
+    private static boolean fastEqual(SimpleEventWrapper o1, SimpleEventWrapper o2) {
         return Objects.equals(o1.listener, o2.listener) &&
                 Objects.equals(o1.eventType, o2.eventType) &&
                 Objects.equals(o1.method, o2.method);

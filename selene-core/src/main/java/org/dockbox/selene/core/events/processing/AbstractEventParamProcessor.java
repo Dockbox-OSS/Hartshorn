@@ -19,8 +19,8 @@ package org.dockbox.selene.core.events.processing;
 
 import org.dockbox.selene.core.exceptions.SkipEventException;
 import org.dockbox.selene.core.events.parents.Event;
-import org.dockbox.selene.core.events.handling.EventStage;
-import org.dockbox.selene.core.events.handling.IWrapper;
+import org.dockbox.selene.core.events.EventStage;
+import org.dockbox.selene.core.events.EventWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 
 /**
- A low level type used to process a given {@link Annotation} type. Typically this is only used by {@link IWrapper}
+ A low level type used to process a given {@link Annotation} type. Typically this is only used by {@link EventWrapper}
  implementations to populate, filter, or skip parameter arguments.
 
  @param <A>
@@ -59,7 +59,7 @@ public abstract class AbstractEventParamProcessor<A extends Annotation> {
 
     /**
      Processes the given object based on available information in the given {@link A Annotation}, {@link Event},
-     {@link Parameter}} and/or {@link IWrapper}.
+     {@link Parameter}} and/or {@link EventWrapper}.
      If the parameter does not meet expectations, or should not be used in a given listener method,
      {@link SkipEventException} is thrown.
 
@@ -72,7 +72,7 @@ public abstract class AbstractEventParamProcessor<A extends Annotation> {
      @param parameter
      The parameter on which the annotation is applied.
      @param wrapper
-     The {@link IWrapper} which contains the invoking definition.
+     The {@link EventWrapper} which contains the invoking definition.
 
      @return The processed object
 
@@ -80,6 +80,6 @@ public abstract class AbstractEventParamProcessor<A extends Annotation> {
      Indicates the event listener should be skipped.
      */
     @Nullable
-    public abstract Object process(@Nullable Object object, A annotation, Event event, Parameter parameter, IWrapper wrapper) throws SkipEventException;
+    public abstract Object process(@Nullable Object object, A annotation, Event event, Parameter parameter, EventWrapper wrapper) throws SkipEventException;
 
 }

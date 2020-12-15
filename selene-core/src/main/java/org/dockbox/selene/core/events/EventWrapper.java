@@ -15,16 +15,18 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.events.handling;
+package org.dockbox.selene.core.events;
 
 import org.dockbox.selene.core.events.parents.Event;
 
-import java.util.Map;
+import java.lang.reflect.Method;
 
-public interface IHandlerRegistry {
+public interface EventWrapper {
 
-    IHandler getHandler(Class<? extends Event> type);
-    boolean computeHierarchy(IHandler subject);
-    Map<Class<? extends Event>, IHandler> getHandlers();
+    void invoke(Event event) throws RuntimeException;
+    Object getListener();
+    Class<? extends Event> getEventType();
+    Method getMethod();
+    int getPriority();
 
 }

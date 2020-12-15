@@ -15,32 +15,28 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.impl.events;
+package org.dockbox.selene.core.impl.events.handle;
 
-import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.events.handling.IHandler;
-import org.dockbox.selene.core.events.handling.IHandlerRegistry;
+import org.dockbox.selene.core.events.parents.Event;
 
 import java.util.Map;
 
-public final class HandlerRegistry implements IHandlerRegistry {
-    private final Map<Class<? extends Event>, IHandler> handlers = SeleneUtils.emptyMap();
+public final class EventHandlerRegistry {
+    private final Map<Class<? extends Event>, EventHandler> handlers = SeleneUtils.emptyMap();
 
-    @Override
-    public IHandler getHandler(Class<? extends Event> type) {
-        IHandler handler = handlers.get(type);
-        if (handler == null) {
-            computeHierarchy(handler = new Handler(type));
-            handlers.put(type, handler);
+    public EventHandler getHandler(Class<? extends Event> type) {
+        EventHandler handler = this.handlers.get(type);
+        if (null == handler) {
+            this.computeHierarchy(handler = new EventHandler(type));
+            this.handlers.put(type, handler);
         }
         return handler;
     }
 
-    @Override
-    public boolean computeHierarchy(IHandler subject) {
+    public boolean computeHierarchy(EventHandler subject) {
         boolean associationFound = false;
-        for (IHandler handler : handlers.values()) {
+        for (EventHandler handler : this.handlers.values()) {
             if (subject == handler) continue;
             if (subject.isSubtypeOf(handler)) {
                 associationFound |= subject.addSupertypeHandler(handler);
@@ -51,8 +47,7 @@ public final class HandlerRegistry implements IHandlerRegistry {
         return associationFound;
     }
 
-    @Override
-    public Map<Class<? extends Event>, IHandler> getHandlers() {
+    public Map<Class<? extends Event>, EventHandler> getHandlers() {
         return this.handlers;
     }
 }

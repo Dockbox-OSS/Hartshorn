@@ -24,7 +24,7 @@ import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
-import org.dockbox.selene.core.events.handling.IWrapper;
+import org.dockbox.selene.core.events.EventWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +41,7 @@ public class FaweSourceProcessor extends AbstractEventParamProcessor<FaweSource>
     }
 
     @Override
-    public @Nullable Object process(Object object, FaweSource annotation, Event event, Parameter parameter, IWrapper wrapper) throws SkipEventException {
+    public @Nullable Object process(Object object, FaweSource annotation, Event event, Parameter parameter, EventWrapper wrapper) throws SkipEventException {
         if (object instanceof Player) {
             Exceptional<FawePlayer<?>> player = ((Player) object).getFawePlayer();
             if (player.isPresent()) return player.get();

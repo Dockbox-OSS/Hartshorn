@@ -29,8 +29,8 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
-import org.dockbox.selene.core.events.handling.EventStage;
-import org.dockbox.selene.core.events.handling.IWrapper;
+import org.dockbox.selene.core.events.EventStage;
+import org.dockbox.selene.core.events.EventWrapper;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -168,7 +168,7 @@ public enum DefaultParamProcessors {
             }
 
             @Override
-            public @Nullable Object process(Object object, A annotation, Event event, Parameter parameter, IWrapper wrapper) throws SkipEventException {
+            public @Nullable Object process(Object object, A annotation, Event event, Parameter parameter, EventWrapper wrapper) throws SkipEventException {
                 return processor.process(object, annotation, event, parameter, wrapper);
             }
         };
@@ -194,6 +194,6 @@ public enum DefaultParamProcessors {
 
     @FunctionalInterface
     private interface AbstractEnumEventParamProcessor<A extends Annotation> {
-        Object process(Object object, A annotation, Event event, Parameter parameter, IWrapper wrapper) throws SkipEventException;
+        Object process(Object object, A annotation, Event event, Parameter parameter, EventWrapper wrapper) throws SkipEventException;
     }
 }
