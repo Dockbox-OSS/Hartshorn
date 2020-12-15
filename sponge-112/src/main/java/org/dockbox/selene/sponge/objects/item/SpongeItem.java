@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.sponge.objects.item;
 
+import com.sk89q.worldedit.blocks.BaseBlock;
+
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;

@@ -17,9 +17,11 @@
 
 package org.dockbox.selene.test.util;
 
+import com.sk89q.worldedit.blocks.BaseBlock;
+
+import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
-import org.dockbox.selene.core.ConstructionUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class TestConstructionUtil implements ConstructionUtil {
@@ -32,6 +34,11 @@ public class TestConstructionUtil implements ConstructionUtil {
     @NotNull
     @Override
     public Item<?> item(@NotNull String id, int amount) {
+        return null;
+    }
+
+    @Override
+    public Item<?> item(BaseBlock baseBlock) {
         return null;
     }
 

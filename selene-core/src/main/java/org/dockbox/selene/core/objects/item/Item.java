@@ -17,14 +17,16 @@
 
 package org.dockbox.selene.core.objects.item;
 
+import com.sk89q.worldedit.blocks.BaseBlock;
+
+import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.ReferenceHolder;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
-import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.keys.PersistentDataHolder;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.ConstructionUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -95,12 +97,41 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
 
     public abstract boolean isBlock();
 
+    /**
+     @param id
+     The fully qualified identifier of a block, e.g. {@code minecraft:stone}
+     @param meta
+     The unsafe damage, or meta. Constraints to range 0-15
+
+     @return The item instance, or {@link Item#AIR}
+
+     @deprecated Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As of 1.13 this will no
+     longer be available!
+
+     See {@link ConstructionUtil#item(String, int)}
+     */
+    @Deprecated
     public static Item<?> of(String id, int meta) {
         return Selene.getInstance(ConstructionUtil.class).item(id, meta);
     }
 
     public static Item<?> of(String id) {
         return Selene.getInstance(ConstructionUtil.class).item(id);
+    }
+
+    /**
+     @param baseBlock
+     The {@link BaseBlock} instance to use when creating the item.
+     @return
+     The item instance, or {@link Item#AIR}
+
+     @deprecated Note that WorldEdit rewrote their API for 1.13+, and that package/class names changes.
+
+     See {@link ConstructionUtil#item(BaseBlock)}
+     */
+    @Deprecated
+    public static Item<?> of(BaseBlock baseBlock) {
+        return Selene.getInstance(ConstructionUtil.class).item(baseBlock);
     }
 
 }

@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.core;
 
+import com.sk89q.worldedit.blocks.BaseBlock;
+
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 
@@ -27,13 +29,31 @@ public interface ConstructionUtil {
      Creates a item based on a given fully qualified identifier. Uses unsafe damage (meta) to select blocks from a
      internal platform registry.
 
-     <b>Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As of 1.13 this will no longer
-     be available!</b>
-     @param id The fully qualified identifier of a block, e.g. {@code minecraft:stone}
-     @param meta The unsafe damage, or meta. Constraints to range 0-15
+     @param id
+     The fully qualified identifier of a block, e.g. {@code minecraft:stone}
+     @param meta
+     The unsafe damage, or meta. Constraints to range 0-15
+
      @return The item instance, or {@link Item#AIR}
+
+     @deprecated Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As of 1.13 this will no
+     longer be available!
      */
     @Deprecated
     Item<?> item(String id, int meta);
+
+    /**
+     Creates a item based on a given {@link BaseBlock}. This is converted by the underlying platform.
+
+     @param baseBlock
+     The {@link BaseBlock} instance to use when creating the item.
+     @return
+     The item instance, or {@link Item#AIR}
+
+     @deprecated Note that WorldEdit rewrote their API for 1.13+, and that package/class names changes.
+     */
+    @Deprecated
+    Item<?> item(BaseBlock baseBlock);
+
     Item<?> item(String id);
 }

@@ -115,6 +115,13 @@
             <artifactId>nucleus-api</artifactId>
             <version>${nucleus.version}</version>
         </dependency>
+
+        <!-- WorldEdit target -->
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-sponge</artifactId>
+            <version>7.3.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

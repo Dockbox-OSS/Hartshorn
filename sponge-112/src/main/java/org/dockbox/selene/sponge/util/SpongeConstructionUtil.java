@@ -17,9 +17,11 @@
 
 package org.dockbox.selene.sponge.util;
 
+import com.sk89q.worldedit.blocks.BaseBlock;
+
+import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
-import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -38,10 +40,14 @@ public class SpongeConstructionUtil implements ConstructionUtil {
         return new SpongeItem(id, amount);
     }
 
+    @Override
+    public Item<?> item(BaseBlock baseBlock) {
+        return SpongeConversionUtil.throughSponge(baseBlock).orElse(Item.AIR);
+    }
+
     @NotNull
     @Override
     public Item<?> item(@NotNull String id) {
         return new SpongeItem(id);
     }
-
 }

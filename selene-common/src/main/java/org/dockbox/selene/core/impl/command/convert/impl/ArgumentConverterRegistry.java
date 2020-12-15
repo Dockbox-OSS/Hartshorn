@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.impl.command.convert.impl;
 
+import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
@@ -203,6 +204,21 @@ public final class ArgumentConverterRegistry {
             },
             (source, s) -> SeleneUtils.emptyList(),
             "pattern"
+    );
+
+    public static final ArgumentConverter<BaseBlock> BLOCK = new ConstantArgumentConverter<>(
+            new String[]{"block", "baseblock"},
+            BaseBlock.class,
+            string -> {
+                String[] parts = string.split(":");
+                int id = Integer.parseInt(parts[0]);
+                if (2 == parts.length) {
+                    int data = Integer.parseInt(parts[1]);
+                    return new BaseBlock(id, data);
+                }
+                return new BaseBlock(id);
+            },
+            new BaseBlock(0)
     );
 
     public static final ArgumentConverter<Extension> EXTENSION = new ConstantArgumentConverter<>(

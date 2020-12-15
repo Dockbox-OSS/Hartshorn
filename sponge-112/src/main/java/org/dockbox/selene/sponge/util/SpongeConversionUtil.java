@@ -20,6 +20,8 @@ package org.dockbox.selene.sponge.util;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.magitechserver.magibridge.util.BridgeCommandSource;
+import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.sponge.adapter.impl.Sponge_1_12_2_Impl;
 
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.command.source.CommandSource;
@@ -49,6 +51,7 @@ import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.data.type.HandTypes;
@@ -307,6 +310,12 @@ public enum SpongeConversionUtil {
         }
     }
 
+    public static HandType toSponge(Hand hand) {
+        if (Hand.MAIN_HAND == hand) return HandTypes.MAIN_HAND;
+        if (Hand.OFF_HAND == hand) return HandTypes.OFF_HAND;
+        throw new UncheckedSeleneException("Invalid value in context '" + hand + "'");
+    }
+
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @NotNull
     public static org.dockbox.selene.core.text.Text fromSponge(Text text) {
@@ -461,9 +470,22 @@ public enum SpongeConversionUtil {
         throw new UncheckedSeleneException("Invalid value in context '" + handType + "'");
     }
 
-    public static HandType toSponge(Hand hand) {
-        if (Hand.MAIN_HAND == hand) return HandTypes.MAIN_HAND;
-        if (Hand.OFF_HAND == hand) return HandTypes.OFF_HAND;
-        throw new UncheckedSeleneException("Invalid value in context '" + hand + "'");
+    public static Exceptional<Item<?>> throughSponge(BaseBlock block) {
+        try {
+            Exceptional<BlockState> state = SeleneUtils.getMethodValue(
+                    com.sk89q.worldedit.sponge.SpongeWorld.class,
+                    new Sponge_1_12_2_Impl(),
+                    "getBlockState",
+                    BlockState.class,
+                    new Class<?>[]{Class.forName("com.sk89q.worldedit.world.block.BlockStateHolder")},
+                    block
+            );
+            return state.map(blockState -> {
+                ItemStack stack = ItemStack.builder().fromBlockState(blockState).build();
+                return fromSponge(stack);
+            });
+        } catch (Exception e) {
+            return Exceptional.empty();
+        }
     }
 }
