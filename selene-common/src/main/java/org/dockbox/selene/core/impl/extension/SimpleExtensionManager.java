@@ -19,15 +19,16 @@ package org.dockbox.selene.core.impl.extension;
 
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.impl.SimpleExtensionContext;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.tuple.Tuple;
-import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.extension.Disabled;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.extension.ExtensionStatus;
+import org.dockbox.selene.core.impl.SimpleExtensionContext;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.tuple.Tuple;
+import org.dockbox.selene.core.server.Selene;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -88,23 +89,25 @@ public class SimpleExtensionManager implements ExtensionManager {
         Collection<Class<?>> annotatedTypes = SeleneUtils
                 .getAnnotatedTypes(Selene.PACKAGE_PREFIX, Extension.class);
         Selene.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
-        return annotatedTypes.stream().map(type -> {
+        return annotatedTypes.stream()
+                .filter(type -> !type.isAnnotationPresent(Disabled.class))
+                .map(type -> {
 
-            Selene.log().info(" - [" + type.getCanonicalName() + "]");
-            SimpleExtensionContext context = new SimpleExtensionContext(
-                    type.getCanonicalName(),
-                    type,
-                    type.getAnnotation(Extension.class)
-            );
+                    Selene.log().info(" - [" + type.getCanonicalName() + "]");
+                    SimpleExtensionContext context = new SimpleExtensionContext(
+                            type.getCanonicalName(),
+                            type,
+                            type.getAnnotation(Extension.class)
+                    );
 
-            return new Tuple<>(context, type);
-        }).filter(tuple -> {
-            if (this.createComponentInstance(tuple.getValue(), tuple.getKey())) {
-                globalContexts.add(tuple.getKey());
-                return true;
-            }
-            return false;
-        }).map(Tuple::getKey).collect(Collectors.toList());
+                    return new Tuple<>(context, type);
+                }).filter(tuple -> {
+                    if (this.createComponentInstance(tuple.getValue(), tuple.getKey())) {
+                        globalContexts.add(tuple.getKey());
+                        return true;
+                    }
+                    return false;
+                }).map(Tuple::getKey).collect(Collectors.toList());
     }
 
     @NotNull

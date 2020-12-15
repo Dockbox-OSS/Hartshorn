@@ -22,8 +22,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ The interface to mark a type (typically a extension) as disabled. This is used as reference for developers working on
+ Selene, and to prevent a extension from loading.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Disabled {
+    /**
+     The reason why the type is disabled.
+
+     @return the reason
+     */
     String reason();
 }

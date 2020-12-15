@@ -25,15 +25,71 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.time.temporal.ChronoUnit;
 
+/**
+ The annotation used to mark a method or class as a command holder.
+ @see <a href="https://github.com/GuusLieben/Selene/wiki/Commands">Commands</a>
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Command {
+    /**
+     The aliases for the command.
+
+     @return the aliases
+     */
     String[] aliases();
+
+    /**
+     The usage context for the command.
+
+     @see <a href="https://github.com/GuusLieben/Selene/wiki/Commands#defining-command-usage">Commands#defining-command-usage</a>
+
+     @return the usage context for the command.
+     */
     String usage();
+
+    /**
+     The permissions for the command. Defaults to {@link Selene#GLOBAL_BYPASS} if not defined.
+
+     @return the permission required for the command.
+     */
     String permission() default Selene.GLOBAL_BYPASS;
+
+    /**
+     The duration in the {@link Command#cooldownUnit() cooldown unit}. Defaults to -1 if not defined, disabling the
+     cooldown functionality for the command.
+
+     @return the duration
+     */
     long cooldownDuration() default -1;
+
+    /**
+     The cooldown unit. Defaults to {@link ChronoUnit#SECONDS} if not defined.
+
+     @return the cooldown unit
+     */
     ChronoUnit cooldownUnit() default ChronoUnit.SECONDS;
+
+    /**
+     Marks whether or not the command is a child command. This typically only affects methods annoted with this
+     annotation which are inside a class annoted with this annotation.
+
+     @return true if the command is a child command
+     */
     boolean inherit() default true;
+
+    /**
+     Marks whether the command is a standalone command, or adds child commands to a existing registration. This
+     typically only affects classes annoted with this annotation.
+
+     @return true if this command adds child commands to a existing registration.
+     */
     boolean extend() default false;
+
+    /**
+     Marks whether or not the command should require user confirmation before executing.
+
+     @return true if confirmation is required.
+     */
     boolean confirm() default false;
 }
