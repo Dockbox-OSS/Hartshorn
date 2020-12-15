@@ -34,7 +34,7 @@ import org.dockbox.selene.core.impl.SimpleExceptionHelper;
 import org.dockbox.selene.core.impl.SimpleResourceService;
 import org.dockbox.selene.core.impl.events.SimpleEventBus;
 import org.dockbox.selene.core.impl.extension.SimpleExtensionManager;
-import org.dockbox.selene.core.impl.server.config.DefaultGlobalConfig;
+import org.dockbox.selene.core.impl.server.config.SimpleGlobalConfig;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
 import org.dockbox.selene.core.server.config.GlobalConfig;
@@ -72,7 +72,7 @@ public class TestInjector extends SeleneInjectConfiguration {
     protected void configureDefaultInject() {
         super.bind(BroadcastService.class).to(SimpleBroadcastService.class);
         super.bind(EventBus.class).to(SimpleEventBus.class);
-        super.bind(GlobalConfig.class).to(DefaultGlobalConfig.class);
+        super.bind(GlobalConfig.class).to(SimpleGlobalConfig.class);
         super.bind(IntegratedExtension.class).to(IntegratedTestExtension.class);
         super.bind(ResourceService.class).to(SimpleResourceService.class);
     }

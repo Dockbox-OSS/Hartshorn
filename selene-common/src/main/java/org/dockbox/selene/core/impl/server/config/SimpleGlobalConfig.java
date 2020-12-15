@@ -39,7 +39,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @Singleton
 @ConfigSerializable
-public class DefaultGlobalConfig implements GlobalConfig, InjectableType {
+public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
 
     @Inject
     private transient ConfigurateManager configurateManager;
@@ -112,7 +112,7 @@ public class DefaultGlobalConfig implements GlobalConfig, InjectableType {
 
         Path configPath = this.configurateManager.getConfigFile(extension);
         GlobalConfig globalConfig = this.configurateManager
-                .getFileContent(configPath, DefaultGlobalConfig.class)
+                .getFileContent(configPath, SimpleGlobalConfig.class)
                 .orNull();
         this.copyValues(globalConfig);
     }

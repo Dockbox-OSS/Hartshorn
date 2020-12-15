@@ -34,7 +34,7 @@ import org.dockbox.selene.core.impl.SimpleExceptionHelper;
 import org.dockbox.selene.core.impl.SimpleResourceService;
 import org.dockbox.selene.core.impl.events.SimpleEventBus;
 import org.dockbox.selene.core.impl.extension.SimpleExtensionManager;
-import org.dockbox.selene.core.impl.server.config.DefaultGlobalConfig;
+import org.dockbox.selene.core.impl.server.config.SimpleGlobalConfig;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
@@ -74,7 +74,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
     protected void configureDefaultInject() {
         this.bind(BroadcastService.class).to(SimpleBroadcastService.class);
         this.bind(EventBus.class).toInstance(new SimpleEventBus());
-        this.bind(GlobalConfig.class).toInstance(new DefaultGlobalConfig());
+        this.bind(GlobalConfig.class).toInstance(new SimpleGlobalConfig());
         this.bind(ResourceService.class).toInstance(new SimpleResourceService());
         this.bind(Logger.class).toInstance(Selene.log());
     }
