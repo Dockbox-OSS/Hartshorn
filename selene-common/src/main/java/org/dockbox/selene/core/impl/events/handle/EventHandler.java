@@ -19,7 +19,6 @@ package org.dockbox.selene.core.impl.events.handle;
 
 import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.events.handling.IHandler;
 import org.dockbox.selene.core.events.EventWrapper;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +31,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class EventHandler implements IHandler {
+public class EventHandler {
     private final Class<? extends Event> eventType;
 
     private final Set<EventHandler> supertypeHandlers = SeleneUtils.emptySet();
@@ -45,24 +44,20 @@ public class EventHandler implements IHandler {
         this.eventType = eventType;
     }
 
-    @Override
     public List<Method> getMethods() {
         return this.invokers.stream().map(SimpleEventWrapper::getMethod).collect(Collectors.toList());
     }
 
-    @Override
     public void subscribe(EventWrapper invoker) {
         if (invoker instanceof SimpleEventWrapper)
             this.invalidateCache(this.invokers.add((SimpleEventWrapper) invoker));
     }
 
-    @Override
     public void unsubscribe(EventWrapper invoker) {
         if (invoker instanceof SimpleEventWrapper)
             this.invalidateCache(this.invokers.remove(invoker));
     }
 
-    @Override
     public void post(Event event, Class<?> target) {
         SimpleEventWrapper[] cache = this.computedInvokerCache;
         if (null == cache) {
@@ -107,8 +102,7 @@ public class EventHandler implements IHandler {
         return type != cls && SeleneUtils.isAssignableFrom(cls, type);
     }
 
-    @Override
-    public boolean isSubtypeOf(IHandler handler) {
+    public boolean isSubtypeOf(EventHandler handler) {
         if (handler instanceof EventHandler)
             return this.isSubtypeOf(((EventHandler) handler).eventType());
         return false;
@@ -118,13 +112,11 @@ public class EventHandler implements IHandler {
         return !this.supertypeHandlers.isEmpty();
     }
 
-    @Override
-    public Set<IHandler> getSupertypeHandlers() {
+    public Set<EventHandler> getSupertypeHandlers() {
         return Collections.unmodifiableSet(this.supertypeHandlers);
     }
 
-    @Override
-    public boolean addSupertypeHandler(IHandler handler) {
+    public boolean addSupertypeHandler(EventHandler handler) {
         if (!(handler instanceof EventHandler)) return false;
         if (handler == this) return false;
         return this.invalidateCache(this.supertypeHandlers.add((EventHandler) handler));
