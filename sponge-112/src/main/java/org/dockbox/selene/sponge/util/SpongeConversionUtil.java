@@ -43,7 +43,7 @@ import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
 import org.dockbox.selene.core.text.pagination.Pagination;
-import org.dockbox.selene.sponge.exceptions.TypeConversionException;
+import org.dockbox.selene.core.exceptions.TypeConversionException;
 import org.dockbox.selene.sponge.objects.discord.MagiBridgeCommandSource;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
@@ -406,7 +406,7 @@ public enum SpongeConversionUtil {
             return Exceptional.of(fromSponge((org.spongepowered.api.entity.living.player.Player) commandSource));
         else if (commandSource instanceof BridgeCommandSource)
             return Exceptional.of(new MagiBridgeCommandSource((BridgeCommandSource) commandSource));
-        return Exceptional.of(new TypeConversionException("Could not convert CommandSource type '" + commandSource.getClass().getCanonicalName() + "'"));
+        return Exceptional.of(new TypeConversionException(commandSource.getClass(), CommandSource.class));
     }
 
     @NotNull

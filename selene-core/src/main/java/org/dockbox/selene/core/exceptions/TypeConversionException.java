@@ -15,11 +15,13 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.exceptions;
+package org.dockbox.selene.core.exceptions;
 
-public class TypeConversionException extends RuntimeException {
+import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 
-    public TypeConversionException(String message) {
-        super(message);
+public class TypeConversionException extends UncheckedSeleneException {
+
+    public TypeConversionException(Class<?> from, Class<?> target) {
+        super("Could not convert [" + from.getCanonicalName() + "] to target type [" + target.getCanonicalName() + "]");
     }
 }
