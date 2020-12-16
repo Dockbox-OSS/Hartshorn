@@ -16,5 +16,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+          submodules
       - name: Build with Maven
         run: mvn -B package --file pom.xml
+        with:
+          token: ${{ secrets.SELENE_AT }}
+          submodules: recursive
