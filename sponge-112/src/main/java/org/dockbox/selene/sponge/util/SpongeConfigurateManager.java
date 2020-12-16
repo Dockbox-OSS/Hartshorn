@@ -44,13 +44,13 @@ public class SpongeConfigurateManager extends DefaultConfigurateManager {
     @NotNull
     @Override
     public Path getDataDir() {
-        return getServerRoot().resolve("data/");
+        return this.getServerRoot().resolve("data/");
     }
 
     @NotNull
     @Override
     public Path getLogsDir() {
-        return getServerRoot().resolve("logs/");
+        return this.getServerRoot().resolve("logs/");
     }
 
     @NotNull
@@ -62,36 +62,36 @@ public class SpongeConfigurateManager extends DefaultConfigurateManager {
     @NotNull
     @Override
     public Path getExtensionDir() {
-        return createPathIfNotExists(getServerRoot().resolve("extensions/"));
+        return this.createPathIfNotExists(this.getServerRoot().resolve("extensions/"));
     }
 
     @NotNull
     @Override
     public Exceptional<Path> getModDir() {
-        return Exceptional.of(createPathIfNotExists(getServerRoot().resolve("mods/")));
+        return Exceptional.of(this.createPathIfNotExists(this.getServerRoot().resolve("mods/")));
     }
 
     @NotNull
     @Override
     public Path getPluginDir() {
-        return createPathIfNotExists(getServerRoot().resolve("plugins/"));
+        return this.createPathIfNotExists(this.getServerRoot().resolve("plugins/"));
     }
 
     @NotNull
     @Override
     public Path getExtensionConfigsDir() {
-        return getServerRoot().resolve("config/extensions/");
+        return this.getServerRoot().resolve("config/extensions/");
     }
 
     @NotNull
     @Override
     public Exceptional<Path> getModdedPlatformModsConfigDir() {
-        return Exceptional.of(getServerRoot().resolve("config/"));
+        return Exceptional.of(this.getServerRoot().resolve("config/"));
     }
 
     @NotNull
     @Override
     public Path getPlatformPluginsConfigDir() {
-        return getServerRoot().resolve("config/plugins/");
+        return this.getServerRoot().resolve("config/plugins/");
     }
 }
