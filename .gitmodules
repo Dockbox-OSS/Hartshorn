@@ -1,3 +1,6 @@
 [submodule "servers"]
 	path = servers
 	url = https://github.com/GuusLieben/Selene-Servers.git
+[submodule "darwin-extensions"]
+	path = darwin-extensions
+	url = https://github.com/GuusLieben/Selene-Native-Extensions

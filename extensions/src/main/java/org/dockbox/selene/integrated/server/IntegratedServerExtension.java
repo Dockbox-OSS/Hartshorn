@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.integrated.server;
 
+import com.sk89q.worldedit.blocks.BaseBlock;
+
 import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
@@ -32,8 +34,6 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LanguageParser;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.keys.PersistentDataKey;
-import org.dockbox.selene.core.objects.keys.data.StringPersistentDataKey;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
@@ -208,6 +208,13 @@ public class IntegratedServerExtension implements IntegratedExtension {
         target.setLanguage(lang);
         // Messages sent after language switch will be in the preferred language
         src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")"));
+    }
+
+    @Command(aliases = "demo", usage = "demo <block{baseblock}>")
+    public void demo(Player player, CommandContext context) {
+        BaseBlock block = context.getArgument("block", BaseBlock.class).get().getValue();
+        Item<?> item = Item.of(block);
+        player.giveItem(item);
     }
 
 }
