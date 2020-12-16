@@ -1,42 +1,12 @@
 ![image](https://user-images.githubusercontent.com/10957963/100515229-bc4f0b00-317a-11eb-8688-39d229eeada6.png)
 
 [![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1)
-![Build status](https://github.com/GuusLieben/Selene/workflows/Build%20status/badge.svg)  
-![minecraft](https://img.shields.io/badge/Minecraft-1.12.2-green)
-![sponge-api](https://img.shields.io/badge/SpongeAPI-7.2-green)  
-
-**Project is in pre-alpha stages, please note there might be major changes without explicit notice**  
-**First release candidate for Selene is expected to be available 2021.1 (Q1)**
-
-# Project structure
-The project uses both Kotlin and Java in a multi-module configuration. Each module contains Java sources at `/src/main/java/`
-and Kotlin sources at `/src/main/kotlin/`. Resources in `/src/main/resources/` are shared across both sources. Tests
-follow the same structure, though it is recommended to write tests for extensions in Java only. 
-
-## Selene Core
-`selene-core` is the base of the framework, containing the main APIs to work with when developing extensions.
-It contains mostly interfaces and abstract types, and does not depend on a specific platform.
-
-## Selene Common
-`selene-common` contains default implementations of the APIs, which can be used across platforms. These are typically
-invisible to extensions.
-
-## Extensions
-`extensions` is the base for platform-independent extensions. These are unaware of the platform they are being used
-on, and only communicate with the framework directly.
-
-## Sponge
-`sponge` is the platform implementation for [Sponge](https://github.com/SpongePowered/SpongeForge/). It contains the
-implementation of Selene for the platform, and defines which default implementations are used alongside Sponge-specific
-implementations.  
-
-## Sponge Extensions
-`sponge-extensions` is the base for platform-specific extensions. These are aware of the platform used, and are
-typically extensions designed to replace platform plugins which are not directly available on other platforms 
-(like ptime).
+![Build status](https://github.com/GuusLieben/Selene/workflows/Build%20status/badge.svg)
 
 # Usage
-_Note: To use Selene, your project must be configured to use Java 8 or higher._
+_Note: To use Selene, your project must be configured to use Java 8 or higher._  
+See [About](https://github.com/GuusLieben/Selene/wiki) and [Maven](https://github.com/GuusLieben/Selene/wiki/Maven) on the wiki
+for additional information about the topics below.
 
 ## Build distribution
 Selene uses Maven to automate builds, performing several steps before and after a build has completed. To build, use
