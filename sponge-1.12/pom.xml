@@ -71,12 +71,6 @@
             <version>${project.parent.version}</version>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>org.dockbox.selene</groupId>
-            <artifactId>sponge-extensions</artifactId>
-            <version>${project.parent.version}</version>
-            <type>jar</type>
-        </dependency>
 
         <!-- Platform -->
         <dependency>
@@ -166,12 +160,6 @@
                                 </filter>
                                 <filter>
                                     <artifact>org.dockbox.selene:extensions</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
-                                </filter>
-                                <filter>
-                                    <artifact>org.dockbox.selene:sponge-extensions</artifact>
                                     <includes>
                                         <include>**</include>
                                     </includes>
