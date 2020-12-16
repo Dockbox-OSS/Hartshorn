@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.dockbox.selene</groupId>
-    <artifactId>sponge-112</artifactId>
+    <artifactId>sponge-1.12</artifactId>
     <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 

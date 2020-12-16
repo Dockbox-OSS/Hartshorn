@@ -28,9 +28,11 @@
     <name>Selene</name>
 
     <modules>
+        <!-- Core and platform modules-->
         <module>selene-core</module>
         <module>selene-common</module>
-        <module>sponge-112</module>
+        <module>sponge-1.12</module>
+        <!-- Extension modules -->
         <module>extensions</module>
         <module>darwin-extensions</module>
     </modules>
