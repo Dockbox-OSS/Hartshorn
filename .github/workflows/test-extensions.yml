@@ -1,4 +1,4 @@
-name: Build Selene
+name: Test Extensions (Integrated)
 
 on: [pull_request]
 
@@ -19,4 +19,4 @@ jobs:
           token: ${{ secrets.SELENE_AT }}
           submodules: recursive
       - name: Build with Maven
-        run: mvn -B test --file selene-common/pom.xml
+        run: mvn -B test --file extensions/pom.xml

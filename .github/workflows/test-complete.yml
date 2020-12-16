@@ -1,4 +1,4 @@
-name: Build Selene
+name: Test Project
 
 on: [pull_request]
 

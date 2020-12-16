@@ -1,4 +1,4 @@
-name: Build Selene
+name: Test Sponge 1.12
 
 on: [pull_request]
 
