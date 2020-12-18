@@ -55,7 +55,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 import java.util.concurrent.TimeUnit;
 
 /**
- Sponge implementation of Selene, using events to initiate startup tasks.
+ * Sponge implementation of Selene, using events to initiate startup tasks.
  */
 @Plugin(
         id = "selene",
@@ -77,32 +77,27 @@ public class SeleneSponge112Impl extends Selene {
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
 
     /**
-     Creates a new Selene instance using the {@link org.dockbox.selene.sponge.util.SpongeInjector} bindings
-     providing utilities.
+     * Creates a new Selene instance using the {@link org.dockbox.selene.sponge.util.SpongeInjector} bindings
+     * providing utilities.
      */
     public SeleneSponge112Impl() {
         super(new SpongeInjector());
     }
 
     /**
-     Sponge Listener method, registers additional listeners present in
-     {@link org.dockbox.selene.sponge.listeners.SpongeServerListener}.
-
-     @param event
-     Sponge's initialization event
+     * The entry point of application, in case it is started directly.
+     *
+     * @param args
+     *         The input arguments
      */
-    @Listener
-    public void onServerInit(GameInitializationEvent event) {
-        // TODO GuusLieben, attempt to convert injector to raw bindings
-//      super.upgradeInjectors(this.spongeInjector);
-        this.registerSpongeListeners(
-                getInstance(SpongeCommandListener.class),
-                getInstance(SpongeServerListener.class),
-                getInstance(SpongeDiscordListener.class),
-                getInstance(SpongePlayerListener.class)
-        );
+    public static void main(String[] args) {
+        // This is the only place where SystemOut is allowed as no server instance can exist at this point.
+        //noinspection UseOfSystemOutOrSystemErr
+        System.out.println("Selene is a framework plugin, it should not be started as a separate application.");
 
-        super.init();
+        // This will cause Forge to complain about direct System.exit references. This only results in a warning
+        // message and an automatic redirect to FMLCommonHandler.exitJava.
+        System.exit(8);
     }
 
     @Listener
@@ -134,13 +129,50 @@ public class SeleneSponge112Impl extends Selene {
     }
 
     /**
-     Sponge Listener method, registers the MagiBridge JDA instance as soon as it is available.
+     * Sponge Listener method, registers additional listeners present in
+     * {@link org.dockbox.selene.sponge.listeners.SpongeServerListener}.
+     *
+     * @param event
+     *         Sponge's initialization event
+     */
+    @Listener
+    public void onServerInit(GameInitializationEvent event) {
+        // TODO GuusLieben, attempt to convert injector to raw bindings
+//      super.upgradeInjectors(this.spongeInjector);
+        this.registerSpongeListeners(
+                getInstance(SpongeCommandListener.class),
+                getInstance(SpongeServerListener.class),
+                getInstance(SpongeDiscordListener.class),
+                getInstance(SpongePlayerListener.class)
+        );
 
-     Sometimes MagiBridge takes a while to start, if this is the case we register a delayed task to execute
-     this method again 30 seconds later.
+        super.init();
+    }
 
-     @param event
-     the event
+    @NotNull
+    @Override
+    public ServerType getServerType() {
+        return ServerType.SPONGE;
+    }
+
+    @Override
+    public String getPlatformVersion() {
+        return Sponge.getPlatform().getContainer(Component.IMPLEMENTATION).getVersion().orElse("Unknown");
+    }
+
+    @Override
+    public MinecraftVersion getMinecraftVersion() {
+        return MinecraftVersion.MC1_12;
+    }
+
+    /**
+     * Sponge Listener method, registers the MagiBridge JDA instance as soon as it is available.
+     *
+     * Sometimes MagiBridge takes a while to start, if this is the case we register a delayed task to execute
+     * this method again 30 seconds later.
+     *
+     * @param event
+     *         The event
      */
     @Listener
     public void onServerStartedLate(GameStartedServerEvent event) {
@@ -163,38 +195,5 @@ public class SeleneSponge112Impl extends Selene {
                     .async()
                     .submit(this);
         }
-    }
-
-    @NotNull
-    @Override
-    public ServerType getServerType() {
-        return ServerType.SPONGE;
-    }
-
-    @Override
-    public String getPlatformVersion() {
-        return Sponge.getPlatform().getContainer(Component.IMPLEMENTATION).getVersion().orElse("Unknown");
-    }
-
-    @Override
-    public MinecraftVersion getMinecraftVersion() {
-        return MinecraftVersion.MC1_12;
-    }
-
-
-    /**
-     The entry point of application, in case it is started directly.
-
-     @param args
-     the input arguments
-     */
-    public static void main(String[] args) {
-        // This is the only place where SystemOut is allowed as no server instance can exist at this point.
-        //noinspection UseOfSystemOutOrSystemErr
-        System.out.println("Selene is a framework plugin, it should not be started as a separate application.");
-
-        // This will cause Forge to complain about direct System.exit references. This only results in a warning
-        // message and an automatic redirect to FMLCommonHandler.exitJava.
-        System.exit(8);
     }
 }

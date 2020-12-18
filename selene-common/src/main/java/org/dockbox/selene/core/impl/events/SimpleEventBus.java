@@ -19,17 +19,17 @@ package org.dockbox.selene.core.impl.events;
 
 import com.google.inject.Singleton;
 
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.event.Listener;
+import org.dockbox.selene.core.events.EventBus;
+import org.dockbox.selene.core.events.EventStage;
 import org.dockbox.selene.core.events.EventWrapper;
+import org.dockbox.selene.core.events.parents.Event;
+import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
 import org.dockbox.selene.core.impl.events.handle.EventHandlerRegistry;
 import org.dockbox.selene.core.impl.events.handle.SimpleEventWrapper;
 import org.dockbox.selene.core.impl.events.processors.DefaultParamProcessors;
-import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
-import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.events.EventStage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,24 +40,24 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- A simple default implementation of {@link EventBus}, used for internal event posting and handling.
+ * A simple default implementation of {@link EventBus}, used for internal event posting and handling.
  */
 @Singleton
 @SuppressWarnings({"unchecked", "EqualsWithItself", "VolatileArrayField"})
 public class SimpleEventBus implements EventBus {
 
     /**
-     A map of all listening objects with their associated {@link EventWrapper}s.
+     * A map of all listening objects with their associated {@link EventWrapper}s.
      */
     protected static final Map<Object, Set<EventWrapper>> listenerToInvokers = SeleneUtils.emptyMap();
 
     /**
-     The internal registry of handlers for each event.
+     * The internal registry of handlers for each event.
      */
     protected static final EventHandlerRegistry handlerRegistry = new EventHandlerRegistry();
 
     /**
-     The internal map of {@link AbstractEventParamProcessor}s per annotation per stage.
+     * The internal map of {@link AbstractEventParamProcessor}s per annotation per stage.
      */
     // TODO: Refactor to Registry structure once S124 is accepted
     protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = SeleneUtils.emptyMap();
@@ -69,10 +69,11 @@ public class SimpleEventBus implements EventBus {
     }
 
     /**
-     Subscribes all event listeners in a object instance. Typically event listeners are methods annotated with
-     {@link Listener}.
-
-     @param object The instance of the listener
+     * Subscribes all event listeners in a object instance. Typically event listeners are methods annotated with
+     * {@link Listener}.
+     *
+     * @param object
+     *         The instance of the listener
      */
     @Override
     public void subscribe(Object object) {
@@ -93,9 +94,10 @@ public class SimpleEventBus implements EventBus {
     }
 
     /**
-     Unsubscribes all event listeners in a object instance.
-
-     @param object The instance of the listener
+     * Unsubscribes all event listeners in a object instance.
+     *
+     * @param object
+     *         The instance of the listener
      */
     @Override
     public void unsubscribe(Object object) {
@@ -121,12 +123,12 @@ public class SimpleEventBus implements EventBus {
     }
 
     /**
-     Gets all {@link EventWrapper} instances for a given listener instance.
-
-     @param object
-     The listener instance
-
-     @return The invokers
+     * Gets all {@link EventWrapper} instances for a given listener instance.
+     *
+     * @param object
+     *         The listener instance
+     *
+     * @return The invokers
      */
     protected static Set<EventWrapper> getInvokers(Object object) {
         Set<EventWrapper> result = SeleneUtils.emptySet();
@@ -141,21 +143,21 @@ public class SimpleEventBus implements EventBus {
     }
 
     /**
-     Checks if a method is a valid listener method. A method is only valid if it:
-     <ul>
-        <li>Is annotated with {@link Listener}</li>
-        <li>Is not static</li>
-        <li>Is not abstract</li>
-        <li>Has at least one parameter which is a subcless of {@link Event}</li>
-     </ul>
-
-     @param method
-     the method
-     @param checkAnnotation
-     the check annotation
-
-     @throws IllegalArgumentException
-     the illegal argument exception
+     * Checks if a method is a valid listener method. A method is only valid if it:
+     * <ul>
+     *    <li>Is annotated with {@link Listener}</li>
+     *    <li>Is not static</li>
+     *    <li>Is not abstract</li>
+     *    <li>Has at least one parameter which is a subcless of {@link Event}</li>
+     * </ul>
+     *
+     * @param method
+     *         the method
+     * @param checkAnnotation
+     *         the check annotation
+     *
+     * @throws IllegalArgumentException
+     *         the illegal argument exception
      */
     protected static void checkListenerMethod(Method method, boolean checkAnnotation) throws IllegalArgumentException {
         if (checkAnnotation && !SeleneUtils.isAnnotationPresentRecursively(method, Listener.class)) {

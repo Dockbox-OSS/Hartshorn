@@ -24,6 +24,9 @@ import com.sk89q.worldedit.extension.input.ParserContext;
 import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
+import org.dockbox.selene.core.PlayerStorageService;
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.parsing.ArgumentParser;
 import org.dockbox.selene.core.command.parsing.TypeParser;
@@ -31,16 +34,13 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.config.GlobalConfig;
-import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.PlayerStorageService;
-import org.dockbox.selene.core.WorldStorageService;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -228,15 +228,15 @@ public class TypeArgumentParsers {
     }
 
     /**
-     Simple implementation which allows parsing String arguments directly into a List. Uses a configurable delimiter
-     to decide when to create a new entry, by default this is ','. Also allows you to use @MinMax attributes to set
-     a minimum/maximum for sublist sizes.
-     <p>
-     Additionally, allows you to pass a {@link Function Function[String, R]} which parses the String values before they are are returned
-     as a List.
-
-     @param <R>
-     The return type
+     * Simple implementation which allows parsing String arguments directly into a List. Uses a configurable delimiter
+     * to decide when to create a new entry, by default this is ','. Also allows you to use @MinMax attributes to set
+     * a minimum/maximum for sublist sizes.
+     * <p>
+     * Additionally, allows you to pass a {@link Function Function[String, R]} which parses the String values before they are are returned
+     * as a List.
+     *
+     * @param <R>
+     *         The return type
      */
     public static class ListParser<R> extends TypeParser<List<R>> {
 
@@ -303,12 +303,12 @@ public class TypeArgumentParsers {
     }
 
     /**
-     Parses a list of block ID's, separated by ',' into a list of [BaseBlock] instances. If the block ID is in the format
-     'id:data' it will use the data from the block ID, otherwise it defaults to zero (0).
-     <p>
-     Delimiter is always ','
-     <p>
-     Does not support named ID's like 'minecraft:stone'. Does not support patterns or masks.
+     * Parses a list of block ID's, separated by ',' into a list of [BaseBlock] instances. If the block ID is in the format
+     * 'id:data' it will use the data from the block ID, otherwise it defaults to zero (0).
+     * <p>
+     * Delimiter is always ','
+     * <p>
+     * Does not support named ID's like 'minecraft:stone'. Does not support patterns or masks.
      */
     public static class WorldEditBlockParser extends ListParser<BaseBlock> {
 

@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.integrated.sql;
 
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.data.table.TableRow;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
@@ -43,13 +43,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- Mid-level manager for communicating with SQL instances. Acts as middlewhere between {@link DSL} and {@link Table}. All
- functionality inside this manager is designed to expose only the methods as defined in {@link ISQLMan}.
-
- @param <T>
- The type of the target source of a implementation. This is typically passed into {@link #getConnection(Object)} and
- {@link #getContext(Object)} dynamically, so implementations can act on the given source. If a source should be
- constant, the implementation should make this type {@link Void}.
+ * Mid-level manager for communicating with SQL instances. Acts as middlewhere between {@link DSL} and {@link Table}. All
+ * functionality inside this manager is designed to expose only the methods as defined in {@link ISQLMan}.
+ *
+ * @param <T>
+ *         The type of the target source of a implementation. This is typically passed into {@link #getConnection(Object)} and
+ *         {@link #getContext(Object)} dynamically, so implementations can act on the given source. If a source should be
+ *         constant, the implementation should make this type {@link Void}.
  */
 public abstract class SQLMan<T> implements ISQLMan<T> {
 
@@ -57,47 +57,46 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     private Boolean resetOnStore;
 
     /**
-     Get the {@link DSLContext} which will be used to communicate to the database. Automatically constructs a
-     {@link Connection} based on the given target.
-
-     @param target
-     The target database source
-
-     @return The context
-
-     @throws InvalidConnectionException
-     When the connection could not be prepared, either because of it being unavailable or because of invalid
-     configurations.
+     * Get the {@link DSLContext} which will be used to communicate to the database. Automatically constructs a
+     * {@link Connection} based on the given target.
+     *
+     * @param target
+     *         The target database source
+     *
+     * @return The context
+     * @throws InvalidConnectionException
+     *         When the connection could not be prepared, either because of it being unavailable or because of invalid
+     *         configurations.
      */
     protected DSLContext getContext(T target) throws InvalidConnectionException {
         return DSL.using(this.getConnection(target), this.getDialect());
     }
 
     /**
-     Get the dialect which will be used for a given implementation.
-
-     @return The SQL dialect
-     */
-    protected abstract SQLDialect getDialect();
-
-    /**
-     Get the connection which can be used by {@link #getContext(Object)} to prepare the internal {@link DSLContext}.
-
-     @param target
-     The target database source
-
-     @return The connection
-
-     @throws InvalidConnectionException
-     When the connection could not be prepared, either because of it being unavailable or because of invalid
-     configurations.
+     * Get the connection which can be used by {@link #getContext(Object)} to prepare the internal {@link DSLContext}.
+     *
+     * @param target
+     * The target database source
+     *
+     * @return The connection
+     *
+     * @throws InvalidConnectionException
+     * When the connection could not be prepared, either because of it being unavailable or because of invalid
+     * configurations.
      */
     protected abstract Connection getConnection(T target) throws InvalidConnectionException;
 
     /**
-     Get the default target if none is provided, this can be injected in {@link #stateEnabling(InjectorProperty[])}.
+     * Get the dialect which will be used for a given implementation.
+     *
+     * @return The SQL dialect
+     */
+    protected abstract SQLDialect getDialect();
 
-     @return The default target
+    /**
+     * Get the default target if none is provided, this can be injected in {@link #stateEnabling(InjectorProperty[])}.
+     *
+     * @return The default target
      */
     protected abstract T getDefaultTarget();
 

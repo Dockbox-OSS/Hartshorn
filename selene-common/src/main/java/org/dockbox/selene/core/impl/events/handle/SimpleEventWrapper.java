@@ -48,8 +48,8 @@ import java.util.Objects;
 
 
 /**
- Wrapper type for future invokation of a {@link Method} listening for {@link Event} posting.
- This type is responsible for filtering and invoking a {@link Method} when a supported {@link Event} is fired.
+ * Wrapper type for future invokation of a {@link Method} listening for {@link Event} posting.
+ * This type is responsible for filtering and invoking a {@link Method} when a supported {@link Event} is fired.
  */
 public class SimpleEventWrapper implements Comparable<SimpleEventWrapper>, EventWrapper {
     public static final Comparator<SimpleEventWrapper> COMPARATOR = (o1, o2) -> {
@@ -68,17 +68,17 @@ public class SimpleEventWrapper implements Comparable<SimpleEventWrapper>, Event
 
 
     /**
-     Creates one or more {@link SimpleEventWrapper}s (depending on how many event parameters are present) for a given
-     method and instance.
-
-     @param instance
-     The instance which is used when invoking the method.
-     @param method
-     The method to store for invokation.
-     @param priority
-     The priority at which the event is fired.
-
-     @return The list of {@link SimpleEventWrapper}s
+     * Creates one or more {@link SimpleEventWrapper}s (depending on how many event parameters are present) for a given
+     * method and instance.
+     *
+     * @param instance
+     *         The instance which is used when invoking the method.
+     * @param method
+     *         The method to store for invokation.
+     * @param priority
+     *         The priority at which the event is fired.
+     *
+     * @return The list of {@link SimpleEventWrapper}s
      */
     public static List<SimpleEventWrapper> create(Object instance, Method method, int priority) {
         List<SimpleEventWrapper> invokeWrappers = SeleneUtils.emptyConcurrentList();

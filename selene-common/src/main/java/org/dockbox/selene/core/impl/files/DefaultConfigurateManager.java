@@ -45,25 +45,25 @@ import ninja.leaping.configurate.xml.XMLConfigurationLoader;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 
 /**
- Implementation of {@link ConfigurateManager} containing dynamic mapping to appropriate {@link ConfigurationLoader}s
- based on the given {@link FileType} by the implementation of this type. Supporting {@link FileType#YAML},
- {@link FileType#JSON}, {@link FileType#XML}, {@link FileType#MOD_CONFIG}, and {@link FileType#CONFIG} file types.
-
- Supports type mapping through {@link NeutrinoObjectMapper}, which allows for additional functionality on top of the
- normal Configurate functionality. See <a href="https://github.com/NucleusPowered/Neutrino">Neutrino</a> for reference.
-
- Automatically generates, and checks the presence of, files in their directories. For both custom file locations and
- {@link Extension#id()} based.
+ * Implementation of {@link ConfigurateManager} containing dynamic mapping to appropriate {@link ConfigurationLoader}s
+ * based on the given {@link FileType} by the implementation of this type. Supporting {@link FileType#YAML},
+ * {@link FileType#JSON}, {@link FileType#XML}, {@link FileType#MOD_CONFIG}, and {@link FileType#CONFIG} file types.
+ *
+ * Supports type mapping through {@link NeutrinoObjectMapper}, which allows for additional functionality on top of the
+ * normal Configurate functionality. See <a href="https://github.com/NucleusPowered/Neutrino">Neutrino</a> for reference.
+ *
+ * Automatically generates, and checks the presence of, files in their directories. For both custom file locations and
+ * {@link Extension#id()} based.
  */
 public abstract class DefaultConfigurateManager extends ConfigurateManager {
 
     /**
-     Provides the given {@link FileType} to the super type {@link ConfigurateManager}. And registers any custom
-     {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializer} types to
-     {@link TypeSerializers#getDefaultSerializers()}.
-
-     @param fileType
-     The file type to be used when mapping.
+     * Provides the given {@link FileType} to the super type {@link ConfigurateManager}. And registers any custom
+     * {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializer} types to
+     * {@link TypeSerializers#getDefaultSerializers()}.
+     *
+     * @param fileType
+     *         The file type to be used when mapping.
      */
     protected DefaultConfigurateManager(FileType fileType) {
         super(fileType);

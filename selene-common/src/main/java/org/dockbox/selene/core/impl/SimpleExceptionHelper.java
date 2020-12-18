@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.core.impl;
 
+import org.dockbox.selene.core.ExceptionHelper;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.ExceptionHelper;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,18 +32,18 @@ import java.util.function.Function;
  * The default (simple) implementation of [org.dockbox.selene.core.util.exceptions.ExceptionHelper].
  * Formats:
  * - Friendly
- * ```
- *     Headline: java.lang.NullPointerException
- *     Message: Foo bar
- *     Location: SourceFile.java line 19
- *     Stack: [...]
- * ```
- *
+ * <pre>{@code
+ *         Headline: java.lang.NullPointerException
+ *         Message: Foo bar
+ *         Location: SourceFile.java line 19
+ *         Stack: [...]
+ *     }</pre>
+ * <p>
  * - Minimal
- * ```
- *     NullPointerException: Foo bar
- *     Stack: [...]
- * ```
+ * <pre>{@code
+ *         NullPointerException: Foo bar
+ *         Stack: [...]
+ *     }</pre>
  */
 public class SimpleExceptionHelper implements ExceptionHelper {
 

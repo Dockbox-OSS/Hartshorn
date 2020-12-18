@@ -52,57 +52,63 @@ import java.util.regex.Pattern;
 public abstract class DefaultCommandBus implements CommandBus {
 
     /**
-     Represents the default type for command elements matched by {@link DefaultCommandBus#FLAG} or
-     {@link DefaultCommandBus#ARGUMENT}. If no type is defined in those matches, this value is used. 'String' is used
-     as this is the base value provided to Selene, thus requiring no further converting to other data types.
+     * Represents the default type for command elements matched by {@link DefaultCommandBus#FLAG} or
+     * {@link DefaultCommandBus#ARGUMENT}. If no type is defined in those matches, this value is used. 'String' is used
+     * as this is the base value provided to Selene, thus requiring no further converting to other data types.
      */
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String DEFAULT_TYPE = "String";
 
     /**
-     Each matching element represents either a flag or argument, these can then be parsed using
-     {@link DefaultCommandBus#FLAG} and {@link DefaultCommandBus#ARGUMENT}.
+     * Each matching element represents either a flag or argument, these can then be parsed using
+     * {@link DefaultCommandBus#FLAG} and {@link DefaultCommandBus#ARGUMENT}.
      */
     private static final Pattern GENERIC_ARGUMENT = Pattern.compile("((?:<.+?>)|(?:\\[.+?\\])|(?:-(?:(?:-\\w+)|\\w)(?: [^ -]+)?))");
 
     /**
-     Each matching element represents a flag with either one or two groups. The first group (G1) is required, and
-     indicates the name of the flag. The second group (G2) is optional, and represents the value expected by the flag.
-     G2 is a argument which can be parsed using {@link DefaultCommandBus#ARGUMENT}.
-     <p>
-     Syntax:
-     - Without value: -f, --flag
-     - With simple value: -f Type, --flag Type
-     - With permission value: -f Type:Permission, --flag Type:Permission
+     * Each matching element represents a flag with either one or two groups. The first group (G1) is required, and
+     * indicates the name of the flag. The second group (G2) is optional, and represents the value expected by the flag.
+     * G2 is a argument which can be parsed using {@link DefaultCommandBus#ARGUMENT}.
+     * <p>
+     * Syntax:
+     * <ul>
+     *  <li>Without value: -f, --flag</li>
+     *  <li>With simple value: -f Type, --flag Type</li>
+     *  <li>With permission value: -f Type:Permission, --flag Type:Permission</li>
+     * </ul>
      */
     private static final Pattern FLAG = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?");
 
     /**
-     Each matching element represents a argument with two groups. The first group (G1) indicates whether the argument
-     is required or optional. The second group can either be a argument meta which can be parsed using
-     {@link DefaultCommandBus#ELEMENT_VALUE}, or a simple value if {@link DefaultCommandBus#ELEMENT_VALUE} returns no
-     matches. Arguments can be grouped.
-     <p>
-     Syntax:
-     - Optional without type: [Argument]
-     - Optional with simple value: [Argument{Type}]
-     - Optional with permission value: [Argument{Type:Permission}]
-     - Required without type: &lt;Argument&gt;
-     - Required with value is equal in syntax to optional, but wrapped in &lt;&gt;
-     - Argument group: [&lt;Argument&gt; &lt;Argument{Type}&gt;]
+     * Each matching element represents a argument with two groups. The first group (G1) indicates whether the argument
+     * is required or optional. The second group can either be a argument meta which can be parsed using
+     * {@link DefaultCommandBus#ELEMENT_VALUE}, or a simple value if {@link DefaultCommandBus#ELEMENT_VALUE} returns no
+     * matches. Arguments can be grouped.
+     * <p>
+     * Syntax:
+     * <ul>
+     *  <li>Optional without type: [Argument]</li>
+     *  <li>Optional with simple value: [Argument{Type}]</li>
+     *  <li>Optional with permission value: [Argument{Type:Permission}]</li>
+     *  <li>Required without type: &lt;Argument&gt;</li>
+     *  <li>Required with value is equal in syntax to optional, but wrapped in &lt;&gt;</li>
+     *  <li>Argument group: [&lt;Argument&gt; &lt;Argument{Type}&gt;]</li>
+     * </ul>
      */
     private static final Pattern ARGUMENT = Pattern.compile("([\\[<])(.+)[\\]>]");
 
     /**
-     Each matching element represents additional meta information for matching elements of
-     {@link DefaultCommandBus#ARGUMENT}. Matches contain either one or two groups. If both groups are present, group 1
-     represents the name of the argument, and group 2 represents the value. If only group 1 is present, it represents
-     the type of the argument and the name is obtained from the argument definition.
-     <p>
-     Syntax:
-     - Type
-     - Name{Type}
-     - Name{Type:Permission}
+     * Each matching element represents additional meta information for matching elements of
+     * {@link DefaultCommandBus#ARGUMENT}. Matches contain either one or two groups. If both groups are present, group 1
+     * represents the name of the argument, and group 2 represents the value. If only group 1 is present, it represents
+     * the type of the argument and the name is obtained from the argument definition.
+     * <p>
+     * Syntax:
+     * <ul>
+     *  <li>Type</li>
+     *  <li>Name{Type}</li>
+     *  <li>Name{Type:Permission}</li>
+     * </ul>
      */
     private static final Pattern ELEMENT_VALUE = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?");
     private static final Map<String, ConfirmableQueueItem> confirmQueue = SeleneUtils.emptyConcurrentMap();

@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.util;
 
+import org.dockbox.selene.core.ThreadUtils;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.ThreadUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
 
@@ -28,8 +28,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- The SpongePowered implementation for {@link ThreadUtils}, using Sponge's
- {@link org.spongepowered.api.scheduler.SpongeExecutorService} for underlying thread access.
+ * The SpongePowered implementation for {@link ThreadUtils}, using Sponge's
+ * {@link org.spongepowered.api.scheduler.SpongeExecutorService} for underlying thread access.
  */
 public class SpongeThreadUtils implements ThreadUtils {
 

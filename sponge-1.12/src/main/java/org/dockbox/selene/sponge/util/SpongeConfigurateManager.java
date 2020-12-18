@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.util;
 
+import org.dockbox.selene.core.files.ConfigurateManager;
 import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.impl.files.DefaultConfigurateManager;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.files.ConfigurateManager;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
@@ -32,10 +32,10 @@ import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 public class SpongeConfigurateManager extends DefaultConfigurateManager {
 
     /**
-     Provides the given {@link FileType} to the super type {@link ConfigurateManager}. And registers any custom
-     {@link TypeSerializer} types to
-     {@link TypeSerializers#getDefaultSerializers()}.@param fileType
-     The file type to be used when mapping.
+     * Provides the given {@link FileType} to the super type {@link ConfigurateManager}. And registers any custom
+     * {@link TypeSerializer} types to
+     * {@link TypeSerializers#getDefaultSerializers()}.@param fileType
+     * The file type to be used when mapping.
      */
     protected SpongeConfigurateManager() {
         super(FileType.YAML);

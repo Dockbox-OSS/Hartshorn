@@ -19,12 +19,12 @@ package org.dockbox.selene.integrated.event.processors;
 
 import com.boydti.fawe.object.FawePlayer;
 
-import org.dockbox.selene.core.exceptions.SkipEventException;
+import org.dockbox.selene.core.events.EventWrapper;
 import org.dockbox.selene.core.events.parents.Event;
+import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
+import org.dockbox.selene.core.exceptions.SkipEventException;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
-import org.dockbox.selene.core.events.EventWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +32,7 @@ import java.lang.reflect.Parameter;
 
 
 /**
- Converts a {@link Player} instance into a {@link FawePlayer}, or skips the listener.
+ * Converts a {@link Player} instance into a {@link FawePlayer}, or skips the listener.
  */
 public class FaweSourceProcessor extends AbstractEventParamProcessor<FaweSource> {
     @Override
