@@ -1,3 +1,4 @@
+org.dockbox.oldplots
 org.dockbox.selene.core
 org.dockbox.selene.core.annotations
 org.dockbox.selene.core.annotations.command
@@ -15,7 +16,6 @@ org.dockbox.selene.core.command.source
 org.dockbox.selene.core.events
 org.dockbox.selene.core.events.chat
 org.dockbox.selene.core.events.discord
-org.dockbox.selene.core.events.handling
 org.dockbox.selene.core.events.moderation
 org.dockbox.selene.core.events.object
 org.dockbox.selene.core.events.parents
@@ -39,6 +39,7 @@ org.dockbox.selene.core.impl.command.convert.impl
 org.dockbox.selene.core.impl.command.registration
 org.dockbox.selene.core.impl.command.values
 org.dockbox.selene.core.impl.events
+org.dockbox.selene.core.impl.events.handle
 org.dockbox.selene.core.impl.events.processors
 org.dockbox.selene.core.impl.extension
 org.dockbox.selene.core.impl.files
@@ -81,10 +82,7 @@ org.dockbox.selene.integrated.sql.dialects.sqlite
 org.dockbox.selene.integrated.sql.exceptions
 org.dockbox.selene.integrated.sql.properties
 org.dockbox.selene.integrated.tools
-org.dockbox.selene.oldplots
-org.dockbox.selene.ptime
 org.dockbox.selene.sponge
-org.dockbox.selene.sponge.exceptions
 org.dockbox.selene.sponge.listeners
 org.dockbox.selene.sponge.objects.discord
 org.dockbox.selene.sponge.objects.item
