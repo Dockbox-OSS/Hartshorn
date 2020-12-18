@@ -90,13 +90,37 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Common utilities for a variety of actions. Including, but not restricted to:
+ * <ul>
+ *     <li>Array- and collection manipulation</li>
+ *     <li>Reflections</li>
+ *     <li>Strict equality</li>
+ *     <li>Natural Language Processing</li>
+ *     <li>Virtual randomness</li>
+ *     <li>Exceptions</li>
+ *     <li>Primite type assignability</li>
+ *     <li>etc.</li>
+ * </ul>
+ *
+ * <p>
+ *     Utilities which are duplicated across classes should be moved to this type.
+ * </p>
+ */
 @SuppressWarnings("OverlyComplexClass")
 public enum SeleneUtils {
     ;
 
+    /**
+     * The maximum amount of decimals used when rounding a number in {@link SeleneUtils#round(double, int)}.
+     */
     public static final int MAXIMUM_DECIMALS = 15;
+
+    /**
+     * The globally 'empty' unique ID which can be used for empty implementations of
+     * {@link org.dockbox.selene.core.objects.targets.Identifiable}.
+     */
     public static final UUID EMPTY_UUID = UUID.fromString("00000000-1111-2222-3333-000000000000");
-    public static final String FOLDER_SEPARATOR = "/";
 
     private static final Random random = new Random();
     private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = emptyConcurrentMap();
@@ -119,11 +143,28 @@ public enum SeleneUtils {
             '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
 
+    /**
+     * Constructs a new unique map from a given set of {@link Entry entries}. If no entries are provided
+     * {@link SeleneUtils#emptyMap()} is returned. The constructed map is not concurrent. Entries can easily be created
+     * using {@link SeleneUtils#entry(Object, Object)}
+     *
+     * @param <K>
+     *         The (super)type of all keys in the entry set
+     * @param <V>
+     *         The (super)type of all values in the entry set
+     * @param entries
+     *         The entries to use while constructing a new map
+     *
+     * @return The new non-concurrent map
+     * @throws NullPointerException
+     *         If a entry is null
+     * @see SeleneUtils#entry(Object, Object)
+     */
     @SafeVarargs
     @SuppressWarnings("varargs")
     public static <K, V> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
         if (0 == entries.length) { // implicit null check of entries array
-            return Collections.emptyMap();
+            return emptyMap();
         } else {
             Map<K, V> map = emptyMap();
             for (Entry<? extends K, ? extends V> entry : entries) {
@@ -133,23 +174,82 @@ public enum SeleneUtils {
         }
     }
 
+    /**
+     * Returns a new empty map. This should be used globally instead of instantiating maps manually. The returned map is
+     * not concurrent.
+     *
+     * @param <K>
+     *         The (super)type of the map key-set
+     * @param <V>
+     *         The (super)type of the map value-set
+     *
+     * @return The new map
+     * @see SeleneUtils#emptyConcurrentMap()
+     */
     public static <K, V> Map<K, V> emptyMap() {
         return new HashMap<>();
     }
 
+    /**
+     * Creates a new entry based on a given key and value combination. Both the key and value may be null.
+     *
+     * @param <K>
+     *         The type of the key
+     * @param <V>
+     *         The type of the value
+     * @param k
+     *         The key
+     * @param v
+     *         The value
+     *
+     * @return The entry
+     * @see SeleneUtils#ofEntries(Entry[])
+     */
     public static <K, V> Entry<K, V> entry(K k, V v) {
         return new Tuple<>(k, v);
     }
 
+    /**
+     * Places a object in the cooldown queue for a given amount of time. If the object is already in the cooldown queue
+     * it will not be overwritten and the existing queue position with be kept.
+     *
+     * @param o
+     *         The object to place in cooldown
+     * @param duration
+     *         The duration
+     * @param timeUnit
+     *         The time unit in which the duration is kept
+     */
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit) {
         cooldown(o, duration, timeUnit, false);
     }
 
+    /**
+     * Places a object in the cooldown queue for a given amount of time. If the object is already in the cooldown queue
+     * it may be overwritten depending on the value of {@code overwriteExisting}.
+     *
+     * @param o
+     *         The object to place in cooldown
+     * @param duration
+     *         The duration
+     * @param timeUnit
+     *         The time unit in which the duration is kept
+     * @param overwriteExisting
+     *         Whether or not to overwrite existing cooldowns
+     */
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
         if (isInCooldown(o) && !overwriteExisting) return;
         activeCooldowns.put(o, new Triad<>(LocalDateTime.now(), duration, timeUnit));
     }
 
+    /**
+     * Returns true if a object is in a active cooldown queue. Otherwise returns false
+     *
+     * @param o
+     *         The object
+     *
+     * @return true if a object is in a active cooldown queue. Otherwise false
+     */
     public static boolean isInCooldown(Object o) {
         if (activeCooldowns.containsKey(o)) {
             LocalDateTime now = LocalDateTime.now();
@@ -165,12 +265,29 @@ public enum SeleneUtils {
         } else return false;
     }
 
+    /**
+     * Returns a {@link List} of non-null events based on the provided {@link Event events}. This should typically be
+     * used for event listeners with multiple event parameters.
+     *
+     * @param events
+     *         The events
+     *
+     * @return The fired (non-null) events
+     */
     public static List<Event> getFiredEvents(Event... events) {
         return Arrays.stream(events)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns the first fired event based on the provided {@link Event events}.
+     *
+     * @param events
+     *         The events
+     *
+     * @return The first fired (non-null) event
+     */
     @Contract(pure = true)
     @Nullable
     public static Event getFirstFiredEvent(Event... events) {
@@ -206,10 +323,39 @@ public enum SeleneUtils {
         else return false;
     }
 
+    /**
+     * Returns true if a instance has a declared method of which the name equals the value of {@code method} and has no
+     * parameters.
+     *
+     * @param instance
+     *         The instance
+     * @param method
+     *         The name of the method to check for
+     *
+     * @return true if the type of the instance has a declared method which matches {@code method}
+     */
     public static boolean hasMethod(Object instance, String method) {
         return hasMethod(instance.getClass(), method);
     }
 
+    /**
+     * Attempts to get the return value of a method which may not be publicly accessible (e.g. protected or private).
+     * If the method does not exist, or throws a exception the error is wrapped in a {@link Exceptional}. Otherwise the
+     * (nullable) return value is returned wrapped in a {@link Exceptional}.
+     *
+     * @param <T>
+     *         The type of the expected return value
+     * @param instance
+     *         The instance to call the method on
+     * @param method
+     *         The method to call
+     * @param expectedType
+     *         The type of the expected return value
+     * @param args
+     *         The arguments which are provided to the method call
+     *
+     * @return The result of the method call, wrapped in {@link Exceptional}
+     */
     @SuppressWarnings("unchecked")
     public static <T> Exceptional<T> getMethodValue(Object instance, String method, Class<T> expectedType, Object... args) {
         Class<?>[] argTypes = new Class<?>[args.length];
@@ -219,6 +365,17 @@ public enum SeleneUtils {
         return getMethodValue(instance.getClass(), instance, method, expectedType, argTypes, args);
     }
 
+    /**
+     * Returns true if a type has a declared method of which the name equals the value of {@code method} and has no
+     * parameters.
+     *
+     * @param type
+     *         The type
+     * @param method
+     *         The name of the method to check for
+     *
+     * @return true if the type has a declared method which matches {@code method}
+     */
     public static boolean hasMethod(Class<?> type, @NonNls String method) {
         for (Method m : type.getDeclaredMethods()) {
             if (m.getName().equals(method)) return true;
@@ -226,6 +383,28 @@ public enum SeleneUtils {
         return false;
     }
 
+    /**
+     * Attempts to get the return value of a method which may not be publicly accessible (e.g. protected or private).
+     * If the method does not exist, or throws a exception the error is wrapped in a {@link Exceptional}. Otherwise the
+     * (nullable) return value is returned wrapped in a {@link Exceptional}.
+     *
+     * @param <T>
+     *         The type of the expected return value
+     * @param methodHolder
+     *         The type to call the method on
+     * @param instance
+     *         The instance to call the method with
+     * @param method
+     *         The method to call
+     * @param expectedType
+     *         The type of the expected return value
+     * @param argumentTypes
+     *         The types of the arguments, used to collect the appropriate method
+     * @param args
+     *         The arguments which are provided to the method call
+     *
+     * @return The result of the method call, wrapped in {@link Exceptional}
+     */
     @SuppressWarnings("unchecked")
     public static <T> Exceptional<T> getMethodValue(Class<?> methodHolder, Object instance, String method, Class<T> expectedType, Class<?>[] argumentTypes, Object... args) {
         try {
@@ -234,7 +413,7 @@ public enum SeleneUtils {
             T value = (T) m.invoke(instance, args);
             return Exceptional.ofNullable(value);
         } catch (ClassCastException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            return Exceptional.empty();
+            return Exceptional.of(e);
         }
     }
 
@@ -693,6 +872,28 @@ public enum SeleneUtils {
         return null != instance && null != type && isAssignableFrom(type, instance.getClass());
     }
 
+    /**
+     * Returns true if {@code to} is equal to-, a super type of, or a primitive wrapper of {@code from}.
+     *
+     * <p>
+     * Primitive wrappers include all JDK wrappers for native types (int, char, double, etc). E.g. all of the
+     * following assignabilities return true:
+     * <pre>{@code
+     *          SeleneUtils.isAssignableFrom(int.class, Integer.class);
+     *          SeleneUtils.isAssignableFrom(Integer.class, int.class);
+     *          SeleneUtils.isAssignableFrom(int.class, int.class);
+     *          SeleneUtils.isAssignableFrom(Number.class, Integer.class);
+     *     }</pre>
+     * </p>
+     *
+     * @param to
+     *         The possible (super) type or primite wrapper of {@code from}
+     * @param from
+     *         The type to compare assignability against
+     *
+     * @return true if {@code to} is equal to-, a super type of, or a primitive wrapper of {@code from}
+     * @see SeleneUtils#isPrimitiveWrapperOf(Class, Class)
+     */
     public static boolean isAssignableFrom(Class<?> to, Class<?> from) {
         if (to.isAssignableFrom(from)) {
             return true;
@@ -706,6 +907,16 @@ public enum SeleneUtils {
         return false;
     }
 
+    /**
+     * Returns true if {@code targetClass} is a primitive wrapper of {@code primitive}.
+     *
+     * @param targetClass
+     *         The primitive wrapper (e.g. Integer)
+     * @param primitive
+     *         The primitive type (e.g. int)
+     *
+     * @return true if {@code targetClass} is a primitive wrapper of {@code primitive}.
+     */
     public static boolean isPrimitiveWrapperOf(Class<?> targetClass, Class<?> primitive) {
         if (!primitive.isPrimitive()) {
             throw new IllegalArgumentException("First argument has to be primitive type");
@@ -733,6 +944,17 @@ public enum SeleneUtils {
         return new ConcurrentHashMap<>();
     }
 
+    /**
+     * Rounds a {@code double} value to a specific amount of decimals, up to at most
+     * {@link SeleneUtils#MAXIMUM_DECIMALS the maximum amount of decimals}.
+     *
+     * @param value
+     *         The {@code double} value to round
+     * @param decimalPlaces
+     *         The amount of decimal places
+     *
+     * @return The rounded {@code double}
+     */
     public static double round(double value, int decimalPlaces) {
         if (Double.isNaN(value) || Double.isInfinite(value) || MAXIMUM_DECIMALS < decimalPlaces) {
             return value;
@@ -810,11 +1032,29 @@ public enum SeleneUtils {
         return Collections.unmodifiableSet(objects);
     }
 
-    public static boolean doesNotThrow(Runnable runnable) {
+    /**
+     * Returns true if a given {@link CheckedRunnable function} does not throw any type of exception when ran. Acts as
+     * inverse of {@link SeleneUtils#throwsException(CheckedRunnable)}.
+     *
+     * @param runnable
+     *         The function to run
+     *
+     * @return true if the function does not throw a exception
+     * @see SeleneUtils#throwsException(CheckedRunnable)
+     */
+    public static boolean doesNotThrow(CheckedRunnable runnable) {
         return !throwsException(runnable);
     }
 
-    public static boolean throwsException(Runnable runnable) {
+    /**
+     * Returns true if a given {@link CheckedRunnable function} throws any type of exception when ran.
+     *
+     * @param runnable
+     *         The function to run
+     *
+     * @return true if the function throws a exception
+     */
+    public static boolean throwsException(CheckedRunnable runnable) {
         try {
             runnable.run();
             return false;
@@ -823,11 +1063,33 @@ public enum SeleneUtils {
         }
     }
 
-    public static boolean doesNotThrow(Runnable runnable, Class<? extends Throwable> exception) {
+    /**
+     * Returns true if a given {@link CheckedRunnable function} does not throw a specific type of  exception when ran.
+     * Acts as inverse of {@link SeleneUtils#throwsException(CheckedRunnable, Class)} )}.
+     *
+     * @param runnable
+     *         The function to run
+     * @param exception
+     *         The expected type of exception
+     *
+     * @return true if the function does not throw a exception
+     * @see SeleneUtils#throwsException(CheckedRunnable, Class)
+     */
+    public static boolean doesNotThrow(CheckedRunnable runnable, Class<? extends Throwable> exception) {
         return !throwsException(runnable, exception);
     }
 
-    public static boolean throwsException(Runnable runnable, Class<? extends Throwable> exception) {
+    /**
+     * Returns true if a given {@link CheckedRunnable function} throws a specific type of exception when ran.
+     *
+     * @param runnable
+     *         The function to run
+     * @param exception
+     *         The expected type of exception
+     *
+     * @return true if the function throws the expected exception
+     */
+    public static boolean throwsException(CheckedRunnable runnable, Class<? extends Throwable> exception) {
         try {
             runnable.run();
             return false;
@@ -861,6 +1123,21 @@ public enum SeleneUtils {
         return optional.isPresent() && optional.get();
     }
 
+    /**
+     * Returns true if {@code vec} is inside the 3D cuboid defined by the two furthest points {@code min} and
+     * {@code max}. Assuming <a href="https://i.stack.imgur.com/hYcv0.png">this</a> is your cuboid, {@code min}
+     * represents point D, {@code max} represents point F, and {@code vec} is represented by point I.
+     *
+     * @param min
+     *         The minimum vector of the cuboid region
+     * @param max
+     *         The maximum vector of the cuboid region
+     * @param vec
+     *         The vector position in 3D space
+     *
+     * @return true if {@code vec} is inside the 3D cuboid region
+     * @see SeleneUtils#isInCuboidRegion(int, int, int, int, int, int, int, int, int)
+     */
     public static boolean isInCuboidRegion(Vector3N min, Vector3N max, Vector3N vec) {
         return isInCuboidRegion(
                 min.getXi(), max.getXi(),
@@ -869,6 +1146,33 @@ public enum SeleneUtils {
                 vec.getXi(), vec.getYi(), vec.getZi());
     }
 
+    /**
+     * Returns true if a vector defined by {@code x, y, z} is inside the 3D cuboid defined by the two furthest points
+     * {@code min} and {@code max}. Each point is represented by 3 integer values, x, y, and z. Assuming
+     * <a href="https://i.stack.imgur.com/hYcv0.png">this</a> is your cuboid, {@code min}
+     * represents point D, {@code max} represents point F, and {@code vec} is represented by point I.
+     *
+     * @param x_min
+     *         The position of the minimum vector on the X axis
+     * @param x_max
+     *         The position of the maximum vector on the X axis
+     * @param y_min
+     *         The position of the minimum vector on the Y axis
+     * @param y_max
+     *         The position of the maximum vector on the Y axis
+     * @param z_min
+     *         The position of the minimum vector on the Z axis
+     * @param z_max
+     *         The position of the maximum vector on the Z axis
+     * @param x
+     *         The position of the vector on the X axis
+     * @param y
+     *         The position of the vector on the Y axis
+     * @param z
+     *         The position of the vector on the Z axis
+     *
+     * @return true if the defined vector is inside the 3D cuboid region
+     */
     @SuppressWarnings("OverlyComplexBooleanExpression")
     @Contract(pure = true)
     public static boolean isInCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
@@ -886,12 +1190,49 @@ public enum SeleneUtils {
         return LocalDateTime.ofInstant(dt, ZoneId.systemDefault());
     }
 
+    /*
+     =====================
+      TODO GuusLieben:
+       Continue documentation for methods below this point
+     =====================
+     */
+
+    /**
+     * Gets annoted methods.
+     *
+     * @param <A>
+     *         the type parameter
+     * @param clazz
+     *         the clazz
+     * @param annotation
+     *         the annotation
+     * @param rule
+     *         the rule
+     *
+     * @return the annoted methods
+     */
     @NotNull
     @Unmodifiable
     public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule) {
         return getAnnotedMethods(clazz, annotation, rule, false);
     }
 
+    /**
+     * Gets annoted methods.
+     *
+     * @param <A>
+     *         the type parameter
+     * @param clazz
+     *         the clazz
+     * @param annotation
+     *         the annotation
+     * @param rule
+     *         the rule
+     * @param skipParents
+     *         the skip parents
+     *
+     * @return the annoted methods
+     */
     @NotNull
     @Unmodifiable
     public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule, boolean skipParents) {
@@ -912,16 +1253,56 @@ public enum SeleneUtils {
         return Collections.unmodifiableList(objects);
     }
 
+    /**
+     * Gets annotated types.
+     *
+     * @param <A>
+     *         the type parameter
+     * @param prefix
+     *         the prefix
+     * @param annotation
+     *         the annotation
+     *
+     * @return the annotated types
+     */
     public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation) {
         return getAnnotatedTypes(prefix, annotation, false);
     }
 
+    /**
+     * Gets annotated types.
+     *
+     * @param <A>
+     *         the type parameter
+     * @param prefix
+     *         the prefix
+     * @param annotation
+     *         the annotation
+     * @param skipParents
+     *         the skip parents
+     *
+     * @return the annotated types
+     */
     public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation, boolean skipParents) {
         Reflections reflections = new Reflections(prefix);
         Set<Class<?>> types = reflections.getTypesAnnotatedWith(annotation, !skipParents);
         return asList(types);
     }
 
+    /**
+     * Gets property value.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param key
+     *         the key
+     * @param expectedType
+     *         the expected type
+     * @param properties
+     *         the properties
+     *
+     * @return the property value
+     */
     public static <T> Exceptional<T> getPropertyValue(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
         InjectorProperty<T> property = getProperty(key, expectedType, properties);
         if (null != property) {
@@ -930,6 +1311,20 @@ public enum SeleneUtils {
         return Exceptional.empty();
     }
 
+    /**
+     * Gets property.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param key
+     *         the key
+     * @param expectedType
+     *         the expected type
+     * @param properties
+     *         the properties
+     *
+     * @return the property
+     */
     @Nullable
     @SuppressWarnings("unchecked")
     public static <T> InjectorProperty<T> getProperty(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
@@ -944,6 +1339,18 @@ public enum SeleneUtils {
         return null;
     }
 
+    /**
+     * Gets sub properties.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param propertyFilter
+     *         the property filter
+     * @param properties
+     *         the properties
+     *
+     * @return the sub properties
+     */
     @SuppressWarnings("unchecked")
     public static <T extends InjectorProperty<?>> List<T> getSubProperties(Class<T> propertyFilter, InjectorProperty<?>... properties) {
         List<T> values = emptyList();
@@ -953,10 +1360,42 @@ public enum SeleneUtils {
         return values;
     }
 
+    /**
+     * Try create from raw exceptional.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param type
+     *         the type
+     * @param valueCollector
+     *         the value collector
+     * @param inject
+     *         the inject
+     *
+     * @return the exceptional
+     */
     public static <T> Exceptional<T> tryCreateFromRaw(Class<T> type, Function<Field, Object> valueCollector, boolean inject) {
         return tryCreate(type, valueCollector, inject, Provision.FIELD);
     }
 
+    /**
+     * Try create exceptional.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param type
+     *         the type
+     * @param valueCollector
+     *         the value collector
+     * @param inject
+     *         the inject
+     * @param provision
+     *         the provision
+     *
+     * @return the exceptional
+     */
     @SuppressWarnings("unchecked")
     public static <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision) {
         T instance = inject ? Selene.getInstance(type) : getInstance(type);
@@ -998,6 +1437,16 @@ public enum SeleneUtils {
         return Exceptional.ofNullable(instance);
     }
 
+    /**
+     * Gets instance.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param clazz
+     *         the clazz
+     *
+     * @return the instance
+     */
     public static <T> T getInstance(Class<T> clazz) {
         try {
             Constructor<T> ctor = clazz.getConstructor();
@@ -1007,6 +1456,14 @@ public enum SeleneUtils {
         }
     }
 
+    /**
+     * Process field name string.
+     *
+     * @param field
+     *         the field
+     *
+     * @return the string
+     */
     public static String processFieldName(Field field) {
         String fieldName = field.getName();
         if (field.isAnnotationPresent(Property.class))
@@ -1014,28 +1471,88 @@ public enum SeleneUtils {
         return fieldName;
     }
 
+    /**
+     * Is not void boolean.
+     *
+     * @param type
+     *         the type
+     *
+     * @return the boolean
+     */
     public static boolean isNotVoid(Class<?> type) {
         return !(type.equals(Void.class) || type == Void.TYPE);
     }
 
+    /**
+     * Try create from map exceptional.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param type
+     *         the type
+     * @param map
+     *         the map
+     *
+     * @return the exceptional
+     */
     public static <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map) {
         return tryCreateFromProcessed(type, key -> map.getOrDefault(key, null), true);
     }
 
+    /**
+     * Try create from processed exceptional.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param type
+     *         the type
+     * @param valueCollector
+     *         the value collector
+     * @param inject
+     *         the inject
+     *
+     * @return the exceptional
+     */
     public static <T> Exceptional<T> tryCreateFromProcessed(Class<T> type, Function<String, Object> valueCollector, boolean inject) {
         return tryCreate(type, valueCollector, inject, Provision.FIELD_NAME);
     }
 
+    /**
+     * Is either assignable from boolean.
+     *
+     * @param to
+     *         the to
+     * @param from
+     *         the from
+     *
+     * @return the boolean
+     */
     public static boolean isEitherAssignableFrom(Class<?> to, Class<?> from) {
         return isAssignableFrom(from, to) || isAssignableFrom(to, from);
     }
 
+    /**
+     * Gets field property name.
+     *
+     * @param field
+     *         the field
+     *
+     * @return the field property name
+     */
     public static String getFieldPropertyName(Field field) {
         return field.isAnnotationPresent(Property.class)
                 ? field.getAnnotation(Property.class).value()
                 : field.getName();
     }
 
+    /**
+     * Gets static fields.
+     *
+     * @param type
+     *         the type
+     *
+     * @return the static fields
+     */
     public static Collection<Field> getStaticFields(Class<?> type) {
         Field[] declaredFields = type.getDeclaredFields();
         Collection<Field> staticFields = emptyList();
@@ -1047,6 +1564,14 @@ public enum SeleneUtils {
         return staticFields;
     }
 
+    /**
+     * Gets enum values.
+     *
+     * @param type
+     *         the type
+     *
+     * @return the enum values
+     */
     public static Collection<? extends Enum<?>> getEnumValues(Class<?> type) {
         if (!type.isEnum()) return emptyList();
         Collection<Enum<?>> constants = emptyList();
@@ -1062,11 +1587,39 @@ public enum SeleneUtils {
         return constants;
     }
 
+    /**
+     * Is annotation present recursively boolean.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param method
+     *         the method
+     * @param annotationClass
+     *         the annotation class
+     *
+     * @return the boolean
+     * @throws SecurityException
+     *         the security exception
+     */
     public static <T extends Annotation> boolean isAnnotationPresentRecursively(Method method, Class<T> annotationClass)
             throws SecurityException {
         return getAnnotationRecursively(method, annotationClass) != null;
     }
 
+    /**
+     * Gets annotation recursively.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param method
+     *         the method
+     * @param annotationClass
+     *         the annotation class
+     *
+     * @return the annotation recursively
+     * @throws SecurityException
+     *         the security exception
+     */
     public static <T extends Annotation> T getAnnotationRecursively(Method method, Class<T> annotationClass)
             throws SecurityException {
         T result;
@@ -1091,6 +1644,14 @@ public enum SeleneUtils {
         return result;
     }
 
+    /**
+     * Gets supertypes.
+     *
+     * @param current
+     *         the current
+     *
+     * @return the supertypes
+     */
     public static Collection<Class<?>> getSupertypes(Class<?> current) {
         Set<Class<?>> supertypes = emptySet();
         Set<Class<?>> next = emptySet();
@@ -1109,6 +1670,16 @@ public enum SeleneUtils {
         return supertypes;
     }
 
+    /**
+     * Gets methods recursively.
+     *
+     * @param cls
+     *         the cls
+     *
+     * @return the methods recursively
+     * @throws SecurityException
+     *         the security exception
+     */
     public static List<Method> getMethodsRecursively(Class<?> cls) throws SecurityException {
         try {
             Set<InternalMethodWrapper> set = SeleneUtils.emptySet();
@@ -1135,6 +1706,14 @@ public enum SeleneUtils {
         return new HashSet<>();
     }
 
+    /**
+     * Gets extension.
+     *
+     * @param type
+     *         the type
+     *
+     * @return the extension
+     */
     @Nullable
     public static Extension getExtension(Class<?> type) {
         if (null == type) return null;
@@ -1146,6 +1725,18 @@ public enum SeleneUtils {
         return extension;
     }
 
+    /**
+     * Run with extension t.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param type
+     *         the type
+     * @param function
+     *         the function
+     *
+     * @return the t
+     */
     @Nullable
     public static <T> T runWithExtension(Class<?> type, Function<Extension, T> function) {
         Extension extension = getExtension(type);
@@ -1153,16 +1744,44 @@ public enum SeleneUtils {
         return null;
     }
 
+    /**
+     * Run with extension.
+     *
+     * @param type
+     *         the type
+     * @param consumer
+     *         the consumer
+     */
     public static void runWithExtension(Class<?> type, Consumer<Extension> consumer) {
         Extension extension = getExtension(type);
         if (null != extension) consumer.accept(extension);
     }
 
+    /**
+     * Run with instance.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param type
+     *         the type
+     * @param consumer
+     *         the consumer
+     */
     public static <T> void runWithInstance(Class<T> type, Consumer<T> consumer) {
         T instance = Selene.getInstance(type);
         if (null != instance) consumer.accept(instance);
     }
 
+    /**
+     * Convert to extension id string string.
+     *
+     * @param name
+     *         the name
+     * @param extension
+     *         the extension
+     *
+     * @return the string
+     */
     public static String convertToExtensionIdString(String name, Extension extension) {
         name = name.toLowerCase(Locale.ROOT)
                 .replaceAll("[ .]", "")
@@ -1170,10 +1789,38 @@ public enum SeleneUtils {
         return extension.id() + ':' + name;
     }
 
+    /**
+     * Persistent key of persistent data key.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param type
+     *         the type
+     * @param name
+     *         the name
+     * @param owningClass
+     *         the owning class
+     *
+     * @return the persistent data key
+     */
     public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, Class<?> owningClass) {
         return persistentKeyOf(type, name, getExtension(owningClass));
     }
 
+    /**
+     * Persistent key of persistent data key.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param type
+     *         the type
+     * @param name
+     *         the name
+     * @param extension
+     *         the extension
+     *
+     * @return the persistent data key
+     */
     @SuppressWarnings("unchecked")
     public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, Extension extension) {
         if (!isNbtSupportedType(type))
@@ -1194,6 +1841,14 @@ public enum SeleneUtils {
                 type);
     }
 
+    /**
+     * Is nbt supported type boolean.
+     *
+     * @param type
+     *         the type
+     *
+     * @return the boolean
+     */
     public static boolean isNbtSupportedType(Class<?> type) {
         boolean supportedType = false;
         for (Class<?> nbtSupportedType : nbtSupportedTypes) {
@@ -1205,15 +1860,55 @@ public enum SeleneUtils {
         return supportedType;
     }
 
+    /**
+     * Dynamic key of key.
+     *
+     * @param <K>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param setter
+     *         the setter
+     * @param getter
+     *         the getter
+     *
+     * @return the key
+     */
     public static <K, A> Key<K, A> dynamicKeyOf(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter) {
         return new Key<K, A>(transactSetter(setter), getter) {
         };
     }
 
+    /**
+     * Transact setter bi function.
+     *
+     * @param <K>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param setter
+     *         the setter
+     *
+     * @return the bi function
+     */
     public static <K, A> BiFunction<K, A, TransactionResult> transactSetter(BiConsumer<K, A> setter) {
         return transactSetter(setter, TransactionResult.success());
     }
 
+    /**
+     * Transact setter bi function.
+     *
+     * @param <K>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param setter
+     *         the setter
+     * @param defaultResult
+     *         the default result
+     *
+     * @return the bi function
+     */
     public static <K, A> BiFunction<K, A, TransactionResult> transactSetter(BiConsumer<K, A> setter, TransactionResult defaultResult) {
         return (t, u) -> {
             setter.accept(t, u);
@@ -1221,41 +1916,159 @@ public enum SeleneUtils {
         };
     }
 
+    /**
+     * Checked dynamic key of key.
+     *
+     * @param <K>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param setter
+     *         the setter
+     * @param getter
+     *         the getter
+     *
+     * @return the key
+     */
     public static <K, A> Key<K, A> checkedDynamicKeyOf(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
         return new Key<K, A>(setter, getter) {
         };
     }
 
+    /**
+     * Unsafe dynamic key of key.
+     *
+     * @param <K>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param setter
+     *         the setter
+     * @param getter
+     *         the getter
+     *
+     * @return the key
+     */
     public static <K, A> Key<K, A> unsafeDynamicKeyOf(BiConsumer<K, A> setter, CheckedFunction<K, A> getter) {
         return new Key<K, A>(transactSetter(setter), k -> Exceptional.of(() -> getter.apply(k))) {
         };
     }
 
+    /**
+     * Unsafe checked dynamic key of key.
+     *
+     * @param <K>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param setter
+     *         the setter
+     * @param getter
+     *         the getter
+     *
+     * @return the key
+     */
     public static <K, A> Key<K, A> unsafeCheckedDynamicKeyOf(BiFunction<K, A, TransactionResult> setter, CheckedFunction<K, A> getter) {
         return new Key<K, A>(setter, k -> Exceptional.of(() -> getter.apply(k))) {
         };
     }
 
+    /**
+     * Dynamic key of removable key.
+     *
+     * @param <K>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param setter
+     *         the setter
+     * @param getter
+     *         the getter
+     * @param remover
+     *         the remover
+     *
+     * @return the removable key
+     */
     public static <K, A> RemovableKey<K, A> dynamicKeyOf(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
         return new RemovableKey<K, A>(transactSetter(setter), getter, remover) {
         };
     }
 
+    /**
+     * Checked dynamic key of removable key.
+     *
+     * @param <K>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param setter
+     *         the setter
+     * @param getter
+     *         the getter
+     * @param remover
+     *         the remover
+     *
+     * @return the removable key
+     */
     public static <K, A> RemovableKey<K, A> checkedDynamicKeyOf(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
         return new RemovableKey<K, A>(setter, getter, remover) {
         };
     }
 
+    /**
+     * Unsafe dynamic key of removable key.
+     *
+     * @param <K>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param setter
+     *         the setter
+     * @param getter
+     *         the getter
+     * @param remover
+     *         the remover
+     *
+     * @return the removable key
+     */
     public static <K, A> RemovableKey<K, A> unsafeDynamicKeyOf(BiConsumer<K, A> setter, CheckedFunction<K, A> getter, Consumer<K> remover) {
         return new RemovableKey<K, A>(transactSetter(setter), k -> Exceptional.of(() -> getter.apply(k)), remover) {
         };
     }
 
+    /**
+     * Unsafe checked dynamic key of removable key.
+     *
+     * @param <K>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param setter
+     *         the setter
+     * @param getter
+     *         the getter
+     * @param remover
+     *         the remover
+     *
+     * @return the removable key
+     */
     public static <K, A> RemovableKey<K, A> unsafeCheckedDynamicKeyOf(BiFunction<K, A, TransactionResult> setter, CheckedFunction<K, A> getter, Consumer<K> remover) {
         return new RemovableKey<K, A>(setter, k -> Exceptional.of(() -> getter.apply(k)), remover) {
         };
     }
 
+    /**
+     * Merge t [ ].
+     *
+     * @param <T>
+     *         the type parameter
+     * @param arrayOne
+     *         the array one
+     * @param arrayTwo
+     *         the array two
+     *
+     * @return the t [ ]
+     */
     public <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
         Object[] merged = Stream.of(arrayOne, arrayTwo).flatMap(Stream::of).toArray(Object[]::new);
         return this.convertGenericArray(merged);
@@ -1273,6 +2086,18 @@ public enum SeleneUtils {
         return (T[]) new Object[0];
     }
 
+    /**
+     * Add all t [ ].
+     *
+     * @param <T>
+     *         the type parameter
+     * @param array1
+     *         the array 1
+     * @param array2
+     *         the array 2
+     *
+     * @return the t [ ]
+     */
     @SuppressWarnings("unchecked")
     public static <T> T[] addAll(final T[] array1, final T[] array2) {
         if (null == array1) {
@@ -1286,6 +2111,16 @@ public enum SeleneUtils {
         return newArray;
     }
 
+    /**
+     * Shallow copy t @ nullable [ ].
+     *
+     * @param <T>
+     *         the type parameter
+     * @param array
+     *         the array
+     *
+     * @return the t @ nullable [ ]
+     */
     @Contract("null -> null")
     public static <T> T @Nullable [] shallowCopy(final T[] array) {
         if (null == array) {
@@ -1294,8 +2129,18 @@ public enum SeleneUtils {
         return array.clone();
     }
 
+    /**
+     * The enum Provision.
+     */
     public enum Provision {
-        FIELD, FIELD_NAME
+        /**
+         * Field provision.
+         */
+        FIELD,
+        /**
+         * Field name provision.
+         */
+        FIELD_NAME
     }
 
 }
