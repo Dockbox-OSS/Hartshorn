@@ -27,11 +27,17 @@ import java.util.Set;
 public interface EventBus {
 
     void subscribe(Object object);
+
     void unsubscribe(Object object);
+
     void post(Event event, Class<?> target);
+
     void post(Event event);
+
     Map<Object, Set<EventWrapper>> getListenersToInvokers();
+
     void registerProcessors(AbstractEventParamProcessor<?>... processors);
+
     <T extends Annotation> AbstractEventParamProcessor<T> getParamProcessor(Class<T> annotation, EventStage stage);
 
 }

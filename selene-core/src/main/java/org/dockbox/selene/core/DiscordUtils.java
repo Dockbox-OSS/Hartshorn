@@ -32,20 +32,29 @@ import org.dockbox.selene.core.text.Text;
 public interface DiscordUtils {
 
     Exceptional<JDA> getJDA();
+
     Exceptional<TextChannel> getGlobalTextChannel();
+
     boolean checkMessageExists(String messageId, String channelId);
+
     Exceptional<Category> getLoggingCategory();
+
     Exceptional<Guild> getGuild();
 
     void sendToTextChannel(Text text, MessageChannel channel);
+
     void sendToTextChannel(CharSequence text, MessageChannel channel);
+
     void sendToTextChannel(ResourceEntry text, MessageChannel channel);
 
     void sendToUser(Text text, User user);
+
     void sendToUser(CharSequence text, User user);
+
     void sendToUser(ResourceEntry text, User user);
 
     void registerCommandListener(Object instance);
+
     void post(String command, DiscordCommandContext context);
 
 }

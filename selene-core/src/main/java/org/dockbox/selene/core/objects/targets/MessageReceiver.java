@@ -24,11 +24,15 @@ import org.dockbox.selene.core.text.pagination.Pagination;
 public interface MessageReceiver extends Target {
 
     void send(ResourceEntry text);
+
     void send(Text text);
+
     void send(CharSequence text);
 
     void sendWithPrefix(ResourceEntry text);
+
     void sendWithPrefix(Text text);
+
     void sendWithPrefix(CharSequence text);
 
     void sendPagination(Pagination pagination);

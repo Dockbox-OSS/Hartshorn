@@ -42,12 +42,34 @@ public abstract class Player
     }
 
     public abstract boolean isOnline();
+
     public abstract Exceptional<FawePlayer<?>> getFawePlayer();
+
     public abstract void kick(Text reason);
+
     public abstract Gamemode getGamemode();
+
     public abstract void setGamemode(Gamemode gamemode);
+
     public abstract Language getLanguage();
+
     public abstract void setLanguage(Language language);
+
+    @Override
+    public boolean hasAnyPermission(@NotNull String @NotNull ... permissions) {
+        for (String permission : permissions) {
+            if (this.hasPermission(permission)) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasAllPermissions(@NotNull String @NotNull ... permissions) {
+        for (String permission : permissions) {
+            if (!this.hasPermission(permission)) return false;
+        }
+        return true;
+    }
 
     @Override
     public boolean hasPermission(@NotNull AbstractPermission permission) {
@@ -65,22 +87,6 @@ public abstract class Player
     @Override
     public boolean hasAllPermissions(@NotNull AbstractPermission @NotNull ... permissions) {
         for (AbstractPermission permission : permissions) {
-            if (!this.hasPermission(permission)) return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean hasAnyPermission(@NotNull String @NotNull ... permissions) {
-        for (String permission : permissions) {
-            if (this.hasPermission(permission)) return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean hasAllPermissions(@NotNull String @NotNull ... permissions) {
-        for (String permission : permissions) {
             if (!this.hasPermission(permission)) return false;
         }
         return true;

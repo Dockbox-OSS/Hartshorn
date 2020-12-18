@@ -24,13 +24,13 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- A low-level type which can be used in combination with a {@link KeyHolder} to dynamically apply, retrieve, and remove
- values from types. The apply and retrieve functionality is inherited and unchanged from {@link Key}.
-
- @param <K>
- The type parameter indicating the constraint for the type to apply to/retrieve from.
- @param <A>
- The type parameter indicating the constraint for the value to be applied/retrieved.
+ * A low-level type which can be used in combination with a {@link KeyHolder} to dynamically apply, retrieve, and remove
+ * values from types. The apply and retrieve functionality is inherited and unchanged from {@link Key}.
+ *
+ * @param <K>
+ *         The type parameter indicating the constraint for the type to apply to/retrieve from.
+ * @param <A>
+ *         The type parameter indicating the constraint for the value to be applied/retrieved.
  */
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class RemovableKey<K, A> extends Key<K, A> {
@@ -38,18 +38,18 @@ public abstract class RemovableKey<K, A> extends Key<K, A> {
     private final Consumer<K> remover;
 
     /**
-     Instantiates a new Key using a given setter and getter.
-
-     @param setter
-     The setter, accepting two values. The first being the type to apply to, constrained using type parameter {@link K}.
-     The second being the value to apply, constrained using type parameter {@link A}.
-     @param getter
-     The getter, accepting one value, and returning another. The accepting value being the type to retrieve from,
-     constrained using type parameter {@link K}. The return value being the value retreived from the type, constrained
-     using type parameter {@link A}.
-     @param remover
-     The remover, accepting one value. The accepting value being the value to remove from, constrained using the type
-     parameter {@link K}.
+     * Instantiates a new Key using a given setter and getter.
+     *
+     * @param setter
+     *         The setter, accepting two values. The first being the type to apply to, constrained using type parameter {@link K}.
+     *         The second being the value to apply, constrained using type parameter {@link A}.
+     * @param getter
+     *         The getter, accepting one value, and returning another. The accepting value being the type to retrieve from,
+     *         constrained using type parameter {@link K}. The return value being the value retreived from the type, constrained
+     *         using type parameter {@link A}.
+     * @param remover
+     *         The remover, accepting one value. The accepting value being the value to remove from, constrained using the type
+     *         parameter {@link K}.
      */
     protected RemovableKey(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
         super(setter, getter);
@@ -57,10 +57,10 @@ public abstract class RemovableKey<K, A> extends Key<K, A> {
     }
 
     /**
-     Removes a value from the given type constrained by type parameter {@link K}.
-
-     @param keyType
-     The data holder, constrained by type parameter {@link K}.
+     * Removes a value from the given type constrained by type parameter {@link K}.
+     *
+     * @param keyType
+     *         The data holder, constrained by type parameter {@link K}.
      */
     public void remove(K keyType) {
         this.remover.accept(keyType);

@@ -27,9 +27,12 @@ public abstract class NoteEvent extends ModerationEvent {
     /**
      * The abstract type which can be used to listen to all player note related events.
      *
-     * @param note The note
-     * @param source The {@link CommandSource} creating the note
-     * @param player The target {@link Player} the note is being added to
+     * @param note
+     *         The note
+     * @param source
+     *         The {@link CommandSource} creating the note
+     * @param player
+     *         The target {@link Player} the note is being added to
      */
     protected NoteEvent(Player player, CommandSource source, String note) {
         super(player, source);
@@ -49,9 +52,12 @@ public abstract class NoteEvent extends ModerationEvent {
         /**
          * The event fire when a new note is added to a player.
          *
-         * @param player The target {@link Player} the note is being added to
-         * @param note The note
-         * @param source The {@link CommandSource} creating the note
+         * @param player
+         *         The target {@link Player} the note is being added to
+         * @param note
+         *         The note
+         * @param source
+         *         The {@link CommandSource} creating the note
          */
         public PlayerNotedEvent(Player player, CommandSource source, String note) {
             super(player, source, note);

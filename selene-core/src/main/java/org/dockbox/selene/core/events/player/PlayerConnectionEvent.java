@@ -55,7 +55,7 @@ public abstract class PlayerConnectionEvent extends AbstractTargetEvent {
     }
 
     /**
-     The event fired when a remote location is attempting to authenticate to the server.
+     * The event fired when a remote location is attempting to authenticate to the server.
      */
     public static class PlayerAuthEvent extends PlayerConnectionEvent {
         private final InetSocketAddress address;

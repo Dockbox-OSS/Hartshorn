@@ -30,8 +30,8 @@ public abstract class ReferenceHolder<T> {
         this.setReference(reference);
     }
 
-    protected void setReference(@NotNull Exceptional<T> reference) {
-        this.reference = reference.map(WeakReference::new).orElseGet(() -> new WeakReference<>(null));
+    public boolean referenceExists() {
+        return this.getReference().isPresent();
     }
 
     public Exceptional<T> getReference() {
@@ -40,8 +40,8 @@ public abstract class ReferenceHolder<T> {
         return Exceptional.ofNullable(this.reference.get());
     }
 
-    public boolean referenceExists() {
-        return this.getReference().isPresent();
+    protected void setReference(@NotNull Exceptional<T> reference) {
+        this.reference = reference.map(WeakReference::new).orElseGet(() -> new WeakReference<>(null));
     }
 
     public abstract Function<T, Exceptional<T>> getUpdateReferenceTask();

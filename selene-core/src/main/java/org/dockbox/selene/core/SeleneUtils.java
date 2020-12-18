@@ -133,17 +133,21 @@ public enum SeleneUtils {
         }
     }
 
+    public static <K, V> Map<K, V> emptyMap() {
+        return new HashMap<>();
+    }
+
     public static <K, V> Entry<K, V> entry(K k, V v) {
         return new Tuple<>(k, v);
+    }
+
+    public static void cooldown(Object o, Long duration, TemporalUnit timeUnit) {
+        cooldown(o, duration, timeUnit, false);
     }
 
     public static void cooldown(Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
         if (isInCooldown(o) && !overwriteExisting) return;
         activeCooldowns.put(o, new Triad<>(LocalDateTime.now(), duration, timeUnit));
-    }
-
-    public static void cooldown(Object o, Long duration, TemporalUnit timeUnit) {
-        cooldown(o, duration, timeUnit, false);
     }
 
     public static boolean isInCooldown(Object o) {
@@ -178,11 +182,6 @@ public enum SeleneUtils {
         return null;
     }
 
-    @Contract(value = "null -> true", pure = true)
-    public static boolean isEmpty(String value) {
-        return null == value || value.isEmpty();
-    }
-
     @Contract(value = "null -> false", pure = true)
     public static boolean isNotEmpty(String value) {
         return null != value && !value.isEmpty();
@@ -190,6 +189,11 @@ public enum SeleneUtils {
 
     public static String capitalize(String value) {
         return isEmpty(value) ? value : (value.substring(0, 1).toUpperCase() + value.substring(1));
+    }
+
+    @Contract(value = "null -> true", pure = true)
+    public static boolean isEmpty(String value) {
+        return null == value || value.isEmpty();
     }
 
     public static boolean isEmpty(Object object) {
@@ -200,6 +204,38 @@ public enum SeleneUtils {
         else if (hasMethod(object, "isEmpty"))
             return getMethodValue(object, "isEmpty", Boolean.class).orElse(false);
         else return false;
+    }
+
+    public static boolean hasMethod(Object instance, String method) {
+        return hasMethod(instance.getClass(), method);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Exceptional<T> getMethodValue(Object instance, String method, Class<T> expectedType, Object... args) {
+        Class<?>[] argTypes = new Class<?>[args.length];
+        for (int i = 0; i < args.length; i++) {
+            argTypes[i] = args[i].getClass();
+        }
+        return getMethodValue(instance.getClass(), instance, method, expectedType, argTypes, args);
+    }
+
+    public static boolean hasMethod(Class<?> type, @NonNls String method) {
+        for (Method m : type.getDeclaredMethods()) {
+            if (m.getName().equals(method)) return true;
+        }
+        return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Exceptional<T> getMethodValue(Class<?> methodHolder, Object instance, String method, Class<T> expectedType, Class<?>[] argumentTypes, Object... args) {
+        try {
+            Method m = methodHolder.getDeclaredMethod(method, argumentTypes);
+            if (!m.isAccessible()) m.setAccessible(true);
+            T value = (T) m.invoke(instance, args);
+            return Exceptional.ofNullable(value);
+        } catch (ClassCastException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            return Exceptional.empty();
+        }
     }
 
     @Contract(pure = true)
@@ -236,6 +272,10 @@ public enum SeleneUtils {
         return s1.trim().equalsIgnoreCase(s2.trim());
     }
 
+    public static boolean notEqual(Object expected, Object actual) {
+        return !equal(expected, actual);
+    }
+
     public static boolean equal(Object expected, Object actual) {
         if (null != expected || null != actual) {
             return !(null == expected || !expected.equals(actual));
@@ -243,28 +283,24 @@ public enum SeleneUtils {
         return false;
     }
 
-    public static boolean same(Object expected, Object actual) {
-        return expected == actual;
-    }
-
-    public static boolean notEqual(Object expected, Object actual) {
-        return !equal(expected, actual);
-    }
-
     public static boolean notSame(Object expected, Object actual) {
         return !same(expected, actual);
+    }
+
+    public static boolean same(Object expected, Object actual) {
+        return expected == actual;
     }
 
     public static boolean hasContent(final String s) {
         return !(0 == trimLength(s));    // faster than returning !isEmpty()
     }
 
-    public static int length(final CharSequence s) {
-        return null == s ? 0 : s.length();
-    }
-
     public static int trimLength(final String s) {
         return (null == s) ? 0 : s.trim().length();
+    }
+
+    public static int length(final CharSequence s) {
+        return null == s ? 0 : s.length();
     }
 
     @Contract(pure = true)
@@ -306,6 +342,12 @@ public enum SeleneUtils {
     }
 
     @Contract(pure = true)
+    @SuppressWarnings("MagicNumber")
+    public static char convertDigit(int value) {
+        return _hex[value & 0x0f];
+    }
+
+    @Contract(pure = true)
     public static int[] range(int max) {
         return range(0, max);
     }
@@ -324,12 +366,6 @@ public enum SeleneUtils {
         StringBuilder sb = new StringBuilder();
         for (int ignored : range(1, amount)) sb.append(string);
         return sb.toString();
-    }
-
-    @Contract(pure = true)
-    @SuppressWarnings("MagicNumber")
-    public static char convertDigit(int value) {
-        return _hex[value & 0x0f];
     }
 
     public static int count(String s, char c) {
@@ -429,6 +465,14 @@ public enum SeleneUtils {
         return v1[t.length()];
     }
 
+    @Contract(pure = true)
+    public static long minimum(long... values) {
+        int len = values.length;
+        long current = values[0];
+        for (int i = 1; i < len; i++) current = Math.min(values[i], current);
+        return current;
+    }
+
     public static int damerauLevenshteinDistance(@NonNls CharSequence source, @NonNls CharSequence target) {
         if (null == source || "".contentEquals(source)) {
             return null == target || "".contentEquals(target) ? 0 : target.length();
@@ -514,28 +558,27 @@ public enum SeleneUtils {
         return upper ? "" + (char) ((int) 'A' + r) : "" + (char) ((int) 'a' + r);
     }
 
-    public static byte[] getBytes(String s, String encoding) {
-        try {
-            return null == s ? new byte[0] : s.getBytes(encoding);
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException(String.format("Encoding (%s) is not supported by your JVM", encoding), e);
-        }
-    }
-
-
     @NotNull
     public static String createUtf8String(byte[] bytes) {
         return createString(bytes, "UTF-8");
-    }
-
-    public static byte[] getUTF8Bytes(String s) {
-        return getBytes(s, "UTF-8");
     }
 
     @NotNull
     public static String createString(byte[] bytes, String encoding) {
         try {
             return null == bytes ? "" : new String(bytes, encoding);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(String.format("Encoding (%s) is not supported by your JVM", encoding), e);
+        }
+    }
+
+    public static byte[] getUTF8Bytes(String s) {
+        return getBytes(s, "UTF-8");
+    }
+
+    public static byte[] getBytes(String s, String encoding) {
+        try {
+            return null == s ? new byte[0] : s.getBytes(encoding);
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(String.format("Encoding (%s) is not supported by your JVM", encoding), e);
         }
@@ -556,14 +599,6 @@ public enum SeleneUtils {
             hash = 31 * hash + c;
         }
         return hash;
-    }
-
-    @Contract(pure = true)
-    public static long minimum(long... values) {
-        int len = values.length;
-        long current = values[0];
-        for (int i = 1; i < len; i++) current = Math.min(values[i], current);
-        return current;
     }
 
     @Contract(pure = true)
@@ -627,27 +662,6 @@ public enum SeleneUtils {
         return null == array ? 0 : Array.getLength(array);
     }
 
-    @Contract("null -> null")
-    public static <T> T @Nullable [] shallowCopy(final T[] array) {
-        if (null == array) {
-            return null;
-        }
-        return array.clone();
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> T[] addAll(final T[] array1, final T[] array2) {
-        if (null == array1) {
-            return shallowCopy(array2);
-        } else if (null == array2) {
-            return shallowCopy(array1);
-        }
-        final T[] newArray = (T[]) Array.newInstance(array1.getClass().getComponentType(), array1.length + array2.length);
-        System.arraycopy(array1, 0, newArray, 0, array1.length);
-        System.arraycopy(array2, 0, newArray, array1.length, array2.length);
-        return newArray;
-    }
-
     @SuppressWarnings("unchecked")
     public static <T> T[] removeItem(T[] array, int pos) {
         int length = Array.getLength(array);
@@ -679,17 +693,32 @@ public enum SeleneUtils {
         return null != instance && null != type && isAssignableFrom(type, instance.getClass());
     }
 
+    public static boolean isAssignableFrom(Class<?> to, Class<?> from) {
+        if (to.isAssignableFrom(from)) {
+            return true;
+        }
+        if (from.isPrimitive()) {
+            return isPrimitiveWrapperOf(to, from);
+        }
+        if (to.isPrimitive()) {
+            return isPrimitiveWrapperOf(from, to);
+        }
+        return false;
+    }
+
+    public static boolean isPrimitiveWrapperOf(Class<?> targetClass, Class<?> primitive) {
+        if (!primitive.isPrimitive()) {
+            throw new IllegalArgumentException("First argument has to be primitive type");
+        }
+        return primitiveWrapperMap.get(primitive) == targetClass;
+    }
+
     public static boolean isFileEmpty(@NotNull Path file) {
         return Files.exists(file) && 0 <= file.toFile().length();
     }
 
     public static <T> Collection<T> singletonList(T mockWorld) {
         return Collections.singletonList(mockWorld);
-    }
-
-    public <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
-        Object[] merged = Stream.of(arrayOne, arrayTwo).flatMap(Stream::of).toArray(Object[]::new);
-        return this.convertGenericArray(merged);
     }
 
     public static <T> List<T> emptyConcurrentList() {
@@ -704,30 +733,6 @@ public enum SeleneUtils {
         return new ConcurrentHashMap<>();
     }
 
-    public static <T> List<T> emptyList() {
-        return new ArrayList<>();
-    }
-
-    public static <T> Set<T> emptySet() {
-        return new HashSet<>();
-    }
-
-    public static <K, V> Map<K, V> emptyMap() {
-        return new HashMap<>();
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T[] convertGenericArray(Object[] array) {
-        try {
-            Class<T> type = (Class<T>) array.getClass().getComponentType();
-            T[] finalArray = (T[]) Array.newInstance(type, 0);
-            return (T[]) addAll(finalArray, array);
-        } catch (ClassCastException e) {
-            Selene.log().error("Attempted to convert generic array not matching generic type T", e);
-        }
-        return (T[]) new Object[0];
-    }
-
     public static double round(double value, int decimalPlaces) {
         if (Double.isNaN(value) || Double.isInfinite(value) || MAXIMUM_DECIMALS < decimalPlaces) {
             return value;
@@ -736,24 +741,6 @@ public enum SeleneUtils {
         BigDecimal decimal = BigDecimal.valueOf(value);
         decimal = decimal.setScale(decimalPlaces, RoundingMode.HALF_UP);
         return decimal.doubleValue();
-    }
-
-    @NotNull
-    @Contract(value = "_ -> new", pure = true)
-    @SafeVarargs
-    public static <T> List<T> asList(T... objects) {
-        return asList(Arrays.asList(objects));
-    }
-
-    public static <T> List<T> asList(Collection<T> collection) {
-        return new ArrayList<>(collection);
-    }
-
-    @NotNull
-    @Contract("_ -> new")
-    @SafeVarargs
-    public static <T> Set<T> asSet(T... objects) {
-        return new HashSet<>(asList(objects));
     }
 
     @NotNull
@@ -770,8 +757,23 @@ public enum SeleneUtils {
         return Collections.unmodifiableList(asList(objects));
     }
 
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    @SafeVarargs
+    public static <T> List<T> asList(T... objects) {
+        return asList(Arrays.asList(objects));
+    }
+
+    public static <T> List<T> asList(Collection<T> collection) {
+        return new ArrayList<>(collection);
+    }
+
     public static <T> List<T> asUnmodifiableList(Collection<T> collection) {
         return Collections.unmodifiableList(emptyList());
+    }
+
+    public static <T> List<T> emptyList() {
+        return new ArrayList<>();
     }
 
     @UnmodifiableView
@@ -780,6 +782,13 @@ public enum SeleneUtils {
     @SafeVarargs
     public static <T> Set<T> asUnmodifiableSet(T... objects) {
         return Collections.unmodifiableSet(asSet(objects));
+    }
+
+    @NotNull
+    @Contract("_ -> new")
+    @SafeVarargs
+    public static <T> Set<T> asSet(T... objects) {
+        return new HashSet<>(asList(objects));
     }
 
     public static <T> Collection<T> asUnmodifiableCollection(T... collection) {
@@ -797,15 +806,12 @@ public enum SeleneUtils {
     @UnmodifiableView
     @NotNull
     @Contract(value = "_ -> new", pure = true)
-    public static <T> List<T> asUnmodifiableList(List<T> objects) {
-        return Collections.unmodifiableList(objects);
-    }
-
-    @UnmodifiableView
-    @NotNull
-    @Contract(value = "_ -> new", pure = true)
     public static <T> Set<T> asUnmodifiableSet(Set<T> objects) {
         return Collections.unmodifiableSet(objects);
+    }
+
+    public static boolean doesNotThrow(Runnable runnable) {
+        return !throwsException(runnable);
     }
 
     public static boolean throwsException(Runnable runnable) {
@@ -817,6 +823,10 @@ public enum SeleneUtils {
         }
     }
 
+    public static boolean doesNotThrow(Runnable runnable, Class<? extends Throwable> exception) {
+        return !throwsException(runnable, exception);
+    }
+
     public static boolean throwsException(Runnable runnable, Class<? extends Throwable> exception) {
         try {
             runnable.run();
@@ -824,14 +834,6 @@ public enum SeleneUtils {
         } catch (Throwable t) {
             return isAssignableFrom(exception, t.getClass());
         }
-    }
-
-    public static boolean doesNotThrow(Runnable runnable) {
-        return !throwsException(runnable);
-    }
-
-    public static boolean doesNotThrow(Runnable runnable, Class<? extends Throwable> exception) {
-        return !throwsException(runnable, exception);
     }
 
     @NotNull
@@ -859,12 +861,6 @@ public enum SeleneUtils {
         return optional.isPresent() && optional.get();
     }
 
-    @SuppressWarnings("OverlyComplexBooleanExpression")
-    @Contract(pure = true)
-    public static boolean isInCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
-        return x_min <= x && x <= x_max && y_min <= y && y <= y_max && z_min <= z && z <= z_max;
-    }
-
     public static boolean isInCuboidRegion(Vector3N min, Vector3N max, Vector3N vec) {
         return isInCuboidRegion(
                 min.getXi(), max.getXi(),
@@ -873,15 +869,27 @@ public enum SeleneUtils {
                 vec.getXi(), vec.getYi(), vec.getZi());
     }
 
+    @SuppressWarnings("OverlyComplexBooleanExpression")
+    @Contract(pure = true)
+    public static boolean isInCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
+        return x_min <= x && x <= x_max && y_min <= y && y <= y_max && z_min <= z && z <= z_max;
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static Exceptional<LocalDateTime> toLocalDateTime(Optional<Instant> optionalInstant) {
+        return Exceptional.of(optionalInstant).map(SeleneUtils::toLocalDateTime);
+    }
+
     @NotNull
     @Contract("_ -> new")
     public static LocalDateTime toLocalDateTime(Instant dt) {
         return LocalDateTime.ofInstant(dt, ZoneId.systemDefault());
     }
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static Exceptional<LocalDateTime> toLocalDateTime(Optional<Instant> optionalInstant) {
-        return Exceptional.of(optionalInstant).map(SeleneUtils::toLocalDateTime);
+    @NotNull
+    @Unmodifiable
+    public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule) {
+        return getAnnotedMethods(clazz, annotation, rule, false);
     }
 
     @NotNull
@@ -897,10 +905,15 @@ public enum SeleneUtils {
         return asUnmodifiableList(annotatedMethods);
     }
 
+    @UnmodifiableView
     @NotNull
-    @Unmodifiable
-    public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule) {
-        return getAnnotedMethods(clazz, annotation, rule, false);
+    @Contract(value = "_ -> new", pure = true)
+    public static <T> List<T> asUnmodifiableList(List<T> objects) {
+        return Collections.unmodifiableList(objects);
+    }
+
+    public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation) {
+        return getAnnotatedTypes(prefix, annotation, false);
     }
 
     public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation, boolean skipParents) {
@@ -909,49 +922,12 @@ public enum SeleneUtils {
         return asList(types);
     }
 
-    public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation) {
-        return getAnnotatedTypes(prefix, annotation, false);
-    }
-
-    public static <T> T getInstance(Class<T> clazz) {
-        try {
-            Constructor<T> ctor = clazz.getConstructor();
-            return ctor.newInstance();
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            return Selene.getInstance(clazz);
+    public static <T> Exceptional<T> getPropertyValue(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
+        InjectorProperty<T> property = getProperty(key, expectedType, properties);
+        if (null != property) {
+            return Exceptional.of(property::getObject);
         }
-    }
-
-    public static boolean hasMethod(Object instance, String method) {
-        return hasMethod(instance.getClass(), method);
-    }
-
-    public static boolean hasMethod(Class<?> type, @NonNls String method) {
-        for (Method m : type.getDeclaredMethods()) {
-            if (m.getName().equals(method)) return true;
-        }
-        return false;
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public static <T> Exceptional<T> getMethodValue(Object instance, String method, Class<T> expectedType, Object... args) {
-        Class<?>[] argTypes = new Class<?>[args.length];
-        for (int i = 0; i < args.length; i++) {
-            argTypes[i] = args[i].getClass();
-        }
-        return getMethodValue(instance.getClass(), instance, method, expectedType, argTypes, args);
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public static <T> Exceptional<T> getMethodValue(Class<?> methodHolder, Object instance, String method, Class<T> expectedType, Class<?>[] argumentTypes, Object... args) {
-        try {
-            Method m = methodHolder.getDeclaredMethod(method, argumentTypes);
-            if (!m.isAccessible()) m.setAccessible(true);
-            T value = (T) m.invoke(instance, args);
-            return Exceptional.ofNullable(value);
-        } catch (ClassCastException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            return Exceptional.empty();
-        }
+        return Exceptional.empty();
     }
 
     @Nullable
@@ -968,14 +944,6 @@ public enum SeleneUtils {
         return null;
     }
 
-    public static <T> Exceptional<T> getPropertyValue(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
-        InjectorProperty<T> property = getProperty(key, expectedType, properties);
-        if (null != property) {
-            return Exceptional.of(property::getObject);
-        }
-        return Exceptional.empty();
-    }
-
     @SuppressWarnings("unchecked")
     public static <T extends InjectorProperty<?>> List<T> getSubProperties(Class<T> propertyFilter, InjectorProperty<?>... properties) {
         List<T> values = emptyList();
@@ -987,10 +955,6 @@ public enum SeleneUtils {
 
     public static <T> Exceptional<T> tryCreateFromRaw(Class<T> type, Function<Field, Object> valueCollector, boolean inject) {
         return tryCreate(type, valueCollector, inject, Provision.FIELD);
-    }
-
-    public static <T> Exceptional<T> tryCreateFromProcessed(Class<T> type, Function<String, Object> valueCollector, boolean inject) {
-        return tryCreate(type, valueCollector, inject, Provision.FIELD_NAME);
     }
 
     @SuppressWarnings("unchecked")
@@ -1034,8 +998,13 @@ public enum SeleneUtils {
         return Exceptional.ofNullable(instance);
     }
 
-    public static <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map) {
-        return tryCreateFromProcessed(type, key -> map.getOrDefault(key, null), true);
+    public static <T> T getInstance(Class<T> clazz) {
+        try {
+            Constructor<T> ctor = clazz.getConstructor();
+            return ctor.newInstance();
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            return Selene.getInstance(clazz);
+        }
     }
 
     public static String processFieldName(Field field) {
@@ -1045,28 +1014,20 @@ public enum SeleneUtils {
         return fieldName;
     }
 
-    public static boolean isPrimitiveWrapperOf(Class<?> targetClass, Class<?> primitive) {
-        if (!primitive.isPrimitive()) {
-            throw new IllegalArgumentException("First argument has to be primitive type");
-        }
-        return primitiveWrapperMap.get(primitive) == targetClass;
+    public static boolean isNotVoid(Class<?> type) {
+        return !(type.equals(Void.class) || type == Void.TYPE);
+    }
+
+    public static <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map) {
+        return tryCreateFromProcessed(type, key -> map.getOrDefault(key, null), true);
+    }
+
+    public static <T> Exceptional<T> tryCreateFromProcessed(Class<T> type, Function<String, Object> valueCollector, boolean inject) {
+        return tryCreate(type, valueCollector, inject, Provision.FIELD_NAME);
     }
 
     public static boolean isEitherAssignableFrom(Class<?> to, Class<?> from) {
         return isAssignableFrom(from, to) || isAssignableFrom(to, from);
-    }
-
-    public static boolean isAssignableFrom(Class<?> to, Class<?> from) {
-        if (to.isAssignableFrom(from)) {
-            return true;
-        }
-        if (from.isPrimitive()) {
-            return isPrimitiveWrapperOf(to, from);
-        }
-        if (to.isPrimitive()) {
-            return isPrimitiveWrapperOf(from, to);
-        }
-        return false;
     }
 
     public static String getFieldPropertyName(Field field) {
@@ -1099,10 +1060,6 @@ public enum SeleneUtils {
             Selene.log().warn("Error obtaining enum constants in " + type.getCanonicalName(), e);
         }
         return constants;
-    }
-
-    public static boolean isNotVoid(Class<?> type) {
-        return !(type.equals(Void.class) || type == Void.TYPE);
     }
 
     public static <T extends Annotation> boolean isAnnotationPresentRecursively(Method method, Class<T> annotationClass)
@@ -1172,6 +1129,10 @@ public enum SeleneUtils {
         } catch (Throwable e) {
             return SeleneUtils.emptyList();
         }
+    }
+
+    public static <T> Set<T> emptySet() {
+        return new HashSet<>();
     }
 
     @Nullable
@@ -1249,6 +1210,17 @@ public enum SeleneUtils {
         };
     }
 
+    public static <K, A> BiFunction<K, A, TransactionResult> transactSetter(BiConsumer<K, A> setter) {
+        return transactSetter(setter, TransactionResult.success());
+    }
+
+    public static <K, A> BiFunction<K, A, TransactionResult> transactSetter(BiConsumer<K, A> setter, TransactionResult defaultResult) {
+        return (t, u) -> {
+            setter.accept(t, u);
+            return defaultResult;
+        };
+    }
+
     public static <K, A> Key<K, A> checkedDynamicKeyOf(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
         return new Key<K, A>(setter, getter) {
         };
@@ -1284,15 +1256,42 @@ public enum SeleneUtils {
         };
     }
 
-    public static <K, A> BiFunction<K, A, TransactionResult> transactSetter(BiConsumer<K, A> setter, TransactionResult defaultResult) {
-        return (t, u) -> {
-            setter.accept(t, u);
-            return defaultResult;
-        };
+    public <T> T[] merge(T[] arrayOne, T[] arrayTwo) {
+        Object[] merged = Stream.of(arrayOne, arrayTwo).flatMap(Stream::of).toArray(Object[]::new);
+        return this.convertGenericArray(merged);
     }
 
-    public static <K, A> BiFunction<K, A, TransactionResult> transactSetter(BiConsumer<K, A> setter) {
-        return transactSetter(setter, TransactionResult.success());
+    @SuppressWarnings("unchecked")
+    private <T> T[] convertGenericArray(Object[] array) {
+        try {
+            Class<T> type = (Class<T>) array.getClass().getComponentType();
+            T[] finalArray = (T[]) Array.newInstance(type, 0);
+            return (T[]) addAll(finalArray, array);
+        } catch (ClassCastException e) {
+            Selene.log().error("Attempted to convert generic array not matching generic type T", e);
+        }
+        return (T[]) new Object[0];
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T[] addAll(final T[] array1, final T[] array2) {
+        if (null == array1) {
+            return shallowCopy(array2);
+        } else if (null == array2) {
+            return shallowCopy(array1);
+        }
+        final T[] newArray = (T[]) Array.newInstance(array1.getClass().getComponentType(), array1.length + array2.length);
+        System.arraycopy(array1, 0, newArray, 0, array1.length);
+        System.arraycopy(array2, 0, newArray, array1.length, array2.length);
+        return newArray;
+    }
+
+    @Contract("null -> null")
+    public static <T> T @Nullable [] shallowCopy(final T[] array) {
+        if (null == array) {
+            return null;
+        }
+        return array.clone();
     }
 
     public enum Provision {

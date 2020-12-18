@@ -28,17 +28,20 @@ import java.lang.annotation.Target;
 
 
 /**
- Indicates whether or not to call an event based on a given filter. A filter includes the parameter to perform a filter
- on, the {@link FilterTypes} to use, and the value it should match. Only applies if a event is an instance of
- {@link Filterable}. Any event implementing {@link Filterable} can provide a list of supported params and
- {@link FilterTypes}. It is up to the event to indicate the exact filter implementation based on the information provided.
+ * Indicates whether or not to call an event based on a given filter. A filter includes the parameter to perform a filter
+ * on, the {@link FilterTypes} to use, and the value it should match. Only applies if a event is an instance of
+ * {@link Filterable}. Any event implementing {@link Filterable} can provide a list of supported params and
+ * {@link FilterTypes}. It is up to the event to indicate the exact filter implementation based on the information provided.
  */
 @Repeatable(Filters.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Filter {
     String param();
+
     String value() default "";
+
     Class<?> target() default Void.class;
+
     FilterTypes type() default FilterTypes.EQUALS;
 }

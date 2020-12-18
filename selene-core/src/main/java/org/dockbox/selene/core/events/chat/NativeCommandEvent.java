@@ -43,22 +43,6 @@ public class NativeCommandEvent extends AbstractTargetCancellableEvent implement
         this.arguments = arguments;
     }
 
-    public String getAlias() {
-        return this.alias;
-    }
-
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
-
-    public String[] getArguments() {
-        return this.arguments;
-    }
-
-    public void setArguments(String[] arguments) {
-        this.arguments = arguments;
-    }
-
     @Override
     public boolean isApplicable(Filter filter) {
         if (Arrays.asList("alias", "command").contains(filter.param())) {
@@ -78,6 +62,22 @@ public class NativeCommandEvent extends AbstractTargetCancellableEvent implement
             }
         }
         return false;
+    }
+
+    public String getAlias() {
+        return this.alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    public String[] getArguments() {
+        return this.arguments;
+    }
+
+    public void setArguments(String[] arguments) {
+        this.arguments = arguments;
     }
 
     @Override

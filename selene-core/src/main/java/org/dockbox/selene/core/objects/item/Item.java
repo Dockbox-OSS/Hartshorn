@@ -43,6 +43,14 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
         this.id = this.getId();
     }
 
+    public String getId() {
+        return this.id;
+    }
+
+    protected void setId(String id) {
+        this.id = id;
+    }
+
     protected Item(String id, int meta) {
         super(Exceptional.empty());
         this.id = id;
@@ -52,35 +60,64 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
 
     protected abstract T getById(String id, int meta);
 
-    public abstract Text getDisplayName(Language language);
+    /**
+     * @param id
+     *         The fully qualified identifier of a block, e.g. {@code minecraft:stone}
+     * @param meta
+     *         The unsafe damage, or meta. Constraints to range 0-15
+     *
+     * @return The item instance, or {@link Item#AIR}
+     *
+     * @deprecated Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As of 1.13 this will no
+     *         longer be available!
+     *         <p>
+     *         See {@link ConstructionUtil#item(String, int)}
+     */
+    @Deprecated
+    public static Item<?> of(String id, int meta) {
+        return Selene.getInstance(ConstructionUtil.class).item(id, meta);
+    }
+
+    public static Item<?> of(String id) {
+        return Selene.getInstance(ConstructionUtil.class).item(id);
+    }
+
+    /**
+     * @param baseBlock
+     *         The {@link BaseBlock} instance to use when creating the item.
+     *
+     * @return The item instance, or {@link Item#AIR}
+     *
+     * @deprecated Note that WorldEdit rewrote their API for 1.13+, and that package/class names changes.
+     *         <p>
+     *         See {@link ConstructionUtil#item(BaseBlock)}
+     */
+    @Deprecated
+    public static Item<?> of(BaseBlock baseBlock) {
+        return Selene.getInstance(ConstructionUtil.class).item(baseBlock);
+    }
 
     public Text getDisplayName() {
         return this.getDisplayName(Selene.getServer().getGlobalConfig().getDefaultLanguage());
     }
 
-    public abstract List<Text> getLore();
-
-    public abstract int getAmount();
+    public abstract Text getDisplayName(Language language);
 
     public abstract void setDisplayName(Text displayName);
 
-    public abstract void removeDisplayName();
+    public abstract List<Text> getLore();
 
     public abstract void setLore(List<Text> lore);
+
+    public abstract int getAmount();
+
+    public abstract void setAmount(int amount);
+
+    public abstract void removeDisplayName();
 
     public abstract void addLore(Text lore);
 
     public abstract void removeLore();
-
-    public abstract void setAmount(int amount);
-
-    public String getId() {
-        return this.id;
-    }
-
-    protected void setId(String id) {
-        this.id = id;
-    }
 
     public Item stack() {
         this.setAmount(this.getStackSize());
@@ -96,42 +133,5 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
     public abstract void removeEnchant(Enchant enchant);
 
     public abstract boolean isBlock();
-
-    /**
-     @param id
-     The fully qualified identifier of a block, e.g. {@code minecraft:stone}
-     @param meta
-     The unsafe damage, or meta. Constraints to range 0-15
-
-     @return The item instance, or {@link Item#AIR}
-
-     @deprecated Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As of 1.13 this will no
-     longer be available!
-
-     See {@link ConstructionUtil#item(String, int)}
-     */
-    @Deprecated
-    public static Item<?> of(String id, int meta) {
-        return Selene.getInstance(ConstructionUtil.class).item(id, meta);
-    }
-
-    public static Item<?> of(String id) {
-        return Selene.getInstance(ConstructionUtil.class).item(id);
-    }
-
-    /**
-     @param baseBlock
-     The {@link BaseBlock} instance to use when creating the item.
-     @return
-     The item instance, or {@link Item#AIR}
-
-     @deprecated Note that WorldEdit rewrote their API for 1.13+, and that package/class names changes.
-
-     See {@link ConstructionUtil#item(BaseBlock)}
-     */
-    @Deprecated
-    public static Item<?> of(BaseBlock baseBlock) {
-        return Selene.getInstance(ConstructionUtil.class).item(baseBlock);
-    }
 
 }

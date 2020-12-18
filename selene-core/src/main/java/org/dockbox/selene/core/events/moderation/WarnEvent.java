@@ -46,10 +46,14 @@ public abstract class WarnEvent extends ModerationEvent {
         /**
          * The event fired when a player is warned
          *
-         * @param created The time at which the warning was originally issued
-         * @param player The target player being warned
-         * @param reason The reason of the warning
-         * @param source The {@link CommandSource} executing the warning
+         * @param created
+         *         The time at which the warning was originally issued
+         * @param player
+         *         The target player being warned
+         * @param reason
+         *         The reason of the warning
+         * @param source
+         *         The {@link CommandSource} executing the warning
          */
         public PlayerWarnedEvent(Player player, CommandSource source, String reason, LocalDateTime created) {
             super(player, source, reason);
@@ -67,9 +71,12 @@ public abstract class WarnEvent extends ModerationEvent {
          * The event fired when a warning expires. This can be either a automatic expiration based on a time constraint, or
          * it being deleted by another {@link CommandSource}.
          *
-         * @param player The target player being warned
-         * @param reason The reason of the warning
-         * @param source The {@link CommandSource} executing the warning
+         * @param player
+         *         The target player being warned
+         * @param reason
+         *         The reason of the warning
+         * @param source
+         *         The {@link CommandSource} executing the warning
          */
         public PlayerWarningExpired(Player player, CommandSource source, String reason) {
             super(player, source, reason);

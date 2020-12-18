@@ -24,9 +24,13 @@ import java.lang.reflect.Method;
 public interface EventWrapper {
 
     void invoke(Event event) throws RuntimeException;
+
     Object getListener();
+
     Class<? extends Event> getEventType();
+
     Method getMethod();
+
     int getPriority();
 
 }

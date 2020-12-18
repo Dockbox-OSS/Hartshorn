@@ -22,6 +22,7 @@ import org.dockbox.selene.core.objects.targets.Target;
 public interface Targetable {
 
     Target getTarget();
+
     void setTarget(Target target);
 
 }

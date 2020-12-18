@@ -25,9 +25,13 @@ import java.util.Map;
 public interface ResourceService {
 
     void init();
+
     Map<String, String> getResourceMap(Language lang);
+
     Map<Language, String> getTranslations(Resource entry);
+
     String createValidKey(String raw);
+
     Exceptional<ResourceEntry> getExternalResource(String key);
 
 }

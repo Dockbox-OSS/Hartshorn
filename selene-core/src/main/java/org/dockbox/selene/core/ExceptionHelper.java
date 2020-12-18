@@ -32,9 +32,12 @@ public interface ExceptionHelper {
      * Prints the exception in a user-friendly manner. Usually providing as much detail as possible
      * while maintaining readability.
      *
-     * @param message The error message provided by the developer
-     * @param exception The exception instance
-     * @param stacktrace Whether or not to print a stacktrace after the error information
+     * @param message
+     *         The error message provided by the developer
+     * @param exception
+     *         The exception instance
+     * @param stacktrace
+     *         Whether or not to print a stacktrace after the error information
      */
     void printFriendly(String message, Throwable exception, boolean stacktrace);
 
@@ -42,9 +45,12 @@ public interface ExceptionHelper {
      * Prints the exception in a minimal manner. Usually providing only the bare minimum required for
      * developers to understand what went wrong.
      *
-     * @param message The error message provided by the developer
-     * @param exception The exception instance
-     * @param stacktrace Whether or not to print a stacktrace after the error information
+     * @param message
+     *         The error message provided by the developer
+     * @param exception
+     *         The exception instance
+     * @param stacktrace
+     *         Whether or not to print a stacktrace after the error information
      */
     void printMinimal(String message, Throwable exception, boolean stacktrace);
 
@@ -52,7 +58,8 @@ public interface ExceptionHelper {
      * Runs a given runnable, and handles any possible exceptions using default behavior for the implementation.
      * Usually this will be logging to a console or file.
      *
-     * @param runnable The runnable to run
+     * @param runnable
+     *         The runnable to run
      */
     void handleSafe(Runnable runnable);
 
@@ -60,9 +67,12 @@ public interface ExceptionHelper {
      * Runs a given consumer accepting a given value, and handles any possible exceptions using default behavior
      * for the implementation. Usually this will be logging to a console or file.
      *
-     * @param <T> The type of value to be consumed
-     * @param consumer The consumer to use
-     * @param value The value to consume
+     * @param <T>
+     *         The type of value to be consumed
+     * @param consumer
+     *         The consumer to use
+     * @param value
+     *         The value to consume
      */
     <T> void handleSafe(Consumer<T> consumer, T value);
 
@@ -72,29 +82,40 @@ public interface ExceptionHelper {
      * present. Handles any possible exceptions using default behavior for the implementation. Usually this will
      * be logging to a console or file.
      *
-     * @param <T> The type of the value to be consumed
-     * @param <R> The return type to be wrapped in Exceptional
-     * @param function The function to use
-     * @param value The value to apply to
+     * @param <T>
+     *         The type of the value to be consumed
+     * @param <R>
+     *         The return type to be wrapped in Exceptional
+     * @param function
+     *         The function to use
+     * @param value
+     *         The value to apply to
+     *
      * @return The exceptional holding either the return type or an exception
      */
-    <T,R> Exceptional<R> handleSafe(Function<T, R> function, T value);
+    <T, R> Exceptional<R> handleSafe(Function<T, R> function, T value);
 
     /**
      * Runs a given runnable, and handles any possible exceptions using a given consumer.
      *
-     * @param runnable The runnable to run
-     * @param errorConsumer The consumer to use for exceptions
+     * @param runnable
+     *         The runnable to run
+     * @param errorConsumer
+     *         The consumer to use for exceptions
      */
     void handleSafe(Runnable runnable, Consumer<Throwable> errorConsumer);
 
     /**
      * Runs a given consumer accepting a given value, and handles any possible exceptions using a given consumer.
      *
-     * @param <T> The type of value to be consumed
-     * @param consumer The consumer to use
-     * @param value The value to consume
-     * @param errorConsumer The consumer to use for exceptions
+     * @param <T>
+     *         The type of value to be consumed
+     * @param consumer
+     *         The consumer to use
+     * @param value
+     *         The value to consume
+     * @param errorConsumer
+     *         The consumer to use for exceptions
      */
     <T> void handleSafe(Consumer<T> consumer, T value, Consumer<Throwable> errorConsumer);
 
@@ -103,11 +124,17 @@ public interface ExceptionHelper {
      * [org.dockbox.selene.core.objects.Exceptional]. The exceptional should wrap the exception if
      * present. Handles any possible exceptions using a given consumer.
      *
-     * @param <T> The type of the value to be consumed
-     * @param <R> The return type to be wrapped in Exceptional
-     * @param function The function to use
-     * @param value The value to apply to
-     * @param errorConsumer The consumer to use for exceptions
+     * @param <T>
+     *         The type of the value to be consumed
+     * @param <R>
+     *         The return type to be wrapped in Exceptional
+     * @param function
+     *         The function to use
+     * @param value
+     *         The value to apply to
+     * @param errorConsumer
+     *         The consumer to use for exceptions
+     *
      * @return The exceptional holding either the return type or an exception
      */
     <T, R> Exceptional<R> handleSafe(Function<T, R> function, T value, Consumer<Throwable> errorConsumer);

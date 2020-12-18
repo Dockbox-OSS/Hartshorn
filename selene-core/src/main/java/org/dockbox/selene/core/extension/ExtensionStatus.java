@@ -22,8 +22,7 @@ public enum ExtensionStatus {
 
     // Deprecated values are the negative equivalent of the values above, so they can easily be obtained using their intValue
     // Deprecated values are only to be used when comparing status results, and never be assigned manually
-    DEPRECATED_LOADED(-1), DEPRECATED_FAILED(-2), DEPRECATED_DISABLED(-3), DEPRECATED_ERRORED(-4)
-    ;
+    DEPRECATED_LOADED(-1), DEPRECATED_FAILED(-2), DEPRECATED_DISABLED(-3), DEPRECATED_ERRORED(-4);
 
     private final int intValue;
 
@@ -31,12 +30,12 @@ public enum ExtensionStatus {
         this.intValue = intValue;
     }
 
-    public int getIntValue() {
-        return this.intValue;
-    }
-
     public static ExtensionStatus of(int intValue) {
         for (ExtensionStatus value : values()) if (value.intValue == intValue) return value;
         return FAILED;
+    }
+
+    public int getIntValue() {
+        return this.intValue;
     }
 }

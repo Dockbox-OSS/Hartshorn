@@ -33,6 +33,10 @@ public class Location {
         this.world = world;
     }
 
+    public static Location empty() {
+        return new Location(0, 0, 0, World.empty());
+    }
+
     public double getX() {
         return this.vectorLoc.getXd();
     }
@@ -51,9 +55,5 @@ public class Location {
 
     public World getWorld() {
         return this.world;
-    }
-
-    public static Location empty() {
-        return new Location(0, 0, 0, World.empty());
     }
 }

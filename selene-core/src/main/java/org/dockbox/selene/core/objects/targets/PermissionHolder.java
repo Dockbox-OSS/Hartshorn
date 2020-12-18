@@ -22,16 +22,22 @@ import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 public interface PermissionHolder extends Target {
 
     boolean hasPermission(String permission);
+
     boolean hasAnyPermission(String... permissions);
+
     boolean hasAllPermissions(String... permissions);
 
     boolean hasPermission(AbstractPermission permission);
+
     boolean hasAnyPermission(AbstractPermission... permissions);
+
     boolean hasAllPermissions(AbstractPermission... permissions);
 
     void setPermission(String permission, boolean value);
+
     void setPermissions(boolean value, String... permissions);
 
     void setPermission(AbstractPermission permission, boolean value);
+
     void setPermissions(boolean value, AbstractPermission... permissions);
 }

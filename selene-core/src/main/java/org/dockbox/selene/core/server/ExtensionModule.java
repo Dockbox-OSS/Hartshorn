@@ -25,6 +25,20 @@ import java.util.Collection;
 
 final class ExtensionModule extends AbstractModule {
 
+    private final Collection<InternalBinding<Object>> bindings = SeleneUtils.emptyConcurrentList();
+
+    @Override
+    protected void configure() {
+        this.bindings.forEach(binding ->
+                this.bind(binding.getSourceClass()).toInstance(binding.getInstance()));
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> void acceptBinding(Class<T> sourceClass, T instance) {
+        InternalBinding<T> binding = new InternalBinding<>(sourceClass, instance);
+        this.bindings.add((InternalBinding<Object>) binding);
+    }
+
     private static final class InternalBinding<T> {
 
         private final Class<T> sourceClass;
@@ -42,20 +56,6 @@ final class ExtensionModule extends AbstractModule {
         public T getInstance() {
             return this.instance;
         }
-    }
-
-    private final Collection<InternalBinding<Object>> bindings = SeleneUtils.emptyConcurrentList();
-
-    @Override
-    protected void configure() {
-        this.bindings.forEach(binding ->
-                this.bind(binding.getSourceClass()).toInstance(binding.getInstance()));
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> void acceptBinding(Class<T> sourceClass, T instance) {
-        InternalBinding<T> binding = new InternalBinding<>(sourceClass, instance);
-        this.bindings.add((InternalBinding<Object>) binding);
     }
 
 }

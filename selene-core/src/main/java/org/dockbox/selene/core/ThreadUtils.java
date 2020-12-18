@@ -24,56 +24,56 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
 /**
- A low-level interface for easy thread-based actions. For all cases this should only be
- accessed through {@link org.dockbox.selene.core.server.Selene#getInstance(Class, InjectorProperty[])}}.
+ * A low-level interface for easy thread-based actions. For all cases this should only be
+ * accessed through {@link org.dockbox.selene.core.server.Selene#getInstance(Class, InjectorProperty[])}}.
  */
 public interface ThreadUtils {
 
     /**
-     Performs a given Runnable on a async thread, returning a Future object to be used for completion checks.
-     The threads are usually provided by the underlying platform.
-
-     @param runnable
-     The Runnable to run
-
-     @return The Future object for completion checks
+     * Performs a given Runnable on a async thread, returning a Future object to be used for completion checks.
+     * The threads are usually provided by the underlying platform.
+     *
+     * @param runnable
+     *         The Runnable to run
+     *
+     * @return The Future object for completion checks
      */
     Future<?> performAsync(Runnable runnable);
 
     /**
-     Performs a given Runnable on a sync thread, returning a Future object to be used for completion checks.
-     The threads are usually provided by the underlying platform.
-
-     @param runnable
-     The Runnable to run
-
-     @return The Future object for completion checks
+     * Performs a given Runnable on a sync thread, returning a Future object to be used for completion checks.
+     * The threads are usually provided by the underlying platform.
+     *
+     * @param runnable
+     *         The Runnable to run
+     *
+     * @return The Future object for completion checks
      */
     Future<?> performSync(Runnable runnable);
 
     /**
-     Performs a given Runnable on a async thread, and blocks the current thread until it completes.
-     The threads are usually provided by the underlying platform.
-
-     @param <T>
-     The return type of the callabe
-     @param callable
-     The callable to use
-
-     @return The Exceptional holding either the return value or a Exception
+     * Performs a given Runnable on a async thread, and blocks the current thread until it completes.
+     * The threads are usually provided by the underlying platform.
+     *
+     * @param <T>
+     *         The return type of the callabe
+     * @param callable
+     *         The callable to use
+     *
+     * @return The Exceptional holding either the return value or a Exception
      */
     <T> Exceptional<T> awaitAsync(Callable<T> callable);
 
     /**
-     Performs a given Runnable on a sync thread, and blocks the current thread until it completes.
-     The threads are usually provided by the underlying platform.
-
-     @param <T>
-     The return type of the callabe
-     @param callable
-     The callable to use
-
-     @return The Exceptional holding either the return value or a Exception
+     * Performs a given Runnable on a sync thread, and blocks the current thread until it completes.
+     * The threads are usually provided by the underlying platform.
+     *
+     * @param <T>
+     *         The return type of the callabe
+     * @param callable
+     *         The callable to use
+     *
+     * @return The Exceptional holding either the return value or a Exception
      */
     <T> Exceptional<T> awaitSync(Callable<T> callable);
 

@@ -33,7 +33,7 @@ import java.util.UUID;
 public abstract class WorldEvent extends AbstractCancellableEvent {
 
     /**
-     The abstract type which can be used to listen to all world events holding a existing {@link World} instance.
+     * The abstract type which can be used to listen to all world events holding a existing {@link World} instance.
      */
     public abstract static class WorldHoldingEvent extends WorldEvent {
         private final World world;
@@ -108,11 +108,21 @@ public abstract class WorldEvent extends AbstractCancellableEvent {
         private final Map<String, String> rules = SeleneUtils.emptyConcurrentMap();
 
         public WorldCreatingProperties(String name, UUID uniqueId, boolean loadOnStartup, Vector3N spawnPosition,
-                                          long seed, Gamemode defaultGamemode, Map<String, String> gamerules) {
+                                       long seed, Gamemode defaultGamemode, Map<String, String> gamerules) {
             super(loadOnStartup, spawnPosition, seed, defaultGamemode);
             this.name = name;
             this.uniqueId = uniqueId;
             gamerules.forEach(this::setGamerule);
+        }
+
+        @Override
+        public void setGamerule(String key, String value) {
+            this.rules.put(key, value);
+        }
+
+        @Override
+        public Map<String, String> getGamerules() {
+            return this.rules;
         }
 
         public String getName() {
@@ -124,16 +134,6 @@ public abstract class WorldEvent extends AbstractCancellableEvent {
         }
 
         public Map<String, String> getRules() {
-            return this.rules;
-        }
-
-        @Override
-        public void setGamerule(String key, String value) {
-            this.rules.put(key, value);
-        }
-
-        @Override
-        public Map<String, String> getGamerules() {
             return this.rules;
         }
     }

@@ -21,9 +21,10 @@ import org.dockbox.selene.core.events.object.ObjectConstructedEvent;
 import org.dockbox.selene.core.server.Selene;
 
 /**
- A low level type which automatically fires {@link ObjectConstructedEvent} in the first step of the constructor.
-
- @param <T> The type of the implementation.
+ * A low level type which automatically fires {@link ObjectConstructedEvent} in the first step of the constructor.
+ *
+ * @param <T>
+ *         The type of the implementation.
  */
 @SuppressWarnings("unchecked")
 public abstract class ConstructNotifier<T extends ConstructNotifier> {

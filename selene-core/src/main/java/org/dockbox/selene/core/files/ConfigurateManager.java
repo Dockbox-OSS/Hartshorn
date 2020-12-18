@@ -43,7 +43,9 @@ public abstract class ConfigurateManager {
      * Gets the default data file for a given {@link Extension}. The exact location is decided by the top-level
      * implementation of this type.
      *
-     * @param extension The {@link Extension} providing identification
+     * @param extension
+     *         The {@link Extension} providing identification
+     *
      * @return A {@link Path} reference to a file
      */
     public abstract Path getDataFile(Extension extension);
@@ -52,7 +54,9 @@ public abstract class ConfigurateManager {
      * Gets the default config file for a given {@link Extension}. The exact location is decided by the top-level
      * implementation of this type.
      *
-     * @param extension The {@link Extension} providing identification
+     * @param extension
+     *         The {@link Extension} providing identification
+     *
      * @return A {@link Path} reference to a file
      */
     public abstract Path getConfigFile(Extension extension);
@@ -61,8 +65,11 @@ public abstract class ConfigurateManager {
      * Gets a specific data file for a given {@link Extension}. The exact location is decided by the top-level
      * implementation of this type.
      *
-     * @param extension The {@link Extension} providing identification
-     * @param file The name of the lookup file
+     * @param extension
+     *         The {@link Extension} providing identification
+     * @param file
+     *         The name of the lookup file
+     *
      * @return A {@link Path} reference to a file
      */
     public abstract Path getDataFile(Extension extension, String file);
@@ -71,8 +78,11 @@ public abstract class ConfigurateManager {
      * Gets a specific config file for a given {@link Extension}. The exact location is decided by the top-level
      * implementation of this type.
      *
-     * @param extension The {@link Extension} providing identification
-     * @param file The name of the lookup file
+     * @param extension
+     *         The {@link Extension} providing identification
+     * @param file
+     *         The name of the lookup file
+     *
      * @return A {@link Path} reference to a file
      */
     public abstract Path getConfigFile(Extension extension, String file);
@@ -82,9 +92,13 @@ public abstract class ConfigurateManager {
      * dynamic, though it is usually encouraged to use {@link ConfigurateManager#getDataFile} or
      * {@link ConfigurateManager#getConfigFile} to obtain appropriate files.
      *
-     * @param <T> The type parameter of the type to map to
-     * @param file The file to read the content of
-     * @param type The exact type to map to
+     * @param <T>
+     *         The type parameter of the type to map to
+     * @param file
+     *         The file to read the content of
+     * @param type
+     *         The exact type to map to
+     *
      * @return A {@link Exceptional} instance holding either the mapping {@link T} instance, or a {@link Throwable}
      */
     public abstract <T> Exceptional<T> getFileContent(Path file, Class<T> type);
@@ -94,13 +108,30 @@ public abstract class ConfigurateManager {
      * dynamic, though it is usually encouraged to use {@link ConfigurateManager#getDataFile} or
      * {@link ConfigurateManager#getConfigFile} to obtain appropriate files.
      *
-     * @param <T> The type parameter of the content
-     * @param file The file to write the content of
-     * @param content The content to write
+     * @param <T>
+     *         The type parameter of the content
+     * @param file
+     *         The file to write the content of
+     * @param content
+     *         The content to write
+     *
      * @return A {@link Exceptional} instance holding a {@link Boolean} indicating the success status of the write process, or a
-     * {@link Throwable}. If a {@link Throwable} is present, the {@link Boolean} value should be false.
+     *         {@link Throwable}. If a {@link Throwable} is present, the {@link Boolean} value should be false.
      */
     public abstract <T> Exceptional<Boolean> writeFileContent(Path file, T content);
+
+    /**
+     * Get the data directory for a given {@link Extension}. The exact location is decided by the top-level implementation
+     * of this type.
+     *
+     * @param extension
+     *         The {@link Extension} providing identification
+     *
+     * @return A {@link Path} reference to the data directory
+     */
+    public Path getDataDir(Extension extension) {
+        return this.getDataDir().resolve(extension.id());
+    }
 
     /**
      * Get the base data directory of a platform file system. The exact location is decided by the top-level
@@ -109,17 +140,6 @@ public abstract class ConfigurateManager {
      * @return A {@link Path} reference to a directory
      */
     public abstract Path getDataDir();
-
-    /**
-     * Get the data directory for a given {@link Extension}. The exact location is decided by the top-level implementation
-     * of this type.
-     *
-     * @param extension The {@link Extension} providing identification
-     * @return A {@link Path} reference to the data directory
-     */
-    public Path getDataDir(Extension extension) {
-        return this.getDataDir().resolve(extension.id());
-    }
 
     /**
      * Get the base log directory of a platform file system. The exact location is decided by the top-level
@@ -148,7 +168,7 @@ public abstract class ConfigurateManager {
     /**
      * Get the base mods directory of a platform file system. The exact location is decided by the top-level
      * implementation of this type.
-     *
+     * <p>
      * Depending on the platform this directory may not be present.
      *
      * @return A {@link Exceptional} object containing either a {@link Path} reference to a directory, or nothing.
@@ -164,18 +184,12 @@ public abstract class ConfigurateManager {
     public abstract Path getPluginDir();
 
     /**
-     * Get the configuration folder for extensions directory of a platform file system. The exact location is decided
-     * by the top-level implementation of this type.
-     *
-     * @return A {@link Path} reference to a directory
-     */
-    public abstract Path getExtensionConfigsDir();
-
-    /**
      * Get the configuration directory for a given {@link Extension}. The exact location is decided by the top-level
      * implementation of this type.
      *
-     * @param extension The {@link Extension} providing identification
+     * @param extension
+     *         The {@link Extension} providing identification
+     *
      * @return A {@link Path} reference to the configuration directory
      */
     public Path getExtensionConfigDir(Extension extension) {
@@ -186,6 +200,14 @@ public abstract class ConfigurateManager {
      * Get the configuration folder for extensions directory of a platform file system. The exact location is decided
      * by the top-level implementation of this type.
      *
+     * @return A {@link Path} reference to a directory
+     */
+    public abstract Path getExtensionConfigsDir();
+
+    /**
+     * Get the configuration folder for extensions directory of a platform file system. The exact location is decided
+     * by the top-level implementation of this type.
+     * <p>
      * Depending on the platform this directory may not be present.
      *
      * @return A {@link Exceptional} object containing either a {@link Path} reference to a directory, or nothing.
@@ -199,12 +221,14 @@ public abstract class ConfigurateManager {
      * @return A {@link Path} reference to a directory
      */
     public abstract Path getPlatformPluginsConfigDir();
-    
+
     /**
      * Evaluates whether or not a given {@link Path} reference directory exists. If it exists nothing is done. If it did not
      * yet exist, the directory is created.
      *
-     * @param path The {@link Path} to evaluate
+     * @param path
+     *         The {@link Path} to evaluate
+     *
      * @return The created {@link Path}
      */
     public abstract Path createPathIfNotExists(Path path);
@@ -213,9 +237,11 @@ public abstract class ConfigurateManager {
      * Evaluates whether or not a given {@link Path} reference file exists. If it exists nothing is done. If it did not yet
      * exist, the directory is created.
      *
-     * @param file The {@link Path} to evaluate
+     * @param file
+     *         The {@link Path} to evaluate
+     *
      * @return The created {@link Path}
      */
     public abstract Path createFileIfNotExists(Path file);
-    
+
 }

@@ -45,33 +45,33 @@ public abstract class WorldProperties {
         return this.loadOnStartup;
     }
 
-    public Vector3N getSpawnPosition() {
-        return this.spawnPosition;
-    }
-
-    public long getSeed() {
-        return this.seed;
-    }
-
-    public Gamemode getDefaultGamemode() {
-        return this.defaultGamemode;
-    }
-
-    public abstract Map<String, String> getGamerules();
-
     public void setLoadOnStartup(boolean loadOnStartup) {
         this.loadOnStartup = loadOnStartup;
+    }
+
+    public Vector3N getSpawnPosition() {
+        return this.spawnPosition;
     }
 
     public void setSpawnPosition(Vector3N spawnPosition) {
         this.spawnPosition = spawnPosition;
     }
 
+    public long getSeed() {
+        return this.seed;
+    }
+
     public void setSeed(long seed) {
         this.seed = seed;
+    }
+
+    public Gamemode getDefaultGamemode() {
+        return this.defaultGamemode;
     }
 
     public void setDefaultGamemode(Gamemode defaultGamemode) {
         this.defaultGamemode = defaultGamemode;
     }
+
+    public abstract Map<String, String> getGamerules();
 }

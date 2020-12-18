@@ -38,6 +38,11 @@ class InternalMethodWrapper {
         this.canOverride = !Modifier.isStatic(modifiers) && !Modifier.isFinal(modifiers);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.name, Arrays.hashCode(this.paramTypes), this.returnType);
+    }
+
     // Uses custom identity function for overriden method handling
     @Override
     public boolean equals(Object o) {
@@ -53,10 +58,5 @@ class InternalMethodWrapper {
                 // If either of the two methods are static or final, check declaring class as well
                 ((this.canOverride && that.canOverride) ||
                         Objects.equals(this.method.getDeclaringClass(), that.method.getDeclaringClass()));
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.name, Arrays.hashCode(this.paramTypes), this.returnType);
     }
 }

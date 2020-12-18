@@ -72,91 +72,39 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- The global {@link Selene} instance used to grant access to various components.
+ * The global {@link Selene} instance used to grant access to various components.
  */
 @SuppressWarnings({"ClassWithTooManyMethods", "ConstantDeclaredInAbstractClass"})
 public abstract class Selene {
 
     public static final String GLOBAL_BYPASS = "selene.admin.bypass-all";
     public static final String PACKAGE_PREFIX = "org.dockbox.selene";
-
-    private static final Logger log = LoggerFactory.getLogger(Selene.class);
-    private String version;
-    private LocalDateTime lastUpdate;
+    public static final List<UUID> GLOBALLY_PERMITTED = SeleneUtils.asList(
+            UUID.fromString("6047d264-7769-4e50-a11e-c8b83f65ccc4"),
+            UUID.fromString("cb6411bb-31c9-4d69-8000-b98842ce0a0a"),
+            UUID.fromString("b7fb5e32-73ee-4f25-b256-a763c8739192")
+    );
     /**
-     Constant value holding the GitHub username(s) of the author(s) of {@link Selene}. This does not include names of
-     extension developers.
+     * Constant value holding the GitHub username(s) of the author(s) of {@link Selene}. This does not include names of
+     * extension developers.
      */
     protected static final String[] authors = {"GuusLieben"};
-
+    private static final Logger log = LoggerFactory.getLogger(Selene.class);
     private static Selene instance;
-
     private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
+    private String version;
+    private LocalDateTime lastUpdate;
 
     /**
-     Instantiates {@link Selene}, creating a local injector based on the provided {@link SeleneInjectConfiguration}.
-     Also verifies dependency artifacts and injector bindings. Proceeds to {@link Selene#construct()} once verified.
-
-     @param moduleConfiguration
-     the injector provided by the Selene implementation
+     * Instantiates {@link Selene}, creating a local injector based on the provided {@link SeleneInjectConfiguration}.
+     * Also verifies dependency artifacts and injector bindings. Proceeds to {@link Selene#construct()} once verified.
+     *
+     * @param moduleConfiguration
+     *         the injector provided by the Selene implementation
      */
     protected Selene(SeleneInjectConfiguration moduleConfiguration) {
         this.injectorModules.add(moduleConfiguration);
         this.construct();
-    }
-
-    private void verifyInjectorBindings() {
-        for (Class<?> bindingType : SeleneInjectConfiguration.REQUIRED_BINDINGS) {
-            try {
-                this.createInjector().getBinding(bindingType);
-            } catch (ConfigurationException e) {
-                log().error("Missing binding for " + bindingType.getCanonicalName() + "! While it is possible to inject it later, it is recommended to do so through the default platform injector!");
-            }
-        }
-    }
-
-    private Injector createInjector(AbstractModule... additionalModules) {
-        Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
-        modules.addAll(Arrays.stream(additionalModules)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList()));
-        return Guice.createInjector(modules);
-    }
-
-    /**
-     Loads various properties from selene.properties, including the latest update and version.
-     Once done sets the static instance equal to this instance.
-     */
-    protected void construct() {
-        this.verifyInjectorBindings();
-
-        String tVer = "dev";
-        LocalDateTime tLU = LocalDateTime.now();
-
-        try {
-            Properties properties = new Properties();
-            properties.load(this.getClass().getResourceAsStream("/selene.properties"));
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")
-                    .withLocale(Locale.getDefault())
-                    .withZone(ZoneId.systemDefault());
-
-            tLU = LocalDateTime.parse(
-                    properties.getOrDefault(
-                            "last_update",
-                            formatter.format(Instant.now())
-                    ).toString(),
-                    formatter
-            );
-            tVer = properties.getOrDefault("version", "dev").toString();
-        } catch (IOException e) {
-            this.except("Failed to convert resource file", e);
-        }
-
-        this.version = tVer;
-        this.lastUpdate = tLU;
-
-        Selene.instance = this;
     }
 
     public static <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties) {
@@ -184,21 +132,21 @@ public abstract class Selene {
     }
 
     /**
-     Gets an instance of a provided {@link Class} type. If the type is annotated with {@link Extension} it is ran
-     through the {@link ExtensionManager} instance to obtain the instance. If it is not annotated as such, it is ran
-     through the instance {@link Injector} to obtain the instance based on implementation, or manually, provided
-     mappings.
-
-     @param <T>
-     The type parameter for the instance to return
-     @param type
-     The type of the instance
-     @param extension
-     The type of the extension if extension specific bindings are to be used
-     @param additionalProperties
-     The properties to be passed into the type either during or after construction
-
-     @return The instance, if present. Otherwise returns null
+     * Gets an instance of a provided {@link Class} type. If the type is annotated with {@link Extension} it is ran
+     * through the {@link ExtensionManager} instance to obtain the instance. If it is not annotated as such, it is ran
+     * through the instance {@link Injector} to obtain the instance based on implementation, or manually, provided
+     * mappings.
+     *
+     * @param <T>
+     *         The type parameter for the instance to return
+     * @param type
+     *         The type of the instance
+     * @param extension
+     *         The type of the extension if extension specific bindings are to be used
+     * @param additionalProperties
+     *         The properties to be passed into the type either during or after construction
+     *
+     * @return The instance, if present. Otherwise returns null
      */
     public static <T> T getInstance(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
         T typeInstance = null;
@@ -249,6 +197,141 @@ public abstract class Selene {
         return typeInstance;
     }
 
+    /**
+     * Creates a custom binding for a given contract and implementation using a custom {@link AbstractModule}. Requires
+     * the implementation to extend the contract type.
+     * <p>
+     * The binding is created by Guice, and can be annotated using Guice supported annotations (e.g.
+     * {@link com.google.inject.Singleton})
+     *
+     * @param <T>
+     *         The type parameter of the contract
+     * @param contract
+     *         The class type of the contract
+     * @param implementation
+     *         The class type of the implementation
+     */
+    public static <T> void bindUtility(Class<T> contract, Class<? extends T> implementation) {
+        AbstractModule localModule = new AbstractModule() {
+            @Override
+            protected void configure() {
+                super.configure();
+                this.bind(contract).to(implementation);
+            }
+        };
+        getServer().injectorModules.add(localModule);
+    }
+
+    /**
+     * Gets the instance of {@link Selene}.
+     *
+     * @return The {@link Selene} instance
+     */
+    public static Selene getServer() {
+        return instance;
+    }
+
+    /**
+     * Handles a given exception and message using the injected {@link ExceptionHelper} instance. Uses the global
+     * preferences as defined in {@link GlobalConfig} to use either the {@link ExceptionLevels#FRIENDLY} or
+     * {@link ExceptionLevels#MINIMAL} level. Additionally this also performs the preference for whether or not to
+     * print stacktraces, using {@link GlobalConfig#getStacktracesAllowed()}
+     *
+     * @param msg
+     *         The message, usually provided by the developer causing the exception. Can be null.
+     * @param e
+     *         Zero or more exceptions (varargs)
+     */
+    public static void except(@Nullable String msg, @Nullable Throwable... e) {
+        if (null != getServer()) {
+            for (Throwable throwable : e) {
+                boolean stacktraces = getServer().getGlobalConfig().getStacktracesAllowed();
+                ExceptionHelper eh = getInstance(ExceptionHelper.class);
+
+                if (ExceptionLevels.FRIENDLY == getServer().getGlobalConfig().getExceptionLevel()) {
+                    eh.printFriendly(msg, throwable, stacktraces);
+                } else {
+                    eh.printMinimal(msg, throwable, stacktraces);
+                }
+            }
+        } else {
+            log().error("Selene has not been initialised! Logging natively");
+            log().error(msg);
+            for (Throwable throwable : e) log().error(Arrays.toString(throwable.getStackTrace()));
+        }
+    }
+
+    /**
+     * Provides quick access to {@link #getLog()} through the {@link Selene} instance (using {@link #getServer()}).
+     *
+     * @return The {@link Logger}
+     */
+    public static Logger log() {
+        return log;
+    }
+
+    public static Exceptional<Path> getResourceFile(String name) {
+        try {
+            URL resourceUrl = Selene.class.getClassLoader().getResource(name);
+            // Warning suppressed relates to potential NPE on `resourceUrl#toURI`. This is caught and handled directly
+            // and can thus be suppressed safely.
+            @SuppressWarnings("ConstantConditions") Path resourcePath = Paths.get(resourceUrl.toURI());
+            File resourceFile = resourcePath.toFile();
+            if (resourceFile.isFile()) {
+                return Exceptional.of(resourcePath);
+            }
+        } catch (URISyntaxException | NullPointerException e) {
+            return Exceptional.of(e);
+        }
+        return Exceptional.empty();
+    }
+
+    private void verifyInjectorBindings() {
+        for (Class<?> bindingType : SeleneInjectConfiguration.REQUIRED_BINDINGS) {
+            try {
+                this.createInjector().getBinding(bindingType);
+            } catch (ConfigurationException e) {
+                log().error("Missing binding for " + bindingType.getCanonicalName() + "! While it is possible to inject it later, it is recommended to do so through the default platform injector!");
+            }
+        }
+    }
+
+    /**
+     * Loads various properties from selene.properties, including the latest update and version.
+     * Once done sets the static instance equal to this instance.
+     */
+    protected void construct() {
+        this.verifyInjectorBindings();
+
+        String tVer = "dev";
+        LocalDateTime tLU = LocalDateTime.now();
+
+        try {
+            Properties properties = new Properties();
+            properties.load(this.getClass().getResourceAsStream("/selene.properties"));
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm")
+                    .withLocale(Locale.getDefault())
+                    .withZone(ZoneId.systemDefault());
+
+            tLU = LocalDateTime.parse(
+                    properties.getOrDefault(
+                            "last_update",
+                            formatter.format(Instant.now())
+                    ).toString(),
+                    formatter
+            );
+            tVer = properties.getOrDefault("version", "dev").toString();
+        } catch (IOException e) {
+            except("Failed to convert resource file", e);
+        }
+
+        this.version = tVer;
+        this.lastUpdate = tLU;
+
+        Selene.instance = this;
+    }
+
     public Injector createExtensionInjector(Object instance) {
         if (null != instance && instance.getClass().isAnnotationPresent(Extension.class)) {
             Exceptional<ExtensionContext> context = getInstance(ExtensionManager.class).getContext(instance.getClass());
@@ -279,37 +362,20 @@ public abstract class Selene {
         return this.createInjector(this.getExtensionModule(instance, header, context));
     }
 
-    /**
-     Creates a custom binding for a given contract and implementation using a custom {@link AbstractModule}. Requires
-     the implementation to extend the contract type.
-     <p>
-     The binding is created by Guice, and can be annotated using Guice supported annotations (e.g.
-     {@link com.google.inject.Singleton})
-
-     @param <T>
-     The type parameter of the contract
-     @param contract
-     The class type of the contract
-     @param implementation
-     The class type of the implementation
-     */
-    public static <T> void bindUtility(Class<T> contract, Class<? extends T> implementation) {
-        AbstractModule localModule = new AbstractModule() {
-            @Override
-            protected void configure() {
-                super.configure();
-                this.bind(contract).to(implementation);
-            }
-        };
-        getServer().injectorModules.add(localModule);
-    }
-
     public <T> T injectMembers(T type) {
         if (null != type) {
-            createInjector().injectMembers(type);
+            this.createInjector().injectMembers(type);
         }
 
         return type;
+    }
+
+    private Injector createInjector(AbstractModule... additionalModules) {
+        Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
+        modules.addAll(Arrays.stream(additionalModules)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
+        return Guice.createInjector(modules);
     }
 
     public <T> T injectMembers(T type, Object extensionInstance) {
@@ -339,18 +405,18 @@ public abstract class Selene {
     }
 
     /**
-     Initiates integrated extensions and performs a given consumer on each loaded extension.
-
-     @param consumer
-     The consumer to apply
+     * Initiates integrated extensions and performs a given consumer on each loaded extension.
+     *
+     * @param consumer
+     *         The consumer to apply
      */
     private void initIntegratedExtensions(Consumer<ExtensionContext> consumer) {
         getInstance(ExtensionManager.class).initialiseExtensions().forEach(consumer);
     }
 
     /**
-     Initiates a {@link Selene} instance. Collecting integrated extensions and registering them to the
-     appropriate {@link EventBus}, {@link CommandBus}, and {@link DiscordUtils} instances.
+     * Initiates a {@link Selene} instance. Collecting integrated extensions and registering them to the
+     * appropriate {@link EventBus}, {@link CommandBus}, and {@link DiscordUtils} instances.
      */
     protected void init() {
         log().info("\u00A7e ,-,");
@@ -378,11 +444,11 @@ public abstract class Selene {
     }
 
     /**
-     Prints information about registered instances. This includes injection bindings, extensions, and event handlers.
-     This method is typically only used when starting the server.
-
-     @param event
-     The server event indicating the server started
+     * Prints information about registered instances. This includes injection bindings, extensions, and event handlers.
+     * This method is typically only used when starting the server.
+     *
+     * @param event
+     *         The server event indicating the server started
      */
     @Listener
     protected void debugRegisteredInstances(ServerStartedEvent event) {
@@ -449,9 +515,9 @@ public abstract class Selene {
     }
 
     /**
-     Gets the log instance created by {@link Selene}.
-
-     @return The log
+     * Gets the log instance created by {@link Selene}.
+     *
+     * @return The log
      */
     @NotNull
     public Logger getLog() {
@@ -459,9 +525,9 @@ public abstract class Selene {
     }
 
     /**
-     Gets the {@link Selene} version, based on the injected value in {@link #construct()}.
-
-     @return The version
+     * Gets the {@link Selene} version, based on the injected value in {@link #construct()}.
+     *
+     * @return The version
      */
     @NotNull
     public String getVersion() {
@@ -469,17 +535,17 @@ public abstract class Selene {
     }
 
     /**
-     Gets the server type as indicated by the {@link Selene} implementation.
-
-     @return the server type
+     * Gets the server type as indicated by the {@link Selene} implementation.
+     *
+     * @return the server type
      */
     @NotNull
     public abstract ServerType getServerType();
 
     /**
-     Gets the last update of {@link Selene}, based on the injected value in {@link #construct()}
-
-     @return The last update
+     * Gets the last update of {@link Selene}, based on the injected value in {@link #construct()}
+     *
+     * @return The last update
      */
     @NotNull
     public LocalDateTime getLastUpdate() {
@@ -487,9 +553,9 @@ public abstract class Selene {
     }
 
     /**
-     Gets the array of authors as defined by {@link #authors}.
-
-     @return A non-null array of authors
+     * Gets the array of authors as defined by {@link #authors}.
+     *
+     * @return A non-null array of authors
      */
     @NotNull
     public String @NotNull [] getAuthors() {
@@ -497,39 +563,9 @@ public abstract class Selene {
     }
 
     /**
-     Handles a given exception and message using the injected {@link ExceptionHelper} instance. Uses the global
-     preferences as defined in {@link GlobalConfig} to use either the {@link ExceptionLevels#FRIENDLY} or
-     {@link ExceptionLevels#MINIMAL} level. Additionally this also performs the preference for whether or not to
-     print stacktraces, using {@link GlobalConfig#getStacktracesAllowed()}
-
-     @param msg
-     The message, usually provided by the developer causing the exception. Can be null.
-     @param e
-     Zero or more exceptions (varargs)
-     */
-    public static void except(@Nullable String msg, @Nullable Throwable... e) {
-        if (null != getServer()) {
-            for (Throwable throwable : e) {
-                boolean stacktraces = getServer().getGlobalConfig().getStacktracesAllowed();
-                ExceptionHelper eh = getInstance(ExceptionHelper.class);
-
-                if (ExceptionLevels.FRIENDLY == getServer().getGlobalConfig().getExceptionLevel()) {
-                    eh.printFriendly(msg, throwable, stacktraces);
-                } else {
-                    eh.printMinimal(msg, throwable, stacktraces);
-                }
-            }
-        } else {
-            log().error("Selene has not been initialised! Logging natively");
-            log().error(msg);
-            for (Throwable throwable : e) log().error(Arrays.toString(throwable.getStackTrace()));
-        }
-    }
-
-    /**
-     Gets the {@link GlobalConfig} instance as injected by the {@link Selene} implementation.
-
-     @return The global config
+     * Gets the {@link GlobalConfig} instance as injected by the {@link Selene} implementation.
+     *
+     * @return The global config
      */
     @NotNull
     public GlobalConfig getGlobalConfig() {
@@ -537,57 +573,17 @@ public abstract class Selene {
     }
 
     /**
-     Provides quick access to {@link #getLog()} through the {@link Selene} instance (using {@link #getServer()}).
-
-     @return The {@link Logger}
-     */
-    public static Logger log() {
-        return log;
-    }
-
-    /**
-     Gets the instance of {@link Selene}.
-
-     @return The {@link Selene} instance
-     */
-    public static Selene getServer() {
-        return instance;
-    }
-
-    /**
-     Gets the used version of the implementation platform.
-
-     @return The platform version
+     * Gets the used version of the implementation platform.
+     *
+     * @return The platform version
      */
     public abstract String getPlatformVersion();
 
     /**
-     Gets the used Minecraft version.
-
-     @return The Minecraft version
+     * Gets the used Minecraft version.
+     *
+     * @return The Minecraft version
      */
     public abstract MinecraftVersion getMinecraftVersion();
-
-    public static final List<UUID> GLOBALLY_PERMITTED = SeleneUtils.asList(
-            UUID.fromString("6047d264-7769-4e50-a11e-c8b83f65ccc4"),
-            UUID.fromString("cb6411bb-31c9-4d69-8000-b98842ce0a0a"),
-            UUID.fromString("b7fb5e32-73ee-4f25-b256-a763c8739192")
-    );
-
-    public static Exceptional<Path> getResourceFile(String name) {
-        try {
-            URL resourceUrl = Selene.class.getClassLoader().getResource(name);
-            // Warning suppressed relates to potential NPE on `resourceUrl#toURI`. This is caught and handled directly
-            // and can thus be suppressed safely.
-            @SuppressWarnings("ConstantConditions") Path resourcePath = Paths.get(resourceUrl.toURI());
-            File resourceFile = resourcePath.toFile();
-            if (resourceFile.isFile()) {
-                return Exceptional.of(resourcePath);
-            }
-        } catch (URISyntaxException | NullPointerException e) {
-            return Exceptional.of(e);
-        }
-        return Exceptional.empty();
-    }
 
 }

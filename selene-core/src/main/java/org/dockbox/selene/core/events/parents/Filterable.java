@@ -30,7 +30,9 @@ public interface Filterable {
     /**
      * Indicates whether or not the implementation and its properties match a given {@link Filter}.
      *
-     * @param filter The filter to apply
+     * @param filter
+     *         The filter to apply
+     *
      * @return Whether or not the filter applies
      */
     boolean isApplicable(Filter filter);
@@ -49,5 +51,5 @@ public interface Filterable {
      * @return The accepted parameters
      */
     List<String> acceptedParams();
-    
+
 }

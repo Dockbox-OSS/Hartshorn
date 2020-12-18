@@ -36,6 +36,10 @@ public abstract class World extends WorldProperties {
         this.name = name;
     }
 
+    public static World empty() {
+        return new EmptyWorld();
+    }
+
     public abstract int getPlayerCount();
 
     public abstract boolean unload();
@@ -50,10 +54,6 @@ public abstract class World extends WorldProperties {
 
     public String getName() {
         return this.name;
-    }
-
-    public static World empty() {
-        return new EmptyWorld();
     }
 
     private static final class EmptyWorld extends World {

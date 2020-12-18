@@ -26,22 +26,30 @@ import org.dockbox.selene.core.objects.Exceptional;
 public interface CommandContext {
 
     String getAlias();
+
     int getArgumentCount();
+
     int getFlagCount();
 
     Exceptional<Argument<String>> getArgument(String key);
+
     <T> Exceptional<Argument<T>> getArgument(String key, Class<T> type);
+
     <T> Exceptional<T> getArgumentAndParse(String key, TypeParser<T> parser);
 
 
     Exceptional<Flag<String>> getFlag(String key);
+
     <T> Exceptional<Flag<T>> getFlag(String key, Class<T> type);
+
     <T> Exceptional<T> getFlagAndParse(String key, TypeParser<T> parser);
 
     boolean hasArgument(String key);
+
     boolean hasFlag(String key);
 
     <T> Exceptional<CommandValue<T>> getValue(String key, Class<T> type, Type valueType);
+
     <T> Exceptional<T> tryCreate(Class<T> type);
 
 }

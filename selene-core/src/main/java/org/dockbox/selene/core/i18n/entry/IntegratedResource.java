@@ -105,13 +105,17 @@ public enum IntegratedResource implements ResourceEntry {
     VANISHING_CURSE("Vanishing Curse", "minecraft.enchant.vanishing"),
     ;
 
-    private String value;
     private final String key;
     private final Map<Language, String> translations = SeleneUtils.emptyConcurrentMap();
+    private String value;
 
     IntegratedResource(String value, String key) {
         this.value = value;
         this.key = key;
+    }
+
+    public static String parse(CharSequence input) {
+        return NONE.parseColors(input.toString());
     }
 
     public String getValue(Player player) {
@@ -143,10 +147,6 @@ public enum IntegratedResource implements ResourceEntry {
     public void setLanguageValue(Language lang, String value) {
         this.translations.put(lang, value);
         if (lang == Selene.getServer().getGlobalConfig().getDefaultLanguage()) this.value = value;
-    }
-
-    public static String parse(CharSequence input) {
-        return NONE.parseColors(input.toString());
     }
 
 }

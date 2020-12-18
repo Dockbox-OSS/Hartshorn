@@ -26,10 +26,11 @@ import java.lang.annotation.Target;
 import java.util.function.Function;
 
 /**
- The interface to mark a object field as ignored when generating objects using
- {@link org.dockbox.selene.core.SeleneUtils#tryCreate(Class, Function, boolean, Provision)}
+ * The interface to mark a object field as ignored when generating objects using
+ * {@link org.dockbox.selene.core.SeleneUtils#tryCreate(Class, Function, boolean, Provision)}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Ignore { }
+public @interface Ignore {
+}
 

@@ -26,9 +26,9 @@ import java.lang.annotation.Target;
 import java.util.Optional;
 
 /**
- Attempts to unwrap the final object if it is a instance of {@link Exceptional} or {@link Optional}. If the type is
- <code>null</code> or the value is not present, it respects {@link UnwrapOrSkip#skipIfNull()} to skip the event or
- return <code>null</code>. If the value is already unwrapped and not <code>null</code> it is returned 'as is'.
+ * Attempts to unwrap the final object if it is a instance of {@link Exceptional} or {@link Optional}. If the type is
+ * <code>null</code> or the value is not present, it respects {@link UnwrapOrSkip#skipIfNull()} to skip the event or
+ * return <code>null</code>. If the value is already unwrapped and not <code>null</code> it is returned 'as is'.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)

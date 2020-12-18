@@ -37,7 +37,8 @@ public interface Cancellable extends Event {
     /**
      * Sets the cancelled state of the event
      *
-     * @param cancelled Whether or not the event should be cancelled
+     * @param cancelled
+     *         Whether or not the event should be cancelled
      */
     void setCancelled(boolean cancelled);
 

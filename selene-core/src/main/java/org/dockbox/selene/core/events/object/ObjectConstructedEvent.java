@@ -30,7 +30,8 @@ import java.util.List;
  * The event fired when a new type instance is constructed. Typically this only includes types which extend
  * {@link org.dockbox.selene.core.objects.ConstructNotifier}, unless the type manually fires the event.
  *
- @param <T> The type of the instance created
+ * @param <T>
+ *         The type of the instance created
  */
 public class ObjectConstructedEvent<T> implements Event, Filterable {
 
@@ -42,6 +43,15 @@ public class ObjectConstructedEvent<T> implements Event, Filterable {
         this.instance = instance;
     }
 
+    @Override
+    public boolean isApplicable(Filter filter) {
+        if (FilterTypes.EQUALS == filter.type()) {
+            return filter.target().equals(this.type)
+                    || filter.value().equals(this.getTypeName());
+        }
+        return false;
+    }
+
     /**
      * Get the canonical name of the instance type. Typically this is only used in
      * {@link ObjectConstructedEvent#isApplicable}.
@@ -50,15 +60,6 @@ public class ObjectConstructedEvent<T> implements Event, Filterable {
      */
     public String getTypeName() {
         return this.type.getCanonicalName();
-    }
-
-    @Override
-    public boolean isApplicable(Filter filter) {
-        if (FilterTypes.EQUALS == filter.type()) {
-            return filter.target().equals(this.type)
-                    || filter.value().equals(this.getTypeName());
-        }
-        return false;
     }
 
     @Override

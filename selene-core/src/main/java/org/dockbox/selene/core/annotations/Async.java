@@ -25,9 +25,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- Indicates that a event or command method should be invoked asynchronously. This is not a direct garantee the method is
- indeed invoked asynchronously, as this is up to the implementation of {@link EventWrapper}
- to respect.
+ * Indicates that a event or command method should be invoked asynchronously. This is not a direct garantee the method is
+ * indeed invoked asynchronously, as this is up to the implementation of {@link EventWrapper}
+ * to respect.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

@@ -23,37 +23,37 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- The interface to mark a extension which is currently not yet implemented, but is scheduled for future implementation.
- This is only used for reference for developers of Selene, and is therefore not available at compile/runtime.
+ * The interface to mark a extension which is currently not yet implemented, but is scheduled for future implementation.
+ * This is only used for reference for developers of Selene, and is therefore not available at compile/runtime.
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface Placeholder {
     /**
-     The description of the scheduled extension.
-
-     @return the string
+     * The description of the scheduled extension.
+     *
+     * @return the string
      */
     String description();
 
     /**
-     The reporter of the extension.
-
-     @return the string
+     * The reporter of the extension.
+     *
+     * @return the string
      */
     String by();
 
     /**
-     The person who has been assigned to implement the extension.
-
-     @return the string
+     * The person who has been assigned to implement the extension.
+     *
+     * @return the string
      */
     String assignee();
 
     /**
-     The <a href="https://github.com/GuusLieben/Selene/issues">GitHub issue</a> reporting the scheduled extension.
-
-     @return the int
+     * The <a href="https://github.com/GuusLieben/Selene/issues">GitHub issue</a> reporting the scheduled extension.
+     *
+     * @return the int
      */
     int issue() default -1;
 }

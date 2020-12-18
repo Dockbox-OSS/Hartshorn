@@ -29,6 +29,26 @@ public class ClickAction<R> extends TextAction<R> {
         super(result);
     }
 
+    public static OpenUrl openUrl(URL url) {
+        return new OpenUrl(url);
+    }
+
+    public static RunCommand runCommand(String command) {
+        return new RunCommand(command);
+    }
+
+    public static ChangePage changePage(int page) {
+        return new ChangePage(page);
+    }
+
+    public static SuggestCommand suggestCommand(String command) {
+        return new SuggestCommand(command);
+    }
+
+    public static ExecuteCallback executeCallback(Consumer<CommandSource> consumer) {
+        return new ExecuteCallback(consumer);
+    }
+
     public static final class OpenUrl extends ClickAction<URL> {
         private OpenUrl(URL result) {
             super(result);
@@ -57,25 +77,5 @@ public class ClickAction<R> extends TextAction<R> {
         private ExecuteCallback(Consumer<CommandSource> result) {
             super(result);
         }
-    }
-
-    public static OpenUrl openUrl(URL url) {
-        return new OpenUrl(url);
-    }
-
-    public static RunCommand runCommand(String command) {
-        return new RunCommand(command);
-    }
-
-    public static ChangePage changePage(int page) {
-        return new ChangePage(page);
-    }
-
-    public static SuggestCommand suggestCommand(String command) {
-        return new SuggestCommand(command);
-    }
-
-    public static ExecuteCallback executeCallback(Consumer<CommandSource> consumer) {
-        return new ExecuteCallback(consumer);
     }
 }
