@@ -24,6 +24,7 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.special.Sounds;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.InventoryHolder;
 import org.dockbox.selene.core.objects.targets.Locatable;
@@ -114,6 +115,8 @@ public abstract class Player
     public abstract Item<?> getItemInHand(Hand hand);
 
     public abstract void setItemInHand(Hand hand, Item<?> item);
+
+    public abstract void play(Sounds sound);
 
     @Override
     public int hashCode() {

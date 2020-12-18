@@ -19,6 +19,7 @@ package org.dockbox.selene.sponge.objects.targets;
 
 import com.boydti.fawe.FaweAPI;
 import com.boydti.fawe.object.FawePlayer;
+import com.flowpowered.math.vector.Vector3d;
 
 import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.events.EventBus;
@@ -35,6 +36,7 @@ import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.objects.special.Sounds;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
@@ -143,6 +145,15 @@ public class SpongePlayer extends Player {
     public void setItemInHand(Hand hand, Item<?> item) {
         this.spongePlayer.getReference().ifPresent(player -> {
             player.setItemInHand(SpongeConversionUtil.toSponge(hand), SpongeConversionUtil.toSponge((SpongeItem) item));
+        });
+    }
+
+    @Override
+    public void play(Sounds sound) {
+        this.spongePlayer.getReference().ifPresent(player -> {
+            SpongeConversionUtil.toSponge(sound).ifPresent(soundType -> {
+                player.playSound(soundType, Vector3d.ZERO, 1);
+            });
         });
     }
 

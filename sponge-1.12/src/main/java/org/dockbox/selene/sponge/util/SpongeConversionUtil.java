@@ -26,6 +26,7 @@ import com.sk89q.worldedit.sponge.adapter.impl.Sponge_1_12_2_Impl;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
+import org.dockbox.selene.core.exceptions.TypeConversionException;
 import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
@@ -37,6 +38,7 @@ import org.dockbox.selene.core.objects.location.Warp;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.objects.special.Sounds;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
@@ -44,7 +46,6 @@ import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
 import org.dockbox.selene.core.text.pagination.Pagination;
-import org.dockbox.selene.core.exceptions.TypeConversionException;
 import org.dockbox.selene.sponge.objects.discord.MagiBridgeCommandSource;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
@@ -56,6 +57,7 @@ import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.data.type.HandTypes;
+import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.Tamer;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
@@ -140,6 +142,11 @@ public enum SpongeConversionUtil {
         
         // TODO GuusLieben, enchantment conversion (also update ItemStack conversions)
         return Exceptional.empty();
+    }
+
+    @NotNull
+    public static Exceptional<SoundType> toSponge(Sounds sound) {
+        return Exceptional.of(Sponge.getRegistry().getType(SoundType.class, sound.name()));
     }
 
     @NotNull
