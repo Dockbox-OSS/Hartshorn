@@ -15,14 +15,13 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.util;
+package org.dockbox.selene.core.impl.command.test;
 
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.impl.command.DefaultCommandBus;
 import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
 import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
 import org.dockbox.selene.core.impl.command.values.AbstractFlagCollection;
-import org.dockbox.selene.test.commands.TestArgumentValue;
 
 import java.util.List;
 
