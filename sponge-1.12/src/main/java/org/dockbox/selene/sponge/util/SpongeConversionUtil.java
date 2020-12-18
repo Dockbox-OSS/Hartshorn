@@ -26,6 +26,7 @@ import com.sk89q.worldedit.sponge.adapter.impl.Sponge_1_12_2_Impl;
 import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
+import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Console;
@@ -240,7 +241,7 @@ public enum SpongeConversionUtil {
                 Consumer<CommandSource> consumer = ((ClickAction.ExecuteCallback) action).getResult();
                 try {
                     fromSponge(commandSource).ifPresent(consumer).rethrow();
-                } catch (Throwable throwable) {
+                } catch (CheckedSeleneException throwable) {
                     commandSource.sendMessage(Text.of(IntegratedResource.UNKNOWN_ERROR.format(throwable.getMessage())));
                 }
             }));
