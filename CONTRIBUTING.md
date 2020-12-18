@@ -109,6 +109,7 @@ Selene uses a standardised branching structure. The `selene-main` branch is the 
 We currently use a modified version of [Jetbrains' Java Style](https://www.jetbrains.com/help/idea/code-style-java.html) 
 for our coding convention.  
 The base repository has an [`Selene Code Style.xml`](https://github.com/GuusLieben/Selene/blob/selene-main/Selene%20Code%20Style.xml) file. If you use any Jetbrains IDE you can import this under `Editor > Code Style`.  
+Alternatively, you can also use the [.editorconfig](https://github.com/GuusLieben/Selene/blob/selene-main/.editorconfig.xml) file with any IDE that supports it.  
 Additionally you should use [`Selene Code Inspections.xml`](https://github.com/GuusLieben/Selene/blob/selene-main/Selene%20Code%20Inspections.xml), which can be imported under `Editor > Inspections`.
 
 #### Type Naming
