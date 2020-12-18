@@ -159,41 +159,38 @@ All JavaDocs follow the order:
 - Descriptive links are formatted using `{@link org.dockbox.selene.ClassY y}` (shows as `y`)
 
 Example:
-```java
-public class X {
-
-    /**
-     * Performs X.
-     *
-     * <pre>{@code
-     *    X x = new X();
-     *    Object o = x.doX(y, z);
-     * }</pre>
-     *
-     * <p>
-     * Additional information about {@link Y y}.
-     * </p>
-     *
-     * <ul>
-     *    <li>A</li>
-     *    <li>B</li>
-     * </ul>
-     *
-     * @param <T>
-     * The type parameter for arg0
-     * @param arg0
-     * The first argument
-     * @param arg1
-     * The second argument
-     *
-     * @return The object X
-     * @throws Exception
-     * When Y happens
-     *
-     * @see X#doY
-     */
-    public <T> Object doX(T arg0, String arg1) throws Exception {
-        // Do x
-    }
+```
+/**
+ * Performs X.
+ *
+ * <pre>{@code
+ *    X x = new X();
+ *    Object o = x.doX(y, z);
+ * }</pre>
+ *
+ * <p>
+ * Additional information about {@link Y y}.
+ * </p>
+ *
+ * <ul>
+ *    <li>A</li>
+ *    <li>B</li>
+ * </ul>
+ *
+ * @param <T>
+ *        The type parameter for arg0
+ * @param arg0
+ *        The first argument
+ * @param arg1
+ *        The second argument
+ *
+ * @return The object X
+ * @throws Exception
+ *        When Y happens
+ *
+ * @see X#doY
+ */
+public <T> Object doX(T arg0, String arg1) throws Exception {
+    // Do x
 }
 ```
