@@ -23,7 +23,7 @@ import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.impl.files.annotations.ProcessSetting;
 import org.dockbox.selene.core.impl.files.process.SettingProcessor;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -43,8 +43,8 @@ public class ProcessSettingTests {
 
         TestConfig tc = cn.getValue(TypeToken.of(TestConfig.class));
 
-        Assert.assertEquals("transformed", tc.getTest());
-        Assert.assertEquals("test", tc.getTest2());
+        Assertions.assertEquals("transformed", tc.getTest());
+        Assertions.assertEquals("test", tc.getTest2());
     }
 
     @Test
@@ -56,8 +56,8 @@ public class ProcessSettingTests {
         TestConfigurationLoader tcl = TestConfigurationLoader.builder().build();
         ConfigurationNode cn = tcl.createEmptyNode(tcl.getDefaultOptions()).setValue(TypeToken.of(TestConfig.class), tc);
 
-        Assert.assertEquals("transformed", cn.getNode("test").getString());
-        Assert.assertEquals("test", cn.getNode("test2").getString());
+        Assertions.assertEquals("transformed", cn.getNode("test").getString());
+        Assertions.assertEquals("test", cn.getNode("test2").getString());
     }
 
     @ConfigSerializable

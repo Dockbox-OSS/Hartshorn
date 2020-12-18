@@ -26,7 +26,7 @@ import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -54,8 +54,8 @@ public class TypeSerialiserTests {
         ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<byte[]>() {}, array);
 
         List<Byte> ls = cn.getList(TypeToken.of(Byte.class));
-        Assert.assertTrue(ls.contains((byte)4));
-        Assert.assertTrue(ls.contains((byte)-2));
+        Assertions.assertTrue(ls.contains((byte)4));
+        Assertions.assertTrue(ls.contains((byte)-2));
     }
 
     @Test
@@ -64,10 +64,10 @@ public class TypeSerialiserTests {
         ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
 
         byte[] ls = cn.getValue(new TypeToken<byte[]>() {});
-        Assert.assertEquals(2, ls.length);
+        Assertions.assertEquals(2, ls.length);
 
-        Assert.assertEquals(ls[0], ((byte) 4));
-        Assert.assertEquals(ls[1], ((byte) -2));
+        Assertions.assertEquals(ls[0], ((byte) 4));
+        Assertions.assertEquals(ls[1], ((byte) -2));
     }
 
     @Test
@@ -78,8 +78,8 @@ public class TypeSerialiserTests {
         ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<short[]>() {}, array);
 
         List<Short> ls = cn.getList(TypeToken.of(Short.class));
-        Assert.assertTrue(ls.contains((short)4));
-        Assert.assertTrue(ls.contains((short)-2));
+        Assertions.assertTrue(ls.contains((short)4));
+        Assertions.assertTrue(ls.contains((short)-2));
     }
 
     @Test
@@ -88,10 +88,10 @@ public class TypeSerialiserTests {
         ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
 
         short[] ls = cn.getValue(new TypeToken<short[]>() {});
-        Assert.assertEquals(2, ls.length);
+        Assertions.assertEquals(2, ls.length);
 
-        Assert.assertEquals(ls[0], ((short) 4));
-        Assert.assertEquals(ls[1], ((short) -2));
+        Assertions.assertEquals(ls[0], ((short) 4));
+        Assertions.assertEquals(ls[1], ((short) -2));
     }
 
     @Test
@@ -102,8 +102,8 @@ public class TypeSerialiserTests {
         ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<int[]>() {}, array);
 
         List<Integer> ls = cn.getList(TypeToken.of(Integer.class));
-        Assert.assertTrue(ls.contains(4));
-        Assert.assertTrue(ls.contains(-2));
+        Assertions.assertTrue(ls.contains(4));
+        Assertions.assertTrue(ls.contains(-2));
     }
 
     @Test
@@ -112,10 +112,10 @@ public class TypeSerialiserTests {
         ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
 
         int[] ls = cn.getValue(new TypeToken<int[]>() {});
-        Assert.assertEquals(2, ls.length);
+        Assertions.assertEquals(2, ls.length);
 
-        Assert.assertEquals(4, ls[0]);
-        Assert.assertEquals(ls[1], -2);
+        Assertions.assertEquals(4, ls[0]);
+        Assertions.assertEquals(ls[1], -2);
     }
 
     @Test
@@ -124,8 +124,8 @@ public class TypeSerialiserTests {
         ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<Set<String>>() {}, Sets.newHashSet("test", "test2"));
 
         List<String> ls = cn.getList(TypeToken.of(String.class));
-        Assert.assertTrue(ls.contains("test"));
-        Assert.assertTrue(ls.contains("test2"));
+        Assertions.assertTrue(ls.contains("test"));
+        Assertions.assertTrue(ls.contains("test2"));
     }
 
     @Test
@@ -134,9 +134,9 @@ public class TypeSerialiserTests {
         ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<List<String>>() {}, Lists.newArrayList("test", "test", "test2"));
 
         Set<String> ls = cn.getValue(new TypeToken<Set<String>>() {});
-        Assert.assertEquals(2, ls.size());
-        Assert.assertTrue(ls.contains("test"));
-        Assert.assertTrue(ls.contains("test2"));
+        Assertions.assertEquals(2, ls.size());
+        Assertions.assertTrue(ls.contains("test"));
+        Assertions.assertTrue(ls.contains("test2"));
     }
 
     @Test
@@ -145,8 +145,8 @@ public class TypeSerialiserTests {
         ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<Language>() {}, Language.NL_NL);
 
         Language ls = cn.getValue(TypeToken.of(Language.class));
-        Assert.assertEquals(ls.getCode(), Language.NL_NL.getCode());
-        Assert.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
+        Assertions.assertEquals(ls.getCode(), Language.NL_NL.getCode());
+        Assertions.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
     }
 
     @Test
@@ -155,7 +155,7 @@ public class TypeSerialiserTests {
         ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<Language>() {}, Language.NL_NL);
 
         Language ls = cn.getValue(TypeToken.of(Language.class));
-        Assert.assertEquals(ls.getCode(), Language.NL_NL.getCode());
-        Assert.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
+        Assertions.assertEquals(ls.getCode(), Language.NL_NL.getCode());
+        Assertions.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
     }
 }
