@@ -140,17 +140,17 @@ instead of `{@link #doY}`
 
 #### Structure
 All JavaDocs follow the order:
-> {method description}
-> 
-> @param <T>
-> {generic type description}
-> @param x
-> {param description}
-> 
-> @return {return description}  
-> @throws {exception type}
-> {exception description}
-> 
+> {method description}  
+>   
+> @param <T>  
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{generic type description}  
+> @param x  
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{param description}  
+>   
+> @return {return description}    
+> @throws {exception type}  
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{exception description}  
+>   
 > @see {link}
 
 - Code examples are wrapped in `<pre>{@code ... }</pre>`
