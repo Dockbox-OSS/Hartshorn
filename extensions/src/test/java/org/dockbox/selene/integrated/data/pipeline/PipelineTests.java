@@ -4,12 +4,12 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipeException;
 import org.dockbox.selene.integrated.data.pipeline.pipelines.AbstractPipeline;
 import org.dockbox.selene.integrated.data.pipeline.pipelines.Pipeline;
+import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.InputPipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.Pipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.StandardPipe;
-import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +26,7 @@ public class PipelineTests {
             .addPipe(StandardPipe.of(input -> input.orElse(-1)))
             .processUnsafe(5);
 
-        Assert.assertEquals(9, result);
+        Assertions.assertEquals(9, result);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class PipelineTests {
             .addPipeline(pipeline)
             .processUnsafe("hi world");
 
-        Assert.assertEquals("- Hi world -", result);
+        Assertions.assertEquals("- Hi world -", result);
     }
 
     @Test
@@ -49,7 +49,7 @@ public class PipelineTests {
             .addPipe(StandardPipe.of(input ->  input.orElse(1)))
             .processUnsafe(0);
 
-        Assert.assertEquals(0, output);
+        Assertions.assertEquals(0, output);
     }
 
     @Test
@@ -61,19 +61,19 @@ public class PipelineTests {
                 else return input.orElse(1);
             })).processUnsafe(0);
 
-        Assert.assertEquals(-1, output);
+        Assertions.assertEquals(-1, output);
     }
 
-    @Test(expected = IllegalPipeException.class)
+    @Test
     public void uncancellablePipelineTest() {
-        new Pipeline<Float>()
-            .addPipe(InputPipe.of(input -> input + 1F))
-            .addPipe(CancellablePipe.of((cancelPipeline, input, throwable) -> {
-                if (2 < input) cancelPipeline.run();
-                return input;
-            }))
-            .addPipe(InputPipe.of(input -> input / 2F))
-            .processUnsafe(4F);
+        Assertions.assertThrows(IllegalPipeException.class, () -> new Pipeline<Float>()
+                .addPipe(InputPipe.of(input -> input + 1F))
+                .addPipe(CancellablePipe.of((cancelPipeline, input, throwable) -> {
+                    if (2 < input) cancelPipeline.run();
+                    return input;
+                }))
+                .addPipe(InputPipe.of(input -> input / 2F))
+                .processUnsafe(4F));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class PipelineTests {
             .addPipe(InputPipe.of(input -> input / 2F))
             .processUnsafe(4F);
 
-        Assert.assertEquals(5, output, 0);
+        Assertions.assertEquals(5, output, 0);
     }
 
     @Test
@@ -103,20 +103,22 @@ public class PipelineTests {
             .addPipe(InputPipe.of(input -> input / 2F))
             .process(4F);
 
-        Assert.assertFalse(output.isPresent());
+        Assertions.assertFalse(output.isPresent());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void convertCancelBehaviourTest() {
-        float output = new Pipeline<Float>()
-            .setCancelBehaviour(CancelBehaviour.CONVERT)
-            .addPipe(InputPipe.of(input -> input + 1F))
-            .addPipe(CancellablePipe.of((cancelPipeline, input, throwable) -> {
-                if (2 < input) cancelPipeline.run();
-                return input;
-            }))
-            .addPipe(InputPipe.of(input -> input / 2F))
-            .processUnsafe(4F);
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+            float output = new Pipeline<Float>()
+                    .setCancelBehaviour(CancelBehaviour.CONVERT)
+                    .addPipe(InputPipe.of(input -> input + 1F))
+                    .addPipe(CancellablePipe.of((cancelPipeline, input, throwable) -> {
+                        if (2 < input) cancelPipeline.run();
+                        return input;
+                    }))
+                    .addPipe(InputPipe.of(input -> input / 2F))
+                    .processUnsafe(4F);
+        });
     }
 
     @Test
@@ -127,22 +129,23 @@ public class PipelineTests {
             .addPipe(InputPipe.of(input -> input - 1));
 
         int output = pipeline.processUnsafe(8);
-        Assert.assertEquals(18, output);
+        Assertions.assertEquals(18, output);
 
         pipeline.removeLastPipe();
         pipeline.removePipeAt(0);
         output = pipeline.processUnsafe(8);
 
-        Assert.assertEquals(11, output);
+        Assertions.assertEquals(11, output);
 
     }
 
+    @SuppressWarnings("ReturnOfNull")
     @Test
     public void processingCollectionInputsTest() {
         List<Integer> output = new Pipeline<Integer>()
             .addPipe(InputPipe.of(input -> 0 == input % 2 ? input : null))
             .addPipe(InputPipe.of(input -> input * 2))
             .processAllSafe(Arrays.asList(1,2,3,4,5,6,7,8,9,10));
-        Assert.assertEquals(Arrays.asList(4,8,12,16,20), output);
+        Assertions.assertEquals(Arrays.asList(4, 8, 12, 16, 20), output);
     }
 }

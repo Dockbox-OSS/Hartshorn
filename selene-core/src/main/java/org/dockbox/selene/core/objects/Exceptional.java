@@ -30,6 +30,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 /**
  * A container object which may or may not contain a non-null value. If a value is present, {@code isPresent()} will
  * return {@code true} and {@code get()} will return the value. If no value is present, {@code isAbsent()} will
@@ -638,5 +640,15 @@ public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
      */
     public boolean isAbsent() {
         return null == this.value;
+    }
+
+    /**
+     * Returns the type of the value, if it is present. Otherwise returns {@code null}.
+     *
+     * @return The type of the value, or {@code null}
+     */
+    @Nullable
+    public Class<?> getType() {
+        return this.isPresent() ? this.value.getClass() : null;
     }
 }
