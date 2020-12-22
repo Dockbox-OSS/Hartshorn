@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.integrated.data.pipeline.pipelines;
 
-import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.integrated.data.pipeline.CancelBehaviour;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipeException;
 import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractPipeline<P, I> {
 
-    private List<IPipe<I, I>> pipes = SeleneUtils.emptyList();
+    private final List<IPipe<I, I>> pipes = SeleneUtils.emptyList();
     private boolean isCancelled;
     private CancelBehaviour cancelBehaviour = CancelBehaviour.UNCANCELLABLE;
 

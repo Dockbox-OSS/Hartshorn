@@ -17,7 +17,9 @@
 
 package org.dockbox.selene.integrated.data.pipeline.exceptions;
 
-public class IllegalPipelineException extends IllegalArgumentException {
+import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
+
+public class IllegalPipelineException extends UncheckedSeleneException {
 
     public IllegalPipelineException(String errorMessage, Throwable throwable) {
         super(errorMessage, throwable);

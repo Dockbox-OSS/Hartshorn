@@ -10,12 +10,14 @@ import java.util.function.Function;
 
 public enum CancelBehaviour {
     UNCANCELLABLE,
-    DISCARD(output -> null),
+    @SuppressWarnings("ReturnOfNull") DISCARD(output -> null),
     CONVERT((output, converter) -> (null == converter) ? output : converter.apply(output)),
     RETURN(output -> output);
 
-    @Nullable private final Function<Object, Object> function;
-    @Nullable private final BiFunction<Object, Function<Object, Object>, Object> biFunction;
+    @Nullable
+    private final Function<Object, Object> function;
+    @Nullable
+    private final BiFunction<Object, Function<Object, Object>, Object> biFunction;
 
     CancelBehaviour() {
         this.function = null;

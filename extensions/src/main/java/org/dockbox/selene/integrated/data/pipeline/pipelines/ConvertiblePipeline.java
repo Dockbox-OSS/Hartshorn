@@ -37,7 +37,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
 
     @Nullable
     private Function<? super I, ?> converter;
-    private Class<I> inputClass;
+    private final Class<I> inputClass;
 
     /**
      * A private constructor for the pipeline as all convertible pipelines should be instantiated initally as {@link ConvertiblePipelineSource}
@@ -103,7 +103,6 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      * @return An {@link Exceptional} containing the {@link I output}.
      *         If the output is not present it will contain a throwable describing why
      */
-    @SuppressWarnings("unchecked")
     @Override
     public Exceptional<I> process(@NotNull P input, @Nullable Throwable throwable) {
         Exceptional<I> exceptionalInput;
