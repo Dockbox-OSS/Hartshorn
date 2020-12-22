@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.objects;
 
+import org.jetbrains.annotations.Nullable;
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 
 import java.util.NoSuchElementException;
@@ -27,6 +28,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.BiFunction;
 
 /**
  * A container object which may or may not contain a non-null value. If a value is present, {@code isPresent()} will
@@ -92,7 +94,10 @@ public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
     }
 
     public static <T> Exceptional<T> ofNullable(T value, Throwable throwable) {
-        return null == value || null == throwable ? empty() : of(value, throwable);
+        if (null == value && null == throwable) return empty();
+        if (null == value) return of(throwable);
+        if (null == throwable) return of(value);
+        else return of(value, throwable);
     }
 
     public static <T> Exceptional<T> ofNullable(T value) {
@@ -150,19 +155,32 @@ public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
     public<U> Exceptional<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
         if (!this.isPresent())
-            return empty();
+            return this.errorPresent() ? of(this.throwable) : empty();
         else {
-            return Exceptional.ofNullable(mapper.apply(this.value));
+            return ofNullable(mapper.apply(this.value), this.throwable);
         }
     }
 
     public<U> Exceptional<U> flatMap(Function<? super T, Exceptional<U>> mapper) {
         Objects.requireNonNull(mapper);
         if (!this.isPresent())
-            return empty();
+            return this.errorPresent() ? of(this.throwable) : empty();
         else {
             return Objects.requireNonNull(mapper.apply(this.value));
         }
+    }
+
+    public<U> Exceptional<U> flatMap(BiFunction<? super T, Throwable, Exceptional<U>> mapper) {
+        Objects.requireNonNull(mapper);
+        if (!this.isPresent())
+            return this.errorPresent() ? of(this.throwable) : empty();
+        else {
+            return Objects.requireNonNull(mapper.apply(this.value, this.throwable));
+        }
+    }
+
+    public Throwable orElseExcept(Throwable other) {
+        return null != this.throwable ? this.throwable : other;
     }
 
     public T orElse(T other) {
@@ -225,6 +243,11 @@ public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
         return this.throwable;
     }
 
+    @Nullable
+    public Class<?> getType() {
+        return this.isPresent() ? this.value.getClass() : Void.class;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -259,9 +282,9 @@ public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
     public Exceptional<T> orElseSupply(Supplier<T> defaultValue) {
         if (this.isAbsent()) {
             if (this.errorPresent()) {
-                return Exceptional.of(defaultValue.get(), this.throwable);
+                return of(defaultValue.get(), this.throwable);
             } else {
-                return Exceptional.of(defaultValue.get());
+                return of(defaultValue.get());
             }
         }
         return this;
