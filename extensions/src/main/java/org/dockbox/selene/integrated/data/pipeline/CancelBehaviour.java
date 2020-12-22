@@ -36,11 +36,11 @@ public enum CancelBehaviour {
      * Determines what should be returned by a {@link Pipeline} when its cancelled by calling the {@link Function} on it.
      *
      * @param output
-     * The output of the pipeline to be acted upon by the cancel behaviour
-     * @throws UnsupportedOperationException
-     * If the cancel behaviour has no {@link Function}
+     *         The output of the pipeline to be acted upon by the cancel behaviour
      *
      * @return The output after it has been acted upon
+     * @throws UnsupportedOperationException
+     *         If the cancel behaviour has no {@link Function}
      */
     public Object act(Object output) {
         if (null == this.function) {
@@ -54,13 +54,13 @@ public enum CancelBehaviour {
      * {@link Function} or {@link BiFunction} on it.
      *
      * @param output
-     * The output of the pipeline to be acted upon by the cancel behaviour
+     *         The output of the pipeline to be acted upon by the cancel behaviour
      * @param converter
-     * The converter of the current pipeline
-     * @throws UnsupportedOperationException
-     * If the cancel behaviour has no {@link Function} or {@link BiFunction}
+     *         The converter of the current pipeline
      *
      * @return The output after it has been acted upon
+     * @throws UnsupportedOperationException
+     *         If the cancel behaviour has no {@link Function} or {@link BiFunction}
      */
     public Object act(Object output, @Nullable Function<Object, Object> converter) {
         if (null != this.function) {
