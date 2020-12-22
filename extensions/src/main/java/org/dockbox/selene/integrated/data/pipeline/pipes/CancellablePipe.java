@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.data.pipeline.pipes;
 
-import org.dockbox.selene.integrated.data.pipeline.AbstractPipeline;
+import org.dockbox.selene.integrated.data.pipeline.pipelines.AbstractPipeline;
 
 @FunctionalInterface
 public interface CancellablePipe<I, O> extends ComplexPipe<I, O> {

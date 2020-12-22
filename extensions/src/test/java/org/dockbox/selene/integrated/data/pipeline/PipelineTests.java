@@ -1,6 +1,9 @@
 package org.dockbox.selene.integrated.data.pipeline;
 
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipeException;
+import org.dockbox.selene.integrated.data.pipeline.pipelines.AbstractPipeline;
+import org.dockbox.selene.integrated.data.pipeline.pipelines.Pipeline;
 import org.dockbox.selene.integrated.data.pipeline.pipes.InputPipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.Pipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.StandardPipe;
@@ -74,9 +77,9 @@ public class PipelineTests {
     }
 
     @Test
-    public void cancellablePipelineTest() {
+    public void returnCancelBehaviourTest() {
         float output = new Pipeline<Float>()
-            .setCancellable(true)
+            .setCancelBehaviour(CancelBehaviour.RETURN)
             .addPipe(InputPipe.of(input -> input + 1F))
             .addPipe(CancellablePipe.of((cancelPipeline, input, throwable) -> {
                 if (2 < input) cancelPipeline.run();
@@ -86,6 +89,34 @@ public class PipelineTests {
             .processUnsafe(4F);
 
         Assert.assertEquals(5, output, 0);
+    }
+
+    @Test
+    public void discardCancelBehaviourTest() {
+        Exceptional<Float> output = new Pipeline<Float>()
+            .setCancelBehaviour(CancelBehaviour.DISCARD)
+            .addPipe(InputPipe.of(input -> input + 1F))
+            .addPipe(CancellablePipe.of((cancelPipeline, input, throwable) -> {
+                if (2 < input) cancelPipeline.run();
+                return input;
+            }))
+            .addPipe(InputPipe.of(input -> input / 2F))
+            .process(4F);
+
+        Assert.assertFalse(output.isPresent());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void convertCancelBehaviourTest() {
+        float output = new Pipeline<Float>()
+            .setCancelBehaviour(CancelBehaviour.CONVERT)
+            .addPipe(InputPipe.of(input -> input + 1F))
+            .addPipe(CancellablePipe.of((cancelPipeline, input, throwable) -> {
+                if (2 < input) cancelPipeline.run();
+                return input;
+            }))
+            .addPipe(InputPipe.of(input -> input / 2F))
+            .processUnsafe(4F);
     }
 
     @Test

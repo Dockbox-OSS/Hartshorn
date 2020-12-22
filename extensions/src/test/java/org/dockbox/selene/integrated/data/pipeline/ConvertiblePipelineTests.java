@@ -17,8 +17,10 @@
 
 package org.dockbox.selene.integrated.data.pipeline;
 
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipeException;
-import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineConverterException;
+import org.dockbox.selene.integrated.data.pipeline.pipelines.ConvertiblePipeline;
+import org.dockbox.selene.integrated.data.pipeline.pipelines.ConvertiblePipelineSource;
 import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.InputPipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.Pipe;
@@ -34,30 +36,20 @@ public class ConvertiblePipelineTests {
     public void simpleConvertablePipelineTest() {
         float output = new ConvertiblePipelineSource<>(Integer.class)
             .addPipe(
-                Pipe.of((input, throwable) -> input * 2)
+                InputPipe.of(input -> input * 2)
             ).convertPipeline(
                 integer -> (float)integer, Float.class
             ).addPipe(
-                Pipe.of((input, throwable) -> input / 6F)
+                InputPipe.of(input -> input / 5F)
             ).addPipe(
-                Pipe.of((input, throwable) -> input * 2)
+                InputPipe.of(input -> input * 2)
             ).processUnsafe(18);
 
-        Assert.assertEquals(12F, output, 0.0);
-    }
-
-    @Test(expected = IllegalPipelineConverterException.class)
-    public void illegalPipelineConverterTest() {
-        new ConvertiblePipelineSource<>(String.class)
-            .addPipe(
-                Pipe.of((input, throwable) -> input + "ing")
-            ).convertPipeline(
-                string -> null, Integer.class
-            ).process("Look");
+        Assert.assertEquals(14.4F, output, 0.0);
     }
 
     @Test(expected = IllegalPipeException.class)
-    public void convertiblePipelineIllegalPipeExceptionTest() {
+    public void addingPipesToUncancellablePipelineTest() {
         new ConvertiblePipelineSource<>(Integer.class)
             .addPipe(
                 CancellablePipe.of((cancelPipeline, input, throwable) -> {
@@ -69,43 +61,100 @@ public class ConvertiblePipelineTests {
             ).process(4);
     }
 
-    @Test(expected = IllegalPipeException.class)
-    public void illegalPipeExceptionWhenConvertingPipelineTest() {
-        new ConvertiblePipelineSource<>(Integer.class)
-            .setCancellable(true)
-            .addPipe(
-                CancellablePipe.of((cancelPipeline, input, throwable) -> {
-                    if (2 < input) cancelPipeline.run();
-                    return input;
-                })
-            ).convertPipeline(Object::toString, String.class)
-            .addPipe(
-                Pipe.of((input, throwable) -> input + " - Test Suffix")
-            ).process(1);
+    @Test
+    public void convertCancelBehaviourTest() {
+        ConvertiblePipeline<Integer, String> pipeline = new ConvertiblePipelineSource<>(Integer.class)
+            .setCancelBehaviour(CancelBehaviour.CONVERT)
+            .addPipe(InputPipe.of(input -> input + 1))
+            .addPipe(CancellablePipe.of((cancelPipeline, input, throwable) -> {
+                if (2 > input) cancelPipeline.run();
+                return input;
+            }))
+            .addPipe(InputPipe.of(input -> input + 1))
+            .convertPipeline(String::valueOf, String.class)
+            .addPipe(InputPipe.of(input -> input + "1"));
+
+        // Doesn't cancel.
+        String output = pipeline.processUnsafe(2);
+        Assert.assertEquals("41", output);
+
+        // Does cancel.
+        output = pipeline.processUnsafe(0);
+        Assert.assertEquals("1", output);
     }
 
     @Test
-    public void convertiblePipelineCancellableTest() {
-        int output = new ConvertiblePipelineSource<>(Integer.class)
-            .setCancellable(true)
-            .addPipe(
-                Pipe.of((input, throwable) -> input + 1)
-            ).addPipe(
-                CancellablePipe.of((cancelPipeline, input, throwable) -> {
-                    if (2 < input) cancelPipeline.run();
-                    return input;
-                })
-            ).addPipe(
-                Pipe.of((input, throwable) -> input + 4)
-            ).processUnsafe(3);
+    public void returnCancelBehaviourTest() {
+        ConvertiblePipeline<Float, Integer> pipeline = new ConvertiblePipelineSource<>(Float.class)
+            .setCancelBehaviour(CancelBehaviour.RETURN)
+            .addPipe(InputPipe.of(input -> input + 1))
+            .addPipe(CancellablePipe.of((cancelPipeline, input, throwable) -> {
+                if (2 > input) cancelPipeline.run();
+                return input;
+            }))
+            .addPipe(InputPipe.of(input -> input + 1))
+            .convertPipeline(Float::intValue, Integer.class)
+            .addPipe(InputPipe.of(input -> input + 1));
 
-        Assert.assertEquals(4, output);
+        // Doesn't cancel
+        int output = pipeline.processUnsafe(2F);
+        Assert.assertEquals(5, output);
+
+        // Does cancel - Will return a Float as its not converted.
+        Exceptional<Integer> safeOutput = pipeline.process(0F);
+        Assert.assertTrue(safeOutput.isPresent());
+        Assert.assertEquals(Float.class, safeOutput.getType());
+    }
+
+    @Test
+    public void discardCancelBehaviourTest() {
+        ConvertiblePipeline<Float, Integer> pipeline = new ConvertiblePipelineSource<>(Float.class)
+            .setCancelBehaviour(CancelBehaviour.DISCARD)
+            .addPipe(InputPipe.of(input -> input + 1))
+            .addPipe(CancellablePipe.of((cancelPipeline, input, throwable) -> {
+                if (2 > input) cancelPipeline.run();
+                return input;
+            }))
+            .addPipe(InputPipe.of(input -> input + 1))
+            .convertPipeline(Float::intValue, Integer.class)
+            .addPipe(InputPipe.of(input -> input + 1));
+
+        // Doesn't cancel
+        int output = pipeline.processUnsafe(2F);
+        Assert.assertEquals(5, output);
+
+        // Does cancel - Will return an empty exceptional as output is discarded.
+        Exceptional<Integer> safeOutput = pipeline.process(0F);
+        Assert.assertFalse(safeOutput.isPresent());
+    }
+
+    @Test
+    public void multipleCancelBehavioursTest() {
+        ConvertiblePipeline<Float, Integer> pipeline = new ConvertiblePipelineSource<>(Float.class)
+            .setCancelBehaviour(CancelBehaviour.DISCARD)
+            .addPipe(InputPipe.of(input -> input + 1))
+            .addPipe(CancellablePipe.of((cancelPipeline, input, throwable) -> {
+                if (2 > input) cancelPipeline.run();
+                return input;
+            }))
+            .addPipe(InputPipe.of(input -> input + 1))
+            .convertPipeline(Float::intValue, Integer.class)
+            .setCancelBehaviour(CancelBehaviour.CONVERT)
+            .addPipe(InputPipe.of(input -> input + 1));
+
+        // Doesn't cancel
+        int output = pipeline.processUnsafe(2F);
+        Assert.assertEquals(5, output);
+
+        // Does cancel - Will convert the output as it takes the last set CancelBehaviour.
+        output = pipeline.processUnsafe(0F);
+        Assert.assertEquals(1, output);
     }
 
     @Test
     public void convertiblePipelineCancellableAfterConversionTest() {
         int output = new ConvertiblePipelineSource<>(Float.class)
-            .setCancellable(true)
+            .setCancelBehaviour(CancelBehaviour.CONVERT)
             .addPipe(
                 Pipe.of((input, throwable) -> input + 1F)
             ).convertPipeline(Float::intValue, Integer.class)
@@ -161,13 +210,5 @@ public class ConvertiblePipelineTests {
             .processAllSafe(Arrays.asList("1", "2", "3", "4", "5"));
 
         Assert.assertEquals(Arrays.asList(1, 4, 9, 16, 25), output);
-    }
-
-    @Test(expected = IllegalPipeException.class)
-    public void IllegalPipeTest() {
-        new ConvertiblePipelineSource<>(Integer.class)
-            .addPipe(InputPipe.of(input -> input + 2))
-            .addPipe(IllegalPipeTest.of(input -> input * 2))
-            .process(3);
     }
 }

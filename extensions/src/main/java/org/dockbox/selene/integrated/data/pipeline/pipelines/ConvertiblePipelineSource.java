@@ -15,20 +15,33 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline;
+package org.dockbox.selene.integrated.data.pipeline.pipelines;
 
 import org.dockbox.selene.core.objects.Exceptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Pipeline<I> extends AbstractPipeline<I, I> {
+public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
 
     /**
-     * Processes an input by first wrapping it in an {@link Exceptional} and then internally calling
-     * {@link AbstractPipeline#process(Exceptional)}.
-     * @param input The non-null {@link I input} value.
-     * @param throwable The nullable input {@link Throwable}.
-     * @return An {@link Exceptional} containing the output. If the output is not present it will contain a throwable describing why.
+     * Calls the super constructor to instantiate a new convertible pipeline.
+     *
+     * @param inputClass
+     *         The {@link Class} of the {@link I input} type
+     */
+    public ConvertiblePipelineSource(Class<I> inputClass) {
+        super(inputClass);
+    }
+
+    /**
+     * Processes an input by first wrapping it in an {@link Exceptional}.
+     *
+     * @param input
+     *         The non-null {@link I input} to be processed by the pipeline
+     * @param throwable
+     *         A nullable {@link Throwable} that may wish to be passed in
+     *
+     * @return An {@link Exceptional} containing the {@link I output}
      */
     @Override
     public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable) {

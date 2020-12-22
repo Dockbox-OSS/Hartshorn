@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.core.objects;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -229,6 +231,11 @@ public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
             throw new NoSuchElementException("No value present");
         }
         return this.throwable;
+    }
+
+    @Nullable
+    public Class<?> getType() {
+        return this.isPresent() ? this.value.getClass() : Void.class;
     }
 
     @Override
