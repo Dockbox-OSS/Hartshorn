@@ -88,7 +88,7 @@ public class PipelineTests {
             .addPipe(InputPipe.of(input -> input / 2F))
             .processUnsafe(4F);
 
-        Assertions.assertEquals(5, output, 0);
+        Assertions.assertEquals(5, output);
     }
 
     @Test

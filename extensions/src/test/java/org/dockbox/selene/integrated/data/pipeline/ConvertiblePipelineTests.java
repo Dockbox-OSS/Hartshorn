@@ -45,7 +45,7 @@ public class ConvertiblePipelineTests {
                 InputPipe.of(input -> input * 2)
             ).processUnsafe(18);
 
-        Assertions.assertEquals(14.4F, output, 0.0);
+        Assertions.assertEquals(14.4F, output);
     }
 
     @Test
