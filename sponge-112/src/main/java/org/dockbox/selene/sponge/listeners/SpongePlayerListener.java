@@ -37,18 +37,27 @@ import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerLeaveEv
 import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerSwitchWorldEvent;
 import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerTeleportEvent;
 import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerWarpEvent;
+import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent.PlayerInteractAirEvent;
+import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent.PlayerInteractBlockEvent;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.Warp;
+import org.dockbox.selene.core.objects.player.ClickType;
+import org.dockbox.selene.core.objects.player.Hand;
+import org.dockbox.selene.core.objects.player.Sneaking;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
+import org.spongepowered.api.event.entity.living.humanoid.HandInteractEvent;
 import org.spongepowered.api.event.entity.living.humanoid.player.KickPlayerEvent;
 import org.spongepowered.api.event.filter.Getter;
 import org.spongepowered.api.event.filter.cause.First;
@@ -304,6 +313,56 @@ public class SpongePlayerListener {
                                @Getter("getSource") Object source
     ) {
         this.postIfCommandSource(source, convertedSource -> new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional.empty()).post());
+    }
+
+    @Listener
+    public void onPlayerInteractedWithBlock(InteractBlockEvent event,
+                                            @Getter("getSource") Player player) {
+        Exceptional<Location> location = Exceptional.of(event
+                .getTargetBlock()
+                .getLocation()
+                .map(SpongeConversionUtil::fromSponge)
+        );
+        if (location.isAbsent()) return;
+        Location blockLocation = location.get();
+        Sneaking sneaking = player.get(Keys.IS_SNEAKING).orElse(false) ? Sneaking.SNEAKING : Sneaking.STANDING;
+        ClickType type;
+        Hand hand;
+
+        if (event instanceof HandInteractEvent) {
+            hand = SpongeConversionUtil.fromSponge(((HandInteractEvent) event).getHandType());
+            String canonical = event.getClass().getCanonicalName();
+            if (canonical.toLowerCase().contains("primary")) type = ClickType.PRIMARY;
+            else if (canonical.toLowerCase().contains("secondary")) type = ClickType.SECONDARY;
+            else return;
+        } else return;
+
+        Cancellable cancellable = new PlayerInteractBlockEvent(
+                SpongeConversionUtil.fromSponge(player),
+                hand, type, blockLocation).post();
+        event.setCancelled(cancellable.isCancelled());
+    }
+
+    @Listener
+    public void onPlayerInteractedAir(HandInteractEvent event,
+                                      @Getter("getSource") Player player) {
+        if (event instanceof InteractBlockEvent || event instanceof InteractEntityEvent) return;
+        if (event.getInteractionPoint().isPresent()) return;
+
+        Sneaking sneaking = player.get(Keys.IS_SNEAKING).orElse(false) ? Sneaking.SNEAKING : Sneaking.STANDING;
+        ClickType type;
+        Hand hand;
+
+        hand = SpongeConversionUtil.fromSponge((event.getHandType()));
+        String canonical = event.getClass().getCanonicalName();
+        if (canonical.toLowerCase().contains("primary")) type = ClickType.PRIMARY;
+        else if (canonical.toLowerCase().contains("secondary")) type = ClickType.SECONDARY;
+        else return;
+
+        Cancellable cancellable = new PlayerInteractAirEvent(
+                SpongeConversionUtil.fromSponge(player),
+                hand, type).post();
+        event.setCancelled(cancellable.isCancelled());
     }
 
     private void logUnsupportedCancel(Cancellable event) {

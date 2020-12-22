@@ -28,6 +28,6 @@ public interface ResourceService {
     Map<String, String> getResourceMap(Language lang);
     Map<Language, String> getTranslations(Resource entry);
     String createValidKey(String raw);
-    Exceptional<Resource> getExternalResource(String key);
+    Exceptional<ResourceEntry> getExternalResource(String key);
 
 }

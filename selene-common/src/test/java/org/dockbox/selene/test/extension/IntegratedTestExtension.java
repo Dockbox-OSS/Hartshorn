@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.test.extension;
 
+import org.dockbox.selene.core.command.context.CommandContext;
+import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.annotations.extension.Extension;
 
@@ -27,4 +29,8 @@ import org.dockbox.selene.core.annotations.extension.Extension;
         authors = "GuusLieben",
         uniqueId = "44574eca-90ba-4ec4-9a5f-14f035d5480b")
 public class IntegratedTestExtension implements IntegratedExtension {
+    @Override
+    public void confirm(MessageReceiver src, CommandContext ctx) {
+
+    }
 }

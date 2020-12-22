@@ -27,7 +27,7 @@ import java.util.Map;
 public class Resource implements ResourceEntry {
 
     private String value;
-    private String key;
+    private final String key;
 
     public Resource(String value, String key) {
         this.value = value;
@@ -52,6 +52,7 @@ public class Resource implements ResourceEntry {
         this.value = value;
     }
 
+    @Override
     public String getKey() {
         return this.key;
     }

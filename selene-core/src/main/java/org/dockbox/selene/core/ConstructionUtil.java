@@ -22,6 +22,18 @@ import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 
 public interface ConstructionUtil {
     PaginationBuilder paginationBuilder();
-    Item<?> item(String id, int amount);
+
+    /**
+     Creates a item based on a given fully qualified identifier. Uses unsafe damage (meta) to select blocks from a
+     internal platform registry.
+
+     <b>Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As of 1.13 this will no longer
+     be available!</b>
+     @param id The fully qualified identifier of a block, e.g. {@code minecraft:stone}
+     @param meta The unsafe damage, or meta. Constraints to range 0-15
+     @return The item instance, or {@link Item#AIR}
+     */
+    @Deprecated
+    Item<?> item(String id, int meta);
     Item<?> item(String id);
 }

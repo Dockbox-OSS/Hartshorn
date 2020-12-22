@@ -21,6 +21,7 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.ReferenceHolder;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.keys.PersistentDataHolder;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.ConstructionUtil;
@@ -29,7 +30,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 @SuppressWarnings("rawtypes")
-public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<Item> {
+public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<Item>, PersistentDataHolder {
+
+    public static Item<?> AIR = Item.of("minecraft:air");
 
     private String id;
 
@@ -38,14 +41,14 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
         this.id = this.getId();
     }
 
-    protected Item(String id, int amount) {
+    protected Item(String id, int meta) {
         super(Exceptional.empty());
         this.id = id;
-        T type = this.getById(id, amount);
+        T type = this.getById(id, meta);
         super.setReference(Exceptional.of(type));
     }
 
-    protected abstract T getById(String id, int amount);
+    protected abstract T getById(String id, int meta);
 
     public abstract Text getDisplayName(Language language);
 
@@ -59,9 +62,13 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
 
     public abstract void setDisplayName(Text displayName);
 
+    public abstract void removeDisplayName();
+
     public abstract void setLore(List<Text> lore);
 
     public abstract void addLore(Text lore);
+
+    public abstract void removeLore();
 
     public abstract void setAmount(int amount);
 
@@ -86,8 +93,10 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
 
     public abstract void removeEnchant(Enchant enchant);
 
-    public static Item<?> of(String id, int amount) {
-        return Selene.getInstance(ConstructionUtil.class).item(id, amount);
+    public abstract boolean isBlock();
+
+    public static Item<?> of(String id, int meta) {
+        return Selene.getInstance(ConstructionUtil.class).item(id, meta);
     }
 
     public static Item<?> of(String id) {

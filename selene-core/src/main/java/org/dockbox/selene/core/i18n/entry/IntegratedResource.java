@@ -18,6 +18,7 @@
 package org.dockbox.selene.core.i18n.entry;
 
 import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.objects.player.Player;
@@ -25,86 +26,92 @@ import org.dockbox.selene.core.server.Selene;
 
 import java.util.Map;
 
+@Resources(responsibleExtension = Selene.class)
 public enum IntegratedResource implements ResourceEntry {
     // Color formats
-    COLOR_PRIMARY("b"),
-    COLOR_SECONDARY("3"),
-    COLOR_MINOR("7"),
-    COLOR_ERROR("c"),
+    COLOR_PRIMARY("b", "color.primary"),
+    COLOR_SECONDARY("3", "color.secondary"),
+    COLOR_MINOR("7", "color.minor"),
+    COLOR_ERROR("c", "color.error"),
 
     // Message formats
-    PREFIX("$3[] $1"),
-    DEFAULT_SINGLE_MESSAGE("$3[] $1{0}"),
+    PREFIX("$3[] $1", "prefix"),
+    DEFAULT_SINGLE_MESSAGE("$3[] $1{0}", "message"),
 
     // Errors
     // - Confirm command errors
-    CONFIRM_INVALID_ID("$4Could not confirm command: Invalid runner ID"),
-    CONFIRM_INVALID_ENTRY("$4Could not confirm command: Invalid runner entry"),
-    CONFIRM_EXPIRED("$4You have no commands waiting for confirmation"),
-    CONFIRM_WRONG_SOURCE("$4This command can only be used by identifiable sources (players, console)"),
+    CONFIRM_INVALID_ID("$4Could not confirm command: Invalid runner ID", "confirm.invalid.id"),
+    CONFIRM_INVALID_ENTRY("$4Could not confirm command: Invalid runner entry", "confirm.invalid.entry"),
+    CONFIRM_EXPIRED("$4You have no commands waiting for confirmation", "confirm.expired"),
+    CONFIRM_WRONG_SOURCE("$4This command can only be used by identifiable sources (players, console)", "confirm.invalid.source"),
 
     // - Generic common error message
-    UNKNOWN_ERROR("$1An error occurred. {0}"),
+    UNKNOWN_ERROR("$1An error occurred. {0}", "error"),
+    KEY_BINDING_FAILED("$4Key cannot be applied to this type", "error.keys.failedbinding"),
+    LOST_REFERENCE("$4Reference to object lost", "error.reference.lost"),
 
     // Discord
-    DISCORD_COMMAND_UNKNOWN("Sorry, I don't know what to do with that command!"),
-    DISCORD_COMMAND_NOT_PERMITTED("You are not permitted to use that command!"),
-    DISCORD_COMMAND_ERRORED("Sorry, I could not start that command. Please report this in our support channel."),
+    DISCORD_COMMAND_UNKNOWN("Sorry, I don't know what to do with that command!", "discord.command.unknown"),
+    DISCORD_COMMAND_NOT_PERMITTED("You are not permitted to use that command!", "discord.command.notpermitted"),
+    DISCORD_COMMAND_ERRORED("Sorry, I could not start that command. Please report this in our support channel.", "discord.command.error"),
 
-    // CommandBus Confirmation
-    CONFIRM_COMMAND_MESSAGE("$1This command requires confirmation, click $2[here] $1to confirm"),
-    CONFIRM_COMMAND_MESSAGE_HOVER("$1Confirm running command"),
+    // CommandBus
+    CONFIRM_COMMAND_MESSAGE("$1This command requires confirmation, click $2[here] $1to confirm", "confirm.message"),
+    CONFIRM_COMMAND_MESSAGE_HOVER("$1Confirm running command", "confirm.message.hover"),
+    MISSING_ARGUMENTS("$4The command requires arguments", "error.command.missingargs"),
 
     // Default characters
-    DEFAULT_SEPARATOR(" - "),
-    DEFAULT_PAGINATION_PADDING("&m$2="),
+    DEFAULT_SEPARATOR(" - ", "separator"),
+    DEFAULT_PAGINATION_PADDING("&m$2=", "pagination.padding"),
 
     // Sources
-    UNKNOWN("Unknown"),
-    NONE("None"),
-    CONSOLE("Console"),
+    UNKNOWN("Unknown", "source.unknown"),
+    NONE("None", "source.none"),
+    CONSOLE("Console", "source.console"),
 
     // Warnings
-    IN_ACTIVE_COOLDOWN("$4You are in cooldown! Please wait before performing this action again."),
+    IN_ACTIVE_COOLDOWN("$4You are in cooldown! Please wait before performing this action again.", "cooldown.warning"),
 
     // Enchantments
-    AQUA_AFFINITY("Aqua Affinity"),
-    BANE_OF_ARTHROPODS("Bane Of Arthropods"),
-    BINDING_CURSE("Binding Curse"),
-    BLAST_PROTECTION("Blast Protection"),
-    DEPTH_STRIDER("Depth Strider"),
-    EFFICIENCY("Efficiency"),
-    FEATHER_FALLING("Feather Falling"),
-    FIRE_ASPECT("Fire Aspect"),
-    FIRE_PROTECTION("Fire Protection"),
-    FLAME("Flame"),
-    FORTUNE("Fortune"),
-    FROST_WALKER("Frost Walker"),
-    INFINITY("Infinity"),
-    KNOCKBACK("Knockback"),
-    LOOTING("Looting"),
-    LUCK_OF_THE_SEA("Luck Of The Sea"),
-    LURE("Lure"),
-    MENDING("Mending"),
-    POWER("Power"),
-    PROJECTILE_PROTECTION("Projectile Protection"),
-    PROTECTION("Protection"),
-    PUNCH("Punch"),
-    RESPIRATION("Respiration"),
-    SHARPNESS("Sharpness"),
-    SILK_TOUCH("Silk Touch"),
-    SMITE("Smite"),
-    SWEEPING("Sweeping"),
-    THORNS("Thorns"),
-    UNBREAKING("Unbreaking"),
-    VANISHING_CURSE("Vanishing Curse"),
+    AQUA_AFFINITY("Aqua Affinity", "minecraft.enchant.aquaaffinity"),
+    BANE_OF_ARTHROPODS("Bane Of Arthropods", "minecraft.enchant.baneofarthopods"),
+    BINDING_CURSE("Binding Curse", "minecraft.enchant.binding"),
+    BLAST_PROTECTION("Blast Protection", "minecraft.enchant.protection.blast"),
+    DEPTH_STRIDER("Depth Strider", "minecraft.enchant.depthstrider"),
+    EFFICIENCY("Efficiency", "minecraft.enchant.efficiency"),
+    FEATHER_FALLING("Feather Falling", "minecraft.enchant.featherfalling"),
+    FIRE_ASPECT("Fire Aspect", "minecraft.enchant.fireaspect"),
+    FIRE_PROTECTION("Fire Protection", "minecraft.enchant.protection.fire"),
+    FLAME("Flame", "minecraft.enchant.flame"),
+    FORTUNE("Fortune", "minecraft.enchant.fortune"),
+    FROST_WALKER("Frost Walker", "minecraft.enchant.frostwalker"),
+    INFINITY("Infinity", "minecraft.enchant.infinity"),
+    KNOCKBACK("Knockback", "minecraft.enchant.knockback"),
+    LOOTING("Looting", "minecraft.enchant.looting"),
+    LUCK_OF_THE_SEA("Luck Of The Sea", "minecraft.enchant.sealuck"),
+    LURE("Lure", "minecraft.enchant.lure"),
+    MENDING("Mending", "minecraft.enchant.mending"),
+    POWER("Power", "minecraft.enchant.power"),
+    PROJECTILE_PROTECTION("Projectile Protection", "minecraft.enchant.protection.projectile"),
+    PROTECTION("Protection", "minecraft.enchant.protection"),
+    PUNCH("Punch", "minecraft.enchant.punch"),
+    RESPIRATION("Respiration", "minecraft.enchant.respiration"),
+    SHARPNESS("Sharpness", "minecraft.enchant.sharpness"),
+    SILK_TOUCH("Silk Touch", "minecraft.enchant.silktouch"),
+    SMITE("Smite", "minecraft.enchant.smite"),
+    SWEEPING("Sweeping", "minecraft.enchant.sweeping"),
+    THORNS("Thorns", "minecraft.enchant.thorns"),
+    UNBREAKING("Unbreaking", "minecraft.enchant.unbreaking"),
+    VANISHING_CURSE("Vanishing Curse", "minecraft.enchant.vanishing"),
     ;
 
     private String value;
+    private final String key;
     private final Map<Language, String> translations = SeleneUtils.emptyConcurrentMap();
 
-    IntegratedResource(String value) {
+    IntegratedResource(String value, String key) {
         this.value = value;
+        this.key = key;
     }
 
     public String getValue(Player player) {
@@ -126,6 +133,11 @@ public enum IntegratedResource implements ResourceEntry {
     public void setValue(String value) {
         this.translations.put(Selene.getServer().getGlobalConfig().getDefaultLanguage(), value);
         this.value = value;
+    }
+
+    @Override
+    public String getKey() {
+        return "selene." + this.key;
     }
 
     public void setLanguageValue(Language lang, String value) {

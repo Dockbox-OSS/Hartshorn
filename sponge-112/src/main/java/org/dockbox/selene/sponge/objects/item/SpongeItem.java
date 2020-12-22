@@ -17,30 +17,45 @@
 
 package org.dockbox.selene.sponge.objects.item;
 
+import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.objects.keys.PersistentDataKey;
+import org.dockbox.selene.core.objects.keys.TransactionResult;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataTransactionResult;
+import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.DisplayNameData;
 import org.spongepowered.api.data.manipulator.mutable.item.EnchantmentData;
+import org.spongepowered.api.data.manipulator.mutable.item.LoreData;
+import org.spongepowered.api.data.value.mutable.MapValue;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class SpongeItem extends Item<ItemStack> {
+
+    public static final String ID = "item_data";
+    public static final String NAME = "Selene Item Data";
+    public static final String QUERY = "SeleneItemData";
+
+    public static Key<MapValue<String, Object>> ITEM_KEY;
 
     public static final int DEFAULT_STACK_SIZE = 64;
 
@@ -52,26 +67,22 @@ public class SpongeItem extends Item<ItemStack> {
         super(id, 1);
     }
 
-    public SpongeItem(String id, int amount) {
-        super(id, amount);
+    public SpongeItem(String id, int meta) {
+        super(id, meta);
     }
 
     @Override
-    protected ItemStack getById(String id, int amount) {
-        if (this.isNumericalId(id)) {
-            Selene.log().warn("The usage of numerical ID's is not recommended! This will be removed as of 1.13");
-        }
-
-        ItemStack itemStack = Sponge.getGame().getRegistry()
+    protected ItemStack getById(String id, int meta) {
+        ItemStack stack = Sponge.getGame().getRegistry()
                 .getType(ItemType.class, id)
-                .map(it -> ItemStack.of(it, amount))
+                .map(ItemStack::of)
                 .orElse(ItemStack.empty());
 
-        return itemStack;
-    }
+        stack = ItemStack.builder()
+                .fromContainer(stack.toContainer().set(Constants.ItemStack.DAMAGE_VALUE, meta))
+                .build();
 
-    private boolean isNumericalId(String id) {
-        return id.matches("[0-9|:]+");
+        return stack;
     }
 
     @Override
@@ -103,6 +114,11 @@ public class SpongeItem extends Item<ItemStack> {
     }
 
     @Override
+    public void removeDisplayName() {
+        this.getReference().ifPresent(i -> i.remove(DisplayNameData.class));
+    }
+
+    @Override
     public void setLore(List<Text> lore) {
         this.getReference().ifPresent(i -> i.offer(Keys.ITEM_LORE, lore.stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList())));
     }
@@ -112,6 +128,11 @@ public class SpongeItem extends Item<ItemStack> {
         List<Text> existing = this.getLore();
         existing.add(lore);
         this.setLore(existing);
+    }
+
+    @Override
+    public void removeLore() {
+        this.getReference().ifPresent(i -> i.remove(LoreData.class));
     }
 
     @Override
@@ -150,6 +171,13 @@ public class SpongeItem extends Item<ItemStack> {
         this.performOnEnchantmentData(enchant, (EnchantmentData::remove));
     }
 
+    @Override
+    public boolean isBlock() {
+        return this.getReference()
+                .map(itemStack -> itemStack.getType().getBlock().isPresent())
+                .orElse(false);
+    }
+
     private void performOnEnchantmentData(Enchant enchant, BiConsumer<EnchantmentData, Enchantment> action) {
         this.getReference().ifPresent(itemStack -> {
             EnchantmentData enchantmentData = itemStack.getOrCreate(EnchantmentData.class).get();
@@ -167,5 +195,52 @@ public class SpongeItem extends Item<ItemStack> {
     @Override
     public Class<?> getReferenceType() {
         return ItemStack.class;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
+        Exceptional<MutableSpongeItemData> result = this.getReference()
+                .map(itemStack -> itemStack.get(MutableSpongeItemData.class).orElse(null));
+
+        if (result.isAbsent()) return Exceptional.empty();
+
+        MutableSpongeItemData data = result.get();
+        if (!data.getData().containsKey(dataKey.getDataKeyId())) return Exceptional.empty();
+
+        Object value = data.getData().get(dataKey.getDataKeyId());
+        if (SeleneUtils.isAssignableFrom(dataKey.getDataType(), value.getClass()))
+            return Exceptional.of((T) value);
+
+        return Exceptional.empty();
+    }
+
+    @Override
+    public <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
+        return this.getReference().map(itemStack -> {
+            Map<String, Object> data = itemStack.get(MutableSpongeItemData.class).orElse(new MutableSpongeItemData()).getData();
+            data.put(dataKey.getDataKeyId(), value);
+
+            MutableSpongeItemData spongeItemData = new MutableSpongeItemData();
+            spongeItemData.fillData(data);
+            DataTransactionResult result = itemStack.offer(spongeItemData);
+            if (result.isSuccessful()) return TransactionResult.success();
+            else return TransactionResult.fail(IntegratedResource.KEY_BINDING_FAILED);
+        }).orElseGet(() -> TransactionResult.fail(IntegratedResource.LOST_REFERENCE));
+    }
+
+    @Override
+    public <T> void remove(PersistentDataKey<T> dataKey) {
+        this.getReference().ifPresent(itemStack -> {
+            Optional<MutableSpongeItemData> result = itemStack.get(MutableSpongeItemData.class);
+            if (!result.isPresent()) return; // No data to remove
+
+            MutableSpongeItemData data = result.get();
+            if (!data.getData().containsKey(dataKey.getDataKeyId())) return; // Already removed
+
+            data.getData().remove(dataKey.getDataKeyId());
+
+            itemStack.offer(data);
+        });
     }
 }

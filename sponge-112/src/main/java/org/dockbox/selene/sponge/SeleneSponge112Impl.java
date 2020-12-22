@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.sponge;
 
+import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
@@ -29,15 +32,25 @@ import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.selene.sponge.listeners.SpongePlayerListener;
 import org.dockbox.selene.sponge.listeners.SpongeServerListener;
+import org.dockbox.selene.sponge.objects.item.ImmutableSpongeItemData;
+import org.dockbox.selene.sponge.objects.item.MutableSpongeItemData;
+import org.dockbox.selene.sponge.objects.item.SpongeItem;
+import org.dockbox.selene.sponge.objects.item.SpongeItemDataManipulatorBuilder;
 import org.dockbox.selene.sponge.util.SpongeInjector;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.DataRegistration;
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.value.mutable.MapValue;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 
 import java.util.concurrent.TimeUnit;
 
@@ -53,11 +66,13 @@ import java.util.concurrent.TimeUnit;
         dependencies = {
                 @Dependency(id = "plotsquared"),
                 @Dependency(id = "nucleus"),
-                @Dependency(id = "luckperms"),
-                @Dependency(id = "spotlin")
+                @Dependency(id = "luckperms")
         }
 )
 public class SeleneSponge112Impl extends Selene {
+
+    @Inject
+    private PluginContainer container;
 
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
 
@@ -86,12 +101,35 @@ public class SeleneSponge112Impl extends Selene {
                 getInstance(SpongeDiscordListener.class),
                 getInstance(SpongePlayerListener.class)
         );
+
         super.init();
+    }
+
+    @Listener
+    public void onGamePreInit(GamePreInitializationEvent event) {
+        SpongeItem.ITEM_KEY = Key.builder()
+                .type(new TypeToken<MapValue<String, Object>>() {
+                })
+                .query(DataQuery.of(SpongeItem.QUERY))
+                .id(SpongeItem.ID)
+                .name(SpongeItem.NAME)
+                .build();
+
+        DataRegistration.builder()
+                .dataClass(MutableSpongeItemData.class)
+                .immutableClass(ImmutableSpongeItemData.class)
+                .builder(new SpongeItemDataManipulatorBuilder())
+                .id(SpongeItem.ID)
+                .name(SpongeItem.NAME)
+                .build();
     }
 
     private void registerSpongeListeners(Object... listeners) {
         for (Object obj : listeners) {
-            Sponge.getEventManager().registerListeners(this, obj);
+            if (null != obj)
+                Sponge.getEventManager().registerListeners(this, obj);
+            else
+                log().warn("Attempted to register 'null' listener");
         }
     }
 

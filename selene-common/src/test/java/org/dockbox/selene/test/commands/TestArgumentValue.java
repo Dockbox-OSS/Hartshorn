@@ -17,24 +17,23 @@
 
 package org.dockbox.selene.test.commands;
 
-import org.dockbox.selene.core.impl.command.AbstractArgumentValue;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
+import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
 
 public class TestArgumentValue extends AbstractArgumentValue<String> {
 
-    public TestArgumentValue(@Nullable ArgumentConverter<?> argument, @Nullable String permission, @NotNull String key) {
-        super(argument, permission, key, key);
+    public TestArgumentValue(String permission, String key, String type) {
+        super(permission, key, type);
     }
 
     @Override
-    public String getArgument() {
-        throw new UnsupportedOperationException("ArgumentValue is not testable in common implementations, and should only be tested in the platform implementation");
+    protected String parseValue(ArgumentConverter<?> converter, String key, String type) {
+        return null;
     }
 
     @Override
-    protected String parseArgument(@Nullable ArgumentConverter<?> argument, @Nullable String key, @Nullable String type) {
-        throw new UnsupportedOperationException("ArgumentValue is not testable in common implementations, and should only be tested in the platform implementation");
+    public AbstractArgumentElement<String> getElement() {
+        return null;
     }
 }

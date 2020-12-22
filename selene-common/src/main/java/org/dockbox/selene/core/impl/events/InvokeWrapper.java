@@ -20,21 +20,21 @@ package org.dockbox.selene.core.impl.events;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 
+import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.ThreadUtils;
 import org.dockbox.selene.core.annotations.Async;
+import org.dockbox.selene.core.annotations.event.IsCancelled;
 import org.dockbox.selene.core.annotations.event.filter.Filter;
 import org.dockbox.selene.core.annotations.event.filter.Filters;
-import org.dockbox.selene.core.annotations.event.IsCancelled;
-import org.dockbox.selene.core.exceptions.SkipEventException;
-import org.dockbox.selene.core.events.parents.Cancellable;
-import org.dockbox.selene.core.events.parents.Event;
-import org.dockbox.selene.core.events.parents.Filterable;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.handling.EventStage;
 import org.dockbox.selene.core.events.handling.IWrapper;
-import org.dockbox.selene.core.ThreadUtils;
+import org.dockbox.selene.core.events.parents.Cancellable;
+import org.dockbox.selene.core.events.parents.Event;
+import org.dockbox.selene.core.events.parents.Filterable;
+import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
+import org.dockbox.selene.core.exceptions.SkipEventException;
+import org.dockbox.selene.core.server.Selene;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +45,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -134,7 +133,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                         the arguments provided to Method#invoke are incorrect, depending on external annotation
                         processors.
                         */
-                        Selene.getServer().except("Could not finish event runner", e);
+                        Selene.except("Could not finish event runner", e);
                     }
                 };
 
@@ -142,7 +141,7 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
                 if (this.method.isAnnotationPresent(Async.class)) {
                     tu.performAsync(eventRunner);
                 } else {
-                    tu.performSync(eventRunner).get();
+                    eventRunner.run();
                 }
             }
         } catch (SkipEventException ignored) {
@@ -150,8 +149,6 @@ public class InvokeWrapper implements Comparable<InvokeWrapper>, IWrapper {
             SkipEventException can be thrown by (a) AbstractEventParamProcessor(s), indicating the method should
             not be invoked. Usually this is because of a filter application of the processor.
             */
-        } catch (InterruptedException | ExecutionException e) {
-            Selene.getServer().except("Sync event execution interrupted", e);
         }
     }
 

@@ -17,18 +17,27 @@
 
 package org.dockbox.selene.core;
 
-import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.annotations.entity.Ignore;
 import org.dockbox.selene.core.annotations.entity.Property;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.events.parents.Event;
+import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
+import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.keys.Key;
+import org.dockbox.selene.core.objects.keys.PersistentDataKey;
+import org.dockbox.selene.core.objects.keys.RemovableKey;
+import org.dockbox.selene.core.objects.keys.TransactionResult;
+import org.dockbox.selene.core.objects.keys.data.DoublePersistentDataKey;
+import org.dockbox.selene.core.objects.keys.data.IntegerPersistentDataKey;
+import org.dockbox.selene.core.objects.keys.data.StringPersistentDataKey;
+import org.dockbox.selene.core.objects.keys.data.TypedPersistentDataKey;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.extension.ExtensionManager;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +54,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
@@ -61,6 +71,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -71,6 +82,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -83,9 +96,15 @@ public enum SeleneUtils {
 
     public static final int MAXIMUM_DECIMALS = 15;
     public static final UUID EMPTY_UUID = UUID.fromString("00000000-1111-2222-3333-000000000000");
+    public static final String FOLDER_SEPARATOR = "/";
 
     private static final Random random = new Random();
     private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = emptyConcurrentMap();
+    private static final List<Class<?>> nbtSupportedTypes = asList(
+            boolean.class, byte.class, short.class, int.class, long.class, float.class, double.class,
+            byte[].class, int[].class, long[].class,
+            String.class, List.class, Map.class
+    );
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap =
             ofEntries(entry(boolean.class, Boolean.class),
                     entry(byte.class, Byte.class),
@@ -95,11 +114,15 @@ public enum SeleneUtils {
                     entry(int.class, Integer.class),
                     entry(long.class, Long.class),
                     entry(short.class, Short.class));
+    private static final char[] _hex = {
+            '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+    };
 
     @SafeVarargs
     @SuppressWarnings("varargs")
     public static <K, V> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
-        if (entries.length == 0) { // implicit null check of entries array
+        if (0 == entries.length) { // implicit null check of entries array
             return Collections.emptyMap();
         } else {
             Map<K, V> map = emptyMap();
@@ -154,12 +177,6 @@ public enum SeleneUtils {
         }
         return null;
     }
-
-    private static final char[] _hex = {
-            '0', '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-    };
-    public static final String FOLDER_SEPARATOR = "/";
 
     @Contract(value = "null -> true", pure = true)
     public static boolean isEmpty(String value) {
@@ -220,8 +237,8 @@ public enum SeleneUtils {
     }
 
     public static boolean equal(Object expected, Object actual) {
-        if (expected != null || actual != null) {
-            return !(expected == null || !expected.equals(actual));
+        if (null != expected || null != actual) {
+            return !(null == expected || !expected.equals(actual));
         }
         return false;
     }
@@ -258,7 +275,6 @@ public enum SeleneUtils {
         return path.lastIndexOf(ch);
     }
 
-    @NotNull
     @SuppressWarnings("MagicNumber")
     public static byte[] decode(CharSequence s) {
         int len = s.length();
@@ -294,7 +310,6 @@ public enum SeleneUtils {
         return range(0, max);
     }
 
-    @NotNull
     @Contract(pure = true)
     public static int[] range(int min, int max) {
         int[] range = new int[(max - min) + 1]; // +1 as both min and max are inclusive
@@ -313,7 +328,7 @@ public enum SeleneUtils {
 
     @Contract(pure = true)
     @SuppressWarnings("MagicNumber")
-    private static char convertDigit(int value) {
+    public static char convertDigit(int value) {
         return _hex[value & 0x0f];
     }
 
@@ -499,7 +514,6 @@ public enum SeleneUtils {
         return upper ? "" + (char) ((int) 'A' + r) : "" + (char) ((int) 'a' + r);
     }
 
-    @NotNull
     public static byte[] getBytes(String s, String encoding) {
         try {
             return null == s ? new byte[0] : s.getBytes(encoding);
@@ -514,7 +528,6 @@ public enum SeleneUtils {
         return createString(bytes, "UTF-8");
     }
 
-    @NotNull
     public static byte[] getUTF8Bytes(String s) {
         return getBytes(s, "UTF-8");
     }
@@ -744,7 +757,7 @@ public enum SeleneUtils {
     }
 
     @NotNull
-    @Contract(value = "_ -> new")
+    @Contract("_ -> new")
     public static <T> Set<T> asSet(Collection<T> collection) {
         return new HashSet<>(collection);
     }
@@ -835,7 +848,7 @@ public enum SeleneUtils {
                 Files.createDirectories(file.getParent());
                 Files.createFile(file);
             } catch (IOException ex) {
-                Selene.getServer().except("Could not create file '" + file.getFileName() + "'", ex);
+                Selene.except("Could not create file '" + file.getFileName() + "'", ex);
             }
         }
         return file;
@@ -970,7 +983,8 @@ public enum SeleneUtils {
         return tryCreate(type, valueCollector, inject, Provision.FIELD_NAME);
     }
 
-    private static <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision) {
+    @SuppressWarnings("unchecked")
+    public static <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision) {
         T instance = inject ? Selene.getInstance(type) : getInstance(type);
         if (null != instance)
             try {
@@ -1004,7 +1018,7 @@ public enum SeleneUtils {
                     if (useFieldDirect && isAssignableFrom(field.getType(), value.getClass()))
                         field.set(instance, value);
                 }
-            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | ClassCastException e) {
                 return Exceptional.of(e);
             }
         return Exceptional.ofNullable(instance);
@@ -1051,6 +1065,32 @@ public enum SeleneUtils {
                 : field.getName();
     }
 
+    public static Collection<Field> getStaticFields(Class<?> type) {
+        Field[] declaredFields = type.getDeclaredFields();
+        Collection<Field> staticFields = emptyList();
+        for (Field field : declaredFields) {
+            if (Modifier.isStatic(field.getModifiers())) {
+                staticFields.add(field);
+            }
+        }
+        return staticFields;
+    }
+
+    public static Collection<? extends Enum<?>> getEnumValues(Class<?> type) {
+        if (!type.isEnum()) return emptyList();
+        Collection<Enum<?>> constants = emptyList();
+        try {
+            Field f = type.getDeclaredField("$VALUES");
+            if (!f.isAccessible()) f.setAccessible(true);
+            Object o = f.get(null);
+            Enum<?>[] e = (Enum<?>[]) o;
+            constants.addAll(Arrays.asList(e));
+        } catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException | ClassCastException e) {
+            Selene.log().warn("Error obtaining enum constants in " + type.getCanonicalName(), e);
+        }
+        return constants;
+    }
+
     public static boolean isNotVoid(Class<?> type) {
         return !(type.equals(Void.class) || type == Void.TYPE);
     }
@@ -1083,86 +1123,101 @@ public enum SeleneUtils {
         if (null != instance) consumer.accept(instance);
     }
 
+    public static String convertToExtensionIdString(String name, Extension extension) {
+        name = name.toLowerCase(Locale.ROOT)
+                .replaceAll("[ .]", "")
+                .replaceAll("-", "_");
+        return extension.id() + ':' + name;
+    }
+
+    public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, Class<?> owningClass) {
+        return persistentKeyOf(type, name, getExtension(owningClass));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, Extension extension) {
+        if (!isNbtSupportedType(type))
+            throw new UncheckedSeleneException("Unsupported data type for persistent key: " + type.getCanonicalName());
+
+        if (type.equals(String.class))
+            return (PersistentDataKey<T>) StringPersistentDataKey.of(name, extension);
+        else if (isAssignableFrom(Integer.class, type)) {
+            return (PersistentDataKey<T>) IntegerPersistentDataKey.of(name, extension);
+        } else if (isAssignableFrom(Double.class, type)) {
+            return (PersistentDataKey<T>) DoublePersistentDataKey.of(name, extension);
+        }
+
+        return new TypedPersistentDataKey<>(
+                name,
+                convertToExtensionIdString(name, extension),
+                extension,
+                type);
+    }
+
+    public static boolean isNbtSupportedType(Class<?> type) {
+        boolean supportedType = false;
+        for (Class<?> nbtSupportedType : nbtSupportedTypes) {
+            if (nbtSupportedType.isAssignableFrom(type)) {
+                supportedType = true;
+                break;
+            }
+        }
+        return supportedType;
+    }
+
+    public static <K, A> Key<K, A> dynamicKeyOf(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter) {
+        return new Key<K, A>(transactSetter(setter), getter) {
+        };
+    }
+
+    public static <K, A> Key<K, A> checkedDynamicKeyOf(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
+        return new Key<K, A>(setter, getter) {
+        };
+    }
+
+    public static <K, A> Key<K, A> unsafeDynamicKeyOf(BiConsumer<K, A> setter, CheckedFunction<K, A> getter) {
+        return new Key<K, A>(transactSetter(setter), k -> Exceptional.of(() -> getter.apply(k))) {
+        };
+    }
+
+    public static <K, A> Key<K, A> unsafeCheckedDynamicKeyOf(BiFunction<K, A, TransactionResult> setter, CheckedFunction<K, A> getter) {
+        return new Key<K, A>(setter, k -> Exceptional.of(() -> getter.apply(k))) {
+        };
+    }
+
+    public static <K, A> RemovableKey<K, A> dynamicKeyOf(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
+        return new RemovableKey<K, A>(transactSetter(setter), getter, remover) {
+        };
+    }
+
+    public static <K, A> RemovableKey<K, A> checkedDynamicKeyOf(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
+        return new RemovableKey<K, A>(setter, getter, remover) {
+        };
+    }
+
+    public static <K, A> RemovableKey<K, A> unsafeDynamicKeyOf(BiConsumer<K, A> setter, CheckedFunction<K, A> getter, Consumer<K> remover) {
+        return new RemovableKey<K, A>(transactSetter(setter), k -> Exceptional.of(() -> getter.apply(k)), remover) {
+        };
+    }
+
+    public static <K, A> RemovableKey<K, A> unsafeCheckedDynamicKeyOf(BiFunction<K, A, TransactionResult> setter, CheckedFunction<K, A> getter, Consumer<K> remover) {
+        return new RemovableKey<K, A>(setter, k -> Exceptional.of(() -> getter.apply(k)), remover) {
+        };
+    }
+
+    public static <K, A> BiFunction<K, A, TransactionResult> transactSetter(BiConsumer<K, A> setter, TransactionResult defaultResult) {
+        return (t, u) -> {
+            setter.accept(t, u);
+            return defaultResult;
+        };
+    }
+
+    public static <K, A> BiFunction<K, A, TransactionResult> transactSetter(BiConsumer<K, A> setter) {
+        return transactSetter(setter, TransactionResult.success());
+    }
+
     public enum Provision {
         FIELD, FIELD_NAME
     }
 
-    public enum HttpStatus {
-        ;
-        // 1xx Informational
-        public static final Integer CONTINUE = 100;
-        public static final Integer SWITCHING_PROTOCOLS = 101;
-        public static final Integer PROCESSING = 102;
-
-        // 2xx Success
-        public static final Integer OK = 200;
-        public static final Integer CREATED = 201;
-        public static final Integer ACCEPTED = 202;
-        public static final Integer NON_AUTHORITATIVE_INFORMATION = 203;
-        public static final Integer NO_CONTENT = 204;
-        public static final Integer RESET_CONTENT = 205;
-        public static final Integer PARTIAL_CONTENT = 206;
-        public static final Integer MULTI_STATUS = 207;
-        public static final Integer ALREADY_REPORTED = 208;
-        public static final Integer IM_USED = 226;
-
-        // 3xx Redirection
-        public static final Integer MULTIPLE_CHOICES = 300;
-        public static final Integer MOVED_PERMANENTLY = 301;
-        public static final Integer FOUND = 302;
-        public static final Integer SEE_OTHER = 303;
-        public static final Integer NOT_MODIFIED = 304;
-        public static final Integer USE_PROXY = 305;
-        public static final Integer TEMPORARY_REDIRECT = 307;
-        public static final Integer PERMANENT_REDIRECT = 308;
-
-        // 4xx Client Error
-        public static final Integer BAD_REQUEST = 400;
-        public static final Integer UNAUTHORIZED = 401;
-        public static final Integer PAYMENT_REQUIRED = 402;
-        public static final Integer FORBIDDEN = 403;
-        public static final Integer NOT_FOUND = 404;
-        public static final Integer METHOD_NOT_ALLOWED = 405;
-        public static final Integer NOT_ACCEPTABLE = 406;
-        public static final Integer PROXY_AUTHENTICATION_REQUIRED = 407;
-        public static final Integer REQUEST_TIMEOUT = 408;
-        public static final Integer CONFLICT = 409;
-        public static final Integer GONE = 410;
-        public static final Integer LENGTH_REQUIRED = 411;
-        public static final Integer PRECONDITION_FAILED = 412;
-        public static final Integer REQUEST_ENTITY_TOO_LARGE = 413;
-        public static final Integer REQUEST_URI_TOO_LONG = 414;
-        public static final Integer UNSUPPORTED_MEDIA_TYPE = 415;
-        public static final Integer REQUESTED_RANGE_NOT_SATISFIABLE = 416;
-        public static final Integer EXPECTATION_FAILED = 417;
-        public static final Integer IAM_A_TEAPOT = 418;
-        public static final Integer ENHANCE_YOUR_CALM = 420;
-        public static final Integer UNPROCESSABLE_ENTITY = 422;
-        public static final Integer LOCKED = 423;
-        public static final Integer FAILED_DEPENDENCY = 424;
-        public static final Integer UPGRADE_REQUIRED = 426;
-        public static final Integer PRECONDITION_REQUIRED = 428;
-        public static final Integer TOO_MANY_REQUESTS = 429;
-        public static final Integer REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
-        public static final Integer NO_RESPONSE = 444;
-        public static final Integer RETRY_WITH = 449;
-        public static final Integer UNAVAILABLE_FOR_LEGAL_REASONS = 451;
-        public static final Integer CLIENT_CLOSED_REQUEST = 499;
-
-        // 5xx Server Error
-        public static final Integer INTERNAL_SERVER_ERROR = 500;
-        public static final Integer NOT_IMPLEMENTED_ = 501;
-        public static final Integer BAD_GATEWAY = 502;
-        public static final Integer SERVICE_UNAVAILABLE = 503;
-        public static final Integer GATEWAY_TIMEOUT = 504;
-        public static final Integer HTTP_VERSION_NOT_SUPPORTED = 505;
-        public static final Integer VARIANT_ALSO_NEGOTIATES = 506;
-        public static final Integer INSUFFICIENT_STORAGE = 507;
-        public static final Integer LOOP_DETECTED = 508;
-        public static final Integer BANDWIDTH_LIMIT_EXCEEDED = 509;
-        public static final Integer NOT_EXTENDED = 510;
-        public static final Integer NETWORK_AUTHENTICATION_REQUIRED = 511;
-        public static final Integer NETWORK_READ_TIMEOUT_ERROR = 598;
-        public static final Integer NETWORK_CONNECT_TIMEOUT_ERROR = 599;
-    }
 }

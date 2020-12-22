@@ -179,10 +179,11 @@ public class SimpleEventBus implements EventBus {
         }
 
         for (Class<?> param : method.getParameterTypes()) {
-            if (!SeleneUtils.isAssignableFrom(Event.class, param) && !SeleneUtils.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
-                throw new IllegalArgumentException("Parameter must be a subclass of the Event class: " + method.toGenericString());
+            if (SeleneUtils.isAssignableFrom(Event.class, param) || SeleneUtils.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
+                return;
             }
         }
+        throw new IllegalArgumentException("Parameter must be a subclass of the Event class: " + method.toGenericString());
     }
 
     @Override

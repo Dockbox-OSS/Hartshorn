@@ -6,6 +6,7 @@ org.dockbox.selene.core.annotations.event
 org.dockbox.selene.core.annotations.event.filter
 org.dockbox.selene.core.annotations.event.processing
 org.dockbox.selene.core.annotations.extension
+org.dockbox.selene.core.annotations.i18n
 org.dockbox.selene.core.command
 org.dockbox.selene.core.command.context
 org.dockbox.selene.core.command.parsing
@@ -19,6 +20,7 @@ org.dockbox.selene.core.events.moderation
 org.dockbox.selene.core.events.object
 org.dockbox.selene.core.events.parents
 org.dockbox.selene.core.events.player
+org.dockbox.selene.core.events.player.interact
 org.dockbox.selene.core.events.processing
 org.dockbox.selene.core.events.server
 org.dockbox.selene.core.events.world
@@ -34,6 +36,8 @@ org.dockbox.selene.core.impl.command
 org.dockbox.selene.core.impl.command.context
 org.dockbox.selene.core.impl.command.convert
 org.dockbox.selene.core.impl.command.convert.impl
+org.dockbox.selene.core.impl.command.registration
+org.dockbox.selene.core.impl.command.values
 org.dockbox.selene.core.impl.events
 org.dockbox.selene.core.impl.events.processors
 org.dockbox.selene.core.impl.extension
@@ -49,6 +53,7 @@ org.dockbox.selene.core.impl.server.properties
 org.dockbox.selene.core.objects
 org.dockbox.selene.core.objects.item
 org.dockbox.selene.core.objects.keys
+org.dockbox.selene.core.objects.keys.data
 org.dockbox.selene.core.objects.location
 org.dockbox.selene.core.objects.player
 org.dockbox.selene.core.objects.targets
@@ -75,6 +80,7 @@ org.dockbox.selene.integrated.sql
 org.dockbox.selene.integrated.sql.dialects.sqlite
 org.dockbox.selene.integrated.sql.exceptions
 org.dockbox.selene.integrated.sql.properties
+org.dockbox.selene.integrated.tools
 org.dockbox.selene.oldplots
 org.dockbox.selene.ptime
 org.dockbox.selene.sponge
@@ -87,3 +93,4 @@ org.dockbox.selene.sponge.objects.targets
 org.dockbox.selene.sponge.text.navigation
 org.dockbox.selene.sponge.util
 org.dockbox.selene.sponge.util.command
+org.dockbox.selene.sponge.util.command.values
