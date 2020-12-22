@@ -40,8 +40,7 @@ public abstract class AbstractPipeline<P, I> {
     private CancelBehaviour cancelBehaviour = CancelBehaviour.UNCANCELLABLE;
 
     /**
-     * Add a non-null {@link IPipe} to the pipeline. If the added pipe is a {@link CancellablePipe}
-     * and the pipeline is not cancellable, then it will throw an {@link IllegalPipeException}.
+     * Add a non-null {@link IPipe} to the pipeline.
      *
      * @param pipe
      *         The non-null {@link IPipe} to add to the pipeline
@@ -141,6 +140,8 @@ public abstract class AbstractPipeline<P, I> {
      *         An {@link Exceptional} containing the input to be processed by the {@link IPipe}
      *
      * @return An {@link Exceptional} of the output of the {@link IPipe}
+     * @throws IllegalPipeException
+     *         If you try and add a {@link CancellablePipe} and the pipeline is not cancellable
      */
     protected Exceptional<I> processPipe(IPipe<I, I> pipe, Exceptional<I> exceptionalInput) {
         if (!this.isCancellable() && SeleneUtils.isAssignableFrom(CancellablePipe.class, pipe.getType())) {
