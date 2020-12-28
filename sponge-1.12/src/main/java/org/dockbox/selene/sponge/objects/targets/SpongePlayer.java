@@ -37,7 +37,7 @@ import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.special.Sounds;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.core.util.SeleneUtils;
@@ -316,7 +316,7 @@ public class SpongePlayer extends Player {
 
     @Override
     public boolean hasPermission(@NotNull String permission) {
-        if (Selene.GLOBALLY_PERMITTED.contains(this.getUniqueId())) return true;
+        if (SeleneInformation.GLOBALLY_PERMITTED.contains(this.getUniqueId())) return true;
         if (this.spongePlayer.referenceExists())
             return this.spongePlayer.getReference().get().hasPermission(permission);
         else return Sponge.getServiceManager().provide(UserStorageService.class)

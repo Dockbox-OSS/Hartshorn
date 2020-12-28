@@ -582,7 +582,7 @@ public class MiscUtil {
                 Files.createDirectories(file.getParent());
                 Files.createFile(file);
             } catch (IOException ex) {
-                Selene.except("Could not create file '" + file.getFileName() + "'", ex);
+                Selene.handle("Could not create file '" + file.getFileName() + "'", ex);
             }
         }
         return file;

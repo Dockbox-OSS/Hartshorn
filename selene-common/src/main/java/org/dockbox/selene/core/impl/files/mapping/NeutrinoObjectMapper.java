@@ -111,7 +111,7 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
                     field.setAccessible(true);
                     defaultValue = field.get(field.getDeclaringClass().newInstance());
                 } catch (IllegalAccessException | InstantiationException e) {
-                    Selene.except(e.getMessage(), e);
+                    Selene.handle(e.getMessage(), e);
                 }
 
                 data = new DoNotGenerateFieldData(field, comment, defaultValue);
@@ -177,7 +177,7 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
                 try {
                     this.setDefaultOnField(instance, node);
                 } catch (IllegalAccessException e) {
-                    Selene.except(e.getMessage(), e);
+                    Selene.handle(e.getMessage(), e);
                 }
 
                 return;
@@ -186,7 +186,7 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
             try {
                 this.fieldData.deserializeFrom(instance, node);
             } catch (Exception e) {
-                Selene.except(e.getMessage(), e);
+                Selene.handle(e.getMessage(), e);
             }
 
             try {
@@ -195,7 +195,7 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
                     this.setDefaultOnField(instance, node);
                 }
             } catch (IllegalAccessException e) {
-                Selene.except(e.getMessage(), e);
+                Selene.handle(e.getMessage(), e);
             }
         }
 
@@ -289,7 +289,7 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
                     this.processors.add(SettingProcessorCache.getOrAdd(pro, processorClassConstructor));
                 }
             } catch (Throwable e) {
-                Selene.except("No setting processor", e);
+                Selene.handle("No setting processor", e);
                 throw new IllegalArgumentException("No setting processor", e);
             }
         }

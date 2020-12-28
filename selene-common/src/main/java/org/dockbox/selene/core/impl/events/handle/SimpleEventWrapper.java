@@ -133,7 +133,7 @@ public class SimpleEventWrapper implements Comparable<SimpleEventWrapper>, Event
                         the arguments provided to Method#invoke are incorrect, depending on external annotation
                         processors.
                         */
-                        Selene.except("Could not finish event runner", e);
+                        Selene.handle("Could not finish event runner", e);
                     }
                 };
 

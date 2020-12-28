@@ -182,7 +182,7 @@ public class SpongeCommandBus extends DefaultCommandBus {
             if (!parsedArgsF.isAccessible()) parsedArgsF.setAccessible(true);
             parsedArgs = (Multimap<String, Object>) parsedArgsF.get(ctx);
         } catch (IllegalAccessException | ClassCastException | NoSuchFieldException e) {
-            Selene.except("Could not load parsed arguments from Sponge command context", e);
+            Selene.handle("Could not load parsed arguments from Sponge command context", e);
             return SimpleCommandContext.EMPTY;
         }
 

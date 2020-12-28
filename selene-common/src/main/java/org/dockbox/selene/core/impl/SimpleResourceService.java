@@ -19,6 +19,7 @@ package org.dockbox.selene.core.impl;
 
 import com.google.inject.Singleton;
 
+import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.files.ConfigurateManager;
@@ -54,7 +55,7 @@ public class SimpleResourceService implements ResourceService {
 
     @Override
     public void init() {
-        Collection<Class<?>> resourceProviders = SeleneUtils.REFLECTION.getAnnotatedTypes(Selene.PACKAGE_PREFIX, Resources.class);
+        Collection<Class<?>> resourceProviders = SeleneUtils.REFLECTION.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Resources.class);
         resourceProviders.forEach(provider -> {
             if (provider.isEnum()) {
                 for (Enum<?> e : SeleneUtils.REFLECTION.getEnumValues(provider)) {
@@ -71,7 +72,7 @@ public class SimpleResourceService implements ResourceService {
                             ResourceEntry resource = (ResourceEntry) field.get(null);
                             this.knownEntries.add(resource);
                         } catch (IllegalAccessException e) {
-                            Selene.except("Could not access static resource", e);
+                            Selene.handle("Could not access static resource", e);
                         }
                     }
                 }

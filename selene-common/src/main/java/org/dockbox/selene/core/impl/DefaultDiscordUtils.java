@@ -171,7 +171,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                 method.invoke(instance, context);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 context.sendToChannel(IntegratedResource.DISCORD_COMMAND_ERRORED);
-                Selene.except("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass().getCanonicalName() + "]");
+                Selene.handle("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass().getCanonicalName() + "]");
             }
         } else context.sendToChannel(IntegratedResource.DISCORD_COMMAND_UNKNOWN);
     }

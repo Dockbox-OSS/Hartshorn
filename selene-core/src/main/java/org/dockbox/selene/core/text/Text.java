@@ -155,7 +155,7 @@ public class Text {
             md.update(this.toStringValue().getBytes());
             return Exceptional.of(DatatypeConverter.printHexBinary(md.digest()).toUpperCase());
         } catch (NoSuchAlgorithmException e) {
-            Selene.except("No algorithm implementation present for " + method + ". " +
+            Selene.handle("No algorithm implementation present for " + method + ". " +
                             "This algorithm should be implemented by every implementation of the Java platform! " +
                             "See https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html",
                     e);

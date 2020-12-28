@@ -28,6 +28,7 @@ import org.dockbox.selene.core.impl.SimpleExtensionContext;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +87,7 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public List<ExtensionContext> initialiseExtensions() {
-        Collection<Class<?>> annotatedTypes = SeleneUtils.REFLECTION.getAnnotatedTypes(Selene.PACKAGE_PREFIX, Extension.class);
+        Collection<Class<?>> annotatedTypes = SeleneUtils.REFLECTION.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Extension.class);
         Selene.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
         return annotatedTypes.stream()
                 .filter(type -> !type.isAnnotationPresent(Disabled.class))
@@ -151,7 +152,7 @@ public class SimpleExtensionManager implements ExtensionManager {
             } catch (Throwable e) {
                 // Package.getPackage(String) typically returns null if no package with that name is present, this clause is a fail-safe and should
                 // technically never be reached. If it is reached we explicitly need to mention the package to prevent future issues (by reporting this).
-                Selene.except("Failed to obtain package [" + dependentPackage + "].", e);
+                Selene.handle("Failed to obtain package [" + dependentPackage + "].", e);
             }
         }
 

@@ -52,7 +52,7 @@ public interface KeyHolder<T extends KeyHolder> {
         try {
             return key.set((T) this, appliedValue);
         } catch (ClassCastException e) {
-            Selene.except("Attempted to apply " + key + " to non-supporting type " + this, e);
+            Selene.handle("Attempted to apply " + key + " to non-supporting type " + this, e);
             return TransactionResult.fail(IntegratedResource.KEY_BINDING_FAILED);
         }
     }

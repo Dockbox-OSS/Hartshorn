@@ -33,7 +33,7 @@
     </parent>
 
     <properties>
-        <main.class>org.dockbox.selene.sponge.SeleneSponge112Impl</main.class>
+        <main.class>org.dockbox.selene.sponge.SpongeAPI7Bootstrap</main.class>
 
         <!-- Versions -->
         <luckperms.version>4.4</luckperms.version>

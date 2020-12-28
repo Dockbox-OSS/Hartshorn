@@ -18,7 +18,6 @@
 package org.dockbox.selene.sponge;
 
 import com.google.common.reflect.TypeToken;
-import com.google.inject.Inject;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
@@ -26,7 +25,7 @@ import net.dv8tion.jda.api.JDAInfo;
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.SeleneBootstrap;
 import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
@@ -51,12 +50,11 @@ import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.plugin.PluginContainer;
 
 import java.util.concurrent.TimeUnit;
 
 /**
- * Sponge implementation of Selene, using events to initiate startup tasks.
+ * Sponge API 7.x implementation of Selene, using events to initiate startup tasks.
  */
 @Plugin(
         id = "selene",
@@ -70,10 +68,7 @@ import java.util.concurrent.TimeUnit;
                 @Dependency(id = "luckperms")
         }
 )
-public class SeleneSponge112Impl extends Selene {
-
-    @Inject
-    private PluginContainer container;
+public class SpongeAPI7Bootstrap extends SeleneBootstrap {
 
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
 
@@ -81,7 +76,7 @@ public class SeleneSponge112Impl extends Selene {
      * Creates a new Selene instance using the {@link org.dockbox.selene.sponge.util.SpongeInjector} bindings
      * providing utilities.
      */
-    public SeleneSponge112Impl() {
+    public SpongeAPI7Bootstrap() {
         super(new SpongeInjector());
     }
 

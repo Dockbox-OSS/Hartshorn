@@ -39,7 +39,7 @@ public class SpongeArgumentValue extends AbstractArgumentValue<CommandElement> {
                     this.setValue(GenericArguments.enumValue(Text.of(key), enumType));
                 } else throw new IllegalArgumentException("Type '" + type.toLowerCase() + "' is not supported");
             } catch (Exception e) {
-                Selene.except("No argument of type `" + type + "` can be read", e);
+                Selene.handle("No argument of type `" + type + "` can be read", e);
             }
         }
     }

@@ -61,7 +61,7 @@ public final class SeleneTypeSerializers {
             new PredicateSerializerInformation<>(Set.class, SetTypeSerializer::new, new TypeToken<Set<?>>() {
             });
         } catch (Exception e) {
-            Selene.except("Failed to initialize serializer information", e);
+            Selene.handle("Failed to initialize serializer information", e);
         }
     }
 

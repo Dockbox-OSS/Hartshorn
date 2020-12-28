@@ -63,7 +63,7 @@ public class EventMethodHandler extends EventHandler {
         try {
             this.method.invoke(this.object, event);
         } catch (Exception e) {
-            Selene.except("Could not invoke event listener", e);
+            Selene.handle("Could not invoke event listener", e);
         }
     }
 

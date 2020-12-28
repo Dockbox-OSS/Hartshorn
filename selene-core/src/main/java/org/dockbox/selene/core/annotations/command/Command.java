@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.annotations.command;
 
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.SeleneInformation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -50,11 +50,11 @@ public @interface Command {
     String usage();
 
     /**
-     * The permissions for the command. Defaults to {@link Selene#GLOBAL_BYPASS} if not defined.
+     * The permissions for the command. Defaults to {@link SeleneInformation#GLOBAL_BYPASS} if not defined.
      *
      * @return the permission required for the command.
      */
-    String permission() default Selene.GLOBAL_BYPASS;
+    String permission() default SeleneInformation.GLOBAL_BYPASS;
 
     /**
      * The duration in the {@link Command#cooldownUnit() cooldown unit}. Defaults to -1 if not defined, disabling the
