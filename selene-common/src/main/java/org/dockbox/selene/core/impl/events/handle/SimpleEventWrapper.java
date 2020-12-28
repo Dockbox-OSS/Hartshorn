@@ -137,7 +137,7 @@ public class SimpleEventWrapper implements Comparable<SimpleEventWrapper>, Event
                     }
                 };
 
-                ThreadUtils tu = Selene.getInstance(ThreadUtils.class);
+                ThreadUtils tu = SeleneUtils.INJECT.getInstance(ThreadUtils.class);
                 if (this.method.isAnnotationPresent(Async.class)) {
                     tu.performAsync(eventRunner);
                 } else {
@@ -176,7 +176,7 @@ public class SimpleEventWrapper implements Comparable<SimpleEventWrapper>, Event
 
     @NotNull
     private Collection<Object> getEventArgs(Event event) throws SkipEventException {
-        EventBus bus = Selene.getInstance(EventBus.class);
+        EventBus bus = SeleneUtils.INJECT.getInstance(EventBus.class);
 
         Collection<Object> args = SeleneUtils.COLLECTION.emptyList();
         for (Parameter parameter : this.method.getParameters()) {

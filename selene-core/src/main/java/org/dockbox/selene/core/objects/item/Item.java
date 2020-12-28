@@ -27,6 +27,7 @@ import org.dockbox.selene.core.objects.keys.KeyHolder;
 import org.dockbox.selene.core.objects.keys.PersistentDataHolder;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -75,11 +76,11 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
      */
     @Deprecated
     public static Item<?> of(String id, int meta) {
-        return Selene.getInstance(ConstructionUtil.class).item(id, meta);
+        return SeleneUtils.INJECT.getInstance(ConstructionUtil.class).item(id, meta);
     }
 
     public static Item<?> of(String id) {
-        return Selene.getInstance(ConstructionUtil.class).item(id);
+        return SeleneUtils.INJECT.getInstance(ConstructionUtil.class).item(id);
     }
 
     /**
@@ -94,7 +95,7 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
      */
     @Deprecated
     public static Item<?> of(BaseBlock baseBlock) {
-        return Selene.getInstance(ConstructionUtil.class).item(baseBlock);
+        return SeleneUtils.INJECT.getInstance(ConstructionUtil.class).item(baseBlock);
     }
 
     public Text getDisplayName() {

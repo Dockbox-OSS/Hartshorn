@@ -156,7 +156,7 @@ public class SimpleExtensionManager implements ExtensionManager {
         }
 
         T instance;
-        instance = Selene.getInstance(entry);
+        instance = SeleneUtils.INJECT.getInstance(entry);
 
         if (null == instance) {
             try {
@@ -182,7 +182,7 @@ public class SimpleExtensionManager implements ExtensionManager {
     }
 
     private <T> void injectMembers(T instance, ExtensionContext context, Extension header) {
-        Selene.getServer().injectMembers(instance);
-        Selene.getServer().createExtensionInjector(instance, header, context).injectMembers(instance);
+        SeleneUtils.INJECT.injectMembers(instance);
+        SeleneUtils.INJECT.createExtensionInjector(instance, header, context).injectMembers(instance);
     }
 }

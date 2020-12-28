@@ -124,7 +124,7 @@ public class TypeArgumentParsers {
                 lang = Arrays.stream(Language.values())
                         .filter(l -> l.getNameEnglish().equals(code) || l.getNameLocalized().equals(code))
                         .findFirst()
-                        .orElse(Selene.getInstance(GlobalConfig.class).getDefaultLanguage());
+                        .orElse(SeleneUtils.INJECT.getInstance(GlobalConfig.class).getDefaultLanguage());
             }
             return Exceptional.of(lang);
         }
@@ -189,7 +189,7 @@ public class TypeArgumentParsers {
         @NotNull
         @Override
         public Exceptional<World> parse(@NotNull CommandValue<String> commandValue) {
-            WorldStorageService wss = Selene.getInstance(WorldStorageService.class);
+            WorldStorageService wss = SeleneUtils.INJECT.getInstance(WorldStorageService.class);
             Exceptional<World> world = wss.getWorld(commandValue.getValue());
             return world.orElseSupply(() -> {
                 UUID uuid = UUID.fromString(commandValue.getValue());
@@ -203,7 +203,7 @@ public class TypeArgumentParsers {
         @Override
         public Exceptional<ResourceEntry> parse(@NotNull CommandValue<String> commandValue) {
             String value = commandValue.getValue();
-            ResourceService rs = Selene.getInstance(ResourceService.class);
+            ResourceService rs = SeleneUtils.INJECT.getInstance(ResourceService.class);
             value = rs.createValidKey(value);
 
             Exceptional<? extends ResourceEntry> or = rs.getExternalResource(value);
@@ -218,7 +218,7 @@ public class TypeArgumentParsers {
         @NotNull
         @Override
         public Exceptional<Player> parse(@NotNull CommandValue<String> commandValue) {
-            PlayerStorageService pss = Selene.getInstance(PlayerStorageService.class);
+            PlayerStorageService pss = SeleneUtils.INJECT.getInstance(PlayerStorageService.class);
             Exceptional<Player> player = pss.getPlayer(commandValue.getValue());
             return player.orElseSupply(() -> {
                 UUID uuid = UUID.fromString(commandValue.getValue());

@@ -54,7 +54,7 @@ public abstract class DefaultPlayerStorageService implements PlayerStorageServic
 
     @SuppressWarnings("ConstantConditions")
     private UserDataModel getUserData(UUID uuid) {
-        ConfigurateManager cm = Selene.getInstance(ConfigurateManager.class);
+        ConfigurateManager cm = SeleneUtils.INJECT.getInstance(ConfigurateManager.class);
         Path file = cm.getDataFile(SeleneUtils.REFLECTION.getExtension(Selene.class), "userdata/" + uuid);
         Exceptional<UserDataModel> userDataModel = cm.getFileContent(file, UserDataModel.class);
         return userDataModel.orElse(new UserDataModel());
@@ -62,7 +62,7 @@ public abstract class DefaultPlayerStorageService implements PlayerStorageServic
 
     @SuppressWarnings("ConstantConditions")
     private void updateUserData(UUID uuid, UserDataModel userData) {
-        ConfigurateManager cm = Selene.getInstance(ConfigurateManager.class);
+        ConfigurateManager cm = SeleneUtils.INJECT.getInstance(ConfigurateManager.class);
         Path file = cm.getDataFile(SeleneUtils.REFLECTION.getExtension(Selene.class), "userdata/" + uuid);
         cm.writeFileContent(file, userData);
     }

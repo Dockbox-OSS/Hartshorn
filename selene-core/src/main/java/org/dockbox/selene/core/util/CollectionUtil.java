@@ -62,9 +62,9 @@ public final class CollectionUtil {
     @SuppressWarnings("varargs")
     public final <K, V> Map<K, V> ofEntries(Entry<? extends K, ? extends V>... entries) {
         if (0 == entries.length) { // implicit null check of entries array
-            return emptyMap();
+            return this.emptyMap();
         } else {
-            Map<K, V> map = emptyMap();
+            Map<K, V> map = this.emptyMap();
             for (Entry<? extends K, ? extends V> entry : entries) {
                 map.put(entry.getKey(), entry.getValue());
             }
@@ -136,14 +136,14 @@ public final class CollectionUtil {
     @Contract(value = "_ -> new", pure = true)
     @SafeVarargs
     public final <T> List<T> asUnmodifiableList(T... objects) {
-        return Collections.unmodifiableList(asList(objects));
+        return Collections.unmodifiableList(this.asList(objects));
     }
 
     @NotNull
     @Contract(value = "_ -> new", pure = true)
     @SafeVarargs
     public final <T> List<T> asList(T... objects) {
-        return asList(Arrays.asList(objects));
+        return this.asList(Arrays.asList(objects));
     }
 
     public <T> List<T> asList(Collection<T> collection) {
@@ -151,7 +151,7 @@ public final class CollectionUtil {
     }
 
     public <T> List<T> asUnmodifiableList(Collection<T> collection) {
-        return Collections.unmodifiableList(emptyList());
+        return Collections.unmodifiableList(this.emptyList());
     }
 
     public <T> List<T> emptyList() {
@@ -167,14 +167,14 @@ public final class CollectionUtil {
     @Contract(value = "_ -> new", pure = true)
     @SafeVarargs
     public final <T> Set<T> asUnmodifiableSet(T... objects) {
-        return Collections.unmodifiableSet(asSet(objects));
+        return Collections.unmodifiableSet(this.asSet(objects));
     }
 
     @NotNull
     @Contract("_ -> new")
     @SafeVarargs
     public final <T> Set<T> asSet(T... objects) {
-        return new HashSet<>(asList(objects));
+        return new HashSet<>(this.asList(objects));
     }
 
     @SafeVarargs

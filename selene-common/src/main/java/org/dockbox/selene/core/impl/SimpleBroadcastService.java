@@ -21,8 +21,8 @@ import org.dockbox.selene.core.BroadcastService;
 import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -30,7 +30,7 @@ import java.util.function.Predicate;
 public class SimpleBroadcastService implements BroadcastService {
     @Override
     public void broadcastPublic(@NotNull Text message) {
-        Selene.getInstance(PlayerStorageService.class).getOnlinePlayers().forEach(message::send);
+        SeleneUtils.INJECT.getInstance(PlayerStorageService.class).getOnlinePlayers().forEach(message::send);
     }
 
     @Override
@@ -59,6 +59,6 @@ public class SimpleBroadcastService implements BroadcastService {
     }
 
     private void sendWithPredicate(Text message, Predicate<Player> filter) {
-        Selene.getInstance(PlayerStorageService.class).getOnlinePlayers().stream().filter(filter).forEach(message::send);
+        SeleneUtils.INJECT.getInstance(PlayerStorageService.class).getOnlinePlayers().stream().filter(filter).forEach(message::send);
     }
 }

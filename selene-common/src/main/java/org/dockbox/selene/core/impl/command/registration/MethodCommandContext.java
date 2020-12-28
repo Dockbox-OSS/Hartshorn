@@ -99,7 +99,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         if (this.getDeclaringClass().equals(Selene.class) || SeleneUtils.REFLECTION.isAssignableFrom(Selene.class, this.getDeclaringClass())) {
             instance = Selene.getServer();
         } else {
-            instance = Selene.getInstance(this.getDeclaringClass());
+            instance = SeleneUtils.INJECT.getInstance(this.getDeclaringClass());
         }
         return instance;
     }

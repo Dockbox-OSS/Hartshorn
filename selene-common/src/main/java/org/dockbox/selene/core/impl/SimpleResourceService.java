@@ -85,7 +85,7 @@ public class SimpleResourceService implements ResourceService {
     public Map<String, String> getResourceMap(@NotNull Language lang) {
         if (this.resourceMaps.containsKey(lang)) return this.resourceMaps.get(lang);
 
-        ConfigurateManager cm = Selene.getInstance(ConfigurateManager.class);
+        ConfigurateManager cm = SeleneUtils.INJECT.getInstance(ConfigurateManager.class);
         Path languageConfigFile = cm.getConfigFile(
                 SeleneUtils.REFLECTION.getExtension(Selene.class),
                 lang.getCode()

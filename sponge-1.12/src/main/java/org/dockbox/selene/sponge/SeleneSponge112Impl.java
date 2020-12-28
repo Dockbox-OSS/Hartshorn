@@ -28,6 +28,7 @@ import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.selene.sponge.listeners.SpongePlayerListener;
@@ -140,10 +141,10 @@ public class SeleneSponge112Impl extends Selene {
         // TODO GuusLieben, attempt to convert injector to raw bindings
 //      super.upgradeInjectors(this.spongeInjector);
         this.registerSpongeListeners(
-                getInstance(SpongeCommandListener.class),
-                getInstance(SpongeServerListener.class),
-                getInstance(SpongeDiscordListener.class),
-                getInstance(SpongePlayerListener.class)
+                SeleneUtils.INJECT.getInstance(SpongeCommandListener.class),
+                SeleneUtils.INJECT.getInstance(SpongeServerListener.class),
+                SeleneUtils.INJECT.getInstance(SpongeDiscordListener.class),
+                SeleneUtils.INJECT.getInstance(SpongePlayerListener.class)
         );
 
         super.init();
@@ -176,7 +177,7 @@ public class SeleneSponge112Impl extends Selene {
      */
     @Listener
     public void onServerStartedLate(GameStartedServerEvent event) {
-        Exceptional<JDA> oj = getInstance(DiscordUtils.class).getJDA();
+        Exceptional<JDA> oj = SeleneUtils.INJECT.getInstance(DiscordUtils.class).getJDA();
         if (oj.isPresent()) {
             JDA jda = oj.get();
             // Avoid registering it twice if the scheduler outside this condition is executing this twice.

@@ -435,11 +435,11 @@ public class ReflectionUtil {
     @Nullable
     public Extension getExtension(Class<?> type) {
         if (null == type) return null;
-        if (type.equals(Selene.class)) return this.getExtension(Selene.getInstance(IntegratedExtension.class).getClass());
+        if (type.equals(Selene.class)) return this.getExtension(SeleneUtils.INJECT.getInstance(IntegratedExtension.class).getClass());
         Extension extension = type.getAnnotation(Extension.class);
         extension = null != extension ? extension : this.getExtension(type.getSuperclass());
         if (null == extension)
-            extension = Selene.getInstanceSafe(ExtensionManager.class).map(em -> em.getHeader(type).orNull()).orNull();
+            extension = SeleneUtils.INJECT.getInstanceSafe(ExtensionManager.class).map(em -> em.getHeader(type).orNull()).orNull();
         return extension;
     }
 
@@ -486,7 +486,7 @@ public class ReflectionUtil {
      *         the consumer
      */
     public <T> void runWithInstance(Class<T> type, Consumer<T> consumer) {
-        T instance = Selene.getInstance(type);
+        T instance = SeleneUtils.INJECT.getInstance(type);
         if (null != instance) consumer.accept(instance);
     }
 
@@ -591,7 +591,7 @@ public class ReflectionUtil {
      */
     @SuppressWarnings("unchecked")
     public <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision) {
-        T instance = inject ? Selene.getInstance(type) : this.getInstance(type);
+        T instance = inject ? SeleneUtils.INJECT.getInstance(type) : this.getInstance(type);
         if (null != instance)
             try {
                 for (Field field : type.getDeclaredFields()) {
@@ -645,7 +645,7 @@ public class ReflectionUtil {
             Constructor<T> ctor = clazz.getConstructor();
             return ctor.newInstance();
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            return Selene.getInstance(clazz);
+            return SeleneUtils.INJECT.getInstance(clazz);
         }
     }
 

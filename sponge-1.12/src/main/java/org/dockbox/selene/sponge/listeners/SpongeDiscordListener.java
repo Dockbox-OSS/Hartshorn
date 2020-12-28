@@ -100,7 +100,7 @@ public class SpongeDiscordListener extends ListenerAdapter {
                     alias,
                     arguments.toArray(new String[0])
             );
-            Selene.getInstance(DiscordUtils.class).post(alias, ctx);
+            SeleneUtils.INJECT.getInstance(DiscordUtils.class).post(alias, ctx);
         }
     }
 

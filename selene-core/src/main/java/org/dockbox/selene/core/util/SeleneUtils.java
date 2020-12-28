@@ -17,28 +17,13 @@
 
 package org.dockbox.selene.core.util;
 
+import java.util.function.Function;
+
 /**
- * Common utilities for a variety of actions. Including, but not restricted to:
- * <ul>
- *     <li>Array- and collection manipulation</li>
- *     <li>Reflections</li>
- *     <li>Strict equality</li>
- *     <li>Natural Language Processing</li>
- *     <li>Virtual randomness</li>
- *     <li>Exceptions</li>
- *     <li>Primite type assignability</li>
- *     <li>etc.</li>
- * </ul>
- *
- * <p>
- *     Utilities which are duplicated across classes should be moved to this type.
- * </p>
+ * Wraps all utility classes to a common accessor. This way all {@code final} utility classes can be accessed at once
+ * and indexed more easily.
  */
-// OverlyComplexClass: If a class has more methods than allowed by the configured threshold. In utility classes this can
-//    safely be suppressed.
-// unused: Several methods may not be visibly used because they are only used outside of the Core module. To avoid
-//    hitting a warning limit this can be suppressed.
-@SuppressWarnings({"OverlyComplexClass", "unused"})
+@SuppressWarnings("unused")
 public final class SeleneUtils {
 
     public static final AssertionUtil ASSERTION = new AssertionUtil();
@@ -46,17 +31,20 @@ public final class SeleneUtils {
     public static final KeyUtil KEYS = new KeyUtil();
     public static final ReflectionUtil REFLECTION = new ReflectionUtil();
     public static final MiscUtil OTHER = new MiscUtil();
+    public static final InjectUtil INJECT = new InjectUtil();
+
+    private SeleneUtils() {}
 
     /**
-     * The enum Provision.
+     * Common enumeration of processed field information in {@link ReflectionUtil#tryCreateFromProcessed(Class, Function, boolean) tryCreate}.
      */
     public enum Provision {
         /**
-         * Field provision.
+         * Uses the field name to process field information.
          */
         FIELD,
         /**
-         * Field name provision.
+         * Uses the field to process field information.
          */
         FIELD_NAME
     }

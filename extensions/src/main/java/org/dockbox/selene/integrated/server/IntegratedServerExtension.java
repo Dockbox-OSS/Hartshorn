@@ -63,7 +63,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
     @Command(aliases = "", usage = "")
     public void debugExtensions(MessageReceiver source) {
         SeleneUtils.REFLECTION.runWithInstance(ExtensionManager.class, em -> {
-            PaginationBuilder pb = Selene.getInstance(ConstructionUtil.class).paginationBuilder();
+            PaginationBuilder pb = SeleneUtils.INJECT.getInstance(ConstructionUtil.class).paginationBuilder();
 
             List<Text> content = SeleneUtils.COLLECTION.emptyList();
             content.add(Text.of(IntegratedServerResources.SERVER_HEADER.format(Selene.getServer().getVersion())));
@@ -121,7 +121,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "reload", usage = "reload [id{Extension}]", confirm = true)
     public void reload(MessageReceiver src, CommandContext ctx) {
-        EventBus eb = Selene.getInstance(EventBus.class);
+        EventBus eb = SeleneUtils.INJECT.getInstance(EventBus.class);
         if (ctx.hasArgument("id")) {
             Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
@@ -130,7 +130,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
             }
 
             Extension e = oarg.get().getValue();
-            Exceptional<?> oi = Selene.getInstance(ExtensionManager.class).getInstance(e.id());
+            Exceptional<?> oi = SeleneUtils.INJECT.getInstance(ExtensionManager.class).getInstance(e.id());
 
             oi.ifPresent(o -> {
                 eb.post(new ServerReloadEvent(), o.getClass());
@@ -157,7 +157,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
         optionalCooldownId
                 .ifPresent(cooldownId -> {
                     String cid = cooldownId.getValue();
-                    Selene.getInstance(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
+                    SeleneUtils.INJECT.getInstance(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
                             src.send(IntegratedServerResources.CONFIRM_FAILED));
                 })
                 .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));

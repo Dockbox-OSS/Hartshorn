@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.core.annotations.event.processing;
 
-import org.dockbox.selene.core.server.Selene;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -26,7 +24,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Tries to get the instance of the type through {@link Selene#getInstance}. Supports extension-specific injected types
+ * Tries to get the instance of the type through {@link org.dockbox.selene.core.util.InjectUtil#getInstance}. Supports extension-specific injected types
  * if the listener is a extension and no value is provided. If {@link #value()} is provided, and is a extension,
  * the provided class is offered as the extension. By default this will not override any pre-existing value unless
  * {@link #overrideExisting()} is set to true.

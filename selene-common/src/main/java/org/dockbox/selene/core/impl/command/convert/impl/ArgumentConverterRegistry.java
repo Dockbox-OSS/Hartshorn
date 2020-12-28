@@ -133,7 +133,7 @@ public final class ArgumentConverterRegistry {
     public static final ArgumentConverter<Player> PLAYER = new ParserArgumentConverter<>(
             Player.class,
             PlayerParser::new,
-            s -> Selene.getInstance(PlayerStorageService.class).getOnlinePlayers().stream()
+            s -> SeleneUtils.INJECT.getInstance(PlayerStorageService.class).getOnlinePlayers().stream()
                     .map(Player::getName)
                     .filter(n -> n.startsWith(s))
                     .collect(Collectors.toList()),
@@ -157,7 +157,7 @@ public final class ArgumentConverterRegistry {
     public static final ArgumentConverter<World> WORLD = new ParserArgumentConverter<>(
             World.class,
             WorldParser::new,
-            s -> Selene.getInstance(WorldStorageService.class).getLoadedWorlds().stream()
+            s -> SeleneUtils.INJECT.getInstance(WorldStorageService.class).getLoadedWorlds().stream()
                     .map(World::getName)
                     .filter(n -> n.startsWith(s))
                     .collect(Collectors.toList()),
@@ -224,8 +224,8 @@ public final class ArgumentConverterRegistry {
     public static final ArgumentConverter<Extension> EXTENSION = new ConstantArgumentConverter<>(
             new String[]{"extension", "ext"},
             Extension.class,
-            s -> Selene.getInstance(ExtensionManager.class).getHeader(s),
-            Selene.getInstance(ExtensionManager.class).getRegisteredExtensionIds()
+            s -> SeleneUtils.INJECT.getInstance(ExtensionManager.class).getHeader(s),
+            SeleneUtils.INJECT.getInstance(ExtensionManager.class).getRegisteredExtensionIds()
                     .toArray(new String[0])
     );
 

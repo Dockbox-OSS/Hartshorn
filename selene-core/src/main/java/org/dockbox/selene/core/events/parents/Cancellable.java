@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.events.parents;
 
 import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -45,7 +45,7 @@ public interface Cancellable extends Event {
     @Override
     @NotNull
     default Cancellable post() {
-        Selene.getInstance(EventBus.class).post(this);
+        SeleneUtils.INJECT.getInstance(EventBus.class).post(this);
         return this;
     }
 

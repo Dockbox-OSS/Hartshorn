@@ -50,9 +50,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "OverlyComplexClass"})
 public class MiscUtil {
-
 
     /**
      * The maximum amount of decimals used when rounding a number in {@link MiscUtil#round(double, int)}.
