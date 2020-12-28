@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core;
+package org.dockbox.selene.core.util;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
