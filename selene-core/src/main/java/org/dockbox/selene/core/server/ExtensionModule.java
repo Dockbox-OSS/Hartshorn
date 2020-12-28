@@ -19,24 +19,35 @@ package org.dockbox.selene.core.server;
 
 import com.google.inject.AbstractModule;
 
+import org.dockbox.selene.core.annotations.extension.Specific;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
 final class ExtensionModule extends AbstractModule {
 
     private final Collection<InternalBinding<Object>> bindings = SeleneUtils.COLLECTION.emptyConcurrentList();
+    private Logger logger;
 
     @Override
     protected void configure() {
         this.bindings.forEach(binding ->
                 this.bind(binding.getSourceClass()).toInstance(binding.getInstance()));
+
+        if (null != this.logger)
+            this.bind(Logger.class).annotatedWith(Specific.class).toInstance(this.logger);
     }
 
     @SuppressWarnings("unchecked")
     public <T> void acceptBinding(Class<T> sourceClass, T instance) {
         InternalBinding<T> binding = new InternalBinding<>(sourceClass, instance);
         this.bindings.add((InternalBinding<Object>) binding);
+    }
+
+    public void acceptInstance(Object instance) {
+        if (null != instance) this.logger = LoggerFactory.getLogger(instance.getClass());
     }
 
     private static final class InternalBinding<T> {

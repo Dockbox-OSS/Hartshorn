@@ -348,8 +348,10 @@ public abstract class Selene {
     private <T> ExtensionModule getExtensionModule(T instance, Extension header, ExtensionContext context) {
         ExtensionModule module = new ExtensionModule();
 
-        if (!(null == instance || instance instanceof Class<?>))
+        if (!(null == instance || instance instanceof Class<?>)) {
             module.acceptBinding((Class<T>) instance.getClass(), instance);
+            module.acceptInstance(instance);
+        }
         if (null != header)
             module.acceptBinding(Extension.class, header);
         if (null != context)
