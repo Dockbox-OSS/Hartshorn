@@ -17,21 +17,9 @@
 
 package org.dockbox.selene.integrated.data;
 
-import com.google.common.reflect.TypeToken;
-
-import org.dockbox.selene.integrated.data.registry.Registry;
-import org.dockbox.selene.core.impl.files.serialize.PredicateSerializerInformation;
-import org.dockbox.selene.integrated.data.serializers.RegistrySerializer;
 import org.dockbox.selene.core.annotations.extension.Extension;
 
 @Extension(id = "datastructures", name = "Additional data structures",
            description = "Provides additional data structures for specific usages",
-           authors = {"GuusLieben", "pumbas600"}, uniqueId = "5755725b-e24b-4ca6-9944-56967ac41949")
-public class DataStructuresExtension {
-
-    public DataStructuresExtension() {
-        new PredicateSerializerInformation<>(Registry.class, RegistrySerializer::new, new TypeToken<Registry<?>>() {
-        });
-    }
-
-}
+           authors = {"GuusLieben", "pumbas600", "simbolduc"}, uniqueId = "5755725b-e24b-4ca6-9944-56967ac41949")
+public class DataStructuresExtension {}

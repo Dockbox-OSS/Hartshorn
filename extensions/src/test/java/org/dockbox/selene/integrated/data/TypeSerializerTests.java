@@ -17,21 +17,16 @@
 
 package org.dockbox.selene.integrated.data;
 
-import com.google.common.reflect.TypeToken;
-
 import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.integrated.data.registry.Registry;
 import org.dockbox.selene.integrated.data.registry.RegistryColumn;
 import org.dockbox.selene.integrated.data.registry.TestIdentifier;
-import org.dockbox.selene.integrated.data.serializers.RegistrySerializer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
 
 public class TypeSerializerTests {
@@ -40,9 +35,6 @@ public class TypeSerializerTests {
         TestConfigurationLoader.Builder tlb = TestConfigurationLoader.builder();
         TypeSerializerCollection tsc = tlb.getDefaultOptions().getSerializers().newChild();
         SeleneTypeSerializers.registerTypeSerializers(tsc);
-        tsc.registerPredicate(typeToken ->
-                SeleneUtils.isAssignableFrom(new TypeToken<Registry<?>>() {
-                }.getRawType(), typeToken.getRawType()), new RegistrySerializer());
         tlb.setDefaultOptions(tlb.getDefaultOptions().setSerializers(tsc));
         return tlb.build();
     }
@@ -60,12 +52,13 @@ public class TypeSerializerTests {
                         .addColumn(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock1"));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testThatRegistryCanBeSerialised() throws ObjectMappingException {
+    public void testThatRegistryCanBeSerialised() {
         TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<Registry<Registry<String>>>() {}, this.buildTestRegistry());
+        ConfigurationNode cn = tl.createEmptyNode().setValue(this.buildTestRegistry());
 
-        Registry<Registry<String>> reg = cn.getValue(new TypeToken<Registry<Registry<String>>>() {});
+        Registry<Registry<String>> reg = (Registry<Registry<String>>) cn.getValue();
 
         RegistryColumn<Registry<String>> result = reg.getAllData();
 
@@ -73,12 +66,13 @@ public class TypeSerializerTests {
         Assertions.assertEquals(3, result.size());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testThatRegistryCanBeDeserialised() throws ObjectMappingException {
+    public void testThatRegistryCanBeDeserialised() {
         TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createEmptyNode().setValue(new TypeToken<Registry<Registry<String>>>() {}, this.buildTestRegistry());
+        ConfigurationNode cn = tl.createEmptyNode().setValue(this.buildTestRegistry());
 
-        Registry<Registry<String>> reg = cn.getValue(new TypeToken<Registry<Registry<String>>>() {});
+        Registry<Registry<String>> reg = (Registry<Registry<String>>) cn.getValue();
 
         List<String> result = reg.getMatchingColumns(TestIdentifier.BRICK)
                 .mapToSingleList(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
