@@ -15,12 +15,11 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.server;
+package org.dockbox.selene.core.util;
 
 import com.google.inject.AbstractModule;
 
 import org.dockbox.selene.core.annotations.extension.Specific;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
