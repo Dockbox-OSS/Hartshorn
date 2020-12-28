@@ -20,7 +20,7 @@ package org.dockbox.selene.core.regex;
 import org.dockbox.selene.core.VerbalExpression;
 import org.dockbox.selene.core.regex.matchers.TestMatchMatcher;
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -39,9 +39,9 @@ public class PredefinedCharClassesTest {
     public void testWordChar() {
         VerbalExpression regex = VerbalExpression.regex().wordChar().build();
 
-        MatcherAssert.assertThat("Not matches on letters", regex, TestMatchMatcher.matchesTo(LETTERS_NO_DIGITS + DIGITS));
-        MatcherAssert.assertThat("matches on non letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((NON_LETTERS + SPACE))));
-        MatcherAssert.assertThat("Extracts wrong word chars",
+        Assert.assertThat("Not matches on letters", regex, TestMatchMatcher.matchesTo(LETTERS_NO_DIGITS + DIGITS));
+        Assert.assertThat("matches on non letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((NON_LETTERS + SPACE))));
+        Assert.assertThat("Extracts wrong word chars",
                 regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.equalTo(LETTERS_NO_DIGITS + DIGITS));
 
     }
@@ -50,9 +50,9 @@ public class PredefinedCharClassesTest {
     public void testNonWordChar() {
         VerbalExpression regex = VerbalExpression.regex().nonWordChar().build();
 
-        MatcherAssert.assertThat("matches on letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((LETTERS_NO_DIGITS + DIGITS))));
-        MatcherAssert.assertThat("Not matches on non letters", regex, TestMatchMatcher.matchesTo(NON_LETTERS + SPACE));
-        MatcherAssert.assertThat("Extracts wrong chars",
+        Assert.assertThat("matches on letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((LETTERS_NO_DIGITS + DIGITS))));
+        Assert.assertThat("Not matches on non letters", regex, TestMatchMatcher.matchesTo(NON_LETTERS + SPACE));
+        Assert.assertThat("Extracts wrong chars",
                 regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.equalTo(NON_LETTERS + SPACE));
 
     }
@@ -61,9 +61,9 @@ public class PredefinedCharClassesTest {
     public void testSpace() {
         VerbalExpression regex = VerbalExpression.regex().space().build();
 
-        MatcherAssert.assertThat("matches on letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((LETTERS_NO_DIGITS + DIGITS + NON_LETTERS))));
-        MatcherAssert.assertThat("Not matches on space", regex, TestMatchMatcher.matchesTo(SPACE));
-        MatcherAssert.assertThat("Extracts wrong chars",
+        Assert.assertThat("matches on letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((LETTERS_NO_DIGITS + DIGITS + NON_LETTERS))));
+        Assert.assertThat("Not matches on space", regex, TestMatchMatcher.matchesTo(SPACE));
+        Assert.assertThat("Extracts wrong chars",
                 regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.equalTo(SPACE));
 
     }
@@ -72,9 +72,9 @@ public class PredefinedCharClassesTest {
     public void testNonSpace() {
         VerbalExpression regex = VerbalExpression.regex().nonSpace().build();
 
-        MatcherAssert.assertThat("Not matches on non space", regex, TestMatchMatcher.matchesTo(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS));
-        MatcherAssert.assertThat("matches on space", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((SPACE))));
-        MatcherAssert.assertThat("Extracts wrong chars",
+        Assert.assertThat("Not matches on non space", regex, TestMatchMatcher.matchesTo(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS));
+        Assert.assertThat("matches on space", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((SPACE))));
+        Assert.assertThat("Extracts wrong chars",
                 regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.not(SPACE));
 
     }
@@ -83,9 +83,9 @@ public class PredefinedCharClassesTest {
     public void testDigit() {
         VerbalExpression regex = VerbalExpression.regex().digit().build();
 
-        MatcherAssert.assertThat("matches on letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((LETTERS_NO_DIGITS + SPACE + NON_LETTERS))));
-        MatcherAssert.assertThat("Not matches on digits", regex, TestMatchMatcher.matchesTo(DIGITS));
-        MatcherAssert.assertThat("Extracts wrong chars",
+        Assert.assertThat("matches on letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((LETTERS_NO_DIGITS + SPACE + NON_LETTERS))));
+        Assert.assertThat("Not matches on digits", regex, TestMatchMatcher.matchesTo(DIGITS));
+        Assert.assertThat("Extracts wrong chars",
                 regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.is(DIGITS));
 
     }
@@ -94,9 +94,9 @@ public class PredefinedCharClassesTest {
     public void testNonDigit() {
         VerbalExpression regex = VerbalExpression.regex().nonDigit().build();
 
-        MatcherAssert.assertThat("Not matches on letters", regex, TestMatchMatcher.matchesTo(LETTERS_NO_DIGITS + SPACE + NON_LETTERS));
-        MatcherAssert.assertThat("matches on digits", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((DIGITS))));
-        MatcherAssert.assertThat("Extracts wrong chars",
+        Assert.assertThat("Not matches on letters", regex, TestMatchMatcher.matchesTo(LETTERS_NO_DIGITS + SPACE + NON_LETTERS));
+        Assert.assertThat("matches on digits", regex, CoreMatchers.not(TestMatchMatcher.matchesTo((DIGITS))));
+        Assert.assertThat("Extracts wrong chars",
                 regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.not(DIGITS));
 
     }
@@ -105,9 +105,9 @@ public class PredefinedCharClassesTest {
     public void testWord() {
         VerbalExpression regex = VerbalExpression.regex().word().build();
 
-        MatcherAssert.assertThat("not matches on word", regex, TestMatchMatcher.matchesTo(LETTERS_NO_DIGITS + DIGITS));
-        MatcherAssert.assertThat("matches on space and non letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo(SPACE + NON_LETTERS)));
-        MatcherAssert.assertThat("extracts wrong chars",
+        Assert.assertThat("not matches on word", regex, TestMatchMatcher.matchesTo(LETTERS_NO_DIGITS + DIGITS));
+        Assert.assertThat("matches on space and non letters", regex, CoreMatchers.not(TestMatchMatcher.matchesTo(SPACE + NON_LETTERS)));
+        Assert.assertThat("extracts wrong chars",
                 regex.getText(LETTERS_NO_DIGITS + DIGITS + NON_LETTERS + SPACE), CoreMatchers.is(LETTERS_NO_DIGITS + DIGITS));
 
     }

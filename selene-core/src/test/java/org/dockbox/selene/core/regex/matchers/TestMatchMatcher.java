@@ -20,7 +20,8 @@ package org.dockbox.selene.core.regex.matchers;
 import org.dockbox.selene.core.VerbalExpression;
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
-import org.hamcrest.TypeSafeMatcher;
+import org.junit.internal.matchers.TypeSafeMatcher;
+//import org.hamcrest.TypeSafeMatcher;
 
 /**
  User: lanwen
@@ -36,18 +37,13 @@ public final class TestMatchMatcher extends TypeSafeMatcher<VerbalExpression> {
     }
 
     @Override
-    protected boolean matchesSafely(VerbalExpression verbalExpression) {
+    public boolean matchesSafely(VerbalExpression verbalExpression) {
         return verbalExpression.test(this.toTest);
     }
 
     @Override
     public void describeTo(Description description) {
         description.appendText("regex should match to ").appendValue(this.toTest);
-    }
-
-    @Override
-    protected void describeMismatchSafely(VerbalExpression item, Description mismatchDescription) {
-        mismatchDescription.appendText(item.toString()).appendText(" don't matches this string");
     }
 
     @Factory

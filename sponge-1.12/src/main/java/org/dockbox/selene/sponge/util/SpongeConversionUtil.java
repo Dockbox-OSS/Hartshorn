@@ -88,7 +88,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("ClassWithTooManyMethods")
+@SuppressWarnings({"ClassWithTooManyMethods", "OverlyComplexClass", "unchecked", "OverlyStrongTypeCast"})
 public enum SpongeConversionUtil {
     ;
 
@@ -120,7 +120,7 @@ public enum SpongeConversionUtil {
         } else if (object instanceof org.spongepowered.api.command.CommandSource) {
             return fromSponge((org.spongepowered.api.command.CommandSource) object);
         } else if (object instanceof Location) {
-            return Exceptional.of(fromSponge((Location) object));
+            return Exceptional.of(fromSponge((Location<World>) object));
         } else if (object instanceof World) {
             return Exceptional.of(fromSponge((World) object));
         } else if (object instanceof GameMode) {
@@ -342,7 +342,6 @@ public enum SpongeConversionUtil {
         return t;
     }
 
-    @SuppressWarnings("OverlyStrongTypeCast")
     private static Exceptional<ShiftClickAction<?>> fromSponge(org.spongepowered.api.text.action.ShiftClickAction<?> shiftClickAction) {
         if (shiftClickAction instanceof InsertText) {
             return Exceptional.of(ShiftClickAction.insertText(org.dockbox.selene.core.text.Text.of(
@@ -351,14 +350,12 @@ public enum SpongeConversionUtil {
         } else return Exceptional.empty();
     }
 
-    @SuppressWarnings("OverlyStrongTypeCast")
     private static Exceptional<HoverAction<?>> fromSponge(org.spongepowered.api.text.action.HoverAction<?> hoverAction) {
         if (hoverAction instanceof ShowText) {
             return Exceptional.of(HoverAction.showText(fromSponge(((ShowText) hoverAction).getResult())));
         } else return Exceptional.empty();
     }
 
-    @SuppressWarnings("OverlyStrongTypeCast")
     private static Exceptional<ClickAction<?>> fromSponge(org.spongepowered.api.text.action.ClickAction<?> clickAction) {
         if (clickAction instanceof OpenUrl) {
             return Exceptional.of(ClickAction.openUrl(((OpenUrl) clickAction).getResult()));

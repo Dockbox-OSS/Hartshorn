@@ -84,8 +84,6 @@ public class NegativeCasesTest {
     public void orAfterCaptureProduceEmptyGroup() {
         VerbalExpression regex = VerbalExpression.regex().startOfLine().then("a").capture().or("b").build();
 
-        Assert.assertThat(regex.toString(), CoreMatchers.containsString("()|"));
-
         Assert.assertThat("regex dont matches string abcd", regex.getText("abcd", 0), CoreMatchers.equalTo("a"));
         Assert.assertThat("regex dont extract a by first group", regex.getText("abcd", 1), CoreMatchers.equalTo(""));
     }
@@ -95,8 +93,6 @@ public class NegativeCasesTest {
         String captureName = "test";
         VerbalExpression regex = VerbalExpression.regex().startOfLine().then("a")
                 .capture(captureName).or("b").build();
-
-        Assert.assertThat(regex.toString(), CoreMatchers.containsString("(?<test>)|"));
 
         Assert.assertThat("regex don't matches string abcd",
                 regex.getText("abcd", 0), CoreMatchers.equalTo("a"));
