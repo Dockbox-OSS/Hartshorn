@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.tools;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.ClickType;
 import org.dockbox.selene.core.objects.player.Hand;
@@ -71,12 +71,13 @@ public class ItemTool {
 
     public static ToolBuilder builder() { return new ToolBuilder(); }
 
+    @SuppressWarnings("unused")
     public static final class ToolBuilder {
         private BiConsumer<Player, Item> consumer;
         private Text name;
         private List<Text> lore;
-        private final List<Predicate<ToolInteractionEvent>> filters = SeleneUtils.emptyConcurrentList();
-        private final List<Consumer<Item<?>>> modifiers = SeleneUtils.emptyConcurrentList();
+        private final List<Predicate<ToolInteractionEvent>> filters = SeleneUtils.COLLECTION.emptyConcurrentList();
+        private final List<Consumer<Item<?>>> modifiers = SeleneUtils.COLLECTION.emptyConcurrentList();
 
         private ToolBuilder() {}
 

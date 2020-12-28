@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.core.impl.events.handle;
 
-import org.dockbox.selene.core.events.parents.Event;
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.events.EventWrapper;
+import org.dockbox.selene.core.events.parents.Event;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public class EventHandler {
     private final Class<? extends Event> eventType;
 
-    private final Set<EventHandler> supertypeHandlers = SeleneUtils.emptySet();
+    private final Set<EventHandler> supertypeHandlers = SeleneUtils.COLLECTION.emptySet();
 
     private final SortedSet<SimpleEventWrapper> invokers = new TreeSet<>(SimpleEventWrapper.COMPARATOR);
 
@@ -99,12 +99,12 @@ public class EventHandler {
 
     private boolean isSubtypeOf(Class<?> cls) {
         Class<? extends Event> type = this.eventType();
-        return type != cls && SeleneUtils.isAssignableFrom(cls, type);
+        return type != cls && SeleneUtils.REFLECTION.isAssignableFrom(cls, type);
     }
 
     public boolean isSubtypeOf(EventHandler handler) {
         if (handler instanceof EventHandler)
-            return this.isSubtypeOf(((EventHandler) handler).eventType());
+            return this.isSubtypeOf(handler.eventType());
         return false;
     }
 
@@ -119,7 +119,7 @@ public class EventHandler {
     public boolean addSupertypeHandler(EventHandler handler) {
         if (!(handler instanceof EventHandler)) return false;
         if (handler == this) return false;
-        return this.invalidateCache(this.supertypeHandlers.add((EventHandler) handler));
+        return this.invalidateCache(this.supertypeHandlers.add(handler));
     }
 
     @Override

@@ -19,7 +19,6 @@ package org.dockbox.selene.core.impl.events;
 
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.EventStage;
@@ -30,6 +29,7 @@ import org.dockbox.selene.core.impl.events.handle.EventHandlerRegistry;
 import org.dockbox.selene.core.impl.events.handle.SimpleEventWrapper;
 import org.dockbox.selene.core.impl.events.processors.DefaultParamProcessors;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +49,7 @@ public class SimpleEventBus implements EventBus {
     /**
      * A map of all listening objects with their associated {@link EventWrapper}s.
      */
-    protected static final Map<Object, Set<EventWrapper>> listenerToInvokers = SeleneUtils.emptyMap();
+    protected static final Map<Object, Set<EventWrapper>> listenerToInvokers = SeleneUtils.COLLECTION.emptyMap();
 
     /**
      * The internal registry of handlers for each event.
@@ -60,7 +60,7 @@ public class SimpleEventBus implements EventBus {
      * The internal map of {@link AbstractEventParamProcessor}s per annotation per stage.
      */
     // TODO: Refactor to Registry structure once S124 is accepted
-    protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = SeleneUtils.emptyMap();
+    protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = SeleneUtils.COLLECTION.emptyMap();
 
     @NotNull
     @Override
@@ -131,9 +131,9 @@ public class SimpleEventBus implements EventBus {
      * @return The invokers
      */
     protected static Set<EventWrapper> getInvokers(Object object) {
-        Set<EventWrapper> result = SeleneUtils.emptySet();
-        for (Method method : SeleneUtils.getMethodsRecursively(object.getClass())) {
-            Listener annotation = SeleneUtils.getAnnotationRecursively(method, Listener.class);
+        Set<EventWrapper> result = SeleneUtils.COLLECTION.emptySet();
+        for (Method method : SeleneUtils.REFLECTION.getMethodsRecursively(object.getClass())) {
+            Listener annotation = SeleneUtils.REFLECTION.getAnnotationRecursively(method, Listener.class);
             if (annotation != null) {
                 checkListenerMethod(method, false);
                 result.addAll(SimpleEventWrapper.create(object, method, annotation.value().getPriority()));
@@ -160,7 +160,7 @@ public class SimpleEventBus implements EventBus {
      *         the illegal argument exception
      */
     protected static void checkListenerMethod(Method method, boolean checkAnnotation) throws IllegalArgumentException {
-        if (checkAnnotation && !SeleneUtils.isAnnotationPresentRecursively(method, Listener.class)) {
+        if (checkAnnotation && !SeleneUtils.REFLECTION.isAnnotationPresentRecursively(method, Listener.class)) {
             throw new IllegalArgumentException("Needs @Listener annotation: " + method.toGenericString());
         }
 
@@ -177,7 +177,8 @@ public class SimpleEventBus implements EventBus {
         }
 
         for (Class<?> param : method.getParameterTypes()) {
-            if (SeleneUtils.isAssignableFrom(Event.class, param) || SeleneUtils.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
+            if (SeleneUtils.REFLECTION.isAssignableFrom(Event.class, param)
+                    || SeleneUtils.REFLECTION.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
                 return;
             }
         }
@@ -187,7 +188,7 @@ public class SimpleEventBus implements EventBus {
     @Override
     public void registerProcessors(@NotNull AbstractEventParamProcessor<?> @NotNull ... processors) {
         for (AbstractEventParamProcessor<?> processor : processors) {
-            parameterProcessors.putIfAbsent(processor.getAnnotationClass(), SeleneUtils.emptyMap());
+            parameterProcessors.putIfAbsent(processor.getAnnotationClass(), SeleneUtils.COLLECTION.emptyMap());
             parameterProcessors.get(processor.getAnnotationClass()).put(processor.targetStage(), processor);
         }
     }

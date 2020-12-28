@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.impl.command.registration;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.source.CommandSource;
@@ -52,16 +52,15 @@ public class MethodCommandContext extends AbstractRegistrationContext {
 
     @Override
     public Exceptional<IntegratedResource> call(CommandSource source, CommandContext context) {
-        Class<?> declaringClass = this.method.getDeclaringClass();
         try {
             List<Object> args = this.prepareArguments(source, context);
             Object instance = this.prepareInstance();
             Command command = this.method.getAnnotation(Command.class);
             if (0 < command.cooldownDuration() && source instanceof Identifiable) {
                 String registrationId = this.getRegistrationId((Identifiable<?>) source, context);
-                SeleneUtils.cooldown(registrationId, command.cooldownDuration(), command.cooldownUnit());
+                SeleneUtils.OTHER.cooldown(registrationId, command.cooldownDuration(), command.cooldownUnit());
             }
-            this.method.invoke(instance, SeleneUtils.toArray(Object.class, args));
+            this.method.invoke(instance, SeleneUtils.OTHER.toArray(Object.class, args));
             return Exceptional.empty();
         } catch (IllegalSourceException e) {
             return Exceptional.of(e);
@@ -75,10 +74,10 @@ public class MethodCommandContext extends AbstractRegistrationContext {
     }
 
     private List<Object> prepareArguments(CommandSource source, CommandContext context) {
-        List<Object> finalArgs = SeleneUtils.emptyList();
+        List<Object> finalArgs = SeleneUtils.COLLECTION.emptyList();
 
         for (Class<?> parameterType : this.getMethod().getParameterTypes()) {
-            if (SeleneUtils.isEitherAssignableFrom(CommandSource.class, parameterType)) {
+            if (SeleneUtils.REFLECTION.isEitherAssignableFrom(CommandSource.class, parameterType)) {
                 if (parameterType.equals(Player.class)) {
                     if (source instanceof Player) finalArgs.add(source);
                     else throw new IllegalSourceException("Command can only be ran by players");
@@ -86,7 +85,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
                     if (source instanceof Console) finalArgs.add(source);
                     else throw new IllegalSourceException("Command can only be ran by the console");
                 } else finalArgs.add(source);
-            } else if (SeleneUtils.isEitherAssignableFrom(CommandContext.class, parameterType)) {
+            } else if (SeleneUtils.REFLECTION.isEitherAssignableFrom(CommandContext.class, parameterType)) {
                 finalArgs.add(context);
             } else {
                 throw new IllegalStateException("Method requested parameter type '" + parameterType.getSimpleName() + "' which is not provided");
@@ -97,7 +96,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
 
     private Object prepareInstance() {
         Object instance;
-        if (this.getDeclaringClass().equals(Selene.class) || SeleneUtils.isAssignableFrom(Selene.class, this.getDeclaringClass())) {
+        if (this.getDeclaringClass().equals(Selene.class) || SeleneUtils.REFLECTION.isAssignableFrom(Selene.class, this.getDeclaringClass())) {
             instance = Selene.getServer();
         } else {
             instance = Selene.getInstance(this.getDeclaringClass());
@@ -110,7 +109,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         if (0 >= command.cooldownDuration()) return false;
         if (sender instanceof Identifiable) {
             String registrationId = this.getRegistrationId((Identifiable<?>) sender, ctx);
-            return SeleneUtils.isInCooldown(registrationId);
+            return SeleneUtils.OTHER.isInCooldown(registrationId);
         }
         return false;
     }

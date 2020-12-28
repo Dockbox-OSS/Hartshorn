@@ -33,7 +33,7 @@ import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
  *
  * <p>
  *     This annotation has another use - it's lazy loading for a field if the key is null. Rather than create a full blown object when we're likely
- *     to just blow it away anyway, we use this to only construct the default object if the config node is <code>null</code>.
+ *     to just blow it away anyway, we use this to only construct the default object if the config node is {@code null}.
  * </p>
  */
 @Target(ElementType.FIELD)

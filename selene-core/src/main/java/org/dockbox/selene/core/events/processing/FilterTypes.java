@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.core.events.processing;
 
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.event.filter.Filter;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.function.BiFunction;
 public enum FilterTypes implements FilterType {
     /**
      * Checks whether or not a expected {@link String} is contained in the actual value. If either value is
-     * <code>null</code> or the types are not both {@link String} types, <code>false</code> is returned.
+     * {@code null} or the types are not both {@link String} types, {@code false} is returned.
      */
     CONTAINS((expected, actual) -> {
         if (eitherNull(expected, actual)) return false;
@@ -44,9 +44,9 @@ public enum FilterTypes implements FilterType {
     }),
 
     /**
-     * Checks whether or not a expected object equals the actual value. If both values are <code>null</code>, are equal,
-     * or are the same object, <code>true</code> is returned. If either value is <code>null</code> or they do not equal
-     * <code>false</code> is returned.
+     * Checks whether or not a expected object equals the actual value. If both values are {@code null}, are equal,
+     * or are the same object, {@code true} is returned. If either value is {@code null} or they do not equal
+     * {@code false} is returned.
      */
     EQUALS((expected, actual) -> {
         if (bothNull(expected, actual)) return true;
@@ -87,9 +87,9 @@ public enum FilterTypes implements FilterType {
     }),
 
     /**
-     * Checks whether or not a expected object does not equal the actual value. If both values are <code>null</code>, are
-     * equal, or are the same object, <code>false</code> is returned. If either value is <code>null</code> or they do not
-     * equal <code>true</code> is returned. (Inverse of {@link #EQUALS}.
+     * Checks whether or not a expected object does not equal the actual value. If both values are {@code null}, are
+     * equal, or are the same object, {@code false} is returned. If either value is {@code null} or they do not
+     * equal {@code true} is returned. (Inverse of {@link #EQUALS}.
      */
     NOT_EQUAL((expected, actual) -> !EQUALS.test(expected, actual)),
 
@@ -123,8 +123,8 @@ public enum FilterTypes implements FilterType {
         if (null == expected || null == actual || null == expectedType) {
             return false;
         }
-        return SeleneUtils.isAssignableFrom(expectedType, expected.getClass())
-                && SeleneUtils.isAssignableFrom(expectedType, actual.getClass());
+        return SeleneUtils.REFLECTION.isAssignableFrom(expectedType, expected.getClass())
+                && SeleneUtils.REFLECTION.isAssignableFrom(expectedType, actual.getClass());
     }
 
     private static boolean bothNull(Object expected, Object actual) {

@@ -28,7 +28,7 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.selene.core.DiscordUtils;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.DiscordCommand;
 import org.dockbox.selene.core.annotations.command.DiscordCommand.ListeningLevel;
 import org.dockbox.selene.core.events.discord.DiscordCommandContext;
@@ -47,7 +47,7 @@ import java.util.Map;
 
 public abstract class DefaultDiscordUtils implements DiscordUtils {
 
-    private static final Map<String, Triad<DiscordCommand, Method, Object>> commandMethods = SeleneUtils.emptyConcurrentMap();
+    private static final Map<String, Triad<DiscordCommand, Method, Object>> commandMethods = SeleneUtils.COLLECTION.emptyConcurrentMap();
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String WILDCARD = "*";
 
@@ -108,7 +108,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @Override
     public void registerCommandListener(@NotNull Object instance) {
         Object obj = instance;
-        if (instance instanceof Class) obj = SeleneUtils.getInstance((Class<?>) instance);
+        if (instance instanceof Class) obj = SeleneUtils.REFLECTION.getInstance((Class<?>) instance);
 
         Arrays.stream(obj.getClass().getDeclaredMethods())
                 .filter(m -> m.isAnnotationPresent(DiscordCommand.class))

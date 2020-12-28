@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.text.pagination;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.text.Text;
 
@@ -31,7 +31,7 @@ public abstract class PaginationBuilder {
     protected Text title;
 
     protected int linesPerPage = 10;
-    protected List<Text> content = SeleneUtils.emptyConcurrentList();
+    protected List<Text> content = SeleneUtils.COLLECTION.emptyConcurrentList();
 
     public PaginationBuilder padding(Text padding) {
         this.padding = padding;

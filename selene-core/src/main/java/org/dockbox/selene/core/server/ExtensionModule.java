@@ -19,13 +19,13 @@ package org.dockbox.selene.core.server;
 
 import com.google.inject.AbstractModule;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Collection;
 
 final class ExtensionModule extends AbstractModule {
 
-    private final Collection<InternalBinding<Object>> bindings = SeleneUtils.emptyConcurrentList();
+    private final Collection<InternalBinding<Object>> bindings = SeleneUtils.COLLECTION.emptyConcurrentList();
 
     @Override
     protected void configure() {

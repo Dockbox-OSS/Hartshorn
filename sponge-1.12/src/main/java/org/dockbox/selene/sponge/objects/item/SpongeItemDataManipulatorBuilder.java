@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.item;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataView;
@@ -48,7 +48,7 @@ public class SpongeItemDataManipulatorBuilder extends AbstractDataBuilder<Mutabl
     protected @NotNull Optional<MutableSpongeItemData> buildContent(DataView container) throws InvalidDataException {
         if(container.contains(SpongeItem.ITEM_KEY.getQuery())) {
             final Map<?, ?> unsafeData = container.getMap(SpongeItem.ITEM_KEY.getQuery()).get();
-            Map<String, Object> safeData = SeleneUtils.emptyMap();
+            Map<String, Object> safeData = SeleneUtils.COLLECTION.emptyMap();
             unsafeData.forEach((k, v) -> safeData.put(k.toString(), v));
 
             MutableSpongeItemData data = this.create();

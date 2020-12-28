@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.i18n.entry;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
@@ -106,7 +106,7 @@ public enum IntegratedResource implements ResourceEntry {
     ;
 
     private final String key;
-    private final Map<Language, String> translations = SeleneUtils.emptyConcurrentMap();
+    private final Map<Language, String> translations = SeleneUtils.COLLECTION.emptyConcurrentMap();
     private String value;
 
     IntegratedResource(String value, String key) {

@@ -18,7 +18,7 @@
 package org.dockbox.selene.integrated.data.table;
 
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ import java.util.Set;
 
 public class TableRow {
 
-    private final Map<ColumnIdentifier<?>, Object> data = SeleneUtils.emptyMap();
+    private final Map<ColumnIdentifier<?>, Object> data = SeleneUtils.COLLECTION.emptyMap();
 
     public TableRow() { }
 
@@ -40,7 +40,7 @@ public class TableRow {
     @NotNull
     public TableRow addValue(@NotNull ColumnIdentifier<?> column, @Nullable Object value) {
         // Make sure both the Identifier and the Value are both the same type
-        if (null == value || SeleneUtils.isAssignableFrom(column.getType(), value.getClass()))
+        if (null == value || SeleneUtils.REFLECTION.isAssignableFrom(column.getType(), value.getClass()))
             this.data.put(column, value);
         else
             throw new IllegalArgumentException(
@@ -70,7 +70,7 @@ public class TableRow {
      */
     @NotNull
     public Set<Object> getValues() {
-        return SeleneUtils.asUnmodifiableSet(this.data.values());
+        return SeleneUtils.COLLECTION.asUnmodifiableSet(this.data.values());
     }
 
     /**
@@ -78,13 +78,13 @@ public class TableRow {
      */
     @NotNull
     public Set<ColumnIdentifier<?>> getColumns() {
-        return SeleneUtils.asUnmodifiableSet(this.data.keySet());
+        return SeleneUtils.COLLECTION.asUnmodifiableSet(this.data.keySet());
     }
 
     @Override
     public String toString() {
         return "TableRow{" +
-                "data=" + data +
+                "data=" + this.data +
                 '}';
     }
 }

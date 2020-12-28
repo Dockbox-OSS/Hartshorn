@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.integrated.sql;
 
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.Table;
 import org.dockbox.selene.integrated.data.table.TableRow;
 import org.dockbox.selene.integrated.data.table.column.ColumnIdentifier;
@@ -53,7 +53,7 @@ import java.util.Map;
  */
 public abstract class SQLMan<T> implements ISQLMan<T> {
 
-    private final Map<String, ColumnIdentifier<?>> identifiers = SeleneUtils.emptyMap();
+    private final Map<String, ColumnIdentifier<?>> identifiers = SeleneUtils.COLLECTION.emptyMap();
     private Boolean resetOnStore;
 
     /**
@@ -135,7 +135,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     }
 
     private List<ColumnIdentifier<?>> getIdentifiers(Result<Record> results) {
-        List<ColumnIdentifier<?>> identifiers = SeleneUtils.emptyList();
+        List<ColumnIdentifier<?>> identifiers = SeleneUtils.COLLECTION.emptyList();
         for (Field<?> field : results.get(0).fields()) {
             String name = field.getName();
 
@@ -282,13 +282,13 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        SeleneUtils.getSubProperties(SQLColumnProperty.class, properties)
+        SeleneUtils.KEYS.getSubProperties(SQLColumnProperty.class, properties)
                 .forEach(property -> {
                     Tuple<String, ColumnIdentifier<?>> identifier = property.getObject();
                     this.identifiers.put(identifier.getKey(), identifier.getValue());
                 });
 
-        this.resetOnStore = SeleneUtils.getPropertyValue(
+        this.resetOnStore = SeleneUtils.KEYS.getPropertyValue(
                 SQLResetBehaviorProperty.KEY,
                 Boolean.class,
                 properties)

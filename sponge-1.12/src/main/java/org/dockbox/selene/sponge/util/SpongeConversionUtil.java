@@ -23,7 +23,6 @@ import com.magitechserver.magibridge.util.BridgeCommandSource;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.sponge.adapter.impl.Sponge_1_12_2_Impl;
 
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
 import org.dockbox.selene.core.exceptions.TypeConversionException;
@@ -46,6 +45,7 @@ import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
 import org.dockbox.selene.core.text.pagination.Pagination;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.discord.MagiBridgeCommandSource;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
@@ -92,24 +92,24 @@ import java.util.stream.Collectors;
 public enum SpongeConversionUtil {
     ;
 
-    private static final Map<TextColor, Character> textColors = SeleneUtils.ofEntries(
-            SeleneUtils.entry(TextColors.BLACK, '0'),
-            SeleneUtils.entry(TextColors.DARK_BLUE, '1'),
-            SeleneUtils.entry(TextColors.DARK_GREEN, '2'),
-            SeleneUtils.entry(TextColors.DARK_AQUA, '3'),
-            SeleneUtils.entry(TextColors.DARK_RED, '4'),
-            SeleneUtils.entry(TextColors.DARK_PURPLE, '5'),
-            SeleneUtils.entry(TextColors.GOLD, '6'),
-            SeleneUtils.entry(TextColors.GRAY, '7'),
-            SeleneUtils.entry(TextColors.DARK_GRAY, '8'),
-            SeleneUtils.entry(TextColors.BLUE, '9'),
-            SeleneUtils.entry(TextColors.GREEN, 'a'),
-            SeleneUtils.entry(TextColors.AQUA, 'b'),
-            SeleneUtils.entry(TextColors.RED, 'c'),
-            SeleneUtils.entry(TextColors.LIGHT_PURPLE, 'd'),
-            SeleneUtils.entry(TextColors.YELLOW, 'e'),
-            SeleneUtils.entry(TextColors.WHITE, 'f'),
-            SeleneUtils.entry(TextColors.RESET, 'r')
+    private static final Map<TextColor, Character> textColors = SeleneUtils.COLLECTION.ofEntries(
+            SeleneUtils.COLLECTION.entry(TextColors.BLACK, '0'),
+            SeleneUtils.COLLECTION.entry(TextColors.DARK_BLUE, '1'),
+            SeleneUtils.COLLECTION.entry(TextColors.DARK_GREEN, '2'),
+            SeleneUtils.COLLECTION.entry(TextColors.DARK_AQUA, '3'),
+            SeleneUtils.COLLECTION.entry(TextColors.DARK_RED, '4'),
+            SeleneUtils.COLLECTION.entry(TextColors.DARK_PURPLE, '5'),
+            SeleneUtils.COLLECTION.entry(TextColors.GOLD, '6'),
+            SeleneUtils.COLLECTION.entry(TextColors.GRAY, '7'),
+            SeleneUtils.COLLECTION.entry(TextColors.DARK_GRAY, '8'),
+            SeleneUtils.COLLECTION.entry(TextColors.BLUE, '9'),
+            SeleneUtils.COLLECTION.entry(TextColors.GREEN, 'a'),
+            SeleneUtils.COLLECTION.entry(TextColors.AQUA, 'b'),
+            SeleneUtils.COLLECTION.entry(TextColors.RED, 'c'),
+            SeleneUtils.COLLECTION.entry(TextColors.LIGHT_PURPLE, 'd'),
+            SeleneUtils.COLLECTION.entry(TextColors.YELLOW, 'e'),
+            SeleneUtils.COLLECTION.entry(TextColors.WHITE, 'f'),
+            SeleneUtils.COLLECTION.entry(TextColors.RESET, 'r')
     );
 
     @NotNull
@@ -388,11 +388,11 @@ public enum SpongeConversionUtil {
     private static String fromSponge(TextStyle style) {
         final char styleChar = org.dockbox.selene.core.text.Text.sectionSymbol;
         String styleString = styleChar + "r";
-        if (SeleneUtils.unwrap(style.isBold())) styleString += styleChar + 'l';
-        if (SeleneUtils.unwrap(style.isItalic())) styleString += styleChar + 'o';
-        if (SeleneUtils.unwrap(style.isObfuscated())) styleString += styleChar + 'k';
-        if (SeleneUtils.unwrap(style.hasUnderline())) styleString += styleChar + 'n';
-        if (SeleneUtils.unwrap(style.hasStrikethrough())) styleString += styleChar + 'm';
+        if (SeleneUtils.OTHER.unwrap(style.isBold())) styleString += styleChar + 'l';
+        if (SeleneUtils.OTHER.unwrap(style.isItalic())) styleString += styleChar + 'o';
+        if (SeleneUtils.OTHER.unwrap(style.isObfuscated())) styleString += styleChar + 'k';
+        if (SeleneUtils.OTHER.unwrap(style.hasUnderline())) styleString += styleChar + 'n';
+        if (SeleneUtils.OTHER.unwrap(style.hasStrikethrough())) styleString += styleChar + 'm';
         return styleString;
     }
 
@@ -480,7 +480,7 @@ public enum SpongeConversionUtil {
 
     public static Exceptional<Item<?>> throughSponge(BaseBlock block) {
         try {
-            Exceptional<BlockState> state = SeleneUtils.getMethodValue(
+            Exceptional<BlockState> state = SeleneUtils.REFLECTION.getMethodValue(
                     com.sk89q.worldedit.sponge.SpongeWorld.class,
                     new Sponge_1_12_2_Impl(),
                     "getBlockState",

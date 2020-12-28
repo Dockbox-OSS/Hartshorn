@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.events.world;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.events.AbstractCancellableEvent;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.location.WorldProperties;
@@ -105,7 +105,7 @@ public abstract class WorldEvent extends AbstractCancellableEvent {
         private final String name;
         private final UUID uniqueId;
 
-        private final Map<String, String> rules = SeleneUtils.emptyConcurrentMap();
+        private final Map<String, String> rules = SeleneUtils.COLLECTION.emptyConcurrentMap();
 
         public WorldCreatingProperties(String name, UUID uniqueId, boolean loadOnStartup, Vector3N spawnPosition,
                                        long seed, Gamemode defaultGamemode, Map<String, String> gamerules) {

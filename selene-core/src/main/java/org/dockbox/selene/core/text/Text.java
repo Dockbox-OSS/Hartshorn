@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.text;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
@@ -40,7 +40,7 @@ public class Text {
     public static final char sectionSymbol = '\u00A7';
     private static final String legacyRegexFormat = "[\\$|&][0-9a-fklmnor]";
     private static final String styleChars = "01234567890abcdefklmnor";
-    private final List<Text> extra = SeleneUtils.emptyConcurrentList();
+    private final List<Text> extra = SeleneUtils.COLLECTION.emptyConcurrentList();
     private String text;
     private ClickAction<?> clickAction;
     private HoverAction<?> hoverAction;
@@ -138,7 +138,7 @@ public class Text {
     }
 
     public List<Text> getParts() {
-        List<Text> parts = SeleneUtils.emptyList();
+        List<Text> parts = SeleneUtils.COLLECTION.emptyList();
         parts.add(this);
         parts.addAll(this.getExtra());
         return parts;

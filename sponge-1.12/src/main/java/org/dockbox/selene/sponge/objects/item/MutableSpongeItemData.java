@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.item;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
@@ -36,14 +36,14 @@ public class MutableSpongeItemData extends AbstractData<MutableSpongeItemData, I
         this.registerGettersAndSetters();
     }
 
-    private final Map<String, Object> data = SeleneUtils.emptyMap();
+    private final Map<String, Object> data = SeleneUtils.COLLECTION.emptyMap();
 
     @Override
     protected void registerGettersAndSetters() {
         this.registerFieldGetter(SpongeItem.ITEM_KEY, () -> this.data);
         this.registerFieldSetter(SpongeItem.ITEM_KEY, this::fillData);
         this.registerKeyValue(SpongeItem.ITEM_KEY, () ->
-                Sponge.getRegistry().getValueFactory().createMapValue(SpongeItem.ITEM_KEY, this.data, SeleneUtils.emptyMap()));
+                Sponge.getRegistry().getValueFactory().createMapValue(SpongeItem.ITEM_KEY, this.data, SeleneUtils.COLLECTION.emptyMap()));
     }
 
     @Override

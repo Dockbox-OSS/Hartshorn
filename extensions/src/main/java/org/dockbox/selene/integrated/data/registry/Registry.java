@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.data.registry;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -32,7 +32,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class Registry<V> {
 
-    private final Map<RegistryIdentifier, RegistryColumn<V>> data = SeleneUtils.emptyConcurrentMap();
+    private final Map<RegistryIdentifier, RegistryColumn<V>> data = SeleneUtils.COLLECTION.emptyConcurrentMap();
 
     /**
      * Adds a column of data to the Registry. <B>Note</B> this will override an existing column

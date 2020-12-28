@@ -19,7 +19,6 @@ package org.dockbox.selene.core.impl.extension;
 
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.extension.Disabled;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.extension.ExtensionContext;
@@ -29,6 +28,7 @@ import org.dockbox.selene.core.impl.SimpleExtensionContext;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,8 +42,8 @@ import java.util.stream.Collectors;
 @Singleton
 public class SimpleExtensionManager implements ExtensionManager {
 
-    private static final Collection<SimpleExtensionContext> globalContexts = SeleneUtils.emptyConcurrentList();
-    private static final Map<String, Object> instanceMappings = SeleneUtils.emptyConcurrentMap();
+    private static final Collection<SimpleExtensionContext> globalContexts = SeleneUtils.COLLECTION.emptyConcurrentList();
+    private static final Map<String, Object> instanceMappings = SeleneUtils.COLLECTION.emptyConcurrentMap();
 
     @NotNull
     @Override
@@ -86,8 +86,7 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public List<ExtensionContext> initialiseExtensions() {
-        Collection<Class<?>> annotatedTypes = SeleneUtils
-                .getAnnotatedTypes(Selene.PACKAGE_PREFIX, Extension.class);
+        Collection<Class<?>> annotatedTypes = SeleneUtils.REFLECTION.getAnnotatedTypes(Selene.PACKAGE_PREFIX, Extension.class);
         Selene.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
         return annotatedTypes.stream()
                 .filter(type -> !type.isAnnotationPresent(Disabled.class))
@@ -125,12 +124,12 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public List<String> getRegisteredExtensionIds() {
-        return SeleneUtils.asList(instanceMappings.keySet());
+        return SeleneUtils.COLLECTION.asList(instanceMappings.keySet());
     }
 
     private <T> boolean createComponentInstance(Class<T> entry, ExtensionContext context) {
         Extension header = entry.getAnnotation(Extension.class);
-        List<Extension> existingHeaders = SeleneUtils.emptyList();
+        List<Extension> existingHeaders = SeleneUtils.COLLECTION.emptyList();
         globalContexts.forEach(ctx -> existingHeaders.add(ctx.getExtension()));
         //noinspection CallToSuspiciousStringMethod
         if (existingHeaders.stream().anyMatch(e -> e.uniqueId().equals(header.uniqueId()))) {

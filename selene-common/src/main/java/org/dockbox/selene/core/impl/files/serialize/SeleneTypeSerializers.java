@@ -19,7 +19,7 @@ package org.dockbox.selene.core.impl.files.serialize;
 
 import com.google.common.reflect.TypeToken;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.server.Selene;
 
@@ -49,7 +49,7 @@ public final class SeleneTypeSerializers {
      * The transient {@link Collection} holding all known {@link SerializerInformation} instances, which can be
      * used to register the associated {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializer}s.
      */
-    static final transient Collection<SerializerInformation<?>> serializerInformation = SeleneUtils.emptyConcurrentList();
+    static final transient Collection<SerializerInformation<?>> serializerInformation = SeleneUtils.COLLECTION.emptyConcurrentList();
 
     static {
         try {

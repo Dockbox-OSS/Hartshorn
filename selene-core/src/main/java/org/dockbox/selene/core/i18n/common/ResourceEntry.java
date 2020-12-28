@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.i18n.common;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.text.Text;
 
@@ -81,7 +81,7 @@ public interface ResourceEntry extends Formattable {
     default String formatCustom(String m, Object... args) {
         String temp = m;
         if (0 == args.length) return temp;
-        Map<String, String> map = SeleneUtils.emptyMap();
+        Map<String, String> map = SeleneUtils.COLLECTION.emptyMap();
 
         for (int i = 0; i < args.length; i++) {
             String arg = "" + args[i];

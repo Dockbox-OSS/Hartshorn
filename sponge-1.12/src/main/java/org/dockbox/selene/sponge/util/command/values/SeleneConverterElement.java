@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
@@ -53,12 +53,12 @@ final class SeleneConverterElement extends CommandElement {
     @Override
     public List<String> complete(@NotNull CommandSource src, CommandArgs args, @NotNull CommandContext context) {
         try {
-            return SeleneUtils.asList(this.argument.getSuggestions(
+            return SeleneUtils.COLLECTION.asList(this.argument.getSuggestions(
                     SpongeConversionUtil.fromSponge(src).get(),
                     args.next()
             ));
         } catch (ArgumentParseException e) {
-            return SeleneUtils.emptyList();
+            return SeleneUtils.COLLECTION.emptyList();
         }
     }
 }

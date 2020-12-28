@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.impl.command.registration;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.source.CommandSource;
@@ -30,7 +30,7 @@ import java.util.UUID;
 
 public abstract class AbstractRegistrationContext {
 
-    private final List<String> aliases = SeleneUtils.emptyConcurrentList();
+    private final List<String> aliases = SeleneUtils.COLLECTION.emptyConcurrentList();
     private final Command command;
 
     protected AbstractRegistrationContext(Command command) {

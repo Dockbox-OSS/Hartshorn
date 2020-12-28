@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.core.events.chat;
 
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.event.filter.Filter;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent;
 import org.dockbox.selene.core.events.parents.Filterable;
 import org.dockbox.selene.core.events.processing.FilterType;
 import org.dockbox.selene.core.events.processing.FilterTypes;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -87,6 +87,6 @@ public class NativeCommandEvent extends AbstractTargetCancellableEvent implement
 
     @Override
     public List<String> acceptedParams() {
-        return SeleneUtils.asUnmodifiableList("alias", "args", "arguments", "command");
+        return SeleneUtils.COLLECTION.asUnmodifiableList("alias", "args", "arguments", "command");
     }
 }

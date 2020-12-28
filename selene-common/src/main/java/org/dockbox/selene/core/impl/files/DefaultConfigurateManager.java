@@ -19,7 +19,7 @@ package org.dockbox.selene.core.impl.files;
 
 import com.google.common.reflect.TypeToken;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.files.ConfigurateManager;
 import org.dockbox.selene.core.files.FileType;
@@ -100,7 +100,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
 
             final T content = mapper.bindToNew().populate(node);
 
-            if (SeleneUtils.isFileEmpty(file)) {
+            if (SeleneUtils.OTHER.isFileEmpty(file)) {
                 this.writeFileContent(file, content);
             }
 
@@ -182,13 +182,13 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @NotNull
     @Override
     public Path createPathIfNotExists(@NotNull Path path) {
-        return SeleneUtils.createPathIfNotExists(path);
+        return SeleneUtils.OTHER.createPathIfNotExists(path);
     }
 
     @NotNull
     @Override
     public Path createFileIfNotExists(@NotNull Path file) {
-        return SeleneUtils.createFileIfNotExists(file);
+        return SeleneUtils.OTHER.createFileIfNotExists(file);
     }
 
 }

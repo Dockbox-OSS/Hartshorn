@@ -20,7 +20,7 @@ package org.dockbox.selene.integrated.server;
 import com.sk89q.worldedit.blocks.BaseBlock;
 
 import org.dockbox.selene.core.ConstructionUtil;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.CommandBus;
@@ -62,10 +62,10 @@ public class IntegratedServerExtension implements IntegratedExtension {
     // Parent command
     @Command(aliases = "", usage = "")
     public void debugExtensions(MessageReceiver source) {
-        SeleneUtils.runWithInstance(ExtensionManager.class, em -> {
+        SeleneUtils.REFLECTION.runWithInstance(ExtensionManager.class, em -> {
             PaginationBuilder pb = Selene.getInstance(ConstructionUtil.class).paginationBuilder();
 
-            List<Text> content = SeleneUtils.emptyList();
+            List<Text> content = SeleneUtils.COLLECTION.emptyList();
             content.add(Text.of(IntegratedServerResources.SERVER_HEADER.format(Selene.getServer().getVersion())));
             content.add(Text.of(IntegratedServerResources.SERVER_UPDATE.format(Selene.getServer().getLastUpdate())));
             content.add(Text.of(IntegratedServerResources.SERVER_AUTHORS.format(String.join(",", Selene.getServer().getAuthors()))));
@@ -93,7 +93,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "extension", usage = "extension <id{Extension}>")
     public void debugExtension(MessageReceiver src, CommandContext ctx) {
-        SeleneUtils.runWithInstance(ExtensionManager.class, em -> {
+        SeleneUtils.REFLECTION.runWithInstance(ExtensionManager.class, em -> {
             Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
@@ -157,9 +157,8 @@ public class IntegratedServerExtension implements IntegratedExtension {
         optionalCooldownId
                 .ifPresent(cooldownId -> {
                     String cid = cooldownId.getValue();
-                    Selene.getInstance(CommandBus.class).confirmCommand(cid).ifAbsent(() -> {
-                        src.send(IntegratedServerResources.CONFIRM_FAILED);
-                    });
+                    Selene.getInstance(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
+                            src.send(IntegratedServerResources.CONFIRM_FAILED));
                 })
                 .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));
     }

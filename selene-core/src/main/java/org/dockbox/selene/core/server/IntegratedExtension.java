@@ -24,7 +24,7 @@ import org.dockbox.selene.core.objects.targets.MessageReceiver;
 /**
  * Low-level interface, used by the default IntegratedExtension as indicated by the mappings provided by the platform
  * implementation. Used to access the extension when {@link Selene} is used
- * in a {@link org.dockbox.selene.core.SeleneUtils#getExtension(Class) SeleneUtils' getExtension} method call.
+ * in a {@link org.dockbox.selene.core.util.ReflectionUtil#getExtension(Class) SeleneUtils' getExtension} method call.
  */
 public interface IntegratedExtension {
 

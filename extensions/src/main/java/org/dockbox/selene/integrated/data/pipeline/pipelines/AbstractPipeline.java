@@ -17,8 +17,9 @@
 
 package org.dockbox.selene.integrated.data.pipeline.pipelines;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.util.CollectionUtil;
 import org.dockbox.selene.integrated.data.pipeline.CancelBehaviour;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipeException;
 import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractPipeline<P, I> {
 
-    private final List<IPipe<I, I>> pipes = SeleneUtils.emptyList();
+    private final List<IPipe<I, I>> pipes = SeleneUtils.COLLECTION.emptyList();
     private boolean isCancelled;
     private CancelBehaviour cancelBehaviour = CancelBehaviour.UNCANCELLABLE;
 
@@ -144,7 +145,7 @@ public abstract class AbstractPipeline<P, I> {
      *         If you try and add a {@link CancellablePipe} and the pipeline is not cancellable
      */
     protected Exceptional<I> processPipe(IPipe<I, I> pipe, Exceptional<I> exceptionalInput) {
-        if (!this.isCancellable() && SeleneUtils.isAssignableFrom(CancellablePipe.class, pipe.getType())) {
+        if (!this.isCancellable() && SeleneUtils.REFLECTION.isAssignableFrom(CancellablePipe.class, pipe.getType())) {
             throw new IllegalPipeException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
         }
 
@@ -152,10 +153,10 @@ public abstract class AbstractPipeline<P, I> {
         final Exceptional<I> finalInput = exceptionalInput;
 
         exceptionalInput = Exceptional.of(() -> {
-            if (SeleneUtils.isAssignableFrom(ComplexPipe.class, pipe.getType())) {
+            if (SeleneUtils.REFLECTION.isAssignableFrom(ComplexPipe.class, pipe.getType())) {
                 ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
                 return complexPipe.apply(this, finalInput.orElse(null), finalInput.orElseExcept(null));
-            } else if (SeleneUtils.isAssignableFrom(StandardPipe.class, pipe.getType())) {
+            } else if (SeleneUtils.REFLECTION.isAssignableFrom(StandardPipe.class, pipe.getType())) {
                 StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
                 return standardPipe.apply(finalInput);
             } else {
@@ -317,7 +318,7 @@ public abstract class AbstractPipeline<P, I> {
      * @return An unmodifiabe list of the {@link IPipe}s in the pipeline
      */
     public List<IPipe<I, I>> getPipes() {
-        return SeleneUtils.asUnmodifiableList(this.pipes);
+        return SeleneUtils.COLLECTION.asUnmodifiableList(this.pipes);
     }
 
     /**

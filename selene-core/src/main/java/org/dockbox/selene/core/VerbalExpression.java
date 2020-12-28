@@ -21,6 +21,8 @@
  */
 package org.dockbox.selene.core;
 
+import org.dockbox.selene.core.util.SeleneUtils;
+
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -180,7 +182,7 @@ public final class VerbalExpression {
      * @return list of extracted groups
      */
     public List<String> getTextGroups(final String toTest, final int group) {
-        List<String> groups = SeleneUtils.emptyList();
+        List<String> groups = SeleneUtils.COLLECTION.emptyList();
         Matcher m = this.pattern.matcher(toTest);
         while (m.find()) {
             groups.add(m.group(group));
@@ -195,14 +197,14 @@ public final class VerbalExpression {
 
     public static class Builder {
 
-        private static final Map<Character, Integer> SYMBOL_MAP = SeleneUtils.ofEntries(
-                SeleneUtils.entry('d', Pattern.UNIX_LINES),
-                SeleneUtils.entry('i', Pattern.CASE_INSENSITIVE),
-                SeleneUtils.entry('x', Pattern.COMMENTS),
-                SeleneUtils.entry('m', Pattern.MULTILINE),
-                SeleneUtils.entry('s', Pattern.DOTALL),
-                SeleneUtils.entry('u', Pattern.UNICODE_CASE),
-                SeleneUtils.entry('U', Pattern.UNICODE_CHARACTER_CLASS)
+        private static final Map<Character, Integer> SYMBOL_MAP = SeleneUtils.COLLECTION.ofEntries(
+                SeleneUtils.COLLECTION.entry('d', Pattern.UNIX_LINES),
+                SeleneUtils.COLLECTION.entry('i', Pattern.CASE_INSENSITIVE),
+                SeleneUtils.COLLECTION.entry('x', Pattern.COMMENTS),
+                SeleneUtils.COLLECTION.entry('m', Pattern.MULTILINE),
+                SeleneUtils.COLLECTION.entry('s', Pattern.DOTALL),
+                SeleneUtils.COLLECTION.entry('u', Pattern.UNICODE_CASE),
+                SeleneUtils.COLLECTION.entry('U', Pattern.UNICODE_CHARACTER_CLASS)
         );
         private final StringBuilder source = new StringBuilder();
         private StringBuilder prefixes = new StringBuilder();

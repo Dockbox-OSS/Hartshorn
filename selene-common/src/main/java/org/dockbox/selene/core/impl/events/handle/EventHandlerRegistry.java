@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.core.impl.events.handle;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.events.parents.Event;
 
 import java.util.Map;
 
 public final class EventHandlerRegistry {
-    private final Map<Class<? extends Event>, EventHandler> handlers = SeleneUtils.emptyMap();
+    private final Map<Class<? extends Event>, EventHandler> handlers = SeleneUtils.COLLECTION.emptyMap();
 
     public EventHandler getHandler(Class<? extends Event> type) {
         EventHandler handler = this.handlers.get(type);

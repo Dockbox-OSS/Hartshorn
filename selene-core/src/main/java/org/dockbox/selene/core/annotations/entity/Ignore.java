@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.annotations.entity;
 
-import org.dockbox.selene.core.SeleneUtils.Provision;
+import org.dockbox.selene.core.util.SeleneUtils.Provision;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,7 +27,7 @@ import java.util.function.Function;
 
 /**
  * The interface to mark a object field as ignored when generating objects using
- * {@link org.dockbox.selene.core.SeleneUtils#tryCreate(Class, Function, boolean, Provision)}
+ * {@link org.dockbox.selene.core.util.ReflectionUtil#tryCreate(Class, Function, boolean, Provision)}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

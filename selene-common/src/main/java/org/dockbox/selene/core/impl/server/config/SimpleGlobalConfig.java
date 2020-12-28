@@ -20,7 +20,7 @@ package org.dockbox.selene.core.impl.server.config;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.server.IntegratedExtension;
@@ -105,7 +105,7 @@ public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Extension extension = SeleneUtils.getExtension(this.integratedExtension.getClass());
+        Extension extension = SeleneUtils.REFLECTION.getExtension(this.integratedExtension.getClass());
         if (null == extension) {
             throw new IllegalStateException("Integrated extension not annotated as such.");
         }

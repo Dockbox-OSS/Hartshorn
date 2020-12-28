@@ -20,7 +20,7 @@ package org.dockbox.selene.sponge.util.command;
 import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
@@ -186,8 +186,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
             return SimpleCommandContext.EMPTY;
         }
 
-        List<CommandValue.Argument<?>> arguments = SeleneUtils.emptyList();
-        List<CommandValue.Flag<?>> flags = SeleneUtils.emptyList();
+        List<CommandValue.Argument<?>> arguments = SeleneUtils.COLLECTION.emptyList();
+        List<CommandValue.Flag<?>> flags = SeleneUtils.COLLECTION.emptyList();
 
         assert null != command : "Context carrier command was null";
         parsedArgs.asMap().forEach((key, parsedArguments) -> parsedArguments.forEach(obj -> {

@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.impl;
 
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionStatus;
@@ -35,7 +35,7 @@ public class SimpleExtensionContext implements ExtensionContext {
 
     // EntryStatus is typically reserved for multi-class registrations. For integrated extensions this will typically
     // only contain one value, however external extensions multiple classes marked as @Extension may be present.
-    private final Map<Class<?>, ExtensionStatus> entryStatus = SeleneUtils.emptyConcurrentMap();
+    private final Map<Class<?>, ExtensionStatus> entryStatus = SeleneUtils.COLLECTION.emptyConcurrentMap();
 
     public SimpleExtensionContext(String source, Class<?> extensionClass, Extension extension) {
         this.setSource(source);

@@ -53,7 +53,7 @@ import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordUserUnbannedEv
 import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.DiscordUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,7 +90,7 @@ public class SpongeDiscordListener extends ListenerAdapter {
             alias = alias.replaceFirst("\\*", ""); // Remove prefix
 
             // Wrapped in ArrayList as Arrays.asList is immutable by default
-            List<String> arguments = SeleneUtils.asList(Arrays.asList(parts));
+            List<String> arguments = SeleneUtils.COLLECTION.asList(Arrays.asList(parts));
             arguments.remove(0); // Remove command
 
             DiscordCommandContext ctx = new DiscordCommandContext(

@@ -17,9 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.item;
 
-import com.sk89q.worldedit.blocks.BaseBlock;
-
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
@@ -158,8 +156,8 @@ public class SpongeItem extends Item<ItemStack> {
     @Override
     public List<Enchant> getEnchantments() {
         List<org.spongepowered.api.item.enchantment.Enchantment> enchantments = this.getReference()
-                .map(i -> i.get(Keys.ITEM_ENCHANTMENTS).orElse(SeleneUtils.emptyList()))
-                .orElse(SeleneUtils.emptyList());
+                .map(i -> i.get(Keys.ITEM_ENCHANTMENTS).orElse(SeleneUtils.COLLECTION.emptyList()))
+                .orElse(SeleneUtils.COLLECTION.emptyList());
         return enchantments.stream().map(SpongeConversionUtil::fromSponge).filter(Exceptional::isPresent).map(Exceptional::get).collect(Collectors.toList());
     }
 
@@ -211,7 +209,7 @@ public class SpongeItem extends Item<ItemStack> {
         if (!data.getData().containsKey(dataKey.getDataKeyId())) return Exceptional.empty();
 
         Object value = data.getData().get(dataKey.getDataKeyId());
-        if (SeleneUtils.isAssignableFrom(dataKey.getDataType(), value.getClass()))
+        if (SeleneUtils.REFLECTION.isAssignableFrom(dataKey.getDataType(), value.getClass()))
             return Exceptional.of((T) value);
 
         return Exceptional.empty();

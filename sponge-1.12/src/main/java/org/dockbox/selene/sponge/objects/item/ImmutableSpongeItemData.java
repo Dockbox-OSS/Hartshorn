@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.item;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class ImmutableSpongeItemData extends AbstractImmutableData<ImmutableSpongeItemData, MutableSpongeItemData> {
 
-    private final Map<String, Object> data = SeleneUtils.emptyMap();
+    private final Map<String, Object> data = SeleneUtils.COLLECTION.emptyMap();
 
     @Override
     public @NotNull MutableSpongeItemData asMutable() {
@@ -53,7 +53,7 @@ public class ImmutableSpongeItemData extends AbstractImmutableData<ImmutableSpon
                 Sponge.getRegistry().getValueFactory().createMapValue(
                         SpongeItem.ITEM_KEY,
                         this.data,
-                        SeleneUtils.emptyMap()).asImmutable()
+                        SeleneUtils.COLLECTION.emptyMap()).asImmutable()
         );
     }
 

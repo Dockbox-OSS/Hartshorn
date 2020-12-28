@@ -23,14 +23,14 @@ import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.command.context.CommandValue.Flag;
 import org.dockbox.selene.core.command.parsing.TypeParser;
+import org.dockbox.selene.core.command.source.CommandSource;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.command.source.CommandSource;
-import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnmodifiableView;
@@ -163,15 +163,15 @@ public class SimpleCommandContext implements CommandContext {
         CommandValue<?>[] arr = new CommandValue[0];
         switch (valType) {
             case ARGUMENT:
-                arr = SeleneUtils.shallowCopy(this.args);
+                arr = SeleneUtils.OTHER.shallowCopy(this.args);
                 break;
             case FLAG:
-                arr = SeleneUtils.shallowCopy(this.flags);
+                arr = SeleneUtils.OTHER.shallowCopy(this.flags);
                 break;
             case BOTH:
-                arr = SeleneUtils.addAll(
-                        SeleneUtils.shallowCopy(this.args),
-                        SeleneUtils.shallowCopy(this.flags));
+                arr = SeleneUtils.OTHER.addAll(
+                        SeleneUtils.OTHER.shallowCopy(this.args),
+                        SeleneUtils.OTHER.shallowCopy(this.flags));
                 break;
         }
         return this.getValueAs(key, type, arr);
@@ -184,7 +184,7 @@ public class SimpleCommandContext implements CommandContext {
         );
         if (candidate.isPresent()) {
             CommandValue<?> cv = candidate.get();
-            if (SeleneUtils.isAssignableFrom(type, cv.getValue().getClass())) return Exceptional.of((A) cv);
+            if (SeleneUtils.REFLECTION.isAssignableFrom(type, cv.getValue().getClass())) return Exceptional.of((A) cv);
         }
         return Exceptional.empty();
     }
@@ -192,25 +192,25 @@ public class SimpleCommandContext implements CommandContext {
     @NotNull
     @Override
     public <T> Exceptional<T> tryCreate(@NotNull Class<T> type) {
-        Map<String, Object> values = SeleneUtils.emptyMap();
+        Map<String, Object> values = SeleneUtils.COLLECTION.emptyMap();
         for (Argument<?> arg : this.args) values.put(arg.getKey(), arg.getValue());
         for (Flag<?> flag : this.flags) values.put(flag.getKey(), flag.getValue());
 
-        return SeleneUtils.tryCreateFromRaw(type, field -> {
+        return SeleneUtils.REFLECTION.tryCreateFromRaw(type, field -> {
             if (field.isAnnotationPresent(FromSource.class)) {
-                if (SeleneUtils.isAssignableFrom(Player.class, field.getType())) {
+                if (SeleneUtils.REFLECTION.isAssignableFrom(Player.class, field.getType())) {
                     if (this.sender instanceof Player) return this.sender;
-                } else if (SeleneUtils.isAssignableFrom(World.class, field.getType())) {
+                } else if (SeleneUtils.REFLECTION.isAssignableFrom(World.class, field.getType())) {
                     if (this.sender instanceof Locatable) return this.world;
-                } else if (SeleneUtils.isAssignableFrom(Location.class, field.getType())) {
+                } else if (SeleneUtils.REFLECTION.isAssignableFrom(Location.class, field.getType())) {
                     if (this.sender instanceof Locatable) return this.location;
-                } else if (SeleneUtils.isAssignableFrom(CommandSource.class, field.getType())) {
+                } else if (SeleneUtils.REFLECTION.isAssignableFrom(CommandSource.class, field.getType())) {
                     return this.sender;
                 } else {
                     Selene.log().warn("Field '" + field.getName() + "' has @FromSource annotation but cannot be provided [" + field.getType().getCanonicalName() + "]");
                 }
             }
-            return values.getOrDefault(SeleneUtils.processFieldName(field), null);
+            return values.getOrDefault(SeleneUtils.REFLECTION.processFieldName(field), null);
         }, true);
     }
 
@@ -219,15 +219,15 @@ public class SimpleCommandContext implements CommandContext {
     }
 
     public @UnmodifiableView @NotNull List<Argument<?>> getArgs() {
-        return SeleneUtils.asUnmodifiableList(this.args);
+        return SeleneUtils.COLLECTION.asUnmodifiableList(this.args);
     }
 
     public @UnmodifiableView @NotNull List<Flag<?>> getFlags() {
-        return SeleneUtils.asUnmodifiableList(this.flags);
+        return SeleneUtils.COLLECTION.asUnmodifiableList(this.flags);
     }
 
     public @UnmodifiableView @NotNull List<String> getPermissions() {
-        return SeleneUtils.asUnmodifiableList(this.permissions);
+        return SeleneUtils.COLLECTION.asUnmodifiableList(this.permissions);
     }
 
     public CommandSource getSender() {

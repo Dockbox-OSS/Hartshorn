@@ -25,7 +25,7 @@ import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
 import org.dockbox.selene.core.PlayerStorageService;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.parsing.ArgumentParser;
@@ -262,7 +262,7 @@ public class TypeArgumentParsers {
             }
 
             // ClassCastException caught by Exceptional supplier
-            return Exceptional.of(() -> (List<R>) SeleneUtils.asList(list));
+            return Exceptional.of(() -> (List<R>) SeleneUtils.COLLECTION.asList(list));
         }
     }
 
@@ -288,7 +288,7 @@ public class TypeArgumentParsers {
                 return Exceptional.of(new IllegalArgumentException("Row and value delimiters were equal while parsing map"));
             }
 
-            Map<String, String> map = SeleneUtils.emptyConcurrentMap();
+            Map<String, String> map = SeleneUtils.COLLECTION.emptyConcurrentMap();
             for (String entry : commandValue.getValue().split(this.rowDelimiter + "")) {
                 if (entry.contains(this.valueDelimiter + "")) {
                     String[] kv = entry.split(this.valueDelimiter + "");
@@ -315,9 +315,9 @@ public class TypeArgumentParsers {
         public WorldEditBlockParser() {
             super(value -> {
                 String[] idData = value.replace(" ", "").split(":");
-                if (idData.length > 0) {
+                if (0 < idData.length) {
                     int data = 0;
-                    if (idData.length == 2) data = Integer.parseInt(idData[1]);
+                    if (2 == idData.length) data = Integer.parseInt(idData[1]);
                     return new BaseBlock(Integer.parseInt(idData[0]), data);
                 }
                 //noinspection ReturnOfNull
@@ -400,7 +400,7 @@ public class TypeArgumentParsers {
                 time += this.amount(m.group(8), DurationParser.secondsInMinute);
                 time += this.amount(m.group(10), 1);
 
-                if (time > 0) {
+                if (0 < time) {
                     return Exceptional.of(Duration.ofSeconds(time));
                 }
             }

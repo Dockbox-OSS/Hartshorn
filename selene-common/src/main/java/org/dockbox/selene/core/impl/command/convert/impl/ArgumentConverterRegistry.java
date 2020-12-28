@@ -38,7 +38,7 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.PlayerStorageService;
@@ -50,10 +50,10 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@SuppressWarnings("ClassWithTooManyFields")
+@SuppressWarnings({"ClassWithTooManyFields", "unused"})
 public final class ArgumentConverterRegistry {
 
-    private static transient final Collection<ArgumentConverter<?>> CONVERTERS = SeleneUtils.emptyConcurrentList();
+    private static transient final Collection<ArgumentConverter<?>> CONVERTERS = SeleneUtils.COLLECTION.emptyConcurrentList();
 
     private ArgumentConverterRegistry() {
     }
@@ -87,7 +87,7 @@ public final class ArgumentConverterRegistry {
     private static <T> Exceptional<ArgumentConverter<T>> getOptionalConverter(Class<T> type) {
         //noinspection unchecked
         return Exceptional.of(CONVERTERS.stream()
-                .filter(converter -> SeleneUtils.isAssignableFrom(converter.getType(), type))
+                .filter(converter -> SeleneUtils.REFLECTION.isAssignableFrom(converter.getType(), type))
                 .map(converter -> (ArgumentConverter<T>) converter)
                 .findFirst());
     }
@@ -143,14 +143,14 @@ public final class ArgumentConverterRegistry {
     public static final ArgumentConverter<UUID> UUID = new ParserArgumentConverter<>(
             UUID.class,
             UuidParser::new,
-            s -> SeleneUtils.emptyList(),
+            s -> SeleneUtils.COLLECTION.emptyList(),
             "uuid", "uniqueid"
     );
 
     public static final ArgumentConverter<Location> LOCATION = new ParserArgumentConverter<>(
             Location.class,
             LocationParser::new,
-            s -> SeleneUtils.emptyList(),
+            s -> SeleneUtils.COLLECTION.emptyList(),
             "location", "loc", "position", "pos"
     );
 
@@ -164,10 +164,10 @@ public final class ArgumentConverterRegistry {
             "world", "dim", "dimension"
     );
 
-    public static final ArgumentConverter<String> STRING = new SimpleArgumentConverter<String>(
+    public static final ArgumentConverter<String> STRING = new SimpleArgumentConverter<>(
             String.class,
             Exceptional::of,
-            s -> SeleneUtils.emptyList(),
+            s -> SeleneUtils.COLLECTION.emptyList(),
             "string", "remaining", "remainingstring"
     );
 
@@ -188,7 +188,7 @@ public final class ArgumentConverterRegistry {
                 }
                 return Exceptional.empty();
             },
-            (source, s) -> SeleneUtils.emptyList(),
+            (source, s) -> SeleneUtils.COLLECTION.emptyList(),
             "mask"
     );
 
@@ -202,7 +202,7 @@ public final class ArgumentConverterRegistry {
                 }
                 return Exceptional.empty();
             },
-            (source, s) -> SeleneUtils.emptyList(),
+            (source, s) -> SeleneUtils.COLLECTION.emptyList(),
             "pattern"
     );
 

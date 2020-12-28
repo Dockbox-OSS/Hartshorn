@@ -19,7 +19,7 @@ package org.dockbox.selene.sponge.objects.location;
 
 import com.flowpowered.math.vector.Vector3i;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.FieldReferenceHolder;
 import org.dockbox.selene.core.objects.location.World;
@@ -134,7 +134,7 @@ public class SpongeWorld extends World {
         if (this.worldReference.referenceExists()) {
             return this.worldReference.getReference().get().getProperties().getGameRules();
         }
-        return SeleneUtils.emptyMap();
+        return SeleneUtils.COLLECTION.emptyMap();
     }
 
     @Override

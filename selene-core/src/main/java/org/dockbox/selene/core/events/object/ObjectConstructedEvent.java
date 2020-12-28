@@ -17,12 +17,13 @@
 
 package org.dockbox.selene.core.events.object;
 
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.event.filter.Filter;
 import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.events.parents.Filterable;
 import org.dockbox.selene.core.events.processing.FilterType;
 import org.dockbox.selene.core.events.processing.FilterTypes;
+import org.dockbox.selene.core.util.CollectionUtil;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.List;
 
@@ -64,11 +65,11 @@ public class ObjectConstructedEvent<T> implements Event, Filterable {
 
     @Override
     public List<FilterType> acceptedFilters() {
-        return SeleneUtils.asUnmodifiableList(FilterTypes.EQUALS);
+        return SeleneUtils.COLLECTION.asUnmodifiableList(FilterTypes.EQUALS);
     }
 
     @Override
     public List<String> acceptedParams() {
-        return SeleneUtils.asUnmodifiableList("type", "target", "class");
+        return SeleneUtils.COLLECTION.asUnmodifiableList("type", "target", "class");
     }
 }

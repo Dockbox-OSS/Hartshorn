@@ -28,7 +28,7 @@ import com.google.inject.ProvisionException;
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.ExceptionHelper;
 import org.dockbox.selene.core.MinecraftVersion;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.CommandBus;
@@ -79,7 +79,7 @@ public abstract class Selene {
 
     public static final String GLOBAL_BYPASS = "selene.admin.bypass-all";
     public static final String PACKAGE_PREFIX = "org.dockbox.selene";
-    public static final List<UUID> GLOBALLY_PERMITTED = SeleneUtils.asList(
+    public static final List<UUID> GLOBALLY_PERMITTED = SeleneUtils.COLLECTION.asList(
             UUID.fromString("6047d264-7769-4e50-a11e-c8b83f65ccc4"),
             UUID.fromString("cb6411bb-31c9-4d69-8000-b98842ce0a0a"),
             UUID.fromString("b7fb5e32-73ee-4f25-b256-a763c8739192")
@@ -91,7 +91,7 @@ public abstract class Selene {
     protected static final String[] authors = {"GuusLieben"};
     private static final Logger log = LoggerFactory.getLogger(Selene.class);
     private static Selene instance;
-    private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
+    private final transient List<AbstractModule> injectorModules = SeleneUtils.COLLECTION.emptyConcurrentList();
     private String version;
     private LocalDateTime lastUpdate;
 
@@ -390,7 +390,7 @@ public abstract class Selene {
     }
 
     private Map<Key<?>, Binding<?>> getAllBindings() {
-        Map<Key<?>, Binding<?>> bindings = SeleneUtils.emptyConcurrentMap();
+        Map<Key<?>, Binding<?>> bindings = SeleneUtils.COLLECTION.emptyConcurrentMap();
         this.createInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
             try {
                 Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();

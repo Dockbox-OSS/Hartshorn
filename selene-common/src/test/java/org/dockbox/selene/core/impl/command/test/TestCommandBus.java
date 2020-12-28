@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.core.impl.command.test;
 
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.impl.command.DefaultCommandBus;
 import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
 import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
 import org.dockbox.selene.core.impl.command.values.AbstractFlagCollection;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.List;
 
@@ -58,7 +58,7 @@ public class TestCommandBus extends DefaultCommandBus {
 
             @Override
             public List<AbstractArgumentElement<?>> buildAndCombines(AbstractArgumentElement<?> element) {
-                return SeleneUtils.asUnmodifiableList(element);
+                return SeleneUtils.COLLECTION.asUnmodifiableList(element);
             }
         };
     }
