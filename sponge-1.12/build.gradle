@@ -1,3 +1,5 @@
+import java.time.LocalDate
+
 /*
  *  Copyright (C) 2020 Guus Lieben
  *
@@ -24,6 +26,7 @@ archivesBaseName = 'sponge-1.12'
 group = project.pluginGroup
 description = 'Sponge API7.x implementation for Selene'
 sponge.plugin.id = pluginId
+def date = LocalDate.now().toString()
 
 repositories {
     maven {
@@ -48,4 +51,35 @@ dependencies {
     testCompileOnly project(':selene-core')
     testCompileOnly project(':selene-common')
     testCompileOnly project(':extensions')
+}
+
+//TODO: Configure pre-built binaries
+task spongeDevServer(dependsOn: build) {
+    def version = getVersionName()
+    def LIBS_DIR = "${buildDir}/libs"
+    def PLUGIN_DIR = "${rootDir}/servers/sponge-112/plugins"
+
+    delete fileTree(PLUGIN_DIR).matching {
+        include "**/*selene*.jar"
+    }
+
+    println("Copying from: $LIBS_DIR:")
+    println("$archivesBaseName-$version-${date}.jar")
+    println("Copying to: $PLUGIN_DIR")
+    ant.copy(todir: PLUGIN_DIR) {
+        fileset dir: LIBS_DIR,
+                includes: "$archivesBaseName-$version-${date}.jar"
+    }
+
+    doLast {
+        javaexec {
+            workingDir = "${project.rootDir}/servers/sponge-112"
+            main = "-jar";
+            args = [
+                    "${project.rootDir}/servers/sponge-112/forge-1.12.2-2709.jar",
+                    "-Xmx6G",
+                    "-Dsponge.debugcauseframes=true"
+            ]
+        }
+    }
 }
