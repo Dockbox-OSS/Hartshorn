@@ -27,6 +27,6 @@ import java.lang.annotation.Target;
  * creating a object using {@link org.dockbox.selene.core.command.context.CommandContext#tryCreate(Class)}.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface FromSource {
 }
