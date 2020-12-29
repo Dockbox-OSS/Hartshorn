@@ -409,7 +409,7 @@ public abstract class DefaultCommandBus implements CommandBus {
                     sender, ctx, command, registrationContext);
 
             if (response.errorPresent())
-                sender.send(IntegratedResource.UNKNOWN_ERROR.format(response.getError().getMessage()));
+                sender.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(response.getError().getMessage()));
         }
     }
 

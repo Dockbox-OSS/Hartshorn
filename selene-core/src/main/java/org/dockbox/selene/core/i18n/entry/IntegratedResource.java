@@ -46,7 +46,7 @@ public enum IntegratedResource implements ResourceEntry {
     CONFIRM_WRONG_SOURCE("$4This command can only be used by identifiable sources (players, console)", "confirm.invalid.source"),
 
     // - Generic common error message
-    UNKNOWN_ERROR("$1An error occurred. {0}", "error"),
+    UNKNOWN_ERROR("$4An error occurred. $3{0}", "error"),
     KEY_BINDING_FAILED("$4Key cannot be applied to this type", "error.keys.failedbinding"),
     LOST_REFERENCE("$4Reference to object lost", "error.reference.lost"),
 
