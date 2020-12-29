@@ -21,3 +21,6 @@ include 'selene-core'
 include 'selene-common'
 include 'extensions'
 include 'sponge-1.12'
+if(file('darwin').exists()){
+    include ':darwin'
+}

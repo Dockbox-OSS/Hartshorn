@@ -51,6 +51,11 @@ dependencies {
     testCompileOnly project(':selene-core')
     testCompileOnly project(':selene-common')
     testCompileOnly project(':extensions')
+
+    if(file('../darwin').exists()){
+        compile project(path: ':darwin', configuration: 'shadow')
+        testCompileOnly project(':darwin')
+    }
 }
 
 task prepareServerArtifacts(dependsOn: build) {
