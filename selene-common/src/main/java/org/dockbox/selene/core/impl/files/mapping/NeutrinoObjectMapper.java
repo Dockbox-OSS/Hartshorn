@@ -25,7 +25,6 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.impl.files.annotations.Default;
-import org.dockbox.selene.core.impl.files.annotations.DoNotGenerate;
 import org.dockbox.selene.core.impl.files.annotations.ProcessSetting;
 import org.dockbox.selene.core.impl.files.annotations.RequiresProperty;
 import org.dockbox.selene.core.impl.files.process.SettingProcessor;
@@ -105,16 +104,6 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
                 } catch (IllegalArgumentException e) {
                     data = new FieldData(field, comment);
                 }
-            } else if (field.isAnnotationPresent(DoNotGenerate.class)) {
-                Object defaultValue = null;
-                try {
-                    field.setAccessible(true);
-                    defaultValue = field.get(field.getDeclaringClass().newInstance());
-                } catch (IllegalAccessException | InstantiationException e) {
-                    Selene.handle(e.getMessage(), e);
-                }
-
-                data = new DoNotGenerateFieldData(field, comment, defaultValue);
             } else {
                 data = new FieldData(field, comment);
             }
