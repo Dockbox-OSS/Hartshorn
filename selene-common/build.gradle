@@ -32,6 +32,8 @@ dependencies {
         compileOnly "org.spongepowered:configurate-gson:$configurateVersion"
         compileOnly "org.spongepowered:configurate-xml:$configurateVersion"
 
+        shadow "com.thoughtworks.xstream:xstream:$xstreamVersion"
+
         testImplementation "org.spongepowered:configurate-core:$configurateVersion"
         testImplementation project(':selene-core')
     }

@@ -24,10 +24,11 @@ import org.dockbox.selene.core.ExceptionHelper;
 import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.ThreadUtils;
 import org.dockbox.selene.core.WorldStorageService;
+import org.dockbox.selene.core.annotations.files.Bulk;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.extension.ExtensionManager;
-import org.dockbox.selene.core.files.ConfigurateManager;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.impl.SimpleBroadcastService;
 import org.dockbox.selene.core.impl.SimpleExceptionHelper;
@@ -41,6 +42,8 @@ import org.dockbox.selene.core.server.SeleneInjectConfiguration;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.integrated.server.IntegratedServerExtension;
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus;
+import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager;
+import org.dockbox.selene.sponge.util.files.SpongeXStreamManager;
 import org.slf4j.Logger;
 
 public class SpongeInjector extends SeleneInjectConfiguration {
@@ -66,6 +69,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
     protected void configurePlatformInject() {
         this.bind(CommandBus.class).toInstance(new SpongeCommandBus());
         this.bind(FileManager.class).to(SpongeConfigurateManager.class);
+        this.bind(FileManager.class).annotatedWith(Bulk.class).to(SpongeXStreamManager.class);
         this.bind(PlayerStorageService.class).to(SpongePlayerStorageService.class);
         this.bind(WorldStorageService.class).to(SpongeWorldStorageService.class);
     }

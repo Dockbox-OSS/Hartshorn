@@ -17,14 +17,16 @@
 
 package org.dockbox.selene.core.util;
 
-import org.dockbox.selene.core.util.SeleneUtils.Provision;
+import org.dockbox.selene.core.annotations.Rejects;
 import org.dockbox.selene.core.annotations.entity.Ignore;
 import org.dockbox.selene.core.annotations.entity.Property;
 import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.exceptions.TypeRejectedException;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils.Provision;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -708,6 +710,21 @@ public class ReflectionUtil {
         return this.getMethodValue(instance.getClass(), instance, method, expectedType, argTypes, args);
     }
 
+    public boolean hasFieldRecursive(Class<?> type, String field) {
+        Class<?> original = type;
+        while (null != type) {
+            try {
+                if (field.contains("*") && !field.contains("?")) {
+                    type.getDeclaredField(field);
+                    return true;
+                }
+            } catch (ReflectiveOperationException e) {
+                type = type.getSuperclass();
+            }
+        }
+        return false;
+    }
+
     public boolean rejects(Class<?> holder, Class<?> potentialReject) {
         return this.rejects(holder, potentialReject, false);
     }
@@ -721,5 +738,6 @@ public class ReflectionUtil {
         }
         return false;
     }
+
 
 }
