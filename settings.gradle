@@ -20,7 +20,7 @@ rootProject.name = 'Selene'
 include 'selene-core'
 include 'selene-common'
 include 'extensions'
-include 'sponge-1.12'
+include 'sponge-7'
 if(file('darwin').exists()){
     include ':darwin'
 }
