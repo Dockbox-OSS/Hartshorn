@@ -31,6 +31,7 @@ import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
+import org.dockbox.selene.core.server.properties.AnnotationProperty;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 
@@ -120,7 +121,14 @@ public class InjectUtil {
         // and therefore do not need late member injection here.
         if (null == typeInstance) {
             try {
-                typeInstance = injector.getInstance(type);
+                //noinspection rawtypes
+                Exceptional<Class> annotation = SeleneUtils.KEYS.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
+                if (annotation.isPresent() && annotation.get().isAnnotation()) {
+                    //noinspection unchecked
+                    typeInstance = (T) injector.getInstance(Key.get(type, annotation.get()));
+                } else {
+                    typeInstance = injector.getInstance(type);
+                }
             } catch (ProvisionException e) {
                 Selene.log().error("Could not create instance using registered injector " + injector + " for [" + type + "]", e);
             } catch (ConfigurationException ignored) {

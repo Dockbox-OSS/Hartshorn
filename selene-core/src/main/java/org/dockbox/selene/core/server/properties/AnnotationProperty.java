@@ -15,23 +15,30 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.annotations.entity;
+package org.dockbox.selene.core.server.properties;
 
-import org.dockbox.selene.core.util.SeleneUtils.Provision;
+import java.lang.annotation.Annotation;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.function.Function;
+public final class AnnotationProperty<T extends Annotation> implements InjectorProperty<Class<T>> {
 
-/**
- * The interface to mark a object field as ignored when generating objects using
- * {@link org.dockbox.selene.core.util.ReflectionUtil#tryCreate(Class, Function, boolean, Provision)} or (de)serializing
- * them with a {@link org.dockbox.selene.core.files.FileManager} implementation.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Ignore {
+    public static final String KEY = "SeleneInternalAnnotationProperty";
+    private final Class<T> annotationType;
+
+    private AnnotationProperty(Class<T> annotationType) {
+        this.annotationType = annotationType;
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
+    }
+
+    @Override
+    public Class<T> getObject() {
+        return this.annotationType;
+    }
+
+    public static <A extends Annotation> AnnotationProperty<A> of(Class<A> annotation) {
+        return new AnnotationProperty<>(annotation);
+    }
 }
-
