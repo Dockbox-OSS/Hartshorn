@@ -20,7 +20,7 @@ package org.dockbox.selene.integrated.server;
 import com.sk89q.worldedit.blocks.BaseBlock;
 
 import org.dockbox.selene.core.ConstructionUtil;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.annotations.command.Arg;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.CommandBus;
@@ -31,7 +31,6 @@ import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LanguageParser;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.Player;
@@ -44,7 +43,7 @@ import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
-import org.jetbrains.annotations.Nullable;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.List;
 
@@ -189,23 +188,22 @@ public class IntegratedServerExtension implements IntegratedExtension {
         ));
     }
 
-    @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", inherit = false)
-    public void switchLang(MessageReceiver src, CommandContext ctx) {
-        Exceptional<Language> ol = ctx.getArgumentAndParse("language", new LanguageParser());
-        @Nullable Player target;
-
-        Exceptional<Argument<Player>> op = ctx.getArgument("player", Player.class);
-        if (op.isPresent()) target = op.get().getValue();
-        else if (src instanceof Player) target = (Player) src;
-        else {
-            src.send(Text.of("What are you??"));
-            return;
+    @Command(aliases = {"lang", "language"}, usage = "language <language{Language}> [player{Player}]", inherit = false)
+    public void switchLang(MessageReceiver src, CommandContext ctx,
+                           @Arg("language") Language lang,
+                           @Arg("player") Player player) {
+        if (null == player) {
+            if (src instanceof Player) {
+                player = (Player) src;
+            } else {
+                src.send("Only players can use this command, or be a target");
+                return;
+            }
         }
 
-        // While the parser will always return a language, it is possible the argument is not present in which case we want to use en_US
-        Language lang = ol.orElse(Language.EN_US);
-        target.setLanguage(lang);
+        player.setLanguage(lang);
         // Messages sent after language switch will be in the preferred language
+        // TODO: For specific player
         src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")"));
     }
 
