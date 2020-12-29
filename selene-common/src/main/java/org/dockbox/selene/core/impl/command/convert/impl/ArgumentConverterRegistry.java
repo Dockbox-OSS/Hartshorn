@@ -21,31 +21,33 @@ import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
+import org.dockbox.selene.core.PlayerStorageService;
+import org.dockbox.selene.core.WorldStorageService;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.exceptions.ConstraintException;
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
+import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.DurationParser;
+import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LanguageParser;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LocationParser;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.PlayerParser;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.UuidParser;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.WorldEditMaskParser;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.WorldEditPatternParser;
 import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.WorldParser;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.extension.ExtensionManager;
-import org.dockbox.selene.core.PlayerStorageService;
-import org.dockbox.selene.core.WorldStorageService;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -176,6 +178,23 @@ public final class ArgumentConverterRegistry {
             Text.class,
             Text::of,
             Text.of()
+    );
+
+    public static final ArgumentConverter<Language> LANGUAGE = new ParserArgumentConverter<>(
+            Language.class,
+            LanguageParser::new,
+            s -> {
+                List<String> suggestions = SeleneUtils.COLLECTION.emptyList();
+                for (Language lang : Language.values()) {
+                    suggestions.add(lang.getCode());
+                    suggestions.add(lang.getNameEnglish());
+                    suggestions.add(lang.getNameLocalized());
+                }
+                return suggestions.stream()
+                        .filter(lang -> lang.toLowerCase().contains(s.toLowerCase()))
+                        .collect(Collectors.toList());
+            },
+            "lang", "language"
     );
 
     public static final ArgumentConverter<Mask> MASK = new SourceAwareArgumentConverter<>(
