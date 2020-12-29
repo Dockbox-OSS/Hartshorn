@@ -66,7 +66,13 @@ public class SpongePlayerStorageService extends DefaultPlayerStorageService {
             if (obj instanceof UUID) {
                 ou = ouss.flatMap(uss -> Exceptional.of(uss.get((UUID) obj)));
             } else {
-                ou = ouss.flatMap(uss -> Exceptional.of(uss.get(obj.toString())));
+                try {
+                    ou = ouss.flatMap(uss -> Exceptional.of(uss.get(obj.toString())));
+                } catch (IllegalArgumentException e) {
+                    // Typically thrown if a username is invalid (length<0 or >=16)
+                    // See org.spongepowered.common.service.user.SpongeUserStorageService.get:64
+                    ou = Exceptional.of(e);
+                }
             }
             if (ou.isPresent()) player = ou.map(u -> new SpongePlayer(u.getUniqueId(), u.getName()));
             return player;
