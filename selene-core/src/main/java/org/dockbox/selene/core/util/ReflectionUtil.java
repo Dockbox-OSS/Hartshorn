@@ -708,5 +708,18 @@ public class ReflectionUtil {
         return this.getMethodValue(instance.getClass(), instance, method, expectedType, argTypes, args);
     }
 
+    public boolean rejects(Class<?> holder, Class<?> potentialReject) {
+        return this.rejects(holder, potentialReject, false);
+    }
+
+    public boolean rejects(Class<?> holder, Class<?> potentialReject, boolean throwIfRejected) {
+        if (holder.isAnnotationPresent(Rejects.class)) {
+            Rejects rejects = holder.getAnnotation(Rejects.class);
+            boolean rejected = potentialReject.isAssignableFrom(rejects.value());
+            if (rejected && throwIfRejected) throw new TypeRejectedException(potentialReject, holder);
+            return rejected;
+        }
+        return false;
+    }
 
 }
