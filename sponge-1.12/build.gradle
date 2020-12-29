@@ -72,7 +72,7 @@ task prepareServerArtifacts(dependsOn: build) {
         }
     }
 }
-task spongeDevServer(dependsOn: prepareServerArtifacts) {
+task runDevServer(dependsOn: prepareServerArtifacts) {
     doLast {
         javaexec {
             workingDir = "${project.rootDir}/servers/sponge-112"
@@ -87,4 +87,4 @@ task spongeDevServer(dependsOn: prepareServerArtifacts) {
 }
 
 prepareServerArtifacts.dependsOn build
-spongeDevServer.dependsOn prepareServerArtifacts
+runDevServer.dependsOn prepareServerArtifacts

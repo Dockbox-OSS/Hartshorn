@@ -7,44 +7,23 @@
 
 # Usage
 _Note: To use Selene, your project must be configured to use Java 8 or higher._  
-See [About](https://github.com/GuusLieben/Selene/wiki) and [Maven](https://github.com/GuusLieben/Selene/wiki/Maven) on the wiki
+See [About](https://github.com/GuusLieben/Selene/wiki) and [Gradle](https://github.com/GuusLieben/Selene/wiki/Gradle) on the wiki
 for additional information about the topics below.
 
 ## Build distribution
-Selene uses Maven to automate builds, performing several steps before and after a build has completed. To build, use
-`mvn package`. Builds can then be found under `/dist/` in the base directory where you cloned Selene. Builds are
-separated into different sub-directories based on the module that has been built. Usually you'll only need platform
-specific builds, like Sponge which can be found in `/dist/sponge/`.
-
-Two packaged builds exist for each build, `original` and `shaded`.  
-
-- `original` contains _only_ Selene, and follows the
-naming scheme `original-selene-{module}-{version}-{date}_{time}.jar`.  
-
-- `shaded` contains required dependencies which are not already expected to be present on a platform, and follows the 
-naming scheme `selene-{module}-{version}-{date}_{time}.jar`. Some dependencies may be excluded from the `shaded` build 
-if they are expected to be on the platform, these dependencies differ per platform and are typically excluded in the 
-`pom.xml` for the appropriate platform.
+Selene uses Gradle to automate builds, performing several steps before and after a build has completed.  
+__Note:__ If you do not have [Gradle] installed then use ./gradlew for Unix systems or Git Bash and gradlew.bat for Windows systems in place of any 'gradle' command.  
+Use `gradle build` to build all Selene modules, build artifacts can then be found under `/dist/` in the base directory 
+where you cloned Selene. Builds are versioned by date and by commit hash, with the artifact following the format `$archivesBaseName-$commitHash-$date.jar`.
 
 ## Aggregated documentation
 Documentation is typically pre-built in `/docs/` in this repository, and is available at 
 [https://guuslieben.github.io/Selene/](https://guuslieben.github.io/Selene/). This contains the aggregated JavaDocs for
-all sources within Selene. To generate these JavaDocs yourself, use `mvn javadoc:aggregate`.
+all sources within Selene. To generate these JavaDocs yourself, use `gradle aggregatedJavadocs`.
 
 ## Development Server
-Selene contains pre-made servers for its supported platforms, with automatic build distributions towards those platforms. These servers are included in the `servers` submodule. Depending on your Git client these may not be cloned directly, to ensure their availability use `git clone --recurse-submodules https://github.com/GuusLieben/Selene.git`.
+Selene contains pre-made servers for its supported platforms, with automatic build distributions towards those platforms. 
+These servers are included in the `servers` submodule. Depending on your Git client these may not be cloned directly, to ensure their availability use `git clone --recurse-submodules https://github.com/GuusLieben/Selene.git`.
 
 To run the server, we recommend using [IntelliJ IDEA](https://www.jetbrains.com/idea/). 
-
-### Sponge 1.12
-Create a configuration to activate a JAR Application as follows:
-- Go to Run > Edit Configurations
-- Add a new configuration (Alt+Insert on Windows)
-- Select 'JAR Application'
-- For 'Path to JAR' select `${your working directory}\servers\sponge-112\forge-1.12.2-2709.jar`
-- For 'VM Options' enter your preferred flags, it is recommended to run the development server with at least 3GB of allocatable memory (`-Xmx3G`)
-- For 'Working directory' select `${your working directory}\servers\sponge-112\`
-- Leave the JRE and classpath settings as default
-- Add Maven Goal `-DskipTests=true clean install` to run 'Before launch'
-
-![image](https://user-images.githubusercontent.com/10957963/101648084-c1913d00-3a39-11eb-9d90-37c8ef7cdd69.png)
+Each relevant platform module will have a `runDevServer` task which prepares and executes the development server for that platform.
