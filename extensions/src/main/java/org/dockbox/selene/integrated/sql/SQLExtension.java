@@ -25,5 +25,5 @@ import org.dockbox.selene.core.annotations.extension.Extension;
  */
 @Extension(id = "selene-sql", name = "SQL Extension",
            description = "Provides the ability to communicate with SQL instances using integrated types",
-           authors = "GuusLieben", uniqueId = "5640d082-a612-40a7-84e7-fc2aeea2743b")
+           authors = "GuusLieben", dependencies = "org.jooq")
 public class SQLExtension { }

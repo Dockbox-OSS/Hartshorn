@@ -35,7 +35,7 @@ import org.dockbox.selene.integrated.event.worldedit.WorldEditCopyEvent;
 import org.dockbox.selene.integrated.event.worldedit.WorldEditPasteEvent;
 
 @Extension(id = "selene-events", name = "Selene Events", description = "Provides additional events for Selene",
-           authors = "GuusLieben", uniqueId = "d212fa88-12d5-472a-ba1d-fd194dcf8e9a")
+           authors = "GuusLieben", dependencies = {"com.boydti.fawe", "com.sk89q.worldedit"})
 public class IntegratedEventExtension {
 
     @Listener

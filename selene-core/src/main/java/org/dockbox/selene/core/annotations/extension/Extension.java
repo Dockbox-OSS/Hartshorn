@@ -44,25 +44,11 @@ public @interface Extension {
     String name();
 
     /**
-     * The version of the extension.
-     *
-     * @return the version
-     */
-    String version() default "unknown";
-
-    /**
      * The human-readable description of the extension.
      *
      * @return the human-readable description
      */
     String description();
-
-    /**
-     * The url of the homepage for the extension. Defaults to the homepage for Selene.
-     *
-     * @return the url of the homepage
-     */
-    String url() default "https://github.com/GuusLieben/Selene";
 
     /**
      * The authors of the extension. Preferably using GitHub usernames, though real names or other aliases are permitted.
@@ -77,20 +63,4 @@ public @interface Extension {
      * @return the packages requires by the extension.
      */
     String[] dependencies() default {};
-
-    /**
-     * Marks whether or not the extension requires access to Native Minecraft Sources (NMS). If the platform does not
-     * support NMS the extension will not be loaded.
-     *
-     * @return true if the extension requires NMS access.
-     */
-    boolean requiresNMS() default false;
-
-    /**
-     * The unique ID (UUID) of the extension. In the format of {@link java.util.UUID}. For example:
-     * {@code 123e4567-e89b-12d3-a456-426614174000}
-     *
-     * @return the unique ID
-     */
-    String uniqueId();
 }

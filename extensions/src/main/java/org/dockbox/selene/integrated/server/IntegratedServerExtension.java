@@ -51,9 +51,7 @@ import java.util.List;
         id = "selene",
         name = "Selene",
         description = "Integrated features of Selene",
-        authors = "GuusLieben",
-        url = "https://github.com/GuusLieben/Selene",
-        uniqueId = "a8a96336-06bd-4521-99d4-5682a4f75e0a"
+        authors = "GuusLieben"
 )
 @Command(aliases = {"selene", "darwin"}, usage = "selene")
 public class IntegratedServerExtension implements IntegratedExtension {
@@ -108,9 +106,8 @@ public class IntegratedServerExtension implements IntegratedExtension {
                 ExtensionContext ec = oec.get();
 
                 src.send(Text.of(IntegratedServerResources.EXTENSION_INFO_BLOCK.format(
-                        e.name(), e.id(), e.description(), e.version(), e.url(),
+                        e.name(), e.id(), e.description(),
                         0 == e.dependencies().length ? "None" : String.join("$3, $1", e.dependencies()),
-                        e.requiresNMS(),
                         String.join("$3, $1", e.authors()),
                         ec.getSource()
                 )));

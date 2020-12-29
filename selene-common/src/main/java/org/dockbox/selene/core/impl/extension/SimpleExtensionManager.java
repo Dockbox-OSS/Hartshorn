@@ -133,18 +133,25 @@ public class SimpleExtensionManager implements ExtensionManager {
         List<Extension> existingHeaders = SeleneUtils.COLLECTION.emptyList();
         globalContexts.forEach(ctx -> existingHeaders.add(ctx.getExtension()));
         //noinspection CallToSuspiciousStringMethod
-        if (existingHeaders.stream().anyMatch(e -> e.uniqueId().equals(header.uniqueId()))) {
-            Selene.log().warn("Extension with unique ID " + header.uniqueId() + " already present!");
+        if (existingHeaders.stream().anyMatch(e -> e.id().equals(header.id()))) {
+            Selene.log().warn("Extension with unique ID " + header.id() + " already present!");
             return false;
         }
 
         assert null != header : "@Extension header missing from previously checked type [" + entry.getCanonicalName() + "]! This should not be possible!";
 
         String[] dependencies = header.dependencies();
-        for (String dependentPackage : dependencies) {
+        for (String dependency : dependencies) {
             try {
-                Package pkg = Package.getPackage(dependentPackage);
+                String formattedDependency = this.convertDependencyName(dependency);
+                // Using Package.getPackage would only return a package if the package has been used by the classloader
+                // before this call has been made. By requesting it as a resource we can ensure it can be loaded.
+                // == Warning! ==
+                // This is no longer functional as of JDK 9, where packages are encapsulated in modules. Classes however
+                // are not encapsulated, so it is possible to reuse this to look up classes in the future.
+                Object pkg = this.getClass().getClassLoader().getResource(formattedDependency);
                 if (null == pkg) {
+                    Selene.log().warn("Dependent package '" + dependency + " (" + formattedDependency + ")' is not present, failing " + header.name());
                     // Do not instantiate entries which require dependencies which are not present.
                     context.addStatus(entry, ExtensionStatus.FAILED);
                     return false;
@@ -152,7 +159,7 @@ public class SimpleExtensionManager implements ExtensionManager {
             } catch (Throwable e) {
                 // Package.getPackage(String) typically returns null if no package with that name is present, this clause is a fail-safe and should
                 // technically never be reached. If it is reached we explicitly need to mention the package to prevent future issues (by reporting this).
-                Selene.handle("Failed to obtain package [" + dependentPackage + "].", e);
+                Selene.handle("Failed to obtain package [" + dependency + "].", e);
             }
         }
 
@@ -180,6 +187,23 @@ public class SimpleExtensionManager implements ExtensionManager {
 
         instanceMappings.put(header.id(), instance);
         return true;
+    }
+
+    /**
+     * Converts a dependency format to a valid resource name.
+     *
+     * Example:
+     * <pre>{@code
+     * java.lang.String.class -> java/lang/String.class
+     * java.lang -> java/lang
+     * }</pre>
+     * @param dependency The unformatted dependency format
+     * @return The formatted dependency format
+     */
+    private String convertDependencyName(String dependency) {
+        dependency = dependency.replaceAll("\\.", "/");
+        dependency = dependency.replaceAll("/class", ".class");
+        return dependency;
     }
 
     private <T> void injectMembers(T instance, ExtensionContext context, Extension header) {

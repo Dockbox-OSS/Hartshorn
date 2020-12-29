@@ -21,5 +21,5 @@ import org.dockbox.selene.core.annotations.extension.Extension;
 
 @Extension(id = "datastructures", name = "Additional data structures",
            description = "Provides additional data structures for specific usages",
-           authors = {"GuusLieben", "pumbas600", "simbolduc"}, uniqueId = "5755725b-e24b-4ca6-9944-56967ac41949")
+           authors = {"GuusLieben", "pumbas600", "simbolduc"})
 public class DataStructuresExtension {}

@@ -38,7 +38,7 @@ import java.util.UUID;
 @SuppressWarnings("rawtypes")
 @Extension(id = "toolbinding", name = "Tool Binding",
            description = "Adds the ability to bind commands to tools and items",
-           authors = "GuusLieben", uniqueId = "287292f6-05f1-46a1-815b-b180f1488854")
+           authors = "GuusLieben")
 @Resources(responsibleExtension = ToolBindingExtension.class)
 public class ToolBindingExtension {
 
