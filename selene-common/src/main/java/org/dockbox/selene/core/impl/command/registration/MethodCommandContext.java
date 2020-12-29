@@ -17,20 +17,28 @@
 
 package org.dockbox.selene.core.impl.command.registration;
 
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.annotations.command.Arg;
 import org.dockbox.selene.core.annotations.command.Command;
+import org.dockbox.selene.core.annotations.command.Flag;
+import org.dockbox.selene.core.annotations.command.FromSource;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.exceptions.IllegalSourceException;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.location.Location;
+import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Collection;
 import java.util.List;
 
 public class MethodCommandContext extends AbstractRegistrationContext {
@@ -76,7 +84,12 @@ public class MethodCommandContext extends AbstractRegistrationContext {
     private List<Object> prepareArguments(CommandSource source, CommandContext context) {
         List<Object> finalArgs = SeleneUtils.COLLECTION.emptyList();
 
-        for (Class<?> parameterType : this.getMethod().getParameterTypes()) {
+        for (Parameter parameter : this.getMethod().getParameters()) {
+            if (this.processFromSourceParameters(parameter, context, finalArgs)) continue;
+            if (this.processFlagParameters(parameter, context, finalArgs)) continue;
+            if (this.processArgumentParameters(parameter, context, finalArgs)) continue;
+
+            Class<?> parameterType = parameter.getType();
             if (SeleneUtils.REFLECTION.isEitherAssignableFrom(CommandSource.class, parameterType)) {
                 if (parameterType.equals(Player.class)) {
                     if (source instanceof Player) finalArgs.add(source);
@@ -92,6 +105,55 @@ public class MethodCommandContext extends AbstractRegistrationContext {
             }
         }
         return finalArgs;
+    }
+
+    private boolean processFromSourceParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs) {
+        if (parameter.isAnnotationPresent(FromSource.class)) {
+            Class<?> parameterType = parameter.getType();
+            if (SeleneUtils.REFLECTION.isAssignableFrom(Player.class, parameterType)) {
+                if (context.getSender() instanceof Player) finalArgs.add(context.getSender());
+            } else if (SeleneUtils.REFLECTION.isAssignableFrom(World.class, parameterType)) {
+                if (context.getSender() instanceof Locatable) finalArgs.add(context.getWorld());
+            } else if (SeleneUtils.REFLECTION.isAssignableFrom(Location.class, parameterType)) {
+                if (context.getSender() instanceof Locatable) finalArgs.add(context.getLocation());
+            } else if (SeleneUtils.REFLECTION.isAssignableFrom(CommandSource.class, parameterType)) {
+                finalArgs.add(context.getSender());
+            } else {
+                Selene.log().warn("Parameter '" + parameter.getName() + "' has @FromSource annotation but cannot be provided [" + parameterType.getCanonicalName() + "]");
+                finalArgs.add(null);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean processFlagParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs) {
+        if (parameter.isAnnotationPresent(Flag.class)) {
+            String flagName = parameter.getAnnotation(Flag.class).value();
+            if (context.hasFlag(flagName) && context.getFlag(flagName, parameter.getType()).isPresent()) {
+                finalArgs.add(context.getFlag(flagName, parameter.getType()).get().getValue());
+            } else {
+                // Flags are optional, therefore we do not log missing flags
+                finalArgs.add(null);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean processArgumentParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs) {
+        if (parameter.isAnnotationPresent(Arg.class)) {
+            Class<?> parameterType = parameter.getType();
+            String argumentName = parameter.getAnnotation(Arg.class).value();
+            if (context.hasArgument(argumentName) && context.getArgument(argumentName, parameterType).isPresent()) {
+                finalArgs.add(context.getArgument(argumentName, parameterType).get().getValue());
+            } else {
+                Selene.log().warn("Parameter '" + parameter.getName() + "' has @Argument annotation but cannot be provided [" + parameterType.getCanonicalName() + "]");
+                finalArgs.add(null);
+            }
+            return true;
+        }
+        return false;
     }
 
     private Object prepareInstance() {
