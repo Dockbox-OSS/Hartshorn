@@ -204,11 +204,7 @@ public abstract class SeleneBootstrap {
                 Extension ex = header.get();
                 log().info("  - \u00A77" + ex.name());
                 log().info("  | - \u00A77ID: \u00A78" + ex.id());
-                log().info("  | - \u00A77UUID: \u00A78" + ex.uniqueId());
                 log().info("  | - \u00A77Authors: \u00A78" + Arrays.toString(ex.authors()));
-                log().info("  | - \u00A77Version: \u00A78" + ex.version());
-                log().info("  | - \u00A77URL: \u00A78" + ex.url());
-                log().info("  | - \u00A77Requires NMS: \u00A78" + ex.requiresNMS());
                 log().info("  | - \u00A77Dependencies: \u00A78" + Arrays.toString(ex.dependencies()));
             } else {
                 log().info("  - \u00A77" + ext + " \u00A78(No header)");

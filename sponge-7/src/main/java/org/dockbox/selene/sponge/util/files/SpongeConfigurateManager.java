@@ -15,27 +15,29 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.util;
+package org.dockbox.selene.sponge.util.files;
 
-import org.dockbox.selene.core.files.ConfigurateManager;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.impl.files.DefaultConfigurateManager;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.api.Sponge;
 
 import java.nio.file.Path;
 
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
-public class SpongeConfigurateManager extends DefaultConfigurateManager {
+/**
+ * Uses SpongeDefaultFileManager to determine the directory paths. This way all directory paths can be reused by other
+ * FileManager implementations without the need of redefining these when changes are made. Due to multiple inheritance
+ * not being possible in Java, a interface is used for this purpose, requiring us to directly target the interface super.
+ */
+public class SpongeConfigurateManager extends DefaultConfigurateManager implements SpongeDefaultFileManager {
 
     /**
-     * Provides the given {@link FileType} to the super type {@link ConfigurateManager}. And registers any custom
-     * {@link TypeSerializer} types to
-     * {@link TypeSerializers#getDefaultSerializers()}.@param fileType
-     * The file type to be used when mapping.
+     * Provides the given {@link FileType} to the super type {@link FileManager}. And registers any custom
+     * {@link TypeSerializer} types to {@link TypeSerializers#getDefaultSerializers()}.
      */
     protected SpongeConfigurateManager() {
         super(FileType.YAML);
@@ -44,54 +46,54 @@ public class SpongeConfigurateManager extends DefaultConfigurateManager {
     @NotNull
     @Override
     public Path getDataDir() {
-        return this.getServerRoot().resolve("data/");
+        return SpongeDefaultFileManager.super.getDataDir();
     }
 
     @NotNull
     @Override
     public Path getLogsDir() {
-        return this.getServerRoot().resolve("logs/");
+        return SpongeDefaultFileManager.super.getLogsDir();
     }
 
     @NotNull
     @Override
     public Path getServerRoot() {
-        return Sponge.getGame().getGameDirectory();
+        return SpongeDefaultFileManager.super.getServerRoot();
     }
 
     @NotNull
     @Override
     public Path getExtensionDir() {
-        return this.createPathIfNotExists(this.getServerRoot().resolve("extensions/"));
+        return SpongeDefaultFileManager.super.getExtensionDir();
     }
 
     @NotNull
     @Override
     public Exceptional<Path> getModDir() {
-        return Exceptional.of(this.createPathIfNotExists(this.getServerRoot().resolve("mods/")));
+        return SpongeDefaultFileManager.super.getModDir();
     }
 
     @NotNull
     @Override
     public Path getPluginDir() {
-        return this.createPathIfNotExists(this.getServerRoot().resolve("plugins/"));
+        return SpongeDefaultFileManager.super.getPluginDir();
     }
 
     @NotNull
     @Override
     public Path getExtensionConfigsDir() {
-        return this.getServerRoot().resolve("config/extensions/");
+        return SpongeDefaultFileManager.super.getExtensionConfigsDir();
     }
 
     @NotNull
     @Override
     public Exceptional<Path> getModdedPlatformModsConfigDir() {
-        return Exceptional.of(this.getServerRoot().resolve("config/"));
+        return SpongeDefaultFileManager.super.getModdedPlatformModsConfigDir();
     }
 
     @NotNull
     @Override
     public Path getPlatformPluginsConfigDir() {
-        return this.getServerRoot().resolve("config/plugins/");
+        return SpongeDefaultFileManager.super.getPlatformPluginsConfigDir();
     }
 }

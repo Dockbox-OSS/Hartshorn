@@ -21,7 +21,7 @@ import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.files.ConfigurateManager;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.PlayerStorageService;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,7 +54,7 @@ public abstract class DefaultPlayerStorageService implements PlayerStorageServic
 
     @SuppressWarnings("ConstantConditions")
     private UserDataModel getUserData(UUID uuid) {
-        ConfigurateManager cm = SeleneUtils.INJECT.getInstance(ConfigurateManager.class);
+        FileManager cm = SeleneUtils.INJECT.getInstance(FileManager.class);
         Path file = cm.getDataFile(SeleneUtils.REFLECTION.getExtension(Selene.class), "userdata/" + uuid);
         Exceptional<UserDataModel> userDataModel = cm.getFileContent(file, UserDataModel.class);
         return userDataModel.orElse(new UserDataModel());
@@ -62,7 +62,7 @@ public abstract class DefaultPlayerStorageService implements PlayerStorageServic
 
     @SuppressWarnings("ConstantConditions")
     private void updateUserData(UUID uuid, UserDataModel userData) {
-        ConfigurateManager cm = SeleneUtils.INJECT.getInstance(ConfigurateManager.class);
+        FileManager cm = SeleneUtils.INJECT.getInstance(FileManager.class);
         Path file = cm.getDataFile(SeleneUtils.REFLECTION.getExtension(Selene.class), "userdata/" + uuid);
         cm.writeFileContent(file, userData);
     }

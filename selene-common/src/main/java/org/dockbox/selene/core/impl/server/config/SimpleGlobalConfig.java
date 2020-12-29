@@ -29,7 +29,7 @@ import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.files.ConfigurateManager;
+import org.dockbox.selene.core.files.FileManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -42,7 +42,7 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
 
     @Inject
-    private transient ConfigurateManager configurateManager;
+    private transient FileManager fileManager;
     @Inject
     private transient IntegratedExtension integratedExtension;
 
@@ -110,8 +110,8 @@ public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
             throw new IllegalStateException("Integrated extension not annotated as such.");
         }
 
-        Path configPath = this.configurateManager.getConfigFile(extension);
-        GlobalConfig globalConfig = this.configurateManager
+        Path configPath = this.fileManager.getConfigFile(extension);
+        GlobalConfig globalConfig = this.fileManager
                 .getFileContent(configPath, SimpleGlobalConfig.class)
                 .orNull();
         this.copyValues(globalConfig);

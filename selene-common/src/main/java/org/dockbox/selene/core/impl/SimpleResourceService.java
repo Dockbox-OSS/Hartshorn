@@ -22,7 +22,7 @@ import com.google.inject.Singleton;
 import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.i18n.Resources;
-import org.dockbox.selene.core.files.ConfigurateManager;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.common.ResourceService;
@@ -86,7 +86,7 @@ public class SimpleResourceService implements ResourceService {
     public Map<String, String> getResourceMap(@NotNull Language lang) {
         if (this.resourceMaps.containsKey(lang)) return this.resourceMaps.get(lang);
 
-        ConfigurateManager cm = SeleneUtils.INJECT.getInstance(ConfigurateManager.class);
+        FileManager cm = SeleneUtils.INJECT.getInstance(FileManager.class);
         Path languageConfigFile = cm.getConfigFile(
                 SeleneUtils.REFLECTION.getExtension(Selene.class),
                 lang.getCode()
@@ -102,7 +102,7 @@ public class SimpleResourceService implements ResourceService {
     }
 
     @NotNull
-    private Map<String, String> createDefaultResourceFile(ConfigurateManager cm, Path languageConfigFile) {
+    private Map<String, String> createDefaultResourceFile(FileManager cm, Path languageConfigFile) {
         Map<String, String> resources = SeleneUtils.COLLECTION.emptyConcurrentMap();
         this.knownEntries.forEach(resource -> {
             resources.put(resource.getKey(), resource.getValue());
@@ -113,7 +113,7 @@ public class SimpleResourceService implements ResourceService {
         return resources;
     }
 
-    private Map<String, String> getResourcesForFile(Path file, ConfigurateManager cm, Language lang) {
+    private Map<String, String> getResourcesForFile(Path file, FileManager cm, Language lang) {
         Exceptional<ResourceConfig> config = cm.getFileContent(file, ResourceConfig.class);
 
         Map<String, String> resources = SeleneUtils.COLLECTION.emptyConcurrentMap();

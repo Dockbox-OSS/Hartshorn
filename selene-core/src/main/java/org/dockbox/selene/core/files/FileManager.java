@@ -27,11 +27,11 @@ import java.nio.file.Path;
  * the usage of Configurate based instances, it is possible to create implementations for alternative configuration
  * libraries and/or frameworks.
  */
-public abstract class ConfigurateManager {
+public abstract class FileManager {
 
     private final FileType fileType;
 
-    protected ConfigurateManager(FileType fileType) {
+    protected FileManager(FileType fileType) {
         this.fileType = fileType;
     }
 
@@ -89,8 +89,8 @@ public abstract class ConfigurateManager {
 
     /**
      * Get the content of a file, and map the given values to a generic type {@link T}. The exact file is completely
-     * dynamic, though it is usually encouraged to use {@link ConfigurateManager#getDataFile} or
-     * {@link ConfigurateManager#getConfigFile} to obtain appropriate files.
+     * dynamic, though it is usually encouraged to use {@link FileManager#getDataFile} or
+     * {@link FileManager#getConfigFile} to obtain appropriate files.
      *
      * @param <T>
      *         The type parameter of the type to map to
@@ -105,8 +105,8 @@ public abstract class ConfigurateManager {
 
     /**
      * Write a generic type {@link T} to a given file. The exact file is completely
-     * dynamic, though it is usually encouraged to use {@link ConfigurateManager#getDataFile} or
-     * {@link ConfigurateManager#getConfigFile} to obtain appropriate files.
+     * dynamic, though it is usually encouraged to use {@link FileManager#getDataFile} or
+     * {@link FileManager#getConfigFile} to obtain appropriate files.
      *
      * @param <T>
      *         The type parameter of the content

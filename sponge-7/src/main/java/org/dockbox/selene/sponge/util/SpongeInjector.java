@@ -65,7 +65,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
     @Override
     protected void configurePlatformInject() {
         this.bind(CommandBus.class).toInstance(new SpongeCommandBus());
-        this.bind(ConfigurateManager.class).to(SpongeConfigurateManager.class);
+        this.bind(FileManager.class).to(SpongeConfigurateManager.class);
         this.bind(PlayerStorageService.class).to(SpongePlayerStorageService.class);
         this.bind(WorldStorageService.class).to(SpongeWorldStorageService.class);
     }

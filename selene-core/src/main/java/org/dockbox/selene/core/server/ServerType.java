@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.server;
 
-import org.dockbox.selene.core.files.ConfigurateManager;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.objects.Exceptional;
 
 /**
@@ -84,7 +84,7 @@ public enum ServerType {
 
     /**
      * Returns whether or not the platform provides access to a mod loader.
-     * This can be especially useful when using {@link ConfigurateManager#getModdedPlatformModsConfigDir()} as it
+     * This can be especially useful when using {@link FileManager#getModdedPlatformModsConfigDir()} as it
      * may return {@link Exceptional#empty()} depending on the availability mods on the platform.
      *
      * @return the boolean

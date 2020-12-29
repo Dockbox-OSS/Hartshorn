@@ -19,6 +19,7 @@ package org.dockbox.selene.core.impl.files.serialize;
 
 import com.google.common.reflect.TypeToken;
 
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.server.Selene;
@@ -35,7 +36,7 @@ import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 /**
  * Serializer definitions which can be (globally) registered for all types using
  * {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializers}. Within Selene, this targets
- * {@link org.dockbox.selene.core.files.ConfigurateManager}.
+ * {@link FileManager}.
  * Due to the requirement of generic constraints, a static final transient {@link java.util.Collection} is used.
  * Insances of {@link SerializerInformation} are automatically registered to {@link #serializerInformation}, and
  * therefore do not need to be declared as fields.

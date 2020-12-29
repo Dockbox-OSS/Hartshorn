@@ -26,7 +26,7 @@ import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.extension.ExtensionManager;
-import org.dockbox.selene.core.files.ConfigurateManager;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 
@@ -37,7 +37,7 @@ public abstract class SeleneInjectConfiguration extends AbstractModule {
     public static final List<Class<?>> REQUIRED_BINDINGS = SeleneUtils.COLLECTION.asList(
             ExceptionHelper.class,
             ExtensionManager.class,
-            ConfigurateManager.class,
+            FileManager.class,
             EventBus.class,
             DiscordUtils.class,
             BroadcastService.class,
