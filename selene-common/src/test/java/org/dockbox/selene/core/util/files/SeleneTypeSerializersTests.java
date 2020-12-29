@@ -36,7 +36,7 @@ import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
 
-public class TypeSerialiserTests {
+public class SeleneTypeSerializersTests {
 
     private TestConfigurationLoader getTestLoader() {
         TestConfigurationLoader.Builder tlb = TestConfigurationLoader.builder();

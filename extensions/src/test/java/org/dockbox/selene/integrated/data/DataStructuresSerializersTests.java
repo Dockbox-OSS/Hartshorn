@@ -29,7 +29,7 @@ import java.util.List;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
 
-public class TypeSerializerTests {
+public class DataStructuresSerializersTests {
 
     private TestConfigurationLoader getTestLoader() {
         TestConfigurationLoader.Builder tlb = TestConfigurationLoader.builder();
