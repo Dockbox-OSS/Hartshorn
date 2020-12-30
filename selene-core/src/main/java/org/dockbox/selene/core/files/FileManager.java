@@ -19,6 +19,7 @@ package org.dockbox.selene.core.files;
 
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.nio.file.Path;
 
@@ -49,6 +50,9 @@ public abstract class FileManager {
      * @return A {@link Path} reference to a file
      */
     public abstract Path getDataFile(Extension extension);
+    public Path getDataFile(Class<?> extension) {
+        return this.getDataFile(SeleneUtils.REFLECTION.getExtension(extension));
+    }
 
     /**
      * Gets the default config file for a given {@link Extension}. The exact location is decided by the top-level
@@ -60,6 +64,9 @@ public abstract class FileManager {
      * @return A {@link Path} reference to a file
      */
     public abstract Path getConfigFile(Extension extension);
+    public Path getConfigFile(Class<?> extension) {
+        return this.getConfigFile(SeleneUtils.REFLECTION.getExtension(extension));
+    }
 
     /**
      * Gets a specific data file for a given {@link Extension}. The exact location is decided by the top-level
@@ -73,6 +80,9 @@ public abstract class FileManager {
      * @return A {@link Path} reference to a file
      */
     public abstract Path getDataFile(Extension extension, String file);
+    public Path getDataFile(Class<?> extension, String file) {
+        return this.getDataFile(SeleneUtils.REFLECTION.getExtension(extension), file);
+    }
 
     /**
      * Gets a specific config file for a given {@link Extension}. The exact location is decided by the top-level
@@ -86,6 +96,9 @@ public abstract class FileManager {
      * @return A {@link Path} reference to a file
      */
     public abstract Path getConfigFile(Extension extension, String file);
+    public Path getConfigFile(Class<?> extension, String file) {
+        return this.getConfigFile(SeleneUtils.REFLECTION.getExtension(extension), file);
+    }
 
     /**
      * Get the content of a file, and map the given values to a generic type {@link T}. The exact file is completely
@@ -131,6 +144,9 @@ public abstract class FileManager {
      */
     public Path getDataDir(Extension extension) {
         return this.getDataDir().resolve(extension.id());
+    }
+    public Path getDataDir(Class<?> extension) {
+        return this.getDataDir(SeleneUtils.REFLECTION.getExtension(extension));
     }
 
     /**
@@ -194,6 +210,9 @@ public abstract class FileManager {
      */
     public Path getExtensionConfigDir(Extension extension) {
         return this.getExtensionConfigsDir().resolve(extension.id());
+    }
+    public Path getExtensionConfigDir(Class<?> extension) {
+        return this.getExtensionConfigDir(SeleneUtils.REFLECTION.getExtension(extension));
     }
 
     /**
