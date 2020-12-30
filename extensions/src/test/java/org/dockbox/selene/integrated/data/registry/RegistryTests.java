@@ -19,11 +19,9 @@ package org.dockbox.selene.integrated.data.registry;
 
 import org.dockbox.selene.core.objects.Exceptional;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 // Disabled as Registry storage is being rewritten for XStream
-@Disabled
 public class RegistryTests {
 
     private Registry<Registry<String>> buildTestRegistry() {
@@ -43,11 +41,11 @@ public class RegistryTests {
     public void testThatRegistryCanGetCorrectMatchingColumns() {
         Registry<Registry<String>> testRegistry = this.buildTestRegistry();
 
-        RegistryColumn<Object> result = testRegistry.getMatchingColumns(TestIdentifier.BRICK)
+        RegistryColumn<RegistryColumn<String>> result = testRegistry.getMatchingColumns(TestIdentifier.BRICK)
             .mapTo(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
 
-        Assertions.assertTrue(result.contains("Brick Fullblock1"));
-        Assertions.assertTrue(result.contains("Brick Fullblock2"));
+        Assertions.assertTrue(result.first().get().contains("Brick Fullblock1"));
+        Assertions.assertTrue(result.first().get().contains("Brick Fullblock2"));
     }
 
     @Test
@@ -117,7 +115,7 @@ public class RegistryTests {
         testRegistry.addRegistry(secondRegistry);
         RegistryColumn<Object> result = testRegistry
             .getMatchingColumns(TestIdentifier.SANDSTONE, TestIdentifier.WOOD)
-            .mapTo(r -> r.getMatchingColumns(TestIdentifier.STAIR));
+            .mapTo(r -> r.getMatchingColumns(TestIdentifier.STAIR).getSafely(0).orNull());
 
         Assertions.assertTrue(result.contains("Sandstone Stair1"));
         Assertions.assertTrue(result.contains("Sandstone Stair2"));
