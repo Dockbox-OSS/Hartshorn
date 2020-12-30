@@ -18,6 +18,7 @@
 package org.dockbox.selene.integrated.data.registry;
 
 import org.dockbox.selene.core.annotations.Rejects;
+import org.dockbox.selene.core.annotations.entity.Alias;
 import org.dockbox.selene.core.impl.files.DefaultConfigurateManager;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,7 @@ import java.util.function.Predicate;
 
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 @Rejects(DefaultConfigurateManager.class)
+@Alias("registry")
 public class Registry<V> {
 
     private final Map<RegistryIdentifier, RegistryColumn<V>> data = SeleneUtils.COLLECTION.emptyMap();

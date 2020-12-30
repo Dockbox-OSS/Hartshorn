@@ -210,7 +210,7 @@ public class SimpleCommandContext implements CommandContext {
                     Selene.log().warn("Field '" + field.getName() + "' has @FromSource annotation but cannot be provided [" + field.getType().getCanonicalName() + "]");
                 }
             }
-            return values.getOrDefault(SeleneUtils.REFLECTION.processFieldName(field), null);
+            return values.getOrDefault(SeleneUtils.REFLECTION.getFieldPropertyName(field), null);
         }, true);
     }
 

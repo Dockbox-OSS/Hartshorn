@@ -26,7 +26,9 @@ import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.security.NoTypePermission;
 import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
+import org.dockbox.selene.core.annotations.entity.Alias;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,6 +67,8 @@ import java.util.regex.Pattern;
  */
 public final class XStreamUtils {
 
+    private static Map<String, Class<?>> aliasedTypes;
+
     private static final String UTF_8 = "UTF-8";
 
     private XStreamUtils() { }
@@ -98,6 +102,18 @@ public final class XStreamUtils {
     }
 
     private static void configureXStream(XStream xstream) {
+        if (null == aliasedTypes) {
+            aliasedTypes = SeleneUtils.COLLECTION.emptyConcurrentMap();
+            Collection<Class<?>> annotatedTypes = SeleneUtils.REFLECTION.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Alias.class);
+            annotatedTypes.forEach(type -> {
+                Alias alias = type.getAnnotation(Alias.class);
+                if (aliasedTypes.containsKey(alias.value())) Selene.log().warn("Attempting to register a duplicate entity alias '" + alias.value() + "'");
+                xstream.alias(alias.value(), type);
+                // Put the alias last, so if xstream.alias ever throws a Exception this won't be called
+                aliasedTypes.put(alias.value(), type);
+            });
+        }
+
         xstream.addPermission(NoTypePermission.NONE);
 
         xstream.addPermission(PrimitiveTypePermission.PRIMITIVES);
