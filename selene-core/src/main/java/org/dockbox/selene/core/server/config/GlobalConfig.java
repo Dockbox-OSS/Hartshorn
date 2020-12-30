@@ -21,7 +21,10 @@ import org.dockbox.selene.core.i18n.common.Language;
 
 public interface GlobalConfig {
     Language getDefaultLanguage();
+
     boolean getStacktracesAllowed();
+
     ExceptionLevels getExceptionLevel();
+
     Environment getEnvironment();
 }

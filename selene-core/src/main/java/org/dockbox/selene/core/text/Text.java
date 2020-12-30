@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.text;
 
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
@@ -24,7 +25,6 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
-import org.dockbox.selene.core.SeleneUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -36,35 +36,15 @@ import javax.xml.bind.DatatypeConverter;
 
 public class Text {
 
-    private static final String legacyRegexFormat = "[\\$|&][0-9a-fklmnor]";
-
-    public enum HashMethod {
-        MD5("MD5"),
-        SHA1("SHA-1"),
-        SHA256("SHA-256");
-
-        private final String alg;
-
-        HashMethod(String alg) {
-            this.alg = alg;
-        }
-
-        @Override
-        public String toString() {
-            return this.alg;
-        }
-    }
-
     public static final char legacySectionSymbol = '&';
     public static final char sectionSymbol = '\u00A7';
+    private static final String legacyRegexFormat = "[\\$|&][0-9a-fklmnor]";
     private static final String styleChars = "01234567890abcdefklmnor";
-
+    private final List<Text> extra = SeleneUtils.COLLECTION.emptyConcurrentList();
     private String text;
     private ClickAction<?> clickAction;
     private HoverAction<?> hoverAction;
     private ShiftClickAction<?> shiftClickAction;
-    private final List<Text> extra = SeleneUtils.emptyConcurrentList();
-
     public Text(Object... objects) {
         if (0 < objects.length) {
             Object prim = objects[0];
@@ -90,6 +70,11 @@ public class Text {
         StringBuilder stringValue = new StringBuilder(this.text);
         for (Text extraText : this.extra) stringValue.append(' ').append(extraText.text);
         return stringValue.toString();
+    }
+
+    public static Text of(Object... objects) {
+        if (0 == objects.length) return new Text("");
+        return new Text(objects);
     }
 
     public String toLegacy() {
@@ -153,7 +138,7 @@ public class Text {
     }
 
     public List<Text> getParts() {
-        List<Text> parts = SeleneUtils.emptyList();
+        List<Text> parts = SeleneUtils.COLLECTION.emptyList();
         parts.add(this);
         parts.addAll(this.getExtra());
         return parts;
@@ -164,18 +149,13 @@ public class Text {
         return this.extra.stream().filter(e -> e != this).collect(Collectors.toList());
     }
 
-    public static Text of(Object... objects) {
-        if (0 == objects.length) return new Text("");
-        return new Text(objects);
-    }
-
     public Exceptional<String> generateHash(HashMethod method) {
         try {
             MessageDigest md = MessageDigest.getInstance(method.toString());
             md.update(this.toStringValue().getBytes());
             return Exceptional.of(DatatypeConverter.printHexBinary(md.digest()).toUpperCase());
         } catch (NoSuchAlgorithmException e) {
-            Selene.except("No algorithm implementation present for " + method.toString() + ". " +
+            Selene.handle("No algorithm implementation present for " + method + ". " +
                             "This algorithm should be implemented by every implementation of the Java platform! " +
                             "See https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html",
                     e);
@@ -186,5 +166,22 @@ public class Text {
     @Override
     public String toString() {
         return this.toStringValue();
+    }
+
+    public enum HashMethod {
+        MD5("MD5"),
+        SHA1("SHA-1"),
+        SHA256("SHA-256");
+
+        private final String alg;
+
+        HashMethod(String alg) {
+            this.alg = alg;
+        }
+
+        @Override
+        public String toString() {
+            return this.alg;
+        }
     }
 }

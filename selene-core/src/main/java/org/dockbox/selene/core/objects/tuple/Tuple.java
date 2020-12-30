@@ -30,6 +30,24 @@ public class Tuple<K, V> implements Entry<K, V> {
         this.value = value;
     }
 
+    public static <K, V> Tuple<K, V> of(K key, V value) {
+        return new Tuple<>(key, value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getKey(), this.getValue());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tuple)) return false;
+        Tuple<?, ?> tuple = (Tuple<?, ?>) o;
+        return this.getKey().equals(tuple.getKey()) &&
+                Objects.equals(this.getValue(), tuple.getValue());
+    }
+
     @Override
     public K getKey() {
         return this.key;
@@ -43,23 +61,5 @@ public class Tuple<K, V> implements Entry<K, V> {
     @Override
     public V setValue(V value) {
         throw new UnsupportedOperationException("Cannot modify final Tuple value");
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Tuple)) return false;
-        Tuple<?, ?> tuple = (Tuple<?, ?>) o;
-        return this.getKey().equals(tuple.getKey()) &&
-                Objects.equals(this.getValue(), tuple.getValue());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.getKey(), this.getValue());
-    }
-
-    public static <K, V> Tuple<K, V> of(K key, V value) {
-        return new Tuple<>(key, value);
     }
 }

@@ -17,12 +17,21 @@
 
 package org.dockbox.selene.core.annotations.entity;
 
+import org.dockbox.selene.core.util.SeleneUtils.Provision;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.function.Function;
 
+/**
+ * The interface to mark a object field as ignored when generating objects using
+ * {@link org.dockbox.selene.core.util.ReflectionUtil#tryCreate(Class, Function, boolean, Provision)} or (de)serializing
+ * them with a {@link org.dockbox.selene.core.files.FileManager} implementation.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Ignore { }
+public @interface Ignore {
+}
 

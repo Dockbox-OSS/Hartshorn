@@ -20,8 +20,11 @@ package org.dockbox.selene.core.objects.keys;
 public interface PersistentDataKey<T> {
 
     Class<T> getDataType();
+
     String getRegisteringExtensionId();
+
     String getDataKeyId();
+
     String getDataKeyName();
 
 }

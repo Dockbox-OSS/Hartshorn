@@ -19,8 +19,8 @@ package org.dockbox.selene.core;
 
 
 /**
- Enum type providing the supported Minecraft versions for Selene. Typically this is used when defining vanilla
- constants, indicating in which version they were made available.
+ * Enum type providing the supported Minecraft versions for Selene. Typically this is used when defining vanilla
+ * constants, indicating in which version they were made available.
  */
 public enum MinecraftVersion {
     MC1_12("1.12"),
@@ -33,6 +33,6 @@ public enum MinecraftVersion {
     }
 
     public String getReadableVersionString() {
-        return readableVersionString;
+        return this.readableVersionString;
     }
 }

@@ -26,13 +26,13 @@ public class ShiftClickAction<R> extends TextAction<R> {
         super(result);
     }
 
+    public static InsertText insertText(Text text) {
+        return new InsertText(text);
+    }
+
     public static final class InsertText extends ShiftClickAction<Text> {
         private InsertText(Text result) {
             super(result);
         }
-    }
-
-    public static InsertText insertText(Text text) {
-        return new InsertText(text);
     }
 }

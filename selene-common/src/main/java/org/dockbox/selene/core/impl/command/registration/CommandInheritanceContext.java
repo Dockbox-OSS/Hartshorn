@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.impl.command.registration;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.source.CommandSource;
@@ -28,7 +28,7 @@ import java.util.List;
 
 public class CommandInheritanceContext extends AbstractRegistrationContext {
 
-    private final List<MethodCommandContext> inheritedCommands = SeleneUtils.emptyConcurrentList();
+    private final List<MethodCommandContext> inheritedCommands = SeleneUtils.COLLECTION.emptyConcurrentList();
 
     public CommandInheritanceContext(Command command) {
         super(command);

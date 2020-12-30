@@ -21,8 +21,7 @@ public enum Language {
     EN_US("en_US", "English", "US"),
     NL_NL("nl_NL", "Dutch", "Nederlands"),
     FR_FR("fr_FR", "French", "Français"),
-    DE_DE("en_US", "German", "Deutsch")
-    ;
+    DE_DE("en_US", "German", "Deutsch");
     private final String code;
     private final String nameEnglish;
     private final String nameLocalized;

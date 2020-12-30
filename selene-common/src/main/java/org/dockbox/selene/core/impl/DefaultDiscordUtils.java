@@ -27,6 +27,8 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
+import org.dockbox.selene.core.DiscordUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.DiscordCommand;
 import org.dockbox.selene.core.annotations.command.DiscordCommand.ListeningLevel;
 import org.dockbox.selene.core.events.discord.DiscordCommandContext;
@@ -36,11 +38,8 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.DiscordUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -48,7 +47,7 @@ import java.util.Map;
 
 public abstract class DefaultDiscordUtils implements DiscordUtils {
 
-    private static final Map<String, Triad<DiscordCommand, Method, Object>> commandMethods = SeleneUtils.emptyConcurrentMap();
+    private static final Map<String, Triad<DiscordCommand, Method, Object>> commandMethods = SeleneUtils.COLLECTION.emptyConcurrentMap();
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String WILDCARD = "*";
 
@@ -109,18 +108,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @Override
     public void registerCommandListener(@NotNull Object instance) {
         Object obj = instance;
-        if (instance instanceof Class) {
-            try {
-                Constructor<?> ctor = ((Class<?>) instance).getConstructor();
-                obj = ctor.newInstance();
-            } catch (NoSuchMethodException e) {
-                Selene.except("Could not find constructor for Discord listener [" + ((Class<?>) instance).getCanonicalName() + "]");
-                return;
-            } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-                Selene.except("Could not instantiate Discord listener [" + ((Class<?>) instance).getCanonicalName() + "]");
-                return;
-            }
-        }
+        if (instance instanceof Class) obj = SeleneUtils.REFLECTION.getInstance((Class<?>) instance);
 
         Arrays.stream(obj.getClass().getDeclaredMethods())
                 .filter(m -> m.isAnnotationPresent(DiscordCommand.class))
@@ -183,7 +171,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                 method.invoke(instance, context);
             } catch (IllegalAccessException | InvocationTargetException e) {
                 context.sendToChannel(IntegratedResource.DISCORD_COMMAND_ERRORED);
-                Selene.except("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass().getCanonicalName() + "]");
+                Selene.handle("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass().getCanonicalName() + "]");
             }
         } else context.sendToChannel(IntegratedResource.DISCORD_COMMAND_UNKNOWN);
     }

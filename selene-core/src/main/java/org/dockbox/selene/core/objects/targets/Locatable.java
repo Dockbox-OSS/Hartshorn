@@ -23,6 +23,8 @@ import org.dockbox.selene.core.objects.location.World;
 public interface Locatable extends Target {
 
     Location getLocation();
+
     void setLocation(Location location);
+
     World getWorld();
 }

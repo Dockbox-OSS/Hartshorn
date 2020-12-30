@@ -25,14 +25,13 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 
 import org.dockbox.selene.core.impl.files.annotations.Default;
-import org.dockbox.selene.core.impl.files.annotations.DoNotGenerate;
 import org.dockbox.selene.core.impl.files.annotations.ProcessSetting;
 import org.dockbox.selene.core.impl.files.annotations.RequiresProperty;
 import org.dockbox.selene.core.impl.files.process.SettingProcessor;
 import org.dockbox.selene.core.impl.files.process.SettingProcessorCache;
 import org.dockbox.selene.core.impl.files.util.ClassConstructor;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -105,16 +104,6 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
                 } catch (IllegalArgumentException e) {
                     data = new FieldData(field, comment);
                 }
-            } else if (field.isAnnotationPresent(DoNotGenerate.class)) {
-                Object defaultValue = null;
-                try {
-                    field.setAccessible(true);
-                    defaultValue = field.get(field.getDeclaringClass().newInstance());
-                } catch (IllegalAccessException | InstantiationException e) {
-                    Selene.except(e.getMessage(), e);
-                }
-
-                data = new DoNotGenerateFieldData(field, comment, defaultValue);
             } else {
                 data = new FieldData(field, comment);
             }
@@ -177,7 +166,7 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
                 try {
                     this.setDefaultOnField(instance, node);
                 } catch (IllegalAccessException e) {
-                    Selene.except(e.getMessage(), e);
+                    Selene.handle(e.getMessage(), e);
                 }
 
                 return;
@@ -186,7 +175,7 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
             try {
                 this.fieldData.deserializeFrom(instance, node);
             } catch (Exception e) {
-                Selene.except(e.getMessage(), e);
+                Selene.handle(e.getMessage(), e);
             }
 
             try {
@@ -195,7 +184,7 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
                     this.setDefaultOnField(instance, node);
                 }
             } catch (IllegalAccessException e) {
-                Selene.except(e.getMessage(), e);
+                Selene.handle(e.getMessage(), e);
             }
         }
 
@@ -279,7 +268,7 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
 
     protected static class PreprocessedFieldData extends FieldData {
 
-        private final Collection<SettingProcessor> processors = SeleneUtils.emptyList();
+        private final Collection<SettingProcessor> processors = SeleneUtils.COLLECTION.emptyList();
 
         protected PreprocessedFieldData(Field field, String comment, ClassConstructor<SettingProcessor> processorClassConstructor)
                 throws ObjectMappingException, IllegalArgumentException {
@@ -289,7 +278,7 @@ public class NeutrinoObjectMapper<T> extends ObjectMapper<T> {
                     this.processors.add(SettingProcessorCache.getOrAdd(pro, processorClassConstructor));
                 }
             } catch (Throwable e) {
-                Selene.except("No setting processor", e);
+                Selene.handle("No setting processor", e);
                 throw new IllegalArgumentException("No setting processor", e);
             }
         }

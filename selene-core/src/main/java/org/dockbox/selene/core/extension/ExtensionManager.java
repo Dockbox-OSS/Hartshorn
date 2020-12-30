@@ -25,12 +25,15 @@ import java.util.List;
 public interface ExtensionManager {
 
     Exceptional<ExtensionContext> getContext(Class<?> type);
+
     Exceptional<ExtensionContext> getContext(String id);
 
     Exceptional<Extension> getHeader(Class<?> type);
+
     Exceptional<Extension> getHeader(String id);
 
     <T> Exceptional<T> getInstance(Class<T> type);
+
     <T> Exceptional<T> getInstance(String id);
 
     List<ExtensionContext> initialiseExtensions();

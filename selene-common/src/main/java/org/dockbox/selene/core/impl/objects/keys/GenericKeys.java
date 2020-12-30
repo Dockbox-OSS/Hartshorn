@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.impl.objects.keys;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.Key;
@@ -32,15 +32,15 @@ import java.util.UUID;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public final class GenericKeys {
 
-    public static final Key<Identifiable, UUID> UNIQUE_ID = SeleneUtils.unsafeDynamicKeyOf(Identifiable::setUniqueId, Identifiable::getUniqueId);
-    public static final Key<Identifiable, String> NAME = SeleneUtils.unsafeDynamicKeyOf(Identifiable::setName, Identifiable::getName);
+    public static final Key<Identifiable, UUID> UNIQUE_ID = SeleneUtils.KEYS.unsafeDynamicKeyOf(Identifiable::setUniqueId, Identifiable::getUniqueId);
+    public static final Key<Identifiable, String> NAME = SeleneUtils.KEYS.unsafeDynamicKeyOf(Identifiable::setName, Identifiable::getName);
 
-    public static final Key<Player, Gamemode> GAMEMODE = SeleneUtils.unsafeDynamicKeyOf(Player::setGamemode, Player::getGamemode);
-    public static final Key<Player, Language> LANGUAGE = SeleneUtils.unsafeDynamicKeyOf(Player::setLanguage, Player::getLanguage);
+    public static final Key<Player, Gamemode> GAMEMODE = SeleneUtils.KEYS.unsafeDynamicKeyOf(Player::setGamemode, Player::getGamemode);
+    public static final Key<Player, Language> LANGUAGE = SeleneUtils.KEYS.unsafeDynamicKeyOf(Player::setLanguage, Player::getLanguage);
 
-    public static final Key<Item, Text> DISPLAY_NAME = SeleneUtils.unsafeDynamicKeyOf(Item::setDisplayName, Item::getDisplayName, Item::removeDisplayName);
-    public static final Key<Item, Integer> AMOUNT = SeleneUtils.unsafeDynamicKeyOf(Item::setAmount, Item::getAmount);
-    public static final Key<Item, List<Text>> LORE = SeleneUtils.unsafeDynamicKeyOf(Item::setLore, Item::getLore, Item::removeLore);
+    public static final Key<Item, Text> DISPLAY_NAME = SeleneUtils.KEYS.unsafeDynamicKeyOf(Item::setDisplayName, Item::getDisplayName, Item::removeDisplayName);
+    public static final Key<Item, Integer> AMOUNT = SeleneUtils.KEYS.unsafeDynamicKeyOf(Item::setAmount, Item::getAmount);
+    public static final Key<Item, List<Text>> LORE = SeleneUtils.KEYS.unsafeDynamicKeyOf(Item::setLore, Item::getLore, Item::removeLore);
 
     private GenericKeys() {
     }

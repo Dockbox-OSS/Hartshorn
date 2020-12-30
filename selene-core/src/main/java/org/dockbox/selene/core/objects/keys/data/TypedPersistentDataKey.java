@@ -59,6 +59,14 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     }
 
     @Override
+    public int hashCode() {
+        int result = this.id.hashCode();
+        result = 31 * result + this.extension.hashCode();
+        result = 31 * result + this.type.hashCode();
+        return result;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof TypedPersistentDataKey)) return false;
@@ -68,13 +76,5 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
         if (!this.id.equals(that.id)) return false;
         if (!this.extension.equals(that.extension)) return false;
         return this.type.equals(that.type);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = this.id.hashCode();
-        result = 31 * result + this.extension.hashCode();
-        result = 31 * result + this.type.hashCode();
-        return result;
     }
 }

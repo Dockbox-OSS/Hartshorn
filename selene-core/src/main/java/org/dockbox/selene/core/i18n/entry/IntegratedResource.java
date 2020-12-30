@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.i18n.entry;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
@@ -46,7 +46,7 @@ public enum IntegratedResource implements ResourceEntry {
     CONFIRM_WRONG_SOURCE("$4This command can only be used by identifiable sources (players, console)", "confirm.invalid.source"),
 
     // - Generic common error message
-    UNKNOWN_ERROR("$1An error occurred. {0}", "error"),
+    UNKNOWN_ERROR("$4An error occurred. $3{0}", "error"),
     KEY_BINDING_FAILED("$4Key cannot be applied to this type", "error.keys.failedbinding"),
     LOST_REFERENCE("$4Reference to object lost", "error.reference.lost"),
 
@@ -105,13 +105,17 @@ public enum IntegratedResource implements ResourceEntry {
     VANISHING_CURSE("Vanishing Curse", "minecraft.enchant.vanishing"),
     ;
 
-    private String value;
     private final String key;
-    private final Map<Language, String> translations = SeleneUtils.emptyConcurrentMap();
+    private final Map<Language, String> translations = SeleneUtils.COLLECTION.emptyConcurrentMap();
+    private String value;
 
     IntegratedResource(String value, String key) {
         this.value = value;
         this.key = key;
+    }
+
+    public static String parse(CharSequence input) {
+        return NONE.parseColors(input.toString());
     }
 
     public String getValue(Player player) {
@@ -143,10 +147,6 @@ public enum IntegratedResource implements ResourceEntry {
     public void setLanguageValue(Language lang, String value) {
         this.translations.put(lang, value);
         if (lang == Selene.getServer().getGlobalConfig().getDefaultLanguage()) this.value = value;
-    }
-
-    public static String parse(CharSequence input) {
-        return NONE.parseColors(input.toString());
     }
 
 }

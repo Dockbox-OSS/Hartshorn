@@ -36,18 +36,13 @@ public final class TestsExactMatcher extends TypeSafeMatcher<VerbalExpression> {
     }
 
     @Override
-    protected boolean matchesSafely(VerbalExpression verbalExpression) {
+    public boolean matchesSafely(VerbalExpression verbalExpression) {
         return verbalExpression.testExact(this.toTest);
     }
 
     @Override
     public void describeTo(Description description) {
         description.appendText("regex should match exactly to ").appendValue(this.toTest);
-    }
-
-    @Override
-    protected void describeMismatchSafely(VerbalExpression item, Description mismatchDescription) {
-        mismatchDescription.appendText(item.toString()).appendText(" don't matches this string");
     }
 
     @Factory

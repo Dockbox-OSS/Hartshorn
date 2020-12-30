@@ -26,12 +26,15 @@ import java.util.function.Predicate;
 public interface BroadcastService {
 
     void broadcastPublic(Text message);
+
     void broadcastWithFilter(Text message, Predicate<Player> filter);
 
     void broadcastForPermission(Text message, AbstractPermission permission);
+
     void broadcastForPermission(Text message, String permission);
 
     void broadcastForPermissionWithFilter(Text message, AbstractPermission permission, Predicate<Player> filter);
+
     void broadcastForPermissionWithFilter(Text message, String permission, Predicate<Player> filter);
 
 }

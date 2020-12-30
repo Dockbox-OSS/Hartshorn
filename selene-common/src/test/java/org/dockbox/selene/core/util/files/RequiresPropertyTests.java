@@ -22,7 +22,7 @@ package org.dockbox.selene.core.util.files;
 import org.dockbox.selene.core.impl.files.annotations.Default;
 import org.dockbox.selene.core.impl.files.annotations.RequiresProperty;
 import org.dockbox.selene.core.impl.files.mapping.NeutrinoObjectMapperFactory;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -41,9 +41,9 @@ public class RequiresPropertyTests {
         ccn.getNode("updated").setValue("ok");
 
         TestConf sut = NeutrinoObjectMapperFactory.getInstance().getMapper(TestConf.class).bindToNew().populate(ccn);
-        Assert.assertEquals("not", sut.test);
-        Assert.assertEquals("def", sut.def);
-        Assert.assertEquals("ok", sut.updated);
+        Assertions.assertEquals("not", sut.test);
+        Assertions.assertEquals("def", sut.def);
+        Assertions.assertEquals("ok", sut.updated);
     }
 
     @Test
@@ -56,9 +56,9 @@ public class RequiresPropertyTests {
 
         TestConf sut = new TestConf();
         NeutrinoObjectMapperFactory.getInstance().getMapper(TestConf.class).bind(sut).serialize(ccn);
-        Assert.assertEquals("ok", ccn.getNode("test").getString());
-        Assert.assertEquals("ok", ccn.getNode("def").getString());
-        Assert.assertEquals("not", ccn.getNode("updated").getString());
+        Assertions.assertEquals("ok", ccn.getNode("test").getString());
+        Assertions.assertEquals("ok", ccn.getNode("def").getString());
+        Assertions.assertEquals("not", ccn.getNode("updated").getString());
     }
 
     @Test
@@ -70,8 +70,8 @@ public class RequiresPropertyTests {
 
         TestConf sut = new TestConf();
         NeutrinoObjectMapperFactory.getInstance().getMapper(TestConf.class).bind(sut).populate(ccn);
-        Assert.assertEquals("ok", sut.regex2);
-        Assert.assertEquals("no", sut.regex);
+        Assertions.assertEquals("ok", sut.regex2);
+        Assertions.assertEquals("no", sut.regex);
     }
 
     @Test
@@ -83,8 +83,8 @@ public class RequiresPropertyTests {
 
         TestConf sut = new TestConf();
         NeutrinoObjectMapperFactory.getInstance().getMapper(TestConf.class).bind(sut).serialize(ccn);
-        Assert.assertEquals("no", ccn.getNode("regex2").getString());
-        Assert.assertEquals("ok", ccn.getNode("regex").getString());
+        Assertions.assertEquals("no", ccn.getNode("regex2").getString());
+        Assertions.assertEquals("ok", ccn.getNode("regex").getString());
     }
 
     @ConfigSerializable

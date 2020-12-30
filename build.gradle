@@ -1,0 +1,169 @@
+import java.time.LocalDate
+
+/*
+ *  Copyright (C) 2020 Guus Lieben
+ *
+ *  This framework is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as
+ *  published by the Free Software Foundation, either version 2.1 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ *  the GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'java-library'
+}
+
+static def getVersionName() {
+    return 'git rev-parse --verify --short HEAD'.execute().text.trim()
+}
+
+version = getVersionName()
+group = project.pluginGroup
+description = 'Common sources for Selene extensions'
+def date = LocalDate.now().toString()
+
+subprojects { Project subProject ->
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    group = project.pluginGroup
+    version = "${getVersionName()}-$date"
+
+    task copyArtifacts {
+        doLast {
+            def version = getVersionName()
+            def DIST_DEST_DIR = "${rootDir}/dist/${date}/${version}"
+            def DIRT_SRC_DIR = "${buildDir}/libs"
+
+            ant.mkdir(dir: DIST_DEST_DIR)
+            println("Copying all built files to $DIST_DEST_DIR")
+            ant.copy(todir: DIST_DEST_DIR) {
+                fileset dir: DIRT_SRC_DIR,
+                        includes: "*${version}-${date}*.jar"
+            }
+
+        }
+    }
+
+    build.finalizedBy copyArtifacts
+
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+
+    tasks.build.dependsOn tasks.shadowJar
+
+    shadowJar {
+        relocate 'com.fasterxml.jackson', 'org.dockbox.selene.internal.jackson'
+        relocate 'org.apache.commons', 'org.dockbox.selene.internal.apache.commons'
+    }
+}
+
+allprojects {
+    plugins.withType(JavaPlugin) {
+        repositories {
+            mavenCentral()
+            jcenter()
+            maven {
+                name 'Jitpack'
+                url 'https://jitpack.io'
+            }
+            maven {
+                name 'fawe'
+                url 'http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/'
+            }
+            maven {
+                name 'sk89q'
+                url 'https://maven.enginehub.org/repo/'
+            }
+            maven {
+                name 'plotsquared'
+                url 'https://plotsquared.com/mvn/'
+            }
+            maven { // Only used for Configurate, not for platform implementations
+                name 'Sponge maven repo'
+                url 'https://repo.spongepowered.org/maven'
+            }
+        }
+
+        configurations {
+            all*.exclude group: 'junit', module:'junit'
+        }
+
+        dependencies {
+            compile("net.dv8tion:JDA:$jdaVersion") {
+                exclude module: 'opus-java'
+            }
+
+            // Required plugins for all platforms
+            compileOnly "com.boydti:fawe-api:$faweVersion"
+            compileOnly "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
+            compileOnly "com.plotsquared:plotsquared-api:$plotSquaredVersion"
+
+            // Included by some platforms, should be shadowed by platforms if it isn't already available
+            compileOnly "org.spongepowered:configurate-core:$configurateVersion"
+            testCompile "org.spongepowered:configurate-core:$configurateVersion"
+            testRuntime "org.spongepowered:configurate-core:$configurateVersion"
+
+            // Typically included by platforms
+            compileOnly "org.slf4j:slf4j-api:$slf4jVersion"
+
+            // Compile/source dependencies
+            compileOnly("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
+
+            // Testing requirements
+            testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+            testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+            testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+            testCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
+
+            testCompile "org.mockito:mockito-all:$mockitoVersion"
+
+            testImplementation "com.boydti:fawe-api:$faweVersion"
+            testImplementation "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
+            testImplementation "com.plotsquared:plotsquared-api:$plotSquaredVersion"
+            testImplementation "com.google.inject:guice:$guiceVersion"
+        }
+
+        test {
+            useJUnitPlatform()
+        }
+    }
+}
+
+task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all submodules', group: 'Documentation') {
+    destinationDir = file "./docs"
+    title = "Selene (commit #$version)"
+    options.author true
+    options.links 'http://docs.spring.io/spring/docs/4.3.x/javadoc-api/', 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.spring.io/spring-ws/docs/2.3.0.RELEASE/api/', 'http://docs.spring.io/spring-security/site/docs/4.0.4.RELEASE/apidocs/'
+    options.addStringOption 'Xdoclint:none', '-quiet'
+
+    delete "./docs"
+
+    subprojects.each { proj ->
+        proj.tasks.withType(Javadoc).each { javadocTask ->
+            source += javadocTask.source
+            classpath += javadocTask.classpath
+            excludes += javadocTask.excludes
+            includes += javadocTask.includes
+        }
+    }
+}

@@ -21,7 +21,7 @@ import org.dockbox.selene.core.VerbalExpression;
 import org.dockbox.selene.core.regex.matchers.TestMatchMatcher;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * User: lanwen

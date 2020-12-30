@@ -22,7 +22,9 @@ import org.dockbox.selene.core.objects.Exceptional;
 public interface CommandBus {
 
     void register(Object... objs);
+
     void apply();
+
     Exceptional<Boolean> confirmCommand(String confirmId);
 
 }

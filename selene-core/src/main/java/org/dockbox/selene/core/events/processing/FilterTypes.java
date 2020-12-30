@@ -18,20 +18,20 @@
 package org.dockbox.selene.core.events.processing;
 
 import org.dockbox.selene.core.annotations.event.filter.Filter;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 
 /**
- The default filter types used in {@link Filter}. These typically compare the given
- value of a event property to a expected value.
+ * The default filter types used in {@link Filter}. These typically compare the given
+ * value of a event property to a expected value.
  */
 public enum FilterTypes implements FilterType {
     /**
-     Checks whether or not a expected {@link String} is contained in the actual value. If either value is
-     <code>null</code> or the types are not both {@link String} types, <code>false</code> is returned.
+     * Checks whether or not a expected {@link String} is contained in the actual value. If either value is
+     * {@code null} or the types are not both {@link String} types, {@code false} is returned.
      */
     CONTAINS((expected, actual) -> {
         if (eitherNull(expected, actual)) return false;
@@ -44,9 +44,9 @@ public enum FilterTypes implements FilterType {
     }),
 
     /**
-     Checks whether or not a expected object equals the actual value. If both values are <code>null</code>, are equal,
-     or are the same object, <code>true</code> is returned. If either value is <code>null</code> or they do not equal
-     <code>false</code> is returned.
+     * Checks whether or not a expected object equals the actual value. If both values are {@code null}, are equal,
+     * or are the same object, {@code true} is returned. If either value is {@code null} or they do not equal
+     * {@code false} is returned.
      */
     EQUALS((expected, actual) -> {
         if (bothNull(expected, actual)) return true;
@@ -57,57 +57,52 @@ public enum FilterTypes implements FilterType {
     }),
 
     /**
-     Checks whether both values are numeral types, then compares if the expected value is greater than the actual value.
+     * Checks whether both values are numeral types, then compares if the expected value is greater than the actual value.
      */
     GREATER_THAN((expected, actual) -> {
         return numberCheck(expected, actual, (e, a) -> e > a);
     }),
 
     /**
-     Checks whether both values are numeral types, then compares if the expected value is less than the actual value.
+     * Checks whether both values are numeral types, then compares if the expected value is less than the actual value.
      */
     LESS_THAN((expected, actual) -> {
         return numberCheck(expected, actual, (e, a) -> e < a);
     }),
 
     /**
-     Checks whether both values are numeral types, then compares if the expected value is less than- or equal to the
-     actual value.
+     * Checks whether both values are numeral types, then compares if the expected value is less than- or equal to the
+     * actual value.
      */
     LESS_OR_EQUAL((expected, actual) -> {
         return numberCheck(expected, actual, (e, a) -> e <= a);
     }),
 
     /**
-     Checks whether both values are numeral types, then compares if the expected value is greater than- or equal to the
-     actual value.
+     * Checks whether both values are numeral types, then compares if the expected value is greater than- or equal to the
+     * actual value.
      */
     GREATER_OR_EQUAL((expected, actual) -> {
         return numberCheck(expected, actual, (e, a) -> e >= a);
     }),
 
     /**
-     Checks whether or not a expected object does not equal the actual value. If both values are <code>null</code>, are
-     equal, or are the same object, <code>false</code> is returned. If either value is <code>null</code> or they do not
-     equal <code>true</code> is returned. (Inverse of {@link #EQUALS}.
+     * Checks whether or not a expected object does not equal the actual value. If both values are {@code null}, are
+     * equal, or are the same object, {@code false} is returned. If either value is {@code null} or they do not
+     * equal {@code true} is returned. (Inverse of {@link #EQUALS}.
      */
     NOT_EQUAL((expected, actual) -> !EQUALS.test(expected, actual)),
 
     /**
-     Checks that a expected {@link String} is not contained in the actual value. (Inverse of {@link #CONTAINS}.
+     * Checks that a expected {@link String} is not contained in the actual value. (Inverse of {@link #CONTAINS}.
      */
     NOT_CONTAINS((expected, actual) -> !CONTAINS.test(expected, actual)),
     ;
 
     private final BiFunction<Object, Object, Boolean> defaultFilter;
 
-    private FilterTypes(BiFunction<Object, Object, Boolean> defaultFilter) {
+    FilterTypes(BiFunction<Object, Object, Boolean> defaultFilter) {
         this.defaultFilter = defaultFilter;
-    }
-
-    @Override
-    public boolean test(Object expected, Object actual) {
-        return this.defaultFilter.apply(expected, actual);
     }
 
     private static boolean numberCheck(Object expected, Object actual, BiFunction<Float, Float, Boolean> function) {
@@ -120,16 +115,16 @@ public enum FilterTypes implements FilterType {
         return false;
     }
 
+    private static boolean eitherNull(Object expected, Object actual) {
+        return null == expected || null == actual;
+    }
+
     private static boolean checkTypes(Object expected, Object actual, Class<?> expectedType) {
         if (null == expected || null == actual || null == expectedType) {
             return false;
         }
-        return SeleneUtils.isAssignableFrom(expectedType, expected.getClass())
-                && SeleneUtils.isAssignableFrom(expectedType, actual.getClass());
-    }
-
-    private static boolean eitherNull(Object expected, Object actual) {
-        return null == expected || null == actual;
+        return SeleneUtils.REFLECTION.isAssignableFrom(expectedType, expected.getClass())
+                && SeleneUtils.REFLECTION.isAssignableFrom(expectedType, actual.getClass());
     }
 
     private static boolean bothNull(Object expected, Object actual) {
@@ -137,20 +132,25 @@ public enum FilterTypes implements FilterType {
     }
 
     /**
-     Returns a list of {@link FilterTypes} which are commonly applied to {@link String} types.
-
-     @return The list of {@link FilterTypes}
+     * Returns a list of {@link FilterTypes} which are commonly applied to {@link String} types.
+     *
+     * @return The list of {@link FilterTypes}
      */
     public static List<FilterType> commonStringTypes() {
         return Arrays.asList(CONTAINS, EQUALS, NOT_CONTAINS, NOT_EQUAL);
     }
 
     /**
-     Returns a list of {@link FilterTypes} which are commonly applied to {@link Number} types.
-
-     @return The list of {@link FilterTypes}
+     * Returns a list of {@link FilterTypes} which are commonly applied to {@link Number} types.
+     *
+     * @return The list of {@link FilterTypes}
      */
     public static List<FilterType> commonNumberTypes() {
         return Arrays.asList(GREATER_THAN, LESS_THAN, LESS_OR_EQUAL, GREATER_OR_EQUAL, NOT_EQUAL, EQUALS);
+    }
+
+    @Override
+    public boolean test(Object expected, Object actual) {
+        return this.defaultFilter.apply(expected, actual);
     }
 }

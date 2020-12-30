@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.core.i18n.common;
 
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.SeleneUtils;
 
 import java.util.Map;
 
@@ -28,22 +28,33 @@ public interface ResourceEntry extends Formattable {
     @SuppressWarnings("ConstantDeclaredInInterface")
     int MAX_SHORT_LENGTH = 50;
 
-    String getValue();
-
     String getValue(Language lang);
 
-    void setValue(String value);
-
-    default String plain(){
-        return this.getValue().replaceAll("[$|&][0-9a-fklmnor]", "");
+    default Text asText() {
+        return Text.of(this.asString());
     }
 
     default String asString() {
         return this.parseColors(this.getValue());
     }
 
-    default Text asText() {
-        return Text.of(this.asString());
+    default String parseColors(String m) {
+        String temp = m;
+        char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
+        for (char c : nativeFormats) temp = temp.replace(String.format("&%s", c), String.format("\u00A7%s", c));
+        return "\u00A7r" + temp
+                .replace("$1", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_PRIMARY.plain()))
+                .replace("$2", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_SECONDARY.plain()))
+                .replace("$3", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_MINOR.plain()))
+                .replace("$4", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_ERROR.plain()));
+    }
+
+    String getValue();
+
+    void setValue(String value);
+
+    default String plain() {
+        return this.getValue().replaceAll("[$|&][0-9a-fklmnor]", "");
     }
 
     default String format(Object... args) {
@@ -53,7 +64,7 @@ public interface ResourceEntry extends Formattable {
     default String shortFormat(Object... args) {
         int diff = this.asString().length() - this.plain().length();
         String formatted = this.format(args);
-        if ((MAX_SHORT_LENGTH -1) + diff > formatted.length())
+        if ((MAX_SHORT_LENGTH - 1) + diff > formatted.length())
             return formatted;
         else
             return this.format(args).substring(0, MAX_SHORT_LENGTH + diff);
@@ -70,9 +81,9 @@ public interface ResourceEntry extends Formattable {
     default String formatCustom(String m, Object... args) {
         String temp = m;
         if (0 == args.length) return temp;
-        Map<String, String> map = SeleneUtils.emptyMap();
+        Map<String, String> map = SeleneUtils.COLLECTION.emptyMap();
 
-        for (int i = 0; i < args.length; i++){
+        for (int i = 0; i < args.length; i++) {
             String arg = "" + args[i];
             if (arg.isEmpty()) map.put(String.format("{%d}", i), "");
             else map.put(String.format("{%d}", i), arg);
@@ -80,17 +91,6 @@ public interface ResourceEntry extends Formattable {
         }
         temp = this.replaceFromMap(temp, map);
         return this.parseColors(temp);
-    }
-
-    default String parseColors(String m) {
-        String temp = m;
-        char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
-        for (char c : nativeFormats) temp = temp.replace(String.format("&%s", c), String.format("\u00A7%s", c));
-        return "\u00A7r" + temp
-                .replace("$1", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_PRIMARY.plain()))
-                .replace("$2", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_SECONDARY.plain()))
-                .replace("$3", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_MINOR.plain()))
-                .replace("$4", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_ERROR.plain()));
     }
 
     String getKey();

@@ -17,27 +17,25 @@
 
 package org.dockbox.selene.core.objects.keys;
 
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Map;
 
 public class TestKeys {
 
-    private static final Map<Object, String> localRegistry = SeleneUtils.emptyMap();
+    private static final Map<Object, String> localRegistry = SeleneUtils.COLLECTION.emptyMap();
 
-    public static final Key<TestKeyHolder, String> HOLDER_KEY = SeleneUtils.dynamicKeyOf(
+    public static final Key<TestKeyHolder, String> HOLDER_KEY = SeleneUtils.KEYS.dynamicKeyOf(
             localRegistry::put,
             testKeyHolder ->
                     Exceptional.ofNullable(localRegistry.getOrDefault(testKeyHolder, null))
     );
 
-    public static final Key<TestNonKeyHolder, String> NON_HOLDER_KEY = SeleneUtils.dynamicKeyOf(
+    public static final Key<TestNonKeyHolder, String> NON_HOLDER_KEY = SeleneUtils.KEYS.dynamicKeyOf(
             localRegistry::put,
             testKeyHolder ->
                     Exceptional.ofNullable(localRegistry.getOrDefault(testKeyHolder, null))
     );
-
-
 
 }

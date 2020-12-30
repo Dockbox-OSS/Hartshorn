@@ -23,13 +23,13 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- A low-level type which can be used in combination with a {@link KeyHolder} to dynamically apply and retrieve
- values from types.
-
- @param <K>
- The type parameter indicating the constraint for the type to apply to/retrieve from.
- @param <A>
- The type parameter indicating the constraint for the value to be applied/retrieved.
+ * A low-level type which can be used in combination with a {@link KeyHolder} to dynamically apply and retrieve
+ * values from types.
+ *
+ * @param <K>
+ *         The type parameter indicating the constraint for the type to apply to/retrieve from.
+ * @param <A>
+ *         The type parameter indicating the constraint for the value to be applied/retrieved.
  */
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class Key<K, A> {
@@ -38,15 +38,15 @@ public abstract class Key<K, A> {
     private final Function<K, Exceptional<A>> getter;
 
     /**
-     Instantiates a new Key using a given setter and getter.
-
-     @param setter
-     The setter, accepting two values. The first being the type to apply to, constrained using type parameter {@link K}.
-     The second being the value to apply, constrained using type parameter {@link A}.
-     @param getter
-     The getter, accepting one value, and returning another. The accepting value being the type to retrieve from,
-     constrained using type parameter {@link K}. The return value being the value retreived from the type, constrained
-     using type parameter {@link A}.
+     * Instantiates a new Key using a given setter and getter.
+     *
+     * @param setter
+     *         The setter, accepting two values. The first being the type to apply to, constrained using type parameter {@link K}.
+     *         The second being the value to apply, constrained using type parameter {@link A}.
+     * @param getter
+     *         The getter, accepting one value, and returning another. The accepting value being the type to retrieve from,
+     *         constrained using type parameter {@link K}. The return value being the value retreived from the type, constrained
+     *         using type parameter {@link A}.
      */
     protected Key(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
         this.setter = setter;
@@ -54,45 +54,44 @@ public abstract class Key<K, A> {
     }
 
 
-
     /**
-     Apply a given value of type parameter {@link A} to a given type constrained by type parameter {@link K}.
-
-     @param keyType
-     The data holder, constrained by type parameter {@link K}.
-     @param appliedValue
-     The value to apply, constrained by type parameter {@link A}.
-
-     @return The transaction result containing a {@link org.dockbox.selene.core.i18n.common.ResourceEntry} if a failure
-     occurred.
+     * Apply a given value of type parameter {@link A} to a given type constrained by type parameter {@link K}.
+     *
+     * @param keyType
+     *         The data holder, constrained by type parameter {@link K}.
+     * @param appliedValue
+     *         The value to apply, constrained by type parameter {@link A}.
+     *
+     * @return The transaction result containing a {@link org.dockbox.selene.core.i18n.common.ResourceEntry} if a failure
+     *         occurred.
      */
     public TransactionResult set(K keyType, A appliedValue) {
         return this.setter.apply(keyType, appliedValue);
     }
 
     /**
-     Retrieves a value from the given type constrained by type parameter {@link K}.
-
-     @param keyType
-     The data holder, constrained by type parameter {@link K}.
-
-     @return The retrieved value, constrained by type parameter {@link A}.
+     * Retrieves a value from the given type constrained by type parameter {@link K}.
+     *
+     * @param keyType
+     *         The data holder, constrained by type parameter {@link K}.
+     *
+     * @return The retrieved value, constrained by type parameter {@link A}.
      */
     public Exceptional<A> get(K keyType) {
         return this.getter.apply(keyType);
     }
 
     /**
-     Resolves the correct parent type for a given key, so it can be applied safely. This is useful when applying
-     keys to supertypes which extend from multiple Keyholders, like {@link org.dockbox.selene.core.objects.player.Player}.
-     This method applies a constraint on the type, so that the supertype has to extend type parameter {@link K}, so
-     we can ensure no {@link ClassCastException} will be thrown. This also prevents us from applying a {@link Key} made
-     for e.g. {@link org.dockbox.selene.core.objects.item.Item} to a {@link org.dockbox.selene.core.objects.player.Player}.
-
-     @param <T>
-     The type parameter indicating the supertype to resolve
-
-     @return The current instance, resolved for the supertype.
+     * Resolves the correct parent type for a given key, so it can be applied safely. This is useful when applying
+     * keys to supertypes which extend from multiple Keyholders, like {@link org.dockbox.selene.core.objects.player.Player}.
+     * This method applies a constraint on the type, so that the supertype has to extend type parameter {@link K}, so
+     * we can ensure no {@link ClassCastException} will be thrown. This also prevents us from applying a {@link Key} made
+     * for e.g. {@link org.dockbox.selene.core.objects.item.Item} to a {@link org.dockbox.selene.core.objects.player.Player}.
+     *
+     * @param <T>
+     *         The type parameter indicating the supertype to resolve
+     *
+     * @return The current instance, resolved for the supertype.
      */
     @SuppressWarnings("unchecked")
     public <T extends K> Key<T, A> resolve() {

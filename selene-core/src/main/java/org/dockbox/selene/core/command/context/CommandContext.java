@@ -21,27 +21,44 @@ import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.command.context.CommandValue.Flag;
 import org.dockbox.selene.core.command.context.CommandValue.Type;
 import org.dockbox.selene.core.command.parsing.TypeParser;
+import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.location.Location;
+import org.dockbox.selene.core.objects.location.World;
 
 public interface CommandContext {
 
     String getAlias();
+
     int getArgumentCount();
+
     int getFlagCount();
 
     Exceptional<Argument<String>> getArgument(String key);
+
     <T> Exceptional<Argument<T>> getArgument(String key, Class<T> type);
+
     <T> Exceptional<T> getArgumentAndParse(String key, TypeParser<T> parser);
 
 
     Exceptional<Flag<String>> getFlag(String key);
+
     <T> Exceptional<Flag<T>> getFlag(String key, Class<T> type);
+
     <T> Exceptional<T> getFlagAndParse(String key, TypeParser<T> parser);
 
     boolean hasArgument(String key);
+
     boolean hasFlag(String key);
 
     <T> Exceptional<CommandValue<T>> getValue(String key, Class<T> type, Type valueType);
+
     <T> Exceptional<T> tryCreate(Class<T> type);
+
+    CommandSource getSender();
+
+    Exceptional<Location> getLocation();
+
+    Exceptional<World> getWorld();
 
 }

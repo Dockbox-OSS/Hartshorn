@@ -28,9 +28,12 @@ public class KickEvent extends ModerationEvent {
     /**
      * The event fired when a {@link Player} is kicked from the server.
      *
-     * @param player The {@link Player} being kicked
-     * @param source The {@link CommandSource} executing the kick
-     * @param reason The reason, if provided
+     * @param player
+     *         The {@link Player} being kicked
+     * @param source
+     *         The {@link CommandSource} executing the kick
+     * @param reason
+     *         The reason, if provided
      */
     public KickEvent(Player player, CommandSource source, Exceptional<String> reason) {
         super(player, source);

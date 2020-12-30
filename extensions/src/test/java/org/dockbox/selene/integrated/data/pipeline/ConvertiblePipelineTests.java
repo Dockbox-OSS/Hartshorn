@@ -24,8 +24,8 @@ import org.dockbox.selene.integrated.data.pipeline.pipelines.ConvertiblePipeline
 import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.InputPipe;
 import org.dockbox.selene.integrated.data.pipeline.pipes.Pipe;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,12 +45,12 @@ public class ConvertiblePipelineTests {
                 InputPipe.of(input -> input * 2)
             ).processUnsafe(18);
 
-        Assert.assertEquals(14.4F, output, 0.0);
+        Assertions.assertEquals(14.4F, output);
     }
 
-    @Test(expected = IllegalPipeException.class)
+    @Test
     public void addingPipesToUncancellablePipelineTest() {
-        new ConvertiblePipelineSource<>(Integer.class)
+        Assertions.assertThrows(IllegalPipeException.class, () -> new ConvertiblePipelineSource<>(Integer.class)
             .addPipe(
                 CancellablePipe.of((cancelPipeline, input, throwable) -> {
                     if (2 < input) cancelPipeline.run();
@@ -58,7 +58,7 @@ public class ConvertiblePipelineTests {
                 })
             ).addPipe(
                 Pipe.of((input, throwable) -> input - 3)
-            ).process(4);
+            ).process(4));
     }
 
     @Test
@@ -76,11 +76,11 @@ public class ConvertiblePipelineTests {
 
         // Doesn't cancel.
         String output = pipeline.processUnsafe(2);
-        Assert.assertEquals("41", output);
+        Assertions.assertEquals("41", output);
 
         // Does cancel.
         output = pipeline.processUnsafe(0);
-        Assert.assertEquals("1", output);
+        Assertions.assertEquals("1", output);
     }
 
     @Test
@@ -98,12 +98,12 @@ public class ConvertiblePipelineTests {
 
         // Doesn't cancel
         int output = pipeline.processUnsafe(2F);
-        Assert.assertEquals(5, output);
+        Assertions.assertEquals(5, output);
 
         // Does cancel - Will return a Float as its not converted.
         Exceptional<Integer> safeOutput = pipeline.process(0F);
-        Assert.assertTrue(safeOutput.isPresent());
-        Assert.assertEquals(Float.class, safeOutput.getType());
+        Assertions.assertTrue(safeOutput.isPresent());
+        Assertions.assertEquals(Float.class, safeOutput.getType());
     }
 
     @Test
@@ -121,11 +121,11 @@ public class ConvertiblePipelineTests {
 
         // Doesn't cancel
         int output = pipeline.processUnsafe(2F);
-        Assert.assertEquals(5, output);
+        Assertions.assertEquals(5, output);
 
         // Does cancel - Will return an empty exceptional as output is discarded.
         Exceptional<Integer> safeOutput = pipeline.process(0F);
-        Assert.assertFalse(safeOutput.isPresent());
+        Assertions.assertFalse(safeOutput.isPresent());
     }
 
     @Test
@@ -144,11 +144,11 @@ public class ConvertiblePipelineTests {
 
         // Doesn't cancel
         int output = pipeline.processUnsafe(2F);
-        Assert.assertEquals(5, output);
+        Assertions.assertEquals(5, output);
 
         // Does cancel - Will convert the output as it takes the last set CancelBehaviour.
         output = pipeline.processUnsafe(0F);
-        Assert.assertEquals(1, output);
+        Assertions.assertEquals(1, output);
     }
 
     @Test
@@ -167,7 +167,7 @@ public class ConvertiblePipelineTests {
                 Pipe.of((input, throwable) -> input + 3)
             ).processUnsafe(3F);
 
-        Assert.assertEquals(4, output);
+        Assertions.assertEquals(4, output);
     }
 
     @Test
@@ -184,7 +184,7 @@ public class ConvertiblePipelineTests {
                 Pipe.of((input, throwable) -> input - 3)
             ).processUnsafe(4);
 
-        Assert.assertEquals(4, output);
+        Assertions.assertEquals(4, output);
     }
 
     @Test
@@ -199,7 +199,7 @@ public class ConvertiblePipelineTests {
                 Pipe.of((input, throwable) -> input + 1F)
             ).size();
 
-        Assert.assertEquals(4, size);
+        Assertions.assertEquals(4, size);
     }
 
     @Test
@@ -209,6 +209,6 @@ public class ConvertiblePipelineTests {
             .addPipe(InputPipe.of(input -> input * input))
             .processAllSafe(Arrays.asList("1", "2", "3", "4", "5"));
 
-        Assert.assertEquals(Arrays.asList(1, 4, 9, 16, 25), output);
+        Assertions.assertEquals(Arrays.asList(1, 4, 9, 16, 25), output);
     }
 }

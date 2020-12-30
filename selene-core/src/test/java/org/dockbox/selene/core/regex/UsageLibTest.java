@@ -19,9 +19,9 @@ package org.dockbox.selene.core.regex;
 
 import org.dockbox.selene.core.VerbalExpression;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsNot;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * User: lanwen
@@ -36,7 +36,7 @@ public class UsageLibTest {
         VerbalExpression regexViaFactory = VerbalExpression.regex().anything().build();
         VerbalExpression regexViaConstructor = VerbalExpression.regex().anything().build();
 
-        Assert.assertThat("Factory builder method produce not same as constructor regex",
+        MatcherAssert.assertThat("Factory builder method produce not same as constructor regex",
                 regexViaFactory.toString(), CoreMatchers.equalTo(regexViaConstructor.toString()));
     }
 
@@ -45,7 +45,7 @@ public class UsageLibTest {
         VerbalExpression.Builder builder = VerbalExpression.regex().anything().addModifier('i');
         VerbalExpression.Builder clonedBuilder = VerbalExpression.regex(builder);
 
-        Assert.assertThat("Cloned builder changed after creating new one",
+        MatcherAssert.assertThat("Cloned builder changed after creating new one",
                 builder.build().toString(), CoreMatchers.equalTo(clonedBuilder.build().toString()));
     }
 
@@ -54,7 +54,7 @@ public class UsageLibTest {
         VerbalExpression.Builder builder = VerbalExpression.regex().anything().addModifier('i');
         VerbalExpression.Builder clonedBuilder = VerbalExpression.regex(builder).endOfLine();
 
-        Assert.assertThat("Cloned builder changed after creating new one",
+        MatcherAssert.assertThat("Cloned builder changed after creating new one",
                 builder.build().toString(), IsNot.not(clonedBuilder.build().toString()));
     }
 

@@ -20,21 +20,20 @@ package org.dockbox.selene.core.i18n.entry;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.common.ResourceService;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Map;
 
 public class Resource implements ResourceEntry {
 
-    private String value;
     private final String key;
+    private final Map<Language, String> resourceMap = SeleneUtils.INJECT.getInstance(ResourceService.class).getTranslations(this);
+    private String value;
 
     public Resource(String value, String key) {
         this.value = value;
         this.key = key;
     }
-
-    private final Map<Language, String> resourceMap = Selene.getInstance(ResourceService.class).getTranslations(this);
 
     @Override
     public String getValue() {

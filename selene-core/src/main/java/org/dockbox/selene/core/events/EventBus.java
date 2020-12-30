@@ -18,9 +18,6 @@
 package org.dockbox.selene.core.events;
 
 import org.dockbox.selene.core.events.parents.Event;
-import org.dockbox.selene.core.events.handling.EventStage;
-import org.dockbox.selene.core.events.handling.IHandlerRegistry;
-import org.dockbox.selene.core.events.handling.IWrapper;
 import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
 
 import java.lang.annotation.Annotation;
@@ -30,12 +27,17 @@ import java.util.Set;
 public interface EventBus {
 
     void subscribe(Object object);
+
     void unsubscribe(Object object);
+
     void post(Event event, Class<?> target);
+
     void post(Event event);
-    IHandlerRegistry getHandlerRegistry();
-    Map<Object, Set<IWrapper>> getListenersToInvokers();
+
+    Map<Object, Set<EventWrapper>> getListenersToInvokers();
+
     void registerProcessors(AbstractEventParamProcessor<?>... processors);
+
     <T extends Annotation> AbstractEventParamProcessor<T> getParamProcessor(Class<T> annotation, EventStage stage);
 
 }

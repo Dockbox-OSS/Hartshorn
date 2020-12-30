@@ -17,8 +17,10 @@
 
 package org.dockbox.selene.integrated.server;
 
+import com.sk89q.worldedit.blocks.BaseBlock;
+
 import org.dockbox.selene.core.ConstructionUtil;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.command.Arg;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.CommandBus;
@@ -29,11 +31,8 @@ import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.impl.command.convert.TypeArgumentParsers.LanguageParser;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.keys.PersistentDataKey;
-import org.dockbox.selene.core.objects.keys.data.StringPersistentDataKey;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
@@ -44,7 +43,7 @@ import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
-import org.jetbrains.annotations.Nullable;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.List;
 
@@ -52,9 +51,7 @@ import java.util.List;
         id = "selene",
         name = "Selene",
         description = "Integrated features of Selene",
-        authors = "GuusLieben",
-        url = "https://github.com/GuusLieben/Selene",
-        uniqueId = "a8a96336-06bd-4521-99d4-5682a4f75e0a"
+        authors = "GuusLieben"
 )
 @Command(aliases = {"selene", "darwin"}, usage = "selene")
 public class IntegratedServerExtension implements IntegratedExtension {
@@ -62,10 +59,10 @@ public class IntegratedServerExtension implements IntegratedExtension {
     // Parent command
     @Command(aliases = "", usage = "")
     public void debugExtensions(MessageReceiver source) {
-        SeleneUtils.runWithInstance(ExtensionManager.class, em -> {
-            PaginationBuilder pb = Selene.getInstance(ConstructionUtil.class).paginationBuilder();
+        SeleneUtils.REFLECTION.runWithInstance(ExtensionManager.class, em -> {
+            PaginationBuilder pb = SeleneUtils.INJECT.getInstance(ConstructionUtil.class).paginationBuilder();
 
-            List<Text> content = SeleneUtils.emptyList();
+            List<Text> content = SeleneUtils.COLLECTION.emptyList();
             content.add(Text.of(IntegratedServerResources.SERVER_HEADER.format(Selene.getServer().getVersion())));
             content.add(Text.of(IntegratedServerResources.SERVER_UPDATE.format(Selene.getServer().getLastUpdate())));
             content.add(Text.of(IntegratedServerResources.SERVER_AUTHORS.format(String.join(",", Selene.getServer().getAuthors()))));
@@ -93,7 +90,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "extension", usage = "extension <id{Extension}>")
     public void debugExtension(MessageReceiver src, CommandContext ctx) {
-        SeleneUtils.runWithInstance(ExtensionManager.class, em -> {
+        SeleneUtils.REFLECTION.runWithInstance(ExtensionManager.class, em -> {
             Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
@@ -109,9 +106,8 @@ public class IntegratedServerExtension implements IntegratedExtension {
                 ExtensionContext ec = oec.get();
 
                 src.send(Text.of(IntegratedServerResources.EXTENSION_INFO_BLOCK.format(
-                        e.name(), e.id(), e.description(), e.version(), e.url(),
+                        e.name(), e.id(), e.description(),
                         0 == e.dependencies().length ? "None" : String.join("$3, $1", e.dependencies()),
-                        e.requiresNMS(),
                         String.join("$3, $1", e.authors()),
                         ec.getSource()
                 )));
@@ -121,7 +117,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "reload", usage = "reload [id{Extension}]", confirm = true)
     public void reload(MessageReceiver src, CommandContext ctx) {
-        EventBus eb = Selene.getInstance(EventBus.class);
+        EventBus eb = SeleneUtils.INJECT.getInstance(EventBus.class);
         if (ctx.hasArgument("id")) {
             Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
@@ -130,7 +126,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
             }
 
             Extension e = oarg.get().getValue();
-            Exceptional<?> oi = Selene.getInstance(ExtensionManager.class).getInstance(e.id());
+            Exceptional<?> oi = SeleneUtils.INJECT.getInstance(ExtensionManager.class).getInstance(e.id());
 
             oi.ifPresent(o -> {
                 eb.post(new ServerReloadEvent(), o.getClass());
@@ -157,9 +153,8 @@ public class IntegratedServerExtension implements IntegratedExtension {
         optionalCooldownId
                 .ifPresent(cooldownId -> {
                     String cid = cooldownId.getValue();
-                    Selene.getInstance(CommandBus.class).confirmCommand(cid).ifAbsent(() -> {
-                        src.send(IntegratedServerResources.CONFIRM_FAILED);
-                    });
+                    SeleneUtils.INJECT.getInstance(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
+                            src.send(IntegratedServerResources.CONFIRM_FAILED));
                 })
                 .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));
     }
@@ -190,24 +185,30 @@ public class IntegratedServerExtension implements IntegratedExtension {
         ));
     }
 
-    @Command(aliases = {"lang", "language"}, usage = "language <language{String}> [player{Player}] -s --f flag{String}", inherit = false)
-    public void switchLang(MessageReceiver src, CommandContext ctx) {
-        Exceptional<Language> ol = ctx.getArgumentAndParse("language", new LanguageParser());
-        @Nullable Player target;
-
-        Exceptional<Argument<Player>> op = ctx.getArgument("player", Player.class);
-        if (op.isPresent()) target = op.get().getValue();
-        else if (src instanceof Player) target = (Player) src;
-        else {
-            src.send(Text.of("What are you??"));
-            return;
+    @Command(aliases = {"lang", "language"}, usage = "language <language{Language}> [player{Player}]", inherit = false)
+    public void switchLang(MessageReceiver src, CommandContext ctx,
+                           @Arg("language") Language lang,
+                           @Arg("player") Player player) {
+        if (null == player) {
+            if (src instanceof Player) {
+                player = (Player) src;
+            } else {
+                src.send("Only players can use this command, or be a target");
+                return;
+            }
         }
 
-        // While the parser will always return a language, it is possible the argument is not present in which case we want to use en_US
-        Language lang = ol.orElse(Language.EN_US);
-        target.setLanguage(lang);
+        player.setLanguage(lang);
         // Messages sent after language switch will be in the preferred language
+        // TODO: For specific player
         src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")"));
+    }
+
+    @Command(aliases = "demo", usage = "demo <block{baseblock}>")
+    public void demo(Player player, CommandContext context) {
+        BaseBlock block = context.getArgument("block", BaseBlock.class).get().getValue();
+        Item<?> item = Item.of(block);
+        player.giveItem(item);
     }
 
 }

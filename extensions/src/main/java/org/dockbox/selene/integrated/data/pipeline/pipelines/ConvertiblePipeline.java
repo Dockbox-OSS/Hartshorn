@@ -18,7 +18,7 @@
 package org.dockbox.selene.integrated.data.pipeline.pipelines;
 
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.pipeline.CancelBehaviour;
 import org.dockbox.selene.integrated.data.pipeline.PipelineDirection;
 import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineException;
@@ -214,7 +214,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
             this.clearPipelineConnections();
             return (ConvertiblePipeline<P, K>) this;
         } else {
-            if (SeleneUtils.isAssignableFrom(previousClass, this.getPreviousPipeline().getInputClass())) {
+            if (SeleneUtils.REFLECTION.isAssignableFrom(previousClass, this.getPreviousPipeline().getInputClass())) {
                 ConvertiblePipeline<P, K> previousPipeline = (ConvertiblePipeline<P, K>) this.getPreviousPipeline();
                 this.clearPipelineConnections();
 

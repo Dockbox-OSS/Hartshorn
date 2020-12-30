@@ -24,8 +24,8 @@ import java.lang.annotation.Target;
 
 
 /**
- {@link org.dockbox.selene.core.events.parents.Event} listener parameter annotation.
- Used by {@link FaweSourceProcessor} to convert a Player instance into a FawePlayer, or skip the listener.
+ * {@link org.dockbox.selene.core.events.parents.Event} listener parameter annotation.
+ * Used by {@link FaweSourceProcessor} to convert a Player instance into a FawePlayer, or skip the listener.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)

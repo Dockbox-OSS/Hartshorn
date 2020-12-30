@@ -23,20 +23,30 @@ import org.dockbox.selene.core.text.Text;
 import java.util.List;
 
 public interface Pagination {
-    
+
     void send(MessageReceiver receiver);
 
     Text getPadding();
-    int getLinesPerPage();
-    Text getHeader();
-    Text getFooter();
-    Text getTitle();
-    List<Text> getContent();
 
     void setPadding(Text padding);
+
+    int getLinesPerPage();
+
     void setLinesPerPage(int linesPerPage);
+
+    Text getHeader();
+
     void setHeader(Text header);
+
+    Text getFooter();
+
     void setFooter(Text footer);
+
+    Text getTitle();
+
     void setTitle(Text title);
+
+    List<Text> getContent();
+
     void setContent(List<Text> content);
 }

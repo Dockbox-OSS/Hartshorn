@@ -19,14 +19,14 @@ package org.dockbox.selene.core.impl.files;
 
 import com.google.common.reflect.TypeToken;
 
-import org.dockbox.selene.core.SeleneUtils;
 import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.files.ConfigurateManager;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.impl.files.mapping.NeutrinoObjectMapper;
 import org.dockbox.selene.core.impl.files.mapping.NeutrinoObjectMapperFactory;
 import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
@@ -45,25 +45,25 @@ import ninja.leaping.configurate.xml.XMLConfigurationLoader;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 
 /**
- Implementation of {@link ConfigurateManager} containing dynamic mapping to appropriate {@link ConfigurationLoader}s
- based on the given {@link FileType} by the implementation of this type. Supporting {@link FileType#YAML},
- {@link FileType#JSON}, {@link FileType#XML}, {@link FileType#MOD_CONFIG}, and {@link FileType#CONFIG} file types.
-
- Supports type mapping through {@link NeutrinoObjectMapper}, which allows for additional functionality on top of the
- normal Configurate functionality. See <a href="https://github.com/NucleusPowered/Neutrino">Neutrino</a> for reference.
-
- Automatically generates, and checks the presence of, files in their directories. For both custom file locations and
- {@link Extension#id()} based.
+ * Implementation of {@link FileManager} containing dynamic mapping to appropriate {@link ConfigurationLoader}s
+ * based on the given {@link FileType} by the implementation of this type. Supporting {@link FileType#YAML},
+ * {@link FileType#JSON}, {@link FileType#XML}, {@link FileType#MOD_CONFIG}, and {@link FileType#CONFIG} file types.
+ *
+ * Supports type mapping through {@link NeutrinoObjectMapper}, which allows for additional functionality on top of the
+ * normal Configurate functionality. See <a href="https://github.com/NucleusPowered/Neutrino">Neutrino</a> for reference.
+ *
+ * Automatically generates, and checks the presence of, files in their directories. For both custom file locations and
+ * {@link Extension#id()} based.
  */
-public abstract class DefaultConfigurateManager extends ConfigurateManager {
+public abstract class DefaultConfigurateManager extends DefaultAbstractFileManager {
 
     /**
-     Provides the given {@link FileType} to the super type {@link ConfigurateManager}. And registers any custom
-     {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializer} types to
-     {@link TypeSerializers#getDefaultSerializers()}.
-
-     @param fileType
-     The file type to be used when mapping.
+     * Provides the given {@link FileType} to the super type {@link FileManager}. And registers any custom
+     * {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializer} types to
+     * {@link TypeSerializers#getDefaultSerializers()}.
+     *
+     * @param fileType
+     *         The file type to be used when mapping.
      */
     protected DefaultConfigurateManager(FileType fileType) {
         super(fileType);
@@ -89,6 +89,8 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @NotNull
     @Override
     public <T> Exceptional<T> getFileContent(@NotNull Path file, @NotNull Class<T> type) {
+        SeleneUtils.REFLECTION.rejects(type, DefaultConfigurateManager.class, true);
+
         try {
             final ConfigurationLoader<?> loader = this.getConfigurationLoader(file);
             final ConfigurationNode node = loader.load();
@@ -100,7 +102,7 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
 
             final T content = mapper.bindToNew().populate(node);
 
-            if (SeleneUtils.isFileEmpty(file)) {
+            if (SeleneUtils.OTHER.isFileEmpty(file)) {
                 this.writeFileContent(file, content);
             }
 
@@ -113,10 +115,12 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
     @NotNull
     @Override
     public <T> Exceptional<Boolean> writeFileContent(@NotNull Path file, @NotNull T content) {
-        try {
+        SeleneUtils.REFLECTION.rejects(content.getClass(), DefaultConfigurateManager.class, true);
 
+        try {
             final ConfigurationLoader<?> loader = this.getConfigurationLoader(file);
             final ConfigurationNode node = loader.load();
+
             this.verifyConfigurateType(content.getClass(), node);
 
             @SuppressWarnings("unchecked") final NeutrinoObjectMapper<T> mapper = NeutrinoObjectMapperFactory.builder()
@@ -132,63 +136,17 @@ public abstract class DefaultConfigurateManager extends ConfigurateManager {
         }
     }
 
-    private final <T> void verifyConfigurateType(Class<T> type, ConfigurationNode node) throws IllegalArgumentException {
+    private <T> void verifyConfigurateType(Class<T> type, ConfigurationNode node) throws IllegalArgumentException {
         if (type.isAnnotationPresent(ConfigSerializable.class)) return; // Valid
 
         TypeSerializer<T> serializer = node.getOptions().getSerializers().get(TypeToken.of(type));
-        if (serializer != null) return; // Valid
+        if (null != serializer) return; // Valid
 
         throw new IllegalArgumentException(
                 "Configuration type [" + type.getCanonicalName() + "] should be annotated with " +
                         "ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable" +
                 " or have a valid ninja.leaping.configurate.objectmapping.serialize.TypeSerializer " +
                 " registered for it.");
-    }
-
-    @NotNull
-    @Override
-    public Path getDataFile(@NotNull Extension extension) {
-        return this.getDataFile(extension, extension.id());
-    }
-
-    @NotNull
-    @Override
-    public Path getConfigFile(@NotNull Extension extension) {
-        return this.getConfigFile(extension, extension.id());
-    }
-
-    @NotNull
-    @Override
-    public Path getDataFile(@NotNull Extension extension, @NotNull String file) {
-        return this.createFileIfNotExists(
-                this.getFileType().asPath(
-                        this.getDataDir().resolve(extension.id()),
-                        file
-                )
-        );
-    }
-
-    @NotNull
-    @Override
-    public Path getConfigFile(@NotNull Extension extension, @NotNull String file) {
-        return this.createFileIfNotExists(
-                this.getFileType().asPath(
-                        this.getExtensionConfigsDir().resolve(extension.id()),
-                        file
-                )
-        );
-    }
-
-    @NotNull
-    @Override
-    public Path createPathIfNotExists(@NotNull Path path) {
-        return SeleneUtils.createPathIfNotExists(path);
-    }
-
-    @NotNull
-    @Override
-    public Path createFileIfNotExists(@NotNull Path file) {
-        return SeleneUtils.createFileIfNotExists(file);
     }
 
 }

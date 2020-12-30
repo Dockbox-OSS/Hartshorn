@@ -18,7 +18,7 @@
 package org.dockbox.selene.integrated.sql.dialects.sqlite;
 
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.sql.SQLMan;
 import org.dockbox.selene.integrated.sql.exceptions.InvalidConnectionException;
 import org.jooq.SQLDialect;
@@ -40,7 +40,7 @@ public class SQLiteMan extends SQLMan<Path> {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        SeleneUtils.getPropertyValue(PATH_KEY, Path.class, properties)
+        SeleneUtils.KEYS.getPropertyValue(PATH_KEY, Path.class, properties)
                 .ifPresent(path -> this.filePath = path)
                 .orElseThrow(() -> new IllegalArgumentException("Missing value for '" + PATH_KEY + "'"));
 

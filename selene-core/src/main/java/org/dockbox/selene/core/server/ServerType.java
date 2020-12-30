@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.core.server;
 
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.files.ConfigurateManager;
 
 /**
- Server type definitions containing display names, minimum/preferred versions, and whether or not the platform
- provides access to Native Minecraft Sources (NMS).
+ * Server type definitions containing display names, minimum/preferred versions, and whether or not the platform
+ * provides access to Native Minecraft Sources (NMS).
  */
 public enum ServerType {
     JUNIT("JUnit Testing", true, true, "5.3.2", "5.3.2"),
@@ -47,47 +47,47 @@ public enum ServerType {
     }
 
     /**
-     Gets the display name of the platform in a human readable format
-
-     @return the display name
+     * Gets the display name of the platform in a human readable format
+     *
+     * @return the display name
      */
     public String getDisplayName() {
         return this.displayName;
     }
 
     /**
-     Returns whether or not the platform provides access to NMS.
-
-     @return the boolean
+     * Returns whether or not the platform provides access to NMS.
+     *
+     * @return the boolean
      */
     public boolean hasNMSAccess() {
         return this.hasNMSAccess;
     }
 
     /**
-     Gets minimum version.
-
-     @return the minimum version
+     * Gets minimum version.
+     *
+     * @return the minimum version
      */
     public String getMinimumVersion() {
         return this.minimumVersion;
     }
 
     /**
-     Gets preferred version.
-
-     @return the preferred version
+     * Gets preferred version.
+     *
+     * @return the preferred version
      */
     public String getPreferredVersion() {
         return this.preferredVersion;
     }
 
     /**
-     Returns whether or not the platform provides access to a mod loader.
-     This can be especially useful when using {@link ConfigurateManager#getModdedPlatformModsConfigDir()} as it
-     may return {@link Exceptional#empty()} depending on the availability mods on the platform.
-
-     @return the boolean
+     * Returns whether or not the platform provides access to a mod loader.
+     * This can be especially useful when using {@link FileManager#getModdedPlatformModsConfigDir()} as it
+     * may return {@link Exceptional#empty()} depending on the availability mods on the platform.
+     *
+     * @return the boolean
      */
     public boolean isModded() {
         return this.isModded;

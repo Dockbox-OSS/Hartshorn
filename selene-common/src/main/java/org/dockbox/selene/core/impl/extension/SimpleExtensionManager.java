@@ -19,15 +19,17 @@ package org.dockbox.selene.core.impl.extension;
 
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.impl.SimpleExtensionContext;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.tuple.Tuple;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.annotations.extension.Disabled;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.extension.ExtensionStatus;
+import org.dockbox.selene.core.impl.SimpleExtensionContext;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.tuple.Tuple;
+import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.SeleneInformation;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,8 +43,8 @@ import java.util.stream.Collectors;
 @Singleton
 public class SimpleExtensionManager implements ExtensionManager {
 
-    private static final Collection<SimpleExtensionContext> globalContexts = SeleneUtils.emptyConcurrentList();
-    private static final Map<String, Object> instanceMappings = SeleneUtils.emptyConcurrentMap();
+    private static final Collection<SimpleExtensionContext> globalContexts = SeleneUtils.COLLECTION.emptyConcurrentList();
+    private static final Map<String, Object> instanceMappings = SeleneUtils.COLLECTION.emptyConcurrentMap();
 
     @NotNull
     @Override
@@ -85,26 +87,27 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public List<ExtensionContext> initialiseExtensions() {
-        Collection<Class<?>> annotatedTypes = SeleneUtils
-                .getAnnotatedTypes(Selene.PACKAGE_PREFIX, Extension.class);
+        Collection<Class<?>> annotatedTypes = SeleneUtils.REFLECTION.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Extension.class);
         Selene.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
-        return annotatedTypes.stream().map(type -> {
+        return annotatedTypes.stream()
+                .filter(type -> !type.isAnnotationPresent(Disabled.class))
+                .map(type -> {
 
-            Selene.log().info(" - [" + type.getCanonicalName() + "]");
-            SimpleExtensionContext context = new SimpleExtensionContext(
-                    type.getCanonicalName(),
-                    type,
-                    type.getAnnotation(Extension.class)
-            );
+                    Selene.log().info(" - [" + type.getCanonicalName() + "]");
+                    SimpleExtensionContext context = new SimpleExtensionContext(
+                            type.getCanonicalName(),
+                            type,
+                            type.getAnnotation(Extension.class)
+                    );
 
-            return new Tuple<>(context, type);
-        }).filter(tuple -> {
-            if (this.createComponentInstance(tuple.getValue(), tuple.getKey())) {
-                globalContexts.add(tuple.getKey());
-                return true;
-            }
-            return false;
-        }).map(Tuple::getKey).collect(Collectors.toList());
+                    return new Tuple<>(context, type);
+                }).filter(tuple -> {
+                    if (this.createComponentInstance(tuple.getValue(), tuple.getKey())) {
+                        globalContexts.add(tuple.getKey());
+                        return true;
+                    }
+                    return false;
+                }).map(Tuple::getKey).collect(Collectors.toList());
     }
 
     @NotNull
@@ -122,26 +125,33 @@ public class SimpleExtensionManager implements ExtensionManager {
     @NotNull
     @Override
     public List<String> getRegisteredExtensionIds() {
-        return SeleneUtils.asList(instanceMappings.keySet());
+        return SeleneUtils.COLLECTION.asList(instanceMappings.keySet());
     }
 
     private <T> boolean createComponentInstance(Class<T> entry, ExtensionContext context) {
         Extension header = entry.getAnnotation(Extension.class);
-        List<Extension> existingHeaders = SeleneUtils.emptyList();
+        List<Extension> existingHeaders = SeleneUtils.COLLECTION.emptyList();
         globalContexts.forEach(ctx -> existingHeaders.add(ctx.getExtension()));
         //noinspection CallToSuspiciousStringMethod
-        if (existingHeaders.stream().anyMatch(e -> e.uniqueId().equals(header.uniqueId()))) {
-            Selene.log().warn("Extension with unique ID " + header.uniqueId() + " already present!");
+        if (existingHeaders.stream().anyMatch(e -> e.id().equals(header.id()))) {
+            Selene.log().warn("Extension with unique ID " + header.id() + " already present!");
             return false;
         }
 
         assert null != header : "@Extension header missing from previously checked type [" + entry.getCanonicalName() + "]! This should not be possible!";
 
         String[] dependencies = header.dependencies();
-        for (String dependentPackage : dependencies) {
+        for (String dependency : dependencies) {
             try {
-                Package pkg = Package.getPackage(dependentPackage);
+                String formattedDependency = this.convertDependencyName(dependency);
+                // Using Package.getPackage would only return a package if the package has been used by the classloader
+                // before this call has been made. By requesting it as a resource we can ensure it can be loaded.
+                // == Warning! ==
+                // This is no longer functional as of JDK 9, where packages are encapsulated in modules. Classes however
+                // are not encapsulated, so it is possible to reuse this to look up classes in the future.
+                Object pkg = this.getClass().getClassLoader().getResource(formattedDependency);
                 if (null == pkg) {
+                    Selene.log().warn("Dependent package '" + dependency + " (" + formattedDependency + ")' is not present, failing " + header.name());
                     // Do not instantiate entries which require dependencies which are not present.
                     context.addStatus(entry, ExtensionStatus.FAILED);
                     return false;
@@ -149,12 +159,12 @@ public class SimpleExtensionManager implements ExtensionManager {
             } catch (Throwable e) {
                 // Package.getPackage(String) typically returns null if no package with that name is present, this clause is a fail-safe and should
                 // technically never be reached. If it is reached we explicitly need to mention the package to prevent future issues (by reporting this).
-                Selene.except("Failed to obtain package [" + dependentPackage + "].", e);
+                Selene.handle("Failed to obtain package [" + dependency + "].", e);
             }
         }
 
         T instance;
-        instance = Selene.getInstance(entry);
+        instance = SeleneUtils.INJECT.getInstance(entry);
 
         if (null == instance) {
             try {
@@ -179,8 +189,25 @@ public class SimpleExtensionManager implements ExtensionManager {
         return true;
     }
 
+    /**
+     * Converts a dependency format to a valid resource name.
+     *
+     * Example:
+     * <pre>{@code
+     * java.lang.String.class -> java/lang/String.class
+     * java.lang -> java/lang
+     * }</pre>
+     * @param dependency The unformatted dependency format
+     * @return The formatted dependency format
+     */
+    private String convertDependencyName(String dependency) {
+        dependency = dependency.replaceAll("\\.", "/");
+        dependency = dependency.replaceAll("/class", ".class");
+        return dependency;
+    }
+
     private <T> void injectMembers(T instance, ExtensionContext context, Extension header) {
-        Selene.getServer().injectMembers(instance);
-        Selene.getServer().createExtensionInjector(instance, header, context).injectMembers(instance);
+        SeleneUtils.INJECT.injectMembers(instance);
+        SeleneUtils.INJECT.createExtensionInjector(instance, header, context).injectMembers(instance);
     }
 }

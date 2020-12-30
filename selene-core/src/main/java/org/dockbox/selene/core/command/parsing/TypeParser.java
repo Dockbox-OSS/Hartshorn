@@ -23,7 +23,8 @@ import org.dockbox.selene.core.objects.Exceptional;
 /**
  * Low-level class to perform {@link CommandValue} conversions into a given generic type T
  *
- * @param <T> The generic return type
+ * @param <T>
+ *         The generic return type
  */
 public abstract class TypeParser<T> extends AbstractParser {
 
@@ -31,7 +32,9 @@ public abstract class TypeParser<T> extends AbstractParser {
      * Parses a given {@link CommandValue} with generic type {@link String} into the given generic type T. Returns
      * an {@link Exceptional} to allow developers to return empty results if need be.
      *
-     * @param commandValue The {@link CommandValue} holding the key and value of a command argument or flag
+     * @param commandValue
+     *         The {@link CommandValue} holding the key and value of a command argument or flag
+     *
      * @return The return value wrapped in {@link Exceptional}
      */
     public abstract Exceptional<T> parse(CommandValue<String> commandValue);

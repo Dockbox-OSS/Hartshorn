@@ -24,6 +24,9 @@ import com.sk89q.worldedit.extension.input.ParserContext;
 import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
+import org.dockbox.selene.core.PlayerStorageService;
+import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.parsing.ArgumentParser;
 import org.dockbox.selene.core.command.parsing.TypeParser;
@@ -31,16 +34,13 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.config.GlobalConfig;
-import org.dockbox.selene.core.SeleneUtils;
-import org.dockbox.selene.core.PlayerStorageService;
-import org.dockbox.selene.core.WorldStorageService;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -124,7 +124,7 @@ public class TypeArgumentParsers {
                 lang = Arrays.stream(Language.values())
                         .filter(l -> l.getNameEnglish().equals(code) || l.getNameLocalized().equals(code))
                         .findFirst()
-                        .orElse(Selene.getInstance(GlobalConfig.class).getDefaultLanguage());
+                        .orElse(SeleneUtils.INJECT.getInstance(GlobalConfig.class).getDefaultLanguage());
             }
             return Exceptional.of(lang);
         }
@@ -189,7 +189,7 @@ public class TypeArgumentParsers {
         @NotNull
         @Override
         public Exceptional<World> parse(@NotNull CommandValue<String> commandValue) {
-            WorldStorageService wss = Selene.getInstance(WorldStorageService.class);
+            WorldStorageService wss = SeleneUtils.INJECT.getInstance(WorldStorageService.class);
             Exceptional<World> world = wss.getWorld(commandValue.getValue());
             return world.orElseSupply(() -> {
                 UUID uuid = UUID.fromString(commandValue.getValue());
@@ -203,7 +203,7 @@ public class TypeArgumentParsers {
         @Override
         public Exceptional<ResourceEntry> parse(@NotNull CommandValue<String> commandValue) {
             String value = commandValue.getValue();
-            ResourceService rs = Selene.getInstance(ResourceService.class);
+            ResourceService rs = SeleneUtils.INJECT.getInstance(ResourceService.class);
             value = rs.createValidKey(value);
 
             Exceptional<? extends ResourceEntry> or = rs.getExternalResource(value);
@@ -218,7 +218,7 @@ public class TypeArgumentParsers {
         @NotNull
         @Override
         public Exceptional<Player> parse(@NotNull CommandValue<String> commandValue) {
-            PlayerStorageService pss = Selene.getInstance(PlayerStorageService.class);
+            PlayerStorageService pss = SeleneUtils.INJECT.getInstance(PlayerStorageService.class);
             Exceptional<Player> player = pss.getPlayer(commandValue.getValue());
             return player.orElseSupply(() -> {
                 UUID uuid = UUID.fromString(commandValue.getValue());
@@ -228,15 +228,15 @@ public class TypeArgumentParsers {
     }
 
     /**
-     Simple implementation which allows parsing String arguments directly into a List. Uses a configurable delimiter
-     to decide when to create a new entry, by default this is ','. Also allows you to use @MinMax attributes to set
-     a minimum/maximum for sublist sizes.
-     <p>
-     Additionally, allows you to pass a {@link Function Function[String, R]} which parses the String values before they are are returned
-     as a List.
-
-     @param <R>
-     The return type
+     * Simple implementation which allows parsing String arguments directly into a List. Uses a configurable delimiter
+     * to decide when to create a new entry, by default this is ','. Also allows you to use @MinMax attributes to set
+     * a minimum/maximum for sublist sizes.
+     * <p>
+     * Additionally, allows you to pass a {@link Function Function[String, R]} which parses the String values before they are are returned
+     * as a List.
+     *
+     * @param <R>
+     *         The return type
      */
     public static class ListParser<R> extends TypeParser<List<R>> {
 
@@ -262,7 +262,7 @@ public class TypeArgumentParsers {
             }
 
             // ClassCastException caught by Exceptional supplier
-            return Exceptional.of(() -> (List<R>) SeleneUtils.asList(list));
+            return Exceptional.of(() -> (List<R>) SeleneUtils.COLLECTION.asList(list));
         }
     }
 
@@ -288,7 +288,7 @@ public class TypeArgumentParsers {
                 return Exceptional.of(new IllegalArgumentException("Row and value delimiters were equal while parsing map"));
             }
 
-            Map<String, String> map = SeleneUtils.emptyConcurrentMap();
+            Map<String, String> map = SeleneUtils.COLLECTION.emptyConcurrentMap();
             for (String entry : commandValue.getValue().split(this.rowDelimiter + "")) {
                 if (entry.contains(this.valueDelimiter + "")) {
                     String[] kv = entry.split(this.valueDelimiter + "");
@@ -303,21 +303,21 @@ public class TypeArgumentParsers {
     }
 
     /**
-     Parses a list of block ID's, separated by ',' into a list of [BaseBlock] instances. If the block ID is in the format
-     'id:data' it will use the data from the block ID, otherwise it defaults to zero (0).
-     <p>
-     Delimiter is always ','
-     <p>
-     Does not support named ID's like 'minecraft:stone'. Does not support patterns or masks.
+     * Parses a list of block ID's, separated by ',' into a list of [BaseBlock] instances. If the block ID is in the format
+     * 'id:data' it will use the data from the block ID, otherwise it defaults to zero (0).
+     * <p>
+     * Delimiter is always ','
+     * <p>
+     * Does not support named ID's like 'minecraft:stone'. Does not support patterns or masks.
      */
     public static class WorldEditBlockParser extends ListParser<BaseBlock> {
 
         public WorldEditBlockParser() {
             super(value -> {
                 String[] idData = value.replace(" ", "").split(":");
-                if (idData.length > 0) {
+                if (0 < idData.length) {
                     int data = 0;
-                    if (idData.length == 2) data = Integer.parseInt(idData[1]);
+                    if (2 == idData.length) data = Integer.parseInt(idData[1]);
                     return new BaseBlock(Integer.parseInt(idData[0]), data);
                 }
                 //noinspection ReturnOfNull
@@ -400,7 +400,7 @@ public class TypeArgumentParsers {
                 time += this.amount(m.group(8), DurationParser.secondsInMinute);
                 time += this.amount(m.group(10), 1);
 
-                if (time > 0) {
+                if (0 < time) {
                     return Exceptional.of(Duration.ofSeconds(time));
                 }
             }

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.integrated.server;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
@@ -36,17 +36,14 @@ enum IntegratedServerResources {
     static final ResourceEntry EXTENSION_ROW_HOVER = new Resource("$2Details for '$1{0}$2'", "selene.info.extension.hover");
     static final ResourceEntry EXTENSION_INFO_BLOCK = new Resource(
             String.join("",
-                    SeleneUtils.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20), "\n",
+                    SeleneUtils.OTHER.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20), "\n",
                     "$2Name : $1{0}", "\n",
                     "$2ID : $1{1}", "\n",
                     "$2Description : $1{2}", "\n",
-                    "$2Version : $1{3}", "\n",
-                    "$2URL : $1{4}", "\n",
-                    "$2Dependencies : $1{5}", "\n",
-                    "$2Requires NMS : $1{6}", "\n",
-                    "$2Author(s) : $1{7}", "\n",
-                    "$2Source : $1{8}", "\n",
-                    SeleneUtils.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20)
+                    "$2Dependencies : $1{3}", "\n",
+                    "$2Author(s) : $1{4}", "\n",
+                    "$2Source : $1{5}", "\n",
+                    SeleneUtils.OTHER.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20)
             ), "selene.info.extension.block");
     static final ResourceEntry EXTENSION_UNKNOWN = new Resource("$4Could not find extension with ID '{0}'", "selene.info.extension.unknown");
     static final ResourceEntry LANG_SWITCHED = new Resource("$1Your preferred language has been switched to: $2{0}", "i18n.lang.updated");

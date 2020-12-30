@@ -22,16 +22,45 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * The interface to mark a type as a extension.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Extension {
+    /**
+     * The identifier of the extension, in snake_case. This is typically used to obtain the extension instance, header, or
+     * context through {@link org.dockbox.selene.core.extension.ExtensionManager}.
+     *
+     * @return the identifier
+     */
     String id();
+
+    /**
+     * The human-readable name of the extension.
+     *
+     * @return the name
+     */
     String name();
-    String version() default "unknown";
+
+    /**
+     * The human-readable description of the extension.
+     *
+     * @return the human-readable description
+     */
     String description();
-    String url() default "none";
+
+    /**
+     * The authors of the extension. Preferably using GitHub usernames, though real names or other aliases are permitted.
+     *
+     * @return the authors of the extension
+     */
     String[] authors();
+
+    /**
+     * The qualified names of packages required to be present by the extension. For example {@code java.lang}.
+     *
+     * @return the packages requires by the extension.
+     */
     String[] dependencies() default {};
-    boolean requiresNMS() default false;
-    String uniqueId();
 }

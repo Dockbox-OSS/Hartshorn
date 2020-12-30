@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.core.impl;
 
+import org.dockbox.selene.core.ExceptionHelper;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.ExceptionHelper;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,18 +32,18 @@ import java.util.function.Function;
  * The default (simple) implementation of [org.dockbox.selene.core.util.exceptions.ExceptionHelper].
  * Formats:
  * - Friendly
- * ```
- *     Headline: java.lang.NullPointerException
- *     Message: Foo bar
- *     Location: SourceFile.java line 19
- *     Stack: [...]
- * ```
- *
+ * <pre>{@code
+ *         Headline: java.lang.NullPointerException
+ *         Message: Foo bar
+ *         Location: SourceFile.java line 19
+ *         Stack: [...]
+ *     }</pre>
+ * <p>
  * - Minimal
- * ```
- *     NullPointerException: Foo bar
- *     Stack: [...]
- * ```
+ * <pre>{@code
+ *         NullPointerException: Foo bar
+ *         Stack: [...]
+ *     }</pre>
  */
 public class SimpleExceptionHelper implements ExceptionHelper {
 
@@ -68,7 +68,7 @@ public class SimpleExceptionHelper implements ExceptionHelper {
                         Selene.log().error(nextException.getClass().getCanonicalName());
                         for (StackTraceElement element : trace) {
                             String elLine = 0 < element.getLineNumber() ? "line " + element.getLineNumber() : "(internal call)";
-                            Selene.log().error("  at " + element.getClassName() + "." + element.getMethodName() + " line " + elLine);
+                            Selene.log().error("  at " + element.getClassName() + "." + element.getMethodName() + ' ' + elLine);
                         }
                         nextException = nextException.getCause();
                     }
@@ -88,18 +88,18 @@ public class SimpleExceptionHelper implements ExceptionHelper {
 
     @Override
     public void handleSafe(@NotNull Runnable runnable) {
-        this.handleSafe(runnable, e -> Selene.except(e.getMessage(), e));
+        this.handleSafe(runnable, e -> Selene.handle(e.getMessage(), e));
     }
 
     @Override
     public <T> void handleSafe(@NotNull Consumer<T> consumer, T value) {
-        this.handleSafe(consumer, value, e -> Selene.except(e.getMessage(), e));
+        this.handleSafe(consumer, value, e -> Selene.handle(e.getMessage(), e));
     }
 
     @Override
     @NotNull
     public <T, R> Exceptional<R> handleSafe(@NotNull Function<T, R> function, T value) {
-        return this.handleSafe(function, value, e -> Selene.except(e.getMessage(), e));
+        return this.handleSafe(function, value, e -> Selene.handle(e.getMessage(), e));
     }
 
     @Override

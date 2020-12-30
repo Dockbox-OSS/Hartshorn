@@ -22,8 +22,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * The interface to indicate a type defines one or more {@link org.dockbox.selene.core.i18n.entry.Resource resource(s)}.
+ * This is typically picked up by {@link org.dockbox.selene.core.i18n.common.ResourceService} to collect all known
+ * {@link org.dockbox.selene.core.i18n.entry.Resource resources} during init phases.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Resources {
+    /**
+     * The extension responsible for the resources. {@link org.dockbox.selene.core.i18n.entry.IntegratedResource Internal resources}
+     * are linked to {@link org.dockbox.selene.core.server.Selene}.
+     *
+     * @return the responsible extension class
+     */
     Class<?> responsibleExtension();
 }

@@ -19,28 +19,28 @@ package org.dockbox.selene.integrated.event;
 
 import com.boydti.fawe.object.FawePlayer;
 
+import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.annotations.event.filter.Filter;
 import org.dockbox.selene.core.annotations.event.processing.Getter;
-import org.dockbox.selene.core.annotations.event.Listener;
-import org.dockbox.selene.core.events.chat.NativeCommandEvent;
-import org.dockbox.selene.core.events.server.ServerEvent.ServerStartingEvent;
-import org.dockbox.selene.core.events.parents.Cancellable;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.events.EventBus;
+import org.dockbox.selene.core.events.chat.NativeCommandEvent;
+import org.dockbox.selene.core.events.parents.Cancellable;
+import org.dockbox.selene.core.events.server.ServerEvent.ServerStartingEvent;
+import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.event.processors.FaweSource;
 import org.dockbox.selene.integrated.event.processors.FaweSourceProcessor;
 import org.dockbox.selene.integrated.event.worldedit.WorldEditCopyEvent;
 import org.dockbox.selene.integrated.event.worldedit.WorldEditPasteEvent;
 
 @Extension(id = "selene-events", name = "Selene Events", description = "Provides additional events for Selene",
-           authors = "GuusLieben", uniqueId = "d212fa88-12d5-472a-ba1d-fd194dcf8e9a")
+           authors = "GuusLieben", dependencies = {"com.boydti.fawe", "com.sk89q.worldedit"})
 public class IntegratedEventExtension {
 
     @Listener
     public void onServerStart(ServerStartingEvent event) {
-        Selene.getInstance(EventBus.class).registerProcessors(new FaweSourceProcessor());
+        SeleneUtils.INJECT.getInstance(EventBus.class).registerProcessors(new FaweSourceProcessor());
     }
 
     @Listener

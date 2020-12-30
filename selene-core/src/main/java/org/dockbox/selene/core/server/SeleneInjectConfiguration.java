@@ -23,10 +23,10 @@ import org.dockbox.selene.core.BroadcastService;
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.ExceptionHelper;
 import org.dockbox.selene.core.PlayerStorageService;
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.extension.ExtensionManager;
-import org.dockbox.selene.core.files.ConfigurateManager;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 
@@ -34,10 +34,10 @@ import java.util.List;
 
 public abstract class SeleneInjectConfiguration extends AbstractModule {
 
-    public static final List<Class<?>> REQUIRED_BINDINGS = SeleneUtils.asList(
+    public static final List<Class<?>> REQUIRED_BINDINGS = SeleneUtils.COLLECTION.asList(
             ExceptionHelper.class,
             ExtensionManager.class,
-            ConfigurateManager.class,
+            FileManager.class,
             EventBus.class,
             DiscordUtils.class,
             BroadcastService.class,

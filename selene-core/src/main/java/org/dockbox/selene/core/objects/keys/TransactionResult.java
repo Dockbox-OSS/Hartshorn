@@ -22,30 +22,12 @@ import org.dockbox.selene.core.i18n.entry.FakeResource;
 
 public final class TransactionResult {
 
-    public enum Status {
-        FAILURE, SUCCESS
-    }
-
     private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, new FakeResource(""));
-
     private final Status status;
     private final ResourceEntry message;
-
     private TransactionResult(Status status, ResourceEntry message) {
         this.status = status;
         this.message = message;
-    }
-
-    public Status getStatus() {
-        return this.status;
-    }
-
-    public ResourceEntry getMessage() {
-        return this.message;
-    }
-
-    public boolean isSuccessfull() {
-        return Status.SUCCESS == this.getStatus();
     }
 
     public static TransactionResult success() {
@@ -58,6 +40,22 @@ public final class TransactionResult {
 
     public static TransactionResult fail(Throwable cause) {
         return new TransactionResult(Status.FAILURE, new FakeResource(cause.getMessage()));
+    }
+
+    public ResourceEntry getMessage() {
+        return this.message;
+    }
+
+    public boolean isSuccessfull() {
+        return Status.SUCCESS == this.getStatus();
+    }
+
+    public Status getStatus() {
+        return this.status;
+    }
+
+    public enum Status {
+        FAILURE, SUCCESS
     }
 
 }

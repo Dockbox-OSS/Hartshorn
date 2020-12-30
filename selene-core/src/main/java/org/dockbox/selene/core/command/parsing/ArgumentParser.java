@@ -27,13 +27,14 @@ public abstract class ArgumentParser extends AbstractParser {
      * generic type.
      *
      * @param <A>
-     * the generic type to convert to
+     *         the generic type to convert to
      * @param commandValue
-     * the {@link CommandValue} in String format to parse.
+     *         the {@link CommandValue} in String format to parse.
      * @param type
-     * the type to convert to
+     *         the type to convert to
+     *
      * @return the optional type of the generic type. Should return {@link Exceptional#empty()} if
-     * null or if the value could not be parsed.
+     *         null or if the value could not be parsed.
      */
-    public abstract <A>Exceptional<A> parse(CommandValue<String> commandValue, Class<A> type);
+    public abstract <A> Exceptional<A> parse(CommandValue<String> commandValue, Class<A> type);
 }

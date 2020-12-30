@@ -51,8 +51,7 @@ public enum FileType {
 
     // Other
     ZIP("zip"),
-    LOG("log")
-    ;
+    LOG("log");
 
     private final String extension;
 
@@ -61,27 +60,32 @@ public enum FileType {
     }
 
     /**
-     * Converts a given filename (without the file extension present) to a {@link String} value holding the correct format.
-     *
-     * @param file The filename without a file extension present
-     * @return The generated filename with extension
-     */
-    public String asFileName(String file) {
-        return file + '.' + this.extension;
-    }
-
-    /**
      * Converts a given filename (without the file extension present), combined with a {@link Path} reference to a directory,
      * to a new {@link Path} reference to a file. If the file did not yet exist, it is created.
-     *
+     * <p>
      * Assumes the parent {@link Path} already exists.
      *
-     * @param parent The parent directory
-     * @param file The filename without a file extension present
+     * @param parent
+     *         The parent directory
+     * @param file
+     *         The filename without a file extension present
+     *
      * @return The {@link Path} reference to a file
      */
     public Path asPath(Path parent, String file) {
         return parent.resolve(this.asFileName(file));
+    }
+
+    /**
+     * Converts a given filename (without the file extension present) to a {@link String} value holding the correct format.
+     *
+     * @param file
+     *         The filename without a file extension present
+     *
+     * @return The generated filename with extension
+     */
+    public String asFileName(String file) {
+        return file + '.' + this.extension;
     }
 
     public String getExtension() {

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.impl.command;
 
-import org.dockbox.selene.core.SeleneUtils;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.context.CommandContext;
@@ -52,63 +52,69 @@ import java.util.regex.Pattern;
 public abstract class DefaultCommandBus implements CommandBus {
 
     /**
-     Represents the default type for command elements matched by {@link DefaultCommandBus#FLAG} or
-     {@link DefaultCommandBus#ARGUMENT}. If no type is defined in those matches, this value is used. 'String' is used
-     as this is the base value provided to Selene, thus requiring no further converting to other data types.
+     * Represents the default type for command elements matched by {@link DefaultCommandBus#FLAG} or
+     * {@link DefaultCommandBus#ARGUMENT}. If no type is defined in those matches, this value is used. 'String' is used
+     * as this is the base value provided to Selene, thus requiring no further converting to other data types.
      */
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String DEFAULT_TYPE = "String";
 
     /**
-     Each matching element represents either a flag or argument, these can then be parsed using
-     {@link DefaultCommandBus#FLAG} and {@link DefaultCommandBus#ARGUMENT}.
+     * Each matching element represents either a flag or argument, these can then be parsed using
+     * {@link DefaultCommandBus#FLAG} and {@link DefaultCommandBus#ARGUMENT}.
      */
     private static final Pattern GENERIC_ARGUMENT = Pattern.compile("((?:<.+?>)|(?:\\[.+?\\])|(?:-(?:(?:-\\w+)|\\w)(?: [^ -]+)?))");
 
     /**
-     Each matching element represents a flag with either one or two groups. The first group (G1) is required, and
-     indicates the name of the flag. The second group (G2) is optional, and represents the value expected by the flag.
-     G2 is a argument which can be parsed using {@link DefaultCommandBus#ARGUMENT}.
-     <p>
-     Syntax:
-     - Without value: -f, --flag
-     - With simple value: -f Type, --flag Type
-     - With permission value: -f Type:Permission, --flag Type:Permission
+     * Each matching element represents a flag with either one or two groups. The first group (G1) is required, and
+     * indicates the name of the flag. The second group (G2) is optional, and represents the value expected by the flag.
+     * G2 is a argument which can be parsed using {@link DefaultCommandBus#ARGUMENT}.
+     * <p>
+     * Syntax:
+     * <ul>
+     *  <li>Without value: -f, --flag</li>
+     *  <li>With simple value: -f Type, --flag Type</li>
+     *  <li>With permission value: -f Type:Permission, --flag Type:Permission</li>
+     * </ul>
      */
     private static final Pattern FLAG = Pattern.compile("-(-?\\w+)(?: ([^ -]+))?");
 
     /**
-     Each matching element represents a argument with two groups. The first group (G1) indicates whether the argument
-     is required or optional. The second group can either be a argument meta which can be parsed using
-     {@link DefaultCommandBus#ELEMENT_VALUE}, or a simple value if {@link DefaultCommandBus#ELEMENT_VALUE} returns no
-     matches. Arguments can be grouped.
-     <p>
-     Syntax:
-     - Optional without type: [Argument]
-     - Optional with simple value: [Argument{Type}]
-     - Optional with permission value: [Argument{Type:Permission}]
-     - Required without type: &lt;Argument&gt;
-     - Required with value is equal in syntax to optional, but wrapped in &lt;&gt;
-     - Argument group: [&lt;Argument&gt; &lt;Argument{Type}&gt;]
+     * Each matching element represents a argument with two groups. The first group (G1) indicates whether the argument
+     * is required or optional. The second group can either be a argument meta which can be parsed using
+     * {@link DefaultCommandBus#ELEMENT_VALUE}, or a simple value if {@link DefaultCommandBus#ELEMENT_VALUE} returns no
+     * matches. Arguments can be grouped.
+     * <p>
+     * Syntax:
+     * <ul>
+     *  <li>Optional without type: [Argument]</li>
+     *  <li>Optional with simple value: [Argument{Type}]</li>
+     *  <li>Optional with permission value: [Argument{Type:Permission}]</li>
+     *  <li>Required without type: &lt;Argument&gt;</li>
+     *  <li>Required with value is equal in syntax to optional, but wrapped in &lt;&gt;</li>
+     *  <li>Argument group: [&lt;Argument&gt; &lt;Argument{Type}&gt;]</li>
+     * </ul>
      */
     private static final Pattern ARGUMENT = Pattern.compile("([\\[<])(.+)[\\]>]");
 
     /**
-     Each matching element represents additional meta information for matching elements of
-     {@link DefaultCommandBus#ARGUMENT}. Matches contain either one or two groups. If both groups are present, group 1
-     represents the name of the argument, and group 2 represents the value. If only group 1 is present, it represents
-     the type of the argument and the name is obtained from the argument definition.
-     <p>
-     Syntax:
-     - Type
-     - Name{Type}
-     - Name{Type:Permission}
+     * Each matching element represents additional meta information for matching elements of
+     * {@link DefaultCommandBus#ARGUMENT}. Matches contain either one or two groups. If both groups are present, group 1
+     * represents the name of the argument, and group 2 represents the value. If only group 1 is present, it represents
+     * the type of the argument and the name is obtained from the argument definition.
+     * <p>
+     * Syntax:
+     * <ul>
+     *  <li>Type</li>
+     *  <li>Name{Type}</li>
+     *  <li>Name{Type:Permission}</li>
+     * </ul>
      */
     private static final Pattern ELEMENT_VALUE = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?");
-    private static final Map<String, ConfirmableQueueItem> confirmQueue = SeleneUtils.emptyConcurrentMap();
+    private static final Map<String, ConfirmableQueueItem> confirmQueue = SeleneUtils.COLLECTION.emptyConcurrentMap();
 
-    private final Map<String, AbstractRegistrationContext> registrations = SeleneUtils.emptyConcurrentMap();
-    private final Map<String, List<CommandInheritanceContext>> queuedAliases = SeleneUtils.emptyConcurrentMap();
+    private final Map<String, AbstractRegistrationContext> registrations = SeleneUtils.COLLECTION.emptyConcurrentMap();
+    private final Map<String, List<CommandInheritanceContext>> queuedAliases = SeleneUtils.COLLECTION.emptyConcurrentMap();
 
     @Override
     public void register(Object... objs) {
@@ -151,7 +157,7 @@ public abstract class DefaultCommandBus implements CommandBus {
              However, once #apply is called these registrations are no longer mutable.
              */
             this.queuedAliases
-                    .getOrDefault(alias, SeleneUtils.emptyConcurrentList())
+                    .getOrDefault(alias, SeleneUtils.COLLECTION.emptyConcurrentList())
                     .forEach(extendingContext ->
                             this.addExtendingContextToRegistration(
                                     extendingContext,
@@ -173,7 +179,7 @@ public abstract class DefaultCommandBus implements CommandBus {
 
     private void queueAliasRegistration(String alias, CommandInheritanceContext context) {
         List<CommandInheritanceContext> contexts =
-                this.queuedAliases.getOrDefault(alias, SeleneUtils.emptyConcurrentList());
+                this.queuedAliases.getOrDefault(alias, SeleneUtils.COLLECTION.emptyConcurrentList());
         contexts.add(context);
         this.queuedAliases.put(alias, contexts);
     }
@@ -184,7 +190,7 @@ public abstract class DefaultCommandBus implements CommandBus {
     }
 
     private List<AbstractRegistrationContext> createContexts(Class<?> parent) {
-        List<AbstractRegistrationContext> contexts = SeleneUtils.emptyList();
+        List<AbstractRegistrationContext> contexts = SeleneUtils.COLLECTION.emptyList();
 
         /*
          It is possible the class itself is not annotated with @Command, in which case all methods should be registered
@@ -197,7 +203,7 @@ public abstract class DefaultCommandBus implements CommandBus {
             contexts.add(this.extractCommandInheritanceContext(parent));
 
         @NotNull @Unmodifiable Collection<Method> nonInheritedMethods =
-                SeleneUtils.getAnnotedMethods(parent, Command.class, c -> !c.inherit() || !isParentRegistration);
+                SeleneUtils.REFLECTION.getAnnotedMethods(parent, Command.class, c -> !c.inherit() || !isParentRegistration);
         nonInheritedMethods.forEach(method -> {
             MethodCommandContext context = this.extractNonInheritedContext(method);
             if (null != context)
@@ -217,7 +223,7 @@ public abstract class DefaultCommandBus implements CommandBus {
          aliases for different parents.
          */
         @NotNull @Unmodifiable Collection<Method> inheritedMethods =
-                SeleneUtils.getAnnotedMethods(parent, Command.class, Command::inherit);
+                SeleneUtils.REFLECTION.getAnnotedMethods(parent, Command.class, Command::inherit);
         inheritedMethods.forEach(method ->
                 context.addInheritedCommand(this.extractInheritedContext(method, context))
         );
@@ -273,7 +279,7 @@ public abstract class DefaultCommandBus implements CommandBus {
         String permission = defaultPermission;
         Matcher elementValue = DefaultCommandBus.ELEMENT_VALUE.matcher(argumentDefinition);
         if (!elementValue.matches() || 0 == elementValue.groupCount())
-            Selene.except("Unknown argument specification " + argumentDefinition + ", use Type or Name{Type} or Name{Type:Permission}");
+            Selene.handle("Unknown argument specification " + argumentDefinition + ", use Type or Name{Type} or Name{Type:Permission}");
 
         /*
          Group one specifies either the name of the value (if two or more groups are matched), or the type if only one
@@ -303,7 +309,7 @@ public abstract class DefaultCommandBus implements CommandBus {
     }
 
     protected List<AbstractArgumentElement<?>> parseArgumentElements(CharSequence argString, String defaultPermission) {
-        List<AbstractArgumentElement<?>> elements = SeleneUtils.emptyList();
+        List<AbstractArgumentElement<?>> elements = SeleneUtils.COLLECTION.emptyList();
         AbstractFlagCollection<?> flagCollection = null;
 
         Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(argString);
@@ -345,7 +351,7 @@ public abstract class DefaultCommandBus implements CommandBus {
         if (result.isEmpty()) {
             AbstractArgumentValue<?> argumentValue = this.generateArgumentValue(argumentMatcher.group(2), defaultPermission);
             AbstractArgumentElement<?> argumentElement = argumentValue.getElement();
-            result = SeleneUtils.asList(argumentElement);
+            result = SeleneUtils.COLLECTION.asList(argumentElement);
         }
 
         /*
@@ -375,7 +381,7 @@ public abstract class DefaultCommandBus implements CommandBus {
         } else {
             AbstractArgumentValue<?> argumentValue = this.generateArgumentValue(value, defaultPermission);
             if (0 <= name.indexOf(':')) {
-                Selene.except("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
+                Selene.handle("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
             flags.addValueBasedFlag(name, argumentValue);
         }
@@ -403,7 +409,7 @@ public abstract class DefaultCommandBus implements CommandBus {
                     sender, ctx, command, registrationContext);
 
             if (response.errorPresent())
-                sender.send(IntegratedResource.UNKNOWN_ERROR.format(response.getError().getMessage()));
+                sender.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(response.getError().getMessage()));
         }
     }
 

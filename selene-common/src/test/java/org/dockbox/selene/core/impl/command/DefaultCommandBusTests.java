@@ -22,7 +22,7 @@ import org.dockbox.selene.core.impl.command.registration.AbstractRegistrationCon
 import org.dockbox.selene.core.impl.command.registration.CommandInheritanceContext;
 import org.dockbox.selene.core.impl.command.registration.MethodCommandContext;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.test.util.TestCommandBus;
+import org.dockbox.selene.core.impl.command.test.TestCommandBus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

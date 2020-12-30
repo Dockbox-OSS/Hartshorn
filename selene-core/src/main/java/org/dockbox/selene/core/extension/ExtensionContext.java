@@ -22,14 +22,19 @@ import org.dockbox.selene.core.annotations.extension.Extension;
 public interface ExtensionContext {
 
     String getSource();
-    Class<?> getExtensionClass();
-    Extension getExtension();
 
     void setSource(String source);
+
+    Class<?> getExtensionClass();
+
     void setExtensionClass(Class<?> extensionClass);
+
+    Extension getExtension();
+
     void setExtension(Extension extension);
 
     void addStatus(Class<?> clazz, ExtensionStatus status);
+
     ExtensionStatus getStatus(Class<?> clazz);
 
 }

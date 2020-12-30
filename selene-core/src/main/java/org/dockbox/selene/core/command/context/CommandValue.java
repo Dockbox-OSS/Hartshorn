@@ -51,6 +51,10 @@ public class CommandValue<T> {
         return this.value;
     }
 
+    public enum Type {
+        ARGUMENT, FLAG, BOTH
+    }
+
     public static class Argument<T> extends CommandValue<T> {
         public Argument(T value, String key) {
             super(value, key);
@@ -61,9 +65,5 @@ public class CommandValue<T> {
         public Flag(T value, String key) {
             super(value, key);
         }
-    }
-
-    public enum Type {
-        ARGUMENT, FLAG, BOTH
     }
 }

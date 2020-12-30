@@ -27,10 +27,13 @@ import java.util.UUID;
 public interface PlayerStorageService {
 
     List<Player> getOnlinePlayers();
+
     Exceptional<Player> getPlayer(String name);
+
     Exceptional<Player> getPlayer(UUID uuid);
 
     void setLanguagePreference(UUID uuid, Language language);
+
     Language getLanguagePreference(UUID uuid);
 
 }

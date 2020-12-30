@@ -20,10 +20,10 @@ package org.dockbox.selene.integrated.sql;
 import org.dockbox.selene.core.annotations.extension.Extension;
 
 /**
- Registers the SQL Extension to Selene. While no logic happens inside this class, this does indicate to server owners
- that the extension is active.
+ * Registers the SQL Extension to Selene. While no logic happens inside this class, this does indicate to server owners
+ * that the extension is active.
  */
 @Extension(id = "selene-sql", name = "SQL Extension",
            description = "Provides the ability to communicate with SQL instances using integrated types",
-           authors = "GuusLieben", uniqueId = "5640d082-a612-40a7-84e7-fc2aeea2743b")
+           authors = "GuusLieben", dependencies = "org.jooq")
 public class SQLExtension { }

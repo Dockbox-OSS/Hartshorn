@@ -22,13 +22,13 @@ import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
-import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.time.LocalDateTime;
 
 public class DiscordCommandContext {
-    
+
     private final User author;
     private final MessageChannel channel;
     private final LocalDateTime timeReceived;
@@ -44,35 +44,35 @@ public class DiscordCommandContext {
     }
 
     public void sendToChannel(Text text) {
-        Selene.getInstance(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
+        SeleneUtils.INJECT.getInstance(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
+    }
+
+    public MessageChannel getChannel() {
+        return this.channel;
     }
 
     public void sendToChannel(CharSequence text) {
-        Selene.getInstance(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
+        SeleneUtils.INJECT.getInstance(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
     }
 
     public void sendToChannel(ResourceEntry text) {
-        Selene.getInstance(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
+        SeleneUtils.INJECT.getInstance(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
     }
 
     public void sendToAuthor(Text text) {
-        Selene.getInstance(DiscordUtils.class).sendToUser(text, this.getAuthor());
-    }
-
-    public void sendToAuthor(CharSequence text) {
-        Selene.getInstance(DiscordUtils.class).sendToUser(text, this.getAuthor());
-    }
-
-    public void sendToAuthor(ResourceEntry text) {
-        Selene.getInstance(DiscordUtils.class).sendToUser(text, this.getAuthor());
+        SeleneUtils.INJECT.getInstance(DiscordUtils.class).sendToUser(text, this.getAuthor());
     }
 
     public User getAuthor() {
         return this.author;
     }
 
-    public MessageChannel getChannel() {
-        return this.channel;
+    public void sendToAuthor(CharSequence text) {
+        SeleneUtils.INJECT.getInstance(DiscordUtils.class).sendToUser(text, this.getAuthor());
+    }
+
+    public void sendToAuthor(ResourceEntry text) {
+        SeleneUtils.INJECT.getInstance(DiscordUtils.class).sendToUser(text, this.getAuthor());
     }
 
     public LocalDateTime getTimeReceived() {

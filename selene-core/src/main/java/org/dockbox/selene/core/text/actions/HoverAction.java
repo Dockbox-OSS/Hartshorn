@@ -26,13 +26,13 @@ public abstract class HoverAction<R> extends TextAction<R> {
         super(result);
     }
 
+    public static ShowText showText(Text text) {
+        return new ShowText(text);
+    }
+
     public static final class ShowText extends HoverAction<Text> {
         private ShowText(Text result) {
             super(result);
         }
-    }
-
-    public static ShowText showText(Text text) {
-        return new ShowText(text);
     }
 }
