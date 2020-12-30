@@ -17,12 +17,15 @@
 
 package org.dockbox.selene.core.impl.files;
 
+import org.dockbox.selene.core.annotations.entity.Ignore;
 import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.impl.files.util.XStreamUtils;
 import org.dockbox.selene.core.impl.files.util.XStreamUtils.XStreamBuilder;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.jetbrains.annotations.NonNls;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
@@ -35,21 +38,48 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
     public <T> Exceptional<T> getFileContent(Path file, Class<T> type) {
         SeleneUtils.REFLECTION.rejects(type, DefaultXStreamManager.class, true);
 
-        return Exceptional.empty();
+        try {
+            T t = this.prepareXStream(type).read(type, file.toFile());
+            return Exceptional.ofNullable(t);
+        } catch (IOException e) {
+            return Exceptional.of(e);
+        }
     }
 
     @Override
     public <T> Exceptional<Boolean> writeFileContent(Path file, T content) {
-        SeleneUtils.REFLECTION.rejects(content.getClass(), DefaultXStreamManager.class, true);
+        @SuppressWarnings("unchecked") Class<T> type = (Class<T>) content.getClass();
+        SeleneUtils.REFLECTION.rejects(type, DefaultXStreamManager.class, true);
 
-        XStreamBuilder builder = XStreamUtils.create();
-        if (content != null) {
-            // TODO:
-            //  - Omit fields annotated with @Ignore
-            //  - Alias fields annotated with @Property
-            //  (Recursive over supers)
+        if (null != content) {
+            try {
+                this.prepareXStream(type).write(content, file.toFile());
+                return Exceptional.of(true);
+            } catch (IOException e) {
+                return Exceptional.of(false, e);
+            }
         }
-        return Exceptional.empty();
+        return Exceptional.of(false);
     }
 
+    private XStreamBuilder prepareXStream(Class<?> type) {
+        XStreamBuilder builder = XStreamUtils.create();
+        this.omitIgnoredFields(type, builder);
+        this.aliasPropertyFields(type, builder);
+        return builder;
+    }
+
+    private void omitIgnoredFields(Class<?> type, XStreamBuilder builder) {
+        SeleneUtils.REFLECTION.forEachFieldIn(type, (declaringType, field) -> {
+            if (field.isAnnotationPresent(Ignore.class))
+                builder.omitField(declaringType, field.getName());
+        });
+    }
+
+    private void aliasPropertyFields(Class<?> type, XStreamBuilder builder) {
+        SeleneUtils.REFLECTION.forEachFieldIn(type, (declaringType, field) -> {
+                @NonNls String alias = SeleneUtils.REFLECTION.getFieldPropertyName(field);
+                if (!field.getName().equals(alias)) builder.aliasField(alias, declaringType, field.getName());
+        });
+    }
 }

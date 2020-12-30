@@ -17,6 +17,7 @@
 
 plugins {
     id 'java'
+    id "java-test-fixtures"
 }
 
 group = 'org.dockbox.selene.core.impl'
@@ -33,6 +34,10 @@ dependencies {
         compileOnly "org.spongepowered:configurate-xml:$configurateVersion"
 
         shadow "com.thoughtworks.xstream:xstream:$xstreamVersion"
+        shadow "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"
+
+        testImplementation "com.thoughtworks.xstream:xstream:$xstreamVersion"
+        testImplementation "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"
 
         testImplementation "org.spongepowered:configurate-core:$configurateVersion"
         testImplementation project(':selene-core')

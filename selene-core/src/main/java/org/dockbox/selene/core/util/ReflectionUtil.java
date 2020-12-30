@@ -45,6 +45,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -737,6 +738,14 @@ public class ReflectionUtil {
             return rejected;
         }
         return false;
+    }
+
+    public void forEachFieldIn(Class<?> type, BiConsumer<Class<?>, Field> consumer) {
+        for (Field declaredField : type.getDeclaredFields()) {
+            consumer.accept(type, declaredField);
+        }
+        if (null != type.getSuperclass())
+            this.forEachFieldIn(type.getSuperclass(), consumer);
     }
 
 
