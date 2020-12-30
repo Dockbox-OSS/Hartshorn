@@ -49,7 +49,7 @@ import javax.annotation.Nullable;
  *         the type parameter
  */
 @SuppressWarnings("AssignmentToNull")
-public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
+public final class Exceptional<T> {
 
     private static final Exceptional<?> EMPTY = new Exceptional<>();
 
@@ -57,25 +57,21 @@ public final class Exceptional<T> extends ConstructNotifier<Exceptional> {
     private final Throwable throwable;
 
     private Exceptional() {
-        super(Exceptional.class);
         this.value = null;
         this.throwable = null;
     }
 
     private Exceptional(T value) {
-        super(Exceptional.class);
         this.value = Objects.requireNonNull(value);
         this.throwable = null;
     }
 
     private Exceptional(T value, Throwable throwable) {
-        super(Exceptional.class);
         this.value = Objects.requireNonNull(value);
         this.throwable = Objects.requireNonNull(throwable);
     }
 
     private Exceptional(Throwable throwable) {
-        super(Exceptional.class);
         this.value = null;
         this.throwable = Objects.requireNonNull(throwable);
     }
