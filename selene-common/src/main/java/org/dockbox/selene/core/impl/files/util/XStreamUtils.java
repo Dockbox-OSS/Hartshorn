@@ -189,7 +189,7 @@ public final class XStreamUtils {
     public static void toXml(XStream stream, Object object, File file, String encoding) throws IOException {
         try (OutputStreamWriter writer = new OutputStreamWriter(new BufferedOutputStream(
                 new FileOutputStream(file)), encoding)) {
-            stream.toXML(object, writer);
+            stream.marshal(object, new PrettyPrintWriter(writer));
         }
     }
 
