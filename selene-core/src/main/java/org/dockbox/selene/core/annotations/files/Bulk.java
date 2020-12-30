@@ -17,5 +17,9 @@
 
 package org.dockbox.selene.core.annotations.files;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Bulk {
 }
