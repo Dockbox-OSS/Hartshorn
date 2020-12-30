@@ -20,7 +20,8 @@ package org.dockbox.selene.core.regex.matchers;
 import org.dockbox.selene.core.VerbalExpression;
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
-import org.junit.internal.matchers.TypeSafeMatcher;
+import org.hamcrest.TypeSafeMatcher;
+
 //import org.hamcrest.TypeSafeMatcher;
 
 /**

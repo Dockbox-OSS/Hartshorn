@@ -124,7 +124,7 @@ allprojects {
             testRuntime "org.spongepowered:configurate-core:$configurateVersion"
 
             // Typically included by platforms
-            compileOnly 'org.slf4j:slf4j-api:1.7.25'
+            compileOnly "org.slf4j:slf4j-api:$slf4jVersion"
 
             // Compile/source dependencies
             compileOnly("org.jetbrains:annotations:$jetbrainsAnnotationsVersion")
@@ -133,6 +133,7 @@ allprojects {
             testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
             testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
             testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+            testCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
 
             testCompile "org.mockito:mockito-all:$mockitoVersion"
 

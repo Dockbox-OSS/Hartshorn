@@ -21,9 +21,8 @@ import org.dockbox.selene.core.VerbalExpression;
 import org.dockbox.selene.core.regex.matchers.TestMatchMatcher;
 import org.dockbox.selene.core.regex.matchers.TestsExactMatcher;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.hamcrest.MatcherAssert;
+import org.junit.jupiter.api.Test;
 
 
 public class RealWorldUnitTest {
@@ -42,9 +41,9 @@ public class RealWorldUnitTest {
 
         // Create an example URL
         String testUrl = "https://www.google.com";
-        Assert.assertThat("Matches Google's url", testRegex, TestMatchMatcher.matchesTo(testUrl)); //True
+        MatcherAssert.assertThat("Matches Google's url", testRegex, TestMatchMatcher.matchesTo(testUrl)); //True
 
-        Assert.assertThat("Regex doesn't match same regex as in example",
+        MatcherAssert.assertThat("Regex doesn't match same regex as in example",
                 testRegex.toString(),
                 CoreMatchers.equalTo("^(?:http)(?:s)?(?:\\:\\/\\/)(?:www\\.)?(?:[^\\ ]*)$"));
     }
@@ -62,9 +61,9 @@ public class RealWorldUnitTest {
         String phoneWithoutSpace = "+097234243";
         String phoneWithDash = "+097-234-243";
 
-        Assert.assertThat(regex, TestsExactMatcher.matchesExactly(phoneWithSpace));
-        Assert.assertThat(regex, TestsExactMatcher.matchesExactly(phoneWithoutSpace));
-        Assert.assertThat(regex, TestsExactMatcher.matchesExactly(phoneWithDash));
+        MatcherAssert.assertThat(regex, TestsExactMatcher.matchesExactly(phoneWithSpace));
+        MatcherAssert.assertThat(regex, TestsExactMatcher.matchesExactly(phoneWithoutSpace));
+        MatcherAssert.assertThat(regex, TestsExactMatcher.matchesExactly(phoneWithDash));
 
     }
 
@@ -86,7 +85,7 @@ public class RealWorldUnitTest {
                 .capt().digit().oneOrMore().endCapture().tab()
                 .capt().find("STR").range("0", "2").count(1).endCapture().build();
 
-        Assert.assertThat(regex, TestsExactMatcher.matchesExactly(logLine));
+        MatcherAssert.assertThat(regex, TestsExactMatcher.matchesExactly(logLine));
 
         VerbalExpression.Builder digits = VerbalExpression.regex().capt().digit().oneOrMore().endCapt().tab();
         VerbalExpression.Builder range = VerbalExpression.regex().capt().range("0", "1").count(1).endCapt().tab();
@@ -99,7 +98,7 @@ public class RealWorldUnitTest {
                 .add(digits).add(digits)
                 .add(range).add(digits).add(fake).build();
 
-        Assert.assertThat(regex2, TestsExactMatcher.matchesExactly(logLine));
+        MatcherAssert.assertThat(regex2, TestsExactMatcher.matchesExactly(logLine));
 
         //(\\d+)\\t(\\d+)\\t([0-1]{1})\\t(http://localhost:20\\d{3})\\t([0-1]{1})
         // \\t(\\d+)\\t([0-1]{1})\\t(\\d+)\\t(\\d+)\\t([0-1]{1})\\t(\\d+)\\t(FAKE[1-2]{1})
@@ -115,13 +114,8 @@ public class RealWorldUnitTest {
 
     @Test
     public void unusualRegex() {
-        Assert.assertThat(VerbalExpression.regex().add("[A-Z0-1!-|]").build().toString(), CoreMatchers.equalTo("[A-Z0-1!-|]"));
+        MatcherAssert.assertThat(VerbalExpression.regex().add("[A-Z0-1!-|]").build().toString(), CoreMatchers.equalTo("[A-Z0-1!-|]"));
 
-    }
-
-    @Test
-    @Ignore("Planned in 1.3")
-    public void captureWithName() {
     }
 
     @Test
@@ -131,8 +125,8 @@ public class RealWorldUnitTest {
                 .oneOf("The Phantom Menace", "Attack of the Clones", "Revenge of the Sith",
                         "The Force Awakens", "A New Hope", "The Empire Strikes Back", "Return of the Jedi")
                 .build();
-        Assert.assertThat(regex, TestMatchMatcher.matchesTo("Star Wars: The Empire Strikes Back"));
-        Assert.assertThat(regex, TestMatchMatcher.matchesTo("Star Wars: Return of the Jedi"));
+        MatcherAssert.assertThat(regex, TestMatchMatcher.matchesTo("Star Wars: The Empire Strikes Back"));
+        MatcherAssert.assertThat(regex, TestMatchMatcher.matchesTo("Star Wars: Return of the Jedi"));
     }
 
     @Test
@@ -146,7 +140,7 @@ public class RealWorldUnitTest {
                         .capture().find(some).endCapture().then(text)
                         .build();
 
-        Assert.assertThat(some, CoreMatchers.equalTo(expression.getText(lineBreak + some + text, 1)));
+        MatcherAssert.assertThat(some, CoreMatchers.equalTo(expression.getText(lineBreak + some + text, 1)));
     }
 
     @Test
@@ -161,7 +155,7 @@ public class RealWorldUnitTest {
                 .capture(captureName).find(some).endCapture().then(text)
                 .build();
 
-        Assert.assertThat(some,
+        MatcherAssert.assertThat(some,
                 CoreMatchers.equalTo(expression.getText(lineBreak + some + text, captureName)));
     }
 }
