@@ -156,7 +156,13 @@ public class RegistryColumn<T> {
 
     public Iterator<T> iterator() {return this.data.iterator();}
 
-    public boolean add(T t) {return this.data.add(t);}
+    public boolean add(T t) {
+        return this.data.add(t);
+    }
+
+    public boolean add(RegistryColumn<T> column) {
+        return this.data.addAll(column.data);
+    }
 
     public boolean addAll(int index, @NotNull Collection<? extends T> c) {return this.data.addAll(index, c);}
 
@@ -164,7 +170,9 @@ public class RegistryColumn<T> {
 
     public boolean addAll(@NotNull Collection<? extends T> c) {return this.data.addAll(c);}
 
-    public boolean addAll(@NotNull RegistryColumn<? extends T> c) {return this.data.addAll(c.data);}
+    public boolean addAll(@NotNull RegistryColumn<? extends T> c) {
+        return this.data.addAll(c.data);
+    }
 
     public T get(int index) {return this.data.get(index);}
 

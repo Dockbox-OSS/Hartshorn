@@ -17,15 +17,20 @@
 
 package org.dockbox.selene.integrated.data;
 
+import org.dockbox.selene.core.files.FileManager;
+import org.dockbox.selene.core.impl.files.TestXStreamFileManager;
 import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.integrated.data.registry.Registry;
 import org.dockbox.selene.integrated.data.registry.RegistryColumn;
 import org.dockbox.selene.integrated.data.registry.TestIdentifier;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import ninja.leaping.configurate.ConfigurationNode;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
 
 public class DataStructuresSerializersTests {
@@ -51,35 +56,36 @@ public class DataStructuresSerializersTests {
                         .addColumn(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock1"));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    @Disabled
     public void testThatRegistryCanBeSerialised() {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createEmptyNode().setValue(this.buildTestRegistry());
+        Assertions.assertDoesNotThrow(() -> {
+            File copy = File.createTempFile("tmp", null);
+            Path tempFile = copy.toPath();
 
-        Registry<Registry<String>> reg = (Registry<Registry<String>>) cn.getValue();
+            FileManager fm = new TestXStreamFileManager();
 
-        RegistryColumn<Registry<String>> result = reg.getAllData();
-
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(3, result.size());
+            fm.writeFileContent(tempFile, this.buildTestRegistry());
+        });
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
-    @Disabled
-    public void testThatRegistryCanBeDeserialised() {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createEmptyNode().setValue(this.buildTestRegistry());
+    public void testThatRegistryCanBeDeserialised() throws IOException {
+        File copy = File.createTempFile("tmp", null);
+        Path tempFile = copy.toPath();
 
-        Registry<Registry<String>> reg = (Registry<Registry<String>>) cn.getValue();
+        FileManager fm = new TestXStreamFileManager();
 
-        RegistryColumn<Object> result = reg.getMatchingColumns(TestIdentifier.BRICK)
+        fm.writeFileContent(tempFile, this.buildTestRegistry());
+        Exceptional<Registry> registry = fm.getFileContent(tempFile, Registry.class);
+        Assertions.assertTrue(registry.isPresent());
+
+        Registry<Registry<String>> reg = (Registry<Registry<String>>) registry.get();
+        RegistryColumn<RegistryColumn<String>> result = reg.getMatchingColumns(TestIdentifier.BRICK)
                 .mapTo(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
 
-        Assertions.assertTrue(result.contains("Brick Fullblock1"));
-        Assertions.assertTrue(result.contains("Brick Fullblock2"));
+        Assertions.assertTrue(result.first().get().contains("Brick Fullblock1"));
+        Assertions.assertTrue(result.first().get().contains("Brick Fullblock2"));
     }
 
 }
