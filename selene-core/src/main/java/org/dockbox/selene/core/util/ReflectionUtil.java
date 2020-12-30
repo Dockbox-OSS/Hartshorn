@@ -21,6 +21,7 @@ import org.dockbox.selene.core.annotations.Rejects;
 import org.dockbox.selene.core.annotations.entity.Ignore;
 import org.dockbox.selene.core.annotations.entity.Property;
 import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.extension.OwnedBy;
 import org.dockbox.selene.core.exceptions.TypeRejectedException;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.objects.Exceptional;
@@ -439,6 +440,12 @@ public class ReflectionUtil {
     public Extension getExtension(Class<?> type) {
         if (null == type) return null;
         if (type.equals(Selene.class)) return this.getExtension(SeleneUtils.INJECT.getInstance(IntegratedExtension.class).getClass());
+
+        if (type.isAnnotationPresent(OwnedBy.class)) {
+            OwnedBy owner = type.getAnnotation(OwnedBy.class);
+            return this.getExtension(owner.value());
+        }
+
         Extension extension = type.getAnnotation(Extension.class);
         extension = null != extension ? extension : this.getExtension(type.getSuperclass());
         if (null == extension)
