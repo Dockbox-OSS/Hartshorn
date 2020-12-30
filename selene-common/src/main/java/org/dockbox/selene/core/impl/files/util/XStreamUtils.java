@@ -20,6 +20,7 @@ package org.dockbox.selene.core.impl.files.util;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
+import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
 import com.thoughtworks.xstream.io.xml.WstxDriver;
 import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.security.NoTypePermission;
@@ -111,6 +112,10 @@ public final class XStreamUtils {
         xstream.allowTypeHierarchy(Enum.class);
 
         xstream.allowTypes(new Class[]{Mapper.Null.class});
+
+        xstream.allowTypesByWildcard(new String[] {
+                "org.dockbox.selene.**"
+        });
 
         // we don't want to use references
         xstream.setMode(XStream.NO_REFERENCES);
