@@ -42,7 +42,8 @@ public class SpongeConstructionUtil implements ConstructionUtil {
 
     @Override
     public Item<?> item(BaseBlock baseBlock) {
-        return SpongeConversionUtil.throughSponge(baseBlock).orElse(Item.AIR);
+        return Item.AIR;
+//        return SpongeConversionUtil.throughSponge(baseBlock).orElse(Item.AIR);
     }
 
     @NotNull
