@@ -18,6 +18,7 @@
 package org.dockbox.selene.core.util;
 
 import org.dockbox.selene.core.annotations.Rejects;
+import org.dockbox.selene.core.annotations.entity.Alias;
 import org.dockbox.selene.core.annotations.entity.Ignore;
 import org.dockbox.selene.core.annotations.entity.Property;
 import org.dockbox.selene.core.annotations.extension.Extension;
@@ -514,19 +515,12 @@ public class ReflectionUtil {
                 : field.getName();
     }
 
-    /**
-     * Process field name string.
-     *
-     * @param field
-     *         the field
-     *
-     * @return the string
-     */
-    public String processFieldName(Field field) {
-        String fieldName = field.getName();
-        if (field.isAnnotationPresent(Property.class))
-            fieldName = field.getAnnotation(Property.class).value();
-        return fieldName;
+    @Nullable
+    public String getClassAlias(Class<?> type) {
+        String className = null;
+        if (type.isAnnotationPresent(Alias.class))
+            className = type.getAnnotation(Alias.class).value();
+        return className;
     }
 
     /**
@@ -611,7 +605,7 @@ public class ReflectionUtil {
                     if (Provision.FIELD == provision) {
                         value = valueCollector.apply((A) field);
                     } else {
-                        String fieldName = this.processFieldName(field);
+                        String fieldName = this.getFieldPropertyName(field);
                         value = valueCollector.apply((A) fieldName);
                     }
                     if (null == value) continue;
