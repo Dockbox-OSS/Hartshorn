@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.integrated.data.registry;
 
+import org.dockbox.selene.core.annotations.Rejects;
+import org.dockbox.selene.core.impl.files.DefaultConfigurateManager;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,12 +29,18 @@ import java.util.function.BiConsumer;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-
-@ConfigSerializable
+@SuppressWarnings({"UnusedReturnValue", "unused"})
+@Rejects(DefaultConfigurateManager.class)
 public class Registry<V> {
 
-    private final Map<RegistryIdentifier, RegistryColumn<V>> data = SeleneUtils.COLLECTION.emptyConcurrentMap();
+    private final Map<RegistryIdentifier, RegistryColumn<V>> data = SeleneUtils.COLLECTION.emptyMap();
+
+    public Registry() {
+    }
+
+    public Registry(Map<RegistryIdentifier, RegistryColumn<V>> data) {
+        this.data.putAll(data);
+    }
 
     /**
      * Adds a column of data to the Registry. <B>Note</B> this will override an existing column
@@ -61,8 +69,13 @@ public class Registry<V> {
      *
      * @return Itself.
      */
-    public Registry<V> addColumn(RegistryIdentifier columnID, Collection<? extends V> values) {
+    public Registry<V> addColumn(RegistryIdentifier columnID, Collection<V> values) {
         this.data.put(columnID, new RegistryColumn<>(values));
+        return this;
+    }
+
+    public Registry<V> addColumn(RegistryIdentifier columnID, RegistryColumn<V> column) {
+        this.data.put(columnID, column);
         return this;
     }
 
@@ -105,11 +118,20 @@ public class Registry<V> {
      *
      * @return Itself.
      */
-    public Registry<V> addData(RegistryIdentifier columnID, Collection<? extends V> values) {
+    public Registry<V> addData(RegistryIdentifier columnID, Collection<V> values) {
         if (this.data.containsKey(columnID)) {
             this.data.get(columnID).addAll(values);
         } else {
             this.addColumn(columnID, values);
+        }
+        return this;
+    }
+
+    public Registry<V> addData(RegistryIdentifier columnID, RegistryColumn<V> column) {
+        if (this.data.containsKey(columnID)) {
+            this.data.get(columnID).addAll(column);
+        } else {
+            this.addColumn(columnID, column);
         }
         return this;
     }
