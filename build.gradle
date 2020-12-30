@@ -104,6 +104,10 @@ allprojects {
             }
         }
 
+        configurations {
+            all*.exclude group: 'junit', module:'junit'
+        }
+
         dependencies {
             compile("net.dv8tion:JDA:$jdaVersion") {
                 exclude module: 'opus-java'
