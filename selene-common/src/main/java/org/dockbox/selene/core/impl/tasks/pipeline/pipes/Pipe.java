@@ -15,21 +15,21 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline.pipes;
+package org.dockbox.selene.core.impl.tasks.pipeline.pipes;
 
-import org.dockbox.selene.integrated.data.pipeline.pipelines.AbstractPipeline;
+import org.dockbox.selene.core.objects.Exceptional;
 
 @FunctionalInterface
-public interface ComplexPipe<I, O> extends IPipe<I, O> {
+public interface Pipe<I, O> extends StandardPipe<I, O> {
 
-    O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception;
+    O execute(I input, Throwable throwable) throws Exception;
 
     @Override
-    default Class<? extends IPipe> getType() {
-        return ComplexPipe.class;
+    default O apply(Exceptional<I> input) throws Exception {
+        return this.execute(input.orNull(), input.orElseExcept(null));
     }
 
-    static <I, O> ComplexPipe<I, O> of(ComplexPipe<I, O> pipe) {
+    static <I, O> Pipe<I, O> of(Pipe<I, O> pipe) {
         return pipe;
     }
 }

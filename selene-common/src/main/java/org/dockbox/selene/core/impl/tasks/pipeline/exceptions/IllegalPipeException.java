@@ -15,26 +15,17 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline.pipes;
+package org.dockbox.selene.core.impl.tasks.pipeline.exceptions;
 
-import org.dockbox.selene.integrated.data.pipeline.pipelines.AbstractPipeline;
+import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 
-@FunctionalInterface
-public interface CancellablePipe<I, O> extends ComplexPipe<I, O> {
+public class IllegalPipeException  extends UncheckedSeleneException {
 
-    O execute(Runnable cancelPipeline, I input, Throwable throwable) throws Exception;
-
-    @Override
-    default O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception{
-        return this.execute(pipeline::cancelPipeline, input, throwable);
+    public IllegalPipeException(String errorMessage, Throwable throwable) {
+        super(errorMessage, throwable);
     }
 
-    @Override
-    default Class<CancellablePipe> getType() {
-        return CancellablePipe.class;
-    }
-
-    static <I, O> CancellablePipe<I, O> of(CancellablePipe<I, O> pipe) {
-        return pipe;
+    public IllegalPipeException(String errorMessage) {
+        super(errorMessage);
     }
 }

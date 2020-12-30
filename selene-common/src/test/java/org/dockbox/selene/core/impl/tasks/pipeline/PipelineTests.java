@@ -1,13 +1,13 @@
-package org.dockbox.selene.integrated.data.pipeline;
+package org.dockbox.selene.core.impl.tasks.pipeline;
 
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipeException;
-import org.dockbox.selene.integrated.data.pipeline.pipelines.AbstractPipeline;
-import org.dockbox.selene.integrated.data.pipeline.pipelines.Pipeline;
-import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
-import org.dockbox.selene.integrated.data.pipeline.pipes.InputPipe;
-import org.dockbox.selene.integrated.data.pipeline.pipes.Pipe;
-import org.dockbox.selene.integrated.data.pipeline.pipes.StandardPipe;
+import org.dockbox.selene.core.impl.tasks.pipeline.exceptions.IllegalPipeException;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipelines.AbstractPipeline;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipelines.Pipeline;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipes.CancellablePipe;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipes.InputPipe;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipes.Pipe;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipes.StandardPipe;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

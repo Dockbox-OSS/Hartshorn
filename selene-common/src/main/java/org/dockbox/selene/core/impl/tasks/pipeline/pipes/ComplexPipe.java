@@ -15,14 +15,21 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline.pipes;
+package org.dockbox.selene.core.impl.tasks.pipeline.pipes;
 
-public interface IPipe<I, O> {
-    /**
-     * If this method is overridden, you can then call it to get the {@link Class} of the pipe, even when created by a lamda expression.
-     * @return The {@link Class} of the pipe.
-     */
+import org.dockbox.selene.core.impl.tasks.pipeline.pipelines.AbstractPipeline;
+
+@FunctionalInterface
+public interface ComplexPipe<I, O> extends IPipe<I, O> {
+
+    O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception;
+
+    @Override
     default Class<? extends IPipe> getType() {
-        return IPipe.class;
+        return ComplexPipe.class;
+    }
+
+    static <I, O> ComplexPipe<I, O> of(ComplexPipe<I, O> pipe) {
+        return pipe;
     }
 }

@@ -15,14 +15,14 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline.pipelines;
+package org.dockbox.selene.core.impl.tasks.pipeline.pipelines;
 
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.integrated.data.pipeline.CancelBehaviour;
-import org.dockbox.selene.integrated.data.pipeline.PipelineDirection;
-import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipelineException;
-import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;
+import org.dockbox.selene.core.impl.tasks.pipeline.CancelBehaviour;
+import org.dockbox.selene.core.impl.tasks.pipeline.PipelineDirection;
+import org.dockbox.selene.core.impl.tasks.pipeline.exceptions.IllegalPipelineException;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipes.IPipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -173,7 +173,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
     /**
      * Converts the pipeline to a different type. <b>Note:</b> When you convert a pipeline, this automatically makes it
      * uncancellable and so will throw an {@link IllegalPipelineException} if you try and process an input with any
-     * {@link org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe}s in this pipeline.
+     * {@link org.dockbox.selene.core.impl.tasks.pipeline.pipes.CancellablePipe}s in this pipeline.
      *
      * @param converter
      *         A non-null {@link Function} that takes in an {@link I input} and returns a converted {@link K output}

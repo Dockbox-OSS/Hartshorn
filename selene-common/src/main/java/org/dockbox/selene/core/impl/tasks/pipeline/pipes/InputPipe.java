@@ -1,4 +1,4 @@
-package org.dockbox.selene.integrated.data.pipeline.pipes;
+package org.dockbox.selene.core.impl.tasks.pipeline.pipes;
 
 import org.dockbox.selene.core.objects.Exceptional;
 

@@ -15,17 +15,16 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline.pipelines;
+package org.dockbox.selene.core.impl.tasks.pipeline.pipelines;
 
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.util.CollectionUtil;
-import org.dockbox.selene.integrated.data.pipeline.CancelBehaviour;
-import org.dockbox.selene.integrated.data.pipeline.exceptions.IllegalPipeException;
-import org.dockbox.selene.integrated.data.pipeline.pipes.CancellablePipe;
-import org.dockbox.selene.integrated.data.pipeline.pipes.ComplexPipe;
-import org.dockbox.selene.integrated.data.pipeline.pipes.IPipe;
-import org.dockbox.selene.integrated.data.pipeline.pipes.StandardPipe;
+import org.dockbox.selene.core.impl.tasks.pipeline.CancelBehaviour;
+import org.dockbox.selene.core.impl.tasks.pipeline.exceptions.IllegalPipeException;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipes.CancellablePipe;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipes.ComplexPipe;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipes.IPipe;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipes.StandardPipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
