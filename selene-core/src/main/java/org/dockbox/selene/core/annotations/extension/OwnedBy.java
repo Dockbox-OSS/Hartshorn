@@ -25,5 +25,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface OwnedBy {
-    Class<?> value() default Void.class;
+    Class<?> value();
 }
