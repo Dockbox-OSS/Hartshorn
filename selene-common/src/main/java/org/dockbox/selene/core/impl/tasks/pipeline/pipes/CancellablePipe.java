@@ -15,21 +15,26 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline.pipes;
+package org.dockbox.selene.core.impl.tasks.pipeline.pipes;
 
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipelines.AbstractPipeline;
 
 @FunctionalInterface
-public interface StandardPipe<I, O> extends IPipe<I, O> {
+public interface CancellablePipe<I, O> extends ComplexPipe<I, O> {
 
-    O apply(Exceptional<I> input) throws Exception;
+    O execute(Runnable cancelPipeline, I input, Throwable throwable) throws Exception;
 
     @Override
-    default Class<? extends IPipe> getType() {
-        return StandardPipe.class;
+    default O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception{
+        return this.execute(pipeline::cancelPipeline, input, throwable);
     }
 
-    static <I, O> StandardPipe<I, O> of(StandardPipe<I, O> pipe) {
+    @Override
+    default Class<CancellablePipe> getType() {
+        return CancellablePipe.class;
+    }
+
+    static <I, O> CancellablePipe<I, O> of(CancellablePipe<I, O> pipe) {
         return pipe;
     }
 }

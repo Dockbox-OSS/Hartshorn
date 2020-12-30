@@ -37,6 +37,7 @@ import org.dockbox.selene.sponge.objects.item.MutableSpongeItemData;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.item.SpongeItemDataManipulatorBuilder;
 import org.dockbox.selene.sponge.util.SpongeInjector;
+import org.dockbox.selene.sponge.util.SpongeTaskRunner;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Sponge;
@@ -184,12 +185,8 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
             }
         } else {
             // Attempt to get the JDA once every 10 seconds until successful
-            Sponge.getScheduler().createTaskBuilder()
-                    .delay(10, TimeUnit.SECONDS)
-                    .execute(() -> this.onServerStartedLate(event))
-                    .name("JDA_scheduler")
-                    .async()
-                    .submit(this);
+            new SpongeTaskRunner().acceptDelayed(() -> this.onServerStartedLate(event), 10, TimeUnit.SECONDS);
         }
     }
+
 }

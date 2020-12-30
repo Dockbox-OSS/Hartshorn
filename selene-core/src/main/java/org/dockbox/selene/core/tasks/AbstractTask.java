@@ -15,17 +15,20 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline.exceptions;
+package org.dockbox.selene.core.tasks;
 
-import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
+public abstract class AbstractTask implements Task {
 
-public class IllegalPipeException  extends UncheckedSeleneException {
+    protected abstract void perform();
 
-    public IllegalPipeException(String errorMessage, Throwable throwable) {
-        super(errorMessage, throwable);
+    public abstract void cancel();
+
+    public void onTaskInit() {
+        // Reserved for implementation
     }
 
-    public IllegalPipeException(String errorMessage) {
-        super(errorMessage);
+    public void onTaskComplete() {
+        // Reserved for implementation
     }
+
 }

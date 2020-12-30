@@ -21,12 +21,18 @@ import com.sk89q.worldedit.blocks.BaseBlock;
 
 import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.tasks.TaskRunner;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
 import org.jetbrains.annotations.NotNull;
 
 public class SpongeConstructionUtil implements ConstructionUtil {
+
+    @Override
+    public TaskRunner taskRunner() {
+        return new SpongeTaskRunner();
+    }
 
     @NotNull
     @Override

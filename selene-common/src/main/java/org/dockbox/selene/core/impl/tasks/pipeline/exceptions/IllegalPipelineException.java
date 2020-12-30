@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline.exceptions;
+package org.dockbox.selene.core.impl.tasks.pipeline.exceptions;
 
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 

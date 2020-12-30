@@ -15,7 +15,7 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline.pipelines;
+package org.dockbox.selene.core.impl.tasks.pipeline.pipelines;
 
 import org.dockbox.selene.core.objects.Exceptional;
 import org.jetbrains.annotations.NotNull;

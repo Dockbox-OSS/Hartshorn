@@ -15,21 +15,17 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline.pipes;
+package org.dockbox.selene.core.impl.tasks.pipeline.exceptions;
 
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 
-@FunctionalInterface
-public interface Pipe<I, O> extends StandardPipe<I, O> {
+public class IllegalPipeException  extends UncheckedSeleneException {
 
-    O execute(I input, Throwable throwable) throws Exception;
-
-    @Override
-    default O apply(Exceptional<I> input) throws Exception {
-        return this.execute(input.orNull(), input.orElseExcept(null));
+    public IllegalPipeException(String errorMessage, Throwable throwable) {
+        super(errorMessage, throwable);
     }
 
-    static <I, O> Pipe<I, O> of(Pipe<I, O> pipe) {
-        return pipe;
+    public IllegalPipeException(String errorMessage) {
+        super(errorMessage);
     }
 }

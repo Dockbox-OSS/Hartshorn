@@ -20,9 +20,14 @@ package org.dockbox.selene.core;
 import com.sk89q.worldedit.blocks.BaseBlock;
 
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.tasks.TaskRunner;
+import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 
 public interface ConstructionUtil {
+
+    TaskRunner taskRunner();
+
     PaginationBuilder paginationBuilder();
 
     /**

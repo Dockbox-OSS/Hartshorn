@@ -15,21 +15,20 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.integrated.data.pipeline.pipes;
+package org.dockbox.selene.core.tasks;
 
-import org.dockbox.selene.integrated.data.pipeline.pipelines.AbstractPipeline;
+import org.dockbox.selene.core.ConstructionUtil;
+import org.dockbox.selene.core.util.SeleneUtils;
 
-@FunctionalInterface
-public interface ComplexPipe<I, O> extends IPipe<I, O> {
+import java.util.concurrent.TimeUnit;
 
-    O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception;
+public abstract class TaskRunner {
 
-    @Override
-    default Class<? extends IPipe> getType() {
-        return ComplexPipe.class;
+    public abstract void accept(Task task);
+    public abstract void acceptDelayed(Task task, long delay, TimeUnit timeUnit);
+
+    public static TaskRunner create() {
+        return SeleneUtils.INJECT.getInstance(ConstructionUtil.class).taskRunner();
     }
 
-    static <I, O> ComplexPipe<I, O> of(ComplexPipe<I, O> pipe) {
-        return pipe;
-    }
 }

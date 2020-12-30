@@ -1,7 +1,7 @@
-package org.dockbox.selene.integrated.data.pipeline;
+package org.dockbox.selene.core.impl.tasks.pipeline;
 
-import org.dockbox.selene.integrated.data.pipeline.pipelines.ConvertiblePipeline;
-import org.dockbox.selene.integrated.data.pipeline.pipelines.Pipeline;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipelines.ConvertiblePipeline;
+import org.dockbox.selene.core.impl.tasks.pipeline.pipelines.Pipeline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
