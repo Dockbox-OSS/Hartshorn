@@ -733,7 +733,9 @@ public class ReflectionUtil {
     public boolean rejects(Class<?> holder, Class<?> potentialReject, boolean throwIfRejected) {
         if (holder.isAnnotationPresent(Rejects.class)) {
             Rejects rejects = holder.getAnnotation(Rejects.class);
-            boolean rejected = potentialReject.isAssignableFrom(rejects.value());
+            boolean rejected = false;
+            for (Class<?> rejectedType : rejects.value())
+                if (potentialReject.isAssignableFrom(rejectedType)) rejected = true;
             if (rejected && throwIfRejected) throw new TypeRejectedException(potentialReject, holder);
             return rejected;
         }

@@ -25,5 +25,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Rejects {
-    Class<?> value() default Void.class;
+    Class<?>[] value() default Void.class;
 }
