@@ -7,6 +7,7 @@ org.dockbox.selene.core.annotations.event
 org.dockbox.selene.core.annotations.event.filter
 org.dockbox.selene.core.annotations.event.processing
 org.dockbox.selene.core.annotations.extension
+org.dockbox.selene.core.annotations.files
 org.dockbox.selene.core.annotations.i18n
 org.dockbox.selene.core.command
 org.dockbox.selene.core.command.context
@@ -17,7 +18,6 @@ org.dockbox.selene.core.events
 org.dockbox.selene.core.events.chat
 org.dockbox.selene.core.events.discord
 org.dockbox.selene.core.events.moderation
-org.dockbox.selene.core.events.object
 org.dockbox.selene.core.events.parents
 org.dockbox.selene.core.events.player
 org.dockbox.selene.core.events.player.interact
@@ -57,6 +57,7 @@ org.dockbox.selene.core.objects.keys
 org.dockbox.selene.core.objects.keys.data
 org.dockbox.selene.core.objects.location
 org.dockbox.selene.core.objects.player
+org.dockbox.selene.core.objects.special
 org.dockbox.selene.core.objects.targets
 org.dockbox.selene.core.objects.tuple
 org.dockbox.selene.core.server
@@ -65,10 +66,14 @@ org.dockbox.selene.core.server.properties
 org.dockbox.selene.core.text
 org.dockbox.selene.core.text.actions
 org.dockbox.selene.core.text.pagination
+org.dockbox.selene.core.util
 org.dockbox.selene.coulis
 org.dockbox.selene.integrated.data
+org.dockbox.selene.integrated.data.pipeline
+org.dockbox.selene.integrated.data.pipeline.exceptions
+org.dockbox.selene.integrated.data.pipeline.pipelines
+org.dockbox.selene.integrated.data.pipeline.pipes
 org.dockbox.selene.integrated.data.registry
-org.dockbox.selene.integrated.data.serializers
 org.dockbox.selene.integrated.data.table
 org.dockbox.selene.integrated.data.table.behavior
 org.dockbox.selene.integrated.data.table.column
@@ -92,3 +97,4 @@ org.dockbox.selene.sponge.text.navigation
 org.dockbox.selene.sponge.util
 org.dockbox.selene.sponge.util.command
 org.dockbox.selene.sponge.util.command.values
+org.dockbox.selene.sponge.util.files
