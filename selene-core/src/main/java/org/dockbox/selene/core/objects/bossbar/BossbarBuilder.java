@@ -20,6 +20,8 @@ package org.dockbox.selene.core.objects.bossbar;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
 
+import java.util.UUID;
+
 public final class BossbarBuilder {
     private String id = "Bossbar#" + System.currentTimeMillis();
     private float percent;
@@ -31,6 +33,11 @@ public final class BossbarBuilder {
 
     public BossbarBuilder withId(String id) {
         this.id = id;
+        return this;
+    }
+
+    public BossbarBuilder withId(UUID id) {
+        this.id = id.toString();
         return this;
     }
 

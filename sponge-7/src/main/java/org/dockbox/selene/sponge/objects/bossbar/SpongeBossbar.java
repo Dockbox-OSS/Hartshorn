@@ -20,28 +20,28 @@ package org.dockbox.selene.sponge.objects.bossbar;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
+import org.dockbox.selene.core.impl.objects.bossbar.DefaultTickableBossbar;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.FieldReferenceHolder;
+import org.dockbox.selene.core.objects.bossbar.Bossbar;
 import org.dockbox.selene.core.objects.bossbar.BossbarColor;
 import org.dockbox.selene.core.objects.bossbar.BossbarStyle;
-import org.dockbox.selene.core.impl.objects.bossbar.DefaultTickableBossbar;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.tasks.TaskRunner;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.jetbrains.annotations.NonNls;
 import org.spongepowered.api.boss.ServerBossBar;
 
 import java.time.Duration;
-import java.util.Map;
+import java.util.Collection;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class SpongeBossbar extends DefaultTickableBossbar {
-
-    // Keeps bossbars in memory as long as they are active.
-    // If they are no longer visible to at least one player the bossbar can be disposed of.
-    public static transient final Map<String, SpongeBossbar> activeBossbars = SeleneUtils.COLLECTION.emptyConcurrentMap();
 
     private final FieldReferenceHolder<ServerBossBar> reference;
 
@@ -72,9 +72,9 @@ public class SpongeBossbar extends DefaultTickableBossbar {
     public void showTo(Player player) {
         this.reference.getReference().ifPresent(serverBossBar -> {
             SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::addPlayer);
-            if (activeBossbars.containsKey(this.getId())) Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player.getName() + ". This may cause unexpected behavior!");
-            else if (activeBossbars.containsValue(this)) Selene.log().warn("Adding identical bossbar with different ID '" + this.getId()  + "'. This may cause unexpected behavior!");
-            activeBossbars.put(this.getId(), this);
+            if (Bossbar.REGISTRY.containsKey(this.getId())) Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player.getName() + ". This may cause unexpected behavior!");
+            else if (Bossbar.REGISTRY.containsValue(this)) Selene.log().warn("Adding identical bossbar with different ID '" + this.getId()  + "'. This may cause unexpected behavior!");
+            Bossbar.REGISTRY.put(this.getId(), this);
         });
     }
 
@@ -89,9 +89,9 @@ public class SpongeBossbar extends DefaultTickableBossbar {
                         TimeUnit.SECONDS
                 );
             });
-            if (activeBossbars.containsKey(this.getId())) Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player.getName() + ". This may cause unexpected behavior!");
-            else if (activeBossbars.containsValue(this)) Selene.log().warn("Adding identical bossbar with different ID '" + this.getId()  + "'. This may cause unexpected behavior!");
-            activeBossbars.put(this.getId(), this);
+            if (Bossbar.REGISTRY.containsKey(this.getId())) Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player.getName() + ". This may cause unexpected behavior!");
+            else if (Bossbar.REGISTRY.containsValue(this)) Selene.log().warn("Adding identical bossbar with different ID '" + this.getId()  + "'. This may cause unexpected behavior!");
+            Bossbar.REGISTRY.put(this.getId(), this);
         });
     }
 
@@ -99,9 +99,10 @@ public class SpongeBossbar extends DefaultTickableBossbar {
     public void hideFrom(Player player) {
         this.reference.getReference().ifPresent(serverBossBar -> {
             SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::removePlayer);
-            if (serverBossBar.getPlayers().isEmpty()) activeBossbars.remove(this.getId());
+            if (serverBossBar.getPlayers().isEmpty()) Bossbar.REGISTRY.remove(this.getId());
         });
     }
+
 
     private ServerBossBar constructReference() {
         return ServerBossBar.builder()

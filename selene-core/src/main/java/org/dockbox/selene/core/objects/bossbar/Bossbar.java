@@ -19,42 +19,40 @@ package org.dockbox.selene.core.objects.bossbar;
 
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Map;
+import java.util.UUID;
 
 public interface Bossbar {
 
     void showTo(Player player);
-
     void showTo(Player player, Duration duration);
-
     void hideFrom(Player player);
-
     void showTo(Collection<Player> players);
-
     void hideFrom(Collection<Player> players);
-
     String getId();
-
     float getPercent();
-
     void setPercent(float percent);
-
     Text getText();
-
     void setText(Text text);
-
     BossbarColor getColor();
-
     void setColor(BossbarColor color);
-
     BossbarStyle getStyle();
-
     void setStyle(BossbarStyle style);
 
     static BossbarBuilder builder() {
         return new BossbarBuilder();
     }
 
+    static final Map<String, Bossbar> REGISTRY = SeleneUtils.COLLECTION.emptyConcurrentMap();
+    static Bossbar get(String id) {
+        return REGISTRY.get(id);
+    }
+
+    static Bossbar get(UUID uuid) {
+        return REGISTRY.get(uuid.toString());
+    }
 }
