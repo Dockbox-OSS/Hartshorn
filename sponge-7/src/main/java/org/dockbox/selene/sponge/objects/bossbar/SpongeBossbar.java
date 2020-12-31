@@ -21,9 +21,10 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.FieldReferenceHolder;
 import org.dockbox.selene.core.objects.bossbar.Bossbar;
 import org.dockbox.selene.core.objects.bossbar.BossbarColor;
-import org.dockbox.selene.core.objects.bossbar.BossbarOverlay;
+import org.dockbox.selene.core.objects.bossbar.BossbarStyle;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.tasks.TaskRunner;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
@@ -31,6 +32,7 @@ import org.spongepowered.api.boss.ServerBossBar;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class SpongeBossbar extends Bossbar {
 
@@ -40,7 +42,7 @@ public class SpongeBossbar extends Bossbar {
 
     private final FieldReferenceHolder<ServerBossBar> reference;
 
-    public SpongeBossbar(String id, float percent, Text text, BossbarColor color, BossbarOverlay overlay) {
+    public SpongeBossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle overlay) {
         super(id, percent, text, color, overlay);
         this.reference = new FieldReferenceHolder<>(Exceptional.of(this.constructReference()), bar -> {
             bar.setName(SpongeConversionUtil.toSponge(this.getText()));
@@ -71,7 +73,11 @@ public class SpongeBossbar extends Bossbar {
         this.reference.getReference().ifPresent(serverBossBar -> {
             SpongeConversionUtil.toSponge(player).ifPresent(sp -> {
                 serverBossBar.addPlayer(sp);
-
+                TaskRunner.create().acceptDelayed(
+                        () -> this.hideFrom(player),
+                        duration.getSeconds(),
+                        TimeUnit.SECONDS
+                );
             });
             if (activeBossbars.containsKey(this.getId())) Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player.getName() + ". This may cause unexpected behavior!");
             else if (activeBossbars.containsValue(this)) Selene.log().warn("Adding identical bossbar with different ID '" + this.getId()  + "'. This may cause unexpected behavior!");
@@ -92,7 +98,7 @@ public class SpongeBossbar extends Bossbar {
                 .name(SpongeConversionUtil.toSponge(this.getText()))
                 .percent(this.getPercent())
                 .color(SpongeConversionUtil.toSponge(this.getColor()))
-                .overlay(SpongeConversionUtil.toSponge(this.getOverlay()))
+                .overlay(SpongeConversionUtil.toSponge(this.getStyle()))
                 .build();
     }
 }

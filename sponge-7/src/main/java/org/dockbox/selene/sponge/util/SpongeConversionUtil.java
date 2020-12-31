@@ -29,6 +29,8 @@ import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.bossbar.BossbarColor;
+import org.dockbox.selene.core.objects.bossbar.BossbarStyle;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Warp;
@@ -51,6 +53,10 @@ import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.boss.BossBarColor;
+import org.spongepowered.api.boss.BossBarColors;
+import org.spongepowered.api.boss.BossBarOverlay;
+import org.spongepowered.api.boss.BossBarOverlays;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.data.type.HandTypes;
@@ -141,6 +147,16 @@ public enum SpongeConversionUtil {
         return Exceptional.empty();
     }
 
+    public static BossBarColor toSponge(BossbarColor bossbarColor) {
+        return Sponge.getRegistry().getType(BossBarColor.class, bossbarColor.name())
+                .orElse(BossBarColors.WHITE);
+    }
+
+    public static BossBarOverlay toSponge(BossbarStyle style) {
+        return Sponge.getRegistry().getType(BossBarOverlay.class, style.name())
+                .orElse(BossBarOverlays.PROGRESS);
+    }
+
     @NotNull
     public static Exceptional<SoundType> toSponge(Sounds sound) {
         return Exceptional.of(Sponge.getRegistry().getType(SoundType.class, sound.name()));
@@ -151,6 +167,13 @@ public enum SpongeConversionUtil {
         if (src instanceof Console) return Exceptional.of(Sponge.getServer().getConsole());
         else if (src instanceof Player)
             return Exceptional.of(Sponge.getServer().getPlayer(((Player) src).getUniqueId()));
+        return Exceptional.empty();
+    }
+
+    public static Exceptional<org.spongepowered.api.entity.living.player.Player> toSponge(Player player) {
+        if (player instanceof SpongePlayer) {
+            return Exceptional.ofNullable(((SpongePlayer) player).getSpongePlayer());
+        }
         return Exceptional.empty();
     }
 

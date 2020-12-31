@@ -74,6 +74,10 @@ public class SpongePlayer extends Player {
         super(uniqueId, name);
     }
 
+    public org.spongepowered.api.entity.living.player.Player getSpongePlayer() {
+        return this.spongePlayer.getReference().orElse(null);
+    }
+
     @Override
     public boolean isOnline() {
         return this.spongePlayer.referenceExists() && this.spongePlayer.getReference().get().isOnline();

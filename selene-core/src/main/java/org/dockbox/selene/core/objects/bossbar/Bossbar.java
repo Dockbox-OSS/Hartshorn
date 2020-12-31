@@ -31,14 +31,14 @@ public abstract class Bossbar {
     private float percent;
     private Text text;
     private BossbarColor color;
-    private BossbarOverlay overlay;
+    private BossbarStyle style;
 
-    protected Bossbar(String id, float percent, Text text, BossbarColor color, BossbarOverlay overlay) {
+    protected Bossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle style) {
         this.id = id;
         this.percent = percent;
         this.text = text;
         this.color = color;
-        this.overlay = overlay;
+        this.style = style;
     }
 
     public abstract void tick();
@@ -89,12 +89,12 @@ public abstract class Bossbar {
         this.tick();
     }
 
-    public BossbarOverlay getOverlay() {
-        return this.overlay;
+    public BossbarStyle getStyle() {
+        return this.style;
     }
 
-    public void setOverlay(BossbarOverlay overlay) {
-        this.overlay = overlay;
+    public void setStyle(BossbarStyle style) {
+        this.style = style;
         this.tick();
     }
 
@@ -107,7 +107,7 @@ public abstract class Bossbar {
         private float percent;
         private Text text;
         private BossbarColor color;
-        private BossbarOverlay overlay;
+        private BossbarStyle style;
 
         private BossbarBuilder() {}
 
@@ -131,8 +131,8 @@ public abstract class Bossbar {
             return this;
         }
 
-        public BossbarBuilder withOverlay(BossbarOverlay overlay) {
-            this.overlay = overlay;
+        public BossbarBuilder withStyle(BossbarStyle style) {
+            this.style = style;
             return this;
         }
 
@@ -142,12 +142,12 @@ public abstract class Bossbar {
                     .withPercent(this.percent)
                     .withText(this.text)
                     .withColor(this.color)
-                    .withOverlay(this.overlay);
+                    .withStyle(this.style);
         }
 
         public Bossbar build() {
             return SeleneUtils.INJECT.getInstance(ConstructionUtil.class)
-                    .bossbar(this.id, this.percent, this.text, this.color, this.overlay);
+                    .bossbar(this.id, this.percent, this.text, this.color, this.style);
         }
     }
 }

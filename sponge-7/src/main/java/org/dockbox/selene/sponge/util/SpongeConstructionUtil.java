@@ -20,9 +20,14 @@ package org.dockbox.selene.sponge.util;
 import com.sk89q.worldedit.blocks.BaseBlock;
 
 import org.dockbox.selene.core.ConstructionUtil;
+import org.dockbox.selene.core.objects.bossbar.Bossbar;
+import org.dockbox.selene.core.objects.bossbar.BossbarColor;
+import org.dockbox.selene.core.objects.bossbar.BossbarStyle;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.tasks.TaskRunner;
+import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
+import org.dockbox.selene.sponge.objects.bossbar.SpongeBossbar;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
 import org.jetbrains.annotations.NotNull;
@@ -56,5 +61,10 @@ public class SpongeConstructionUtil implements ConstructionUtil {
     @Override
     public Item<?> item(@NotNull String id) {
         return new SpongeItem(id);
+    }
+
+    @Override
+    public Bossbar bossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle style) {
+        return new SpongeBossbar(id, percent, text, color, style);
     }
 }

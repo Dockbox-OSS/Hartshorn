@@ -19,6 +19,9 @@ package org.dockbox.selene.core;
 
 import com.sk89q.worldedit.blocks.BaseBlock;
 
+import org.dockbox.selene.core.objects.bossbar.Bossbar;
+import org.dockbox.selene.core.objects.bossbar.BossbarColor;
+import org.dockbox.selene.core.objects.bossbar.BossbarStyle;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.tasks.TaskRunner;
 import org.dockbox.selene.core.text.Text;
@@ -61,4 +64,6 @@ public interface ConstructionUtil {
     Item<?> item(BaseBlock baseBlock);
 
     Item<?> item(String id);
+
+    Bossbar bossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle style);
 }

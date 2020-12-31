@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.objects.bossbar;
 
-public enum BossbarOverlay {
+public enum BossbarStyle {
     NOTCHED_10,
     NOTCHED_12,
     NOTCHED_20,
