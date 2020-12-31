@@ -211,10 +211,15 @@ public class IntegratedServerExtension implements IntegratedExtension {
     @Command(aliases = "demo", usage = "demo <content{String}> [animate{Boolean}]")
     public void demo(Player player, CommandContext context, @Arg("content") String content, @Nullable @Arg(
             "animate") Boolean animate) {
-        Bossbar bossbar = Bossbar.builder()
+        Bossbar.builder()
+                .withId("PlotBar$" + player.getUniqueId())
                 .withText(Text.of(content))
                 .withPercent(25F)
                 .build();
+
+        // Imagine we're in a different place right now
+
+        Bossbar bossbar = Bossbar.get("PlotBar$" + player.getUniqueId());
         bossbar.showTo(player);
 
         if (null != animate && animate)
