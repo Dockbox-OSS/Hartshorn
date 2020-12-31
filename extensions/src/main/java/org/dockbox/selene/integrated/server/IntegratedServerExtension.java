@@ -29,13 +29,15 @@ import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.bossbar.Bossbar;
+import org.dockbox.selene.core.objects.bossbar.BossbarColor;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
+import org.dockbox.selene.core.tasks.TaskRunner;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
@@ -43,6 +45,9 @@ import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nullable;
 
 @Extension(
         id = "selene",
@@ -196,16 +201,31 @@ public class IntegratedServerExtension implements IntegratedExtension {
         }
 
         player.setLanguage(lang);
-        // Messages sent after language switch will be in the preferred language
-        // TODO: For specific player
-        src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")"));
+
+        String languageLocalized = lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")";
+        if (player != src)
+            src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED_OTHER.format(player.getName(), languageLocalized));
+        player.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(languageLocalized));
     }
 
-    @Command(aliases = "demo", usage = "demo <block{String}>")
-    public void demo(Player player, CommandContext context) {
-        String block = context.getArgument("block").get().getValue();
-        Item item = Item.of(block);
-        player.giveItem(item);
+    @Command(aliases = "demo", usage = "demo <content{String}> [animate{Boolean}]")
+    public void demo(Player player, CommandContext context, @Arg("content") String content, @Nullable @Arg(
+            "animate") Boolean animate) {
+        Bossbar bossbar = Bossbar.builder()
+                .withText(Text.of(content))
+                .withPercent(25F)
+                .build();
+        bossbar.showTo(player);
+
+        if (null != animate && animate)
+            this.scheduleBossbarColor(bossbar, BossbarColor.RED, BossbarColor.WHITE);
+    }
+
+    private void scheduleBossbarColor(Bossbar bossbar, BossbarColor color, BossbarColor next) {
+        TaskRunner.create().acceptDelayed(() -> {
+            bossbar.setColor(color);
+            this.scheduleBossbarColor(bossbar, next, color);
+        }, 1, TimeUnit.SECONDS);
     }
 
 }
