@@ -56,9 +56,9 @@ public class SpongeBossbar extends DefaultTickableBossbar {
         super(id, percent, text, color, style);
         this.reference = new FieldReferenceHolder<>(Exceptional.of(this.constructReference()), bar -> {
             bar.setName(SpongeConversionUtil.toSponge(this.getText()));
-            bar.setPercent(this.getPercent());
-            bar.setColor(SpongeConversionUtil.toSponge(color));
-            bar.setOverlay(SpongeConversionUtil.toSponge(style));
+            bar.setPercent(this.getPercent()/100);
+            bar.setColor(SpongeConversionUtil.toSponge(this.getColor()));
+            bar.setOverlay(SpongeConversionUtil.toSponge(this.getStyle()));
             return Exceptional.of(bar);
         }, ServerBossBar.class);
     }
@@ -106,7 +106,7 @@ public class SpongeBossbar extends DefaultTickableBossbar {
     private ServerBossBar constructReference() {
         return ServerBossBar.builder()
                 .name(SpongeConversionUtil.toSponge(this.getText()))
-                .percent(this.getPercent())
+                .percent(this.getPercent()/100)
                 .color(SpongeConversionUtil.toSponge(this.getColor()))
                 .overlay(SpongeConversionUtil.toSponge(this.getStyle()))
                 .build();
