@@ -81,11 +81,13 @@ task runDevServer(dependsOn: prepareServerArtifacts) {
     doLast {
         javaexec {
             workingDir = "${project.rootDir}/servers/sponge-112"
-            main = "-jar";
+            main = "-jar"
             args = [
-                    "${project.rootDir}/servers/sponge-112/forge-1.12.2-2709.jar",
                     "-Xmx6G",
-                    "-Dsponge.debugcauseframes=true"
+                    "-Dsponge.debugcauseframes=true",
+                    "-Xdebug",
+                    "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005",
+                    "${project.rootDir}/servers/sponge-112/forge-1.12.2-2709.jar"
             ]
         }
     }
