@@ -61,7 +61,7 @@ import org.spongepowered.api.util.Tristate;
 import java.util.Optional;
 import java.util.UUID;
 
-@SuppressWarnings("ClassWithTooManyMethods")
+@SuppressWarnings({"ClassWithTooManyMethods", "rawtypes"})
 public class SpongePlayer extends Player {
 
     private final FieldReferenceHolder<org.spongepowered.api.entity.living.player.Player> spongePlayer =
@@ -124,7 +124,7 @@ public class SpongePlayer extends Player {
     }
 
     @Override
-    public Item<?> getItemInHand(Hand hand) {
+    public Item getItemInHand(Hand hand) {
         return this.spongePlayer.getReference().map(player -> {
             HandType handType;
             switch (hand) {
@@ -147,7 +147,7 @@ public class SpongePlayer extends Player {
 
     @SuppressWarnings("OverlyStrongTypeCast")
     @Override
-    public void setItemInHand(Hand hand, Item<?> item) {
+    public void setItemInHand(Hand hand, Item item) {
         this.spongePlayer.getReference().ifPresent(player -> {
             player.setItemInHand(SpongeConversionUtil.toSponge(hand), SpongeConversionUtil.toSponge((SpongeItem) item));
         });
@@ -175,23 +175,21 @@ public class SpongePlayer extends Player {
     }
 
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void giveItem(@NotNull Item<?> item) {
-        if (ItemStack.class != item.getReferenceType()) {
+    public void giveItem(@NotNull Item item) {
+        if (!(item instanceof SpongeItem)) {
             return;
         }
         if (this.spongePlayer.referenceExists()) {
             this.spongePlayer.getReference().ifPresent(player -> {
-                player.getInventory().offer(SpongeConversionUtil.toSponge((Item<ItemStack>) item));
+                player.getInventory().offer(SpongeConversionUtil.toSponge((SpongeItem) item));
             });
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void giveItem(@NotNull Item<?> item, int row, int column) {
-        if (ItemStack.class != item.getReferenceType()) {
+    public void giveItem(@NotNull Item item, int row, int column) {
+        if (!(item instanceof SpongeItem)) {
             return;
         }
         if (this.spongePlayer.referenceExists()) {
@@ -199,7 +197,7 @@ public class SpongePlayer extends Player {
                 MainPlayerInventory main = player.getInventory().query(MainPlayerInventory.class);
                 Optional<Slot> slotOptional = main.getSlot(SlotPos.of(column, row));
                 slotOptional.ifPresent(slot ->
-                        slot.offer(SpongeConversionUtil.toSponge((Item<ItemStack>) item))
+                        slot.offer(SpongeConversionUtil.toSponge((SpongeItem) item))
                 );
                 if (!slotOptional.isPresent()) {
                     // TODO: Handle unavailable slot
@@ -208,10 +206,9 @@ public class SpongePlayer extends Player {
         }
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @NotNull
     @Override
-    public Exceptional<Item<?>> getItemAt(int row, int column) {
+    public Exceptional<Item> getItemAt(int row, int column) {
         if (this.spongePlayer.referenceExists()) {
             return this.spongePlayer.getReference().map(player -> {
                 MainPlayerInventory main = player.getInventory().query(MainPlayerInventory.class);
@@ -227,7 +224,7 @@ public class SpongePlayer extends Player {
 
     @NotNull
     @Override
-    public Item<?>[][] getInventory() {
+    public Item[][] getInventory() {
         // TODO: Implementation pending
         return new Item[0][];
     }

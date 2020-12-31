@@ -17,137 +17,44 @@
 
 package org.dockbox.selene.core.objects.bossbar;
 
-import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.time.Duration;
 import java.util.Collection;
 
-public abstract class Bossbar {
+public interface Bossbar {
 
-    private final String id;
-    private float percent;
-    private Text text;
-    private BossbarColor color;
-    private BossbarStyle style;
+    void showTo(Player player);
 
-    protected Bossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle style) {
-        this.id = id;
-        this.percent = percent;
-        this.text = text;
-        this.color = color;
-        this.style = style;
-    }
+    void showTo(Player player, Duration duration);
 
-    public abstract void tick();
+    void hideFrom(Player player);
 
-    public abstract void showTo(Player player);
+    void showTo(Collection<Player> players);
 
-    public abstract void showTo(Player player, Duration duration);
+    void hideFrom(Collection<Player> players);
 
-    public abstract void hideFrom(Player player);
+    String getId();
 
-    public void showTo(Collection<Player> players) {
-        players.forEach(this::showTo);
-    }
+    float getPercent();
 
-    public void hideFrom(Collection<Player> players) {
-        players.forEach(this::hideFrom);
-    }
+    void setPercent(float percent);
 
-    public String getId() {
-        return this.id;
-    }
+    Text getText();
 
-    public float getPercent() {
-        return this.percent;
-    }
+    void setText(Text text);
 
-    public void setPercent(float percent) {
-        this.percent = percent;
-        this.tick();
-    }
+    BossbarColor getColor();
 
-    public Text getText() {
-        return this.text;
-    }
+    void setColor(BossbarColor color);
 
-    public void setText(Text text) {
-        this.text = text;
-        this.tick();
+    BossbarStyle getStyle();
 
-    }
+    void setStyle(BossbarStyle style);
 
-    public BossbarColor getColor() {
-        return this.color;
-    }
-
-    public void setColor(BossbarColor color) {
-        this.color = color;
-        this.tick();
-    }
-
-    public BossbarStyle getStyle() {
-        return this.style;
-    }
-
-    public void setStyle(BossbarStyle style) {
-        this.style = style;
-        this.tick();
-    }
-
-    public static BossbarBuilder builder() {
+    static BossbarBuilder builder() {
         return new BossbarBuilder();
     }
 
-    public static final class BossbarBuilder {
-        private String id;
-        private float percent;
-        private Text text;
-        private BossbarColor color;
-        private BossbarStyle style;
-
-        private BossbarBuilder() {}
-
-        public BossbarBuilder withId(String id) {
-            this.id = id;
-            return this;
-        }
-
-        public BossbarBuilder withPercent(float percent) {
-            this.percent = percent;
-            return this;
-        }
-
-        public BossbarBuilder withText(Text text) {
-            this.text = text;
-            return this;
-        }
-
-        public BossbarBuilder withColor(BossbarColor color) {
-            this.color = color;
-            return this;
-        }
-
-        public BossbarBuilder withStyle(BossbarStyle style) {
-            this.style = style;
-            return this;
-        }
-
-        public BossbarBuilder but() {
-            return builder()
-                    .withId(this.id)
-                    .withPercent(this.percent)
-                    .withText(this.text)
-                    .withColor(this.color)
-                    .withStyle(this.style);
-        }
-
-        public Bossbar build() {
-            return SeleneUtils.INJECT.getInstance(ConstructionUtil.class)
-                    .bossbar(this.id, this.percent, this.text, this.color, this.style);
-        }
-    }
 }

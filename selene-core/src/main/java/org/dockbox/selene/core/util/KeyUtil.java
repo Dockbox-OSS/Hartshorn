@@ -77,6 +77,15 @@ public final class KeyUtil {
         return Exceptional.empty();
     }
 
+    @SuppressWarnings("unchecked")
+    public <T extends InjectorProperty<?>> List<T> getAllPropertiesOf(Class<T> type, InjectorProperty<?>... properties) {
+        List<T> matches = SeleneUtils.COLLECTION.emptyList();
+        for (InjectorProperty<?> property : properties) {
+            if (null != property && type.isAssignableFrom(type)) matches.add((T) property);
+        }
+        return matches;
+    }
+
     /**
      * Gets property.
      *

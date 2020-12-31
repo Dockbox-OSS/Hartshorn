@@ -18,6 +18,7 @@
 package org.dockbox.selene.core.objects.keys;
 
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.item.Item;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -86,7 +87,7 @@ public abstract class Key<K, A> {
      * keys to supertypes which extend from multiple Keyholders, like {@link org.dockbox.selene.core.objects.player.Player}.
      * This method applies a constraint on the type, so that the supertype has to extend type parameter {@link K}, so
      * we can ensure no {@link ClassCastException} will be thrown. This also prevents us from applying a {@link Key} made
-     * for e.g. {@link org.dockbox.selene.core.objects.item.Item} to a {@link org.dockbox.selene.core.objects.player.Player}.
+     * for e.g. {@link Item} to a {@link org.dockbox.selene.core.objects.player.Player}.
      *
      * @param <T>
      *         The type parameter indicating the supertype to resolve

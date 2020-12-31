@@ -112,9 +112,9 @@ public abstract class Player
         }
     }
 
-    public abstract Item<?> getItemInHand(Hand hand);
+    public abstract Item getItemInHand(Hand hand);
 
-    public abstract void setItemInHand(Hand hand, Item<?> item);
+    public abstract void setItemInHand(Hand hand, Item item);
 
     public abstract void play(Sounds sound);
 

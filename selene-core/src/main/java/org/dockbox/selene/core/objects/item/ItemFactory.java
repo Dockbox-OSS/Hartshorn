@@ -15,18 +15,11 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.objects.targets;
+package org.dockbox.selene.core.objects.item;
 
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.item.Item;
+import com.sk89q.worldedit.blocks.BaseBlock;
 
-public interface InventoryHolder {
-
-    void giveItem(Item item);
-
-    void giveItem(Item item, int row, int column);
-
-    Exceptional<Item> getItemAt(int row, int column);
-
-    Item[][] getInventory();
+public interface ItemFactory {
+    Item create(String id, int meta);
+    Item create(BaseBlock baseBlock);
 }

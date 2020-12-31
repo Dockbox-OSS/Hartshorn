@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.core.impl.objects.keys;
 
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.Key;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.player.Gamemode;
@@ -29,7 +29,7 @@ import org.dockbox.selene.core.text.Text;
 import java.util.List;
 import java.util.UUID;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes"})
 public final class GenericKeys {
 
     public static final Key<Identifiable, UUID> UNIQUE_ID = SeleneUtils.KEYS.unsafeDynamicKeyOf(Identifiable::setUniqueId, Identifiable::getUniqueId);

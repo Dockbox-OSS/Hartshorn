@@ -27,14 +27,14 @@ import org.dockbox.selene.core.objects.player.Sneaking;
 public class ToolInteractionEvent extends AbstractCancellableEvent {
 
     private final Player player;
-    private final Item<?> item;
+    private final Item item;
     private final ItemTool tool;
 
     private final Hand hand;
     private final ClickType type;
     private final Sneaking sneaking;
 
-    public ToolInteractionEvent(Player player, Item<?> item, ItemTool tool, Hand hand, ClickType type, Sneaking sneaking) {
+    public ToolInteractionEvent(Player player, Item item, ItemTool tool, Hand hand, ClickType type, Sneaking sneaking) {
         this.player = player;
         this.item = item;
         this.tool = tool;
@@ -47,7 +47,7 @@ public class ToolInteractionEvent extends AbstractCancellableEvent {
         return this.player;
     }
 
-    public Item<?> getItem() {
+    public Item getItem() {
         return this.item;
     }
 

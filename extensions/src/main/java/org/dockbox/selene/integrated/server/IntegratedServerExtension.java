@@ -17,9 +17,6 @@
 
 package org.dockbox.selene.integrated.server;
 
-import com.sk89q.worldedit.blocks.BaseBlock;
-
-import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.annotations.command.Arg;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Extension;
@@ -60,7 +57,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
     @Command(aliases = "", usage = "")
     public void debugExtensions(MessageReceiver source) {
         SeleneUtils.REFLECTION.runWithInstance(ExtensionManager.class, em -> {
-            PaginationBuilder pb = SeleneUtils.INJECT.getInstance(ConstructionUtil.class).paginationBuilder();
+            PaginationBuilder pb = SeleneUtils.INJECT.getInstance(PaginationBuilder.class);
 
             List<Text> content = SeleneUtils.COLLECTION.emptyList();
             content.add(Text.of(IntegratedServerResources.SERVER_HEADER.format(Selene.getServer().getVersion())));
@@ -204,10 +201,10 @@ public class IntegratedServerExtension implements IntegratedExtension {
         src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")"));
     }
 
-    @Command(aliases = "demo", usage = "demo <block{baseblock}>")
+    @Command(aliases = "demo", usage = "demo <block{String}>")
     public void demo(Player player, CommandContext context) {
-        BaseBlock block = context.getArgument("block", BaseBlock.class).get().getValue();
-        Item<?> item = Item.of(block);
+        String block = context.getArgument("block").get().getValue();
+        Item item = Item.of(block);
         player.giveItem(item);
     }
 

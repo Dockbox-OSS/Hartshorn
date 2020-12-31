@@ -17,11 +17,14 @@
 
 package org.dockbox.selene.sponge.objects.bossbar;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.FieldReferenceHolder;
-import org.dockbox.selene.core.objects.bossbar.Bossbar;
 import org.dockbox.selene.core.objects.bossbar.BossbarColor;
 import org.dockbox.selene.core.objects.bossbar.BossbarStyle;
+import org.dockbox.selene.core.impl.objects.bossbar.DefaultTickableBossbar;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.tasks.TaskRunner;
@@ -34,7 +37,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class SpongeBossbar extends Bossbar {
+public class SpongeBossbar extends DefaultTickableBossbar {
 
     // Keeps bossbars in memory as long as they are active.
     // If they are no longer visible to at least one player the bossbar can be disposed of.
@@ -42,13 +45,20 @@ public class SpongeBossbar extends Bossbar {
 
     private final FieldReferenceHolder<ServerBossBar> reference;
 
-    public SpongeBossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle overlay) {
-        super(id, percent, text, color, overlay);
+    @AssistedInject
+    public SpongeBossbar(
+            @Assisted String id,
+            @Assisted float percent,
+            @Assisted Text text,
+            @Assisted BossbarColor color,
+            @Assisted BossbarStyle style
+    ) {
+        super(id, percent, text, color, style);
         this.reference = new FieldReferenceHolder<>(Exceptional.of(this.constructReference()), bar -> {
             bar.setName(SpongeConversionUtil.toSponge(this.getText()));
             bar.setPercent(this.getPercent());
             bar.setColor(SpongeConversionUtil.toSponge(color));
-            bar.setOverlay(SpongeConversionUtil.toSponge(overlay));
+            bar.setOverlay(SpongeConversionUtil.toSponge(style));
             return Exceptional.of(bar);
         }, ServerBossBar.class);
     }

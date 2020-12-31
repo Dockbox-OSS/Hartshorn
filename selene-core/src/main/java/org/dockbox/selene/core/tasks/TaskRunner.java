@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.core.tasks;
 
-import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.concurrent.TimeUnit;
@@ -28,7 +27,7 @@ public abstract class TaskRunner {
     public abstract void acceptDelayed(Task task, long delay, TimeUnit timeUnit);
 
     public static TaskRunner create() {
-        return SeleneUtils.INJECT.getInstance(ConstructionUtil.class).taskRunner();
+        return SeleneUtils.INJECT.getInstance(TaskRunner.class);
     }
 
 }
