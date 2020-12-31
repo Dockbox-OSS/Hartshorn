@@ -42,6 +42,10 @@ public interface Bossbar {
     void setColor(BossbarColor color);
     BossbarStyle getStyle();
     void setStyle(BossbarStyle style);
+    Collection<Player> visibleTo();
+    boolean isVisibleTo(Player player);
+    boolean isVisibleTo(UUID player);
+    boolean isVisibleTo(String name);
 
     static BossbarBuilder builder() {
         return new BossbarBuilder();

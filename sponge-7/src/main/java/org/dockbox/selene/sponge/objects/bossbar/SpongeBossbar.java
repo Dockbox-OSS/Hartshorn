@@ -103,6 +103,37 @@ public class SpongeBossbar extends DefaultTickableBossbar {
         });
     }
 
+    @Override
+    public Collection<Player> visibleTo() {
+        return this.reference.getReference().map(serverBossBar -> serverBossBar.getPlayers().stream()
+                .map(SpongeConversionUtil::fromSponge).collect(Collectors.toList()))
+                .orElseGet(SeleneUtils.COLLECTION::emptyList);
+    }
+
+    @Override
+    public boolean isVisibleTo(Player player) {
+        return this.isVisibleTo(player.getUniqueId());
+    }
+
+    @Override
+    public boolean isVisibleTo(UUID player) {
+        return this.reference.getReference().map(serverBossBar -> {
+            for (org.spongepowered.api.entity.living.player.Player serverBossBarPlayer : serverBossBar.getPlayers()) {
+                if (serverBossBarPlayer.getUniqueId().equals(player)) return true;
+            }
+            return false;
+        }).orElse(false);
+    }
+
+    @Override
+    public boolean isVisibleTo(@NonNls String name) {
+        return this.reference.getReference().map(serverBossBar -> {
+            for (org.spongepowered.api.entity.living.player.Player serverBossBarPlayer : serverBossBar.getPlayers()) {
+                if (serverBossBarPlayer.getName().equals(name)) return true;
+            }
+            return false;
+        }).orElse(false);
+    }
 
     private ServerBossBar constructReference() {
         return ServerBossBar.builder()
