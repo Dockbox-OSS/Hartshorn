@@ -47,6 +47,7 @@ enum IntegratedServerResources {
             ), "selene.info.extension.block");
     static final ResourceEntry EXTENSION_UNKNOWN = new Resource("$4Could not find extension with ID '{0}'", "selene.info.extension.unknown");
     static final ResourceEntry LANG_SWITCHED = new Resource("$1Your preferred language has been switched to: $2{0}", "i18n.lang.updated");
+    static final ResourceEntry LANG_SWITCHED_OTHER = new Resource("$1The language preference for $2{0} $1has been switched to: $2{1}", "i18n.lang.updated.other");
     static final ResourceEntry MISSING_ARGUMENT = new Resource("$4Missing value for argument '{0}'", "selene.info.parameter.missing");
     static final ResourceEntry EXTENSION_RELOAD_SUCCESSFUL = new Resource("$1Successfully reloaded '$2{0}$1'", "selene.reload.single");
     static final ResourceEntry EXTENSION_RELOAD_FAILED = new Resource("$4Failed to reload '{0}'", "selene.reload.single.fail");

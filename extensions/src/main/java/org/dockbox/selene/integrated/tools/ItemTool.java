@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.integrated.tools;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.ClickType;
 import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.player.Sneaking;
 import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
@@ -32,17 +32,16 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-@SuppressWarnings("rawtypes")
 public class ItemTool {
 
     private final Text name;
     private final List<Text> lore;
     private final BiConsumer<Player, Item> consumer;
     private final List<Predicate<ToolInteractionEvent>> filters;
-    private final List<Consumer<Item<?>>> modifiers;
+    private final List<Consumer<Item>> modifiers;
 
     public ItemTool(Text name, List<Text> lore, BiConsumer<Player, Item> consumer,
-                    List<Predicate<ToolInteractionEvent>> filters, List<Consumer<Item<?>>> modifiers) {
+                    List<Predicate<ToolInteractionEvent>> filters, List<Consumer<Item>> modifiers) {
         this.name = name;
         this.lore = lore;
         this.consumer = consumer;
@@ -77,7 +76,7 @@ public class ItemTool {
         private Text name;
         private List<Text> lore;
         private final List<Predicate<ToolInteractionEvent>> filters = SeleneUtils.COLLECTION.emptyConcurrentList();
-        private final List<Consumer<Item<?>>> modifiers = SeleneUtils.COLLECTION.emptyConcurrentList();
+        private final List<Consumer<Item>> modifiers = SeleneUtils.COLLECTION.emptyConcurrentList();
 
         private ToolBuilder() {}
 
@@ -136,7 +135,7 @@ public class ItemTool {
             return this;
         }
 
-        public ToolBuilder modify(Consumer<Item<?>> modifier) {
+        public ToolBuilder modify(Consumer<Item> modifier) {
             this.modifiers.add(modifier);
             return this;
         }

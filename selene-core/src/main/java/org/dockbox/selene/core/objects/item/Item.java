@@ -19,47 +19,35 @@ package org.dockbox.selene.core.objects.item;
 
 import com.sk89q.worldedit.blocks.BaseBlock;
 
-import org.dockbox.selene.core.ConstructionUtil;
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.ReferenceHolder;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
 import org.dockbox.selene.core.objects.keys.PersistentDataHolder;
-import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-@SuppressWarnings("rawtypes")
-public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<Item>, PersistentDataHolder {
+public interface Item extends KeyHolder<Item>, PersistentDataHolder {
 
-    public static Item<?> AIR = Item.of("minecraft:air");
+    String getId();
+    Text getDisplayName();
+    Text getDisplayName(Language language);
+    void setDisplayName(Text displayName);
+    List<Text> getLore();
+    void setLore(List<Text> lore);
+    int getAmount();
+    void setAmount(int amount);
+    void removeDisplayName();
+    void addLore(Text lore);
+    void removeLore();
+    int getStackSize();
+    List<Enchant> getEnchantments();
+    void addEnchant(Enchant enchant);
+    void removeEnchant(Enchant enchant);
+    boolean isBlock();
+    Item stack();
 
-    private String id;
-
-    protected Item(@NotNull T reference) {
-        super(Exceptional.of(reference));
-        this.id = this.getId();
-    }
-
-    public String getId() {
-        return this.id;
-    }
-
-    protected void setId(String id) {
-        this.id = id;
-    }
-
-    protected Item(String id, int meta) {
-        super(Exceptional.empty());
-        this.id = id;
-        T type = this.getById(id, meta);
-        super.setReference(Exceptional.of(type));
-    }
-
-    protected abstract T getById(String id, int meta);
+    Item AIR = Item.of("minecraft:air");
 
     /**
      * @param id
@@ -71,16 +59,14 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
      *
      * @deprecated Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As of 1.13 this will no
      *         longer be available!
-     *         <p>
-     *         See {@link ConstructionUtil#item(String, int)}
      */
     @Deprecated
-    public static Item<?> of(String id, int meta) {
-        return SeleneUtils.INJECT.getInstance(ConstructionUtil.class).item(id, meta);
+    static Item of(String id, int meta) {
+        return SeleneUtils.INJECT.getInstance(ItemFactory.class).create(id, meta);
     }
 
-    public static Item<?> of(String id) {
-        return SeleneUtils.INJECT.getInstance(ConstructionUtil.class).item(id);
+    static Item of(String id) {
+        return Item.of(id, 0);
     }
 
     /**
@@ -90,49 +76,10 @@ public abstract class Item<T> extends ReferenceHolder<T> implements KeyHolder<It
      * @return The item instance, or {@link Item#AIR}
      *
      * @deprecated Note that WorldEdit rewrote their API for 1.13+, and that package/class names changes.
-     *         <p>
-     *         See {@link ConstructionUtil#item(BaseBlock)}
      */
     @Deprecated
-    public static Item<?> of(BaseBlock baseBlock) {
-        return SeleneUtils.INJECT.getInstance(ConstructionUtil.class).item(baseBlock);
+    static Item of(BaseBlock baseBlock) {
+        return SeleneUtils.INJECT.getInstance(ItemFactory.class).create(baseBlock);
     }
-
-    public Text getDisplayName() {
-        return this.getDisplayName(Selene.getServer().getGlobalConfig().getDefaultLanguage());
-    }
-
-    public abstract Text getDisplayName(Language language);
-
-    public abstract void setDisplayName(Text displayName);
-
-    public abstract List<Text> getLore();
-
-    public abstract void setLore(List<Text> lore);
-
-    public abstract int getAmount();
-
-    public abstract void setAmount(int amount);
-
-    public abstract void removeDisplayName();
-
-    public abstract void addLore(Text lore);
-
-    public abstract void removeLore();
-
-    public Item stack() {
-        this.setAmount(this.getStackSize());
-        return this;
-    }
-
-    public abstract int getStackSize();
-
-    public abstract List<Enchant> getEnchantments();
-
-    public abstract void addEnchant(Enchant enchant);
-
-    public abstract void removeEnchant(Enchant enchant);
-
-    public abstract boolean isBlock();
 
 }

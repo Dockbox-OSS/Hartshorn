@@ -22,11 +22,11 @@ import org.dockbox.selene.core.objects.item.Item;
 
 public interface InventoryHolder {
 
-    void giveItem(Item<?> item);
+    void giveItem(Item item);
 
-    void giveItem(Item<?> item, int row, int column);
+    void giveItem(Item item, int row, int column);
 
-    Exceptional<Item<?>> getItemAt(int row, int column);
+    Exceptional<Item> getItemAt(int row, int column);
 
-    Item<?>[][] getInventory();
+    Item[][] getInventory();
 }

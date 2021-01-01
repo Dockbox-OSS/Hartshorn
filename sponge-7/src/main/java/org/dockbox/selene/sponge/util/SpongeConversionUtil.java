@@ -20,6 +20,7 @@ package org.dockbox.selene.sponge.util;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.magitechserver.magibridge.util.BridgeCommandSource;
+import com.sk89q.worldedit.blocks.BaseBlock;
 
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
@@ -29,8 +30,10 @@ import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.bossbar.BossbarColor;
+import org.dockbox.selene.core.objects.bossbar.BossbarStyle;
 import org.dockbox.selene.core.objects.item.Enchant;
-import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
 import org.dockbox.selene.core.objects.location.Warp;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.player.Hand;
@@ -51,6 +54,11 @@ import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.boss.BossBarColor;
+import org.spongepowered.api.boss.BossBarColors;
+import org.spongepowered.api.boss.BossBarOverlay;
+import org.spongepowered.api.boss.BossBarOverlays;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.data.type.HandTypes;
@@ -141,6 +149,16 @@ public enum SpongeConversionUtil {
         return Exceptional.empty();
     }
 
+    public static BossBarColor toSponge(BossbarColor bossbarColor) {
+        return Sponge.getRegistry().getType(BossBarColor.class, bossbarColor.name())
+                .orElse(BossBarColors.WHITE);
+    }
+
+    public static BossBarOverlay toSponge(BossbarStyle style) {
+        return Sponge.getRegistry().getType(BossBarOverlay.class, style.name())
+                .orElse(BossBarOverlays.PROGRESS);
+    }
+
     @NotNull
     public static Exceptional<SoundType> toSponge(Sounds sound) {
         return Exceptional.of(Sponge.getRegistry().getType(SoundType.class, sound.name()));
@@ -151,6 +169,13 @@ public enum SpongeConversionUtil {
         if (src instanceof Console) return Exceptional.of(Sponge.getServer().getConsole());
         else if (src instanceof Player)
             return Exceptional.of(Sponge.getServer().getPlayer(((Player) src).getUniqueId()));
+        return Exceptional.empty();
+    }
+
+    public static Exceptional<org.spongepowered.api.entity.living.player.Player> toSponge(Player player) {
+        if (player instanceof SpongePlayer) {
+            return Exceptional.ofNullable(((SpongePlayer) player).getSpongePlayer());
+        }
         return Exceptional.empty();
     }
 
@@ -170,7 +195,7 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    public static ItemStack toSponge(Item<ItemStack> item) {
+    public static ItemStack toSponge(SpongeItem item) {
         // Create a copy of the ItemStack so Sponge doesn't modify the Item reference
         return item.getReference().orElse(ItemStack.empty()).copy();
     }
@@ -275,7 +300,7 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    public static Item<ItemStack> fromSponge(ItemStack item) {
+    public static ReferencedItem<ItemStack> fromSponge(ItemStack item) {
         // Create a copy of the ItemStack so Sponge doesn't modify the Item reference
         return new SpongeItem(item.copy());
     }
@@ -472,9 +497,10 @@ public enum SpongeConversionUtil {
         throw new UncheckedSeleneException("Invalid value in context '" + handType + "'");
     }
 
-//    public static Exceptional<Item<?>> throughSponge(BaseBlock block) {
-//        try {
-//            Exceptional<BlockState> state = SeleneUtils.REFLECTION.getMethodValue(
+    public static Exceptional<ItemStack> toSponge(BaseBlock block) {
+        try {
+            Exceptional<BlockState> state = Exceptional.empty();
+//                    SeleneUtils.REFLECTION.getMethodValue(
 //                    com.sk89q.worldedit.sponge.SpongeWorld.class,
 //                    new Sponge_1_12_2_Impl(),
 //                    "getBlockState",
@@ -482,12 +508,9 @@ public enum SpongeConversionUtil {
 //                    new Class<?>[]{Class.forName("com.sk89q.worldedit.world.block.BlockStateHolder")},
 //                    block
 //            );
-//            return state.map(blockState -> {
-//                ItemStack stack = ItemStack.builder().fromBlockState(blockState).build();
-//                return fromSponge(stack);
-//            });
-//        } catch (Exception e) {
-//            return Exceptional.empty();
-//        }
-//    }
+            return state.map(blockState -> ItemStack.builder().fromBlockState(blockState).build());
+        } catch (Exception e) {
+            return Exceptional.empty();
+        }
+    }
 }

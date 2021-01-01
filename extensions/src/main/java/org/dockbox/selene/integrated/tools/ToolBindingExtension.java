@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.integrated.tools;
 
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.annotations.extension.Extension;
@@ -25,7 +26,6 @@ import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.Resource;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.dockbox.selene.core.objects.keys.RemovableKey;
 import org.dockbox.selene.core.objects.keys.TransactionResult;
@@ -64,7 +64,7 @@ public class ToolBindingExtension {
         instance = this;
     }
 
-    private TransactionResult setTool(Item<?> item, ItemTool tool) {
+    private TransactionResult setTool(Item item, ItemTool tool) {
         if (item.isBlock()) return TransactionResult.fail(TOOL_ERROR_BLOCK);
         if (item == Item.AIR) return TransactionResult.fail(TOOL_ERROR_HAND);
         if (item.get(PERSISTENT_TOOL).isPresent())
@@ -106,7 +106,7 @@ public class ToolBindingExtension {
 
     @Listener
     public void onPlayerInteracted(PlayerInteractEvent event) {
-        Item<?> itemInHand = event.getTarget().getItemInHand(event.getHand());
+        Item itemInHand = event.getTarget().getItemInHand(event.getHand());
         if (itemInHand == Item.AIR || itemInHand.isBlock()) return;
 
         Exceptional<String> identifier = itemInHand.get(PERSISTENT_TOOL);

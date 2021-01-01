@@ -160,7 +160,7 @@
       <option name="useParameterizedTypeForCollectionMethods" value="true" />
       <option name="doNotWeakenToJavaLangObject" value="true" />
       <option name="onlyWeakentoInterface" value="true" />
-      <stopClasses>org.spongepowered.api.entity.living.player.Player,org.dockbox.selene.core.objects.events.Cancellable,org.dockbox.selene.core.events.chat.NativeCommandEvent,java.lang.String,java.util.regex.Matcher,org.dockbox.selene.core.objects.item.Item,org.dockbox.selene.core.objects.keys.TestKeyHolder</stopClasses>
+      <stopClasses>org.spongepowered.api.entity.living.player.Player,org.dockbox.selene.core.objects.events.Cancellable,org.dockbox.selene.core.events.chat.NativeCommandEvent,java.lang.String,java.util.regex.Matcher,org.dockbox.selene.core.impl.objects.item.ReferencedItem,org.dockbox.selene.core.objects.keys.TestKeyHolder</stopClasses>
     </inspection_tool>
     <inspection_tool class="UnnecessaryConstantArrayCreationExpression" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="UnnecessaryToStringCall" enabled="true" level="WARNING" enabled_by_default="true" />

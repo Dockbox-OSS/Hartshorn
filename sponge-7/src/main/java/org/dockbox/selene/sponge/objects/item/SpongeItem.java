@@ -17,15 +17,19 @@
 
 package org.dockbox.selene.sponge.objects.item;
 
-import org.dockbox.selene.core.util.SeleneUtils;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+import com.sk89q.worldedit.blocks.BaseBlock;
+
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Enchant;
-import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.dockbox.selene.core.objects.keys.TransactionResult;
 import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -49,7 +53,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class SpongeItem extends Item<ItemStack> {
+public class SpongeItem extends ReferencedItem<ItemStack> {
 
     public static final String ID = "item_data";
     public static final String NAME = "Selene Item Data";
@@ -63,12 +67,15 @@ public class SpongeItem extends Item<ItemStack> {
         super(initialValue);
     }
 
-    public SpongeItem(String id) {
-        super(id, 1);
+    @AssistedInject
+    public SpongeItem(@Assisted String id, @Assisted int meta) {
+        super(id, meta);
     }
 
-    public SpongeItem(String id, int meta) {
-        super(id, meta);
+    @AssistedInject
+    @Deprecated
+    public SpongeItem(@Assisted BaseBlock baseBlock) {
+        this(SpongeConversionUtil.toSponge(baseBlock).orElse(ItemStack.empty()));
     }
 
     @Override

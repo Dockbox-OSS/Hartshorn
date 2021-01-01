@@ -35,9 +35,12 @@ public abstract class ReferenceHolder<T> {
     }
 
     public Exceptional<T> getReference() {
-        Exceptional<T> updated = this.getUpdateReferenceTask().apply(this.reference.get());
-        updated.ifPresent(t -> this.reference = new WeakReference<>(t));
+        this.updateReference().ifPresent(t -> this.reference = new WeakReference<>(t));
         return Exceptional.ofNullable(this.reference.get());
+    }
+
+    public Exceptional<T> updateReference() {
+        return this.getUpdateReferenceTask().apply(this.reference.get());
     }
 
     protected void setReference(@NotNull Exceptional<T> reference) {

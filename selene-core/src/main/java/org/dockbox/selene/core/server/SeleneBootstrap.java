@@ -18,7 +18,6 @@
 package org.dockbox.selene.core.server;
 
 import com.google.inject.Binding;
-import com.google.inject.ConfigurationException;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
 
@@ -84,8 +83,6 @@ public abstract class SeleneBootstrap {
      * Once done sets the static instance equal to this instance.
      */
     protected void construct() {
-        this.verifyInjectorBindings();
-
         String tVer = "dev";
         LocalDateTime tLU = LocalDateTime.now();
 
@@ -113,16 +110,6 @@ public abstract class SeleneBootstrap {
         this.lastUpdate = tLU;
 
         instance = this;
-    }
-
-    private void verifyInjectorBindings() {
-        for (Class<?> bindingType : SeleneInjectConfiguration.REQUIRED_BINDINGS) {
-            try {
-                SeleneUtils.INJECT.createInjector().getBinding(bindingType);
-            } catch (ConfigurationException e) {
-                log().error("Missing binding for " + bindingType.getCanonicalName() + "! While it is possible to inject it later, it is recommended to do so through the default platform injector!");
-            }
-        }
     }
 
     /**
