@@ -1,0 +1,42 @@
+/*
+ *  Copyright (C) 2020 Guus Lieben
+ *
+ *  This framework is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as
+ *  published by the Free Software Foundation, either version 2.1 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ *  the GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
+package org.dockbox.selene.core.inventory;
+
+import org.dockbox.selene.core.inventory.factory.ElementFactory;
+import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.util.SeleneUtils;
+
+import java.util.function.Consumer;
+
+public interface Element {
+
+    Element EMPTY = of(Item.AIR);
+
+    Item getItem();
+    void onClick(Consumer<Player> onClick);
+
+    static Element of(Item item) {
+        return of(item, p -> {});
+    }
+
+    static Element of(Item item, Consumer<Player> onClick) {
+        return SeleneUtils.INJECT.getInstance(ElementFactory.class).create(item, onClick);
+    }
+
+}
