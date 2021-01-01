@@ -37,6 +37,9 @@ import org.dockbox.selene.core.impl.SimpleResourceService;
 import org.dockbox.selene.core.impl.events.SimpleEventBus;
 import org.dockbox.selene.core.impl.extension.SimpleExtensionManager;
 import org.dockbox.selene.core.impl.server.config.SimpleGlobalConfig;
+import org.dockbox.selene.core.inventory.Element;
+import org.dockbox.selene.core.inventory.builder.LayoutBuilder;
+import org.dockbox.selene.core.inventory.factory.ElementFactory;
 import org.dockbox.selene.core.objects.bossbar.Bossbar;
 import org.dockbox.selene.core.objects.bossbar.BossbarFactory;
 import org.dockbox.selene.core.objects.item.Item;
@@ -48,6 +51,8 @@ import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.tasks.TaskRunner;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.integrated.server.IntegratedServerExtension;
+import org.dockbox.selene.sponge.inventory.SpongeElement;
+import org.dockbox.selene.sponge.inventory.builder.SpongeLayoutBuilder;
 import org.dockbox.selene.sponge.objects.bossbar.SpongeBossbar;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
@@ -83,7 +88,10 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(PlayerStorageService.class).to(SpongePlayerStorageService.class);
         this.bind(WorldStorageService.class).to(SpongeWorldStorageService.class);
         this.bind(TaskRunner.class).to(SpongeTaskRunner.class);
+        // Builder types
         this.bind(PaginationBuilder.class).to(SpongePaginationBuilder.class);
+        this.bind(LayoutBuilder.class).to(SpongeLayoutBuilder.class);
+        this.install(new FactoryModuleBuilder().implement(Element.class, SpongeElement.class).build(ElementFactory.class));
         this.install(new FactoryModuleBuilder().implement(Item.class, SpongeItem.class).build(ItemFactory.class));
         this.install(new FactoryModuleBuilder().implement(Bossbar.class, SpongeBossbar.class).build(BossbarFactory.class));
     }
