@@ -28,12 +28,13 @@ import org.dockbox.selene.core.exceptions.TypeConversionException;
 import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
 import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.bossbar.BossbarColor;
 import org.dockbox.selene.core.objects.bossbar.BossbarStyle;
 import org.dockbox.selene.core.objects.item.Enchant;
-import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Warp;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.player.Hand;
@@ -47,6 +48,7 @@ import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
 import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.objects.discord.MagiBridgeCommandSource;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
@@ -92,6 +94,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import dev.flashlabs.flashlibs.inventory.Element;
 
 @SuppressWarnings({"ClassWithTooManyMethods", "OverlyComplexClass", "unchecked", "OverlyStrongTypeCast"})
 public enum SpongeConversionUtil {
@@ -195,9 +199,11 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    public static ItemStack toSponge(SpongeItem item) {
-        // Create a copy of the ItemStack so Sponge doesn't modify the Item reference
-        return item.getReference().orElse(ItemStack.empty()).copy();
+    public static ItemStack toSponge(Item item) {
+        if (item instanceof SpongeItem)
+            // Create a copy of the ItemStack so Sponge doesn't modify the Item reference
+            return ((SpongeItem) item).getReference().orElse(ItemStack.empty()).copy();
+        return ItemStack.empty();
     }
 
     @NotNull
@@ -495,6 +501,18 @@ public enum SpongeConversionUtil {
         if (handType == HandTypes.MAIN_HAND) return Hand.MAIN_HAND;
         else if (handType == HandTypes.OFF_HAND) return Hand.OFF_HAND;
         throw new UncheckedSeleneException("Invalid value in context '" + handType + "'");
+    }
+
+    public static Element toSponge(org.dockbox.selene.core.inventory.Element element) {
+        if (element instanceof SpongeElement) {
+            return Element.of(toSponge(element.getItem()), a -> ((SpongeElement) element).perform(fromSponge(a.getPlayer())));
+        }
+        return Element.EMPTY;
+    }
+
+    public static org.dockbox.selene.core.inventory.Element fromSponge(Element element) {
+        Item item = fromSponge(element.getItem().createStack());
+        return org.dockbox.selene.core.inventory.Element.of(item); // Action is skipped here
     }
 
     public static Exceptional<ItemStack> toSponge(BaseBlock block) {
