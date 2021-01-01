@@ -17,10 +17,31 @@
 
 package org.dockbox.selene.core.objects.bossbar;
 
+/**
+ * Represents the different styles of bossbars. See <a href="https://www.spigotmc.org/attachments/2016-03-15_17-03-47-png.113003/">this image</a>
+ * for reference regarding the visual representation of these styles.
+ */
 public enum BossbarStyle {
+
+    /**
+     * A bossbar split into 10 parts, separated by vertical notches.
+     */
     NOTCHED_10,
+
+    /**
+     * A bossbar split into 12 parts, separated by vertical notches.
+     */
     NOTCHED_12,
+    /**
+     * A bossbar split into 20 parts, separated by vertical notches.
+     */
     NOTCHED_20,
+    /**
+     * A bossbar split into 6 parts, separated by vertical notches.
+     */
     NOTCHED_6,
+    /**
+     * A plain bossbar with one even part.
+     */
     PROGRESS
 }

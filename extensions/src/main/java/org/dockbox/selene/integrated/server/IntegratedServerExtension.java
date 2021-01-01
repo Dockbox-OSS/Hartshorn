@@ -212,18 +212,19 @@ public class IntegratedServerExtension implements IntegratedExtension {
     public void demo(Player player, CommandContext context, @Arg("content") String content, @Nullable @Arg(
             "animate") Boolean animate) {
         Bossbar.builder()
-                .withId("PlotBar$" + player.getUniqueId())
+                .withId("CustomBar$" + player.getUniqueId())
                 .withText(Text.of(content))
                 .withPercent(25F)
                 .build();
 
         // Imagine we're in a different place right now
 
-        Bossbar bossbar = Bossbar.get("PlotBar$" + player.getUniqueId());
-        bossbar.showTo(player);
-
-        if (null != animate && animate)
-            this.scheduleBossbarColor(bossbar, BossbarColor.RED, BossbarColor.WHITE);
+        Exceptional<Bossbar> bossbar = Bossbar.get("CustomBar$" + player.getUniqueId());
+        bossbar.ifPresent(bar -> {
+            bar.showTo(player);
+            if (null != animate && animate)
+                this.scheduleBossbarColor(bar, BossbarColor.RED, BossbarColor.WHITE);
+        });
     }
 
     private void scheduleBossbarColor(Bossbar bossbar, BossbarColor color, BossbarColor next) {
