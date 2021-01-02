@@ -24,20 +24,11 @@ public abstract class SeleneInjectConfiguration extends AbstractModule {
     @Override
     protected void configure() {
         super.configure();
-        this.configureExceptionInject();
-        this.configureExtensionInject();
-        this.configureUtilInject();
-        this.configurePlatformInject();
-        this.configureDefaultInject();
+        Selene.log().info("Configuring bindings for Selene, using [" + this.getClass().getCanonicalName() + "]");
+        this.configureBindings();
     }
 
-    protected abstract void configureExceptionInject();
 
-    protected abstract void configureExtensionInject();
 
-    protected abstract void configureUtilInject();
-
-    protected abstract void configurePlatformInject();
-
-    protected abstract void configureDefaultInject();
+    protected abstract void configureBindings();
 }

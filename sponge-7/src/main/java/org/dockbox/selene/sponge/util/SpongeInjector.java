@@ -39,6 +39,8 @@ import org.dockbox.selene.core.impl.extension.SimpleExtensionManager;
 import org.dockbox.selene.core.impl.server.config.SimpleGlobalConfig;
 import org.dockbox.selene.core.inventory.Element;
 import org.dockbox.selene.core.inventory.builder.LayoutBuilder;
+import org.dockbox.selene.core.inventory.builder.PaginatedPaneBuilder;
+import org.dockbox.selene.core.inventory.builder.StaticPaneBuilder;
 import org.dockbox.selene.core.inventory.factory.ElementFactory;
 import org.dockbox.selene.core.objects.bossbar.Bossbar;
 import org.dockbox.selene.core.objects.bossbar.BossbarFactory;
@@ -53,6 +55,8 @@ import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.integrated.server.IntegratedServerExtension;
 import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.inventory.builder.SpongeLayoutBuilder;
+import org.dockbox.selene.sponge.inventory.builder.SpongePaginatedPaneBuilder;
+import org.dockbox.selene.sponge.inventory.builder.SpongeStaticPaneBuilder;
 import org.dockbox.selene.sponge.objects.bossbar.SpongeBossbar;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
@@ -64,44 +68,38 @@ import org.slf4j.Logger;
 public class SpongeInjector extends SeleneInjectConfiguration {
 
     @Override
-    protected void configureExceptionInject() {
+    protected void configureBindings() {
+        // Helper types
         this.bind(ExceptionHelper.class).to(SimpleExceptionHelper.class);
-    }
-
-    @Override
-    protected void configureExtensionInject() {
+        this.bind(TaskRunner.class).to(SpongeTaskRunner.class);
+        // Extension management
         this.bind(ExtensionManager.class).toInstance(new SimpleExtensionManager());
         this.bind(IntegratedExtension.class).to(IntegratedServerExtension.class);
-    }
-
-    @Override
-    protected void configureUtilInject() {
+        // Utility types
         this.bind(DiscordUtils.class).to(SpongeDiscordUtils.class);
         this.bind(ThreadUtils.class).to(SpongeThreadUtils.class);
-    }
-
-    @Override
-    protected void configurePlatformInject() {
-        this.bind(CommandBus.class).toInstance(new SpongeCommandBus());
+        // File management
         this.bind(FileManager.class).to(SpongeConfigurateManager.class);
         this.bind(FileManager.class).annotatedWith(Bulk.class).to(SpongeXStreamManager.class);
+        // Services
         this.bind(PlayerStorageService.class).to(SpongePlayerStorageService.class);
         this.bind(WorldStorageService.class).to(SpongeWorldStorageService.class);
-        this.bind(TaskRunner.class).to(SpongeTaskRunner.class);
+        this.bind(BroadcastService.class).to(SimpleBroadcastService.class);
+        this.bind(ResourceService.class).toInstance(new SimpleResourceService());
+        // Internal services
+        this.bind(CommandBus.class).toInstance(new SpongeCommandBus());
+        this.bind(EventBus.class).toInstance(new SimpleEventBus());
         // Builder types
         this.bind(PaginationBuilder.class).to(SpongePaginationBuilder.class);
         this.bind(LayoutBuilder.class).to(SpongeLayoutBuilder.class);
+        this.bind(PaginatedPaneBuilder.class).to(SpongePaginatedPaneBuilder.class);
+        this.bind(StaticPaneBuilder.class).to(SpongeStaticPaneBuilder.class);
+        // Factory types
         this.install(new FactoryModuleBuilder().implement(Element.class, SpongeElement.class).build(ElementFactory.class));
         this.install(new FactoryModuleBuilder().implement(Item.class, SpongeItem.class).build(ItemFactory.class));
         this.install(new FactoryModuleBuilder().implement(Bossbar.class, SpongeBossbar.class).build(BossbarFactory.class));
-    }
-
-    @Override
-    protected void configureDefaultInject() {
-        this.bind(BroadcastService.class).to(SimpleBroadcastService.class);
-        this.bind(EventBus.class).toInstance(new SimpleEventBus());
+        // Globally accessible
         this.bind(GlobalConfig.class).toInstance(new SimpleGlobalConfig());
-        this.bind(ResourceService.class).toInstance(new SimpleResourceService());
         this.bind(Logger.class).toInstance(Selene.log());
     }
 }

@@ -29,6 +29,7 @@ import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
+import org.dockbox.selene.core.inventory.InventoryType;
 import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.bossbar.BossbarColor;
@@ -70,6 +71,8 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.item.enchantment.Enchantment;
+import org.spongepowered.api.item.inventory.InventoryArchetype;
+import org.spongepowered.api.item.inventory.InventoryArchetypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
@@ -530,5 +533,11 @@ public enum SpongeConversionUtil {
         } catch (Exception e) {
             return Exceptional.empty();
         }
+    }
+
+    public static InventoryArchetype toSponge(InventoryType inventoryType) {
+        return Sponge.getRegistry()
+                .getType(InventoryArchetype.class, inventoryType.name())
+                .orElse(InventoryArchetypes.CHEST);
     }
 }
