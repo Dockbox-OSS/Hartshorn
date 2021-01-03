@@ -23,41 +23,477 @@ import org.dockbox.selene.core.objects.item.Item;
 @SuppressWarnings({"unused", "OverlyComplexClass"})
 public abstract class MinecraftItems {
 
+    public abstract Item getAcaciaLeaves();
+
+    public abstract Item getAcaciaLog();
+
+    public abstract Item getAcaciaPlanks();
+
+    public abstract Item getAcaciaSapling();
+
+    public abstract Item getAcaciaWoodSlab();
+
+    public abstract Item getAllium();
+
+    public abstract Item getAndesite();
+
+    public abstract Item getAzureBluet();
+
+    public abstract Item getBirchLeaves();
+
+    public abstract Item getBirchLog();
+
+    public abstract Item getBirchPlanks();
+
+    public abstract Item getBirchSapling();
+
+    public abstract Item getBirchWoodSlab();
+
     public abstract MinecraftVersion getMinecraftVersion();
 
     public abstract Item getBlackBanner();
 
+    public abstract Item getBlackBed();
+
+    public abstract Item getBlackCarpet();
+
+    public abstract Item getBlackConcrete();
+
+    public abstract Item getBlackConcretePowder();
+
+    public abstract Item getBlackDye();
+
+    public abstract Item getBlackStainedGlass();
+
+    public abstract Item getBlackStainedGlassPane();
+
+    public abstract Item getBlackTerracotta();
+
+    public abstract Item getBlackWool();
+
     public abstract Item getBlueBanner();
+
+    public abstract Item getBlueBed();
+
+    public abstract Item getBlueCarpet();
+
+    public abstract Item getBlueOrchid();
+
+    public abstract Item getBlueStainedGlass();
+
+    public abstract Item getBlueStainedGlassPane();
+
+    public abstract Item getBlueTerracotta();
+
+    public abstract Item getBlueWool();
+
+    public abstract Item getBrickSlab();
 
     public abstract Item getBrownBanner();
 
+    public abstract Item getBrownBed();
+
+    public abstract Item getBrownCarpet();
+
+    public abstract Item getBrownConcrete();
+
+    public abstract Item getBrownConcretePowder();
+
+    public abstract Item getBrownDye();
+
+    public abstract Item getBrownStainedGlass();
+
+    public abstract Item getBrownStainedGlassPane();
+
+    public abstract Item getBrownTerracotta();
+
+    public abstract Item getBrownWool();
+
+    public abstract Item getCharcoal();
+
     public abstract Item getSlightlyDamagedAnvil();
+
+    public abstract Item getChiseledRedSandstone();
+
+    public abstract Item getChiseledSandstone();
+
+    public abstract Item getChiseledStoneBricks();
+
+    public abstract Item getCoarseDirt();
+
+    public abstract Item getCobblestoneSlab();
+
+    public abstract Item getCookedSalmon();
+
+    public abstract Item getCrackedStoneBricks();
+
+    public abstract Item getCreeperHead();
 
     public abstract Item getCyanBanner();
 
+    public abstract Item getCyanBed();
+
+    public abstract Item getCyanCarpet();
+
+    public abstract Item getCyanConcrete();
+
+    public abstract Item getCyanConcretePowder();
+
+    public abstract Item getCyanDye();
+
+    public abstract Item getCyanStainedGlass();
+
+    public abstract Item getCyanStainedGlassPane();
+
+    public abstract Item getCyanTerracotta();
+
+    public abstract Item getCyanWool();
+
     public abstract Item getVeryDamagedAnvil();
+
+    public abstract Item getDarkOakLeaves();
+
+    public abstract Item getDarkOakLog();
+
+    public abstract Item getDarkOakPlanks();
+
+    public abstract Item getDarkOakSapling();
+
+    public abstract Item getDarkOakWoodSlab();
+
+    public abstract Item getDarkPrismarine();
+
+    public abstract Item getDiorite();
+
+    public abstract Item getDragonHead();
+
+    public abstract Item getEnchantedGoldenApple();
+
+    public abstract Item getFern();
+
+    public abstract Item getGranite();
+
+    public abstract Item getGrass();
 
     public abstract Item getGrayBanner();
 
+    public abstract Item getGrayBed();
+
+    public abstract Item getGrayCarpet();
+
+    public abstract Item getGrayConcrete();
+
+    public abstract Item getGrayConcretePowder();
+
+    public abstract Item getGrayDye();
+
+    public abstract Item getGrayStainedGlass();
+
+    public abstract Item getGrayStainedGlassPane();
+
+    public abstract Item getGrayTerracotta();
+
+    public abstract Item getGrayWool();
+
     public abstract Item getGreenBanner();
+
+    public abstract Item getGreenBed();
+
+    public abstract Item getGreenCarpet();
+
+    public abstract Item getGreenConcrete();
+
+    public abstract Item getGreenConcretePowder();
+
+    public abstract Item getGreenDye();
+
+    public abstract Item getGreenStainedGlass();
+
+    public abstract Item getGreenStainedGlassPane();
+
+    public abstract Item getGreenTerracotta();
+
+    public abstract Item getGreenWool();
+
+    public abstract Item getChiseledStoneBrickMonsterEgg();
+
+    public abstract Item getCobblestoneMonsterEgg();
+
+    public abstract Item getCrackedStoneBrickMonsterEgg();
+
+    public abstract Item getMossyStoneBrickMonsterEgg();
+
+    public abstract Item getStoneBrickMonsterEgg();
+
+    public abstract Item getJungleLeaves();
+
+    public abstract Item getJungleLog();
+
+    public abstract Item getJunglePlanks();
+
+    public abstract Item getJungleSapling();
+
+    public abstract Item getJungleWoodSlab();
+
+    public abstract Item getLargeFern();
 
     public abstract Item getLightBlueBanner();
 
+    public abstract Item getLightBlueBed();
+
+    public abstract Item getLightBlueCarpet();
+
+    public abstract Item getLightBlueConcrete();
+
+    public abstract Item getLightBlueConcretePowder();
+
+    public abstract Item getLightBlueDye();
+
+    public abstract Item getLightBlueStainedGlass();
+
+    public abstract Item getLightBlueStainedGlassPane();
+
+    public abstract Item getLightBlueTerracotta();
+
+    public abstract Item getLightBlueWool();
+
     public abstract Item getLightGrayBanner();
+
+    public abstract Item getLightGrayBed();
+
+    public abstract Item getLightGrayCarpet();
+
+    public abstract Item getLightGrayConcrete();
+
+    public abstract Item getLightGrayConcretePowder();
+
+    public abstract Item getLightGrayDye();
+
+    public abstract Item getLightGrayStainedGlass();
+
+    public abstract Item getLightGrayStainedGlassPane();
+
+    public abstract Item getLightGrayTerracotta();
+
+    public abstract Item getLightGrayWool();
+
+    public abstract Item getLilac();
 
     public abstract Item getLimeBanner();
 
+    public abstract Item getLimeBed();
+
+    public abstract Item getLimeCarpet();
+
+    public abstract Item getLimeConcrete();
+
+    public abstract Item getLimeConcretePowder();
+
+    public abstract Item getLimeDye();
+
+    public abstract Item getLimeStainedGlass();
+
+    public abstract Item getLimeStainedGlassPane();
+
+    public abstract Item getLimeTerracotta();
+
+    public abstract Item getLimeWool();
+
     public abstract Item getMagentaBanner();
+
+    public abstract Item getMagentaBed();
+
+    public abstract Item getMagentaCarpet();
+
+    public abstract Item getMagentaConcrete();
+
+    public abstract Item getMagentaConcretePowder();
+
+    public abstract Item getMagentaDye();
+
+    public abstract Item getMagentaStainedGlass();
+
+    public abstract Item getMagentaStainedGlassPane();
+
+    public abstract Item getMagentaTerracotta();
+
+    public abstract Item getMagentaWool();
+
+    public abstract Item getMossyCobblestoneWall();
+
+    public abstract Item getMossyStoneBricks();
+
+    public abstract Item getNetherBrickSlab();
+
+    public abstract Item getOakWoodSlab();
 
     public abstract Item getOrangeBanner();
 
+    public abstract Item getOrangeBed();
+
+    public abstract Item getOrangeCarpet();
+
+    public abstract Item getOrangeConcrete();
+
+    public abstract Item getOrangeConcretePowder();
+
+    public abstract Item getOrangeDye();
+
+    public abstract Item getOrangeStainedGlass();
+
+    public abstract Item getOrangeStainedGlassPane();
+
+    public abstract Item getOrangeTerracotta();
+
+    public abstract Item getOrangeTulip();
+
+    public abstract Item getOrangeWool();
+
+    public abstract Item getOxeyeDaisy();
+
+    public abstract Item getPeony();
+
     public abstract Item getPinkBanner();
+
+    public abstract Item getPinkBed();
+
+    public abstract Item getPinkCarpet();
+
+    public abstract Item getPinkConcrete();
+
+    public abstract Item getPinkConcretePowder();
+
+    public abstract Item getPinkDye();
+
+    public abstract Item getPinkStainedGlass();
+
+    public abstract Item getPinkStainedGlassPane();
+
+    public abstract Item getPinkTerracotta();
+
+    public abstract Item getPinkTulip();
+
+    public abstract Item getPinkWool();
+
+    public abstract Item getSteveHead();
+
+    public abstract Item getPodzol();
+
+    public abstract Item getPolishedAndesite();
+
+    public abstract Item getPolishedDiorite();
+
+    public abstract Item getPolishedGranite();
+
+    public abstract Item getPrismarineBricks();
+
+    public abstract Item getPufferfish();
 
     public abstract Item getPurpleBanner();
 
+    public abstract Item getPurpleBed();
+
+    public abstract Item getPurpleCarpet();
+
+    public abstract Item getPurpleConcrete();
+
+    public abstract Item getPurpleConcretePowder();
+
+    public abstract Item getPurpleDye();
+
+    public abstract Item getPurpleStainedGlass();
+
+    public abstract Item getPurpleStainedGlassPane();
+
+    public abstract Item getPurpleTerracotta();
+
+    public abstract Item getPurpleWool();
+
+    public abstract Item getQuartzBricks();
+
+    public abstract Item getPillarQuartzBlock();
+
+    public abstract Item getQuartzSlab();
+
     public abstract Item getRedBanner();
 
+    public abstract Item getRedBed();
+
+    public abstract Item getRedCarpet();
+
+    public abstract Item getRedConcrete();
+
+    public abstract Item getRedConcretePowder();
+
+    public abstract Item getRedDye();
+
+    public abstract Item getRedSand();
+
+    public abstract Item getRedSandstoneSlab();
+
+    public abstract Item getRedStainedGlass();
+
+    public abstract Item getRedStainedGlassPane();
+
+    public abstract Item getRedTerracotta();
+
+    public abstract Item getRedTulip();
+
+    public abstract Item getRedWool();
+
+    public abstract Item getRoseBush();
+
+    public abstract Item getRawSalmon();
+
+    public abstract Item getSandstoneSlab();
+
+    public abstract Item getSkeletonSkull();
+
+    public abstract Item getSmoothRedSandstone();
+
+    public abstract Item getSmoothSandstone();
+
+    public abstract Item getSpruceLeaves();
+
+    public abstract Item getSpruceLog();
+
+    public abstract Item getSprucePlanks();
+
+    public abstract Item getSpruceSapling();
+
+    public abstract Item getSpruceWoodSlab();
+
+    public abstract Item getStoneBrickSlab();
+
+    public abstract Item getStrippedBirchLog();
+
+    public abstract Item getStrippedJungleLog();
+
+    public abstract Item getDoubleTallgrass();
+
+    public abstract Item getTropicalFish();
+
+    public abstract Item getWetSponge();
+
     public abstract Item getWhiteBanner();
+
+    public abstract Item getWhiteBed();
+
+    public abstract Item getWhiteCarpet();
+
+    public abstract Item getWhiteConcrete();
+
+    public abstract Item getWhiteConcretePowder();
+
+    public abstract Item getWhiteDye();
+
+    public abstract Item getWhiteStainedGlass();
+
+    public abstract Item getWhiteStainedGlassPane();
+
+    public abstract Item getWhiteTulip();
+
+    public abstract Item getWitherSkeletonSkull();
 
     public abstract Item getYellowBanner();
 
@@ -2985,4 +3421,23 @@ public abstract class MinecraftItems {
         return Item.of("minecraft:zombified_piglin_spawn_egg");
     }
 
+    public abstract Item getYellowBed();
+
+    public abstract Item getYellowCarpet();
+
+    public abstract Item getYellowConcrete();
+
+    public abstract Item getYellowConcretePowder();
+
+    public abstract Item getYellowDye();
+
+    public abstract Item getYellowStainedGlass();
+
+    public abstract Item getYellowStainedGlassPane();
+
+    public abstract Item getYellowTerracotta();
+
+    public abstract Item getYellowWool();
+
+    public abstract Item getZombieHead();
 }
