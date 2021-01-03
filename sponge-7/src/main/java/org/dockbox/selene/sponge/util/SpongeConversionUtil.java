@@ -94,6 +94,7 @@ import org.spongepowered.api.world.World;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -536,8 +537,8 @@ public enum SpongeConversionUtil {
     }
 
     public static InventoryArchetype toSponge(InventoryType inventoryType) {
-        return Sponge.getRegistry()
-                .getType(InventoryArchetype.class, inventoryType.name())
-                .orElse(InventoryArchetypes.CHEST);
+        Optional<InventoryArchetype> inventoryArchetypeOptional = Sponge.getRegistry()
+                .getType(InventoryArchetype.class, inventoryType.name().toLowerCase()); // TODO: Resolve #getType returning empty optional
+        return inventoryArchetypeOptional.orElse(InventoryArchetypes.CHEST);
     }
 }
