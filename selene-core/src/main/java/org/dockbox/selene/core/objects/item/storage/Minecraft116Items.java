@@ -90,7 +90,7 @@ public class Minecraft116Items extends MinecraftItems {
 
     @Override
     public MinecraftVersion getMinecraftVersion() {
-        return null;
+        return MinecraftVersion.MC1_16;
     }
 
     @Override
