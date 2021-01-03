@@ -214,13 +214,14 @@ public class InjectUtil {
     }
 
     public Injector createInjector(AbstractModule... additionalModules) {
-        if (null != this.injector) return this.injector;
-
-        Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
-        modules.addAll(Arrays.stream(additionalModules)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList()));
-        return Guice.createInjector(modules);
+        if (null == this.injector) {
+            Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
+            modules.addAll(Arrays.stream(additionalModules)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+            this.injector = Guice.createInjector(modules);
+        }
+        return this.injector;
     }
 
     public <T> T injectMembers(T type, Object extensionInstance) {
