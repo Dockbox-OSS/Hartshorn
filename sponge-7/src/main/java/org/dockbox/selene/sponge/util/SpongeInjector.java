@@ -68,7 +68,9 @@ import org.slf4j.Logger;
 public class SpongeInjector extends SeleneInjectConfiguration {
 
     @Override
-    protected void configureBindings() {
+    protected void configure() {
+        Selene.log().info("Configuring bindings for Selene, using [" + this.getClass().getCanonicalName() + "]");
+
         // Helper types
         this.bind(ExceptionHelper.class).to(SimpleExceptionHelper.class);
         this.bind(TaskRunner.class).to(SpongeTaskRunner.class);

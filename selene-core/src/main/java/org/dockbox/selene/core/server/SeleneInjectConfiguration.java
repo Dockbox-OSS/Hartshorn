@@ -19,16 +19,4 @@ package org.dockbox.selene.core.server;
 
 import com.google.inject.AbstractModule;
 
-public abstract class SeleneInjectConfiguration extends AbstractModule {
-
-    @Override
-    protected void configure() {
-        super.configure();
-        Selene.log().info("Configuring bindings for Selene, using [" + this.getClass().getCanonicalName() + "]");
-        this.configureBindings();
-    }
-
-
-
-    protected abstract void configureBindings();
-}
+public abstract class SeleneInjectConfiguration extends AbstractModule { }
