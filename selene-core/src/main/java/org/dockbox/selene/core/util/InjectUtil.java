@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public class InjectUtil {
 
+    private Injector injector;
     private final transient List<AbstractModule> injectorModules = SeleneUtils.COLLECTION.emptyConcurrentList();
 
     public <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties) {
@@ -168,6 +169,7 @@ public class InjectUtil {
             }
         };
         this.injectorModules.add(localModule);
+        this.injector = null; // Reset injector so it regenerates later
     }
 
 
@@ -212,6 +214,8 @@ public class InjectUtil {
     }
 
     public Injector createInjector(AbstractModule... additionalModules) {
+        if (null != this.injector) return this.injector;
+
         Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
         modules.addAll(Arrays.stream(additionalModules)
                 .filter(Objects::nonNull)
