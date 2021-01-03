@@ -23,6 +23,7 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
 import org.dockbox.selene.core.objects.keys.PersistentDataHolder;
+import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
 
@@ -46,6 +47,8 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
     void addEnchant(Enchant enchant);
     void removeEnchant(Enchant enchant);
     boolean isBlock();
+    boolean isHead();
+    void setProfile(Profile profile);
     Item stack();
     @Deprecated
     Item withMeta(int meta);
