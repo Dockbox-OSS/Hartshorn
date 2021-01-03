@@ -19,10 +19,11 @@ package org.dockbox.selene.core.inventory.factory;
 
 import org.dockbox.selene.core.inventory.Element;
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.player.Player;
 
 import java.util.function.Consumer;
 
 public interface ElementFactory {
 
-    Element create(Item item, Consumer<?> onClick);
+    Element create(Item item, Consumer<Player> onClick);
 }
