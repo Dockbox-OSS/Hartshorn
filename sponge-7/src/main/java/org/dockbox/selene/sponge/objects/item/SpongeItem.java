@@ -26,6 +26,7 @@ import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.dockbox.selene.core.objects.keys.TransactionResult;
 import org.dockbox.selene.core.text.Text;
@@ -183,6 +184,11 @@ public class SpongeItem extends ReferencedItem<ItemStack> {
         return this.getReference()
                 .map(itemStack -> itemStack.getType().getBlock().isPresent())
                 .orElse(false);
+    }
+
+    @Override
+    public Item withMeta(int meta) {
+        return Item.of(SpongeItem.this.getId(), meta);
     }
 
     private void performOnEnchantmentData(Enchant enchant, BiConsumer<EnchantmentData, Enchantment> action) {

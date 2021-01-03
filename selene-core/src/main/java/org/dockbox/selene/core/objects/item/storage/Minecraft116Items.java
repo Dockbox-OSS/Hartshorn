@@ -990,11 +990,6 @@ public class Minecraft116Items extends MinecraftItems {
     }
 
     @Override
-    public Item getQuartzBricks() {
-        return Item.of("minecraft:quartz_bricks");
-    }
-
-    @Override
     public Item getPillarQuartzBlock() {
         return Item.of("minecraft:quartz_pillar");
     }
@@ -1127,16 +1122,6 @@ public class Minecraft116Items extends MinecraftItems {
     @Override
     public Item getStoneBrickSlab() {
         return Item.of("minecraft:stone_brick_slab");
-    }
-
-    @Override
-    public Item getStrippedBirchLog() {
-        return Item.of("minecraft:stripped_birch_log");
-    }
-
-    @Override
-    public Item getStrippedJungleLog() {
-        return Item.of("minecraft:stripped_jungle_log");
     }
 
     @Override

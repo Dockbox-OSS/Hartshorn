@@ -409,8 +409,6 @@ public abstract class MinecraftItems {
 
     public abstract Item getPurpleWool();
 
-    public abstract Item getQuartzBricks();
-
     public abstract Item getPillarQuartzBlock();
 
     public abstract Item getQuartzSlab();
@@ -464,10 +462,6 @@ public abstract class MinecraftItems {
     public abstract Item getSpruceWoodSlab();
 
     public abstract Item getStoneBrickSlab();
-
-    public abstract Item getStrippedBirchLog();
-
-    public abstract Item getStrippedJungleLog();
 
     public abstract Item getDoubleTallgrass();
 
@@ -2293,6 +2287,10 @@ public abstract class MinecraftItems {
         return Item.of("minecraft:netherrack");
     }
 
+    public Item getQuartzBricks() {
+        return Item.of("minecraft:quartz_bricks");
+    }
+
     public Item getNoteBlock() {
         return Item.of("minecraft:note_block");
     }
@@ -3115,6 +3113,14 @@ public abstract class MinecraftItems {
 
     public Item getStrippedWarpedStem() {
         return Item.of("minecraft:stripped_warped_stem");
+    }
+
+    public Item getStrippedBirchLog() {
+        return Item.of("minecraft:stripped_birch_log");
+    }
+
+    public Item getStrippedJungleLog() {
+        return Item.of("minecraft:stripped_jungle_log");
     }
 
     public Item getStructureBlock() {
