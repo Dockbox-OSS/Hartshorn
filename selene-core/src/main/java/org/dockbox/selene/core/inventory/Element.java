@@ -26,8 +26,6 @@ import java.util.function.Consumer;
 
 public interface Element {
 
-    Element EMPTY = of(Item.AIR);
-
     Item getItem();
     void onClick(Consumer<Player> onClick);
 

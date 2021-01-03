@@ -37,6 +37,7 @@ import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.special.Sounds;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
@@ -141,8 +142,8 @@ public class SpongePlayer extends Player {
             if (itemStack.isPresent()) {
                 return SpongeConversionUtil.fromSponge(itemStack.get());
             }
-            return Item.AIR;
-        }).orElse(Item.AIR);
+            return Selene.getItems().getAir();
+        }).orElse(Selene.getItems().getAir());
     }
 
     @SuppressWarnings("OverlyStrongTypeCast")
