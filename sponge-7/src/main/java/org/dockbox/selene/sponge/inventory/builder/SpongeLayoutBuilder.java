@@ -70,11 +70,6 @@ public class SpongeLayoutBuilder extends LayoutBuilder {
     }
 
     @Override
-    public boolean canEnable() {
-        return true;
-    }
-
-    @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         SeleneUtils.KEYS.getPropertyValue(InventoryTypeProperty.KEY, InventoryType.class, properties)
                 .ifPresent(inventoryType -> {

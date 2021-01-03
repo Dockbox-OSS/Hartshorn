@@ -61,11 +61,6 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
     }
 
     @Override
-    public boolean canEnable() {
-        return false;
-    }
-
-    @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         SeleneUtils.KEYS.getPropertyValue(InventoryTypeProperty.KEY, InventoryType.class, properties)
                 .ifPresent(inventoryType -> {
