@@ -29,8 +29,10 @@ import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.dockbox.selene.core.objects.keys.TransactionResult;
+import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -38,10 +40,14 @@ import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.DisplayNameData;
+import org.spongepowered.api.data.manipulator.mutable.RepresentedPlayerData;
+import org.spongepowered.api.data.manipulator.mutable.SkullData;
 import org.spongepowered.api.data.manipulator.mutable.item.EnchantmentData;
 import org.spongepowered.api.data.manipulator.mutable.item.LoreData;
+import org.spongepowered.api.data.type.SkullTypes;
 import org.spongepowered.api.data.value.mutable.MapValue;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.common.util.Constants;
@@ -184,6 +190,34 @@ public class SpongeItem extends ReferencedItem<ItemStack> {
         return this.getReference()
                 .map(itemStack -> itemStack.getType().getBlock().isPresent())
                 .orElse(false);
+    }
+
+    @Override
+    public boolean isHead() {
+        return this.getReference()
+                .map(itemStack -> itemStack.getType().getType() == ItemTypes.SKULL)
+                .orElse(false);
+    }
+
+    @Override
+    public void setProfile(Profile profile) {
+        if (this.isHead() && profile instanceof SpongeProfile) {
+            this.getReference().ifPresent(itemStack -> {
+                SkullData skullData = Sponge.getGame()
+                        .getDataManager()
+                        .getManipulatorBuilder(SkullData.class)
+                        .get().create()
+                        .set(Keys.SKULL_TYPE, SkullTypes.PLAYER);
+                itemStack.offer(skullData);
+
+                RepresentedPlayerData representedPlayerData = Sponge.getGame()
+                        .getDataManager()
+                        .getManipulatorBuilder(RepresentedPlayerData.class)
+                        .get().create()
+                        .set(Keys.REPRESENTED_PLAYER, ((SpongeProfile) profile).getGameProfile());
+                itemStack.offer(representedPlayerData);
+            });
+        }
     }
 
     @Override

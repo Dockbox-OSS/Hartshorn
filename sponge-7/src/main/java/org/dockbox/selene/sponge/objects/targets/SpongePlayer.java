@@ -36,12 +36,14 @@ import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.objects.special.Sounds;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
@@ -146,11 +148,10 @@ public class SpongePlayer extends Player {
         }).orElse(Selene.getItems().getAir());
     }
 
-    @SuppressWarnings("OverlyStrongTypeCast")
     @Override
     public void setItemInHand(Hand hand, Item item) {
         this.spongePlayer.getReference().ifPresent(player -> {
-            player.setItemInHand(SpongeConversionUtil.toSponge(hand), SpongeConversionUtil.toSponge((SpongeItem) item));
+            player.setItemInHand(SpongeConversionUtil.toSponge(hand), SpongeConversionUtil.toSponge(item));
         });
     }
 
@@ -170,6 +171,13 @@ public class SpongePlayer extends Player {
     }
 
     @Override
+    public Profile getProfile() {
+        return this.spongePlayer.getReference()
+                .map(p -> new SpongeProfile(p.getProfile()))
+                .orElseGet(() -> new SpongeProfile(this.getUniqueId()));
+    }
+
+    @Override
     public void execute(@NotNull String command) {
         if (this.spongePlayer.referenceExists())
             Sponge.getCommandManager().process(this.spongePlayer.getReference().get(), command);
@@ -183,7 +191,7 @@ public class SpongePlayer extends Player {
         }
         if (this.spongePlayer.referenceExists()) {
             this.spongePlayer.getReference().ifPresent(player -> {
-                player.getInventory().offer(SpongeConversionUtil.toSponge((SpongeItem) item));
+                player.getInventory().offer(SpongeConversionUtil.toSponge(item));
             });
         }
     }
@@ -198,7 +206,7 @@ public class SpongePlayer extends Player {
                 MainPlayerInventory main = player.getInventory().query(MainPlayerInventory.class);
                 Optional<Slot> slotOptional = main.getSlot(SlotPos.of(column, row));
                 slotOptional.ifPresent(slot ->
-                        slot.offer(SpongeConversionUtil.toSponge((SpongeItem) item))
+                        slot.offer(SpongeConversionUtil.toSponge(item))
                 );
                 if (!slotOptional.isPresent()) {
                     // TODO: Handle unavailable slot
