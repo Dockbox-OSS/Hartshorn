@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.integrated.server;
 
-import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.annotations.command.Arg;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.files.Format.Json;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
@@ -29,23 +29,20 @@ import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.inventory.Element;
-import org.dockbox.selene.core.inventory.InventoryLayout;
-import org.dockbox.selene.core.inventory.InventoryType;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
+import org.dockbox.selene.core.server.properties.AnnotationProperty;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.util.web.WebUtil;
 
 import java.util.List;
 
@@ -210,21 +207,20 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "demo", usage = "demo")
     public void demo(Player player, CommandContext context) {
-        MinecraftItems
-                .registerCustomItem(MinecraftVersion.MC1_12, "plastered_stone", Item.of("stone_full_1"));
-        Selene.getItems()
-                .registerCustom("plastered_stone_tiles", Item.of("conquest:stone_full_1", 1))
-                .registerCustom("overgrown_cobble", Item.of("conquest:stone_full_2"));
+        Exceptional<HeadAPIObject[]> result = SeleneUtils.INJECT.getInstance(WebUtil.class, AnnotationProperty.of(Json.class))
+                .getContent(HeadAPIObject[].class, "https://minecraft-heads.com/scripts/api.php?tags=true&cat=animals");
 
-        InventoryLayout.builder(InventoryType.DOUBLE_CHEST)
-                .fill(Selene.getItems().getBlackStainedGlassPane())
-                .row(Selene.getItems().getBedrock(), 2)
-                .border(Selene.getItems().getBlueStainedGlassPane())
-                .set(Element.of(Selene.getItems().getCustom("plastered_stone_tiles"), p -> p.send("Boo!")), 31)
-                .toStaticPaneBuilder()
-                .title(Text.of("$1Test inventory"))
-                .build()
-                .open(player);
+        // ...
+    }
+
+    public static class HeadAPIObject {
+        private String name;
+        private String uuid;
+        private String value;
+        private String tags;
+
+        public HeadAPIObject() {
+        }
     }
 
 }
