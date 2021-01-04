@@ -208,9 +208,10 @@ public class IntegratedServerExtension implements IntegratedExtension {
     @Command(aliases = "demo", usage = "demo")
     public void demo(Player player, CommandContext context) {
         InventoryLayout.builder(InventoryType.DOUBLE_CHEST)
-                .fill(Element.of(Selene.getItems().getBlackStainedGlassPane()))
-                .border(Element.of(Selene.getItems().getBlueStainedGlassPane()))
-                .row(Element.of(Selene.getItems().getBedrock()), 2)
+                .fill(Selene.getItems().getBlackStainedGlassPane())
+                .row(Selene.getItems().getBedrock(), 2)
+                .border(Selene.getItems().getBlueStainedGlassPane())
+                .set(Element.of(Selene.getItems().getCarvedPumpkin(), p -> p.send("Boo!")), 31)
                 .toStaticPaneBuilder()
                 .title(Text.of("$1Test inventory"))
                 .build()
