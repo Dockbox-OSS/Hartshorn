@@ -81,6 +81,10 @@ public final class Selene {
         }
     }
 
+    public static void handle(Throwable e) {
+        handle(e.getMessage(), e);
+    }
+
     /**
      * Provides quick access to {@link SeleneBootstrap#log()}. Primarily added to avoid {@link SeleneBootstrap#log()}
      * from being used globally.
