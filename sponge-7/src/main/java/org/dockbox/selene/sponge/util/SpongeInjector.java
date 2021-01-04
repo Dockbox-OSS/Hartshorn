@@ -26,11 +26,13 @@ import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.ThreadUtils;
 import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.core.annotations.files.Bulk;
+import org.dockbox.selene.core.annotations.files.Format;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.ResourceService;
+import org.dockbox.selene.core.impl.web.GsonWebUtil;
 import org.dockbox.selene.core.impl.SimpleBroadcastService;
 import org.dockbox.selene.core.impl.SimpleExceptionHelper;
 import org.dockbox.selene.core.impl.SimpleResourceService;
@@ -54,6 +56,7 @@ import org.dockbox.selene.core.server.SeleneInjectConfiguration;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.tasks.TaskRunner;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
+import org.dockbox.selene.core.util.web.WebUtil;
 import org.dockbox.selene.integrated.server.IntegratedServerExtension;
 import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.inventory.builder.SpongeLayoutBuilder;
@@ -83,6 +86,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         // Utility types
         this.bind(DiscordUtils.class).to(SpongeDiscordUtils.class);
         this.bind(ThreadUtils.class).to(SpongeThreadUtils.class);
+        this.bind(WebUtil.class).annotatedWith(Format.Json.class).to(GsonWebUtil.class);
         // File management
         this.bind(FileManager.class).to(SpongeConfigurateManager.class);
         this.bind(FileManager.class).annotatedWith(Bulk.class).to(SpongeXStreamManager.class);
