@@ -20,8 +20,10 @@ package org.dockbox.selene.core.objects.item;
 import com.sk89q.worldedit.blocks.BaseBlock;
 
 import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
 import org.dockbox.selene.core.objects.keys.PersistentDataHolder;
+import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
 
@@ -45,9 +47,11 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
     void addEnchant(Enchant enchant);
     void removeEnchant(Enchant enchant);
     boolean isBlock();
+    boolean isHead();
+    Item setProfile(Profile profile);
     Item stack();
-
-    Item AIR = Item.of("minecraft:air");
+    @Deprecated
+    Item withMeta(int meta);
 
     /**
      * @param id
@@ -55,7 +59,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
      * @param meta
      *         The unsafe damage, or meta. Constraints to range 0-15
      *
-     * @return The item instance, or {@link Item#AIR}
+     * @return The item instance, or {@link MinecraftItems#getAir()}
      *
      * @deprecated Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As of 1.13 this will no
      *         longer be available!
@@ -73,7 +77,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
      * @param baseBlock
      *         The {@link BaseBlock} instance to use when creating the item.
      *
-     * @return The item instance, or {@link Item#AIR}
+     * @return The item instance, or {@link MinecraftItems#getAir()}
      *
      * @deprecated Note that WorldEdit rewrote their API for 1.13+, and that package/class names changes.
      */

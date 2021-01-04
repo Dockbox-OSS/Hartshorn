@@ -27,3 +27,5 @@ These servers are included in the `servers` submodule. Depending on your Git cli
 
 To run the server, we recommend using [IntelliJ IDEA](https://www.jetbrains.com/idea/). 
 Each relevant platform module will have a `runDevServer` task which prepares and executes the development server for that platform.
+The `runDevServer` exposes a debugging socket on port 5005. Using IntelliJ IDEA you can manually attach your debugger once the task starts
+(the IDE will notify you of this). To attach automatically, we recommend the use of [AttachMe](https://plugins.jetbrains.com/plugin/13263-attachme).

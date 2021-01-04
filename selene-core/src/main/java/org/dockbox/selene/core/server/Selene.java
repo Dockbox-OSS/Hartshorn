@@ -18,7 +18,9 @@
 package org.dockbox.selene.core.server;
 
 import org.dockbox.selene.core.ExceptionHelper;
+import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.util.SeleneUtils;
@@ -87,6 +89,15 @@ public final class Selene {
      */
     public static Logger log() {
         return SeleneBootstrap.log();
+    }
+
+    /**
+     * Provides quick access to {@link MinecraftVersion#getItems()} through {@link SeleneBootstrap#getMinecraftVersion()}.
+     *
+     * @return The {@link MinecraftItems} instance for the active {@link MinecraftVersion}
+     */
+    public static MinecraftItems getItems() {
+        return SeleneBootstrap.getInstance().getMinecraftVersion().getItems();
     }
 
     /**

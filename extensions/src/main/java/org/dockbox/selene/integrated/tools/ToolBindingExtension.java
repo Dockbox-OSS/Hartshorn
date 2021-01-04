@@ -18,6 +18,7 @@
 package org.dockbox.selene.integrated.tools;
 
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.annotations.extension.Extension;
@@ -66,7 +67,7 @@ public class ToolBindingExtension {
 
     private TransactionResult setTool(Item item, ItemTool tool) {
         if (item.isBlock()) return TransactionResult.fail(TOOL_ERROR_BLOCK);
-        if (item == Item.AIR) return TransactionResult.fail(TOOL_ERROR_HAND);
+        if (item == Selene.getItems().getAir()) return TransactionResult.fail(TOOL_ERROR_HAND);
         if (item.get(PERSISTENT_TOOL).isPresent())
             return TransactionResult.fail(TOOL_ERROR_DUPLICATE);
 
@@ -107,7 +108,7 @@ public class ToolBindingExtension {
     @Listener
     public void onPlayerInteracted(PlayerInteractEvent event) {
         Item itemInHand = event.getTarget().getItemInHand(event.getHand());
-        if (itemInHand == Item.AIR || itemInHand.isBlock()) return;
+        if (itemInHand.equals(Selene.getItems().getAir()) || itemInHand.isBlock()) return;
 
         Exceptional<String> identifier = itemInHand.get(PERSISTENT_TOOL);
         if (identifier.isAbsent()) return;

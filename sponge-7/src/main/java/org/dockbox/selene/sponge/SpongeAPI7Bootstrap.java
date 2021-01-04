@@ -18,6 +18,7 @@
 package org.dockbox.selene.sponge;
 
 import com.google.common.reflect.TypeToken;
+import com.google.inject.Inject;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
@@ -51,6 +52,7 @@ import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 
 import java.util.concurrent.TimeUnit;
 
@@ -70,6 +72,9 @@ import java.util.concurrent.TimeUnit;
         }
 )
 public class SpongeAPI7Bootstrap extends SeleneBootstrap {
+
+    @Inject
+    private PluginContainer container;
 
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
 
@@ -187,6 +192,10 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
             // Attempt to get the JDA once every 10 seconds until successful
             new SpongeTaskRunner().acceptDelayed(() -> this.onServerStartedLate(event), 10, TimeUnit.SECONDS);
         }
+    }
+
+    public static PluginContainer getContainer() {
+        return ((SpongeAPI7Bootstrap) getInstance()).container;
     }
 
 }

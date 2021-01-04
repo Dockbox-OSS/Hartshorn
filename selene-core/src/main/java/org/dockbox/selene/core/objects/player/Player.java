@@ -24,6 +24,7 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.objects.special.Sounds;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.InventoryHolder;
@@ -132,5 +133,7 @@ public abstract class Player
     }
 
     public abstract boolean isSneaking();
+    
+    public abstract Profile getProfile();
 
 }

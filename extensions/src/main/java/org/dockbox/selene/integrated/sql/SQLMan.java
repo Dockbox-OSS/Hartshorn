@@ -294,9 +294,4 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
                 properties)
                 .orElse(true);
     }
-
-    @Override
-    public boolean canEnable() {
-        return true;
-    }
 }

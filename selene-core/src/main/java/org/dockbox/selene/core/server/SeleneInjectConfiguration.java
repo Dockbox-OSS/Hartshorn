@@ -19,25 +19,4 @@ package org.dockbox.selene.core.server;
 
 import com.google.inject.AbstractModule;
 
-public abstract class SeleneInjectConfiguration extends AbstractModule {
-
-    @Override
-    protected void configure() {
-        super.configure();
-        this.configureExceptionInject();
-        this.configureExtensionInject();
-        this.configureUtilInject();
-        this.configurePlatformInject();
-        this.configureDefaultInject();
-    }
-
-    protected abstract void configureExceptionInject();
-
-    protected abstract void configureExtensionInject();
-
-    protected abstract void configureUtilInject();
-
-    protected abstract void configurePlatformInject();
-
-    protected abstract void configureDefaultInject();
-}
+public abstract class SeleneInjectConfiguration extends AbstractModule { }

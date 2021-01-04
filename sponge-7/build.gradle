@@ -45,6 +45,7 @@ dependencies {
     compileOnly "org.spongepowered:spongecommon:$spongeCommon7Version"
     compileOnly "com.github.Eufranio:MagiBridge:$magiBridgeVersion"
     compileOnly "com.github.MultiChat:Development:$multiChatVersion"
+    compileOnly "com.github.flash-labs:FlashLibs:$flashLibsVersion"
     compileOnly "com.sk89q.worldedit:worldedit-sponge:$worldEditSpongeVersion"
     compileOnly "io.github.nucleuspowered:nucleus-api:$nucleusApiVersion"
 
