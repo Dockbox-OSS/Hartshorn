@@ -200,7 +200,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> {
     }
 
     @Override
-    public void setProfile(Profile profile) {
+    public Item setProfile(Profile profile) {
         if (this.isHead() && profile instanceof SpongeProfile) {
             this.getReference().ifPresent(itemStack -> {
                 SkullData skullData = Sponge.getGame()
@@ -218,6 +218,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> {
                 itemStack.offer(representedPlayerData);
             });
         }
+        return this;
     }
 
     @Override

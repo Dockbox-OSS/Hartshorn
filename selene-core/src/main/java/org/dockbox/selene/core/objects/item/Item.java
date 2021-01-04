@@ -48,7 +48,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
     void removeEnchant(Enchant enchant);
     boolean isBlock();
     boolean isHead();
-    void setProfile(Profile profile);
+    Item setProfile(Profile profile);
     Item stack();
     @Deprecated
     Item withMeta(int meta);
