@@ -19,9 +19,38 @@ package org.dockbox.selene.core.objects.item.storage;
 
 import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.SeleneBootstrap;
+import org.dockbox.selene.core.util.SeleneUtils;
+
+import java.util.Map;
 
 @SuppressWarnings({"unused", "OverlyComplexClass"})
 public abstract class MinecraftItems {
+
+    private static final Map<MinecraftVersion, Map<String, Item>> customItems = SeleneUtils.COLLECTION.emptyConcurrentMap();
+
+    public static void registerCustomItem(MinecraftVersion version, String identifier, Item item) {
+        customItems.putIfAbsent(version, SeleneUtils.COLLECTION.emptyConcurrentMap());
+        if (customItems.get(version).containsKey(identifier))
+            Selene.log().warn("Overwriting custom item identifier '" + identifier + "'");
+        customItems.get(version).put(identifier, item);
+    }
+
+    public static Item getCustomItem(String identifier) {
+        MinecraftVersion version = SeleneBootstrap.getInstance().getMinecraftVersion();
+        Map<String, Item> customItemsForVersion = customItems.getOrDefault(version, SeleneUtils.COLLECTION.emptyMap());
+        return customItemsForVersion.getOrDefault(identifier, Selene.getItems().getAir());
+    }
+
+    public MinecraftItems registerCustom(String identifier, Item item) {
+        registerCustomItem(this.getMinecraftVersion(), identifier, item);
+        return this;
+    }
+
+    public Item getCustom(String identifier) {
+        return getCustomItem(identifier);
+    }
 
     public abstract Item getAcaciaLeaves();
 
