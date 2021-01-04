@@ -84,7 +84,7 @@ public class SpongeProfile implements Profile {
 
     @Override
     public void setProperty(String property, String key, String value) {
-        this.gameProfile.addProperty(property, ProfileProperty.of(key, value));
+        this.gameProfile.getPropertyMap().put(property, ProfileProperty.of(key, value));
     }
 
     @Override
