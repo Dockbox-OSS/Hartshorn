@@ -28,6 +28,9 @@ import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.inventory.Element;
+import org.dockbox.selene.core.inventory.InventoryLayout;
+import org.dockbox.selene.core.inventory.InventoryType;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
@@ -204,7 +207,14 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "demo", usage = "demo")
     public void demo(Player player, CommandContext context) {
-        player.giveItem(Selene.getItems().getSteveHead().setProfile(player.getProfile()));
+        InventoryLayout.builder(InventoryType.DOUBLE_CHEST)
+                .fill(Element.of(Selene.getItems().getBlackStainedGlassPane()))
+                .border(Element.of(Selene.getItems().getBlueStainedGlassPane()))
+                .row(Element.of(Selene.getItems().getBedrock()), 2)
+                .toStaticPaneBuilder()
+                .title(Text.of("$1Test inventory"))
+                .build()
+                .open(player);
     }
 
 }
