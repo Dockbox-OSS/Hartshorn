@@ -21,7 +21,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.web.WebUtil;
@@ -35,7 +34,7 @@ import java.net.URL;
 public class GsonWebUtil implements WebUtil {
 
     @Override
-    public <T> Exceptional<T> getContent(Class<T> type, URL url, FileType fileType) {
+    public <T> Exceptional<T> getContent(Class<T> type, URL url) {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
             Gson gson = new Gson();
@@ -47,9 +46,9 @@ public class GsonWebUtil implements WebUtil {
     }
 
     @Override
-    public <T> Exceptional<T> getContent(Class<T> type, String url, FileType fileType) {
+    public <T> Exceptional<T> getContent(Class<T> type, String url) {
         try {
-            return this.getContent(type, new URL(url), fileType);
+            return this.getContent(type, new URL(url));
         } catch (MalformedURLException e) {
             Selene.handle("Invalid URL", e);
             return Exceptional.of(e);
