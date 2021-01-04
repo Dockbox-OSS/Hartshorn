@@ -26,6 +26,7 @@ import java.util.Map;
 public interface InventoryLayout {
 
     Map<Integer, Element> getElements();
+    InventoryType getIventoryType();
 
     static LayoutBuilder builder(InventoryType inventoryType) {
         return SeleneUtils.INJECT.getInstance(LayoutBuilder.class, new InventoryTypeProperty(inventoryType));

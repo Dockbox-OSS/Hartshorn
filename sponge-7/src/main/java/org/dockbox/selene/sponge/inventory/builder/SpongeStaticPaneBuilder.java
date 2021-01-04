@@ -18,7 +18,6 @@
 package org.dockbox.selene.sponge.inventory.builder;
 
 import org.dockbox.selene.core.inventory.InventoryLayout;
-import org.dockbox.selene.core.inventory.InventoryType;
 import org.dockbox.selene.core.inventory.builder.StaticPaneBuilder;
 import org.dockbox.selene.core.inventory.pane.StaticPane;
 import org.dockbox.selene.core.inventory.properties.InventoryTypeProperty;
@@ -45,12 +44,10 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
         return this;
     }
 
-    @Override
-    public StaticPaneBuilder layout(InventoryLayout layout) {
+    private void layout(InventoryLayout layout) {
         if (layout instanceof SpongeInventoryLayout) {
             this.layout = (SpongeInventoryLayout) layout;
         }
-        return this;
     }
 
     @Override
@@ -62,9 +59,10 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        SeleneUtils.KEYS.getPropertyValue(InventoryTypeProperty.KEY, InventoryType.class, properties)
-                .ifPresent(inventoryType -> {
-                    this.builder = View.builder(SpongeConversionUtil.toSponge(inventoryType));
+        SeleneUtils.KEYS.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
+                .ifPresent(layout -> {
+                    this.builder = View.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
+                    this.layout(layout);
                 })
                 .ifAbsent(() -> {
                     Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");

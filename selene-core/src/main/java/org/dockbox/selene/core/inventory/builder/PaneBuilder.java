@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.core.inventory.builder;
 
-import org.dockbox.selene.core.inventory.InventoryLayout;
 import org.dockbox.selene.core.inventory.pane.Pane;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.text.Text;
@@ -25,7 +24,6 @@ import org.dockbox.selene.core.text.Text;
 public abstract class PaneBuilder<T extends Pane, B extends PaneBuilder<T, B>> implements InjectableType {
 
     public abstract B title(Text text);
-    public abstract B layout(InventoryLayout layout);
     public abstract T build();
 
 }

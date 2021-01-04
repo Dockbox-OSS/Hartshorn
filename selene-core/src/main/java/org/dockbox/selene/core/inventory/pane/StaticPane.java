@@ -18,10 +18,9 @@
 package org.dockbox.selene.core.inventory.pane;
 
 import org.dockbox.selene.core.inventory.Element;
-import org.dockbox.selene.core.inventory.InventoryType;
 import org.dockbox.selene.core.inventory.InventoryLayout;
-import org.dockbox.selene.core.inventory.properties.InventoryTypeProperty;
 import org.dockbox.selene.core.inventory.builder.StaticPaneBuilder;
+import org.dockbox.selene.core.inventory.properties.LayoutProperty;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.util.SeleneUtils;
 
@@ -31,8 +30,8 @@ public interface StaticPane extends Pane {
     void set(Item item, int index);
     void update(InventoryLayout layout);
 
-    static StaticPaneBuilder builder(InventoryType inventoryType) {
-        return SeleneUtils.INJECT.getInstance(StaticPaneBuilder.class, new InventoryTypeProperty(inventoryType));
+    static StaticPaneBuilder builder(InventoryLayout layout) {
+        return SeleneUtils.INJECT.getInstance(StaticPaneBuilder.class, new LayoutProperty(layout));
     }
 
 }

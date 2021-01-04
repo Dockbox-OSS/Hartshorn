@@ -33,6 +33,7 @@ import dev.flashlabs.flashlibs.inventory.Layout;
 public class SpongeLayoutBuilder extends LayoutBuilder {
 
     private Layout.Builder builder;
+    private InventoryType inventoryType;
 
     @Override
     public LayoutBuilder set(Element element, int index) {
@@ -66,18 +67,19 @@ public class SpongeLayoutBuilder extends LayoutBuilder {
 
     @Override
     public InventoryLayout build() {
-        return new SpongeInventoryLayout(this.builder.build());
+        return new SpongeInventoryLayout(this.builder.build(), inventoryType);
     }
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         SeleneUtils.KEYS.getPropertyValue(InventoryTypeProperty.KEY, InventoryType.class, properties)
                 .ifPresent(inventoryType -> {
-                    this.builder = Layout.builder(inventoryType.getRows(), inventoryType.getColumns());
+                    this.inventoryType = inventoryType;
                 })
                 .ifAbsent(() -> {
                     Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
-                    this.builder = Layout.builder(InventoryType.CHEST.getRows(), InventoryType.DOUBLE_CHEST.getColumns());
+                    this.inventoryType = InventoryType.CHEST;
                 });
+        this.builder = Layout.builder(this.inventoryType.getRows(), this.inventoryType.getColumns());
     }
 }

@@ -19,6 +19,7 @@ package org.dockbox.selene.sponge.inventory;
 
 import org.dockbox.selene.core.inventory.Element;
 import org.dockbox.selene.core.inventory.InventoryLayout;
+import org.dockbox.selene.core.inventory.InventoryType;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
@@ -29,9 +30,11 @@ import dev.flashlabs.flashlibs.inventory.Layout;
 public class SpongeInventoryLayout implements InventoryLayout {
 
     private final Layout layout;
+    private final InventoryType inventoryType;
 
-    public SpongeInventoryLayout(Layout initialLayout) {
+    public SpongeInventoryLayout(Layout initialLayout, InventoryType inventoryType) {
         this.layout = initialLayout;
+        this.inventoryType = inventoryType;
     }
 
     @Override
@@ -41,6 +44,11 @@ public class SpongeInventoryLayout implements InventoryLayout {
             elements.put(index, SpongeConversionUtil.fromSponge(element));
         });
         return SeleneUtils.COLLECTION.asUnmodifiableMap(elements);
+    }
+
+    @Override
+    public InventoryType getIventoryType() {
+        return this.inventoryType;
     }
 
     public Layout getLayout() {

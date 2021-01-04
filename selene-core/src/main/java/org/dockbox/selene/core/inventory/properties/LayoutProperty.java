@@ -15,23 +15,27 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.inventory.pane;
+package org.dockbox.selene.core.inventory.properties;
 
-import org.dockbox.selene.core.inventory.Element;
 import org.dockbox.selene.core.inventory.InventoryLayout;
-import org.dockbox.selene.core.inventory.builder.PaginatedPaneBuilder;
-import org.dockbox.selene.core.inventory.properties.LayoutProperty;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
 
-import java.util.Collection;
+public class LayoutProperty implements InjectorProperty<InventoryLayout> {
 
-public interface PaginatedPane extends Pane {
+    public static final String KEY = "SeleneInternalInventoryTypeKey";
+    private final InventoryLayout layout;
 
-    void open(Player player, int page);
-    void elements(Collection<Element> elements);
+    public LayoutProperty(InventoryLayout layout) {
+        this.layout = layout;
+    }
 
-    static PaginatedPaneBuilder builder(InventoryLayout layout) {
-        return SeleneUtils.INJECT.getInstance(PaginatedPaneBuilder.class, new LayoutProperty(layout));
+    @Override
+    public String getKey() {
+        return LayoutProperty.KEY;
+    }
+
+    @Override
+    public InventoryLayout getObject() {
+        return this.layout;
     }
 }

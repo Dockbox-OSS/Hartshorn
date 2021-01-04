@@ -19,6 +19,8 @@ package org.dockbox.selene.core.inventory.builder;
 
 import org.dockbox.selene.core.inventory.Element;
 import org.dockbox.selene.core.inventory.InventoryLayout;
+import org.dockbox.selene.core.inventory.pane.PaginatedPane;
+import org.dockbox.selene.core.inventory.pane.StaticPane;
 import org.dockbox.selene.core.server.properties.InjectableType;
 
 public abstract class LayoutBuilder implements InjectableType {
@@ -39,6 +41,14 @@ public abstract class LayoutBuilder implements InjectableType {
     public abstract LayoutBuilder border(Element element);
 
     public abstract LayoutBuilder fill(Element element);
+
+    public PaginatedPaneBuilder toPaginatedPaneBuilder() {
+        return PaginatedPane.builder(this.build());
+    }
+
+    public StaticPaneBuilder toStaticPaneBuilder() {
+        return StaticPane.builder(this.build());
+    }
 
     public abstract InventoryLayout build();
 

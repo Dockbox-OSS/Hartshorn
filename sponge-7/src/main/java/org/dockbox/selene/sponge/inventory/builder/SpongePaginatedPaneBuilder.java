@@ -19,7 +19,6 @@ package org.dockbox.selene.sponge.inventory.builder;
 
 import org.dockbox.selene.core.inventory.Element;
 import org.dockbox.selene.core.inventory.InventoryLayout;
-import org.dockbox.selene.core.inventory.InventoryType;
 import org.dockbox.selene.core.inventory.builder.PaginatedPaneBuilder;
 import org.dockbox.selene.core.inventory.pane.PaginatedPane;
 import org.dockbox.selene.core.inventory.properties.InventoryTypeProperty;
@@ -55,11 +54,9 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
         return this;
     }
 
-    @Override
-    public PaginatedPaneBuilder layout(InventoryLayout layout) {
+    public void layout(InventoryLayout layout) {
         if (layout instanceof SpongeInventoryLayout)
             this.builder.layout(((SpongeInventoryLayout) layout).getLayout());
-        return this;
     }
 
     @Override
@@ -74,9 +71,10 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        SeleneUtils.KEYS.getPropertyValue(InventoryTypeProperty.KEY, InventoryType.class, properties)
-                .ifPresent(inventoryType -> {
-                    this.builder = Page.builder(SpongeConversionUtil.toSponge(inventoryType));
+        SeleneUtils.KEYS.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
+                .ifPresent(layout -> {
+                    this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
+                    this.layout(layout);
                 })
                 .ifAbsent(() -> {
                     Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
