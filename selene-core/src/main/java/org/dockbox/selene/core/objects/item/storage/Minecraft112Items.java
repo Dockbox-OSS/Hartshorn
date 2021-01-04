@@ -1249,6 +1249,11 @@ public class Minecraft112Items extends MinecraftItems {
     }
 
     @Override
+    public Item getCarvedPumpkin() {
+        return Item.of("minecraft:lit_pumpkin");
+    }
+
+    @Override
     public Item getYellowBed() {
         return this.getWhiteBed().withMeta(YELLOW);
     }
