@@ -46,6 +46,8 @@ import org.dockbox.selene.core.objects.bossbar.Bossbar;
 import org.dockbox.selene.core.objects.bossbar.BossbarFactory;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.item.ItemFactory;
+import org.dockbox.selene.core.objects.profile.Profile;
+import org.dockbox.selene.core.objects.profile.ProfileFactory;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
@@ -57,6 +59,7 @@ import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.inventory.builder.SpongeLayoutBuilder;
 import org.dockbox.selene.sponge.inventory.builder.SpongePaginatedPaneBuilder;
 import org.dockbox.selene.sponge.inventory.builder.SpongeStaticPaneBuilder;
+import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.bossbar.SpongeBossbar;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
@@ -100,6 +103,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.install(new FactoryModuleBuilder().implement(Element.class, SpongeElement.class).build(ElementFactory.class));
         this.install(new FactoryModuleBuilder().implement(Item.class, SpongeItem.class).build(ItemFactory.class));
         this.install(new FactoryModuleBuilder().implement(Bossbar.class, SpongeBossbar.class).build(BossbarFactory.class));
+        this.install(new FactoryModuleBuilder().implement(Profile.class, SpongeProfile.class).build(ProfileFactory.class));
         // Globally accessible
         this.bind(GlobalConfig.class).toInstance(new SimpleGlobalConfig());
         this.bind(Logger.class).toInstance(Selene.log());
