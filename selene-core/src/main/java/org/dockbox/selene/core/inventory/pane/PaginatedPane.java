@@ -26,11 +26,37 @@ import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Collection;
 
+/**
+ * Represents a pane containing pagination controls to display a large quantity of {@link Element elements}.
+ */
 public interface PaginatedPane extends Pane {
 
+    /**
+     * Opens the pane on a specific page for the given {@link Player}.
+     *
+     * @param player
+     *         The player to show the pane to.
+     * @param page
+     *         The number of the page to show.
+     */
     void open(Player player, int page);
+
+    /**
+     * Set the {@link Element elements} to be displayed by the pane.
+     *
+     * @param elements
+     *         The elements
+     */
     void elements(Collection<Element> elements);
 
+    /**
+     * Create a new {@link PaginatedPaneBuilder} instance.
+     *
+     * @param layout
+     *         The layout to use while building the pane.
+     *
+     * @return The builder
+     */
     static PaginatedPaneBuilder builder(InventoryLayout layout) {
         return SeleneUtils.INJECT.getInstance(PaginatedPaneBuilder.class, new LayoutProperty(layout));
     }

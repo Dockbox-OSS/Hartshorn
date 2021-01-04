@@ -24,12 +24,48 @@ import org.dockbox.selene.core.inventory.properties.LayoutProperty;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.util.SeleneUtils;
 
+/**
+ * Represents a static (non-changing) pane, which can be updated without closing the pane.
+ */
 public interface StaticPane extends Pane {
 
+    /**
+     * Places a specific {@link Element} on the given {@code index}.
+     *
+     * @param element
+     *         The element to place.
+     * @param index
+     *         The position index.
+     */
     void set(Element element, int index);
+
+    /**
+     * Places a specific {@link Item} on the given {@code index}.
+     *
+     * @param item
+     *         The item to place.
+     * @param index
+     *         The position index.
+     */
     void set(Item item, int index);
+
+    /**
+     * Updates the pane. This will update the pane even if it is open to a player. This will not close the pane and open
+     * the updated version, and instead cleans and replaces the items currently displayed by the pane.
+     *
+     * @param layout
+     *         The new layout to display.
+     */
     void update(InventoryLayout layout);
 
+    /**
+     * Create a new {@link StaticPaneBuilder} instance.
+     *
+     * @param layout
+     *         The layout to use while building the pane.
+     *
+     * @return The builder
+     */
     static StaticPaneBuilder builder(InventoryLayout layout) {
         return SeleneUtils.INJECT.getInstance(StaticPaneBuilder.class, new LayoutProperty(layout));
     }
