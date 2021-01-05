@@ -59,7 +59,6 @@ public class SimpleEventBus implements EventBus {
     /**
      * The internal map of {@link AbstractEventParamProcessor}s per annotation per stage.
      */
-    // TODO: Refactor to Registry structure once S124 is accepted
     protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = SeleneUtils.COLLECTION.emptyMap();
 
     @NotNull

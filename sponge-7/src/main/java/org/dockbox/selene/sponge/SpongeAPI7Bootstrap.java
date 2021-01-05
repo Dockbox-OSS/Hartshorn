@@ -139,8 +139,6 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
      */
     @Listener
     public void onServerInit(GameInitializationEvent event) {
-        // TODO GuusLieben, attempt to convert injector to raw bindings
-//      super.upgradeInjectors(this.spongeInjector);
         this.registerSpongeListeners(
                 SeleneUtils.INJECT.getInstance(SpongeCommandListener.class),
                 SeleneUtils.INJECT.getInstance(SpongeServerListener.class),
