@@ -48,6 +48,10 @@ public abstract class MinecraftItems {
         return this;
     }
 
+    public String getAirId() {
+        return "minecraft:air";
+    }
+
     public Item getCustom(String identifier) {
         return getCustomItem(identifier);
     }
@@ -567,7 +571,7 @@ public abstract class MinecraftItems {
     }
 
     public Item getAir() {
-        return Item.of("minecraft:air");
+        return Item.of(this.getAirId());
     }
 
     public Item getAncientDebris() {

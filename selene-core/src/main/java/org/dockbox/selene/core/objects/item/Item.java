@@ -27,6 +27,7 @@ import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
 
@@ -71,9 +72,9 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
         return SeleneUtils.INJECT.getInstance(ItemFactory.class).create(id, meta);
     }
 
-    static Item of(String id) {
+    static Item of(@NonNls String id) {
         Item item = Item.of(id, 0);
-        if (item.isAir()) {
+        if (item.isAir() && !Selene.getItems().getAirId().equals(id)) {
             item = Selene.getItems().getCustom(id);
         }
         return item;
