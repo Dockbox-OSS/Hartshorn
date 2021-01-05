@@ -21,15 +21,16 @@
 package org.dockbox.selene.core.impl.files.serialize;
 
 import com.google.common.primitives.Bytes;
-import com.google.common.reflect.TypeToken;
 
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.serialize.TypeSerializer;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
+import io.leangen.geantyref.TypeToken;
 
 public class ByteArrayTypeSerializer implements TypeSerializer<byte[]> {
 
@@ -39,14 +40,14 @@ public class ByteArrayTypeSerializer implements TypeSerializer<byte[]> {
     };
 
     @Override
-    public byte[] deserialize(@NotNull TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
-        List<Byte> list = value.getList(this.ttb);
+    public byte[] deserialize(Type type, ConfigurationNode node) throws SerializationException {
+        List<Byte> list = node.getList(this.ttb);
         return Bytes.toArray(list);
     }
 
     @Override
-    public void serialize(@NotNull TypeToken<?> type, byte[] obj, ConfigurationNode value) throws ObjectMappingException {
+    public void serialize(Type type, byte @Nullable [] obj, ConfigurationNode node) throws SerializationException {
         List<Byte> bytes = Bytes.asList(obj);
-        value.setValue(this.ttlb, bytes);
+        node.set(this.ttlb, bytes);
     }
 }

@@ -21,28 +21,31 @@
 package org.dockbox.selene.core.impl.files.serialize;
 
 import com.google.common.primitives.Ints;
-import com.google.common.reflect.TypeToken;
 
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.serialize.TypeSerializer;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
+import io.leangen.geantyref.TypeToken;
 
 public class IntArrayTypeSerializer implements TypeSerializer<int[]> {
 
     private final TypeToken<Integer> ttb = new TypeToken<Integer>() {};
     private final TypeToken<List<Integer>> ttlb = new TypeToken<List<Integer>>() {};
 
-    @Override public int[] deserialize(@NotNull TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
-        List<Integer> list = value.getList(this.ttb);
+    @Override
+    public int[] deserialize(Type type, ConfigurationNode node) throws SerializationException {
+        List<Integer> list = node.getList(this.ttb);
         return Ints.toArray(list);
     }
 
-    @Override public void serialize(@NotNull TypeToken<?> type, int[] obj, ConfigurationNode value) throws ObjectMappingException {
+    @Override
+    public void serialize(Type type, int @Nullable [] obj, ConfigurationNode node) throws SerializationException {
         List<Integer> bytes = Ints.asList(obj);
-        value.setValue(ttlb, bytes);
+        node.set(ttlb, bytes);
     }
 }

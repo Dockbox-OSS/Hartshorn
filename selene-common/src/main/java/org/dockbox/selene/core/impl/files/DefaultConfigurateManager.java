@@ -17,40 +17,30 @@
 
 package org.dockbox.selene.core.impl.files;
 
-import com.google.common.reflect.TypeToken;
-
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.files.FileType;
-import org.dockbox.selene.core.impl.files.mapping.NeutrinoObjectMapper;
-import org.dockbox.selene.core.impl.files.mapping.NeutrinoObjectMapperFactory;
 import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
-import org.yaml.snakeyaml.DumperOptions.FlowStyle;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.gson.GsonConfigurationLoader;
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
+import org.spongepowered.configurate.loader.AbstractConfigurationLoader;
+import org.spongepowered.configurate.loader.ConfigurationLoader;
+import org.spongepowered.configurate.objectmapping.ObjectMapper;
+import org.spongepowered.configurate.xml.XmlConfigurationLoader;
+import org.spongepowered.configurate.yaml.NodeStyle;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.IOException;
 import java.nio.file.Path;
-
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.gson.GsonConfigurationLoader;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
-import ninja.leaping.configurate.xml.XMLConfigurationLoader;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 
 /**
  * Implementation of {@link FileManager} containing dynamic mapping to appropriate {@link ConfigurationLoader}s
  * based on the given {@link FileType} by the implementation of this type. Supporting {@link FileType#YAML},
  * {@link FileType#JSON}, {@link FileType#XML}, {@link FileType#MOD_CONFIG}, and {@link FileType#CONFIG} file types.
- *
- * Supports type mapping through {@link NeutrinoObjectMapper}, which allows for additional functionality on top of the
- * normal Configurate functionality. See <a href="https://github.com/NucleusPowered/Neutrino">Neutrino</a> for reference.
  *
  * Automatically generates, and checks the presence of, files in their directories. For both custom file locations and
  * {@link Extension#id()} based.
@@ -58,32 +48,38 @@ import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 public abstract class DefaultConfigurateManager extends DefaultAbstractFileManager {
 
     /**
-     * Provides the given {@link FileType} to the super type {@link FileManager}. And registers any custom
-     * {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializer} types to
-     * {@link TypeSerializers#getDefaultSerializers()}.
+     * Provides the given {@link FileType} to the super type {@link FileManager}.
      *
      * @param fileType
      *         The file type to be used when mapping.
      */
     protected DefaultConfigurateManager(FileType fileType) {
         super(fileType);
-        SeleneTypeSerializers.registerTypeSerializers();
     }
 
-    private final ConfigurationLoader<?> getConfigurationLoader(Path file) throws UnsupportedFileException {
+    private ConfigurationLoader<?> getConfigurationLoader(Path file) throws UnsupportedFileException {
+        AbstractConfigurationLoader.Builder<?, ?> builder;
         switch (this.getFileType()) {
             case YAML:
-                return YAMLConfigurationLoader.builder().setPath(file).setFlowStyle(FlowStyle.BLOCK).build();
+                builder = YamlConfigurationLoader.builder().nodeStyle(NodeStyle.FLOW);
+                break;
             case JSON:
-                return GsonConfigurationLoader.builder().setPath(file).build();
+                builder = GsonConfigurationLoader.builder();
+                break;
             case XML:
-                return XMLConfigurationLoader.builder().setPath(file).build();
+                builder = XmlConfigurationLoader.builder();
+                break;
             case MOD_CONFIG:
             case CONFIG:
-                return HoconConfigurationLoader.builder().setPath(file).build();
+                builder = HoconConfigurationLoader.builder();
+                break;
             default:
                 throw new UnsupportedFileException(this.getFileType().getExtension());
         }
+        return builder.path(file)
+                .defaultOptions(opts ->
+                        opts.serializers(build -> build.registerAll(SeleneTypeSerializers.collection()))
+                ).build();
     }
 
     @NotNull
@@ -94,24 +90,22 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
         try {
             final ConfigurationLoader<?> loader = this.getConfigurationLoader(file);
             final ConfigurationNode node = loader.load();
-            this.verifyConfigurateType(type, node);
 
-            final NeutrinoObjectMapper<T> mapper = NeutrinoObjectMapperFactory.builder()
-                    .build(true)
-                    .getMapper(type);
+            final ObjectMapper<T> mapper = ObjectMapper.factory().get(type);
 
-            final T content = mapper.bindToNew().populate(node);
+            final T content = mapper.load(node);
 
             if (SeleneUtils.OTHER.isFileEmpty(file)) {
                 this.writeFileContent(file, content);
             }
 
             return Exceptional.ofNullable(content);
-        } catch (IOException | IllegalArgumentException | ObjectMappingException | UnsupportedFileException e) {
+        } catch (IOException | IllegalArgumentException | UnsupportedFileException e) {
             return Exceptional.of(e);
         }
     }
 
+    @SuppressWarnings("unchecked")
     @NotNull
     @Override
     public <T> Exceptional<Boolean> writeFileContent(@NotNull Path file, @NotNull T content) {
@@ -121,33 +115,14 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
             final ConfigurationLoader<?> loader = this.getConfigurationLoader(file);
             final ConfigurationNode node = loader.load();
 
-            this.verifyConfigurateType(content.getClass(), node);
+            final ObjectMapper<T> mapper = (ObjectMapper<T>) ObjectMapper.factory().get(content.getClass());
 
-            @SuppressWarnings("unchecked") final NeutrinoObjectMapper<T> mapper = NeutrinoObjectMapperFactory.builder()
-                    .build(true)
-                    .getMapper((Class<T>) content.getClass());
-
-            node.setValue(content);
-            mapper.bind(content).serialize(node);
+            mapper.save(content, node);
             loader.save(node);
 
             return Exceptional.of(true);
-        } catch (UnsupportedFileException | IOException | ObjectMappingException e) {
+        } catch (UnsupportedFileException | IOException e) {
             return Exceptional.of(false, e);
         }
     }
-
-    private <T> void verifyConfigurateType(Class<T> type, ConfigurationNode node) throws IllegalArgumentException {
-        if (type.isAnnotationPresent(ConfigSerializable.class)) return; // Valid
-
-        TypeSerializer<T> serializer = node.getOptions().getSerializers().get(TypeToken.of(type));
-        if (null != serializer) return; // Valid
-
-        throw new IllegalArgumentException(
-                "Configuration type [" + type.getCanonicalName() + "] should be annotated with " +
-                        "ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable" +
-                " or have a valid ninja.leaping.configurate.objectmapping.serialize.TypeSerializer " +
-                " registered for it.");
-    }
-
 }

@@ -31,15 +31,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
-
 public class DataStructuresSerializersTests {
 
     private TestConfigurationLoader getTestLoader() {
         TestConfigurationLoader.Builder tlb = TestConfigurationLoader.builder();
-        TypeSerializerCollection tsc = tlb.getDefaultOptions().getSerializers().newChild();
-        SeleneTypeSerializers.registerTypeSerializers(tsc);
-        tlb.setDefaultOptions(tlb.getDefaultOptions().setSerializers(tsc));
+        tlb.defaultOptions(build -> build.serializers(SeleneTypeSerializers.collection()));
         return tlb.build();
     }
 

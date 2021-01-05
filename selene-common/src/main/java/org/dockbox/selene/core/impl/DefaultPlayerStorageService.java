@@ -17,19 +17,18 @@
 
 package org.dockbox.selene.core.impl;
 
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.PlayerStorageService;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.files.FileManager;
-import org.dockbox.selene.core.PlayerStorageService;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.nio.file.Path;
 import java.util.UUID;
-
-import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 public abstract class DefaultPlayerStorageService implements PlayerStorageService {
 

@@ -41,8 +41,12 @@ dependencies {
     compile project(path: ':extensions', configuration: 'shadow')
 
     compileOnly "me.lucko.luckperms:luckperms-api:$luckPermsVersion"
-    compileOnly "org.spongepowered:spongeapi:$spongeApi7Version"
-    compileOnly "org.spongepowered:spongecommon:$spongeCommon7Version"
+    compileOnly ("org.spongepowered:spongeapi:$spongeApi7Version") {
+        exclude group: "org.spongepowered", module: "configurate**"
+    }
+    compileOnly ("org.spongepowered:spongecommon:$spongeCommon7Version") {
+        exclude group: "org.spongepowered", module: "configurate**"
+    }
     compileOnly "com.github.Eufranio:MagiBridge:$magiBridgeVersion"
     compileOnly "com.github.MultiChat:Development:$multiChatVersion"
     compileOnly "com.github.flash-labs:FlashLibs:$flashLibsVersion"
@@ -53,7 +57,7 @@ dependencies {
     testCompileOnly project(':selene-common')
     testCompileOnly project(':extensions')
 
-    if(file('../darwin').exists()){
+    if(findProject(':darwin') != null){
         compile project(path: ':darwin', configuration: 'shadow')
         testCompileOnly project(':darwin')
     }

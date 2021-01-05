@@ -17,38 +17,30 @@
 
 package org.dockbox.selene.core.impl.files.serialize;
 
-import com.google.common.reflect.TypeToken;
-
-import org.dockbox.selene.core.files.FileManager;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
+import org.spongepowered.configurate.serialize.TypeSerializer;
+import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
-
 /**
- * Serializer definitions which can be (globally) registered for all types using
- * {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializers}. Within Selene, this targets
- * {@link FileManager}.
- * Due to the requirement of generic constraints, a static final transient {@link java.util.Collection} is used.
- * Insances of {@link SerializerInformation} are automatically registered to {@link #serializerInformation}, and
- * therefore do not need to be declared as fields.
- * {@link #registerTypeSerializers()} registers all known serializers using their associated
- * {@link java.util.function.BiConsumer} as seen in {@link SerializerInformation#getConsumer()}.
+ * Serializer definitions which can be (globally) registered for all types accepting {@link TypeSerializer}. Within 
+ * Selene, this targets {@link org.dockbox.selene.core.impl.files.DefaultConfigurateManager}. Due to the requirement of
+ * generic constraints, a static final transient {@link java.util.Collection} is used. Instances of
+ * {@link SerializerInformation} are automatically registered to {@link SeleneTypeSerializers#serializerInformation},
+ * and therefore do not need to be declared as fields.
  */
 @SuppressWarnings("rawtypes")
 public final class SeleneTypeSerializers {
 
+    private static final TypeSerializerCollection.Builder serializerBuilder = TypeSerializerCollection.builder();
+
     /**
      * The transient {@link Collection} holding all known {@link SerializerInformation} instances, which can be
-     * used to register the associated {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializer}s.
+     * used to register the associated {@link TypeSerializer}s.
      */
     static final transient Collection<SerializerInformation<?>> serializerInformation = SeleneUtils.COLLECTION.emptyConcurrentList();
 
@@ -59,12 +51,12 @@ public final class SeleneTypeSerializers {
             new SerializerInformation<>(int[].class, IntArrayTypeSerializer::new);
             new SerializerInformation<>(short[].class, ShortArrayTypeSerializer::new);
             new SerializerInformation<>(Pattern.class, PatternTypeSerializer::new);
-            new PredicateSerializerInformation<>(Set.class, SetTypeSerializer::new, new TypeToken<Set<?>>() {
-            });
         } catch (Exception e) {
             Selene.handle("Failed to initialize serializer information", e);
         }
     }
+
+    private SeleneTypeSerializers() {}
 
     /**
      * Registers a new {@link SerializerInformation} instance, if the instance was already known nothing happens.
@@ -79,30 +71,18 @@ public final class SeleneTypeSerializers {
     /**
      * Registers all known {@link SerializerInformation} instances using their associated
      * {@link java.util.function.BiConsumer}. Usually this means registering the
-     * {@link ninja.leaping.configurate.objectmapping.serialize.TypeSerializer} globally using
-     * {@link TypeSerializers#getDefaultSerializers()}'s {@link TypeSerializerCollection#registerType(TypeToken, TypeSerializer)}
-     * (in case of 'raw' types) or {@link TypeSerializerCollection#registerPredicate(Predicate, TypeSerializer)} (in case
-     * of generic types).
+     * {@link TypeSerializer} globally using {@link TypeSerializerCollection.Builder#register(Class, TypeSerializer)}
      */
-    public static void registerTypeSerializers() {
+    @SuppressWarnings("unchecked")
+    private static void registerTypeSerializers() {
         for (SerializerInformation serializer : serializerInformation) {
-            serializer.getConsumer().accept(serializer.getTypeToken(), serializer.getTypeSerializer());
+            serializerBuilder.register(serializer.getType(), serializer.getTypeSerializer());
         }
     }
 
-    /**
-     * Registers all known {@link SerializerInformation} instances using their associated
-     * {@link java.util.function.BiConsumer}. Usually this targets specific
-     * {@link ninja.leaping.configurate.objectmapping.ObjectMapper}s.
-     *
-     * @param tsc
-     *         The collection to apply the serializers to, usually targets either {@link TypeSerializers#getDefaultSerializers()}
-     *         (global) or a specific {@link ninja.leaping.configurate.objectmapping.ObjectMapper}'s collection.
-     */
-    public static void registerTypeSerializers(TypeSerializerCollection tsc) {
-        for (SerializerInformation serializer : serializerInformation) {
-            serializer.getConsumer(tsc).accept(serializer.getTypeToken(), serializer.getTypeSerializer());
-        }
+    public static TypeSerializerCollection collection() {
+        registerTypeSerializers();
+        return serializerBuilder.build();
     }
 
 }
