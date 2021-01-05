@@ -27,11 +27,12 @@ import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 /**
@@ -117,18 +118,18 @@ public final class Selene {
      */
     public static Exceptional<Path> getResourceFile(String name) {
         try {
-            URL resourceUrl = Selene.class.getClassLoader().getResource(name);
-            // Warning suppressed relates to potential NPE on `resourceUrl#toURI`. This is caught and handled directly
-            // and can thus be suppressed safely.
-            @SuppressWarnings("ConstantConditions") Path resourcePath = Paths.get(resourceUrl.toURI());
-            File resourceFile = resourcePath.toFile();
-            if (resourceFile.isFile()) {
-                return Exceptional.of(resourcePath);
-            }
-        } catch (URISyntaxException | NullPointerException e) {
+            InputStream in = Selene.class.getClassLoader().getResourceAsStream(name);
+            byte[] buffer = new byte[in.available()];
+            in.read(buffer);
+
+            Path tempFile = Files.createTempFile(name, ".tmp");
+            OutputStream outStream = new FileOutputStream(tempFile.toFile());
+            outStream.write(buffer);
+
+            return Exceptional.of(tempFile);
+        } catch (NullPointerException | IOException e) {
             return Exceptional.of(e);
         }
-        return Exceptional.empty();
     }
 
 }
