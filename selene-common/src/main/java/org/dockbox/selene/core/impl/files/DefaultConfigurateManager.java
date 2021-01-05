@@ -127,6 +127,7 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
                     .build(true)
                     .getMapper((Class<T>) content.getClass());
 
+            node.setValue(content);
             mapper.bind(content).serialize(node);
             loader.save(node);
 

@@ -20,7 +20,6 @@ package org.dockbox.selene.integrated.server;
 import org.dockbox.selene.core.annotations.command.Arg;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.annotations.files.Format.Json;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
@@ -28,6 +27,7 @@ import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
@@ -36,15 +36,16 @@ import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
-import org.dockbox.selene.core.server.properties.AnnotationProperty;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.util.web.WebUtil;
 
+import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Extension(
         id = "selene",
@@ -207,20 +208,12 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "demo", usage = "demo")
     public void demo(Player player, CommandContext context) {
-        Exceptional<HeadAPIObject[]> result = SeleneUtils.INJECT.getInstance(WebUtil.class, AnnotationProperty.of(Json.class))
-                .getContent(HeadAPIObject[].class, "https://minecraft-heads.com/scripts/api.php?tags=true&cat=animals");
-
-        // ...
-    }
-
-    public static class HeadAPIObject {
-        private String name;
-        private String uuid;
-        private String value;
-        private String tags;
-
-        public HeadAPIObject() {
-        }
+        Map<String, String> corrections = new HashMap<>();
+        corrections.put("stucco_tan_wall_full", "stucco_tan_full");
+        corrections.put("marble_parian_dragonegg", "quartz_block_dragonegg");
+        FileManager fm = SeleneUtils.INJECT.getInstance(FileManager.class);
+        Path dataFileCorrections = fm.getDataFile(IntegratedServerExtension.class, "112_corrections");
+        fm.writeFileContent(dataFileCorrections, corrections).ifErrorPresent(Selene::handle);
     }
 
 }
