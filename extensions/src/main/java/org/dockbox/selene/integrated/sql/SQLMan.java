@@ -154,7 +154,10 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
         TableRow row = new TableRow();
         for (Field<?> field : record.fields()) {
             Object attr = record.getValue(field);
-            ColumnIdentifier<?> identifier = table.getIdentifier(field.getName());
+            ColumnIdentifier<?> identifier = this.identifiers.getOrDefault(
+                    field.getName(),
+                    table.getIdentifier(field.getName())
+            );
             // May cause the row to be rejected by the target Table, though typically the identifier is never null
             // unless the result was modified after fetching.
             if (null != identifier)
