@@ -39,6 +39,7 @@ import org.dockbox.selene.core.impl.SimpleResourceService;
 import org.dockbox.selene.core.impl.events.SimpleEventBus;
 import org.dockbox.selene.core.impl.extension.SimpleExtensionManager;
 import org.dockbox.selene.core.impl.server.config.SimpleGlobalConfig;
+import org.dockbox.selene.core.impl.web.GsonXmlWebUtil;
 import org.dockbox.selene.core.inventory.Element;
 import org.dockbox.selene.core.inventory.builder.LayoutBuilder;
 import org.dockbox.selene.core.inventory.builder.PaginatedPaneBuilder;
@@ -87,6 +88,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(DiscordUtils.class).to(SpongeDiscordUtils.class);
         this.bind(ThreadUtils.class).to(SpongeThreadUtils.class);
         this.bind(WebUtil.class).annotatedWith(Format.Json.class).to(GsonWebUtil.class);
+        this.bind(WebUtil.class).annotatedWith(Format.XML.class).to(GsonXmlWebUtil.class);
         // File management
         this.bind(FileManager.class).to(SpongeConfigurateManager.class);
         this.bind(FileManager.class).annotatedWith(Bulk.class).to(SpongeXStreamManager.class);

@@ -17,29 +17,42 @@
 
 package org.dockbox.selene.core.impl.web;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import com.stanfy.gsonxml.GsonXml;
+import com.stanfy.gsonxml.GsonXmlBuilder;
+import com.stanfy.gsonxml.XmlParserCreator;
 
 import org.dockbox.selene.core.objects.Exceptional;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-public class GsonWebUtil extends DefaultWebUtil {
+public class GsonXmlWebUtil extends DefaultWebUtil {
 
     @Override
     public <T> Exceptional<T> getContent(Class<T> type, URL url) {
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-            Gson gson = new Gson();
-            T result = gson.fromJson(in, type);
+
+            XmlParserCreator parser = () -> {
+                try {
+                    return XmlPullParserFactory.newInstance().newPullParser();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            };
+            GsonXml gsonXml = new GsonXmlBuilder()
+                    .setXmlParserCreator(parser)
+                    .create();
+
+            T result = gsonXml.fromXml(in, type);
             return Exceptional.ofNullable(result);
         } catch (JsonIOException | JsonSyntaxException | IOException e) {
             return Exceptional.of(e);
         }
     }
-
 }

@@ -33,6 +33,7 @@ dependencies {
         compileOnly "org.spongepowered:configurate-gson:$configurateVersion"
         compileOnly "org.spongepowered:configurate-xml:$configurateVersion"
 
+        shadow "com.stanfy:gson-xml-java:$gsonXmlVersion"
         shadow "com.thoughtworks.xstream:xstream:$xstreamVersion"
         shadow "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"
 

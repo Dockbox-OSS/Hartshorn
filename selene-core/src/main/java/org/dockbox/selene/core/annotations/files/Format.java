@@ -30,5 +30,10 @@ public @interface Format {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @interface Json {}
+
+    @BindingAnnotation
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    @interface XML {}
     
 }
