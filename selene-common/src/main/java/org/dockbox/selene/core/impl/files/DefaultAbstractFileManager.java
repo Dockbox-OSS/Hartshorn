@@ -23,7 +23,10 @@ import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public abstract class DefaultAbstractFileManager extends FileManager {
 
@@ -75,5 +78,16 @@ public abstract class DefaultAbstractFileManager extends FileManager {
     @Override
     public Path createFileIfNotExists(@NotNull Path file) {
         return SeleneUtils.OTHER.createFileIfNotExists(file);
+    }
+
+    @Override
+    public boolean move(Path sourceFile, Path targetFile) {
+        this.createFileIfNotExists(targetFile);
+        try {
+            Files.move(sourceFile, targetFile, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
