@@ -35,5 +35,10 @@ public @interface Format {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @interface XML {}
+
+    @BindingAnnotation
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    @interface SQLite {}
     
 }
