@@ -83,6 +83,13 @@ public class LogArchivalExtension {
         Selene.log().info("Archived file {} to {}", source, destination);
     }
 
+    /**
+     * Returns the target archive directory for the file (if applicable). Formatted as {@code YEAR/00-MONTH}, for
+     * example {@code 2020/12-DECEMBER}.
+     *
+     * @param file The file to archive
+     * @return The target archive directory
+     */
     private Exceptional<Path> getArchiveDirectory(Path file) {
         Matcher dateMatcher = this.datePattern.matcher(file.getFileName().toString());
 
@@ -107,6 +114,14 @@ public class LogArchivalExtension {
         return Exceptional.of(this.logPath.resolve(year).resolve(folder));
     }
 
+    /**
+     * Returns the target archive file located in the given directory for the given file. If a file with the same name
+     * already exists at the target location, it will be appended by {@code __n}, n being the next number available.
+     *
+     * @param dir The directory to place the target file in
+     * @param file The source file to archive
+     * @return The target archive file
+     */
     private Exceptional<Path> getArchiveName(Path dir, Path file) {
         Matcher nameMatcher = this.namePattern.matcher(file.getFileName().toString());
         if (nameMatcher.find()) {
