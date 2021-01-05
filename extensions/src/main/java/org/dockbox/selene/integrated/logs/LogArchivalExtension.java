@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.regex.Matcher;
@@ -96,8 +97,7 @@ public class LogArchivalExtension {
                 LocalDate date = LocalDate.from(time.toInstant());
                 year = new SimpleDateFormat("yyyy").format(date);
                 month = new SimpleDateFormat("MM").format(date);
-            } catch (IOException e) {
-                Selene.handle(e);
+            } catch (IOException | DateTimeException e) {
                 return Exceptional.of(e);
             }
         }
