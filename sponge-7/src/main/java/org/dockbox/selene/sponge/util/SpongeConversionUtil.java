@@ -71,6 +71,7 @@ import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.item.enchantment.Enchantment;
+import org.spongepowered.api.item.enchantment.EnchantmentType;
 import org.spongepowered.api.item.inventory.InventoryArchetype;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -149,11 +150,14 @@ public enum SpongeConversionUtil {
 
     @NotNull
     public static Exceptional<Enchantment> toSponge(Enchant enchantment) {
+        Exceptional<EnchantmentType> type = Exceptional.of(Sponge.getRegistry()
+                .getType(EnchantmentType.class, enchantment.getEnchantment().name()));
 
-        enchantment.getEnchantment().name();
-        
-        // TODO GuusLieben, enchantment conversion (also update ItemStack conversions)
-        return Exceptional.empty();
+        return type.map(enchantmentType -> Enchantment.builder()
+                .type(enchantmentType)
+                .level(enchantment.getLevel())
+                .build()
+        );
     }
 
     public static BossBarColor toSponge(BossbarColor bossbarColor) {
@@ -521,6 +525,7 @@ public enum SpongeConversionUtil {
     public static Exceptional<ItemStack> toSponge(BaseBlock block) {
         try {
             Exceptional<BlockState> state = Exceptional.empty();
+            // TODO: Implement Blockstate translator for worldedit 6.1
 //                    SeleneUtils.REFLECTION.getMethodValue(
 //                    com.sk89q.worldedit.sponge.SpongeWorld.class,
 //                    new Sponge_1_12_2_Impl(),
@@ -547,8 +552,5 @@ public enum SpongeConversionUtil {
             default:
                 return InventoryArchetypes.CHEST;
         }
-//        Optional<InventoryArchetype> inventoryArchetypeOptional = Sponge.getRegistry()
-//                .getType(InventoryArchetype.class, inventoryType.name().toLowerCase()); // TODO: Resolve #getType returning empty optional
-//        return inventoryArchetypeOptional.orElse(InventoryArchetypes.CHEST);
     }
 }
