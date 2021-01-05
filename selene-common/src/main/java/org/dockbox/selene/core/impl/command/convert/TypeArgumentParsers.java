@@ -25,7 +25,6 @@ import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 
 import org.dockbox.selene.core.PlayerStorageService;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.parsing.ArgumentParser;
@@ -39,8 +38,8 @@ import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
-import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.config.GlobalConfig;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -221,8 +220,13 @@ public class TypeArgumentParsers {
             PlayerStorageService pss = SeleneUtils.INJECT.getInstance(PlayerStorageService.class);
             Exceptional<Player> player = pss.getPlayer(commandValue.getValue());
             return player.orElseSupply(() -> {
-                UUID uuid = UUID.fromString(commandValue.getValue());
-                return pss.getPlayer(uuid).orNull();
+                try {
+                    UUID uuid = UUID.fromString(commandValue.getValue());
+                    return pss.getPlayer(uuid).orNull();
+                } catch (IllegalArgumentException e) {
+                    //noinspection ReturnOfNull
+                    return null;
+                }
             });
         }
     }
