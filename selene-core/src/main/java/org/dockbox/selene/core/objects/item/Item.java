@@ -24,6 +24,7 @@ import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
 import org.dockbox.selene.core.objects.keys.PersistentDataHolder;
 import org.dockbox.selene.core.objects.profile.Profile;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
 
@@ -48,6 +49,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
     void removeEnchant(Enchant enchant);
     boolean isBlock();
     boolean isHead();
+    boolean isAir();
     Item setProfile(Profile profile);
     Item stack();
     @Deprecated
@@ -70,7 +72,11 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
     }
 
     static Item of(String id) {
-        return Item.of(id, 0);
+        Item item = Item.of(id, 0);
+        if (item.isAir()) {
+            item = Selene.getItems().getCustom(id);
+        }
+        return item;
     }
 
     /**

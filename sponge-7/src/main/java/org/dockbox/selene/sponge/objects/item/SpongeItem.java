@@ -30,6 +30,7 @@ import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.dockbox.selene.core.objects.keys.TransactionResult;
 import org.dockbox.selene.core.objects.profile.Profile;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
@@ -197,6 +198,16 @@ public class SpongeItem extends ReferencedItem<ItemStack> {
         return this.getReference()
                 .map(itemStack -> itemStack.getType().getType() == ItemTypes.SKULL)
                 .orElse(false);
+    }
+
+    @Override
+    public boolean isAir() {
+        if (this.equals(Selene.getItems().getAir())) return true;
+        else {
+            return this.getReference()
+                    .map(itemStack -> itemStack.isEmpty() || itemStack.getType().getType() == ItemTypes.AIR)
+                    .orElse(true);
+        }
     }
 
     @Override
