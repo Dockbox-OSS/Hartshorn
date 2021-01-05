@@ -263,4 +263,12 @@ public abstract class FileManager {
      */
     public abstract Path createFileIfNotExists(Path file);
 
+    /**
+     * Attempts to move a file to a target file. If the target file does not exist it will be created.
+     *
+     * @param sourceFile The original file to move
+     * @param targetFile The target location of the file (fully qualified)
+     * @return true if the file was moved successfully, otherwise false
+     */
+    public abstract boolean move(Path sourceFile, Path targetFile);
 }
