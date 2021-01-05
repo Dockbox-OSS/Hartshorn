@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.integrated.server;
 
-import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.annotations.command.Arg;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Extension;
@@ -28,13 +27,9 @@ import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.inventory.Element;
-import org.dockbox.selene.core.inventory.InventoryLayout;
-import org.dockbox.selene.core.inventory.InventoryType;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
@@ -47,7 +42,10 @@ import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.util.SeleneUtils;
 
+import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Extension(
         id = "selene",
@@ -210,21 +208,12 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "demo", usage = "demo")
     public void demo(Player player, CommandContext context) {
-        MinecraftItems
-                .registerCustomItem(MinecraftVersion.MC1_12, "plastered_stone", Item.of("stone_full_1"));
-        Selene.getItems()
-                .registerCustom("plastered_stone_tiles", Item.of("conquest:stone_full_1", 1))
-                .registerCustom("overgrown_cobble", Item.of("conquest:stone_full_2"));
-
-        InventoryLayout.builder(InventoryType.DOUBLE_CHEST)
-                .fill(Selene.getItems().getBlackStainedGlassPane())
-                .row(Selene.getItems().getBedrock(), 2)
-                .border(Selene.getItems().getBlueStainedGlassPane())
-                .set(Element.of(Selene.getItems().getCustom("plastered_stone_tiles"), p -> p.send("Boo!")), 31)
-                .toStaticPaneBuilder()
-                .title(Text.of("$1Test inventory"))
-                .build()
-                .open(player);
+        Map<String, String> corrections = new HashMap<>();
+        corrections.put("stucco_tan_wall_full", "stucco_tan_full");
+        corrections.put("marble_parian_dragonegg", "quartz_block_dragonegg");
+        FileManager fm = SeleneUtils.INJECT.getInstance(FileManager.class);
+        Path dataFileCorrections = fm.getDataFile(IntegratedServerExtension.class, "112_corrections");
+        fm.writeFileContent(dataFileCorrections, corrections).ifErrorPresent(Selene::handle);
     }
 
 }
