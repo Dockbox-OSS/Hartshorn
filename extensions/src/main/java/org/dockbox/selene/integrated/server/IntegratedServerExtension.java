@@ -64,28 +64,43 @@ public class IntegratedServerExtension implements IntegratedExtension {
             PaginationBuilder pb = SeleneUtils.INJECT.getInstance(PaginationBuilder.class);
 
             List<Text> content = SeleneUtils.COLLECTION.emptyList();
-            content.add(Text.of(IntegratedServerResources.SERVER_HEADER.format(Selene.getServer().getVersion())));
-            content.add(Text.of(IntegratedServerResources.SERVER_UPDATE.format(Selene.getServer().getLastUpdate())));
-            content.add(Text.of(IntegratedServerResources.SERVER_AUTHORS.format(String.join(",", Selene.getServer().getAuthors()))));
-            content.add(Text.of(IntegratedServerResources.SERVER_EXTENSIONS));
+            content.add(IntegratedServerResources.SERVER_HEADER
+                    .format(Selene.getServer().getVersion())
+                    .translate(source).asText()
+            );
+            content.add(IntegratedServerResources.SERVER_UPDATE
+                    .format(Selene.getServer().getLastUpdate())
+                    .translate(source).asText()
+            );
+            content.add(IntegratedServerResources.SERVER_AUTHORS
+                    .format(String.join(",", Selene.getServer().getAuthors()))
+                    .translate(source).asText());
+            content.add(IntegratedServerResources.SERVER_EXTENSIONS.translate(source).asText());
 
             em.getRegisteredExtensionIds()
                     .forEach(id -> em.getHeader(id)
-                            .map(this::generateText)
+                            .map(e -> generateText(e, source))
                             .ifPresent(content::add)
                     );
 
-            pb.title(IntegratedServerResources.PAGINATION_TITLE.asText());
+            pb.title(IntegratedServerResources.PAGINATION_TITLE.translate(source).asText());
             pb.content(content);
 
             source.sendPagination(pb.build());
         });
     }
 
-    private Text generateText(Extension e) {
-        Text line = Text.of(IntegratedServerResources.EXTENSION_ROW.format(e.name(), e.id()));
+    private Text generateText(Extension e, MessageReceiver source) {
+        Text line = IntegratedServerResources.EXTENSION_ROW
+                .format(e.name(), e.id())
+                .translate(source)
+                .asText();
         line.onClick(ClickAction.runCommand("/dserver extension " + e.id()));
-        line.onHover(HoverAction.showText(Text.of(IntegratedServerResources.EXTENSION_ROW_HOVER.format(e.name()))));
+        line.onHover(HoverAction.showText(IntegratedServerResources.EXTENSION_ROW_HOVER
+                .format(e.name())
+                .translate(source)
+                .asText()
+        ));
         return line;
     }
 

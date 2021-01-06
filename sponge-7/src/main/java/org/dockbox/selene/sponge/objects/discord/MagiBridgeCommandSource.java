@@ -40,7 +40,7 @@ public class MagiBridgeCommandSource extends DiscordCommandSource {
 
     @Override
     public void send(@NotNull ResourceEntry text) {
-        this.bridge.sendMessage(SpongeConversionUtil.toSponge(Text.of(text)));
+        this.bridge.sendMessage(SpongeConversionUtil.toSponge(text.asText()));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class MagiBridgeCommandSource extends DiscordCommandSource {
 
     @Override
     public void sendWithPrefix(@NotNull ResourceEntry text) {
-        this.bridge.sendMessage(SpongeConversionUtil.toSponge(Text.of(text)));
+        this.bridge.sendMessage(SpongeConversionUtil.toSponge(text.asText()));
     }
 
     @Override

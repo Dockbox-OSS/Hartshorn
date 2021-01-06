@@ -60,7 +60,7 @@ public class Text {
 
             for (Object obj : objects) {
                 if (obj instanceof Text) this.extra.add((Text) obj);
-                if (obj instanceof ResourceEntry) this.extra.add(of(((ResourceEntry) obj).format()));
+                if (obj instanceof ResourceEntry) this.extra.add(of(((ResourceEntry) obj).asString()));
                 else this.extra.add(of(obj));
             }
         }

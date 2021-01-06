@@ -18,6 +18,9 @@
 package org.dockbox.selene.core.i18n.common;
 
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.objects.targets.MessageReceiver;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 
 public interface ResourceEntry extends Formattable {
@@ -33,6 +36,12 @@ public interface ResourceEntry extends Formattable {
     }
 
     String plain();
+
+    default ResourceEntry translate(MessageReceiver receiver) {
+        if (receiver instanceof Player)
+            return this.translate(((Player) receiver).getLanguage());
+        else return this.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage());
+    }
 
     static String plain(String value) {
         return value.replaceAll("[$|&][0-9a-fklmnor]", "");
