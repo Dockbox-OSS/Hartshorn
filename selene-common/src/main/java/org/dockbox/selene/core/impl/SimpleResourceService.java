@@ -105,7 +105,7 @@ public class SimpleResourceService implements ResourceService {
     private Map<String, String> createDefaultResourceFile(FileManager cm, Path languageConfigFile) {
         Map<String, String> resources = SeleneUtils.COLLECTION.emptyConcurrentMap();
         this.knownEntries.forEach(resource -> {
-            resources.put(resource.getKey(), resource.getValue());
+            resources.put(resource.getKey(), resource.asString());
         });
         ResourceConfig config = new ResourceConfig();
         config.translations = resources;

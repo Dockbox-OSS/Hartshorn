@@ -29,6 +29,7 @@ import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
@@ -105,12 +106,12 @@ public class IntegratedServerExtension implements IntegratedExtension {
             } else {
                 ExtensionContext ec = oec.get();
 
-                src.send(Text.of(IntegratedServerResources.EXTENSION_INFO_BLOCK.format(
+                src.send(IntegratedServerResources.EXTENSION_INFO_BLOCK.format(
                         e.name(), e.id(), e.description(),
                         0 == e.dependencies().length ? "None" : String.join("$3, $1", e.dependencies()),
                         String.join("$3, $1", e.authors()),
                         ec.getSource()
-                )));
+                ));
             }
         });
     }
@@ -193,7 +194,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
             if (src instanceof Player) {
                 player = (Player) src;
             } else {
-                src.send("Only players can use this command, or be a target");
+                src.send(IntegratedResource.CONFIRM_WRONG_SOURCE);
                 return;
             }
         }
