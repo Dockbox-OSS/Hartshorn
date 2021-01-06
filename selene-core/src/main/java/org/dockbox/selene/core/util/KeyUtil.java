@@ -101,17 +101,24 @@ public final class KeyUtil {
      * @return the property
      */
     @Nullable
-    @SuppressWarnings("unchecked")
     public <T> InjectorProperty<T> getProperty(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
+        List<InjectorProperty<T>> matchingProperties = this.getProperties(key, expectedType, properties);
+        if (matchingProperties.isEmpty()) return null;
+        else return matchingProperties.get(0);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<InjectorProperty<T>> getProperties(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
+        List<InjectorProperty<T>> matchingProperties = SeleneUtils.COLLECTION.emptyList();
         for (InjectorProperty<?> property : properties) {
             if (property.getKey().equals(key)
                     && null != property.getObject()
                     && SeleneUtils.REFLECTION.isAssignableFrom(expectedType, property.getObject().getClass())
             ) {
-                return (InjectorProperty<T>) property;
+                matchingProperties.add((InjectorProperty<T>) property);
             }
         }
-        return null;
+        return matchingProperties;
     }
 
     /**

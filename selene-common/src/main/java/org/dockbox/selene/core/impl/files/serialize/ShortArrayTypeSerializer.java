@@ -21,28 +21,31 @@
 package org.dockbox.selene.core.impl.files.serialize;
 
 import com.google.common.primitives.Shorts;
-import com.google.common.reflect.TypeToken;
 
-import org.jetbrains.annotations.NotNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.serialize.TypeSerializer;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
+import io.leangen.geantyref.TypeToken;
 
 public class ShortArrayTypeSerializer implements TypeSerializer<short[]> {
 
     private final TypeToken<Short> ttb = new TypeToken<Short>() {};
     private final TypeToken<List<Short>> ttlb = new TypeToken<List<Short>>() {};
 
-    @Override public short[] deserialize(@NotNull TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
-        List<Short> list = value.getList(this.ttb);
+    @Override
+    public short[] deserialize(Type type, ConfigurationNode node) throws SerializationException {
+        List<Short> list = node.getList(this.ttb);
         return Shorts.toArray(list);
     }
 
-    @Override public void serialize(@NotNull TypeToken<?> type, short[] obj, ConfigurationNode value) throws ObjectMappingException {
+    @Override
+    public void serialize(Type type, short @Nullable [] obj, ConfigurationNode node) throws SerializationException {
         List<Short> bytes = Shorts.asList(obj);
-        value.setValue(this.ttlb, bytes);
+        node.set(this.ttlb, bytes);
     }
 }

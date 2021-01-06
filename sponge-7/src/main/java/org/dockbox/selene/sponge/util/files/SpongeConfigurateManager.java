@@ -25,9 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
-
 /**
  * Uses SpongeDefaultFileManager to determine the directory paths. This way all directory paths can be reused by other
  * FileManager implementations without the need of redefining these when changes are made. Due to multiple inheritance
@@ -36,8 +33,7 @@ import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 public class SpongeConfigurateManager extends DefaultConfigurateManager implements SpongeDefaultFileManager {
 
     /**
-     * Provides the given {@link FileType} to the super type {@link FileManager}. And registers any custom
-     * {@link TypeSerializer} types to {@link TypeSerializers#getDefaultSerializers()}.
+     * Provides the given {@link FileType} to the super type {@link FileManager}.
      */
     protected SpongeConfigurateManager() {
         super(FileType.YAML);

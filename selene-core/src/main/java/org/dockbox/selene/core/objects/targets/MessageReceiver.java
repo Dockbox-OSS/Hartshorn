@@ -27,13 +27,9 @@ public interface MessageReceiver extends Target {
 
     void send(Text text);
 
-    void send(CharSequence text);
-
     void sendWithPrefix(ResourceEntry text);
 
     void sendWithPrefix(Text text);
-
-    void sendWithPrefix(CharSequence text);
 
     void sendPagination(Pagination pagination);
 

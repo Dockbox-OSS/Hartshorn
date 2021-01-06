@@ -50,7 +50,7 @@ public class Text {
             Object prim = objects[0];
 
             if (prim instanceof Text) this.text = ((Text) prim).toStringValue();
-            else if (prim instanceof ResourceEntry) this.text = ((ResourceEntry) prim).format();
+            else if (prim instanceof ResourceEntry) this.text = ((ResourceEntry) prim).asString();
             else this.text = prim.toString();
 
             for (char styleChar : styleChars.toCharArray()) {
@@ -60,7 +60,7 @@ public class Text {
 
             for (Object obj : objects) {
                 if (obj instanceof Text) this.extra.add((Text) obj);
-                if (obj instanceof ResourceEntry) this.extra.add(of(((ResourceEntry) obj).format()));
+                if (obj instanceof ResourceEntry) this.extra.add(of(((ResourceEntry) obj).asString()));
                 else this.extra.add(of(obj));
             }
         }

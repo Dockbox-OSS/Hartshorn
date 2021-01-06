@@ -43,7 +43,7 @@ public enum IntegratedResource implements ResourceEntry {
     CONFIRM_INVALID_ID("$4Could not confirm command: Invalid runner ID", "confirm.invalid.id"),
     CONFIRM_INVALID_ENTRY("$4Could not confirm command: Invalid runner entry", "confirm.invalid.entry"),
     CONFIRM_EXPIRED("$4You have no commands waiting for confirmation", "confirm.expired"),
-    CONFIRM_WRONG_SOURCE("$4This command can only be used by identifiable sources (players, console)", "confirm.invalid.source"),
+    CONFIRM_WRONG_SOURCE("$4This command can only be used by players", "confirm.invalid.source"),
 
     // - Generic common error message
     UNKNOWN_ERROR("$4An error occurred. $3{0}", "error"),
@@ -103,7 +103,7 @@ public enum IntegratedResource implements ResourceEntry {
     THORNS("Thorns", "minecraft.enchant.thorns"),
     UNBREAKING("Unbreaking", "minecraft.enchant.unbreaking"),
     VANISHING_CURSE("Vanishing Curse", "minecraft.enchant.vanishing"),
-    ;
+    EXCEPTION("$4{0}", "selene.exception");
 
     private final String key;
     private final Map<Language, String> translations = SeleneUtils.COLLECTION.emptyConcurrentMap();
@@ -119,29 +119,28 @@ public enum IntegratedResource implements ResourceEntry {
     }
 
     public String getValue(Player player) {
-        return this.getValue(player.getLanguage());
+        return this.translate(player.getLanguage()).asString();
     }
 
     @Override
-    public String getValue() {
-        return this.getValue(Selene.getServer().getGlobalConfig().getDefaultLanguage());
+    public ResourceEntry translate(Language lang) {
+        if (this.translations.containsKey(lang)) return new Resource(this.translations.get(lang), this.getKey());
+        return this;
     }
 
     @Override
-    public String getValue(Language lang) {
-        if (this.translations.containsKey(lang)) return this.translations.get(lang);
-        return this.value;
-    }
-
-    @Override
-    public void setValue(String value) {
-        this.translations.put(Selene.getServer().getGlobalConfig().getDefaultLanguage(), value);
-        this.value = value;
+    public String asString() {
+        return this.parseColors(this.value);
     }
 
     @Override
     public String getKey() {
         return "selene." + this.key;
+    }
+
+    @Override
+    public String plain() {
+        return ResourceEntry.plain(this.value);
     }
 
     public void setLanguageValue(Language lang, String value) {

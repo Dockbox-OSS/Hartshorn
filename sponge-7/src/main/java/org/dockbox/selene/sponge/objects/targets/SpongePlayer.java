@@ -263,7 +263,7 @@ public class SpongePlayer extends Player {
 
     @Override
     public void send(@NotNull ResourceEntry text) {
-        String formattedValue = IntegratedResource.NONE.parseColors(text.getValue(this.getLanguage()));
+        String formattedValue = IntegratedResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
         this.send(Text.of(formattedValue));
     }
 
@@ -277,18 +277,8 @@ public class SpongePlayer extends Player {
     }
 
     @Override
-    public void send(@NotNull CharSequence text) {
-        if (this.spongePlayer.referenceExists()) {
-            Text message = Text.of(text);
-            this.postEventPre(message).ifPresent(msg -> {
-                this.spongePlayer.getReference().get().sendMessage(SpongeConversionUtil.toSponge(msg));
-            });
-        }
-    }
-
-    @Override
     public void sendWithPrefix(@NotNull ResourceEntry text) {
-        String formattedValue = IntegratedResource.NONE.parseColors(text.getValue(this.getLanguage()));
+        String formattedValue = IntegratedResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
         this.sendWithPrefix(Text.of(formattedValue));
     }
 
@@ -296,19 +286,6 @@ public class SpongePlayer extends Player {
     public void sendWithPrefix(@NotNull Text text) {
         if (this.spongePlayer.referenceExists()) {
             this.postEventPre(text).ifPresent(msg -> {
-                this.spongePlayer.getReference().get().sendMessage(org.spongepowered.api.text.Text.of(
-                        SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
-                        SpongeConversionUtil.toSponge(msg))
-                );
-            });
-        }
-    }
-
-    @Override
-    public void sendWithPrefix(@NotNull CharSequence text) {
-        if (this.spongePlayer.referenceExists()) {
-            Text message = Text.of(text);
-            this.postEventPre(message).ifPresent(msg -> {
                 this.spongePlayer.getReference().get().sendMessage(org.spongepowered.api.text.Text.of(
                         SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
                         SpongeConversionUtil.toSponge(msg))

@@ -29,6 +29,7 @@ import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
@@ -63,28 +64,43 @@ public class IntegratedServerExtension implements IntegratedExtension {
             PaginationBuilder pb = SeleneUtils.INJECT.getInstance(PaginationBuilder.class);
 
             List<Text> content = SeleneUtils.COLLECTION.emptyList();
-            content.add(Text.of(IntegratedServerResources.SERVER_HEADER.format(Selene.getServer().getVersion())));
-            content.add(Text.of(IntegratedServerResources.SERVER_UPDATE.format(Selene.getServer().getLastUpdate())));
-            content.add(Text.of(IntegratedServerResources.SERVER_AUTHORS.format(String.join(",", Selene.getServer().getAuthors()))));
-            content.add(Text.of(IntegratedServerResources.SERVER_EXTENSIONS));
+            content.add(IntegratedServerResources.SERVER_HEADER
+                    .format(Selene.getServer().getVersion())
+                    .translate(source).asText()
+            );
+            content.add(IntegratedServerResources.SERVER_UPDATE
+                    .format(Selene.getServer().getLastUpdate())
+                    .translate(source).asText()
+            );
+            content.add(IntegratedServerResources.SERVER_AUTHORS
+                    .format(String.join(",", Selene.getServer().getAuthors()))
+                    .translate(source).asText());
+            content.add(IntegratedServerResources.SERVER_EXTENSIONS.translate(source).asText());
 
             em.getRegisteredExtensionIds()
                     .forEach(id -> em.getHeader(id)
-                            .map(this::generateText)
+                            .map(e -> generateText(e, source))
                             .ifPresent(content::add)
                     );
 
-            pb.title(IntegratedServerResources.PAGINATION_TITLE.asText());
+            pb.title(IntegratedServerResources.PAGINATION_TITLE.translate(source).asText());
             pb.content(content);
 
             source.sendPagination(pb.build());
         });
     }
 
-    private Text generateText(Extension e) {
-        Text line = Text.of(IntegratedServerResources.EXTENSION_ROW.format(e.name(), e.id()));
+    private Text generateText(Extension e, MessageReceiver source) {
+        Text line = IntegratedServerResources.EXTENSION_ROW
+                .format(e.name(), e.id())
+                .translate(source)
+                .asText();
         line.onClick(ClickAction.runCommand("/dserver extension " + e.id()));
-        line.onHover(HoverAction.showText(Text.of(IntegratedServerResources.EXTENSION_ROW_HOVER.format(e.name()))));
+        line.onHover(HoverAction.showText(IntegratedServerResources.EXTENSION_ROW_HOVER
+                .format(e.name())
+                .translate(source)
+                .asText()
+        ));
         return line;
     }
 
@@ -105,12 +121,12 @@ public class IntegratedServerExtension implements IntegratedExtension {
             } else {
                 ExtensionContext ec = oec.get();
 
-                src.send(Text.of(IntegratedServerResources.EXTENSION_INFO_BLOCK.format(
+                src.send(IntegratedServerResources.EXTENSION_INFO_BLOCK.format(
                         e.name(), e.id(), e.description(),
                         0 == e.dependencies().length ? "None" : String.join("$3, $1", e.dependencies()),
                         String.join("$3, $1", e.authors()),
                         ec.getSource()
-                )));
+                ));
             }
         });
     }
@@ -193,7 +209,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
             if (src instanceof Player) {
                 player = (Player) src;
             } else {
-                src.send("Only players can use this command, or be a target");
+                src.send(IntegratedResource.CONFIRM_WRONG_SOURCE);
                 return;
             }
         }

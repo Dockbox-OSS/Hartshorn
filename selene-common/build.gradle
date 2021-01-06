@@ -27,11 +27,12 @@ dependencies {
     compile project(path: ':selene-core', configuration: 'shadow')
 
     dependencies {
-        compileOnly "org.spongepowered:configurate-hocon:$configurateVersion"
-        compileOnly "org.spongepowered:configurate-yaml:$configurateVersion"
-        compileOnly "org.spongepowered:configurate-json:$configurateVersion"
-        compileOnly "org.spongepowered:configurate-gson:$configurateVersion"
-        compileOnly "org.spongepowered:configurate-xml:$configurateVersion"
+        shadow "org.spongepowered:configurate-core:$configurateVersion"
+        shadow "org.spongepowered:configurate-hocon:$configurateVersion"
+        shadow "org.spongepowered:configurate-yaml:$configurateVersion"
+        shadow "org.spongepowered:configurate-jackson:$configurateVersion"
+        shadow "org.spongepowered:configurate-gson:$configurateVersion"
+        shadow "org.spongepowered:configurate-xml:$configurateVersion"
 
         shadow "com.stanfy:gson-xml-java:$gsonXmlVersion"
         shadow "com.thoughtworks.xstream:xstream:$xstreamVersion"

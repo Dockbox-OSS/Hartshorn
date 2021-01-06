@@ -30,6 +30,8 @@ import org.dockbox.selene.integrated.data.table.exceptions.UnknownIdentifierExce
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -37,8 +39,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 /**
  * A relational table type which can easily create weak relations to other tables. Relations are non-strict references so
@@ -58,7 +58,9 @@ import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 @ConfigSerializable
 public class Table {
 
+    @Setting
     private final List<TableRow> rows;
+    @Setting
     private final ColumnIdentifier<?>[] identifiers;
 
     /**

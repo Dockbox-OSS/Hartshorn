@@ -35,37 +35,27 @@ public class MagiBridgeCommandSource extends DiscordCommandSource {
 
     @Override
     public void execute(@NotNull String command) {
-        Sponge.getCommandManager().process(bridge, command);
+        Sponge.getCommandManager().process(this.bridge, command);
     }
 
     @Override
     public void send(@NotNull ResourceEntry text) {
-        bridge.sendMessage(SpongeConversionUtil.toSponge(Text.of(text)));
+        this.bridge.sendMessage(SpongeConversionUtil.toSponge(text.asText()));
     }
 
     @Override
     public void send(@NotNull Text text) {
-        bridge.sendMessage(SpongeConversionUtil.toSponge(text));
-    }
-
-    @Override
-    public void send(@NotNull CharSequence text) {
-        bridge.sendMessage(SpongeConversionUtil.toSponge(Text.of(text)));
+        this.bridge.sendMessage(SpongeConversionUtil.toSponge(text));
     }
 
     @Override
     public void sendWithPrefix(@NotNull ResourceEntry text) {
-        bridge.sendMessage(SpongeConversionUtil.toSponge(Text.of(text)));
+        this.bridge.sendMessage(SpongeConversionUtil.toSponge(text.asText()));
     }
 
     @Override
     public void sendWithPrefix(@NotNull Text text) {
-        bridge.sendMessage(SpongeConversionUtil.toSponge(text));
-    }
-
-    @Override
-    public void sendWithPrefix(@NotNull CharSequence text) {
-        bridge.sendMessage(SpongeConversionUtil.toSponge(Text.of(text)));
+        this.bridge.sendMessage(SpongeConversionUtil.toSponge(text));
     }
 
     @Override

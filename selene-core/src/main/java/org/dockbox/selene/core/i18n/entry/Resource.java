@@ -28,7 +28,7 @@ public class Resource implements ResourceEntry {
 
     private final String key;
     private final Map<Language, String> resourceMap = SeleneUtils.INJECT.getInstance(ResourceService.class).getTranslations(this);
-    private String value;
+    private final String value;
 
     public Resource(String value, String key) {
         this.value = value;
@@ -36,23 +36,23 @@ public class Resource implements ResourceEntry {
     }
 
     @Override
-    public String getValue() {
-        return this.value;
+    public ResourceEntry translate(Language lang) {
+        if (this.resourceMap.containsKey(lang)) return new Resource(this.resourceMap.get(lang), this.getKey());
+        return this;
     }
 
     @Override
-    public String getValue(Language lang) {
-        if (this.resourceMap.containsKey(lang)) return this.resourceMap.get(lang);
-        return this.value;
-    }
-
-    @Override
-    public void setValue(String value) {
-        this.value = value;
+    public String asString() {
+        return this.parseColors(this.value);
     }
 
     @Override
     public String getKey() {
         return this.key;
+    }
+
+    @Override
+    public String plain() {
+        return ResourceEntry.plain(this.value);
     }
 }

@@ -271,4 +271,13 @@ public abstract class FileManager {
      * @return true if the file was moved successfully, otherwise false
      */
     public abstract boolean move(Path sourceFile, Path targetFile);
+
+    /**
+     * Attempts to copy a pre-made resource to a target file. If the target file already exists nothing is done.
+     *
+     * @param defaultFileName The name of the resource to copy
+     * @param targetFile The target location of the file (fully qualified)
+     * @return true if the file was copied, otherwise false
+     */
+    public abstract boolean copyDefaultFile(String defaultFileName, Path targetFile);
 }

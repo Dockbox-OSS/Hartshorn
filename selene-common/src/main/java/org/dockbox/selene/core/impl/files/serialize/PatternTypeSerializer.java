@@ -20,25 +20,28 @@
  */
 package org.dockbox.selene.core.impl.files.serialize;
 
-import com.google.common.reflect.TypeToken;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.serialize.TypeSerializer;
 
-import org.jetbrains.annotations.NotNull;
-
+import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.objectmapping.ObjectMappingException;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
+import io.leangen.geantyref.TypeToken;
+
 
 public class PatternTypeSerializer implements TypeSerializer<Pattern> {
 
-    @Override public Pattern deserialize(@NotNull TypeToken<?> type, ConfigurationNode value) throws ObjectMappingException {
-        return Pattern.compile(Objects.requireNonNull(value.getString()));
+    @Override
+    public Pattern deserialize(Type type, ConfigurationNode node) throws SerializationException {
+        return Pattern.compile(Objects.requireNonNull(node.getString()));
     }
 
-    @Override public void serialize(TypeToken<?> type, Pattern obj, ConfigurationNode value) throws ObjectMappingException {
+    @Override
+    public void serialize(Type type, @Nullable Pattern obj, ConfigurationNode node) throws SerializationException {
         assert null != obj : "Pattern object is required";
-        value.setValue(TypeToken.of(String.class), obj.pattern());
+        node.set(TypeToken.get(String.class), obj.pattern());
     }
 }

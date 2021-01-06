@@ -74,13 +74,14 @@ public class LogArchivalExtension {
             Selene.log().warn("Unable to resolve archive name for file {}", source);
             return;
         }
-
-        if (!this.fileManager.move(source, destination.get())) {
-            Selene.log().warn("Unable to move file {} to {}", source, destination);
+        
+        Path dest = destination.get();
+        if (!this.fileManager.move(source, dest)) {
+            Selene.log().warn("Unable to move file {} to {}", source, dest);
             return;
         }
 
-        Selene.log().info("Archived file {} to {}", source, destination);
+        Selene.log().info("Archived file {} to {}", source, dest);
     }
 
     /**

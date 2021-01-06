@@ -20,35 +20,33 @@
  */
 package org.dockbox.selene.core.util.files;
 
-import org.dockbox.selene.core.impl.files.mapping.NeutrinoObjectMapperFactory;
-import org.jetbrains.annotations.NotNull;
+import org.dockbox.selene.core.server.Selene;
 import org.mockito.Mockito;
+import org.spongepowered.configurate.BasicConfigurationNode;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.loader.AbstractConfigurationLoader;
+import org.spongepowered.configurate.loader.CommentHandlers;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.ConfigurationOptions;
-import ninja.leaping.configurate.SimpleConfigurationNode;
-import ninja.leaping.configurate.loader.AbstractConfigurationLoader;
-import ninja.leaping.configurate.loader.CommentHandlers;
-
 /**
  * Largely taken from https://github.com/zml2008/configurate/blob/master/configurate-core/src/test/java/ninja/leaping/configurate/loader/TestConfigurationLoader.java
  */
-public class TestConfigurationLoader extends AbstractConfigurationLoader<ConfigurationNode> {
+public class TestConfigurationLoader extends AbstractConfigurationLoader<BasicConfigurationNode> {
 
-    private ConfigurationNode result = SimpleConfigurationNode.root();
+    private ConfigurationNode result = BasicConfigurationNode.root();
 
-    public static final class Builder extends AbstractConfigurationLoader.Builder<Builder> {
+    public static final class Builder extends AbstractConfigurationLoader.Builder<Builder, TestConfigurationLoader> {
 
         @Override
         public TestConfigurationLoader build() {
-            this.setDefaultOptions(this.getDefaultOptions().setObjectMapperFactory(NeutrinoObjectMapperFactory.getInstance()))
-                    .setSource(() -> Mockito.mock(BufferedReader.class))
-                    .setSink(() -> Mockito.mock(BufferedWriter.class));
+            this.defaultOptions(this.defaultOptions())
+                    .source(() -> Mockito.mock(BufferedReader.class))
+                    .sink(() -> Mockito.mock(BufferedWriter.class));
             return new TestConfigurationLoader(this);
         }
     }
@@ -62,13 +60,21 @@ public class TestConfigurationLoader extends AbstractConfigurationLoader<Configu
     }
 
     @Override
-    protected void loadInternal(ConfigurationNode node, BufferedReader reader) throws IOException {
-        node.setValue(this.result);
+    protected void loadInternal(BasicConfigurationNode node, BufferedReader reader) {
+        try {
+            node.set(this.result);
+        } catch (IOException e) {
+            Selene.handle(e);
+        }
     }
 
     @Override
-    protected void saveInternal(ConfigurationNode node, Writer writer) throws IOException {
-        this.result.setValue(node);
+    protected void saveInternal(ConfigurationNode node, Writer writer) {
+        try {
+            this.result.set(node);
+        } catch (IOException e) {
+            Selene.handle(e);
+        }
     }
 
     public ConfigurationNode getNode() {
@@ -86,7 +92,7 @@ public class TestConfigurationLoader extends AbstractConfigurationLoader<Configu
      * @return The appropriate node type
      */
     @Override
-    public @NotNull ConfigurationNode createEmptyNode(@NotNull ConfigurationOptions options) {
-        return SimpleConfigurationNode.root(options);
+    public BasicConfigurationNode createNode(ConfigurationOptions options) {
+        return BasicConfigurationNode.root(options);
     }
 }

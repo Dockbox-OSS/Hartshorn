@@ -65,7 +65,7 @@ public class SimpleExceptionHelper implements ExceptionHelper {
                     Throwable nextException = exception;
                     while (null != nextException) {
                         StackTraceElement[] trace = nextException.getStackTrace();
-                        Selene.log().error(nextException.getClass().getCanonicalName());
+                        Selene.log().error(nextException.getClass().getCanonicalName() + ": " + nextException.getMessage());
                         for (StackTraceElement element : trace) {
                             String elLine = 0 < element.getLineNumber() ? "line " + element.getLineNumber() : "(internal call)";
                             Selene.log().error("  at " + element.getClassName() + "." + element.getMethodName() + ' ' + elLine);

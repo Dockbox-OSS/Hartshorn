@@ -19,8 +19,6 @@ package org.dockbox.selene.core.impl;
 
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.server.SeleneInformation;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
@@ -29,8 +27,12 @@ import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.i18n.entry.Resource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.SeleneInformation;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -38,8 +40,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @Singleton
 public class SimpleResourceService implements ResourceService {
@@ -105,7 +105,7 @@ public class SimpleResourceService implements ResourceService {
     private Map<String, String> createDefaultResourceFile(FileManager cm, Path languageConfigFile) {
         Map<String, String> resources = SeleneUtils.COLLECTION.emptyConcurrentMap();
         this.knownEntries.forEach(resource -> {
-            resources.put(resource.getKey(), resource.getValue());
+            resources.put(resource.getKey(), resource.asString());
         });
         ResourceConfig config = new ResourceConfig();
         config.translations = resources;

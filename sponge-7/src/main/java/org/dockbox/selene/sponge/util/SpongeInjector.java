@@ -59,6 +59,8 @@ import org.dockbox.selene.core.tasks.TaskRunner;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.util.web.WebUtil;
 import org.dockbox.selene.integrated.server.IntegratedServerExtension;
+import org.dockbox.selene.integrated.sql.SQLMan;
+import org.dockbox.selene.integrated.sql.dialects.sqlite.SQLiteMan;
 import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.inventory.builder.SpongeLayoutBuilder;
 import org.dockbox.selene.sponge.inventory.builder.SpongePaginatedPaneBuilder;
@@ -92,6 +94,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         // File management
         this.bind(FileManager.class).to(SpongeConfigurateManager.class);
         this.bind(FileManager.class).annotatedWith(Bulk.class).to(SpongeXStreamManager.class);
+        this.bind(SQLMan.class).annotatedWith(Format.SQLite.class).to(SQLiteMan.class);
         // Services
         this.bind(PlayerStorageService.class).to(SpongePlayerStorageService.class);
         this.bind(WorldStorageService.class).to(SpongeWorldStorageService.class);

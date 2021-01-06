@@ -17,14 +17,10 @@
 
 package org.dockbox.selene.core.impl.files.serialize;
 
-import com.google.common.reflect.TypeToken;
+import org.spongepowered.configurate.serialize.TypeSerializer;
 
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializerCollection;
-import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
 
 public class SerializerInformation<T> {
 
@@ -37,19 +33,12 @@ public class SerializerInformation<T> {
         SeleneTypeSerializers.addSerializerInformation(this);
     }
 
-    public TypeToken<T> getTypeToken() {
-        return TypeToken.of(this.type);
+    public Class<T> getType() {
+        return this.type;
     }
 
     public TypeSerializer<?> getTypeSerializer() {
         return this.serializer.get();
     }
 
-    public BiConsumer<TypeToken<T>, TypeSerializer<T>> getConsumer() {
-        return this.getConsumer(TypeSerializers.getDefaultSerializers());
-    }
-
-    public BiConsumer<TypeToken<T>, TypeSerializer<T>> getConsumer(TypeSerializerCollection tsc) {
-        return tsc::registerType;
-    }
 }

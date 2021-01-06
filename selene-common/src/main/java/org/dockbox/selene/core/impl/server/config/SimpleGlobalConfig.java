@@ -20,8 +20,8 @@ package org.dockbox.selene.core.impl.server.config;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.config.Environment;
@@ -29,13 +29,13 @@ import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.files.FileManager;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Comment;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.nio.file.Path;
-
-import ninja.leaping.configurate.objectmapping.Setting;
-import ninja.leaping.configurate.objectmapping.serialize.ConfigSerializable;
 
 @Singleton
 @ConfigSerializable
@@ -46,28 +46,20 @@ public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
     @Inject
     private transient IntegratedExtension integratedExtension;
 
-    @Setting(
-            value = "default-language",
-            comment = "The default language for all players and the console."
-    )
+    @Setting("default-language")
+    @Comment("The default language for all players and the console.")
     private Language defaultLanguage = Language.EN_US;
 
-    @Setting(
-            value = "allow-stacktraces",
-            comment = "Whether or not stacktraces should print if a exception is thrown."
-    )
+    @Setting("allow-stacktraces")
+    @Comment("Whether or not stacktraces should print if a exception is thrown.")
     private boolean stacktracesAllowed = true;
 
-    @Setting(
-            value = "friendly-exceptions",
-            comment = "Indicates whether or not to provide a clear user-friendly view of exceptions."
-    )
+    @Setting("friendly-exceptions")
+    @Comment("Indicates whether or not to provide a clear user-friendly view of exceptions.")
     private boolean friendlyExceptions = true;
 
-    @Setting(
-            value = "environment-level",
-            comment = "Indicates the environment Selene is running in. The development environment usually allows for additional debugging options."
-    )
+    @Setting("environment-level")
+    @Comment("Indicates the environment Selene is running in. The development environment usually allows for additional debugging options.")
     private Environment environment = Environment.DEVELOPMENT;
 
     @NotNull

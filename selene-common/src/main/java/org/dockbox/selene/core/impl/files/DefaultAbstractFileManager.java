@@ -20,6 +20,7 @@ package org.dockbox.selene.core.impl.files;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.files.FileType;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,5 +90,14 @@ public abstract class DefaultAbstractFileManager extends FileManager {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean copyDefaultFile(String defaultFileName, Path targetFile) {
+        if (targetFile.toFile().exists() && !SeleneUtils.OTHER.isFileEmpty(targetFile)) return false;
+        return Selene.getResourceFile(defaultFileName).map(resource -> {
+            this.move(resource, targetFile);
+            return true;
+        }).orElse(false);
     }
 }

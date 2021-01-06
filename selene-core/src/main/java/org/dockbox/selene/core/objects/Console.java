@@ -19,7 +19,6 @@ package org.dockbox.selene.core.objects;
 
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
-import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.core.objects.targets.PermissionHolder;
 import org.dockbox.selene.core.server.Selene;
@@ -72,27 +71,13 @@ public abstract class Console implements CommandSource, PermissionHolder {
 
     @Override
     public void send(@NotNull ResourceEntry text) {
-        String formattedValue = IntegratedResource.parse(text.getValue(Selene.getServer().getGlobalConfig().getDefaultLanguage()));
+        Text formattedValue = text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
         this.send(formattedValue);
     }
 
     @Override
-    public void send(@NotNull CharSequence text) {
-        for (String line : text.toString().split("\n")) {
-            this.send(Text.of(line));
-        }
-    }
-
-    @Override
     public void sendWithPrefix(@NotNull ResourceEntry text) {
-        String formattedValue = IntegratedResource.parse(text.getValue(Selene.getServer().getGlobalConfig().getDefaultLanguage()));
+        Text formattedValue = text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
         this.sendWithPrefix(formattedValue);
-    }
-
-    @Override
-    public void sendWithPrefix(@NotNull CharSequence text) {
-        for (String line : text.toString().split("\n")) {
-            this.sendWithPrefix(Text.of(line));
-        }
     }
 }

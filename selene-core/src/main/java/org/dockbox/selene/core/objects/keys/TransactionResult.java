@@ -18,11 +18,11 @@
 package org.dockbox.selene.core.objects.keys;
 
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
-import org.dockbox.selene.core.i18n.entry.FakeResource;
+import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 
 public final class TransactionResult {
 
-    private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, new FakeResource(""));
+    private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, IntegratedResource.NONE);
     private final Status status;
     private final ResourceEntry message;
     private TransactionResult(Status status, ResourceEntry message) {
@@ -39,7 +39,7 @@ public final class TransactionResult {
     }
 
     public static TransactionResult fail(Throwable cause) {
-        return new TransactionResult(Status.FAILURE, new FakeResource(cause.getMessage()));
+        return new TransactionResult(Status.FAILURE, IntegratedResource.EXCEPTION.format(cause.getMessage()));
     }
 
     public ResourceEntry getMessage() {

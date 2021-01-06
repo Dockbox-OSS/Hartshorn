@@ -17,25 +17,34 @@
 
 package org.dockbox.selene.core.i18n.common;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.objects.targets.MessageReceiver;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
-
-import java.util.Map;
 
 public interface ResourceEntry extends Formattable {
 
-    @SuppressWarnings("ConstantDeclaredInInterface")
-    int MAX_SHORT_LENGTH = 50;
+    ResourceEntry translate(Language lang);
 
-    String getValue(Language lang);
+    String asString();
+
+    String getKey();
 
     default Text asText() {
         return Text.of(this.asString());
     }
 
-    default String asString() {
-        return this.parseColors(this.getValue());
+    String plain();
+
+    default ResourceEntry translate(MessageReceiver receiver) {
+        if (receiver instanceof Player)
+            return this.translate(((Player) receiver).getLanguage());
+        else return this.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage());
+    }
+
+    static String plain(String value) {
+        return value.replaceAll("[$|&][0-9a-fklmnor]", "");
     }
 
     default String parseColors(String m) {
@@ -49,49 +58,9 @@ public interface ResourceEntry extends Formattable {
                 .replace("$4", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_ERROR.plain()));
     }
 
-    String getValue();
 
-    void setValue(String value);
-
-    default String plain() {
-        return this.getValue().replaceAll("[$|&][0-9a-fklmnor]", "");
+    @SuppressWarnings("ClassReferencesSubclass")
+    default FormattedResource format(Object... args) {
+        return new FormattedResource(this, args);
     }
-
-    default String format(Object... args) {
-        return this.formatCustom(this.getValue(), args);
-    }
-
-    default String shortFormat(Object... args) {
-        int diff = this.asString().length() - this.plain().length();
-        String formatted = this.format(args);
-        if ((MAX_SHORT_LENGTH - 1) + diff > formatted.length())
-            return formatted;
-        else
-            return this.format(args).substring(0, MAX_SHORT_LENGTH + diff);
-    }
-
-    default String shorten() {
-        if ((MAX_SHORT_LENGTH - 1) < this.getValue().length())
-            return this.getValue().substring(0, MAX_SHORT_LENGTH);
-        else return this.getValue();
-    }
-
-    // Format value placeholders and colors
-    @SuppressWarnings("DuplicatedCode")
-    default String formatCustom(String m, Object... args) {
-        String temp = m;
-        if (0 == args.length) return temp;
-        Map<String, String> map = SeleneUtils.COLLECTION.emptyMap();
-
-        for (int i = 0; i < args.length; i++) {
-            String arg = "" + args[i];
-            if (arg.isEmpty()) map.put(String.format("{%d}", i), "");
-            else map.put(String.format("{%d}", i), arg);
-            if (0 == i) map.put("%s", arg);
-        }
-        temp = this.replaceFromMap(temp, map);
-        return this.parseColors(temp);
-    }
-
-    String getKey();
 }
