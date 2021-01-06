@@ -21,7 +21,6 @@
 package org.dockbox.selene.core.util.files;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
@@ -31,7 +30,6 @@ import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.List;
-import java.util.Set;
 
 import io.leangen.geantyref.TypeToken;
 
@@ -113,27 +111,6 @@ public class SeleneTypeSerializersTests {
 
         Assertions.assertEquals(4, ls[0]);
         Assertions.assertEquals(ls[1], -2);
-    }
-
-    @Test
-    public void testThatSetsCanBeSerialised() throws SerializationException {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createNode().set(new TypeToken<Set<String>>() {}, Sets.newHashSet("test", "test2"));
-
-        List<String> ls = cn.getList(TypeToken.get(String.class));
-        Assertions.assertTrue(ls.contains("test"));
-        Assertions.assertTrue(ls.contains("test2"));
-    }
-
-    @Test
-    public void testThatSetsCanBeDeserialised() throws SerializationException {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createNode().set(new TypeToken<List<String>>() {}, Lists.newArrayList("test", "test", "test2"));
-
-        Set<String> ls = cn.get(new TypeToken<Set<String>>() {});
-        Assertions.assertEquals(2, ls.size());
-        Assertions.assertTrue(ls.contains("test"));
-        Assertions.assertTrue(ls.contains("test2"));
     }
 
     @Test
