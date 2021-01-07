@@ -60,12 +60,15 @@ import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.util.Tristate;
+import org.spongepowered.api.util.blockray.BlockRay;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@SuppressWarnings({"ClassWithTooManyMethods", "rawtypes"})
+@SuppressWarnings("ClassWithTooManyMethods")
 public class SpongePlayer extends Player {
+
+    private static final double BLOCKRAY_LIMIT = 50d;
 
     private final FieldReferenceHolder<org.spongepowered.api.entity.living.player.Player> spongePlayer =
             new FieldReferenceHolder<>(Exceptional.of(Sponge.getServer().getPlayer(this.getUniqueId())), player -> {
@@ -175,6 +178,21 @@ public class SpongePlayer extends Player {
         return this.spongePlayer.getReference()
                 .map(p -> new SpongeProfile(p.getProfile()))
                 .orElseGet(() -> new SpongeProfile(this.getUniqueId()));
+    }
+
+    @Override
+    public Exceptional<Location> getLookingAtBlockPos() {
+        return this.spongePlayer.getReference().map(p -> {
+            BlockRay<org.spongepowered.api.world.World> ray = BlockRay.from(p)
+                .select(BlockRay.notAirFilter())
+                .whilst(BlockRay.allFilter())
+                .distanceLimit(BLOCKRAY_LIMIT)
+                .build();
+            if (ray.hasNext()) {
+                return SpongeConversionUtil.fromSponge(ray.next().getLocation());
+            } else //noinspection ReturnOfNull
+                return null;
+        });
     }
 
     @Override
