@@ -15,14 +15,14 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-rootProject.name = 'Selene'
+package org.dockbox.selene.sample;
 
-include 'selene-core'
-include 'selene-common'
-include 'extensions'
-include 'sponge-7'
-if(file('darwin').exists()){
-    include ':darwin'
+import org.dockbox.selene.core.annotations.extension.Extension;
+
+@Extension(id = "sample", name = "Selene Sample Extension", description = "A sample extension, providing examples on various tasks",
+           authors = "GuusLieben")
+public class SampleExtension {
+
+    // Silence is golden..
+
 }
-
-include 'examples'
