@@ -27,10 +27,11 @@ import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
-import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.inventory.Slot;
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
@@ -43,10 +44,7 @@ import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.util.SeleneUtils;
 
-import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Extension(
         id = "selene",
@@ -224,12 +222,18 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "demo", usage = "demo")
     public void demo(Player player, CommandContext context) {
-        Map<String, String> corrections = new HashMap<>();
-        corrections.put("stucco_tan_wall_full", "stucco_tan_full");
-        corrections.put("marble_parian_dragonegg", "quartz_block_dragonegg");
-        FileManager fm = SeleneUtils.INJECT.getInstance(FileManager.class);
-        Path dataFileCorrections = fm.getDataFile(IntegratedServerExtension.class, "112_corrections");
-        fm.writeFileContent(dataFileCorrections, corrections).ifErrorPresent(Selene::handle);
+        Item item = player.getInventory().getSlot(32);
+        System.out.println("Index:" + item.getId());
+
+        Item item2 = player.getInventory().getSlot(Slot.CHESTPLATE);
+        System.out.println("Chest:" + item2.getId());
+
+        Item item3 = player.getInventory().getSlot(3, 2);
+        System.out.println("At:" + item3.getId());
+
+        player.getInventory().setSlot(Selene.getItems().getPumpkin(), 32);
+        player.getInventory().setSlot(Selene.getItems().getCarvedPumpkin(), Slot.HELMET);
+        player.getInventory().setSlot(Selene.getItems().getBedrock(), 3, 0);
     }
 
 }
