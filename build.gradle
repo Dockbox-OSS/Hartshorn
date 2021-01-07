@@ -29,6 +29,7 @@ buildscript {
 plugins {
     id 'java'
     id 'java-library'
+    id 'org.cadixdev.licenser' version '0.5.0'
 }
 
 static def getVersionName() {
@@ -44,6 +45,11 @@ subprojects { Project subProject ->
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'org.cadixdev.licenser'
+    license {
+        header = rootProject.file("HEADER.txt")
+        ignoreFailures = true
+    }
 
     group = project.pluginGroup
     version = "${getVersionName()}-$date"
@@ -66,10 +72,13 @@ subprojects { Project subProject ->
 
     build.finalizedBy copyArtifacts
 
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
-    tasks.build.dependsOn tasks.shadowJar
+    tasks.build {
+        dependsOn tasks.updateLicenses
+        dependsOn tasks.shadowJar
+    }
 
     shadowJar {
         relocate 'com.fasterxml.jackson', 'org.dockbox.selene.internal.jackson'
