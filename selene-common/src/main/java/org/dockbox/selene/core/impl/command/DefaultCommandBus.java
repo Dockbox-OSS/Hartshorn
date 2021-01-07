@@ -1,23 +1,22 @@
 /*
- *  Copyright (C) 2020 Guus Lieben
+ * Copyright (C) 2020 Guus Lieben
  *
- *  This framework is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as
- *  published by the Free Software Foundation, either version 2.1 of the
- *  License, or (at your option) any later version.
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
  *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- *  the GNU Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
 package org.dockbox.selene.core.impl.command;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.context.CommandContext;
@@ -38,6 +37,7 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -69,8 +69,8 @@ public abstract class DefaultCommandBus implements CommandBus {
      * Each matching element represents a flag with either one or two groups. The first group (G1) is required, and
      * indicates the name of the flag. The second group (G2) is optional, and represents the value expected by the flag.
      * G2 is a argument which can be parsed using {@link DefaultCommandBus#ARGUMENT}.
-     * <p>
-     * Syntax:
+     *
+     * <p>Syntax:
      * <ul>
      *  <li>Without value: -f, --flag</li>
      *  <li>With simple value: -f Type, --flag Type</li>
@@ -84,8 +84,8 @@ public abstract class DefaultCommandBus implements CommandBus {
      * is required or optional. The second group can either be a argument meta which can be parsed using
      * {@link DefaultCommandBus#ELEMENT_VALUE}, or a simple value if {@link DefaultCommandBus#ELEMENT_VALUE} returns no
      * matches. Arguments can be grouped.
-     * <p>
-     * Syntax:
+     *
+     * <p>Syntax:
      * <ul>
      *  <li>Optional without type: [Argument]</li>
      *  <li>Optional with simple value: [Argument{Type}]</li>
@@ -102,8 +102,8 @@ public abstract class DefaultCommandBus implements CommandBus {
      * {@link DefaultCommandBus#ARGUMENT}. Matches contain either one or two groups. If both groups are present, group 1
      * represents the name of the argument, and group 2 represents the value. If only group 1 is present, it represents
      * the type of the argument and the name is obtained from the argument definition.
-     * <p>
-     * Syntax:
+     *
+     * <p>Syntax:
      * <ul>
      *  <li>Type</li>
      *  <li>Name{Type}</li>
@@ -138,6 +138,7 @@ public abstract class DefaultCommandBus implements CommandBus {
         }
     }
 
+    @SuppressWarnings("checkstyle:Indentation")
     private boolean prepareInheritanceContext(AbstractRegistrationContext context, String alias) {
         /*
          If the command 'extends' on the provided alias(es), it should not be registered directly and should instead be

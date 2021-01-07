@@ -49,6 +49,7 @@ subprojects { Project subProject ->
     license {
         header = rootProject.file("HEADER.txt")
         ignoreFailures = true
+        include '**/*.java'
     }
 
     group = project.pluginGroup

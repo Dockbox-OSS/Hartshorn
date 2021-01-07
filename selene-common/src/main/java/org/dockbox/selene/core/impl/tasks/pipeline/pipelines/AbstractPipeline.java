@@ -1,18 +1,18 @@
 /*
- *  Copyright (C) 2020 Guus Lieben
+ * Copyright (C) 2020 Guus Lieben
  *
- *  This framework is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as
- *  published by the Free Software Foundation, either version 2.1 of the
- *  License, or (at your option) any later version.
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
  *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- *  the GNU Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
 package org.dockbox.selene.core.impl.tasks.pipeline.pipelines;
@@ -131,6 +131,20 @@ public abstract class AbstractPipeline<P, I> {
     protected abstract Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput);
 
     /**
+     * Processes an {@link P input} by internally calling {@link AbstractPipeline#process(Object, Throwable)}.
+     *
+     * @param input
+     *         The non-null {@link P input} to be processed by the pipeline
+     *
+     * @return An {@link Exceptional} containing the {@link I output}. If the output is not present it will contain a
+     *         throwable describing why
+     */
+    @SuppressWarnings("NullableProblems") // Performed by GenericTask
+    public Exceptional<I> process(@NotNull P input) {
+        return this.process(input, null);
+    }
+
+    /**
      * A default method for processing a pipe, which handles converting the pipe, checking that they're not illegal
      * {@link CancellablePipe}s and passing forward the previous input if the pipe throws an error.
      *
@@ -184,19 +198,6 @@ public abstract class AbstractPipeline<P, I> {
      */
     public I processUnsafe(@NotNull P input) {
         return this.process(input).orNull();
-    }
-
-    /**
-     * Processes an {@link P input} by internally calling {@link AbstractPipeline#process(Object, Throwable)}.
-     *
-     * @param input
-     *         The non-null {@link P input} to be processed by the pipeline
-     *
-     * @return An {@link Exceptional} containing the {@link I output}. If the output is not present it will contain a
-     *         throwable describing why
-     */
-    public Exceptional<I> process(@NotNull P input) {
-        return this.process(input, null);
     }
 
     /**
