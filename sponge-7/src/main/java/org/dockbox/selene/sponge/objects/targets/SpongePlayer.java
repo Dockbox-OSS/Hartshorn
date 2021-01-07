@@ -30,6 +30,7 @@ import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.FieldReferenceHolder;
+import org.dockbox.selene.core.objects.inventory.PlayerInventory;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
@@ -44,6 +45,7 @@ import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
+import org.dockbox.selene.sponge.objects.inventory.SpongePlayerInventory;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
@@ -233,8 +235,6 @@ public class SpongePlayer extends Player {
         }
     }
 
-    @NotNull
-    @Override
     public Exceptional<Item> getItemAt(int row, int column) {
         if (this.spongePlayer.referenceExists()) {
             return this.spongePlayer.getReference().map(player -> {
@@ -251,9 +251,8 @@ public class SpongePlayer extends Player {
 
     @NotNull
     @Override
-    public Item[][] getInventory() {
-        // TODO: Implementation pending
-        return new Item[0][];
+    public PlayerInventory getInventory() {
+        return new SpongePlayerInventory(this.getUniqueId());
     }
 
     @NotNull
