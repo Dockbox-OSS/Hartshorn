@@ -101,7 +101,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
      */
     static Item of(@NonNls String id) {
         Item item = Item.of(id, 0);
-        if (item.isAir() && !Selene.getItems().getAirId().equals(id)) {
+        if (!Selene.getItems().getAirId().equals(id) && item.isAir()) {
             item = Selene.getItems().getCustom(id);
         }
         return item;
