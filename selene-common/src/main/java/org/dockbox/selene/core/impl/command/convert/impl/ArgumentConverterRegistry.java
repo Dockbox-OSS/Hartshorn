@@ -1,18 +1,18 @@
 /*
- *  Copyright (C) 2020 Guus Lieben
+ * Copyright (C) 2020 Guus Lieben
  *
- *  This framework is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as
- *  published by the Free Software Foundation, either version 2.1 of the
- *  License, or (at your option) any later version.
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
  *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- *  the GNU Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
 package org.dockbox.selene.core.impl.command.convert.impl;
@@ -55,7 +55,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"ClassWithTooManyFields", "unused"})
 public final class ArgumentConverterRegistry {
 
-    private static transient final Collection<ArgumentConverter<?>> CONVERTERS = SeleneUtils.COLLECTION.emptyConcurrentList();
+    private static final transient Collection<ArgumentConverter<?>> CONVERTERS = SeleneUtils.COLLECTION.emptyConcurrentList();
 
     private ArgumentConverterRegistry() {
     }
@@ -64,8 +64,16 @@ public final class ArgumentConverterRegistry {
         return getOptionalConverter(key).isPresent();
     }
 
+    public static boolean hasConverter(Class<?> type) {
+        return getOptionalConverter(type).isPresent();
+    }
+
     public static ArgumentConverter<?> getConverter(String key) {
         return getOptionalConverter(key).rethrowUnchecked().orNull();
+    }
+
+    public static <T> ArgumentConverter<T> getConverter(Class<T> type) {
+        return getOptionalConverter(type).orNull();
     }
 
     public static Exceptional<ArgumentConverter<?>> getOptionalConverter(String key) {
@@ -76,22 +84,12 @@ public final class ArgumentConverterRegistry {
         else return Exceptional.of(new UncheckedSeleneException("No converter present"));
     }
 
-
-    public static boolean hasConverter(Class<?> type) {
-        return getOptionalConverter(type).isPresent();
-    }
-
-
-    public static <T> ArgumentConverter<T> getConverter(Class<T> type) {
-        return getOptionalConverter(type).orNull();
-    }
-
     private static <T> Exceptional<ArgumentConverter<T>> getOptionalConverter(Class<T> type) {
         //noinspection unchecked
         return Exceptional.of(CONVERTERS.stream()
-                .filter(converter -> SeleneUtils.REFLECTION.isAssignableFrom(converter.getType(), type))
-                .map(converter -> (ArgumentConverter<T>) converter)
-                .findFirst());
+            .filter(converter -> SeleneUtils.REFLECTION.isAssignableFrom(converter.getType(), type))
+            .map(converter -> (ArgumentConverter<T>) converter)
+            .findFirst());
     }
 
     public static void registerConverter(ArgumentConverter<?> converter) {

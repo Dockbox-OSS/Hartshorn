@@ -1,23 +1,22 @@
 /*
- *  Copyright (C) 2020 Guus Lieben
+ * Copyright (C) 2020 Guus Lieben
  *
- *  This framework is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser General Public License as
- *  published by the Free Software Foundation, either version 2.1 of the
- *  License, or (at your option) any later version.
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
  *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- *  the GNU Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
 package org.dockbox.selene.core.text;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
@@ -25,6 +24,7 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -45,6 +45,7 @@ public class Text {
     private ClickAction<?> clickAction;
     private HoverAction<?> hoverAction;
     private ShiftClickAction<?> shiftClickAction;
+
     public Text(Object... objects) {
         if (0 < objects.length) {
             Object prim = objects[0];
@@ -155,10 +156,10 @@ public class Text {
             md.update(this.toStringValue().getBytes());
             return Exceptional.of(DatatypeConverter.printHexBinary(md.digest()).toUpperCase());
         } catch (NoSuchAlgorithmException e) {
-            Selene.handle("No algorithm implementation present for " + method + ". " +
-                            "This algorithm should be implemented by every implementation of the Java platform! " +
-                            "See https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html",
-                    e);
+            Selene.handle("No algorithm implementation present for " + method + ". "
+                    + "This algorithm should be implemented by every implementation of the Java platform! "
+                    + "See https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html",
+                e);
         }
         return Exceptional.empty();
     }
