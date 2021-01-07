@@ -34,6 +34,7 @@ import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.bossbar.BossbarColor;
 import org.dockbox.selene.core.objects.bossbar.BossbarStyle;
+import org.dockbox.selene.core.objects.inventory.Slot;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Warp;
@@ -75,6 +76,8 @@ import org.spongepowered.api.item.enchantment.EnchantmentType;
 import org.spongepowered.api.item.inventory.InventoryArchetype;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.equipment.EquipmentType;
+import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.ClickAction.ChangePage;
@@ -552,5 +555,23 @@ public enum SpongeConversionUtil {
             default:
                 return InventoryArchetypes.CHEST;
         }
+    }
+
+    public static EquipmentType toSponge(Slot slot) {
+        switch (slot) {
+            case HELMET:
+                return EquipmentTypes.HEADWEAR;
+            case CHESTPLATE:
+                return EquipmentTypes.CHESTPLATE;
+            case LEGGINGS:
+                return EquipmentTypes.LEGGINGS;
+            case BOOTS:
+                return EquipmentTypes.BOOTS;
+            case MAIN_HAND:
+                return EquipmentTypes.MAIN_HAND;
+            case OFF_HAND:
+                return EquipmentTypes.OFF_HAND;
+        }
+        return EquipmentTypes.ANY;
     }
 }
