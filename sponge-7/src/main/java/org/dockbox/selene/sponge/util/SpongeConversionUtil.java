@@ -188,7 +188,7 @@ public enum SpongeConversionUtil {
 
     public static Exceptional<org.spongepowered.api.entity.living.player.Player> toSponge(Player player) {
         if (player instanceof SpongePlayer) {
-            return Exceptional.ofNullable(((SpongePlayer) player).getSpongePlayer());
+            return ((SpongePlayer) player).getSpongePlayer();
         }
         return Exceptional.empty();
     }

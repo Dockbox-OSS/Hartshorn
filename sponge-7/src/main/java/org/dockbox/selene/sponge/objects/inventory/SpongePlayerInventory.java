@@ -17,27 +17,23 @@
 
 package org.dockbox.selene.sponge.objects.inventory;
 
-import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.inventory.InventoryRow;
 import org.dockbox.selene.core.objects.inventory.PlayerInventory;
 import org.dockbox.selene.core.objects.inventory.Slot;
 import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.entity.Hotbar;
 import org.spongepowered.api.item.inventory.entity.MainPlayerInventory;
+import org.spongepowered.api.item.inventory.equipment.EquipmentInventory;
 import org.spongepowered.api.item.inventory.equipment.EquipmentType;
-import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
 import org.spongepowered.api.item.inventory.property.SlotIndex;
 import org.spongepowered.common.item.inventory.query.operation.InventoryTypeQueryOperation;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -51,79 +47,129 @@ public class SpongePlayerInventory extends PlayerInventory {
             .orElseGet(air);
     };
 
-    private final UUID playerUniqueId;
+    private final SpongePlayer player;
 
-    public SpongePlayerInventory(UUID playerUniqueId) {
-        this.playerUniqueId = playerUniqueId;
+    public SpongePlayerInventory(SpongePlayer player) {
+        this.player = player;
     }
 
     @Override
     public Item getSlot(int row, int column) {
-        return this.getPlayer().map(player -> {
+        return this.internalGetSlot(row, column)
+            .map(slotLookup)
+            .orElseGet(air);
+    }
+
+    @Override
+    public Item getSlot(int index) {
+        return this.internalGetSlot(index)
+            .map(slotLookup)
+            .orElseGet(air);
+    }
+
+    @Override
+    public Item getSlot(Slot slot) {
+        return this.internalGetSlot(slot)
+            .map(slotLookup)
+            .orElseGet(air);
+    }
+
+    @Override
+    public void setSlot(Item item, int row, int column) {
+        this.internalGetSlot(row, column).ifPresent(slot -> {
+            slot.set(SpongeConversionUtil.toSponge(item));
+        });
+    }
+
+    @Override
+    public void setSlot(Item item, int index) {
+        this.internalGetSlot(index).ifPresent(slot -> {
+            slot.set(SpongeConversionUtil.toSponge(item));
+        });
+    }
+
+    @Override
+    public void setSlot(Item item, Slot slotType) {
+        this.internalGetSlot(slotType).ifPresent(slot -> {
+            slot.set(SpongeConversionUtil.toSponge(item));
+        });
+    }
+
+    @Override
+    public boolean contains(Item item) {
+        // TODO
+        return false;
+    }
+
+    @Override
+    public Collection<Item> findMatching(Function<Item, Boolean> filter) {
+        // TODO
+        return new ArrayList<>();
+    }
+
+    @Override
+    public int count(Item item) {
+        // TODO
+        return 0;
+    }
+
+    @Override
+    public Exceptional<InventoryRow> getRow(int index) {
+        if (4 >= index) {
+            return Exceptional.of(new SpongeInventoryRow(this, index, this.player));
+        }
+        return Exceptional.empty();
+    }
+
+    private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(int row, int column) {
+        return this.player.getSpongePlayer().map(player -> {
             if (3 > row) { // Main inventory
                 MainPlayerInventory main = player.getInventory()
                     .query(new InventoryTypeQueryOperation(MainPlayerInventory.class));
 
                 return main.getGrid()
                     .getSlot(column, row)
-                    .map(slotLookup)
-                    .orElseGet(air);
+                    .orElse(null);
 
             } else if (3 == row) { // Hotbar
                 Hotbar hotbar = player.getInventory()
                     .query(new InventoryTypeQueryOperation(Hotbar.class));
                 return hotbar.getSlot(new SlotIndex(column))
-                    .map(slotLookup)
-                    .orElseGet(air);
+                    .orElse(null);
 
-            } else throw new IllegalArgumentException("Slot index [row="+row+", col=" + column +"] is out of bounds (row: 0-3, col: 0-8)");
-        }).orElseGet(air);
+            } else throw new IllegalArgumentException("Slot index [row=" + row + ", col=" + column + "] is out of bounds (row: 0-3, col: 0-8)");
+        });
     }
 
-    @SuppressWarnings("MagicNumber")
-    @Override
-    public Item getSlot(int index) {
-        // Supplier prevents additional performance hit
-        final Supplier<Item> air = () -> Selene.getItems().getAir();
-        return this.getPlayer().map(player -> {
-            if (27 > index) { // Main inventory
+    private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(int index) {
+        final int gridSize = 27;
+        final int inventorySize = 36;
+        return this.player.getSpongePlayer().map(player -> {
+            if (gridSize > index) { // Main inventory
                 MainPlayerInventory main = player.getInventory()
                     .query(new InventoryTypeQueryOperation(MainPlayerInventory.class));
 
-                return main.getGrid().getSlot(new SlotIndex(index)).map(slotLookup).orElseGet(air);
+                return main.getGrid()
+                    .getSlot(new SlotIndex(index))
+                    .orElse(null);
 
-            } else if (36 > index) { // Hotbar
+            } else if (inventorySize > index) { // Hotbar
                 Hotbar hotbar = player.getInventory()
                     .query(new InventoryTypeQueryOperation(Hotbar.class));
                 // -27 to correct for the grid gap (main grid is excluded once we get the Hotbar inventory, and is 3x9 slots)
-                return hotbar.getSlot(new SlotIndex(index - 27))
-                    .map(slotLookup)
-                    .orElseGet(air);
+                return hotbar.getSlot(new SlotIndex(index - gridSize))
+                    .orElse(null);
+
             } else throw new IllegalArgumentException("Slot index " + index + " is out of bounds (0-35)");
-        }).orElseGet(air);
+        });
     }
 
-    @Override
-    public Item getSlot(Slot slot) {
-        Exceptional<Player> lookupPlayer = this.getPlayer();
-        if (lookupPlayer.isAbsent()) return Selene.getItems().getAir();
-        Player player = lookupPlayer.get();
-        // As we were able to look up the Sponge type player, we can confirm the player exists and can skip the isPresent check
-        SpongePlayer spongePlayer = (SpongePlayer) SeleneUtils.INJECT
-            .getInstance(PlayerStorageService.class)
-            .getPlayer(player.getUniqueId()).get();
-
-        EquipmentType equipmentType = SpongeConversionUtil.toSponge(slot);
-        if (equipmentType == EquipmentTypes.OFF_HAND) return spongePlayer.getItemInHand(Hand.OFF_HAND);
-        else if (equipmentType == EquipmentTypes.MAIN_HAND) return spongePlayer.getItemInHand(Hand.MAIN_HAND);
-
-        Exceptional<ItemStack> stack = Exceptional.of(player.getEquipped(equipmentType));
-        return stack.map(SpongeConversionUtil::fromSponge)
-            .map(referencedItem -> (Item) referencedItem)
-            .orElseGet(() -> Selene.getItems().getAir());
-    }
-
-    private Exceptional<Player> getPlayer() {
-        return Exceptional.of(Sponge.getServer().getPlayer(this.playerUniqueId));
+    private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(Slot slot) {
+        return this.player.getSpongePlayer().map(player -> {
+            EquipmentInventory equipment = player.getInventory()
+                .query(new InventoryTypeQueryOperation(EquipmentInventory.class));
+            EquipmentType equipmentType = SpongeConversionUtil.toSponge(slot);
+            return equipment.getSlot(equipmentType).orElse(null);
+        });
     }
 }

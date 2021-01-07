@@ -82,10 +82,6 @@ public class SpongePlayer extends Player {
         super(uniqueId, name);
     }
 
-    public org.spongepowered.api.entity.living.player.Player getSpongePlayer() {
-        return this.spongePlayer.getReference().orElse(null);
-    }
-
     @Override
     public boolean isOnline() {
         return this.spongePlayer.referenceExists() && this.spongePlayer.getReference().get().isOnline();
@@ -252,7 +248,7 @@ public class SpongePlayer extends Player {
     @NotNull
     @Override
     public PlayerInventory getInventory() {
-        return new SpongePlayerInventory(this.getUniqueId());
+        return new SpongePlayerInventory(this);
     }
 
     @NotNull
@@ -348,5 +344,9 @@ public class SpongePlayer extends Player {
         text = event.getMessage();
         if (event.isCancelled()) return Exceptional.empty();
         else return Exceptional.ofNullable(text);
+    }
+
+    public Exceptional<org.spongepowered.api.entity.living.player.Player> getSpongePlayer() {
+        return this.spongePlayer.getReference();
     }
 }
