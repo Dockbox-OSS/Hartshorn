@@ -210,6 +210,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> {
         }
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public Item setProfile(Profile profile) {
         if (this.isHead() && profile instanceof SpongeProfile) {
@@ -237,6 +238,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> {
         return Item.of(SpongeItem.this.getId(), meta);
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void performOnEnchantmentData(Enchant enchant, BiConsumer<EnchantmentData, Enchantment> action) {
         this.getReference().ifPresent(itemStack -> {
             EnchantmentData enchantmentData = itemStack.getOrCreate(EnchantmentData.class).get();
@@ -301,5 +303,22 @@ public class SpongeItem extends ReferencedItem<ItemStack> {
 
             itemStack.offer(data);
         });
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (null == obj) return false;
+        if (obj instanceof SpongeItem) {
+            SpongeItem that = (SpongeItem) obj;
+            Exceptional<ItemStack> thisReference = this.getReference();
+            Exceptional<ItemStack> thatReference = that.getReference();
+            if (thisReference.isAbsent() || thatReference.isAbsent()) return false;
+            ItemStack thisStack = thisReference.get().copy();
+            ItemStack thatStack = thatReference.get().copy();
+            thatStack.setQuantity(1);
+            thisStack.setQuantity(1);
+            return thisStack.equalTo(thatStack);
+        }
+        return false;
     }
 }

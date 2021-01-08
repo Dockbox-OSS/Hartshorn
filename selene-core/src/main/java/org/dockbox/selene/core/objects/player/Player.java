@@ -23,6 +23,7 @@ import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.inventory.PlayerInventory;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.profile.Profile;
@@ -139,4 +140,6 @@ public abstract class Player
 
     public abstract Exceptional<Location> getLookingAtBlockPos();
 
+    @Override
+    public abstract PlayerInventory getInventory();
 }

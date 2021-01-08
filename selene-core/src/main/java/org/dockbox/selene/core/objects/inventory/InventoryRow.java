@@ -15,14 +15,19 @@
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-rootProject.name = 'Selene'
+package org.dockbox.selene.core.objects.inventory;
 
-include 'selene-core'
-include 'selene-common'
-include 'extensions'
-include 'sponge-7'
-if(file('darwin').exists()){
-    include ':darwin'
+/**
+ * Represents a single row inside a {@link PlayerInventory}, a 1x9 row.
+ */
+public interface InventoryRow extends Inventory {
+
+
+    /**
+     * Gets the owning {@link PlayerInventory}.
+     *
+     * @return The inventory
+     */
+    PlayerInventory getInventory();
+
 }
-
-include 'examples'

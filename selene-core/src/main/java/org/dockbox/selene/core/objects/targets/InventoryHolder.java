@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.objects.targets;
 
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.inventory.Inventory;
 import org.dockbox.selene.core.objects.item.Item;
 
 public interface InventoryHolder {
@@ -26,7 +26,5 @@ public interface InventoryHolder {
 
     void giveItem(Item item, int row, int column);
 
-    Exceptional<Item> getItemAt(int row, int column);
-
-    Item[][] getInventory();
+    Inventory getInventory();
 }
