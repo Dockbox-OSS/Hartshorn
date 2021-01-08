@@ -17,12 +17,17 @@
 
 package org.dockbox.selene.core.server;
 
+import com.google.inject.Injector;
+
 import org.dockbox.selene.core.ExceptionHelper;
 import org.dockbox.selene.core.MinecraftVersion;
+import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -67,7 +72,7 @@ public final class Selene {
         if (null != getServer()) {
             for (Throwable throwable : e) {
                 boolean stacktraces = getServer().getGlobalConfig().getStacktracesAllowed();
-                ExceptionHelper eh = SeleneUtils.INJECT.getInstance(ExceptionHelper.class);
+                ExceptionHelper eh = Selene.provide(ExceptionHelper.class);
 
                 if (ExceptionLevels.FRIENDLY == getServer().getGlobalConfig().getExceptionLevel()) {
                     eh.printFriendly(msg, throwable, stacktraces);
@@ -130,6 +135,35 @@ public final class Selene {
         } catch (NullPointerException | IOException e) {
             return Exceptional.of(e);
         }
+    }
+
+    /**
+     * Gets an instance of a provided {@link Class} type. If the type is annotated with {@link Extension} it is ran
+     * through the {@link ExtensionManager} instance to obtain the instance. If it is not annotated as such, it is ran
+     * through the instance {@link Injector} to obtain the instance based on implementation, or manually, provided
+     * mappings.
+     *
+     * @param <T>
+     *     The type parameter for the instance to return
+     * @param type
+     *     The type of the instance
+     * @param extension
+     *     The type of the extension if extension specific bindings are to be used
+     * @param additionalProperties
+     *     The properties to be passed into the type either during or after construction
+     *
+     * @return The instance, if present. Otherwise returns null
+     */
+    public static <T> T provide(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
+        return SeleneUtils.INJECT.getInstance(type, extension, additionalProperties);
+    }
+
+    public static <T> T provide(Class<T> type, InjectorProperty<?>... additionalProperties) {
+        return SeleneUtils.INJECT.getInstance(type, additionalProperties);
+    }
+
+    public static <T> T provide(Class<T> type, Object extension, InjectorProperty<?>... additionalProperties) {
+        return SeleneUtils.INJECT.getInstance(type, extension, additionalProperties);
     }
 
 }

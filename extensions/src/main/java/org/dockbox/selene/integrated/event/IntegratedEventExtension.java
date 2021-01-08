@@ -28,7 +28,7 @@ import org.dockbox.selene.core.events.chat.NativeCommandEvent;
 import org.dockbox.selene.core.events.parents.Cancellable;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerStartingEvent;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.integrated.event.processors.FaweSource;
 import org.dockbox.selene.integrated.event.processors.FaweSourceProcessor;
 import org.dockbox.selene.integrated.event.worldedit.WorldEditCopyEvent;
@@ -40,7 +40,7 @@ public class IntegratedEventExtension {
 
     @Listener
     public void onServerStart(ServerStartingEvent event) {
-        SeleneUtils.INJECT.getInstance(EventBus.class).registerProcessors(new FaweSourceProcessor());
+        Selene.provide(EventBus.class).registerProcessors(new FaweSourceProcessor());
     }
 
     @Listener

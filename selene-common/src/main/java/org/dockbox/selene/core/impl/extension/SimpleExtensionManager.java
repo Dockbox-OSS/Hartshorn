@@ -164,7 +164,7 @@ public class SimpleExtensionManager implements ExtensionManager {
         }
 
         T instance;
-        instance = SeleneUtils.INJECT.getInstance(entry);
+        instance = Selene.provide(entry);
 
         if (null == instance) {
             try {

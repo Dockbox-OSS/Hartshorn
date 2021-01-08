@@ -26,9 +26,9 @@ import net.dv8tion.jda.api.JDAInfo;
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneBootstrap;
 import org.dockbox.selene.core.server.ServerType;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.selene.sponge.listeners.SpongePlayerListener;
@@ -140,10 +140,10 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
     @Listener
     public void onServerInit(GameInitializationEvent event) {
         this.registerSpongeListeners(
-                SeleneUtils.INJECT.getInstance(SpongeCommandListener.class),
-                SeleneUtils.INJECT.getInstance(SpongeServerListener.class),
-                SeleneUtils.INJECT.getInstance(SpongeDiscordListener.class),
-                SeleneUtils.INJECT.getInstance(SpongePlayerListener.class)
+                Selene.provide(SpongeCommandListener.class),
+                Selene.provide(SpongeServerListener.class),
+                Selene.provide(SpongeDiscordListener.class),
+                Selene.provide(SpongePlayerListener.class)
         );
 
         super.init();
@@ -176,7 +176,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
      */
     @Listener
     public void onServerStartedLate(GameStartedServerEvent event) {
-        Exceptional<JDA> oj = SeleneUtils.INJECT.getInstance(DiscordUtils.class).getJDA();
+        Exceptional<JDA> oj = Selene.provide(DiscordUtils.class).getJDA();
         if (oj.isPresent()) {
             JDA jda = oj.get();
             // Avoid registering it twice if the scheduler outside this condition is executing this twice.

@@ -79,7 +79,7 @@ public enum DefaultParamProcessors {
         } else if (wrapper.getListener().getClass().isAnnotationPresent(Extension.class)) {
             extensionClass = wrapper.getListener().getClass();
         }
-        return SeleneUtils.INJECT.getInstance(parameter.getType(), extensionClass);
+        return Selene.provide(parameter.getType(), extensionClass);
     }),
 
     /**

@@ -44,7 +44,6 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.inventory.SpongePlayerInventory;
@@ -124,12 +123,12 @@ public class SpongePlayer extends Player {
     @NotNull
     @Override
     public Language getLanguage() {
-        return SeleneUtils.INJECT.getInstance(PlayerStorageService.class).getLanguagePreference(this.getUniqueId());
+        return Selene.provide(PlayerStorageService.class).getLanguagePreference(this.getUniqueId());
     }
 
     @Override
     public void setLanguage(@NotNull Language lang) {
-        SeleneUtils.INJECT.getInstance(PlayerStorageService.class).setLanguagePreference(this.getUniqueId(), lang);
+        Selene.provide(PlayerStorageService.class).setLanguagePreference(this.getUniqueId(), lang);
     }
 
     @Override
@@ -345,7 +344,7 @@ public class SpongePlayer extends Player {
 
     private Exceptional<Text> postEventPre(Text text) {
         SendMessageEvent event = new SendMessageEvent(this, text);
-        SeleneUtils.INJECT.getInstance(EventBus.class).post(event);
+        Selene.provide(EventBus.class).post(event);
         text = event.getMessage();
         if (event.isCancelled()) return Exceptional.empty();
         else return Exceptional.ofNullable(text);

@@ -42,6 +42,7 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
 
@@ -133,7 +134,7 @@ public final class ArgumentConverterRegistry {
     public static final ArgumentConverter<Player> PLAYER = new ParserArgumentConverter<>(
             Player.class,
             PlayerParser::new,
-            s -> SeleneUtils.INJECT.getInstance(PlayerStorageService.class).getOnlinePlayers().stream()
+            s -> Selene.provide(PlayerStorageService.class).getOnlinePlayers().stream()
                     .map(Player::getName)
                     .filter(n -> n.startsWith(s))
                     .collect(Collectors.toList()),
@@ -157,7 +158,7 @@ public final class ArgumentConverterRegistry {
     public static final ArgumentConverter<World> WORLD = new ParserArgumentConverter<>(
             World.class,
             WorldParser::new,
-            s -> SeleneUtils.INJECT.getInstance(WorldStorageService.class).getLoadedWorlds().stream()
+            s -> Selene.provide(WorldStorageService.class).getLoadedWorlds().stream()
                     .map(World::getName)
                     .filter(n -> n.startsWith(s))
                     .collect(Collectors.toList()),
@@ -241,8 +242,8 @@ public final class ArgumentConverterRegistry {
     public static final ArgumentConverter<Extension> EXTENSION = new ConstantArgumentConverter<>(
             new String[]{"extension", "ext"},
             Extension.class,
-            s -> SeleneUtils.INJECT.getInstance(ExtensionManager.class).getHeader(s),
-            SeleneUtils.INJECT.getInstance(ExtensionManager.class).getRegisteredExtensionIds()
+            s -> Selene.provide(ExtensionManager.class).getHeader(s),
+            Selene.provide(ExtensionManager.class).getRegisteredExtensionIds()
                     .toArray(new String[0])
     );
 

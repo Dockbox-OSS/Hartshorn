@@ -59,7 +59,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
     @Command(aliases = "", usage = "")
     public void debugExtensions(MessageReceiver source) {
         SeleneUtils.REFLECTION.runWithInstance(ExtensionManager.class, em -> {
-            PaginationBuilder pb = SeleneUtils.INJECT.getInstance(PaginationBuilder.class);
+            PaginationBuilder pb = Selene.provide(PaginationBuilder.class);
 
             List<Text> content = SeleneUtils.COLLECTION.emptyList();
             content.add(IntegratedServerResources.SERVER_HEADER
@@ -131,7 +131,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "reload", usage = "reload [id{Extension}]", confirm = true)
     public void reload(MessageReceiver src, CommandContext ctx) {
-        EventBus eb = SeleneUtils.INJECT.getInstance(EventBus.class);
+        EventBus eb = Selene.provide(EventBus.class);
         if (ctx.hasArgument("id")) {
             Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
@@ -140,7 +140,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
             }
 
             Extension e = oarg.get().getValue();
-            Exceptional<?> oi = SeleneUtils.INJECT.getInstance(ExtensionManager.class).getInstance(e.id());
+            Exceptional<?> oi = Selene.provide(ExtensionManager.class).getInstance(e.id());
 
             oi.ifPresent(o -> {
                 eb.post(new ServerReloadEvent(), o.getClass());
@@ -167,7 +167,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
         optionalCooldownId
                 .ifPresent(cooldownId -> {
                     String cid = cooldownId.getValue();
-                    SeleneUtils.INJECT.getInstance(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
+                    Selene.provide(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
                             src.send(IntegratedServerResources.CONFIRM_FAILED));
                 })
                 .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));

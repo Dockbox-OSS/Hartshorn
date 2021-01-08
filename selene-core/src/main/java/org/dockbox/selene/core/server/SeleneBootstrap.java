@@ -128,7 +128,7 @@ public abstract class SeleneBootstrap {
      *         The consumer to apply
      */
     private void initIntegratedExtensions(Consumer<ExtensionContext> consumer) {
-        SeleneUtils.INJECT.getInstance(ExtensionManager.class).initialiseExtensions().forEach(consumer);
+        Selene.provide(ExtensionManager.class).initialiseExtensions().forEach(consumer);
     }
 
     /**
@@ -142,9 +142,9 @@ public abstract class SeleneBootstrap {
         log().info("\u00A7e `-`");
         log().info("     \u00A77Initiating \u00A7bSelene " + this.getVersion());
 
-        EventBus eb = SeleneUtils.INJECT.getInstance(EventBus.class);
-        CommandBus cb = SeleneUtils.INJECT.getInstance(CommandBus.class);
-        DiscordUtils du = SeleneUtils.INJECT.getInstance(DiscordUtils.class);
+        EventBus eb = Selene.provide(EventBus.class);
+        CommandBus cb = Selene.provide(CommandBus.class);
+        DiscordUtils du = Selene.provide(DiscordUtils.class);
 
         eb.subscribe(this);
 
@@ -152,11 +152,11 @@ public abstract class SeleneBootstrap {
         this.initResources();
         cb.apply();
 
-        SeleneUtils.INJECT.getInstance(EventBus.class).post(new ServerEvent.ServerInitEvent());
+        Selene.provide(EventBus.class).post(new ServerEvent.ServerInitEvent());
     }
 
     private void initResources() {
-        SeleneUtils.INJECT.getInstance(ResourceService.class).init();
+        Selene.provide(ResourceService.class).init();
     }
 
     /**
@@ -184,7 +184,7 @@ public abstract class SeleneBootstrap {
         log().info("  \u00A77.. and " + unprovisionedTypes.get() + " unprovisioned types.");
 
         log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded extensions: ");
-        ExtensionManager em = SeleneUtils.INJECT.getInstance(ExtensionManager.class);
+        ExtensionManager em = Selene.provide(ExtensionManager.class);
         em.getRegisteredExtensionIds().forEach(ext -> {
             Exceptional<Extension> header = em.getHeader(ext);
             if (header.isPresent()) {
@@ -199,7 +199,7 @@ public abstract class SeleneBootstrap {
         });
 
         log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded event handlers: ");
-        SeleneUtils.INJECT.getInstance(EventBus.class).getListenersToInvokers().forEach((listener, invokers) -> {
+        Selene.provide(EventBus.class).getListenersToInvokers().forEach((listener, invokers) -> {
             Class<?> type;
             if (listener instanceof Class) type = (Class<?>) listener;
             else type = listener.getClass();
@@ -271,7 +271,7 @@ public abstract class SeleneBootstrap {
      */
     @NotNull
     public GlobalConfig getGlobalConfig() {
-        return SeleneUtils.INJECT.getInstance(GlobalConfig.class);
+        return Selene.provide(GlobalConfig.class);
     }
 
     /**

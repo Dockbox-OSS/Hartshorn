@@ -22,7 +22,7 @@ import org.dockbox.selene.core.inventory.InventoryLayout;
 import org.dockbox.selene.core.inventory.builder.PaginatedPaneBuilder;
 import org.dockbox.selene.core.inventory.properties.LayoutProperty;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.server.Selene;
 
 import java.util.Collection;
 
@@ -58,6 +58,6 @@ public interface PaginatedPane extends Pane {
      * @return The builder
      */
     static PaginatedPaneBuilder builder(InventoryLayout layout) {
-        return SeleneUtils.INJECT.getInstance(PaginatedPaneBuilder.class, new LayoutProperty(layout));
+        return Selene.provide(PaginatedPaneBuilder.class, new LayoutProperty(layout));
     }
 }

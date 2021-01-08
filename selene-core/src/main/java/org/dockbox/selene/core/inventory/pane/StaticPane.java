@@ -22,7 +22,7 @@ import org.dockbox.selene.core.inventory.InventoryLayout;
 import org.dockbox.selene.core.inventory.builder.StaticPaneBuilder;
 import org.dockbox.selene.core.inventory.properties.LayoutProperty;
 import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.server.Selene;
 
 /**
  * Represents a static (non-changing) pane, which can be updated without closing the pane.
@@ -67,7 +67,7 @@ public interface StaticPane extends Pane {
      * @return The builder
      */
     static StaticPaneBuilder builder(InventoryLayout layout) {
-        return SeleneUtils.INJECT.getInstance(StaticPaneBuilder.class, new LayoutProperty(layout));
+        return Selene.provide(StaticPaneBuilder.class, new LayoutProperty(layout));
     }
 
 }

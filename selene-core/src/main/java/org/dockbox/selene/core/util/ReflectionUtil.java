@@ -440,7 +440,7 @@ public class ReflectionUtil {
     @Nullable
     public Extension getExtension(Class<?> type) {
         if (null == type) return null;
-        if (type.equals(Selene.class)) return this.getExtension(SeleneUtils.INJECT.getInstance(IntegratedExtension.class).getClass());
+        if (type.equals(Selene.class)) return this.getExtension(Selene.provide(IntegratedExtension.class).getClass());
 
         if (type.isAnnotationPresent(OwnedBy.class)) {
             OwnedBy owner = type.getAnnotation(OwnedBy.class);
@@ -497,7 +497,7 @@ public class ReflectionUtil {
      *         the consumer
      */
     public <T> void runWithInstance(Class<T> type, Consumer<T> consumer) {
-        T instance = SeleneUtils.INJECT.getInstance(type);
+        T instance = Selene.provide(type);
         if (null != instance) consumer.accept(instance);
     }
 
@@ -595,7 +595,7 @@ public class ReflectionUtil {
      */
     @SuppressWarnings("unchecked")
     public <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision) {
-        T instance = inject ? SeleneUtils.INJECT.getInstance(type) : this.getInstance(type);
+        T instance = inject ? Selene.provide(type) : this.getInstance(type);
         if (null != instance)
             try {
                 for (Field field : type.getDeclaredFields()) {
@@ -649,7 +649,7 @@ public class ReflectionUtil {
             Constructor<T> ctor = clazz.getConstructor();
             return ctor.newInstance();
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            return SeleneUtils.INJECT.getInstance(clazz);
+            return Selene.provide(clazz);
         }
     }
 

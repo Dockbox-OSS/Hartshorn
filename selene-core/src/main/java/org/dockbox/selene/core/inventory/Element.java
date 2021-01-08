@@ -20,7 +20,7 @@ package org.dockbox.selene.core.inventory;
 import org.dockbox.selene.core.inventory.factory.ElementFactory;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.server.Selene;
 
 import java.util.function.Consumer;
 
@@ -70,7 +70,7 @@ public interface Element {
      * @return The element.
      */
     static Element of(Item item, Consumer<Player> onClick) {
-        return SeleneUtils.INJECT.getInstance(ElementFactory.class).create(item, onClick);
+        return Selene.provide(ElementFactory.class).create(item, onClick);
     }
 
 }

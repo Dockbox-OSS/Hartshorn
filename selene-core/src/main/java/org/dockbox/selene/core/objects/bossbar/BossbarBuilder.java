@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.core.objects.bossbar;
 
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.UUID;
 
@@ -71,7 +71,7 @@ public final class BossbarBuilder {
     }
 
     public Bossbar build() {
-        return SeleneUtils.INJECT.getInstance(BossbarFactory.class)
+        return Selene.provide(BossbarFactory.class)
                 .create(this.id, this.percent, this.text, this.color, this.style);
     }
 }
