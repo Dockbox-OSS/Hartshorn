@@ -20,7 +20,8 @@ package org.dockbox.selene.core.objects.inventory;
 import org.dockbox.selene.core.objects.item.Item;
 
 import java.util.Collection;
-import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public interface Inventory {
 
@@ -36,10 +37,23 @@ public interface Inventory {
 
     void setSlot(Item item, Slot slot);
 
-    boolean contains(Item item);
+    default boolean contains(Item item) {
+        return 0 < this.count(item);
+    }
 
-    Collection<Item> findMatching(Function<Item, Boolean> filter);
+    default Collection<Item> findMatching(Predicate<Item> filter) {
+        return this.getAllItems().stream()
+            .filter(filter)
+            .collect(Collectors.toList());
+    }
 
-    int count(Item item);
+    Collection<Item> getAllItems();
+
+    default int count(Item item) {
+        return this.getAllItems().stream()
+            .filter(inventoryItem -> inventoryItem.equals(item))
+            .mapToInt(Item::getAmount)
+            .sum();
+    }
     
 }
