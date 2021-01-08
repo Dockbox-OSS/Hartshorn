@@ -23,6 +23,7 @@ import org.dockbox.selene.core.objects.inventory.PlayerInventory;
 import org.dockbox.selene.core.objects.inventory.Slot;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.item.inventory.entity.Hotbar;
@@ -32,10 +33,11 @@ import org.spongepowered.api.item.inventory.equipment.EquipmentType;
 import org.spongepowered.api.item.inventory.property.SlotIndex;
 import org.spongepowered.common.item.inventory.query.operation.InventoryTypeQueryOperation;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class SpongePlayerInventory extends PlayerInventory {
 
@@ -96,21 +98,14 @@ public class SpongePlayerInventory extends PlayerInventory {
     }
 
     @Override
-    public boolean contains(Item item) {
-        // TODO
-        return false;
-    }
-
-    @Override
-    public Collection<Item> findMatching(Function<Item, Boolean> filter) {
-        // TODO
-        return new ArrayList<>();
-    }
-
-    @Override
-    public int count(Item item) {
-        // TODO
-        return 0;
+    public Collection<Item> getAllItems() {
+        return this.player.getSpongePlayer().map(player -> {
+            return StreamSupport.stream(player.getInventory().slots().spliterator(), false)
+                .filter(inventory -> inventory instanceof org.spongepowered.api.item.inventory.Slot)
+                .map(slot -> (org.spongepowered.api.item.inventory.Slot) slot)
+                .map(slotLookup)
+                .collect(Collectors.toList());
+        }).orElseGet(SeleneUtils.COLLECTION::emptyList);
     }
 
     @Override
