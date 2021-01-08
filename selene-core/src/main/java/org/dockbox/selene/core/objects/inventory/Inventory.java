@@ -148,5 +148,39 @@ public interface Inventory {
             .mapToInt(Item::getAmount)
             .sum();
     }
-    
+
+    /**
+     * Attempts to give the {@link Item} to the inventory. If the item cannot be added, false is returned.
+     *
+     * @param item
+     *     The item to add
+     *
+     * @return {@code true} if the item was added, otherwise {@code false}
+     */
+    boolean give(Item item);
+
+    /**
+     * Returns the first occurring index of the given {@link Item}. If the item is not present, -1 is returned.
+     *
+     * @param item
+     *     The item
+     *
+     * @return The first index of the item, or -1
+     */
+    default int indexOf(Item item) {
+        int capacity = this.capacity();
+        while (0 <= capacity) {
+            Item slot = this.getSlot(capacity);
+            if (slot.equals(item)) return capacity;
+            capacity--;
+        }
+        return -1; // No matches
+    }
+
+    /**
+     * Returns the total capacity of the inventory. This is equal to the maximum index, plus one (to correct for starting at 0).
+     *
+     * @return The capacity
+     */
+    int capacity();
 }
