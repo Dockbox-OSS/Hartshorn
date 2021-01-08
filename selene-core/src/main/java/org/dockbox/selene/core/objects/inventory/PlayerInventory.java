@@ -24,6 +24,18 @@ import org.dockbox.selene.core.objects.Exceptional;
  * - 4 rows, of which one is the hotbar
  * - 4 equipment slots
  * - 2 hand slots (off- and main-hand)
+ *
+ * <p>Index- and row/column-based lookups only support the grid inventory, starting at the top left corner:
+ * <i>Inventory:</i>
+ * {@code
+ * 0 - - - - - - 8
+ * 9 - - - - - - 17
+ * 18 - - - - - - 26
+ * }
+ * <i>Hotbar:</i>
+ * {@code 27 - - - - - - 35}
+ * 
+ * <p>Equipment lookups should be performed using {@link #getSlot(Slot)}.
  */
 public abstract class PlayerInventory implements Inventory {
 
