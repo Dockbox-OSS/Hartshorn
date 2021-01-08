@@ -29,7 +29,7 @@ public class NMSSpawnEntityPacket<T extends Entity> extends SpawnEntityPacket<T>
     public SPacketSpawnGlobalEntity getPacket() {
         Entity entity = this.getEntity();
         if (entity instanceof NMSEntity) {
-            return new SPacketSpawnGlobalEntity(((NMSEntity) entity).getEntity());
+            return new SPacketSpawnGlobalEntity(((NMSEntity<?>) entity).getEntity());
         } else {
             throw new UnsupportedOperationException("Cannot convert entity '" + entity + "' to SpongeEntity");
         }
