@@ -168,7 +168,7 @@ public interface Inventory {
      * @return The first index of the item, or -1
      */
     default int indexOf(Item item) {
-        int capacity = this.capacity();
+        int capacity = this.capacity() -1; //-1 to correct for index offset
         while (0 <= capacity) {
             Item slot = this.getSlot(capacity);
             if (slot.equals(item)) return capacity;

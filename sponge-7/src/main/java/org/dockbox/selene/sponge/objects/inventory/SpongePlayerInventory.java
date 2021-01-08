@@ -26,11 +26,14 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.entity.Hotbar;
 import org.spongepowered.api.item.inventory.entity.MainPlayerInventory;
 import org.spongepowered.api.item.inventory.equipment.EquipmentInventory;
 import org.spongepowered.api.item.inventory.equipment.EquipmentType;
 import org.spongepowered.api.item.inventory.property.SlotIndex;
+import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult;
+import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult.Type;
 import org.spongepowered.common.item.inventory.query.operation.InventoryTypeQueryOperation;
 
 import java.util.Collection;
@@ -41,6 +44,7 @@ import java.util.stream.StreamSupport;
 
 public class SpongePlayerInventory extends PlayerInventory {
 
+    private static final int inventorySize = 36;
     private static final Supplier<Item> air = () -> Selene.getItems().getAir();
     private static final Function<org.spongepowered.api.item.inventory.Slot, Item> slotLookup = slot -> {
         return slot.peek().map(SpongeConversionUtil::fromSponge)
@@ -109,6 +113,23 @@ public class SpongePlayerInventory extends PlayerInventory {
     }
 
     @Override
+    public boolean give(Item item) {
+        return this.player.getSpongePlayer().map(player -> {
+            MainPlayerInventory inventory = player.getInventory().query(new InventoryTypeQueryOperation(MainPlayerInventory.class));
+            ItemStack stack = SpongeConversionUtil.toSponge(item);
+            InventoryTransactionResult result = inventory.getHotbar().offer(stack);
+            if (Type.SUCCESS == result.getType()) return true;
+
+            return Type.SUCCESS == inventory.offer(stack).getType();
+        }).orElse(false);
+    }
+
+    @Override
+    public int capacity() {
+        return inventorySize;
+    }
+
+    @Override
     public Exceptional<InventoryRow> getRow(int index) {
         if (4 >= index) {
             return Exceptional.of(new SpongeInventoryRow(this, index, this.player));
@@ -138,7 +159,6 @@ public class SpongePlayerInventory extends PlayerInventory {
 
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(int index) {
         final int gridSize = 27;
-        final int inventorySize = 36;
         return this.player.getSpongePlayer().map(player -> {
             if (gridSize > index) { // Main inventory
                 MainPlayerInventory main = player.getInventory()

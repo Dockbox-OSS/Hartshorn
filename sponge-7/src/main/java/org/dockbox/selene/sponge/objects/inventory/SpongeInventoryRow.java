@@ -26,9 +26,11 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.entity.Hotbar;
 import org.spongepowered.api.item.inventory.entity.MainPlayerInventory;
 import org.spongepowered.api.item.inventory.property.SlotIndex;
+import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResult.Type;
 import org.spongepowered.common.item.inventory.query.operation.InventoryTypeQueryOperation;
 
 import java.util.Collection;
@@ -101,6 +103,19 @@ public class SpongeInventoryRow implements InventoryRow {
                 .map(slotLookup)
                 .collect(Collectors.toList());
         }).orElseGet(SeleneUtils.COLLECTION::emptyList);
+    }
+
+    @Override
+    public boolean give(Item item) {
+        return this.internalGetRow().map(row -> {
+            ItemStack stack = SpongeConversionUtil.toSponge(item);
+            return Type.SUCCESS == row.offer(stack).getType();
+        }).orElse(false);
+    }
+
+    @Override
+    public int capacity() {
+        return 9;
     }
 
     @Override
