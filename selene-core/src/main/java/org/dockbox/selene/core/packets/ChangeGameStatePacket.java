@@ -15,19 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.objects.inventory;
+package org.dockbox.selene.core.packets;
 
-/**
- * Represents a single row inside a {@link PlayerInventory}, a 1x9 row.
- */
-public interface InventoryRow extends Inventory {
+import org.dockbox.selene.core.Weather;
 
+@SuppressWarnings("AbstractClassWithoutAbstractMethods")
+public abstract class ChangeGameStatePacket extends Packet {
 
-    /**
-     * Gets the owning {@link PlayerInventory}.
-     *
-     * @return The inventory
-     */
-    PlayerInventory getInventory();
+    private Weather weather = Weather.CLEAR;
+
+    public Weather getWeather() {
+        return this.weather;
+    }
+
+    public void setWeather(Weather weather) {
+        this.weather = weather;
+    }
+
+    @Override
+    protected Class<?> internalGetPacketType() throws ClassNotFoundException {
+        return Class.forName("net.minecraft.network.play.server.SPacketChangeGameState");
+    }
 
 }

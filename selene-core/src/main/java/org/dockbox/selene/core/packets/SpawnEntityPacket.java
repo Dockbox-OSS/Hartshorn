@@ -15,19 +15,25 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.objects.inventory;
+package org.dockbox.selene.core.packets;
 
-/**
- * Represents a single row inside a {@link PlayerInventory}, a 1x9 row.
- */
-public interface InventoryRow extends Inventory {
+import org.dockbox.selene.core.entities.Entity;
 
+public abstract class SpawnEntityPacket<T extends Entity> extends Packet {
 
-    /**
-     * Gets the owning {@link PlayerInventory}.
-     *
-     * @return The inventory
-     */
-    PlayerInventory getInventory();
+    private T entity;
+
+    public T getEntity() {
+        return this.entity;
+    }
+
+    public void setEntity(T entity) {
+        this.entity = entity;
+    }
+
+    @Override
+    protected Class<?> internalGetPacketType() throws ClassNotFoundException {
+        return Class.forName("net.minecraft.network.play.server.SPacketSpawnGlobalEntity");
+    }
 
 }

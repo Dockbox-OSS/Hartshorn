@@ -15,19 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.objects.inventory;
+package org.dockbox.selene.core;
 
-/**
- * Represents a single row inside a {@link PlayerInventory}, a 1x9 row.
- */
-public interface InventoryRow extends Inventory {
+public enum Weather {
+    CLEAR(1),
+    RAIN(2);
 
+    private final int gameStateId;
 
-    /**
-     * Gets the owning {@link PlayerInventory}.
-     *
-     * @return The inventory
-     */
-    PlayerInventory getInventory();
+    Weather(int gameStateId) {
+        this.gameStateId = gameStateId;
+    }
 
+    public int getGameStateId() {
+        return this.gameStateId;
+    }
 }
