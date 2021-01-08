@@ -44,7 +44,7 @@ dependencies {
     compileOnly ("org.spongepowered:spongeapi:$spongeApi7Version") {
         exclude group: "org.spongepowered", module: "configurate**"
     }
-    compileOnly ("org.spongepowered:spongecommon:$spongeCommon7Version") {
+    compileOnly("org.spongepowered:spongecommon:$spongeCommon7Version") {
         exclude group: "org.spongepowered", module: "configurate**"
     }
     compileOnly "com.github.Eufranio:MagiBridge:$magiBridgeVersion"
@@ -53,14 +53,24 @@ dependencies {
     compileOnly "com.sk89q.worldedit:worldedit-sponge:$worldEditSpongeVersion"
     compileOnly "io.github.nucleuspowered:nucleus-api:$nucleusApiVersion"
 
+    compileOnly 'io.netty:netty-all:4.1.24.Final'
+
     testCompileOnly project(':selene-core')
     testCompileOnly project(':selene-common')
     testCompileOnly project(':extensions')
 
-    if(findProject(':darwin') != null){
+    if (findProject(':darwin') != null) {
         compile project(path: ':darwin', configuration: 'shadow')
         testCompileOnly project(':darwin')
     }
+
+    // Compile to include in FatJar
+    compile files('../selene-nms-1.12/build/libs/selene-nms-1.12.jar')
+    compileOnly files('libs/PacketGate-0.1.2.jar')
+}
+
+shadowJar {
+    exclude 'net/minecraft/**'
 }
 
 task prepareServerArtifacts(dependsOn: build) {
@@ -98,5 +108,21 @@ task runDevServer(dependsOn: prepareServerArtifacts) {
     }
 }
 
+task buildNMS(type: Exec) {
+    workingDir '../selene-nms-1.12'
+
+    //on windows:
+    commandLine 'cmd', '/c', 'gradlew.bat', 'jar'
+
+    //store the output instead of printing to the console:
+    standardOutput = new ByteArrayOutputStream()
+
+    //extension method stopTomcat.output() can be used to obtain the output:
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+tasks.build.dependsOn buildNMS
 prepareServerArtifacts.dependsOn build
 runDevServer.dependsOn prepareServerArtifacts

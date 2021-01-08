@@ -39,11 +39,13 @@ import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.objects.special.Sounds;
+import org.dockbox.selene.core.packets.Packet;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.inventory.SpongePlayerInventory;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
@@ -66,6 +68,9 @@ import org.spongepowered.api.util.blockray.BlockRay;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
+import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 
 @SuppressWarnings("ClassWithTooManyMethods")
 public class SpongePlayer extends Player {
@@ -348,5 +353,20 @@ public class SpongePlayer extends Player {
 
     public Exceptional<org.spongepowered.api.entity.living.player.Player> getSpongePlayer() {
         return this.spongePlayer.getReference();
+    }
+
+    @Override
+    public void send(Packet packet) {
+        if (packet instanceof NMSPacket) {
+            Sponge.getServiceManager().provide(PacketGate.class).ifPresent(packetGate -> {
+                // connectionByPlayer only calls getUniqueId on the Sponge Player object. Avoid constant rewrapping of types.
+                Exceptional<PacketConnection> connection = Exceptional.of(packetGate.connectionByUniqueId(this.getUniqueId()));
+                connection.ifPresent(packetConnection -> {
+                    ((NMSPacket<?>) packet).write(packetConnection.getChannel());
+                }).ifAbsent(() -> {
+                    Selene.log().warn("Could not create packet connection for player '" + this.getName() + "'");
+                });
+            });
+        }
     }
 }
