@@ -108,21 +108,5 @@ task runDevServer(dependsOn: prepareServerArtifacts) {
     }
 }
 
-task buildNMS(type: Exec) {
-    workingDir '../selene-nms-1.12'
-
-    //on windows:
-    commandLine 'cmd', '/c', 'gradlew.bat', 'jar'
-
-    //store the output instead of printing to the console:
-    standardOutput = new ByteArrayOutputStream()
-
-    //extension method stopTomcat.output() can be used to obtain the output:
-    ext.output = {
-        return standardOutput.toString()
-    }
-}
-
-tasks.build.dependsOn buildNMS
 prepareServerArtifacts.dependsOn build
 runDevServer.dependsOn prepareServerArtifacts

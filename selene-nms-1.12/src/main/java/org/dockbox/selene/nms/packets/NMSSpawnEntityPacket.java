@@ -34,4 +34,5 @@ public class NMSSpawnEntityPacket<T extends Entity> extends SpawnEntityPacket<T>
             throw new UnsupportedOperationException("Cannot convert entity '" + entity + "' to SpongeEntity");
         }
     }
+
 }

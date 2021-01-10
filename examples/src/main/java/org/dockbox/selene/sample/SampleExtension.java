@@ -17,12 +17,20 @@
 
 package org.dockbox.selene.sample;
 
+import org.dockbox.selene.core.annotations.event.Listener;
+import org.dockbox.selene.core.annotations.event.filter.Packet;
 import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.events.packet.PacketEvent;
+import org.dockbox.selene.core.packets.ChangeGameStatePacket;
 
 @Extension(id = "sample", name = "Selene Sample Extension", description = "A sample extension, providing examples on various tasks",
            authors = "GuusLieben")
 public class SampleExtension {
 
-    // Silence is golden..
+    @Listener
+    @Packet(ChangeGameStatePacket.class)
+    public void onGlobalGameStateChange(PacketEvent<ChangeGameStatePacket> packetEvent) {
+        
+    }
 
 }

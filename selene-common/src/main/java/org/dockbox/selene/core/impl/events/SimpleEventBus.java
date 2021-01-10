@@ -20,9 +20,11 @@ package org.dockbox.selene.core.impl.events;
 import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.annotations.event.Listener;
+import org.dockbox.selene.core.annotations.event.filter.Packet;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.EventStage;
 import org.dockbox.selene.core.events.EventWrapper;
+import org.dockbox.selene.core.events.packet.PacketEvent;
 import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
 import org.dockbox.selene.core.impl.events.handle.EventHandlerRegistry;
@@ -176,11 +178,17 @@ public class SimpleEventBus implements EventBus {
         }
 
         for (Class<?> param : method.getParameterTypes()) {
-            if (SeleneUtils.REFLECTION.isAssignableFrom(Event.class, param)
-                    || SeleneUtils.REFLECTION.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
+            if (SeleneUtils.REFLECTION.isAssignableFrom(Event.class, param)) {
+                if (SeleneUtils.REFLECTION.isAssignableFrom(PacketEvent.class, param)
+                && !method.isAnnotationPresent(Packet.class)) {
+                    throw new IllegalArgumentException("Needs @Packet annotation: " + method.toGenericString());
+                }
+                return;
+            } else if (SeleneUtils.REFLECTION.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
                 return;
             }
         }
+
         throw new IllegalArgumentException("Parameter must be a subclass of the Event class: " + method.toGenericString());
     }
 

@@ -27,4 +27,5 @@ public class NMSChangeGameStatePacket extends ChangeGameStatePacket implements N
     public SPacketChangeGameState getPacket() {
         return new SPacketChangeGameState(super.getWeather().getGameStateId(), 0f);
     }
+
 }

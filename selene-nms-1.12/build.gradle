@@ -46,7 +46,7 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
-    compileOnly files('libs/core-cffacc31-2021-01-08.jar')
+    compileOnly files('libs/core-6fed2d3c-2021-01-10.jar')
 }
 
 publishing {

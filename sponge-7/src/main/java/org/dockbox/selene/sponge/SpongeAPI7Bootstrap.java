@@ -25,10 +25,17 @@ import net.dv8tion.jda.api.JDAInfo;
 
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.MinecraftVersion;
+import org.dockbox.selene.core.PlayerStorageService;
+import org.dockbox.selene.core.events.EventBus;
+import org.dockbox.selene.core.events.packet.PacketEvent;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.packets.Packet;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneBootstrap;
 import org.dockbox.selene.core.server.ServerType;
+import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.nms.packets.NMSPacket;
+import org.dockbox.selene.nms.properties.NativePacketProperty;
 import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.selene.sponge.listeners.SpongePlayerListener;
@@ -54,7 +61,13 @@ import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import eu.crushedpixel.sponge.packetgate.api.listener.PacketListener.ListenerPriority;
+import eu.crushedpixel.sponge.packetgate.api.listener.PacketListenerAdapter;
+import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
+import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 
 /**
  * Sponge API 7.x implementation of Selene, using events to initiate startup tasks.
@@ -147,6 +160,56 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
         );
 
         super.init();
+
+        Optional<PacketGate> packetGate = Sponge.getServiceManager().provide(PacketGate.class);
+        // TODO, Placeholder for future implementation by NMSPackets to support native packet modification
+        //noinspection PointlessBooleanExpression
+        if (packetGate.isPresent() && false) {
+            this.preparePacketGateListeners(packetGate.get());
+        } else {
+            Selene.log().warn("Missing PacketGate, packet events will not be fired!");
+        }
+    }
+
+    private void preparePacketGateListeners(PacketGate packetGate) {
+        EventBus bus = Selene.provide(EventBus.class);
+        bus.getListenersToInvokers().forEach((k, v) -> {
+            v.forEach(eventWrapper -> {
+                if (SeleneUtils.REFLECTION.isAssignableFrom(PacketEvent.class, eventWrapper.getEventType())) {
+                    Class<? extends Packet> packet = eventWrapper.getMethod()
+                        .getAnnotation(org.dockbox.selene.core.annotations.event.filter.Packet.class).value();
+
+                    Packet emptyPacket = Selene.provide(packet);
+                    packetGate.registerListener(
+                        this.getPacketGateAdapter(packet),
+                        ListenerPriority.DEFAULT,
+                        emptyPacket.getNativePacketType()
+                    );
+                }
+            });
+        });
+    }
+
+    private PacketListenerAdapter getPacketGateAdapter(Class<? extends Packet> packet) {
+        return new PacketListenerAdapter() {
+            @Override
+            public void onPacketRead(eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent,
+                                     PacketConnection connection) {
+                Selene.provide(PlayerStorageService.class).getPlayer(connection.getPlayerUUID()).ifPresent(player -> {
+                    // Shadowed type
+                    net.minecraft.network.Packet nativePacket = packetEvent.getPacket();
+                    Packet internalPacket = Selene.provide(packet, new NativePacketProperty<>(nativePacket));
+
+                    PacketEvent<? extends Packet> event = new PacketEvent<>(internalPacket, player).post();
+                    packetEvent.setCancelled(event.isCancelled());
+                    if (event.isModified()) {
+                        if (internalPacket instanceof NMSPacket) packetEvent.setPacket(((NMSPacket<?>) internalPacket).getPacket());
+                    }
+
+                    super.onPacketRead(packetEvent, connection);
+                });
+            }
+        };
     }
 
     @NotNull

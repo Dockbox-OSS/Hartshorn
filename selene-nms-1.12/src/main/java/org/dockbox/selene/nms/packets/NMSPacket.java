@@ -22,7 +22,6 @@ import net.minecraft.network.Packet;
 
 import io.netty.channel.Channel;
 
-@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface NMSPacket<T extends Packet<? extends INetHandler>> {
 
     T getPacket();
