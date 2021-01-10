@@ -24,13 +24,13 @@ import com.flowpowered.math.vector.Vector3d;
 import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.chat.SendMessageEvent;
-import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.FieldReferenceHolder;
 import org.dockbox.selene.core.objects.inventory.PlayerInventory;
+import org.dockbox.selene.core.objects.inventory.Slot;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
@@ -47,25 +47,17 @@ import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.inventory.SpongePlayerInventory;
-import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.type.HandType;
-import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
-import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.item.inventory.Slot;
-import org.spongepowered.api.item.inventory.entity.MainPlayerInventory;
-import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.util.blockray.BlockRay;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
@@ -133,24 +125,14 @@ public class SpongePlayer extends Player {
 
     @Override
     public Item getItemInHand(Hand hand) {
-        return this.spongePlayer.getReference().map(player -> {
-            HandType handType;
-            switch (hand) {
-                case MAIN_HAND:
-                    handType = HandTypes.MAIN_HAND;
-                    break;
-                case OFF_HAND:
-                    handType = HandTypes.OFF_HAND;
-                    break;
-                default:
-                    throw new UncheckedSeleneException("Unsupported value in context '" + hand + "'");
-            }
-            Optional<ItemStack> itemStack = player.getItemInHand(handType);
-            if (itemStack.isPresent()) {
-                return SpongeConversionUtil.fromSponge(itemStack.get());
-            }
-            return Selene.getItems().getAir();
-        }).orElse(Selene.getItems().getAir());
+        switch (hand) {
+            case MAIN_HAND:
+                return this.getInventory().getSlot(Slot.MAIN_HAND);
+            case OFF_HAND:
+                return this.getInventory().getSlot(Slot.OFF_HAND);
+            default:
+                throw new IllegalArgumentException("Unsupported type: " + hand);
+        }
     }
 
     @Override
@@ -201,52 +183,6 @@ public class SpongePlayer extends Player {
     public void execute(@NotNull String command) {
         if (this.spongePlayer.referenceExists())
             Sponge.getCommandManager().process(this.spongePlayer.getReference().get(), command);
-    }
-
-
-    @Override
-    public void giveItem(@NotNull Item item) {
-        if (!(item instanceof SpongeItem)) {
-            return;
-        }
-        if (this.spongePlayer.referenceExists()) {
-            this.spongePlayer.getReference().ifPresent(player -> {
-                player.getInventory().offer(SpongeConversionUtil.toSponge(item));
-            });
-        }
-    }
-
-    @Override
-    public void giveItem(@NotNull Item item, int row, int column) {
-        if (!(item instanceof SpongeItem)) {
-            return;
-        }
-        if (this.spongePlayer.referenceExists()) {
-            this.spongePlayer.getReference().ifPresent(player -> {
-                MainPlayerInventory main = player.getInventory().query(MainPlayerInventory.class);
-                Optional<Slot> slotOptional = main.getSlot(SlotPos.of(column, row));
-                slotOptional.ifPresent(slot ->
-                        slot.offer(SpongeConversionUtil.toSponge(item))
-                );
-                if (!slotOptional.isPresent()) {
-                    // TODO: Handle unavailable slot
-                }
-            });
-        }
-    }
-
-    public Exceptional<Item> getItemAt(int row, int column) {
-        if (this.spongePlayer.referenceExists()) {
-            return this.spongePlayer.getReference().map(player -> {
-                MainPlayerInventory main = player.getInventory().query(MainPlayerInventory.class);
-                Exceptional<Slot> optionalSlot = Exceptional.of(main.getSlot(SlotPos.of(column, row)));
-                return optionalSlot.map(slot ->
-                        slot.peek().map(SpongeConversionUtil::fromSponge)
-                                .map(item -> (Item) item)
-                                .orElseGet(() -> Item.of("0"))).orNull();
-            });
-        }
-        return Exceptional.of(new IllegalStateException("Player reference lost"));
     }
 
     @NotNull
