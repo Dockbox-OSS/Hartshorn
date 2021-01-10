@@ -28,4 +28,4 @@ jobs:
         working-directory: selene-nms-1.12
         run: ./gradlew build -x test
       - name: Build (Gradle)
-        run: gradle build -x test -x buildNMS
+        run: gradle build -x test
