@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 /**
  * Represents a inventory element which can be displayed by a {@link org.dockbox.selene.core.inventory.pane.Pane}
  * instance. A element can either be a static representation of a {@link Item}, or carry a action listener in the form
- * of a {@link Consumer<Player>}.
+ * of a {@link Consumer Player consumer}.
  */
 public interface Element {
 

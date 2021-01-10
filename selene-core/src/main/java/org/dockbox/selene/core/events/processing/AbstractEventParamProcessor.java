@@ -58,7 +58,7 @@ public abstract class AbstractEventParamProcessor<A extends Annotation> {
     }
 
     /**
-     * Processes the given object based on available information in the given {@link A Annotation}, {@link Event},
+     * Processes the given object based on available information in the given {@code Annotation}, {@link Event},
      * {@link Parameter}} and/or {@link EventWrapper}.
      * If the parameter does not meet expectations, or should not be used in a given listener method,
      * {@link SkipEventException} is thrown.

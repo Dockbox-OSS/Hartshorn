@@ -41,15 +41,15 @@ public abstract class RemovableKey<K, A> extends Key<K, A> {
      * Instantiates a new Key using a given setter and getter.
      *
      * @param setter
-     *         The setter, accepting two values. The first being the type to apply to, constrained using type parameter {@link K}.
-     *         The second being the value to apply, constrained using type parameter {@link A}.
+     *         The setter, accepting two values. The first being the type to apply to, constrained using type parameter {@code K}.
+     *         The second being the value to apply, constrained using type parameter {@code A}.
      * @param getter
      *         The getter, accepting one value, and returning another. The accepting value being the type to retrieve from,
-     *         constrained using type parameter {@link K}. The return value being the value retreived from the type, constrained
-     *         using type parameter {@link A}.
+     *         constrained using type parameter {@code K}. The return value being the value retreived from the type, constrained
+     *         using type parameter {@code A}.
      * @param remover
      *         The remover, accepting one value. The accepting value being the value to remove from, constrained using the type
-     *         parameter {@link K}.
+     *         parameter {@code K}.
      */
     protected RemovableKey(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
         super(setter, getter);
@@ -57,10 +57,10 @@ public abstract class RemovableKey<K, A> extends Key<K, A> {
     }
 
     /**
-     * Removes a value from the given type constrained by type parameter {@link K}.
+     * Removes a value from the given type constrained by type parameter {@code K}.
      *
      * @param keyType
-     *         The data holder, constrained by type parameter {@link K}.
+     *         The data holder, constrained by type parameter {@code K}.
      */
     public void remove(K keyType) {
         this.remover.accept(keyType);
