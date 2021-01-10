@@ -42,12 +42,12 @@ public abstract class Key<K, A> {
      * Instantiates a new Key using a given setter and getter.
      *
      * @param setter
-     *         The setter, accepting two values. The first being the type to apply to, constrained using type parameter {@link K}.
-     *         The second being the value to apply, constrained using type parameter {@link A}.
+     *         The setter, accepting two values. The first being the type to apply to, constrained using type parameter {@code K}.
+     *         The second being the value to apply, constrained using type parameter {@code A}.
      * @param getter
      *         The getter, accepting one value, and returning another. The accepting value being the type to retrieve from,
-     *         constrained using type parameter {@link K}. The return value being the value retreived from the type, constrained
-     *         using type parameter {@link A}.
+     *         constrained using type parameter {@code K}. The return value being the value retreived from the type, constrained
+     *         using type parameter {@code A}.
      */
     protected Key(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
         this.setter = setter;
@@ -56,12 +56,12 @@ public abstract class Key<K, A> {
 
 
     /**
-     * Apply a given value of type parameter {@link A} to a given type constrained by type parameter {@link K}.
+     * Apply a given value of type parameter {@code A} to a given type constrained by type parameter {@code K}.
      *
      * @param keyType
-     *         The data holder, constrained by type parameter {@link K}.
+     *         The data holder, constrained by type parameter {@code K}.
      * @param appliedValue
-     *         The value to apply, constrained by type parameter {@link A}.
+     *         The value to apply, constrained by type parameter {@code A}.
      *
      * @return The transaction result containing a {@link org.dockbox.selene.core.i18n.common.ResourceEntry} if a failure
      *         occurred.
@@ -71,12 +71,12 @@ public abstract class Key<K, A> {
     }
 
     /**
-     * Retrieves a value from the given type constrained by type parameter {@link K}.
+     * Retrieves a value from the given type constrained by type parameter {@code K}.
      *
      * @param keyType
-     *         The data holder, constrained by type parameter {@link K}.
+     *         The data holder, constrained by type parameter {@code K}.
      *
-     * @return The retrieved value, constrained by type parameter {@link A}.
+     * @return The retrieved value, constrained by type parameter {@code A}.
      */
     public Exceptional<A> get(K keyType) {
         return this.getter.apply(keyType);
@@ -85,7 +85,7 @@ public abstract class Key<K, A> {
     /**
      * Resolves the correct parent type for a given key, so it can be applied safely. This is useful when applying
      * keys to supertypes which extend from multiple Keyholders, like {@link org.dockbox.selene.core.objects.player.Player}.
-     * This method applies a constraint on the type, so that the supertype has to extend type parameter {@link K}, so
+     * This method applies a constraint on the type, so that the supertype has to extend type parameter {@code K}, so
      * we can ensure no {@link ClassCastException} will be thrown. This also prevents us from applying a {@link Key} made
      * for e.g. {@link Item} to a {@link org.dockbox.selene.core.objects.player.Player}.
      *

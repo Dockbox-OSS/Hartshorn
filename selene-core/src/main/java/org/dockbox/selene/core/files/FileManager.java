@@ -101,7 +101,7 @@ public abstract class FileManager {
     }
 
     /**
-     * Get the content of a file, and map the given values to a generic type {@link T}. The exact file is completely
+     * Get the content of a file, and map the given values to a generic type {@code T}. The exact file is completely
      * dynamic, though it is usually encouraged to use {@link FileManager#getDataFile} or
      * {@link FileManager#getConfigFile} to obtain appropriate files.
      *
@@ -112,12 +112,12 @@ public abstract class FileManager {
      * @param type
      *         The exact type to map to
      *
-     * @return A {@link Exceptional} instance holding either the mapping {@link T} instance, or a {@link Throwable}
+     * @return A {@link Exceptional} instance holding either the mapping {@code T} instance, or a {@link Throwable}
      */
     public abstract <T> Exceptional<T> getFileContent(Path file, Class<T> type);
 
     /**
-     * Write a generic type {@link T} to a given file. The exact file is completely
+     * Write a generic type {@code T} to a given file. The exact file is completely
      * dynamic, though it is usually encouraged to use {@link FileManager#getDataFile} or
      * {@link FileManager#getConfigFile} to obtain appropriate files.
      *

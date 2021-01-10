@@ -35,7 +35,7 @@ import org.dockbox.selene.core.server.Selene;
 public interface KeyHolder<T extends KeyHolder> {
 
     /**
-     * Apply a given value of type {@link A} using a given {@link Key} type to the implementation of this interface.
+     * Apply a given value of type {@code A} using a given {@link Key} type to the implementation of this interface.
      * The type parameter of the value to apply, constrained by the type parameter of the given {@link Key}.
      *
      * @param <A>
@@ -59,7 +59,7 @@ public interface KeyHolder<T extends KeyHolder> {
 
     /**
      * Retrieves a value from the implementation of this interface using a given {@link Key}. The {@link Key}
-     * provides the constraints for the returned type using type parameters {@link A}.
+     * provides the constraints for the returned type using type parameters {@code A}.
      *
      * @param <A>
      *         The type parameter of the returned value, constrained by the type parameter of the given {@link Key}.

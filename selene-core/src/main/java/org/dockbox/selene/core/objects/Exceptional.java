@@ -94,7 +94,7 @@ public final class Exceptional<T> {
     }
 
     /**
-     * Provides a {@code Exceptional} instance which contains a non-null value of type {@link T}. This requires the
+     * Provides a {@code Exceptional} instance which contains a non-null value of type {@code T}. This requires the
      * provided value to be non-null. If the value is null, a {@link NullPointerException} is thrown.
      *
      * @param <T>

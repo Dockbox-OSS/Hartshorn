@@ -51,7 +51,7 @@ public class Registry<V> {
      * @param columnID
      *         The {@link RegistryIdentifier} for which to add this data added under.
      * @param values
-     *         A safe varargs of type {@link V} to be added.
+     *         A safe varargs of type {@code V} to be added.
      *
      * @return Itself.
      */
@@ -67,7 +67,7 @@ public class Registry<V> {
      * @param columnID
      *         The {@link RegistryIdentifier} for which to add this data added under.
      * @param values
-     *         A collection of type {@link V} or its children to be added.
+     *         A collection of type {@code V} or its children to be added.
      *
      * @return Itself.
      */
@@ -116,7 +116,7 @@ public class Registry<V> {
      * @param columnID
      *         The {@link RegistryIdentifier} for which this data will be added to.
      * @param values
-     *         A collection of type {@link V} or its children to be added.
+     *         A collection of type {@code V} or its children to be added.
      *
      * @return Itself.
      */
@@ -239,7 +239,7 @@ public class Registry<V> {
      * Filter the Registry by its values. Note this creates a new Registry and doesn't modify itself.
      *
      * @param filter
-     * The filter accepts a value of type {@link V} or its parents and returns true to remove that column, false to keep it.
+     * The filter accepts a value of type {@code V} or its parents and returns true to remove that column, false to keep it.
      * The values which pass the filter are stored in a <b>new</b> Registry. If no values in a particular column pass the
      * filter, it is still added to the new Registry, it will simply contain no values.
      *
@@ -260,7 +260,7 @@ public class Registry<V> {
      * Filter the Registry by its values. Note this creates a new Registry and doesn't modify itself.
      *
      * @param biFilter
-     * The biFilter accepts a {@link RegistryIdentifier} (The columnID of the value), along with a value of type {@link V}
+     * The biFilter accepts a {@link RegistryIdentifier} (The columnID of the value), along with a value of type {@code V}
      * or its parents and returns true to remove that column, false to keep it. The values which pass the filter are stored
      * in a <b>new</b> Registry. If no values in a particular column pass the filter, it is still added to the new Registry,
      * it will simply contain no values.
@@ -285,7 +285,7 @@ public class Registry<V> {
      * @param columnID
      *         The {@link RegistryIdentifier} for which this data will be added to.
      * @param values
-     *         A safe varargs of type {@link V} to be added.
+     *         A safe varargs of type {@code V} to be added.
      *
      * @return Itself.
      */
