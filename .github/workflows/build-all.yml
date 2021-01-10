@@ -21,8 +21,9 @@ jobs:
         with:
           token: ${{ secrets.SELENE_AT }}
           submodules: recursive
-      - name: Build NMS (Gradle Wrapper)
-        run: ./gradlew build -x test
-        working-directory: selene-nms-1.12
+      - uses: eskatos/gradle-command-action@v1
+        with:
+          build-root-directory: selene-nms-1.12
+          arguments: build -x test
       - name: Build (Gradle)
         run: gradle build -x test
