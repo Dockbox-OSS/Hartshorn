@@ -31,7 +31,7 @@ import org.dockbox.selene.core.events.packet.PacketEvent;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.packets.Packet;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.SeleneBootstrap;
+import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.nms.packets.NMSPacket;
@@ -73,16 +73,16 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
  * Sponge API 7.x implementation of Selene, using events to initiate startup tasks.
  */
 @Plugin(
-        id = "selene",
-        name = "Selene Server",
-        description = "Custom plugins and modifications combined into a single source",
-        url = "https://github.com/GuusLieben/Selene",
-        authors = "GuusLieben",
-        dependencies = {
-                @Dependency(id = "plotsquared"),
-                @Dependency(id = "nucleus"),
-                @Dependency(id = "luckperms")
-        }
+    id = "selene",
+    name = "Selene Server",
+    description = "Custom plugins and modifications combined into a single source",
+    url = "https://github.com/GuusLieben/Selene",
+    authors = "GuusLieben",
+    dependencies = {
+        @Dependency(id = "plotsquared"),
+        @Dependency(id = "nucleus"),
+        @Dependency(id = "luckperms")
+    }
 )
 public class SpongeAPI7Bootstrap extends SeleneBootstrap {
 
@@ -103,7 +103,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
      * The entry point of application, in case it is started directly.
      *
      * @param args
-     *         The input arguments
+     *     The input arguments
      */
     public static void main(String[] args) {
         // This is the only place where SystemOut is allowed as no server instance can exist at this point.
@@ -118,20 +118,20 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
     @Listener
     public void onGamePreInit(GamePreInitializationEvent event) {
         SpongeItem.ITEM_KEY = Key.builder()
-                .type(new TypeToken<MapValue<String, Object>>() {
-                })
-                .query(DataQuery.of(SpongeItem.QUERY))
-                .id(SpongeItem.ID)
-                .name(SpongeItem.NAME)
-                .build();
+            .type(new TypeToken<MapValue<String, Object>>() {
+            })
+            .query(DataQuery.of(SpongeItem.QUERY))
+            .id(SpongeItem.ID)
+            .name(SpongeItem.NAME)
+            .build();
 
         DataRegistration.builder()
-                .dataClass(MutableSpongeItemData.class)
-                .immutableClass(ImmutableSpongeItemData.class)
-                .builder(new SpongeItemDataManipulatorBuilder())
-                .id(SpongeItem.ID)
-                .name(SpongeItem.NAME)
-                .build();
+            .dataClass(MutableSpongeItemData.class)
+            .immutableClass(ImmutableSpongeItemData.class)
+            .builder(new SpongeItemDataManipulatorBuilder())
+            .id(SpongeItem.ID)
+            .name(SpongeItem.NAME)
+            .build();
     }
 
     private void registerSpongeListeners(Object... listeners) {
@@ -148,24 +148,23 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
      * {@link org.dockbox.selene.sponge.listeners.SpongeServerListener}.
      *
      * @param event
-     *         Sponge's initialization event
+     *     Sponge's initialization event
      */
     @Listener
     public void onServerInit(GameInitializationEvent event) {
         this.registerSpongeListeners(
-                Selene.provide(SpongeCommandListener.class),
-                Selene.provide(SpongeServerListener.class),
-                Selene.provide(SpongeDiscordListener.class),
-                Selene.provide(SpongePlayerListener.class)
+            Selene.provide(SpongeCommandListener.class),
+            Selene.provide(SpongeServerListener.class),
+            Selene.provide(SpongeDiscordListener.class),
+            Selene.provide(SpongePlayerListener.class)
         );
 
         super.init();
 
         Optional<PacketGate> packetGate = Sponge.getServiceManager().provide(PacketGate.class);
-        // TODO, Placeholder for future implementation by NMSPackets to support native packet modification
-        //noinspection PointlessBooleanExpression
-        if (packetGate.isPresent() && false) {
+        if (packetGate.isPresent()) {
             this.preparePacketGateListeners(packetGate.get());
+            Selene.log().info("Successfully hooked into PacketGate");
         } else {
             Selene.log().warn("Missing PacketGate, packet events will not be fired!");
         }
@@ -193,20 +192,15 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
     private PacketListenerAdapter getPacketGateAdapter(Class<? extends Packet> packet) {
         return new PacketListenerAdapter() {
             @Override
-            public void onPacketRead(eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent,
-                                     PacketConnection connection) {
+            public void onPacketWrite(eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent, PacketConnection connection) {
                 Selene.provide(PlayerStorageService.class).getPlayer(connection.getPlayerUUID()).ifPresent(player -> {
-                    // Shadowed type
+                    // Shadowed NMS type
                     net.minecraft.network.Packet nativePacket = packetEvent.getPacket();
                     Packet internalPacket = Selene.provide(packet, new NativePacketProperty<>(nativePacket));
 
                     PacketEvent<? extends Packet> event = new PacketEvent<>(internalPacket, player).post();
                     packetEvent.setCancelled(event.isCancelled());
-                    if (event.isModified()) {
-                        if (internalPacket instanceof NMSPacket) packetEvent.setPacket(((NMSPacket<?>) internalPacket).getPacket());
-                    }
-
-                    super.onPacketRead(packetEvent, connection);
+                    if (event.isModified() && internalPacket instanceof NMSPacket) packetEvent.setPacket(((NMSPacket<?>) internalPacket).getPacket());
                 });
             }
         };
@@ -235,7 +229,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
      * this method again 30 seconds later.
      *
      * @param event
-     *         The event
+     *     The event
      */
     @Listener
     public void onServerStartedLate(GameStartedServerEvent event) {

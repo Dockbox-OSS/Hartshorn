@@ -24,6 +24,10 @@ import org.dockbox.selene.core.packets.Packet;
 import org.dockbox.selene.core.server.Selene;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * The event fired when the server <b>sends</b> a packet to a player.
+ * @param <T>
+ */
 public class PacketEvent<T extends Packet> extends AbstractCancellableEvent {
 
     private T packet;

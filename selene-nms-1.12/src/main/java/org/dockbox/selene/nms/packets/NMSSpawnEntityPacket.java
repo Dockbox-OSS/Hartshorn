@@ -21,6 +21,7 @@ import net.minecraft.network.play.server.SPacketSpawnGlobalEntity;
 
 import org.dockbox.selene.core.entities.Entity;
 import org.dockbox.selene.core.packets.SpawnEntityPacket;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.nms.entities.NMSEntity;
 
 public class NMSSpawnEntityPacket<T extends Entity> extends SpawnEntityPacket<T> implements NMSPacket<SPacketSpawnGlobalEntity> {
@@ -35,4 +36,8 @@ public class NMSSpawnEntityPacket<T extends Entity> extends SpawnEntityPacket<T>
         }
     }
 
+    @Override
+    public void stateEnabling(InjectorProperty<?>... injectorProperties) {
+        // TODO, Implementation of Entity
+    }
 }

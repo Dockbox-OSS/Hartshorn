@@ -52,7 +52,6 @@ import org.dockbox.selene.core.objects.item.ItemFactory;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.objects.profile.ProfileFactory;
 import org.dockbox.selene.core.packets.ChangeGameStatePacket;
-import org.dockbox.selene.core.packets.SpawnEntityPacket;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
@@ -64,7 +63,6 @@ import org.dockbox.selene.integrated.server.IntegratedServerExtension;
 import org.dockbox.selene.integrated.sql.SQLMan;
 import org.dockbox.selene.integrated.sql.dialects.sqlite.SQLiteMan;
 import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
-import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
 import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.inventory.builder.SpongeLayoutBuilder;
 import org.dockbox.selene.sponge.inventory.builder.SpongePaginatedPaneBuilder;
@@ -122,6 +120,5 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(Logger.class).toInstance(Selene.log());
         // Packets
         this.bind(ChangeGameStatePacket.class).to(NMSChangeGameStatePacket.class);
-        this.bind(SpawnEntityPacket.class).to(NMSSpawnEntityPacket.class);
     }
 }

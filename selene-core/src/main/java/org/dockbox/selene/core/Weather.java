@@ -30,4 +30,11 @@ public enum Weather {
     public int getGameStateId() {
         return this.gameStateId;
     }
+
+    public static Weather getByGameStateId(int gameStateId) {
+        for (Weather value : values()) {
+            if (value.getGameStateId() == gameStateId) return value;
+        }
+        return Weather.CLEAR;
+    }
 }

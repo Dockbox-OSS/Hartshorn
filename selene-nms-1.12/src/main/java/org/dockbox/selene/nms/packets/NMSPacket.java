@@ -20,9 +20,11 @@ package org.dockbox.selene.nms.packets;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 
+import org.dockbox.selene.core.server.properties.InjectableType;
+
 import io.netty.channel.Channel;
 
-public interface NMSPacket<T extends Packet<? extends INetHandler>> {
+public interface NMSPacket<T extends Packet<? extends INetHandler>> extends InjectableType {
 
     T getPacket();
 

@@ -19,13 +19,38 @@ package org.dockbox.selene.nms.packets;
 
 import net.minecraft.network.play.server.SPacketChangeGameState;
 
+import org.dockbox.selene.core.Weather;
+import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.packets.ChangeGameStatePacket;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.nms.properties.NativePacketProperty;
 
 public class NMSChangeGameStatePacket extends ChangeGameStatePacket implements NMSPacket<SPacketChangeGameState> {
 
+    private SPacketChangeGameState nativePacket;
+
     @Override
-    public SPacketChangeGameState getPacket() {
-        return new SPacketChangeGameState(super.getWeather().getGameStateId(), 0f);
+    public Weather getWeather() {
+        // TODO, use field value or buffer, getGameState is client only
+        return Weather.getByGameStateId(this.nativePacket.getGameState());
     }
 
+    @Override
+    public void setWeather(Weather weather) {
+        this.nativePacket = new SPacketChangeGameState(weather.getGameStateId(), 0f);
+    }
+
+    @Override
+    public SPacketChangeGameState getPacket() {
+        return null == this.nativePacket ? new SPacketChangeGameState(super.getWeather().getGameStateId(), 0f) : this.nativePacket;
+    }
+
+    @Override
+    public void stateEnabling(InjectorProperty<?>... injectorProperties) {
+        this.nativePacket = Keys.getPropertyValue(
+            NativePacketProperty.KEY,
+            SPacketChangeGameState.class,
+            injectorProperties
+        ).orElseGet(SPacketChangeGameState::new);
+    }
 }
