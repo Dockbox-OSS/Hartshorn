@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.integrated.server;
 
+import org.dockbox.selene.core.Weather;
 import org.dockbox.selene.core.annotations.command.Arg;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Extension;
@@ -30,11 +31,10 @@ import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.inventory.Slot;
-import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
+import org.dockbox.selene.core.packets.ChangeGameStatePacket;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
@@ -222,18 +222,9 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "demo", usage = "demo")
     public void demo(Player player, CommandContext context) {
-        Item item = player.getInventory().getSlot(32);
-        System.out.println("Index:" + item.getId());
-
-        Item item2 = player.getInventory().getSlot(Slot.CHESTPLATE);
-        System.out.println("Chest:" + item2.getId());
-
-        Item item3 = player.getInventory().getSlot(3, 2);
-        System.out.println("At:" + item3.getId());
-
-        player.getInventory().setSlot(Selene.getItems().getPumpkin(), 32);
-        player.getInventory().setSlot(Selene.getItems().getCarvedPumpkin(), Slot.HELMET);
-        player.getInventory().setSlot(Selene.getItems().getBedrock(), 3, 0);
+        ChangeGameStatePacket packet = Selene.provide(ChangeGameStatePacket.class);
+        packet.setWeather(Weather.RAIN);
+        player.send(packet);
     }
 
 }

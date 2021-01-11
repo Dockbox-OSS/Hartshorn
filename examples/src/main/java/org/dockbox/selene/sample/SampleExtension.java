@@ -22,6 +22,7 @@ import org.dockbox.selene.core.annotations.event.filter.Packet;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.events.packet.PacketEvent;
 import org.dockbox.selene.core.packets.ChangeGameStatePacket;
+import org.dockbox.selene.core.server.Selene;
 
 @Extension(id = "sample", name = "Selene Sample Extension", description = "A sample extension, providing examples on various tasks",
            authors = "GuusLieben")
@@ -29,8 +30,8 @@ public class SampleExtension {
 
     @Listener
     @Packet(ChangeGameStatePacket.class)
-    public void onGlobalGameStateChange(PacketEvent<ChangeGameStatePacket> packetEvent) {
-        
+    public void onGameStatePacket(PacketEvent<ChangeGameStatePacket> packetEvent) {
+        Selene.log().info("Sending a packet event to " + packetEvent.getTarget().getName() + " (GameStateChange: " + packetEvent.getPacket().getWeather() + ')');
     }
 
 }
