@@ -100,6 +100,18 @@ public class ReflectionUtil {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> Exceptional<T> getFieldValue(Class<?> fieldHolder, Object instance, String field, Class<T> expectedType) {
+        try {
+            Field declaredField = fieldHolder.getDeclaredField(field);
+            declaredField.setAccessible(true);
+            T value = (T) declaredField.get(instance);
+            return Exceptional.of(value);
+        } catch (ClassCastException | ReflectiveOperationException e) {
+            return Exceptional.of(e);
+        }
+    }
+
     @Contract("null, _ -> false; !null, null -> false")
     public <T> boolean isGenericInstanceOf(T instance, Class<?> type) {
         return null != instance && null != type && this.isAssignableFrom(type, instance.getClass());
