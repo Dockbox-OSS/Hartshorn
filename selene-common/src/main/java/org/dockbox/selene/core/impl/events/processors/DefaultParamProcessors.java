@@ -64,7 +64,7 @@ public enum DefaultParamProcessors {
     }),
 
     /**
-     * The processor definition for {@link Provided}. Tries to obtain a value through {@link org.dockbox.selene.core.util.InjectUtil#getInstance(Class, InjectorProperty[])}.
+     * The processor definition for {@link Provided}. Tries to obtain a value through {@link org.dockbox.selene.core.server.bootstrap.InjectableBootstrap#getInstance(Class, InjectorProperty[])}.
      * If no instance is found {@code null} is returned. This processor is performed in a {@link EventStage#POPULATE}
      * stage, making it the first available option to provide the object value. It is possible there is another annotation
      * processed before this if it is in the same stage, in which case the processor respects the value of
@@ -100,7 +100,7 @@ public enum DefaultParamProcessors {
                 if (null == object) throw new SkipEventException();
                 break;
             case EMPTY:
-                if (SeleneUtils.ASSERTION.isEmpty(object)) throw new SkipEventException();
+                if (SeleneUtils.OTHER.isEmpty(object)) throw new SkipEventException();
                 break;
             case ZERO:
                 if (object instanceof Number && 0 == ((Number) object).floatValue())

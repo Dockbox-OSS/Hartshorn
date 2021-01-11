@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.server;
+package org.dockbox.selene.core.server.bootstrap;
 
 import com.google.inject.Binding;
 import com.google.inject.Key;
@@ -33,8 +33,11 @@ import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.SeleneInformation;
+import org.dockbox.selene.core.server.SeleneInjectConfiguration;
+import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.server.config.GlobalConfig;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +57,7 @@ import java.util.function.Consumer;
  * The global bootstrapping component which instantiates all configured modules and provides access to server
  * information.
  */
-public abstract class SeleneBootstrap {
+public abstract class SeleneBootstrap extends InjectableBootstrap {
 
     private static SeleneBootstrap instance;
     private static final Logger log = LoggerFactory.getLogger(Selene.class);
@@ -70,7 +73,7 @@ public abstract class SeleneBootstrap {
      *         the injector provided by the Selene implementation
      */
     protected SeleneBootstrap(SeleneInjectConfiguration moduleConfiguration) {
-        SeleneUtils.INJECT.registerGlobal(moduleConfiguration);
+        super.registerGlobal(moduleConfiguration);
         this.construct();
     }
 
@@ -117,7 +120,7 @@ public abstract class SeleneBootstrap {
      *
      * @return The {@link Logger}
      */
-    protected static Logger log() {
+    public static Logger log() {
         return log;
     }
 
@@ -170,7 +173,7 @@ public abstract class SeleneBootstrap {
     protected void debugRegisteredInstances(ServerStartedEvent event) {
         log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
         AtomicInteger unprovisionedTypes = new AtomicInteger();
-        SeleneUtils.INJECT.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
+        super.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
             try {
                 Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
                 Class<?> providerType = binding.getProvider().get().getClass();
@@ -213,7 +216,7 @@ public abstract class SeleneBootstrap {
         return (ExtensionContext ctx) -> {
             Class<?> type = ctx.getExtensionClass();
             log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
-            Exceptional<?> oi = SeleneUtils.INJECT.getInstanceSafe(type);
+            Exceptional<?> oi = super.getInstanceSafe(type);
             oi.ifPresent(i -> {
                 Package pkg = i.getClass().getPackage();
                 if (null != pkg) {

@@ -18,6 +18,7 @@
 package org.dockbox.selene.integrated.sql;
 
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
@@ -285,13 +286,13 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        SeleneUtils.KEYS.getSubProperties(SQLColumnProperty.class, properties)
+        Keys.getSubProperties(SQLColumnProperty.class, properties)
                 .forEach(property -> {
                     Tuple<String, ColumnIdentifier<?>> identifier = property.getObject();
                     this.identifiers.put(identifier.getKey(), identifier.getValue());
                 });
 
-        this.resetOnStore = SeleneUtils.KEYS.getPropertyValue(
+        this.resetOnStore = Keys.getPropertyValue(
                 SQLResetBehaviorProperty.KEY,
                 Boolean.class,
                 properties)

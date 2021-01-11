@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util;
+package org.dockbox.selene.core.server.bootstrap;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binding;
@@ -29,11 +29,13 @@ import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
 import org.dockbox.selene.core.server.properties.AnnotationProperty;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,8 +45,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@SuppressWarnings({"UnusedReturnValue", "unused"})
-public class InjectUtil {
+@SuppressWarnings("AbstractClassWithoutAbstractMethods")
+public abstract class InjectableBootstrap {
 
     private Injector injector;
     private final transient List<AbstractModule> injectorModules = SeleneUtils.COLLECTION.emptyConcurrentList();
@@ -99,8 +101,8 @@ public class InjectUtil {
         // extension-specific injector.
         if (type.isAnnotationPresent(Extension.class)) {
             typeInstance = this.getInstanceSafe(ExtensionManager.class)
-                    .map(extensionManager -> extensionManager.getInstance(type).orNull())
-                    .orNull();
+                .map(extensionManager -> extensionManager.getInstance(type).orNull())
+                .orNull();
 
         }
 
@@ -123,7 +125,7 @@ public class InjectUtil {
         if (null == typeInstance) {
             try {
                 //noinspection rawtypes
-                Exceptional<Class> annotation = SeleneUtils.KEYS.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
+                Exceptional<Class> annotation = Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
                 if (annotation.isPresent() && annotation.get().isAnnotation()) {
                     //noinspection unchecked
                     typeInstance = (T) injector.getInstance(Key.get(type, annotation.get()));
@@ -178,8 +180,8 @@ public class InjectUtil {
             Exceptional<ExtensionContext> context = this.getInstance(ExtensionManager.class).getContext(instance.getClass());
             Extension extension;
             extension = context
-                    .map(ExtensionContext::getExtension)
-                    .orElseGet(() -> instance.getClass().getAnnotation(Extension.class));
+                .map(ExtensionContext::getExtension)
+                .orElseGet(() -> instance.getClass().getAnnotation(Extension.class));
             return this.createExtensionInjector(instance, extension, context.orNull());
         }
         return this.createInjector();
@@ -217,8 +219,8 @@ public class InjectUtil {
         if (null == this.injector) {
             Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
             modules.addAll(Arrays.stream(additionalModules)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()));
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
             this.injector = Guice.createInjector(modules);
         }
         return this.injector;

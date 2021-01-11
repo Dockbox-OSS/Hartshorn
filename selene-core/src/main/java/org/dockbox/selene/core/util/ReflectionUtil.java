@@ -28,6 +28,7 @@ import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.util.SeleneUtils.Provision;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -450,7 +451,7 @@ public class ReflectionUtil {
         Extension extension = type.getAnnotation(Extension.class);
         extension = null != extension ? extension : this.getExtension(type.getSuperclass());
         if (null == extension)
-            extension = SeleneUtils.INJECT.getInstanceSafe(ExtensionManager.class).map(em -> em.getHeader(type).orNull()).orNull();
+            extension = SeleneBootstrap.getInstance().getInstanceSafe(ExtensionManager.class).map(em -> em.getHeader(type).orNull()).orNull();
         return extension;
     }
 

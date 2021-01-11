@@ -20,7 +20,7 @@ package org.dockbox.selene.core.objects.item.storage;
 import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.SeleneBootstrap;
+import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Map;

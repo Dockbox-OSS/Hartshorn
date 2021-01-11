@@ -26,13 +26,13 @@ public class TestKeys {
 
     private static final Map<Object, String> localRegistry = SeleneUtils.COLLECTION.emptyMap();
 
-    public static final Key<TestKeyHolder, String> HOLDER_KEY = SeleneUtils.KEYS.dynamicKeyOf(
+    public static final Key<TestKeyHolder, String> HOLDER_KEY = Keys.dynamicKeyOf(
             localRegistry::put,
             testKeyHolder ->
                     Exceptional.ofNullable(localRegistry.getOrDefault(testKeyHolder, null))
     );
 
-    public static final Key<TestNonKeyHolder, String> NON_HOLDER_KEY = SeleneUtils.KEYS.dynamicKeyOf(
+    public static final Key<TestNonKeyHolder, String> NON_HOLDER_KEY = Keys.dynamicKeyOf(
             localRegistry::put,
             testKeyHolder ->
                     Exceptional.ofNullable(localRegistry.getOrDefault(testKeyHolder, null))

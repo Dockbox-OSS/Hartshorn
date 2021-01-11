@@ -29,6 +29,7 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInformation;
+import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -207,7 +208,7 @@ public class SimpleExtensionManager implements ExtensionManager {
     }
 
     private <T> void injectMembers(T instance, ExtensionContext context, Extension header) {
-        SeleneUtils.INJECT.injectMembers(instance);
-        SeleneUtils.INJECT.createExtensionInjector(instance, header, context).injectMembers(instance);
+        SeleneBootstrap.getInstance().injectMembers(instance);
+        SeleneBootstrap.getInstance().createExtensionInjector(instance, header, context).injectMembers(instance);
     }
 }

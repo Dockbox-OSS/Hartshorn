@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.core.server.SeleneBootstrap;
+import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.tasks.Task;
 import org.dockbox.selene.core.tasks.TaskRunner;
 import org.spongepowered.api.Sponge;

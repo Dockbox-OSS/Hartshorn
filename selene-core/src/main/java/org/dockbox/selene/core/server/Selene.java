@@ -25,10 +25,10 @@ import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
+import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -155,15 +155,15 @@ public final class Selene {
      * @return The instance, if present. Otherwise returns null
      */
     public static <T> T provide(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
-        return SeleneUtils.INJECT.getInstance(type, extension, additionalProperties);
+        return SeleneBootstrap.getInstance().getInstance(type, extension, additionalProperties);
     }
 
     public static <T> T provide(Class<T> type, InjectorProperty<?>... additionalProperties) {
-        return SeleneUtils.INJECT.getInstance(type, additionalProperties);
+        return SeleneBootstrap.getInstance().getInstance(type, additionalProperties);
     }
 
     public static <T> T provide(Class<T> type, Object extension, InjectorProperty<?>... additionalProperties) {
-        return SeleneUtils.INJECT.getInstance(type, extension, additionalProperties);
+        return SeleneBootstrap.getInstance().getInstance(type, extension, additionalProperties);
     }
 
 }

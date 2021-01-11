@@ -26,12 +26,9 @@ import java.util.function.Function;
 @SuppressWarnings("unused")
 public final class SeleneUtils {
 
-    public static final AssertionUtil ASSERTION = new AssertionUtil();
     public static final CollectionUtil COLLECTION = new CollectionUtil();
-    public static final KeyUtil KEYS = new KeyUtil();
     public static final ReflectionUtil REFLECTION = new ReflectionUtil();
     public static final MiscUtil OTHER = new MiscUtil();
-    public static final InjectUtil INJECT = new InjectUtil();
 
     private SeleneUtils() {}
 

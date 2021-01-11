@@ -18,6 +18,7 @@
 package org.dockbox.selene.core.objects.keys.data;
 
 import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.util.SeleneUtils;
 
 public final class IntegerPersistentDataKey extends TypedPersistentDataKey<Integer> {
@@ -32,7 +33,7 @@ public final class IntegerPersistentDataKey extends TypedPersistentDataKey<Integ
     }
 
     public static IntegerPersistentDataKey of(String name, Extension extension) {
-        String id = SeleneUtils.KEYS.convertToExtensionIdString(name, extension);
+        String id = Keys.convertToExtensionIdString(name, extension);
         return new IntegerPersistentDataKey(name, id, extension);
     }
 }
