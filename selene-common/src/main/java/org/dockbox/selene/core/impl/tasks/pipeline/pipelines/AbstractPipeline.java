@@ -137,7 +137,7 @@ public abstract class AbstractPipeline<P, I> {
      * @param input
      *         The non-null {@code P} input to be processed by the pipeline
      *
-     * @return An {@link Exceptional} containing the {@link I output}. If the output is not present it will contain a
+     * @return An {@link Exceptional} containing the {@code I} output. If the output is not present it will contain a
      *         throwable describing why
      */
     @SuppressWarnings("NullableProblems") // Performed by GenericTask
@@ -208,7 +208,7 @@ public abstract class AbstractPipeline<P, I> {
      * @param inputs
      *         The non-null {@link Collection} of {@code P} inputs to be processed by the pipeline
      *
-     * @return A {@link List} of {@link Exceptional} containing the processed {@link I output} of each input
+     * @return A {@link List} of {@link Exceptional} containing the processed {@code I} output of each input
      */
     public List<Exceptional<I>> processAll(@NotNull Collection<P> inputs) {
         return inputs
@@ -219,7 +219,7 @@ public abstract class AbstractPipeline<P, I> {
 
     /**
      * Processes a {@link Collection} of {@code P} inputs by internally calling {@link AbstractPipeline#process(Object)}
-     * on each input in the {@link Collection} and returns the non-null results as a {@link List} of {@link I outputs}.
+     * on each input in the {@link Collection} and returns the non-null results as a {@link List} of {@code I} outputs.
      *
      * @param inputs
      *         The non-null {@link Collection} of {@code P} inputs to be processed by the pipeline

@@ -29,7 +29,7 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
      * {@link Pipeline#process(Exceptional)} on it.
      *
      * @param input
-     *         The non-null {@link I input} value
+     *         The non-null {@code I} input value
      * @param throwable
      *         The nullable input {@link Throwable}
      *

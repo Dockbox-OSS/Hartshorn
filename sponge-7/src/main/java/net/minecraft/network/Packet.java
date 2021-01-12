@@ -21,5 +21,5 @@ package net.minecraft.network;
  * Shadowed interface of {@code net.minecraft.network.Packet}.
  * This is only used to make Javac work correctly when compiling types which need indirect access to this type.
  */
-public interface Packet {
+public interface Packet<T> {
 }

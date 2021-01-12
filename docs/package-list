@@ -1,4 +1,6 @@
-org.dockbox.oldplots
+net.minecraft.entity
+net.minecraft.entity.item
+net.minecraft.network
 org.dockbox.selene.core
 org.dockbox.selene.core.annotations
 org.dockbox.selene.core.annotations.command
@@ -14,10 +16,12 @@ org.dockbox.selene.core.command.context
 org.dockbox.selene.core.command.parsing
 org.dockbox.selene.core.command.registry
 org.dockbox.selene.core.command.source
+org.dockbox.selene.core.entities
 org.dockbox.selene.core.events
 org.dockbox.selene.core.events.chat
 org.dockbox.selene.core.events.discord
 org.dockbox.selene.core.events.moderation
+org.dockbox.selene.core.events.packet
 org.dockbox.selene.core.events.parents
 org.dockbox.selene.core.events.player
 org.dockbox.selene.core.events.player.interact
@@ -43,9 +47,6 @@ org.dockbox.selene.core.impl.events.handle
 org.dockbox.selene.core.impl.events.processors
 org.dockbox.selene.core.impl.extension
 org.dockbox.selene.core.impl.files
-org.dockbox.selene.core.impl.files.annotations
-org.dockbox.selene.core.impl.files.mapping
-org.dockbox.selene.core.impl.files.process
 org.dockbox.selene.core.impl.files.serialize
 org.dockbox.selene.core.impl.files.util
 org.dockbox.selene.core.impl.objects.bossbar
@@ -58,6 +59,7 @@ org.dockbox.selene.core.impl.tasks.pipeline
 org.dockbox.selene.core.impl.tasks.pipeline.exceptions
 org.dockbox.selene.core.impl.tasks.pipeline.pipelines
 org.dockbox.selene.core.impl.tasks.pipeline.pipes
+org.dockbox.selene.core.impl.web
 org.dockbox.selene.core.inventory
 org.dockbox.selene.core.inventory.builder
 org.dockbox.selene.core.inventory.factory
@@ -65,6 +67,7 @@ org.dockbox.selene.core.inventory.pane
 org.dockbox.selene.core.inventory.properties
 org.dockbox.selene.core.objects
 org.dockbox.selene.core.objects.bossbar
+org.dockbox.selene.core.objects.inventory
 org.dockbox.selene.core.objects.item
 org.dockbox.selene.core.objects.item.storage
 org.dockbox.selene.core.objects.keys
@@ -75,7 +78,9 @@ org.dockbox.selene.core.objects.profile
 org.dockbox.selene.core.objects.special
 org.dockbox.selene.core.objects.targets
 org.dockbox.selene.core.objects.tuple
+org.dockbox.selene.core.packets
 org.dockbox.selene.core.server
+org.dockbox.selene.core.server.bootstrap
 org.dockbox.selene.core.server.config
 org.dockbox.selene.core.server.properties
 org.dockbox.selene.core.tasks
@@ -83,6 +88,7 @@ org.dockbox.selene.core.text
 org.dockbox.selene.core.text.actions
 org.dockbox.selene.core.text.pagination
 org.dockbox.selene.core.util
+org.dockbox.selene.core.util.web
 org.dockbox.selene.coulis
 org.dockbox.selene.integrated.data
 org.dockbox.selene.integrated.data.registry
@@ -93,13 +99,20 @@ org.dockbox.selene.integrated.data.table.exceptions
 org.dockbox.selene.integrated.event
 org.dockbox.selene.integrated.event.processors
 org.dockbox.selene.integrated.event.worldedit
+org.dockbox.selene.integrated.logs
 org.dockbox.selene.integrated.server
 org.dockbox.selene.integrated.sql
 org.dockbox.selene.integrated.sql.dialects.sqlite
 org.dockbox.selene.integrated.sql.exceptions
 org.dockbox.selene.integrated.sql.properties
 org.dockbox.selene.integrated.tools
+org.dockbox.selene.nms.entities
+org.dockbox.selene.nms.packets
+org.dockbox.selene.nms.properties
+org.dockbox.selene.oldplots
+org.dockbox.selene.sample
 org.dockbox.selene.sponge
+org.dockbox.selene.sponge.entities
 org.dockbox.selene.sponge.inventory
 org.dockbox.selene.sponge.inventory.builder
 org.dockbox.selene.sponge.inventory.pane
@@ -107,6 +120,7 @@ org.dockbox.selene.sponge.listeners
 org.dockbox.selene.sponge.objects
 org.dockbox.selene.sponge.objects.bossbar
 org.dockbox.selene.sponge.objects.discord
+org.dockbox.selene.sponge.objects.inventory
 org.dockbox.selene.sponge.objects.item
 org.dockbox.selene.sponge.objects.location
 org.dockbox.selene.sponge.objects.targets
