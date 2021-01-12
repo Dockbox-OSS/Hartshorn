@@ -46,7 +46,8 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
-    compileOnly files('libs/core-latest.jar')
+    compileOnly project(':selene-core')
+    compileOnly project(':selene-common')
 }
 
 publishing {

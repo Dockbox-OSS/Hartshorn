@@ -23,7 +23,7 @@ import org.dockbox.selene.core.Weather;
 import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.packets.ChangeGameStatePacket;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
 
 /**
@@ -36,7 +36,7 @@ public class NMSChangeGameStatePacket extends ChangeGameStatePacket implements N
 
     @Override
     public Weather getWeather() {
-        int state = SeleneUtils.REFLECTION.getFieldValue(
+        int state = Reflect.getFieldValue(
             SPacketChangeGameState.class,
             this.nativePacket,
             "field_149140_b", // state

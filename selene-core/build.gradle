@@ -39,10 +39,10 @@ def date = LocalDate.now().toString()
 
 dependencies {
     // Ensure both Guice and AssistedInject are on equal versions, mismatches will cause issues
-    shadow "com.google.inject:guice:$guiceVersion"
-    shadow "com.google.inject.extensions:guice-assistedinject:$guiceVersion"
-    shadow "org.reflections:reflections:$reflectionsVersion"
-    shadow "org.apache.commons:commons-collections4:$apacheCommonsCollections"
+    compile "com.google.inject:guice:$guiceVersion"
+    compile "com.google.inject.extensions:guice-assistedinject:$guiceVersion"
+    compile "org.reflections:reflections:$reflectionsVersion"
+    compile "org.apache.commons:commons-collections4:$apacheCommonsCollections"
 }
 
 processResources {
