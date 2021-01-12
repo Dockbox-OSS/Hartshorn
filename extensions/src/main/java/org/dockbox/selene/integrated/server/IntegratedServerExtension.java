@@ -35,6 +35,7 @@ import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.packets.ChangeGameStatePacket;
+import org.dockbox.selene.core.packets.Packet;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
@@ -42,6 +43,7 @@ import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.List;
@@ -58,10 +60,10 @@ public class IntegratedServerExtension implements IntegratedExtension {
     // Parent command
     @Command(aliases = "", usage = "")
     public void debugExtensions(MessageReceiver source) {
-        SeleneUtils.REFLECTION.runWithInstance(ExtensionManager.class, em -> {
+        Reflect.runWithInstance(ExtensionManager.class, em -> {
             PaginationBuilder pb = Selene.provide(PaginationBuilder.class);
 
-            List<Text> content = SeleneUtils.COLLECTION.emptyList();
+            List<Text> content = SeleneUtils.emptyList();
             content.add(IntegratedServerResources.SERVER_HEADER
                     .format(Selene.getServer().getVersion())
                     .translate(source).asText()
@@ -104,7 +106,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "extension", usage = "extension <id{Extension}>")
     public void debugExtension(MessageReceiver src, CommandContext ctx) {
-        SeleneUtils.REFLECTION.runWithInstance(ExtensionManager.class, em -> {
+        Reflect.runWithInstance(ExtensionManager.class, em -> {
             Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));

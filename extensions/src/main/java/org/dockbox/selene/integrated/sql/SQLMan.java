@@ -54,7 +54,7 @@ import java.util.Map;
  */
 public abstract class SQLMan<T> implements ISQLMan<T> {
 
-    private final Map<String, ColumnIdentifier<?>> identifiers = SeleneUtils.COLLECTION.emptyMap();
+    private final Map<String, ColumnIdentifier<?>> identifiers = SeleneUtils.emptyMap();
     private Boolean resetOnStore;
 
     /**
@@ -136,7 +136,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     }
 
     private List<ColumnIdentifier<?>> getIdentifiers(Result<Record> results) {
-        List<ColumnIdentifier<?>> identifiers = SeleneUtils.COLLECTION.emptyList();
+        List<ColumnIdentifier<?>> identifiers = SeleneUtils.emptyList();
         for (Field<?> field : results.get(0).fields()) {
             String name = field.getName();
 

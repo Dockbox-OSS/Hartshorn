@@ -41,7 +41,7 @@ import dev.flashlabs.flashlibs.inventory.Page;
 public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
 
     private Page.Builder builder;
-    private Collection<Element> elements = SeleneUtils.COLLECTION.emptyList();
+    private Collection<Element> elements = SeleneUtils.emptyList();
 
     @Override
     public PaginatedPaneBuilder elements(Collection<Element> elements) {

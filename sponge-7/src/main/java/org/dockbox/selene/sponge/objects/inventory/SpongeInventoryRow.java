@@ -102,7 +102,7 @@ public class SpongeInventoryRow implements InventoryRow {
                 .map(slot -> (org.spongepowered.api.item.inventory.Slot) slot)
                 .map(slotLookup)
                 .collect(Collectors.toList());
-        }).orElseGet(SeleneUtils.COLLECTION::emptyList);
+        }).orElseGet(SeleneUtils::emptyList);
     }
 
     @Override

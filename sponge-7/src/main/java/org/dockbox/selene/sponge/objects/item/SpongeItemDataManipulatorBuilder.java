@@ -48,7 +48,7 @@ public class SpongeItemDataManipulatorBuilder extends AbstractDataBuilder<Mutabl
     protected @NotNull Optional<MutableSpongeItemData> buildContent(DataView container) throws InvalidDataException {
         if(container.contains(SpongeItem.ITEM_KEY.getQuery())) {
             final Map<?, ?> unsafeData = container.getMap(SpongeItem.ITEM_KEY.getQuery()).get();
-            Map<String, Object> safeData = SeleneUtils.COLLECTION.emptyMap();
+            Map<String, Object> safeData = SeleneUtils.emptyMap();
             unsafeData.forEach((k, v) -> safeData.put(k.toString(), v));
 
             MutableSpongeItemData data = this.create();

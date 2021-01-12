@@ -20,7 +20,6 @@ package org.dockbox.selene.core.impl.events.handle;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.ThreadUtils;
 import org.dockbox.selene.core.annotations.Async;
 import org.dockbox.selene.core.annotations.event.IsCancelled;
@@ -35,6 +34,8 @@ import org.dockbox.selene.core.events.parents.Filterable;
 import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
 import org.dockbox.selene.core.exceptions.SkipEventException;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.Reflect;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,12 +82,12 @@ public class SimpleEventWrapper implements Comparable<SimpleEventWrapper>, Event
      * @return The list of {@link SimpleEventWrapper}s
      */
     public static List<SimpleEventWrapper> create(Object instance, Method method, int priority) {
-        List<SimpleEventWrapper> invokeWrappers = SeleneUtils.COLLECTION.emptyConcurrentList();
+        List<SimpleEventWrapper> invokeWrappers = SeleneUtils.emptyConcurrentList();
         for (Class<?> param : method.getParameterTypes()) {
-            if (SeleneUtils.REFLECTION.isAssignableFrom(Event.class, param)) {
+            if (Reflect.isAssignableFrom(Event.class, param)) {
                 Class<? extends Event> eventType = (Class<? extends Event>) param;
                 invokeWrappers.add(new SimpleEventWrapper(instance, eventType, method, priority));
-            } else if (SeleneUtils.REFLECTION.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
+            } else if (Reflect.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
                 WorldEdit.getInstance().getEventBus().subscribe(param,
                         new EventMethodHandler(
                                 Priority.EARLY,
@@ -178,14 +179,14 @@ public class SimpleEventWrapper implements Comparable<SimpleEventWrapper>, Event
     private Collection<Object> getEventArgs(Event event) throws SkipEventException {
         EventBus bus = Selene.provide(EventBus.class);
 
-        Collection<Object> args = SeleneUtils.COLLECTION.emptyList();
+        Collection<Object> args = SeleneUtils.emptyList();
         for (Parameter parameter : this.method.getParameters()) {
             /*
             Arguments always default to null if it is not assignable from the event type provided, and should be
             populated by annotation processors.
             */
             Object argument = null;
-            if (SeleneUtils.REFLECTION.isAssignableFrom(parameter.getType(), event.getClass())) argument = event;
+            if (Reflect.isAssignableFrom(parameter.getType(), event.getClass())) argument = event;
 
             /*
             To allow for the addition of future stages, we only use the enum values provided directly. This way we can

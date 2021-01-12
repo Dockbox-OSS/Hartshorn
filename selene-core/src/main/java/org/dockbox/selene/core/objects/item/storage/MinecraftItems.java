@@ -28,18 +28,18 @@ import java.util.Map;
 @SuppressWarnings({"unused", "OverlyComplexClass"})
 public abstract class MinecraftItems {
 
-    private static final Map<MinecraftVersion, Map<String, Item>> customItems = SeleneUtils.COLLECTION.emptyConcurrentMap();
+    private static final Map<MinecraftVersion, Map<String, Item>> customItems = SeleneUtils.emptyConcurrentMap();
 
     public static void registerCustomItem(MinecraftVersion version, String identifier, Item item) {
-        customItems.putIfAbsent(version, SeleneUtils.COLLECTION.emptyConcurrentMap());
+        customItems.putIfAbsent(version, SeleneUtils.emptyConcurrentMap());
         if (customItems.get(version).containsKey(identifier))
             Selene.log().warn("Overwriting custom item identifier '" + identifier + "'");
         customItems.get(version).put(identifier, item);
     }
 
     public static Item getCustomItem(String identifier) {
-        MinecraftVersion version = SeleneBootstrap.getInstance().getMinecraftVersion();
-        Map<String, Item> customItemsForVersion = customItems.getOrDefault(version, SeleneUtils.COLLECTION.emptyMap());
+        MinecraftVersion version = Selene.getServer().getMinecraftVersion();
+        Map<String, Item> customItemsForVersion = customItems.getOrDefault(version, SeleneUtils.emptyMap());
         return customItemsForVersion.getOrDefault(identifier, Selene.getItems().getAir());
     }
 

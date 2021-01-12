@@ -40,7 +40,7 @@ public class Text {
     public static final char sectionSymbol = '\u00A7';
     private static final String legacyRegexFormat = "[\\$|&][0-9a-fklmnor]";
     private static final String styleChars = "01234567890abcdefklmnor";
-    private final List<Text> extra = SeleneUtils.COLLECTION.emptyConcurrentList();
+    private final List<Text> extra = SeleneUtils.emptyConcurrentList();
     private String text;
     private ClickAction<?> clickAction;
     private HoverAction<?> hoverAction;
@@ -139,7 +139,7 @@ public class Text {
     }
 
     public List<Text> getParts() {
-        List<Text> parts = SeleneUtils.COLLECTION.emptyList();
+        List<Text> parts = SeleneUtils.emptyList();
         parts.add(this);
         parts.addAll(this.getExtra());
         return parts;

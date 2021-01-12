@@ -36,14 +36,14 @@ import java.util.function.Predicate;
 @Alias("column")
 public class RegistryColumn<T> {
 
-    private List<T> data = SeleneUtils.COLLECTION.emptyList();
+    private List<T> data = SeleneUtils.emptyList();
 
     public RegistryColumn() {
         super();
     }
 
     public RegistryColumn(Collection<T> values) {
-        this.data = SeleneUtils.COLLECTION.asList(values);
+        this.data = SeleneUtils.asList(values);
     }
 
     public RegistryColumn(RegistryColumn<T> column) {

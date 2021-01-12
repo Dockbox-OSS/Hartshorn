@@ -87,6 +87,6 @@ public class NativeCommandEvent extends AbstractTargetCancellableEvent implement
 
     @Override
     public List<String> acceptedParams() {
-        return SeleneUtils.COLLECTION.asUnmodifiableList("alias", "args", "arguments", "command");
+        return SeleneUtils.asUnmodifiableList("alias", "args", "arguments", "command");
     }
 }

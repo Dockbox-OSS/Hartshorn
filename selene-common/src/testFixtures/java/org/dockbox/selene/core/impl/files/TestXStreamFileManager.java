@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class TestXStreamFileManager extends DefaultXStreamManager {
 
-    private final Map<String, Path> pathDictionary = SeleneUtils.COLLECTION.emptyMap();
+    private final Map<String, Path> pathDictionary = SeleneUtils.emptyMap();
 
     @Override
     public Path getDataDir() {

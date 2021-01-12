@@ -197,7 +197,7 @@ public interface Bossbar {
      * The registry of all active {@link Bossbar bossbars}. Typically this only contains bossbars which are currently
      * visible to at least one player.
      */
-    static final Map<String, Bossbar> REGISTRY = SeleneUtils.COLLECTION.emptyConcurrentMap();
+    static final Map<String, Bossbar> REGISTRY = SeleneUtils.emptyConcurrentMap();
 
     /**
      * Returns a {@link Bossbar} instance based on a given {@code id}. This identifier typically matches with the one

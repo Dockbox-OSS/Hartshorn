@@ -33,6 +33,7 @@ import org.dockbox.selene.core.packets.Packet;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
@@ -173,10 +174,10 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
 
     private void preparePacketGateListeners(PacketGate packetGate) {
         EventBus bus = Selene.provide(EventBus.class);
-        Set<Class<? extends Packet>> adaptedPackets = SeleneUtils.COLLECTION.emptySet();
+        Set<Class<? extends Packet>> adaptedPackets = SeleneUtils.emptySet();
         bus.getListenersToInvokers().forEach((k, v) -> {
             v.forEach(eventWrapper -> {
-                if (SeleneUtils.REFLECTION.isAssignableFrom(PacketEvent.class, eventWrapper.getEventType())) {
+                if (Reflect.isAssignableFrom(PacketEvent.class, eventWrapper.getEventType())) {
                     Class<? extends Packet> packet = eventWrapper.getMethod()
                         .getAnnotation(org.dockbox.selene.core.annotations.event.filter.Packet.class).value();
 

@@ -19,6 +19,7 @@ package org.dockbox.selene.core.impl.events.handle;
 
 import org.dockbox.selene.core.events.EventWrapper;
 import org.dockbox.selene.core.events.parents.Event;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 public class EventHandler {
     private final Class<? extends Event> eventType;
 
-    private final Set<EventHandler> supertypeHandlers = SeleneUtils.COLLECTION.emptySet();
+    private final Set<EventHandler> supertypeHandlers = SeleneUtils.emptySet();
 
     private final SortedSet<SimpleEventWrapper> invokers = new TreeSet<>(SimpleEventWrapper.COMPARATOR);
 
@@ -99,7 +100,7 @@ public class EventHandler {
 
     private boolean isSubtypeOf(Class<?> cls) {
         Class<? extends Event> type = this.eventType();
-        return type != cls && SeleneUtils.REFLECTION.isAssignableFrom(cls, type);
+        return type != cls && Reflect.isAssignableFrom(cls, type);
     }
 
     public boolean isSubtypeOf(EventHandler handler) {

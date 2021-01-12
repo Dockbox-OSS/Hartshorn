@@ -31,6 +31,7 @@ import org.dockbox.selene.core.exceptions.SkipEventException;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +59,7 @@ public enum DefaultParamProcessors {
         if (null != object && !annotation.overrideExisting()) return object;
 
         AtomicReference<Object> arg = new AtomicReference<>(null);
-        SeleneUtils.REFLECTION.getMethodValue(event, annotation.value(), parameter.getType())
+        Reflect.getMethodValue(event, annotation.value(), parameter.getType())
                 .ifPresent(arg::set);
         return arg.get();
     }),
@@ -74,7 +75,7 @@ public enum DefaultParamProcessors {
         if (null != object && !annotation.overrideExisting()) return object;
 
         Class<?> extensionClass = parameter.getType();
-        if (SeleneUtils.REFLECTION.isNotVoid(annotation.value()) && annotation.value().isAnnotationPresent(Extension.class)) {
+        if (Reflect.isNotVoid(annotation.value()) && annotation.value().isAnnotationPresent(Extension.class)) {
             extensionClass = annotation.value();
         } else if (wrapper.getListener().getClass().isAnnotationPresent(Extension.class)) {
             extensionClass = wrapper.getListener().getClass();
@@ -100,7 +101,7 @@ public enum DefaultParamProcessors {
                 if (null == object) throw new SkipEventException();
                 break;
             case EMPTY:
-                if (SeleneUtils.OTHER.isEmpty(object)) throw new SkipEventException();
+                if (SeleneUtils.isEmpty(object)) throw new SkipEventException();
                 break;
             case ZERO:
                 if (object instanceof Number && 0 == ((Number) object).floatValue())
@@ -116,7 +117,7 @@ public enum DefaultParamProcessors {
      * it is converted to a {@link Exceptional}.
      */
     WRAP_SAFE(WrapSafe.class, EventStage.FILTER, (object, annotation, event, parameter, wrapper) -> {
-        if (SeleneUtils.REFLECTION.isAssignableFrom(parameter.getType(), event.getClass())) {
+        if (Reflect.isAssignableFrom(parameter.getType(), event.getClass())) {
             Selene.log().warn("Event parameter cannot be wrapped");
             return object;
         }

@@ -28,7 +28,7 @@ import java.util.Collection;
 
 final class ExtensionModule extends AbstractModule {
 
-    private final Collection<InternalBinding<Object>> bindings = SeleneUtils.COLLECTION.emptyConcurrentList();
+    private final Collection<InternalBinding<Object>> bindings = SeleneUtils.emptyConcurrentList();
     private Logger logger;
 
     @Override

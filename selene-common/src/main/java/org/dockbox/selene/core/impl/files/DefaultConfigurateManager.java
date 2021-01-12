@@ -22,6 +22,7 @@ import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -85,7 +86,7 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
     @NotNull
     @Override
     public <T> Exceptional<T> getFileContent(@NotNull Path file, @NotNull Class<T> type) {
-        SeleneUtils.REFLECTION.rejects(type, DefaultConfigurateManager.class, true);
+        Reflect.rejects(type, DefaultConfigurateManager.class, true);
 
         try {
             final ConfigurationLoader<?> loader = this.getConfigurationLoader(file);
@@ -95,7 +96,7 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
 
             final T content = mapper.load(node);
 
-            if (SeleneUtils.OTHER.isFileEmpty(file)) {
+            if (SeleneUtils.isFileEmpty(file)) {
                 this.writeFileContent(file, content);
             }
 
@@ -109,7 +110,7 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
     @NotNull
     @Override
     public <T> Exceptional<Boolean> writeFileContent(@NotNull Path file, @NotNull T content) {
-        SeleneUtils.REFLECTION.rejects(content.getClass(), DefaultConfigurateManager.class, true);
+        Reflect.rejects(content.getClass(), DefaultConfigurateManager.class, true);
 
         try {
             final ConfigurationLoader<?> loader = this.getConfigurationLoader(file);

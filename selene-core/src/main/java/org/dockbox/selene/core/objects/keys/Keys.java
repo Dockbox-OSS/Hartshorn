@@ -26,6 +26,7 @@ import org.dockbox.selene.core.objects.keys.data.IntegerPersistentDataKey;
 import org.dockbox.selene.core.objects.keys.data.StringPersistentDataKey;
 import org.dockbox.selene.core.objects.keys.data.TypedPersistentDataKey;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +41,7 @@ import java.util.function.Function;
 
 public final class Keys {
 
-    private static final List<Class<?>> nbtSupportedTypes = SeleneUtils.COLLECTION.asList(
+    private static final List<Class<?>> nbtSupportedTypes = SeleneUtils.asList(
         boolean.class, byte.class, short.class, int.class, long.class, float.class, double.class,
         byte[].class, int[].class, long[].class,
         String.class, List.class, Map.class
@@ -75,7 +76,7 @@ public final class Keys {
 
     @SuppressWarnings("unchecked")
     public static <T extends InjectorProperty<?>> List<T> getAllPropertiesOf(Class<T> type, InjectorProperty<?>... properties) {
-        List<T> matches = SeleneUtils.COLLECTION.emptyList();
+        List<T> matches = SeleneUtils.emptyList();
         for (InjectorProperty<?> property : properties) {
             if (null != property && type.isAssignableFrom(type)) matches.add((T) property);
         }
@@ -105,11 +106,11 @@ public final class Keys {
 
     @SuppressWarnings("unchecked")
     public static <T> List<InjectorProperty<T>> getProperties(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
-        List<InjectorProperty<T>> matchingProperties = SeleneUtils.COLLECTION.emptyList();
+        List<InjectorProperty<T>> matchingProperties = SeleneUtils.emptyList();
         for (InjectorProperty<?> property : properties) {
             if (property.getKey().equals(key)
                 && null != property.getObject()
-                && SeleneUtils.REFLECTION.isAssignableFrom(expectedType, property.getObject().getClass())
+                && Reflect.isAssignableFrom(expectedType, property.getObject().getClass())
             ) {
                 matchingProperties.add((InjectorProperty<T>) property);
             }
@@ -131,9 +132,9 @@ public final class Keys {
      */
     @SuppressWarnings("unchecked")
     public static <T extends InjectorProperty<?>> List<T> getSubProperties(Class<T> propertyFilter, InjectorProperty<?>... properties) {
-        List<T> values = SeleneUtils.COLLECTION.emptyList();
+        List<T> values = SeleneUtils.emptyList();
         for (InjectorProperty<?> property : properties) {
-            if (SeleneUtils.REFLECTION.isAssignableFrom(propertyFilter, property.getClass())) values.add((T) property);
+            if (Reflect.isAssignableFrom(propertyFilter, property.getClass())) values.add((T) property);
         }
         return values;
     }
@@ -170,7 +171,7 @@ public final class Keys {
      * @return the persistent data key
      */
     public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, Class<?> owningClass) {
-        return Keys.persistentKeyOf(type, name, SeleneUtils.REFLECTION.getExtension(owningClass));
+        return Keys.persistentKeyOf(type, name, Reflect.getExtension(owningClass));
     }
 
     /**
@@ -194,9 +195,9 @@ public final class Keys {
 
         if (type.equals(String.class))
             return (PersistentDataKey<T>) StringPersistentDataKey.of(name, extension);
-        else if (SeleneUtils.REFLECTION.isAssignableFrom(Integer.class, type)) {
+        else if (Reflect.isAssignableFrom(Integer.class, type)) {
             return (PersistentDataKey<T>) IntegerPersistentDataKey.of(name, extension);
-        } else if (SeleneUtils.REFLECTION.isAssignableFrom(Double.class, type)) {
+        } else if (Reflect.isAssignableFrom(Double.class, type)) {
             return (PersistentDataKey<T>) DoublePersistentDataKey.of(name, extension);
         }
 

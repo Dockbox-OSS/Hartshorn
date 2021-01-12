@@ -22,7 +22,7 @@ import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.impl.files.util.XStreamUtils;
 import org.dockbox.selene.core.impl.files.util.XStreamUtils.XStreamBuilder;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.util.Reflect;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.IOException;
@@ -36,7 +36,7 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
 
     @Override
     public <T> Exceptional<T> getFileContent(Path file, Class<T> type) {
-        SeleneUtils.REFLECTION.rejects(type, DefaultXStreamManager.class, true);
+        Reflect.rejects(type, DefaultXStreamManager.class, true);
 
         try {
             T t = this.prepareXStream(type).read(type, file.toFile());
@@ -49,7 +49,7 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
     @Override
     public <T> Exceptional<Boolean> writeFileContent(Path file, T content) {
         @SuppressWarnings("unchecked") Class<T> type = (Class<T>) content.getClass();
-        SeleneUtils.REFLECTION.rejects(type, DefaultXStreamManager.class, true);
+        Reflect.rejects(type, DefaultXStreamManager.class, true);
 
         if (null != content) {
             try {
@@ -70,15 +70,15 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
     }
 
     private void omitIgnoredFields(Class<?> type, XStreamBuilder builder) {
-        SeleneUtils.REFLECTION.forEachFieldIn(type, (declaringType, field) -> {
+        Reflect.forEachFieldIn(type, (declaringType, field) -> {
             if (field.isAnnotationPresent(Ignore.class))
                 builder.omitField(declaringType, field.getName());
         });
     }
 
     private void aliasPropertyFields(Class<?> type, XStreamBuilder builder) {
-        SeleneUtils.REFLECTION.forEachFieldIn(type, (declaringType, field) -> {
-                @NonNls String alias = SeleneUtils.REFLECTION.getFieldPropertyName(field);
+        Reflect.forEachFieldIn(type, (declaringType, field) -> {
+                @NonNls String alias = Reflect.getFieldPropertyName(field);
                 if (!field.getName().equals(alias)) builder.aliasField(alias, declaringType, field.getName());
         });
     }

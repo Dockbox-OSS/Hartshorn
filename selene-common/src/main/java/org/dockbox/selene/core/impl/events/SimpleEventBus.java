@@ -31,6 +31,7 @@ import org.dockbox.selene.core.impl.events.handle.EventHandlerRegistry;
 import org.dockbox.selene.core.impl.events.handle.SimpleEventWrapper;
 import org.dockbox.selene.core.impl.events.processors.DefaultParamProcessors;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +52,7 @@ public class SimpleEventBus implements EventBus {
     /**
      * A map of all listening objects with their associated {@link EventWrapper}s.
      */
-    protected static final Map<Object, Set<EventWrapper>> listenerToInvokers = SeleneUtils.COLLECTION.emptyMap();
+    protected static final Map<Object, Set<EventWrapper>> listenerToInvokers = SeleneUtils.emptyMap();
 
     /**
      * The internal registry of handlers for each event.
@@ -61,7 +62,7 @@ public class SimpleEventBus implements EventBus {
     /**
      * The internal map of {@link AbstractEventParamProcessor}s per annotation per stage.
      */
-    protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = SeleneUtils.COLLECTION.emptyMap();
+    protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = SeleneUtils.emptyMap();
 
     @NotNull
     @Override
@@ -104,7 +105,7 @@ public class SimpleEventBus implements EventBus {
     public void unsubscribe(Object object) {
         if (!object.equals(object)) return;
         Set<EventWrapper> invokers = listenerToInvokers.remove(object);
-        if (invokers == null || invokers.isEmpty()) {
+        if (null == invokers || invokers.isEmpty()) {
             return; // Not registered
         }
 
@@ -132,10 +133,10 @@ public class SimpleEventBus implements EventBus {
      * @return The invokers
      */
     protected static Set<EventWrapper> getInvokers(Object object) {
-        Set<EventWrapper> result = SeleneUtils.COLLECTION.emptySet();
-        for (Method method : SeleneUtils.REFLECTION.getMethodsRecursively(object.getClass())) {
-            Listener annotation = SeleneUtils.REFLECTION.getAnnotationRecursively(method, Listener.class);
-            if (annotation != null) {
+        Set<EventWrapper> result = SeleneUtils.emptySet();
+        for (Method method : Reflect.getMethodsRecursively(object.getClass())) {
+            Listener annotation = Reflect.getAnnotationRecursively(method, Listener.class);
+            if (null != annotation) {
                 checkListenerMethod(method, false);
                 result.addAll(SimpleEventWrapper.create(object, method, annotation.value().getPriority()));
             }
@@ -161,7 +162,7 @@ public class SimpleEventBus implements EventBus {
      *         the illegal argument exception
      */
     protected static void checkListenerMethod(Method method, boolean checkAnnotation) throws IllegalArgumentException {
-        if (checkAnnotation && !SeleneUtils.REFLECTION.isAnnotationPresentRecursively(method, Listener.class)) {
+        if (checkAnnotation && !Reflect.isAnnotationPresentRecursively(method, Listener.class)) {
             throw new IllegalArgumentException("Needs @Listener annotation: " + method.toGenericString());
         }
 
@@ -173,18 +174,18 @@ public class SimpleEventBus implements EventBus {
             throw new IllegalArgumentException("Method cannot be abstract: " + method.toGenericString());
         }
 
-        if (method.getParameterCount() == 0) {
+        if (0 == method.getParameterCount()) {
             throw new IllegalArgumentException("Must have at least one parameter: " + method.toGenericString());
         }
 
         for (Class<?> param : method.getParameterTypes()) {
-            if (SeleneUtils.REFLECTION.isAssignableFrom(Event.class, param)) {
-                if (SeleneUtils.REFLECTION.isAssignableFrom(PacketEvent.class, param)
+            if (Reflect.isAssignableFrom(Event.class, param)) {
+                if (Reflect.isAssignableFrom(PacketEvent.class, param)
                 && !method.isAnnotationPresent(Packet.class)) {
                     throw new IllegalArgumentException("Needs @Packet annotation: " + method.toGenericString());
                 }
                 return;
-            } else if (SeleneUtils.REFLECTION.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
+            } else if (Reflect.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
                 return;
             }
         }
@@ -195,7 +196,7 @@ public class SimpleEventBus implements EventBus {
     @Override
     public void registerProcessors(@NotNull AbstractEventParamProcessor<?> @NotNull ... processors) {
         for (AbstractEventParamProcessor<?> processor : processors) {
-            parameterProcessors.putIfAbsent(processor.getAnnotationClass(), SeleneUtils.COLLECTION.emptyMap());
+            parameterProcessors.putIfAbsent(processor.getAnnotationClass(), SeleneUtils.emptyMap());
             parameterProcessors.get(processor.getAnnotationClass()).put(processor.targetStage(), processor);
         }
     }

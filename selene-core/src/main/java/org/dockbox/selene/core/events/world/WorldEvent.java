@@ -105,7 +105,7 @@ public abstract class WorldEvent extends AbstractCancellableEvent {
         private final String name;
         private final UUID uniqueId;
 
-        private final Map<String, String> rules = SeleneUtils.COLLECTION.emptyConcurrentMap();
+        private final Map<String, String> rules = SeleneUtils.emptyConcurrentMap();
 
         public WorldCreatingProperties(String name, UUID uniqueId, boolean loadOnStartup, Vector3N spawnPosition,
                                        long seed, Gamemode defaultGamemode, Map<String, String> gamerules) {

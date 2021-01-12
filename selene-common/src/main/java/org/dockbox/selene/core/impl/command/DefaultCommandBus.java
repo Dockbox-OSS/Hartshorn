@@ -37,6 +37,7 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,10 +112,10 @@ public abstract class DefaultCommandBus implements CommandBus {
      * </ul>
      */
     private static final Pattern ELEMENT_VALUE = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?");
-    private static final Map<String, ConfirmableQueueItem> confirmQueue = SeleneUtils.COLLECTION.emptyConcurrentMap();
+    private static final Map<String, ConfirmableQueueItem> confirmQueue = SeleneUtils.emptyConcurrentMap();
 
-    private final Map<String, AbstractRegistrationContext> registrations = SeleneUtils.COLLECTION.emptyConcurrentMap();
-    private final Map<String, List<CommandInheritanceContext>> queuedAliases = SeleneUtils.COLLECTION.emptyConcurrentMap();
+    private final Map<String, AbstractRegistrationContext> registrations = SeleneUtils.emptyConcurrentMap();
+    private final Map<String, List<CommandInheritanceContext>> queuedAliases = SeleneUtils.emptyConcurrentMap();
 
     @Override
     public void register(Object... objs) {
@@ -158,7 +159,7 @@ public abstract class DefaultCommandBus implements CommandBus {
              However, once #apply is called these registrations are no longer mutable.
              */
             this.queuedAliases
-                    .getOrDefault(alias, SeleneUtils.COLLECTION.emptyConcurrentList())
+                    .getOrDefault(alias, SeleneUtils.emptyConcurrentList())
                     .forEach(extendingContext ->
                             this.addExtendingContextToRegistration(
                                     extendingContext,
@@ -180,7 +181,7 @@ public abstract class DefaultCommandBus implements CommandBus {
 
     private void queueAliasRegistration(String alias, CommandInheritanceContext context) {
         List<CommandInheritanceContext> contexts =
-                this.queuedAliases.getOrDefault(alias, SeleneUtils.COLLECTION.emptyConcurrentList());
+                this.queuedAliases.getOrDefault(alias, SeleneUtils.emptyConcurrentList());
         contexts.add(context);
         this.queuedAliases.put(alias, contexts);
     }
@@ -191,7 +192,7 @@ public abstract class DefaultCommandBus implements CommandBus {
     }
 
     private List<AbstractRegistrationContext> createContexts(Class<?> parent) {
-        List<AbstractRegistrationContext> contexts = SeleneUtils.COLLECTION.emptyList();
+        List<AbstractRegistrationContext> contexts = SeleneUtils.emptyList();
 
         /*
          It is possible the class itself is not annotated with @Command, in which case all methods should be registered
@@ -204,7 +205,7 @@ public abstract class DefaultCommandBus implements CommandBus {
             contexts.add(this.extractCommandInheritanceContext(parent));
 
         @NotNull @Unmodifiable Collection<Method> nonInheritedMethods =
-                SeleneUtils.REFLECTION.getAnnotedMethods(parent, Command.class, c -> !c.inherit() || !isParentRegistration);
+                Reflect.getAnnotedMethods(parent, Command.class, c -> !c.inherit() || !isParentRegistration);
         nonInheritedMethods.forEach(method -> {
             MethodCommandContext context = this.extractNonInheritedContext(method);
             if (null != context)
@@ -224,7 +225,7 @@ public abstract class DefaultCommandBus implements CommandBus {
          aliases for different parents.
          */
         @NotNull @Unmodifiable Collection<Method> inheritedMethods =
-                SeleneUtils.REFLECTION.getAnnotedMethods(parent, Command.class, Command::inherit);
+                Reflect.getAnnotedMethods(parent, Command.class, Command::inherit);
         inheritedMethods.forEach(method ->
                 context.addInheritedCommand(this.extractInheritedContext(method, context))
         );
@@ -310,7 +311,7 @@ public abstract class DefaultCommandBus implements CommandBus {
     }
 
     protected List<AbstractArgumentElement<?>> parseArgumentElements(CharSequence argString, String defaultPermission) {
-        List<AbstractArgumentElement<?>> elements = SeleneUtils.COLLECTION.emptyList();
+        List<AbstractArgumentElement<?>> elements = SeleneUtils.emptyList();
         AbstractFlagCollection<?> flagCollection = null;
 
         Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(argString);
@@ -352,7 +353,7 @@ public abstract class DefaultCommandBus implements CommandBus {
         if (result.isEmpty()) {
             AbstractArgumentValue<?> argumentValue = this.generateArgumentValue(argumentMatcher.group(2), defaultPermission);
             AbstractArgumentElement<?> argumentElement = argumentValue.getElement();
-            result = SeleneUtils.COLLECTION.asList(argumentElement);
+            result = SeleneUtils.asList(argumentElement);
         }
 
         /*

@@ -75,8 +75,8 @@ public class ItemTool {
         private BiConsumer<Player, Item> consumer;
         private Text name;
         private List<Text> lore;
-        private final List<Predicate<ToolInteractionEvent>> filters = SeleneUtils.COLLECTION.emptyConcurrentList();
-        private final List<Consumer<Item>> modifiers = SeleneUtils.COLLECTION.emptyConcurrentList();
+        private final List<Predicate<ToolInteractionEvent>> filters = SeleneUtils.emptyConcurrentList();
+        private final List<Consumer<Item>> modifiers = SeleneUtils.emptyConcurrentList();
 
         private ToolBuilder() {}
 

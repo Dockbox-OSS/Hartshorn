@@ -19,7 +19,7 @@ package org.dockbox.selene.core.files;
 
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.util.Reflect;
 
 import java.nio.file.Path;
 
@@ -51,7 +51,7 @@ public abstract class FileManager {
      */
     public abstract Path getDataFile(Extension extension);
     public Path getDataFile(Class<?> extension) {
-        return this.getDataFile(SeleneUtils.REFLECTION.getExtension(extension));
+        return this.getDataFile(Reflect.getExtension(extension));
     }
 
     /**
@@ -65,7 +65,7 @@ public abstract class FileManager {
      */
     public abstract Path getConfigFile(Extension extension);
     public Path getConfigFile(Class<?> extension) {
-        return this.getConfigFile(SeleneUtils.REFLECTION.getExtension(extension));
+        return this.getConfigFile(Reflect.getExtension(extension));
     }
 
     /**
@@ -81,7 +81,7 @@ public abstract class FileManager {
      */
     public abstract Path getDataFile(Extension extension, String file);
     public Path getDataFile(Class<?> extension, String file) {
-        return this.getDataFile(SeleneUtils.REFLECTION.getExtension(extension), file);
+        return this.getDataFile(Reflect.getExtension(extension), file);
     }
 
     /**
@@ -97,7 +97,7 @@ public abstract class FileManager {
      */
     public abstract Path getConfigFile(Extension extension, String file);
     public Path getConfigFile(Class<?> extension, String file) {
-        return this.getConfigFile(SeleneUtils.REFLECTION.getExtension(extension), file);
+        return this.getConfigFile(Reflect.getExtension(extension), file);
     }
 
     /**
@@ -146,7 +146,7 @@ public abstract class FileManager {
         return this.getDataDir().resolve(extension.id());
     }
     public Path getDataDir(Class<?> extension) {
-        return this.getDataDir(SeleneUtils.REFLECTION.getExtension(extension));
+        return this.getDataDir(Reflect.getExtension(extension));
     }
 
     /**
@@ -212,7 +212,7 @@ public abstract class FileManager {
         return this.getExtensionConfigsDir().resolve(extension.id());
     }
     public Path getExtensionConfigDir(Class<?> extension) {
-        return this.getExtensionConfigDir(SeleneUtils.REFLECTION.getExtension(extension));
+        return this.getExtensionConfigDir(Reflect.getExtension(extension));
     }
 
     /**

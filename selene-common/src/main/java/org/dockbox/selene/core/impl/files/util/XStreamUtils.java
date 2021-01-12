@@ -29,6 +29,7 @@ import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 import org.dockbox.selene.core.annotations.entity.Alias;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInformation;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,8 +104,8 @@ public final class XStreamUtils {
 
     private static void configureXStream(XStream xstream) {
         if (null == aliasedTypes) {
-            aliasedTypes = SeleneUtils.COLLECTION.emptyConcurrentMap();
-            Collection<Class<?>> annotatedTypes = SeleneUtils.REFLECTION.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Alias.class);
+            aliasedTypes = SeleneUtils.emptyConcurrentMap();
+            Collection<Class<?>> annotatedTypes = Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Alias.class);
             annotatedTypes.forEach(type -> {
                 Alias alias = type.getAnnotation(Alias.class);
                 if (aliasedTypes.containsKey(alias.value())) Selene.log().warn("Attempting to register a duplicate entity alias '" + alias.value() + "'");
@@ -320,7 +321,7 @@ public final class XStreamUtils {
          * @see XStream#aliasField(String, Class, String)
          */
         public XStreamBuilder aliasField(String alias, Class<?> definedIn, String fieldName) {
-            SeleneUtils.REFLECTION.hasFieldRecursive(definedIn, fieldName);
+            Reflect.hasFieldRecursive(definedIn, fieldName);
             this.stream.aliasField(alias, definedIn, fieldName);
             return this;
         }
@@ -337,7 +338,7 @@ public final class XStreamUtils {
          * @see XStream#aliasAttribute(Class, String, String)
          */
         public XStreamBuilder aliasAttribute(Class<?> definedIn, String attributeName, String alias) {
-            SeleneUtils.REFLECTION.hasFieldRecursive(definedIn, attributeName);
+            Reflect.hasFieldRecursive(definedIn, attributeName);
             this.stream.aliasAttribute(definedIn, attributeName, alias);
             return this;
         }
@@ -492,7 +493,7 @@ public final class XStreamUtils {
          * @see XStream#omitField(Class, String)
          */
         public XStreamBuilder omitField(Class<?> type, String field) {
-            SeleneUtils.REFLECTION.hasFieldRecursive(type, field);
+            Reflect.hasFieldRecursive(type, field);
             this.stream.omitField(type, field);
             return this;
         }
@@ -550,7 +551,7 @@ public final class XStreamUtils {
          * @see XStream#registerLocalConverter(Class, String, Converter)
          */
         public XStreamBuilder registerLocalConverter(Class<?> definedIn, String fieldName, Converter converter) {
-            SeleneUtils.REFLECTION.hasFieldRecursive(definedIn, fieldName);
+            Reflect.hasFieldRecursive(definedIn, fieldName);
             this.stream.registerLocalConverter(definedIn, fieldName, converter);
             return this;
         }
@@ -559,7 +560,7 @@ public final class XStreamUtils {
          * @see XStream#registerLocalConverter(Class, String, SingleValueConverter)
          */
         public XStreamBuilder registerLocalConverter(Class<?> definedIn, String fieldName, SingleValueConverter converter) {
-            SeleneUtils.REFLECTION.hasFieldRecursive(definedIn, fieldName);
+            Reflect.hasFieldRecursive(definedIn, fieldName);
             this.stream.registerLocalConverter(definedIn, fieldName, converter);
             return this;
         }

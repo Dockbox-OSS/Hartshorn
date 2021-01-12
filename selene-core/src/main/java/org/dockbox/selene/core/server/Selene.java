@@ -107,7 +107,7 @@ public final class Selene {
      * @return The {@link MinecraftItems} instance for the active {@link MinecraftVersion}
      */
     public static MinecraftItems getItems() {
-        return SeleneBootstrap.getInstance().getMinecraftVersion().getItems();
+        return Selene.getServer().getMinecraftVersion().getItems();
     }
 
     /**
@@ -155,15 +155,15 @@ public final class Selene {
      * @return The instance, if present. Otherwise returns null
      */
     public static <T> T provide(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
-        return SeleneBootstrap.getInstance().getInstance(type, extension, additionalProperties);
+        return Selene.getServer().getInstance(type, extension, additionalProperties);
     }
 
     public static <T> T provide(Class<T> type, InjectorProperty<?>... additionalProperties) {
-        return SeleneBootstrap.getInstance().getInstance(type, additionalProperties);
+        return Selene.getServer().getInstance(type, additionalProperties);
     }
 
     public static <T> T provide(Class<T> type, Object extension, InjectorProperty<?>... additionalProperties) {
-        return SeleneBootstrap.getInstance().getInstance(type, extension, additionalProperties);
+        return Selene.getServer().getInstance(type, extension, additionalProperties);
     }
 
 }

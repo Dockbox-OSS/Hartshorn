@@ -35,7 +35,7 @@ import java.util.function.Predicate;
 @Alias("registry")
 public class Registry<V> {
 
-    private final Map<RegistryIdentifier, RegistryColumn<V>> data = SeleneUtils.COLLECTION.emptyMap();
+    private final Map<RegistryIdentifier, RegistryColumn<V>> data = SeleneUtils.emptyMap();
 
     public Registry() {
     }

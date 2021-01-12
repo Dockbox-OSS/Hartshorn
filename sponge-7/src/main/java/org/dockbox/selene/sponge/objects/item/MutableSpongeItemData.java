@@ -36,14 +36,14 @@ public class MutableSpongeItemData extends AbstractData<MutableSpongeItemData, I
         this.registerGettersAndSetters();
     }
 
-    private final Map<String, Object> data = SeleneUtils.COLLECTION.emptyMap();
+    private final Map<String, Object> data = SeleneUtils.emptyMap();
 
     @Override
     protected void registerGettersAndSetters() {
         this.registerFieldGetter(SpongeItem.ITEM_KEY, () -> this.data);
         this.registerFieldSetter(SpongeItem.ITEM_KEY, this::fillData);
         this.registerKeyValue(SpongeItem.ITEM_KEY, () ->
-                Sponge.getRegistry().getValueFactory().createMapValue(SpongeItem.ITEM_KEY, this.data, SeleneUtils.COLLECTION.emptyMap()));
+                Sponge.getRegistry().getValueFactory().createMapValue(SpongeItem.ITEM_KEY, this.data, SeleneUtils.emptyMap()));
     }
 
     @Override

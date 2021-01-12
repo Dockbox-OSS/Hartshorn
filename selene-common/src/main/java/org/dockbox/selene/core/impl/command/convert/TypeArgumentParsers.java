@@ -267,7 +267,7 @@ public class TypeArgumentParsers {
             }
 
             // ClassCastException caught by Exceptional supplier
-            return Exceptional.of(() -> (List<R>) SeleneUtils.COLLECTION.asList(list));
+            return Exceptional.of(() -> (List<R>) SeleneUtils.asList(list));
         }
     }
 
@@ -293,7 +293,7 @@ public class TypeArgumentParsers {
                 return Exceptional.of(new IllegalArgumentException("Row and value delimiters were equal while parsing map"));
             }
 
-            Map<String, String> map = SeleneUtils.COLLECTION.emptyConcurrentMap();
+            Map<String, String> map = SeleneUtils.emptyConcurrentMap();
             for (String entry : commandValue.getValue().split(this.rowDelimiter + "")) {
                 if (entry.contains(this.valueDelimiter + "")) {
                     String[] kv = entry.split(this.valueDelimiter + "");

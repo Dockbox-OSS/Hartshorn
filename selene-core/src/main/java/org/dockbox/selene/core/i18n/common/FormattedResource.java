@@ -56,7 +56,7 @@ public class FormattedResource implements ResourceEntry {
     public String formatCustom(String m, Object... args) {
         String temp = m;
         if (0 == args.length) return temp;
-        Map<String, String> map = SeleneUtils.COLLECTION.emptyMap();
+        Map<String, String> map = SeleneUtils.emptyMap();
 
         for (int i = 0; i < args.length; i++) {
             String arg = "" + args[i];

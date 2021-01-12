@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class ImmutableSpongeItemData extends AbstractImmutableData<ImmutableSpongeItemData, MutableSpongeItemData> {
 
-    private final Map<String, Object> data = SeleneUtils.COLLECTION.emptyMap();
+    private final Map<String, Object> data = SeleneUtils.emptyMap();
 
     @Override
     public @NotNull MutableSpongeItemData asMutable() {
@@ -53,7 +53,7 @@ public class ImmutableSpongeItemData extends AbstractImmutableData<ImmutableSpon
                 Sponge.getRegistry().getValueFactory().createMapValue(
                         SpongeItem.ITEM_KEY,
                         this.data,
-                        SeleneUtils.COLLECTION.emptyMap()).asImmutable()
+                        SeleneUtils.emptyMap()).asImmutable()
         );
     }
 

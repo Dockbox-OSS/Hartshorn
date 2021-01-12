@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class TestKeys {
 
-    private static final Map<Object, String> localRegistry = SeleneUtils.COLLECTION.emptyMap();
+    private static final Map<Object, String> localRegistry = SeleneUtils.emptyMap();
 
     public static final Key<TestKeyHolder, String> HOLDER_KEY = Keys.dynamicKeyOf(
             localRegistry::put,

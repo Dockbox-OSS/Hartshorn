@@ -29,7 +29,7 @@ import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
@@ -97,7 +97,7 @@ public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Extension extension = SeleneUtils.REFLECTION.getExtension(this.integratedExtension.getClass());
+        Extension extension = Reflect.getExtension(this.integratedExtension.getClass());
         if (null == extension) {
             throw new IllegalStateException("Integrated extension not annotated as such.");
         }

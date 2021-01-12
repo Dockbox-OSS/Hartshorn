@@ -30,6 +30,7 @@ import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -163,15 +164,15 @@ public class SimpleCommandContext implements CommandContext {
         CommandValue<?>[] arr = new CommandValue[0];
         switch (valType) {
             case ARGUMENT:
-                arr = SeleneUtils.OTHER.shallowCopy(this.args);
+                arr = SeleneUtils.shallowCopy(this.args);
                 break;
             case FLAG:
-                arr = SeleneUtils.OTHER.shallowCopy(this.flags);
+                arr = SeleneUtils.shallowCopy(this.flags);
                 break;
             case BOTH:
-                arr = SeleneUtils.OTHER.addAll(
-                        SeleneUtils.OTHER.shallowCopy(this.args),
-                        SeleneUtils.OTHER.shallowCopy(this.flags));
+                arr = SeleneUtils.addAll(
+                        SeleneUtils.shallowCopy(this.args),
+                        SeleneUtils.shallowCopy(this.flags));
                 break;
         }
         return this.getValueAs(key, type, arr);
@@ -184,7 +185,7 @@ public class SimpleCommandContext implements CommandContext {
         );
         if (candidate.isPresent()) {
             CommandValue<?> cv = candidate.get();
-            if (SeleneUtils.REFLECTION.isAssignableFrom(type, cv.getValue().getClass())) return Exceptional.of((A) cv);
+            if (Reflect.isAssignableFrom(type, cv.getValue().getClass())) return Exceptional.of((A) cv);
         }
         return Exceptional.empty();
     }
@@ -192,25 +193,25 @@ public class SimpleCommandContext implements CommandContext {
     @NotNull
     @Override
     public <T> Exceptional<T> tryCreate(@NotNull Class<T> type) {
-        Map<String, Object> values = SeleneUtils.COLLECTION.emptyMap();
+        Map<String, Object> values = SeleneUtils.emptyMap();
         for (Argument<?> arg : this.args) values.put(arg.getKey(), arg.getValue());
         for (Flag<?> flag : this.flags) values.put(flag.getKey(), flag.getValue());
 
-        return SeleneUtils.REFLECTION.tryCreateFromRaw(type, field -> {
+        return Reflect.tryCreateFromRaw(type, field -> {
             if (field.isAnnotationPresent(FromSource.class)) {
-                if (SeleneUtils.REFLECTION.isAssignableFrom(Player.class, field.getType())) {
+                if (Reflect.isAssignableFrom(Player.class, field.getType())) {
                     if (this.sender instanceof Player) return this.sender;
-                } else if (SeleneUtils.REFLECTION.isAssignableFrom(World.class, field.getType())) {
+                } else if (Reflect.isAssignableFrom(World.class, field.getType())) {
                     if (this.sender instanceof Locatable) return this.world;
-                } else if (SeleneUtils.REFLECTION.isAssignableFrom(Location.class, field.getType())) {
+                } else if (Reflect.isAssignableFrom(Location.class, field.getType())) {
                     if (this.sender instanceof Locatable) return this.location;
-                } else if (SeleneUtils.REFLECTION.isAssignableFrom(CommandSource.class, field.getType())) {
+                } else if (Reflect.isAssignableFrom(CommandSource.class, field.getType())) {
                     return this.sender;
                 } else {
                     Selene.log().warn("Field '" + field.getName() + "' has @FromSource annotation but cannot be provided [" + field.getType().getCanonicalName() + "]");
                 }
             }
-            return values.getOrDefault(SeleneUtils.REFLECTION.getFieldPropertyName(field), null);
+            return values.getOrDefault(Reflect.getFieldPropertyName(field), null);
         }, true);
     }
 
@@ -219,15 +220,15 @@ public class SimpleCommandContext implements CommandContext {
     }
 
     public @UnmodifiableView @NotNull List<Argument<?>> getArgs() {
-        return SeleneUtils.COLLECTION.asUnmodifiableList(this.args);
+        return SeleneUtils.asUnmodifiableList(this.args);
     }
 
     public @UnmodifiableView @NotNull List<Flag<?>> getFlags() {
-        return SeleneUtils.COLLECTION.asUnmodifiableList(this.flags);
+        return SeleneUtils.asUnmodifiableList(this.flags);
     }
 
     public @UnmodifiableView @NotNull List<String> getPermissions() {
-        return SeleneUtils.COLLECTION.asUnmodifiableList(this.permissions);
+        return SeleneUtils.asUnmodifiableList(this.permissions);
     }
 
     public CommandSource getSender() {

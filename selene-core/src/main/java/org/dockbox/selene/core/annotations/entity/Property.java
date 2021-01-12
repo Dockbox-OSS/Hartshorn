@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.annotations.entity;
 
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils.Provision;
 
 import java.lang.annotation.ElementType;
@@ -27,7 +28,7 @@ import java.util.function.Function;
 
 /**
  * The interface to provide custom information to a object field when creating a object using
- * {@link org.dockbox.selene.core.util.ReflectionUtil#tryCreate(Class, Function, boolean, Provision)}
+ * {@link Reflect#tryCreate(Class, Function, boolean, Provision)}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -48,7 +49,7 @@ public @interface Property {
     String value();
 
     /**
-     * The alternative setter for the field. When defined {@link org.dockbox.selene.core.util.ReflectionUtil#tryCreate(Class, Function, boolean, Provision)}
+     * The alternative setter for the field. When defined {@link Reflect#tryCreate(Class, Function, boolean, Provision)}
      * will first attempt to find a method which accepts a value of the type of the provided value. This means it is
      * possible to directly apply a given {@link String} value to a {@link Integer} field. Note that type differences are
      * only accepted when defined with {@link Property#accepts()}.

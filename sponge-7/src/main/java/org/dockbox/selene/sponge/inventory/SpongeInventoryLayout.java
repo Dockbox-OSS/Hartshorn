@@ -39,11 +39,11 @@ public class SpongeInventoryLayout implements InventoryLayout {
 
     @Override
     public Map<Integer, Element> getElements() {
-        Map<Integer, Element> elements = SeleneUtils.COLLECTION.emptyMap();
+        Map<Integer, Element> elements = SeleneUtils.emptyMap();
         this.layout.getElements().forEach((index, element) -> {
             elements.put(index, SpongeConversionUtil.fromSponge(element));
         });
-        return SeleneUtils.COLLECTION.asUnmodifiableMap(elements);
+        return SeleneUtils.asUnmodifiableMap(elements);
     }
 
     @Override

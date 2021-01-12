@@ -23,15 +23,16 @@ import com.sk89q.worldedit.blocks.BaseBlock;
 
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Enchant;
-import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.dockbox.selene.core.objects.keys.TransactionResult;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
@@ -171,8 +172,8 @@ public class SpongeItem extends ReferencedItem<ItemStack> {
     @Override
     public List<Enchant> getEnchantments() {
         List<org.spongepowered.api.item.enchantment.Enchantment> enchantments = this.getReference()
-                .map(i -> i.get(Keys.ITEM_ENCHANTMENTS).orElse(SeleneUtils.COLLECTION.emptyList()))
-                .orElse(SeleneUtils.COLLECTION.emptyList());
+                .map(i -> i.get(Keys.ITEM_ENCHANTMENTS).orElse(SeleneUtils.emptyList()))
+                .orElse(SeleneUtils.emptyList());
         return enchantments.stream().map(SpongeConversionUtil::fromSponge).filter(Exceptional::isPresent).map(Exceptional::get).collect(Collectors.toList());
     }
 
@@ -270,7 +271,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> {
         if (!data.getData().containsKey(dataKey.getDataKeyId())) return Exceptional.empty();
 
         Object value = data.getData().get(dataKey.getDataKeyId());
-        if (SeleneUtils.REFLECTION.isAssignableFrom(dataKey.getDataType(), value.getClass()))
+        if (Reflect.isAssignableFrom(dataKey.getDataType(), value.getClass()))
             return Exceptional.of((T) value);
 
         return Exceptional.empty();

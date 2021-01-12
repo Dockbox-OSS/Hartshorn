@@ -30,7 +30,7 @@ import java.util.UUID;
 
 public abstract class AbstractRegistrationContext {
 
-    private final List<String> aliases = SeleneUtils.COLLECTION.emptyConcurrentList();
+    private final List<String> aliases = SeleneUtils.emptyConcurrentList();
     private final Command command;
 
     protected AbstractRegistrationContext(Command command) {

@@ -108,24 +108,24 @@ import dev.flashlabs.flashlibs.inventory.Element;
 public enum SpongeConversionUtil {
     ;
 
-    private static final Map<TextColor, Character> textColors = SeleneUtils.COLLECTION.ofEntries(
-            SeleneUtils.COLLECTION.entry(TextColors.BLACK, '0'),
-            SeleneUtils.COLLECTION.entry(TextColors.DARK_BLUE, '1'),
-            SeleneUtils.COLLECTION.entry(TextColors.DARK_GREEN, '2'),
-            SeleneUtils.COLLECTION.entry(TextColors.DARK_AQUA, '3'),
-            SeleneUtils.COLLECTION.entry(TextColors.DARK_RED, '4'),
-            SeleneUtils.COLLECTION.entry(TextColors.DARK_PURPLE, '5'),
-            SeleneUtils.COLLECTION.entry(TextColors.GOLD, '6'),
-            SeleneUtils.COLLECTION.entry(TextColors.GRAY, '7'),
-            SeleneUtils.COLLECTION.entry(TextColors.DARK_GRAY, '8'),
-            SeleneUtils.COLLECTION.entry(TextColors.BLUE, '9'),
-            SeleneUtils.COLLECTION.entry(TextColors.GREEN, 'a'),
-            SeleneUtils.COLLECTION.entry(TextColors.AQUA, 'b'),
-            SeleneUtils.COLLECTION.entry(TextColors.RED, 'c'),
-            SeleneUtils.COLLECTION.entry(TextColors.LIGHT_PURPLE, 'd'),
-            SeleneUtils.COLLECTION.entry(TextColors.YELLOW, 'e'),
-            SeleneUtils.COLLECTION.entry(TextColors.WHITE, 'f'),
-            SeleneUtils.COLLECTION.entry(TextColors.RESET, 'r')
+    private static final Map<TextColor, Character> textColors = SeleneUtils.ofEntries(
+            SeleneUtils.entry(TextColors.BLACK, '0'),
+            SeleneUtils.entry(TextColors.DARK_BLUE, '1'),
+            SeleneUtils.entry(TextColors.DARK_GREEN, '2'),
+            SeleneUtils.entry(TextColors.DARK_AQUA, '3'),
+            SeleneUtils.entry(TextColors.DARK_RED, '4'),
+            SeleneUtils.entry(TextColors.DARK_PURPLE, '5'),
+            SeleneUtils.entry(TextColors.GOLD, '6'),
+            SeleneUtils.entry(TextColors.GRAY, '7'),
+            SeleneUtils.entry(TextColors.DARK_GRAY, '8'),
+            SeleneUtils.entry(TextColors.BLUE, '9'),
+            SeleneUtils.entry(TextColors.GREEN, 'a'),
+            SeleneUtils.entry(TextColors.AQUA, 'b'),
+            SeleneUtils.entry(TextColors.RED, 'c'),
+            SeleneUtils.entry(TextColors.LIGHT_PURPLE, 'd'),
+            SeleneUtils.entry(TextColors.YELLOW, 'e'),
+            SeleneUtils.entry(TextColors.WHITE, 'f'),
+            SeleneUtils.entry(TextColors.RESET, 'r')
     );
 
     @NotNull
@@ -423,11 +423,11 @@ public enum SpongeConversionUtil {
     private static String fromSponge(TextStyle style) {
         final char styleChar = org.dockbox.selene.core.text.Text.sectionSymbol;
         String styleString = styleChar + "r";
-        if (SeleneUtils.OTHER.unwrap(style.isBold())) styleString += styleChar + 'l';
-        if (SeleneUtils.OTHER.unwrap(style.isItalic())) styleString += styleChar + 'o';
-        if (SeleneUtils.OTHER.unwrap(style.isObfuscated())) styleString += styleChar + 'k';
-        if (SeleneUtils.OTHER.unwrap(style.hasUnderline())) styleString += styleChar + 'n';
-        if (SeleneUtils.OTHER.unwrap(style.hasStrikethrough())) styleString += styleChar + 'm';
+        if (SeleneUtils.unwrap(style.isBold())) styleString += styleChar + 'l';
+        if (SeleneUtils.unwrap(style.isItalic())) styleString += styleChar + 'o';
+        if (SeleneUtils.unwrap(style.isObfuscated())) styleString += styleChar + 'k';
+        if (SeleneUtils.unwrap(style.hasUnderline())) styleString += styleChar + 'n';
+        if (SeleneUtils.unwrap(style.hasStrikethrough())) styleString += styleChar + 'm';
         return styleString;
     }
 

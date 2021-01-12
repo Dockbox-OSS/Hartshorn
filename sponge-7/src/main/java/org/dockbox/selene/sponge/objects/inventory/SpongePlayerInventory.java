@@ -109,7 +109,7 @@ public class SpongePlayerInventory extends PlayerInventory {
                 .map(slot -> (org.spongepowered.api.item.inventory.Slot) slot)
                 .map(slotLookup)
                 .collect(Collectors.toList());
-        }).orElseGet(SeleneUtils.COLLECTION::emptyList);
+        }).orElseGet(SeleneUtils::emptyList);
     }
 
     @Override

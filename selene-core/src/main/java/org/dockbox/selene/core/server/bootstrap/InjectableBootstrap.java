@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 public abstract class InjectableBootstrap {
 
     private Injector injector;
-    private final transient List<AbstractModule> injectorModules = SeleneUtils.COLLECTION.emptyConcurrentList();
+    private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
 
     public <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties) {
         return Exceptional.ofNullable(this.getInstance(type, additionalProperties));
@@ -238,7 +238,7 @@ public abstract class InjectableBootstrap {
     }
 
     public Map<Key<?>, Binding<?>> getAllBindings() {
-        Map<Key<?>, Binding<?>> bindings = SeleneUtils.COLLECTION.emptyConcurrentMap();
+        Map<Key<?>, Binding<?>> bindings = SeleneUtils.emptyConcurrentMap();
         this.createInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
             try {
                 Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();

@@ -60,7 +60,7 @@ public class ToolBindingExtension {
     private static final ResourceEntry TOOL_ERROR_HAND = new Resource("Tool cannot be bound to hand", "toolbinding.error.hand");
     private static final ResourceEntry TOOL_ERROR_DUPLICATE = new Resource("There is already a tool bound to this item", "toolbinding.error.duplicate");
 
-    private final Map<String, ItemTool> registry = SeleneUtils.COLLECTION.emptyConcurrentMap();
+    private final Map<String, ItemTool> registry = SeleneUtils.emptyConcurrentMap();
 
     public ToolBindingExtension() {
         instance = this;
