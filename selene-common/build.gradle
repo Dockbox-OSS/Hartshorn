@@ -17,7 +17,6 @@
 
 plugins {
     id 'java'
-    id "java-test-fixtures"
 }
 
 group = 'org.dockbox.selene.core.impl'

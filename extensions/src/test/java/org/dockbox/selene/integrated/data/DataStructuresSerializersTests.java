@@ -18,7 +18,6 @@
 package org.dockbox.selene.integrated.data;
 
 import org.dockbox.selene.core.files.FileManager;
-import org.dockbox.selene.core.impl.files.TestXStreamFileManager;
 import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.integrated.data.registry.Registry;

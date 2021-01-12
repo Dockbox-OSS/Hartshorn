@@ -84,11 +84,11 @@ task prepareServerArtifacts(dependsOn: build) {
         }
 
         println("Copying from: $DIST_DIR:")
-        println("$archivesBaseName-$version-${date}.jar")
+        println("$archivesBaseName-$version-${date}-all.jar")
         println("Copying to: $PLUGIN_DIR")
         ant.copy(todir: PLUGIN_DIR) {
             fileset dir: DIST_DIR,
-                    includes: "$archivesBaseName-$version-${date}.jar"
+                    includes: "$archivesBaseName-$version-${date}-all.jar"
         }
     }
 }
