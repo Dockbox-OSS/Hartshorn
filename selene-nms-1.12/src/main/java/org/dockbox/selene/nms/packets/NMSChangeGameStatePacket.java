@@ -26,6 +26,10 @@ import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
 
+/**
+ * Represents a global gamestate change packet. See <a href="https://wiki.vg/Protocol#Change_Game_State">Protocol - Change Game State</a> for more
+ * details. Only supports weather gamestates.
+ */
 public class NMSChangeGameStatePacket extends ChangeGameStatePacket implements NMSPacket<SPacketChangeGameState> {
 
     private SPacketChangeGameState nativePacket;
@@ -35,7 +39,7 @@ public class NMSChangeGameStatePacket extends ChangeGameStatePacket implements N
         int state = SeleneUtils.REFLECTION.getFieldValue(
             SPacketChangeGameState.class,
             this.nativePacket,
-            "field_149140_b",
+            "field_149140_b", // state
             int.class)
             .orElse(Weather.CLEAR.getGameStateId());
         return Weather.getByGameStateId(state);
