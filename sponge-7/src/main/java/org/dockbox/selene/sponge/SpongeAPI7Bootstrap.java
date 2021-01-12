@@ -31,8 +31,8 @@ import org.dockbox.selene.core.events.packet.PacketEvent;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.packets.Packet;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.server.ServerType;
+import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
@@ -62,6 +62,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import eu.crushedpixel.sponge.packetgate.api.listener.PacketListener.ListenerPriority;
@@ -172,18 +173,23 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
 
     private void preparePacketGateListeners(PacketGate packetGate) {
         EventBus bus = Selene.provide(EventBus.class);
+        Set<Class<? extends Packet>> adaptedPackets = SeleneUtils.COLLECTION.emptySet();
         bus.getListenersToInvokers().forEach((k, v) -> {
             v.forEach(eventWrapper -> {
                 if (SeleneUtils.REFLECTION.isAssignableFrom(PacketEvent.class, eventWrapper.getEventType())) {
                     Class<? extends Packet> packet = eventWrapper.getMethod()
                         .getAnnotation(org.dockbox.selene.core.annotations.event.filter.Packet.class).value();
 
-                    Packet emptyPacket = Selene.provide(packet);
-                    packetGate.registerListener(
-                        this.getPacketGateAdapter(packet),
-                        ListenerPriority.DEFAULT,
-                        emptyPacket.getNativePacketType()
-                    );
+                    // Adapters post the event globally, so we only need to register it once. This also avoids double-posting of the same event.
+                    if (!adaptedPackets.contains(packet)) {
+                        Packet emptyPacket = Selene.provide(packet);
+                        packetGate.registerListener(
+                            this.getPacketGateAdapter(packet),
+                            ListenerPriority.DEFAULT,
+                            emptyPacket.getNativePacketType()
+                        );
+                        adaptedPackets.add(packet);
+                    }
                 }
             });
         });
