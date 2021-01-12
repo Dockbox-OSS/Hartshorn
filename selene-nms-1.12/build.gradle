@@ -32,7 +32,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 archivesBaseName = 'selene-nms-1.12'
-group = 'org.dockbox.selene'
+group = project.pluginGroup
 description = 'NMS resources for Selene on Minecraft 1.12'
 
 minecraft {
