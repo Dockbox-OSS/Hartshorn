@@ -53,12 +53,12 @@ final class SeleneConverterElement extends CommandElement {
     @Override
     public List<String> complete(@NotNull CommandSource src, CommandArgs args, @NotNull CommandContext context) {
         try {
-            return SeleneUtils.COLLECTION.asList(this.argument.getSuggestions(
+            return SeleneUtils.asList(this.argument.getSuggestions(
                     SpongeConversionUtil.fromSponge(src).get(),
                     args.next()
             ));
         } catch (ArgumentParseException e) {
-            return SeleneUtils.COLLECTION.emptyList();
+            return SeleneUtils.emptyList();
         }
     }
 }

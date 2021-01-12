@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.integrated.server;
 
+import org.dockbox.selene.core.Weather;
 import org.dockbox.selene.core.annotations.command.Arg;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Extension;
@@ -30,11 +31,10 @@ import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.inventory.Slot;
-import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
+import org.dockbox.selene.core.packets.ChangeGameStatePacket;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
@@ -42,6 +42,7 @@ import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.List;
@@ -58,10 +59,10 @@ public class IntegratedServerExtension implements IntegratedExtension {
     // Parent command
     @Command(aliases = "", usage = "")
     public void debugExtensions(MessageReceiver source) {
-        SeleneUtils.REFLECTION.runWithInstance(ExtensionManager.class, em -> {
-            PaginationBuilder pb = SeleneUtils.INJECT.getInstance(PaginationBuilder.class);
+        Reflect.runWithInstance(ExtensionManager.class, em -> {
+            PaginationBuilder pb = Selene.provide(PaginationBuilder.class);
 
-            List<Text> content = SeleneUtils.COLLECTION.emptyList();
+            List<Text> content = SeleneUtils.emptyList();
             content.add(IntegratedServerResources.SERVER_HEADER
                     .format(Selene.getServer().getVersion())
                     .translate(source).asText()
@@ -104,7 +105,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "extension", usage = "extension <id{Extension}>")
     public void debugExtension(MessageReceiver src, CommandContext ctx) {
-        SeleneUtils.REFLECTION.runWithInstance(ExtensionManager.class, em -> {
+        Reflect.runWithInstance(ExtensionManager.class, em -> {
             Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
@@ -131,7 +132,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "reload", usage = "reload [id{Extension}]", confirm = true)
     public void reload(MessageReceiver src, CommandContext ctx) {
-        EventBus eb = SeleneUtils.INJECT.getInstance(EventBus.class);
+        EventBus eb = Selene.provide(EventBus.class);
         if (ctx.hasArgument("id")) {
             Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
             if (!oarg.isPresent()) {
@@ -140,7 +141,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
             }
 
             Extension e = oarg.get().getValue();
-            Exceptional<?> oi = SeleneUtils.INJECT.getInstance(ExtensionManager.class).getInstance(e.id());
+            Exceptional<?> oi = Selene.provide(ExtensionManager.class).getInstance(e.id());
 
             oi.ifPresent(o -> {
                 eb.post(new ServerReloadEvent(), o.getClass());
@@ -167,7 +168,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
         optionalCooldownId
                 .ifPresent(cooldownId -> {
                     String cid = cooldownId.getValue();
-                    SeleneUtils.INJECT.getInstance(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
+                    Selene.provide(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
                             src.send(IntegratedServerResources.CONFIRM_FAILED));
                 })
                 .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));
@@ -222,18 +223,9 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
     @Command(aliases = "demo", usage = "demo")
     public void demo(Player player, CommandContext context) {
-        Item item = player.getInventory().getSlot(32);
-        System.out.println("Index:" + item.getId());
-
-        Item item2 = player.getInventory().getSlot(Slot.CHESTPLATE);
-        System.out.println("Chest:" + item2.getId());
-
-        Item item3 = player.getInventory().getSlot(3, 2);
-        System.out.println("At:" + item3.getId());
-
-        player.getInventory().setSlot(Selene.getItems().getPumpkin(), 32);
-        player.getInventory().setSlot(Selene.getItems().getCarvedPumpkin(), Slot.HELMET);
-        player.getInventory().setSlot(Selene.getItems().getBedrock(), 3, 0);
+        ChangeGameStatePacket packet = Selene.provide(ChangeGameStatePacket.class);
+        packet.setWeather(Weather.RAIN);
+        player.send(packet);
     }
 
 }

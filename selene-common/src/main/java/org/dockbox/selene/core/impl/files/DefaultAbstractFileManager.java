@@ -72,13 +72,13 @@ public abstract class DefaultAbstractFileManager extends FileManager {
     @NotNull
     @Override
     public Path createPathIfNotExists(@NotNull Path path) {
-        return SeleneUtils.OTHER.createPathIfNotExists(path);
+        return SeleneUtils.createPathIfNotExists(path);
     }
 
     @NotNull
     @Override
     public Path createFileIfNotExists(@NotNull Path file) {
-        return SeleneUtils.OTHER.createFileIfNotExists(file);
+        return SeleneUtils.createFileIfNotExists(file);
     }
 
     @Override
@@ -94,7 +94,7 @@ public abstract class DefaultAbstractFileManager extends FileManager {
 
     @Override
     public boolean copyDefaultFile(String defaultFileName, Path targetFile) {
-        if (targetFile.toFile().exists() && !SeleneUtils.OTHER.isFileEmpty(targetFile)) return false;
+        if (targetFile.toFile().exists() && !SeleneUtils.isFileEmpty(targetFile)) return false;
         return Selene.getResourceFile(defaultFileName).map(resource -> {
             this.move(resource, targetFile);
             return true;

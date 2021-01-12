@@ -26,7 +26,6 @@ import org.dockbox.selene.core.objects.keys.PersistentDataHolder;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
@@ -89,7 +88,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
      */
     @Deprecated
     static Item of(String id, int meta) {
-        return SeleneUtils.INJECT.getInstance(ItemFactory.class).create(id, meta);
+        return Selene.provide(ItemFactory.class).create(id, meta);
     }
 
 
@@ -117,7 +116,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
      */
     @Deprecated
     static Item of(BaseBlock baseBlock) {
-        return SeleneUtils.INJECT.getInstance(ItemFactory.class).create(baseBlock);
+        return Selene.provide(ItemFactory.class).create(baseBlock);
     }
 
 }

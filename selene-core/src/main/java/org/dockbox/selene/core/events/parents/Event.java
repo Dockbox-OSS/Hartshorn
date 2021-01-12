@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.events.parents;
 
 import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.server.Selene;
 
 /**
  * A low level type which is used when subscribing to, posting, or modifying events.
@@ -31,7 +31,7 @@ public interface Event {
      * @return Itself
      */
     default Event post() {
-        SeleneUtils.INJECT.getInstance(EventBus.class).post(this);
+        Selene.provide(EventBus.class).post(this);
         return this;
     }
 

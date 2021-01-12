@@ -18,7 +18,8 @@
 package org.dockbox.selene.core.objects.keys.data;
 
 import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.objects.keys.Keys;
+import org.dockbox.selene.core.util.Reflect;
 
 public final class StringPersistentDataKey extends TypedPersistentDataKey<String> {
 
@@ -27,12 +28,12 @@ public final class StringPersistentDataKey extends TypedPersistentDataKey<String
     }
 
     public static StringPersistentDataKey of(String name, Class<?> owningClass) {
-        Extension extension = SeleneUtils.REFLECTION.getExtension(owningClass);
+        Extension extension = Reflect.getExtension(owningClass);
         return of(name, extension);
     }
 
     public static StringPersistentDataKey of(String name, Extension extension) {
-        String id = SeleneUtils.KEYS.convertToExtensionIdString(name, extension);
+        String id = Keys.convertToExtensionIdString(name, extension);
         return new StringPersistentDataKey(name, id, extension);
     }
 }

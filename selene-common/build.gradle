@@ -17,26 +17,27 @@
 
 plugins {
     id 'java'
-    id "java-test-fixtures"
 }
 
 group = 'org.dockbox.selene.core.impl'
 description = 'Default implementations for Selene'
 
 dependencies {
-    compile project(path: ':selene-core', configuration: 'shadow')
+    compile project(':selene-core')
 
     dependencies {
-        shadow "org.spongepowered:configurate-core:$configurateVersion"
-        shadow "org.spongepowered:configurate-hocon:$configurateVersion"
-        shadow "org.spongepowered:configurate-yaml:$configurateVersion"
-        shadow "org.spongepowered:configurate-jackson:$configurateVersion"
-        shadow "org.spongepowered:configurate-gson:$configurateVersion"
-        shadow "org.spongepowered:configurate-xml:$configurateVersion"
+        compile "org.spongepowered:configurate-core:$configurateVersion"
+        compile "org.spongepowered:configurate-hocon:$configurateVersion"
+        compile "org.spongepowered:configurate-yaml:$configurateVersion"
+        compile "org.spongepowered:configurate-jackson:$configurateVersion"
+        compile "org.spongepowered:configurate-gson:$configurateVersion"
+        compile "org.spongepowered:configurate-xml:$configurateVersion"
 
-        shadow "com.stanfy:gson-xml-java:$gsonXmlVersion"
-        shadow "com.thoughtworks.xstream:xstream:$xstreamVersion"
-        shadow "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"
+        compile "com.stanfy:gson-xml-java:$gsonXmlVersion"
+        compile "com.thoughtworks.xstream:xstream:$xstreamVersion"
+        compile 'xpp3:xpp3:1.1.4c' // TODO, versioning
+        compile 'net.sf.kxml:kxml2:2.3.0'
+        compile "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"
 
         testImplementation "com.thoughtworks.xstream:xstream:$xstreamVersion"
         testImplementation "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"

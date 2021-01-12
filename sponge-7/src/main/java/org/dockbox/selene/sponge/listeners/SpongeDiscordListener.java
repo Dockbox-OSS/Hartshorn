@@ -90,7 +90,7 @@ public class SpongeDiscordListener extends ListenerAdapter {
             alias = alias.replaceFirst("\\*", ""); // Remove prefix
 
             // Wrapped in ArrayList as Arrays.asList is immutable by default
-            List<String> arguments = SeleneUtils.COLLECTION.asList(Arrays.asList(parts));
+            List<String> arguments = SeleneUtils.asList(Arrays.asList(parts));
             arguments.remove(0); // Remove command
 
             DiscordCommandContext ctx = new DiscordCommandContext(
@@ -100,7 +100,7 @@ public class SpongeDiscordListener extends ListenerAdapter {
                     alias,
                     arguments.toArray(new String[0])
             );
-            SeleneUtils.INJECT.getInstance(DiscordUtils.class).post(alias, ctx);
+            Selene.provide(DiscordUtils.class).post(alias, ctx);
         }
     }
 

@@ -17,10 +17,9 @@
 
 package org.dockbox.selene.core.objects.location;
 
-import org.dockbox.selene.core.util.MiscUtil;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -58,7 +57,7 @@ public abstract class World extends WorldProperties {
     }
 
     private static final class EmptyWorld extends World {
-        private EmptyWorld() {super(MiscUtil.EMPTY_UUID, "Empty", false, new Vector3N(0, 0, 0), -1, Gamemode.OTHER);}
+        private EmptyWorld() {super(SeleneUtils.EMPTY_UUID, "Empty", false, new Vector3N(0, 0, 0), -1, Gamemode.OTHER);}
 
         @Override
         public int getPlayerCount() {
@@ -85,7 +84,7 @@ public abstract class World extends WorldProperties {
 
         @Override
         public Map<String, String> getGamerules() {
-            return SeleneUtils.COLLECTION.emptyMap();
+            return SeleneUtils.emptyMap();
         }
     }
 }

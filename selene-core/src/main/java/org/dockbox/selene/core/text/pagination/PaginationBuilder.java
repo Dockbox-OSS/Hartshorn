@@ -31,7 +31,7 @@ public abstract class PaginationBuilder {
     protected Text title;
 
     protected int linesPerPage = 10;
-    protected List<Text> content = SeleneUtils.COLLECTION.emptyConcurrentList();
+    protected List<Text> content = SeleneUtils.emptyConcurrentList();
 
     public PaginationBuilder padding(Text padding) {
         this.padding = padding;

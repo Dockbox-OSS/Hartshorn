@@ -33,6 +33,7 @@ import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -66,9 +67,9 @@ public class MethodCommandContext extends AbstractRegistrationContext {
             Command command = this.method.getAnnotation(Command.class);
             if (0 < command.cooldownDuration() && source instanceof Identifiable) {
                 String registrationId = this.getRegistrationId((Identifiable<?>) source, context);
-                SeleneUtils.OTHER.cooldown(registrationId, command.cooldownDuration(), command.cooldownUnit());
+                SeleneUtils.cooldown(registrationId, command.cooldownDuration(), command.cooldownUnit());
             }
-            this.method.invoke(instance, SeleneUtils.OTHER.toArray(Object.class, args));
+            this.method.invoke(instance, SeleneUtils.toArray(Object.class, args));
             return Exceptional.empty();
         } catch (IllegalSourceException e) {
             return Exceptional.of(e);
@@ -82,7 +83,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
     }
 
     private List<Object> prepareArguments(CommandSource source, CommandContext context) {
-        List<Object> finalArgs = SeleneUtils.COLLECTION.emptyList();
+        List<Object> finalArgs = SeleneUtils.emptyList();
 
         for (Parameter parameter : this.getMethod().getParameters()) {
             if (this.processFromSourceParameters(parameter, context, finalArgs)) continue;
@@ -90,7 +91,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
             if (this.processArgumentParameters(parameter, context, finalArgs)) continue;
 
             Class<?> parameterType = parameter.getType();
-            if (SeleneUtils.REFLECTION.isEitherAssignableFrom(CommandSource.class, parameterType)) {
+            if (Reflect.isEitherAssignableFrom(CommandSource.class, parameterType)) {
                 if (parameterType.equals(Player.class)) {
                     if (source instanceof Player) finalArgs.add(source);
                     else throw new IllegalSourceException("Command can only be ran by players");
@@ -98,7 +99,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
                     if (source instanceof Console) finalArgs.add(source);
                     else throw new IllegalSourceException("Command can only be ran by the console");
                 } else finalArgs.add(source);
-            } else if (SeleneUtils.REFLECTION.isEitherAssignableFrom(CommandContext.class, parameterType)) {
+            } else if (Reflect.isEitherAssignableFrom(CommandContext.class, parameterType)) {
                 finalArgs.add(context);
             } else {
                 throw new IllegalStateException("Method requested parameter type '" + parameterType.getSimpleName() + "' which is not provided");
@@ -110,13 +111,13 @@ public class MethodCommandContext extends AbstractRegistrationContext {
     private boolean processFromSourceParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs) {
         if (parameter.isAnnotationPresent(FromSource.class)) {
             Class<?> parameterType = parameter.getType();
-            if (SeleneUtils.REFLECTION.isAssignableFrom(Player.class, parameterType)) {
+            if (Reflect.isAssignableFrom(Player.class, parameterType)) {
                 if (context.getSender() instanceof Player) finalArgs.add(context.getSender());
-            } else if (SeleneUtils.REFLECTION.isAssignableFrom(World.class, parameterType)) {
+            } else if (Reflect.isAssignableFrom(World.class, parameterType)) {
                 if (context.getSender() instanceof Locatable) finalArgs.add(context.getWorld());
-            } else if (SeleneUtils.REFLECTION.isAssignableFrom(Location.class, parameterType)) {
+            } else if (Reflect.isAssignableFrom(Location.class, parameterType)) {
                 if (context.getSender() instanceof Locatable) finalArgs.add(context.getLocation());
-            } else if (SeleneUtils.REFLECTION.isAssignableFrom(CommandSource.class, parameterType)) {
+            } else if (Reflect.isAssignableFrom(CommandSource.class, parameterType)) {
                 finalArgs.add(context.getSender());
             } else {
                 Selene.log().warn("Parameter '" + parameter.getName() + "' has @FromSource annotation but cannot be provided [" + parameterType.getCanonicalName() + "]");
@@ -158,10 +159,10 @@ public class MethodCommandContext extends AbstractRegistrationContext {
 
     private Object prepareInstance() {
         Object instance;
-        if (this.getDeclaringClass().equals(Selene.class) || SeleneUtils.REFLECTION.isAssignableFrom(Selene.class, this.getDeclaringClass())) {
+        if (this.getDeclaringClass().equals(Selene.class) || Reflect.isAssignableFrom(Selene.class, this.getDeclaringClass())) {
             instance = Selene.getServer();
         } else {
-            instance = SeleneUtils.INJECT.getInstance(this.getDeclaringClass());
+            instance = Selene.provide(this.getDeclaringClass());
         }
         return instance;
     }
@@ -171,7 +172,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         if (0 >= command.cooldownDuration()) return false;
         if (sender instanceof Identifiable) {
             String registrationId = this.getRegistrationId((Identifiable<?>) sender, ctx);
-            return SeleneUtils.OTHER.isInCooldown(registrationId);
+            return SeleneUtils.isInCooldown(registrationId);
         }
         return false;
     }

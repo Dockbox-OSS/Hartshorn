@@ -1,18 +1,18 @@
 /*
  * Copyright (C) 2020 Guus Lieben
  *
- * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
+ * Reflect framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General public static License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
+ * Reflect library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General Public License for more details.
+ * the GNU Lesser General public static License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ * You should have received a copy of the GNU Lesser General public static License
+ * along with Reflect library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
 package org.dockbox.selene.core.util;
@@ -53,17 +53,19 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class ReflectionUtil {
+public final class Reflect {
 
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap =
-            SeleneUtils.COLLECTION.ofEntries(SeleneUtils.COLLECTION.entry(boolean.class, Boolean.class),
-                    SeleneUtils.COLLECTION.entry(byte.class, Byte.class),
-                    SeleneUtils.COLLECTION.entry(char.class, Character.class),
-                    SeleneUtils.COLLECTION.entry(double.class, Double.class),
-                    SeleneUtils.COLLECTION.entry(float.class, Float.class),
-                    SeleneUtils.COLLECTION.entry(int.class, Integer.class),
-                    SeleneUtils.COLLECTION.entry(long.class, Long.class),
-                    SeleneUtils.COLLECTION.entry(short.class, Short.class));
+            SeleneUtils.ofEntries(SeleneUtils.entry(boolean.class, Boolean.class),
+                    SeleneUtils.entry(byte.class, Byte.class),
+                    SeleneUtils.entry(char.class, Character.class),
+                    SeleneUtils.entry(double.class, Double.class),
+                    SeleneUtils.entry(float.class, Float.class),
+                    SeleneUtils.entry(int.class, Integer.class),
+                    SeleneUtils.entry(long.class, Long.class),
+                    SeleneUtils.entry(short.class, Short.class));
+
+    private Reflect() {}
 
     /**
      * Attempts to get the return value of a method which may not be publicly accessible (e.g. protected or private).
@@ -88,7 +90,7 @@ public class ReflectionUtil {
      * @return The result of the method call, wrapped in {@link Exceptional}
      */
     @SuppressWarnings("unchecked")
-    public <T> Exceptional<T> getMethodValue(Class<?> methodHolder, Object instance, String method, Class<T> expectedType, Class<?>[] argumentTypes, Object... args) {
+    public static <T> Exceptional<T> getMethodValue(Class<?> methodHolder, Object instance, String method, Class<T> expectedType, Class<?>[] argumentTypes, Object... args) {
         try {
             Method m = methodHolder.getDeclaredMethod(method, argumentTypes);
             if (!m.isAccessible()) m.setAccessible(true);
@@ -99,9 +101,21 @@ public class ReflectionUtil {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> Exceptional<T> getFieldValue(Class<?> fieldHolder, Object instance, String field, Class<T> expectedType) {
+        try {
+            Field declaredField = fieldHolder.getDeclaredField(field);
+            declaredField.setAccessible(true);
+            T value = (T) declaredField.get(instance);
+            return Exceptional.of(value);
+        } catch (ClassCastException | ReflectiveOperationException e) {
+            return Exceptional.of(e);
+        }
+    }
+
     @Contract("null, _ -> false; !null, null -> false")
-    public <T> boolean isGenericInstanceOf(T instance, Class<?> type) {
-        return null != instance && null != type && this.isAssignableFrom(type, instance.getClass());
+    public static <T> boolean isGenericInstanceOf(T instance, Class<?> type) {
+        return null != instance && null != type && Reflect.isAssignableFrom(type, instance.getClass());
     }
 
     /**
@@ -123,17 +137,17 @@ public class ReflectionUtil {
      *         The type to compare assignability against
      *
      * @return true if {@code to} is equal to-, a super type of, or a primitive wrapper of {@code from}
-     * @see ReflectionUtil#isPrimitiveWrapperOf(Class, Class)
+     * @see Reflect#isPrimitiveWrapperOf(Class, Class)
      */
-    public boolean isAssignableFrom(Class<?> to, Class<?> from) {
+    public static boolean isAssignableFrom(Class<?> to, Class<?> from) {
         if (to.isAssignableFrom(from)) {
             return true;
         }
         if (from.isPrimitive()) {
-            return this.isPrimitiveWrapperOf(to, from);
+            return Reflect.isPrimitiveWrapperOf(to, from);
         }
         if (to.isPrimitive()) {
-            return this.isPrimitiveWrapperOf(from, to);
+            return Reflect.isPrimitiveWrapperOf(from, to);
         }
         return false;
     }
@@ -148,7 +162,7 @@ public class ReflectionUtil {
      *
      * @return true if {@code targetClass} is a primitive wrapper of {@code primitive}.
      */
-    public boolean isPrimitiveWrapperOf(Class<?> targetClass, Class<?> primitive) {
+    public static boolean isPrimitiveWrapperOf(Class<?> targetClass, Class<?> primitive) {
         if (!primitive.isPrimitive()) {
             throw new IllegalArgumentException("First argument has to be primitive type");
         }
@@ -173,8 +187,8 @@ public class ReflectionUtil {
      */
     @NotNull
     @Unmodifiable
-    public <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule) {
-        return this.getAnnotedMethods(clazz, annotation, rule, false);
+    public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule) {
+        return Reflect.getAnnotedMethods(clazz, annotation, rule, false);
     }
 
     /**
@@ -197,15 +211,15 @@ public class ReflectionUtil {
      */
     @NotNull
     @Unmodifiable
-    public <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule, boolean skipParents) {
-        List<Method> annotatedMethods = SeleneUtils.COLLECTION.emptyList();
-        for (Method method : SeleneUtils.COLLECTION.asList(skipParents ? clazz.getMethods() : clazz.getDeclaredMethods())) {
+    public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule, boolean skipParents) {
+        List<Method> annotatedMethods = SeleneUtils.emptyList();
+        for (Method method : SeleneUtils.asList(skipParents ? clazz.getMethods() : clazz.getDeclaredMethods())) {
             if (!method.isAccessible()) method.setAccessible(true);
             if (method.isAnnotationPresent(annotation) && rule.test(method.getAnnotation(annotation))) {
                 annotatedMethods.add(method);
             }
         }
-        return SeleneUtils.COLLECTION.asUnmodifiableList(annotatedMethods);
+        return SeleneUtils.asUnmodifiableList(annotatedMethods);
     }
 
     /**
@@ -221,8 +235,8 @@ public class ReflectionUtil {
      *
      * @return The annotated types
      */
-    public <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation) {
-        return this.getAnnotatedTypes(prefix, annotation, false);
+    public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation) {
+        return Reflect.getAnnotatedTypes(prefix, annotation, false);
     }
 
     /**
@@ -240,10 +254,10 @@ public class ReflectionUtil {
      *
      * @return The annotated types
      */
-    public <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation, boolean skipParents) {
+    public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation, boolean skipParents) {
         Reflections reflections = new Reflections(prefix);
         Set<Class<?>> types = reflections.getTypesAnnotatedWith(annotation, !skipParents);
-        return SeleneUtils.COLLECTION.asList(types);
+        return SeleneUtils.asList(types);
     }
 
     /**
@@ -254,7 +268,7 @@ public class ReflectionUtil {
      *
      * @return the boolean
      */
-    public boolean isNotVoid(Class<?> type) {
+    public static boolean isNotVoid(Class<?> type) {
         return !(type.equals(Void.class) || type == Void.TYPE);
     }
 
@@ -268,8 +282,8 @@ public class ReflectionUtil {
      *
      * @return the boolean
      */
-    public boolean isEitherAssignableFrom(Class<?> to, Class<?> from) {
-        return this.isAssignableFrom(from, to) || this.isAssignableFrom(to, from);
+    public static boolean isEitherAssignableFrom(Class<?> to, Class<?> from) {
+        return Reflect.isAssignableFrom(from, to) || Reflect.isAssignableFrom(to, from);
     }
 
     /**
@@ -280,9 +294,9 @@ public class ReflectionUtil {
      *
      * @return the static fields
      */
-    public Collection<Field> getStaticFields(Class<?> type) {
+    public static Collection<Field> getStaticFields(Class<?> type) {
         Field[] declaredFields = type.getDeclaredFields();
-        Collection<Field> staticFields = SeleneUtils.COLLECTION.emptyList();
+        Collection<Field> staticFields = SeleneUtils.emptyList();
         for (Field field : declaredFields) {
             if (Modifier.isStatic(field.getModifiers())) {
                 staticFields.add(field);
@@ -299,9 +313,9 @@ public class ReflectionUtil {
      *
      * @return the enum values
      */
-    public Collection<? extends Enum<?>> getEnumValues(Class<?> type) {
-        if (!type.isEnum()) return SeleneUtils.COLLECTION.emptyList();
-        Collection<Enum<?>> constants = SeleneUtils.COLLECTION.emptyList();
+    public static Collection<? extends Enum<?>> getEnumValues(Class<?> type) {
+        if (!type.isEnum()) return SeleneUtils.emptyList();
+        Collection<Enum<?>> constants = SeleneUtils.emptyList();
         try {
             Field f = type.getDeclaredField("$VALUES");
             if (!f.isAccessible()) f.setAccessible(true);
@@ -328,9 +342,9 @@ public class ReflectionUtil {
      * @throws SecurityException
      *         the security exception
      */
-    public <T extends Annotation> boolean isAnnotationPresentRecursively(Method method, Class<T> annotationClass)
+    public static <T extends Annotation> boolean isAnnotationPresentRecursively(Method method, Class<T> annotationClass)
             throws SecurityException {
-        return null != this.getAnnotationRecursively(method, annotationClass);
+        return null != Reflect.getAnnotationRecursively(method, annotationClass);
     }
 
     /**
@@ -347,7 +361,7 @@ public class ReflectionUtil {
      * @throws SecurityException
      *         the security exception
      */
-    public <T extends Annotation> T getAnnotationRecursively(Method method, Class<T> annotationClass)
+    public static <T extends Annotation> T getAnnotationRecursively(Method method, Class<T> annotationClass)
             throws SecurityException {
         T result;
         if (null == (result = method.getAnnotation(annotationClass))) {
@@ -355,7 +369,7 @@ public class ReflectionUtil {
             final Class<?>[] params = method.getParameterTypes();
 
             Class<?> declaringClass = method.getDeclaringClass();
-            for (Class<?> supertype : this.getSupertypes(declaringClass)) {
+            for (Class<?> supertype : Reflect.getSupertypes(declaringClass)) {
                 try {
                     Method m = supertype.getDeclaredMethod(name, params);
 
@@ -364,7 +378,7 @@ public class ReflectionUtil {
 
                     if (null != (result = m.getAnnotation(annotationClass))) break;
                 } catch (NoSuchMethodException ignored) {
-                    // Current class doesn't have this method
+                    // Current class doesn't have Reflect method
                 }
             }
         }
@@ -379,9 +393,9 @@ public class ReflectionUtil {
      *
      * @return the supertypes
      */
-    public Collection<Class<?>> getSupertypes(Class<?> current) {
-        Set<Class<?>> supertypes = SeleneUtils.COLLECTION.emptySet();
-        Set<Class<?>> next = SeleneUtils.COLLECTION.emptySet();
+    public static Collection<Class<?>> getSupertypes(Class<?> current) {
+        Set<Class<?>> supertypes = SeleneUtils.emptySet();
+        Set<Class<?>> next = SeleneUtils.emptySet();
         Class<?> superclass = current.getSuperclass();
         if (Object.class != superclass && null != superclass) {
             supertypes.add(superclass);
@@ -392,7 +406,7 @@ public class ReflectionUtil {
             next.add(interfaceClass);
         }
         for (Class<?> cls : next) {
-            supertypes.addAll(this.getSupertypes(cls));
+            supertypes.addAll(Reflect.getSupertypes(cls));
         }
         return supertypes;
     }
@@ -407,9 +421,9 @@ public class ReflectionUtil {
      * @throws SecurityException
      *         the security exception
      */
-    public List<Method> getMethodsRecursively(Class<?> cls) throws SecurityException {
+    public static List<Method> getMethodsRecursively(Class<?> cls) throws SecurityException {
         try {
-            Set<InternalMethodWrapper> set = SeleneUtils.COLLECTION.emptySet();
+            Set<InternalMethodWrapper> set = SeleneUtils.emptySet();
             Class<?> current = cls;
             do {
                 Method[] methods = current.getDeclaredMethods();
@@ -421,11 +435,11 @@ public class ReflectionUtil {
 
             // Guava equivalent:       Lists.transform(set, w -> w.method);
             // Stream API equivalent:  set.stream().map(w -> w.method).collect(Collectors.toList());
-            List<Method> result = SeleneUtils.COLLECTION.emptyList();
+            List<Method> result = SeleneUtils.emptyList();
             for (InternalMethodWrapper methodWrapper : set) result.add(methodWrapper.method);
             return result;
         } catch (Throwable e) {
-            return SeleneUtils.COLLECTION.emptyList();
+            return SeleneUtils.emptyList();
         }
     }
 
@@ -438,19 +452,19 @@ public class ReflectionUtil {
      * @return the extension
      */
     @Nullable
-    public Extension getExtension(Class<?> type) {
+    public static Extension getExtension(Class<?> type) {
         if (null == type) return null;
-        if (type.equals(Selene.class)) return this.getExtension(SeleneUtils.INJECT.getInstance(IntegratedExtension.class).getClass());
+        if (type.equals(Selene.class)) return Reflect.getExtension(Selene.provide(IntegratedExtension.class).getClass());
 
         if (type.isAnnotationPresent(OwnedBy.class)) {
             OwnedBy owner = type.getAnnotation(OwnedBy.class);
-            return this.getExtension(owner.value());
+            return Reflect.getExtension(owner.value());
         }
 
         Extension extension = type.getAnnotation(Extension.class);
-        extension = null != extension ? extension : this.getExtension(type.getSuperclass());
+        extension = null != extension ? extension : Reflect.getExtension(type.getSuperclass());
         if (null == extension)
-            extension = SeleneUtils.INJECT.getInstanceSafe(ExtensionManager.class).map(em -> em.getHeader(type).orNull()).orNull();
+            extension = Selene.getServer().getInstanceSafe(ExtensionManager.class).map(em -> em.getHeader(type).orNull()).orNull();
         return extension;
     }
 
@@ -467,8 +481,8 @@ public class ReflectionUtil {
      * @return the t
      */
     @Nullable
-    public <T> T runWithExtension(Class<?> type, Function<Extension, T> function) {
-        Extension extension = this.getExtension(type);
+    public static <T> T runWithExtension(Class<?> type, Function<Extension, T> function) {
+        Extension extension = Reflect.getExtension(type);
         if (null != extension) return function.apply(extension);
         return null;
     }
@@ -481,8 +495,8 @@ public class ReflectionUtil {
      * @param consumer
      *         the consumer
      */
-    public void runWithExtension(Class<?> type, Consumer<Extension> consumer) {
-        Extension extension = this.getExtension(type);
+    public static void runWithExtension(Class<?> type, Consumer<Extension> consumer) {
+        Extension extension = Reflect.getExtension(type);
         if (null != extension) consumer.accept(extension);
     }
 
@@ -496,8 +510,8 @@ public class ReflectionUtil {
      * @param consumer
      *         the consumer
      */
-    public <T> void runWithInstance(Class<T> type, Consumer<T> consumer) {
-        T instance = SeleneUtils.INJECT.getInstance(type);
+    public static <T> void runWithInstance(Class<T> type, Consumer<T> consumer) {
+        T instance = Selene.provide(type);
         if (null != instance) consumer.accept(instance);
     }
 
@@ -509,14 +523,14 @@ public class ReflectionUtil {
      *
      * @return the field property name
      */
-    public String getFieldPropertyName(Field field) {
+    public static String getFieldPropertyName(Field field) {
         return field.isAnnotationPresent(Property.class)
                 ? field.getAnnotation(Property.class).value()
                 : field.getName();
     }
 
     @Nullable
-    public String getClassAlias(Class<?> type) {
+    public static String getClassAlias(Class<?> type) {
         String className = null;
         if (type.isAnnotationPresent(Alias.class))
             className = type.getAnnotation(Alias.class).value();
@@ -535,8 +549,8 @@ public class ReflectionUtil {
      *
      * @return the exceptional
      */
-    public <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map) {
-        return this.tryCreateFromProcessed(type, key -> map.getOrDefault(key, null), true);
+    public static <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map) {
+        return Reflect.tryCreateFromProcessed(type, key -> map.getOrDefault(key, null), true);
     }
 
     /**
@@ -553,8 +567,8 @@ public class ReflectionUtil {
      *
      * @return the exceptional
      */
-    public <T> Exceptional<T> tryCreateFromProcessed(Class<T> type, Function<String, Object> valueCollector, boolean inject) {
-        return this.tryCreate(type, valueCollector, inject, Provision.FIELD_NAME);
+    public static <T> Exceptional<T> tryCreateFromProcessed(Class<T> type, Function<String, Object> valueCollector, boolean inject) {
+        return Reflect.tryCreate(type, valueCollector, inject, Provision.FIELD_NAME);
     }
 
     /**
@@ -571,8 +585,8 @@ public class ReflectionUtil {
      *
      * @return the exceptional
      */
-    public <T> Exceptional<T> tryCreateFromRaw(Class<T> type, Function<Field, Object> valueCollector, boolean inject) {
-        return this.tryCreate(type, valueCollector, inject, Provision.FIELD);
+    public static <T> Exceptional<T> tryCreateFromRaw(Class<T> type, Function<Field, Object> valueCollector, boolean inject) {
+        return Reflect.tryCreate(type, valueCollector, inject, Provision.FIELD);
     }
 
     /**
@@ -594,8 +608,8 @@ public class ReflectionUtil {
      * @return the exceptional
      */
     @SuppressWarnings("unchecked")
-    public <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision) {
-        T instance = inject ? SeleneUtils.INJECT.getInstance(type) : this.getInstance(type);
+    public static <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision) {
+        T instance = inject ? Selene.provide(type) : Reflect.getInstance(type);
         if (null != instance)
             try {
                 for (Field field : type.getDeclaredFields()) {
@@ -605,7 +619,7 @@ public class ReflectionUtil {
                     if (Provision.FIELD == provision) {
                         value = valueCollector.apply((A) field);
                     } else {
-                        String fieldName = this.getFieldPropertyName(field);
+                        String fieldName = Reflect.getFieldPropertyName(field);
                         value = valueCollector.apply((A) fieldName);
                     }
                     if (null == value) continue;
@@ -615,9 +629,9 @@ public class ReflectionUtil {
                         Property property = field.getAnnotation(Property.class);
 
                         //noinspection CallToSuspiciousStringMethod
-                        if (!"".equals(property.setter()) && this.hasMethod(type, property.setter())) {
+                        if (!"".equals(property.setter()) && Reflect.hasMethod(type, property.setter())) {
                             Class<?> parameterType = field.getType();
-                            if (this.isNotVoid(property.accepts())) parameterType = property.accepts();
+                            if (Reflect.isNotVoid(property.accepts())) parameterType = property.accepts();
 
                             Method method = type.getMethod(property.setter(), parameterType);
                             method.invoke(instance, value);
@@ -625,7 +639,7 @@ public class ReflectionUtil {
                         }
                     }
 
-                    if (useFieldDirect && this.isAssignableFrom(field.getType(), value.getClass()))
+                    if (useFieldDirect && Reflect.isAssignableFrom(field.getType(), value.getClass()))
                         field.set(instance, value);
                 }
             } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException | ClassCastException e) {
@@ -644,12 +658,12 @@ public class ReflectionUtil {
      *
      * @return the instance
      */
-    public <T> T getInstance(Class<T> clazz) {
+    public static <T> T getInstance(Class<T> clazz) {
         try {
             Constructor<T> ctor = clazz.getConstructor();
             return ctor.newInstance();
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            return SeleneUtils.INJECT.getInstance(clazz);
+            return Selene.provide(clazz);
         }
     }
 
@@ -664,8 +678,8 @@ public class ReflectionUtil {
      *
      * @return true if the type of the instance has a declared method which matches {@code method}
      */
-    public boolean hasMethod(Object instance, String method) {
-        return this.hasMethod(instance.getClass(), method);
+    public static boolean hasMethod(Object instance, String method) {
+        return Reflect.hasMethod(instance.getClass(), method);
     }
 
     /**
@@ -679,7 +693,7 @@ public class ReflectionUtil {
      *
      * @return true if the type has a declared method which matches {@code method}
      */
-    public boolean hasMethod(Class<?> type, @NonNls String method) {
+    public static boolean hasMethod(Class<?> type, @NonNls String method) {
         for (Method m : type.getDeclaredMethods()) {
             if (m.getName().equals(method)) return true;
         }
@@ -704,15 +718,15 @@ public class ReflectionUtil {
      *
      * @return The result of the method call, wrapped in {@link Exceptional}
      */
-    public <T> Exceptional<T> getMethodValue(Object instance, String method, Class<T> expectedType, Object... args) {
+    public static <T> Exceptional<T> getMethodValue(Object instance, String method, Class<T> expectedType, Object... args) {
         Class<?>[] argTypes = new Class<?>[args.length];
         for (int i = 0; i < args.length; i++) {
             argTypes[i] = args[i].getClass();
         }
-        return this.getMethodValue(instance.getClass(), instance, method, expectedType, argTypes, args);
+        return Reflect.getMethodValue(instance.getClass(), instance, method, expectedType, argTypes, args);
     }
 
-    public boolean hasFieldRecursive(Class<?> type, String field) {
+    public static boolean hasFieldRecursive(Class<?> type, String field) {
         Class<?> original = type;
         while (null != type) {
             try {
@@ -727,11 +741,11 @@ public class ReflectionUtil {
         return false;
     }
 
-    public boolean rejects(Class<?> holder, Class<?> potentialReject) {
-        return this.rejects(holder, potentialReject, false);
+    public static boolean rejects(Class<?> holder, Class<?> potentialReject) {
+        return Reflect.rejects(holder, potentialReject, false);
     }
 
-    public boolean rejects(Class<?> holder, Class<?> potentialReject, boolean throwIfRejected) {
+    public static boolean rejects(Class<?> holder, Class<?> potentialReject, boolean throwIfRejected) {
         if (holder.isAnnotationPresent(Rejects.class)) {
             Rejects rejects = holder.getAnnotation(Rejects.class);
             boolean rejected = false;
@@ -743,12 +757,12 @@ public class ReflectionUtil {
         return false;
     }
 
-    public void forEachFieldIn(Class<?> type, BiConsumer<Class<?>, Field> consumer) {
+    public static void forEachFieldIn(Class<?> type, BiConsumer<Class<?>, Field> consumer) {
         for (Field declaredField : type.getDeclaredFields()) {
             consumer.accept(type, declaredField);
         }
         if (null != type.getSuperclass())
-            this.forEachFieldIn(type.getSuperclass(), consumer);
+            Reflect.forEachFieldIn(type.getSuperclass(), consumer);
     }
 
 

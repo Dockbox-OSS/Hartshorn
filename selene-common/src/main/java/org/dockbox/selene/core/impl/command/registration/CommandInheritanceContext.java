@@ -28,7 +28,7 @@ import java.util.List;
 
 public class CommandInheritanceContext extends AbstractRegistrationContext {
 
-    private final List<MethodCommandContext> inheritedCommands = SeleneUtils.COLLECTION.emptyConcurrentList();
+    private final List<MethodCommandContext> inheritedCommands = SeleneUtils.emptyConcurrentList();
 
     public CommandInheritanceContext(Command command) {
         super(command);

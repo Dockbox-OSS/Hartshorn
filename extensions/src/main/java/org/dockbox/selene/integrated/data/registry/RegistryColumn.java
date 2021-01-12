@@ -36,14 +36,14 @@ import java.util.function.Predicate;
 @Alias("column")
 public class RegistryColumn<T> {
 
-    private List<T> data = SeleneUtils.COLLECTION.emptyList();
+    private List<T> data = SeleneUtils.emptyList();
 
     public RegistryColumn() {
         super();
     }
 
     public RegistryColumn(Collection<T> values) {
-        this.data = SeleneUtils.COLLECTION.asList(values);
+        this.data = SeleneUtils.asList(values);
     }
 
     public RegistryColumn(RegistryColumn<T> column) {
@@ -54,7 +54,7 @@ public class RegistryColumn<T> {
      * Filters the RegistryColumn based on the provided filter.
      *
      * @param filter
-     * The filter accepts a value of type {@link T} or its parents and returns false to keep that value,
+     * The filter accepts a value of type {@code T} or its parents and returns false to keep that value,
      * true to remove it.
      * @return Itself
      */
@@ -67,7 +67,7 @@ public class RegistryColumn<T> {
      * Maps this registryColumn to another type.
      *
      * @param mapper
-     * The mapper accepts a value of type {@link T} or its parents and returns a value of type {@link K}.
+     * The mapper accepts a value of type {@code T} or its parents and returns a value of type {@code K}.
      * @param <K> The type of the new RegistryColumn.
      * @return A new RegistryColumn which contains the mapped values of the previous RegistryColumn.
      */
@@ -84,7 +84,7 @@ public class RegistryColumn<T> {
      * Maps this registryColumn to a collection and then adds all the collections into a new single RegistryColumn
      *
      * @param mapper
-     * The mapper accepts a value of type {@link T} or its parents and returns a collection of type {@link K}.
+     * The mapper accepts a value of type {@code T} or its parents and returns a collection of type {@code K}.
      * @param <K> The type of the new RegistryColumn.
      * @return A new RegistryColumn which contains all the values of the collections.
      */
@@ -98,8 +98,8 @@ public class RegistryColumn<T> {
     }
 
     /**
-     * Attempts to cast the values to the specified type {@link K}. If the value is not an instance of type
-     * {@link K} then it is not added to the resulting RegistryColumn.
+     * Attempts to cast the values to the specified type {@code K}. If the value is not an instance of type
+     * {@code K} then it is not added to the resulting RegistryColumn.
      *
      * @param clazz The class of the type to convert to.
      * @param <K> The type of the new RegistryColumn
@@ -122,7 +122,7 @@ public class RegistryColumn<T> {
      * Finds the first value which matches the provided predicate.
      *
      * @param predicate
-     * The predicate takes in a value of type {@link T} or its parents and returns true if that value is a match,
+     * The predicate takes in a value of type {@code T} or its parents and returns true if that value is a match,
      * otherwise it returns false.
      * @return An {@link Exceptional} containing the value of the first match, if one is found.
      */

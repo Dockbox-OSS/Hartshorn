@@ -134,7 +134,7 @@ public class SpongeWorld extends World {
         if (this.worldReference.referenceExists()) {
             return this.worldReference.getReference().get().getProperties().getGameRules();
         }
-        return SeleneUtils.COLLECTION.emptyMap();
+        return SeleneUtils.emptyMap();
     }
 
     @Override

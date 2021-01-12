@@ -18,6 +18,7 @@
 package org.dockbox.selene.integrated.tools;
 
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.event.Listener;
@@ -45,7 +46,7 @@ public class ToolBindingExtension {
 
     private static ToolBindingExtension instance;
 
-    public static final RemovableKey<Item, ItemTool> TOOL = SeleneUtils.KEYS.checkedDynamicKeyOf(
+    public static final RemovableKey<Item, ItemTool> TOOL = Keys.checkedDynamicKeyOf(
             // Not possible to use method references here due to instance being initialized later
             (item, tool) -> instance.setTool(item, tool),
             item -> instance.getTool(item),
@@ -59,7 +60,7 @@ public class ToolBindingExtension {
     private static final ResourceEntry TOOL_ERROR_HAND = new Resource("Tool cannot be bound to hand", "toolbinding.error.hand");
     private static final ResourceEntry TOOL_ERROR_DUPLICATE = new Resource("There is already a tool bound to this item", "toolbinding.error.duplicate");
 
-    private final Map<String, ItemTool> registry = SeleneUtils.COLLECTION.emptyConcurrentMap();
+    private final Map<String, ItemTool> registry = SeleneUtils.emptyConcurrentMap();
 
     public ToolBindingExtension() {
         instance = this;

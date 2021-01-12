@@ -106,7 +106,7 @@ public enum IntegratedResource implements ResourceEntry {
     EXCEPTION("$4{0}", "selene.exception");
 
     private final String key;
-    private final Map<Language, String> translations = SeleneUtils.COLLECTION.emptyConcurrentMap();
+    private final Map<Language, String> translations = SeleneUtils.emptyConcurrentMap();
     private String value;
 
     IntegratedResource(String value, String key) {

@@ -72,14 +72,14 @@ public class SpongeProfile implements Profile {
     @Override
     public Map<String, Collection<Tuple<String, String>>> getAdditionalProperties() {
         Map<String, Collection<ProfileProperty>> properties = this.gameProfile.getPropertyMap().asMap();
-        Map<String, Collection<Tuple<String, String>>> convertedProperties = SeleneUtils.COLLECTION.emptyMap();
+        Map<String, Collection<Tuple<String, String>>> convertedProperties = SeleneUtils.emptyMap();
         properties.forEach((key, propertyCollection) -> {
             List<Tuple<String, String>> collection = propertyCollection.stream()
                     .map(property -> new Tuple<>(property.getName(), property.getValue()))
                     .collect(Collectors.toList());
             convertedProperties.put(key, collection);
         });
-        return SeleneUtils.COLLECTION.asUnmodifiableMap(convertedProperties);
+        return SeleneUtils.asUnmodifiableMap(convertedProperties);
     }
 
     @Override

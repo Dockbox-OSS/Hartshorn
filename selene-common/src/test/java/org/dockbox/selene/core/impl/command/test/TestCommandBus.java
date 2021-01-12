@@ -58,7 +58,7 @@ public class TestCommandBus extends DefaultCommandBus {
 
             @Override
             public List<AbstractArgumentElement<?>> buildAndCombines(AbstractArgumentElement<?> element) {
-                return SeleneUtils.COLLECTION.asUnmodifiableList(element);
+                return SeleneUtils.asUnmodifiableList(element);
             }
         };
     }

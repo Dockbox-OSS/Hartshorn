@@ -36,15 +36,18 @@ repositories {
 }
 
 dependencies {
-    compile project(path: ':selene-core', configuration: 'shadow')
-    compile project(path: ':selene-common', configuration: 'shadow')
-    compile project(path: ':extensions', configuration: 'shadow')
+    compile project(':selene-core')
+    compile project(':selene-common')
+    compile project(':extensions')
+    compile(project(':selene-nms-1.12')) {
+        exclude group: 'net.minecraftforge', module: 'forge'
+    }
 
     compileOnly "me.lucko.luckperms:luckperms-api:$luckPermsVersion"
     compileOnly ("org.spongepowered:spongeapi:$spongeApi7Version") {
         exclude group: "org.spongepowered", module: "configurate**"
     }
-    compileOnly ("org.spongepowered:spongecommon:$spongeCommon7Version") {
+    compileOnly("org.spongepowered:spongecommon:$spongeCommon7Version") {
         exclude group: "org.spongepowered", module: "configurate**"
     }
     compileOnly "com.github.Eufranio:MagiBridge:$magiBridgeVersion"
@@ -53,14 +56,25 @@ dependencies {
     compileOnly "com.sk89q.worldedit:worldedit-sponge:$worldEditSpongeVersion"
     compileOnly "io.github.nucleuspowered:nucleus-api:$nucleusApiVersion"
 
+    compileOnly 'io.netty:netty-all:4.1.24.Final'
+
     testCompileOnly project(':selene-core')
     testCompileOnly project(':selene-common')
     testCompileOnly project(':extensions')
+    testCompileOnly(project(':selene-nms-1.12')) {
+        exclude group: 'net.minecraftforge', module: 'forge'
+    }
 
-    if(findProject(':darwin') != null){
-        compile project(path: ':darwin', configuration: 'shadow')
+    if (findProject(':darwin') != null) {
+        compile project(':darwin')
         testCompileOnly project(':darwin')
     }
+
+    compileOnly files('libs/PacketGate-0.1.2.jar')
+}
+
+shadowJar {
+    exclude 'net/minecraft/**'
 }
 
 task prepareServerArtifacts(dependsOn: build) {
@@ -74,11 +88,11 @@ task prepareServerArtifacts(dependsOn: build) {
         }
 
         println("Copying from: $DIST_DIR:")
-        println("$archivesBaseName-$version-${date}.jar")
+        println("$archivesBaseName-$version-${date}-all.jar")
         println("Copying to: $PLUGIN_DIR")
         ant.copy(todir: PLUGIN_DIR) {
             fileset dir: DIST_DIR,
-                    includes: "$archivesBaseName-$version-${date}.jar"
+                    includes: "$archivesBaseName-$version-${date}-all.jar"
         }
     }
 }

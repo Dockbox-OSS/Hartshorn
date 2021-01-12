@@ -42,7 +42,7 @@ public final class SeleneTypeSerializers {
      * The transient {@link Collection} holding all known {@link SerializerInformation} instances, which can be
      * used to register the associated {@link TypeSerializer}s.
      */
-    static final transient Collection<SerializerInformation<?>> serializerInformation = SeleneUtils.COLLECTION.emptyConcurrentList();
+    static final transient Collection<SerializerInformation<?>> serializerInformation = SeleneUtils.emptyConcurrentList();
 
     static {
         try {

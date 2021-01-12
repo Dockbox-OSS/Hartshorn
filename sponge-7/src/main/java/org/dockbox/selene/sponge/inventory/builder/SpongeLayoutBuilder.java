@@ -22,9 +22,9 @@ import org.dockbox.selene.core.inventory.InventoryLayout;
 import org.dockbox.selene.core.inventory.InventoryType;
 import org.dockbox.selene.core.inventory.builder.LayoutBuilder;
 import org.dockbox.selene.core.inventory.properties.InventoryTypeProperty;
+import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
@@ -72,7 +72,7 @@ public class SpongeLayoutBuilder extends LayoutBuilder {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        SeleneUtils.KEYS.getPropertyValue(InventoryTypeProperty.KEY, InventoryType.class, properties)
+        Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryType.class, properties)
                 .ifPresent(inventoryType -> {
                     this.inventoryType = inventoryType;
                 })

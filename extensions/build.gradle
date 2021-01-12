@@ -30,15 +30,14 @@ dependencies {
     testCompile project(':selene-common')
 
     // SQL Extension dependencies
-    shadow "org.jooq:jooq:$jooqVersion"
-    shadow "org.jooq:jooq-meta:$jooqVersion"
-    shadow "org.jooq:jooq-codegen:$jooqVersion"
+    compile "org.jooq:jooq:$jooqVersion"
+    compile "org.jooq:jooq-meta:$jooqVersion"
+    compile "org.jooq:jooq-codegen:$jooqVersion"
 
     testRuntime "org.jooq:jooq:$jooqVersion"
     testCompile "org.xerial:sqlite-jdbc:$xerialSqliteJdbcVersion"
 
-    // Test fixtures
-    testCompile testFixtures(project(":selene-common"))
+    // Test file managers
     testImplementation "com.thoughtworks.xstream:xstream:$xstreamVersion"
     testImplementation 'com.fasterxml.woodstox:woodstox-core:6.2.3'
 

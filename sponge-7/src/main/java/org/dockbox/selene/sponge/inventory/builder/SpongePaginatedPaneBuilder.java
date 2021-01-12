@@ -22,6 +22,7 @@ import org.dockbox.selene.core.inventory.InventoryLayout;
 import org.dockbox.selene.core.inventory.builder.PaginatedPaneBuilder;
 import org.dockbox.selene.core.inventory.pane.PaginatedPane;
 import org.dockbox.selene.core.inventory.properties.InventoryTypeProperty;
+import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.text.Text;
@@ -40,7 +41,7 @@ import dev.flashlabs.flashlibs.inventory.Page;
 public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
 
     private Page.Builder builder;
-    private Collection<Element> elements = SeleneUtils.COLLECTION.emptyList();
+    private Collection<Element> elements = SeleneUtils.emptyList();
 
     @Override
     public PaginatedPaneBuilder elements(Collection<Element> elements) {
@@ -71,7 +72,7 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        SeleneUtils.KEYS.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
+        Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
                 .ifPresent(layout -> {
                     this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
                     this.layout(layout);

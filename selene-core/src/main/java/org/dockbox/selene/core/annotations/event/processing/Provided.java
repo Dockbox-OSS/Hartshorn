@@ -24,10 +24,10 @@ import java.lang.annotation.Target;
 
 
 /**
- * Tries to get the instance of the type through {@link org.dockbox.selene.core.util.InjectUtil#getInstance}. Supports extension-specific injected types
- * if the listener is a extension and no value is provided. If {@link #value()} is provided, and is a extension,
- * the provided class is offered as the extension. By default this will not override any pre-existing value unless
- * {@link #overrideExisting()} is set to true.
+ * Tries to get the instance of the type through {@link org.dockbox.selene.core.server.bootstrap.InjectableBootstrap#getInstance}. Supports
+ * extension-specific injected types if the listener is a extension and no value is provided. If {@link #value()} is provided, and is a extension, the
+ * provided class is offered as the extension. By default this will not override any pre-existing value unless {@link #overrideExisting()} is set to
+ * true.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)

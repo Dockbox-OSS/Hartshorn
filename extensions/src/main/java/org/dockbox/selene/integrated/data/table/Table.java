@@ -20,6 +20,7 @@ package org.dockbox.selene.integrated.data.table;
 import org.dockbox.selene.core.annotations.entity.Ignore;
 import org.dockbox.selene.core.annotations.entity.Property;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.integrated.data.table.behavior.Merge;
 import org.dockbox.selene.integrated.data.table.behavior.Order;
@@ -72,12 +73,12 @@ public class Table {
      */
     public Table(ColumnIdentifier<?>... columns) {
         this.identifiers = columns;
-        this.rows = SeleneUtils.COLLECTION.emptyConcurrentList();
+        this.rows = SeleneUtils.emptyConcurrentList();
     }
 
     public Table(Collection<ColumnIdentifier<?>> columns) {
         this.identifiers = columns.toArray(new ColumnIdentifier[0]);
-        this.rows = SeleneUtils.COLLECTION.emptyConcurrentList();
+        this.rows = SeleneUtils.emptyConcurrentList();
     }
 
     /**
@@ -180,7 +181,7 @@ public class Table {
         if (!this.hasColumn(column))
             throw new UnknownIdentifierException("Cannot look up a column that does not exist");
 
-        Collection<TableRow> filteredRows = SeleneUtils.COLLECTION.emptyList();
+        Collection<TableRow> filteredRows = SeleneUtils.emptyList();
         for (TableRow row : this.rows) {
             Exceptional<T> value = row.getValue(column);
             if (!value.isPresent()) continue;
@@ -323,8 +324,8 @@ public class Table {
      */
     public <T> Table join(@NotNull Table otherTable, ColumnIdentifier<T> column, Merge merge, boolean populateEmptyEntries) throws EmptyEntryException, IdentifierMismatchException {
         if (this.hasColumn(column) && otherTable.hasColumn(column)) {
-            List<ColumnIdentifier<?>> mergedIdentifiers = SeleneUtils.COLLECTION.emptyList();
-            for (ColumnIdentifier<?> identifier : SeleneUtils.OTHER.addAll(this.getIdentifiers(), otherTable.getIdentifiers())) {
+            List<ColumnIdentifier<?>> mergedIdentifiers = SeleneUtils.emptyList();
+            for (ColumnIdentifier<?> identifier : SeleneUtils.addAll(this.getIdentifiers(), otherTable.getIdentifiers())) {
                 if (mergedIdentifiers.contains(identifier)) continue;
                 mergedIdentifiers.add(identifier);
             }
@@ -405,7 +406,7 @@ public class Table {
      * @return Return the table's rows
      */
     public List<TableRow> getRows() {
-        return SeleneUtils.COLLECTION.asUnmodifiableList(this.rows);
+        return SeleneUtils.asUnmodifiableList(this.rows);
     }
 
     /**
@@ -483,7 +484,7 @@ public class Table {
         if (!this.hasColumn(column))
             throw new IllegalArgumentException("Table does not contains column named : " + column.getColumnName());
 
-        if (!SeleneUtils.REFLECTION.isAssignableFrom(Comparable.class, column.getType()))
+        if (!Reflect.isAssignableFrom(Comparable.class, column.getType()))
             throw new IllegalArgumentException("Column does not contain a comparable data type : " + column.getColumnName());
 
         this.rows.sort((r1, r2) -> {
@@ -537,7 +538,7 @@ public class Table {
     }
 
     private <T> Exceptional<T> convertRowTo(Class<T> type, TableRow row, boolean injectable) {
-        return SeleneUtils.REFLECTION.tryCreateFromProcessed(type, fieldName -> {
+        return Reflect.tryCreateFromProcessed(type, fieldName -> {
             ColumnIdentifier<?> identifier = this.getIdentifier(fieldName);
             return row.getValue(identifier).orNull();
         }, injectable);

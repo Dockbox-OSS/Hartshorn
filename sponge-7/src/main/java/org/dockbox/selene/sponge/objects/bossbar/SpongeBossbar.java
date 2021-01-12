@@ -107,7 +107,7 @@ public class SpongeBossbar extends DefaultTickableBossbar {
     public Collection<Player> visibleTo() {
         return this.reference.getReference().map(serverBossBar -> serverBossBar.getPlayers().stream()
                 .map(SpongeConversionUtil::fromSponge).collect(Collectors.toList()))
-                .orElseGet(SeleneUtils.COLLECTION::emptyList);
+                .orElseGet(SeleneUtils::emptyList);
     }
 
     @Override

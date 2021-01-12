@@ -15,11 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util;
+package org.dockbox.selene.core.server.bootstrap;
 
 import com.google.inject.AbstractModule;
 
 import org.dockbox.selene.core.annotations.extension.Specific;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ import java.util.Collection;
 
 final class ExtensionModule extends AbstractModule {
 
-    private final Collection<InternalBinding<Object>> bindings = SeleneUtils.COLLECTION.emptyConcurrentList();
+    private final Collection<InternalBinding<Object>> bindings = SeleneUtils.emptyConcurrentList();
     private Logger logger;
 
     @Override

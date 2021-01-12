@@ -1,7 +1,6 @@
 build
 .gradle/
 .idea/
-gradle/
 dist
 target
 dependency-reduced-pom.xml

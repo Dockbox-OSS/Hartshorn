@@ -31,6 +31,7 @@ import org.dockbox.selene.core.exceptions.SkipEventException;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,13 +59,13 @@ public enum DefaultParamProcessors {
         if (null != object && !annotation.overrideExisting()) return object;
 
         AtomicReference<Object> arg = new AtomicReference<>(null);
-        SeleneUtils.REFLECTION.getMethodValue(event, annotation.value(), parameter.getType())
+        Reflect.getMethodValue(event, annotation.value(), parameter.getType())
                 .ifPresent(arg::set);
         return arg.get();
     }),
 
     /**
-     * The processor definition for {@link Provided}. Tries to obtain a value through {@link org.dockbox.selene.core.util.InjectUtil#getInstance(Class, InjectorProperty[])}.
+     * The processor definition for {@link Provided}. Tries to obtain a value through {@link org.dockbox.selene.core.server.bootstrap.InjectableBootstrap#getInstance(Class, InjectorProperty[])}.
      * If no instance is found {@code null} is returned. This processor is performed in a {@link EventStage#POPULATE}
      * stage, making it the first available option to provide the object value. It is possible there is another annotation
      * processed before this if it is in the same stage, in which case the processor respects the value of
@@ -74,12 +75,12 @@ public enum DefaultParamProcessors {
         if (null != object && !annotation.overrideExisting()) return object;
 
         Class<?> extensionClass = parameter.getType();
-        if (SeleneUtils.REFLECTION.isNotVoid(annotation.value()) && annotation.value().isAnnotationPresent(Extension.class)) {
+        if (Reflect.isNotVoid(annotation.value()) && annotation.value().isAnnotationPresent(Extension.class)) {
             extensionClass = annotation.value();
         } else if (wrapper.getListener().getClass().isAnnotationPresent(Extension.class)) {
             extensionClass = wrapper.getListener().getClass();
         }
-        return SeleneUtils.INJECT.getInstance(parameter.getType(), extensionClass);
+        return Selene.provide(parameter.getType(), extensionClass);
     }),
 
     /**
@@ -100,7 +101,7 @@ public enum DefaultParamProcessors {
                 if (null == object) throw new SkipEventException();
                 break;
             case EMPTY:
-                if (SeleneUtils.ASSERTION.isEmpty(object)) throw new SkipEventException();
+                if (SeleneUtils.isEmpty(object)) throw new SkipEventException();
                 break;
             case ZERO:
                 if (object instanceof Number && 0 == ((Number) object).floatValue())
@@ -116,7 +117,7 @@ public enum DefaultParamProcessors {
      * it is converted to a {@link Exceptional}.
      */
     WRAP_SAFE(WrapSafe.class, EventStage.FILTER, (object, annotation, event, parameter, wrapper) -> {
-        if (SeleneUtils.REFLECTION.isAssignableFrom(parameter.getType(), event.getClass())) {
+        if (Reflect.isAssignableFrom(parameter.getType(), event.getClass())) {
             Selene.log().warn("Event parameter cannot be wrapped");
             return object;
         }

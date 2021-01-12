@@ -17,14 +17,15 @@
 
 package org.dockbox.selene.core.impl.tasks.pipeline.pipelines;
 
-import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.impl.tasks.pipeline.CancelBehaviour;
 import org.dockbox.selene.core.impl.tasks.pipeline.exceptions.IllegalPipeException;
 import org.dockbox.selene.core.impl.tasks.pipeline.pipes.CancellablePipe;
 import org.dockbox.selene.core.impl.tasks.pipeline.pipes.ComplexPipe;
 import org.dockbox.selene.core.impl.tasks.pipeline.pipes.IPipe;
 import org.dockbox.selene.core.impl.tasks.pipeline.pipes.StandardPipe;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.util.Reflect;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractPipeline<P, I> {
 
-    private final List<IPipe<I, I>> pipes = SeleneUtils.COLLECTION.emptyList();
+    private final List<IPipe<I, I>> pipes = SeleneUtils.emptyList();
     private boolean isCancelled;
     private CancelBehaviour cancelBehaviour = CancelBehaviour.UNCANCELLABLE;
 
@@ -108,7 +109,7 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /**
-     * An abstract method which defines how an {@link P input} and a {@link Throwable} should be passed to
+     * An abstract method which defines how an {@code P} input and a {@link Throwable} should be passed to
      * {@link AbstractPipeline#process(Exceptional)}.
      *
      * @param input
@@ -131,10 +132,10 @@ public abstract class AbstractPipeline<P, I> {
     protected abstract Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput);
 
     /**
-     * Processes an {@link P input} by internally calling {@link AbstractPipeline#process(Object, Throwable)}.
+     * Processes an {@code P} input by internally calling {@link AbstractPipeline#process(Object, Throwable)}.
      *
      * @param input
-     *         The non-null {@link P input} to be processed by the pipeline
+     *         The non-null {@code P} input to be processed by the pipeline
      *
      * @return An {@link Exceptional} containing the {@link I output}. If the output is not present it will contain a
      *         throwable describing why
@@ -158,7 +159,7 @@ public abstract class AbstractPipeline<P, I> {
      *         If you try and add a {@link CancellablePipe} and the pipeline is not cancellable
      */
     protected Exceptional<I> processPipe(IPipe<I, I> pipe, Exceptional<I> exceptionalInput) {
-        if (!this.isCancellable() && SeleneUtils.REFLECTION.isAssignableFrom(CancellablePipe.class, pipe.getType())) {
+        if (!this.isCancellable() && Reflect.isAssignableFrom(CancellablePipe.class, pipe.getType())) {
             throw new IllegalPipeException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
         }
 
@@ -166,10 +167,10 @@ public abstract class AbstractPipeline<P, I> {
         final Exceptional<I> finalInput = exceptionalInput;
 
         exceptionalInput = Exceptional.of(() -> {
-            if (SeleneUtils.REFLECTION.isAssignableFrom(ComplexPipe.class, pipe.getType())) {
+            if (Reflect.isAssignableFrom(ComplexPipe.class, pipe.getType())) {
                 ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
                 return complexPipe.apply(this, finalInput.orElse(null), finalInput.orElseExcept(null));
-            } else if (SeleneUtils.REFLECTION.isAssignableFrom(StandardPipe.class, pipe.getType())) {
+            } else if (Reflect.isAssignableFrom(StandardPipe.class, pipe.getType())) {
                 StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
                 return standardPipe.apply(finalInput);
             } else {
@@ -187,13 +188,13 @@ public abstract class AbstractPipeline<P, I> {
 
 
     /**
-     * Unsafely processes an {@link P input} by calling {@link AbstractPipeline#process(Object, Throwable)} and
+     * Unsafely processes an {@code P} input by calling {@link AbstractPipeline#process(Object, Throwable)} and
      * unwrapping the output value without checking if its present.
      *
      * @param input
-     *         The non-null {@link P input} to be processed by the pipeline
+     *         The non-null {@code P} input to be processed by the pipeline
      *
-     * @return The {@link I output} of processing the input, unwrapped from the {@link Exceptional} without checking
+     * @return The {@code I} output of processing the input, unwrapped from the {@link Exceptional} without checking
      *         if its present
      */
     public I processUnsafe(@NotNull P input) {
@@ -201,11 +202,11 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /**
-     * Processes a {@link Collection} of {@link P inputs} by internally calling {@link AbstractPipeline#process(Object)}
+     * Processes a {@link Collection} of {@code P} inputs by internally calling {@link AbstractPipeline#process(Object)}
      * on each input in the {@link Collection} and returns the result as a {@link List} of {@link Exceptional}.
      *
      * @param inputs
-     *         The non-null {@link Collection} of {@link P inputs} to be processed by the pipeline
+     *         The non-null {@link Collection} of {@code P} inputs to be processed by the pipeline
      *
      * @return A {@link List} of {@link Exceptional} containing the processed {@link I output} of each input
      */
@@ -217,13 +218,13 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /**
-     * Processes a {@link Collection} of {@link P inputs} by internally calling {@link AbstractPipeline#process(Object)}
+     * Processes a {@link Collection} of {@code P} inputs by internally calling {@link AbstractPipeline#process(Object)}
      * on each input in the {@link Collection} and returns the non-null results as a {@link List} of {@link I outputs}.
      *
      * @param inputs
-     *         The non-null {@link Collection} of {@link P inputs} to be processed by the pipeline
+     *         The non-null {@link Collection} of {@code P} inputs to be processed by the pipeline
      *
-     * @return A {@link List} containing the processed {@link I output} of each input, if not null
+     * @return A {@link List} containing the processed {@code I} output of each input, if not null
      */
     public List<I> processAllSafe(@NotNull Collection<P> inputs) {
         return inputs
@@ -235,14 +236,14 @@ public abstract class AbstractPipeline<P, I> {
     }
 
     /**
-     * Processes a {@link Collection} of {@link P inputs} by internally calling {@link AbstractPipeline#process(Object)}
-     * on each input in the {@link Collection} and returns the result as a {@link List} of {@link I outputs},
+     * Processes a {@link Collection} of {@code P} inputs by internally calling {@link AbstractPipeline#process(Object)}
+     * on each input in the {@link Collection} and returns the result as a {@link List} of {@code I} outputs,
      * including null values.
      *
      * @param inputs
-     *         The non-null {@link Collection} of {@link P inputs} to be processed by the pipeline
+     *         The non-null {@link Collection} of {@code P} inputs to be processed by the pipeline
      *
-     * @return A {@link List} containing the processed {@link I output} of each input, even if its null
+     * @return A {@link List} containing the processed {@code I} output of each input, even if its null
      */
     public List<I> processAllUnsafe(@NotNull Collection<P> inputs) {
         return inputs
@@ -318,7 +319,7 @@ public abstract class AbstractPipeline<P, I> {
      * @return An unmodifiabe list of the {@link IPipe}s in the pipeline
      */
     public List<IPipe<I, I>> getPipes() {
-        return SeleneUtils.COLLECTION.asUnmodifiableList(this.pipes);
+        return SeleneUtils.asUnmodifiableList(this.pipes);
     }
 
     /**

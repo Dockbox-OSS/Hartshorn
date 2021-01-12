@@ -186,8 +186,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
             return SimpleCommandContext.EMPTY;
         }
 
-        List<CommandValue.Argument<?>> arguments = SeleneUtils.COLLECTION.emptyList();
-        List<CommandValue.Flag<?>> flags = SeleneUtils.COLLECTION.emptyList();
+        List<CommandValue.Argument<?>> arguments = SeleneUtils.emptyList();
+        List<CommandValue.Flag<?>> flags = SeleneUtils.emptyList();
 
         assert null != command : "Context carrier command was null";
         parsedArgs.asMap().forEach((key, parsedArguments) -> parsedArguments.forEach(obj -> {

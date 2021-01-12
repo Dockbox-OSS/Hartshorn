@@ -31,6 +31,7 @@ import org.dockbox.selene.core.objects.special.Sounds;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.InventoryHolder;
 import org.dockbox.selene.core.objects.targets.Locatable;
+import org.dockbox.selene.core.objects.targets.PacketReceiver;
 import org.dockbox.selene.core.objects.targets.PermissionHolder;
 import org.dockbox.selene.core.text.Text;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +40,7 @@ import java.util.UUID;
 
 public abstract class Player
         extends Identifiable<Player>
-        implements CommandSource, PermissionHolder, Locatable, InventoryHolder {
+        implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver {
 
     protected Player(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);

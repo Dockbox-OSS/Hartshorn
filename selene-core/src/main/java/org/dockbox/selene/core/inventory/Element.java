@@ -20,14 +20,14 @@ package org.dockbox.selene.core.inventory;
 import org.dockbox.selene.core.inventory.factory.ElementFactory;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.server.Selene;
 
 import java.util.function.Consumer;
 
 /**
  * Represents a inventory element which can be displayed by a {@link org.dockbox.selene.core.inventory.pane.Pane}
  * instance. A element can either be a static representation of a {@link Item}, or carry a action listener in the form
- * of a {@link Consumer<Player>}.
+ * of a {@link Consumer Player consumer}.
  */
 public interface Element {
 
@@ -70,7 +70,7 @@ public interface Element {
      * @return The element.
      */
     static Element of(Item item, Consumer<Player> onClick) {
-        return SeleneUtils.INJECT.getInstance(ElementFactory.class).create(item, onClick);
+        return Selene.provide(ElementFactory.class).create(item, onClick);
     }
 
 }

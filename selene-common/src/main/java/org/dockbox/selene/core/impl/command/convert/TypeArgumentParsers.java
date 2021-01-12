@@ -38,6 +38,7 @@ import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
@@ -123,7 +124,7 @@ public class TypeArgumentParsers {
                 lang = Arrays.stream(Language.values())
                         .filter(l -> l.getNameEnglish().equals(code) || l.getNameLocalized().equals(code))
                         .findFirst()
-                        .orElse(SeleneUtils.INJECT.getInstance(GlobalConfig.class).getDefaultLanguage());
+                        .orElse(Selene.provide(GlobalConfig.class).getDefaultLanguage());
             }
             return Exceptional.of(lang);
         }
@@ -188,7 +189,7 @@ public class TypeArgumentParsers {
         @NotNull
         @Override
         public Exceptional<World> parse(@NotNull CommandValue<String> commandValue) {
-            WorldStorageService wss = SeleneUtils.INJECT.getInstance(WorldStorageService.class);
+            WorldStorageService wss = Selene.provide(WorldStorageService.class);
             Exceptional<World> world = wss.getWorld(commandValue.getValue());
             return world.orElseSupply(() -> {
                 UUID uuid = UUID.fromString(commandValue.getValue());
@@ -202,7 +203,7 @@ public class TypeArgumentParsers {
         @Override
         public Exceptional<ResourceEntry> parse(@NotNull CommandValue<String> commandValue) {
             String value = commandValue.getValue();
-            ResourceService rs = SeleneUtils.INJECT.getInstance(ResourceService.class);
+            ResourceService rs = Selene.provide(ResourceService.class);
             value = rs.createValidKey(value);
 
             Exceptional<? extends ResourceEntry> or = rs.getExternalResource(value);
@@ -217,7 +218,7 @@ public class TypeArgumentParsers {
         @NotNull
         @Override
         public Exceptional<Player> parse(@NotNull CommandValue<String> commandValue) {
-            PlayerStorageService pss = SeleneUtils.INJECT.getInstance(PlayerStorageService.class);
+            PlayerStorageService pss = Selene.provide(PlayerStorageService.class);
             Exceptional<Player> player = pss.getPlayer(commandValue.getValue());
             return player.orElseSupply(() -> {
                 try {
@@ -266,7 +267,7 @@ public class TypeArgumentParsers {
             }
 
             // ClassCastException caught by Exceptional supplier
-            return Exceptional.of(() -> (List<R>) SeleneUtils.COLLECTION.asList(list));
+            return Exceptional.of(() -> (List<R>) SeleneUtils.asList(list));
         }
     }
 
@@ -292,7 +293,7 @@ public class TypeArgumentParsers {
                 return Exceptional.of(new IllegalArgumentException("Row and value delimiters were equal while parsing map"));
             }
 
-            Map<String, String> map = SeleneUtils.COLLECTION.emptyConcurrentMap();
+            Map<String, String> map = SeleneUtils.emptyConcurrentMap();
             for (String entry : commandValue.getValue().split(this.rowDelimiter + "")) {
                 if (entry.contains(this.valueDelimiter + "")) {
                     String[] kv = entry.split(this.valueDelimiter + "");

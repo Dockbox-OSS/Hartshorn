@@ -35,7 +35,7 @@ public class SimpleExtensionContext implements ExtensionContext {
 
     // EntryStatus is typically reserved for multi-class registrations. For integrated extensions this will typically
     // only contain one value, however external extensions multiple classes marked as @Extension may be present.
-    private final Map<Class<?>, ExtensionStatus> entryStatus = SeleneUtils.COLLECTION.emptyConcurrentMap();
+    private final Map<Class<?>, ExtensionStatus> entryStatus = SeleneUtils.emptyConcurrentMap();
 
     public SimpleExtensionContext(String source, Class<?> extensionClass, Extension extension) {
         this.setSource(source);

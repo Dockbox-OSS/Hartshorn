@@ -21,10 +21,10 @@ import org.dockbox.selene.core.inventory.InventoryLayout;
 import org.dockbox.selene.core.inventory.builder.StaticPaneBuilder;
 import org.dockbox.selene.core.inventory.pane.StaticPane;
 import org.dockbox.selene.core.inventory.properties.InventoryTypeProperty;
+import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.SpongeAPI7Bootstrap;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.inventory.pane.SpongeStaticPane;
@@ -59,7 +59,7 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        SeleneUtils.KEYS.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
+        Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
                 .ifPresent(layout -> {
                     this.builder = View.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
                     this.layout(layout);

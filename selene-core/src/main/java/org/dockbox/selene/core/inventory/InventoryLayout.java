@@ -19,7 +19,7 @@ package org.dockbox.selene.core.inventory;
 
 import org.dockbox.selene.core.inventory.builder.LayoutBuilder;
 import org.dockbox.selene.core.inventory.properties.InventoryTypeProperty;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.server.Selene;
 
 import java.util.Map;
 
@@ -52,7 +52,7 @@ public interface InventoryLayout {
      * @return The builder
      */
     static LayoutBuilder builder(InventoryType inventoryType) {
-        return SeleneUtils.INJECT.getInstance(LayoutBuilder.class, new InventoryTypeProperty(inventoryType));
+        return Selene.provide(LayoutBuilder.class, new InventoryTypeProperty(inventoryType));
     }
 
 }
