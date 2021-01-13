@@ -18,7 +18,9 @@
 package org.dockbox.selene.core.text.actions;
 
 import org.dockbox.selene.core.command.source.CommandSource;
+import org.dockbox.selene.core.server.Selene;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.function.Consumer;
 
@@ -31,6 +33,16 @@ public class ClickAction<R> extends TextAction<R> {
 
     public static OpenUrl openUrl(URL url) {
         return new OpenUrl(url);
+    }
+
+    public static OpenUrl openUrl(String raw) {
+        try {
+            URL url = new URL(raw);
+            return openUrl(url);
+        } catch (MalformedURLException e) {
+            Selene.handle(e);
+            return new OpenUrl(null);
+        }
     }
 
     public static RunCommand runCommand(String command) {
