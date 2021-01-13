@@ -29,12 +29,13 @@ import org.spongepowered.api.data.DataTransactionResult;
 import java.util.Map;
 import java.util.Optional;
 
+@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface SpongeComposite extends PersistentDataHolder {
 
     @Override
     default <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
         Exceptional<MutableCompositeData> result = this.getDataHolder()
-            .map(itemStack -> itemStack.get(MutableCompositeData.class).orElse(null));
+            .map(composite -> composite.get(MutableCompositeData.class).orElse(null));
 
         if (result.isAbsent()) return Exceptional.empty();
 
@@ -50,13 +51,13 @@ public interface SpongeComposite extends PersistentDataHolder {
 
     @Override
     default <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
-        return this.getDataHolder().map(itemStack -> {
-            Map<String, Object> data = itemStack.get(MutableCompositeData.class).orElse(new MutableCompositeData()).getData();
+        return this.getDataHolder().map(composite -> {
+            Map<String, Object> data = composite.get(MutableCompositeData.class).orElse(new MutableCompositeData()).getData();
             data.put(dataKey.getDataKeyId(), value);
 
-            MutableCompositeData spongeItemData = new MutableCompositeData();
-            spongeItemData.fillData(data);
-            DataTransactionResult result = itemStack.offer(spongeItemData);
+            MutableCompositeData compositeData = new MutableCompositeData();
+            compositeData.fillData(data);
+            DataTransactionResult result = composite.offer(compositeData);
             if (result.isSuccessful()) return TransactionResult.success();
             else return TransactionResult.fail(IntegratedResource.KEY_BINDING_FAILED);
         }).orElseGet(() -> TransactionResult.fail(IntegratedResource.LOST_REFERENCE));
@@ -64,8 +65,8 @@ public interface SpongeComposite extends PersistentDataHolder {
 
     @Override
     default <T> void remove(PersistentDataKey<T> dataKey) {
-        this.getDataHolder().ifPresent(itemStack -> {
-            Optional<MutableCompositeData> result = itemStack.get(MutableCompositeData.class);
+        this.getDataHolder().ifPresent(composite -> {
+            Optional<MutableCompositeData> result = composite.get(MutableCompositeData.class);
             if (!result.isPresent()) return; // No data to remove
 
             MutableCompositeData data = result.get();
@@ -73,7 +74,7 @@ public interface SpongeComposite extends PersistentDataHolder {
 
             data.getData().remove(dataKey.getDataKeyId());
 
-            itemStack.offer(data);
+            composite.offer(data);
         });
     }
 
