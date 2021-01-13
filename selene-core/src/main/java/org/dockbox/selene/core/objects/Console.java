@@ -27,6 +27,18 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class Console implements CommandSource, PermissionHolder {
 
+    private static Console instance;
+
+    protected Console() {
+        if (null != instance) throw new IllegalStateException("Console has already been initialized!");
+        instance = this;
+    }
+
+    public static Console getInstance() {
+        if (null == instance) return Selene.provide(Console.class);
+        return instance;
+    }
+
     @Override
     public boolean hasPermission(@NotNull String permission) {
         return true;
