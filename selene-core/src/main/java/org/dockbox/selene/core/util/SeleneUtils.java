@@ -729,7 +729,7 @@ public final class SeleneUtils {
     }
 
     public static boolean isFileEmpty(@NotNull Path file) {
-        return Files.exists(file) && 0 <= file.toFile().length();
+        return !Files.exists(file) || 0 >= file.toFile().length();
     }
 
     /**
