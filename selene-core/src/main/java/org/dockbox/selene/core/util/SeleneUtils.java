@@ -417,6 +417,11 @@ public final class SeleneUtils {
         return range;
     }
 
+    public static String shorten(String string, int maxLength) {
+        if (string.length() < maxLength) return string;
+        return string.substring(0, maxLength-1);
+    }
+
     @NotNull
     public static String repeat(String string, int amount) {
         StringBuilder sb = new StringBuilder();

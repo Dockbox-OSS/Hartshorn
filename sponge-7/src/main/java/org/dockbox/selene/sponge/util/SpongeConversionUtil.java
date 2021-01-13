@@ -201,7 +201,8 @@ public enum SpongeConversionUtil {
         if (null != pagination.getFooter()) builder.footer(toSponge(pagination.getFooter()));
 
         builder.padding(toSponge(pagination.getPadding()));
-        builder.linesPerPage(pagination.getLinesPerPage());
+        if (0 < pagination.getLinesPerPage())
+            builder.linesPerPage(pagination.getLinesPerPage());
         List<Text> convertedContent = pagination.getContent().stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList());
         builder.contents(convertedContent);
         return builder.build();
