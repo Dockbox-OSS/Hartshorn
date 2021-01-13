@@ -44,7 +44,8 @@ public interface SpongeComposite extends PersistentDataHolder {
 
         Object value = data.getData().get(dataKey.getDataKeyId());
         if (Reflect.isAssignableFrom(dataKey.getDataType(), value.getClass()))
-            return Exceptional.of((T) value);
+            //noinspection unchecked
+            return Exceptional.of(() -> (T) value); // If a CCE is thrown, it'll be captured by the Exceptional because of the Callable
 
         return Exceptional.empty();
     }
