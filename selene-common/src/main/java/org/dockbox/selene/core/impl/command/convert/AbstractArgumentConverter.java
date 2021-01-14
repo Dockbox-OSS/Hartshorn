@@ -17,20 +17,17 @@
 
 package org.dockbox.selene.core.impl.command.convert;
 
-import org.dockbox.selene.core.impl.command.convert.impl.ArgumentConverterRegistry;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.command.source.CommandSource;
+import org.dockbox.selene.core.command.context.ArgumentConverter;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-public abstract class ArgumentConverter<T> {
+public abstract class AbstractArgumentConverter<T> implements ArgumentConverter<T> {
 
     private final String[] keys;
     private final Class<T> type;
 
-    protected ArgumentConverter(Class<T> type, String... keys) {
+    protected AbstractArgumentConverter(Class<T> type, String... keys) {
         if (0 == keys.length)
             throw new IllegalArgumentException("Cannot create argument converter without at least one key");
         this.keys = keys;
@@ -46,8 +43,4 @@ public abstract class ArgumentConverter<T> {
         return this.type;
     }
 
-
-    public abstract Exceptional<T> convert(CommandSource source, String argument);
-
-    public abstract Collection<String> getSuggestions(CommandSource source, String argument);
 }

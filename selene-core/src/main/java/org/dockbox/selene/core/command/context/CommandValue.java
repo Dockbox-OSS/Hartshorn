@@ -17,9 +17,6 @@
 
 package org.dockbox.selene.core.command.context;
 
-import org.dockbox.selene.core.command.parsing.Parser;
-import org.dockbox.selene.core.objects.Exceptional;
-
 @SuppressWarnings("ClassReferencesSubclass")
 public class CommandValue<T> {
 
@@ -37,10 +34,6 @@ public class CommandValue<T> {
 
     public Flag<T> asFlag() {
         return (Flag<T>) this;
-    }
-
-    public <P> Exceptional<P> parse(Parser<P> parser, Class<P> type) {
-        return parser.parse(this, type);
     }
 
     public String getKey() {

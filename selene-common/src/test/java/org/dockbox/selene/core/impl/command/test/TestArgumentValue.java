@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.impl.command.test;
 
-import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
+import org.dockbox.selene.core.command.context.ArgumentConverter;
 import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
 import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
 
