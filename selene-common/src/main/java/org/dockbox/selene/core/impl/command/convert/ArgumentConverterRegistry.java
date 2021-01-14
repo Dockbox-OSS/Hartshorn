@@ -26,6 +26,7 @@ import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public final class ArgumentConverterRegistry {
@@ -53,8 +54,11 @@ public final class ArgumentConverterRegistry {
 
     public static Exceptional<ArgumentConverter<?>> getOptionalConverter(String key) {
         Optional<ArgumentConverter<?>> optional = CONVERTERS.stream()
-                .filter(converter -> converter.getKeys().contains(key))
-                .findFirst();
+            .filter(converter -> converter.getKeys().stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toList())
+                .contains(key.toLowerCase())
+            ).findFirst();
         if (optional.isPresent()) return Exceptional.of(optional);
         else return Exceptional.of(new UncheckedSeleneException("No converter present"));
     }
