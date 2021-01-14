@@ -17,10 +17,14 @@
 
 package org.dockbox.selene.integrated.server;
 
+import com.google.inject.Inject;
+
 import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.core.annotations.extension.ArgumentProvider;
+import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.context.ArgumentConverter;
+import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.common.ResourceService;
@@ -35,6 +39,7 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 
@@ -54,26 +59,6 @@ public final class DefaultArgumentConverters implements InjectableType {
         (Function<String, Exceptional<String>>) Exceptional::ofNullable,
         "string"
     );
-
-    // TODO: Text, Extension
-
-    /*
-
-    public static final ArgumentConverter<Text> TEXT = new ConstantArgumentConverter<>(
-            new String[]{"text"},
-            Text.class,
-            Text::of,
-            Text.of()
-    );
-
-    public static final ArgumentConverter<Extension> EXTENSION = new ConstantArgumentConverter<>(
-            new String[]{"extension", "ext"},
-            Extension.class,
-            s -> Selene.provide(ExtensionManager.class).getHeader(s),
-            Selene.provide(ExtensionManager.class).getRegisteredExtensionIds()
-                    .toArray(new String[0])
-    );
-     */
 
     public static final ArgumentConverter<Character> CHARACTER = new CommandValueConverter<>(
         Character.class,
@@ -113,7 +98,7 @@ public final class DefaultArgumentConverters implements InjectableType {
         in -> {
             return Exceptional.of(in).map(Float::parseFloat);
         },
-        "double"
+        "float"
     );
 
     public static final ArgumentConverter<Integer> INTEGER = new CommandValueConverter<>(
@@ -121,7 +106,7 @@ public final class DefaultArgumentConverters implements InjectableType {
         in -> {
             return Exceptional.of(in).map(Integer::parseInt);
         },
-        "double"
+        "int", "integer"
     );
 
     public static final ArgumentConverter<Long> LONG = new CommandValueConverter<>(
@@ -129,7 +114,7 @@ public final class DefaultArgumentConverters implements InjectableType {
         in -> {
             return Exceptional.of(in).map(Long::parseLong);
         },
-        "double"
+        "long"
     );
 
     public static final ArgumentConverter<Short> SHORT = new CommandValueConverter<>(
@@ -137,7 +122,7 @@ public final class DefaultArgumentConverters implements InjectableType {
         in -> {
             return Exceptional.of(in).map(Short::parseShort);
         },
-        "double"
+        "short"
     );
 
     public static final ArgumentConverter<Language> LANGUAGE = new CommandValueConverter<>(
@@ -213,7 +198,8 @@ public final class DefaultArgumentConverters implements InjectableType {
             World world = WORLD.convert(cs, xyzw[3]).orElse(World.empty());
 
             return Exceptional.of(new Location(vec, world));
-        }
+        },
+        "location", "position", "pos"
     );
 
     public static final ArgumentConverter<ResourceEntry> RESOURCE = new CommandValueConverter<>(
@@ -259,6 +245,22 @@ public final class DefaultArgumentConverters implements InjectableType {
         "duration"
     );
 
+    public static final ArgumentConverter<Extension> EXTENSION = new CommandValueConverter<>(
+        Extension.class,
+        in -> Selene.provide(ExtensionManager.class).getHeader(in),
+        in -> Selene.provide(ExtensionManager.class).getRegisteredExtensionIds().stream()
+            .filter(id -> id.toLowerCase().contains(in.toLowerCase()))
+            .collect(Collectors.toList()),
+        "extension"
+    );
+
+    public static final ArgumentConverter<Text> TEXT = new CommandValueConverter<>(
+        Text.class,
+        in -> Exceptional.of(Text.of(in)),
+        "text"
+    );
+
+    @Inject
     private DefaultArgumentConverters() {}
 
     @Override
