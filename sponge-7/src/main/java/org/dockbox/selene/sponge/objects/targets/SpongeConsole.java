@@ -27,18 +27,6 @@ import org.spongepowered.api.Sponge;
 
 public final class SpongeConsole extends Console {
 
-    private static Console instance;
-
-    private SpongeConsole() {
-        if (null != instance) throw new IllegalStateException("Console has already been initialized!");
-        instance = this;
-    }
-
-    public static Console getInstance() {
-        if (null == instance) return new SpongeConsole();
-        return instance;
-    }
-
     @Override
     public void execute(@NotNull String command) {
         Sponge.getCommandManager().process(

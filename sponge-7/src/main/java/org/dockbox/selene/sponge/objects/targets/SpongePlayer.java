@@ -32,6 +32,8 @@ import org.dockbox.selene.core.objects.FieldReferenceHolder;
 import org.dockbox.selene.core.objects.inventory.PlayerInventory;
 import org.dockbox.selene.core.objects.inventory.Slot;
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.keys.PersistentDataKey;
+import org.dockbox.selene.core.objects.keys.TransactionResult;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Gamemode;
@@ -45,11 +47,13 @@ import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.nms.packets.NMSPacket;
+import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.inventory.SpongePlayerInventory;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
@@ -64,7 +68,7 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 
 @SuppressWarnings("ClassWithTooManyMethods")
-public class SpongePlayer extends Player {
+public class SpongePlayer extends Player implements SpongeComposite {
 
     private static final double BLOCKRAY_LIMIT = 50d;
 
@@ -303,5 +307,25 @@ public class SpongePlayer extends Player {
                 });
             });
         }
+    }
+
+    @Override
+    public <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
+        return SpongeComposite.super.get(dataKey);
+    }
+
+    @Override
+    public <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
+        return SpongeComposite.super.set(dataKey, value);
+    }
+
+    @Override
+    public <T> void remove(PersistentDataKey<T> dataKey) {
+        SpongeComposite.super.remove(dataKey);
+    }
+
+    @Override
+    public Exceptional<? extends DataHolder> getDataHolder() {
+        return this.getSpongePlayer();
     }
 }

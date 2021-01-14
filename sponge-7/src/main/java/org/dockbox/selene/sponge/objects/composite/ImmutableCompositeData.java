@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.objects.item;
+package org.dockbox.selene.sponge.objects.composite;
 
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -25,13 +25,13 @@ import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutable
 
 import java.util.Map;
 
-public class ImmutableSpongeItemData extends AbstractImmutableData<ImmutableSpongeItemData, MutableSpongeItemData> {
+public class ImmutableCompositeData extends AbstractImmutableData<ImmutableCompositeData, MutableCompositeData> {
 
     private final Map<String, Object> data = SeleneUtils.emptyMap();
 
     @Override
-    public @NotNull MutableSpongeItemData asMutable() {
-        MutableSpongeItemData data = new MutableSpongeItemData();
+    public @NotNull MutableCompositeData asMutable() {
+        MutableCompositeData data = new MutableCompositeData();
         data.fillData(this.data);
         return data;
     }
@@ -43,15 +43,15 @@ public class ImmutableSpongeItemData extends AbstractImmutableData<ImmutableSpon
 
     @Override
     public @NotNull DataContainer toContainer() {
-        return super.toContainer().set(SpongeItem.ITEM_KEY, this.data);
+        return super.toContainer().set(Composite.ITEM_KEY, this.data);
     }
 
     @Override
     protected void registerGetters() {
-        this.registerFieldGetter(SpongeItem.ITEM_KEY, () -> this.data);
-        this.registerKeyValue(SpongeItem.ITEM_KEY, () ->
+        this.registerFieldGetter(Composite.ITEM_KEY, () -> this.data);
+        this.registerKeyValue(Composite.ITEM_KEY, () ->
                 Sponge.getRegistry().getValueFactory().createMapValue(
-                        SpongeItem.ITEM_KEY,
+                    Composite.ITEM_KEY,
                         this.data,
                         SeleneUtils.emptyMap()).asImmutable()
         );

@@ -41,10 +41,10 @@ import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.selene.sponge.listeners.SpongePlayerListener;
 import org.dockbox.selene.sponge.listeners.SpongeServerListener;
-import org.dockbox.selene.sponge.objects.item.ImmutableSpongeItemData;
-import org.dockbox.selene.sponge.objects.item.MutableSpongeItemData;
-import org.dockbox.selene.sponge.objects.item.SpongeItem;
-import org.dockbox.selene.sponge.objects.item.SpongeItemDataManipulatorBuilder;
+import org.dockbox.selene.sponge.objects.composite.Composite;
+import org.dockbox.selene.sponge.objects.composite.ImmutableCompositeData;
+import org.dockbox.selene.sponge.objects.composite.MutableCompositeData;
+import org.dockbox.selene.sponge.objects.composite.CompositeDataManipulatorBuilder;
 import org.dockbox.selene.sponge.util.SpongeInjector;
 import org.dockbox.selene.sponge.util.SpongeTaskRunner;
 import org.jetbrains.annotations.NotNull;
@@ -119,20 +119,20 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
 
     @Listener
     public void onGamePreInit(GamePreInitializationEvent event) {
-        SpongeItem.ITEM_KEY = Key.builder()
+        Composite.ITEM_KEY = Key.builder()
             .type(new TypeToken<MapValue<String, Object>>() {
             })
-            .query(DataQuery.of(SpongeItem.QUERY))
-            .id(SpongeItem.ID)
-            .name(SpongeItem.NAME)
+            .query(DataQuery.of(Composite.QUERY))
+            .id(Composite.ID)
+            .name(Composite.NAME)
             .build();
 
         DataRegistration.builder()
-            .dataClass(MutableSpongeItemData.class)
-            .immutableClass(ImmutableSpongeItemData.class)
-            .builder(new SpongeItemDataManipulatorBuilder())
-            .id(SpongeItem.ID)
-            .name(SpongeItem.NAME)
+            .dataClass(MutableCompositeData.class)
+            .immutableClass(ImmutableCompositeData.class)
+            .builder(new CompositeDataManipulatorBuilder())
+            .id(Composite.ID)
+            .name(Composite.NAME)
             .build();
     }
 
@@ -202,7 +202,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
             public void onPacketWrite(eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent, PacketConnection connection) {
                 Selene.provide(PlayerStorageService.class).getPlayer(connection.getPlayerUUID()).ifPresent(player -> {
                     // Shadowed NMS type
-                    net.minecraft.network.Packet nativePacket = packetEvent.getPacket();
+                    net.minecraft.network.Packet<?> nativePacket = packetEvent.getPacket();
                     Packet internalPacket = Selene.provide(packet, new NativePacketProperty<>(nativePacket));
 
                     PacketEvent<? extends Packet> event = new PacketEvent<>(internalPacket, player).post();

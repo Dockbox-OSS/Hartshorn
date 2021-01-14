@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.objects.item;
+package org.dockbox.selene.sponge.objects.composite;
 
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -29,10 +29,10 @@ import org.spongepowered.api.data.merge.MergeFunction;
 import java.util.Map;
 import java.util.Optional;
 
-public class MutableSpongeItemData extends AbstractData<MutableSpongeItemData, ImmutableSpongeItemData> {
+public class MutableCompositeData extends AbstractData<MutableCompositeData, ImmutableCompositeData> {
 
 
-    public MutableSpongeItemData() {
+    public MutableCompositeData() {
         this.registerGettersAndSetters();
     }
 
@@ -40,39 +40,39 @@ public class MutableSpongeItemData extends AbstractData<MutableSpongeItemData, I
 
     @Override
     protected void registerGettersAndSetters() {
-        this.registerFieldGetter(SpongeItem.ITEM_KEY, () -> this.data);
-        this.registerFieldSetter(SpongeItem.ITEM_KEY, this::fillData);
-        this.registerKeyValue(SpongeItem.ITEM_KEY, () ->
-                Sponge.getRegistry().getValueFactory().createMapValue(SpongeItem.ITEM_KEY, this.data, SeleneUtils.emptyMap()));
+        this.registerFieldGetter(Composite.ITEM_KEY, () -> this.data);
+        this.registerFieldSetter(Composite.ITEM_KEY, this::fillData);
+        this.registerKeyValue(Composite.ITEM_KEY, () ->
+                Sponge.getRegistry().getValueFactory().createMapValue(Composite.ITEM_KEY, this.data, SeleneUtils.emptyMap()));
     }
 
     @Override
-    public @NotNull Optional<MutableSpongeItemData> fill(@NotNull DataHolder dataHolder, @NotNull MergeFunction overlap) {
-        MutableSpongeItemData itemData = overlap.merge(this, dataHolder.get(MutableSpongeItemData.class).orElse(null));
+    public @NotNull Optional<MutableCompositeData> fill(@NotNull DataHolder dataHolder, @NotNull MergeFunction overlap) {
+        MutableCompositeData itemData = overlap.merge(this, dataHolder.get(MutableCompositeData.class).orElse(null));
         this.fillData(itemData.data);
         return Optional.of(this);
     }
 
     @Override
     public boolean supports(@NotNull Key<?> key) {
-        return SpongeItem.ITEM_KEY == key;
+        return Composite.ITEM_KEY == key;
     }
 
     @Override
-    public @NotNull Optional<MutableSpongeItemData> from(@NotNull DataContainer container) {
+    public @NotNull Optional<MutableCompositeData> from(@NotNull DataContainer container) {
         return Optional.of(this);
     }
 
     @Override
-    public @NotNull MutableSpongeItemData copy() {
-        MutableSpongeItemData itemData = new MutableSpongeItemData();
+    public @NotNull MutableCompositeData copy() {
+        MutableCompositeData itemData = new MutableCompositeData();
         itemData.fillData(this.data);
         return itemData;
     }
 
     @Override
-    public @NotNull ImmutableSpongeItemData asImmutable() {
-        ImmutableSpongeItemData data = new ImmutableSpongeItemData();
+    public @NotNull ImmutableCompositeData asImmutable() {
+        ImmutableCompositeData data = new ImmutableCompositeData();
         data.fillData(this.data);
         return data;
     }
@@ -89,7 +89,7 @@ public class MutableSpongeItemData extends AbstractData<MutableSpongeItemData, I
 
     @Override
     public @NotNull DataContainer toContainer() {
-        return super.toContainer().set(SpongeItem.ITEM_KEY, this.data);
+        return super.toContainer().set(Composite.ITEM_KEY, this.data);
     }
 
     public Map<String, Object> getData() {

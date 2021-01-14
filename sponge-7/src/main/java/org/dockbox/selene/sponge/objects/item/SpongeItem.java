@@ -32,14 +32,13 @@ import org.dockbox.selene.core.objects.keys.TransactionResult;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
+import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.data.DataTransactionResult;
-import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.DisplayNameData;
 import org.spongepowered.api.data.manipulator.mutable.RepresentedPlayerData;
@@ -47,7 +46,6 @@ import org.spongepowered.api.data.manipulator.mutable.SkullData;
 import org.spongepowered.api.data.manipulator.mutable.item.EnchantmentData;
 import org.spongepowered.api.data.manipulator.mutable.item.LoreData;
 import org.spongepowered.api.data.type.SkullTypes;
-import org.spongepowered.api.data.value.mutable.MapValue;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.enchantment.Enchantment;
@@ -56,19 +54,11 @@ import org.spongepowered.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class SpongeItem extends ReferencedItem<ItemStack> {
-
-    public static final String ID = "item_data";
-    public static final String NAME = "Selene Item Data";
-    public static final String QUERY = "SeleneItemData";
-
-    public static Key<MapValue<String, Object>> ITEM_KEY;
+public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeComposite {
 
     public static final int DEFAULT_STACK_SIZE = 64;
 
@@ -259,51 +249,24 @@ public class SpongeItem extends ReferencedItem<ItemStack> {
         return ItemStack.class;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
-        Exceptional<MutableSpongeItemData> result = this.getReference()
-                .map(itemStack -> itemStack.get(MutableSpongeItemData.class).orElse(null));
-
-        if (result.isAbsent()) return Exceptional.empty();
-
-        MutableSpongeItemData data = result.get();
-        if (!data.getData().containsKey(dataKey.getDataKeyId())) return Exceptional.empty();
-
-        Object value = data.getData().get(dataKey.getDataKeyId());
-        if (Reflect.isAssignableFrom(dataKey.getDataType(), value.getClass()))
-            return Exceptional.of((T) value);
-
-        return Exceptional.empty();
+        return SpongeComposite.super.get(dataKey);
     }
 
     @Override
     public <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
-        return this.getReference().map(itemStack -> {
-            Map<String, Object> data = itemStack.get(MutableSpongeItemData.class).orElse(new MutableSpongeItemData()).getData();
-            data.put(dataKey.getDataKeyId(), value);
-
-            MutableSpongeItemData spongeItemData = new MutableSpongeItemData();
-            spongeItemData.fillData(data);
-            DataTransactionResult result = itemStack.offer(spongeItemData);
-            if (result.isSuccessful()) return TransactionResult.success();
-            else return TransactionResult.fail(IntegratedResource.KEY_BINDING_FAILED);
-        }).orElseGet(() -> TransactionResult.fail(IntegratedResource.LOST_REFERENCE));
+        return SpongeComposite.super.set(dataKey, value);
     }
 
     @Override
     public <T> void remove(PersistentDataKey<T> dataKey) {
-        this.getReference().ifPresent(itemStack -> {
-            Optional<MutableSpongeItemData> result = itemStack.get(MutableSpongeItemData.class);
-            if (!result.isPresent()) return; // No data to remove
+        SpongeComposite.super.remove(dataKey);
+    }
 
-            MutableSpongeItemData data = result.get();
-            if (!data.getData().containsKey(dataKey.getDataKeyId())) return; // Already removed
-
-            data.getData().remove(dataKey.getDataKeyId());
-
-            itemStack.offer(data);
-        });
+    @Override
+    public Exceptional<? extends DataHolder> getDataHolder() {
+        return this.getReference();
     }
 
     @Override

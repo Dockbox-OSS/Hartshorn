@@ -30,7 +30,7 @@ public abstract class PaginationBuilder {
     protected Text footer;
     protected Text title;
 
-    protected int linesPerPage = 10;
+    protected int linesPerPage = -1;
     protected List<Text> content = SeleneUtils.emptyConcurrentList();
 
     public PaginationBuilder padding(Text padding) {

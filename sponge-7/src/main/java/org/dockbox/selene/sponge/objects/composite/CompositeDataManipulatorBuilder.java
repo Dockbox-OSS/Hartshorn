@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.objects.item;
+package org.dockbox.selene.sponge.objects.composite;
 
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -28,30 +28,30 @@ import org.spongepowered.api.data.persistence.InvalidDataException;
 import java.util.Map;
 import java.util.Optional;
 
-public class SpongeItemDataManipulatorBuilder extends AbstractDataBuilder<MutableSpongeItemData> implements DataManipulatorBuilder<MutableSpongeItemData, ImmutableSpongeItemData> {
+public class CompositeDataManipulatorBuilder extends AbstractDataBuilder<MutableCompositeData> implements DataManipulatorBuilder<MutableCompositeData, ImmutableCompositeData> {
 
-    public SpongeItemDataManipulatorBuilder() {
-        super(MutableSpongeItemData.class, 1);
+    public CompositeDataManipulatorBuilder() {
+        super(MutableCompositeData.class, 1);
     }
 
     @Override
-    public @NotNull MutableSpongeItemData create() {
-        return new MutableSpongeItemData();
+    public @NotNull MutableCompositeData create() {
+        return new MutableCompositeData();
     }
 
     @Override
-    public @NotNull Optional<MutableSpongeItemData> createFrom(DataHolder dataHolder) {
-        return Optional.of(dataHolder.get(MutableSpongeItemData.class).orElseGet(this::create));
+    public @NotNull Optional<MutableCompositeData> createFrom(DataHolder dataHolder) {
+        return Optional.of(dataHolder.get(MutableCompositeData.class).orElseGet(this::create));
     }
 
     @Override
-    protected @NotNull Optional<MutableSpongeItemData> buildContent(DataView container) throws InvalidDataException {
-        if(container.contains(SpongeItem.ITEM_KEY.getQuery())) {
-            final Map<?, ?> unsafeData = container.getMap(SpongeItem.ITEM_KEY.getQuery()).get();
+    protected @NotNull Optional<MutableCompositeData> buildContent(DataView container) throws InvalidDataException {
+        if(container.contains(Composite.ITEM_KEY.getQuery())) {
+            final Map<?, ?> unsafeData = container.getMap(Composite.ITEM_KEY.getQuery()).get();
             Map<String, Object> safeData = SeleneUtils.emptyMap();
             unsafeData.forEach((k, v) -> safeData.put(k.toString(), v));
 
-            MutableSpongeItemData data = this.create();
+            MutableCompositeData data = this.create();
             data.fillData(safeData);
             return Optional.of(data);
         }

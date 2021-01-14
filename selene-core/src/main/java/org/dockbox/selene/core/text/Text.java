@@ -140,7 +140,11 @@ public class Text {
 
     public List<Text> getParts() {
         List<Text> parts = SeleneUtils.emptyList();
-        parts.add(this);
+        // Do not add 'this' directly, as it'd wrap the extra parts as well and cause duplicates
+        parts.add(Text.of(this.text)
+            .onClick(this.clickAction)
+            .onHover(this.hoverAction)
+            .onShiftClick(this.shiftClickAction));
         parts.addAll(this.getExtra());
         return parts;
     }

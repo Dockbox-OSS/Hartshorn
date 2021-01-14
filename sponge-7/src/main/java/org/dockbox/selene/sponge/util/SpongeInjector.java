@@ -45,6 +45,7 @@ import org.dockbox.selene.core.inventory.builder.LayoutBuilder;
 import org.dockbox.selene.core.inventory.builder.PaginatedPaneBuilder;
 import org.dockbox.selene.core.inventory.builder.StaticPaneBuilder;
 import org.dockbox.selene.core.inventory.factory.ElementFactory;
+import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.bossbar.Bossbar;
 import org.dockbox.selene.core.objects.bossbar.BossbarFactory;
 import org.dockbox.selene.core.objects.item.Item;
@@ -70,6 +71,7 @@ import org.dockbox.selene.sponge.inventory.builder.SpongeStaticPaneBuilder;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.bossbar.SpongeBossbar;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
+import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus;
 import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager;
@@ -118,6 +120,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         // Globally accessible
         this.bind(GlobalConfig.class).toInstance(new SimpleGlobalConfig());
         this.bind(Logger.class).toInstance(Selene.log());
+        this.bind(Console.class).toInstance(new SpongeConsole());
         // Packets
         this.bind(ChangeGameStatePacket.class).to(NMSChangeGameStatePacket.class);
     }
