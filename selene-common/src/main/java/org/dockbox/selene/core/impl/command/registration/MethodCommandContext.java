@@ -120,7 +120,9 @@ public class MethodCommandContext extends AbstractRegistrationContext {
             } else if (Reflect.isAssignableFrom(CommandSource.class, parameterType)) {
                 finalArgs.add(context.getSender());
             } else {
-                Selene.log().warn("Parameter '" + parameter.getName() + "' has @FromSource annotation but cannot be provided [" + parameterType.getCanonicalName() + "]");
+                Selene.log().warn(
+                    "Parameter '" + parameter.getName() + "' has @FromSource annotation but cannot be provided [" + parameterType.getCanonicalName() +
+                        "]");
                 finalArgs.add(null);
             }
             return true;
@@ -149,7 +151,11 @@ public class MethodCommandContext extends AbstractRegistrationContext {
             if (context.hasArgument(argumentName) && context.getArgument(argumentName, parameterType).isPresent()) {
                 finalArgs.add(context.getArgument(argumentName, parameterType).get().getValue());
             } else {
-                Selene.log().warn("Parameter '" + parameter.getName() + "' has @Argument annotation but cannot be provided [" + parameterType.getCanonicalName() + "]");
+                if (!parameter.getAnnotation(Arg.class).optional()) {
+                    Selene.log().warn("Parameter '" + parameter.getName() +
+                        "' has @Argument annotation but cannot be provided, if it is optional ensure the annotation is marked as such [" +
+                        parameterType.getCanonicalName() + "]");
+                }
                 finalArgs.add(null);
             }
             return true;
