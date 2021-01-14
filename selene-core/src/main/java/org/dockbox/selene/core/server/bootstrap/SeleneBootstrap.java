@@ -24,6 +24,7 @@ import com.google.inject.ProvisionException;
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.annotations.event.Listener;
+import org.dockbox.selene.core.annotations.extension.ArgumentProvider;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.EventBus;
@@ -38,6 +39,7 @@ import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
 import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.server.config.GlobalConfig;
+import org.dockbox.selene.core.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,6 +146,9 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         log().info("\u00A7e\\ {");
         log().info("\u00A7e `-`");
         log().info("     \u00A77Initiating \u00A7bSelene " + this.getVersion());
+
+        // Register additional argument types early on, before extensions are constructed
+        Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, ArgumentProvider.class).forEach(Selene::provide);
 
         EventBus eb = Selene.provide(EventBus.class);
         CommandBus cb = Selene.provide(CommandBus.class);
