@@ -260,7 +260,6 @@ public final class DefaultArgumentConverters implements InjectableType {
         "text"
     );
 
-    @Inject
     private DefaultArgumentConverters() {}
 
     @Override
