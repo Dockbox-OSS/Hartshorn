@@ -82,15 +82,10 @@ public abstract class InjectableBootstrap {
      * through the instance {@link Injector} to obtain the instance based on implementation, or manually, provided
      * mappings.
      *
-     * @param <T>
-     *         The type parameter for the instance to return
-     * @param type
-     *         The type of the instance
-     * @param extension
-     *         The type of the extension if extension specific bindings are to be used
-     * @param additionalProperties
-     *         The properties to be passed into the type either during or after construction
-     *
+     * @param <T>                  The type parameter for the instance to return
+     * @param type                 The type of the instance
+     * @param extension            The type of the extension if extension specific bindings are to be used
+     * @param additionalProperties The properties to be passed into the type either during or after construction
      * @return The instance, if present. Otherwise returns null
      */
     public <T> T getInstance(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
@@ -102,8 +97,8 @@ public abstract class InjectableBootstrap {
         // extension-specific injector.
         if (type.isAnnotationPresent(Extension.class)) {
             typeInstance = this.getInstanceSafe(ExtensionManager.class)
-                .map(extensionManager -> extensionManager.getInstance(type).orNull())
-                .orNull();
+                    .map(extensionManager -> extensionManager.getInstance(type).orNull())
+                    .orNull();
 
         }
 
@@ -125,24 +120,17 @@ public abstract class InjectableBootstrap {
         // and therefore do not need late member injection here.
         if (null == typeInstance) {
             try {
-                typeInstance = getInjectedInstance(injector, type, additionalProperties);
+                typeInstance = this.getInjectedInstance(injector, type, additionalProperties);
             } catch (ProvisionException e) {
                 Selene.log().error("Could not create instance using registered injector " + injector + " for [" + type + "]", e);
-            } catch (ConfigurationException ignored) {
-                AbstractModule fallbackModule = new AbstractModule() {
-                    @Override
-                    protected void configure() {
-                        try {
-                            Constructor<T> ctor = type.getConstructor();
-                            ctor.setAccessible(true);
-                            this.bind(type).toConstructor(ctor);
-                        } catch (ReflectiveOperationException e) {
-                            Selene.log().warn("Configuration error while attempting to create instance for [" + type + "] : " + injector);
-                        }
-                    }
+            } catch (ConfigurationException ce) {
+                try {
+                    Constructor<T> ctor = type.getDeclaredConstructor();
+                    ctor.setAccessible(true);
+                    typeInstance = this.injectMembers(ctor.newInstance());
+                } catch (Exception e) {
+                    Selene.handle("Could not create raw or injected instance of [" + type.getCanonicalName() + "]", e, ce);
                 }
-                Injector fallback = this.createInjector(extensionModule, propertyModule, fallbackModule);
-                typeInstance = getInjectedInstance(fallback, type, additionalProperties);
             }
         }
 
@@ -156,7 +144,8 @@ public abstract class InjectableBootstrap {
     }
 
     private <T> T getInjectedInstance(Injector injector, Class<T> type, InjectorProperty<?>... additionalProperties) {
-        Exceptional<Class> annotation = Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
+        @SuppressWarnings("rawtypes") Exceptional<Class> annotation =
+                Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
         if (annotation.isPresent() && annotation.get().isAnnotation()) {
             //noinspection unchecked
             return (T) injector.getInstance(Key.get(type, annotation.get()));
@@ -172,12 +161,9 @@ public abstract class InjectableBootstrap {
      * The binding is created by Guice, and can be annotated using Guice supported annotations (e.g.
      * {@link com.google.inject.Singleton})
      *
-     * @param <T>
-     *         The type parameter of the contract
-     * @param contract
-     *         The class type of the contract
-     * @param implementation
-     *         The class type of the implementation
+     * @param <T>            The type parameter of the contract
+     * @param contract       The class type of the contract
+     * @param implementation The class type of the implementation
      */
     public <T> void bindUtility(Class<T> contract, Class<? extends T> implementation) {
         AbstractModule localModule = new AbstractModule() {
@@ -197,8 +183,8 @@ public abstract class InjectableBootstrap {
             Exceptional<ExtensionContext> context = this.getInstance(ExtensionManager.class).getContext(instance.getClass());
             Extension extension;
             extension = context
-                .map(ExtensionContext::getExtension)
-                .orElseGet(() -> instance.getClass().getAnnotation(Extension.class));
+                    .map(ExtensionContext::getExtension)
+                    .orElseGet(() -> instance.getClass().getAnnotation(Extension.class));
             return this.createExtensionInjector(instance, extension, context.orNull());
         }
         return this.createInjector();
@@ -236,8 +222,8 @@ public abstract class InjectableBootstrap {
         if (null == this.injector) {
             Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
             modules.addAll(Arrays.stream(additionalModules)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList()));
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
             this.injector = Guice.createInjector(modules);
         }
         return this.injector;
