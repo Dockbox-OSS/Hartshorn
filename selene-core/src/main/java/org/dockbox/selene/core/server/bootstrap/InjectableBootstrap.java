@@ -36,8 +36,10 @@ import org.dockbox.selene.core.server.properties.AnnotationProperty;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,9 +48,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import sun.misc.Unsafe;
+
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class InjectableBootstrap {
 
+    private Unsafe unsafe;
     private Injector injector;
     private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
 
@@ -82,10 +87,15 @@ public abstract class InjectableBootstrap {
      * through the instance {@link Injector} to obtain the instance based on implementation, or manually, provided
      * mappings.
      *
-     * @param <T>                  The type parameter for the instance to return
-     * @param type                 The type of the instance
-     * @param extension            The type of the extension if extension specific bindings are to be used
-     * @param additionalProperties The properties to be passed into the type either during or after construction
+     * @param <T>
+     *         The type parameter for the instance to return
+     * @param type
+     *         The type of the instance
+     * @param extension
+     *         The type of the extension if extension specific bindings are to be used
+     * @param additionalProperties
+     *         The properties to be passed into the type either during or after construction
+     *
      * @return The instance, if present. Otherwise returns null
      */
     public <T> T getInstance(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
@@ -124,13 +134,10 @@ public abstract class InjectableBootstrap {
             } catch (ProvisionException e) {
                 Selene.log().error("Could not create instance using registered injector " + injector + " for [" + type + "]", e);
             } catch (ConfigurationException ce) {
-                try {
-                    Constructor<T> ctor = type.getDeclaredConstructor();
-                    ctor.setAccessible(true);
-                    typeInstance = this.injectMembers(ctor.newInstance());
-                } catch (Exception e) {
-                    Selene.handle("Could not create raw or injected instance of [" + type.getCanonicalName() + "]", e, ce);
-                }
+                typeInstance = this
+                        .getRawInstance(type, injector)
+                        .orElseSupply(() -> this.getUnsafeInstance(type, injector))
+                        .orNull();
             }
         }
 
@@ -141,6 +148,30 @@ public abstract class InjectableBootstrap {
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
+    }
+
+    private <T> @Nullable T getUnsafeInstance(Class<T> type, Injector injector) {
+        Selene.log().warn("Attempting to get instance of [" + type.getCanonicalName() + "] through Unsafe");
+        try {
+            @SuppressWarnings("unchecked") T t = (T) this.getUnsafe().allocateInstance(type);
+            injector.injectMembers(t);
+            return t;
+        } catch (Exception e) {
+            Selene.handle("Could not create instance of [" + type.getCanonicalName() + "] through injected, raw or unsafe construction");
+        }
+        return null;
+    }
+
+    private <T> Exceptional<T> getRawInstance(Class<T> type, Injector injector) {
+        try {
+            Constructor<T> ctor = type.getDeclaredConstructor();
+            ctor.setAccessible(true);
+            T t = ctor.newInstance();
+            injector.injectMembers(t);
+            return Exceptional.of(t);
+        } catch (Exception e) {
+            return Exceptional.of(e);
+        }
     }
 
     private <T> T getInjectedInstance(Injector injector, Class<T> type, InjectorProperty<?>... additionalProperties) {
@@ -161,9 +192,12 @@ public abstract class InjectableBootstrap {
      * The binding is created by Guice, and can be annotated using Guice supported annotations (e.g.
      * {@link com.google.inject.Singleton})
      *
-     * @param <T>            The type parameter of the contract
-     * @param contract       The class type of the contract
-     * @param implementation The class type of the implementation
+     * @param <T>
+     *         The type parameter of the contract
+     * @param contract
+     *         The class type of the contract
+     * @param implementation
+     *         The class type of the implementation
      */
     public <T> void bindUtility(Class<T> contract, Class<? extends T> implementation) {
         AbstractModule localModule = new AbstractModule() {
@@ -257,6 +291,19 @@ public abstract class InjectableBootstrap {
 
     public void registerGlobal(SeleneInjectConfiguration moduleConfiguration) {
         this.injectorModules.add(moduleConfiguration);
+    }
+
+    private Unsafe getUnsafe() {
+        if (null == this.unsafe) {
+            try {
+                Field f = Unsafe.class.getDeclaredField("theUnsafe");
+                f.setAccessible(true);
+                this.unsafe = (Unsafe) f.get(null);
+            } catch (ReflectiveOperationException e) {
+                Selene.handle(e);
+            }
+        }
+        return this.unsafe;
     }
 
 }
