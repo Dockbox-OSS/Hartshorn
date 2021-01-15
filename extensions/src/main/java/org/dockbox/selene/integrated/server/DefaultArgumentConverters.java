@@ -260,8 +260,6 @@ public final class DefaultArgumentConverters implements InjectableType {
         "text"
     );
 
-    private DefaultArgumentConverters() {}
-
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         Selene.log().info("Registered default command argument converters.");
