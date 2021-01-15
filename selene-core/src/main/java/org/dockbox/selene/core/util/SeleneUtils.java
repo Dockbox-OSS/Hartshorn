@@ -37,6 +37,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -60,6 +61,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -88,6 +90,16 @@ public final class SeleneUtils {
         '0', '1', '2', '3', '4', '5', '6', '7',
         '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
+
+    private static final java.util.regex.Pattern minorTimeString =
+        java.util.regex.Pattern.compile("^\\d+$");
+    private static final java.util.regex.Pattern timeString =
+        java.util.regex.Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
+
+    private static final int secondsInMinute = 60;
+    private static final int secondsInHour = 60 * SeleneUtils.secondsInMinute;
+    private static final int secondsInDay = 24 * SeleneUtils.secondsInHour;
+    private static final int secondsInWeek = 7 * SeleneUtils.secondsInDay;
 
     private SeleneUtils() { }
 
@@ -1083,7 +1095,37 @@ public final class SeleneUtils {
             return Reflect.isAssignableFrom(exception, t.getClass());
         }
     }
-    
+
+    public static Exceptional<Duration> durationOf(String in) {
+        // First, if just digits, return the number in seconds.
+
+        if (SeleneUtils.minorTimeString.matcher(in).matches()) {
+            return Exceptional.of(Duration.ofSeconds(Long.parseUnsignedLong(in)));
+        }
+
+        Matcher m = SeleneUtils.timeString.matcher(in);
+        if (m.matches()) {
+            long time = SeleneUtils.durationAmount(m.group(2), SeleneUtils.secondsInWeek);
+            time += SeleneUtils.durationAmount(m.group(4), SeleneUtils.secondsInDay);
+            time += SeleneUtils.durationAmount(m.group(6), SeleneUtils.secondsInHour);
+            time += SeleneUtils.durationAmount(m.group(8), SeleneUtils.secondsInMinute);
+            time += SeleneUtils.durationAmount(m.group(10), 1);
+
+            if (0 < time) {
+                return Exceptional.of(Duration.ofSeconds(time));
+            }
+        }
+        return Exceptional.empty();
+    }
+
+    private static long durationAmount(@Nullable String g, int multipler) {
+        if (null != g && !g.isEmpty()) {
+            return multipler * Long.parseUnsignedLong(g);
+        }
+
+        return 0;
+    }
+
     /**
      * Common enumeration of processed field information in {@link Reflect#tryCreateFromProcessed(Class, Function, boolean) tryCreate}.
      */

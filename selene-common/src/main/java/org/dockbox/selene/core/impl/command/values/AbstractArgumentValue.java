@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.core.impl.command.values;
 
-import org.dockbox.selene.core.impl.command.convert.ArgumentConverter;
-import org.dockbox.selene.core.impl.command.convert.impl.ArgumentConverterRegistry;
+import org.dockbox.selene.core.command.context.ArgumentConverter;
+import org.dockbox.selene.core.impl.command.convert.ArgumentConverterRegistry;
 import org.dockbox.selene.core.objects.Exceptional;
 
 public abstract class AbstractArgumentValue<T> {

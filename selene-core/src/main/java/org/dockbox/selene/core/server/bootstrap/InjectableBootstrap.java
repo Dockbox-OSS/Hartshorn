@@ -36,7 +36,10 @@ import org.dockbox.selene.core.server.properties.AnnotationProperty;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,9 +48,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import sun.misc.Unsafe;
+
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class InjectableBootstrap {
 
+    private Unsafe unsafe;
     private Injector injector;
     private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
 
@@ -101,8 +107,8 @@ public abstract class InjectableBootstrap {
         // extension-specific injector.
         if (type.isAnnotationPresent(Extension.class)) {
             typeInstance = this.getInstanceSafe(ExtensionManager.class)
-                .map(extensionManager -> extensionManager.getInstance(type).orNull())
-                .orNull();
+                    .map(extensionManager -> extensionManager.getInstance(type).orNull())
+                    .orNull();
 
         }
 
@@ -124,18 +130,14 @@ public abstract class InjectableBootstrap {
         // and therefore do not need late member injection here.
         if (null == typeInstance) {
             try {
-                //noinspection rawtypes
-                Exceptional<Class> annotation = Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
-                if (annotation.isPresent() && annotation.get().isAnnotation()) {
-                    //noinspection unchecked
-                    typeInstance = (T) injector.getInstance(Key.get(type, annotation.get()));
-                } else {
-                    typeInstance = injector.getInstance(type);
-                }
+                typeInstance = this.getInjectedInstance(injector, type, additionalProperties);
             } catch (ProvisionException e) {
                 Selene.log().error("Could not create instance using registered injector " + injector + " for [" + type + "]", e);
-            } catch (ConfigurationException ignored) {
-                Selene.log().warn("Configuration error while attempting to create instance for [" + type + "] : " + injector);
+            } catch (ConfigurationException ce) {
+                typeInstance = this
+                        .getRawInstance(type, injector)
+                        .orElseSupply(() -> this.getUnsafeInstance(type, injector))
+                        .orNull();
             }
         }
 
@@ -146,6 +148,41 @@ public abstract class InjectableBootstrap {
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
+    }
+
+    private <T> @Nullable T getUnsafeInstance(Class<T> type, Injector injector) {
+        Selene.log().warn("Attempting to get instance of [" + type.getCanonicalName() + "] through Unsafe");
+        try {
+            @SuppressWarnings("unchecked") T t = (T) this.getUnsafe().allocateInstance(type);
+            injector.injectMembers(t);
+            return t;
+        } catch (Exception e) {
+            Selene.handle("Could not create instance of [" + type.getCanonicalName() + "] through injected, raw or unsafe construction");
+        }
+        return null;
+    }
+
+    private <T> Exceptional<T> getRawInstance(Class<T> type, Injector injector) {
+        try {
+            Constructor<T> ctor = type.getDeclaredConstructor();
+            ctor.setAccessible(true);
+            T t = ctor.newInstance();
+            injector.injectMembers(t);
+            return Exceptional.of(t);
+        } catch (Exception e) {
+            return Exceptional.of(e);
+        }
+    }
+
+    private <T> T getInjectedInstance(Injector injector, Class<T> type, InjectorProperty<?>... additionalProperties) {
+        @SuppressWarnings("rawtypes") Exceptional<Class> annotation =
+                Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
+        if (annotation.isPresent() && annotation.get().isAnnotation()) {
+            //noinspection unchecked
+            return (T) injector.getInstance(Key.get(type, annotation.get()));
+        } else {
+            return injector.getInstance(type);
+        }
     }
 
     /**
@@ -180,8 +217,8 @@ public abstract class InjectableBootstrap {
             Exceptional<ExtensionContext> context = this.getInstance(ExtensionManager.class).getContext(instance.getClass());
             Extension extension;
             extension = context
-                .map(ExtensionContext::getExtension)
-                .orElseGet(() -> instance.getClass().getAnnotation(Extension.class));
+                    .map(ExtensionContext::getExtension)
+                    .orElseGet(() -> instance.getClass().getAnnotation(Extension.class));
             return this.createExtensionInjector(instance, extension, context.orNull());
         }
         return this.createInjector();
@@ -219,8 +256,8 @@ public abstract class InjectableBootstrap {
         if (null == this.injector) {
             Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
             modules.addAll(Arrays.stream(additionalModules)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList()));
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
             this.injector = Guice.createInjector(modules);
         }
         return this.injector;
@@ -254,6 +291,19 @@ public abstract class InjectableBootstrap {
 
     public void registerGlobal(SeleneInjectConfiguration moduleConfiguration) {
         this.injectorModules.add(moduleConfiguration);
+    }
+
+    private Unsafe getUnsafe() {
+        if (null == this.unsafe) {
+            try {
+                Field f = Unsafe.class.getDeclaredField("theUnsafe");
+                f.setAccessible(true);
+                this.unsafe = (Unsafe) f.get(null);
+            } catch (ReflectiveOperationException e) {
+                Selene.handle(e);
+            }
+        }
+        return this.unsafe;
     }
 
 }

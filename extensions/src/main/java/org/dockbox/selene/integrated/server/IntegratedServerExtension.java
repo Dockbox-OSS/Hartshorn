@@ -203,7 +203,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
     @Command(aliases = {"lang", "language"}, usage = "language <language{Language}> [player{Player}]", inherit = false)
     public void switchLang(MessageReceiver src, CommandContext ctx,
                            @Arg("language") Language lang,
-                           @Arg("player") Player player) {
+                           @Arg(value = "player", optional = true) Player player) {
         if (null == player) {
             if (src instanceof Player) {
                 player = (Player) src;

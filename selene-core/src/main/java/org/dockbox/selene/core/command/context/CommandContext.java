@@ -20,7 +20,6 @@ package org.dockbox.selene.core.command.context;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.command.context.CommandValue.Flag;
 import org.dockbox.selene.core.command.context.CommandValue.Type;
-import org.dockbox.selene.core.command.parsing.TypeParser;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
@@ -38,14 +37,14 @@ public interface CommandContext {
 
     <T> Exceptional<Argument<T>> getArgument(String key, Class<T> type);
 
-    <T> Exceptional<T> getArgumentAndParse(String key, TypeParser<T> parser);
+    <T> Exceptional<T> getArgumentAndParse(String key, ArgumentConverter<T> converter);
 
 
     Exceptional<Flag<String>> getFlag(String key);
 
     <T> Exceptional<Flag<T>> getFlag(String key, Class<T> type);
 
-    <T> Exceptional<T> getFlagAndParse(String key, TypeParser<T> parser);
+    <T> Exceptional<T> getFlagAndParse(String key, ArgumentConverter<T> parser);
 
     boolean hasArgument(String key);
 

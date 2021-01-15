@@ -134,8 +134,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
 
         List<AbstractArgumentElement<?>> elements = super.parseArgumentElements(context.getCommand().usage(), context.getCommand().permission());
         List<CommandElement> commandElements = elements.stream()
-                .filter(element -> element instanceof SpongeArgumentElement)
-                .map(element -> (SpongeArgumentElement) element)
+                .filter(SpongeArgumentElement.class::isInstance)
+                .map(SpongeArgumentElement.class::cast)
                 .map(AbstractArgumentElement::getReference)
                 .collect(Collectors.toList());
         if (!elements.isEmpty())
