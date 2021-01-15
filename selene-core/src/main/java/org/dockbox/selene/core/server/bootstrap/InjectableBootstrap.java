@@ -37,6 +37,7 @@ import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -124,18 +125,24 @@ public abstract class InjectableBootstrap {
         // and therefore do not need late member injection here.
         if (null == typeInstance) {
             try {
-                //noinspection rawtypes
-                Exceptional<Class> annotation = Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
-                if (annotation.isPresent() && annotation.get().isAnnotation()) {
-                    //noinspection unchecked
-                    typeInstance = (T) injector.getInstance(Key.get(type, annotation.get()));
-                } else {
-                    typeInstance = injector.getInstance(type);
-                }
+                typeInstance = getInjectedInstance(injector, type, additionalProperties);
             } catch (ProvisionException e) {
                 Selene.log().error("Could not create instance using registered injector " + injector + " for [" + type + "]", e);
             } catch (ConfigurationException ignored) {
-                Selene.log().warn("Configuration error while attempting to create instance for [" + type + "] : " + injector);
+                AbstractModule fallbackModule = new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                        try {
+                            Constructor<T> ctor = type.getConstructor();
+                            ctor.setAccessible(true);
+                            this.bind(type).toConstructor(ctor);
+                        } catch (ReflectiveOperationException e) {
+                            Selene.log().warn("Configuration error while attempting to create instance for [" + type + "] : " + injector);
+                        }
+                    }
+                }
+                Injector fallback = this.createInjector(extensionModule, propertyModule, fallbackModule);
+                typeInstance = getInjectedInstance(fallback, type, additionalProperties);
             }
         }
 
@@ -146,6 +153,16 @@ public abstract class InjectableBootstrap {
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
+    }
+
+    private <T> T getInjectedInstance(Injector injector, Class<T> type, InjectorProperty<?>... additionalProperties) {
+        Exceptional<Class> annotation = Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
+        if (annotation.isPresent() && annotation.get().isAnnotation()) {
+            //noinspection unchecked
+            return (T) injector.getInstance(Key.get(type, annotation.get()));
+        } else {
+            return injector.getInstance(type);
+        }
     }
 
     /**
