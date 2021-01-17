@@ -28,9 +28,11 @@ import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
@@ -44,8 +46,14 @@ import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Extension(
         id = "selene",
@@ -219,13 +227,6 @@ public class IntegratedServerExtension implements IntegratedExtension {
         if (player != src)
             src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED_OTHER.format(player.getName(), languageLocalized));
         player.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(languageLocalized));
-    }
-
-    @Command(aliases = "demo", usage = "demo")
-    public void demo(Player player, CommandContext context) {
-        ChangeGameStatePacket packet = Selene.provide(ChangeGameStatePacket.class);
-        packet.setWeather(Weather.RAIN);
-        player.send(packet);
     }
 
 }
