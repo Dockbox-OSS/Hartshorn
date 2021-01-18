@@ -17,6 +17,34 @@
 
 package org.dockbox.selene.core.server.config;
 
+import org.dockbox.selene.core.ExceptionHelper;
+import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.tasks.TriConsumer;
+
+import java.util.Arrays;
+
 public enum ExceptionLevels {
-    FRIENDLY, MINIMAL
+    FRIENDLY((message, exception, stacktrace) -> {
+        Selene.provide(ExceptionHelper.class)
+                .printFriendly(message, exception, stacktrace);
+    }),
+    MINIMAL((message, exception, stacktrace) -> {
+        Selene.provide(ExceptionHelper.class)
+                .printMinimal(message, exception, stacktrace);
+    }),
+    NATIVE((message, exception, stacktrace) -> {
+        Selene.log().error(message);
+        Selene.log().error(Arrays.toString(exception.getStackTrace()));
+    });
+
+    private final TriConsumer<String, Throwable, Boolean> consumer;
+
+    ExceptionLevels(TriConsumer<String, Throwable, Boolean> consumer) {
+
+        this.consumer = consumer;
+    }
+
+    public void handle(String message, Throwable exception, boolean stacktrace) {
+        this.consumer.accept(message, exception, stacktrace);
+    }
 }

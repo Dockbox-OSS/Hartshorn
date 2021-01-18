@@ -250,7 +250,7 @@ public final class XStreamUtils {
                 return null != fallback ? fallback.get() : null;
             }
         } catch (Exception e) {
-            Selene.handle(e.getMessage(), e);
+            Selene.handle(e);
             return null != fallback ? fallback.get() : null;
         }
     }
@@ -269,7 +269,7 @@ public final class XStreamUtils {
                 new FileOutputStream(file)), StandardCharsets.UTF_8)) {
             stream.toXML(object, writer);
         } catch (IOException e) {
-            Selene.handle(e.getMessage(), e);
+            Selene.handle(e);
         }
     }
 

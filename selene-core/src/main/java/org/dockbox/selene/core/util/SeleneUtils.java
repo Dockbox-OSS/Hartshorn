@@ -1126,6 +1126,17 @@ public final class SeleneUtils {
         return 0;
     }
 
+    public static String getFirstCauseMessage(Throwable throwable) {
+        final String noCause = "No message provided";
+        if (null == throwable) return noCause;
+        while (true) {
+            if (null != throwable.getMessage()) break;
+            else if (null != throwable.getCause()) throwable = throwable.getCause();
+            else break;
+        }
+        return null == throwable.getMessage() ? noCause : throwable.getMessage();
+    }
+
     /**
      * Common enumeration of processed field information in {@link Reflect#tryCreateFromProcessed(Class, Function, boolean) tryCreate}.
      */

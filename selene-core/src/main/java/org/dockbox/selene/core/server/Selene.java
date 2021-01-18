@@ -29,6 +29,7 @@ import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -38,7 +39,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 /**
  * The global {@link Selene} instance used to grant access to various components.
@@ -69,26 +69,13 @@ public final class Selene {
      *         Zero or more exceptions (varargs)
      */
     public static void handle(@Nullable String msg, @Nullable Throwable... e) {
-        if (null != getServer()) {
-            for (Throwable throwable : e) {
-                boolean stacktraces = getServer().getGlobalConfig().getStacktracesAllowed();
-                ExceptionHelper eh = Selene.provide(ExceptionHelper.class);
-
-                if (ExceptionLevels.FRIENDLY == getServer().getGlobalConfig().getExceptionLevel()) {
-                    eh.printFriendly(msg, throwable, stacktraces);
-                } else {
-                    eh.printMinimal(msg, throwable, stacktraces);
-                }
-            }
-        } else {
-            log().error("Selene has not been initialised! Logging natively");
-            log().error(msg);
-            for (Throwable throwable : e) log().error(Arrays.toString(throwable.getStackTrace()));
-        }
+        ExceptionLevels level = null != getServer() ? getServer().getGlobalConfig().getExceptionLevel() : ExceptionLevels.NATIVE;
+        boolean stacktraces = null == getServer() || getServer().getGlobalConfig().getStacktracesAllowed();
+        for (Throwable throwable : e) level.handle(msg, throwable, stacktraces);
     }
 
     public static void handle(Throwable e) {
-        handle(e.getMessage(), e);
+        handle(SeleneUtils.getFirstCauseMessage(e), e);
     }
 
     /**
@@ -119,7 +106,7 @@ public final class Selene {
      *         The name of the file to look up
      *
      * @return The resource file wrapped in a {@link Exceptional}, or a appropriate {@link Exceptional} (either empty or
-     * providing the appropriate exception).
+     *         providing the appropriate exception).
      */
     public static Exceptional<Path> getResourceFile(String name) {
         try {
@@ -144,13 +131,13 @@ public final class Selene {
      * mappings.
      *
      * @param <T>
-     *     The type parameter for the instance to return
+     *         The type parameter for the instance to return
      * @param type
-     *     The type of the instance
+     *         The type of the instance
      * @param extension
-     *     The type of the extension if extension specific bindings are to be used
+     *         The type of the extension if extension specific bindings are to be used
      * @param additionalProperties
-     *     The properties to be passed into the type either during or after construction
+     *         The properties to be passed into the type either during or after construction
      *
      * @return The instance, if present. Otherwise returns null
      */
