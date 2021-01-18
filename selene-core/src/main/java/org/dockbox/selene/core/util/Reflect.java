@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.util;
 
 import org.dockbox.selene.core.annotations.Rejects;
-import org.dockbox.selene.core.annotations.entity.Alias;
+import org.dockbox.selene.core.annotations.entity.Metadata;
 import org.dockbox.selene.core.annotations.entity.Ignore;
 import org.dockbox.selene.core.annotations.entity.Property;
 import org.dockbox.selene.core.annotations.extension.Extension;
@@ -532,8 +532,8 @@ public final class Reflect {
     @Nullable
     public static String getClassAlias(Class<?> type) {
         String className = null;
-        if (type.isAnnotationPresent(Alias.class))
-            className = type.getAnnotation(Alias.class).value();
+        if (type.isAnnotationPresent(Metadata.class))
+            className = type.getAnnotation(Metadata.class).alias();
         return className;
     }
 

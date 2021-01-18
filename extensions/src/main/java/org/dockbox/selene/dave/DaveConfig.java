@@ -20,17 +20,14 @@ package org.dockbox.selene.dave;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import org.dockbox.selene.core.DiscordUtils;
+import org.dockbox.selene.core.annotations.entity.Metadata;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
 
-@ConfigSerializable
+@Metadata(alias = "dave-config")
 public class DaveConfig {
 
-    @Setting
     private String channelId = "622795938699673600";
-    @Setting
     private Text prefix = Text.of("&6Dave&e: &f");
 
     public DaveConfig() {

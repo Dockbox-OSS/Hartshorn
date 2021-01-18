@@ -17,23 +17,17 @@
 
 package org.dockbox.selene.dave.models;
 
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
+import org.dockbox.selene.core.annotations.entity.Metadata;
 
 import java.util.List;
 
-@ConfigSerializable
+@Metadata(alias = "dave-trigger")
 public class DaveTrigger {
 
-    @Setting
     private String id;
-    @Setting
     private List<String> triggers;
-    @Setting
     private boolean important;
-    @Setting
     private List<DaveResponse> responses;
-    @Setting
     private String permission;
 
     public DaveTrigger() {

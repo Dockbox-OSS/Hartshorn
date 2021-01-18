@@ -18,6 +18,7 @@
 package org.dockbox.selene.structures.table;
 
 import org.dockbox.selene.core.annotations.entity.Ignore;
+import org.dockbox.selene.core.annotations.entity.Metadata;
 import org.dockbox.selene.core.annotations.entity.Property;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.util.Reflect;
@@ -31,8 +32,6 @@ import org.dockbox.selene.structures.table.exceptions.UnknownIdentifierException
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -56,12 +55,10 @@ import java.util.stream.Collectors;
  * @since feature/S124
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
-@ConfigSerializable
+@Metadata(alias = "table")
 public class Table {
 
-    @Setting
     private final List<TableRow> rows;
-    @Setting
     private final ColumnIdentifier<?>[] identifiers;
 
     /**

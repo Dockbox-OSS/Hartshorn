@@ -121,7 +121,7 @@ public class DaveExtension implements InjectableType {
         Path triggerFile = fm.getDataFile(DaveExtension.class, "triggers");
         if (SeleneUtils.isFileEmpty(triggerFile)) this.restoreTriggerFile(fm, triggerFile);
 
-        fm.getFileContent(triggerFile, DaveTriggers.class).ifPresent(triggers -> {
+        fm.read(triggerFile, DaveTriggers.class).ifPresent(triggers -> {
             this.triggers = triggers;
         }).ifAbsent(() -> {
             Selene.log().warn("Could not load triggers for Dave");
@@ -129,7 +129,7 @@ public class DaveExtension implements InjectableType {
 
 
         Path configFile = fm.getConfigFile(DaveExtension.class);
-        fm.getFileContent(configFile, DaveConfig.class).ifPresent(config -> this.config = config);
+        fm.read(configFile, DaveConfig.class).ifPresent(config -> this.config = config);
     }
 
     private void restoreTriggerFile(FileManager fm, Path triggerFile) {

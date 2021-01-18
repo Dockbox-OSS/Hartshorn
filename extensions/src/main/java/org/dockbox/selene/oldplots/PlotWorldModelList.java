@@ -17,14 +17,14 @@
 
 package org.dockbox.selene.oldplots;
 
+import org.dockbox.selene.core.annotations.entity.Metadata;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import java.util.List;
 
-@ConfigSerializable
+@Metadata(alias = "plot-world-models")
 class PlotWorldModelList {
     private final List<PlotWorldModel> worlds = SeleneUtils.emptyList();
 

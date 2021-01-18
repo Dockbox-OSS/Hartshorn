@@ -59,7 +59,7 @@ public class DataStructuresSerializersTests {
 
             FileManager fm = new TestXStreamFileManager();
 
-            fm.writeFileContent(tempFile, this.buildTestRegistry());
+            fm.write(tempFile, this.buildTestRegistry());
         });
     }
 
@@ -71,8 +71,8 @@ public class DataStructuresSerializersTests {
 
         FileManager fm = new TestXStreamFileManager();
 
-        fm.writeFileContent(tempFile, this.buildTestRegistry());
-        Exceptional<Registry> registry = fm.getFileContent(tempFile, Registry.class);
+        fm.write(tempFile, this.buildTestRegistry());
+        Exceptional<Registry> registry = fm.read(tempFile, Registry.class);
         Assertions.assertTrue(registry.isPresent());
 
         Registry<Registry<String>> reg = (Registry<Registry<String>>) registry.get();

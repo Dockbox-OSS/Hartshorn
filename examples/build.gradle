@@ -24,8 +24,12 @@ description = 'Sample extensions for Selene'
 
 dependencies {
     compileOnly project(':selene-core')
-    compileOnly project(':selene-common')
+    compileOnly(project(':selene-common')) {
+        exclude group: "org.spongepowered", module: "configurate**"
+    }
 
     testCompile project(':selene-core')
-    testCompile project(':selene-common')
+    testCompile(project(':selene-common')) {
+        exclude group: "org.spongepowered", module: "configurate**"
+    }
 }

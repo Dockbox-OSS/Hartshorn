@@ -18,14 +18,12 @@
 package org.dockbox.selene.core.impl;
 
 import org.dockbox.selene.core.PlayerStorageService;
+import org.dockbox.selene.core.annotations.entity.Metadata;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.nio.file.Path;
 import java.util.UUID;
@@ -45,9 +43,8 @@ public abstract class DefaultPlayerStorageService implements PlayerStorageServic
         return this.getUserData(uuid).language;
     }
 
-    @ConfigSerializable
+    @Metadata(alias = "userdata")
     private static class UserDataModel {
-        @Setting
         private Language language = Selene.getServer().getGlobalConfig().getDefaultLanguage();
     }
 
@@ -55,7 +52,7 @@ public abstract class DefaultPlayerStorageService implements PlayerStorageServic
     private UserDataModel getUserData(UUID uuid) {
         FileManager cm = Selene.provide(FileManager.class);
         Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
-        Exceptional<UserDataModel> userDataModel = cm.getFileContent(file, UserDataModel.class);
+        Exceptional<UserDataModel> userDataModel = cm.read(file, UserDataModel.class);
         return userDataModel.orElse(new UserDataModel());
     }
 
@@ -63,7 +60,7 @@ public abstract class DefaultPlayerStorageService implements PlayerStorageServic
     private void updateUserData(UUID uuid, UserDataModel userData) {
         FileManager cm = Selene.provide(FileManager.class);
         Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
-        cm.writeFileContent(file, userData);
+        cm.write(file, userData);
     }
 
 }

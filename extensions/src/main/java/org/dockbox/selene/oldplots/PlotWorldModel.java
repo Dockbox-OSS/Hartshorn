@@ -18,12 +18,12 @@
 package org.dockbox.selene.oldplots;
 
 import org.dockbox.selene.core.WorldStorageService;
+import org.dockbox.selene.core.annotations.entity.Metadata;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.server.Selene;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-@ConfigSerializable
+@Metadata(alias = "plot-world-model")
 public class PlotWorldModel {
 
     private String name;

@@ -35,7 +35,7 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
     }
 
     @Override
-    public <T> Exceptional<T> getFileContent(Path file, Class<T> type) {
+    public <T> Exceptional<T> read(Path file, Class<T> type) {
         Reflect.rejects(type, DefaultXStreamManager.class, true);
 
         try {
@@ -47,7 +47,7 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
     }
 
     @Override
-    public <T> Exceptional<Boolean> writeFileContent(Path file, T content) {
+    public <T> Exceptional<Boolean> write(Path file, T content) {
         @SuppressWarnings("unchecked") Class<T> type = (Class<T>) content.getClass();
         Reflect.rejects(type, DefaultXStreamManager.class, true);
 

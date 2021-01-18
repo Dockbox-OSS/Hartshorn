@@ -17,19 +17,17 @@
 
 package org.dockbox.selene.dave.models;
 
+import org.dockbox.selene.core.annotations.entity.Metadata;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.dave.DaveUtils;
 import org.jetbrains.annotations.NonNls;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.util.List;
 
-@ConfigSerializable
+@Metadata(alias = "dave-triggers")
 public class DaveTriggers {
 
-    @Setting
     private final List<DaveTrigger> triggers = SeleneUtils.emptyList();
 
     public DaveTriggers() {

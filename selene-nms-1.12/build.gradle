@@ -47,7 +47,9 @@ repositories {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
     compileOnly project(':selene-core')
-    compileOnly project(':selene-common')
+    compileOnly(project(':selene-common')) {
+        exclude group: "org.spongepowered", module: "configurate**"
+    }
 }
 
 publishing {

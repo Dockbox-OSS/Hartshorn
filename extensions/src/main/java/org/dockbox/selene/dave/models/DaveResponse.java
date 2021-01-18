@@ -17,14 +17,12 @@
 
 package org.dockbox.selene.dave.models;
 
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
+import org.dockbox.selene.core.annotations.entity.Metadata;
 
-@ConfigSerializable
+@Metadata(alias = "dave-response")
 public class DaveResponse {
-    @Setting
+
     private String message;
-    @Setting
     private ResponseType type;
 
     public DaveResponse() {
