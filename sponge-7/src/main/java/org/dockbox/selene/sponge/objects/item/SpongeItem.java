@@ -245,11 +245,6 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public Class<?> getReferenceType() {
-        return ItemStack.class;
-    }
-
-    @Override
     public <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
         return SpongeComposite.super.get(dataKey);
     }

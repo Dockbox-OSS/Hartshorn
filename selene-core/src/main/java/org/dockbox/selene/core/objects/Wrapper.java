@@ -17,26 +17,18 @@
 
 package org.dockbox.selene.core.objects;
 
-import java.util.function.Function;
+import org.jetbrains.annotations.NotNull;
 
-public class FieldReferenceHolder<T> extends ReferenceHolder<T> {
+public interface Wrapper<T> {
 
-    private final Function<T, Exceptional<T>> updateRefTask;
-    private final Class<T> type;
-
-    public FieldReferenceHolder(Exceptional<T> reference, Function<T, Exceptional<T>> updateRefTask, Class<T> type) {
-        super(reference);
-        this.updateRefTask = updateRefTask;
-        this.type = type;
+    default boolean referenceExists() {
+        return this.getReference().isPresent();
     }
 
-    @Override
-    public Function<T, Exceptional<T>> getUpdateReferenceTask() {
-        return this.updateRefTask;
-    }
+    Exceptional<T> getReference();
 
-    @Override
-    public Class<?> getReferenceType() {
-        return this.type;
-    }
+    void setReference(@NotNull Exceptional<T> reference);
+
+    Exceptional<T> constructInitialReference();
+
 }
