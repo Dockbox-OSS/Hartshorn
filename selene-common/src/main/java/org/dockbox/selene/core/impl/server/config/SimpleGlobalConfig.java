@@ -25,6 +25,7 @@ import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.server.IntegratedExtension;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.config.Environment;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
 import org.dockbox.selene.core.server.config.GlobalConfig;
@@ -63,6 +64,7 @@ public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
     @NotNull
     @Override
     public ExceptionLevels getExceptionLevel() {
+        if (null == Selene.getServer()) return ExceptionLevels.NATIVE;
         return this.friendlyExceptions ? ExceptionLevels.FRIENDLY : ExceptionLevels.MINIMAL;
     }
 
