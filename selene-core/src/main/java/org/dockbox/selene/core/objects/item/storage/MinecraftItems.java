@@ -24,36 +24,33 @@ import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 @SuppressWarnings({"unused", "OverlyComplexClass"})
 public abstract class MinecraftItems {
 
-    private static final Map<MinecraftVersion, Map<String, Item>> customItems = SeleneUtils.emptyConcurrentMap();
+    // Static as it is possible multiple instances of this type are created
+    private static final Map<MinecraftVersion, Map<String, Supplier<Item>>> customItems = SeleneUtils.emptyConcurrentMap();
 
-    public static void registerCustomItem(MinecraftVersion version, String identifier, Item item) {
-        customItems.putIfAbsent(version, SeleneUtils.emptyConcurrentMap());
-        if (customItems.get(version).containsKey(identifier))
-            Selene.log().warn("Overwriting custom item identifier '" + identifier + "'");
-        customItems.get(version).put(identifier, item);
+    public Item getCustom(String identifier) {
+        Map<String, Supplier<Item>> customItemsForVersion = customItems.getOrDefault(this.getMinecraftVersion(), SeleneUtils.emptyMap());
+        return customItemsForVersion.getOrDefault(identifier, () -> Selene.getItems().getAir()).get();
     }
 
-    public static Item getCustomItem(String identifier) {
-        MinecraftVersion version = Selene.getServer().getMinecraftVersion();
-        Map<String, Item> customItemsForVersion = customItems.getOrDefault(version, SeleneUtils.emptyMap());
-        return customItemsForVersion.getOrDefault(identifier, Selene.getItems().getAir());
+    public MinecraftItems registerCustom(String identifier, Supplier<Item> item) {
+        customItems.putIfAbsent(this.getMinecraftVersion(), SeleneUtils.emptyConcurrentMap());
+        if (customItems.get(this.getMinecraftVersion()).containsKey(identifier))
+            Selene.log().warn("Overwriting custom item identifier '" + identifier + "'");
+        customItems.get(this.getMinecraftVersion()).put(identifier, item);
+        return this;
     }
 
     public MinecraftItems registerCustom(String identifier, Item item) {
-        registerCustomItem(this.getMinecraftVersion(), identifier, item);
-        return this;
+        return this.registerCustom(identifier, () -> item);
     }
 
     public String getAirId() {
         return "minecraft:air";
-    }
-
-    public Item getCustom(String identifier) {
-        return getCustomItem(identifier);
     }
 
     public abstract Item getAcaciaLeaves();

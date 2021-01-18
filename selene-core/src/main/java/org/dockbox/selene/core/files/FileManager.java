@@ -114,7 +114,7 @@ public abstract class FileManager {
      *
      * @return A {@link Exceptional} instance holding either the mapping {@code T} instance, or a {@link Throwable}
      */
-    public abstract <T> Exceptional<T> getFileContent(Path file, Class<T> type);
+    public abstract <T> Exceptional<T> read(Path file, Class<T> type);
 
     /**
      * Write a generic type {@code T} to a given file. The exact file is completely
@@ -131,7 +131,7 @@ public abstract class FileManager {
      * @return A {@link Exceptional} instance holding a {@link Boolean} indicating the success status of the write process, or a
      *         {@link Throwable}. If a {@link Throwable} is present, the {@link Boolean} value should be false.
      */
-    public abstract <T> Exceptional<Boolean> writeFileContent(Path file, T content);
+    public abstract <T> Exceptional<Boolean> write(Path file, T content);
 
     /**
      * Get the data directory for a given {@link Extension}. The exact location is decided by the top-level implementation

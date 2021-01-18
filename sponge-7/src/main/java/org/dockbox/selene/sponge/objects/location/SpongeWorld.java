@@ -19,43 +19,39 @@ package org.dockbox.selene.sponge.objects.location;
 
 import com.flowpowered.math.vector.Vector3i;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.FieldReferenceHolder;
+import org.dockbox.selene.core.objects.Wrapper;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
+import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.UUID;
 
-public class SpongeWorld extends World {
+public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.world.World> {
 
-    private final FieldReferenceHolder<org.spongepowered.api.world.World> worldReference = new FieldReferenceHolder<>(
-            Exceptional.of(Sponge.getServer().getWorld(this.getWorldUniqueId())), world -> {
-        // Do NOT load the world here as this reference is also used for several methods where the world does
-        // not have to be loaded, or even _should_ not be loaded due to the performance impact of loading a world.
-        if (null == world) return Exceptional.of(Sponge.getServer().getWorld(this.getWorldUniqueId()));
-        else return Exceptional.empty();
-    }, org.spongepowered.api.world.World.class);
+    private WeakReference<org.spongepowered.api.world.World> reference = new WeakReference<>(null);
 
     public SpongeWorld(@NotNull UUID worldUniqueId, @NotNull String name, boolean loadOnStartup, @NotNull Vector3N spawnPosition, long seed, @NotNull Gamemode defaultGamemode) {
         super(worldUniqueId, name, loadOnStartup, spawnPosition, seed, defaultGamemode);
+        this.setReference(this.constructInitialReference());
     }
 
     @Override
     public int getPlayerCount() {
-        if (this.worldReference.referenceExists()) return this.worldReference.getReference().get().getPlayers().size();
+        if (this.referenceExists()) return this.getReference().get().getPlayers().size();
         else return 0;
     }
 
     @Override
     public boolean unload() {
-        if (this.worldReference.referenceExists()) {
-            return Sponge.getServer().unloadWorld(this.worldReference.getReference().get());
+        if (this.referenceExists()) {
+            return Sponge.getServer().unloadWorld(this.getReference().get());
         } else return false;
     }
 
@@ -68,38 +64,38 @@ public class SpongeWorld extends World {
 
     @Override
     public boolean isLoaded() {
-        if (this.worldReference.referenceExists()) {
-            return this.worldReference.getReference().get().isLoaded();
+        if (this.referenceExists()) {
+            return this.getReference().get().isLoaded();
         } else return false;
     }
 
     @Override
     public boolean getLoadOnStartup() {
-        if (this.worldReference.referenceExists()) {
-            return this.worldReference.getReference().get().getProperties().loadOnStartup();
+        if (this.referenceExists()) {
+            return this.getReference().get().getProperties().loadOnStartup();
         } else return false;
     }
 
     @Override
     public void setLoadOnStartup(boolean loadOnStartup) {
-        if (this.worldReference.referenceExists()) {
-            this.worldReference.getReference().get().getProperties().setLoadOnStartup(loadOnStartup);
+        if (this.referenceExists()) {
+            this.getReference().get().getProperties().setLoadOnStartup(loadOnStartup);
         }
     }
 
     @NotNull
     @Override
     public Vector3N getSpawnPosition() {
-        if (this.worldReference.referenceExists()) {
-            Vector3i vector3i = this.worldReference.getReference().get().getProperties().getSpawnPosition();
+        if (this.referenceExists()) {
+            Vector3i vector3i = this.getReference().get().getProperties().getSpawnPosition();
             return new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
         } else return new Vector3N(0, 0, 0);
     }
 
     @Override
     public void setSpawnPosition(@NotNull Vector3N spawnPosition) {
-        if (this.worldReference.referenceExists()) {
-            this.worldReference.getReference().get().getProperties().setSpawnPosition(
+        if (this.referenceExists()) {
+            this.getReference().get().getProperties().setSpawnPosition(
                     new Vector3i(spawnPosition.getXi(),
                             spawnPosition.getYi(),
                             spawnPosition.getZi()
@@ -109,50 +105,69 @@ public class SpongeWorld extends World {
 
     @Override
     public long getSeed() {
-        if (this.worldReference.referenceExists()) {
-            return this.worldReference.getReference().get().getProperties().getSeed();
+        if (this.referenceExists()) {
+            return this.getReference().get().getProperties().getSeed();
         } else return 0;
     }
 
     @Override
     public void setSeed(long seed) {
-        if (this.worldReference.referenceExists()) {
-            this.worldReference.getReference().get().getProperties().setSeed(seed);
+        if (this.referenceExists()) {
+            this.getReference().get().getProperties().setSeed(seed);
         }
     }
 
     @NotNull
     @Override
     public Gamemode getDefaultGamemode() {
-        if (this.worldReference.referenceExists()) {
-            return SpongeConversionUtil.fromSponge(this.worldReference.getReference().get().getProperties().getGameMode());
+        if (this.referenceExists()) {
+            return SpongeConversionUtil.fromSponge(this.getReference().get().getProperties().getGameMode());
         } else return Gamemode.OTHER;
     }
 
     @Override
     public Map<String, String> getGamerules() {
-        if (this.worldReference.referenceExists()) {
-            return this.worldReference.getReference().get().getProperties().getGameRules();
+        if (this.referenceExists()) {
+            return this.getReference().get().getProperties().getGameRules();
         }
         return SeleneUtils.emptyMap();
     }
 
     @Override
     public void setDefaultGamemode(@NotNull Gamemode defaultGamemode) {
-        if (this.worldReference.referenceExists()) {
-            this.worldReference.getReference().get().getProperties()
+        if (this.referenceExists()) {
+            this.getReference().get().getProperties()
                     .setGameMode(SpongeConversionUtil.toSponge(defaultGamemode));
         }
     }
 
     public org.spongepowered.api.world.World getReferenceWorld() {
-        return this.worldReference.getReference().orNull();
+        return this.getReference().orNull();
     }
 
     @Override
     public void setGamerule(String key, String value) {
-        if (this.worldReference.referenceExists()) {
-            this.worldReference.getReference().get().getProperties().setGameRule(key, value);
+        if (this.referenceExists()) {
+            this.getReference().get().getProperties().setGameRule(key, value);
         }
+    }
+
+    @Override
+    public Exceptional<org.spongepowered.api.world.World> getReference() {
+        // Do NOT load the world here as this reference is also used for several methods where the world does
+        // not have to be loaded, or even _should_ not be loaded due to the performance impact of loading a world.
+        if (null == this.reference.get())
+            this.setReference(Exceptional.of(Sponge.getServer().getWorld(this.getWorldUniqueId())));
+        return Exceptional.ofNullable(this.reference.get());
+    }
+
+    @Override
+    public void setReference(@NotNull Exceptional<org.spongepowered.api.world.World> reference) {
+        reference.ifPresent(world -> this.reference = new WeakReference<>(world));
+    }
+
+    @Override
+    public Exceptional<org.spongepowered.api.world.World> constructInitialReference() {
+        return Exceptional.of(Sponge.getServer().getWorld(this.getWorldUniqueId()));
     }
 }

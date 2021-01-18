@@ -28,7 +28,7 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.FieldReferenceHolder;
+import org.dockbox.selene.core.objects.Wrapper;
 import org.dockbox.selene.core.objects.inventory.PlayerInventory;
 import org.dockbox.selene.core.objects.inventory.Slot;
 import org.dockbox.selene.core.objects.item.Item;
@@ -47,8 +47,8 @@ import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.nms.packets.NMSPacket;
-import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
+import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.objects.inventory.SpongePlayerInventory;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
@@ -62,21 +62,17 @@ import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.util.blockray.BlockRay;
 
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 
-@SuppressWarnings("ClassWithTooManyMethods")
-public class SpongePlayer extends Player implements SpongeComposite {
+@SuppressWarnings({"ClassWithTooManyMethods", "CodeBlock2Expr"})
+public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org.spongepowered.api.entity.living.player.Player> {
 
     private static final double BLOCKRAY_LIMIT = 50d;
-
-    private final FieldReferenceHolder<org.spongepowered.api.entity.living.player.Player> spongePlayer =
-            new FieldReferenceHolder<>(Exceptional.of(Sponge.getServer().getPlayer(this.getUniqueId())), player -> {
-                if (null == player) return Exceptional.of(Sponge.getServer().getPlayer(this.getUniqueId()));
-                else return Exceptional.empty();
-            }, org.spongepowered.api.entity.living.player.Player.class);
+    private WeakReference<org.spongepowered.api.entity.living.player.Player> reference = new WeakReference<>(null);
 
     public SpongePlayer(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
@@ -84,36 +80,36 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public boolean isOnline() {
-        return this.spongePlayer.referenceExists() && this.spongePlayer.getReference().get().isOnline();
+        return this.referenceExists() && this.getReference().get().isOnline();
     }
 
     @SuppressWarnings("unchecked")
     @NotNull
     @Override
     public Exceptional<FawePlayer<?>> getFawePlayer() {
-        if (this.spongePlayer.referenceExists())
-            return Exceptional.of(FaweAPI.wrapPlayer(this.spongePlayer.getReference().get()));
+        if (this.referenceExists())
+            return Exceptional.of(FaweAPI.wrapPlayer(this.getReference().get()));
         else return Exceptional.empty();
     }
 
     @Override
     public void kick(@NotNull Text message) {
-        if (this.spongePlayer.referenceExists()) this.spongePlayer.getReference().get().kick();
+        if (this.referenceExists()) this.getReference().get().kick();
     }
 
     @NotNull
     @Override
     public Gamemode getGamemode() {
-        if (this.spongePlayer.referenceExists()) {
-            GameMode mode = this.spongePlayer.getReference().get().get(Keys.GAME_MODE).orElse(GameModes.NOT_SET);
+        if (this.referenceExists()) {
+            GameMode mode = this.getReference().get().get(Keys.GAME_MODE).orElse(GameModes.NOT_SET);
             return SpongeConversionUtil.fromSponge(mode);
         } else return Gamemode.OTHER;
     }
 
     @Override
     public void setGamemode(@NotNull Gamemode gamemode) {
-        if (this.spongePlayer.referenceExists())
-            this.spongePlayer.getReference().get().offer(Keys.GAME_MODE, SpongeConversionUtil.toSponge(gamemode));
+        if (this.referenceExists())
+            this.getReference().get().offer(Keys.GAME_MODE, SpongeConversionUtil.toSponge(gamemode));
     }
 
     @NotNull
@@ -141,14 +137,14 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public void setItemInHand(Hand hand, Item item) {
-        this.spongePlayer.getReference().ifPresent(player -> {
+        this.getReference().ifPresent(player -> {
             player.setItemInHand(SpongeConversionUtil.toSponge(hand), SpongeConversionUtil.toSponge(item));
         });
     }
 
     @Override
     public void play(Sounds sound) {
-        this.spongePlayer.getReference().ifPresent(player -> {
+        this.getReference().ifPresent(player -> {
             SpongeConversionUtil.toSponge(sound).ifPresent(soundType -> {
                 player.playSound(soundType, Vector3d.ZERO, 1);
             });
@@ -157,20 +153,20 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public boolean isSneaking() {
-        return this.spongePlayer.getReference().map(p -> p.get(Keys.IS_SNEAKING).orElse(false))
+        return this.getReference().map(p -> p.get(Keys.IS_SNEAKING).orElse(false))
                 .orElse(false);
     }
 
     @Override
     public Profile getProfile() {
-        return this.spongePlayer.getReference()
+        return this.getReference()
                 .map(p -> new SpongeProfile(p.getProfile()))
                 .orElseGet(() -> new SpongeProfile(this.getUniqueId()));
     }
 
     @Override
     public Exceptional<Location> getLookingAtBlockPos() {
-        return this.spongePlayer.getReference().map(p -> {
+        return this.getReference().map(p -> {
             BlockRay<org.spongepowered.api.world.World> ray = BlockRay.from(p)
                 .select(BlockRay.notAirFilter())
                 .whilst(BlockRay.allFilter())
@@ -185,8 +181,8 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public void execute(@NotNull String command) {
-        if (this.spongePlayer.referenceExists())
-            Sponge.getCommandManager().process(this.spongePlayer.getReference().get(), command);
+        if (this.referenceExists())
+            Sponge.getCommandManager().process(this.getReference().get(), command);
     }
 
     @NotNull
@@ -198,15 +194,15 @@ public class SpongePlayer extends Player implements SpongeComposite {
     @NotNull
     @Override
     public Location getLocation() {
-        if (this.spongePlayer.referenceExists())
-            return SpongeConversionUtil.fromSponge(this.spongePlayer.getReference().get().getLocation());
+        if (this.referenceExists())
+            return SpongeConversionUtil.fromSponge(this.getReference().get().getLocation());
         else return Location.empty();
     }
 
     @Override
     public void setLocation(@NotNull Location location) {
-        if (this.spongePlayer.referenceExists()) {
-            SpongeConversionUtil.toSponge(location).ifPresent(loc -> this.spongePlayer.getReference().get().setLocation(loc));
+        if (this.referenceExists()) {
+            SpongeConversionUtil.toSponge(location).ifPresent(loc -> this.getReference().get().setLocation(loc));
         }
     }
 
@@ -226,9 +222,9 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public void send(@NotNull Text text) {
-        if (this.spongePlayer.referenceExists()) {
+        if (this.referenceExists()) {
             this.postEventPre(text).ifPresent(msg -> {
-                this.spongePlayer.getReference().get().sendMessage(SpongeConversionUtil.toSponge(msg));
+                this.getReference().get().sendMessage(SpongeConversionUtil.toSponge(msg));
             });
         }
     }
@@ -241,9 +237,9 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public void sendWithPrefix(@NotNull Text text) {
-        if (this.spongePlayer.referenceExists()) {
+        if (this.referenceExists()) {
             this.postEventPre(text).ifPresent(msg -> {
-                this.spongePlayer.getReference().get().sendMessage(org.spongepowered.api.text.Text.of(
+                this.getReference().get().sendMessage(org.spongepowered.api.text.Text.of(
                         SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
                         SpongeConversionUtil.toSponge(msg))
                 );
@@ -253,16 +249,16 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public void sendPagination(@NotNull Pagination pagination) {
-        if (this.spongePlayer.referenceExists()) {
-            SpongeConversionUtil.toSponge(pagination).sendTo(this.spongePlayer.getReference().get());
+        if (this.referenceExists()) {
+            SpongeConversionUtil.toSponge(pagination).sendTo(this.getReference().get());
         }
     }
 
     @Override
     public boolean hasPermission(@NotNull String permission) {
         if (SeleneInformation.GLOBALLY_PERMITTED.contains(this.getUniqueId())) return true;
-        if (this.spongePlayer.referenceExists())
-            return this.spongePlayer.getReference().get().hasPermission(permission);
+        if (this.referenceExists())
+            return this.getReference().get().hasPermission(permission);
         else return Sponge.getServiceManager().provide(UserStorageService.class)
                 .map(uss -> uss.get(this.getUniqueId())
                         .map(user -> user.hasPermission(permission))
@@ -272,8 +268,8 @@ public class SpongePlayer extends Player implements SpongeComposite {
 
     @Override
     public void setPermission(String permission, boolean value) {
-        if (this.spongePlayer.referenceExists())
-            this.spongePlayer.getReference().get().getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, permission, Tristate.fromBoolean(value));
+        if (this.referenceExists())
+            this.getReference().get().getSubjectData().setPermission(SubjectData.GLOBAL_CONTEXT, permission, Tristate.fromBoolean(value));
         else Sponge.getServiceManager().provide(UserStorageService.class)
                 .flatMap(uss -> uss.get(this.getUniqueId()))
                 .ifPresent(user -> {
@@ -291,7 +287,7 @@ public class SpongePlayer extends Player implements SpongeComposite {
     }
 
     public Exceptional<org.spongepowered.api.entity.living.player.Player> getSpongePlayer() {
-        return this.spongePlayer.getReference();
+        return this.getReference();
     }
 
     @Override
@@ -327,5 +323,23 @@ public class SpongePlayer extends Player implements SpongeComposite {
     @Override
     public Exceptional<? extends DataHolder> getDataHolder() {
         return this.getSpongePlayer();
+    }
+
+    @Override
+    public Exceptional<org.spongepowered.api.entity.living.player.Player> getReference() {
+        if (null == this.reference.get()) {
+            this.setReference(Exceptional.of(Sponge.getServer().getPlayer(this.getUniqueId())));
+        }
+        return Exceptional.of(this.reference.get());
+    }
+
+    @Override
+    public void setReference(@NotNull Exceptional<org.spongepowered.api.entity.living.player.Player> reference) {
+        reference.ifPresent(player -> this.reference = new WeakReference<>(player));
+    }
+
+    @Override
+    public Exceptional<org.spongepowered.api.entity.living.player.Player> constructInitialReference() {
+        return Exceptional.of(Sponge.getServer().getPlayer(this.getUniqueId()));
     }
 }

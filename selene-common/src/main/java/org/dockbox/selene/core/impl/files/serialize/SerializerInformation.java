@@ -18,9 +18,7 @@
 package org.dockbox.selene.core.impl.files.serialize;
 
 import org.spongepowered.configurate.serialize.TypeSerializer;
-
 import java.util.function.Supplier;
-
 
 public class SerializerInformation<T> {
 

@@ -18,20 +18,19 @@
 package org.dockbox.selene.core.impl.objects.item;
 
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.ReferenceHolder;
+import org.dockbox.selene.core.objects.ReferencedWrapper;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("rawtypes")
-public abstract class ReferencedItem<T> extends ReferenceHolder<T> implements Item {
+public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements Item {
 
     private String id;
 
     protected ReferencedItem(@NotNull T reference) {
-        super(Exceptional.of(reference));
         this.id = this.getId();
+        this.setReference(Exceptional.of(reference));
     }
 
     @Override
@@ -44,7 +43,6 @@ public abstract class ReferencedItem<T> extends ReferenceHolder<T> implements It
     }
 
     protected ReferencedItem(String id, int meta) {
-        super(Exceptional.empty());
         this.id = id;
         T type = this.getById(id, meta);
         super.setReference(Exceptional.of(type));
@@ -63,4 +61,8 @@ public abstract class ReferencedItem<T> extends ReferenceHolder<T> implements It
 
     protected abstract T getById(String id, int meta);
 
+    @Override
+    public Exceptional<T> constructInitialReference() {
+        return Exceptional.empty(); // Handled by constructors
+    }
 }

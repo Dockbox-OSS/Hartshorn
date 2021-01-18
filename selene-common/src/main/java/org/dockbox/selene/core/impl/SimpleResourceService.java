@@ -19,6 +19,7 @@ package org.dockbox.selene.core.impl;
 
 import com.google.inject.Singleton;
 
+import org.dockbox.selene.core.annotations.entity.Metadata;
 import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
@@ -32,8 +33,6 @@ import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -48,9 +47,8 @@ public class SimpleResourceService implements ResourceService {
     private final Map<Language, Map<String, String>> resourceMaps = SeleneUtils.emptyConcurrentMap();
     private final List<ResourceEntry> knownEntries = SeleneUtils.emptyConcurrentList();
 
-    @ConfigSerializable
+    @Metadata(alias = "resources")
     static class ResourceConfig {
-        @Setting
         Map<String, String> translations = SeleneUtils.emptyConcurrentMap();
     }
 
@@ -110,12 +108,12 @@ public class SimpleResourceService implements ResourceService {
         });
         ResourceConfig config = new ResourceConfig();
         config.translations = resources;
-        cm.writeFileContent(languageConfigFile, config);
+        cm.write(languageConfigFile, config);
         return resources;
     }
 
     private Map<String, String> getResourcesForFile(Path file, FileManager cm, Language lang) {
-        Exceptional<ResourceConfig> config = cm.getFileContent(file, ResourceConfig.class);
+        Exceptional<ResourceConfig> config = cm.read(file, ResourceConfig.class);
 
         Map<String, String> resources = SeleneUtils.emptyConcurrentMap();
         config.ifPresent(cfg -> resources.putAll(cfg.translations));

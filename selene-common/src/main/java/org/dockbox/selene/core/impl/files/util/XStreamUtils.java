@@ -26,7 +26,7 @@ import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.security.NoTypePermission;
 import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 
-import org.dockbox.selene.core.annotations.entity.Alias;
+import org.dockbox.selene.core.annotations.entity.Metadata;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.util.Reflect;
@@ -105,13 +105,13 @@ public final class XStreamUtils {
     private static void configureXStream(XStream xstream) {
         if (null == aliasedTypes) {
             aliasedTypes = SeleneUtils.emptyConcurrentMap();
-            Collection<Class<?>> annotatedTypes = Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Alias.class);
+            Collection<Class<?>> annotatedTypes = Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Metadata.class);
             annotatedTypes.forEach(type -> {
-                Alias alias = type.getAnnotation(Alias.class);
-                if (aliasedTypes.containsKey(alias.value())) Selene.log().warn("Attempting to register a duplicate entity alias '" + alias.value() + "'");
-                xstream.alias(alias.value(), type);
+                Metadata metadata = type.getAnnotation(Metadata.class);
+                if (aliasedTypes.containsKey(metadata.alias())) Selene.log().warn("Attempting to register a duplicate entity alias '" + metadata.alias() + "'");
+                xstream.alias(metadata.alias(), type);
                 // Put the alias last, so if xstream.alias ever throws a Exception this won't be called
-                aliasedTypes.put(alias.value(), type);
+                aliasedTypes.put(metadata.alias(), type);
             });
         }
 
@@ -250,7 +250,7 @@ public final class XStreamUtils {
                 return null != fallback ? fallback.get() : null;
             }
         } catch (Exception e) {
-            Selene.handle(e.getMessage(), e);
+            Selene.handle(e);
             return null != fallback ? fallback.get() : null;
         }
     }
@@ -269,7 +269,7 @@ public final class XStreamUtils {
                 new FileOutputStream(file)), StandardCharsets.UTF_8)) {
             stream.toXML(object, writer);
         } catch (IOException e) {
-            Selene.handle(e.getMessage(), e);
+            Selene.handle(e);
         }
     }
 

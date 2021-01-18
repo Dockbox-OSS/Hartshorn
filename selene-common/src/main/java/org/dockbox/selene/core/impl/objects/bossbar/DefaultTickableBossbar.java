@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.impl.objects.bossbar;
 
+import org.dockbox.selene.core.objects.ReferencedWrapper;
 import org.dockbox.selene.core.objects.bossbar.Bossbar;
 import org.dockbox.selene.core.objects.bossbar.BossbarColor;
 import org.dockbox.selene.core.objects.bossbar.BossbarStyle;
@@ -25,7 +26,7 @@ import org.dockbox.selene.core.text.Text;
 
 import java.util.Collection;
 
-public abstract class DefaultTickableBossbar implements Bossbar {
+public abstract class DefaultTickableBossbar<T> extends ReferencedWrapper<T> implements Bossbar {
 
     private final String id;
     private float percent;

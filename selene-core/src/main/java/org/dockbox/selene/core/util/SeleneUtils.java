@@ -2,16 +2,16 @@
  * Copyright (C) 2020 Guus Lieben
  *
  * This framework is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General public static License as
+ * it under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation, either version 2.1 of the
  * License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
- * the GNU Lesser General public static License for more details.
+ * the GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General public static License
+ * You should have received a copy of the GNU Lesser General Public License
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
@@ -1124,6 +1124,17 @@ public final class SeleneUtils {
         }
 
         return 0;
+    }
+
+    public static String getFirstCauseMessage(Throwable throwable) {
+        final String noCause = "No message provided";
+        if (null == throwable) return noCause;
+        while (true) {
+            if (null != throwable.getMessage()) break;
+            else if (null != throwable.getCause()) throwable = throwable.getCause();
+            else break;
+        }
+        return null == throwable.getMessage() ? noCause : throwable.getMessage();
     }
 
     /**

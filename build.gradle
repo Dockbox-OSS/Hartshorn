@@ -108,10 +108,6 @@ allprojects {
                 name 'plotsquared'
                 url 'https://plotsquared.com/mvn/'
             }
-            maven { // Only used for Configurate, not for platform implementations
-                name 'Sponge maven repo'
-                url 'https://repo.spongepowered.org/maven'
-            }
         }
 
         configurations {
@@ -127,11 +123,6 @@ allprojects {
             compileOnly "com.boydti:fawe-api:$faweVersion"
             compileOnly "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
             compileOnly "com.plotsquared:plotsquared-api:$plotSquaredVersion"
-
-            // Included by some platforms, should be shadowed by platforms if it isn't already available
-            compileOnly "org.spongepowered:configurate-core:$configurateVersion"
-            testCompile "org.spongepowered:configurate-core:$configurateVersion"
-            testRuntime "org.spongepowered:configurate-core:$configurateVersion"
 
             // Typically included by platforms
             compileOnly "org.slf4j:slf4j-api:$slf4jVersion"

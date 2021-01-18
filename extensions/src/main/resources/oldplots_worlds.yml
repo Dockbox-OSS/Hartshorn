@@ -1,0 +1,10 @@
+{
+  worlds: [
+    { name: OldFreePlots, size: 51, road: 7, zero-x: -55, zero-z: -57, height: 66 },
+    { name: OldPlots1A, size: 21, road: 6, zero-x: -25, zero-z: -27, height: 66 },
+    { name: OldPlots1B, size: 43, road: 7, zero-x: -47, zero-z: -49, height: 66 },
+    { name: OldPlots1K, size: 1000, road: 11, zero-x: -1006, zero-z: -1008, height: 4 },
+    { name: OldPlots2, size: 151, road: 7, zero-x: -155, zero-z: -157, height: 66 },
+    { name: OldPlots3, size: 251, road: 9, zero-x: -256, zero-z: -258, height: 66 }
+  ]
+}

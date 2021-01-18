@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.impl.files;
 
+import org.dockbox.selene.core.annotations.entity.Metadata;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.files.FileType;
@@ -36,7 +37,10 @@ import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.IOException;
+import java.lang.reflect.AnnotatedType;
 import java.nio.file.Path;
+
+import io.leangen.geantyref.GenericTypeReflector;
 
 /**
  * Implementation of {@link FileManager} containing dynamic mapping to appropriate {@link ConfigurationLoader}s
@@ -79,13 +83,20 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
         }
         return builder.path(file)
                 .defaultOptions(opts ->
-                        opts.serializers(build -> build.registerAll(SeleneTypeSerializers.collection()))
+                        opts.serializers(build -> build
+                                .registerAll(SeleneTypeSerializers.collection())
+                                .register(type -> {
+                                    AnnotatedType annotatedType = GenericTypeReflector.annotate(type);
+                                    return annotatedType.isAnnotationPresent(Metadata.class)
+                                            && annotatedType.getAnnotation(Metadata.class).serializable();
+                                }, ObjectMapper.factory().asTypeSerializer())
+                        )
                 ).build();
     }
 
     @NotNull
     @Override
-    public <T> Exceptional<T> getFileContent(@NotNull Path file, @NotNull Class<T> type) {
+    public <T> Exceptional<T> read(@NotNull Path file, @NotNull Class<T> type) {
         Reflect.rejects(type, DefaultConfigurateManager.class, true);
 
         try {
@@ -97,7 +108,7 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
             final T content = mapper.load(node);
 
             if (SeleneUtils.isFileEmpty(file)) {
-                this.writeFileContent(file, content);
+                this.write(file, content);
             }
 
             return Exceptional.ofNullable(content);
@@ -109,7 +120,7 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
     @SuppressWarnings("unchecked")
     @NotNull
     @Override
-    public <T> Exceptional<Boolean> writeFileContent(@NotNull Path file, @NotNull T content) {
+    public <T> Exceptional<Boolean> write(@NotNull Path file, @NotNull T content) {
         Reflect.rejects(content.getClass(), DefaultConfigurateManager.class, true);
 
         try {
