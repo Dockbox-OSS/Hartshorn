@@ -30,6 +30,7 @@ import org.dockbox.selene.core.annotations.files.Format;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.external.WorldEditService;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.impl.SimpleBroadcastService;
@@ -104,6 +105,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(WorldStorageService.class).to(SpongeWorldStorageService.class);
         this.bind(BroadcastService.class).to(SimpleBroadcastService.class);
         this.bind(ResourceService.class).toInstance(new SimpleResourceService());
+        this.bind(WorldEditService.class).to(SpongeWorldEditService.class);
         // Internal services
         this.bind(CommandBus.class).toInstance(new SpongeCommandBus());
         this.bind(EventBus.class).toInstance(new SimpleEventBus());

@@ -19,7 +19,6 @@ package org.dockbox.selene.sponge.objects.item;
 
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
-import com.sk89q.worldedit.blocks.BaseBlock;
 
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
@@ -69,12 +68,6 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @AssistedInject
     public SpongeItem(@Assisted String id, @Assisted int meta) {
         super(id, meta);
-    }
-
-    @AssistedInject
-    @Deprecated
-    public SpongeItem(@Assisted BaseBlock baseBlock) {
-        this(SpongeConversionUtil.toSponge(baseBlock).orElse(ItemStack.empty()));
     }
 
     @Override

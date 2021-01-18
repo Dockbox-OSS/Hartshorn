@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.core.objects.item;
 
-import com.sk89q.worldedit.blocks.BaseBlock;
-
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
@@ -104,19 +102,6 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
             item = Selene.getItems().getCustom(id);
         }
         return item;
-    }
-
-    /**
-     * @param baseBlock
-     *         The {@link BaseBlock} instance to use when creating the item.
-     *
-     * @return The item instance, or {@link MinecraftItems#getAir()}
-     *
-     * @deprecated Note that WorldEdit rewrote their API for 1.13+, and that package/class names changes.
-     */
-    @Deprecated
-    static Item of(BaseBlock baseBlock) {
-        return Selene.provide(ItemFactory.class).create(baseBlock);
     }
 
 }

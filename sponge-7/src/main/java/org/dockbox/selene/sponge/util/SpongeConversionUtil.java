@@ -20,13 +20,19 @@ package org.dockbox.selene.sponge.util;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.magitechserver.magibridge.util.BridgeCommandSource;
-import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 
+import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
 import org.dockbox.selene.core.exceptions.TypeConversionException;
 import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
+import org.dockbox.selene.core.external.region.Clipboard;
+import org.dockbox.selene.core.external.region.Region;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
 import org.dockbox.selene.core.inventory.InventoryType;
@@ -58,7 +64,6 @@ import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.boss.BossBarColor;
 import org.spongepowered.api.boss.BossBarColors;
 import org.spongepowered.api.boss.BossBarOverlay;
@@ -520,22 +525,46 @@ public enum SpongeConversionUtil {
         return org.dockbox.selene.core.inventory.Element.of(item); // Action is skipped here
     }
 
-    public static Exceptional<ItemStack> toSponge(BaseBlock block) {
-        try {
-            Exceptional<BlockState> state = Exceptional.empty();
-            // TODO: Implement Blockstate translator for worldedit 6.1
-//                    SeleneUtils.REFLECTION.getMethodValue(
-//                    com.sk89q.worldedit.sponge.SpongeWorld.class,
-//                    new Sponge_1_12_2_Impl(),
-//                    "getBlockState",
-//                    BlockState.class,
-//                    new Class<?>[]{Class.forName("com.sk89q.worldedit.world.block.BlockStateHolder")},
-//                    block
-//            );
-            return state.map(blockState -> ItemStack.builder().fromBlockState(blockState).build());
-        } catch (Exception e) {
-            return Exceptional.empty();
-        }
+    public static Region fromSponge(com.sk89q.worldedit.regions.Region region) {
+        org.dockbox.selene.core.objects.location.World world =
+                Selene.provide(WorldStorageService.class).getWorld(region.getWorld().getName()).orElse(org.dockbox.selene.core.objects.location.World.empty());
+        Vector min = region.getMinimumPoint();
+        Vector max = region.getMaximumPoint();
+        return new Region(
+                world,
+                new Vector3N(min.getX(), min.getY(), min.getZ()),
+                new Vector3N(max.getX(), max.getY(), max.getZ())
+        );
+    }
+
+    public static com.sk89q.worldedit.regions.Region toSponge(Region region) {
+        com.sk89q.worldedit.world.World world = toWorldEdit(region.getWorld());
+        Vector3N min = region.getMinimumPoint();
+        Vector3N max = region.getMaximumPoint();
+
+        return new CuboidRegion(
+                world,
+                new Vector(min.getXd(), min.getYd(), min.getZd()),
+                new Vector(max.getXd(), max.getYd(), max.getZd())
+        );
+    }
+
+    public static Clipboard fromSponge(com.sk89q.worldedit.extent.clipboard.Clipboard clipboard) {
+        Region region = fromSponge(clipboard.getRegion());
+        Vector origin = clipboard.getOrigin();
+        return new Clipboard(region, new Vector3N(origin.getX(), origin.getY(), origin.getZ()));
+    }
+
+    public static com.sk89q.worldedit.extent.clipboard.Clipboard toSponge(Clipboard clipboard) {
+        com.sk89q.worldedit.regions.Region region = toSponge(clipboard.getRegion());
+        Vector3N origin = clipboard.getOrigin();
+        com.sk89q.worldedit.extent.clipboard.Clipboard worldEditClipboard = new BlockArrayClipboard(region);
+        worldEditClipboard.setOrigin(new Vector(origin.getXd(), origin.getYd(), origin.getZd()));
+        return worldEditClipboard;
+    }
+
+    public static com.sk89q.worldedit.world.World toWorldEdit(org.dockbox.selene.core.objects.location.World world) {
+        return SpongeWorldEdit.inst().getAdapter().getWorld(toSponge(world).orNull());
     }
 
     public static InventoryArchetype toSponge(InventoryType inventoryType) {
