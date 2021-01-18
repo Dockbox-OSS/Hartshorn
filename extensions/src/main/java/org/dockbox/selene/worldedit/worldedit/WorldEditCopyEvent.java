@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.worldedit.worldedit;
 
-import com.boydti.fawe.object.FawePlayer;
-import com.sk89q.worldedit.regions.Region;
-
 import org.dockbox.selene.core.events.AbstractCancellableEvent;
+import org.dockbox.selene.core.external.WorldEditKeys;
+import org.dockbox.selene.core.external.region.Region;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
 
 /**
@@ -29,30 +29,19 @@ import org.dockbox.selene.core.objects.player.Player;
  */
 public class WorldEditCopyEvent extends AbstractCancellableEvent {
 
-    private final FawePlayer<?> fawePlayer;
     private final Player player;
 
-    public WorldEditCopyEvent(FawePlayer<?> fawePlayer, Player player) {
-        this.fawePlayer = fawePlayer;
+    public WorldEditCopyEvent(Player player) {
         this.player = player;
     }
 
     /**
-     * Gets the selection of the executing {@link FawePlayer}
+     * Gets the selection of the executing {@link Player}
      *
      * @return The selection
      */
-    public Region getSelection() {
-        return this.fawePlayer.getSelection();
-    }
-
-    /**
-     * Gets the executing {@link FawePlayer}
-     *
-     * @return The player
-     */
-    public FawePlayer<?> getFawePlayer() {
-        return this.fawePlayer;
+    public Exceptional<Region> getSelection() {
+        return this.player.get(WorldEditKeys.SELECTION);
     }
 
     /**

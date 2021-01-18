@@ -15,11 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core;
+package org.dockbox.selene.core.tasks;
 
 @FunctionalInterface
-public interface CheckedFunction<T, R> {
+public interface CheckedRunnable {
 
-    R apply(T t) throws Exception;
+    void run() throws Exception;
 
 }

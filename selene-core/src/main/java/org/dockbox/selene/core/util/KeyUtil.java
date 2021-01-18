@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.util;
 
-import org.dockbox.selene.core.CheckedFunction;
+import org.dockbox.selene.core.tasks.CheckedFunction;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.objects.Exceptional;

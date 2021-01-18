@@ -17,20 +17,13 @@
 
 package org.dockbox.selene.worldedit;
 
-import com.boydti.fawe.object.FawePlayer;
-
 import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.annotations.event.filter.Filter;
 import org.dockbox.selene.core.annotations.event.processing.Getter;
 import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.chat.NativeCommandEvent;
 import org.dockbox.selene.core.events.parents.Cancellable;
-import org.dockbox.selene.core.events.server.ServerEvent.ServerStartingEvent;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.worldedit.processors.FaweSource;
-import org.dockbox.selene.worldedit.processors.FaweSourceProcessor;
 import org.dockbox.selene.worldedit.worldedit.WorldEditCopyEvent;
 import org.dockbox.selene.worldedit.worldedit.WorldEditPasteEvent;
 
@@ -39,27 +32,20 @@ import org.dockbox.selene.worldedit.worldedit.WorldEditPasteEvent;
 public class WorldEditEventExtension {
 
     @Listener
-    public void onServerStart(ServerStartingEvent event) {
-        Selene.provide(EventBus.class).registerProcessors(new FaweSourceProcessor());
-    }
-
-    @Listener
     @Filter(param = "alias", value = "/copy")
     public void onWorldEditCopy(NativeCommandEvent nce,
-                                @Getter("getSource") @FaweSource FawePlayer<?> fawePlayer,
                                 @Getter("getSource") Player player
     ) {
-        Cancellable event = new WorldEditCopyEvent(fawePlayer, player).post();
+        Cancellable event = new WorldEditCopyEvent(player).post();
         nce.setCancelled(event.isCancelled());
     }
 
     @Listener
     @Filter(param = "alias", value = "/paste")
     public void onWorldEditPaste(NativeCommandEvent nce,
-                                @Getter("getSource") @FaweSource FawePlayer<?> fawePlayer,
                                 @Getter("getSource") Player player
     ) {
-        Cancellable event = new WorldEditPasteEvent(fawePlayer, player).post();
+        Cancellable event = new WorldEditPasteEvent(player).post();
         nce.setCancelled(event.isCancelled());
     }
 

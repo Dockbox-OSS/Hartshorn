@@ -15,19 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.worldedit.processors;
+package org.dockbox.selene.core.tasks;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+@FunctionalInterface
+public interface CheckedFunction<T, R> {
 
+    R apply(T t) throws Exception;
 
-/**
- * {@link org.dockbox.selene.core.events.parents.Event} listener parameter annotation.
- * Used by {@link FaweSourceProcessor} to convert a Player instance into a FawePlayer, or skip the listener.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.PARAMETER)
-public @interface FaweSource {
 }

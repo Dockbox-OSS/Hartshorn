@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.core.util;
 
-import org.dockbox.selene.core.CheckedRunnable;
 import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.tasks.CheckedRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -816,6 +816,27 @@ public final class SeleneUtils {
             min.getYi(), max.getYi(),
             min.getZi(), max.getZi(),
             vec.getXi(), vec.getYi(), vec.getZi());
+    }
+
+    public static Vector3N getMinimumPoint(Vector3N pos1, Vector3N pos2) {
+        float minX = Math.min(pos1.getXf(), pos2.getXf());
+        float minY = Math.min(pos1.getYf(), pos2.getYf());
+        float minZ = Math.min(pos1.getZf(), pos2.getZf());
+        return new Vector3N(minX, minY, minZ);
+    }
+
+    public static Vector3N getMaximumPoint(Vector3N pos1, Vector3N pos2) {
+        float maxX = Math.max(pos1.getXf(), pos2.getXf());
+        float maxY = Math.max(pos1.getYf(), pos2.getYf());
+        float maxZ = Math.max(pos1.getZf(), pos2.getZf());
+        return new Vector3N(maxX, maxY, maxZ);
+    }
+
+    public static Vector3N getCenterPoint(Vector3N pos1, Vector3N pos2) {
+        float centerX = (pos1.getXf() + pos2.getXf()) / 2;
+        float centerY = (pos1.getYf() + pos2.getYf()) / 2;
+        float centerZ = (pos1.getZf() + pos2.getZf()) / 2;
+        return new Vector3N(centerX, centerY, centerZ);
     }
 
     /**

@@ -18,22 +18,22 @@
 package org.dockbox.selene.worldedit.worldedit;
 
 import com.boydti.fawe.object.FawePlayer;
-import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldedit.session.ClipboardHolder;
 
 import org.dockbox.selene.core.events.AbstractCancellableEvent;
+import org.dockbox.selene.core.external.WorldEditKeys;
+import org.dockbox.selene.core.external.region.Clipboard;
+import org.dockbox.selene.core.external.region.Region;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
+
 /**
  * Cancellable event which is executed when a player performs a paste action using WorldEdit.
  */
 public class WorldEditPasteEvent extends AbstractCancellableEvent {
 
-    private final FawePlayer<?> fawePlayer;
     private final Player player;
 
-    public WorldEditPasteEvent(FawePlayer<?> fawePlayer, Player player) {
-        this.fawePlayer = fawePlayer;
+    public WorldEditPasteEvent(Player player) {
         this.player = player;
     }
 
@@ -43,17 +43,8 @@ public class WorldEditPasteEvent extends AbstractCancellableEvent {
      *
      * @return The selection
      */
-    public Region getSelection() {
-        return this.fawePlayer.getSelection();
-    }
-
-    /**
-     * Gets the executing {@link FawePlayer}
-     *
-     * @return The player
-     */
-    public FawePlayer<?> getFawePlayer() {
-        return this.fawePlayer;
+    public Exceptional<Region> getSelection() {
+        return this.player.get(WorldEditKeys.SELECTION);
     }
 
     /**
@@ -62,8 +53,8 @@ public class WorldEditPasteEvent extends AbstractCancellableEvent {
      *
      * @return the clipboard
      */
-    public Exceptional<ClipboardHolder> getClipboard() {
-        return Exceptional.of(() -> this.fawePlayer.getSession().getClipboard());
+    public Exceptional<Clipboard> getClipboard() {
+        return this.player.get(WorldEditKeys.CLIPBOARD);
     }
 
     /**
