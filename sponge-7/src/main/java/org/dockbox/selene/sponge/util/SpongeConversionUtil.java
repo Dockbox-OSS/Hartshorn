@@ -17,12 +17,14 @@
 
 package org.dockbox.selene.sponge.util;
 
+import com.boydti.fawe.object.FawePlayer;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.magitechserver.magibridge.util.BridgeCommandSource;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
-import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.function.mask.Mask;
+import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 
 import org.dockbox.selene.core.WorldStorageService;
@@ -56,6 +58,7 @@ import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
 import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.sponge.external.WrappedRegion;
 import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.objects.discord.MagiBridgeCommandSource;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
@@ -113,23 +116,23 @@ public enum SpongeConversionUtil {
     ;
 
     private static final Map<TextColor, Character> textColors = SeleneUtils.ofEntries(
-        SeleneUtils.entry(TextColors.BLACK, '0'),
-        SeleneUtils.entry(TextColors.DARK_BLUE, '1'),
-        SeleneUtils.entry(TextColors.DARK_GREEN, '2'),
-        SeleneUtils.entry(TextColors.DARK_AQUA, '3'),
-        SeleneUtils.entry(TextColors.DARK_RED, '4'),
-        SeleneUtils.entry(TextColors.DARK_PURPLE, '5'),
-        SeleneUtils.entry(TextColors.GOLD, '6'),
-        SeleneUtils.entry(TextColors.GRAY, '7'),
-        SeleneUtils.entry(TextColors.DARK_GRAY, '8'),
-        SeleneUtils.entry(TextColors.BLUE, '9'),
-        SeleneUtils.entry(TextColors.GREEN, 'a'),
-        SeleneUtils.entry(TextColors.AQUA, 'b'),
-        SeleneUtils.entry(TextColors.RED, 'c'),
-        SeleneUtils.entry(TextColors.LIGHT_PURPLE, 'd'),
-        SeleneUtils.entry(TextColors.YELLOW, 'e'),
-        SeleneUtils.entry(TextColors.WHITE, 'f'),
-        SeleneUtils.entry(TextColors.RESET, 'r')
+            SeleneUtils.entry(TextColors.BLACK, '0'),
+            SeleneUtils.entry(TextColors.DARK_BLUE, '1'),
+            SeleneUtils.entry(TextColors.DARK_GREEN, '2'),
+            SeleneUtils.entry(TextColors.DARK_AQUA, '3'),
+            SeleneUtils.entry(TextColors.DARK_RED, '4'),
+            SeleneUtils.entry(TextColors.DARK_PURPLE, '5'),
+            SeleneUtils.entry(TextColors.GOLD, '6'),
+            SeleneUtils.entry(TextColors.GRAY, '7'),
+            SeleneUtils.entry(TextColors.DARK_GRAY, '8'),
+            SeleneUtils.entry(TextColors.BLUE, '9'),
+            SeleneUtils.entry(TextColors.GREEN, 'a'),
+            SeleneUtils.entry(TextColors.AQUA, 'b'),
+            SeleneUtils.entry(TextColors.RED, 'c'),
+            SeleneUtils.entry(TextColors.LIGHT_PURPLE, 'd'),
+            SeleneUtils.entry(TextColors.YELLOW, 'e'),
+            SeleneUtils.entry(TextColors.WHITE, 'f'),
+            SeleneUtils.entry(TextColors.RESET, 'r')
     );
 
     @NotNull
@@ -158,23 +161,23 @@ public enum SpongeConversionUtil {
     @NotNull
     public static Exceptional<Enchantment> toSponge(Enchant enchantment) {
         Exceptional<EnchantmentType> type = Exceptional.of(Sponge.getRegistry()
-            .getType(EnchantmentType.class, enchantment.getEnchantment().name()));
+                .getType(EnchantmentType.class, enchantment.getEnchantment().name()));
 
         return type.map(enchantmentType -> Enchantment.builder()
-            .type(enchantmentType)
-            .level(enchantment.getLevel())
-            .build()
+                .type(enchantmentType)
+                .level(enchantment.getLevel())
+                .build()
         );
     }
 
     public static BossBarColor toSponge(BossbarColor bossbarColor) {
         return Sponge.getRegistry().getType(BossBarColor.class, bossbarColor.name())
-            .orElse(BossBarColors.WHITE);
+                .orElse(BossBarColors.WHITE);
     }
 
     public static BossBarOverlay toSponge(BossbarStyle style) {
         return Sponge.getRegistry().getType(BossBarOverlay.class, style.name())
-            .orElse(BossBarOverlays.PROGRESS);
+                .orElse(BossBarOverlays.PROGRESS);
     }
 
     @NotNull
@@ -333,7 +336,7 @@ public enum SpongeConversionUtil {
         }
 
         return Exceptional.of(() -> Sponge.getServer().getWorld(world.getWorldUniqueId())
-            .orElseThrow(() -> new RuntimeException("World reference not present on server")));
+                .orElseThrow(() -> new RuntimeException("World reference not present on server")));
     }
 
     @NotNull
@@ -369,11 +372,11 @@ public enum SpongeConversionUtil {
         org.dockbox.selene.core.text.Text t = org.dockbox.selene.core.text.Text.of(color + style + value);
 
         text.getClickAction().map(SpongeConversionUtil::fromSponge)
-            .ifPresent(action -> action.ifPresent(t::onClick));
+                .ifPresent(action -> action.ifPresent(t::onClick));
         text.getHoverAction().map(SpongeConversionUtil::fromSponge)
-            .ifPresent(action -> action.ifPresent(t::onHover));
+                .ifPresent(action -> action.ifPresent(t::onHover));
         text.getShiftClickAction().map(SpongeConversionUtil::fromSponge)
-            .ifPresent(action -> action.ifPresent(t::onShiftClick));
+                .ifPresent(action -> action.ifPresent(t::onShiftClick));
 
         // Last step
         text.getChildren().stream().map(SpongeConversionUtil::fromSponge).forEach(t::append);
@@ -383,7 +386,7 @@ public enum SpongeConversionUtil {
     private static Exceptional<ShiftClickAction<?>> fromSponge(org.spongepowered.api.text.action.ShiftClickAction<?> shiftClickAction) {
         if (shiftClickAction instanceof InsertText) {
             return Exceptional.of(ShiftClickAction.insertText(org.dockbox.selene.core.text.Text.of(
-                ((InsertText) shiftClickAction).getResult()))
+                    ((InsertText) shiftClickAction).getResult()))
             );
         } else return Exceptional.empty();
     }
@@ -409,8 +412,8 @@ public enum SpongeConversionUtil {
 
         } else if (clickAction instanceof ExecuteCallback) {
             return Exceptional.of(ClickAction.executeCallback(src -> toSponge(src)
-                .ifPresent(ssrc -> ((ExecuteCallback) clickAction).getResult().accept(ssrc))
-                .ifAbsent(() -> Selene.log().warn("Attempted to execute callback with unknown source type '" + src + "', is it convertable?"))
+                    .ifPresent(ssrc -> ((ExecuteCallback) clickAction).getResult().accept(ssrc))
+                    .ifAbsent(() -> Selene.log().warn("Attempted to execute callback with unknown source type '" + src + "', is it convertable?"))
             ));
 
         } else return Exceptional.empty();
@@ -458,12 +461,12 @@ public enum SpongeConversionUtil {
         Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
 
         org.dockbox.selene.core.objects.location.World spongeWorld = new SpongeWorld(
-            world.getUniqueId(),
-            world.getName(),
-            world.getProperties().loadOnStartup(),
-            spawnLocation,
-            world.getProperties().getSeed(),
-            fromSponge(world.getProperties().getGameMode())
+                world.getUniqueId(),
+                world.getName(),
+                world.getProperties().loadOnStartup(),
+                spawnLocation,
+                world.getProperties().getSeed(),
+                fromSponge(world.getProperties().getGameMode())
         );
         world.getProperties().getGameRules().forEach(spongeWorld::setGamerule);
         return spongeWorld;
@@ -484,26 +487,26 @@ public enum SpongeConversionUtil {
         Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
 
         return new WorldCreatingProperties(
-            worldProperties.getWorldName(),
-            worldProperties.getUniqueId(),
-            worldProperties.loadOnStartup(),
-            spawnLocation,
-            worldProperties.getSeed(),
-            fromSponge(worldProperties.getGameMode()),
-            worldProperties.getGameRules()
+                worldProperties.getWorldName(),
+                worldProperties.getUniqueId(),
+                worldProperties.loadOnStartup(),
+                spawnLocation,
+                worldProperties.getSeed(),
+                fromSponge(worldProperties.getGameMode()),
+                worldProperties.getGameRules()
         );
     }
 
     public static Warp fromSponge(io.github.nucleuspowered.nucleus.api.nucleusdata.Warp warp) {
         org.dockbox.selene.core.objects.location.Location location = warp.getLocation()
-            .map(SpongeConversionUtil::fromSponge)
-            .orElse(org.dockbox.selene.core.objects.location.Location.empty());
+                .map(SpongeConversionUtil::fromSponge)
+                .orElse(org.dockbox.selene.core.objects.location.Location.empty());
 
         return new Warp(
-            Exceptional.of(warp.getDescription().map(Text::toString)),
-            Exceptional.of(warp.getCategory()),
-            location,
-            warp.getName()
+                Exceptional.of(warp.getDescription().map(Text::toString)),
+                Exceptional.of(warp.getCategory()),
+                location,
+                warp.getName()
         );
     }
 
@@ -525,38 +528,34 @@ public enum SpongeConversionUtil {
         return org.dockbox.selene.core.inventory.Element.of(item); // Action is skipped here
     }
 
-    public static Region fromSponge(com.sk89q.worldedit.regions.Region region) {
-        org.dockbox.selene.core.objects.location.World world =
-                Selene.provide(WorldStorageService.class).getWorld(region.getWorld().getName()).orElse(org.dockbox.selene.core.objects.location.World.empty());
-        Vector min = region.getMinimumPoint();
-        Vector max = region.getMaximumPoint();
-        return new Region(
-                world,
-                new Vector3N(min.getX(), min.getY(), min.getZ()),
-                new Vector3N(max.getX(), max.getY(), max.getZ())
-        );
+    public static Region fromWorldEdit(com.sk89q.worldedit.regions.Region region) {
+        return new WrappedRegion(region);
     }
 
-    public static com.sk89q.worldedit.regions.Region toSponge(Region region) {
-        com.sk89q.worldedit.world.World world = toWorldEdit(region.getWorld());
-        Vector3N min = region.getMinimumPoint();
-        Vector3N max = region.getMaximumPoint();
+    public static com.sk89q.worldedit.regions.Region toWorldEdit(Region region) {
+        if (region instanceof WrappedRegion) {
+            return ((WrappedRegion) region).getReference().orNull();
+        } else {
+            com.sk89q.worldedit.world.World world = toWorldEdit(region.getWorld());
+            Vector3N min = region.getMinimumPoint();
+            Vector3N max = region.getMaximumPoint();
 
-        return new CuboidRegion(
-                world,
-                new Vector(min.getXd(), min.getYd(), min.getZd()),
-                new Vector(max.getXd(), max.getYd(), max.getZd())
-        );
+            return new com.sk89q.worldedit.regions.CuboidRegion(
+                    world,
+                    new Vector(min.getXd(), min.getYd(), min.getZd()),
+                    new Vector(max.getXd(), max.getYd(), max.getZd())
+            );
+        }
     }
 
     public static Clipboard fromSponge(com.sk89q.worldedit.extent.clipboard.Clipboard clipboard) {
-        Region region = fromSponge(clipboard.getRegion());
+        Region region = fromWorldEdit(clipboard.getRegion());
         Vector origin = clipboard.getOrigin();
         return new Clipboard(region, new Vector3N(origin.getX(), origin.getY(), origin.getZ()));
     }
 
-    public static com.sk89q.worldedit.extent.clipboard.Clipboard toSponge(Clipboard clipboard) {
-        com.sk89q.worldedit.regions.Region region = toSponge(clipboard.getRegion());
+    public static com.sk89q.worldedit.extent.clipboard.Clipboard toWorldEdit(Clipboard clipboard) {
+        com.sk89q.worldedit.regions.Region region = toWorldEdit(clipboard.getRegion());
         Vector3N origin = clipboard.getOrigin();
         com.sk89q.worldedit.extent.clipboard.Clipboard worldEditClipboard = new BlockArrayClipboard(region);
         worldEditClipboard.setOrigin(new Vector(origin.getXd(), origin.getYd(), origin.getZd()));
@@ -565,6 +564,18 @@ public enum SpongeConversionUtil {
 
     public static com.sk89q.worldedit.world.World toWorldEdit(org.dockbox.selene.core.objects.location.World world) {
         return SpongeWorldEdit.inst().getAdapter().getWorld(toSponge(world).orNull());
+    }
+
+    public static FawePlayer<?> toWorldEdit(Player player) {
+        return FawePlayer.wrap(toSponge(player));
+    }
+
+    public static Vector3N fromWorldEdit(Vector vector) {
+        return new Vector3N(vector.getX(), vector.getY(), vector.getZ());
+    }
+
+    public static org.dockbox.selene.core.objects.location.World fromWorldEdit(com.sk89q.worldedit.world.World world) {
+        return Selene.provide(WorldStorageService.class).getWorld(world.getName()).orNull();
     }
 
     public static InventoryArchetype toSponge(InventoryType inventoryType) {
@@ -597,5 +608,13 @@ public enum SpongeConversionUtil {
                 return EquipmentTypes.OFF_HAND;
         }
         return EquipmentTypes.ANY;
+    }
+
+    public static Mask toWorldEdit(org.dockbox.selene.core.external.pattern.Mask mask) {
+        return null;
+    }
+
+    public static Pattern toWorldEdit(org.dockbox.selene.core.external.pattern.Pattern pattern) {
+        return null;
     }
 }
