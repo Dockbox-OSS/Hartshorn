@@ -19,6 +19,8 @@ package org.dockbox.selene.sponge.util;
 
 import com.boydti.fawe.object.FawePlayer;
 import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.extension.input.ParserContext;
 import com.sk89q.worldedit.session.ClipboardHolder;
 
 import org.dockbox.selene.core.external.WorldEditService;
@@ -99,15 +101,27 @@ public class SpongeWorldEditService implements WorldEditService {
     }
 
     @Override
-    public Pattern parsePattern(String pattern) {
-        // TODO GuusLieben
-        return new WrappedPattern(null);
+    public Exceptional<Pattern> parsePattern(String pattern) {
+        return Exceptional.of(() -> {
+            ParserContext context = new ParserContext();
+            context.setPreferringWildcard(true);
+            context.setRestricted(false);
+            com.sk89q.worldedit.function.pattern.Pattern worldEditPattern =
+                    WorldEdit.getInstance().getPatternFactory().parseFromInput(pattern, context);
+            return new WrappedPattern(worldEditPattern);
+        });
     }
 
     @Override
-    public Mask parseMask(String mask) {
-        // TODO GuusLieben
-        return new WrappedMask(null);
+    public Exceptional<Mask> parseMask(String mask) {
+        return Exceptional.of(() -> {
+            ParserContext context = new ParserContext();
+            context.setPreferringWildcard(true);
+            context.setRestricted(false);
+            com.sk89q.worldedit.function.mask.Mask worldEditMask =
+                    WorldEdit.getInstance().getMaskFactory().parseFromInput(mask, context);
+            return new WrappedMask(worldEditMask);
+        });
     }
 
     @Override
