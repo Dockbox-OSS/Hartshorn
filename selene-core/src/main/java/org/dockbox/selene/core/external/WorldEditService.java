@@ -41,9 +41,9 @@ public interface WorldEditService {
 
     void set(Region region, Pattern pattern, Player cause);
 
-    Pattern parsePattern(String pattern);
+    Exceptional<Pattern> parsePattern(String pattern);
 
-    Mask parseMask(String mask);
+    Exceptional<Mask> parseMask(String mask);
 
     void replace(Region region, Collection<Item> mask, Collection<Item> pattern, Player cause);
 
