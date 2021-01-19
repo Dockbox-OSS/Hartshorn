@@ -18,14 +18,22 @@
 package org.dockbox.selene.sponge.util;
 
 import com.boydti.fawe.object.FawePlayer;
+import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.session.ClipboardHolder;
 
 import org.dockbox.selene.core.external.WorldEditService;
+import org.dockbox.selene.core.external.pattern.Mask;
+import org.dockbox.selene.core.external.pattern.Pattern;
 import org.dockbox.selene.core.external.region.Clipboard;
 import org.dockbox.selene.core.external.region.Region;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.sponge.external.WrappedMask;
+import org.dockbox.selene.sponge.external.WrappedPattern;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
+
+import java.util.Collection;
 
 public class SpongeWorldEditService implements WorldEditService {
 
@@ -33,13 +41,13 @@ public class SpongeWorldEditService implements WorldEditService {
     public Exceptional<Region> getPlayerSelection(Player player) {
         return this.wrapPlayer(player)
                 .map(FawePlayer::getSelection)
-                .map(SpongeConversionUtil::fromSponge);
+                .map(SpongeConversionUtil::fromWorldEdit);
     }
 
     @Override
     public void setPlayerSelection(Player player, Region region) {
         this.wrapPlayer(player).ifPresent(fawePlayer ->
-                fawePlayer.setSelection(SpongeConversionUtil.toSponge(region))
+                fawePlayer.setSelection(SpongeConversionUtil.toWorldEdit(region))
         );
     }
 
@@ -63,10 +71,64 @@ public class SpongeWorldEditService implements WorldEditService {
     public void setPlayerClipboard(Player player, Clipboard clipboard) {
         this.wrapPlayer(player).ifPresent(fawePlayer -> {
             fawePlayer.getSession().setClipboard(new ClipboardHolder(
-                    SpongeConversionUtil.toSponge(clipboard),
+                    SpongeConversionUtil.toWorldEdit(clipboard),
                     SpongeConversionUtil.toWorldEdit(clipboard.getRegion().getWorld()).getWorldData()
             ));
         });
+    }
+
+    @Override
+    public void replace(Region region, Mask mask, Pattern pattern, Player cause) {
+        FawePlayer<?> player = SpongeConversionUtil.toWorldEdit(cause);
+        EditSession session = player.getNewEditSession();
+        session.replaceBlocks(
+                SpongeConversionUtil.toWorldEdit(region),
+                SpongeConversionUtil.toWorldEdit(mask),
+                SpongeConversionUtil.toWorldEdit(pattern)
+        );
+    }
+
+    @Override
+    public void set(Region region, Pattern pattern, Player cause) {
+        FawePlayer<?> player = SpongeConversionUtil.toWorldEdit(cause);
+        EditSession session = player.getNewEditSession();
+        session.setBlocks(
+                SpongeConversionUtil.toWorldEdit(region),
+                SpongeConversionUtil.toWorldEdit(pattern)
+        );
+    }
+
+    @Override
+    public Pattern parsePattern(String pattern) {
+        // TODO GuusLieben
+        return new WrappedPattern(null);
+    }
+
+    @Override
+    public Mask parseMask(String mask) {
+        // TODO GuusLieben
+        return new WrappedMask(null);
+    }
+
+    @Override
+    public void replace(Region region, Collection<Item> mask, Collection<Item> pattern, Player cause) {
+        FawePlayer<?> player = SpongeConversionUtil.toWorldEdit(cause);
+        EditSession session = player.getNewEditSession();
+        session.replaceBlocks(
+                SpongeConversionUtil.toWorldEdit(region),
+                toMask(mask),
+                toPattern(pattern)
+        );
+    }
+
+    @Override
+    public void set(Region region, Collection<Item> pattern, Player cause) {
+        FawePlayer<?> player = SpongeConversionUtil.toWorldEdit(cause);
+        EditSession session = player.getNewEditSession();
+        session.setBlocks(
+                SpongeConversionUtil.toWorldEdit(region),
+                toPattern(pattern)
+        );
     }
 
     private Exceptional<FawePlayer<?>> wrapPlayer(Player player) {
@@ -74,5 +136,15 @@ public class SpongeWorldEditService implements WorldEditService {
             return ((SpongePlayer) player).getReference().map(FawePlayer::wrap);
         }
         return Exceptional.empty();
+    }
+
+    private static com.sk89q.worldedit.function.pattern.Pattern toPattern(Collection<Item> pattern) {
+        // TODO GuusLieben
+        return null;
+    }
+
+    private static com.sk89q.worldedit.function.mask.Mask toMask(Collection<Item> mask) {
+        // TODO GuusLieben
+        return null;
     }
 }
