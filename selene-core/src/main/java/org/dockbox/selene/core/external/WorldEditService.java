@@ -17,10 +17,15 @@
 
 package org.dockbox.selene.core.external;
 
+import org.dockbox.selene.core.external.pattern.Mask;
+import org.dockbox.selene.core.external.pattern.Pattern;
 import org.dockbox.selene.core.external.region.Clipboard;
 import org.dockbox.selene.core.external.region.Region;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.Player;
+
+import java.util.Collection;
 
 public interface WorldEditService {
 
@@ -32,4 +37,15 @@ public interface WorldEditService {
 
     void setPlayerClipboard(Player player, Clipboard clipboard);
 
+    void replace(Region region, Mask mask, Pattern pattern, Player cause);
+
+    void set(Region region, Pattern pattern, Player cause);
+
+    Pattern parsePattern(String pattern);
+
+    Mask parseMask(String mask);
+
+    void replace(Region region, Collection<Item> mask, Collection<Item> pattern, Player cause);
+
+    void set(Region region, Collection<Item> pattern, Player cause);
 }
