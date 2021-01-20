@@ -49,4 +49,10 @@ public abstract class ServerEvent implements Event {
     public static class ServerStartedEvent extends ServerEvent {
     }
 
+    /**
+     * The event fired when the server is stopping.
+     */
+    public static class ServerStoppingEvent extends ServerEvent {
+    }
+
 }
