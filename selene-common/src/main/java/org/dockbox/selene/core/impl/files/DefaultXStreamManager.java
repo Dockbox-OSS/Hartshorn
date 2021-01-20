@@ -37,13 +37,7 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
     @Override
     public <T> Exceptional<T> read(Path file, Class<T> type) {
         Reflect.rejects(type, DefaultXStreamManager.class, true);
-
-        try {
-            T t = this.prepareXStream(type).read(type, file.toFile());
-            return Exceptional.ofNullable(t);
-        } catch (IOException e) {
-            return Exceptional.of(e);
-        }
+        return Exceptional.of(() -> this.prepareXStream(type).read(type, file.toFile()));
     }
 
     @Override
@@ -78,8 +72,8 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
 
     private void aliasPropertyFields(Class<?> type, XStreamBuilder builder) {
         Reflect.forEachFieldIn(type, (declaringType, field) -> {
-                @NonNls String alias = Reflect.getFieldPropertyName(field);
-                if (!field.getName().equals(alias)) builder.aliasField(alias, declaringType, field.getName());
+            @NonNls String alias = Reflect.getFieldPropertyName(field);
+            if (!field.getName().equals(alias)) builder.aliasField(alias, declaringType, field.getName());
         });
     }
 }
