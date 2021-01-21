@@ -153,7 +153,7 @@ public class Registry<V> {
 
     /**
      * @param columnIDs
-     * A varargs of {@link RegistryIdentifier}s to check if contained in the Registry.
+     *         A varargs of {@link RegistryIdentifier}s to check if contained in the Registry.
      *
      * @return True if all of the {@link RegistryIdentifier}s are contained, otherwise false.
      */
@@ -162,6 +162,24 @@ public class Registry<V> {
             if (!this.data.containsKey(columnID)) return false;
         }
         return true;
+    }
+
+    /**
+     * Returns the column if it exists, or creates a new column with the provided default values.
+     *
+     * @param identifier
+     *         The {@link RegistryIdentifier} of the {@link RegistryColumn} to retrieve
+     * @param defaultvalues
+     *         A varargs of {@link V values} to add create the column with, if it doesn't exist
+     *
+     * @return The {@link RegistryColumn}
+     */
+    @SafeVarargs
+    public final RegistryColumn<V> getColumnOrCreate(RegistryIdentifier identifier, V... defaultvalues) {
+        if (!this.containsColumns(identifier)) {
+            this.addColumn(identifier, defaultvalues);
+        }
+        return this.getMatchingColumns(identifier);
     }
 
     /**
@@ -347,5 +365,40 @@ public class Registry<V> {
      */
     public void forEach(BiConsumer<? super RegistryIdentifier, ? super RegistryColumn<V>> action) {
         this.data.forEach(action);
+    }
+
+    /**
+     * @return The registry in an easy to view manner, which displays the relationship between {@link RegistryIdentifier}s
+     *         and the values in the columns.
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        this.buildheirarchy(builder, 0);
+
+        return builder.toString();
+    }
+
+    /**
+     * Builds the registry heirarchy.
+     *
+     * @param builder
+     *         The {@link StringBuilder} being used to build the reistry heirarchy
+     * @param indents
+     *         The depth of the registry (Caused by nested registries)
+     */
+    private void buildheirarchy(StringBuilder builder, int indents) {
+        for (RegistryIdentifier identifier : this.data.keySet()) {
+            for (int i = 0; i < indents; i++) builder.append("\t");
+            builder.append("- ").append(identifier).append("\n");
+
+            for (V value : this.data.get(identifier)) {
+                for (int i = 0; i < indents; i++) builder.append("\t");
+                if (value instanceof Registry)
+                    ((Registry<?>)value).buildheirarchy(builder, indents + 1);
+                else
+                    builder.append("| ").append(value).append("\n");
+            }
+        }
     }
 }
