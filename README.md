@@ -3,7 +3,7 @@
 ![Tests](https://github.com/GuusLieben/Selene/workflows/Tests/badge.svg)
 ![JavaDocs](https://github.com/GuusLieben/Selene/workflows/JavaDocs/badge.svg)  
 
-![image](https://raw.githubusercontent.com/GuusLieben/Selene/selene-main/docs/Selene.png)
+![image](http://dockbox.org/content/Selene.png)
 
 # Usage
 _Note: To use Selene, your project must be configured to use Java 8 or higher._  
