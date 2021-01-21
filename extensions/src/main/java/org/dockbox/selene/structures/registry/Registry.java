@@ -186,11 +186,10 @@ public class Registry<V> {
      * Gets all the matching columns in the Registry if contained.
      *
      * @param columnIDs
-     * A varargs of {@link RegistryIdentifier}s to return from the Registry if contained.
+     *         A varargs of {@link RegistryIdentifier}s to return from the Registry if contained.
      *
-     * @return
-     * All the matching columns data combined into a single {@link RegistryColumn}. If no matches are found, an empty
-     * {@link RegistryColumn} will be returned.
+     * @return All the matching columns data combined into a single {@link RegistryColumn}. If no matches are found, an empty
+     *         {@link RegistryColumn} will be returned.
      */
     public RegistryColumn<V> getMatchingColumns(RegistryIdentifier... columnIDs) {
         RegistryColumn<V> result = new RegistryColumn<>();
@@ -206,8 +205,8 @@ public class Registry<V> {
      * Filter the Registry by its columns. Note this creates a new Registry and doesn't modify itself.
      *
      * @param filter
-     * The filter accepts a {@link RegistryIdentifier} and returns true to remove that column, false to keep it.
-     * The columns which pass the filter are stored in a <b>new</b> Registry.
+     *         The filter accepts a {@link RegistryIdentifier} and returns true to remove that column, false to keep it.
+     *         The columns which pass the filter are stored in a <b>new</b> Registry.
      *
      * @return The new Registry containing the filtered columns.
      */
@@ -257,9 +256,9 @@ public class Registry<V> {
      * Filter the Registry by its values. Note this creates a new Registry and doesn't modify itself.
      *
      * @param filter
-     * The filter accepts a value of type {@code V} or its parents and returns true to remove that column, false to keep it.
-     * The values which pass the filter are stored in a <b>new</b> Registry. If no values in a particular column pass the
-     * filter, it is still added to the new Registry, it will simply contain no values.
+     *         The filter accepts a value of type {@code V} or its parents and returns true to remove that column, false to keep it.
+     *         The values which pass the filter are stored in a <b>new</b> Registry. If no values in a particular column pass the
+     *         filter, it is still added to the new Registry, it will simply contain no values.
      *
      * @return The new Registry containing the filtered values.
      */
@@ -278,10 +277,10 @@ public class Registry<V> {
      * Filter the Registry by its values. Note this creates a new Registry and doesn't modify itself.
      *
      * @param biFilter
-     * The biFilter accepts a {@link RegistryIdentifier} (The columnID of the value), along with a value of type {@code V}
-     * or its parents and returns true to remove that column, false to keep it. The values which pass the filter are stored
-     * in a <b>new</b> Registry. If no values in a particular column pass the filter, it is still added to the new Registry,
-     * it will simply contain no values.
+     *         The biFilter accepts a {@link RegistryIdentifier} (The columnID of the value), along with a value of type {@code V}
+     *         or its parents and returns true to remove that column, false to keep it. The values which pass the filter are stored
+     *         in a <b>new</b> Registry. If no values in a particular column pass the filter, it is still added to the new Registry,
+     *         it will simply contain no values.
      *
      * @return The new Registry containing the filtered values.
      */
@@ -395,7 +394,7 @@ public class Registry<V> {
             for (V value : this.data.get(identifier)) {
                 for (int i = 0; i < indents; i++) builder.append("\t");
                 if (value instanceof Registry)
-                    ((Registry<?>)value).buildheirarchy(builder, indents + 1);
+                    ((Registry<?>) value).buildheirarchy(builder, indents + 1);
                 else
                     builder.append("| ").append(value).append("\n");
             }
