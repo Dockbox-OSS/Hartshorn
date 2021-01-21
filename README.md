@@ -11,8 +11,9 @@ See [About](https://github.com/GuusLieben/Selene/wiki) and [Gradle](https://gith
 for additional information about the topics below.
 
 ## Build distribution
-Selene uses Gradle **6.x** to automate builds, performing several steps before and after a build has completed.  
-__Note:__ If you do not have [Gradle] installed then use ./gradlew for Unix systems or Git Bash and gradlew.bat for Windows systems in place of any 'gradle' command.  
+Selene uses a custom Gradle wrapper to automate builds, performing several steps before and after a build has completed.  
+Depending on your IDE the Gradle wrapper may be automatically used. If you encounter any issues, use `./gradlew` for Unix systems or Git Bash and `gradlew.bat` for Windows systems in place of any 'gradle' command.  
+
 Use `gradle build` to build all Selene modules, build artifacts can then be found under `/dist/` in the base directory 
 where you cloned Selene. Builds are versioned by date and by commit hash, with the artifact following the format `$archivesBaseName-$commitHash-$date.jar`.
 
