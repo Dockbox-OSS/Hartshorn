@@ -149,6 +149,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
 
         // Register additional argument types early on, before extensions are constructed
         Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, ArgumentProvider.class).forEach(Selene::provide);
+        super.boostrapDelegates();
 
         EventBus eb = Selene.provide(EventBus.class);
         CommandBus cb = Selene.provide(CommandBus.class);

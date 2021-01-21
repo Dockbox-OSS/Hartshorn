@@ -32,7 +32,7 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
-import org.dockbox.selene.core.server.delegate.DelegateHandler;
+import org.dockbox.selene.core.delegate.DelegateHandler;
 import org.dockbox.selene.core.server.properties.AnnotationProperty;
 import org.dockbox.selene.core.server.properties.DelegateProperty;
 import org.dockbox.selene.core.server.properties.InjectableType;
@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 import sun.misc.Unsafe;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class InjectableBootstrap {
+public abstract class InjectableBootstrap extends DelegateBootstrap {
 
     private Unsafe unsafe;
     private Injector injector;
@@ -168,9 +168,9 @@ public abstract class InjectableBootstrap {
             this.delegateProperties.stream()
                     .filter(delegate -> Reflect.isAssignableFrom(delegate.getObject(), instance.getClass()))
                     .forEach(delegates::add);
-            
+
             if (!delegates.isEmpty()) {
-                DelegateHandler<T, ?> handler = new DelegateHandler<>(instance);
+                DelegateHandler<T> handler = new DelegateHandler<>(instance);
                 delegates.forEach(handler::delegate);
                 return handler.proxy();
             }
