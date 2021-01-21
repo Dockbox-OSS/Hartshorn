@@ -38,7 +38,6 @@ import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.server.IntegratedExtension;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
-import org.dockbox.selene.core.server.properties.DelegateProperty;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
@@ -227,15 +226,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
     @Command(aliases = "demo", usage = "demo")
     public void demo(CommandSource source) throws NoSuchMethodException {
         Method getDataFile = FileManager.class.getDeclaredMethod("getDataFile", Class.class, String.class);
-        FileManager fm = Selene.provide(FileManager.class, DelegateProperty.of(
-                FileManager.class,
-                getDataFile,
-                (instance, args) -> {
-                    Class<?> extension = (Class<?>) args[0];
-                    String file = (String) args[1];
-                    return instance.getConfigFile(extension, file);
-                })
-        );
+        FileManager fm = Selene.provide(FileManager.class);
         Path demoFile = fm.getDataFile(IntegratedServerExtension.class, "demo");
         DemoObject demoObject = new DemoObject("Demo Thing");
         fm.write(demoFile, demoObject);
