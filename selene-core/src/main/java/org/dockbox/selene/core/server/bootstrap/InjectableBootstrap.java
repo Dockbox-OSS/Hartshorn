@@ -32,7 +32,9 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
+import org.dockbox.selene.core.server.delegate.DelegateHandler;
 import org.dockbox.selene.core.server.properties.AnnotationProperty;
+import org.dockbox.selene.core.server.properties.DelegateProperty;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
@@ -48,6 +50,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javassist.util.proxy.ProxyFactory;
 import sun.misc.Unsafe;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
@@ -141,6 +144,10 @@ public abstract class InjectableBootstrap {
             }
         }
 
+        if (null != typeInstance) {
+            typeInstance = this.delegate(typeInstance, additionalProperties);
+        }
+
         // Inject properties if applicable
         if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable()) {
             ((InjectableType) typeInstance).stateEnabling(additionalProperties);
@@ -148,6 +155,28 @@ public abstract class InjectableBootstrap {
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
+    }
+
+    private <T> @Nullable T delegate(T instance, InjectorProperty<?>... additionalProperties) {
+        try {
+            //noinspection rawtypes
+            List<DelegateProperty> delegates = Keys.getAllPropertiesOf(
+                    DelegateProperty.class,
+                    additionalProperties
+            );
+            if (!delegates.isEmpty()) {
+                DelegateHandler<T, ?> handler = new DelegateHandler<>(instance);
+                delegates.forEach(handler::delegate);
+
+                ProxyFactory factory = new ProxyFactory();
+                factory.setSuperclass(instance.getClass());
+                //noinspection unchecked
+                return (T) factory.create(new Class<?>[0], new Object[0], handler);
+            }
+        } catch (Throwable t) {
+            Selene.handle(t);
+        }
+        return instance;
     }
 
     private <T> @Nullable T getUnsafeInstance(Class<T> type, Injector injector) {
