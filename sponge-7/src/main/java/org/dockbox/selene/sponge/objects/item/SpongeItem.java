@@ -222,6 +222,15 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         return Item.of(SpongeItem.this.getId(), meta);
     }
 
+    @Override
+    public int getMeta() {
+        return (int) this.getReference()
+                .map(stack -> stack.toContainer()
+                        .get(Constants.ItemStack.DAMAGE_VALUE)
+                        .orElse(0)
+                ).orElse(0);
+    }
+
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void performOnEnchantmentData(Enchant enchant, BiConsumer<EnchantmentData, Enchantment> action) {
         this.getReference().ifPresent(itemStack -> {

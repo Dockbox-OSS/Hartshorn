@@ -22,6 +22,9 @@ import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import com.magitechserver.magibridge.util.BridgeCommandSource;
 import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.extension.input.ParserContext;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
 import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
@@ -58,6 +61,8 @@ import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.actions.ShiftClickAction;
 import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.sponge.external.WrappedMask;
+import org.dockbox.selene.sponge.external.WrappedPattern;
 import org.dockbox.selene.sponge.external.WrappedRegion;
 import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.objects.discord.MagiBridgeCommandSource;
@@ -362,7 +367,6 @@ public enum SpongeConversionUtil {
         throw new UncheckedSeleneException("Invalid value in context '" + hand + "'");
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @NotNull
     public static org.dockbox.selene.core.text.Text fromSponge(Text text) {
         String style = fromSponge(text.getFormat().getStyle());
@@ -567,7 +571,7 @@ public enum SpongeConversionUtil {
     }
 
     public static FawePlayer<?> toWorldEdit(Player player) {
-        return FawePlayer.wrap(toSponge(player));
+        return FawePlayer.wrap(toSponge(player).orNull());
     }
 
     public static Vector3N fromWorldEdit(Vector vector) {
@@ -576,6 +580,14 @@ public enum SpongeConversionUtil {
 
     public static org.dockbox.selene.core.objects.location.World fromWorldEdit(com.sk89q.worldedit.world.World world) {
         return Selene.provide(WorldStorageService.class).getWorld(world.getName()).orNull();
+    }
+
+    public static Exceptional<BaseBlock> toWorldEdit(Item item, ParserContext context) {
+        if (!item.isBlock()) return Exceptional.of(new IllegalArgumentException("Cannot derive BaseBlock from non-block item"));
+        return Exceptional.of(() -> WorldEdit.getInstance()
+                .getBlockFactory()
+                .parseFromInput(item.getId() + ':' + item.getMeta(), context)
+        );
     }
 
     public static InventoryArchetype toSponge(InventoryType inventoryType) {
@@ -611,10 +623,16 @@ public enum SpongeConversionUtil {
     }
 
     public static Mask toWorldEdit(org.dockbox.selene.core.external.pattern.Mask mask) {
-        return null;
+        if (mask instanceof WrappedMask) {
+            return ((WrappedMask) mask).getReference().orNull();
+        }
+        throw new IllegalStateException("Unknown implementation for Mask: [" + mask.getClass() + "]");
     }
 
     public static Pattern toWorldEdit(org.dockbox.selene.core.external.pattern.Pattern pattern) {
-        return null;
+        if (pattern instanceof WrappedPattern) {
+            return ((WrappedPattern) pattern).getReference().orNull();
+        }
+        throw new IllegalStateException("Unknown implementation for Pattern: [" + pattern.getClass() + "]");
     }
 }
