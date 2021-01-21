@@ -37,6 +37,7 @@ import org.dockbox.selene.core.server.properties.AnnotationProperty;
 import org.dockbox.selene.core.server.properties.DelegateProperty;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,6 +59,7 @@ public abstract class InjectableBootstrap {
     private Unsafe unsafe;
     private Injector injector;
     private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
+    private final transient List<DelegateProperty<?, ?>> delegateProperties = SeleneUtils.emptyConcurrentList();
 
     public <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties) {
         return Exceptional.ofNullable(this.getInstance(type, additionalProperties));
@@ -163,6 +165,10 @@ public abstract class InjectableBootstrap {
                     DelegateProperty.class,
                     additionalProperties
             );
+            this.delegateProperties.stream()
+                    .filter(delegate -> Reflect.isAssignableFrom(delegate.getObject(), instance.getClass()))
+                    .forEach(delegates::add);
+            
             if (!delegates.isEmpty()) {
                 DelegateHandler<T, ?> handler = new DelegateHandler<>(instance);
                 delegates.forEach(handler::delegate);
@@ -315,6 +321,10 @@ public abstract class InjectableBootstrap {
 
     public void registerGlobal(SeleneInjectConfiguration moduleConfiguration) {
         this.injectorModules.add(moduleConfiguration);
+    }
+
+    public void delegate(DelegateProperty<?, ?> property) {
+        if (null != property) this.delegateProperties.add(property);
     }
 
     private Unsafe getUnsafe() {
