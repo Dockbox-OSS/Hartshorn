@@ -31,27 +31,38 @@ public class DelegateHandler<T> implements MethodHandler {
 
     @Override
     public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
+        // The handler listens for all methods, while not all methods are proxied
         if (this.handlers.containsKey(thisMethod)) {
             Collection<DelegateProperty<T, ?>> properties = this.handlers.get(thisMethod);
             Object returnValue = null;
+            // Sort the list so all properties are prioritised. The phase at which the property will be delegated does
+            // not matter here, as out-of-phase properties are not performed.
             List<DelegateProperty<T, ?>> toSort = new ArrayList<>(properties);
             toSort.sort(Comparator.comparingInt(DelegateProperty::getPriority));
 
+            // Phase is sorted in execution order (HEAD, OVERWRITE, TAIL)
             for (Phase phase : Phase.values())
                 returnValue = this.enterPhase(phase, toSort, args, thisMethod, returnValue);
 
             return returnValue;
         } else {
+            // If no handler is known, default to the original method. This is delegated to the instance created, as it
+            // is typically created through Selene's injectors and therefore DI dependent.
             return thisMethod.invoke(this.instance, args);
         }
     }
 
     private Object enterPhase(Phase at, Iterable<DelegateProperty<T, ?>> properties, Object[] args, Method thisMethod, Object returnValue) throws InvocationTargetException, IllegalAccessException {
+        // Used to ensure the target is performed if there is no OVERWRITE phase hook
         boolean target = true;
         for (DelegateProperty<T, ?> property : properties) {
             if (at == property.getTarget()) {
                 Object result = property.delegate(this.instance, args);
                 if (property.overwriteResult()) {
+                    // A proxy returning null typically indicates the use of a non-returning function, for annotation
+                    // properties this is handled internally, however proxy types should carry the annotation value to
+                    // ensure no results will be overwritten. Null values may cause the initial target return value to
+                    // be used instead if no other phase hook changes the final return value.
                     if (null == result) Selene.log().warn("Proxy method for '" + thisMethod.getName() + "' returned null while overwriting results!");
                     returnValue = result;
                 }

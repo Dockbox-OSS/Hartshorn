@@ -24,6 +24,7 @@ public abstract class DelegateBootstrap {
 
     protected void boostrapDelegates() {
         Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Proxy.class).forEach(proxy -> {
+            //
             if (Modifier.isAbstract(proxy.getModifiers())) {
                 Selene.log().warn("Proxy source cannot be abstract [" + proxy.getCanonicalName() + "]");
                 return;
@@ -51,6 +52,11 @@ public abstract class DelegateBootstrap {
     }
 
     private <T> void delegateMethod(Class<T> proxyClass, Method source) {
+        if (Modifier.isAbstract(source.getModifiers())) {
+            Selene.log().warn("Proxy method cannot be abstract [" + source.getName() + "]");
+            return;
+        }
+
         Proxy proxy = proxyClass.getAnnotation(Proxy.class);
         Class<?> delegateTarget = proxy.value();
         String methodName = source.getName();
