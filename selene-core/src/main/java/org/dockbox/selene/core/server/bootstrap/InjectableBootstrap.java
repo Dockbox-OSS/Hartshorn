@@ -50,7 +50,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javassist.util.proxy.ProxyFactory;
 import sun.misc.Unsafe;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
@@ -167,11 +166,7 @@ public abstract class InjectableBootstrap {
             if (!delegates.isEmpty()) {
                 DelegateHandler<T, ?> handler = new DelegateHandler<>(instance);
                 delegates.forEach(handler::delegate);
-
-                ProxyFactory factory = new ProxyFactory();
-                factory.setSuperclass(instance.getClass());
-                //noinspection unchecked
-                return (T) factory.create(new Class<?>[0], new Object[0], handler);
+                return handler.proxy();
             }
         } catch (Throwable t) {
             Selene.handle(t);
