@@ -59,9 +59,12 @@ public abstract class DelegateBootstrap {
                 .map(Parameter::getType)
                 .toArray(Class<?>[]::new);
         try {
-            Method targetMethod = delegateTarget.getDeclaredMethod(methodName, arguments);
             Target target = source.getAnnotation(Target.class);
-            if (!targetMethod.getReturnType().equals(Void.TYPE) && target.overwriteResult()) {
+            //noinspection CallToSuspiciousStringMethod
+            if (!"".equals(target.method())) methodName = target.method();
+            Method targetMethod = delegateTarget.getDeclaredMethod(methodName, arguments);
+
+            if (!targetMethod.getReturnType().equals(Void.TYPE) && target.overwrite()) {
                 if (!Reflect.isAssignableFrom(source.getReturnType(), targetMethod.getReturnType())) {
                     Selene.log().warn("Return type for '" + source.getName() + "' is not assignable from '" + targetMethod.getReturnType() + "' [" + proxyClass.getCanonicalName() + "]");
                 }
@@ -69,7 +72,7 @@ public abstract class DelegateBootstrap {
             DelegateProperty<T, ?> property = DelegateProperty.of(proxyClass, targetMethod, (instance, args, holder) -> {
                 Object[] invokingArgs = this.prepareArguments(source, args, instance);
                 try {
-                    return targetMethod.invoke(instance, invokingArgs);
+                    return source.invoke(Selene.provide(proxyClass), invokingArgs);
                 } catch (CancelDelegateException e) {
                     holder.setCancelled(true);
                 } catch (Throwable e) {
@@ -78,7 +81,9 @@ public abstract class DelegateBootstrap {
                 //noinspection ReturnOfNull
                 return null;
             });
-            property.setTarget(target.target());
+            property.setTarget(target.at());
+            property.setPriority(target.priority());
+            property.setOverwriteResult(target.overwrite());
             Selene.getServer().delegate(property);
         } catch (NoSuchMethodException e) {
             Selene.log().warn("Proxy target does not have declared method '" + methodName + "(" + Arrays.toString(arguments) + ") [" + proxyClass.getCanonicalName() + "]");

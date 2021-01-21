@@ -1,6 +1,6 @@
 package org.dockbox.selene.core.annotations.delegate;
 
-import org.dockbox.selene.core.delegate.DelegateTarget;
+import org.dockbox.selene.core.delegate.Phase;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,7 +15,9 @@ public @interface Proxy {
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.METHOD)
     @interface Target {
-        boolean overwriteResult() default true;
-        DelegateTarget target() default DelegateTarget.OVERWRITE;
+        boolean overwrite() default true;
+        Phase at() default Phase.OVERWRITE;
+        int priority() default 10;
+        String method() default "";
     }
 }

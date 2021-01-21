@@ -1,6 +1,6 @@
 package org.dockbox.selene.core.server.properties;
 
-import org.dockbox.selene.core.delegate.DelegateTarget;
+import org.dockbox.selene.core.delegate.Phase;
 import org.dockbox.selene.core.delegate.DelegationFunction;
 import org.dockbox.selene.core.delegate.DelegationHolder;
 
@@ -14,9 +14,10 @@ public final class DelegateProperty<T, R> implements InjectorProperty<Class<T>>{
     private final Class<T> type;
     private final Method target;
     private final DelegationFunction<T, R> delegate;
-    private DelegateTarget delegateTarget = DelegateTarget.OVERWRITE;
+    private Phase phase = Phase.OVERWRITE;
     private final DelegationHolder holder = new DelegationHolder();
     private boolean overwriteResult = true;
+    private int priority = 10;
 
     private DelegateProperty(Class<T> type, Method target, DelegationFunction<T, R> delegate) {
         this.type = type;
@@ -34,17 +35,25 @@ public final class DelegateProperty<T, R> implements InjectorProperty<Class<T>>{
         return this.type;
     }
 
-    public DelegateTarget getTarget() {
-        return this.delegateTarget;
+    public Class<?> getTargetClass() {
+        return this.getTargetMethod().getDeclaringClass();
     }
 
-    public void setTarget(DelegateTarget delegateTarget) {
-        this.delegateTarget = delegateTarget;
+    public Phase getTarget() {
+        return this.phase;
+    }
+
+    public void setTarget(Phase phase) {
+        this.phase = phase;
     }
 
     public R delegate(T instance, Object... args) {
         this.holder.setCancelled(false);
         return this.delegate.delegate(instance, args, this.holder);
+    }
+
+    public boolean isVoid() {
+        return Void.TYPE.equals(this.getTargetMethod().getReturnType());
     }
 
     public Method getTargetMethod() {
@@ -56,11 +65,19 @@ public final class DelegateProperty<T, R> implements InjectorProperty<Class<T>>{
     }
 
     public boolean overwriteResult() {
-        return this.overwriteResult;
+        return this.overwriteResult && !this.isVoid();
     }
 
     public void setOverwriteResult(boolean overwriteResult) {
         this.overwriteResult = overwriteResult;
+    }
+
+    public int getPriority() {
+        return this.priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
     public static <T, R> DelegateProperty<T, R> of(Class<T> type, Method target, BiFunction<T, Object[], R> delegate) {

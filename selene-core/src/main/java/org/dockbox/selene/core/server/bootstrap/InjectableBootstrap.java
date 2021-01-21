@@ -25,6 +25,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
 
+import org.dockbox.selene.core.annotations.delegate.Proxy;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
@@ -145,7 +146,8 @@ public abstract class InjectableBootstrap extends DelegateBootstrap {
             }
         }
 
-        if (null != typeInstance) {
+        // Don't attempt to delegate proxy types
+        if (null != typeInstance && !type.isAnnotationPresent(Proxy.class)) {
             typeInstance = this.delegate(typeInstance, additionalProperties);
         }
 
@@ -166,7 +168,7 @@ public abstract class InjectableBootstrap extends DelegateBootstrap {
                     additionalProperties
             );
             this.delegateProperties.stream()
-                    .filter(delegate -> Reflect.isAssignableFrom(delegate.getObject(), instance.getClass()))
+                    .filter(delegate -> Reflect.isAssignableFrom(delegate.getTargetClass(), instance.getClass()))
                     .forEach(delegates::add);
 
             if (!delegates.isEmpty()) {
