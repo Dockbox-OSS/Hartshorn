@@ -1,10 +1,10 @@
-package org.dockbox.selene.core.delegate;
+package org.dockbox.selene.core.proxy;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.properties.DelegateProperty;
+import org.dockbox.selene.core.server.properties.ProxyProperty;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,16 +16,16 @@ import java.util.List;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
-public class DelegateHandler<T> implements MethodHandler {
+public class ProxyHandler<T> implements MethodHandler {
 
-    private final Multimap<Method, DelegateProperty<T, ?>> handlers = ArrayListMultimap.create();
+    private final Multimap<Method, ProxyProperty<T, ?>> handlers = ArrayListMultimap.create();
     private final T instance;
 
-    public DelegateHandler(T instance) {
+    public ProxyHandler(T instance) {
         this.instance = instance;
     }
 
-    public void delegate(DelegateProperty<T, ?> property) {
+    public void delegate(ProxyProperty<T, ?> property) {
         this.handlers.put(property.getTargetMethod(), property);
     }
 
@@ -33,12 +33,12 @@ public class DelegateHandler<T> implements MethodHandler {
     public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
         // The handler listens for all methods, while not all methods are proxied
         if (this.handlers.containsKey(thisMethod)) {
-            Collection<DelegateProperty<T, ?>> properties = this.handlers.get(thisMethod);
+            Collection<ProxyProperty<T, ?>> properties = this.handlers.get(thisMethod);
             Object returnValue = null;
             // Sort the list so all properties are prioritised. The phase at which the property will be delegated does
             // not matter here, as out-of-phase properties are not performed.
-            List<DelegateProperty<T, ?>> toSort = new ArrayList<>(properties);
-            toSort.sort(Comparator.comparingInt(DelegateProperty::getPriority));
+            List<ProxyProperty<T, ?>> toSort = new ArrayList<>(properties);
+            toSort.sort(Comparator.comparingInt(ProxyProperty::getPriority));
 
             // Phase is sorted in execution order (HEAD, OVERWRITE, TAIL)
             for (Phase phase : Phase.values())
@@ -52,10 +52,10 @@ public class DelegateHandler<T> implements MethodHandler {
         }
     }
 
-    private Object enterPhase(Phase at, Iterable<DelegateProperty<T, ?>> properties, Object[] args, Method thisMethod, Object returnValue) throws InvocationTargetException, IllegalAccessException {
+    private Object enterPhase(Phase at, Iterable<ProxyProperty<T, ?>> properties, Object[] args, Method thisMethod, Object returnValue) throws InvocationTargetException, IllegalAccessException {
         // Used to ensure the target is performed if there is no OVERWRITE phase hook
         boolean target = true;
-        for (DelegateProperty<T, ?> property : properties) {
+        for (ProxyProperty<T, ?> property : properties) {
             if (at == property.getTarget()) {
                 Object result = property.delegate(this.instance, args);
                 if (property.overwriteResult()) {

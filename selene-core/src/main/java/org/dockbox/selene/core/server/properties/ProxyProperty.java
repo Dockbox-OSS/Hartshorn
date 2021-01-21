@@ -1,25 +1,25 @@
 package org.dockbox.selene.core.server.properties;
 
-import org.dockbox.selene.core.delegate.Phase;
-import org.dockbox.selene.core.delegate.DelegationFunction;
-import org.dockbox.selene.core.delegate.DelegationHolder;
+import org.dockbox.selene.core.proxy.Phase;
+import org.dockbox.selene.core.proxy.ProxyFunction;
+import org.dockbox.selene.core.proxy.ProxyHolder;
 
 import java.lang.reflect.Method;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-public final class DelegateProperty<T, R> implements InjectorProperty<Class<T>>{
+public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>>{
 
-    public static final String KEY = "SeleneInternalDelegateKey";
+    public static final String KEY = "SeleneInternalProxyKey";
     private final Class<T> type;
     private final Method target;
-    private final DelegationFunction<T, R> delegate;
+    private final ProxyFunction<T, R> delegate;
     private Phase phase = Phase.OVERWRITE;
-    private final DelegationHolder holder = new DelegationHolder();
+    private final ProxyHolder holder = new ProxyHolder();
     private boolean overwriteResult = true;
     private int priority = 10;
 
-    private DelegateProperty(Class<T> type, Method target, DelegationFunction<T, R> delegate) {
+    private ProxyProperty(Class<T> type, Method target, ProxyFunction<T, R> delegate) {
         this.type = type;
         this.target = target;
         this.delegate = delegate;
@@ -80,19 +80,19 @@ public final class DelegateProperty<T, R> implements InjectorProperty<Class<T>>{
         this.priority = priority;
     }
 
-    public static <T, R> DelegateProperty<T, R> of(Class<T> type, Method target, BiFunction<T, Object[], R> delegate) {
-        return new DelegateProperty<>(type, target, (instance, args, holder) -> delegate.apply(instance, args));
+    public static <T, R> ProxyProperty<T, R> of(Class<T> type, Method target, BiFunction<T, Object[], R> proxyFunction) {
+        return new ProxyProperty<>(type, target, (instance, args, holder) -> proxyFunction.apply(instance, args));
     }
 
-    public static <T, R> DelegateProperty<T, R> of(Class<T> type, Method target, BiConsumer<T, Object[]> delegate) {
-        return new DelegateProperty<>(type, target, (instance, args, holder) -> {
-            delegate.accept(instance, args);
+    public static <T, R> ProxyProperty<T, R> of(Class<T> type, Method target, BiConsumer<T, Object[]> proxyFunction) {
+        return new ProxyProperty<>(type, target, (instance, args, holder) -> {
+            proxyFunction.accept(instance, args);
             //noinspection ReturnOfNull
             return null;
         });
     }
 
-    public static <T, R> DelegateProperty<T, R> of(Class<T> type, Method target, DelegationFunction<T, R> delegate) {
-        return new DelegateProperty<>(type, target, delegate);
+    public static <T, R> ProxyProperty<T, R> of(Class<T> type, Method target, ProxyFunction<T, R> proxyFunction) {
+        return new ProxyProperty<>(type, target, proxyFunction);
     }
 }

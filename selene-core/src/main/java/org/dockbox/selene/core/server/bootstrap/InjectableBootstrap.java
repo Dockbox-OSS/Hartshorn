@@ -25,7 +25,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
 
-import org.dockbox.selene.core.annotations.delegate.Proxy;
+import org.dockbox.selene.core.annotations.proxy.Proxy;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
@@ -33,9 +33,9 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
-import org.dockbox.selene.core.delegate.DelegateHandler;
+import org.dockbox.selene.core.proxy.ProxyHandler;
 import org.dockbox.selene.core.server.properties.AnnotationProperty;
-import org.dockbox.selene.core.server.properties.DelegateProperty;
+import org.dockbox.selene.core.server.properties.ProxyProperty;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.Reflect;
@@ -55,12 +55,12 @@ import java.util.stream.Collectors;
 import sun.misc.Unsafe;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class InjectableBootstrap extends DelegateBootstrap {
+public abstract class InjectableBootstrap extends ProxyableBootstrap {
 
     private Unsafe unsafe;
     private Injector injector;
     private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
-    private final transient List<DelegateProperty<?, ?>> delegateProperties = SeleneUtils.emptyConcurrentList();
+    private final transient List<ProxyProperty<?, ?>> proxies = SeleneUtils.emptyConcurrentList();
 
     public <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties) {
         return Exceptional.ofNullable(this.getInstance(type, additionalProperties));
@@ -163,17 +163,17 @@ public abstract class InjectableBootstrap extends DelegateBootstrap {
     private <T> @Nullable T delegate(T instance, InjectorProperty<?>... additionalProperties) {
         try {
             //noinspection rawtypes
-            List<DelegateProperty> delegates = Keys.getAllPropertiesOf(
-                    DelegateProperty.class,
+            List<ProxyProperty> proxies = Keys.getAllPropertiesOf(
+                    ProxyProperty.class,
                     additionalProperties
             );
-            this.delegateProperties.stream()
-                    .filter(delegate -> Reflect.isAssignableFrom(delegate.getTargetClass(), instance.getClass()))
-                    .forEach(delegates::add);
+            this.proxies.stream()
+                    .filter(proxy -> Reflect.isAssignableFrom(proxy.getTargetClass(), instance.getClass()))
+                    .forEach(proxies::add);
 
-            if (!delegates.isEmpty()) {
-                DelegateHandler<T> handler = new DelegateHandler<>(instance);
-                delegates.forEach(handler::delegate);
+            if (!proxies.isEmpty()) {
+                ProxyHandler<T> handler = new ProxyHandler<>(instance);
+                proxies.forEach(handler::delegate);
                 return handler.proxy();
             }
         } catch (Throwable t) {
@@ -325,8 +325,8 @@ public abstract class InjectableBootstrap extends DelegateBootstrap {
         this.injectorModules.add(moduleConfiguration);
     }
 
-    public void delegate(DelegateProperty<?, ?> property) {
-        if (null != property) this.delegateProperties.add(property);
+    public void delegate(ProxyProperty<?, ?> property) {
+        if (null != property) this.proxies.add(property);
     }
 
     private Unsafe getUnsafe() {

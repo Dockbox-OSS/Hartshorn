@@ -1,6 +1,6 @@
-package org.dockbox.selene.core.annotations.delegate;
+package org.dockbox.selene.core.annotations.proxy;
 
-import org.dockbox.selene.core.delegate.Phase;
+import org.dockbox.selene.core.proxy.Phase;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

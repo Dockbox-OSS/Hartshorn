@@ -1,4 +1,4 @@
-package org.dockbox.selene.core.delegate;
+package org.dockbox.selene.core.proxy;
 
 public enum Phase {
     HEAD, OVERWRITE, TAIL;
