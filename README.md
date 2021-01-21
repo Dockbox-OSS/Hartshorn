@@ -1,9 +1,9 @@
-![image](https://user-images.githubusercontent.com/10957963/100515229-bc4f0b00-317a-11eb-8688-39d229eeada6.png)
-
 [![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1)
 ![Build](https://github.com/GuusLieben/Selene/workflows/Build/badge.svg)
 ![Tests](https://github.com/GuusLieben/Selene/workflows/Tests/badge.svg)
-![JavaDocs](https://github.com/GuusLieben/Selene/workflows/JavaDocs/badge.svg)
+![JavaDocs](https://github.com/GuusLieben/Selene/workflows/JavaDocs/badge.svg)  
+
+![image](https://raw.githubusercontent.com/GuusLieben/Selene/selene-main/docs/Selene.png)
 
 # Usage
 _Note: To use Selene, your project must be configured to use Java 8 or higher._  
