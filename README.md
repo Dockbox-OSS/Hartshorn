@@ -1,9 +1,9 @@
-![image](https://user-images.githubusercontent.com/10957963/100515229-bc4f0b00-317a-11eb-8688-39d229eeada6.png)
-
 [![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1)
 ![Build](https://github.com/GuusLieben/Selene/workflows/Build/badge.svg)
 ![Tests](https://github.com/GuusLieben/Selene/workflows/Tests/badge.svg)
-![JavaDocs](https://github.com/GuusLieben/Selene/workflows/JavaDocs/badge.svg)
+![JavaDocs](https://github.com/GuusLieben/Selene/workflows/JavaDocs/badge.svg)  
+
+![image](http://dockbox.org/content/Selene.png)
 
 # Usage
 _Note: To use Selene, your project must be configured to use Java 8 or higher._  
@@ -11,8 +11,9 @@ See [About](https://github.com/GuusLieben/Selene/wiki) and [Gradle](https://gith
 for additional information about the topics below.
 
 ## Build distribution
-Selene uses Gradle **6.x** to automate builds, performing several steps before and after a build has completed.  
-__Note:__ If you do not have [Gradle] installed then use ./gradlew for Unix systems or Git Bash and gradlew.bat for Windows systems in place of any 'gradle' command.  
+Selene uses a custom Gradle wrapper to automate builds, performing several steps before and after a build has completed.  
+Depending on your IDE the Gradle wrapper may be automatically used. If you encounter any issues, use `./gradlew` for Unix systems or Git Bash and `gradlew.bat` for Windows systems in place of any 'gradle' command.  
+
 Use `gradle build` to build all Selene modules, build artifacts can then be found under `/dist/` in the base directory 
 where you cloned Selene. Builds are versioned by date and by commit hash, with the artifact following the format `$archivesBaseName-$commitHash-$date.jar`.
 

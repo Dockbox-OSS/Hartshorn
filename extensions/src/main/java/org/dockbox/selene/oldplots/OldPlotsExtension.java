@@ -51,7 +51,7 @@ import java.util.List;
 @Extension(id = "oldplots", name = "OldPlots",
            description = "Provides a easy way to interact with old plot worlds and registrations",
            authors = "GuusLieben",
-           dependencies = "org.dockbox.selene.integrated.sql"
+           dependencies = "org.dockbox.selene.database"
 )
 public class OldPlotsExtension {
 

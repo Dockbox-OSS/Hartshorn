@@ -140,6 +140,9 @@ public final class Reflect {
      * @see Reflect#isPrimitiveWrapperOf(Class, Class)
      */
     public static boolean isAssignableFrom(Class<?> to, Class<?> from) {
+        if (null == to || null == from) return false;
+        if (to == from || to.equals(from)) return true;
+
         if (to.isAssignableFrom(from)) {
             return true;
         }
@@ -454,7 +457,8 @@ public final class Reflect {
     @Nullable
     public static Extension getExtension(Class<?> type) {
         if (null == type) return null;
-        if (type.equals(Selene.class)) return Reflect.getExtension(Selene.provide(IntegratedExtension.class).getClass());
+        if (type.equals(Selene.class))
+            return Reflect.getExtension(Selene.provide(IntegratedExtension.class).getClass());
 
         if (type.isAnnotationPresent(OwnedBy.class)) {
             OwnedBy owner = type.getAnnotation(OwnedBy.class);

@@ -25,6 +25,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
 
+import org.dockbox.selene.core.annotations.proxy.Proxy;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
@@ -32,9 +33,12 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
+import org.dockbox.selene.core.proxy.ProxyHandler;
 import org.dockbox.selene.core.server.properties.AnnotationProperty;
+import org.dockbox.selene.core.server.properties.ProxyProperty;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,11 +55,12 @@ import java.util.stream.Collectors;
 import sun.misc.Unsafe;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class InjectableBootstrap {
+public abstract class InjectableBootstrap extends ProxyableBootstrap {
 
     private Unsafe unsafe;
     private Injector injector;
     private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
+    private final transient List<ProxyProperty<?, ?>> proxies = SeleneUtils.emptyConcurrentList();
 
     public <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties) {
         return Exceptional.ofNullable(this.getInstance(type, additionalProperties));
@@ -141,6 +146,11 @@ public abstract class InjectableBootstrap {
             }
         }
 
+        // Don't attempt to delegate proxy types
+        if (null != typeInstance && !type.isAnnotationPresent(Proxy.class)) {
+            typeInstance = this.delegate(typeInstance, additionalProperties);
+        }
+
         // Inject properties if applicable
         if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable()) {
             ((InjectableType) typeInstance).stateEnabling(additionalProperties);
@@ -148,6 +158,28 @@ public abstract class InjectableBootstrap {
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
+    }
+
+    private <T> @Nullable T delegate(T instance, InjectorProperty<?>... additionalProperties) {
+        try {
+            //noinspection rawtypes
+            List<ProxyProperty> proxies = Keys.getAllPropertiesOf(
+                    ProxyProperty.class,
+                    additionalProperties
+            );
+            this.proxies.stream()
+                    .filter(proxy -> Reflect.isAssignableFrom(proxy.getTargetClass(), instance.getClass()))
+                    .forEach(proxies::add);
+
+            if (!proxies.isEmpty()) {
+                ProxyHandler<T> handler = new ProxyHandler<>(instance);
+                proxies.forEach(handler::delegate);
+                return handler.proxy();
+            }
+        } catch (Throwable t) {
+            Selene.handle(t);
+        }
+        return instance;
     }
 
     private <T> @Nullable T getUnsafeInstance(Class<T> type, Injector injector) {
@@ -291,6 +323,10 @@ public abstract class InjectableBootstrap {
 
     public void registerGlobal(SeleneInjectConfiguration moduleConfiguration) {
         this.injectorModules.add(moduleConfiguration);
+    }
+
+    public void delegate(ProxyProperty<?, ?> property) {
+        if (null != property) this.proxies.add(property);
     }
 
     private Unsafe getUnsafe() {
