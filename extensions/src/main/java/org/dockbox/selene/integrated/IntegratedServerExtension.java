@@ -45,6 +45,7 @@ import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -223,7 +224,8 @@ public class IntegratedServerExtension implements IntegratedExtension {
     }
 
     @Command(aliases = "demo", usage = "demo")
-    public void demo(CommandSource source) {
+    public void demo(CommandSource source) throws NoSuchMethodException {
+        Method getDataFile = FileManager.class.getDeclaredMethod("getDataFile", Class.class, String.class);
         FileManager fm = Selene.provide(FileManager.class);
         Path demoFile = fm.getDataFile(IntegratedServerExtension.class, "demo");
         DemoObject demoObject = new DemoObject("Demo Thing");
