@@ -20,10 +20,11 @@ rootProject.name = 'Selene'
 include 'selene-core'
 include 'selene-common'
 include 'selene-nms-1.12'
-include 'extensions'
 include 'sponge-7'
-if(file('darwin').exists()){
-    include ':darwin'
-}
-
+include 'extensions'
 include 'examples'
+new File(rootDir, 'extensions').listFiles().each {
+    if (it.directory && new File(it, 'build.gradle').exists()) {
+        include(":extensions:${it.name}")
+    }
+}
