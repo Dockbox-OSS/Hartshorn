@@ -40,6 +40,11 @@ dependencies {
     compile(project(':selene-common')) {
         exclude group: "org.spongepowered", module: "configurate**"
     }
+    new File(parent.rootDir, 'extensions').listFiles().each {
+        if (it.directory && new File(it, 'build.gradle').exists()) {
+            compile(project(":extensions:${it.name}"))
+        }
+    }
     compile project(':extensions')
     compile(project(':selene-nms-1.12')) {
         exclude group: 'net.minecraftforge', module: 'forge'
@@ -116,5 +121,22 @@ task runDevServer(dependsOn: prepareServerArtifacts) {
     }
 }
 
+task copyArtifacts {
+    doLast {
+        def version = getVersionName()
+        def DIST_DEST_DIR = "${rootDir}/dist/${date}/${version}"
+        def DIRT_SRC_DIR = "${buildDir}/libs"
+
+        ant.mkdir(dir: DIST_DEST_DIR)
+        println("Copying all built files to $DIST_DEST_DIR")
+        ant.copy(todir: DIST_DEST_DIR) {
+            fileset dir: DIRT_SRC_DIR,
+                    includes: "*${version}-${date}*.jar"
+        }
+
+    }
+}
+
+build.finalizedBy copyArtifacts
 prepareServerArtifacts.dependsOn build
 runDevServer.dependsOn prepareServerArtifacts
