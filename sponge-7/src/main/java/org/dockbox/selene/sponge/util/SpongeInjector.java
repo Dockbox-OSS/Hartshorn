@@ -120,7 +120,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         // Globally accessible
         this.bind(GlobalConfig.class).toInstance(new SimpleGlobalConfig());
         this.bind(Logger.class).toInstance(Selene.log());
-        this.bind(Console.class).toInstance(new SpongeConsole());
+        this.bind(Console.class).toInstance(SpongeConsole.getInstance());
         // Packets
         this.bind(ChangeGameStatePacket.class).to(NMSChangeGameStatePacket.class);
     }

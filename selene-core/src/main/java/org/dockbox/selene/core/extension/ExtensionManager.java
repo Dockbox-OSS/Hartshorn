@@ -21,6 +21,7 @@ import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.objects.Exceptional;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ExtensionManager {
 
@@ -35,6 +36,8 @@ public interface ExtensionManager {
     <T> Exceptional<T> getInstance(Class<T> type);
 
     <T> Exceptional<T> getInstance(String id);
+
+    Map<String, Object> getInstanceMappings();
 
     List<ExtensionContext> initialiseExtensions();
 
