@@ -141,7 +141,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
             if (null != obj)
                 Sponge.getEventManager().registerListeners(this, obj);
             else
-                log().warn("Attempted to register 'null' listener");
+                Selene.log().warn("Attempted to register 'null' listener");
         }
     }
 
@@ -248,7 +248,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
             // we may not want to cancel.
             if (!jda.getRegisteredListeners().contains(this.discordListener)) {
                 jda.addEventListener(this.discordListener);
-                log().info("Initiated JDA" + JDAInfo.VERSION);
+                Selene.log().info("Initiated JDA" + JDAInfo.VERSION);
             }
         } else {
             // Attempt to get the JDA once every 10 seconds until successful

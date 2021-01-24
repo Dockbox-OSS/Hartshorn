@@ -36,6 +36,7 @@ public final class SeleneInformation {
      * extension developers.
      */
     public static final String[] AUTHORS = {"GuusLieben"};
+    public static final String PROJECT_NAME = "Selene";
 
     private SeleneInformation() {}
 }

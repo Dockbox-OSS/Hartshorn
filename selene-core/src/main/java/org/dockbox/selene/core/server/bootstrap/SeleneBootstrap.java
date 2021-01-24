@@ -41,8 +41,6 @@ import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.util.Reflect;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -62,7 +60,6 @@ import java.util.function.Consumer;
 public abstract class SeleneBootstrap extends InjectableBootstrap {
 
     private static SeleneBootstrap instance;
-    private static final Logger log = LoggerFactory.getLogger(Selene.class);
     private String version;
     private LocalDateTime lastUpdate;
 
@@ -118,15 +115,6 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
     }
 
     /**
-     * Gets the log instance created by {@link SeleneBootstrap}.
-     *
-     * @return The {@link Logger}
-     */
-    public static Logger log() {
-        return log;
-    }
-
-    /**
      * Initiates integrated extensions and performs a given consumer on each loaded extension.
      *
      * @param consumer
@@ -141,11 +129,11 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * appropriate {@link EventBus}, {@link CommandBus}, and {@link DiscordUtils} instances.
      */
     protected void init() {
-        log().info("\u00A7e ,-,");
-        log().info("\u00A7e/.(");
-        log().info("\u00A7e\\ {");
-        log().info("\u00A7e `-`");
-        log().info("     \u00A77Initiating \u00A7bSelene " + this.getVersion());
+        Selene.log().info("\u00A7e ,-,");
+        Selene.log().info("\u00A7e/.(");
+        Selene.log().info("\u00A7e\\ {");
+        Selene.log().info("\u00A7e `-`");
+        Selene.log().info("     \u00A77Initiating \u00A7bSelene " + this.getVersion());
 
         // Register additional argument types early on, before extensions are constructed
         Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, ArgumentProvider.class).forEach(Selene::provide);
@@ -177,7 +165,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      */
     @Listener
     protected void debugRegisteredInstances(ServerStartedEvent event) {
-        log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
+        Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
         AtomicInteger unprovisionedTypes = new AtomicInteger();
         super.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
             try {
@@ -185,48 +173,48 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
                 Class<?> providerType = binding.getProvider().get().getClass();
 
                 if (!keyType.equals(providerType) && null != providerType)
-                    log().info("  - \u00A77" + keyType.getSimpleName() + ": \u00A78" + providerType.getCanonicalName());
+                    Selene.log().info("  - \u00A77" + keyType.getSimpleName() + ": \u00A78" + providerType.getCanonicalName());
             } catch (ProvisionException | AssertionError e) {
                 unprovisionedTypes.getAndIncrement();
             }
         });
-        log().info("  \u00A77.. and " + unprovisionedTypes.get() + " unprovisioned types.");
+        Selene.log().info("  \u00A77.. and " + unprovisionedTypes.get() + " unprovisioned types.");
 
-        log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded extensions: ");
+        Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded extensions: ");
         ExtensionManager em = Selene.provide(ExtensionManager.class);
         em.getRegisteredExtensionIds().forEach(ext -> {
             Exceptional<Extension> header = em.getHeader(ext);
             if (header.isPresent()) {
                 Extension ex = header.get();
-                log().info("  - \u00A77" + ex.name());
-                log().info("  | - \u00A77ID: \u00A78" + ex.id());
-                log().info("  | - \u00A77Authors: \u00A78" + Arrays.toString(ex.authors()));
-                log().info("  | - \u00A77Dependencies: \u00A78" + Arrays.toString(ex.dependencies()));
+                Selene.log().info("  - \u00A77" + ex.name());
+                Selene.log().info("  | - \u00A77ID: \u00A78" + ex.id());
+                Selene.log().info("  | - \u00A77Authors: \u00A78" + Arrays.toString(ex.authors()));
+                Selene.log().info("  | - \u00A77Dependencies: \u00A78" + Arrays.toString(ex.dependencies()));
             } else {
-                log().info("  - \u00A77" + ext + " \u00A78(No header)");
+                Selene.log().info("  - \u00A77" + ext + " \u00A78(No header)");
             }
         });
 
-        log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded event handlers: ");
+        Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded event handlers: ");
         Selene.provide(EventBus.class).getListenersToInvokers().forEach((listener, invokers) -> {
             Class<?> type;
             if (listener instanceof Class) type = (Class<?>) listener;
             else type = listener.getClass();
 
-            log().info("  - \u00A77" + type.getCanonicalName());
-            invokers.forEach(invoker -> log().info("  | - \u00A77" + invoker.getEventType().getSimpleName() + ": \u00A78" + invoker.getMethod().getName()));
+            Selene.log().info("  - \u00A77" + type.getCanonicalName());
+            invokers.forEach(invoker -> Selene.log().info("  | - \u00A77" + invoker.getEventType().getSimpleName() + ": \u00A78" + invoker.getMethod().getName()));
         });
     }
 
     private Consumer<ExtensionContext> getExtensionContextConsumer(CommandBus cb, EventBus eb, DiscordUtils du) {
         return (ExtensionContext ctx) -> {
             Class<?> type = ctx.getExtensionClass();
-            log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
+            Selene.log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
             Exceptional<?> oi = super.getInstanceSafe(type);
             oi.ifPresent(i -> {
                 Package pkg = i.getClass().getPackage();
                 if (null != pkg) {
-                    log().info("Registering [" + type.getCanonicalName() + "] as Event and Command listener");
+                    Selene.log().info("Registering [" + type.getCanonicalName() + "] as Event and Command listener");
                     eb.subscribe(i);
                     cb.register(i);
                     du.registerCommandListener(i);

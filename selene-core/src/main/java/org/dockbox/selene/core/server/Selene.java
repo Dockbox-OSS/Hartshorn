@@ -32,6 +32,7 @@ import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -79,13 +80,14 @@ public final class Selene {
     }
 
     /**
-     * Provides quick access to {@link SeleneBootstrap#log()}. Primarily added to avoid {@link SeleneBootstrap#log()}
-     * from being used globally.
+     * Gets a log instance representing the calling type.
      *
      * @return The {@link Logger}
      */
     public static Logger log() {
-        return SeleneBootstrap.log();
+        StackTraceElement element = Thread.currentThread().getStackTrace()[2];
+        String[] qualifiedClassName = element.getClassName().split("\\.");
+        return LoggerFactory.getLogger("Selene/" + qualifiedClassName[qualifiedClassName.length - 1]);
     }
 
     /**
