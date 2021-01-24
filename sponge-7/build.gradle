@@ -43,6 +43,7 @@ dependencies {
     new File(parent.rootDir, 'extensions').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
             compile(project(":extensions:${it.name}"))
+            testCompileOnly(project(":extensions:${it.name}"))
         }
     }
     compile project(':extensions')
