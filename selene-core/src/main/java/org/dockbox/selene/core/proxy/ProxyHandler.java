@@ -46,6 +46,10 @@ public class ProxyHandler<T> implements MethodHandler {
         this.handlers.put(property.getTargetMethod(), property);
     }
 
+    public void delegate(ProxyProperty<T, ?>... properties) {
+        for (ProxyProperty<T, ?> property : properties) this.delegate(property);
+    }
+
     @Override
     public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
         // The handler listens for all methods, while not all methods are proxied
@@ -75,7 +79,7 @@ public class ProxyHandler<T> implements MethodHandler {
         for (ProxyProperty<T, ?> property : properties) {
             if (at == property.getTarget()) {
                 Object result = property.delegate(this.instance, args);
-                if (property.overwriteResult()) {
+                if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType())) {
                     // A proxy returning null typically indicates the use of a non-returning function, for annotation
                     // properties this is handled internally, however proxy types should carry the annotation value to
                     // ensure no results will be overwritten. Null values may cause the initial target return value to

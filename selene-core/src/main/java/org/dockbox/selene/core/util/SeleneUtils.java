@@ -22,7 +22,10 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
+import org.dockbox.selene.core.proxy.ProxyFunction;
+import org.dockbox.selene.core.proxy.ProxyHandler;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.properties.ProxyProperty;
 import org.dockbox.selene.core.tasks.CheckedRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -33,6 +36,8 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
@@ -60,6 +65,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -87,14 +93,14 @@ public final class SeleneUtils {
     private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = SeleneUtils.emptyConcurrentMap();
 
     private static final char[] _hex = {
-        '0', '1', '2', '3', '4', '5', '6', '7',
-        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+            '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
 
     private static final java.util.regex.Pattern minorTimeString =
-        java.util.regex.Pattern.compile("^\\d+$");
+            java.util.regex.Pattern.compile("^\\d+$");
     private static final java.util.regex.Pattern timeString =
-        java.util.regex.Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
+            java.util.regex.Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
 
     private static final int secondsInMinute = 60;
     private static final int secondsInHour = 60 * SeleneUtils.secondsInMinute;
@@ -110,15 +116,15 @@ public final class SeleneUtils {
      * using {@link SeleneUtils#entry(Object, Object)}
      *
      * @param <K>
-     *     The (super)type of all keys in the entry set
+     *         The (super)type of all keys in the entry set
      * @param <V>
-     *     The (super)type of all values in the entry set
+     *         The (super)type of all values in the entry set
      * @param entries
-     *     The entries to use while constructing a new map
+     *         The entries to use while constructing a new map
      *
      * @return The new non-concurrent map
      * @throws NullPointerException
-     *     If a entry is null
+     *         If a entry is null
      * @see SeleneUtils#entry(Object, Object)
      */
     @SafeVarargs
@@ -140,9 +146,9 @@ public final class SeleneUtils {
      * not concurrent.
      *
      * @param <K>
-     *     The (super)type of the map key-set
+     *         The (super)type of the map key-set
      * @param <V>
-     *     The (super)type of the map value-set
+     *         The (super)type of the map value-set
      *
      * @return The new map
      * @see SeleneUtils#emptyConcurrentMap()
@@ -155,13 +161,13 @@ public final class SeleneUtils {
      * Creates a new entry based on a given key and value combination. Both the key and value may be null.
      *
      * @param <K>
-     *     The type of the key
+     *         The type of the key
      * @param <V>
-     *     The type of the value
+     *         The type of the value
      * @param k
-     *     The key
+     *         The key
      * @param v
-     *     The value
+     *         The value
      *
      * @return The entry
      * @see SeleneUtils#ofEntries(Entry...)
@@ -211,6 +217,64 @@ public final class SeleneUtils {
 
     public static <T> List<T> asList(Collection<T> collection) {
         return new ArrayList<>(collection);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static <T> List<T> asObservableList(List<T> list, BiFunction<List<T>, Object, Boolean> singleObjectAddListener) {
+        try {
+            // Using list.getClass over List.class as methods are compared directly in delegated proxies instead of for
+            // assignability.
+            Method add = list.getClass().getDeclaredMethod("add", Object.class);
+            Method addIndexed = list.getClass().getDeclaredMethod("add", int.class, Object.class);
+
+            Method addAll = list.getClass().getDeclaredMethod("addAll", Collection.class);
+            Method addAllIndexed = list.getClass().getDeclaredMethod("addAll", Collection.class);
+
+            ProxyHandler<List> handler = new ProxyHandler<>(list);
+
+            ProxyFunction<List, Object> singleHandler = (instance, args, holder) -> {
+                boolean result = singleObjectAddListener.apply((List<T>) instance, args[0]);
+                if (result) instance.add(args[0]);
+                holder.setCancelled(result);
+                return result;
+            };
+
+            ProxyProperty<List, Object> addProperty = ProxyProperty.of(List.class, add, singleHandler);
+            ProxyProperty<List, Object> addIndexedProperty = ProxyProperty.of(List.class, addIndexed, (instance, args, holder) -> {
+                singleHandler.delegate(instance, new Object[]{args[1]}, holder);
+                if (!holder.isCancelled()) instance.add((Integer) args[0], args[1]);
+                return !holder.isCancelled();
+            });
+            ProxyProperty<List, Object> addAllProperty = ProxyProperty.of(List.class, addAll, (instance, args, holder) -> {
+                Iterable<T> collection = (Iterable<T>) args[0];
+                collection.forEach(object -> {
+                    singleHandler.delegate(instance, args, holder);
+                    if (!holder.isCancelled()) {
+                        instance.add(args[0]);
+                    }
+                    holder.setCancelled(false); // Reset for each iteration
+                });
+                return true;
+            });
+            ProxyProperty<List, Object> addAllIndexedProperty = ProxyProperty.of(List.class, addAllIndexed, (instance, args, holder) -> {
+                Iterable<T> collection = (Iterable<T>) args[0];
+                collection.forEach(object -> {
+                    singleHandler.delegate(instance, new Object[]{args[1]}, holder);
+                    if (!holder.isCancelled()) {
+                        instance.add((Integer) args[0], args[1]);
+                    }
+                    holder.setCancelled(false); // Reset for each iteration
+                });
+                return true;
+            });
+
+            handler.delegate(addProperty, addIndexedProperty, addAllProperty, addAllIndexedProperty);
+
+            return handler.proxy();
+        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
+            Selene.handle(e);
+            return list;
+        }
     }
 
     public static <T> List<T> asUnmodifiableList(Collection<T> collection) {
@@ -336,8 +400,8 @@ public final class SeleneUtils {
      */
     public static List<Event> getFiredEvents(Event... events) {
         return Arrays.stream(events)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -431,7 +495,7 @@ public final class SeleneUtils {
 
     public static String shorten(String string, int maxLength) {
         if (string.length() < maxLength) return string;
-        return string.substring(0, maxLength-1);
+        return string.substring(0, maxLength - 1);
     }
 
     @NotNull
@@ -581,14 +645,14 @@ public final class SeleneUtils {
                 // Find the current distance by determining the shortest path to a
                 // match (hence the 'minimum' calculation on distances).
                 distanceMatrix[srcIndex][targetIndex] = (int) SeleneUtils.minimum(
-                    // Character match between current character in
-                    // source string and next character in target
-                    distanceMatrix[srcIndex - 1][targetIndex] + 1,
-                    // Character match between next character in
-                    // source string and current character in target
-                    distanceMatrix[srcIndex][targetIndex - 1] + 1,
-                    // No match, at current, add cumulative penalty
-                    distanceMatrix[srcIndex - 1][targetIndex - 1] + cost);
+                        // Character match between current character in
+                        // source string and next character in target
+                        distanceMatrix[srcIndex - 1][targetIndex] + 1,
+                        // Character match between next character in
+                        // source string and current character in target
+                        distanceMatrix[srcIndex][targetIndex - 1] + 1,
+                        // No match, at current, add cumulative penalty
+                        distanceMatrix[srcIndex - 1][targetIndex - 1] + cost);
 
                 // We don't want to do the next series of calculations on
                 // the first pass because we would get an index out of bounds
@@ -603,10 +667,10 @@ public final class SeleneUtils {
                     // What's the minimum cost between the current distance
                     // and a transposition.
                     distanceMatrix[srcIndex][targetIndex] = (int) SeleneUtils.minimum(
-                        // Current cost
-                        distanceMatrix[srcIndex][targetIndex],
-                        // Transposition
-                        distanceMatrix[srcIndex - 2][targetIndex - 2] + cost);
+                            // Current cost
+                            distanceMatrix[srcIndex][targetIndex],
+                            // Transposition
+                            distanceMatrix[srcIndex - 2][targetIndex - 2] + cost);
                 }
             }
         }
@@ -812,10 +876,10 @@ public final class SeleneUtils {
      */
     public static boolean isInCuboidRegion(Vector3N min, Vector3N max, Vector3N vec) {
         return SeleneUtils.isInCuboidRegion(
-            min.getXi(), max.getXi(),
-            min.getYi(), max.getYi(),
-            min.getZi(), max.getZi(),
-            vec.getXi(), vec.getYi(), vec.getZi());
+                min.getXi(), max.getXi(),
+                min.getYi(), max.getYi(),
+                min.getZi(), max.getZi(),
+                vec.getXi(), vec.getYi(), vec.getZi());
     }
 
     public static Vector3N getMinimumPoint(Vector3N pos1, Vector3N pos2) {
