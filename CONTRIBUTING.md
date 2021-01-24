@@ -1,7 +1,7 @@
 # Contributing to Selene
 ## What should I know before I get started?
 ### Debug Selene
-The documentation about Selene's Maven setup can be found [here](https://github.com/GuusLieben/Selene/wiki/Maven). This
+The documentation about Selene's Gradle setup can be found [here](https://github.com/GuusLieben/Selene/wiki/Gradle). This
 describes the existing project structure and how to use the provided test servers.
 
 ### Where can I ask for help?
@@ -88,11 +88,11 @@ For example, `org.dockbox.selene.common.ClassX` is tested in `org.dockbox.selene
 #### Run Testing
 - Tests are performed using the [predefined Selene Servers](https://github.com/GuusLieben/Selene-Servers)
 - Tests are performed against the latest (supported) version of relevant platforms
-- Servers are activated using the [Selene development server configurations](https://github.com/GuusLieben/Selene/wiki/Maven#development-server)
+- Servers are activated using the [Selene development server configurations](https://github.com/GuusLieben/Selene/wiki/Gradle#development-server)
 
 ## Style Guides
 ### Project Structure
-Selene is divided into a variety of submodules, see [Maven](https://github.com/GuusLieben/Selene/wiki/Maven) for specifications
+Selene is divided into a variety of submodules, see [Gradle](https://github.com/GuusLieben/Selene/wiki/Gradle) for specifications
 for each submodule.
 
 Each class and method is placed in the highest possible location in the submodule hierarchy. Exceptions can be made by 
