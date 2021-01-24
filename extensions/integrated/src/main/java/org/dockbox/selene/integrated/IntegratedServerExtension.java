@@ -17,18 +17,18 @@
 
 package org.dockbox.selene.integrated;
 
+import com.google.inject.Singleton;
+
 import org.dockbox.selene.core.annotations.command.Arg;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.extension.Extension;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
-import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
-import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
@@ -45,8 +45,6 @@ import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 
-import java.lang.reflect.Method;
-import java.nio.file.Path;
 import java.util.List;
 
 @Extension(
@@ -56,6 +54,7 @@ import java.util.List;
         authors = "GuusLieben"
 )
 @Command(aliases = {"selene", "darwin"}, usage = "selene")
+@Singleton
 public class IntegratedServerExtension implements IntegratedExtension {
 
     // Parent command
@@ -80,7 +79,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
 
             em.getRegisteredExtensionIds()
                     .forEach(id -> em.getHeader(id)
-                            .map(e -> generateText(e, source))
+                            .map(e -> this.generateText(e, source))
                             .ifPresent(content::add)
                     );
 
@@ -221,24 +220,6 @@ public class IntegratedServerExtension implements IntegratedExtension {
         if (player != src)
             src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED_OTHER.format(player.getName(), languageLocalized));
         player.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(languageLocalized));
-    }
-
-    @Command(aliases = "demo", usage = "demo")
-    public void demo(CommandSource source) throws NoSuchMethodException {
-        Method getDataFile = FileManager.class.getDeclaredMethod("getDataFile", Class.class, String.class);
-        FileManager fm = Selene.provide(FileManager.class);
-        Path demoFile = fm.getDataFile(IntegratedServerExtension.class, "demo");
-        DemoObject demoObject = new DemoObject("Demo Thing");
-        fm.write(demoFile, demoObject);
-    }
-
-    public static class DemoObject {
-
-        private String name;
-
-        public DemoObject(String name) {
-            this.name = name;
-        }
     }
 
 }

@@ -88,6 +88,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(ExceptionHelper.class).to(SimpleExceptionHelper.class);
         this.bind(TaskRunner.class).to(SpongeTaskRunner.class);
         // Extension management
+        // Extension manager keeps static references, and can thus be recreated
         this.bind(ExtensionManager.class).toInstance(new SimpleExtensionManager());
         this.bind(IntegratedExtension.class).to(IntegratedServerExtension.class);
         // Utility types
@@ -105,6 +106,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(BroadcastService.class).to(SimpleBroadcastService.class);
         this.bind(ResourceService.class).toInstance(new SimpleResourceService());
         // Internal services
+        // Event- and command bus keep static references, and can thus be recreated
         this.bind(CommandBus.class).toInstance(new SpongeCommandBus());
         this.bind(EventBus.class).toInstance(new SimpleEventBus());
         // Builder types
@@ -118,8 +120,11 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.install(new FactoryModuleBuilder().implement(Bossbar.class, SpongeBossbar.class).build(BossbarFactory.class));
         this.install(new FactoryModuleBuilder().implement(Profile.class, SpongeProfile.class).build(ProfileFactory.class));
         // Globally accessible
+        // Config can be recreated, so no external tracking is required (contents obtained from file, no cache writes)
         this.bind(GlobalConfig.class).toInstance(new SimpleGlobalConfig());
+        // Log is created from LoggerFactory externally
         this.bind(Logger.class).toInstance(Selene.log());
+        // Console is a constant singleton, to avoid
         this.bind(Console.class).toInstance(SpongeConsole.getInstance());
         // Packets
         this.bind(ChangeGameStatePacket.class).to(NMSChangeGameStatePacket.class);
