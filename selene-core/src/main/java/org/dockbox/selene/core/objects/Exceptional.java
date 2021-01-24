@@ -19,7 +19,6 @@ package org.dockbox.selene.core.objects;
 
 import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
-import org.dockbox.selene.core.tasks.CheckedFunction;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -49,7 +48,7 @@ import javax.annotation.Nullable;
  * @param <T>
  *         the type parameter
  */
-@SuppressWarnings("AssignmentToNull")
+@SuppressWarnings({"AssignmentToNull", "unused"})
 public final class Exceptional<T> {
 
     private static final Exceptional<?> EMPTY = new Exceptional<>();
@@ -363,7 +362,7 @@ public final class Exceptional<T> {
 
     /**
      * If a value is present, apply the provided {@code Exceptional}-bearing mapping function to it, return that result,
-     * otherwise return {@link Exceptional#empty()}. This method is similar to {@link Exceptional#map(CheckedFunction)}, but the
+     * otherwise return {@link Exceptional#empty()}. This method is similar to {@link Exceptional#map(Function)}, but the
      * provided mapper is one whose result is already an {@code Exceptional}, and if invoked, {@code flatMap} does not
      * wrap it with an additional {@code Exceptional}.
      *
