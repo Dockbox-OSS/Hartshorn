@@ -61,6 +61,7 @@ public abstract class InjectableBootstrap extends ProxyableBootstrap {
     private Injector injector;
     private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
     private final transient List<ProxyProperty<?, ?>> proxies = SeleneUtils.emptyConcurrentList();
+    private boolean extensionsLoaded = false;
 
     public <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties) {
         return Exceptional.ofNullable(this.getInstance(type, additionalProperties));
@@ -117,20 +118,8 @@ public abstract class InjectableBootstrap extends ProxyableBootstrap {
 
         }
 
-        // Prepare modules
-        ExtensionModule extensionModule = null;
-        if (extension.isAnnotationPresent(Extension.class)) {
-            extensionModule = this.getExtensionModule(extension, extension.getAnnotation(Extension.class), null);
-        }
+        Injector injector = this.rebuildInjector();
 
-        AbstractModule propertyModule = new AbstractModule() {
-            @Override
-            protected void configure() {
-                this.bind(InjectorProperty[].class).toInstance(additionalProperties);
-            }
-        };
-
-        Injector injector = this.createInjector(extensionModule, propertyModule);
         // Type instance can be present if it is a extension. These instances are also created using Guice injectors
         // and therefore do not need late member injection here.
         if (null == typeInstance) {
@@ -243,6 +232,17 @@ public abstract class InjectableBootstrap extends ProxyableBootstrap {
         this.injector = null; // Reset injector so it regenerates later
     }
 
+    public <C, T extends C> void bindUtility(Class<C> contract, T instance) {
+        AbstractModule localModule = new AbstractModule() {
+            @Override
+            protected void configure() {
+                super.configure();
+                this.bind(contract).toInstance(instance);
+            }
+        };
+        this.injectorModules.add(localModule);
+        this.injector = null; // Reset injector so it regenerates later
+    }
 
     public Injector createExtensionInjector(Object instance) {
         if (null != instance && instance.getClass().isAnnotationPresent(Extension.class)) {
@@ -253,7 +253,7 @@ public abstract class InjectableBootstrap extends ProxyableBootstrap {
                     .orElseGet(() -> instance.getClass().getAnnotation(Extension.class));
             return this.createExtensionInjector(instance, extension, context.orNull());
         }
-        return this.createInjector();
+        return this.rebuildInjector();
     }
 
     @SuppressWarnings("unchecked")
@@ -273,18 +273,18 @@ public abstract class InjectableBootstrap extends ProxyableBootstrap {
     }
 
     public Injector createExtensionInjector(Object instance, Extension header, ExtensionContext context) {
-        return this.createInjector(this.getExtensionModule(instance, header, context));
+        return this.rebuildInjector(this.getExtensionModule(instance, header, context));
     }
 
     public <T> T injectMembers(T type) {
         if (null != type) {
-            this.createInjector().injectMembers(type);
+            this.rebuildInjector().injectMembers(type);
         }
 
         return type;
     }
 
-    public Injector createInjector(AbstractModule... additionalModules) {
+    private Injector rebuildInjector(AbstractModule... additionalModules) {
         if (null == this.injector) {
             Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
             modules.addAll(Arrays.stream(additionalModules)
@@ -300,7 +300,7 @@ public abstract class InjectableBootstrap extends ProxyableBootstrap {
             if (null != extensionInstance && extensionInstance.getClass().isAnnotationPresent(Extension.class)) {
                 this.createExtensionInjector(extensionInstance).injectMembers(type);
             } else {
-                this.createInjector().injectMembers(type);
+                this.rebuildInjector().injectMembers(type);
             }
         }
         return type;
@@ -308,7 +308,7 @@ public abstract class InjectableBootstrap extends ProxyableBootstrap {
 
     public Map<Key<?>, Binding<?>> getAllBindings() {
         Map<Key<?>, Binding<?>> bindings = SeleneUtils.emptyConcurrentMap();
-        this.createInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
+        this.rebuildInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
             try {
                 Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
                 Class<?> providerType = binding.getProvider().get().getClass();

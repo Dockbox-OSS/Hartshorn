@@ -22,27 +22,18 @@ plugins {
 group = 'org.dockbox.selene.integrated'
 description = 'Integrated extensions for Selene'
 
-dependencies {
-    compileOnly project(':selene-core')
-    compileOnly(project(':selene-common')) {
-        exclude group: "org.spongepowered", module: "configurate**"
+subprojects { Project subProject ->
+    dependencies {
+        compileOnly project(':selene-core')
+        compileOnly(project(':selene-common')) {
+            exclude group: "org.spongepowered", module: "configurate**"
+        }
+
+        testCompile project(':selene-core')
+        testCompile(project(':selene-common')) {
+            exclude group: "org.spongepowered", module: "configurate**"
+        }
+
     }
-
-    testCompile project(':selene-core')
-    testCompile(project(':selene-common')) {
-        exclude group: "org.spongepowered", module: "configurate**"
-    }
-
-    // SQL Extension dependencies
-    compile "org.jooq:jooq:$jooqVersion"
-    compile "org.jooq:jooq-meta:$jooqVersion"
-    compile "org.jooq:jooq-codegen:$jooqVersion"
-
-    testRuntime "org.jooq:jooq:$jooqVersion"
-    testCompile "org.xerial:sqlite-jdbc:$xerialSqliteJdbcVersion"
-
-    // Test file managers
-    testImplementation "com.thoughtworks.xstream:xstream:$xstreamVersion"
-    testImplementation 'com.fasterxml.woodstox:woodstox-core:6.2.3'
 
 }

@@ -114,8 +114,8 @@ public abstract class DefaultCommandBus implements CommandBus {
     private static final Pattern ELEMENT_VALUE = Pattern.compile("(\\w+)(?:\\{(\\w+)(?::([\\w\\.]+))?\\})?");
     private static final Map<String, ConfirmableQueueItem> confirmQueue = SeleneUtils.emptyConcurrentMap();
 
-    private final Map<String, AbstractRegistrationContext> registrations = SeleneUtils.emptyConcurrentMap();
-    private final Map<String, List<CommandInheritanceContext>> queuedAliases = SeleneUtils.emptyConcurrentMap();
+    private static final Map<String, AbstractRegistrationContext> registrations = SeleneUtils.emptyConcurrentMap();
+    private static final Map<String, List<CommandInheritanceContext>> queuedAliases = SeleneUtils.emptyConcurrentMap();
 
     @Override
     public void register(Object... objs) {
@@ -130,10 +130,10 @@ public abstract class DefaultCommandBus implements CommandBus {
                     if (context instanceof CommandInheritanceContext
                             && this.prepareInheritanceContext(context, alias)) continue;
 
-                    if (this.registrations.containsKey(alias))
+                    if (DefaultCommandBus.registrations.containsKey(alias))
                         Selene.log().warn("Registering duplicate alias '" + alias + "'");
 
-                    this.registrations.put(alias, context);
+                    DefaultCommandBus.registrations.put(alias, context);
                 }
             }
         }
@@ -147,7 +147,7 @@ public abstract class DefaultCommandBus implements CommandBus {
          can be added when the target registration is created.
          */
         if (context.getCommand().extend()) {
-            if (this.registrations.containsKey(alias))
+            if (DefaultCommandBus.registrations.containsKey(alias))
                 this.addExtendingAliasToRegistration(alias, (CommandInheritanceContext) context);
             else this.queueAliasRegistration(alias, (CommandInheritanceContext) context);
 
@@ -158,7 +158,7 @@ public abstract class DefaultCommandBus implements CommandBus {
              registrations can still be added to if future registrations extend aliases defined in this registration.
              However, once #apply is called these registrations are no longer mutable.
              */
-            this.queuedAliases
+            DefaultCommandBus.queuedAliases
                     .getOrDefault(alias, SeleneUtils.emptyConcurrentList())
                     .forEach(extendingContext ->
                             this.addExtendingContextToRegistration(
@@ -170,9 +170,9 @@ public abstract class DefaultCommandBus implements CommandBus {
     }
 
     private void addExtendingAliasToRegistration(String alias, CommandInheritanceContext extendingContext) {
-        AbstractRegistrationContext context = this.registrations.get(alias);
+        AbstractRegistrationContext context = DefaultCommandBus.registrations.get(alias);
         this.addExtendingContextToRegistration(extendingContext, (CommandInheritanceContext) context);
-        this.registrations.put(alias, context);
+        DefaultCommandBus.registrations.put(alias, context);
     }
 
     private void addExtendingContextToRegistration(CommandInheritanceContext extendingContext, CommandInheritanceContext context) {
@@ -181,14 +181,14 @@ public abstract class DefaultCommandBus implements CommandBus {
 
     private void queueAliasRegistration(String alias, CommandInheritanceContext context) {
         List<CommandInheritanceContext> contexts =
-                this.queuedAliases.getOrDefault(alias, SeleneUtils.emptyConcurrentList());
+                DefaultCommandBus.queuedAliases.getOrDefault(alias, SeleneUtils.emptyConcurrentList());
         contexts.add(context);
-        this.queuedAliases.put(alias, contexts);
+        DefaultCommandBus.queuedAliases.put(alias, contexts);
     }
 
     protected void clearAliasQueue() {
         // This should be called after #apply has finished, to avoid unexpected alias extensions.
-        this.queuedAliases.clear();
+        DefaultCommandBus.queuedAliases.clear();
     }
 
     private List<AbstractRegistrationContext> createContexts(Class<?> parent) {
@@ -442,7 +442,7 @@ public abstract class DefaultCommandBus implements CommandBus {
     protected abstract AbstractFlagCollection<?> createEmptyFlagCollection();
 
     protected Map<String, AbstractRegistrationContext> getRegistrations() {
-        return this.registrations;
+        return DefaultCommandBus.registrations;
     }
 
 }

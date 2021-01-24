@@ -88,6 +88,12 @@ public class SimpleExtensionManager implements ExtensionManager {
 
     @NotNull
     @Override
+    public Map<String, Object> getInstanceMappings() {
+        return SeleneUtils.asUnmodifiableMap(instanceMappings);
+    }
+
+    @NotNull
+    @Override
     public List<ExtensionContext> initialiseExtensions() {
         Collection<Class<?>> annotatedTypes = Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Extension.class);
         Selene.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
@@ -176,6 +182,7 @@ public class SimpleExtensionManager implements ExtensionManager {
                 this.injectMembers(instance, context, header);
 
                 context.addStatus(entry, ExtensionStatus.LOADED);
+                Selene.getServer().bindUtility(entry, instance);
             } catch (NoSuchMethodException | IllegalAccessException e) {
                 context.addStatus(entry, ExtensionStatus.FAILED);
                 Selene.log().warn("No default accessible constructor available for [" + entry.getCanonicalName() + ']');
