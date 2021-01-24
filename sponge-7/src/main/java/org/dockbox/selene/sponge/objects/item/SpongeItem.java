@@ -93,7 +93,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         Exceptional<String> translatedName = ref.map(i -> i.getTranslation().get());
         if (translatedName.isPresent()) return Text.of(translatedName.get());
 
-        return Text.of(ref.map(i -> i.getItem().getId()).orElse(IntegratedResource.UNKNOWN.translate(language).asString()));
+        return Text.of(ref.map(i -> i.getType().getId()).orElse(IntegratedResource.UNKNOWN.translate(language).asString()));
     }
 
     @Override

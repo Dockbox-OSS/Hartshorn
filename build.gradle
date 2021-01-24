@@ -61,6 +61,7 @@ subprojects { Project subProject ->
     tasks.build {
         dependsOn tasks.updateLicenses
         dependsOn tasks.shadowJar
+        finalizedBy tasks.clean
     }
 
     shadowJar {
