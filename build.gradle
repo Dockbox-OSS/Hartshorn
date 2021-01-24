@@ -55,24 +55,6 @@ subprojects { Project subProject ->
     group = project.pluginGroup
     version = "${getVersionName()}-$date"
 
-    task copyArtifacts {
-        doLast {
-            def version = getVersionName()
-            def DIST_DEST_DIR = "${rootDir}/dist/${date}/${version}"
-            def DIRT_SRC_DIR = "${buildDir}/libs"
-
-            ant.mkdir(dir: DIST_DEST_DIR)
-            println("Copying all built files to $DIST_DEST_DIR")
-            ant.copy(todir: DIST_DEST_DIR) {
-                fileset dir: DIRT_SRC_DIR,
-                        includes: "*${version}-${date}*.jar"
-            }
-
-        }
-    }
-
-    build.finalizedBy copyArtifacts
-
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 

@@ -50,4 +50,9 @@ public final class SpongeConsole extends Console {
     public void sendPagination(@NotNull Pagination pagination) {
         SpongeConversionUtil.toSponge(pagination).sendTo(Sponge.getServer().getConsole());
     }
+
+    public static Console getInstance() {
+        if (null != Console.instance) return Console.instance;
+        return new SpongeConsole();
+    }
 }
