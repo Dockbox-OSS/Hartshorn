@@ -15,9 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.annotations.proxy;
+package org.dockbox.selene.proxy.annotations;
 
-import org.dockbox.selene.core.proxy.Phase;
+import org.dockbox.selene.proxy.handle.Phase;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

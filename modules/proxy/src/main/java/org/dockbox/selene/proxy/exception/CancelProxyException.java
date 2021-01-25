@@ -15,9 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.proxy;
+package org.dockbox.selene.proxy.exception;
 
-public interface ProxyFunction<T, R> {
+import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 
-    R delegate(T instance, Object[] args, ProxyHolder holder);
+/**
+ * The exception to be thrown by methods annotated with {@link org.dockbox.selene.proxy.annotations.Proxy.Target}
+ * to indicate a proxy delegation should be cancelled.
+ */
+public class CancelProxyException extends UncheckedSeleneException {
+
+    public CancelProxyException() {
+        super("");
+    }
 }

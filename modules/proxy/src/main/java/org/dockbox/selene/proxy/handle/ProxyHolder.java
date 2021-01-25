@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.proxy;
+package org.dockbox.selene.proxy.handle;
 
 /**
  * The type passed into proxy functions. Cancellability is unused internally, but may be used by functions.

@@ -15,17 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.server.bootstrap;
+package org.dockbox.selene.proxy;
 
-import org.dockbox.selene.core.annotations.proxy.Proxy;
-import org.dockbox.selene.core.annotations.proxy.Instance;
-import org.dockbox.selene.core.annotations.proxy.Proxy.Target;
-import org.dockbox.selene.core.proxy.CancelProxyException;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInformation;
-import org.dockbox.selene.core.server.properties.ProxyProperty;
+import org.dockbox.selene.core.server.inject.InjectionPoint;
 import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.proxy.annotations.Instance;
+import org.dockbox.selene.proxy.annotations.Proxy;
+import org.dockbox.selene.proxy.annotations.Proxy.Target;
+import org.dockbox.selene.proxy.exception.CancelProxyException;
+import org.dockbox.selene.proxy.handle.ProxyHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -39,8 +40,10 @@ import java.util.List;
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class ProxyableBootstrap {
 
-    protected void boostrapDelegates() {
+    static void boostrapDelegates() {
+        Selene.log().info("Scanning for proxy types in " + SeleneInformation.PACKAGE_PREFIX);
         Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Proxy.class).forEach(proxy -> {
+            Selene.log().info("Processing [" + proxy.getCanonicalName() + "]");
             if (Modifier.isAbstract(proxy.getModifiers())) {
                 Selene.log().warn("Proxy source cannot be abstract [" + proxy.getCanonicalName() + "]");
                 return;
@@ -52,29 +55,29 @@ public abstract class ProxyableBootstrap {
                 return;
             }
 
-            this.delegateMethods(proxy);
+            ProxyableBootstrap.delegateMethods(proxy);
         });
     }
 
-    private void delegateMethods(Class<?> proxy) {
+    private static void delegateMethods(Class<?> proxyClass) {
         @NotNull @Unmodifiable Collection<Method> targets = Reflect.getAnnotedMethods(
-                proxy,
+                proxyClass,
                 Target.class,
                 i -> true,
                 false
         );
 
-        targets.forEach(target -> this.delegateMethod(proxy, target));
+        Proxy proxy = proxyClass.getAnnotation(Proxy.class);
+        targets.forEach(target -> ProxyableBootstrap.delegateMethod(proxyClass, proxy.value(), target));
     }
 
-    private <T> void delegateMethod(Class<T> proxyClass, Method source) {
+    private static <T, C> void delegateMethod(Class<T> proxyClass, Class<C> proxyTargetClass, Method source) {
+        Selene.log().info("Processing " + proxyClass.getSimpleName() + "." + source.getName());
         if (Modifier.isAbstract(source.getModifiers())) {
             Selene.log().warn("Proxy method cannot be abstract [" + source.getName() + "]");
             return;
         }
 
-        Proxy proxy = proxyClass.getAnnotation(Proxy.class);
-        Class<?> proxyTargetClass = proxy.value();
         String methodName = source.getName();
 
         // Used only for method lookup, parameters annotated with @Instance are injected and thus not present on the
@@ -96,15 +99,15 @@ public abstract class ProxyableBootstrap {
             // If the target method has a return type other than `void`, and the proxy wants to overwrite the return
             // value, we need to ensure the return value of the proxy method is assignable from the return type of the
             // target.
-            if (!targetMethod.getReturnType().equals(Void.TYPE) && target.overwrite()) {
+            if (!source.getReturnType().equals(Void.TYPE) && target.overwrite()) {
                 if (!Reflect.isAssignableFrom(source.getReturnType(), targetMethod.getReturnType())) {
                     Selene.log().warn("Return type for '" + source.getName() + "' is not assignable from '" + targetMethod.getReturnType() + "' [" + proxyClass.getCanonicalName() + "]");
                     return;
                 }
             }
 
-            ProxyProperty<T, ?> property = ProxyProperty.of(proxyClass, targetMethod, (instance, args, holder) -> {
-                Object[] invokingArgs = this.prepareArguments(source, args, instance);
+            ProxyProperty<C, ?> property = ProxyProperty.of(proxyTargetClass, targetMethod, (instance, args, holder) -> {
+                Object[] invokingArgs = ProxyableBootstrap.prepareArguments(source, args, instance);
                 try {
                     return source.invoke(Selene.provide(proxyClass), invokingArgs);
                 } catch (CancelProxyException e) {
@@ -118,13 +121,23 @@ public abstract class ProxyableBootstrap {
             property.setTarget(target.at());
             property.setPriority(target.priority());
             property.setOverwriteResult(target.overwrite());
-            Selene.getServer().delegate(property);
+            InjectionPoint<C> point = InjectionPoint.of(proxyTargetClass, instance -> {
+                try {
+                    ProxyHandler<C> handler = new ProxyHandler<>(instance);
+                    handler.delegate(property);
+                    return handler.proxy();
+                } catch (Throwable t) {
+                    Selene.handle(t);
+                }
+                return instance;
+            });
+            Selene.getServer().injectAt(point);
         } catch (NoSuchMethodException e) {
             Selene.log().warn("Proxy target does not have declared method '" + methodName + "(" + Arrays.toString(arguments) + ") [" + proxyClass.getCanonicalName() + "]");
         }
     }
 
-    private Object[] prepareArguments(Method method, Object[] args, Object instance) {
+    private static Object[] prepareArguments(Method method, Object[] args, Object instance) {
         List<Object> arguments = SeleneUtils.emptyList();
         if (method.getParameters()[0].isAnnotationPresent(Instance.class)) {
             arguments.add(instance);

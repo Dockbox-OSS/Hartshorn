@@ -15,13 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.proxy;
+package org.dockbox.selene.proxy.handle;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.properties.ProxyProperty;
+import org.dockbox.selene.proxy.ProxyProperty;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -15,17 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.server.properties;
+package org.dockbox.selene.proxy;
 
-import org.dockbox.selene.core.proxy.Phase;
-import org.dockbox.selene.core.proxy.ProxyFunction;
-import org.dockbox.selene.core.proxy.ProxyHolder;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.proxy.handle.Phase;
+import org.dockbox.selene.proxy.handle.ProxyFunction;
+import org.dockbox.selene.proxy.handle.ProxyHolder;
 
 import java.lang.reflect.Method;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>>{
+public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
 
     public static final String KEY = "SeleneInternalProxyKey";
     private final Class<T> type;
