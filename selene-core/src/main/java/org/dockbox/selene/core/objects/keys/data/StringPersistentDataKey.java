@@ -17,23 +17,23 @@
 
 package org.dockbox.selene.core.objects.keys.data;
 
-import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.util.Reflect;
 
 public final class StringPersistentDataKey extends TypedPersistentDataKey<String> {
 
-    private StringPersistentDataKey(String name, String id, Extension extension) {
-        super(name, id, extension, String.class);
+    private StringPersistentDataKey(String name, String id, Module module) {
+        super(name, id, module, String.class);
     }
 
     public static StringPersistentDataKey of(String name, Class<?> owningClass) {
-        Extension extension = Reflect.getExtension(owningClass);
-        return of(name, extension);
+        Module module = Reflect.getModule(owningClass);
+        return of(name, module);
     }
 
-    public static StringPersistentDataKey of(String name, Extension extension) {
-        String id = Keys.convertToExtensionIdString(name, extension);
-        return new StringPersistentDataKey(name, id, extension);
+    public static StringPersistentDataKey of(String name, Module module) {
+        String id = Keys.convertToModuleIdString(name, module);
+        return new StringPersistentDataKey(name, id, module);
     }
 }

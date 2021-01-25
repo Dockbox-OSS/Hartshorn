@@ -40,13 +40,13 @@ dependencies {
     compile(project(':selene-common')) {
         exclude group: "org.spongepowered", module: "configurate**"
     }
-    new File(parent.rootDir, 'extensions').listFiles().each {
+    new File(parent.rootDir, 'modules').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            compile(project(":extensions:${it.name}"))
-            testCompileOnly(project(":extensions:${it.name}"))
+            compile(project(":modules:${it.name}"))
+            testCompileOnly(project(":modules:${it.name}"))
         }
     }
-    compile project(':extensions')
+    compile project(':modules')
     compile(project(':selene-nms-1.12')) {
         exclude group: 'net.minecraftforge', module: 'forge'
     }
@@ -70,7 +70,7 @@ dependencies {
     testCompileOnly(project(':selene-common')) {
         exclude group: "org.spongepowered", module: "configurate**"
     }
-    testCompileOnly project(':extensions')
+    testCompileOnly project(':modules')
     testCompileOnly(project(':selene-nms-1.12')) {
         exclude group: 'net.minecraftforge', module: 'forge'
     }

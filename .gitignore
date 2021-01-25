@@ -6,5 +6,5 @@ target
 dependency-reduced-pom.xml
 *.iml
 *.hprof
-extensions/src/test/resources/storage.db-journal
+module/src/test/resources/storage.db-journal
 servers

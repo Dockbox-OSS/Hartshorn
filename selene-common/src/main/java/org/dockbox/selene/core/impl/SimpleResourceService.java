@@ -87,7 +87,7 @@ public class SimpleResourceService implements ResourceService {
 
         FileManager cm = Selene.provide(FileManager.class);
         Path languageConfigFile = cm.getConfigFile(
-                Reflect.getExtension(Selene.class),
+                Reflect.getModule(Selene.class),
                 lang.getCode()
         );
         Map<String, String> resources;

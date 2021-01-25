@@ -41,8 +41,8 @@ public interface SpongeDefaultFileManager {
     }
 
     @NotNull
-    default Path getExtensionDir() {
-        return this.createPathIfNotExists(this.getServerRoot().resolve("extensions/"));
+    default Path getModuleDir() {
+        return this.createPathIfNotExists(this.getServerRoot().resolve("modules/"));
     }
 
     @NotNull
@@ -56,8 +56,8 @@ public interface SpongeDefaultFileManager {
     }
 
     @NotNull
-    default Path getExtensionConfigsDir() {
-        return this.getServerRoot().resolve("config/extensions/");
+    default Path getModuleConfigsDir() {
+        return this.getServerRoot().resolve("config/modules/");
     }
 
     @NotNull

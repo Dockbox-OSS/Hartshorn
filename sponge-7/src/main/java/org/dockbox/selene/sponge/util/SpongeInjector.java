@@ -29,15 +29,16 @@ import org.dockbox.selene.core.annotations.files.Bulk;
 import org.dockbox.selene.core.annotations.files.Format;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.extension.ExtensionManager;
-import org.dockbox.selene.core.external.WorldEditService;
+import org.dockbox.selene.core.module.ModuleManager;
+import org.dockbox.selene.integrated.IntegratedServer;
+import org.dockbox.selene.worldedit.WorldEditService;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.impl.SimpleBroadcastService;
 import org.dockbox.selene.core.impl.SimpleExceptionHelper;
 import org.dockbox.selene.core.impl.SimpleResourceService;
 import org.dockbox.selene.core.impl.events.SimpleEventBus;
-import org.dockbox.selene.core.impl.extension.SimpleExtensionManager;
+import org.dockbox.selene.core.impl.modules.SimpleModuleManager;
 import org.dockbox.selene.core.impl.server.config.SimpleGlobalConfig;
 import org.dockbox.selene.core.impl.web.GsonWebUtil;
 import org.dockbox.selene.core.impl.web.GsonXmlWebUtil;
@@ -54,14 +55,13 @@ import org.dockbox.selene.core.objects.item.ItemFactory;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.objects.profile.ProfileFactory;
 import org.dockbox.selene.core.packets.ChangeGameStatePacket;
-import org.dockbox.selene.core.server.IntegratedExtension;
+import org.dockbox.selene.core.server.IntegratedModule;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
 import org.dockbox.selene.core.server.config.GlobalConfig;
 import org.dockbox.selene.core.tasks.TaskRunner;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.util.web.WebUtil;
-import org.dockbox.selene.integrated.IntegratedServerExtension;
 import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.dialects.sqlite.SQLiteMan;
 import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
@@ -88,10 +88,10 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         // Helper types
         this.bind(ExceptionHelper.class).to(SimpleExceptionHelper.class);
         this.bind(TaskRunner.class).to(SpongeTaskRunner.class);
-        // Extension management
-        // Extension manager keeps static references, and can thus be recreated
-        this.bind(ExtensionManager.class).toInstance(new SimpleExtensionManager());
-        this.bind(IntegratedExtension.class).to(IntegratedServerExtension.class);
+        // Module management
+        // Module manager keeps static references, and can thus be recreated
+        this.bind(ModuleManager.class).toInstance(new SimpleModuleManager());
+        this.bind(IntegratedModule.class).to(IntegratedServer.class);
         // Utility types
         this.bind(DiscordUtils.class).to(SpongeDiscordUtils.class);
         this.bind(ThreadUtils.class).to(SpongeThreadUtils.class);

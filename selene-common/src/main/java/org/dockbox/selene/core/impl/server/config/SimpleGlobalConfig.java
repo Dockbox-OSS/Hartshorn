@@ -21,10 +21,10 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.annotations.entity.Metadata;
-import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.server.IntegratedExtension;
+import org.dockbox.selene.core.server.IntegratedModule;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.config.Environment;
 import org.dockbox.selene.core.server.config.ExceptionLevels;
@@ -43,7 +43,7 @@ public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
     @Inject
     private transient FileManager fileManager;
     @Inject
-    private transient IntegratedExtension integratedExtension;
+    private transient IntegratedModule integratedModule;
 
     private Language defaultLanguage = Language.EN_US;
     private boolean stacktracesAllowed = true;
@@ -86,12 +86,12 @@ public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Extension extension = Reflect.getExtension(this.integratedExtension.getClass());
-        if (null == extension) {
-            throw new IllegalStateException("Integrated extension not annotated as such.");
+        Module module = Reflect.getModule(this.integratedModule.getClass());
+        if (null == module) {
+            throw new IllegalStateException("Integrated module not annotated as such.");
         }
 
-        Path configPath = this.fileManager.getConfigFile(extension);
+        Path configPath = this.fileManager.getConfigFile(module);
         GlobalConfig globalConfig = this.fileManager
                 .read(configPath, SimpleGlobalConfig.class)
                 .orNull();

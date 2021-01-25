@@ -23,15 +23,16 @@ import com.google.inject.ProvisionException;
 
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.MinecraftVersion;
+import org.dockbox.selene.core.annotations.AbstractService;
 import org.dockbox.selene.core.annotations.event.Listener;
-import org.dockbox.selene.core.annotations.extension.ArgumentProvider;
-import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.module.ArgumentProvider;
+import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
-import org.dockbox.selene.core.extension.ExtensionContext;
-import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.module.ModuleContext;
+import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
@@ -115,17 +116,17 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
     }
 
     /**
-     * Initiates integrated extensions and performs a given consumer on each loaded extension.
+     * Initiates integrated modules and performs a given consumer on each loaded module.
      *
      * @param consumer
      *         The consumer to apply
      */
-    private void initIntegratedExtensions(Consumer<ExtensionContext> consumer) {
-        Selene.provide(ExtensionManager.class).initialiseExtensions().forEach(consumer);
+    private void initialiseModules(Consumer<ModuleContext> consumer) {
+        Selene.provide(ModuleManager.class).initialiseModules().forEach(consumer);
     }
 
     /**
-     * Initiates a {@link Selene} instance. Collecting integrated extensions and registering them to the
+     * Initiates a {@link Selene} instance. Collecting integrated modules and registering them to the
      * appropriate {@link EventBus}, {@link CommandBus}, and {@link DiscordUtils} instances.
      */
     protected void init() {
@@ -135,9 +136,15 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         Selene.log().info("\u00A7e `-`");
         Selene.log().info("     \u00A77Initiating \u00A7bSelene " + this.getVersion());
 
-        // Register additional argument types early on, before extensions are constructed
+        // Register additional argument types early on, before modules are constructed
         Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, ArgumentProvider.class).forEach(Selene::provide);
         super.boostrapDelegates();
+
+        Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, AbstractService.class).forEach(type -> {
+            if (Reflect.getSubTypes(SeleneInformation.PACKAGE_PREFIX, type).isEmpty()) {
+                Selene.log().error("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
+            }
+        });
 
         EventBus eb = Selene.provide(EventBus.class);
         CommandBus cb = Selene.provide(CommandBus.class);
@@ -145,7 +152,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
 
         eb.subscribe(this);
 
-        this.initIntegratedExtensions(this.getExtensionContextConsumer(cb, eb, du));
+        this.initialiseModules(this.getModuleConsumer(cb, eb, du));
         this.initResources();
         cb.apply();
 
@@ -157,7 +164,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
     }
 
     /**
-     * Prints information about registered instances. This includes injection bindings, extensions, and event handlers.
+     * Prints information about registered instances. This includes injection bindings, modules, and event handlers.
      * This method is typically only used when starting the server.
      *
      * @param event
@@ -180,12 +187,12 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         });
         Selene.log().info("  \u00A77.. and " + unprovisionedTypes.get() + " unprovisioned types.");
 
-        Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded extensions: ");
-        ExtensionManager em = Selene.provide(ExtensionManager.class);
-        em.getRegisteredExtensionIds().forEach(ext -> {
-            Exceptional<Extension> header = em.getHeader(ext);
+        Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded modules: ");
+        ModuleManager em = Selene.provide(ModuleManager.class);
+        em.getRegisteredModuleIds().forEach(ext -> {
+            Exceptional<Module> header = em.getHeader(ext);
             if (header.isPresent()) {
-                Extension ex = header.get();
+                Module ex = header.get();
                 Selene.log().info("  - \u00A77" + ex.name());
                 Selene.log().info("  | - \u00A77ID: \u00A78" + ex.id());
                 Selene.log().info("  | - \u00A77Authors: \u00A78" + Arrays.toString(ex.authors()));
@@ -206,9 +213,9 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         });
     }
 
-    private Consumer<ExtensionContext> getExtensionContextConsumer(CommandBus cb, EventBus eb, DiscordUtils du) {
-        return (ExtensionContext ctx) -> {
-            Class<?> type = ctx.getExtensionClass();
+    private Consumer<ModuleContext> getModuleConsumer(CommandBus cb, EventBus eb, DiscordUtils du) {
+        return (ModuleContext ctx) -> {
+            Class<?> type = ctx.getType();
             Selene.log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
             Exceptional<?> oi = super.getInstanceSafe(type);
             oi.ifPresent(i -> {

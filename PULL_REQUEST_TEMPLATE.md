@@ -7,7 +7,7 @@ Fixes #issue
 [comment]: <> (Please delete options that are not relevant.)
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New core feature
-- [ ] New extension
+- [ ] New module
 - [ ] Enhancement of existing functionality
 
 ## Status

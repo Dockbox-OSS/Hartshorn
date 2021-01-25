@@ -134,7 +134,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
     private boolean processFlagParameters(AnnotatedElement parameter, CommandContext context, Collection<Object> finalArgs) {
         if (parameter.isAnnotationPresent(Flag.class)) {
             String flagName = parameter.getAnnotation(Flag.class).value();
-            if (context.hasFlag(flagName) && context.flag(flagName).isPresent()) {
+            if (context.has(flagName) && context.flag(flagName).isPresent()) {
                 finalArgs.add(context.flag(flagName).get().getValue());
             } else {
                 // Flags are optional, therefore we do not log missing flags
