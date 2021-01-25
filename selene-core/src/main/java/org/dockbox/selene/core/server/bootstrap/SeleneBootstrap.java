@@ -137,9 +137,12 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         Selene.log().info("     \u00A77Initiating \u00A7bSelene " + this.getVersion());
 
         // Register additional argument types early on, before modules are constructed
-        Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, ArgumentProvider.class).forEach(Selene::provide);
-        super.boostrapDelegates();
-
+        Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, ArgumentProvider.class)
+                .forEach(Selene::provide);
+        // Register pre-loadable types early on, these typically modify initialisation logic
+        Reflect.getSubTypes(SeleneInformation.PACKAGE_PREFIX, Preloadable.class)
+                .forEach(t -> Selene.provide(t).preload());
+        // Ensure all services requiring a platform implementation have one present
         Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, AbstractService.class).forEach(type -> {
             if (Reflect.getSubTypes(SeleneInformation.PACKAGE_PREFIX, type).isEmpty()) {
                 Selene.log().error("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
