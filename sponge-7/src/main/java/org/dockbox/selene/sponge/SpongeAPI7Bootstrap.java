@@ -244,7 +244,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
         if (oj.isPresent()) {
             JDA jda = oj.get();
             // Avoid registering it twice if the scheduler outside this condition is executing this twice.
-            // Usually cancelling all tasks would be preferred, however any extension is able to schedule tasks
+            // Usually cancelling all tasks would be preferred, however any module is able to schedule tasks
             // we may not want to cancel.
             if (!jda.getRegisteredListeners().contains(this.discordListener)) {
                 jda.addEventListener(this.discordListener);

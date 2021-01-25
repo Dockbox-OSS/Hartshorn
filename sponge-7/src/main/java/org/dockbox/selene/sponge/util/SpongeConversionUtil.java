@@ -36,8 +36,8 @@ import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
 import org.dockbox.selene.core.exceptions.TypeConversionException;
 import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
-import org.dockbox.selene.core.external.region.Clipboard;
-import org.dockbox.selene.core.external.region.Region;
+import org.dockbox.selene.worldedit.region.Clipboard;
+import org.dockbox.selene.worldedit.region.Region;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
 import org.dockbox.selene.core.inventory.InventoryType;
@@ -622,14 +622,14 @@ public enum SpongeConversionUtil {
         return EquipmentTypes.ANY;
     }
 
-    public static Mask toWorldEdit(org.dockbox.selene.core.external.pattern.Mask mask) {
+    public static Mask toWorldEdit(org.dockbox.selene.worldedit.region.Mask mask) {
         if (mask instanceof WrappedMask) {
             return ((WrappedMask) mask).getReference().orNull();
         }
         throw new IllegalStateException("Unknown implementation for Mask: [" + mask.getClass() + "]");
     }
 
-    public static Pattern toWorldEdit(org.dockbox.selene.core.external.pattern.Pattern pattern) {
+    public static Pattern toWorldEdit(org.dockbox.selene.worldedit.region.Pattern pattern) {
         if (pattern instanceof WrappedPattern) {
             return ((WrappedPattern) pattern).getReference().orNull();
         }

@@ -34,7 +34,7 @@ repositories {
 
 archivesBaseName = 'core'
 group = project.pluginGroup
-description = 'Common API for Selene extensions'
+description = 'Common API for Selene modules'
 def date = LocalDate.now().toString()
 
 dependencies {

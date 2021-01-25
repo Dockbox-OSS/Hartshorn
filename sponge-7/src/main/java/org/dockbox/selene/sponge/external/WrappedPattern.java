@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.external;
 
-import org.dockbox.selene.core.external.pattern.Pattern;
+import org.dockbox.selene.worldedit.region.Pattern;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.Wrapper;
 import org.jetbrains.annotations.NotNull;

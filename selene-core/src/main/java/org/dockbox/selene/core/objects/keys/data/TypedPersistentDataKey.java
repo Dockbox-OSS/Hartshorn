@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.objects.keys.data;
 
-import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.jetbrains.annotations.NonNls;
 
@@ -28,13 +28,13 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     private final String name;
     @NonNls
     private final String id;
-    private final Extension extension;
+    private final Module module;
     private final Class<T> type;
 
-    public TypedPersistentDataKey(String name, String id, Extension extension, Class<T> type) {
+    public TypedPersistentDataKey(String name, String id, Module module, Class<T> type) {
         this.name = name;
         this.id = id;
-        this.extension = extension;
+        this.module = module;
         this.type = type;
     }
 
@@ -44,8 +44,8 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     }
 
     @Override
-    public String getRegisteringExtensionId() {
-        return this.extension.id();
+    public String getRegisteringModuleId() {
+        return this.module.id();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     @Override
     public int hashCode() {
         int result = this.id.hashCode();
-        result = 31 * result + this.extension.hashCode();
+        result = 31 * result + this.module.hashCode();
         result = 31 * result + this.type.hashCode();
         return result;
     }
@@ -74,7 +74,7 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
         TypedPersistentDataKey<?> that = (TypedPersistentDataKey<?>) o;
 
         if (!this.id.equals(that.id)) return false;
-        if (!this.extension.equals(that.extension)) return false;
+        if (!this.module.equals(that.module)) return false;
         return this.type.equals(that.type);
     }
 }

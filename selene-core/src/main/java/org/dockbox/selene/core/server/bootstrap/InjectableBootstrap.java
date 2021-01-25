@@ -25,10 +25,10 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
 
+import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.annotations.proxy.Proxy;
-import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.extension.ExtensionContext;
-import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.module.ModuleContext;
+import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
@@ -61,35 +61,34 @@ public abstract class InjectableBootstrap extends ProxyableBootstrap {
     private Injector injector;
     private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
     private final transient List<ProxyProperty<?, ?>> proxies = SeleneUtils.emptyConcurrentList();
-    private boolean extensionsLoaded = false;
 
     public <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties) {
         return Exceptional.ofNullable(this.getInstance(type, additionalProperties));
     }
 
-    public <T> Exceptional<T> getInstanceSafe(Class<T> type, Object extension, InjectorProperty<?>... additionalProperties) {
-        return Exceptional.ofNullable(this.getInstance(type, extension, additionalProperties));
+    public <T> Exceptional<T> getInstanceSafe(Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
+        return Exceptional.ofNullable(this.getInstance(type, module, additionalProperties));
     }
 
-    public <T> Exceptional<T> getInstanceSafe(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
-        return Exceptional.ofNullable(this.getInstance(type, extension, additionalProperties));
+    public <T> Exceptional<T> getInstanceSafe(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
+        return Exceptional.ofNullable(this.getInstance(type, module, additionalProperties));
     }
 
     public <T> T getInstance(Class<T> type, InjectorProperty<?>... additionalProperties) {
         return this.getInstance(type, type, additionalProperties);
     }
 
-    public <T> T getInstance(Class<T> type, Object extension, InjectorProperty<?>... additionalProperties) {
-        if (null != extension) {
-            return this.getInstance(type, extension.getClass(), additionalProperties);
+    public <T> T getInstance(Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
+        if (null != module) {
+            return this.getInstance(type, module.getClass(), additionalProperties);
         } else {
             return this.getInstance(type, additionalProperties);
         }
     }
 
     /**
-     * Gets an instance of a provided {@link Class} type. If the type is annotated with {@link Extension} it is ran
-     * through the {@link ExtensionManager} instance to obtain the instance. If it is not annotated as such, it is ran
+     * Gets an instance of a provided {@link Class} type. If the type is annotated with {@link Module} it is ran
+     * through the {@link ModuleManager} instance to obtain the instance. If it is not annotated as such, it is ran
      * through the instance {@link Injector} to obtain the instance based on implementation, or manually, provided
      * mappings.
      *
@@ -97,30 +96,30 @@ public abstract class InjectableBootstrap extends ProxyableBootstrap {
      *         The type parameter for the instance to return
      * @param type
      *         The type of the instance
-     * @param extension
-     *         The type of the extension if extension specific bindings are to be used
+     * @param module
+     *         The type of the module if module specific bindings are to be used
      * @param additionalProperties
      *         The properties to be passed into the type either during or after construction
      *
      * @return The instance, if present. Otherwise returns null
      */
-    public <T> T getInstance(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
+    public <T> T getInstance(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
         T typeInstance = null;
 
-        // Extensions are initially created using #getInstance here (assuming SimpleExtensionManager or a derivative is
-        // bound to ExtensionManager). Therefore it may not yet be present in the ExtensionManager's registry. In which
+        // Modules are initially created using #getInstance here (assuming SimpleModuleManager or a derivative is
+        // bound to ModuleManager). Therefore it may not yet be present in the ModuleManager's registry. In which
         // case `null` is (re-)assigned to typeInstance so that it can be created through the generated
-        // extension-specific injector.
-        if (type.isAnnotationPresent(Extension.class)) {
-            typeInstance = this.getInstanceSafe(ExtensionManager.class)
-                    .map(extensionManager -> extensionManager.getInstance(type).orNull())
+        // module-specific injector.
+        if (type.isAnnotationPresent(Module.class)) {
+            typeInstance = this.getInstanceSafe(ModuleManager.class)
+                    .map(moduleManager -> moduleManager.getInstance(type).orNull())
                     .orNull();
 
         }
 
         Injector injector = this.rebuildInjector();
 
-        // Type instance can be present if it is a extension. These instances are also created using Guice injectors
+        // Type instance can be present if it is a module. These instances are also created using Guice injectors
         // and therefore do not need late member injection here.
         if (null == typeInstance) {
             try {
@@ -244,36 +243,36 @@ public abstract class InjectableBootstrap extends ProxyableBootstrap {
         this.injector = null; // Reset injector so it regenerates later
     }
 
-    public Injector createExtensionInjector(Object instance) {
-        if (null != instance && instance.getClass().isAnnotationPresent(Extension.class)) {
-            Exceptional<ExtensionContext> context = this.getInstance(ExtensionManager.class).getContext(instance.getClass());
-            Extension extension;
-            extension = context
-                    .map(ExtensionContext::getExtension)
-                    .orElseGet(() -> instance.getClass().getAnnotation(Extension.class));
-            return this.createExtensionInjector(instance, extension, context.orNull());
+    public Injector createModuleInjector(Object instance) {
+        if (null != instance && instance.getClass().isAnnotationPresent(Module.class)) {
+            Exceptional<ModuleContext> context = this.getInstance(ModuleManager.class).getContext(instance.getClass());
+            Module module;
+            module = context
+                    .map(ModuleContext::getModule)
+                    .orElseGet(() -> instance.getClass().getAnnotation(Module.class));
+            return this.createModuleInjector(instance, module, context.orNull());
         }
         return this.rebuildInjector();
     }
 
     @SuppressWarnings("unchecked")
-    private <T> ExtensionModule getExtensionModule(T instance, Extension header, ExtensionContext context) {
-        ExtensionModule module = new ExtensionModule();
+    private <T> ModuleInjectionConfiguration getModuleConfiguration(T instance, Module header, ModuleContext context) {
+        ModuleInjectionConfiguration module = new ModuleInjectionConfiguration();
 
         if (!(null == instance || instance instanceof Class<?>)) {
             module.acceptBinding((Class<T>) instance.getClass(), instance);
             module.acceptInstance(instance);
         }
         if (null != header)
-            module.acceptBinding(Extension.class, header);
+            module.acceptBinding(Module.class, header);
         if (null != context)
-            module.acceptBinding(ExtensionContext.class, context);
+            module.acceptBinding(ModuleContext.class, context);
 
         return module;
     }
 
-    public Injector createExtensionInjector(Object instance, Extension header, ExtensionContext context) {
-        return this.rebuildInjector(this.getExtensionModule(instance, header, context));
+    public Injector createModuleInjector(Object instance, Module header, ModuleContext context) {
+        return this.rebuildInjector(this.getModuleConfiguration(instance, header, context));
     }
 
     public <T> T injectMembers(T type) {
@@ -295,10 +294,10 @@ public abstract class InjectableBootstrap extends ProxyableBootstrap {
         return this.injector;
     }
 
-    public <T> T injectMembers(T type, Object extensionInstance) {
+    public <T> T injectMembers(T type, Object module) {
         if (null != type) {
-            if (null != extensionInstance && extensionInstance.getClass().isAnnotationPresent(Extension.class)) {
-                this.createExtensionInjector(extensionInstance).injectMembers(type);
+            if (null != module && module.getClass().isAnnotationPresent(Module.class)) {
+                this.createModuleInjector(module).injectMembers(type);
             } else {
                 this.rebuildInjector().injectMembers(type);
             }

@@ -153,7 +153,7 @@ public class SpongeCommandBus extends DefaultCommandBus {
         return (src, args) -> {
             /*
              Command sources need to be convertable so that they can be identified by command implementations. While it
-             is possible for extensions to implement CommandSources, these should never be used to execute commands.
+             is possible for modules to implement CommandSources, these should never be used to execute commands.
              Only the console, players, and Discord command sources can be converted natively.
              */
             CommandSource sender = SpongeConversionUtil

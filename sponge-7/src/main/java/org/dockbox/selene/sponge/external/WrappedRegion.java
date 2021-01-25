@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.external;
 
-import org.dockbox.selene.core.external.region.Region;
+import org.dockbox.selene.worldedit.region.Region;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.Wrapper;
 import org.dockbox.selene.core.objects.location.World;

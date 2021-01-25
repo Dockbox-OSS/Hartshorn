@@ -26,7 +26,7 @@ import org.dockbox.selene.core.server.Selene;
 
 import java.util.Map;
 
-@Resources(responsibleExtension = Selene.class)
+@Resources(module = Selene.class)
 public enum IntegratedResource implements ResourceEntry {
     // Color formats
     COLOR_PRIMARY("b", "color.primary"),
