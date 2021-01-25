@@ -74,7 +74,7 @@ public class DaveExtension implements InjectableType {
 
     @Command(aliases = "run", usage = "run <trigger{String}>")
     public void run(Player source, CommandContext context) {
-        String triggerId = context.getArgument("trigger").get().getValue();
+        String triggerId = context.argument("trigger").get().getValue();
         this.triggers.findById(triggerId).ifPresent(trigger -> {
             DaveUtils.performTrigger(
                 source,

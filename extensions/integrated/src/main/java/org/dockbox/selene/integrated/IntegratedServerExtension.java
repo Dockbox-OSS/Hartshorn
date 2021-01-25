@@ -31,6 +31,7 @@ import org.dockbox.selene.core.extension.ExtensionContext;
 import org.dockbox.selene.core.extension.ExtensionManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
+import org.dockbox.selene.core.impl.events.SimpleEventBus;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
@@ -107,7 +108,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
     @Command(aliases = "extension", usage = "extension <id{Extension}>")
     public void debugExtension(MessageReceiver src, CommandContext ctx) {
         Reflect.runWithInstance(ExtensionManager.class, em -> {
-            Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
+            Exceptional<Argument<Extension>> oarg = ctx.argument("id");
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
                 return;
@@ -134,8 +135,8 @@ public class IntegratedServerExtension implements IntegratedExtension {
     @Command(aliases = "reload", usage = "reload [id{Extension}]", confirm = true)
     public void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = Selene.provide(EventBus.class);
-        if (ctx.hasArgument("id")) {
-            Exceptional<Argument<Extension>> oarg = ctx.getArgument("id", Extension.class);
+        if (ctx.has("id")) {
+            Exceptional<Argument<Extension>> oarg = ctx.argument("id");
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
                 return;
@@ -162,7 +163,7 @@ public class IntegratedServerExtension implements IntegratedExtension {
             src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
             return;
         }
-        Exceptional<Argument<String>> optionalCooldownId = ctx.getArgument("cooldownId");
+        Exceptional<Argument<String>> optionalCooldownId = ctx.argument("cooldownId");
 
         // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
         // argument here is just a confirmation that the source is correct.

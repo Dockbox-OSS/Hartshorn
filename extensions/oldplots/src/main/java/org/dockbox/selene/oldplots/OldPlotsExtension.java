@@ -71,10 +71,10 @@ public class OldPlotsExtension {
     
     @Command(aliases = "oldplots", usage = "oldplots <player{Player}>", permission = "selene.oldplots.list")
     public void oldPlotsCommand(Player source, CommandContext ctx) throws InvalidConnectionException {
-        if (!ctx.hasArgument("player")) {
+        if (!ctx.has("player")) {
             source.sendWithPrefix(OldPlotsResources.ERROR_NO_PLAYER);
         }
-        Player player = ctx.getArgument("player", Player.class).rethrowUnchecked().get().getValue();
+        Player player = ctx.get("player");
 
         SQLMan<?> man = this.getSQLMan();
         Table plots = man.getTable("plot");
@@ -113,7 +113,7 @@ public class OldPlotsExtension {
     
     @Command(aliases = "optp", usage = "teleport <id{Int}>", permission = "selene.oldplots.teleport")
     public void teleportCommand(Player source, CommandContext context) throws InvalidConnectionException {
-        Integer id = context.getArgument("id", Integer.class).get().getValue();
+        Integer id = context.get("id");
         SQLMan<?> man = this.getSQLMan();
         Table plots = man.getTable("plot");
         plots = plots.where(OldPlotsIdentifiers.PLOT_ID, id);
