@@ -5,10 +5,11 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.palswap.fileparsers.BlockRegistryParser;
-import org.dockbox.selene.palswap.fileparsers.ItemData;
 import org.dockbox.selene.structures.registry.RegistryIdentifier;
+import org.dockbox.selene.palswap.fileparsers.ItemData;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -49,7 +50,8 @@ public enum VariantIdentifier implements RegistryIdentifier {
 
     private final Set<String> identifiers;
     private static final Map<String, VariantIdentifier> identifierMap = SeleneUtils.emptyConcurrentMap();
-    private static final BlockRegistryParser blockRegistryParser = Selene.provide(BlockRegistryParser.class);
+    private static BlockRegistryParser blockRegistryParser;
+    private static ItemData overridenBlockNames;
 
     public static final Pattern blockNameIdentifierRegex = Pattern.compile("(?:\\w* )*(\\w* )+(\\w*)");
     public static final Pattern conquestIdIdentifierRegex = Pattern.compile("(?:conquest:)?\\w*_(\\w*)_\\d*(?::\\d{1,2})?");
@@ -60,27 +62,21 @@ public enum VariantIdentifier implements RegistryIdentifier {
                 identifierMap.put(identifier, variantIdentifier);
             }
         }
+        if (SeleneBootstrap.isConstructed()) {
+            blockRegistryParser = Selene.provide(BlockRegistryParser.class);
+        }
     }
-
-    private static ItemData overridenBlockNames;
 
     public static ItemData getOverridenBlockNames() {
         if (null == overridenBlockNames) {
-            String filename = blockRegistryParser.getOverridenBlockNamesFile();
+            if (!SeleneBootstrap.isConstructed()) return (overridenBlockNames = new ItemData());
 
             FileManager fm = Selene.provide(FileManager.class);
-            Path file = fm.getDataFile(BlockRegistryExtension.class, filename);
+            Path file = fm.getDataFile(BlockRegistryExtension.class, "overridenblocknames");
 
             Exceptional<ItemData> mappings = fm.read(file, ItemData.class);
-
-            mappings.ifPresent(
-                    m -> overridenBlockNames = m
-            ).ifAbsent(
-                    () -> {
-                        Selene.log().info("Couldn't retrieve block identifier mappings");
-                        overridenBlockNames = new ItemData();
-                    }
-            );
+            mappings.ifPresent(m -> overridenBlockNames = m)
+                    .ifAbsent(() -> overridenBlockNames = new ItemData());
         }
         return overridenBlockNames;
     }
@@ -119,14 +115,14 @@ public enum VariantIdentifier implements RegistryIdentifier {
             String secondLastWord = matcher.group(1);
 
             if (of(secondLastWord + lastWord).isPresent())
-                return name.replace(" " + secondLastWord + lastWord, "");
+                return name.replace(" " + secondLastWord + lastWord, "").trim();
             if (of(lastWord).isPresent())
-                return name.replace(lastWord, "");
+                return name.replace(lastWord, "").trim();
             if (name.split(" ")[0].equalsIgnoreCase("horizontal") && lastWord.equalsIgnoreCase("beam"))
-                return name.replace("Horizontal", "");
+                return name.replace("Horizontal", "").trim();
         }
 
-        return name;
+        return name.trim();
     }
 
     public static Exceptional<VariantIdentifier> ofName(String name) {
@@ -157,6 +153,15 @@ public enum VariantIdentifier implements RegistryIdentifier {
 
     public static Exceptional<VariantIdentifier> ofID(String id) {
         return of(id.substring(id.lastIndexOf("_") + 1));
+    }
+
+    @Deprecated
+    public static Exceptional<VariantIdentifier> ofRawItem(Item item) {
+        String id = item.getId();
+        if (id.contains("minecraft:")) {
+            return ofName(item.getDisplayName(Language.EN_US).toStringValue());
+        }
+        return ofRawID(id);
     }
 
     @Deprecated

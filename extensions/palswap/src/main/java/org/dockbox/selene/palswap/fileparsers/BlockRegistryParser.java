@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Singleton
 public abstract class BlockRegistryParser {
 
     //TODO: add command updates ItemData
@@ -60,8 +59,10 @@ public abstract class BlockRegistryParser {
             String id = this.getItemID(item);
             String blockIdentifier = eBlockIdentifier.get();
             this.blockIdentifierIDs.put(id, blockIdentifier);
-            blockIdentifiers.add(blockIdentifier);
 
+            if (!blockIdentifiers.contains(blockIdentifier)) {
+                blockIdentifiers.add(blockIdentifier);
+            }
             this.registerItem(rawID, item);
         }
         return blockIdentifiers;
@@ -133,7 +134,4 @@ public abstract class BlockRegistryParser {
     public abstract String getItemID(Item item);
 
     public abstract Item getItemFromRawID(String rawID);
-
-    //TODO: Remove (Not really needed?)
-    public abstract String getOverridenBlockNamesFile();
 }

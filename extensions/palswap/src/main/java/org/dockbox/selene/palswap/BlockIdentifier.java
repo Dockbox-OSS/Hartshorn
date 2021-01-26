@@ -1,5 +1,4 @@
 package org.dockbox.selene.palswap;
-
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;

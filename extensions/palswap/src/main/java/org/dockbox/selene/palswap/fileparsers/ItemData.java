@@ -13,12 +13,12 @@ public class ItemData {
     private Map<String, String> itemRegistry = SeleneUtils.emptyConcurrentMap();
 
     @Setting
-    private Map<String, String> blockIdentifierIDs = SeleneUtils.emptyConcurrentMap();
+    private Map<String, String> blockIdentifierIds = SeleneUtils.emptyConcurrentMap();
 
     public static ItemData of(Map<String, String> itemRegistry, Map<String, String> blockIdentifierIDs) {
         ItemData instance = new ItemData();
         instance.itemRegistry = itemRegistry;
-        instance.blockIdentifierIDs = blockIdentifierIDs;
+        instance.blockIdentifierIds = blockIdentifierIDs;
         return instance;
     }
 
@@ -27,6 +27,6 @@ public class ItemData {
     }
 
     public Map<String, String> getBlockIdentifierIDs() {
-        return this.blockIdentifierIDs;
+        return this.blockIdentifierIds;
     }
 }

@@ -39,14 +39,17 @@ public final class BlockRegistryUtil {
                     .replace(")", "")
                     .replace("-", "_")
                     .replace("and", "")
+                    .replace("with", "")
                     .replace("vertical_connection", "ctm")
                     .replace("round_top", "round"));
     }
 
     public static String getItemVariant(Item item) {
-        return VariantIdentifier.ofItem(item).toString()
+        return VariantIdentifier.ofRawItem(item).orElse(VariantIdentifier.FULL)
+                .toString()
                 .toLowerCase()
                 .replace("_", "");
     }
 }
+
 

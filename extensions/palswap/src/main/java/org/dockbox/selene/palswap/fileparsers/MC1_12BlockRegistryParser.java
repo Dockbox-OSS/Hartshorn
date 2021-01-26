@@ -108,9 +108,4 @@ public class MC1_12BlockRegistryParser extends BlockRegistryParser {
         }
         return Selene.getItems().getAir();
     }
-
-    @Override
-    public String getOverridenBlockNamesFile() {
-        return "overridenblocknames";
-    }
 }

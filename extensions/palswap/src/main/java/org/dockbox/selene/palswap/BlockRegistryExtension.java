@@ -38,14 +38,15 @@ public class BlockRegistryExtension {
     private Logger logger;
     private static Registry<Registry<Item>> blockRegistry = new Registry<>();
 
-    private final BlockRegistryParser blockRegistryParser = Selene.provide(BlockRegistryParser.class);
-    private final String itemRegistryFile = "";
+    private BlockRegistryParser blockRegistryParser;
+    private final String itemRegistryFile = "itemdata";
 
     @Listener
     public void OnServerStartedEvent(ServerStartedEvent event) {
         Selene.getServer().bindUtility(
                 BlockRegistryParser.class, BlockRegistryUtil.getBlockRegistryParserClass());
 
+        this.blockRegistryParser = Selene.provide(BlockRegistryParser.class);
         this.blockRegistryParser.LoadItemData(this.itemRegistryFile);
 
         blockRegistry = loadBlockRegistry();
