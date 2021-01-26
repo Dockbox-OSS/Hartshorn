@@ -84,13 +84,6 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
     }
 
     /**
-     * @return If the bootstrap has been constructed
-     */
-    public static boolean isConstructed() {
-        return null != instance;
-    }
-
-    /**
      * Loads various properties from selene.properties, including the latest update and version.
      * Once done sets the static instance equal to this instance.
      */
