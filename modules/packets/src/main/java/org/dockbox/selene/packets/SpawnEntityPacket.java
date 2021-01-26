@@ -15,10 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.packets;
+package org.dockbox.selene.packets;
 
+import org.dockbox.selene.core.annotations.RequiresBinding;
 import org.dockbox.selene.core.entities.Entity;
+import org.dockbox.selene.core.packets.Packet;
 
+@SuppressWarnings("AbstractClassWithoutAbstractMethods")
+@RequiresBinding
 public abstract class SpawnEntityPacket<T extends Entity> extends Packet {
 
     private T entity;

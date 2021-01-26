@@ -32,4 +32,11 @@ dependencies {
     testCompile(project(':selene-common')) {
         exclude group: "org.spongepowered", module: "configurate**"
     }
+
+    new File(parent.rootDir, 'modules').listFiles().each {
+        if (it.directory && new File(it, 'build.gradle').exists()) {
+            compileOnly(project(":modules:${it.name}"))
+            testCompileOnly(project(":modules:${it.name}"))
+        }
+    }
 }

@@ -21,10 +21,10 @@ import net.minecraft.network.play.server.SPacketChangeGameState;
 
 import org.dockbox.selene.core.Weather;
 import org.dockbox.selene.core.objects.keys.Keys;
-import org.dockbox.selene.core.packets.ChangeGameStatePacket;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
+import org.dockbox.selene.packets.ChangeGameStatePacket;
 
 /**
  * Represents a global gamestate change packet. See <a href="https://wiki.vg/Protocol#Change_Game_State">Protocol - Change Game State</a> for more

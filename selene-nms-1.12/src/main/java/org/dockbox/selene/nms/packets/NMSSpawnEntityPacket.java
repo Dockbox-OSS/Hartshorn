@@ -20,9 +20,9 @@ package org.dockbox.selene.nms.packets;
 import net.minecraft.network.play.server.SPacketSpawnGlobalEntity;
 
 import org.dockbox.selene.core.entities.Entity;
-import org.dockbox.selene.core.packets.SpawnEntityPacket;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.nms.entities.NMSEntity;
+import org.dockbox.selene.packets.SpawnEntityPacket;
 
 public class NMSSpawnEntityPacket<T extends Entity> extends SpawnEntityPacket<T> implements NMSPacket<SPacketSpawnGlobalEntity> {
 

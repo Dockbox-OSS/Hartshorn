@@ -50,6 +50,7 @@ dependencies {
     compileOnly(project(':selene-common')) {
         exclude group: "org.spongepowered", module: "configurate**"
     }
+    compileOnly project(':modules:packets')
 }
 
 publishing {
