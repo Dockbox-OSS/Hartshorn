@@ -624,9 +624,9 @@ public final class Exceptional<T> {
     public Exceptional<T> orElseSupply(Supplier<T> defaultValue) {
         if (this.isAbsent()) {
             if (this.errorPresent()) {
-                return of(defaultValue.get(), this.throwable);
+                return ofNullable(defaultValue.get(), this.throwable);
             } else {
-                return of(defaultValue.get());
+                return ofNullable(defaultValue.get());
             }
         }
         return this;

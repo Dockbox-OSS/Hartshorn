@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.worldedit;
 
-import org.dockbox.selene.core.annotations.AbstractService;
+import org.dockbox.selene.core.annotations.RequiresBinding;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.Player;
@@ -28,7 +28,7 @@ import org.dockbox.selene.worldedit.region.Region;
 
 import java.util.Collection;
 
-@AbstractService
+@RequiresBinding
 public interface WorldEditService {
 
     Exceptional<Region> getPlayerSelection(Player player);

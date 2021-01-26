@@ -15,14 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.annotations;
+package org.dockbox.selene.packets.data;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public enum Weather {
+    CLEAR(1),
+    RAIN(2);
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface AbstractService {
+    private final int gameStateId;
+
+    Weather(int gameStateId) {
+        this.gameStateId = gameStateId;
+    }
+
+    public int getGameStateId() {
+        return this.gameStateId;
+    }
+
+    public static Weather getByGameStateId(int gameStateId) {
+        for (Weather value : values()) {
+            if (value.getGameStateId() == gameStateId) return value;
+        }
+        return Weather.CLEAR;
+    }
 }

@@ -15,10 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.packets;
+package org.dockbox.selene.packets;
 
-import org.dockbox.selene.core.Weather;
+import org.dockbox.selene.packets.data.Weather;
+import org.dockbox.selene.core.annotations.RequiresBinding;
+import org.dockbox.selene.core.objects.Packet;
 
+@RequiresBinding
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class ChangeGameStatePacket extends Packet {
 

@@ -31,6 +31,8 @@ import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.integrated.IntegratedServer;
+import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
+import org.dockbox.selene.packets.SpawnEntityPacket;
 import org.dockbox.selene.worldedit.WorldEditService;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.ResourceService;
@@ -54,7 +56,7 @@ import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.item.ItemFactory;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.objects.profile.ProfileFactory;
-import org.dockbox.selene.core.packets.ChangeGameStatePacket;
+import org.dockbox.selene.packets.ChangeGameStatePacket;
 import org.dockbox.selene.core.server.IntegratedModule;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
@@ -130,5 +132,6 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(Console.class).toInstance(SpongeConsole.getInstance());
         // Packets
         this.bind(ChangeGameStatePacket.class).to(NMSChangeGameStatePacket.class);
+        this.bind(SpawnEntityPacket.class).to(NMSSpawnEntityPacket.class);
     }
 }

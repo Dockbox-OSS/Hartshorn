@@ -55,6 +55,7 @@ import java.util.function.Predicate;
 @SuppressWarnings("unused")
 public final class Reflect {
 
+    private static final Map<String, Reflections> reflectedPrefixes = SeleneUtils.emptyConcurrentMap();
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap =
             SeleneUtils.ofEntries(SeleneUtils.entry(boolean.class, Boolean.class),
                     SeleneUtils.entry(byte.class, Byte.class),
@@ -256,7 +257,7 @@ public final class Reflect {
      * @return The list of sub-types, or an empty list
      */
     public static <T> Collection<Class<? extends T>> getSubTypes(String prefix, Class<T> parent) {
-        Reflections reflections = new Reflections(prefix);
+        Reflections reflections = getReflectedPrefix(prefix);
         Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(parent);
         return SeleneUtils.asList(subTypes);
     }
@@ -277,7 +278,7 @@ public final class Reflect {
      * @return The annotated types
      */
     public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation, boolean skipParents) {
-        Reflections reflections = new Reflections(prefix);
+        Reflections reflections = getReflectedPrefix(prefix);
         Set<Class<?>> types = reflections.getTypesAnnotatedWith(annotation, !skipParents);
         return SeleneUtils.asList(types);
     }
@@ -788,5 +789,11 @@ public final class Reflect {
             Reflect.forEachFieldIn(type.getSuperclass(), consumer);
     }
 
+    private static Reflections getReflectedPrefix(String prefix) {
+        if (!reflectedPrefixes.containsKey(prefix)) {
+            reflectedPrefixes.put(prefix, new Reflections(prefix));
+        }
+        return reflectedPrefixes.get(prefix);
+    }
 
 }

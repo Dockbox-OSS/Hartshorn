@@ -15,26 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core;
+package org.dockbox.selene.packets;
 
-public enum Weather {
-    CLEAR(1),
-    RAIN(2);
+import org.dockbox.selene.core.annotations.module.Module;
 
-    private final int gameStateId;
-
-    Weather(int gameStateId) {
-        this.gameStateId = gameStateId;
-    }
-
-    public int getGameStateId() {
-        return this.gameStateId;
-    }
-
-    public static Weather getByGameStateId(int gameStateId) {
-        for (Weather value : values()) {
-            if (value.getGameStateId() == gameStateId) return value;
-        }
-        return Weather.CLEAR;
-    }
+@Module(id = "packets", name = "Packets", description = "Provides additional packets to the Packet API", authors = "GuusLieben")
+public class PacketsModule {
 }

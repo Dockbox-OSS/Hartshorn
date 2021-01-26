@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.packets;
+package org.dockbox.selene.core.objects;
 
 import org.dockbox.selene.core.server.Selene;
 import org.jetbrains.annotations.Nullable;

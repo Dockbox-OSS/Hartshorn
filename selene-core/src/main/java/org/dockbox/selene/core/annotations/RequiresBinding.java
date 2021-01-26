@@ -15,32 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.server.inject;
+package org.dockbox.selene.core.annotations;
 
-import org.dockbox.selene.core.util.Reflect;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.util.function.Function;
-
-public final class InjectionPoint<T> {
-
-    private final Class<T> type;
-    private final Function<T, T> point;
-
-    private InjectionPoint(Class<T> type, Function<T, T> point) {
-        this.type = type;
-        this.point = point;
-    }
-
-    public boolean accepts(Class<?> type) {
-        return Reflect.isAssignableFrom(this.type, type);
-    }
-
-    public T apply(T instance) {
-        return this.point.apply(instance);
-    }
-
-    public static <T> InjectionPoint<T> of(Class<T> type, Function<T, T> point) {
-        return new InjectionPoint<>(type, point);
-    }
-
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface RequiresBinding {
 }
