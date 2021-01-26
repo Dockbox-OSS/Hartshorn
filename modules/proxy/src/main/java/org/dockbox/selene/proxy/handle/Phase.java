@@ -15,17 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.proxy;
+package org.dockbox.selene.proxy.handle;
 
-import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
+public enum Phase {
+    HEAD, OVERWRITE, TAIL;
 
-/**
- * The exception to be thrown by methods annotated with {@link org.dockbox.selene.core.annotations.proxy.Proxy.Target}
- * to indicate a proxy delegation should be cancelled.
- */
-public class CancelProxyException extends UncheckedSeleneException {
-
-    public CancelProxyException() {
-        super("");
+    public Phase[] collect() {
+        return new Phase[] {HEAD, OVERWRITE, TAIL};
     }
 }

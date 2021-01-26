@@ -22,10 +22,7 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
-import org.dockbox.selene.core.proxy.ProxyFunction;
-import org.dockbox.selene.core.proxy.ProxyHandler;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.properties.ProxyProperty;
 import org.dockbox.selene.core.tasks.CheckedRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -36,8 +33,6 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Files;
@@ -65,7 +60,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -217,64 +211,6 @@ public final class SeleneUtils {
 
     public static <T> List<T> asList(Collection<T> collection) {
         return new ArrayList<>(collection);
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static <T> List<T> asObservableList(List<T> list, BiFunction<List<T>, Object, Boolean> singleObjectAddListener) {
-        try {
-            // Using list.getClass over List.class as methods are compared directly in delegated proxies instead of for
-            // assignability.
-            Method add = list.getClass().getDeclaredMethod("add", Object.class);
-            Method addIndexed = list.getClass().getDeclaredMethod("add", int.class, Object.class);
-
-            Method addAll = list.getClass().getDeclaredMethod("addAll", Collection.class);
-            Method addAllIndexed = list.getClass().getDeclaredMethod("addAll", Collection.class);
-
-            ProxyHandler<List> handler = new ProxyHandler<>(list);
-
-            ProxyFunction<List, Object> singleHandler = (instance, args, holder) -> {
-                boolean result = singleObjectAddListener.apply((List<T>) instance, args[0]);
-                if (result) instance.add(args[0]);
-                holder.setCancelled(result);
-                return result;
-            };
-
-            ProxyProperty<List, Object> addProperty = ProxyProperty.of(List.class, add, singleHandler);
-            ProxyProperty<List, Object> addIndexedProperty = ProxyProperty.of(List.class, addIndexed, (instance, args, holder) -> {
-                singleHandler.delegate(instance, new Object[]{args[1]}, holder);
-                if (!holder.isCancelled()) instance.add((Integer) args[0], args[1]);
-                return !holder.isCancelled();
-            });
-            ProxyProperty<List, Object> addAllProperty = ProxyProperty.of(List.class, addAll, (instance, args, holder) -> {
-                Iterable<T> collection = (Iterable<T>) args[0];
-                collection.forEach(object -> {
-                    singleHandler.delegate(instance, args, holder);
-                    if (!holder.isCancelled()) {
-                        instance.add(args[0]);
-                    }
-                    holder.setCancelled(false); // Reset for each iteration
-                });
-                return true;
-            });
-            ProxyProperty<List, Object> addAllIndexedProperty = ProxyProperty.of(List.class, addAllIndexed, (instance, args, holder) -> {
-                Iterable<T> collection = (Iterable<T>) args[0];
-                collection.forEach(object -> {
-                    singleHandler.delegate(instance, new Object[]{args[1]}, holder);
-                    if (!holder.isCancelled()) {
-                        instance.add((Integer) args[0], args[1]);
-                    }
-                    holder.setCancelled(false); // Reset for each iteration
-                });
-                return true;
-            });
-
-            handler.delegate(addProperty, addIndexedProperty, addAllProperty, addAllIndexedProperty);
-
-            return handler.proxy();
-        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException e) {
-            Selene.handle(e);
-            return list;
-        }
     }
 
     public static <T> List<T> asUnmodifiableList(Collection<T> collection) {

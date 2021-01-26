@@ -15,12 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.proxy;
+package org.dockbox.selene.proxy.annotations;
 
-public enum Phase {
-    HEAD, OVERWRITE, TAIL;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    public Phase[] collect() {
-        return new Phase[] {HEAD, OVERWRITE, TAIL};
-    }
+/**
+ * The annotation used to mark a parameter as instance provider for methods annotated with {@link Proxy.Target}.
+ * Parameters with this annotation are excluded from the target method lookup, and are automatically injected.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+public @interface Instance {
 }
