@@ -23,7 +23,7 @@ import com.google.inject.ProvisionException;
 
 import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.MinecraftVersion;
-import org.dockbox.selene.core.annotations.AbstractService;
+import org.dockbox.selene.core.annotations.RequiresBinding;
 import org.dockbox.selene.core.annotations.event.Listener;
 import org.dockbox.selene.core.annotations.module.ArgumentProvider;
 import org.dockbox.selene.core.annotations.module.Module;
@@ -143,7 +143,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         Reflect.getSubTypes(SeleneInformation.PACKAGE_PREFIX, Preloadable.class)
                 .forEach(t -> Selene.provide(t).preload());
         // Ensure all services requiring a platform implementation have one present
-        Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, AbstractService.class).forEach(type -> {
+        Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, RequiresBinding.class).forEach(type -> {
             if (Reflect.getSubTypes(SeleneInformation.PACKAGE_PREFIX, type).isEmpty()) {
                 Selene.log().error("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
             }
