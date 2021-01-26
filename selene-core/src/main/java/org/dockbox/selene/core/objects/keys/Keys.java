@@ -78,7 +78,7 @@ public final class Keys {
     public static <T extends InjectorProperty<?>> List<T> getAllPropertiesOf(Class<T> type, InjectorProperty<?>... properties) {
         List<T> matches = SeleneUtils.emptyList();
         for (InjectorProperty<?> property : properties) {
-            if (null != property && type.isAssignableFrom(type)) matches.add((T) property);
+            if (null != property && type.isAssignableFrom(property.getClass())) matches.add((T) property);
         }
         return matches;
     }
