@@ -26,7 +26,7 @@ import io.netty.channel.Channel;
 
 /**
  * Represents a native {@link Packet} instance. This is used primarily as a wrapper type for implementations of
- * {@link org.dockbox.selene.core.packets.Packet}.
+ * {@link org.dockbox.selene.core.objects.Packet}.
  *
  * @param <T>
  *     The type of the native packet.

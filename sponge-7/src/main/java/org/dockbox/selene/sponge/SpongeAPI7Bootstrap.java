@@ -29,7 +29,7 @@ import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.packet.PacketEvent;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.packets.Packet;
+import org.dockbox.selene.core.objects.Packet;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;

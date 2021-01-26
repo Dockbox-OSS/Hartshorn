@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.packets;
 
-import org.dockbox.selene.core.Weather;
+import org.dockbox.selene.packets.data.Weather;
 import org.dockbox.selene.core.annotations.RequiresBinding;
-import org.dockbox.selene.core.packets.Packet;
+import org.dockbox.selene.core.objects.Packet;
 
 @RequiresBinding
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")

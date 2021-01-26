@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core;
+package org.dockbox.selene.packets.data;
 
 public enum Weather {
     CLEAR(1),

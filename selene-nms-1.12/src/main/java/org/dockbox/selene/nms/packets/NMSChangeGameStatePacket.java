@@ -19,7 +19,7 @@ package org.dockbox.selene.nms.packets;
 
 import net.minecraft.network.play.server.SPacketChangeGameState;
 
-import org.dockbox.selene.core.Weather;
+import org.dockbox.selene.packets.data.Weather;
 import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.Reflect;
