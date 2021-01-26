@@ -35,6 +35,13 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
     }
 
     @Override
+    public void requestFileType(FileType fileType) {
+        if (FileType.XML != fileType) {
+            throw new UnsupportedOperationException("XStream only supports XML");
+        }
+    }
+
+    @Override
     public <T> Exceptional<T> read(Path file, Class<T> type) {
         Reflect.rejects(type, DefaultXStreamManager.class, true);
         return Exceptional.of(() -> this.prepareXStream(type).read(type, file.toFile()));

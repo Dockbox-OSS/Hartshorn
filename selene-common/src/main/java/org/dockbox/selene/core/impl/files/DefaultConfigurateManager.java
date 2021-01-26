@@ -62,6 +62,21 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
         super(fileType);
     }
 
+    @Override
+    public void requestFileType(FileType fileType) {
+        switch (fileType) {
+            case YAML:
+            case JSON:
+            case XML:
+            case MOD_CONFIG:
+            case CONFIG:
+                super.setFileType(fileType);
+                break;
+            default:
+                throw new UnsupportedOperationException("Configurate does not support " + fileType.getExtension());
+        }
+    }
+
     private ConfigurationLoader<?> getConfigurationLoader(Path file) throws UnsupportedFileException {
         AbstractConfigurationLoader.Builder<?, ?> builder;
         switch (this.getFileType()) {

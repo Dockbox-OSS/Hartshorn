@@ -19,6 +19,9 @@ package org.dockbox.selene.core.files;
 
 import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.keys.Keys;
+import org.dockbox.selene.core.server.properties.InjectableType;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.Reflect;
 
 import java.nio.file.Path;
@@ -28,9 +31,9 @@ import java.nio.file.Path;
  * the usage of Configurate based instances, it is possible to create implementations for alternative configuration
  * libraries and/or frameworks.
  */
-public abstract class FileManager {
+public abstract class FileManager implements InjectableType {
 
-    private final FileType fileType;
+    private FileType fileType;
 
     protected FileManager(FileType fileType) {
         this.fileType = fileType;
@@ -38,6 +41,12 @@ public abstract class FileManager {
 
     public FileType getFileType() {
         return this.fileType;
+    }
+
+    public abstract void requestFileType(FileType fileType);
+
+    protected void setFileType(FileType fileType) {
+        this.fileType = fileType;
     }
 
     /**
@@ -289,4 +298,10 @@ public abstract class FileManager {
      * @return true if the file was copied, otherwise false
      */
     public abstract boolean copyDefaultFile(String defaultFileName, Path targetFile);
+
+    @Override
+    public void stateEnabling(InjectorProperty<?>... properties) {
+        Keys.getPropertyValue(FileTypeProperty.KEY, FileType.class, properties)
+                .ifPresent(this::requestFileType);
+    }
 }
