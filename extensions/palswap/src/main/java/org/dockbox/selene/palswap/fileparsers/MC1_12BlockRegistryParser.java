@@ -1,0 +1,111 @@
+package org.dockbox.selene.palswap.fileparsers;
+
+import com.google.inject.Singleton;
+
+import org.dockbox.selene.core.MinecraftVersion;
+import org.dockbox.selene.core.i18n.common.Language;
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.palswap.BlockIdentifier;
+import org.dockbox.selene.palswap.BlockRegistryUtil;
+import org.dockbox.selene.palswap.VariantIdentifier;
+import org.jetbrains.annotations.NonNls;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+@Singleton
+public class MC1_12BlockRegistryParser extends BlockRegistryParser {
+
+    public static final Pattern idInformationRegex = Pattern.compile("(\\w*:\\w*):?(\\d*)?");
+
+    @Override
+    public MinecraftVersion getMinecraftVersion() {
+        return MinecraftVersion.MC1_12;
+    }
+
+    @Override
+    protected List<String> loadMinecraftItemRawIDs(String filename) {
+        List<String> rawIDs = new ArrayList<>();
+        int lineIndex = 0;
+        String id;
+        int meta = 0;
+
+        for (String line : this.parseFile(filename)) {
+            lineIndex++;
+            if (1 == lineIndex) {
+                meta = Integer.parseInt(line.split("\\t")[2]);
+            }
+            else if (3 == lineIndex) {
+                id = line.substring(1, line.length() - 3);
+                rawIDs.add(id + ":" + meta);
+                lineIndex = 0;
+            }
+        }
+        return rawIDs;
+    }
+
+    @Override
+    protected List<String> loadConquestItemRawIDs(String filename) {
+        List<String> rawIDs = new ArrayList<>();
+
+        for (String line : this.parseFile(filename)) {
+            String[] parts = line.split("\\.");
+            String parent = parts[0];
+
+            for (int i = 1; i < parts.length; i++) {
+                String variant = parts[i];
+                variant = variant.replaceFirst("variant\\(", "");
+                variant = variant.substring(0, variant.length() - 1)
+                        .replaceAll(" ", "");
+                variant = variant.replaceAll("\"", "");
+                String[] metaAndName = variant.split(",");
+                int meta = Integer.parseInt(metaAndName[0]);
+
+                rawIDs.add("conquest:" + parent + ":" + meta);
+            }
+        }
+        return rawIDs;
+    }
+
+    @Override
+    public Exceptional<String> determineBlockIdentifier(Item item) {
+        String name = item.getDisplayName(Language.EN_US).toStringValue();
+        @NonNls String blockIdentifier = VariantIdentifier.getBlockNameWithoutVariant(name);
+
+        //If the name is the same, check that its a fullblock and not an invalid item (E.g: plant, food, etc)
+        if (name.equalsIgnoreCase(blockIdentifier)) {
+            Exceptional<VariantIdentifier> eVariantIdentifier = VariantIdentifier.ofName(name);
+
+            if (eVariantIdentifier.isPresent() && VariantIdentifier.FULL != eVariantIdentifier.get())
+                return Exceptional.empty();
+        }
+        return Exceptional.of(BlockIdentifier.formatBlockName(name));
+    }
+
+    @Override
+    public String getItemID(Item item) {
+        return BlockRegistryUtil.getUpdatedID(item);
+    }
+
+    /**
+     * @param rawID
+     *         The id of the {@link Item} in the format modId:itemId:meta
+     *
+     * @return The {@link Item} of the provided id.
+     */
+    @Override
+    public Item getItemFromRawID(String rawID) {
+        Matcher matcher = idInformationRegex.matcher(rawID);
+
+        if (matcher.matches()) {
+            // If there's no meta, then assume its 0.
+            int meta = null == matcher.group(2) ? 0 : Integer.parseInt(matcher.group(2));
+            return Item.of(matcher.group(1), meta);
+        }
+        return Selene.getItems().getAir();
+    }
+}
