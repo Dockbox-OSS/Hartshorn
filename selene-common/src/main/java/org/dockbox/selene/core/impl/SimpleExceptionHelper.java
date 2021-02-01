@@ -58,8 +58,8 @@ public class SimpleExceptionHelper implements ExceptionHelper {
 
             if (0 < exception.getStackTrace().length) {
                 StackTraceElement root = exception.getStackTrace()[0];
-                String line = 0 < root.getLineNumber() ? "line " + root.getLineNumber() : "(internal call)";
-                Selene.log().error("Location: " + root.getFileName() + " " + line);
+                String line = 0 < root.getLineNumber() ? ":" + root.getLineNumber() : "(internal call)";
+                Selene.log().error("Location: " + root.getFileName() + line);
 
                 if (stacktrace) {
                     Throwable nextException = exception;
@@ -67,8 +67,8 @@ public class SimpleExceptionHelper implements ExceptionHelper {
                         StackTraceElement[] trace = nextException.getStackTrace();
                         Selene.log().error(nextException.getClass().getCanonicalName() + ": " + nextException.getMessage());
                         for (StackTraceElement element : trace) {
-                            String elLine = 0 < element.getLineNumber() ? "line " + element.getLineNumber() : "(internal call)";
-                            Selene.log().error("  at " + element.getClassName() + "." + element.getMethodName() + ' ' + elLine);
+                            String elLine = 0 < element.getLineNumber() ? ":" + element.getLineNumber() : "(internal call)";
+                            Selene.log().error("  at " + element.getClassName() + "." + element.getMethodName() + elLine);
                         }
                         nextException = nextException.getCause();
                     }
