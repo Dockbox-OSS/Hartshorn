@@ -27,11 +27,10 @@ import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
-import org.dockbox.selene.core.module.ModuleContext;
-import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.impl.events.SimpleEventBus;
+import org.dockbox.selene.core.module.ModuleContext;
+import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.Identifiable;
@@ -202,6 +201,7 @@ public class IntegratedServer implements IntegratedModule {
         ));
     }
 
+
     @Command(aliases = {"lang", "language"}, usage = "language <language{Language}> [player{Player}]", inherit = false)
     public void switchLang(MessageReceiver src, CommandContext ctx,
                            @Arg("language") Language lang,
@@ -221,19 +221,6 @@ public class IntegratedServer implements IntegratedModule {
         if (player != src)
             src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED_OTHER.format(player.getName(), languageLocalized));
         player.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(languageLocalized));
-    }
-
-    @Command(aliases = "demo", usage = "demo")
-    public void demo (Player player, CommandContext ctx) {
-        long nano = System.nanoTime();
-        new SimpleEventBus();
-        System.out.println(System.nanoTime() - nano + "ns");
-
-        nano = System.nanoTime();
-        Selene.provide(EventBus.class);
-        System.out.println(System.nanoTime() - nano + "ns");
-
-//        player.get(WorldEditKeys.SELECTION).ifPresent(selection -> selection.set(Item.of("minecraft:stone"), player));
     }
 
 }

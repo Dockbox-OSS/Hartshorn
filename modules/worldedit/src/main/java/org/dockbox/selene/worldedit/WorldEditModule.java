@@ -17,36 +17,10 @@
 
 package org.dockbox.selene.worldedit;
 
-import org.dockbox.selene.core.annotations.event.Listener;
-import org.dockbox.selene.core.annotations.event.filter.Filter;
-import org.dockbox.selene.core.annotations.event.processing.Getter;
 import org.dockbox.selene.core.annotations.module.Module;
-import org.dockbox.selene.core.events.chat.NativeCommandEvent;
-import org.dockbox.selene.core.events.parents.Cancellable;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.worldedit.events.WorldEditCopyEvent;
-import org.dockbox.selene.worldedit.events.WorldEditPasteEvent;
 
 @Module(id = "worldedit-events", name = "WorldEdit Events", description = "Provides additional WorldEdit events for Selene",
         authors = "GuusLieben", dependencies = {"com.boydti.fawe", "com.sk89q.worldedit"})
 public class WorldEditModule {
-
-    @Listener
-    @Filter(param = "alias", value = "/copy")
-    public void onWorldEditCopy(NativeCommandEvent nce,
-                                @Getter("getSource") Player player
-    ) {
-        Cancellable event = new WorldEditCopyEvent(player).post();
-        nce.setCancelled(event.isCancelled());
-    }
-
-    @Listener
-    @Filter(param = "alias", value = "/paste")
-    public void onWorldEditPaste(NativeCommandEvent nce,
-                                @Getter("getSource") Player player
-    ) {
-        Cancellable event = new WorldEditPasteEvent(player).post();
-        nce.setCancelled(event.isCancelled());
-    }
 
 }
