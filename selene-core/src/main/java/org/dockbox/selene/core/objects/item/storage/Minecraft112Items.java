@@ -20,7 +20,7 @@ package org.dockbox.selene.core.objects.item.storage;
 import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.objects.item.Item;
 
-@SuppressWarnings({"deprecation", "unused", "OverlyComplexClass", "MagicNumber"})
+@SuppressWarnings({"unused", "OverlyComplexClass", "MagicNumber"})
 public class Minecraft112Items extends MinecraftItems {
 
     // White (0) is skipped as item meta defaults to zero

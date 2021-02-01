@@ -29,7 +29,7 @@ import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.packet.PacketEvent;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.packets.Packet;
+import org.dockbox.selene.core.objects.Packet;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
 import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
@@ -141,7 +141,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
             if (null != obj)
                 Sponge.getEventManager().registerListeners(this, obj);
             else
-                log().warn("Attempted to register 'null' listener");
+                Selene.log().warn("Attempted to register 'null' listener");
         }
     }
 
@@ -244,11 +244,11 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
         if (oj.isPresent()) {
             JDA jda = oj.get();
             // Avoid registering it twice if the scheduler outside this condition is executing this twice.
-            // Usually cancelling all tasks would be preferred, however any extension is able to schedule tasks
+            // Usually cancelling all tasks would be preferred, however any module is able to schedule tasks
             // we may not want to cancel.
             if (!jda.getRegisteredListeners().contains(this.discordListener)) {
                 jda.addEventListener(this.discordListener);
-                log().info("Initiated JDA" + JDAInfo.VERSION);
+                Selene.log().info("Initiated JDA" + JDAInfo.VERSION);
             }
         } else {
             // Attempt to get the JDA once every 10 seconds until successful

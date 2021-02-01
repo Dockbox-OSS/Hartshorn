@@ -21,12 +21,12 @@ import org.dockbox.selene.core.annotations.Rejects;
 import org.dockbox.selene.core.annotations.entity.Metadata;
 import org.dockbox.selene.core.annotations.entity.Ignore;
 import org.dockbox.selene.core.annotations.entity.Property;
-import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.annotations.extension.OwnedBy;
+import org.dockbox.selene.core.annotations.module.Module;
+import org.dockbox.selene.core.annotations.module.OwnedBy;
 import org.dockbox.selene.core.exceptions.TypeRejectedException;
-import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.server.IntegratedExtension;
+import org.dockbox.selene.core.server.IntegratedModule;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils.Provision;
 import org.jetbrains.annotations.Contract;
@@ -55,6 +55,7 @@ import java.util.function.Predicate;
 @SuppressWarnings("unused")
 public final class Reflect {
 
+    private static final Map<String, Reflections> reflectedPrefixes = SeleneUtils.emptyConcurrentMap();
     private static final Map<Class<?>, Class<?>> primitiveWrapperMap =
             SeleneUtils.ofEntries(SeleneUtils.entry(boolean.class, Boolean.class),
                     SeleneUtils.entry(byte.class, Byte.class),
@@ -243,6 +244,25 @@ public final class Reflect {
     }
 
     /**
+     * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist for the given type,
+     * and empty list is returned.
+     *
+     * @param prefix
+     *         The package prefix
+     * @param parent
+     *         The parent type to scan for subclasses
+     * @param <T>
+     *         The type of the parent
+     *
+     * @return The list of sub-types, or an empty list
+     */
+    public static <T> Collection<Class<? extends T>> getSubTypes(String prefix, Class<T> parent) {
+        Reflections reflections = getReflectedPrefix(prefix);
+        Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(parent);
+        return SeleneUtils.asList(subTypes);
+    }
+
+    /**
      * Gets types annotated with a given annotation, both classes and annotations. The prefix is typically a package.
      * If the annotation is present on a parent of the type, it will only be included if {@code skipParents} is false.
      *
@@ -258,7 +278,7 @@ public final class Reflect {
      * @return The annotated types
      */
     public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation, boolean skipParents) {
-        Reflections reflections = new Reflections(prefix);
+        Reflections reflections = getReflectedPrefix(prefix);
         Set<Class<?>> types = reflections.getTypesAnnotatedWith(annotation, !skipParents);
         return SeleneUtils.asList(types);
     }
@@ -447,33 +467,33 @@ public final class Reflect {
     }
 
     /**
-     * Gets extension.
+     * Gets module.
      *
      * @param type
      *         the type
      *
-     * @return the extension
+     * @return the module
      */
     @Nullable
-    public static Extension getExtension(Class<?> type) {
+    public static Module getModule(Class<?> type) {
         if (null == type) return null;
         if (type.equals(Selene.class))
-            return Reflect.getExtension(Selene.provide(IntegratedExtension.class).getClass());
+            return Reflect.getModule(Selene.provide(IntegratedModule.class).getClass());
 
         if (type.isAnnotationPresent(OwnedBy.class)) {
             OwnedBy owner = type.getAnnotation(OwnedBy.class);
-            return Reflect.getExtension(owner.value());
+            return Reflect.getModule(owner.value());
         }
 
-        Extension extension = type.getAnnotation(Extension.class);
-        extension = null != extension ? extension : Reflect.getExtension(type.getSuperclass());
-        if (null == extension)
-            extension = Selene.getServer().getInstanceSafe(ExtensionManager.class).map(em -> em.getHeader(type).orNull()).orNull();
-        return extension;
+        Module module = type.getAnnotation(Module.class);
+        module = null != module ? module : Reflect.getModule(type.getSuperclass());
+        if (null == module)
+            module = Selene.getServer().getInstanceSafe(ModuleManager.class).map(em -> em.getHeader(type).orNull()).orNull();
+        return module;
     }
 
     /**
-     * Run with extension t.
+     * Run with module t.
      *
      * @param <T>
      *         the type parameter
@@ -485,27 +505,27 @@ public final class Reflect {
      * @return the t
      */
     @Nullable
-    public static <T> T runWithExtension(Class<?> type, Function<Extension, T> function) {
-        Extension extension = Reflect.getExtension(type);
-        if (null != extension) return function.apply(extension);
+    public static <T> T runWithModule(Class<?> type, Function<Module, T> function) {
+        Module module = Reflect.getModule(type);
+        if (null != module) return function.apply(module);
         return null;
     }
 
     /**
-     * Run with extension.
+     * Run with module.
      *
      * @param type
      *         the type
      * @param consumer
      *         the consumer
      */
-    public static void runWithExtension(Class<?> type, Consumer<Extension> consumer) {
-        Extension extension = Reflect.getExtension(type);
-        if (null != extension) consumer.accept(extension);
+    public static void runWithModule(Class<?> type, Consumer<Module> consumer) {
+        Module module = Reflect.getModule(type);
+        if (null != module) consumer.accept(module);
     }
 
     /**
-     * Run with instance.
+     * Run with module.
      *
      * @param <T>
      *         the type parameter
@@ -769,5 +789,11 @@ public final class Reflect {
             Reflect.forEachFieldIn(type.getSuperclass(), consumer);
     }
 
+    private static Reflections getReflectedPrefix(String prefix) {
+        if (!reflectedPrefixes.containsKey(prefix)) {
+            reflectedPrefixes.put(prefix, new Reflections(prefix));
+        }
+        return reflectedPrefixes.get(prefix);
+    }
 
 }

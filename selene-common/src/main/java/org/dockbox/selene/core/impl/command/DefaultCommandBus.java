@@ -422,7 +422,7 @@ public abstract class DefaultCommandBus implements CommandBus {
             AbstractRegistrationContext registrationContext
     ) {
         /*
-         Extensions are allowed to modify and/or cancel commands before and after the command has initially been
+         Modules are allowed to modify and/or cancel commands before and after the command has initially been
          executed. To allow this we need to ensure separate events are posted at these stages.
          */
         Cancellable ceb = new CommandEvent.Before(sender, context).post();

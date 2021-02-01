@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.core.objects.player;
 
-import com.boydti.fawe.object.FawePlayer;
-
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
@@ -48,8 +46,6 @@ public abstract class Player
     }
 
     public abstract boolean isOnline();
-
-    public abstract Exceptional<FawePlayer<?>> getFawePlayer();
 
     public abstract void kick(Text reason);
 

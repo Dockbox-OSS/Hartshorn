@@ -1,0 +1,16 @@
+dependencies {
+    compileOnly project(':modules:datastructs')
+    testImplementation project(':modules:datastructs')
+
+    // SQL Extension dependencies
+    compile "org.jooq:jooq:$jooqVersion"
+    compile "org.jooq:jooq-meta:$jooqVersion"
+    compile "org.jooq:jooq-codegen:$jooqVersion"
+
+    testRuntime "org.jooq:jooq:$jooqVersion"
+    testCompile "org.xerial:sqlite-jdbc:$xerialSqliteJdbcVersion"
+
+    // Test file managers
+    testImplementation "com.thoughtworks.xstream:xstream:$xstreamVersion"
+    testImplementation 'com.fasterxml.woodstox:woodstox-core:6.2.3'
+}

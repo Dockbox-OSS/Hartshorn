@@ -49,7 +49,7 @@
       <option name="ignorableAnnotations">
         <value>
           <item value="org.dockbox.selene.core.annotations.Placeholder" />
-          <item value="org.dockbox.selene.core.util.extension.Extension" />
+          <item value="org.dockbox.selene.core.util.module.Extension" />
         </value>
       </option>
       <option name="ignoreClassWithParameterization" value="false" />

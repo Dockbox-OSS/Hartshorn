@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.core.objects.keys;
 
-import org.dockbox.selene.core.CheckedFunction;
-import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.module.Module;
+import org.dockbox.selene.core.tasks.CheckedFunction;
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.keys.data.DoublePersistentDataKey;
@@ -140,20 +140,20 @@ public final class Keys {
     }
 
     /**
-     * Convert to extension id string string.
+     * Convert to module id.
      *
      * @param name
      *         the name
-     * @param extension
-     *         the extension
+     * @param module
+     *         the module
      *
      * @return the string
      */
-    public static String convertToExtensionIdString(String name, Extension extension) {
+    public static String convertToModuleIdString(String name, Module module) {
         name = name.toLowerCase(Locale.ROOT)
             .replaceAll("[ .]", "")
             .replaceAll("-", "_");
-        return extension.id() + ':' + name;
+        return module.id() + ':' + name;
     }
 
     /**
@@ -171,7 +171,7 @@ public final class Keys {
      * @return the persistent data key
      */
     public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, Class<?> owningClass) {
-        return Keys.persistentKeyOf(type, name, Reflect.getExtension(owningClass));
+        return Keys.persistentKeyOf(type, name, Reflect.getModule(owningClass));
     }
 
     /**
@@ -183,28 +183,28 @@ public final class Keys {
      *         the type
      * @param name
      *         the name
-     * @param extension
-     *         the extension
+     * @param module
+     *         the module
      *
      * @return the persistent data key
      */
     @SuppressWarnings("unchecked")
-    public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, Extension extension) {
+    public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, Module module) {
         if (!Keys.isNbtSupportedType(type))
             throw new UncheckedSeleneException("Unsupported data type for persistent key: " + type.getCanonicalName());
 
         if (type.equals(String.class))
-            return (PersistentDataKey<T>) StringPersistentDataKey.of(name, extension);
+            return (PersistentDataKey<T>) StringPersistentDataKey.of(name, module);
         else if (Reflect.isAssignableFrom(Integer.class, type)) {
-            return (PersistentDataKey<T>) IntegerPersistentDataKey.of(name, extension);
+            return (PersistentDataKey<T>) IntegerPersistentDataKey.of(name, module);
         } else if (Reflect.isAssignableFrom(Double.class, type)) {
-            return (PersistentDataKey<T>) DoublePersistentDataKey.of(name, extension);
+            return (PersistentDataKey<T>) DoublePersistentDataKey.of(name, module);
         }
 
         return new TypedPersistentDataKey<>(
             name,
-            Keys.convertToExtensionIdString(name, extension),
-            extension,
+            Keys.convertToModuleIdString(name, module),
+                module,
             type);
     }
 

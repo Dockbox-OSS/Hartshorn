@@ -22,7 +22,7 @@ import org.dockbox.selene.core.annotations.event.processing.Provided;
 import org.dockbox.selene.core.annotations.event.processing.SkipIf;
 import org.dockbox.selene.core.annotations.event.processing.UnwrapOrSkip;
 import org.dockbox.selene.core.annotations.event.processing.WrapSafe;
-import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.events.EventStage;
 import org.dockbox.selene.core.events.EventWrapper;
 import org.dockbox.selene.core.events.parents.Event;
@@ -44,8 +44,8 @@ import java.util.function.Supplier;
 
 /**
  * Parameter annotation processor definitions for internal event listener parameter annotations. This enumeration only
- * contains definitions for internal annotations, processors for annotations applied by extensions should be defined in
- * the responsible extension.
+ * contains definitions for internal annotations, processors for annotations applied by modules should be defined in
+ * the responsible module.
  */
 public enum DefaultParamProcessors {
     /**
@@ -74,13 +74,13 @@ public enum DefaultParamProcessors {
     PROVIDED(Provided.class, EventStage.POPULATE, (object, annotation, event, parameter, wrapper) -> {
         if (null != object && !annotation.overrideExisting()) return object;
 
-        Class<?> extensionClass = parameter.getType();
-        if (Reflect.isNotVoid(annotation.value()) && annotation.value().isAnnotationPresent(Extension.class)) {
-            extensionClass = annotation.value();
-        } else if (wrapper.getListener().getClass().isAnnotationPresent(Extension.class)) {
-            extensionClass = wrapper.getListener().getClass();
+        Class<?> moduleType = parameter.getType();
+        if (Reflect.isNotVoid(annotation.value()) && annotation.value().isAnnotationPresent(Module.class)) {
+            moduleType = annotation.value();
+        } else if (wrapper.getListener().getClass().isAnnotationPresent(Module.class)) {
+            moduleType = wrapper.getListener().getClass();
         }
-        return Selene.provide(parameter.getType(), extensionClass);
+        return Selene.provide(parameter.getType(), moduleType);
     }),
 
     /**

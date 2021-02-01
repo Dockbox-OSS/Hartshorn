@@ -55,7 +55,7 @@ public abstract class AbstractRegistrationContext {
 
     public String getRegistrationId(Identifiable<?> sender, CommandContext ctx) {
         UUID uuid = sender.getUniqueId();
-        String alias = ctx.getAlias();
+        String alias = ctx.alias();
         return uuid + "$" + alias;
     }
 

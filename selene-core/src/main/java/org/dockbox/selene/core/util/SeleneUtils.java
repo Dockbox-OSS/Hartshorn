@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.core.util;
 
-import org.dockbox.selene.core.CheckedRunnable;
 import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.tasks.CheckedRunnable;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -87,14 +87,14 @@ public final class SeleneUtils {
     private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = SeleneUtils.emptyConcurrentMap();
 
     private static final char[] _hex = {
-        '0', '1', '2', '3', '4', '5', '6', '7',
-        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+            '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
 
     private static final java.util.regex.Pattern minorTimeString =
-        java.util.regex.Pattern.compile("^\\d+$");
+            java.util.regex.Pattern.compile("^\\d+$");
     private static final java.util.regex.Pattern timeString =
-        java.util.regex.Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
+            java.util.regex.Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
 
     private static final int secondsInMinute = 60;
     private static final int secondsInHour = 60 * SeleneUtils.secondsInMinute;
@@ -110,15 +110,15 @@ public final class SeleneUtils {
      * using {@link SeleneUtils#entry(Object, Object)}
      *
      * @param <K>
-     *     The (super)type of all keys in the entry set
+     *         The (super)type of all keys in the entry set
      * @param <V>
-     *     The (super)type of all values in the entry set
+     *         The (super)type of all values in the entry set
      * @param entries
-     *     The entries to use while constructing a new map
+     *         The entries to use while constructing a new map
      *
      * @return The new non-concurrent map
      * @throws NullPointerException
-     *     If a entry is null
+     *         If a entry is null
      * @see SeleneUtils#entry(Object, Object)
      */
     @SafeVarargs
@@ -140,9 +140,9 @@ public final class SeleneUtils {
      * not concurrent.
      *
      * @param <K>
-     *     The (super)type of the map key-set
+     *         The (super)type of the map key-set
      * @param <V>
-     *     The (super)type of the map value-set
+     *         The (super)type of the map value-set
      *
      * @return The new map
      * @see SeleneUtils#emptyConcurrentMap()
@@ -155,13 +155,13 @@ public final class SeleneUtils {
      * Creates a new entry based on a given key and value combination. Both the key and value may be null.
      *
      * @param <K>
-     *     The type of the key
+     *         The type of the key
      * @param <V>
-     *     The type of the value
+     *         The type of the value
      * @param k
-     *     The key
+     *         The key
      * @param v
-     *     The value
+     *         The value
      *
      * @return The entry
      * @see SeleneUtils#ofEntries(Entry...)
@@ -336,8 +336,8 @@ public final class SeleneUtils {
      */
     public static List<Event> getFiredEvents(Event... events) {
         return Arrays.stream(events)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -431,7 +431,7 @@ public final class SeleneUtils {
 
     public static String shorten(String string, int maxLength) {
         if (string.length() < maxLength) return string;
-        return string.substring(0, maxLength-1);
+        return string.substring(0, maxLength - 1);
     }
 
     @NotNull
@@ -581,14 +581,14 @@ public final class SeleneUtils {
                 // Find the current distance by determining the shortest path to a
                 // match (hence the 'minimum' calculation on distances).
                 distanceMatrix[srcIndex][targetIndex] = (int) SeleneUtils.minimum(
-                    // Character match between current character in
-                    // source string and next character in target
-                    distanceMatrix[srcIndex - 1][targetIndex] + 1,
-                    // Character match between next character in
-                    // source string and current character in target
-                    distanceMatrix[srcIndex][targetIndex - 1] + 1,
-                    // No match, at current, add cumulative penalty
-                    distanceMatrix[srcIndex - 1][targetIndex - 1] + cost);
+                        // Character match between current character in
+                        // source string and next character in target
+                        distanceMatrix[srcIndex - 1][targetIndex] + 1,
+                        // Character match between next character in
+                        // source string and current character in target
+                        distanceMatrix[srcIndex][targetIndex - 1] + 1,
+                        // No match, at current, add cumulative penalty
+                        distanceMatrix[srcIndex - 1][targetIndex - 1] + cost);
 
                 // We don't want to do the next series of calculations on
                 // the first pass because we would get an index out of bounds
@@ -603,10 +603,10 @@ public final class SeleneUtils {
                     // What's the minimum cost between the current distance
                     // and a transposition.
                     distanceMatrix[srcIndex][targetIndex] = (int) SeleneUtils.minimum(
-                        // Current cost
-                        distanceMatrix[srcIndex][targetIndex],
-                        // Transposition
-                        distanceMatrix[srcIndex - 2][targetIndex - 2] + cost);
+                            // Current cost
+                            distanceMatrix[srcIndex][targetIndex],
+                            // Transposition
+                            distanceMatrix[srcIndex - 2][targetIndex - 2] + cost);
                 }
             }
         }
@@ -812,10 +812,31 @@ public final class SeleneUtils {
      */
     public static boolean isInCuboidRegion(Vector3N min, Vector3N max, Vector3N vec) {
         return SeleneUtils.isInCuboidRegion(
-            min.getXi(), max.getXi(),
-            min.getYi(), max.getYi(),
-            min.getZi(), max.getZi(),
-            vec.getXi(), vec.getYi(), vec.getZi());
+                min.getXi(), max.getXi(),
+                min.getYi(), max.getYi(),
+                min.getZi(), max.getZi(),
+                vec.getXi(), vec.getYi(), vec.getZi());
+    }
+
+    public static Vector3N getMinimumPoint(Vector3N pos1, Vector3N pos2) {
+        float minX = Math.min(pos1.getXf(), pos2.getXf());
+        float minY = Math.min(pos1.getYf(), pos2.getYf());
+        float minZ = Math.min(pos1.getZf(), pos2.getZf());
+        return new Vector3N(minX, minY, minZ);
+    }
+
+    public static Vector3N getMaximumPoint(Vector3N pos1, Vector3N pos2) {
+        float maxX = Math.max(pos1.getXf(), pos2.getXf());
+        float maxY = Math.max(pos1.getYf(), pos2.getYf());
+        float maxZ = Math.max(pos1.getZf(), pos2.getZf());
+        return new Vector3N(maxX, maxY, maxZ);
+    }
+
+    public static Vector3N getCenterPoint(Vector3N pos1, Vector3N pos2) {
+        float centerX = (pos1.getXf() + pos2.getXf()) / 2;
+        float centerY = (pos1.getYf() + pos2.getYf()) / 2;
+        float centerZ = (pos1.getZf() + pos2.getZf()) / 2;
+        return new Vector3N(centerX, centerY, centerZ);
     }
 
     /**

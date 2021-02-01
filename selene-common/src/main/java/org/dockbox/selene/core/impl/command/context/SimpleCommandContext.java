@@ -17,28 +17,19 @@
 
 package org.dockbox.selene.core.impl.command.context;
 
-import org.dockbox.selene.core.annotations.command.FromSource;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.command.context.CommandValue.Flag;
 import org.dockbox.selene.core.command.source.CommandSource;
-import org.dockbox.selene.core.command.context.ArgumentConverter;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.objects.targets.Locatable;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("unchecked")
 public class SimpleCommandContext implements CommandContext {
@@ -80,33 +71,23 @@ public class SimpleCommandContext implements CommandContext {
 
     @NotNull
     @Override
-    public String getAlias() {
+    public String alias() {
         return this.usage.split(" ")[0];
     }
 
     @Override
-    public int getArgumentCount() {
+    public int arguments() {
         return this.args.length;
     }
 
     @Override
-    public int getFlagCount() {
+    public int flags() {
         return this.flags.length;
     }
 
     @NotNull
     @Override
-    public Exceptional<Argument<String>> getArgument(@NonNls @NotNull String key) {
-        return Exceptional.of(
-                Arrays.stream(this.args)
-                        .filter(arg -> arg.getKey().equals(key))
-                        .findFirst()
-        ).map(arg -> new Argument<>(arg.getValue().toString(), arg.getKey()));
-    }
-
-    @NotNull
-    @Override
-    public <T> Exceptional<Argument<T>> getArgument(@NonNls @NotNull String key, @NotNull Class<T> type) {
+    public <T> Exceptional<Argument<T>> argument(@NonNls @NotNull String key) {
         return Exceptional.of(
                 Arrays.stream(this.args)
                         .filter(arg -> arg.getKey().equals(key))
@@ -114,134 +95,51 @@ public class SimpleCommandContext implements CommandContext {
         ).map(arg -> (Argument<T>) arg);
     }
 
-    @NotNull
     @Override
-    public <T> Exceptional<T> getArgumentAndParse(@NotNull String key, @NotNull ArgumentConverter<T> converter) {
-        Exceptional<Argument<String>> optionalArg = this.getArgument(key);
-        return optionalArg.map(commandValue -> {
-            return converter.convert(this.sender, commandValue);
-        }).map(Exceptional::orNull);
+    public <T> T get(@NonNls String key) {
+        return Arrays.stream(SeleneUtils.merge(this.args, this.flags))
+                .filter(arg -> arg.getKey().equals(key))
+                .findFirst()
+                .map(arg -> (T) arg.getValue())
+                .orElse(null);
+    }
+
+    @Override
+    public <T> Exceptional<T> optional(String key) {
+        return Exceptional.ofNullable(this.get(key));
     }
 
     @NotNull
     @Override
-    public Exceptional<Flag<String>> getFlag(@NonNls @NotNull String key) {
-        return Exceptional.of(
-                Arrays.stream(this.flags)
-                        .filter(flag -> flag.getKey().equals(key))
-                        .findFirst()
-        ).map(flag -> new Flag<>(flag.getValue().toString(), flag.getKey()));
-    }
-
-    @NotNull
-    @Override
-    public <T> Exceptional<Flag<T>> getFlag(@NonNls @NotNull String key, @NotNull Class<T> type) {
+    public <T> Exceptional<Flag<T>> flag(@NonNls @NotNull String key) {
         return Exceptional.of(
                 Arrays.stream(this.flags)
                         .filter(flag -> flag.getKey().equals(key))
                         .findFirst()
         ).map(flag -> (Flag<T>) flag);
     }
-
-    @NotNull
     @Override
-    public <T> Exceptional<T> getFlagAndParse(@NotNull String key, @NotNull ArgumentConverter<T> parser) {
-        @NotNull Exceptional<Flag<String>> optionalFlag = this.getFlag(key);
-        return optionalFlag.map(arg -> parser.convert(this.sender, arg)).map(Exceptional::orNull);
+    public boolean has(@NonNls @NotNull String key) {
+        return Arrays.stream(SeleneUtils.merge(this.args, this.flags)).anyMatch(arg -> arg.getKey().equals(key));
     }
 
     @Override
-    public boolean hasArgument(@NonNls @NotNull String key) {
-        return Arrays.stream(this.args).anyMatch(arg -> arg.getKey().equals(key));
-    }
-
-    @Override
-    public boolean hasFlag(@NonNls @NotNull String key) {
-        return Arrays.stream(this.flags).anyMatch(flag -> flag.getKey().equals(key));
-    }
-
-    @NotNull
-    @Override
-    public <T> Exceptional<CommandValue<T>> getValue(@NotNull String key, @NotNull Class<T> type, CommandValue.@NotNull Type valType) {
-        CommandValue<?>[] arr = new CommandValue[0];
-        switch (valType) {
-            case ARGUMENT:
-                arr = SeleneUtils.shallowCopy(this.args);
-                break;
-            case FLAG:
-                arr = SeleneUtils.shallowCopy(this.flags);
-                break;
-            case BOTH:
-                arr = SeleneUtils.addAll(
-                        SeleneUtils.shallowCopy(this.args),
-                        SeleneUtils.shallowCopy(this.flags));
-                break;
-        }
-        return this.getValueAs(key, type, arr);
-    }
-
-    private <T, A extends CommandValue<T>> Exceptional<A> getValueAs(@NonNls String key, Class<T> type, CommandValue<?>[] values) {
-        Exceptional<CommandValue<?>> candidate = Exceptional.of(Arrays.stream(values)
-                .filter(val -> val.getKey().equals(key))
-                .findFirst()
-        );
-        if (candidate.isPresent()) {
-            CommandValue<?> cv = candidate.get();
-            if (Reflect.isAssignableFrom(type, cv.getValue().getClass())) return Exceptional.of((A) cv);
-        }
-        return Exceptional.empty();
-    }
-
-    @NotNull
-    @Override
-    public <T> Exceptional<T> tryCreate(@NotNull Class<T> type) {
-        Map<String, Object> values = SeleneUtils.emptyMap();
-        for (Argument<?> arg : this.args) values.put(arg.getKey(), arg.getValue());
-        for (Flag<?> flag : this.flags) values.put(flag.getKey(), flag.getValue());
-
-        return Reflect.tryCreateFromRaw(type, field -> {
-            if (field.isAnnotationPresent(FromSource.class)) {
-                if (Reflect.isAssignableFrom(Player.class, field.getType())) {
-                    if (this.sender instanceof Player) return this.sender;
-                } else if (Reflect.isAssignableFrom(World.class, field.getType())) {
-                    if (this.sender instanceof Locatable) return this.world;
-                } else if (Reflect.isAssignableFrom(Location.class, field.getType())) {
-                    if (this.sender instanceof Locatable) return this.location;
-                } else if (Reflect.isAssignableFrom(CommandSource.class, field.getType())) {
-                    return this.sender;
-                } else {
-                    Selene.log().warn("Field '" + field.getName() + "' has @FromSource annotation but cannot be provided [" + field.getType().getCanonicalName() + "]");
-                }
-            }
-            return values.getOrDefault(Reflect.getFieldPropertyName(field), null);
-        }, true);
-    }
-
-    public String getUsage() {
-        return this.usage;
-    }
-
-    public @UnmodifiableView @NotNull List<Argument<?>> getArgs() {
-        return SeleneUtils.asUnmodifiableList(this.args);
-    }
-
-    public @UnmodifiableView @NotNull List<Flag<?>> getFlags() {
-        return SeleneUtils.asUnmodifiableList(this.flags);
-    }
-
-    public @UnmodifiableView @NotNull List<String> getPermissions() {
-        return SeleneUtils.asUnmodifiableList(this.permissions);
-    }
-
-    public CommandSource getSender() {
+    public CommandSource sender() {
         return this.sender;
     }
 
-    public Exceptional<Location> getLocation() {
+    @Override
+    public Exceptional<Location> location() {
         return this.location;
     }
 
-    public Exceptional<World> getWorld() {
+    @Override
+    public Exceptional<World> world() {
         return this.world;
+    }
+
+    @Override
+    public String[] permissions() {
+        return this.permissions;
     }
 }

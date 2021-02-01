@@ -36,6 +36,7 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.Reflect;
 import org.dockbox.selene.core.util.SeleneUtils;
 
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -112,13 +113,13 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         if (parameter.isAnnotationPresent(FromSource.class)) {
             Class<?> parameterType = parameter.getType();
             if (Reflect.isAssignableFrom(Player.class, parameterType)) {
-                if (context.getSender() instanceof Player) finalArgs.add(context.getSender());
+                if (context.sender() instanceof Player) finalArgs.add(context.sender());
             } else if (Reflect.isAssignableFrom(World.class, parameterType)) {
-                if (context.getSender() instanceof Locatable) finalArgs.add(context.getWorld());
+                if (context.sender() instanceof Locatable) finalArgs.add(context.world());
             } else if (Reflect.isAssignableFrom(Location.class, parameterType)) {
-                if (context.getSender() instanceof Locatable) finalArgs.add(context.getLocation());
+                if (context.sender() instanceof Locatable) finalArgs.add(context.location());
             } else if (Reflect.isAssignableFrom(CommandSource.class, parameterType)) {
-                finalArgs.add(context.getSender());
+                finalArgs.add(context.sender());
             } else {
                 Selene.log().warn(
                     "Parameter '" + parameter.getName() + "' has @FromSource annotation but cannot be provided [" + parameterType.getCanonicalName() +
@@ -130,11 +131,11 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         return false;
     }
 
-    private boolean processFlagParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs) {
+    private boolean processFlagParameters(AnnotatedElement parameter, CommandContext context, Collection<Object> finalArgs) {
         if (parameter.isAnnotationPresent(Flag.class)) {
             String flagName = parameter.getAnnotation(Flag.class).value();
-            if (context.hasFlag(flagName) && context.getFlag(flagName, parameter.getType()).isPresent()) {
-                finalArgs.add(context.getFlag(flagName, parameter.getType()).get().getValue());
+            if (context.has(flagName) && context.flag(flagName).isPresent()) {
+                finalArgs.add(context.flag(flagName).get().getValue());
             } else {
                 // Flags are optional, therefore we do not log missing flags
                 finalArgs.add(null);
@@ -148,8 +149,8 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         if (parameter.isAnnotationPresent(Arg.class)) {
             Class<?> parameterType = parameter.getType();
             String argumentName = parameter.getAnnotation(Arg.class).value();
-            if (context.hasArgument(argumentName) && context.getArgument(argumentName, parameterType).isPresent()) {
-                finalArgs.add(context.getArgument(argumentName, parameterType).get().getValue());
+            if (context.has(argumentName) && context.argument(argumentName).isPresent()) {
+                finalArgs.add(context.argument(argumentName).get().getValue());
             } else {
                 if (!parameter.getAnnotation(Arg.class).optional()) {
                     Selene.log().warn("Parameter '" + parameter.getName() +

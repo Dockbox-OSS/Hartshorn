@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.impl.files;
 
 import org.dockbox.selene.core.annotations.entity.Metadata;
-import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
@@ -48,7 +48,7 @@ import io.leangen.geantyref.GenericTypeReflector;
  * {@link FileType#JSON}, {@link FileType#XML}, {@link FileType#MOD_CONFIG}, and {@link FileType#CONFIG} file types.
  *
  * Automatically generates, and checks the presence of, files in their directories. For both custom file locations and
- * {@link Extension#id()} based.
+ * {@link Module#id()} based.
  */
 public abstract class DefaultConfigurateManager extends DefaultAbstractFileManager {
 
@@ -60,6 +60,21 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
      */
     protected DefaultConfigurateManager(FileType fileType) {
         super(fileType);
+    }
+
+    @Override
+    public void requestFileType(FileType fileType) {
+        switch (fileType) {
+            case YAML:
+            case JSON:
+            case XML:
+            case MOD_CONFIG:
+            case CONFIG:
+                super.setFileType(fileType);
+                break;
+            default:
+                throw new UnsupportedOperationException("Configurate does not support " + fileType.getExtension());
+        }
     }
 
     private ConfigurationLoader<?> getConfigurationLoader(Path file) throws UnsupportedFileException {

@@ -20,7 +20,7 @@ plugins {
 }
 
 group = 'org.dockbox.selene.sample'
-description = 'Sample extensions for Selene'
+description = 'Sample modules for Selene'
 
 dependencies {
     compileOnly project(':selene-core')
@@ -31,5 +31,12 @@ dependencies {
     testCompile project(':selene-core')
     testCompile(project(':selene-common')) {
         exclude group: "org.spongepowered", module: "configurate**"
+    }
+
+    new File(parent.rootDir, 'modules').listFiles().each {
+        if (it.directory && new File(it, 'build.gradle').exists()) {
+            compileOnly(project(":modules:${it.name}"))
+            testCompileOnly(project(":modules:${it.name}"))
+        }
     }
 }

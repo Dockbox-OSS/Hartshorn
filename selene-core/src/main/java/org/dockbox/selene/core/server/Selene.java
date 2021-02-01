@@ -21,8 +21,8 @@ import com.google.inject.Injector;
 
 import org.dockbox.selene.core.ExceptionHelper;
 import org.dockbox.selene.core.MinecraftVersion;
-import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.annotations.module.Module;
+import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
@@ -32,6 +32,7 @@ import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -79,13 +80,14 @@ public final class Selene {
     }
 
     /**
-     * Provides quick access to {@link SeleneBootstrap#log()}. Primarily added to avoid {@link SeleneBootstrap#log()}
-     * from being used globally.
+     * Gets a log instance representing the calling type.
      *
      * @return The {@link Logger}
      */
     public static Logger log() {
-        return SeleneBootstrap.log();
+        StackTraceElement element = Thread.currentThread().getStackTrace()[2];
+        String[] qualifiedClassName = element.getClassName().split("\\.");
+        return LoggerFactory.getLogger("Selene/" + qualifiedClassName[qualifiedClassName.length - 1]);
     }
 
     /**
@@ -125,8 +127,8 @@ public final class Selene {
     }
 
     /**
-     * Gets an instance of a provided {@link Class} type. If the type is annotated with {@link Extension} it is ran
-     * through the {@link ExtensionManager} instance to obtain the instance. If it is not annotated as such, it is ran
+     * Gets an instance of a provided {@link Class} type. If the type is annotated with {@link Module} it is ran
+     * through the {@link ModuleManager} instance to obtain the instance. If it is not annotated as such, it is ran
      * through the instance {@link Injector} to obtain the instance based on implementation, or manually, provided
      * mappings.
      *
@@ -134,23 +136,23 @@ public final class Selene {
      *         The type parameter for the instance to return
      * @param type
      *         The type of the instance
-     * @param extension
-     *         The type of the extension if extension specific bindings are to be used
+     * @param module
+     *         The type of the module if module specific bindings are to be used
      * @param additionalProperties
      *         The properties to be passed into the type either during or after construction
      *
      * @return The instance, if present. Otherwise returns null
      */
-    public static <T> T provide(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
-        return Selene.getServer().getInstance(type, extension, additionalProperties);
+    public static <T> T provide(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
+        return Selene.getServer().getInstance(type, module, additionalProperties);
     }
 
     public static <T> T provide(Class<T> type, InjectorProperty<?>... additionalProperties) {
         return Selene.getServer().getInstance(type, additionalProperties);
     }
 
-    public static <T> T provide(Class<T> type, Object extension, InjectorProperty<?>... additionalProperties) {
-        return Selene.getServer().getInstance(type, extension, additionalProperties);
+    public static <T> T provide(Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
+        return Selene.getServer().getInstance(type, module, additionalProperties);
     }
 
 }

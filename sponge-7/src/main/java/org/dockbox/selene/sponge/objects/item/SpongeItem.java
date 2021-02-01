@@ -19,7 +19,6 @@ package org.dockbox.selene.sponge.objects.item;
 
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
-import com.sk89q.worldedit.blocks.BaseBlock;
 
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
@@ -71,12 +70,6 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         super(id, meta);
     }
 
-    @AssistedInject
-    @Deprecated
-    public SpongeItem(@Assisted BaseBlock baseBlock) {
-        this(SpongeConversionUtil.toSponge(baseBlock).orElse(ItemStack.empty()));
-    }
-
     @Override
     protected ItemStack getById(String id, int meta) {
         ItemStack stack = Sponge.getGame().getRegistry()
@@ -100,7 +93,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         Exceptional<String> translatedName = ref.map(i -> i.getTranslation().get());
         if (translatedName.isPresent()) return Text.of(translatedName.get());
 
-        return Text.of(ref.map(i -> i.getItem().getId()).orElse(IntegratedResource.UNKNOWN.translate(language).asString()));
+        return Text.of(ref.map(i -> i.getType().getId()).orElse(IntegratedResource.UNKNOWN.translate(language).asString()));
     }
 
     @Override
@@ -227,6 +220,15 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @Override
     public Item withMeta(int meta) {
         return Item.of(SpongeItem.this.getId(), meta);
+    }
+
+    @Override
+    public int getMeta() {
+        return (int) this.getReference()
+                .map(stack -> stack.toContainer()
+                        .get(Constants.ItemStack.DAMAGE_VALUE)
+                        .orElse(0)
+                ).orElse(0);
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")

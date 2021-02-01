@@ -17,8 +17,11 @@
 
 package org.dockbox.selene.core.files;
 
-import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.keys.Keys;
+import org.dockbox.selene.core.server.properties.InjectableType;
+import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.Reflect;
 
 import java.nio.file.Path;
@@ -28,9 +31,9 @@ import java.nio.file.Path;
  * the usage of Configurate based instances, it is possible to create implementations for alternative configuration
  * libraries and/or frameworks.
  */
-public abstract class FileManager {
+public abstract class FileManager implements InjectableType {
 
-    private final FileType fileType;
+    private FileType fileType;
 
     protected FileManager(FileType fileType) {
         this.fileType = fileType;
@@ -40,64 +43,70 @@ public abstract class FileManager {
         return this.fileType;
     }
 
-    /**
-     * Gets the default data file for a given {@link Extension}. The exact location is decided by the top-level
-     * implementation of this type.
-     *
-     * @param extension
-     *         The {@link Extension} providing identification
-     *
-     * @return A {@link Path} reference to a file
-     */
-    public abstract Path getDataFile(Extension extension);
-    public Path getDataFile(Class<?> extension) {
-        return this.getDataFile(Reflect.getExtension(extension));
+    public abstract void requestFileType(FileType fileType);
+
+    protected void setFileType(FileType fileType) {
+        this.fileType = fileType;
     }
 
     /**
-     * Gets the default config file for a given {@link Extension}. The exact location is decided by the top-level
+     * Gets the default data file for a given {@link Module}. The exact location is decided by the top-level
      * implementation of this type.
      *
-     * @param extension
-     *         The {@link Extension} providing identification
+     * @param module
+     *         The {@link Module} providing identification
      *
      * @return A {@link Path} reference to a file
      */
-    public abstract Path getConfigFile(Extension extension);
-    public Path getConfigFile(Class<?> extension) {
-        return this.getConfigFile(Reflect.getExtension(extension));
+    public abstract Path getDataFile(Module module);
+    public Path getDataFile(Class<?> module) {
+        return this.getDataFile(Reflect.getModule(module));
     }
 
     /**
-     * Gets a specific data file for a given {@link Extension}. The exact location is decided by the top-level
+     * Gets the default config file for a given {@link Module}. The exact location is decided by the top-level
      * implementation of this type.
      *
-     * @param extension
-     *         The {@link Extension} providing identification
+     * @param module
+     *         The {@link Module} providing identification
+     *
+     * @return A {@link Path} reference to a file
+     */
+    public abstract Path getConfigFile(Module module);
+    public Path getConfigFile(Class<?> module) {
+        return this.getConfigFile(Reflect.getModule(module));
+    }
+
+    /**
+     * Gets a specific data file for a given {@link Module}. The exact location is decided by the top-level
+     * implementation of this type.
+     *
+     * @param module
+     *         The {@link Module} providing identification
      * @param file
      *         The name of the lookup file
      *
      * @return A {@link Path} reference to a file
      */
-    public abstract Path getDataFile(Extension extension, String file);
-    public Path getDataFile(Class<?> extension, String file) {
-        return this.getDataFile(Reflect.getExtension(extension), file);
+    public abstract Path getDataFile(Module module, String file);
+    public Path getDataFile(Class<?> module, String file) {
+        return this.getDataFile(Reflect.getModule(module), file);
     }
 
     /**
-     * Gets a specific config file for a given {@link Extension}. The exact location is decided by the top-level
+     * Gets a specific config file for a given {@link Module}. The exact location is decided by the top-level
      * implementation of this type.
      *
-     * @param extension
-     *         The {@link Extension} providing identification
+     * @param module
+     *         The {@link Module} providing identification
      * @param file
      *         The name of the lookup file
      *
      * @return A {@link Path} reference to a file
      */
-    public abstract Path getConfigFile(Extension extension, String file);
-    public Path getConfigFile(Class<?> extension, String file) {
-        return this.getConfigFile(Reflect.getExtension(extension), file);
+    public abstract Path getConfigFile(Module module, String file);
+    public Path getConfigFile(Class<?> module, String file) {
+        return this.getConfigFile(Reflect.getModule(module), file);
     }
 
     /**
@@ -134,19 +143,19 @@ public abstract class FileManager {
     public abstract <T> Exceptional<Boolean> write(Path file, T content);
 
     /**
-     * Get the data directory for a given {@link Extension}. The exact location is decided by the top-level implementation
+     * Get the data directory for a given {@link Module}. The exact location is decided by the top-level implementation
      * of this type.
      *
-     * @param extension
-     *         The {@link Extension} providing identification
+     * @param module
+     *         The {@link Module} providing identification
      *
      * @return A {@link Path} reference to the data directory
      */
-    public Path getDataDir(Extension extension) {
-        return this.getDataDir().resolve(extension.id());
+    public Path getDataDir(Module module) {
+        return this.getDataDir().resolve(module.id());
     }
-    public Path getDataDir(Class<?> extension) {
-        return this.getDataDir(Reflect.getExtension(extension));
+    public Path getDataDir(Class<?> module) {
+        return this.getDataDir(Reflect.getModule(module));
     }
 
     /**
@@ -174,12 +183,12 @@ public abstract class FileManager {
     public abstract Path getServerRoot();
 
     /**
-     * Get the base extensions directory of a platform file system. The exact location is decided by the top-level
+     * Get the base modules directory of a platform file system. The exact location is decided by the top-level
      * implementation of this type.
      *
      * @return A {@link Path} reference to a directory
      */
-    public abstract Path getExtensionDir();
+    public abstract Path getModuleDir();
 
     /**
      * Get the base mods directory of a platform file system. The exact location is decided by the top-level
@@ -200,31 +209,31 @@ public abstract class FileManager {
     public abstract Path getPluginDir();
 
     /**
-     * Get the configuration directory for a given {@link Extension}. The exact location is decided by the top-level
+     * Get the configuration directory for a given {@link Module}. The exact location is decided by the top-level
      * implementation of this type.
      *
-     * @param extension
-     *         The {@link Extension} providing identification
+     * @param module
+     *         The {@link Module} providing identification
      *
      * @return A {@link Path} reference to the configuration directory
      */
-    public Path getExtensionConfigDir(Extension extension) {
-        return this.getExtensionConfigsDir().resolve(extension.id());
+    public Path getModuleConfigDir(Module module) {
+        return this.getModuleConfigsDir().resolve(module.id());
     }
-    public Path getExtensionConfigDir(Class<?> extension) {
-        return this.getExtensionConfigDir(Reflect.getExtension(extension));
+    public Path getModuleConfigDir(Class<?> module) {
+        return this.getModuleConfigDir(Reflect.getModule(module));
     }
 
     /**
-     * Get the configuration folder for extensions directory of a platform file system. The exact location is decided
+     * Get the configuration folder for modules directory of a platform file system. The exact location is decided
      * by the top-level implementation of this type.
      *
      * @return A {@link Path} reference to a directory
      */
-    public abstract Path getExtensionConfigsDir();
+    public abstract Path getModuleConfigsDir();
 
     /**
-     * Get the configuration folder for extensions directory of a platform file system. The exact location is decided
+     * Get the configuration folder for modules directory of a platform file system. The exact location is decided
      * by the top-level implementation of this type.
      * <p>
      * Depending on the platform this directory may not be present.
@@ -234,7 +243,7 @@ public abstract class FileManager {
     public abstract Exceptional<Path> getModdedPlatformModsConfigDir();
 
     /**
-     * Get the configuration folder for extensions directory of a platform file system. The exact location is decided
+     * Get the configuration folder for modules directory of a platform file system. The exact location is decided
      * by the top-level implementation of this type.
      *
      * @return A {@link Path} reference to a directory
@@ -289,4 +298,10 @@ public abstract class FileManager {
      * @return true if the file was copied, otherwise false
      */
     public abstract boolean copyDefaultFile(String defaultFileName, Path targetFile);
+
+    @Override
+    public void stateEnabling(InjectorProperty<?>... properties) {
+        Keys.getPropertyValue(FileTypeProperty.KEY, FileType.class, properties)
+                .ifPresent(this::requestFileType);
+    }
 }

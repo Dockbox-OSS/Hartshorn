@@ -33,9 +33,10 @@ public final class SeleneInformation {
     );
     /**
      * Constant value holding the GitHub username(s) of the author(s) of {@link Selene}. This does not include names of
-     * extension developers.
+     * module developers.
      */
     public static final String[] AUTHORS = {"GuusLieben"};
+    public static final String PROJECT_NAME = "Selene";
 
     private SeleneInformation() {}
 }

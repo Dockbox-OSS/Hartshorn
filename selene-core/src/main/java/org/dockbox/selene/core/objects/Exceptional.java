@@ -48,7 +48,7 @@ import javax.annotation.Nullable;
  * @param <T>
  *         the type parameter
  */
-@SuppressWarnings("AssignmentToNull")
+@SuppressWarnings({"AssignmentToNull", "unused"})
 public final class Exceptional<T> {
 
     private static final Exceptional<?> EMPTY = new Exceptional<>();
@@ -291,7 +291,11 @@ public final class Exceptional<T> {
         if (!this.isPresent())
             return this.errorPresent() ? of(this.throwable) : empty();
         else {
-            return ofNullable(mapper.apply(this.value), this.throwable);
+            try {
+                return ofNullable(mapper.apply(this.value), this.throwable);
+            } catch (Throwable e) {
+                return of(e);
+            }
         }
     }
 
@@ -620,9 +624,9 @@ public final class Exceptional<T> {
     public Exceptional<T> orElseSupply(Supplier<T> defaultValue) {
         if (this.isAbsent()) {
             if (this.errorPresent()) {
-                return of(defaultValue.get(), this.throwable);
+                return ofNullable(defaultValue.get(), this.throwable);
             } else {
-                return of(defaultValue.get());
+                return ofNullable(defaultValue.get());
             }
         }
         return this;

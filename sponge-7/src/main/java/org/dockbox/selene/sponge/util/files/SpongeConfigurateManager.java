@@ -59,8 +59,8 @@ public class SpongeConfigurateManager extends DefaultConfigurateManager implemen
 
     @NotNull
     @Override
-    public Path getExtensionDir() {
-        return SpongeDefaultFileManager.super.getExtensionDir();
+    public Path getModuleDir() {
+        return SpongeDefaultFileManager.super.getModuleDir();
     }
 
     @NotNull
@@ -77,8 +77,8 @@ public class SpongeConfigurateManager extends DefaultConfigurateManager implemen
 
     @NotNull
     @Override
-    public Path getExtensionConfigsDir() {
-        return SpongeDefaultFileManager.super.getExtensionConfigsDir();
+    public Path getModuleConfigsDir() {
+        return SpongeDefaultFileManager.super.getModuleConfigsDir();
     }
 
     @NotNull

@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.core.objects.item;
 
-import com.sk89q.worldedit.blocks.BaseBlock;
-
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
@@ -72,8 +70,9 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
 
     Item stack();
 
-    @Deprecated
     Item withMeta(int meta);
+
+    int getMeta();
 
     /**
      * @param id
@@ -82,7 +81,6 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
      *         The unsafe damage, or meta. Constraints to range 0-15
      *
      * @return The item instance, or {@link MinecraftItems#getAir()}
-     *
      * @deprecated Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As of 1.13 this will no
      *         longer be available!
      */
@@ -94,7 +92,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
 
     /**
      * @param id
-     *     The fully qualified identifier of a block, e.g. {@code minecraft:stone}
+     *         The fully qualified identifier of a block, e.g. {@code minecraft:stone}
      *
      * @return The item instance, or {@link MinecraftItems#getAir()}
      */
@@ -104,19 +102,6 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
             item = Selene.getItems().getCustom(id);
         }
         return item;
-    }
-
-    /**
-     * @param baseBlock
-     *         The {@link BaseBlock} instance to use when creating the item.
-     *
-     * @return The item instance, or {@link MinecraftItems#getAir()}
-     *
-     * @deprecated Note that WorldEdit rewrote their API for 1.13+, and that package/class names changes.
-     */
-    @Deprecated
-    static Item of(BaseBlock baseBlock) {
-        return Selene.provide(ItemFactory.class).create(baseBlock);
     }
 
 }

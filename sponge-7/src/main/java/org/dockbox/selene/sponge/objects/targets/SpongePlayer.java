@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.sponge.objects.targets;
 
-import com.boydti.fawe.FaweAPI;
-import com.boydti.fawe.object.FawePlayer;
 import com.flowpowered.math.vector.Vector3d;
 
 import org.dockbox.selene.core.PlayerStorageService;
@@ -41,7 +39,7 @@ import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.objects.special.Sounds;
-import org.dockbox.selene.core.packets.Packet;
+import org.dockbox.selene.core.objects.Packet;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.text.Text;
@@ -81,15 +79,6 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     @Override
     public boolean isOnline() {
         return this.referenceExists() && this.getReference().get().isOnline();
-    }
-
-    @SuppressWarnings("unchecked")
-    @NotNull
-    @Override
-    public Exceptional<FawePlayer<?>> getFawePlayer() {
-        if (this.referenceExists())
-            return Exceptional.of(FaweAPI.wrapPlayer(this.getReference().get()));
-        else return Exceptional.empty();
     }
 
     @Override

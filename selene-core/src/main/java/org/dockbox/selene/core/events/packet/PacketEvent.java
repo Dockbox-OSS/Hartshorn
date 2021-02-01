@@ -20,7 +20,7 @@ package org.dockbox.selene.core.events.packet;
 import org.dockbox.selene.core.events.AbstractCancellableEvent;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.packets.Packet;
+import org.dockbox.selene.core.objects.Packet;
 import org.dockbox.selene.core.server.Selene;
 import org.jetbrains.annotations.NotNull;
 

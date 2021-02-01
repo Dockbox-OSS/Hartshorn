@@ -28,8 +28,6 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
 
 archivesBaseName = 'selene-nms-1.12'
 group = project.pluginGroup
@@ -50,19 +48,7 @@ dependencies {
     compileOnly(project(':selene-common')) {
         exclude group: "org.spongepowered", module: "configurate**"
     }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
+    compileOnly project(':modules:packets')
 }
 
 jar.finalizedBy('reobfJar')

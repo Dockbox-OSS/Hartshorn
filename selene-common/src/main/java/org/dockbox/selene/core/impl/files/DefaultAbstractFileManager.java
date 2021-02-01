@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.core.impl.files;
 
-import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.files.FileType;
 import org.dockbox.selene.core.server.Selene;
@@ -37,16 +37,16 @@ public abstract class DefaultAbstractFileManager extends FileManager {
 
     @NotNull
     @Override
-    public Path getDataFile(@NotNull Extension extension) {
-        return this.getDataFile(extension, extension.id());
+    public Path getDataFile(@NotNull Module module) {
+        return this.getDataFile(module, module.id());
     }
 
     @NotNull
     @Override
-    public Path getDataFile(@NotNull Extension extension, @NotNull String file) {
+    public Path getDataFile(@NotNull Module module, @NotNull String file) {
         return this.createFileIfNotExists(
                 this.getFileType().asPath(
-                        this.getDataDir().resolve(extension.id()),
+                        this.getDataDir().resolve(module.id()),
                         file
                 )
         );
@@ -54,16 +54,16 @@ public abstract class DefaultAbstractFileManager extends FileManager {
 
     @NotNull
     @Override
-    public Path getConfigFile(@NotNull Extension extension) {
-        return this.getConfigFile(extension, extension.id());
+    public Path getConfigFile(@NotNull Module module) {
+        return this.getConfigFile(module, module.id());
     }
 
     @NotNull
     @Override
-    public Path getConfigFile(@NotNull Extension extension, @NotNull String file) {
+    public Path getConfigFile(@NotNull Module module, @NotNull String file) {
         return this.createFileIfNotExists(
                 this.getFileType().asPath(
-                        this.getExtensionConfigsDir().resolve(extension.id()),
+                        this.getModuleConfigsDir().resolve(module.id()),
                         file
                 )
         );
