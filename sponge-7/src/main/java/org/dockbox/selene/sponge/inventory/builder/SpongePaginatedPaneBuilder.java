@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.sponge.inventory.builder;
 
+import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.inventory.Element;
 import org.dockbox.selene.core.inventory.InventoryLayout;
 import org.dockbox.selene.core.inventory.builder.PaginatedPaneBuilder;
@@ -30,7 +31,6 @@ import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.SpongeAPI7Bootstrap;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.inventory.pane.SpongePaginatedPane;
-import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
 
     @Override
     public PaginatedPaneBuilder title(Text text) {
-        this.builder.title(ctx -> SpongeConversionUtil.toSponge(text));
+        this.builder.title(ctx -> PlatformConversionService.map(text));
         return this;
     }
 
@@ -64,7 +64,8 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
     public PaginatedPane build() {
         Page page = this.builder.build(SpongeAPI7Bootstrap.getContainer());
         page.define(this.elements.stream()
-                .map(SpongeConversionUtil::toSponge)
+                .map(PlatformConversionService::map)
+                .map(dev.flashlabs.flashlibs.inventory.Element.class::cast)
                 .collect(Collectors.toList())
         );
         return new SpongePaginatedPane(page);
@@ -74,7 +75,7 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
     public void stateEnabling(InjectorProperty<?>... properties) {
         Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
                 .ifPresent(layout -> {
-                    this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
+                    this.builder = Page.builder(PlatformConversionService.map(layout.getIventoryType()));
                     this.layout(layout);
                 })
                 .ifAbsent(() -> {

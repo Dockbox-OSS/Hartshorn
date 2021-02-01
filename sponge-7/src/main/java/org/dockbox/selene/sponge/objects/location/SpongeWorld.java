@@ -19,13 +19,13 @@ package org.dockbox.selene.sponge.objects.location;
 
 import com.flowpowered.math.vector.Vector3i;
 
+import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.Wrapper;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
@@ -121,7 +121,7 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
     @Override
     public Gamemode getDefaultGamemode() {
         if (this.referenceExists()) {
-            return SpongeConversionUtil.fromSponge(this.getReference().get().getProperties().getGameMode());
+            return PlatformConversionService.map(this.getReference().get().getProperties().getGameMode());
         } else return Gamemode.OTHER;
     }
 
@@ -137,7 +137,7 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
     public void setDefaultGamemode(@NotNull Gamemode defaultGamemode) {
         if (this.referenceExists()) {
             this.getReference().get().getProperties()
-                    .setGameMode(SpongeConversionUtil.toSponge(defaultGamemode));
+                    .setGameMode(PlatformConversionService.map(defaultGamemode));
         }
     }
 

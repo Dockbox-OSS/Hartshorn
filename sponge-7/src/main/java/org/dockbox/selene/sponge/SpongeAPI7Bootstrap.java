@@ -42,9 +42,9 @@ import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.selene.sponge.listeners.SpongePlayerListener;
 import org.dockbox.selene.sponge.listeners.SpongeServerListener;
 import org.dockbox.selene.sponge.objects.composite.Composite;
+import org.dockbox.selene.sponge.objects.composite.CompositeDataManipulatorBuilder;
 import org.dockbox.selene.sponge.objects.composite.ImmutableCompositeData;
 import org.dockbox.selene.sponge.objects.composite.MutableCompositeData;
-import org.dockbox.selene.sponge.objects.composite.CompositeDataManipulatorBuilder;
 import org.dockbox.selene.sponge.util.SpongeInjector;
 import org.dockbox.selene.sponge.util.SpongeTaskRunner;
 import org.jetbrains.annotations.NotNull;
@@ -134,6 +134,8 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
             .id(Composite.ID)
             .name(Composite.NAME)
             .build();
+
+        SpongePlatformConverters.init();
     }
 
     private void registerSpongeListeners(Object... listeners) {

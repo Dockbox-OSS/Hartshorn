@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.sponge.listeners;
 
+import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.events.chat.SendChatEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.IpBannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.IpUnbannedEvent;
@@ -45,7 +46,6 @@ import org.dockbox.selene.core.objects.player.ClickType;
 import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.Transform;
@@ -83,12 +83,12 @@ public class SpongePlayerListener {
 
     @Listener
     public void onPlayerConnected(ClientConnectionEvent.Join joinEvent, @First Player sp) {
-        new PlayerJoinEvent(SpongeConversionUtil.fromSponge(sp)).post();
+        new PlayerJoinEvent(PlatformConversionService.map(sp, Player.class)).post();
     }
 
     @Listener
     public void onPlayerDisconnected(ClientConnectionEvent.Disconnect disconnectEvent, @First Player sp) {
-        new PlayerLeaveEvent(SpongeConversionUtil.fromSponge(sp)).post();
+        new PlayerLeaveEvent(PlatformConversionService.map(sp, Player.class)).post();
     }
 
     @Listener
@@ -99,9 +99,9 @@ public class SpongePlayerListener {
 
     @Listener
     public void onPlayerWarp(NucleusWarpEvent.Use warpEvent, @Getter("getTargetUser") User user) {
-        Warp warp = SpongeConversionUtil.fromSponge(warpEvent.getWarp());
+        Warp warp = PlatformConversionService.map(warpEvent.getWarp());
         Cancellable event = new PlayerWarpEvent(
-                SpongeConversionUtil.fromSponge(user),
+                PlatformConversionService.map(user, User.class),
                 warp
         ).post();
         warpEvent.setCancelled(event.isCancelled());
@@ -112,17 +112,17 @@ public class SpongePlayerListener {
                                  @First Player player,
                                  @Getter("getFromTransform") Transform<World> from,
                                  @Getter("getToTransform") Transform<World> to) {
-        Location fromLocation = SpongeConversionUtil.fromSponge(from.getLocation());
-        Location toLocation = SpongeConversionUtil.fromSponge(to.getLocation());
+        Location fromLocation = PlatformConversionService.map(from.getLocation());
+        Location toLocation = PlatformConversionService.map(to.getLocation());
 
         Cancellable event = new PlayerTeleportEvent(
-                SpongeConversionUtil.fromSponge(player),
+                PlatformConversionService.map(player, Player.class),
                 fromLocation, toLocation).post();
         teleportEvent.setCancelled(event.isCancelled());
 
         if (!fromLocation.getWorld().equals(toLocation.getWorld()) && !event.isCancelled()) {
             Cancellable worldEvent = new PlayerSwitchWorldEvent(
-                    SpongeConversionUtil.fromSponge(player),
+                    PlatformConversionService.map(player, Player.class),
                     fromLocation.getWorld(), toLocation.getWorld()).post();
 
             teleportEvent.setCancelled(worldEvent.isCancelled());
@@ -134,8 +134,8 @@ public class SpongePlayerListener {
                              @First Player player,
                              @Getter("getMessage") Text message) {
         Cancellable event = new SendChatEvent(
-                SpongeConversionUtil.fromSponge(player),
-                SpongeConversionUtil.fromSponge(message)
+                PlatformConversionService.map(player, Player.class),
+                PlatformConversionService.map(message)
         ).post();
         chatEvent.setCancelled(event.isCancelled());
     }
@@ -148,7 +148,7 @@ public class SpongePlayerListener {
     ) {
         this.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new PlayerBannedEvent(
-                    SpongeConversionUtil.fromSponge(player),
+                    PlatformConversionService.map(player, Player.class),
                     convertedSource,
                     Exceptional.of(profile.getReason().map(Text::toPlain)),
                     SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
@@ -201,7 +201,7 @@ public class SpongePlayerListener {
     ) {
         this.postIfCommandSource(source, convertedSource -> {
             PlayerWarnedEvent event = new WarnEvent.PlayerWarnedEvent(
-                    SpongeConversionUtil.fromSponge(user),
+                    PlatformConversionService.map(user, User.class),
                     convertedSource,
                     reason,
                     LocalDateTime.now());
@@ -219,7 +219,7 @@ public class SpongePlayerListener {
                               @Getter("getSource") Object source
     ) {
         this.postIfCommandSource(source, convertedSource -> new NoteEvent.PlayerNotedEvent(
-                SpongeConversionUtil.fromSponge(user),
+                PlatformConversionService.map(user, User.class),
                 convertedSource,
                 note
         ).post());
@@ -242,7 +242,7 @@ public class SpongePlayerListener {
     ) {
         this.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new PlayerUnbannedEvent(
-                    SpongeConversionUtil.fromSponge(player),
+                    PlatformConversionService.map(player, Player.class),
                     convertedSource,
                     Exceptional.of(profile.getReason().map(Text::toPlain)),
                     SeleneUtils.toLocalDateTime(profile.getCreationDate())
@@ -291,7 +291,7 @@ public class SpongePlayerListener {
                               @Getter("getSource") Object source
     ) {
         this.postIfCommandSource(source, convertedSource -> new WarnEvent.PlayerWarningExpired(
-                SpongeConversionUtil.fromSponge(user),
+                PlatformConversionService.map(user, User.class),
                 convertedSource,
                 reason
         ).post());
@@ -310,7 +310,7 @@ public class SpongePlayerListener {
                                @Getter("getTargetEntity") Player player,
                                @Getter("getSource") Object source
     ) {
-        this.postIfCommandSource(source, convertedSource -> new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional.empty()).post());
+        this.postIfCommandSource(source, convertedSource -> new KickEvent(PlatformConversionService.map(player, Player.class), convertedSource, Exceptional.empty()).post());
     }
 
     @Listener
@@ -319,7 +319,7 @@ public class SpongePlayerListener {
         Exceptional<Location> location = Exceptional.of(event
                 .getTargetBlock()
                 .getLocation()
-                .map(SpongeConversionUtil::fromSponge)
+                .map(PlatformConversionService::map)
         );
         if (location.isAbsent()) return;
         Location blockLocation = location.get();
@@ -327,7 +327,7 @@ public class SpongePlayerListener {
         Hand hand;
 
         if (event instanceof HandInteractEvent) {
-            hand = SpongeConversionUtil.fromSponge(((HandInteractEvent) event).getHandType());
+            hand = PlatformConversionService.map(((HandInteractEvent) event).getHandType());
             String canonical = event.getClass().getCanonicalName();
             if (canonical.toLowerCase().contains("primary")) type = ClickType.PRIMARY;
             else if (canonical.toLowerCase().contains("secondary")) type = ClickType.SECONDARY;
@@ -335,7 +335,7 @@ public class SpongePlayerListener {
         } else return;
 
         Cancellable cancellable = new PlayerInteractBlockEvent(
-                SpongeConversionUtil.fromSponge(player),
+                PlatformConversionService.map(player, Player.class),
                 hand, type, blockLocation).post();
         event.setCancelled(cancellable.isCancelled());
     }
@@ -349,14 +349,14 @@ public class SpongePlayerListener {
         ClickType type;
         Hand hand;
 
-        hand = SpongeConversionUtil.fromSponge((event.getHandType()));
+        hand = PlatformConversionService.map((event.getHandType()));
         String canonical = event.getClass().getCanonicalName();
         if (canonical.toLowerCase().contains("primary")) type = ClickType.PRIMARY;
         else if (canonical.toLowerCase().contains("secondary")) type = ClickType.SECONDARY;
         else return;
 
         Cancellable cancellable = new PlayerInteractAirEvent(
-                SpongeConversionUtil.fromSponge(player),
+                PlatformConversionService.map(player, Player.class),
                 hand, type).post();
         event.setCancelled(cancellable.isCancelled());
     }
@@ -371,7 +371,9 @@ public class SpongePlayerListener {
 
     private void postIfCommandSource(Object source, Consumer<org.dockbox.selene.core.command.source.CommandSource> consumer) {
         if (source instanceof CommandSource) {
-            SpongeConversionUtil.fromSponge((CommandSource) source).ifPresent(consumer);
+            PlatformConversionService.mapSafely((CommandSource) source)
+                    .map(org.dockbox.selene.core.command.source.CommandSource.class::cast)
+                    .ifPresent(consumer);
         }
     }
 

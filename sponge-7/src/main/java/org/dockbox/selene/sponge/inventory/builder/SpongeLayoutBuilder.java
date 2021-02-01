@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.sponge.inventory.builder;
 
+import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.inventory.Element;
 import org.dockbox.selene.core.inventory.InventoryLayout;
 import org.dockbox.selene.core.inventory.InventoryType;
@@ -26,7 +27,6 @@ import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
-import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
 import dev.flashlabs.flashlibs.inventory.Layout;
 
@@ -37,37 +37,37 @@ public class SpongeLayoutBuilder extends LayoutBuilder {
 
     @Override
     public LayoutBuilder set(Element element, int index) {
-        this.builder.set(SpongeConversionUtil.toSponge(element), index);
+        this.builder.set(PlatformConversionService.map(element), index);
         return this;
     }
 
     @Override
     public LayoutBuilder row(Element element, int index) {
-        this.builder.row(SpongeConversionUtil.toSponge(element), index);
+        this.builder.row(PlatformConversionService.map(element), index);
         return this;
     }
 
     @Override
     public LayoutBuilder column(Element element, int index) {
-        this.builder.column(SpongeConversionUtil.toSponge(element), index);
+        this.builder.column(PlatformConversionService.map(element), index);
         return this;
     }
 
     @Override
     public LayoutBuilder border(Element element) {
-        this.builder.border(SpongeConversionUtil.toSponge(element));
+        this.builder.border(PlatformConversionService.map(element));
         return this;
     }
 
     @Override
     public LayoutBuilder fill(Element element) {
-        this.builder.fill(SpongeConversionUtil.toSponge(element));
+        this.builder.fill(PlatformConversionService.map(element));
         return this;
     }
 
     @Override
     public InventoryLayout build() {
-        return new SpongeInventoryLayout(this.builder.build(), inventoryType);
+        return new SpongeInventoryLayout(this.builder.build(), this.inventoryType);
     }
 
     @Override

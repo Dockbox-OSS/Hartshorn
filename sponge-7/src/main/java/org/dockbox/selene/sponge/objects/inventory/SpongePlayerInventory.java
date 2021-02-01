@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.inventory;
 
+import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.inventory.InventoryRow;
 import org.dockbox.selene.core.objects.inventory.PlayerInventory;
@@ -25,7 +26,6 @@ import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
-import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.entity.Hotbar;
 import org.spongepowered.api.item.inventory.entity.MainPlayerInventory;
@@ -47,8 +47,8 @@ public class SpongePlayerInventory extends PlayerInventory {
     private static final int inventorySize = 36;
     private static final Supplier<Item> air = () -> Selene.getItems().getAir();
     private static final Function<org.spongepowered.api.item.inventory.Slot, Item> slotLookup = slot -> {
-        return slot.peek().map(SpongeConversionUtil::fromSponge)
-            .map(referencedItem -> (Item) referencedItem)
+        return slot.peek().map(PlatformConversionService::map)
+            .map(Item.class::cast)
 
             .orElseGet(air);
     };
@@ -83,21 +83,21 @@ public class SpongePlayerInventory extends PlayerInventory {
     @Override
     public void setSlot(Item item, int row, int column) {
         this.internalGetSlot(row, column).ifPresent(slot -> {
-            slot.set(SpongeConversionUtil.toSponge(item));
+            slot.set(PlatformConversionService.map(item));
         });
     }
 
     @Override
     public void setSlot(Item item, int index) {
         this.internalGetSlot(index).ifPresent(slot -> {
-            slot.set(SpongeConversionUtil.toSponge(item));
+            slot.set(PlatformConversionService.map(item));
         });
     }
 
     @Override
     public void setSlot(Item item, Slot slotType) {
         this.internalGetSlot(slotType).ifPresent(slot -> {
-            slot.set(SpongeConversionUtil.toSponge(item));
+            slot.set(PlatformConversionService.map(item));
         });
     }
 
@@ -116,7 +116,7 @@ public class SpongePlayerInventory extends PlayerInventory {
     public boolean give(Item item) {
         return this.player.getSpongePlayer().map(player -> {
             MainPlayerInventory inventory = player.getInventory().query(new InventoryTypeQueryOperation(MainPlayerInventory.class));
-            ItemStack stack = SpongeConversionUtil.toSponge(item);
+            ItemStack stack = PlatformConversionService.map(item);
             InventoryTransactionResult result = inventory.getHotbar().offer(stack);
             if (Type.SUCCESS == result.getType()) return true;
 
@@ -183,7 +183,7 @@ public class SpongePlayerInventory extends PlayerInventory {
         return this.player.getSpongePlayer().map(player -> {
             EquipmentInventory equipment = player.getInventory()
                 .query(new InventoryTypeQueryOperation(EquipmentInventory.class));
-            EquipmentType equipmentType = SpongeConversionUtil.toSponge(slot);
+            EquipmentType equipmentType = PlatformConversionService.map(slot);
             return equipment.getSlot(equipmentType).orElse(null);
         });
     }

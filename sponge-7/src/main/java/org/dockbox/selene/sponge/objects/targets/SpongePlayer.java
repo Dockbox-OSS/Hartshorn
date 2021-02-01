@@ -19,6 +19,7 @@ package org.dockbox.selene.sponge.objects.targets;
 
 import com.flowpowered.math.vector.Vector3d;
 
+import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.PlayerStorageService;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.chat.SendMessageEvent;
@@ -26,6 +27,7 @@ import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.Packet;
 import org.dockbox.selene.core.objects.Wrapper;
 import org.dockbox.selene.core.objects.inventory.PlayerInventory;
 import org.dockbox.selene.core.objects.inventory.Slot;
@@ -39,7 +41,6 @@ import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.objects.special.Sounds;
-import org.dockbox.selene.core.objects.Packet;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInformation;
 import org.dockbox.selene.core.text.Text;
@@ -48,13 +49,14 @@ import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.objects.inventory.SpongePlayerInventory;
-import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.util.Tristate;
@@ -91,14 +93,14 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     public Gamemode getGamemode() {
         if (this.referenceExists()) {
             GameMode mode = this.getReference().get().get(Keys.GAME_MODE).orElse(GameModes.NOT_SET);
-            return SpongeConversionUtil.fromSponge(mode);
+            return PlatformConversionService.map(mode);
         } else return Gamemode.OTHER;
     }
 
     @Override
     public void setGamemode(@NotNull Gamemode gamemode) {
         if (this.referenceExists())
-            this.getReference().get().offer(Keys.GAME_MODE, SpongeConversionUtil.toSponge(gamemode));
+            this.getReference().get().offer(Keys.GAME_MODE, PlatformConversionService.map(gamemode));
     }
 
     @NotNull
@@ -127,14 +129,14 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     @Override
     public void setItemInHand(Hand hand, Item item) {
         this.getReference().ifPresent(player -> {
-            player.setItemInHand(SpongeConversionUtil.toSponge(hand), SpongeConversionUtil.toSponge(item));
+            player.setItemInHand(PlatformConversionService.map(hand), PlatformConversionService.map(item));
         });
     }
 
     @Override
     public void play(Sounds sound) {
         this.getReference().ifPresent(player -> {
-            SpongeConversionUtil.toSponge(sound).ifPresent(soundType -> {
+            PlatformConversionService.<Sounds, SoundType>mapSafely(sound).ifPresent(soundType -> {
                 player.playSound(soundType, Vector3d.ZERO, 1);
             });
         });
@@ -162,7 +164,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
                 .distanceLimit(BLOCKRAY_LIMIT)
                 .build();
             if (ray.hasNext()) {
-                return SpongeConversionUtil.fromSponge(ray.next().getLocation());
+                return PlatformConversionService.map(ray.next().getLocation());
             } else //noinspection ReturnOfNull
                 return null;
         });
@@ -184,14 +186,15 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     @Override
     public Location getLocation() {
         if (this.referenceExists())
-            return SpongeConversionUtil.fromSponge(this.getReference().get().getLocation());
+            return PlatformConversionService.map(this.getReference().get().getLocation());
         else return Location.empty();
     }
 
     @Override
     public void setLocation(@NotNull Location location) {
         if (this.referenceExists()) {
-            SpongeConversionUtil.toSponge(location).ifPresent(loc -> this.getReference().get().setLocation(loc));
+            PlatformConversionService.<@NotNull Location, org.spongepowered.api.world.Location<org.spongepowered.api.world.World>>mapSafely(location)
+                    .ifPresent(loc -> this.getReference().get().setLocation(loc));
         }
     }
 
@@ -213,7 +216,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     public void send(@NotNull Text text) {
         if (this.referenceExists()) {
             this.postEventPre(text).ifPresent(msg -> {
-                this.getReference().get().sendMessage(SpongeConversionUtil.toSponge(msg));
+                this.getReference().get().sendMessage(PlatformConversionService.<Text, org.spongepowered.api.text.Text>map(msg));
             });
         }
     }
@@ -229,8 +232,8 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
         if (this.referenceExists()) {
             this.postEventPre(text).ifPresent(msg -> {
                 this.getReference().get().sendMessage(org.spongepowered.api.text.Text.of(
-                        SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
-                        SpongeConversionUtil.toSponge(msg))
+                        PlatformConversionService.<Text, org.spongepowered.api.text.Text>map(IntegratedResource.PREFIX.asText()),
+                        PlatformConversionService.<Text, org.spongepowered.api.text.Text>map(msg))
                 );
             });
         }
@@ -239,7 +242,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     @Override
     public void sendPagination(@NotNull Pagination pagination) {
         if (this.referenceExists()) {
-            SpongeConversionUtil.toSponge(pagination).sendTo(this.getReference().get());
+            PlatformConversionService.<@NotNull Pagination, PaginationList>map(pagination).sendTo(this.getReference().get());
         }
     }
 

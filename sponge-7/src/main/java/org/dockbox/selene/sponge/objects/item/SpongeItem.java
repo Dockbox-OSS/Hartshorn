@@ -20,6 +20,7 @@ package org.dockbox.selene.sponge.objects.item;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
+import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
@@ -34,7 +35,6 @@ import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
-import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataHolder;
@@ -87,7 +87,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @Override
     public Text getDisplayName(Language language) {
         Exceptional<ItemStack> ref = this.getReference();
-        Exceptional<Text> name = Exceptional.of(ref.map(i -> i.get(Keys.DISPLAY_NAME)).get()).map(SpongeConversionUtil::fromSponge);
+        Exceptional<Text> name = Exceptional.of(ref.map(i -> i.get(Keys.DISPLAY_NAME)).get()).map(PlatformConversionService::map);
         if (name.isPresent()) return name.get();
 
         Exceptional<String> translatedName = ref.map(i -> i.getTranslation().get());
@@ -99,7 +99,10 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @Override
     public List<Text> getLore() {
         List<org.spongepowered.api.text.Text> sl = this.getReference().map(i -> i.get(Keys.ITEM_LORE)).get().orElseGet(ArrayList::new);
-        return sl.stream().map(SpongeConversionUtil::fromSponge).collect(Collectors.toList());
+        return sl.stream()
+                .map(PlatformConversionService::map)
+                .map(Text.class::cast)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -109,7 +112,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
 
     @Override
     public void setDisplayName(Text displayName) {
-        this.getReference().ifPresent(i -> i.offer(Keys.DISPLAY_NAME, SpongeConversionUtil.toSponge(displayName)));
+        this.getReference().ifPresent(i -> i.offer(Keys.DISPLAY_NAME, PlatformConversionService.map(displayName)));
     }
 
     @Override
@@ -119,7 +122,10 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
 
     @Override
     public void setLore(List<Text> lore) {
-        this.getReference().ifPresent(i -> i.offer(Keys.ITEM_LORE, lore.stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList())));
+        this.getReference().ifPresent(i -> i.offer(Keys.ITEM_LORE, lore.stream()
+                .map(PlatformConversionService::map)
+                .map(org.spongepowered.api.text.Text.class::cast)
+                .collect(Collectors.toList())));
     }
 
     @Override
@@ -157,7 +163,12 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         List<org.spongepowered.api.item.enchantment.Enchantment> enchantments = this.getReference()
                 .map(i -> i.get(Keys.ITEM_ENCHANTMENTS).orElse(SeleneUtils.emptyList()))
                 .orElse(SeleneUtils.emptyList());
-        return enchantments.stream().map(SpongeConversionUtil::fromSponge).filter(Exceptional::isPresent).map(Exceptional::get).collect(Collectors.toList());
+        return enchantments.stream().map(PlatformConversionService::map)
+                .map(Exceptional.class::cast)
+                .filter(Exceptional::isPresent)
+                .map(Exceptional::get)
+                .map(Enchant.class::cast)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -236,7 +247,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         this.getReference().ifPresent(itemStack -> {
             EnchantmentData enchantmentData = itemStack.getOrCreate(EnchantmentData.class).get();
             @NotNull Exceptional<org.spongepowered.api.item.enchantment.Enchantment> enchantment =
-                    SpongeConversionUtil.toSponge(enchant);
+                    PlatformConversionService.map(enchant);
             enchantment.ifPresent(e -> action.accept(enchantmentData, e));
         });
     }

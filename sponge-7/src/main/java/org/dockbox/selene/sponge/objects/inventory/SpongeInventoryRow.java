@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.inventory;
 
+import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.inventory.InventoryRow;
 import org.dockbox.selene.core.objects.inventory.PlayerInventory;
@@ -25,7 +26,6 @@ import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
-import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.entity.Hotbar;
 import org.spongepowered.api.item.inventory.entity.MainPlayerInventory;
@@ -43,7 +43,7 @@ public class SpongeInventoryRow implements InventoryRow {
 
     private static final Supplier<Item> air = () -> Selene.getItems().getAir();
     private static final Function<org.spongepowered.api.item.inventory.Slot, Item> slotLookup = slot -> {
-        return slot.peek().map(SpongeConversionUtil::fromSponge)
+        return slot.peek().map(PlatformConversionService::map)
             .map(referencedItem -> (Item) referencedItem)
 
             .orElseGet(air);
@@ -86,7 +86,7 @@ public class SpongeInventoryRow implements InventoryRow {
     @Override
     public void setSlot(Item item, int index) {
         this.internalGetSlot(index).ifPresent(slot -> {
-            slot.set(SpongeConversionUtil.toSponge(item));
+            slot.set(PlatformConversionService.map(item));
         });
     }
 
@@ -108,7 +108,7 @@ public class SpongeInventoryRow implements InventoryRow {
     @Override
     public boolean give(Item item) {
         return this.internalGetRow().map(row -> {
-            ItemStack stack = SpongeConversionUtil.toSponge(item);
+            ItemStack stack = PlatformConversionService.map(item);
             return Type.SUCCESS == row.offer(stack).getType();
         }).orElse(false);
     }

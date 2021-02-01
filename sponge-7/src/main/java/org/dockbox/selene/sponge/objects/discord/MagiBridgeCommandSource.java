@@ -19,11 +19,11 @@ package org.dockbox.selene.sponge.objects.discord;
 
 import com.magitechserver.magibridge.util.BridgeCommandSource;
 
+import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.command.source.DiscordCommandSource;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
-import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
@@ -42,22 +42,22 @@ public class MagiBridgeCommandSource extends DiscordCommandSource {
 
     @Override
     public void send(@NotNull ResourceEntry text) {
-        this.bridge.sendMessage(SpongeConversionUtil.toSponge(text.asText()));
+        this.bridge.sendMessage(PlatformConversionService.<Text, org.spongepowered.api.text.Text>map(text.asText()));
     }
 
     @Override
     public void send(@NotNull Text text) {
-        this.bridge.sendMessage(SpongeConversionUtil.toSponge(text));
+        this.bridge.sendMessage(PlatformConversionService.<Text, org.spongepowered.api.text.Text>map(text));
     }
 
     @Override
     public void sendWithPrefix(@NotNull ResourceEntry text) {
-        this.bridge.sendMessage(SpongeConversionUtil.toSponge(text.asText()));
+        this.bridge.sendMessage(PlatformConversionService.<Text, org.spongepowered.api.text.Text>map(text.asText()));
     }
 
     @Override
     public void sendWithPrefix(@NotNull Text text) {
-        this.bridge.sendMessage(SpongeConversionUtil.toSponge(text));
+        this.bridge.sendMessage(PlatformConversionService.<Text, org.spongepowered.api.text.Text>map(text));
     }
 
     @Override

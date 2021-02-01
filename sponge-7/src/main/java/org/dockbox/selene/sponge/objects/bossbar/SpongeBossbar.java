@@ -20,6 +20,7 @@ package org.dockbox.selene.sponge.objects.bossbar;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
+import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.impl.objects.bossbar.DefaultTickableBossbar;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.bossbar.Bossbar;
@@ -30,7 +31,6 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.tasks.TaskRunner;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.spongepowered.api.boss.ServerBossBar;
 
@@ -62,7 +62,7 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     @Override
     public void showTo(Player player) {
         this.getReference().ifPresent(serverBossBar -> {
-            SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::addPlayer);
+            PlatformConversionService.<Player, org.spongepowered.api.entity.living.player.Player>mapSafely(player).ifPresent(serverBossBar::addPlayer);
             if (Bossbar.REGISTRY.containsKey(this.getId()))
                 Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player.getName() + ". This may cause unexpected behavior!");
             else if (Bossbar.REGISTRY.containsValue(this))
@@ -74,7 +74,7 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     @Override
     public void showTo(Player player, Duration duration) {
         this.getReference().ifPresent(serverBossBar -> {
-            SpongeConversionUtil.toSponge(player).ifPresent(sp -> {
+            PlatformConversionService.<Player, org.spongepowered.api.entity.living.player.Player>mapSafely(player).ifPresent(sp -> {
                 serverBossBar.addPlayer(sp);
                 TaskRunner.create().acceptDelayed(
                         () -> this.hideFrom(player),
@@ -93,7 +93,7 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     @Override
     public void hideFrom(Player player) {
         this.getReference().ifPresent(serverBossBar -> {
-            SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::removePlayer);
+            PlatformConversionService.<Player, org.spongepowered.api.entity.living.player.Player>mapSafely(player).ifPresent(serverBossBar::removePlayer);
             if (serverBossBar.getPlayers().isEmpty()) Bossbar.REGISTRY.remove(this.getId());
         });
     }
@@ -101,7 +101,9 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     @Override
     public Collection<Player> visibleTo() {
         return this.getReference().map(serverBossBar -> serverBossBar.getPlayers().stream()
-                .map(SpongeConversionUtil::fromSponge).collect(Collectors.toList()))
+                .map(PlatformConversionService::map)
+                .map(Player.class::cast)
+                .collect(Collectors.toList()))
                 .orElseGet(SeleneUtils::emptyList);
     }
 
@@ -133,10 +135,10 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     @Override
     public Function<ServerBossBar, Exceptional<ServerBossBar>> getUpdateReferenceTask() {
         return bar -> {
-            bar.setName(SpongeConversionUtil.toSponge(this.getText()));
+            bar.setName(PlatformConversionService.map(this.getText()));
             bar.setPercent(this.getPercent() / 100);
-            bar.setColor(SpongeConversionUtil.toSponge(this.getColor()));
-            bar.setOverlay(SpongeConversionUtil.toSponge(this.getStyle()));
+            bar.setColor(PlatformConversionService.map(this.getColor()));
+            bar.setOverlay(PlatformConversionService.map(this.getStyle()));
             return Exceptional.of(bar);
         };
     }
@@ -144,10 +146,10 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     @Override
     public Exceptional<ServerBossBar> constructInitialReference() {
         return Exceptional.of(ServerBossBar.builder()
-                .name(SpongeConversionUtil.toSponge(this.getText()))
+                .name(PlatformConversionService.map(this.getText()))
                 .percent(this.getPercent() / 100)
-                .color(SpongeConversionUtil.toSponge(this.getColor()))
-                .overlay(SpongeConversionUtil.toSponge(this.getStyle()))
+                .color(PlatformConversionService.map(this.getColor()))
+                .overlay(PlatformConversionService.map(this.getStyle()))
                 .build());
     }
 }

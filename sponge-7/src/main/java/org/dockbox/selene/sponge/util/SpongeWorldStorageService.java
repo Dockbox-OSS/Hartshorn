@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.sponge.util;
 
+import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.WorldStorageService;
@@ -33,7 +34,10 @@ public class SpongeWorldStorageService implements WorldStorageService {
     @NotNull
     @Override
     public List<World> getLoadedWorlds() {
-        return Sponge.getServer().getWorlds().stream().map(SpongeConversionUtil::fromSponge).collect(Collectors.toList());
+        return Sponge.getServer().getWorlds().stream()
+                .map(PlatformConversionService::map)
+                .map(World.class::cast)
+                .collect(Collectors.toList());
     }
 
     @NotNull
@@ -45,12 +49,16 @@ public class SpongeWorldStorageService implements WorldStorageService {
     @NotNull
     @Override
     public Exceptional<World> getWorld(@NotNull String name) {
-        return Exceptional.of(Sponge.getServer().loadWorld(name)).map(SpongeConversionUtil::fromSponge);
+        return Exceptional.of(Sponge.getServer().loadWorld(name))
+                .map(PlatformConversionService::map)
+                .map(World.class::cast);
     }
 
     @NotNull
     @Override
     public Exceptional<World> getWorld(@NotNull UUID uuid) {
-        return Exceptional.of(Sponge.getServer().loadWorld(uuid)).map(SpongeConversionUtil::fromSponge);
+        return Exceptional.of(Sponge.getServer().loadWorld(uuid))
+                .map(PlatformConversionService::map)
+                .map(World.class::cast);
     }
 }
