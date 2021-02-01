@@ -32,11 +32,6 @@ import com.sk89q.worldedit.function.mask.BlockMask;
 import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.session.ClipboardHolder;
 
-import org.dockbox.selene.worldedit.WorldEditService;
-import org.dockbox.selene.worldedit.region.Mask;
-import org.dockbox.selene.worldedit.region.Pattern;
-import org.dockbox.selene.worldedit.region.Clipboard;
-import org.dockbox.selene.worldedit.region.Region;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.Player;
@@ -44,6 +39,11 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.sponge.external.WrappedMask;
 import org.dockbox.selene.sponge.external.WrappedPattern;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
+import org.dockbox.selene.worldedit.WorldEditService;
+import org.dockbox.selene.worldedit.region.Clipboard;
+import org.dockbox.selene.worldedit.region.Mask;
+import org.dockbox.selene.worldedit.region.Pattern;
+import org.dockbox.selene.worldedit.region.Region;
 
 import java.util.Collection;
 import java.util.List;
@@ -151,7 +151,9 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
             FawePlayer<?> player = SpongeConversionUtil.toWorldEdit(cause);
             CommandContext context = new CommandContext("");
             EditSession session = player.getNewEditSession();
+            // Disallow fast mode internally
             session.setFastMode(false);
+            // Ensure the area is within the bounds, or request the player to confirm the action
             player.checkConfirmationRegion(
                     () -> {
                         int affected = consumer.accept(player, session);
@@ -161,6 +163,8 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
                     player.getSelection(),
                     context
             );
+            // Flush the queue once we're done. This ensures the region update is also corrected on the client.
+            session.flushQueue();
         } catch (CommandException | WorldEditException e) {
             Selene.handle(e);
         }
