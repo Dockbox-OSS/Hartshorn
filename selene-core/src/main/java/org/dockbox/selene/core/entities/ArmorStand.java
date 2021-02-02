@@ -17,8 +17,25 @@
 
 package org.dockbox.selene.core.entities;
 
-public interface ArmorStand extends Entity {
+import org.dockbox.selene.core.objects.targets.InventoryHolder;
+import org.dockbox.selene.core.objects.tuple.Vector3N;
 
-    // TODO S37: Entity contract
+public interface ArmorStand extends Entity<ArmorStand>, InventoryHolder {
+
+    Vector3N getRotation(Limbs limb);
+
+    void setRotation(Limbs limb, Vector3N rotation);
+
+    boolean hasBaseplate();
+
+    void setBaseplate(boolean baseplate);
+
+    boolean isSmall();
+
+    void setSmall(boolean small);
+
+    enum Limbs {
+        HEAD, BODY, LEFT_LEG, RIGHT_LEG, LEFT_ARM, RIGHT_ARM
+    }
 
 }

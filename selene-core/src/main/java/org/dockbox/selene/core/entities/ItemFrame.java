@@ -3,7 +3,7 @@ package org.dockbox.selene.core.entities;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
 
-public interface ItemFrame {
+public interface ItemFrame extends Entity<ItemFrame> {
 
     Exceptional<Item> getDisplayedItem();
 
