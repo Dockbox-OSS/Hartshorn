@@ -387,17 +387,17 @@ public class Registry<V> {
      *         The depth of the registry (Caused by nested registries)
      */
     private void buildheirarchy(StringBuilder builder, int indents) {
-        for (RegistryIdentifier identifier : this.data.keySet()) {
+        this.data.forEach((identifier, column) -> {
             for (int i = 0; i < indents; i++) builder.append("\t");
             builder.append("- ").append(identifier).append("\n");
 
-            for (V value : this.data.get(identifier)) {
+            column.forEach(value -> {
                 for (int i = 0; i < indents; i++) builder.append("\t");
                 if (value instanceof Registry)
                     ((Registry<?>) value).buildheirarchy(builder, indents + 1);
                 else
                     builder.append("| ").append(value).append("\n");
-            }
-        }
+            });
+        });
     }
 }

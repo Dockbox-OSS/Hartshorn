@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 @Rejects(DefaultConfigurateManager.class)
 @Metadata(alias = "column")
-public class RegistryColumn<T> implements Iterable<T> {
+public class RegistryColumn<T> {
 
     private List<T> data = SeleneUtils.emptyList();
 
