@@ -99,7 +99,13 @@ public abstract class SpongeEntity
 
     @Override
     public void setDisplayName(Text displayName) {
-        this.getRepresentation().offer(Keys.DISPLAY_NAME, PlatformConversionService.map(displayName));
+        if (null == displayName) {
+            this.getRepresentation().offer(Keys.CUSTOM_NAME_VISIBLE, false);
+            this.getRepresentation().remove(Keys.DISPLAY_NAME);
+        } else {
+            this.getRepresentation().offer(Keys.DISPLAY_NAME, SpongeConversionUtil.toSponge(displayName));
+            this.getRepresentation().offer(Keys.CUSTOM_NAME_VISIBLE, true);
+        }
     }
 
     @Override
