@@ -49,6 +49,22 @@ public class Location {
         return this.vectorLoc.getZd();
     }
 
+    public Location expand(Vector3N vector) {
+        return new Location(this.vectorLoc.expand(vector), this.getWorld());
+    }
+
+    public Location expandX(double x) {
+        return this.expand(new Vector3N(x, 0, 0));
+    }
+
+    public Location expandY(double y) {
+        return this.expand(new Vector3N(0, y, 0));
+    }
+
+    public Location expandZ(double z) {
+        return this.expand(new Vector3N(0, 0, z));
+    }
+
     public Vector3N getVectorLoc() {
         return this.vectorLoc;
     }

@@ -34,6 +34,14 @@ public class Vector3N extends Vector2N {
 
     public long getYl() { return this.y.longValue(); }
 
+    public Vector3N expand(Vector3N vector) {
+        return new Vector3N(
+                this.getXd() + vector.getXd(),
+                this.getYd() + vector.getYd(),
+                this.getZd() + vector.getZd()
+        );
+    }
+
     public static Vector3N empty() {
         return new Vector3N(0, 0, 0);
     }
