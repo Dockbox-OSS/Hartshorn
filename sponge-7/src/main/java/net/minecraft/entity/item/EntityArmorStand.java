@@ -17,9 +17,11 @@
 
 package net.minecraft.entity.item;
 
+import net.minecraft.entity.Entity;
+
 /**
  * Shadowed interface of {@code net.minecraft.entity.item.EntityArmorStand}.
  * This is only used to make Javac work correctly when compiling types which need indirect access to this type.
  */
-public interface EntityArmorStand {
+public interface EntityArmorStand extends Entity {
 }
