@@ -29,11 +29,20 @@ public abstract class SpongeEntity
 
     @Override
     public E copy() {
-        org.spongepowered.api.entity.Entity clone = PlatformConversionService.
-                <Location, org.spongepowered.api.world.Location<org.spongepowered.api.world.World>>map(this.getLocation())
-                .createEntity(this.getEntityType());
-        clone.copyFrom(this.getRepresentation());
-        return this.from(clone);
+        return SpongeConversionUtil.toSponge(this.getLocation())
+                .map(spongeLocation -> {
+                    org.spongepowered.api.entity.Entity clone = spongeLocation.createEntity(this.getEntityType());
+                    DataTransactionResult result = clone.copyFrom(this.getRepresentation());
+                    if (Type.FAILURE == result.getType()) {
+                        // Typically only time-related keys are rejected (e.g. invulnerability time)
+                        for (DataManipulator<?, ?> container : this.getRepresentation().getContainers())
+                            if (Type.FAILURE == clone.offer(container, MergeFunction.IGNORE_ALL).getType()) {
+                                String key = container.getKeys().stream().findFirst().map(CatalogType::getId).orElse("unknown_key");
+                                Selene.log().warn("Could not offer container key [" + key + "] to clone of " + this.getClass().getSimpleName());
+                            }
+                    }
+                    return this.from(clone);
+                }).orNull();
     }
 
     @Override
