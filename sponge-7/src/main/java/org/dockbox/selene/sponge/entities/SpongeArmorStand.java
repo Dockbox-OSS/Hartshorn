@@ -40,7 +40,7 @@ import java.util.Map;
 
 public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand> implements ArmorStand {
 
-    private org.spongepowered.api.entity.living.ArmorStand representation;
+    private final org.spongepowered.api.entity.living.ArmorStand representation;
 
     private static final Map<Limbs, Key<Value<Vector3d>>> limbKeys = SeleneUtils.ofEntries(
             SeleneUtils.entry(Limbs.HEAD, Keys.HEAD_ROTATION),

@@ -36,7 +36,7 @@ import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
 public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> implements ItemFrame {
 
-    org.spongepowered.api.entity.hanging.ItemFrame representation;
+    private final org.spongepowered.api.entity.hanging.ItemFrame representation;
 
     public SpongeItemFrame(org.spongepowered.api.entity.hanging.ItemFrame representation) {
         this.representation = representation;
