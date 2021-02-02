@@ -123,6 +123,16 @@ public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand>
     }
 
     @Override
+    public boolean hasArms() {
+        return this.getRepresentation().getOrElse(Keys.ARMOR_STAND_HAS_ARMS, false);
+    }
+
+    @Override
+    public void setArms(boolean arms) {
+        this.getRepresentation().offer(Keys.ARMOR_STAND_HAS_ARMS, arms);
+    }
+
+    @Override
     public Inventory getInventory() {
         return null; // TODO
     }
