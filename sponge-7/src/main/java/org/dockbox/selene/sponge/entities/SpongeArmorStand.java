@@ -23,12 +23,12 @@ import com.google.inject.assistedinject.AssistedInject;
 
 import net.minecraft.entity.item.EntityArmorStand;
 
-import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.entities.ArmorStand;
 import org.dockbox.selene.core.objects.inventory.Inventory;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.value.mutable.Value;
@@ -82,12 +82,11 @@ public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand>
     @Override
     public Vector3N getRotation(Limbs limb) {
         if (Limbs.BODY == limb) {
-            return PlatformConversionService.map(this.representation.getBodyPartRotationalData().bodyRotation().get());
+            return SpongeConversionUtil.fromSponge(this.representation.getBodyPartRotationalData().bodyRotation().get());
         } else {
             Key<Value<Vector3d>> rotationKey = limbKeys.get(limb);
             return this.getRepresentation().get(rotationKey)
-                    .map(PlatformConversionService::map)
-                    .map(Vector3N.class::cast)
+                    .map(SpongeConversionUtil::fromSponge)
                     .orElse(Vector3N.empty());
         }
     }
@@ -95,10 +94,10 @@ public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand>
     @Override
     public void setRotation(Limbs limb, Vector3N rotation) {
         if (Limbs.BODY == limb) {
-            this.representation.getBodyPartRotationalData().bodyRotation().set(PlatformConversionService.map(rotation));
+            this.representation.getBodyPartRotationalData().bodyRotation().set(SpongeConversionUtil.toSponge(rotation));
         } else {
             Key<Value<Vector3d>> rotationKey = limbKeys.get(limb);
-            this.getRepresentation().offer(rotationKey, PlatformConversionService.map(rotation));
+            this.getRepresentation().offer(rotationKey, SpongeConversionUtil.toSponge(rotation));
         }
     }
 

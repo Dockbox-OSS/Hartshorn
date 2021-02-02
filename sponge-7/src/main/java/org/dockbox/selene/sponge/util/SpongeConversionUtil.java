@@ -32,12 +32,11 @@ import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 
 import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.core.command.source.CommandSource;
+import org.dockbox.selene.core.entities.ItemFrame;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
 import org.dockbox.selene.core.exceptions.TypeConversionException;
 import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
-import org.dockbox.selene.worldedit.region.Clipboard;
-import org.dockbox.selene.worldedit.region.Region;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
 import org.dockbox.selene.core.inventory.InventoryType;
@@ -70,6 +69,8 @@ import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
+import org.dockbox.selene.worldedit.region.Clipboard;
+import org.dockbox.selene.worldedit.region.Region;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.boss.BossBarColor;
@@ -105,6 +106,8 @@ import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyle;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.util.rotation.Rotation;
+import org.spongepowered.api.util.rotation.Rotations;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -154,7 +157,7 @@ public enum SpongeConversionUtil {
         } else if (object instanceof GameMode) {
             return Exceptional.of(fromSponge((GameMode) object));
         } else if (object instanceof User) {
-            return Exceptional.of(new SpongePlayer(((Identifiable<?>) object).getUniqueId(), ((Tamer) object).getName()));
+            return Exceptional.of(new SpongePlayer(((Identifiable) object).getUniqueId(), ((Tamer) object).getName()));
         } else if (object instanceof ItemStack) {
             return Exceptional.of(fromSponge((ItemStack) object));
         } else if (object instanceof Enchantment) {
@@ -306,6 +309,7 @@ public enum SpongeConversionUtil {
         if (!world.isPresent()) return Exceptional.empty();
         Vector3d vector3d = new Vector3d(location.getVectorLoc().getXd(), location.getVectorLoc().getYd(), location.getVectorLoc().getZd());
         return Exceptional.of(new Location<>(world.get(), vector3d));
+
     }
 
     @NotNull
@@ -634,5 +638,27 @@ public enum SpongeConversionUtil {
             return ((WrappedPattern) pattern).getReference().orNull();
         }
         throw new IllegalStateException("Unknown implementation for Pattern: [" + pattern.getClass() + "]");
+    }
+
+    public static Vector3N fromSponge(Vector3d v3d) {
+        return new Vector3N(v3d.getX(), v3d.getY(), v3d.getZ());
+    }
+
+    public static Vector3d toSponge(Vector3N v3n) {
+        return new Vector3d(v3n.getXd(), v3n.getYd(), v3n.getZd());
+    }
+
+    public static ItemFrame.Rotation fromSponge(Rotation rotation) {
+        try {
+            return ItemFrame.Rotation.valueOf(rotation.getName());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return ItemFrame.Rotation.TOP;
+        }
+    }
+
+    public static Rotation toSponge(ItemFrame.Rotation rotation) {
+        return Sponge.getRegistry()
+                .getType(Rotation.class, rotation.name())
+                .orElse(Rotations.TOP);
     }
 }

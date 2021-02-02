@@ -1,16 +1,39 @@
+/*
+ * Copyright (C) 2020 Guus Lieben
+ *
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
 package org.dockbox.selene.sponge.entities;
 
 import net.minecraft.entity.Entity;
 
-import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.nms.entities.NMSEntity;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
+import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.spongepowered.api.CatalogType;
 import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.DataTransactionResult;
+import org.spongepowered.api.data.DataTransactionResult.Type;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.DataManipulator;
+import org.spongepowered.api.data.merge.MergeFunction;
 import org.spongepowered.api.entity.EntityType;
 
 import java.util.UUID;
@@ -22,9 +45,9 @@ public abstract class SpongeEntity
 
     @SuppressWarnings("unchecked")
     protected <C extends org.spongepowered.api.entity.Entity> C create(Location location) {
-        org.spongepowered.api.world.Location<org.spongepowered.api.world.World> spongeLocation =
-                PlatformConversionService.map(location);
-        return (C) spongeLocation.createEntity(this.getEntityType());
+        return SpongeConversionUtil.toSponge(location)
+                .map(spongeLocation -> (C) spongeLocation.createEntity(this.getEntityType()))
+                .orNull();
     }
 
     @Override
@@ -72,17 +95,17 @@ public abstract class SpongeEntity
 
     @Override
     public Location getLocation() {
-        return PlatformConversionService.map(this.getRepresentation().getLocation());
+        return SpongeConversionUtil.fromSponge(this.getRepresentation().getLocation());
     }
 
     @Override
     public void setLocation(Location location) {
-        this.getRepresentation().setLocation(PlatformConversionService.map(location));
+        this.getRepresentation().setLocation(SpongeConversionUtil.toSponge(location).orNull());
     }
 
     @Override
     public World getWorld() {
-        return PlatformConversionService.map(this.getRepresentation().getWorld());
+        return SpongeConversionUtil.fromSponge(this.getRepresentation().getWorld());
     }
 
     @Override
@@ -92,7 +115,7 @@ public abstract class SpongeEntity
 
     @Override
     public Text getDisplayName() {
-        return PlatformConversionService.map(this.getRepresentation()
+        return SpongeConversionUtil.fromSponge(this.getRepresentation()
                 .getOrElse(Keys.DISPLAY_NAME, org.spongepowered.api.text.Text.EMPTY)
         );
     }
@@ -140,8 +163,9 @@ public abstract class SpongeEntity
 
     @Override
     public boolean summon(Location location) {
-        org.spongepowered.api.world.Location<org.spongepowered.api.world.World> spongeLocation = PlatformConversionService.map(location);
-        return spongeLocation.spawnEntity(this.getRepresentation());
+        return SpongeConversionUtil.toSponge(location)
+                .map(spongeLocation -> spongeLocation.spawnEntity(this.getRepresentation()))
+                .orElse(false);
     }
 
     @Override

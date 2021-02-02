@@ -22,16 +22,15 @@ import com.google.inject.assistedinject.AssistedInject;
 
 import net.minecraft.entity.item.EntityItemFrame;
 
-import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.entities.ItemFrame;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.location.Location;
+import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
-import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
 public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> implements ItemFrame {
@@ -51,25 +50,24 @@ public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> im
     public Exceptional<Item> getDisplayedItem() {
         return Exceptional.of(this.representation.get(Keys.REPRESENTED_ITEM)
                 .map(ItemStackSnapshot::createStack)
-                .map(PlatformConversionService::map));
+                .map(SpongeConversionUtil::fromSponge));
     }
 
     @Override
     public void setDisplayedItem(Item stack) {
-        this.representation.offer(Keys.REPRESENTED_ITEM, PlatformConversionService.<Item, ItemStack>map(stack).createSnapshot());
+        this.representation.offer(Keys.REPRESENTED_ITEM, SpongeConversionUtil.toSponge(stack).createSnapshot());
     }
 
     @Override
     public Rotation getRotation() {
         return this.representation.get(Keys.ROTATION)
-                .map(PlatformConversionService::map)
-                .map(Rotation.class::cast)
+                .map(SpongeConversionUtil::fromSponge)
                 .orElse(Rotation.TOP);
     }
 
     @Override
     public void setRotation(Rotation rotation) {
-        this.representation.offer(Keys.ROTATION, PlatformConversionService.map(rotation));
+        this.representation.offer(Keys.ROTATION, SpongeConversionUtil.toSponge(rotation));
     }
 
     @Override
