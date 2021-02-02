@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.sponge.inventory.builder;
 
-import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.inventory.InventoryLayout;
 import org.dockbox.selene.core.inventory.builder.StaticPaneBuilder;
 import org.dockbox.selene.core.inventory.pane.StaticPane;
@@ -29,6 +28,7 @@ import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.sponge.SpongeAPI7Bootstrap;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.inventory.pane.SpongeStaticPane;
+import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
 
 import dev.flashlabs.flashlibs.inventory.View;
@@ -40,7 +40,7 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
 
     @Override
     public StaticPaneBuilder title(Text text) {
-        this.builder.title(PlatformConversionService.map(text));
+        this.builder.title(SpongeConversionUtil.toSponge(text));
         return this;
     }
 
@@ -61,7 +61,7 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
     public void stateEnabling(InjectorProperty<?>... properties) {
         Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
                 .ifPresent(layout -> {
-                    this.builder = View.builder(PlatformConversionService.map(layout.getIventoryType()));
+                    this.builder = View.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
                     this.layout(layout);
                 })
                 .ifAbsent(() -> {

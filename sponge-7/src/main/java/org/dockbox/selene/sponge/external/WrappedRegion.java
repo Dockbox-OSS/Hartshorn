@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.sponge.external;
 
-import org.dockbox.selene.core.PlatformConversionService;
+import org.dockbox.selene.worldedit.region.Region;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.Wrapper;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
-import org.dockbox.selene.worldedit.region.Region;
+import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class WrappedRegion implements Region, Wrapper<com.sk89q.worldedit.regions.Region> {
@@ -35,17 +35,17 @@ public class WrappedRegion implements Region, Wrapper<com.sk89q.worldedit.region
 
     @Override
     public Vector3N getMinimumPoint() {
-        return PlatformConversionService.map(this.region.getMinimumPoint());
+        return SpongeConversionUtil.fromWorldEdit(this.region.getMinimumPoint());
     }
 
     @Override
     public Vector3N getMaximumPoint() {
-        return PlatformConversionService.map(this.region.getMaximumPoint());
+        return SpongeConversionUtil.fromWorldEdit(this.region.getMaximumPoint());
     }
 
     @Override
     public Vector3N getCenter() {
-        return PlatformConversionService.map(this.region.getCenter());
+        return SpongeConversionUtil.fromWorldEdit(this.region.getCenter());
     }
 
     @Override
@@ -70,7 +70,7 @@ public class WrappedRegion implements Region, Wrapper<com.sk89q.worldedit.region
 
     @Override
     public World getWorld() {
-        return PlatformConversionService.map(this.region.getWorld());
+        return SpongeConversionUtil.fromWorldEdit(this.region.getWorld());
     }
 
     @Override

@@ -19,14 +19,14 @@ package org.dockbox.selene.sponge.listeners;
 
 import com.google.inject.Inject;
 
-import org.dockbox.selene.core.PlatformConversionService;
-import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.events.parents.Cancellable;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingEvent;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldLoadEvent;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldSaveEvent;
 import org.dockbox.selene.core.events.world.WorldEvent.WorldUnloadEvent;
+import org.dockbox.selene.core.events.parents.Cancellable;
 import org.dockbox.selene.core.objects.location.World;
+import org.dockbox.selene.core.events.EventBus;
+import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.world.ConstructWorldPropertiesEvent;
 import org.spongepowered.api.event.world.LoadWorldEvent;
@@ -41,7 +41,7 @@ public class SpongeWorldListener {
 
     @Listener
     public void onWorldLoaded(LoadWorldEvent loadEvent) {
-        World world = PlatformConversionService.map(loadEvent.getTargetWorld());
+        World world = SpongeConversionUtil.fromSponge(loadEvent.getTargetWorld());
         Cancellable event = new WorldLoadEvent(world).post();
         loadEvent.setCancelled(event.isCancelled());
     }
@@ -54,7 +54,7 @@ public class SpongeWorldListener {
 
     @Listener
     public void onWorldSaved(SaveWorldEvent saveEvent) {
-        World world = PlatformConversionService.map(saveEvent.getTargetWorld());
+        World world = SpongeConversionUtil.fromSponge(saveEvent.getTargetWorld());
         Cancellable event = new WorldSaveEvent(world).post();
         saveEvent.setCancelled(event.isCancelled());
     }
@@ -62,7 +62,7 @@ public class SpongeWorldListener {
     @Listener
     public void onWorldCreating(ConstructWorldPropertiesEvent constructEvent) {
         WorldProperties swp = constructEvent.getWorldProperties();
-        new WorldCreatingEvent(PlatformConversionService.map(swp)).post();
+        new WorldCreatingEvent(SpongeConversionUtil.fromSponge(swp)).post();
     }
 
 }

@@ -31,12 +31,9 @@ import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.function.mask.BlockMask;
 import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.session.ClipboardHolder;
-import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 
-import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.sponge.external.WrappedMask;
@@ -59,13 +56,13 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
     public Exceptional<Region> getPlayerSelection(Player player) {
         return this.wrapPlayer(player)
                 .map(FawePlayer::getSelection)
-                .map(PlatformConversionService::map);
+                .map(SpongeConversionUtil::fromWorldEdit);
     }
 
     @Override
     public void setPlayerSelection(Player player, Region region) {
         this.wrapPlayer(player).ifPresent(fawePlayer ->
-                fawePlayer.setSelection(PlatformConversionService.<Region, com.sk89q.worldedit.regions.Region>map(region))
+                fawePlayer.setSelection(SpongeConversionUtil.toWorldEdit(region))
         );
     }
 
@@ -82,15 +79,15 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
                     }
                 })
                 .map(clipboardHolder -> clipboardHolder.getClipboards().get(0))
-                .map(PlatformConversionService::map);
+                .map(SpongeConversionUtil::fromSponge);
     }
 
     @Override
     public void setPlayerClipboard(Player player, Clipboard clipboard) {
         this.wrapPlayer(player).ifPresent(fawePlayer ->
                 fawePlayer.getSession().setClipboard(new ClipboardHolder(
-                        PlatformConversionService.map(clipboard),
-                        PlatformConversionService.<World, com.sk89q.worldedit.world.World>map(clipboard.getRegion().getWorld()).getWorldData()
+                        SpongeConversionUtil.toWorldEdit(clipboard),
+                        SpongeConversionUtil.toWorldEdit(clipboard.getRegion().getWorld()).getWorldData()
                 ))
         );
     }
@@ -98,17 +95,17 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
     @Override
     public void replace(Region region, Mask mask, Pattern pattern, Player cause) {
         this.checkConfirmationRegion(cause, (player, session) -> session.replaceBlocks(
-                PlatformConversionService.map(region),
-                PlatformConversionService.<Mask, com.sk89q.worldedit.function.mask.Mask>map(mask),
-                PlatformConversionService.<Pattern, com.sk89q.worldedit.function.pattern.Pattern>map(pattern)
+                SpongeConversionUtil.toWorldEdit(region),
+                SpongeConversionUtil.toWorldEdit(mask),
+                SpongeConversionUtil.toWorldEdit(pattern)
         ));
     }
 
     @Override
     public void set(Region region, Pattern pattern, Player cause) {
         this.checkConfirmationRegion(cause, (player, session) -> session.setBlocks(
-                PlatformConversionService.<Region, com.sk89q.worldedit.regions.Region>map(region),
-                PlatformConversionService.<Pattern, com.sk89q.worldedit.function.pattern.Pattern>map(pattern)
+                SpongeConversionUtil.toWorldEdit(region),
+                SpongeConversionUtil.toWorldEdit(pattern)
         ));
     }
 
@@ -135,7 +132,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
     @Override
     public void replace(Region region, Collection<Item> mask, Collection<Item> pattern, Player cause) {
         this.checkConfirmationRegion(cause, (player, session) -> session.replaceBlocks(
-                PlatformConversionService.map(region),
+                SpongeConversionUtil.toWorldEdit(region),
                 toMask(mask, cause),
                 toPattern(pattern, cause)
         ));
@@ -144,14 +141,14 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
     @Override
     public void set(Region region, Collection<Item> pattern, Player cause) {
         this.checkConfirmationRegion(cause, (player, session) -> session.setBlocks(
-                PlatformConversionService.<Region, com.sk89q.worldedit.regions.Region>map(region),
+                SpongeConversionUtil.toWorldEdit(region),
                 toPattern(pattern, cause)
         ));
     }
 
     private void checkConfirmationRegion(Player cause, RegionExecutor consumer) {
         try {
-            FawePlayer<?> player = safeWrapPlayer(cause);
+            FawePlayer<?> player = SpongeConversionUtil.toWorldEdit(cause);
             CommandContext context = new CommandContext("");
             EditSession session = player.getNewEditSession();
             // Disallow fast mode internally
@@ -189,7 +186,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
     }
 
     private static com.sk89q.worldedit.function.mask.Mask toMask(Collection<Item> mask, Player cause) {
-        Extent extent = convertWorld(cause.getWorld());
+        Extent extent = SpongeConversionUtil.toWorldEdit(cause.getWorld());
         List<BaseBlock> baseBlocks = deriveBlocks(mask, cause);
         return new BlockMask(extent, baseBlocks);
     }
@@ -197,7 +194,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
     private static List<BaseBlock> deriveBlocks(Collection<Item> items, Player cause) {
         ParserContext context = prepareContext(cause);
         return items.stream()
-                .map(item -> convertToBaseBlock(item, context))
+                .map(item -> SpongeConversionUtil.toWorldEdit(item, context))
                 .filter(Exceptional::isPresent)
                 .map(Exceptional::get)
                 .collect(Collectors.toList());
@@ -207,29 +204,13 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
         ParserContext context = new ParserContext();
         context.setPreferringWildcard(true);
         if (null != cause) {
-            FawePlayer<?> player = safeWrapPlayer(cause);
+            FawePlayer<?> player = SpongeConversionUtil.toWorldEdit(cause);
             context.setActor(player.getPlayer());
             // setWorld also targets setExtent
             context.setWorld(player.getWorldForEditing());
             context.setSession(player.getSession());
         }
         return context;
-    }
-
-    public static Exceptional<BaseBlock> convertToBaseBlock(Item item, ParserContext context) {
-        if (!item.isBlock()) return Exceptional.of(new IllegalArgumentException("Cannot derive BaseBlock from non-block item"));
-        return Exceptional.of(() -> WorldEdit.getInstance()
-                .getBlockFactory()
-                .parseFromInput(item.getId() + ':' + item.getMeta(), context)
-        );
-    }
-
-    public static com.sk89q.worldedit.world.World convertWorld(org.dockbox.selene.core.objects.location.World world) {
-        return SpongeWorldEdit.inst().getAdapter().getWorld(PlatformConversionService.<org.dockbox.selene.core.objects.location.World, org.spongepowered.api.world.World>mapSafely(world).orNull());
-    }
-
-    public static FawePlayer<?> safeWrapPlayer(Player player) {
-        return FawePlayer.wrap(PlatformConversionService.<Player, org.spongepowered.api.entity.living.player.Player>mapSafely(player).orNull());
     }
 
     @FunctionalInterface

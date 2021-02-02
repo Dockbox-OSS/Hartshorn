@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.inventory.pane;
 
-import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.inventory.Element;
 import org.dockbox.selene.core.inventory.pane.PaginatedPane;
 import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -37,7 +37,7 @@ public class SpongePaginatedPane implements PaginatedPane {
 
     @Override
     public void open(Player player, int page) {
-        PlatformConversionService.<Player, org.spongepowered.api.entity.living.player.Player>mapSafely(player).ifPresent(p -> {
+        SpongeConversionUtil.toSponge(player).ifPresent(p -> {
             this.page.open(p, page);
         });
     }
@@ -45,15 +45,13 @@ public class SpongePaginatedPane implements PaginatedPane {
     @Override
     public void elements(Collection<Element> elements) {
         this.page.define(elements.stream()
-                .map(PlatformConversionService::map)
-                .map(dev.flashlabs.flashlibs.inventory.Element.class::cast)
+                .map(SpongeConversionUtil::toSponge)
                 .collect(Collectors.toList())
         );
     }
 
     @Override
     public void open(Player player) {
-        PlatformConversionService.<Player, org.spongepowered.api.entity.living.player.Player>mapSafely(player)
-                .ifPresent(this.page::open);
+        SpongeConversionUtil.toSponge(player).ifPresent(this.page::open);
     }
 }

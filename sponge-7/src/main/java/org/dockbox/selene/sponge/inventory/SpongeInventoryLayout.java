@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.sponge.inventory;
 
-import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.inventory.Element;
 import org.dockbox.selene.core.inventory.InventoryLayout;
 import org.dockbox.selene.core.inventory.InventoryType;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
 import java.util.Map;
 
@@ -41,7 +41,7 @@ public class SpongeInventoryLayout implements InventoryLayout {
     public Map<Integer, Element> getElements() {
         Map<Integer, Element> elements = SeleneUtils.emptyMap();
         this.layout.getElements().forEach((index, element) -> {
-            elements.put(index, PlatformConversionService.map(element));
+            elements.put(index, SpongeConversionUtil.fromSponge(element));
         });
         return SeleneUtils.asUnmodifiableMap(elements);
     }

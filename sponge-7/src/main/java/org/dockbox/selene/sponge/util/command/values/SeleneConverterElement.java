@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
-import org.dockbox.selene.core.PlatformConversionService;
-import org.dockbox.selene.core.command.context.ArgumentConverter;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.core.command.context.ArgumentConverter;
+import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.command.CommandSource;
@@ -44,7 +44,7 @@ final class SeleneConverterElement extends CommandElement {
     @Override
     protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
         return this.argument.convert(
-                PlatformConversionService.map(source),
+                SpongeConversionUtil.fromSponge(source).get(),
                 args.next()
         ).orNull();
     }
@@ -54,7 +54,7 @@ final class SeleneConverterElement extends CommandElement {
     public List<String> complete(@NotNull CommandSource src, CommandArgs args, @NotNull CommandContext context) {
         try {
             return SeleneUtils.asList(this.argument.getSuggestions(
-                    PlatformConversionService.map(src),
+                    SpongeConversionUtil.fromSponge(src).get(),
                     args.next()
             ));
         } catch (ArgumentParseException e) {

@@ -17,14 +17,13 @@
 
 package org.dockbox.selene.sponge.objects.targets;
 
-import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
+import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.service.pagination.PaginationList;
 
 public final class SpongeConsole extends Console {
 
@@ -36,20 +35,20 @@ public final class SpongeConsole extends Console {
 
     @Override
     public void send(@NotNull Text text) {
-        Sponge.getServer().getConsole().sendMessage(PlatformConversionService.<Text, org.spongepowered.api.text.Text>map(text));
+        Sponge.getServer().getConsole().sendMessage(SpongeConversionUtil.toSponge(text));
     }
 
     @Override
     public void sendWithPrefix(@NotNull Text text) {
         Sponge.getServer().getConsole().sendMessage(org.spongepowered.api.text.Text.of(
-                PlatformConversionService.<Text, org.spongepowered.api.text.Text>map(IntegratedResource.PREFIX.asText()),
-                PlatformConversionService.<Text, org.spongepowered.api.text.Text>map(text)
+                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
+                SpongeConversionUtil.toSponge(text)
         ));
     }
 
     @Override
     public void sendPagination(@NotNull Pagination pagination) {
-        PlatformConversionService.<@NotNull Pagination, PaginationList>map(pagination).sendTo(Sponge.getServer().getConsole());
+        SpongeConversionUtil.toSponge(pagination).sendTo(Sponge.getServer().getConsole());
     }
 
     public static Console getInstance() {

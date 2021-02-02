@@ -20,7 +20,7 @@ package org.dockbox.selene.sponge.util.command;
 import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.PlatformConversionService;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
@@ -37,7 +37,7 @@ import org.dockbox.selene.core.impl.command.values.AbstractFlagCollection;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentElement;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentValue;
 import org.dockbox.selene.sponge.util.command.values.SpongeFlagCollection;
@@ -156,7 +156,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
              is possible for modules to implement CommandSources, these should never be used to execute commands.
              Only the console, players, and Discord command sources can be converted natively.
              */
-            CommandSource sender = PlatformConversionService.<org.spongepowered.api.command.CommandSource, CommandSource>mapSafely(src)
+            CommandSource sender = SpongeConversionUtil
+                    .fromSponge(src)
                     .orElseThrow(() ->
                             new IllegalArgumentException("Command sender is not a convertable source type, did a plugin call me?"));
             SimpleCommandContext ctx = this.createCommandContext(args, sender, command);
@@ -207,7 +208,7 @@ public class SpongeCommandBus extends DefaultCommandBus {
          This converts non-native (JDK) types to Selene usable types. Converters can be applied later to further convert
          and/or modify these objects.
          */
-        Exceptional<?> oo = PlatformConversionService.mapSafely(obj);
+        Exceptional<?> oo = SpongeConversionUtil.autoDetectFromSponge(obj);
         return oo.isPresent() ? oo.get() : obj; // oo.orElse() cannot be cast due to generic ? type
     }
 

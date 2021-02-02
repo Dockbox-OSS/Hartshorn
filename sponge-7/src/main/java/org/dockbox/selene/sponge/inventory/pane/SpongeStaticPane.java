@@ -17,14 +17,13 @@
 
 package org.dockbox.selene.sponge.inventory.pane;
 
-import org.dockbox.selene.core.PlatformConversionService;
 import org.dockbox.selene.core.inventory.Element;
 import org.dockbox.selene.core.inventory.InventoryLayout;
 import org.dockbox.selene.core.inventory.pane.StaticPane;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
-import org.spongepowered.api.item.inventory.ItemStack;
+import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
 import dev.flashlabs.flashlibs.inventory.View;
 
@@ -39,17 +38,17 @@ public class SpongeStaticPane implements StaticPane {
 
     @Override
     public void open(Player player) {
-        PlatformConversionService.<Player, org.spongepowered.api.entity.living.player.Player>mapSafely(player).ifPresent(this.view::open);
+        SpongeConversionUtil.toSponge(player).ifPresent(this.view::open);
     }
 
     @Override
     public void set(Element element, int index) {
-        this.view.set(PlatformConversionService.<Element, dev.flashlabs.flashlibs.inventory.Element>map(element), index);
+        this.view.set(SpongeConversionUtil.toSponge(element), index);
     }
 
     @Override
     public void set(Item item, int index) {
-        this.view.set(PlatformConversionService.<Item, ItemStack>map(item), index);
+        this.view.set(SpongeConversionUtil.toSponge(item), index);
     }
 
     @Override
