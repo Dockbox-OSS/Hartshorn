@@ -17,5 +17,45 @@
 
 package org.dockbox.selene.core.entities;
 
-public interface Entity {
+import org.dockbox.selene.core.objects.keys.KeyHolder;
+import org.dockbox.selene.core.objects.keys.PersistentDataHolder;
+import org.dockbox.selene.core.objects.location.Location;
+import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.core.objects.targets.Locatable;
+import org.dockbox.selene.core.text.Text;
+
+public interface Entity<T extends Entity<T>> extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<T> {
+
+    Text getDisplayName();
+
+    void setDisplayName(Text displayName);
+
+    double getHealth();
+
+    void setHealth(double health);
+
+    boolean isAlive();
+
+    boolean isInvisible();
+
+    void setInvisible(boolean visible);
+
+    boolean isInvulnerable();
+
+    void setInvulnerable(boolean invulnerable);
+
+    boolean hasGravity();
+
+    void setGravity(boolean gravity);
+
+    boolean summon(Location location);
+
+    default boolean summon() {
+        return this.summon(this.getLocation());
+    }
+
+    boolean destroy();
+
+    T copy();
+
 }
