@@ -34,6 +34,10 @@ public interface ArmorStand extends Entity<ArmorStand>, InventoryHolder {
 
     void setSmall(boolean small);
 
+    boolean hasArms();
+
+    void setArms(boolean arms);
+
     enum Limbs {
         HEAD, BODY, LEFT_LEG, RIGHT_LEG, LEFT_ARM, RIGHT_ARM
     }
