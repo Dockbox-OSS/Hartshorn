@@ -153,7 +153,7 @@ public class Registry<V> {
 
     /**
      * @param columnIDs
-     * A varargs of {@link RegistryIdentifier}s to check if contained in the Registry.
+     *         A varargs of {@link RegistryIdentifier}s to check if contained in the Registry.
      *
      * @return True if all of the {@link RegistryIdentifier}s are contained, otherwise false.
      */
@@ -165,14 +165,31 @@ public class Registry<V> {
     }
 
     /**
+     * Returns the column if it exists, or creates a new column with the provided default values.
+     *
+     * @param identifier
+     *         The {@link RegistryIdentifier} of the {@link RegistryColumn} to retrieve
+     * @param defaultvalues
+     *         A varargs of {@link V values} to add create the column with, if it doesn't exist
+     *
+     * @return The {@link RegistryColumn}
+     */
+    @SafeVarargs
+    public final RegistryColumn<V> getColumnOrCreate(RegistryIdentifier identifier, V... defaultvalues) {
+        if (!this.containsColumns(identifier)) {
+            this.addColumn(identifier, defaultvalues);
+        }
+        return this.getMatchingColumns(identifier);
+    }
+
+    /**
      * Gets all the matching columns in the Registry if contained.
      *
      * @param columnIDs
-     * A varargs of {@link RegistryIdentifier}s to return from the Registry if contained.
+     *         A varargs of {@link RegistryIdentifier}s to return from the Registry if contained.
      *
-     * @return
-     * All the matching columns data combined into a single {@link RegistryColumn}. If no matches are found, an empty
-     * {@link RegistryColumn} will be returned.
+     * @return All the matching columns data combined into a single {@link RegistryColumn}. If no matches are found, an empty
+     *         {@link RegistryColumn} will be returned.
      */
     public RegistryColumn<V> getMatchingColumns(RegistryIdentifier... columnIDs) {
         RegistryColumn<V> result = new RegistryColumn<>();
@@ -188,8 +205,8 @@ public class Registry<V> {
      * Filter the Registry by its columns. Note this creates a new Registry and doesn't modify itself.
      *
      * @param filter
-     * The filter accepts a {@link RegistryIdentifier} and returns true to remove that column, false to keep it.
-     * The columns which pass the filter are stored in a <b>new</b> Registry.
+     *         The filter accepts a {@link RegistryIdentifier} and returns true to remove that column, false to keep it.
+     *         The columns which pass the filter are stored in a <b>new</b> Registry.
      *
      * @return The new Registry containing the filtered columns.
      */
@@ -239,9 +256,9 @@ public class Registry<V> {
      * Filter the Registry by its values. Note this creates a new Registry and doesn't modify itself.
      *
      * @param filter
-     * The filter accepts a value of type {@code V} or its parents and returns true to remove that column, false to keep it.
-     * The values which pass the filter are stored in a <b>new</b> Registry. If no values in a particular column pass the
-     * filter, it is still added to the new Registry, it will simply contain no values.
+     *         The filter accepts a value of type {@code V} or its parents and returns true to remove that column, false to keep it.
+     *         The values which pass the filter are stored in a <b>new</b> Registry. If no values in a particular column pass the
+     *         filter, it is still added to the new Registry, it will simply contain no values.
      *
      * @return The new Registry containing the filtered values.
      */
@@ -260,10 +277,10 @@ public class Registry<V> {
      * Filter the Registry by its values. Note this creates a new Registry and doesn't modify itself.
      *
      * @param biFilter
-     * The biFilter accepts a {@link RegistryIdentifier} (The columnID of the value), along with a value of type {@code V}
-     * or its parents and returns true to remove that column, false to keep it. The values which pass the filter are stored
-     * in a <b>new</b> Registry. If no values in a particular column pass the filter, it is still added to the new Registry,
-     * it will simply contain no values.
+     *         The biFilter accepts a {@link RegistryIdentifier} (The columnID of the value), along with a value of type {@code V}
+     *         or its parents and returns true to remove that column, false to keep it. The values which pass the filter are stored
+     *         in a <b>new</b> Registry. If no values in a particular column pass the filter, it is still added to the new Registry,
+     *         it will simply contain no values.
      *
      * @return The new Registry containing the filtered values.
      */
@@ -347,5 +364,40 @@ public class Registry<V> {
      */
     public void forEach(BiConsumer<? super RegistryIdentifier, ? super RegistryColumn<V>> action) {
         this.data.forEach(action);
+    }
+
+    /**
+     * @return The registry in an easy to view manner, which displays the relationship between {@link RegistryIdentifier}s
+     *         and the values in the columns.
+     */
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        this.buildheirarchy(builder, 0);
+
+        return builder.toString();
+    }
+
+    /**
+     * Builds the registry heirarchy.
+     *
+     * @param builder
+     *         The {@link StringBuilder} being used to build the reistry heirarchy
+     * @param indents
+     *         The depth of the registry (Caused by nested registries)
+     */
+    private void buildheirarchy(StringBuilder builder, int indents) {
+        this.data.forEach((identifier, column) -> {
+            for (int i = 0; i < indents; i++) builder.append("\t");
+            builder.append("- ").append(identifier).append("\n");
+
+            column.forEach(value -> {
+                for (int i = 0; i < indents; i++) builder.append("\t");
+                if (value instanceof Registry)
+                    ((Registry<?>) value).buildheirarchy(builder, indents + 1);
+                else
+                    builder.append("| ").append(value).append("\n");
+            });
+        });
     }
 }
