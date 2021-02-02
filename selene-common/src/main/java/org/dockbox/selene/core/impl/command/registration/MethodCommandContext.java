@@ -30,7 +30,7 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.Reflect;
@@ -66,8 +66,8 @@ public class MethodCommandContext extends AbstractRegistrationContext {
             List<Object> args = this.prepareArguments(source, context);
             Object instance = this.prepareInstance();
             Command command = this.method.getAnnotation(Command.class);
-            if (0 < command.cooldownDuration() && source instanceof Identifiable) {
-                String registrationId = this.getRegistrationId((Identifiable<?>) source, context);
+            if (0 < command.cooldownDuration() && source instanceof AbstractIdentifiable) {
+                String registrationId = this.getRegistrationId((AbstractIdentifiable<?>) source, context);
                 SeleneUtils.cooldown(registrationId, command.cooldownDuration(), command.cooldownUnit());
             }
             this.method.invoke(instance, SeleneUtils.toArray(Object.class, args));
@@ -177,8 +177,8 @@ public class MethodCommandContext extends AbstractRegistrationContext {
     private boolean isSenderInCooldown(CommandSource sender, CommandContext ctx) {
         Command command = this.getMethod().getAnnotation(Command.class);
         if (0 >= command.cooldownDuration()) return false;
-        if (sender instanceof Identifiable) {
-            String registrationId = this.getRegistrationId((Identifiable<?>) sender, ctx);
+        if (sender instanceof AbstractIdentifiable) {
+            String registrationId = this.getRegistrationId((AbstractIdentifiable<?>) sender, ctx);
             return SeleneUtils.isInCooldown(registrationId);
         }
         return false;

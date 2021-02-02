@@ -19,6 +19,7 @@ package org.dockbox.selene.core.util;
 
 import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.core.objects.tuple.Triad;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
@@ -79,7 +80,7 @@ public final class SeleneUtils {
 
     /**
      * The globally 'empty' unique ID which can be used for empty implementations of
-     * {@link org.dockbox.selene.core.objects.targets.Identifiable}.
+     * {@link AbstractIdentifiable}.
      */
     public static UUID EMPTY_UUID = UUID.fromString("00000000-1111-2222-3333-000000000000");
 

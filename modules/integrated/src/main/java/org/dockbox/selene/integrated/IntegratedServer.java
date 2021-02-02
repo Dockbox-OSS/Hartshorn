@@ -33,7 +33,7 @@ import org.dockbox.selene.core.module.ModuleContext;
 import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.server.IntegratedModule;
 import org.dockbox.selene.core.server.Selene;
@@ -158,7 +158,7 @@ public class IntegratedServer implements IntegratedModule {
     @Override
     @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>")
     public void confirm(MessageReceiver src, CommandContext ctx) {
-        if (!(src instanceof Identifiable)) {
+        if (!(src instanceof AbstractIdentifiable)) {
             src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
             return;
         }

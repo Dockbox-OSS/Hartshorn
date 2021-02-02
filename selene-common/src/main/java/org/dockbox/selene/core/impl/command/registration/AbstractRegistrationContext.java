@@ -23,7 +23,7 @@ import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
 
 import java.util.List;
 import java.util.UUID;
@@ -53,7 +53,7 @@ public abstract class AbstractRegistrationContext {
 
     public abstract Exceptional<IntegratedResource> call(CommandSource source, CommandContext context);
 
-    public String getRegistrationId(Identifiable<?> sender, CommandContext ctx) {
+    public String getRegistrationId(AbstractIdentifiable<?> sender, CommandContext ctx) {
         UUID uuid = sender.getUniqueId();
         String alias = ctx.alias();
         return uuid + "$" + alias;

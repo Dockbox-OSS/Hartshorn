@@ -27,7 +27,7 @@ import org.dockbox.selene.core.objects.keys.PersistentDataHolder;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.objects.special.Sounds;
-import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.core.objects.targets.InventoryHolder;
 import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.objects.targets.PacketReceiver;
@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public abstract class Player
-        extends Identifiable<Player>
+        extends AbstractIdentifiable<Player>
         implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder {
 
     protected Player(@NotNull UUID uniqueId, @NotNull String name) {

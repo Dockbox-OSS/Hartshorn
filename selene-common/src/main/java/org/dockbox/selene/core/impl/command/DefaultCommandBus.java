@@ -32,7 +32,7 @@ import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
 import org.dockbox.selene.core.impl.command.values.AbstractFlagCollection;
 import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
@@ -395,10 +395,10 @@ public abstract class DefaultCommandBus implements CommandBus {
          identified we cannot ensure the same command source is the one confirming the command, so we execute it as
          usual. The only sender with a bypass on this rule is the console.
          */
-        if (registrationContext.getCommand().confirm() && sender instanceof Identifiable && !(sender instanceof Console)) {
-            String registrationId = registrationContext.getRegistrationId((Identifiable<?>) sender, ctx);
+        if (registrationContext.getCommand().confirm() && sender instanceof AbstractIdentifiable && !(sender instanceof Console)) {
+            String registrationId = registrationContext.getRegistrationId((AbstractIdentifiable<?>) sender, ctx);
             ConfirmableQueueItem queueItem =
-                    new ConfirmableQueueItem((Identifiable<?>) sender, ctx, registrationContext);
+                    new ConfirmableQueueItem((AbstractIdentifiable<?>) sender, ctx, registrationContext);
             this.queueConfirmable(registrationId, queueItem);
 
             Text confirmText = IntegratedResource.CONFIRM_COMMAND_MESSAGE.asText();
