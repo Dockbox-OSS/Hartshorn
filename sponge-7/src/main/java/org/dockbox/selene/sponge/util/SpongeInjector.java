@@ -28,11 +28,16 @@ import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.core.annotations.files.Bulk;
 import org.dockbox.selene.core.annotations.files.Format;
 import org.dockbox.selene.core.command.CommandBus;
+import org.dockbox.selene.core.entities.ArmorStand;
+import org.dockbox.selene.core.entities.EntityFactory;
+import org.dockbox.selene.core.entities.ItemFrame;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.integrated.IntegratedServer;
 import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
 import org.dockbox.selene.packets.SpawnEntityPacket;
+import org.dockbox.selene.sponge.entities.SpongeArmorStand;
+import org.dockbox.selene.sponge.entities.SpongeItemFrame;
 import org.dockbox.selene.worldedit.WorldEditService;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.ResourceService;
@@ -123,6 +128,11 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.install(new FactoryModuleBuilder().implement(Item.class, SpongeItem.class).build(ItemFactory.class));
         this.install(new FactoryModuleBuilder().implement(Bossbar.class, SpongeBossbar.class).build(BossbarFactory.class));
         this.install(new FactoryModuleBuilder().implement(Profile.class, SpongeProfile.class).build(ProfileFactory.class));
+        this.install(new FactoryModuleBuilder()
+                .implement(ItemFrame.class, SpongeItemFrame.class)
+                .implement(ArmorStand.class, SpongeArmorStand.class)
+                .build(EntityFactory.class)
+        );
         // Globally accessible
         // Config can be recreated, so no external tracking is required (contents obtained from file, no cache writes)
         this.bind(GlobalConfig.class).toInstance(new SimpleGlobalConfig());
