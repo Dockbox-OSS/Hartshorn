@@ -17,20 +17,35 @@
 
 package org.dockbox.selene.sponge.entities;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+
 import net.minecraft.entity.item.EntityItemFrame;
 
 import org.dockbox.selene.core.PlatformConversionService;
+import org.dockbox.selene.core.entities.ItemFrame;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.nms.entities.NMSItemFrame;
+import org.dockbox.selene.core.objects.location.Location;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.entity.hanging.ItemFrame;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
-public class SpongeItemFrame extends NMSItemFrame {
+public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> implements ItemFrame {
 
-    ItemFrame representation;
+    org.spongepowered.api.entity.hanging.ItemFrame representation;
+
+    public SpongeItemFrame(org.spongepowered.api.entity.hanging.ItemFrame representation) {
+        this.representation = representation;
+    }
+
+    @AssistedInject
+    public SpongeItemFrame(@Assisted Location location) {
+        this.representation = super.create(location);
+    }
 
     @Override
     public Exceptional<Item> getDisplayedItem() {
@@ -58,7 +73,22 @@ public class SpongeItemFrame extends NMSItemFrame {
     }
 
     @Override
-    public EntityItemFrame getEntity() {
-        return (EntityItemFrame) this.representation;
+    protected Entity getRepresentation() {
+        return this.representation;
+    }
+
+    @Override
+    protected EntityType getEntityType() {
+        return EntityTypes.ITEM_FRAME;
+    }
+
+    @Override
+    protected Class<ItemFrame> getInternalType() {
+        return ItemFrame.class;
+    }
+
+    @Override
+    protected ItemFrame from(Entity clone) {
+        return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) clone);
     }
 }
