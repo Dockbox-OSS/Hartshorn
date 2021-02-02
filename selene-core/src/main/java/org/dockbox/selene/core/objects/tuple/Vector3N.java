@@ -33,4 +33,8 @@ public class Vector3N extends Vector2N {
     public int getYi() { return this.y.intValue(); }
 
     public long getYl() { return this.y.longValue(); }
+
+    public static Vector3N empty() {
+        return new Vector3N(0, 0, 0);
+    }
 }

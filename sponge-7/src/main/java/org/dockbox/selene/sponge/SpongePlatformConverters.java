@@ -498,6 +498,9 @@ public final class SpongePlatformConverters {
                     warp.getName()
             );
         });
+        PlatformConversionService.register(Vector3d.class, vector3d -> new Vector3N(vector3d.getX(), vector3d.getY(), vector3d.getZ()));
+        PlatformConversionService.register(Vector3N.class, vector3n -> new Vector3d(vector3n.getXd(), vector3n.getYd(), vector3n.getZd()));
+
     }
 
     private static void registerInventories() {
