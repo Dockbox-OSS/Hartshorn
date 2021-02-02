@@ -1,7 +1,5 @@
 package org.dockbox.selene.sponge.entities;
 
-import com.flowpowered.math.vector.Vector3d;
-
 import net.minecraft.entity.Entity;
 
 import org.dockbox.selene.core.PlatformConversionService;
@@ -31,8 +29,9 @@ public abstract class SpongeEntity
 
     @Override
     public E copy() {
-        org.spongepowered.api.entity.Entity clone = PlatformConversionService.<World, org.spongepowered.api.world.World>map(this.getWorld())
-                .createEntity(this.getEntityType(), new Vector3d());
+        org.spongepowered.api.entity.Entity clone = PlatformConversionService.
+                <Location, org.spongepowered.api.world.Location<org.spongepowered.api.world.World>>map(this.getLocation())
+                .createEntity(this.getEntityType());
         clone.copyFrom(this.getRepresentation());
         return this.from(clone);
     }
