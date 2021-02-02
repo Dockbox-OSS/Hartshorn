@@ -41,8 +41,8 @@ public final class PlatformConversionService {
             return Exceptional.ofNullable(out);
         } catch (Throwable e) {
             Selene.handle(e);
+            return Exceptional.of(e);
         }
-        return Exceptional.empty();
     }
 
     private static <I, O> @Nullable Function<I, O> findMapper(Class<?> type) {
