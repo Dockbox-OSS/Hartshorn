@@ -34,7 +34,7 @@ group = project.pluginGroup
 description = 'NMS resources for Selene on Minecraft 1.12'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20171003-1.12'
+    mappings channel: 'snapshot', version: "${minecraftMappings112}"
 }
 
 repositories {
@@ -43,12 +43,16 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
+    minecraft "net.minecraftforge:forge:${minecraftForge112}"
     compileOnly project(':selene-core')
     compileOnly(project(':selene-common')) {
         exclude group: "org.spongepowered", module: "configurate**"
     }
     compileOnly project(':modules:packets')
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
 }
 
 jar.finalizedBy('reobfJar')
