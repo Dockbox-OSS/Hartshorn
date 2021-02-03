@@ -18,23 +18,28 @@
 package org.dockbox.selene.sponge.entities;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
 
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.nms.entities.NMSEntity;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
-import org.spongepowered.api.CatalogType;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataHolder;
-import org.spongepowered.api.data.DataTransactionResult;
-import org.spongepowered.api.data.DataTransactionResult.Type;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.DataManipulator;
-import org.spongepowered.api.data.merge.MergeFunction;
+import org.spongepowered.api.entity.EntityArchetype;
+import org.spongepowered.api.entity.EntitySnapshot;
 import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.event.CauseStackManager.StackFrame;
+import org.spongepowered.api.event.cause.EventContextKeys;
+import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
+import org.spongepowered.common.bridge.world.WorldInfoBridge;
+import org.spongepowered.common.data.AbstractArchetype;
+import org.spongepowered.common.entity.SpongeEntitySnapshotBuilder;
+import org.spongepowered.common.util.Constants;
 
 import java.util.UUID;
 
@@ -54,18 +59,38 @@ public abstract class SpongeEntity
     public E copy() {
         return SpongeConversionUtil.toSponge(this.getLocation())
                 .map(spongeLocation -> {
-                    org.spongepowered.api.entity.Entity clone = spongeLocation.createEntity(this.getEntityType());
-                    DataTransactionResult result = clone.copyFrom(this.getRepresentation());
-                    if (Type.FAILURE == result.getType()) {
-                        // Typically only time-related keys are rejected (e.g. invulnerability time)
-                        for (DataManipulator<?, ?> container : this.getRepresentation().getContainers())
-                            if (Type.FAILURE == clone.offer(container, MergeFunction.IGNORE_ALL).getType()) {
-                                String key = container.getKeys().stream().findFirst().map(CatalogType::getId).orElse("unknown_key");
-                                Selene.log().warn("Could not offer container key [" + key + "] to clone of " + this.getClass().getSimpleName());
-                            }
+                    try (StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+                        frame.addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLUGIN);
+                        EntityArchetype archetype = this.getRepresentation()
+                                .createArchetype();
+
+                        @SuppressWarnings("unchecked") org.spongepowered.api.entity.Entity clone =
+                                this.createSnapshot(
+                                        (AbstractArchetype<EntityType, EntitySnapshot, org.spongepowered.api.entity.Entity>) archetype,
+                                        spongeLocation
+                                )
+                                .restore()
+                                .orElse(null);
+
+                        return this.from(clone);
                     }
-                    return this.from(clone);
-                }).orNull();
+                }).rethrowUnchecked().orNull();
+    }
+
+    private EntitySnapshot createSnapshot(AbstractArchetype<EntityType, EntitySnapshot, org.spongepowered.api.entity.Entity> archetype, org.spongepowered.api.world.Location<org.spongepowered.api.world.World> location) {
+        final SpongeEntitySnapshotBuilder builder = new SpongeEntitySnapshotBuilder();
+        builder.type(this.getEntityType());
+        NBTTagCompound newCompound = archetype.getCompound().copy();
+        newCompound.setTag("Pos", Constants.NBT
+                .newDoubleNBTList(location.getPosition().getX(), location.getPosition().getY(), location.getPosition().getZ()));
+        newCompound.setInteger("Dimension", ((WorldInfoBridge) location.getExtent().getProperties()).bridge$getDimensionId());
+        builder.unsafeCompound(newCompound);
+        builder.worldId(location.getExtent().getUniqueId());
+        builder.position(location.getPosition());
+        builder.rotation(this.getRepresentation().getRotation());
+        builder.scale(this.getRepresentation().getScale());
+        builder.type(this.getEntityType());
+        return builder.build();
     }
 
     @Override
