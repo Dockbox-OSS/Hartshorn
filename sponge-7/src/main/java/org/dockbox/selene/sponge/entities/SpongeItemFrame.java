@@ -81,11 +81,6 @@ public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> im
     }
 
     @Override
-    protected Class<ItemFrame> getInternalType() {
-        return ItemFrame.class;
-    }
-
-    @Override
     protected ItemFrame from(Entity clone) {
         return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) clone);
     }

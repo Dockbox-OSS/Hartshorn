@@ -70,11 +70,6 @@ public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand>
     }
 
     @Override
-    protected Class<ArmorStand> getInternalType() {
-        return ArmorStand.class;
-    }
-
-    @Override
     protected ArmorStand from(Entity clone) {
         return new SpongeArmorStand((org.spongepowered.api.entity.living.ArmorStand) clone);
     }

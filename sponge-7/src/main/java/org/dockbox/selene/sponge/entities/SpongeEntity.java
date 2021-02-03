@@ -189,7 +189,5 @@ public abstract class SpongeEntity
 
     protected abstract EntityType getEntityType();
 
-    protected abstract Class<E> getInternalType();
-
     protected abstract E from(org.spongepowered.api.entity.Entity clone);
 }
