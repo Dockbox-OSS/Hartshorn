@@ -552,10 +552,16 @@ public final class SeleneUtils
         return s.toString();
     }
 
-    // TODO: Fix cyclomatic complexity (11)
-    public static int levenshteinDistance(@NonNls CharSequence source, @NonNls CharSequence target)
+    @Contract(pure = true)
+    public static long minimum(long... values)
     {
-        // degenerate cases
+        int len = values.length;
+        long current = values[0];
+        for (int i = 1; i < len; i++) current = Math.min(values[i], current);
+        return current;
+    }
+
+    private static int verifyContentLength(CharSequence source, CharSequence target) {
         if (null == source || "".contentEquals(source))
         {
             return null == target || "".contentEquals(target) ? 0 : target.length();
@@ -564,6 +570,13 @@ public final class SeleneUtils
         {
             return source.length();
         }
+        return -1;
+    }
+
+    public static int levenshteinDistance(@NonNls CharSequence source, @NonNls CharSequence target)
+    {
+        int length = verifyContentLength(source, target);
+        if (-1 < length) return length;
 
         // create two work vectors of integer distances
         int[] v0 = new int[target.length() + 1];
@@ -601,26 +614,11 @@ public final class SeleneUtils
         return v1[target.length()];
     }
 
-    @Contract(pure = true)
-    public static long minimum(long... values)
-    {
-        int len = values.length;
-        long current = values[0];
-        for (int i = 1; i < len; i++) current = Math.min(values[i], current);
-        return current;
-    }
-
-    // TODO: Fix cyclomatic complexity (16)
+    @SuppressWarnings("OverlyComplexMethod")
     public static int damerauLevenshteinDistance(@NonNls CharSequence source, @NonNls CharSequence target)
     {
-        if (null == source || "".contentEquals(source))
-        {
-            return null == target || "".contentEquals(target) ? 0 : target.length();
-        }
-        else if (null == target || "".contentEquals(target))
-        {
-            return source.length();
-        }
+        int length = verifyContentLength(source, target);
+        if (-1 < length) return length;
 
         int srcLen = source.length();
         int targetLen = target.length();
@@ -630,9 +628,7 @@ public final class SeleneUtils
         // This sequential set of numbers will be the row "headers"
         // in the matrix.
         for (int srcIndex = 0; srcIndex <= srcLen; srcIndex++)
-        {
             distanceMatrix[srcIndex][0] = srcIndex;
-        }
 
         // We need indexers from 0 to the length of the target string.
         // This sequential set of numbers will be the
