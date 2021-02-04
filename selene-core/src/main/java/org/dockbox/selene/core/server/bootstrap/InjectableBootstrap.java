@@ -32,6 +32,8 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
+import org.dockbox.selene.core.server.bootstrap.modules.SingleImplementationBinding;
+import org.dockbox.selene.core.server.bootstrap.modules.SingleInstanceModule;
 import org.dockbox.selene.core.server.inject.InjectionPoint;
 import org.dockbox.selene.core.server.properties.AnnotationProperty;
 import org.dockbox.selene.core.server.properties.InjectableType;
@@ -109,7 +111,6 @@ public abstract class InjectableBootstrap
      *
      * @return The instance, if present. Otherwise returns null
      */
-    // TODO: Fix cyclomatic complexity (11)
     public <T> T getInstance(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties)
     {
         T typeInstance = null;
@@ -130,6 +131,22 @@ public abstract class InjectableBootstrap
 
         // Type instance can be present if it is a module. These instances are also created using Guice injectors
         // and therefore do not need late member injection here.
+        typeInstance = this.createInstanceOf(type, typeInstance, injector, additionalProperties);
+
+        if (null != typeInstance)
+            typeInstance = this.applyInjectionPoints(type, typeInstance);
+
+        // Inject properties if applicable
+        if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable())
+            ((InjectableType) typeInstance).stateEnabling(additionalProperties);
+
+        // May be null, but we have used all possible injectors, it's up to the developer now
+        return typeInstance;
+    }
+
+    @Nullable
+    private <T> T createInstanceOf(Class<T> type, T typeInstance, Injector injector, InjectorProperty<?>[] additionalProperties)
+    {
         if (null == typeInstance)
         {
             try
@@ -148,33 +165,26 @@ public abstract class InjectableBootstrap
                         .orNull();
             }
         }
+        return typeInstance;
+    }
 
-        if (null != typeInstance)
+    private <T> T applyInjectionPoints(Class<T> type, T typeInstance)
+    {
+        for (InjectionPoint<?> injectionPoint : this.injectionPoints)
         {
-            for (InjectionPoint<?> injectionPoint : this.injectionPoints)
+            if (injectionPoint.accepts(type))
             {
-                if (injectionPoint.accepts(type))
+                try
                 {
-                    try
-                    {
-                        //noinspection unchecked
-                        typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance);
-                    }
-                    catch (ClassCastException e)
-                    {
-                        Selene.log().warn("Attempted to apply injection point to incompatible type [" + type.getCanonicalName() + "]");
-                    }
+                    //noinspection unchecked
+                    typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance);
+                }
+                catch (ClassCastException e)
+                {
+                    Selene.log().warn("Attempted to apply injection point to incompatible type [" + type.getCanonicalName() + "]");
                 }
             }
         }
-
-        // Inject properties if applicable
-        if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable())
-        {
-            ((InjectableType) typeInstance).stateEnabling(additionalProperties);
-        }
-
-        // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
     }
 
