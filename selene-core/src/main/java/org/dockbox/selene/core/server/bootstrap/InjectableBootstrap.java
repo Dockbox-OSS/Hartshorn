@@ -32,7 +32,7 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
-import org.dockbox.selene.core.server.bootstrap.modules.SingleImplementationBinding;
+import org.dockbox.selene.core.server.bootstrap.modules.SingleImplementationModule;
 import org.dockbox.selene.core.server.bootstrap.modules.SingleInstanceModule;
 import org.dockbox.selene.core.server.inject.InjectionPoint;
 import org.dockbox.selene.core.server.properties.AnnotationProperty;
@@ -251,32 +251,14 @@ public abstract class InjectableBootstrap
      */
     public <T> void bindUtility(Class<T> contract, Class<? extends T> implementation)
     {
-        // TODO: Convert to static inner class
-        AbstractModule localModule = new AbstractModule()
-        {
-            @Override
-            protected void configure()
-            {
-                super.configure();
-                this.bind(contract).to(implementation);
-            }
-        };
+        AbstractModule localModule = new SingleImplementationModule<>(contract, implementation);
         this.injectorModules.add(localModule);
         this.injector = null; // Reset injector so it regenerates later
     }
 
     public <C, T extends C> void bindUtility(Class<C> contract, T instance)
     {
-        // TODO: Convert to static inner class
-        AbstractModule localModule = new AbstractModule()
-        {
-            @Override
-            protected void configure()
-            {
-                super.configure();
-                this.bind(contract).toInstance(instance);
-            }
-        };
+        AbstractModule localModule = new SingleInstanceModule<>(contract, instance);
         this.injectorModules.add(localModule);
         this.injector = null; // Reset injector so it regenerates later
     }
