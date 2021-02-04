@@ -17,10 +17,14 @@
 
 package org.dockbox.selene.proxy.handle;
 
-public enum Phase {
-    HEAD, OVERWRITE, TAIL;
+public enum Phase
+{
+    HEAD,
+    OVERWRITE,
+    TAIL;
 
-    public Phase[] collect() {
-        return new Phase[] {HEAD, OVERWRITE, TAIL};
+    public static Phase[] collect()
+    {
+        return new Phase[]{ HEAD, OVERWRITE, TAIL };
     }
 }

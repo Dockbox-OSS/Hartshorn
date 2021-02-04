@@ -19,13 +19,18 @@ package org.dockbox.selene.core.impl.tasks.pipeline.pipes;
 
 import org.dockbox.selene.core.objects.Exceptional;
 
+@SuppressWarnings("InterfaceNeverImplemented") // API type
 @FunctionalInterface
-public interface OutputPipe<O> extends StandardPipe<O, O> {
+public interface OutputPipe<O> extends StandardPipe<O, O>
+{
 
     @Override
-    default O apply(Exceptional<O> input) throws Exception {
+    default O apply(Exceptional<O> input)
+            throws Exception
+    {
         return this.run();
     }
 
-    O run() throws Exception;
+    O run()
+            throws Exception;
 }

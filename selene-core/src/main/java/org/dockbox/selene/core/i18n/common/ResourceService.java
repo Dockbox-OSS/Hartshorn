@@ -22,7 +22,8 @@ import org.dockbox.selene.core.objects.Exceptional;
 
 import java.util.Map;
 
-public interface ResourceService {
+public interface ResourceService
+{
 
     void init();
 

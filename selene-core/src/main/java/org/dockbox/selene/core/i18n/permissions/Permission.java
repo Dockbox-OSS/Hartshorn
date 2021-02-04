@@ -17,16 +17,19 @@
 
 package org.dockbox.selene.core.i18n.permissions;
 
-public class Permission implements AbstractPermission {
+public class Permission implements AbstractPermission
+{
 
     private final String key;
 
-    public Permission(String key) {
+    public Permission(String key)
+    {
         this.key = key;
     }
 
     @Override
-    public String get() {
+    public String get()
+    {
         return this.key;
     }
 }

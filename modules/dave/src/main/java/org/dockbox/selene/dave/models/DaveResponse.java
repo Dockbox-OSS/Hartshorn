@@ -20,24 +20,29 @@ package org.dockbox.selene.dave.models;
 import org.dockbox.selene.core.annotations.entity.Metadata;
 
 @Metadata(alias = "dave-response")
-public class DaveResponse {
+public class DaveResponse
+{
 
     private String message;
     private ResponseType type;
 
-    public DaveResponse() {
+    public DaveResponse()
+    {
     }
 
-    public DaveResponse(String message, ResponseType type) {
+    public DaveResponse(String message, ResponseType type)
+    {
         this.message = message;
         this.type = type;
     }
 
-    public String getMessage() {
+    public String getMessage()
+    {
         return this.message;
     }
 
-    public ResponseType getType() {
+    public ResponseType getType()
+    {
         return this.type;
     }
 }

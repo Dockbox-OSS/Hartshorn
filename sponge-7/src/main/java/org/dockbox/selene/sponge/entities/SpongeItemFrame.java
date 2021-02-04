@@ -33,55 +33,65 @@ import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
-public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> implements ItemFrame {
+public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> implements ItemFrame
+{
 
     private final org.spongepowered.api.entity.hanging.ItemFrame representation;
 
-    public SpongeItemFrame(org.spongepowered.api.entity.hanging.ItemFrame representation) {
+    public SpongeItemFrame(org.spongepowered.api.entity.hanging.ItemFrame representation)
+    {
         this.representation = representation;
     }
 
     @AssistedInject
-    public SpongeItemFrame(@Assisted Location location) {
+    public SpongeItemFrame(@Assisted Location location)
+    {
         this.representation = super.create(location);
     }
 
     @Override
-    public Exceptional<Item> getDisplayedItem() {
+    public Exceptional<Item> getDisplayedItem()
+    {
         return Exceptional.of(this.representation.get(Keys.REPRESENTED_ITEM)
                 .map(ItemStackSnapshot::createStack)
                 .map(SpongeConversionUtil::fromSponge));
     }
 
     @Override
-    public void setDisplayedItem(Item stack) {
+    public void setDisplayedItem(Item stack)
+    {
         this.representation.offer(Keys.REPRESENTED_ITEM, SpongeConversionUtil.toSponge(stack).createSnapshot());
     }
 
     @Override
-    public Rotation getRotation() {
+    public Rotation getRotation()
+    {
         return this.representation.get(Keys.ROTATION)
                 .map(SpongeConversionUtil::fromSponge)
                 .orElse(Rotation.TOP);
     }
 
     @Override
-    public void setRotation(Rotation rotation) {
+    public void setRotation(Rotation rotation)
+    {
         this.representation.offer(Keys.ROTATION, SpongeConversionUtil.toSponge(rotation));
     }
 
     @Override
-    protected Entity getRepresentation() {
-        return this.representation;
-    }
-
-    @Override
-    protected EntityType getEntityType() {
+    protected EntityType getEntityType()
+    {
         return EntityTypes.ITEM_FRAME;
     }
 
     @Override
-    protected ItemFrame from(Entity clone) {
+    protected Entity getRepresentation()
+    {
+        return this.representation;
+    }
+
+    @Override
+    protected ItemFrame from(Entity clone)
+    {
         return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) clone);
     }
 }

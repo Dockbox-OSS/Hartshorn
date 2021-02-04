@@ -17,12 +17,13 @@
 
 package org.dockbox.selene.core.impl.tasks.pipeline.pipelines;
 
-import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.impl.tasks.pipeline.pipes.IPipe;
+import org.dockbox.selene.core.objects.Exceptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Pipeline<I> extends AbstractPipeline<I, I> {
+public class Pipeline<I> extends AbstractPipeline<I, I>
+{
 
     /**
      * Processes an input by first wrapping it in an {@link Exceptional} and calling
@@ -37,7 +38,8 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
      *         describing why
      */
     @Override
-    public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable) {
+    public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable)
+    {
         Exceptional<I> exceptionalInput = Exceptional.ofNullable(input, throwable);
 
         return this.process(exceptionalInput);
@@ -54,12 +56,15 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    protected Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput) {
-        for (IPipe<I, I> pipe : this.getPipes()) {
+    protected Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput)
+    {
+        for (IPipe<I, I> pipe : this.getPipes())
+        {
             exceptionalInput = super.processPipe(pipe, exceptionalInput);
 
             // If the pipelines been cancelled, stop processing any further pipes.
-            if (this.isCancelled()) {
+            if (this.isCancelled())
+            {
                 // Reset it straight after its been detected for next time the pipeline's used.
                 this.uncancelPipeline();
                 return Exceptional.ofNullable(

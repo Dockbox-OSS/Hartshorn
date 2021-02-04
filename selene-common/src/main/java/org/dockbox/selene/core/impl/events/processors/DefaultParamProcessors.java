@@ -47,7 +47,8 @@ import java.util.function.Supplier;
  * contains definitions for internal annotations, processors for annotations applied by modules should be defined in
  * the responsible module.
  */
-public enum DefaultParamProcessors {
+public enum DefaultParamProcessors
+{
     /**
      * The processor definition for {@link Getter}. Tries to obtain a value through a getter method inside the provided
      * {@link Event} instance. If no method exists {@code null} is returned. This processor is performed in a {@link EventStage#POPULATE}
@@ -75,9 +76,12 @@ public enum DefaultParamProcessors {
         if (null != object && !annotation.overrideExisting()) return object;
 
         Class<?> moduleType = parameter.getType();
-        if (Reflect.isNotVoid(annotation.value()) && annotation.value().isAnnotationPresent(Module.class)) {
+        if (Reflect.isNotVoid(annotation.value()) && annotation.value().isAnnotationPresent(Module.class))
+        {
             moduleType = annotation.value();
-        } else if (wrapper.getListener().getClass().isAnnotationPresent(Module.class)) {
+        }
+        else if (wrapper.getListener().getClass().isAnnotationPresent(Module.class))
+        {
             moduleType = wrapper.getListener().getClass();
         }
         return Selene.provide(parameter.getType(), moduleType);
@@ -96,7 +100,8 @@ public enum DefaultParamProcessors {
      * </ul>
      */
     SKIP_IF(SkipIf.class, EventStage.FILTER, (object, annotation, event, parameter, wrapper) -> {
-        switch (annotation.value()) {
+        switch (annotation.value())
+        {
             case NULL:
                 if (null == object) throw new SkipEventException();
                 break;
@@ -117,7 +122,8 @@ public enum DefaultParamProcessors {
      * it is converted to a {@link Exceptional}.
      */
     WRAP_SAFE(WrapSafe.class, EventStage.FILTER, (object, annotation, event, parameter, wrapper) -> {
-        if (Reflect.isAssignableFrom(parameter.getType(), event.getClass())) {
+        if (Reflect.isAssignableFrom(parameter.getType(), event.getClass()))
+        {
             Selene.log().warn("Event parameter cannot be wrapped");
             return object;
         }
@@ -134,15 +140,21 @@ public enum DefaultParamProcessors {
      * If the value is already unwrapped and not {@code null} it is returned 'as is'
      */
     UNWRAP_OR_SKIP(UnwrapOrSkip.class, EventStage.FILTER, (object, annotation, event, parameter, wrapper) -> {
-        if (object instanceof Exceptional<?>) {
+        if (object instanceof Exceptional<?>)
+        {
             if (((Exceptional<?>) object).isPresent()) return ((Exceptional<?>) object).get();
             else if (annotation.skipIfNull()) throw new SkipEventException();
 
-        } else if (object instanceof Optional<?>) {
-            if (((Optional<?>) object).isPresent()) return ((Optional<?>) object).get();
+        }
+        else if (object instanceof Optional<?>)
+        {
+            if (((Optional<?>) object).isPresent()) //noinspection OptionalGetWithoutIsPresent
+                return ((Optional<?>) object).get();
             else if (annotation.skipIfNull()) throw new SkipEventException();
 
-        } else if (null == object && annotation.skipIfNull()) {
+        }
+        else if (null == object && annotation.skipIfNull())
+        {
             throw new SkipEventException();
         }
         return object; // Already unwrapped
@@ -151,25 +163,33 @@ public enum DefaultParamProcessors {
     private final EventStage stage;
     private final Supplier<AbstractEventParamProcessor<?>> processorSupplier;
 
-    <A extends Annotation> DefaultParamProcessors(Class<A> annotationClass, AbstractEnumEventParamProcessor<A> processor) {
+    <A extends Annotation> DefaultParamProcessors(Class<A> annotationClass, AbstractEnumEventParamProcessor<A> processor)
+    {
         this(annotationClass, EventStage.PROCESS, processor);
     }
 
-    <A extends Annotation> DefaultParamProcessors(Class<A> annotationClass, EventStage stage, AbstractEnumEventParamProcessor<A> processor) {
+    <A extends Annotation> DefaultParamProcessors(Class<A> annotationClass, EventStage stage, AbstractEnumEventParamProcessor<A> processor)
+    {
         this.stage = stage;
-        this.processorSupplier = () -> new AbstractEventParamProcessor<A>() {
+        // TODO: Refactor to inner class
+        this.processorSupplier = () -> new AbstractEventParamProcessor<A>()
+        {
             @Override
-            public @NotNull Class<A> getAnnotationClass() {
+            public @NotNull Class<A> getAnnotationClass()
+            {
                 return annotationClass;
             }
 
             @Override
-            public @NotNull EventStage targetStage() {
+            public @NotNull EventStage targetStage()
+            {
                 return null == stage ? super.targetStage() : stage;
             }
 
             @Override
-            public @Nullable Object process(Object object, A annotation, Event event, Parameter parameter, EventWrapper wrapper) throws SkipEventException {
+            public @Nullable Object process(Object object, A annotation, Event event, Parameter parameter, EventWrapper wrapper)
+                    throws SkipEventException
+            {
                 return processor.process(object, annotation, event, parameter, wrapper);
             }
         };
@@ -180,7 +200,8 @@ public enum DefaultParamProcessors {
      *
      * @return The stage
      */
-    public EventStage getStage() {
+    public EventStage getStage()
+    {
         return this.stage;
     }
 
@@ -189,12 +210,15 @@ public enum DefaultParamProcessors {
      *
      * @return The processor
      */
-    public AbstractEventParamProcessor<?> getProcessor() {
+    public AbstractEventParamProcessor<?> getProcessor()
+    {
         return this.processorSupplier.get();
     }
 
     @FunctionalInterface
-    private interface AbstractEnumEventParamProcessor<A extends Annotation> {
-        Object process(Object object, A annotation, Event event, Parameter parameter, EventWrapper wrapper) throws SkipEventException;
+    private interface AbstractEnumEventParamProcessor<A extends Annotation>
+    {
+        Object process(Object object, A annotation, Event event, Parameter parameter, EventWrapper wrapper)
+                throws SkipEventException;
     }
 }

@@ -36,7 +36,8 @@ import java.lang.annotation.Target;
 @Repeatable(Filters.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Filter {
+public @interface Filter
+{
     String param();
 
     String value() default "";

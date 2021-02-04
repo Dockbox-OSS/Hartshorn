@@ -19,14 +19,16 @@ package org.dockbox.selene.structures.table.objects;
 
 import org.dockbox.selene.core.annotations.entity.Property;
 
-public class WronglyIdentifiedUser {
+public class WronglyIdentifiedUser
+{
 
     public int Id;
 
     @Property("name")
     public String displayedName;
 
-    public WronglyIdentifiedUser(int id, String name) {
+    public WronglyIdentifiedUser(int id, String name)
+    {
         this.Id = id;
         this.displayedName = name;
     }

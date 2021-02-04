@@ -19,7 +19,8 @@ package org.dockbox.selene.core.objects.targets;
 
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
 
-public interface PermissionHolder extends Target {
+public interface PermissionHolder extends Target
+{
 
     boolean hasPermission(String permission);
 

@@ -17,14 +17,15 @@
 
 package org.dockbox.selene.worldedit;
 
-import org.dockbox.selene.worldedit.region.Clipboard;
-import org.dockbox.selene.worldedit.region.Region;
 import org.dockbox.selene.core.objects.keys.Key;
 import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.worldedit.region.Clipboard;
+import org.dockbox.selene.worldedit.region.Region;
 
-public final class WorldEditKeys {
+public final class WorldEditKeys
+{
 
     public static final Key<Player, Region> SELECTION = Keys.dynamicKeyOf(
             (player, region) -> Selene.provide(WorldEditService.class).setPlayerSelection(player, region),

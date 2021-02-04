@@ -22,13 +22,16 @@ import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.worldedit.WorldEditService;
 
-public interface Pattern {
+public interface Pattern
+{
 
-    static Exceptional<Pattern> parse(String pattern) {
+    static Exceptional<Pattern> parse(String pattern)
+    {
         return Selene.provide(WorldEditService.class).parsePattern(pattern, null);
     }
 
-    static Exceptional<Pattern> parse(String pattern, Player cause) {
+    static Exceptional<Pattern> parse(String pattern, Player cause)
+    {
         return Selene.provide(WorldEditService.class).parsePattern(pattern, cause);
     }
 

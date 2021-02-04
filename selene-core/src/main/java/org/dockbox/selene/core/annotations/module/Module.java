@@ -29,7 +29,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Module {
+public @interface Module
+{
     /**
      * The identifier of the module, in snake_case. This is typically used to obtain the module instance, header, or
      * context through {@link ModuleManager}.

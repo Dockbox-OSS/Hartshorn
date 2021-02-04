@@ -19,8 +19,10 @@ package org.dockbox.selene.structures.table.exceptions;
 
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 
-public class UnknownIdentifierException extends UncheckedSeleneException {
-    public UnknownIdentifierException(String message) {
+public class UnknownIdentifierException extends UncheckedSeleneException
+{
+    public UnknownIdentifierException(String message)
+    {
         super(message);
     }
 }

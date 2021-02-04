@@ -17,7 +17,8 @@
 
 package org.dockbox.selene.core.objects.keys;
 
-public interface PersistentDataKey<T> {
+public interface PersistentDataKey<T>
+{
 
     Class<T> getDataType();
 

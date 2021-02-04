@@ -18,44 +18,57 @@
 package org.dockbox.selene.core.command.context;
 
 @SuppressWarnings("ClassReferencesSubclass")
-public class CommandValue<T> {
+public class CommandValue<T>
+{
 
     private final String key;
     private final T value;
 
-    public CommandValue(T value, String key) {
+    public CommandValue(T value, String key)
+    {
         this.key = key;
         this.value = value;
     }
 
-    public Argument<T> asArgument() {
+    public Argument<T> asArgument()
+    {
         return (Argument<T>) this;
     }
 
-    public Flag<T> asFlag() {
+    public Flag<T> asFlag()
+    {
         return (Flag<T>) this;
     }
 
-    public String getKey() {
+    public String getKey()
+    {
         return this.key;
     }
 
-    public T getValue() {
+    public T getValue()
+    {
         return this.value;
     }
 
-    public enum Type {
-        ARGUMENT, FLAG, BOTH
+    public enum Type
+    {
+        ARGUMENT,
+        FLAG,
+        BOTH
     }
 
-    public static class Argument<T> extends CommandValue<T> {
-        public Argument(T value, String key) {
+    public static class Argument<T> extends CommandValue<T>
+    {
+        public Argument(T value, String key)
+        {
             super(value, key);
         }
     }
 
-    public static class Flag<T> extends CommandValue<T> {
-        public Flag(T value, String key) {
+    public static class Flag<T> extends CommandValue<T>
+    {
+        public Flag(T value, String key)
+        {
             super(value, key);
         }
     }

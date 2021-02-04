@@ -30,7 +30,53 @@ import java.util.UUID;
 /**
  * Represents a server-controlled bossbar instance.
  */
-public interface Bossbar {
+public interface Bossbar
+{
+
+    /**
+     * The registry of all active {@link Bossbar bossbars}. Typically this only contains bossbars which are currently
+     * visible to at least one player.
+     */
+    @SuppressWarnings("ConstantDeclaredInInterface")
+    Map<String, Bossbar> REGISTRY = SeleneUtils.emptyConcurrentMap();
+
+    /**
+     * Returns a assisted {@link BossbarBuilder builder instance}.
+     *
+     * @return A new builder instance.
+     */
+    static BossbarBuilder builder()
+    {
+        return new BossbarBuilder();
+    }
+
+    /**
+     * Returns a {@link Bossbar} instance based on a given {@link UUID uuid}. This identifier typically matches with the
+     * one returned by {@link Bossbar#getId()}. If no instance exists, a empty {@link Exceptional} is returned.
+     *
+     * @param uuid
+     *         The unique identifier of the potential bossbar
+     *
+     * @return The bossbar wrapped in a {@link Exceptional}, or empty.
+     */
+    static Exceptional<Bossbar> get(UUID uuid)
+    {
+        return get(uuid.toString());
+    }
+
+    /**
+     * Returns a {@link Bossbar} instance based on a given {@code id}. This identifier typically matches with the one
+     * returned by {@link Bossbar#getId()}. If no instance exists, a empty {@link Exceptional} is returned.
+     *
+     * @param id
+     *         The identifier of the potential bossbar
+     *
+     * @return The bossbar wrapped in a {@link Exceptional}, or empty.
+     */
+    static Exceptional<Bossbar> get(String id)
+    {
+        return Exceptional.of(() -> REGISTRY.get(id));
+    }
 
     /**
      * Shows the bossbar instance to the given {@link Player} indefinitely.
@@ -183,45 +229,4 @@ public interface Bossbar {
      * @return {@code true} of the given player can see the bossbar.
      */
     boolean isVisibleTo(String name);
-
-    /**
-     * Returns a assisted {@link BossbarBuilder builder instance}.
-     *
-     * @return A new builder instance.
-     */
-    static BossbarBuilder builder() {
-        return new BossbarBuilder();
-    }
-
-    /**
-     * The registry of all active {@link Bossbar bossbars}. Typically this only contains bossbars which are currently
-     * visible to at least one player.
-     */
-    static final Map<String, Bossbar> REGISTRY = SeleneUtils.emptyConcurrentMap();
-
-    /**
-     * Returns a {@link Bossbar} instance based on a given {@code id}. This identifier typically matches with the one
-     * returned by {@link Bossbar#getId()}. If no instance exists, a empty {@link Exceptional} is returned.
-     *
-     * @param id
-     *         The identifier of the potential bossbar
-     *
-     * @return The bossbar wrapped in a {@link Exceptional}, or empty.
-     */
-    static Exceptional<Bossbar> get(String id) {
-        return Exceptional.of(() -> REGISTRY.get(id));
-    }
-
-    /**
-     * Returns a {@link Bossbar} instance based on a given {@link UUID uuid}. This identifier typically matches with the
-     * one returned by {@link Bossbar#getId()}. If no instance exists, a empty {@link Exceptional} is returned.
-     *
-     * @param uuid
-     *         The unique identifier of the potential bossbar
-     *
-     * @return The bossbar wrapped in a {@link Exceptional}, or empty.
-     */
-    static Exceptional<Bossbar> get(UUID uuid) {
-        return get(uuid.toString());
-    }
 }

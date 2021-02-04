@@ -21,10 +21,10 @@ import com.google.inject.Singleton;
 
 import org.dockbox.selene.core.annotations.module.Disabled;
 import org.dockbox.selene.core.annotations.module.Module;
+import org.dockbox.selene.core.impl.SimpleModuleContext;
 import org.dockbox.selene.core.module.ModuleContext;
 import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.core.module.ModuleStatus;
-import org.dockbox.selene.core.impl.SimpleModuleContext;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.Selene;
@@ -42,15 +42,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Singleton
-public class SimpleModuleManager implements ModuleManager {
+public class SimpleModuleManager implements ModuleManager
+{
 
     private static final Collection<SimpleModuleContext> globalContexts = SeleneUtils.emptyConcurrentList();
     private static final Map<String, Object> instanceMappings = SeleneUtils.emptyConcurrentMap();
 
     @NotNull
     @Override
-    public Exceptional<ModuleContext> getContext(@NotNull Class<?> type) {
-        for (SimpleModuleContext ctx : globalContexts) {
+    public Exceptional<ModuleContext> getContext(@NotNull Class<?> type)
+    {
+        for (SimpleModuleContext ctx : globalContexts)
+        {
             Class<?> componentClassType = ctx.getType();
             if (componentClassType.equals(type)) return Exceptional.of(ctx);
         }
@@ -59,8 +62,10 @@ public class SimpleModuleManager implements ModuleManager {
 
     @NotNull
     @Override
-    public Exceptional<ModuleContext> getContext(@NonNls @NotNull String id) {
-        for (SimpleModuleContext ctx : globalContexts) {
+    public Exceptional<ModuleContext> getContext(@NonNls @NotNull String id)
+    {
+        for (SimpleModuleContext ctx : globalContexts)
+        {
             if (ctx.getModule().id().equals(id)) return Exceptional.of(ctx);
         }
         return Exceptional.empty();
@@ -68,9 +73,25 @@ public class SimpleModuleManager implements ModuleManager {
 
     @NotNull
     @Override
-    public <T> Exceptional<T> getInstance(@NotNull Class<T> type) {
-        Selene.log().debug("Instance requested for [" + type.getCanonicalName() +"]");
-        for (Object o : instanceMappings.values()) {
+    public Exceptional<Module> getHeader(@NotNull Class<?> type)
+    {
+        return Exceptional.ofNullable(type.getAnnotation(Module.class));
+    }
+
+    @NotNull
+    @Override
+    public Exceptional<Module> getHeader(@NotNull String id)
+    {
+        return this.getInstance(id).map(i -> i.getClass().getAnnotation(Module.class));
+    }
+
+    @NotNull
+    @Override
+    public <T> Exceptional<T> getInstance(@NotNull Class<T> type)
+    {
+        Selene.log().debug("Instance requested for [" + type.getCanonicalName() + "]");
+        for (Object o : instanceMappings.values())
+        {
             if (null != o && o.getClass().equals(type))
                 // Condition meets requirement for checked cast
                 //noinspection unchecked
@@ -82,19 +103,22 @@ public class SimpleModuleManager implements ModuleManager {
     @SuppressWarnings("unchecked")
     @NotNull
     @Override
-    public Exceptional<?> getInstance(@NotNull String id) {
+    public Exceptional<?> getInstance(@NotNull String id)
+    {
         return Exceptional.ofNullable(instanceMappings.get(id));
     }
 
     @NotNull
     @Override
-    public Map<String, Object> getInstanceMappings() {
+    public Map<String, Object> getInstanceMappings()
+    {
         return SeleneUtils.asUnmodifiableMap(instanceMappings);
     }
 
     @NotNull
     @Override
-    public List<ModuleContext> initialiseModules() {
+    public List<ModuleContext> initialiseModules()
+    {
         Collection<Class<?>> annotatedTypes = Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Module.class);
         Selene.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
         return annotatedTypes.stream()
@@ -110,7 +134,8 @@ public class SimpleModuleManager implements ModuleManager {
 
                     return new Tuple<>(context, type);
                 }).filter(tuple -> {
-                    if (this.createComponentInstance(tuple.getValue(), tuple.getKey())) {
+                    if (this.createComponentInstance(tuple.getValue(), tuple.getKey()))
+                    {
                         globalContexts.add(tuple.getKey());
                         return true;
                     }
@@ -120,51 +145,49 @@ public class SimpleModuleManager implements ModuleManager {
 
     @NotNull
     @Override
-    public Exceptional<Module> getHeader(@NotNull Class<?> type) {
-        return Exceptional.ofNullable(type.getAnnotation(Module.class));
-    }
-
-    @NotNull
-    @Override
-    public Exceptional<Module> getHeader(@NotNull String id) {
-        return this.getInstance(id).map(i -> i.getClass().getAnnotation(Module.class));
-    }
-
-    @NotNull
-    @Override
-    public List<String> getRegisteredModuleIds() {
+    public List<String> getRegisteredModuleIds()
+    {
         return SeleneUtils.asList(instanceMappings.keySet());
     }
 
-    private <T> boolean createComponentInstance(Class<T> entry, ModuleContext context) {
+    private <T> boolean createComponentInstance(Class<T> entry, ModuleContext context)
+    {
         Module header = entry.getAnnotation(Module.class);
         List<Module> existingHeaders = SeleneUtils.emptyList();
         globalContexts.forEach(ctx -> existingHeaders.add(ctx.getModule()));
         //noinspection CallToSuspiciousStringMethod
-        if (existingHeaders.stream().anyMatch(e -> e.id().equals(header.id()))) {
+        if (existingHeaders.stream().anyMatch(e -> e.id().equals(header.id())))
+        {
             Selene.log().warn("Module with unique ID " + header.id() + " already present!");
             return false;
         }
 
-        assert null != header : "@Module header missing from previously checked type [" + entry.getCanonicalName() + "]! This should not be possible!";
+        assert null != header : "@Module header missing from previously checked type [" + entry
+                .getCanonicalName() + "]! This should not be possible!";
 
         String[] dependencies = header.dependencies();
-        for (String dependency : dependencies) {
-            try {
-                String formattedDependency = this.convertDependencyName(dependency);
+        for (String dependency : dependencies)
+        {
+            try
+            {
+                String formattedDependency = SimpleModuleManager.convertDependencyName(dependency);
                 // Using Package.getPackage would only return a package if the package has been used by the classloader
                 // before this call has been made. By requesting it as a resource we can ensure it can be loaded.
                 // == Warning! ==
                 // This is no longer functional as of JDK 9, where packages are encapsulated in modules. Classes however
                 // are not encapsulated, so it is possible to reuse this to look up classes in the future.
                 Object pkg = this.getClass().getClassLoader().getResource(formattedDependency);
-                if (null == pkg) {
-                    Selene.log().warn("Dependent package '" + dependency + " (" + formattedDependency + ")' is not present, failing " + header.name());
+                if (null == pkg)
+                {
+                    Selene.log()
+                            .warn("Dependent package '" + dependency + " (" + formattedDependency + ")' is not present, failing " + header.name());
                     // Do not instantiate entries which require dependencies which are not present.
                     context.addStatus(entry, ModuleStatus.FAILED);
                     return false;
                 }
-            } catch (Throwable e) {
+            }
+            catch (Throwable e)
+            {
                 // Package.getPackage(String) typically returns null if no package with that name is present, this clause is a fail-safe and should
                 // technically never be reached. If it is reached we explicitly need to mention the package to prevent future issues (by reporting this).
                 Selene.handle("Failed to obtain package [" + dependency + "].", e);
@@ -174,22 +197,29 @@ public class SimpleModuleManager implements ModuleManager {
         T instance;
         instance = Selene.provide(entry);
 
-        if (null == instance) {
-            try {
+        if (null == instance)
+        {
+            try
+            {
                 Constructor<T> defaultConstructor = entry.getConstructor();
                 defaultConstructor.setAccessible(true);
                 instance = defaultConstructor.newInstance();
-                this.injectMembers(instance, context, header);
+                SimpleModuleManager.injectMembers(instance, context, header);
 
                 context.addStatus(entry, ModuleStatus.LOADED);
                 Selene.getServer().bindUtility(entry, instance);
-            } catch (NoSuchMethodException | IllegalAccessException e) {
+            }
+            catch (NoSuchMethodException | IllegalAccessException e)
+            {
                 context.addStatus(entry, ModuleStatus.FAILED);
                 Selene.log().warn("No default accessible constructor available for [" + entry.getCanonicalName() + ']');
                 return false;
-            } catch (InstantiationException | InvocationTargetException e) {
+            }
+            catch (InstantiationException | InvocationTargetException e)
+            {
                 context.addStatus(entry, ModuleStatus.ERRORED);
-                Selene.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
+                Selene.log().warn("Failed to instantiate default constructor for [" + entry
+                        .getCanonicalName() + "]. Proceeding to look for injectable constructors.");
                 return false;
             }
         }
@@ -206,16 +236,21 @@ public class SimpleModuleManager implements ModuleManager {
      * java.lang.String.class -> java/lang/String.class
      * java.lang -> java/lang
      * }</pre>
-     * @param dependency The unformatted dependency format
+     *
+     * @param dependency
+     *         The unformatted dependency format
+     *
      * @return The formatted dependency format
      */
-    private String convertDependencyName(String dependency) {
+    private static String convertDependencyName(String dependency)
+    {
         dependency = dependency.replaceAll("\\.", "/");
         dependency = dependency.replaceAll("/class", ".class");
         return dependency;
     }
 
-    private <T> void injectMembers(T instance, ModuleContext context, Module header) {
+    private static <T> void injectMembers(T instance, ModuleContext context, Module header)
+    {
         Selene.getServer().injectMembers(instance);
         Selene.getServer().createModuleInjector(instance, header, context).injectMembers(instance);
     }

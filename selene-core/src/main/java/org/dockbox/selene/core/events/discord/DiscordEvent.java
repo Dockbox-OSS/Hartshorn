@@ -30,49 +30,59 @@ import org.dockbox.selene.core.objects.Exceptional;
  * The abstract type which can be used to listen to all Discord related events.
  */
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class DiscordEvent implements Event {
+public abstract class DiscordEvent implements Event
+{
 
     @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-    public static abstract class DiscordMessageAuthorEvent extends DiscordEvent {
+    public static abstract class DiscordMessageAuthorEvent extends DiscordEvent
+    {
 
         private final User author;
         private final Message message;
 
-        protected DiscordMessageAuthorEvent(User author, Message message) {
+        protected DiscordMessageAuthorEvent(User author, Message message)
+        {
             this.author = author;
             this.message = message;
         }
 
-        public User getAuthor() {
+        public User getAuthor()
+        {
             return this.author;
         }
 
-        public Message getMessage() {
+        public Message getMessage()
+        {
             return this.message;
         }
     }
 
     @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-    public static abstract class DiscordGuildUserEvent extends DiscordEvent {
+    public static abstract class DiscordGuildUserEvent extends DiscordEvent
+    {
 
         private final User user;
         private final Guild guild;
 
-        protected DiscordGuildUserEvent(User user, Guild guild) {
+        protected DiscordGuildUserEvent(User user, Guild guild)
+        {
             this.user = user;
             this.guild = guild;
         }
 
-        public User getUser() {
+        public User getUser()
+        {
             return this.user;
         }
 
-        public Guild getGuild() {
+        public Guild getGuild()
+        {
             return this.guild;
         }
     }
 
-    public static class DiscordChatReceivedEvent extends DiscordMessageAuthorEvent {
+    public static class DiscordChatReceivedEvent extends DiscordMessageAuthorEvent
+    {
 
         private final Guild guild;
         private final TextChannel channel;
@@ -89,22 +99,26 @@ public abstract class DiscordEvent implements Event {
          * @param channel
          *         The Discord channel in which the message was received
          */
-        public DiscordChatReceivedEvent(User author, Message message, Guild guild, TextChannel channel) {
+        public DiscordChatReceivedEvent(User author, Message message, Guild guild, TextChannel channel)
+        {
             super(author, message);
             this.guild = guild;
             this.channel = channel;
         }
 
-        public Guild getGuild() {
+        public Guild getGuild()
+        {
             return this.guild;
         }
 
-        public TextChannel getChannel() {
+        public TextChannel getChannel()
+        {
             return this.channel;
         }
     }
 
-    public static class DiscordPrivateChatReceivedEvent extends DiscordMessageAuthorEvent {
+    public static class DiscordPrivateChatReceivedEvent extends DiscordMessageAuthorEvent
+    {
 
         /**
          * The event fired when a private chat message is received from Discord. This only includes messages sent to the
@@ -115,12 +129,14 @@ public abstract class DiscordEvent implements Event {
          * @param message
          *         The message
          */
-        public DiscordPrivateChatReceivedEvent(User author, Message message) {
+        public DiscordPrivateChatReceivedEvent(User author, Message message)
+        {
             super(author, message);
         }
     }
 
-    public static class DiscordReactionAddedEvent extends DiscordMessageAuthorEvent {
+    public static class DiscordReactionAddedEvent extends DiscordMessageAuthorEvent
+    {
 
         private final MessageReaction reaction;
 
@@ -134,7 +150,8 @@ public abstract class DiscordEvent implements Event {
          * @param reaction
          *         The reaction which was added
          */
-        public DiscordReactionAddedEvent(User author, Message message, MessageReaction reaction) {
+        public DiscordReactionAddedEvent(User author, Message message, MessageReaction reaction)
+        {
             super(author, message);
             this.reaction = reaction;
         }
@@ -144,11 +161,13 @@ public abstract class DiscordEvent implements Event {
          *
          * @return The ID of the emote (can usually be parsed to a {@link Long}
          */
-        public String getEmoteId() {
+        public String getEmoteId()
+        {
             return this.getReaction().getReactionEmote().getId();
         }
 
-        public MessageReaction getReaction() {
+        public MessageReaction getReaction()
+        {
             return this.reaction;
         }
 
@@ -157,12 +176,14 @@ public abstract class DiscordEvent implements Event {
          *
          * @return The name of the emote
          */
-        public String getEmoteName() {
+        public String getEmoteName()
+        {
             return this.getReaction().getReactionEmote().getName();
         }
     }
 
-    public static class DiscordChatDeletedEvent extends DiscordEvent {
+    public static class DiscordChatDeletedEvent extends DiscordEvent
+    {
 
         private final String messageId;
 
@@ -172,16 +193,19 @@ public abstract class DiscordEvent implements Event {
          * @param messageId
          *         The ID of the message.
          */
-        public DiscordChatDeletedEvent(String messageId) {
+        public DiscordChatDeletedEvent(String messageId)
+        {
             this.messageId = messageId;
         }
 
-        public String getMessageId() {
+        public String getMessageId()
+        {
             return this.messageId;
         }
     }
 
-    public static class DiscordPrivateChatDeletedEvent extends DiscordEvent {
+    public static class DiscordPrivateChatDeletedEvent extends DiscordEvent
+    {
 
         private final String messageId;
 
@@ -191,16 +215,19 @@ public abstract class DiscordEvent implements Event {
          * @param messageId
          *         The ID of the message.
          */
-        public DiscordPrivateChatDeletedEvent(String messageId) {
+        public DiscordPrivateChatDeletedEvent(String messageId)
+        {
             this.messageId = messageId;
         }
 
-        public String getMessageId() {
+        public String getMessageId()
+        {
             return this.messageId;
         }
     }
 
-    public static class DiscordChatUpdatedEvent extends DiscordMessageAuthorEvent {
+    public static class DiscordChatUpdatedEvent extends DiscordMessageAuthorEvent
+    {
 
         /**
          * The event fired when a message was updated.
@@ -210,12 +237,14 @@ public abstract class DiscordEvent implements Event {
          * @param message
          *         The new value of the message
          */
-        public DiscordChatUpdatedEvent(User author, Message message) {
+        public DiscordChatUpdatedEvent(User author, Message message)
+        {
             super(author, message);
         }
     }
 
-    public static class DiscordPrivateChatUpdatedEvent extends DiscordMessageAuthorEvent {
+    public static class DiscordPrivateChatUpdatedEvent extends DiscordMessageAuthorEvent
+    {
 
         /**
          * The event fired when a private message was updated.
@@ -225,12 +254,14 @@ public abstract class DiscordEvent implements Event {
          * @param message
          *         The new value of the message
          */
-        public DiscordPrivateChatUpdatedEvent(User author, Message message) {
+        public DiscordPrivateChatUpdatedEvent(User author, Message message)
+        {
             super(author, message);
         }
     }
 
-    public static class DiscordUserBannedEvent extends DiscordGuildUserEvent {
+    public static class DiscordUserBannedEvent extends DiscordGuildUserEvent
+    {
 
         /**
          * The event fired when a user is banned from a Discord guild.
@@ -240,12 +271,14 @@ public abstract class DiscordEvent implements Event {
          * @param guild
          *         The guild the user was banned from
          */
-        public DiscordUserBannedEvent(User user, Guild guild) {
+        public DiscordUserBannedEvent(User user, Guild guild)
+        {
             super(user, guild);
         }
     }
 
-    public static class DiscordUserUnbannedEvent extends DiscordGuildUserEvent {
+    public static class DiscordUserUnbannedEvent extends DiscordGuildUserEvent
+    {
 
         /**
          * The event fired when a user is unbanned/pardonned from a Discord guild.
@@ -255,12 +288,14 @@ public abstract class DiscordEvent implements Event {
          * @param guild
          *         The guild the user was unbanned from
          */
-        public DiscordUserUnbannedEvent(User user, Guild guild) {
+        public DiscordUserUnbannedEvent(User user, Guild guild)
+        {
             super(user, guild);
         }
     }
 
-    public static class DiscordUserJoinedEvent extends DiscordGuildUserEvent {
+    public static class DiscordUserJoinedEvent extends DiscordGuildUserEvent
+    {
 
         /**
          * The event fired when a new user joins a Discord guild.
@@ -270,12 +305,14 @@ public abstract class DiscordEvent implements Event {
          * @param guild
          *         The guild the user joined
          */
-        public DiscordUserJoinedEvent(User user, Guild guild) {
+        public DiscordUserJoinedEvent(User user, Guild guild)
+        {
             super(user, guild);
         }
     }
 
-    public static class DiscordUserLeftEvent extends DiscordGuildUserEvent {
+    public static class DiscordUserLeftEvent extends DiscordGuildUserEvent
+    {
 
         /**
          * The event fired when a user leaves a Discord guild.
@@ -285,12 +322,14 @@ public abstract class DiscordEvent implements Event {
          * @param guild
          *         The guild the user left
          */
-        public DiscordUserLeftEvent(User user, Guild guild) {
+        public DiscordUserLeftEvent(User user, Guild guild)
+        {
             super(user, guild);
         }
     }
 
-    public static class DiscordUserNicknameChangedEvent extends DiscordEvent {
+    public static class DiscordUserNicknameChangedEvent extends DiscordEvent
+    {
 
         private final User user;
         private final Exceptional<String> oldNickname;
@@ -306,21 +345,25 @@ public abstract class DiscordEvent implements Event {
          * @param newNickname
          *         The new (and current) value of the nickname
          */
-        public DiscordUserNicknameChangedEvent(User user, Exceptional<String> oldNickname, Exceptional<String> newNickname) {
+        public DiscordUserNicknameChangedEvent(User user, Exceptional<String> oldNickname, Exceptional<String> newNickname)
+        {
             this.user = user;
             this.oldNickname = oldNickname;
             this.newNickname = newNickname;
         }
 
-        public User getUser() {
+        public User getUser()
+        {
             return this.user;
         }
 
-        public Exceptional<String> getOldNickname() {
+        public Exceptional<String> getOldNickname()
+        {
             return this.oldNickname;
         }
 
-        public Exceptional<String> getNewNickname() {
+        public Exceptional<String> getNewNickname()
+        {
             return this.newNickname;
         }
     }
@@ -328,12 +371,14 @@ public abstract class DiscordEvent implements Event {
     /**
      * The event fired when the Discord bot disconnects from Discord.
      */
-    public static class DiscordBotDisconnectedEvent extends DiscordEvent {
+    public static class DiscordBotDisconnectedEvent extends DiscordEvent
+    {
     }
 
     /**
      * The event fired when the Discord bot (re)connects to Discord.
      */
-    public static class DiscordBotReconnectedEvent extends DiscordEvent {
+    public static class DiscordBotReconnectedEvent extends DiscordEvent
+    {
     }
 }

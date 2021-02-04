@@ -21,5 +21,7 @@ import org.dockbox.selene.core.annotations.module.Module;
 
 @Module(id = "datastructures", name = "Additional data structures",
         description = "Provides additional data structures for specific usages",
-        authors = {"GuusLieben", "pumbas600", "simbolduc"})
-public class DataStructuresModule {}
+        authors = { "GuusLieben", "pumbas600", "simbolduc" })
+public class DataStructuresModule
+{
+}

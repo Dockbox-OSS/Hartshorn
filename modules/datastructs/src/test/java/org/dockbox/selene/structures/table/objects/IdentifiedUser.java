@@ -19,18 +19,21 @@ package org.dockbox.selene.structures.table.objects;
 
 import org.dockbox.selene.core.annotations.entity.Property;
 
-public class IdentifiedUser {
+public class IdentifiedUser
+{
 
     public int numeralId;
 
     @Property("name")
     public String displayedName;
 
-    public IdentifiedUser(int id, String name) {
+    public IdentifiedUser(int id, String name)
+    {
         this.numeralId = id;
         this.displayedName = name;
     }
 
-    public IdentifiedUser() {
+    public IdentifiedUser()
+    {
     }
 }

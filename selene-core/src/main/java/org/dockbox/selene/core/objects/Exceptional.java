@@ -48,30 +48,35 @@ import javax.annotation.Nullable;
  * @param <T>
  *         the type parameter
  */
-@SuppressWarnings({"AssignmentToNull", "unused"})
-public final class Exceptional<T> {
+@SuppressWarnings({ "AssignmentToNull", "unused" })
+public final class Exceptional<T>
+{
 
     private static final Exceptional<?> EMPTY = new Exceptional<>();
 
     private final T value;
     private final Throwable throwable;
 
-    private Exceptional() {
+    private Exceptional()
+    {
         this.value = null;
         this.throwable = null;
     }
 
-    private Exceptional(T value) {
+    private Exceptional(T value)
+    {
         this.value = Objects.requireNonNull(value);
         this.throwable = null;
     }
 
-    private Exceptional(T value, Throwable throwable) {
+    private Exceptional(T value, Throwable throwable)
+    {
         this.value = Objects.requireNonNull(value);
         this.throwable = Objects.requireNonNull(throwable);
     }
 
-    private Exceptional(Throwable throwable) {
+    private Exceptional(Throwable throwable)
+    {
         this.value = null;
         this.throwable = Objects.requireNonNull(throwable);
     }
@@ -89,7 +94,8 @@ public final class Exceptional<T> {
      * @return The {@code Exceptional}
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    public static <T> Exceptional<T> of(Optional<T> optional) {
+    public static <T> Exceptional<T> of(Optional<T> optional)
+    {
         return optional.map(Exceptional::of).orElseGet(Exceptional::empty);
     }
 
@@ -103,11 +109,11 @@ public final class Exceptional<T> {
      *         The value to wrap
      *
      * @return The {@code Exceptional}
-     *
      * @throws NullPointerException
      *         When the provided value is null
      */
-    public static <T> Exceptional<T> of(T value) {
+    public static <T> Exceptional<T> of(T value)
+    {
         return new Exceptional<>(value);
     }
 
@@ -120,7 +126,8 @@ public final class Exceptional<T> {
      *
      * @return The empty {@code Exceptional}
      */
-    public static <T> Exceptional<T> empty() {
+    public static <T> Exceptional<T> empty()
+    {
         @SuppressWarnings("unchecked")
         Exceptional<T> t = (Exceptional<T>) EMPTY;
         return t;
@@ -139,10 +146,14 @@ public final class Exceptional<T> {
      *
      * @return The {@code Exceptional}
      */
-    public static <T> Exceptional<T> of(Callable<T> supplier) {
-        try {
+    public static <T> Exceptional<T> of(Callable<T> supplier)
+    {
+        try
+        {
             return ofNullable(supplier.call());
-        } catch (Throwable t) {
+        }
+        catch (Throwable t)
+        {
             return of(t);
         }
     }
@@ -158,7 +169,8 @@ public final class Exceptional<T> {
      *
      * @return The {@code Exceptional}
      */
-    public static <T> Exceptional<T> ofNullable(T value) {
+    public static <T> Exceptional<T> ofNullable(T value)
+    {
         return null == value ? empty() : of(value);
     }
 
@@ -173,11 +185,11 @@ public final class Exceptional<T> {
      *         The throwable to wrap
      *
      * @return The {@code Exceptional}
-     *
      * @throws NullPointerException
      *         When the provided value is null
      */
-    public static <T> Exceptional<T> of(Throwable throwable) {
+    public static <T> Exceptional<T> of(Throwable throwable)
+    {
         return new Exceptional<>(throwable);
     }
 
@@ -186,13 +198,14 @@ public final class Exceptional<T> {
      * otherwise throws {@code NoSuchElementException}.
      *
      * @return the non-null value held by this {@code Optional}
-     *
      * @throws NoSuchElementException
      *         If there is no value present
      * @see Exceptional#isPresent()
      */
-    public T get() {
-        if (null == this.value) {
+    public T get()
+    {
+        if (null == this.value)
+        {
             throw new NoSuchElementException("No value present");
         }
         return this.value;
@@ -205,11 +218,11 @@ public final class Exceptional<T> {
      *         Block to be executed if a value is present
      *
      * @return The {@code Exceptional}, for chaining
-     *
      * @throws NullPointerException
      *         If value is present and {@code consumer} is null
      */
-    public Exceptional<T> ifPresent(Consumer<? super T> consumer) {
+    public Exceptional<T> ifPresent(Consumer<? super T> consumer)
+    {
         if (null != this.value)
             consumer.accept(this.value);
         return this;
@@ -222,11 +235,11 @@ public final class Exceptional<T> {
      *         Block to be executed if a value is absent
      *
      * @return The {@code Exceptional}, for chaining
-     *
      * @throws NullPointerException
      *         If {@code runnable} is null
      */
-    public Exceptional<T> ifAbsent(Runnable runnable) {
+    public Exceptional<T> ifAbsent(Runnable runnable)
+    {
         if (null == this.value)
             runnable.run();
         return this;
@@ -241,11 +254,11 @@ public final class Exceptional<T> {
      *
      * @return an {@code Exceptional} describing the value of this {@code Exceptional} if a value is present and the value
      *         matches the given predicate, otherwise an empty {@code Exceptional}
-     *
      * @throws NullPointerException
      *         If the predicate is null
      */
-    public Exceptional<T> filter(Predicate<? super T> predicate) {
+    public Exceptional<T> filter(Predicate<? super T> predicate)
+    {
         Objects.requireNonNull(predicate);
         if (!this.isPresent())
             return this;
@@ -258,7 +271,8 @@ public final class Exceptional<T> {
      *
      * @return {@code true} if there is a value present, otherwise {@code false}
      */
-    public boolean isPresent() {
+    public boolean isPresent()
+    {
         return null != this.value;
     }
 
@@ -282,18 +296,22 @@ public final class Exceptional<T> {
      * @return an {@code Exceptional} describing the result of applying a mapping
      *         function to the value of this {@code Exceptional}, if a value is present,
      *         otherwise an empty {@code Optional}
-     *
      * @throws NullPointerException
      *         If the mapping function is null
      */
-    public <U> Exceptional<U> map(Function<? super T, ? extends U> mapper) {
+    public <U> Exceptional<U> map(Function<? super T, ? extends U> mapper)
+    {
         Objects.requireNonNull(mapper);
         if (!this.isPresent())
             return this.errorPresent() ? of(this.throwable) : empty();
-        else {
-            try {
+        else
+        {
+            try
+            {
                 return ofNullable(mapper.apply(this.value), this.throwable);
-            } catch (Throwable e) {
+            }
+            catch (Throwable e)
+            {
                 return of(e);
             }
         }
@@ -304,7 +322,8 @@ public final class Exceptional<T> {
      *
      * @return {@code true} if there is a throwable present, otherwise {@code false}
      */
-    public boolean errorPresent() {
+    public boolean errorPresent()
+    {
         return null != this.throwable;
     }
 
@@ -332,7 +351,8 @@ public final class Exceptional<T> {
      *
      * @return The {@code Exceptional}
      */
-    public static <T> Exceptional<T> ofNullable(T value, Throwable throwable) {
+    public static <T> Exceptional<T> ofNullable(T value, Throwable throwable)
+    {
         if (null == value && null == throwable) return empty();
         if (null == value) return of(throwable);
         if (null == throwable) return of(value);
@@ -352,11 +372,11 @@ public final class Exceptional<T> {
      *         The throwable to wrap
      *
      * @return The {@code Exceptional}
-     *
      * @throws NullPointerException
      *         When the provided value is null
      */
-    public static <T> Exceptional<T> of(T value, Throwable throwable) {
+    public static <T> Exceptional<T> of(T value, Throwable throwable)
+    {
         return new Exceptional<>(value, throwable);
     }
 
@@ -373,15 +393,16 @@ public final class Exceptional<T> {
      *
      * @return The result of applying an {@code Exceptional}-bearing mapping function to the value of this
      *         {@code Exceptional}, if a value is present, otherwise {@link Exceptional#empty()}
-     *
      * @throws NullPointerException
      *         If the mapping function is null or returns a null result
      */
-    public <U> Exceptional<U> flatMap(Function<? super T, Exceptional<U>> mapper) {
+    public <U> Exceptional<U> flatMap(Function<? super T, Exceptional<U>> mapper)
+    {
         Objects.requireNonNull(mapper);
         if (!this.isPresent())
             return this.errorPresent() ? of(this.throwable) : empty();
-        else {
+        else
+        {
             return Objects.requireNonNull(mapper.apply(this.value));
         }
     }
@@ -399,15 +420,16 @@ public final class Exceptional<T> {
      *
      * @return The result of applying an {@code Exceptional}-bearing mapping function to the value and throwable of this
      *         {@code Exceptional}, if a value is present, otherwise {@link Exceptional#empty()}
-     *
      * @throws NullPointerException
      *         If the mapping function is null or returns a null result
      */
-    public <U> Exceptional<U> flatMap(BiFunction<? super T, Throwable, Exceptional<U>> mapper) {
+    public <U> Exceptional<U> flatMap(BiFunction<? super T, Throwable, Exceptional<U>> mapper)
+    {
         Objects.requireNonNull(mapper);
         if (!this.isPresent())
             return this.errorPresent() ? of(this.throwable) : empty();
-        else {
+        else
+        {
             return Objects.requireNonNull(mapper.apply(this.value, this.throwable));
         }
     }
@@ -420,7 +442,8 @@ public final class Exceptional<T> {
      *
      * @return The throwable, if present, otherwise {@code other}
      */
-    public Throwable orElseExcept(Throwable other) {
+    public Throwable orElseExcept(Throwable other)
+    {
         return null != this.throwable ? this.throwable : other;
     }
 
@@ -429,7 +452,8 @@ public final class Exceptional<T> {
      *
      * @return The value, if present, otherwise null
      */
-    public T orNull() {
+    public T orNull()
+    {
         return this.orElse(null);
     }
 
@@ -440,10 +464,10 @@ public final class Exceptional<T> {
      *         The value to be returned if there is no value present, may be null
      *
      * @return The value, if present, otherwise {@code other}
-     *
      * @see Exceptional#orNull()
      */
-    public T orElse(T other) {
+    public T orElse(T other)
+    {
         return null != this.value ? this.value : other;
     }
 
@@ -454,11 +478,11 @@ public final class Exceptional<T> {
      *         A {@code Supplier} whose result is returned if no value is present
      *
      * @return The value if present otherwise the result of {@code other.get()}
-     *
      * @throws NullPointerException
      *         if value is not present and {@code other} is null
      */
-    public T orElseGet(Supplier<? extends T> other) {
+    public T orElseGet(Supplier<? extends T> other)
+    {
         return null != this.value ? this.value : other.get();
     }
 
@@ -471,16 +495,20 @@ public final class Exceptional<T> {
      *         The supplier which will return the exception to be thrown
      *
      * @return The present value
-     *
      * @throws X
      *         If there is no value present
      * @throws NullPointerException
      *         If no value is present and {@code exceptionSupplier} is null
      */
-    public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X {
-        if (null != this.value) {
+    public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier)
+            throws X
+    {
+        if (null != this.value)
+        {
             return this.value;
-        } else {
+        }
+        else
+        {
             throw exceptionSupplier.get();
         }
     }
@@ -499,11 +527,11 @@ public final class Exceptional<T> {
      *         The block to be executed if a throwable is present
      *
      * @return The {@code Exceptional}, for chaining
-     *
      * @throws NullPointerException
      *         If throwable is present and {@code consumer} is null
      */
-    public Exceptional<T> ifErrorPresent(Consumer<? super Throwable> consumer) {
+    public Exceptional<T> ifErrorPresent(Consumer<? super Throwable> consumer)
+    {
         if (null != this.throwable)
             consumer.accept(this.throwable);
         return this;
@@ -516,11 +544,11 @@ public final class Exceptional<T> {
      *         Block to be executed if no throwable is present
      *
      * @return The {@code Exceptional}, for chaining
-     *
      * @throws NullPointerException
      *         If {@code runnable} is null
      */
-    public Exceptional<T> ifErrorAbsent(Runnable runnable) {
+    public Exceptional<T> ifErrorAbsent(Runnable runnable)
+    {
         if (null == this.throwable)
             runnable.run();
         return this;
@@ -531,11 +559,12 @@ public final class Exceptional<T> {
      * otherwise do nothing.
      *
      * @return The {@code Exceptional}, for chaining
-     *
      * @throws CheckedSeleneException
      *         If {@code throwable} is not null and is rethrown
      */
-    public Exceptional<T> rethrow() throws CheckedSeleneException {
+    public Exceptional<T> rethrow()
+            throws CheckedSeleneException
+    {
         if (null != this.throwable)
             throw new CheckedSeleneException(this.throwable);
         return this;
@@ -546,12 +575,13 @@ public final class Exceptional<T> {
      * otherwise do nothing.
      *
      * @return The {@code Exceptional}, for chaining
-     *
      * @throws UncheckedSeleneException
      *         If {@code throwable} is not null and is rethrown
      */
-    public Exceptional<T> rethrowUnchecked() {
-        if (null != this.throwable) {
+    public Exceptional<T> rethrowUnchecked()
+    {
+        if (null != this.throwable)
+        {
             if (this.throwable instanceof RuntimeException)
                 throw (RuntimeException) this.throwable;
             else throw new UncheckedSeleneException(this.throwable);
@@ -564,30 +594,35 @@ public final class Exceptional<T> {
      * {@code NoSuchElementException}.
      *
      * @return The non-null throwable held by this {@code Exceptional}
-     *
      * @throws NoSuchElementException
      *         If there is no throwable present
      * @see Exceptional#errorPresent()
      */
-    public Throwable getError() {
-        if (null == this.throwable) {
+    public Throwable getError()
+    {
+        if (null == this.throwable)
+        {
             throw new NoSuchElementException("No value present");
         }
         return this.throwable;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash(this.value, this.throwable);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
             return true;
         }
 
-        if (!(obj instanceof Exceptional)) {
+        if (!(obj instanceof Exceptional))
+        {
             return false;
         }
 
@@ -596,12 +631,18 @@ public final class Exceptional<T> {
     }
 
     @Override
-    public String toString() {
-        if (null != this.value && null != this.throwable) {
+    public String toString()
+    {
+        if (null != this.value && null != this.throwable)
+        {
             return String.format("Exceptional[%s,%s]", this.value, this.throwable);
-        } else if (null != this.value) {
+        }
+        else if (null != this.value)
+        {
             return String.format("Exceptional[%s,-]", this.value);
-        } else if (null != this.throwable) {
+        }
+        else if (null != this.throwable)
+        {
             return String.format("Exceptional[-,%s]", this.throwable);
         }
         return "Exceptional.empty";
@@ -617,15 +658,19 @@ public final class Exceptional<T> {
      *         A {@code Supplier} whose result is wrapped if no value is present
      *
      * @return The {@code Exceptional}, for chaining
-     *
      * @throws NullPointerException
      *         If a value is present and {@code defaultValue} is null
      */
-    public Exceptional<T> orElseSupply(Supplier<T> defaultValue) {
-        if (this.isAbsent()) {
-            if (this.errorPresent()) {
+    public Exceptional<T> orElseSupply(Supplier<T> defaultValue)
+    {
+        if (this.isAbsent())
+        {
+            if (this.errorPresent())
+            {
                 return ofNullable(defaultValue.get(), this.throwable);
-            } else {
+            }
+            else
+            {
                 return ofNullable(defaultValue.get());
             }
         }
@@ -638,7 +683,8 @@ public final class Exceptional<T> {
      *
      * @return {@code true} if there is no value present, otherwise {@code false}
      */
-    public boolean isAbsent() {
+    public boolean isAbsent()
+    {
         return null == this.value;
     }
 
@@ -648,7 +694,8 @@ public final class Exceptional<T> {
      * @return The type of the value, or {@code null}
      */
     @Nullable
-    public Class<?> getType() {
+    public Class<?> getType()
+    {
         return this.isPresent() ? this.value.getClass() : null;
     }
 }

@@ -20,20 +20,25 @@ package org.dockbox.selene.core.i18n.common;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public interface Formattable {
+public interface Formattable
+{
 
-    default String replaceFromMap(String string, Map<String, String> replacements) {
+    default String replaceFromMap(String string, Map<String, String> replacements)
+    {
         StringBuilder sb = new StringBuilder(string);
         int size = string.length();
-        for (Entry<String, String> entry : replacements.entrySet()) {
-            if (0 == size) {
+        for (Entry<String, String> entry : replacements.entrySet())
+        {
+            if (0 == size)
+            {
                 break;
             }
             String key = entry.getKey();
             String value = entry.getValue();
             int nextSearchStart;
             int start = sb.indexOf(key, 0);
-            while (-1 < start) {
+            while (-1 < start)
+            {
                 int end = start + key.length();
                 nextSearchStart = start + value.length();
                 sb.replace(start, end, value);

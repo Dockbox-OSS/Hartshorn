@@ -38,9 +38,8 @@ import org.spongepowered.api.entity.EntityTypes;
 
 import java.util.Map;
 
-public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand> implements ArmorStand {
-
-    private final org.spongepowered.api.entity.living.ArmorStand representation;
+public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand> implements ArmorStand
+{
 
     private static final Map<Limbs, Key<Value<Vector3d>>> limbKeys = SeleneUtils.ofEntries(
             SeleneUtils.entry(Limbs.HEAD, Keys.HEAD_ROTATION),
@@ -49,36 +48,46 @@ public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand>
             SeleneUtils.entry(Limbs.LEFT_LEG, Keys.LEFT_LEG_ROTATION),
             SeleneUtils.entry(Limbs.RIGHT_LEG, Keys.RIGHT_LEG_ROTATION)
     );
+    private final org.spongepowered.api.entity.living.ArmorStand representation;
 
-    public SpongeArmorStand(org.spongepowered.api.entity.living.ArmorStand representation) {
+    public SpongeArmorStand(org.spongepowered.api.entity.living.ArmorStand representation)
+    {
         this.representation = representation;
     }
 
     @AssistedInject
-    public SpongeArmorStand(@Assisted Location location) {
+    public SpongeArmorStand(@Assisted Location location)
+    {
         this.representation = super.create(location);
     }
 
     @Override
-    protected Entity getRepresentation() {
-        return this.representation;
-    }
-
-    @Override
-    protected EntityType getEntityType() {
+    protected EntityType getEntityType()
+    {
         return EntityTypes.ARMOR_STAND;
     }
 
     @Override
-    protected ArmorStand from(Entity clone) {
+    protected Entity getRepresentation()
+    {
+        return this.representation;
+    }
+
+    @Override
+    protected ArmorStand from(Entity clone)
+    {
         return new SpongeArmorStand((org.spongepowered.api.entity.living.ArmorStand) clone);
     }
 
     @Override
-    public Vector3N getRotation(Limbs limb) {
-        if (Limbs.BODY == limb) {
+    public Vector3N getRotation(Limbs limb)
+    {
+        if (Limbs.BODY == limb)
+        {
             return SpongeConversionUtil.fromSponge(this.representation.getBodyPartRotationalData().bodyRotation().get());
-        } else {
+        }
+        else
+        {
             Key<Value<Vector3d>> rotationKey = limbKeys.get(limb);
             return this.getRepresentation().get(rotationKey)
                     .map(SpongeConversionUtil::fromSponge)
@@ -87,47 +96,59 @@ public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand>
     }
 
     @Override
-    public void setRotation(Limbs limb, Vector3N rotation) {
-        if (Limbs.BODY == limb) {
+    public void setRotation(Limbs limb, Vector3N rotation)
+    {
+        if (Limbs.BODY == limb)
+        {
             this.representation.getBodyPartRotationalData().bodyRotation().set(SpongeConversionUtil.toSponge(rotation));
-        } else {
+        }
+        else
+        {
             Key<Value<Vector3d>> rotationKey = limbKeys.get(limb);
             this.getRepresentation().offer(rotationKey, SpongeConversionUtil.toSponge(rotation));
         }
     }
 
     @Override
-    public boolean hasBaseplate() {
+    public boolean hasBaseplate()
+    {
         return this.representation.basePlate().get();
     }
 
     @Override
-    public void setBaseplate(boolean baseplate) {
+    public void setBaseplate(boolean baseplate)
+    {
         this.representation.basePlate().set(baseplate);
     }
 
     @Override
-    public boolean isSmall() {
+    public boolean isSmall()
+    {
         return this.getRepresentation().getOrElse(Keys.ARMOR_STAND_IS_SMALL, false);
     }
 
     @Override
-    public void setSmall(boolean small) {
+    public void setSmall(boolean small)
+    {
         this.getRepresentation().offer(Keys.ARMOR_STAND_IS_SMALL, small);
     }
 
     @Override
-    public boolean hasArms() {
+    public boolean hasArms()
+    {
         return this.getRepresentation().getOrElse(Keys.ARMOR_STAND_HAS_ARMS, false);
     }
 
     @Override
-    public void setArms(boolean arms) {
+    public void setArms(boolean arms)
+    {
         this.getRepresentation().offer(Keys.ARMOR_STAND_HAS_ARMS, arms);
     }
 
     @Override
-    public Inventory getInventory() {
-        return null; // TODO
+    public Inventory getInventory()
+    {
+        //noinspection ReturnOfNull
+        return null; // TODO: Implement entity inventory
     }
 }

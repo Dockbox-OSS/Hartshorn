@@ -19,7 +19,8 @@ package org.dockbox.selene.core.command;
 
 import org.dockbox.selene.core.objects.Exceptional;
 
-public interface CommandBus {
+public interface CommandBus
+{
 
     void register(Object... objs);
 

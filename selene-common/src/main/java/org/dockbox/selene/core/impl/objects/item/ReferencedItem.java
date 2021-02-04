@@ -24,45 +24,53 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements Item {
+public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements Item
+{
 
     private String id;
 
-    protected ReferencedItem(@NotNull T reference) {
+    protected ReferencedItem(@NotNull T reference)
+    {
         this.id = this.getId();
         this.setReference(Exceptional.of(reference));
     }
 
     @Override
-    public String getId() {
+    public String getId()
+    {
         return this.id;
     }
 
-    protected void setId(String id) {
+    protected void setId(String id)
+    {
         this.id = id;
     }
 
-    protected ReferencedItem(String id, int meta) {
+    @Override
+    public Text getDisplayName()
+    {
+        return this.getDisplayName(Selene.getServer().getGlobalConfig().getDefaultLanguage());
+    }
+
+    @Override
+    public Item stack()
+    {
+        this.setAmount(this.getStackSize());
+        return this;
+    }
+
+    protected ReferencedItem(String id, int meta)
+    {
         this.id = id;
         T type = this.getById(id, meta);
         super.setReference(Exceptional.of(type));
     }
 
-    @Override
-    public Text getDisplayName() {
-        return this.getDisplayName(Selene.getServer().getGlobalConfig().getDefaultLanguage());
-    }
-
-    @Override
-    public Item stack() {
-        this.setAmount(this.getStackSize());
-        return this;
-    }
-
     protected abstract T getById(String id, int meta);
 
     @Override
-    public Exceptional<T> constructInitialReference() {
+    public Exceptional<T> constructInitialReference()
+    {
         return Exceptional.empty(); // Handled by constructors
     }
 }

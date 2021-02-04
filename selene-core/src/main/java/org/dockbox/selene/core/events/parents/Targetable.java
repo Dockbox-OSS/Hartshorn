@@ -19,7 +19,8 @@ package org.dockbox.selene.core.events.parents;
 
 import org.dockbox.selene.core.objects.targets.Target;
 
-public interface Targetable {
+public interface Targetable
+{
 
     Target getTarget();
 

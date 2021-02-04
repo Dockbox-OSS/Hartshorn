@@ -32,7 +32,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 @SuppressWarnings("unchecked")
-public class SimpleCommandContext implements CommandContext {
+public class SimpleCommandContext implements CommandContext
+{
 
     public static final SimpleCommandContext EMPTY = new SimpleCommandContext(
             "", new Argument[0], new Flag[0],
@@ -58,7 +59,8 @@ public class SimpleCommandContext implements CommandContext {
             Exceptional<Location> location,
             Exceptional<World> world,
             String[] permissions
-    ) {
+    )
+    {
         this.usage = usage;
         this.args = args;
         this.flags = flags;
@@ -71,23 +73,27 @@ public class SimpleCommandContext implements CommandContext {
 
     @NotNull
     @Override
-    public String alias() {
+    public String alias()
+    {
         return this.usage.split(" ")[0];
     }
 
     @Override
-    public int arguments() {
+    public int arguments()
+    {
         return this.args.length;
     }
 
     @Override
-    public int flags() {
+    public int flags()
+    {
         return this.flags.length;
     }
 
     @NotNull
     @Override
-    public <T> Exceptional<Argument<T>> argument(@NonNls @NotNull String key) {
+    public <T> Exceptional<Argument<T>> argument(@NonNls @NotNull String key)
+    {
         return Exceptional.of(
                 Arrays.stream(this.args)
                         .filter(arg -> arg.getKey().equals(key))
@@ -96,7 +102,8 @@ public class SimpleCommandContext implements CommandContext {
     }
 
     @Override
-    public <T> T get(@NonNls String key) {
+    public <T> T get(@NonNls String key)
+    {
         return Arrays.stream(SeleneUtils.merge(this.args, this.flags))
                 .filter(arg -> arg.getKey().equals(key))
                 .findFirst()
@@ -105,41 +112,49 @@ public class SimpleCommandContext implements CommandContext {
     }
 
     @Override
-    public <T> Exceptional<T> optional(String key) {
+    public <T> Exceptional<T> optional(String key)
+    {
         return Exceptional.ofNullable(this.get(key));
     }
 
     @NotNull
     @Override
-    public <T> Exceptional<Flag<T>> flag(@NonNls @NotNull String key) {
+    public <T> Exceptional<Flag<T>> flag(@NonNls @NotNull String key)
+    {
         return Exceptional.of(
                 Arrays.stream(this.flags)
                         .filter(flag -> flag.getKey().equals(key))
                         .findFirst()
         ).map(flag -> (Flag<T>) flag);
     }
+
     @Override
-    public boolean has(@NonNls @NotNull String key) {
+    public boolean has(@NonNls @NotNull String key)
+    {
         return Arrays.stream(SeleneUtils.merge(this.args, this.flags)).anyMatch(arg -> arg.getKey().equals(key));
     }
 
     @Override
-    public CommandSource sender() {
+    public CommandSource sender()
+    {
         return this.sender;
     }
 
     @Override
-    public Exceptional<Location> location() {
+    public Exceptional<Location> location()
+    {
         return this.location;
     }
 
     @Override
-    public Exceptional<World> world() {
+    public Exceptional<World> world()
+    {
         return this.world;
     }
 
     @Override
-    public String[] permissions() {
+    public String[] permissions()
+    {
         return this.permissions;
     }
 }

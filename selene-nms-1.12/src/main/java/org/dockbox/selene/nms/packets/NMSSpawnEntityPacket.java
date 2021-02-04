@@ -24,20 +24,26 @@ import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.nms.entities.NMSEntity;
 import org.dockbox.selene.packets.SpawnEntityPacket;
 
-public class NMSSpawnEntityPacket<T extends Entity> extends SpawnEntityPacket<T> implements NMSPacket<SPacketSpawnGlobalEntity> {
+public class NMSSpawnEntityPacket<T extends Entity<?>> extends SpawnEntityPacket<T> implements NMSPacket<SPacketSpawnGlobalEntity>
+{
 
     @Override
-    public SPacketSpawnGlobalEntity getPacket() {
-        Entity entity = this.getEntity();
-        if (entity instanceof NMSEntity) {
+    public SPacketSpawnGlobalEntity getPacket()
+    {
+        Entity<?> entity = this.getEntity();
+        if (entity instanceof NMSEntity)
+        {
             return new SPacketSpawnGlobalEntity(((NMSEntity<?>) entity).getEntity());
-        } else {
+        }
+        else
+        {
             throw new UnsupportedOperationException("Cannot convert entity '" + entity + "' to NMSEntity");
         }
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... injectorProperties) {
+    public void stateEnabling(InjectorProperty<?>... injectorProperties)
+    {
         // TODO, Implementation of Entity
     }
 }

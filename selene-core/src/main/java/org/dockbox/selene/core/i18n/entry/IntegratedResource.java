@@ -17,17 +17,18 @@
 
 package org.dockbox.selene.core.i18n.entry;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Map;
 
 @Resources(module = Selene.class)
-public enum IntegratedResource implements ResourceEntry {
+public enum IntegratedResource implements ResourceEntry
+{
     // Color formats
     COLOR_PRIMARY("b", "color.primary"),
     COLOR_SECONDARY("3", "color.secondary"),
@@ -109,41 +110,49 @@ public enum IntegratedResource implements ResourceEntry {
     private final Map<Language, String> translations = SeleneUtils.emptyConcurrentMap();
     private String value;
 
-    IntegratedResource(String value, String key) {
+    IntegratedResource(String value, String key)
+    {
         this.value = value;
         this.key = key;
     }
 
-    public static String parse(CharSequence input) {
+    public static String parse(CharSequence input)
+    {
         return NONE.parseColors(input.toString());
     }
 
-    public String getValue(Player player) {
+    public String getValue(Player player)
+    {
         return this.translate(player.getLanguage()).asString();
     }
 
     @Override
-    public ResourceEntry translate(Language lang) {
+    public ResourceEntry translate(Language lang)
+    {
         if (this.translations.containsKey(lang)) return new Resource(this.translations.get(lang), this.getKey());
         return this;
     }
 
     @Override
-    public String asString() {
+    public String asString()
+    {
         return this.parseColors(this.value);
     }
 
     @Override
-    public String getKey() {
+    public String getKey()
+    {
         return "selene." + this.key;
     }
 
     @Override
-    public String plain() {
+    public String plain()
+    {
         return ResourceEntry.plain(this.value);
     }
 
-    public void setLanguageValue(Language lang, String value) {
+    public void setLanguageValue(Language lang, String value)
+    {
         this.translations.put(lang, value);
         if (lang == Selene.getServer().getGlobalConfig().getDefaultLanguage()) this.value = value;
     }

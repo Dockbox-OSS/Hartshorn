@@ -17,16 +17,20 @@
 
 package org.dockbox.selene.structures.table.behavior;
 
-public enum Order {
-    ASC(1), DESC(-1);
+public enum Order
+{
+    ASC(1),
+    DESC(-1);
 
     private final int order;
 
-    Order(int order) {
+    Order(int order)
+    {
         this.order = order;
     }
 
-    public int getOrder() {
+    public int getOrder()
+    {
         return this.order;
     }
 

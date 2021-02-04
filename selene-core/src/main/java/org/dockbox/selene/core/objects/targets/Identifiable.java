@@ -19,7 +19,8 @@ package org.dockbox.selene.core.objects.targets;
 
 import java.util.UUID;
 
-public interface Identifiable {
+public interface Identifiable
+{
 
     UUID getUniqueId();
 

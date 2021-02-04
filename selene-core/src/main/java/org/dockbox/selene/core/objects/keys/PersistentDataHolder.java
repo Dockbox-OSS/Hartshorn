@@ -19,7 +19,8 @@ package org.dockbox.selene.core.objects.keys;
 
 import org.dockbox.selene.core.objects.Exceptional;
 
-public interface PersistentDataHolder {
+public interface PersistentDataHolder
+{
 
     <T> Exceptional<T> get(PersistentDataKey<T> dataKey);
 

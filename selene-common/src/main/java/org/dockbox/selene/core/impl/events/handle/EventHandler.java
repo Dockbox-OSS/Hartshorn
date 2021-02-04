@@ -32,7 +32,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class EventHandler {
+public class EventHandler
+{
     private final Class<? extends Event> eventType;
 
     private final Set<EventHandler> supertypeHandlers = SeleneUtils.emptySet();
@@ -41,35 +42,50 @@ public class EventHandler {
 
     private transient volatile SimpleEventWrapper @Nullable [] computedInvokerCache;
 
-    EventHandler(Class<? extends Event> eventType) {
+    EventHandler(Class<? extends Event> eventType)
+    {
         this.eventType = eventType;
     }
 
-    public List<Method> getMethods() {
+    public List<Method> getMethods()
+    {
         return this.invokers.stream().map(SimpleEventWrapper::getMethod).collect(Collectors.toList());
     }
 
-    public void subscribe(EventWrapper invoker) {
+    public void subscribe(EventWrapper invoker)
+    {
         if (invoker instanceof SimpleEventWrapper)
             this.invalidateCache(this.invokers.add((SimpleEventWrapper) invoker));
     }
 
-    public void unsubscribe(EventWrapper invoker) {
+    private boolean invalidateCache(boolean modified)
+    {
+        if (modified) this.computedInvokerCache = null;
+        return modified;
+    }
+
+    public void unsubscribe(EventWrapper invoker)
+    {
         if (invoker instanceof SimpleEventWrapper)
             this.invalidateCache(this.invokers.remove(invoker));
     }
 
-    public void post(Event event, Class<?> target) {
+    public void post(Event event, Class<?> target)
+    {
         SimpleEventWrapper[] cache = this.computedInvokerCache;
-        if (null == cache) {
-            synchronized (this) {
-                if (null == (cache = this.computedInvokerCache)) {
+        if (null == cache)
+        {
+            synchronized (this)
+            {
+                if (null == (cache = this.computedInvokerCache))
+                {
                     cache = this.computedInvokerCache = this.computeInvokerCache();
                 }
             }
         }
 
-        for (SimpleEventWrapper invoker : cache) {
+        for (SimpleEventWrapper invoker : cache)
+        {
             // Target is null if no specific target should be checked
             // If the target is present we only want to invoke when the listener matches our target
             if (null == target || invoker.getListener().getClass().equals(target))
@@ -77,66 +93,74 @@ public class EventHandler {
         }
     }
 
-    private synchronized SimpleEventWrapper[] computeInvokerCache() {
+    private synchronized SimpleEventWrapper[] computeInvokerCache()
+    {
         SortedSet<SimpleEventWrapper> set;
-        if (this.hasSupertypeHandler()) {
+        if (this.hasSupertypeHandler())
+        {
             set = new TreeSet<>(this.invokers);
             for (EventHandler supertypeHandler : this.supertypeHandlers)
                 set.addAll(supertypeHandler.invokers);
-        } else {
+        }
+        else
+        {
             set = this.invokers;
         }
         return set.toArray(new SimpleEventWrapper[0]);
     }
 
-    private boolean invalidateCache(boolean modified) {
-        if (modified) this.computedInvokerCache = null;
-        return modified;
+    private boolean hasSupertypeHandler()
+    {
+        return !this.supertypeHandlers.isEmpty();
     }
 
-    private Class<? extends Event> eventType() {
-        return this.eventType;
-    }
-
-    private boolean isSubtypeOf(Class<?> cls) {
-        Class<? extends Event> type = this.eventType();
-        return type != cls && Reflect.isAssignableFrom(cls, type);
-    }
-
-    public boolean isSubtypeOf(EventHandler handler) {
+    public boolean isSubtypeOf(EventHandler handler)
+    {
         if (handler instanceof EventHandler)
             return this.isSubtypeOf(handler.eventType());
         return false;
     }
 
-    private boolean hasSupertypeHandler() {
-        return !this.supertypeHandlers.isEmpty();
+    private boolean isSubtypeOf(Class<?> cls)
+    {
+        Class<? extends Event> type = this.eventType();
+        return type != cls && Reflect.isAssignableFrom(cls, type);
     }
 
-    public Set<EventHandler> getSupertypeHandlers() {
+    private Class<? extends Event> eventType()
+    {
+        return this.eventType;
+    }
+
+    public Set<EventHandler> getSupertypeHandlers()
+    {
         return Collections.unmodifiableSet(this.supertypeHandlers);
     }
 
-    public boolean addSupertypeHandler(EventHandler handler) {
+    public boolean addSupertypeHandler(EventHandler handler)
+    {
         if (!(handler instanceof EventHandler)) return false;
         if (handler == this) return false;
         return this.invalidateCache(this.supertypeHandlers.add(handler));
     }
 
     @Override
-    public boolean equals(Object o) {
+    public int hashCode()
+    {
+        return this.eventType.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
         if (this == o) return true;
         if (!(o instanceof EventHandler)) return false;
         return Objects.equals(this.eventType, ((EventHandler) o).eventType);
     }
 
     @Override
-    public int hashCode() {
-        return this.eventType.hashCode();
-    }
-
-    @Override
-    public String toString() {
+    public String toString()
+    {
         return String.format("Handler{%s}", this.eventType.getName());
     }
 }

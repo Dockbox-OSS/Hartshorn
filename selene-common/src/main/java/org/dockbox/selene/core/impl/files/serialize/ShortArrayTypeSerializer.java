@@ -32,19 +32,29 @@ import java.util.List;
 
 import io.leangen.geantyref.TypeToken;
 
-public class ShortArrayTypeSerializer implements TypeSerializer<short[]> {
+@SuppressWarnings("AnonymousInnerClassMayBeStatic")
+public class ShortArrayTypeSerializer implements TypeSerializer<short[]>
+{
 
-    private final TypeToken<Short> ttb = new TypeToken<Short>() {};
-    private final TypeToken<List<Short>> ttlb = new TypeToken<List<Short>>() {};
+    private final TypeToken<Short> ttb = new TypeToken<Short>()
+    {
+    };
+    private final TypeToken<List<Short>> ttlb = new TypeToken<List<Short>>()
+    {
+    };
 
     @Override
-    public short[] deserialize(Type type, ConfigurationNode node) throws SerializationException {
+    public short[] deserialize(Type type, ConfigurationNode node)
+            throws SerializationException
+    {
         List<Short> list = node.getList(this.ttb);
         return Shorts.toArray(list);
     }
 
     @Override
-    public void serialize(Type type, short @Nullable [] obj, ConfigurationNode node) throws SerializationException {
+    public void serialize(Type type, short @Nullable [] obj, ConfigurationNode node)
+            throws SerializationException
+    {
         List<Short> bytes = Shorts.asList(obj);
         node.set(this.ttlb, bytes);
     }

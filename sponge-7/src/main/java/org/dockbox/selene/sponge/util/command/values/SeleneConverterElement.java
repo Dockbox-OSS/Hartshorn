@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.command.context.ArgumentConverter;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,18 +31,22 @@ import org.spongepowered.api.text.Text;
 
 import java.util.List;
 
-final class SeleneConverterElement extends CommandElement {
+final class SeleneConverterElement extends CommandElement
+{
 
     private final ArgumentConverter<?> argument;
 
-    SeleneConverterElement(String key, ArgumentConverter<?> argument) {
+    SeleneConverterElement(String key, ArgumentConverter<?> argument)
+    {
         super(Text.of(key));
         this.argument = argument;
     }
 
     @Nullable
     @Override
-    protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
+    protected Object parseValue(@NotNull CommandSource source, CommandArgs args)
+            throws ArgumentParseException
+    {
         return this.argument.convert(
                 SpongeConversionUtil.fromSponge(source).get(),
                 args.next()
@@ -51,13 +55,17 @@ final class SeleneConverterElement extends CommandElement {
 
     @NotNull
     @Override
-    public List<String> complete(@NotNull CommandSource src, CommandArgs args, @NotNull CommandContext context) {
-        try {
+    public List<String> complete(@NotNull CommandSource src, CommandArgs args, @NotNull CommandContext context)
+    {
+        try
+        {
             return SeleneUtils.asList(this.argument.getSuggestions(
                     SpongeConversionUtil.fromSponge(src).get(),
                     args.next()
             ));
-        } catch (ArgumentParseException e) {
+        }
+        catch (ArgumentParseException e)
+        {
             return SeleneUtils.emptyList();
         }
     }

@@ -17,7 +17,8 @@
 
 package org.dockbox.selene.core.objects.special;
 
-public enum Sounds {
+public enum Sounds
+{
     AMBIENT_CAVE,
     BLOCK_ANVIL_BREAK,
     BLOCK_ANVIL_DESTROY,

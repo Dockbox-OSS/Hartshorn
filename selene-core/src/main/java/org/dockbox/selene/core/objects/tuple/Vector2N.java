@@ -20,12 +20,14 @@ package org.dockbox.selene.core.objects.tuple;
 /**
  * Represents a 2D point on a x-, and z-axis. All axis points can be represented as any numeral value.
  */
-public class Vector2N {
+public class Vector2N
+{
 
     private final Number x;
     private final Number z;
 
-    public Vector2N(Number x, Number z) {
+    public Vector2N(Number x, Number z)
+    {
         this.x = x;
         this.z = z;
     }

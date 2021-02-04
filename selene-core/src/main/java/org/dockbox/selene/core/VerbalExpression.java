@@ -28,7 +28,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class VerbalExpression {
+public final class VerbalExpression
+{
 
     private final Pattern pattern;
 
@@ -39,7 +40,8 @@ public final class VerbalExpression {
      * @param pattern
      *         - {@link java.util.regex.Pattern} that constructed by builder
      */
-    private VerbalExpression(final Pattern pattern) {
+    private VerbalExpression(final Pattern pattern)
+    {
         this.pattern = pattern;
     }
 
@@ -50,10 +52,10 @@ public final class VerbalExpression {
      *         - instance to clone
      *
      * @return new VerbalExpression.Builder copied from passed
-     *
      * @since 1.1
      */
-    public static Builder regex(final Builder pBuilder) {
+    public static Builder regex(final Builder pBuilder)
+    {
         Builder builder = new Builder();
 
         //Using created StringBuilder
@@ -69,10 +71,10 @@ public final class VerbalExpression {
      * Creates new instance of VerbalExpression builder
      *
      * @return new VerbalExpression.Builder
-     *
      * @since 1.1
      */
-    public static Builder regex() {
+    public static Builder regex()
+    {
         return new Builder();
     }
 
@@ -84,9 +86,11 @@ public final class VerbalExpression {
      *
      * @return true if matches exact string, false otherwise
      */
-    public boolean testExact(final String pToTest) {
+    public boolean testExact(final String pToTest)
+    {
         boolean ret = false;
-        if (null != pToTest) {
+        if (null != pToTest)
+        {
             ret = this.pattern.matcher(pToTest).matches();
         }
         return ret;
@@ -100,9 +104,11 @@ public final class VerbalExpression {
      *
      * @return true if string contains regex, false otherwise
      */
-    public boolean test(final String pToTest) {
+    public boolean test(final String pToTest)
+    {
         boolean ret = false;
-        if (null != pToTest) {
+        if (null != pToTest)
+        {
             ret = this.pattern.matcher(pToTest).find();
         }
         return ret;
@@ -117,7 +123,8 @@ public final class VerbalExpression {
      *
      * @return group 0, extracted from text
      */
-    public String getText(final String toTest) {
+    public String getText(final String toTest)
+    {
         return this.getText(toTest, 0);
     }
 
@@ -130,13 +137,14 @@ public final class VerbalExpression {
      *         - group to extract
      *
      * @return extracted group
-     *
      * @since 1.1
      */
-    public String getText(final String toTest, final int group) {
+    public String getText(final String toTest, final int group)
+    {
         Matcher m = this.pattern.matcher(toTest);
         StringBuilder result = new StringBuilder();
-        while (m.find()) {
+        while (m.find())
+        {
             result.append(m.group(group));
         }
         return result.toString();
@@ -153,13 +161,14 @@ public final class VerbalExpression {
      *         - group to extract
      *
      * @return extracted group
-     *
      * @since 1.6
      */
-    public String getText(final String toTest, final String group) {
+    public String getText(final String toTest, final String group)
+    {
         Matcher m = this.pattern.matcher(toTest);
         StringBuilder result = new StringBuilder();
-        while (m.find()) {
+        while (m.find())
+        {
             result.append(m.group(group));
         }
         return result.toString();
@@ -181,21 +190,25 @@ public final class VerbalExpression {
      *
      * @return list of extracted groups
      */
-    public List<String> getTextGroups(final String toTest, final int group) {
+    public List<String> getTextGroups(final String toTest, final int group)
+    {
         List<String> groups = SeleneUtils.emptyList();
         Matcher m = this.pattern.matcher(toTest);
-        while (m.find()) {
+        while (m.find())
+        {
             groups.add(m.group(group));
         }
         return groups;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return this.pattern.pattern();
     }
 
-    public static class Builder {
+    public static class Builder
+    {
 
         private static final Map<Character, Integer> SYMBOL_MAP = SeleneUtils.ofEntries(
                 SeleneUtils.entry('d', Pattern.UNIX_LINES),
@@ -216,10 +229,12 @@ public final class VerbalExpression {
          *
          * @since 1.2
          */
-        Builder() {
+        Builder()
+        {
         }
 
-        public VerbalExpression build() {
+        public VerbalExpression build()
+        {
             Pattern pattern = Pattern.compile(new StringBuilder(this.prefixes)
                     .append(this.source).append(this.suffixes).toString(), this.modifiers);
             return new VerbalExpression(pattern);
@@ -232,10 +247,10 @@ public final class VerbalExpression {
          *         - VerbalExpression.Builder, that not changed
          *
          * @return this builder
-         *
          * @since 1.2
          */
-        public Builder add(final Builder regex) {
+        public Builder add(final Builder regex)
+        {
             return this.group().add(regex.build().toString()).endGr();
         }
 
@@ -245,7 +260,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder startOfLine() {
+        public Builder startOfLine()
+        {
             return this.startOfLine(true);
         }
 
@@ -257,9 +273,11 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder startOfLine(final boolean pEnable) {
+        public Builder startOfLine(final boolean pEnable)
+        {
             this.prefixes.append(pEnable ? "^" : "");
-            if (!pEnable) {
+            if (!pEnable)
+            {
                 this.prefixes = new StringBuilder(this.prefixes.toString().replace("^", ""));
             }
             return this;
@@ -271,7 +289,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder endOfLine() {
+        public Builder endOfLine()
+        {
             return this.endOfLine(true);
         }
 
@@ -283,9 +302,11 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder endOfLine(final boolean pEnable) {
+        public Builder endOfLine(final boolean pEnable)
+        {
             this.suffixes.append(pEnable ? "$" : "");
-            if (!pEnable) {
+            if (!pEnable)
+            {
                 this.suffixes = new StringBuilder(this.suffixes.toString().replace("$", ""));
             }
             return this;
@@ -301,7 +322,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder find(final String value) {
+        public Builder find(final String value)
+        {
             return this.then(value);
         }
 
@@ -313,7 +335,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder then(final String pValue) {
+        public Builder then(final String pValue)
+        {
             return this.add("(?:" + this.sanitize(pValue) + ")");
         }
 
@@ -331,7 +354,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder add(final String pValue) {
+        public Builder add(final String pValue)
+        {
             this.source.append(pValue);
             return this;
         }
@@ -345,7 +369,8 @@ public final class VerbalExpression {
          *
          * @return sanitized string value
          */
-        private String sanitize(final String pValue) {
+        private String sanitize(final String pValue)
+        {
             return pValue.replaceAll("[\\W]", "\\\\$0");
         }
 
@@ -366,7 +391,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder maybe(final String pValue) {
+        public Builder maybe(final String pValue)
+        {
             return this.then(pValue).add("?");
         }
 
@@ -390,7 +416,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder maybe(final Builder regex) {
+        public Builder maybe(final Builder regex)
+        {
             return this.group().add(regex).endGr().add("?");
         }
 
@@ -399,7 +426,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder anything() {
+        public Builder anything()
+        {
             return this.add("(?:.*)");
         }
 
@@ -411,7 +439,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder anythingBut(final String pValue) {
+        public Builder anythingBut(final String pValue)
+        {
             return this.add("(?:[^" + this.sanitize(pValue) + "]*)");
         }
 
@@ -420,11 +449,13 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder something() {
+        public Builder something()
+        {
             return this.add("(?:.+)");
         }
 
-        public Builder somethingButNot(final String pValue) {
+        public Builder somethingButNot(final String pValue)
+        {
             return this.add("(?:[^" + this.sanitize(pValue) + "]+)");
         }
 
@@ -433,7 +464,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder br() {
+        public Builder br()
+        {
             return this.lineBreak();
         }
 
@@ -442,7 +474,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder lineBreak() {
+        public Builder lineBreak()
+        {
             return this.add("(?:\\n|(?:\\r\\n)|(?:\\r\\r))");
         }
 
@@ -451,7 +484,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder tab() {
+        public Builder tab()
+        {
             return this.add("(?:\\t)");
         }
 
@@ -460,7 +494,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder word() {
+        public Builder word()
+        {
             return this.add("(?:\\w+)");
         }
 
@@ -469,7 +504,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder wordChar() {
+        public Builder wordChar()
+        {
             return this.add("(?:\\w)");
         }
 
@@ -483,7 +519,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder nonWordChar() {
+        public Builder nonWordChar()
+        {
             return this.add("(?:\\W)");
         }
 
@@ -492,7 +529,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder nonDigit() {
+        public Builder nonDigit()
+        {
             return this.add("(?:\\D)");
         }
 
@@ -501,7 +539,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder digit() {
+        public Builder digit()
+        {
             return this.add("(?:\\d)");
         }
 
@@ -510,7 +549,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder space() {
+        public Builder space()
+        {
             return this.add("(?:\\s)");
         }
 
@@ -519,7 +559,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder nonSpace() {
+        public Builder nonSpace()
+        {
             return this.add("(?:\\S)");
         }
 
@@ -538,7 +579,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder wordBoundary() {
+        public Builder wordBoundary()
+        {
             return this.add("(?:\\b)");
         }
 
@@ -550,7 +592,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder any(final String value) {
+        public Builder any(final String value)
+        {
             return this.anyOf(value);
         }
 
@@ -559,7 +602,8 @@ public final class VerbalExpression {
            --- / end of predefined character classes
          */
 
-        public Builder anyOf(final String pValue) {
+        public Builder anyOf(final String pValue)
+        {
             this.add("[" + this.sanitize(pValue) + "]");
             return this;
         }
@@ -575,9 +619,11 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder range(final String... pArgs) {
+        public Builder range(final String... pArgs)
+        {
             StringBuilder value = new StringBuilder("[");
-            for (int firstInPairPosition = 1; firstInPairPosition < pArgs.length; firstInPairPosition += 2) {
+            for (int firstInPairPosition = 1; firstInPairPosition < pArgs.length; firstInPairPosition += 2)
+            {
                 String from = this.sanitize(pArgs[firstInPairPosition - 1]);
                 String to = this.sanitize(pArgs[firstInPairPosition]);
 
@@ -597,39 +643,52 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder withAnyCase() {
+        public Builder withAnyCase()
+        {
             return this.withAnyCase(true);
         }
 
-        public Builder withAnyCase(final boolean pEnable) {
-            if (pEnable) {
+        public Builder withAnyCase(final boolean pEnable)
+        {
+            if (pEnable)
+            {
                 this.addModifier('i');
-            } else {
+            }
+            else
+            {
                 this.removeModifier('i');
             }
             return this;
         }
 
-        public Builder addModifier(final char pModifier) {
-            if (SYMBOL_MAP.containsKey(pModifier)) {
+        public Builder addModifier(final char pModifier)
+        {
+            if (SYMBOL_MAP.containsKey(pModifier))
+            {
                 this.modifiers |= SYMBOL_MAP.get(pModifier);
             }
 
             return this;
         }
 
-        public Builder removeModifier(final char pModifier) {
-            if (SYMBOL_MAP.containsKey(pModifier)) {
+        public Builder removeModifier(final char pModifier)
+        {
+            if (SYMBOL_MAP.containsKey(pModifier))
+            {
                 this.modifiers &= ~SYMBOL_MAP.get(pModifier);
             }
 
             return this;
         }
 
-        public Builder searchOneLine(final boolean pEnable) {
-            if (pEnable) {
+        public Builder searchOneLine(final boolean pEnable)
+        {
+            if (pEnable)
+            {
                 this.removeModifier('m');
-            } else {
+            }
+            else
+            {
                 this.addModifier('m');
             }
             return this;
@@ -650,16 +709,18 @@ public final class VerbalExpression {
          *         - (optional) if passed one or two numbers, it used to show count or range count
          *
          * @return this builder
-         *
          * @see #oneOrMore()
          * @see #then(String)
          * @see #zeroOrMore()
          */
-        public Builder multiple(final String pValue, final int... count) {
-            if (null == count) {
+        public Builder multiple(final String pValue, final int... count)
+        {
+            if (null == count)
+            {
                 return this.then(pValue).oneOrMore();
             }
-            switch (count.length) {
+            switch (count.length)
+            {
                 case 1:
                     return this.then(pValue).count(count[0]);
                 case 2:
@@ -675,10 +736,10 @@ public final class VerbalExpression {
          * Also, used by {@link #multiple(String, int...)} when second argument is null, or have length more than 2
          *
          * @return this builder
-         *
          * @since 1.2
          */
-        public Builder oneOrMore() {
+        public Builder oneOrMore()
+        {
             return this.add("+");
         }
 
@@ -692,7 +753,8 @@ public final class VerbalExpression {
          *
          * @return this Builder
          */
-        public Builder count(final int count) {
+        public Builder count(final int count)
+        {
             this.source.append("{").append(count).append("}");
             return this;
         }
@@ -708,10 +770,10 @@ public final class VerbalExpression {
          *         - max number of occurrences
          *
          * @return this Builder
-         *
          * @see #count(int)
          */
-        public Builder count(final int from, final int to) {
+        public Builder count(final int from, final int to)
+        {
             this.source.append("{").append(from).append(",").append(to).append("}");
             return this;
         }
@@ -721,10 +783,10 @@ public final class VerbalExpression {
          * Same effect as {@link #atLeast(int)} with "0" argument
          *
          * @return this builder
-         *
          * @since 1.2
          */
-        public Builder zeroOrMore() {
+        public Builder zeroOrMore()
+        {
             return this.add("*");
         }
 
@@ -737,13 +799,13 @@ public final class VerbalExpression {
          *         - minimal number of occurrences
          *
          * @return this Builder
-         *
          * @see #count(int)
          * @see #oneOrMore()
          * @see #zeroOrMore()
          * @since 1.2
          */
-        public Builder atLeast(final int from) {
+        public Builder atLeast(final int from)
+        {
             return this.add("{").add(String.valueOf(from)).add(",}");
         }
 
@@ -757,18 +819,21 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder or(final String pValue) {
+        public Builder or(final String pValue)
+        {
             this.prefixes.append("(?:");
 
             int opened = this.countOccurrencesOf(this.prefixes.toString(), "(");
             int closed = this.countOccurrencesOf(this.suffixes.toString(), ")");
 
-            if (opened >= closed) {
+            if (opened >= closed)
+            {
                 this.suffixes = new StringBuilder(")" + this.suffixes);
             }
 
             this.add(")|(?:");
-            if (null != pValue) {
+            if (null != pValue)
+            {
                 this.then(pValue);
             }
             return this;
@@ -786,7 +851,8 @@ public final class VerbalExpression {
          *
          * @return 0 if nothing found, count of occurrences instead
          */
-        private int countOccurrencesOf(String where, String what) {
+        private int countOccurrencesOf(String where, String what)
+        {
             return (where.length() - where.replace(what, "").length()) / what.length();
         }
 
@@ -798,18 +864,21 @@ public final class VerbalExpression {
          *         - the strings to be looked for
          *
          * @return this builder
-         *
          * @since 1.3
          */
-        public Builder oneOf(final String... pValues) {
-            if (null != pValues && 0 < pValues.length) {
+        public Builder oneOf(final String... pValues)
+        {
+            if (null != pValues && 0 < pValues.length)
+            {
                 this.add("(?:");
-                for (int i = 0; i < pValues.length; i++) {
+                for (int i = 0; i < pValues.length; i++)
+                {
                     String value = pValues[i];
                     this.add("(?:");
                     this.add(value);
                     this.add(")");
-                    if (i < pValues.length - 1) {
+                    if (i < pValues.length - 1)
+                    {
                         this.add("|");
                     }
                 }
@@ -822,10 +891,10 @@ public final class VerbalExpression {
          * Shortcut for {@link #capture()}
          *
          * @return this builder
-         *
          * @since 1.2
          */
-        public Builder capt() {
+        public Builder capt()
+        {
             return this.capture();
         }
 
@@ -834,7 +903,8 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder capture() {
+        public Builder capture()
+        {
             return this.capture(null);
         }
 
@@ -852,13 +922,14 @@ public final class VerbalExpression {
          *         The name to capture
          *
          * @return this builder
-         *
          * @since 1.6
          */
-        public Builder capture(final String name) {
+        public Builder capture(final String name)
+        {
             this.suffixes.append(")");
 
-            if (null == name || name.trim().isEmpty()) {
+            if (null == name || name.trim().isEmpty())
+            {
                 return this.add("(");
             }
             return this.add("(?<" + name + ">");
@@ -871,10 +942,10 @@ public final class VerbalExpression {
          *         The name to capture
          *
          * @return this builder
-         *
          * @since 1.6
          */
-        public Builder capt(final String name) {
+        public Builder capt(final String name)
+        {
             return this.capture(name);
         }
 
@@ -889,10 +960,10 @@ public final class VerbalExpression {
          * .endGr().count(2);
          *
          * @return this builder
-         *
          * @since 1.2
          */
-        public Builder group() {
+        public Builder group()
+        {
             this.suffixes.append(")");
             return this.add("(?:");
         }
@@ -901,10 +972,10 @@ public final class VerbalExpression {
          * Shortcut for {@link #endCapture()}
          *
          * @return this builder
-         *
          * @since 1.2
          */
-        public Builder endCapt() {
+        public Builder endCapt()
+        {
             return this.endCapture();
         }
 
@@ -914,11 +985,15 @@ public final class VerbalExpression {
          *
          * @return this builder
          */
-        public Builder endCapture() {
-            if (-1 != this.suffixes.indexOf(")")) {
+        public Builder endCapture()
+        {
+            if (-1 != this.suffixes.indexOf(")"))
+            {
                 this.suffixes.setLength(this.suffixes.length() - 1);
                 return this.add(")");
-            } else {
+            }
+            else
+            {
                 throw new IllegalStateException("Can't end capture (group) when it not started");
             }
         }
@@ -931,10 +1006,10 @@ public final class VerbalExpression {
          * regex().group().maybe("word").count(2).endGr()
          *
          * @return this builder
-         *
          * @since 1.2
          */
-        public Builder endGr() {
+        public Builder endGr()
+        {
             return this.endCapture();
         }
     }

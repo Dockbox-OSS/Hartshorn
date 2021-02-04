@@ -24,20 +24,24 @@ import org.dockbox.selene.core.text.Text;
 /**
  * The event fired when Selene is about to send a message to any {@link MessageReceiver}.
  */
-public class SendMessageEvent extends AbstractTargetCancellableEvent {
+public class SendMessageEvent extends AbstractTargetCancellableEvent
+{
 
     private Text message;
 
-    public SendMessageEvent(MessageReceiver target, Text message) {
+    public SendMessageEvent(MessageReceiver target, Text message)
+    {
         super(target);
         this.message = message;
     }
 
-    public Text getMessage() {
+    public Text getMessage()
+    {
         return this.message;
     }
 
-    public void setMessage(Text message) {
+    public void setMessage(Text message)
+    {
         this.message = message;
     }
 }

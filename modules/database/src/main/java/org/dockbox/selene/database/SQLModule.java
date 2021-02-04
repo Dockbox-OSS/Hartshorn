@@ -26,4 +26,6 @@ import org.dockbox.selene.core.annotations.module.Module;
 @Module(id = "selene-sql", name = "SQL Module",
         description = "Provides the ability to communicate with SQL instances using integrated types",
         authors = "GuusLieben", dependencies = "org.jooq")
-public class SQLModule { }
+public class SQLModule
+{
+}

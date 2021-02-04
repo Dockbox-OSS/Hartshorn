@@ -34,24 +34,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AbstractPipeline<P, I> {
+public abstract class AbstractPipeline<P, I>
+{
 
     private final List<IPipe<I, I>> pipes = SeleneUtils.emptyList();
     private boolean isCancelled;
     private CancelBehaviour cancelBehaviour = CancelBehaviour.UNCANCELLABLE;
-
-    /**
-     * Add a non-null {@link IPipe} to the pipeline.
-     *
-     * @param pipe
-     *         The non-null {@link IPipe} to add to the pipeline
-     *
-     * @return Itself
-     */
-    public AbstractPipeline<P, I> addPipe(@NotNull IPipe<I, I> pipe) {
-        this.pipes.add(pipe);
-        return this;
-    }
 
     /**
      * Internally calls {@link AbstractPipeline#addPipes(IPipe[])} and returns itself.
@@ -62,7 +50,8 @@ public abstract class AbstractPipeline<P, I> {
      * @return Itself
      */
     @SafeVarargs
-    public final AbstractPipeline<P, I> addVarargPipes(@NotNull IPipe<I, I>... pipes) {
+    public final AbstractPipeline<P, I> addVarargPipes(@NotNull IPipe<I, I>... pipes)
+    {
         return this.addPipes(pipes);
     }
 
@@ -75,7 +64,8 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> addPipes(@NotNull IPipe<I, I>[] pipes) {
+    public AbstractPipeline<P, I> addPipes(@NotNull IPipe<I, I>[] pipes)
+    {
         return this.addPipes(Arrays.asList(pipes));
     }
 
@@ -88,10 +78,26 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> addPipes(@NotNull Iterable<IPipe<I, I>> pipes) {
-        for (IPipe<I, I> pipe : pipes) {
+    public AbstractPipeline<P, I> addPipes(@NotNull Iterable<IPipe<I, I>> pipes)
+    {
+        for (IPipe<I, I> pipe : pipes)
+        {
             this.addPipe(pipe);
         }
+        return this;
+    }
+
+    /**
+     * Add a non-null {@link IPipe} to the pipeline.
+     *
+     * @param pipe
+     *         The non-null {@link IPipe} to add to the pipeline
+     *
+     * @return Itself
+     */
+    public AbstractPipeline<P, I> addPipe(@NotNull IPipe<I, I> pipe)
+    {
+        this.pipes.add(pipe);
         return this;
     }
 
@@ -104,8 +110,136 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return Itself
      */
-    public AbstractPipeline<P, I> addPipeline(@NotNull AbstractPipeline<?, I> pipeline) {
+    public AbstractPipeline<P, I> addPipeline(@NotNull AbstractPipeline<?, I> pipeline)
+    {
         return this.addPipes(pipeline.getPipes());
+    }
+
+    /**
+     * @return An unmodifiabe list of the {@link IPipe}s in the pipeline
+     */
+    public List<IPipe<I, I>> getPipes()
+    {
+        return SeleneUtils.asUnmodifiableList(this.pipes);
+    }
+
+    /**
+     * An abstract method which defines how an {@link Exceptional input} should be processed.
+     *
+     * @param exceptionalInput
+     *         A non-null {@link Exceptional} which contains the input value and throwable
+     *
+     * @return An {@link Exceptional} containing the output value after it has been processed by the pipeline
+     */
+    protected abstract Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput);
+
+    /**
+     * A default method for processing a pipe, which handles converting the pipe, checking that they're not illegal
+     * {@link CancellablePipe}s and passing forward the previous input if the pipe throws an error.
+     *
+     * @param pipe
+     *         The {@link IPipe} to be processed
+     * @param exceptionalInput
+     *         An {@link Exceptional} containing the input to be processed by the {@link IPipe}
+     *
+     * @return An {@link Exceptional} of the output of the {@link IPipe}
+     * @throws IllegalPipeException
+     *         If you try and add a {@link CancellablePipe} and the pipeline is not cancellable
+     */
+    protected Exceptional<I> processPipe(IPipe<I, I> pipe, Exceptional<I> exceptionalInput)
+    {
+        if (!this.isCancellable() && Reflect.isAssignableFrom(CancellablePipe.class, pipe.getType()))
+        {
+            throw new IllegalPipeException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
+        }
+
+        // Create a temporary final version that can be used within the supplier.
+        final Exceptional<I> finalInput = exceptionalInput;
+
+        exceptionalInput = Exceptional.of(() -> {
+            if (Reflect.isAssignableFrom(ComplexPipe.class, pipe.getType()))
+            {
+                ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
+                return complexPipe.apply(this, finalInput.orElse(null), finalInput.orElseExcept(null));
+            }
+            else if (Reflect.isAssignableFrom(StandardPipe.class, pipe.getType()))
+            {
+                StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
+                return standardPipe.apply(finalInput);
+            }
+            else
+            {
+                return finalInput.orNull();
+            }
+        });
+
+        // If there was an error, the supplier won't have captured any input, so we'll try and
+        // pass the previous input forwards.
+        if (exceptionalInput.errorPresent())
+        {
+            exceptionalInput = Exceptional.ofNullable(finalInput.orElse(null), exceptionalInput.getError());
+        }
+        return exceptionalInput;
+    }
+
+    /**
+     * @return A boolean describing if the pipeline is cancellable or not
+     */
+    public boolean isCancellable()
+    {
+        return CancelBehaviour.UNCANCELLABLE != this.getCancelBehaviour();
+    }
+
+    /**
+     * @return The {@link CancelBehaviour} of this pipeline
+     */
+    public CancelBehaviour getCancelBehaviour()
+    {
+        return this.cancelBehaviour;
+    }
+
+    /**
+     * Sets how the pipeline responds if cancelled by an {@link CancellablePipe} or any child pipes of it.
+     *
+     * @param cancelBehaviour
+     *         A {@link CancelBehaviour} describing the cancellability of the pipeline
+     *
+     * @return Itself
+     */
+    public AbstractPipeline<P, I> setCancelBehaviour(CancelBehaviour cancelBehaviour)
+    {
+        this.cancelBehaviour = cancelBehaviour;
+        return this;
+    }
+
+    /**
+     * Unsafely processes an {@code P} input by calling {@link AbstractPipeline#process(Object, Throwable)} and
+     * unwrapping the output value without checking if its present.
+     *
+     * @param input
+     *         The non-null {@code P} input to be processed by the pipeline
+     *
+     * @return The {@code I} output of processing the input, unwrapped from the {@link Exceptional} without checking
+     *         if its present
+     */
+    public I processUnsafe(@NotNull P input)
+    {
+        return this.process(input).orNull();
+    }
+
+    /**
+     * Processes an {@code P} input by internally calling {@link AbstractPipeline#process(Object, Throwable)}.
+     *
+     * @param input
+     *         The non-null {@code P} input to be processed by the pipeline
+     *
+     * @return An {@link Exceptional} containing the {@code I} output. If the output is not present it will contain a
+     *         throwable describing why
+     */
+    @SuppressWarnings("NullableProblems") // Performed by GenericTask
+    public Exceptional<I> process(@NotNull P input)
+    {
+        return this.process(input, null);
     }
 
     /**
@@ -122,86 +256,6 @@ public abstract class AbstractPipeline<P, I> {
     public abstract Exceptional<I> process(@NotNull P input, @Nullable Throwable throwable);
 
     /**
-     * An abstract method which defines how an {@link Exceptional input} should be processed.
-     *
-     * @param exceptionalInput
-     *         A non-null {@link Exceptional} which contains the input value and throwable
-     *
-     * @return An {@link Exceptional} containing the output value after it has been processed by the pipeline
-     */
-    protected abstract Exceptional<I> process(@NotNull Exceptional<I> exceptionalInput);
-
-    /**
-     * Processes an {@code P} input by internally calling {@link AbstractPipeline#process(Object, Throwable)}.
-     *
-     * @param input
-     *         The non-null {@code P} input to be processed by the pipeline
-     *
-     * @return An {@link Exceptional} containing the {@code I} output. If the output is not present it will contain a
-     *         throwable describing why
-     */
-    @SuppressWarnings("NullableProblems") // Performed by GenericTask
-    public Exceptional<I> process(@NotNull P input) {
-        return this.process(input, null);
-    }
-
-    /**
-     * A default method for processing a pipe, which handles converting the pipe, checking that they're not illegal
-     * {@link CancellablePipe}s and passing forward the previous input if the pipe throws an error.
-     *
-     * @param pipe
-     *         The {@link IPipe} to be processed
-     * @param exceptionalInput
-     *         An {@link Exceptional} containing the input to be processed by the {@link IPipe}
-     *
-     * @return An {@link Exceptional} of the output of the {@link IPipe}
-     * @throws IllegalPipeException
-     *         If you try and add a {@link CancellablePipe} and the pipeline is not cancellable
-     */
-    protected Exceptional<I> processPipe(IPipe<I, I> pipe, Exceptional<I> exceptionalInput) {
-        if (!this.isCancellable() && Reflect.isAssignableFrom(CancellablePipe.class, pipe.getType())) {
-            throw new IllegalPipeException("Attempted to add a CancellablePipe to an uncancellable pipeline.");
-        }
-
-        // Create a temporary final version that can be used within the supplier.
-        final Exceptional<I> finalInput = exceptionalInput;
-
-        exceptionalInput = Exceptional.of(() -> {
-            if (Reflect.isAssignableFrom(ComplexPipe.class, pipe.getType())) {
-                ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
-                return complexPipe.apply(this, finalInput.orElse(null), finalInput.orElseExcept(null));
-            } else if (Reflect.isAssignableFrom(StandardPipe.class, pipe.getType())) {
-                StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
-                return standardPipe.apply(finalInput);
-            } else {
-                return finalInput.orNull();
-            }
-        });
-
-        // If there was an error, the supplier won't have captured any input, so we'll try and
-        // pass the previous input forwards.
-        if (exceptionalInput.errorPresent()) {
-            exceptionalInput = Exceptional.ofNullable(finalInput.orElse(null), exceptionalInput.getError());
-        }
-        return exceptionalInput;
-    }
-
-
-    /**
-     * Unsafely processes an {@code P} input by calling {@link AbstractPipeline#process(Object, Throwable)} and
-     * unwrapping the output value without checking if its present.
-     *
-     * @param input
-     *         The non-null {@code P} input to be processed by the pipeline
-     *
-     * @return The {@code I} output of processing the input, unwrapped from the {@link Exceptional} without checking
-     *         if its present
-     */
-    public I processUnsafe(@NotNull P input) {
-        return this.process(input).orNull();
-    }
-
-    /**
      * Processes a {@link Collection} of {@code P} inputs by internally calling {@link AbstractPipeline#process(Object)}
      * on each input in the {@link Collection} and returns the result as a {@link List} of {@link Exceptional}.
      *
@@ -210,7 +264,8 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return A {@link List} of {@link Exceptional} containing the processed {@code I} output of each input
      */
-    public List<Exceptional<I>> processAll(@NotNull Collection<P> inputs) {
+    public List<Exceptional<I>> processAll(@NotNull Collection<P> inputs)
+    {
         return inputs
                 .stream()
                 .map(this::process)
@@ -226,7 +281,8 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return A {@link List} containing the processed {@code I} output of each input, if not null
      */
-    public List<I> processAllSafe(@NotNull Collection<P> inputs) {
+    public List<I> processAllSafe(@NotNull Collection<P> inputs)
+    {
         return inputs
                 .stream()
                 .map(this::process)
@@ -245,7 +301,8 @@ public abstract class AbstractPipeline<P, I> {
      *
      * @return A {@link List} containing the processed {@code I} output of each input, even if its null
      */
-    public List<I> processAllUnsafe(@NotNull Collection<P> inputs) {
+    public List<I> processAllUnsafe(@NotNull Collection<P> inputs)
+    {
         return inputs
                 .stream()
                 .map(this::process)
@@ -256,35 +313,34 @@ public abstract class AbstractPipeline<P, I> {
     /**
      * Cancels the pipeline which prevents it from processing any further {@link IPipe}s.
      */
-    public void cancelPipeline() {
+    public void cancelPipeline()
+    {
         if (this.isCancellable()) this.isCancelled = true;
     }
 
     /**
      * Uncancels the pipeline.
      */
-    public void uncancelPipeline() {
+    public void uncancelPipeline()
+    {
         this.isCancelled = false;
     }
 
     /**
      * @return If the pipeline is cancelled
      */
-    protected boolean isCancelled() {
+    protected boolean isCancelled()
+    {
         return this.isCancellable() && this.isCancelled;
     }
 
     /**
-     * Sets how the pipeline responds if cancelled by an {@link CancellablePipe} or any child pipes of it.
-     *
-     * @param cancelBehaviour
-     *         A {@link CancelBehaviour} describing the cancellability of the pipeline
-     *
-     * @return Itself
+     * Removes the last {@link IPipe} from the pipeline. If there are no {@link IPipe}s in the pipeline, this does
+     * nothing.
      */
-    public AbstractPipeline<P, I> setCancelBehaviour(CancelBehaviour cancelBehaviour) {
-        this.cancelBehaviour = cancelBehaviour;
-        return this;
+    public void removeLastPipe()
+    {
+        this.removePipeAt(this.size() - 1);
     }
 
     /**
@@ -294,52 +350,27 @@ public abstract class AbstractPipeline<P, I> {
      * @param index
      *         The index of the {@link IPipe} to remove
      */
-    public void removePipeAt(int index) {
-        if (this.pipes.size() > index) {
+    public void removePipeAt(int index)
+    {
+        if (this.pipes.size() > index)
+        {
             this.pipes.remove(index);
         }
     }
 
     /**
-     * Removes the last {@link IPipe} from the pipeline. If there are no {@link IPipe}s in the pipeline, this does
-     * nothing.
-     */
-    public void removeLastPipe() {
-        this.removePipeAt(this.size() - 1);
-    }
-
-    /**
      * @return The number of {@link IPipe}s in the pipeline
      */
-    public int size() {
+    public int size()
+    {
         return this.pipes.size();
-    }
-
-    /**
-     * @return An unmodifiabe list of the {@link IPipe}s in the pipeline
-     */
-    public List<IPipe<I, I>> getPipes() {
-        return SeleneUtils.asUnmodifiableList(this.pipes);
     }
 
     /**
      * Removes all the {@link IPipe}s in the pipeline.
      */
-    public void clearPipes() {
+    public void clearPipes()
+    {
         this.pipes.clear();
-    }
-
-    /**
-     * @return A boolean describing if the pipeline is cancellable or not
-     */
-    public boolean isCancellable() {
-        return CancelBehaviour.UNCANCELLABLE != this.getCancelBehaviour();
-    }
-
-    /**
-     * @return The {@link CancelBehaviour} of this pipeline
-     */
-    public CancelBehaviour getCancelBehaviour() {
-        return this.cancelBehaviour;
     }
 }

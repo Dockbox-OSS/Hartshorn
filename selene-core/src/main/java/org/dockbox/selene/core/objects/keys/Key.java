@@ -33,7 +33,8 @@ import java.util.function.Function;
  *         The type parameter indicating the constraint for the value to be applied/retrieved.
  */
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class Key<K, A> {
+public abstract class Key<K, A>
+{
 
     private final BiFunction<K, A, TransactionResult> setter;
     private final Function<K, Exceptional<A>> getter;
@@ -49,7 +50,8 @@ public abstract class Key<K, A> {
      *         constrained using type parameter {@code K}. The return value being the value retreived from the type, constrained
      *         using type parameter {@code A}.
      */
-    protected Key(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
+    protected Key(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter)
+    {
         this.setter = setter;
         this.getter = getter;
     }
@@ -66,7 +68,8 @@ public abstract class Key<K, A> {
      * @return The transaction result containing a {@link org.dockbox.selene.core.i18n.common.ResourceEntry} if a failure
      *         occurred.
      */
-    public TransactionResult set(K keyType, A appliedValue) {
+    public TransactionResult set(K keyType, A appliedValue)
+    {
         return this.setter.apply(keyType, appliedValue);
     }
 
@@ -78,7 +81,8 @@ public abstract class Key<K, A> {
      *
      * @return The retrieved value, constrained by type parameter {@code A}.
      */
-    public Exceptional<A> get(K keyType) {
+    public Exceptional<A> get(K keyType)
+    {
         return this.getter.apply(keyType);
     }
 
@@ -95,7 +99,8 @@ public abstract class Key<K, A> {
      * @return The current instance, resolved for the supertype.
      */
     @SuppressWarnings("unchecked")
-    public <T extends K> Key<T, A> resolve() {
+    public <T extends K> Key<T, A> resolve()
+    {
         return (Key<T, A>) this;
     }
 

@@ -25,18 +25,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class World extends WorldProperties {
+public abstract class World extends WorldProperties
+{
 
     protected UUID worldUniqueId;
     protected String name;
 
-    public World(UUID worldUniqueId, String name, boolean loadOnStartup, @NotNull Vector3N spawnPosition, long seed, Gamemode defaultGamemode) {
+    public World(UUID worldUniqueId, String name, boolean loadOnStartup, @NotNull Vector3N spawnPosition, long seed, Gamemode defaultGamemode)
+    {
         super(loadOnStartup, spawnPosition, seed, defaultGamemode);
         this.worldUniqueId = worldUniqueId;
         this.name = name;
     }
 
-    public static World empty() {
+    public static World empty()
+    {
         return new EmptyWorld();
     }
 
@@ -48,34 +51,41 @@ public abstract class World extends WorldProperties {
 
     public abstract boolean isLoaded();
 
-    public UUID getWorldUniqueId() {
+    public UUID getWorldUniqueId()
+    {
         return this.worldUniqueId;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return this.name;
     }
 
-    private static final class EmptyWorld extends World {
+    private static final class EmptyWorld extends World
+    {
         private EmptyWorld() {super(SeleneUtils.EMPTY_UUID, "Empty", false, new Vector3N(0, 0, 0), -1, Gamemode.OTHER);}
 
         @Override
-        public int getPlayerCount() {
+        public int getPlayerCount()
+        {
             return 0;
         }
 
         @Override
-        public boolean unload() {
+        public boolean unload()
+        {
             return true;
         }
 
         @Override
-        public boolean load() {
+        public boolean load()
+        {
             return true;
         }
 
         @Override
-        public boolean isLoaded() {
+        public boolean isLoaded()
+        {
             return true;
         }
 
@@ -83,7 +93,8 @@ public abstract class World extends WorldProperties {
         public void setGamerule(String key, String value) { }
 
         @Override
-        public Map<String, String> getGamerules() {
+        public Map<String, String> getGamerules()
+        {
             return SeleneUtils.emptyMap();
         }
     }

@@ -19,9 +19,11 @@ package org.dockbox.selene.core.exceptions;
 
 import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 
-public class ConfirmFailedException extends CheckedSeleneException {
+public class ConfirmFailedException extends CheckedSeleneException
+{
 
-    public ConfirmFailedException(String message) {
+    public ConfirmFailedException(String message)
+    {
         super(message);
     }
 }

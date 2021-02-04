@@ -19,8 +19,10 @@ package org.dockbox.selene.core.exceptions;
 
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 
-public class IllegalSourceException extends UncheckedSeleneException {
-    public IllegalSourceException(String message) {
+public class IllegalSourceException extends UncheckedSeleneException
+{
+    public IllegalSourceException(String message)
+    {
         super(message);
     }
 }

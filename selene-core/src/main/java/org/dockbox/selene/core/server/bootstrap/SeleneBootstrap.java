@@ -31,9 +31,9 @@ import org.dockbox.selene.core.command.CommandBus;
 import org.dockbox.selene.core.events.EventBus;
 import org.dockbox.selene.core.events.server.ServerEvent;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
+import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.module.ModuleContext;
 import org.dockbox.selene.core.module.ModuleManager;
-import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInformation;
@@ -58,7 +58,8 @@ import java.util.function.Consumer;
  * The global bootstrapping component which instantiates all configured modules and provides access to server
  * information.
  */
-public abstract class SeleneBootstrap extends InjectableBootstrap {
+public abstract class SeleneBootstrap extends InjectableBootstrap
+{
 
     private static SeleneBootstrap instance;
     private String version;
@@ -72,24 +73,23 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * @param moduleConfiguration
      *         the injector provided by the Selene implementation
      */
-    protected SeleneBootstrap(SeleneInjectConfiguration moduleConfiguration) {
+    protected SeleneBootstrap(SeleneInjectConfiguration moduleConfiguration)
+    {
         super.registerGlobal(moduleConfiguration);
         this.construct();
-    }
-
-    public static SeleneBootstrap getInstance() {
-        return instance;
     }
 
     /**
      * Loads various properties from selene.properties, including the latest update and version.
      * Once done sets the static instance equal to this instance.
      */
-    protected void construct() {
+    protected void construct()
+    {
         String tVer = "dev";
         LocalDateTime tLU = LocalDateTime.now();
 
-        try {
+        try
+        {
             Properties properties = new Properties();
             properties.load(this.getClass().getResourceAsStream("/selene.properties"));
 
@@ -105,7 +105,9 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
                     formatter
             );
             tVer = properties.getOrDefault("version", "dev").toString();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             Selene.handle("Failed to convert resource file", e);
         }
 
@@ -115,21 +117,17 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         instance = this;
     }
 
-    /**
-     * Initiates integrated modules and performs a given consumer on each loaded module.
-     *
-     * @param consumer
-     *         The consumer to apply
-     */
-    private void initialiseModules(Consumer<ModuleContext> consumer) {
-        Selene.provide(ModuleManager.class).initialiseModules().forEach(consumer);
+    public static SeleneBootstrap getInstance()
+    {
+        return instance;
     }
 
     /**
      * Initiates a {@link Selene} instance. Collecting integrated modules and registering them to the
      * appropriate {@link EventBus}, {@link CommandBus}, and {@link DiscordUtils} instances.
      */
-    protected void init() {
+    protected void init()
+    {
         Selene.log().info("\u00A7e ,-,");
         Selene.log().info("\u00A7e/.(");
         Selene.log().info("\u00A7e\\ {");
@@ -144,8 +142,10 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
                 .forEach(t -> Selene.provide(t).preload());
         // Ensure all services requiring a platform implementation have one present
         Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, RequiresBinding.class).forEach(type -> {
-            if (Reflect.getSubTypes(SeleneInformation.PACKAGE_PREFIX, type).isEmpty()) {
-                Selene.log().error("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
+            if (Reflect.getSubTypes(SeleneInformation.PACKAGE_PREFIX, type).isEmpty())
+            {
+                Selene.log().error("No implementation exists for [" + type
+                        .getCanonicalName() + "], this will cause functionality to misbehave or not function!");
             }
         });
 
@@ -155,14 +155,56 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
 
         eb.subscribe(this);
 
-        this.initialiseModules(this.getModuleConsumer(cb, eb, du));
-        this.initResources();
+        SeleneBootstrap.initialiseModules(this.getModuleConsumer(cb, eb, du));
+        SeleneBootstrap.initResources();
         cb.apply();
 
         Selene.provide(EventBus.class).post(new ServerEvent.ServerInitEvent());
     }
 
-    private void initResources() {
+    /**
+     * Gets the {@link Selene} version, based on the injected value in {@link #construct()}.
+     *
+     * @return The version
+     */
+    @NotNull
+    public String getVersion()
+    {
+        return this.version;
+    }
+
+    /**
+     * Initiates integrated modules and performs a given consumer on each loaded module.
+     *
+     * @param consumer
+     *         The consumer to apply
+     */
+    private static void initialiseModules(Consumer<ModuleContext> consumer)
+    {
+        Selene.provide(ModuleManager.class).initialiseModules().forEach(consumer);
+    }
+
+    private Consumer<ModuleContext> getModuleConsumer(CommandBus cb, EventBus eb, DiscordUtils du)
+    {
+        return (ModuleContext ctx) -> {
+            Class<?> type = ctx.getType();
+            Selene.log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
+            Exceptional<?> oi = super.getInstanceSafe(type);
+            oi.ifPresent(i -> {
+                Package pkg = i.getClass().getPackage();
+                if (null != pkg)
+                {
+                    Selene.log().info("Registering [" + type.getCanonicalName() + "] as Event and Command listener");
+                    eb.subscribe(i);
+                    cb.register(i);
+                    du.registerCommandListener(i);
+                }
+            });
+        };
+    }
+
+    private static void initResources()
+    {
         Selene.provide(ResourceService.class).init();
     }
 
@@ -174,17 +216,21 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      *         The server event indicating the server started
      */
     @Listener
-    protected void debugRegisteredInstances(ServerStartedEvent event) {
+    protected void debugRegisteredInstances(ServerStartedEvent event)
+    {
         Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
         AtomicInteger unprovisionedTypes = new AtomicInteger();
         super.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
-            try {
+            try
+            {
                 Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
                 Class<?> providerType = binding.getProvider().get().getClass();
 
                 if (!keyType.equals(providerType) && null != providerType)
                     Selene.log().info("  - \u00A77" + keyType.getSimpleName() + ": \u00A78" + providerType.getCanonicalName());
-            } catch (ProvisionException | AssertionError e) {
+            }
+            catch (ProvisionException | AssertionError e)
+            {
                 unprovisionedTypes.getAndIncrement();
             }
         });
@@ -194,13 +240,16 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         ModuleManager em = Selene.provide(ModuleManager.class);
         em.getRegisteredModuleIds().forEach(ext -> {
             Exceptional<Module> header = em.getHeader(ext);
-            if (header.isPresent()) {
+            if (header.isPresent())
+            {
                 Module ex = header.get();
                 Selene.log().info("  - \u00A77" + ex.name());
                 Selene.log().info("  | - \u00A77ID: \u00A78" + ex.id());
                 Selene.log().info("  | - \u00A77Authors: \u00A78" + Arrays.toString(ex.authors()));
                 Selene.log().info("  | - \u00A77Dependencies: \u00A78" + Arrays.toString(ex.dependencies()));
-            } else {
+            }
+            else
+            {
                 Selene.log().info("  - \u00A77" + ext + " \u00A78(No header)");
             }
         });
@@ -212,35 +261,9 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
             else type = listener.getClass();
 
             Selene.log().info("  - \u00A77" + type.getCanonicalName());
-            invokers.forEach(invoker -> Selene.log().info("  | - \u00A77" + invoker.getEventType().getSimpleName() + ": \u00A78" + invoker.getMethod().getName()));
+            invokers.forEach(invoker -> Selene.log()
+                    .info("  | - \u00A77" + invoker.getEventType().getSimpleName() + ": \u00A78" + invoker.getMethod().getName()));
         });
-    }
-
-    private Consumer<ModuleContext> getModuleConsumer(CommandBus cb, EventBus eb, DiscordUtils du) {
-        return (ModuleContext ctx) -> {
-            Class<?> type = ctx.getType();
-            Selene.log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
-            Exceptional<?> oi = super.getInstanceSafe(type);
-            oi.ifPresent(i -> {
-                Package pkg = i.getClass().getPackage();
-                if (null != pkg) {
-                    Selene.log().info("Registering [" + type.getCanonicalName() + "] as Event and Command listener");
-                    eb.subscribe(i);
-                    cb.register(i);
-                    du.registerCommandListener(i);
-                }
-            });
-        };
-    }
-
-    /**
-     * Gets the {@link Selene} version, based on the injected value in {@link #construct()}.
-     *
-     * @return The version
-     */
-    @NotNull
-    public String getVersion() {
-        return this.version;
     }
 
     /**
@@ -257,7 +280,8 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * @return The last update
      */
     @NotNull
-    public LocalDateTime getLastUpdate() {
+    public LocalDateTime getLastUpdate()
+    {
         return this.lastUpdate;
     }
 
@@ -267,7 +291,8 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * @return A non-null array of authors
      */
     @NotNull
-    public String @NotNull [] getAuthors() {
+    public static String @NotNull [] getAuthors()
+    {
         return SeleneInformation.AUTHORS;
     }
 
@@ -276,8 +301,10 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      *
      * @return The global config
      */
+    @SuppressWarnings("MethodMayBeStatic")
     @NotNull
-    public GlobalConfig getGlobalConfig() {
+    public GlobalConfig getGlobalConfig()
+    {
         return Selene.provide(GlobalConfig.class);
     }
 

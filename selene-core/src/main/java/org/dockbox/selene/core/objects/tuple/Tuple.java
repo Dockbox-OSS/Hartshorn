@@ -20,27 +20,32 @@ package org.dockbox.selene.core.objects.tuple;
 import java.util.Map.Entry;
 import java.util.Objects;
 
-public class Tuple<K, V> implements Entry<K, V> {
+public class Tuple<K, V> implements Entry<K, V>
+{
 
     private final K key;
     private final V value;
 
-    public Tuple(K key, V value) {
+    public Tuple(K key, V value)
+    {
         this.key = key;
         this.value = value;
     }
 
-    public static <K, V> Tuple<K, V> of(K key, V value) {
+    public static <K, V> Tuple<K, V> of(K key, V value)
+    {
         return new Tuple<>(key, value);
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash(this.getKey(), this.getValue());
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o)
+    {
         if (this == o) return true;
         if (!(o instanceof Tuple)) return false;
         Tuple<?, ?> tuple = (Tuple<?, ?>) o;
@@ -49,17 +54,20 @@ public class Tuple<K, V> implements Entry<K, V> {
     }
 
     @Override
-    public K getKey() {
+    public K getKey()
+    {
         return this.key;
     }
 
     @Override
-    public V getValue() {
+    public V getValue()
+    {
         return this.value;
     }
 
     @Override
-    public V setValue(V value) {
+    public V setValue(V value)
+    {
         throw new UnsupportedOperationException("Cannot modify final Tuple value");
     }
 }

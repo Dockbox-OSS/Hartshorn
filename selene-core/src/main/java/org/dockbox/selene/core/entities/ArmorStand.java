@@ -20,7 +20,8 @@ package org.dockbox.selene.core.entities;
 import org.dockbox.selene.core.objects.targets.InventoryHolder;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 
-public interface ArmorStand extends Entity<ArmorStand>, InventoryHolder {
+public interface ArmorStand extends Entity<ArmorStand>, InventoryHolder
+{
 
     Vector3N getRotation(Limbs limb);
 
@@ -38,8 +39,14 @@ public interface ArmorStand extends Entity<ArmorStand>, InventoryHolder {
 
     void setArms(boolean arms);
 
-    enum Limbs {
-        HEAD, BODY, LEFT_LEG, RIGHT_LEG, LEFT_ARM, RIGHT_ARM
+    enum Limbs
+    {
+        HEAD,
+        BODY,
+        LEFT_LEG,
+        RIGHT_LEG,
+        LEFT_ARM,
+        RIGHT_ARM
     }
 
 }

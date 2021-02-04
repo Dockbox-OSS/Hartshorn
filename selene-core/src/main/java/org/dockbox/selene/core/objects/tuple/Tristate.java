@@ -17,16 +17,21 @@
 
 package org.dockbox.selene.core.objects.tuple;
 
-public enum Tristate {
-    TRUE(true), FALSE(false), UNDEFINED(false);
+public enum Tristate
+{
+    TRUE(true),
+    FALSE(false),
+    UNDEFINED(false);
 
     private final boolean booleanValue;
 
-    Tristate(boolean booleanValue) {
+    Tristate(boolean booleanValue)
+    {
         this.booleanValue = booleanValue;
     }
 
-    public boolean booleanValue() {
+    public boolean booleanValue()
+    {
         return this.booleanValue;
     }
 }

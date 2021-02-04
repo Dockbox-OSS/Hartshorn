@@ -17,7 +17,8 @@
 
 package org.dockbox.selene.core.objects.inventory;
 
-public enum Slot {
+public enum Slot
+{
     HELMET,
     CHESTPLATE,
     LEGGINGS,

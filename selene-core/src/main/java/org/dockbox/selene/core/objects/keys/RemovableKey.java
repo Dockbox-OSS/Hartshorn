@@ -33,7 +33,8 @@ import java.util.function.Function;
  *         The type parameter indicating the constraint for the value to be applied/retrieved.
  */
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class RemovableKey<K, A> extends Key<K, A> {
+public abstract class RemovableKey<K, A> extends Key<K, A>
+{
 
     private final Consumer<K> remover;
 
@@ -51,7 +52,8 @@ public abstract class RemovableKey<K, A> extends Key<K, A> {
      *         The remover, accepting one value. The accepting value being the value to remove from, constrained using the type
      *         parameter {@code K}.
      */
-    protected RemovableKey(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
+    protected RemovableKey(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover)
+    {
         super(setter, getter);
         this.remover = remover;
     }
@@ -62,7 +64,8 @@ public abstract class RemovableKey<K, A> extends Key<K, A> {
      * @param keyType
      *         The data holder, constrained by type parameter {@code K}.
      */
-    public void remove(K keyType) {
+    public void remove(K keyType)
+    {
         this.remover.accept(keyType);
     }
 

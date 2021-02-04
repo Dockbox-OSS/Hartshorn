@@ -45,28 +45,35 @@ import java.util.function.Function;
  *         Stack: [...]
  *     }</pre>
  */
-public class SimpleExceptionHelper implements ExceptionHelper {
+public class SimpleExceptionHelper implements ExceptionHelper
+{
 
     private static final String separator = "========================================";
 
     @Override
-    public void printFriendly(@NonNls @Nullable String message, @Nullable Throwable exception, boolean stacktrace) {
+    public void printFriendly(@NonNls @Nullable String message, @Nullable Throwable exception, boolean stacktrace)
+    {
         Selene.log().error(SimpleExceptionHelper.separator);
-        if (null != exception) {
+        if (null != exception)
+        {
             Selene.log().error("Exception: " + exception.getClass().getCanonicalName());
-            if (null != message && !"".equals(message)) Selene.log().error("Message: " + message);
+            if (null != message && !message.isEmpty()) Selene.log().error("Message: " + message);
 
-            if (0 < exception.getStackTrace().length) {
+            if (0 < exception.getStackTrace().length)
+            {
                 StackTraceElement root = exception.getStackTrace()[0];
                 String line = 0 < root.getLineNumber() ? ":" + root.getLineNumber() : "(internal call)";
                 Selene.log().error("Location: " + root.getFileName() + line);
 
-                if (stacktrace) {
+                if (stacktrace)
+                {
                     Throwable nextException = exception;
-                    while (null != nextException) {
+                    while (null != nextException)
+                    {
                         StackTraceElement[] trace = nextException.getStackTrace();
                         Selene.log().error(nextException.getClass().getCanonicalName() + ": " + nextException.getMessage());
-                        for (StackTraceElement element : trace) {
+                        for (StackTraceElement element : trace)
+                        {
                             String elLine = 0 < element.getLineNumber() ? ":" + element.getLineNumber() : "(internal call)";
                             Selene.log().error("  at " + element.getClassName() + "." + element.getMethodName() + elLine);
                         }
@@ -78,54 +85,71 @@ public class SimpleExceptionHelper implements ExceptionHelper {
     }
 
     @Override
-    public void printMinimal(@NonNls @Nullable String message, @Nullable Throwable exception, boolean stacktrace) {
+    public void printMinimal(@NonNls @Nullable String message, @Nullable Throwable exception, boolean stacktrace)
+    {
         Selene.log().error(SimpleExceptionHelper.separator);
-        if (null != exception && null != message && !"".equals(message)) {
+        if (null != exception && null != message && !message.isEmpty())
+        {
             Selene.log().error(exception.getClass().getSimpleName() + ": " + message);
             if (stacktrace) Selene.log().error(Arrays.toString(exception.getStackTrace()));
         }
     }
 
     @Override
-    public void handleSafe(@NotNull Runnable runnable) {
+    public void handleSafe(@NotNull Runnable runnable)
+    {
         this.handleSafe(runnable, Selene::handle);
     }
 
     @Override
-    public <T> void handleSafe(@NotNull Consumer<T> consumer, T value) {
+    public <T> void handleSafe(@NotNull Consumer<T> consumer, T value)
+    {
         this.handleSafe(consumer, value, Selene::handle);
     }
 
     @Override
     @NotNull
-    public <T, R> Exceptional<R> handleSafe(@NotNull Function<T, R> function, T value) {
+    public <T, R> Exceptional<R> handleSafe(@NotNull Function<T, R> function, T value)
+    {
         return this.handleSafe(function, value, Selene::handle);
     }
 
     @Override
-    public void handleSafe(@NotNull Runnable runnable, @NotNull Consumer<Throwable> errorConsumer) {
-        try {
+    public void handleSafe(@NotNull Runnable runnable, @NotNull Consumer<Throwable> errorConsumer)
+    {
+        try
+        {
             runnable.run();
-        } catch (Throwable e) {
+        }
+        catch (Throwable e)
+        {
             errorConsumer.accept(e);
         }
     }
 
     @Override
-    public <T> void handleSafe(@NotNull Consumer<T> consumer, T value, @NotNull Consumer<Throwable> errorConsumer) {
-        try {
+    public <T> void handleSafe(@NotNull Consumer<T> consumer, T value, @NotNull Consumer<Throwable> errorConsumer)
+    {
+        try
+        {
             consumer.accept(value);
-        } catch (Throwable e) {
+        }
+        catch (Throwable e)
+        {
             errorConsumer.accept(e);
         }
     }
 
     @Override
     @NotNull
-    public <T, R> Exceptional<R> handleSafe(@NotNull Function<T, R> function, T value, @NotNull Consumer<Throwable> errorConsumer) {
-        try {
+    public <T, R> Exceptional<R> handleSafe(@NotNull Function<T, R> function, T value, @NotNull Consumer<Throwable> errorConsumer)
+    {
+        try
+        {
             return Exceptional.ofNullable(function.apply(value));
-        } catch (Throwable e) {
+        }
+        catch (Throwable e)
+        {
             errorConsumer.accept(e);
             return Exceptional.of(e);
         }

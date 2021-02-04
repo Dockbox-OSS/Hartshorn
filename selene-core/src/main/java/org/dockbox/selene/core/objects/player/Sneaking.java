@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.core.objects.player;
 
-public enum Sneaking {
-    SNEAKING, STANDING, EITHER
+public enum Sneaking
+{
+    SNEAKING,
+    STANDING,
+    EITHER
 }

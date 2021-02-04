@@ -30,7 +30,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Proxy {
+public @interface Proxy
+{
     /**
      * The target class for the proxy. Can be a interface, abstract, or concrete class.
      *
@@ -45,7 +46,8 @@ public @interface Proxy {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @java.lang.annotation.Target(ElementType.METHOD)
-    @interface Target {
+    @interface Target
+    {
         /**
          * Whether or not to overwrite the return value of the target method.
          */
@@ -55,7 +57,6 @@ public @interface Proxy {
          * At which {@link Phase} the proxy executor should be performed.
          *
          * @return The phase
-         *
          * @see Phase
          */
         Phase at() default Phase.OVERWRITE;

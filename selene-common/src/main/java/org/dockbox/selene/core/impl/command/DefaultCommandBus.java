@@ -33,6 +33,7 @@ import org.dockbox.selene.core.impl.command.values.AbstractFlagCollection;
 import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
+import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
@@ -50,7 +51,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class DefaultCommandBus implements CommandBus {
+public abstract class DefaultCommandBus implements CommandBus
+{
 
     /**
      * Represents the default type for command elements matched by {@link DefaultCommandBus#FLAG} or
@@ -118,17 +120,21 @@ public abstract class DefaultCommandBus implements CommandBus {
     private static final Map<String, List<CommandInheritanceContext>> queuedAliases = SeleneUtils.emptyConcurrentMap();
 
     @Override
-    public void register(Object... objs) {
-        for (Object obj : objs) {
+    public void register(Object... objs)
+    {
+        for (Object obj : objs)
+        {
             if (null == obj) continue;
             if (!(obj instanceof Class<?>)) obj = obj.getClass();
-            List<AbstractRegistrationContext> contexts = this.createContexts((Class<?>) obj);
+            List<AbstractRegistrationContext> contexts = DefaultCommandBus.createContexts((Class<?>) obj);
 
-            for (AbstractRegistrationContext context : contexts) {
-                for (String alias : context.getAliases()) {
+            for (AbstractRegistrationContext context : contexts)
+            {
+                for (String alias : context.getAliases())
+                {
 
                     if (context instanceof CommandInheritanceContext
-                            && this.prepareInheritanceContext(context, alias)) continue;
+                            && DefaultCommandBus.prepareInheritanceContext(context, alias)) continue;
 
                     if (DefaultCommandBus.registrations.containsKey(alias))
                         Selene.log().warn("Registering duplicate alias '" + alias + "'");
@@ -139,59 +145,8 @@ public abstract class DefaultCommandBus implements CommandBus {
         }
     }
 
-    @SuppressWarnings("checkstyle:Indentation")
-    private boolean prepareInheritanceContext(AbstractRegistrationContext context, String alias) {
-        /*
-         If the command 'extends' on the provided alias(es), it should not be registered directly and should instead be
-         added to existing registrations. If no existing registration is present (yet), it should be queued so that it
-         can be added when the target registration is created.
-         */
-        if (context.getCommand().extend()) {
-            if (DefaultCommandBus.registrations.containsKey(alias))
-                this.addExtendingAliasToRegistration(alias, (CommandInheritanceContext) context);
-            else this.queueAliasRegistration(alias, (CommandInheritanceContext) context);
-
-            return true;
-        } else {
-            /*
-             If the command does not extend on the provided alias(es), it can be registered directly. These
-             registrations can still be added to if future registrations extend aliases defined in this registration.
-             However, once #apply is called these registrations are no longer mutable.
-             */
-            DefaultCommandBus.queuedAliases
-                    .getOrDefault(alias, SeleneUtils.emptyConcurrentList())
-                    .forEach(extendingContext ->
-                            this.addExtendingContextToRegistration(
-                                    extendingContext,
-                                    (CommandInheritanceContext) context)
-                    );
-        }
-        return false;
-    }
-
-    private void addExtendingAliasToRegistration(String alias, CommandInheritanceContext extendingContext) {
-        AbstractRegistrationContext context = DefaultCommandBus.registrations.get(alias);
-        this.addExtendingContextToRegistration(extendingContext, (CommandInheritanceContext) context);
-        DefaultCommandBus.registrations.put(alias, context);
-    }
-
-    private void addExtendingContextToRegistration(CommandInheritanceContext extendingContext, CommandInheritanceContext context) {
-        extendingContext.getInheritedCommands().forEach(context::addInheritedCommand);
-    }
-
-    private void queueAliasRegistration(String alias, CommandInheritanceContext context) {
-        List<CommandInheritanceContext> contexts =
-                DefaultCommandBus.queuedAliases.getOrDefault(alias, SeleneUtils.emptyConcurrentList());
-        contexts.add(context);
-        DefaultCommandBus.queuedAliases.put(alias, contexts);
-    }
-
-    protected void clearAliasQueue() {
-        // This should be called after #apply has finished, to avoid unexpected alias extensions.
-        DefaultCommandBus.queuedAliases.clear();
-    }
-
-    private List<AbstractRegistrationContext> createContexts(Class<?> parent) {
+    private static List<AbstractRegistrationContext> createContexts(Class<?> parent)
+    {
         List<AbstractRegistrationContext> contexts = SeleneUtils.emptyList();
 
         /*
@@ -202,12 +157,12 @@ public abstract class DefaultCommandBus implements CommandBus {
          */
         boolean isParentRegistration = parent.isAnnotationPresent(Command.class);
         if (isParentRegistration)
-            contexts.add(this.extractCommandInheritanceContext(parent));
+            contexts.add(DefaultCommandBus.extractCommandInheritanceContext(parent));
 
         @NotNull @Unmodifiable Collection<Method> nonInheritedMethods =
                 Reflect.getAnnotedMethods(parent, Command.class, c -> !c.inherit() || !isParentRegistration);
         nonInheritedMethods.forEach(method -> {
-            MethodCommandContext context = this.extractNonInheritedContext(method);
+            MethodCommandContext context = DefaultCommandBus.extractNonInheritedContext(method);
             if (null != context)
                 contexts.add(context);
         });
@@ -215,7 +170,42 @@ public abstract class DefaultCommandBus implements CommandBus {
         return contexts;
     }
 
-    private CommandInheritanceContext extractCommandInheritanceContext(Class<?> parent) {
+    @SuppressWarnings("checkstyle:Indentation")
+    private static boolean prepareInheritanceContext(AbstractRegistrationContext context, String alias)
+    {
+        /*
+         If the command 'extends' on the provided alias(es), it should not be registered directly and should instead be
+         added to existing registrations. If no existing registration is present (yet), it should be queued so that it
+         can be added when the target registration is created.
+         */
+        if (context.getCommand().extend())
+        {
+            if (DefaultCommandBus.registrations.containsKey(alias))
+                DefaultCommandBus.addExtendingAliasToRegistration(alias, (CommandInheritanceContext) context);
+            else DefaultCommandBus.queueAliasRegistration(alias, (CommandInheritanceContext) context);
+
+            return true;
+        }
+        else
+        {
+            /*
+             If the command does not extend on the provided alias(es), it can be registered directly. These
+             registrations can still be added to if future registrations extend aliases defined in this registration.
+             However, once #apply is called these registrations are no longer mutable.
+             */
+            DefaultCommandBus.queuedAliases
+                    .getOrDefault(alias, SeleneUtils.emptyConcurrentList())
+                    .forEach(extendingContext ->
+                            DefaultCommandBus.addExtendingContextToRegistration(
+                                    extendingContext,
+                                    (CommandInheritanceContext) context)
+                    );
+        }
+        return false;
+    }
+
+    private static CommandInheritanceContext extractCommandInheritanceContext(Class<?> parent)
+    {
         Command command = parent.getAnnotation(Command.class);
         CommandInheritanceContext context = new CommandInheritanceContext(command);
 
@@ -227,20 +217,52 @@ public abstract class DefaultCommandBus implements CommandBus {
         @NotNull @Unmodifiable Collection<Method> inheritedMethods =
                 Reflect.getAnnotedMethods(parent, Command.class, Command::inherit);
         inheritedMethods.forEach(method ->
-                context.addInheritedCommand(this.extractInheritedContext(method, context))
+                context.addInheritedCommand(DefaultCommandBus.extractInheritedContext(method, context))
         );
 
         return context;
     }
 
-    private @Nullable MethodCommandContext extractInheritedContext(Method method, CommandInheritanceContext parentContext) {
+    private @Nullable
+    static MethodCommandContext extractNonInheritedContext(Method method)
+    {
+        Command command = method.getAnnotation(Command.class);
+        if (command.inherit() && method.getDeclaringClass().isAnnotationPresent(Command.class)) return null;
+        return new MethodCommandContext(command, method);
+    }
+
+    private static void addExtendingAliasToRegistration(String alias, CommandInheritanceContext extendingContext)
+    {
+        AbstractRegistrationContext context = DefaultCommandBus.registrations.get(alias);
+        DefaultCommandBus.addExtendingContextToRegistration(extendingContext, (CommandInheritanceContext) context);
+        DefaultCommandBus.registrations.put(alias, context);
+    }
+
+    private static void queueAliasRegistration(String alias, CommandInheritanceContext context)
+    {
+        List<CommandInheritanceContext> contexts =
+                DefaultCommandBus.queuedAliases.getOrDefault(alias, SeleneUtils.emptyConcurrentList());
+        contexts.add(context);
+        DefaultCommandBus.queuedAliases.put(alias, contexts);
+    }
+
+    private static void addExtendingContextToRegistration(CommandInheritanceContext extendingContext, CommandInheritanceContext context)
+    {
+        extendingContext.getInheritedCommands().forEach(context::addInheritedCommand);
+    }
+
+    private @Nullable
+    static MethodCommandContext extractInheritedContext(Method method, CommandInheritanceContext parentContext)
+    {
         Command command = method.getAnnotation(Command.class);
         if (!command.inherit()) return null;
-        for (String alias : command.aliases()) {
+        for (String alias : command.aliases())
+        {
             if (parentContext.getInheritedCommands()
                     .stream()
                     .anyMatch(cmd -> cmd.getAliases().contains(alias))
-            ) {
+            )
+            {
                 /*
                  If a parent has two sub-commands with the same alias(es), a warning is thrown. Typically methods calling
                  this method will overwrite any existing sub-commands with the generated context.
@@ -251,16 +273,13 @@ public abstract class DefaultCommandBus implements CommandBus {
         return new MethodCommandContext(command, method);
     }
 
-    private @Nullable MethodCommandContext extractNonInheritedContext(Method method) {
-        Command command = method.getAnnotation(Command.class);
-        if (command.inherit() && method.getDeclaringClass().isAnnotationPresent(Command.class)) return null;
-        return new MethodCommandContext(command, method);
-    }
-
-    public Exceptional<Boolean> confirmCommand(String confirmId) {
-        if (DefaultCommandBus.confirmQueue.containsKey(confirmId)) {
+    public Exceptional<Boolean> confirmCommand(String confirmId)
+    {
+        if (DefaultCommandBus.confirmQueue.containsKey(confirmId))
+        {
             ConfirmableQueueItem confirmableQueueItem = DefaultCommandBus.confirmQueue.get(confirmId);
-            if (confirmableQueueItem.getSource() instanceof CommandSource) {
+            if (confirmableQueueItem.getSource() instanceof CommandSource)
+            {
                 confirmableQueueItem.getCommand().call(
                         (CommandSource) confirmableQueueItem.getSource(),
                         confirmableQueueItem.getContext()
@@ -271,11 +290,14 @@ public abstract class DefaultCommandBus implements CommandBus {
         return Exceptional.empty();
     }
 
-    protected void queueConfirmable(String identifier, ConfirmableQueueItem queueItem) {
-        DefaultCommandBus.confirmQueue.put(identifier, queueItem);
+    protected static void clearAliasQueue()
+    {
+        // This should be called after #apply has finished, to avoid unexpected alias extensions.
+        DefaultCommandBus.queuedAliases.clear();
     }
 
-    protected AbstractArgumentValue<?> generateArgumentValue(String argumentDefinition, String defaultPermission) {
+    protected AbstractArgumentValue<?> generateArgumentValue(String argumentDefinition, String defaultPermission)
+    {
         String type = DefaultCommandBus.DEFAULT_TYPE;
         String key;
         String permission = defaultPermission;
@@ -287,11 +309,13 @@ public abstract class DefaultCommandBus implements CommandBus {
          Group one specifies either the name of the value (if two or more groups are matched), or the type if only one
          group matched.
          */
-        if (1 <= elementValue.groupCount()) {
+        if (1 <= elementValue.groupCount())
+        {
             String g1 = elementValue.group(1);
             if (1 == elementValue.groupCount()) type = g1;
             key = g1;
-        } else throw new IllegalArgumentException("Missing key argument in specification '" + argumentDefinition + "'");
+        }
+        else throw new IllegalArgumentException("Missing key argument in specification '" + argumentDefinition + "'");
 
         /*
          Group two matches the type if two or more groups are present. This overwrites the default value if applicable.
@@ -310,19 +334,24 @@ public abstract class DefaultCommandBus implements CommandBus {
         return this.generateArgumentValue(type, permission, key);
     }
 
-    protected List<AbstractArgumentElement<?>> parseArgumentElements(CharSequence argString, String defaultPermission) {
+    protected List<AbstractArgumentElement<?>> parseArgumentElements(CharSequence argString, String defaultPermission)
+    {
         List<AbstractArgumentElement<?>> elements = SeleneUtils.emptyList();
         AbstractFlagCollection<?> flagCollection = null;
 
         Matcher genericArgumentMatcher = GENERIC_ARGUMENT.matcher(argString);
-        while (genericArgumentMatcher.find()) {
+        while (genericArgumentMatcher.find())
+        {
 
             String part = genericArgumentMatcher.group();
             Matcher argumentMatcher = ARGUMENT.matcher(part);
-            if (argumentMatcher.matches()) {
+            if (argumentMatcher.matches())
+            {
                 this.extractArguments(elements, argumentMatcher, defaultPermission);
 
-            } else {
+            }
+            else
+            {
                 Matcher flagMatcher = FLAG.matcher(part);
                 flagCollection = this.getAbstractFlagCollection(flagCollection, flagMatcher, defaultPermission);
             }
@@ -337,20 +366,25 @@ public abstract class DefaultCommandBus implements CommandBus {
         else return flagCollection.buildAndCombines(this.wrapElements(elements));
     }
 
-    private AbstractFlagCollection<?> getAbstractFlagCollection(AbstractFlagCollection<?> flagCollection, Matcher flagMatcher, String defaultPermission) {
-        if (flagMatcher.matches()) {
+    private AbstractFlagCollection<?> getAbstractFlagCollection(AbstractFlagCollection<?> flagCollection, Matcher flagMatcher,
+                                                                String defaultPermission)
+    {
+        if (flagMatcher.matches())
+        {
             if (null == flagCollection) flagCollection = this.createEmptyFlagCollection();
             this.parseFlag(flagCollection, flagMatcher.group(1), flagMatcher.group(2), defaultPermission);
         }
         return flagCollection;
     }
 
-    private void extractArguments(Collection<AbstractArgumentElement<?>> elements, Matcher argumentMatcher, String defaultPermission) {
+    private void extractArguments(Collection<AbstractArgumentElement<?>> elements, Matcher argumentMatcher, String defaultPermission)
+    {
         boolean optional = '[' == argumentMatcher.group(1).charAt(0);
         String elementValue = argumentMatcher.group(2);
 
         List<AbstractArgumentElement<?>> result = this.parseArgumentElements(elementValue, defaultPermission);
-        if (result.isEmpty()) {
+        if (result.isEmpty())
+        {
             AbstractArgumentValue<?> argumentValue = this.generateArgumentValue(argumentMatcher.group(2), defaultPermission);
             AbstractArgumentElement<?> argumentElement = argumentValue.getElement();
             result = SeleneUtils.asList(argumentElement);
@@ -361,53 +395,69 @@ public abstract class DefaultCommandBus implements CommandBus {
          If there is only one element present this may simply return a unwrapped version of the element list.
          */
         AbstractArgumentElement<?> argumentElement = this.wrapElements(result);
-        if (optional) {
+        if (optional)
+        {
             elements.add(argumentElement.asOptional());
-        } else {
+        }
+        else
+        {
             elements.add(argumentElement);
         }
     }
 
-    private void parseFlag(AbstractFlagCollection<?> flags, String name, String value, String defaultPermission) {
-        if (null == value) {
+    private void parseFlag(AbstractFlagCollection<?> flags, String name, String value, String defaultPermission)
+    {
+        if (null == value)
+        {
             int at;
             /* See syntax definition of DefaultCommandBus#FLAG */
-            if (0 <= (at = name.indexOf(':'))) {
+            if (0 <= (at = name.indexOf(':')))
+            {
                 name = name.substring(0, at);
                 String permission = name.substring(at + 1);
                 flags.addNamedPermissionFlag(name, permission);
-            } else {
+            }
+            else
+            {
                 flags.addNamedFlag(name);
             }
 
-        } else {
+        }
+        else
+        {
             AbstractArgumentValue<?> argumentValue = this.generateArgumentValue(value, defaultPermission);
-            if (0 <= name.indexOf(':')) {
+            if (0 <= name.indexOf(':'))
+            {
                 Selene.handle("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
             flags.addValueBasedFlag(name, argumentValue);
         }
     }
 
-    protected void callCommandContext(AbstractRegistrationContext registrationContext, String command, CommandSource sender, CommandContext ctx) {
+    protected static void callCommandContext(AbstractRegistrationContext registrationContext, String command, CommandSource sender,
+                                             CommandContext ctx)
+    {
         /*
          If the command sender can be identified we can queue the command for confirmation. If the sender cannot be
          identified we cannot ensure the same command source is the one confirming the command, so we execute it as
          usual. The only sender with a bypass on this rule is the console.
          */
-        if (registrationContext.getCommand().confirm() && sender instanceof AbstractIdentifiable && !(sender instanceof Console)) {
-            String registrationId = registrationContext.getRegistrationId((AbstractIdentifiable<?>) sender, ctx);
+        if (registrationContext.getCommand().confirm() && sender instanceof AbstractIdentifiable && !(sender instanceof Console))
+        {
+            String registrationId = AbstractRegistrationContext.getRegistrationId((Identifiable) sender, ctx);
             ConfirmableQueueItem queueItem =
                     new ConfirmableQueueItem((AbstractIdentifiable<?>) sender, ctx, registrationContext);
-            this.queueConfirmable(registrationId, queueItem);
+            DefaultCommandBus.queueConfirmable(registrationId, queueItem);
 
             Text confirmText = IntegratedResource.CONFIRM_COMMAND_MESSAGE.asText();
             confirmText.onHover(HoverAction.showText(IntegratedResource.CONFIRM_COMMAND_MESSAGE_HOVER.asText()));
             confirmText.onClick(ClickAction.runCommand("/selene confirm " + registrationId));
             sender.sendWithPrefix(confirmText);
 
-        } else {
-            Exceptional<IntegratedResource> response = this.callCommandWithEvents(
+        }
+        else
+        {
+            Exceptional<IntegratedResource> response = DefaultCommandBus.callCommandWithEvents(
                     sender, ctx, command, registrationContext);
 
             if (response.errorPresent())
@@ -415,19 +465,26 @@ public abstract class DefaultCommandBus implements CommandBus {
         }
     }
 
-    private Exceptional<IntegratedResource> callCommandWithEvents(
+    protected static void queueConfirmable(String identifier, ConfirmableQueueItem queueItem)
+    {
+        DefaultCommandBus.confirmQueue.put(identifier, queueItem);
+    }
+
+    private static Exceptional<IntegratedResource> callCommandWithEvents(
             CommandSource sender,
             CommandContext context,
             String command,
             AbstractRegistrationContext registrationContext
-    ) {
+    )
+    {
         /*
          Modules are allowed to modify and/or cancel commands before and after the command has initially been
          executed. To allow this we need to ensure separate events are posted at these stages.
          */
         Cancellable ceb = new CommandEvent.Before(sender, context).post();
 
-        if (!ceb.isCancelled()) {
+        if (!ceb.isCancelled())
+        {
             Exceptional<IntegratedResource> response = registrationContext.call(sender, context);
             new CommandEvent.After(sender, context).post();
             return response;
@@ -441,7 +498,8 @@ public abstract class DefaultCommandBus implements CommandBus {
 
     protected abstract AbstractFlagCollection<?> createEmptyFlagCollection();
 
-    protected Map<String, AbstractRegistrationContext> getRegistrations() {
+    protected static Map<String, AbstractRegistrationContext> getRegistrations()
+    {
         return DefaultCommandBus.registrations;
     }
 
