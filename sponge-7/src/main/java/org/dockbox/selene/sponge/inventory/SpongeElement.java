@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 public class SpongeElement implements Element
 {
 
-    private Item item;
+    private final Item item;
     private Consumer<Player> onClick;
 
     @Inject

@@ -23,6 +23,7 @@ import org.spongepowered.api.Sponge;
 
 import java.nio.file.Path;
 
+@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface SpongeDefaultFileManager
 {
 

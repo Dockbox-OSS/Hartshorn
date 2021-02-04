@@ -63,7 +63,6 @@ public class SpongePagination implements Pagination
         this.padding = padding;
     }
 
-    @NotNull
     @Override
     public int getLinesPerPage()
     {
@@ -71,7 +70,7 @@ public class SpongePagination implements Pagination
     }
 
     @Override
-    public void setLinesPerPage(@NotNull int linesPerPage)
+    public void setLinesPerPage(int linesPerPage)
     {
         this.linesPerPage = linesPerPage;
     }

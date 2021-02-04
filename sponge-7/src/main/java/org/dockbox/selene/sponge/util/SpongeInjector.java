@@ -89,6 +89,7 @@ import org.slf4j.Logger;
 public class SpongeInjector extends SeleneInjectConfiguration
 {
 
+    @SuppressWarnings("OverlyCoupledMethod")
     @Override
     protected void configure()
     {

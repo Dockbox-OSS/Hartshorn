@@ -63,7 +63,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
     @Override
     public Exceptional<Region> getPlayerSelection(Player player)
     {
-        return this.wrapPlayer(player)
+        return SpongeWorldEditService.wrapPlayer(player)
                 .map(FawePlayer::getSelection)
                 .map(SpongeConversionUtil::fromWorldEdit);
     }
@@ -71,7 +71,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
     @Override
     public void setPlayerSelection(Player player, Region region)
     {
-        this.wrapPlayer(player).ifPresent(fawePlayer ->
+        SpongeWorldEditService.wrapPlayer(player).ifPresent(fawePlayer ->
                 fawePlayer.setSelection(SpongeConversionUtil.toWorldEdit(region))
         );
     }
@@ -79,7 +79,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
     @Override
     public Exceptional<Clipboard> getPlayerClipboard(Player player)
     {
-        return this.wrapPlayer(player)
+        return SpongeWorldEditService.wrapPlayer(player)
                 .map(FawePlayer::getSession)
                 .map(session -> {
                     try
@@ -99,7 +99,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
     @Override
     public void setPlayerClipboard(Player player, Clipboard clipboard)
     {
-        this.wrapPlayer(player).ifPresent(fawePlayer ->
+        SpongeWorldEditService.wrapPlayer(player).ifPresent(fawePlayer ->
                 fawePlayer.getSession().setClipboard(new ClipboardHolder(
                         SpongeConversionUtil.toWorldEdit(clipboard),
                         SpongeConversionUtil.toWorldEdit(clipboard.getRegion().getWorld()).getWorldData()
@@ -229,7 +229,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
         }
     }
 
-    private Exceptional<FawePlayer<?>> wrapPlayer(Player player)
+    private static Exceptional<FawePlayer<?>> wrapPlayer(Player player)
     {
         if (player instanceof SpongePlayer)
         {

@@ -95,7 +95,7 @@ public class SpongeCommandBus extends DefaultCommandBus
          AbstractRegistrationContext#getAliases to register all aliases at once, some command implementations may wish
          to be aware of the used alias.
          */
-        this.getRegistrations().forEach((alias, abstractCommand) -> {
+        DefaultCommandBus.getRegistrations().forEach((alias, abstractCommand) -> {
             Selene.log().info("Attempting to register /" + alias);
             CommandSpec spec = null;
             if (abstractCommand instanceof MethodCommandContext)
@@ -130,21 +130,18 @@ public class SpongeCommandBus extends DefaultCommandBus
             else
                 Selene.log().warn("Could not generate executor for '" + alias + "'. Any errors logged above.");
         });
-        super.clearAliasQueue();
+        clearAliasQueue();
     }
 
     private CommandSpec buildInheritedContextExecutor(CommandInheritanceContext context, String alias)
     {
         CommandSpec.Builder builder = this.buildContextExecutor(context, alias);
         Selene.log().info("Children for /" + alias);
-        context.getInheritedCommands().forEach(inheritedContext -> {
-            inheritedContext.getAliases().forEach(inheritedAlias -> {
-                builder.child(
+        context.getInheritedCommands().forEach(inheritedContext ->
+                inheritedContext.getAliases().forEach(inheritedAlias -> builder.child(
                         this.buildContextExecutor(inheritedContext, inheritedAlias).build(),
                         inheritedAlias
-                );
-            });
-        });
+                )));
         return builder.build();
     }
 
@@ -162,14 +159,14 @@ public class SpongeCommandBus extends DefaultCommandBus
             builder.arguments(commandElements.toArray(new CommandElement[0]));
 
         builder.permission(context.getCommand().permission());
-        builder.executor(this.buildExecutor(context, alias));
+        builder.executor(SpongeCommandBus.buildExecutor(context, alias));
 
         Selene.log().info("- " + alias);
 
         return builder;
     }
 
-    private CommandExecutor buildExecutor(AbstractRegistrationContext registrationContext, String command)
+    private static CommandExecutor buildExecutor(AbstractRegistrationContext registrationContext, String command)
     {
         return (src, args) -> {
             /*
@@ -181,18 +178,18 @@ public class SpongeCommandBus extends DefaultCommandBus
                     .fromSponge(src)
                     .orElseThrow(() ->
                             new IllegalArgumentException("Command sender is not a convertable source type, did a plugin call me?"));
-            SimpleCommandContext ctx = this.createCommandContext(args, sender, command);
+            SimpleCommandContext ctx = SpongeCommandBus.createCommandContext(args, sender, command);
 
-            super.callCommandContext(registrationContext, command, sender, ctx);
+            callCommandContext(registrationContext, command, sender, ctx);
 
             return CommandResult.success();
         };
     }
 
     @SuppressWarnings("unchecked")
-    private SimpleCommandContext createCommandContext(CommandContext ctx,
-                                                      @NotNull CommandSource sender,
-                                                      @Nullable String command)
+    private static SimpleCommandContext createCommandContext(CommandContext ctx,
+                                                             @NotNull CommandSource sender,
+                                                             @Nullable String command)
     {
         /*
          Sponge's CommandContext does not expose parsed arguments by default, so Reflections are needed to access these
@@ -221,14 +218,14 @@ public class SpongeCommandBus extends DefaultCommandBus
              does not have to check for anything but the flag prefix (-f or --flag).
              */
             if (Pattern.compile("-(-?" + key + ")").matcher(command).find())
-                flags.add(new Flag<>(this.tryConvertObject(obj), key));
-            else arguments.add(new Argument<>(this.tryConvertObject(obj), key));
+                flags.add(new Flag<>(SpongeCommandBus.tryConvertObject(obj), key));
+            else arguments.add(new Argument<>(SpongeCommandBus.tryConvertObject(obj), key));
         }));
 
-        return this.constructCommandContext(sender, arguments, flags, command);
+        return SpongeCommandBus.constructCommandContext(sender, arguments, flags, command);
     }
 
-    private Object tryConvertObject(Object obj)
+    private static Object tryConvertObject(Object obj)
     {
         /*
          This converts non-native (JDK) types to Selene usable types. Converters can be applied later to further convert
@@ -239,8 +236,8 @@ public class SpongeCommandBus extends DefaultCommandBus
     }
 
     @NotNull
-    private SimpleCommandContext constructCommandContext(@NotNull CommandSource sender, List<CommandValue.Argument<?>> arguments,
-                                                         List<CommandValue.Flag<?>> flags, String command)
+    private static SimpleCommandContext constructCommandContext(@NotNull CommandSource sender, List<CommandValue.Argument<?>> arguments,
+                                                                List<CommandValue.Flag<?>> flags, String command)
     {
         SimpleCommandContext seleneContext;
         if (sender instanceof Locatable)

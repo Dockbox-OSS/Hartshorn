@@ -25,6 +25,7 @@ import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,7 +43,7 @@ public class CompositeDataManipulatorBuilder extends AbstractDataBuilder<Mutable
     {
         if (container.contains(Composite.ITEM_KEY.getQuery()))
         {
-            final Map<?, ?> unsafeData = container.getMap(Composite.ITEM_KEY.getQuery()).get();
+            @SuppressWarnings("OptionalGetWithoutIsPresent") final Map<?, ?> unsafeData = container.getMap(Composite.ITEM_KEY.getQuery()).get();
             Map<String, Object> safeData = SeleneUtils.emptyMap();
             unsafeData.forEach((k, v) -> safeData.put(k.toString(), v));
 

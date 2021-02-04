@@ -103,10 +103,9 @@ public class SpongeProfile implements Profile
     @Override
     public void setProperties(Map<String, Collection<Tuple<String, String>>> properties)
     {
-        properties.forEach((name, propertyCollection) -> {
-            propertyCollection.forEach(property -> {
-                this.setProperty(name, property.getKey(), property.getValue());
-            });
-        });
+        properties.forEach((name, propertyCollection) ->
+                propertyCollection.forEach(property ->
+                        this.setProperty(name, property.getKey(), property.getValue())
+                ));
     }
 }

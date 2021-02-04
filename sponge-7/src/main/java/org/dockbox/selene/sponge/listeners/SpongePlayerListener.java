@@ -155,7 +155,7 @@ public class SpongePlayerListener
                                @Getter("getSource") Object source
     )
     {
-        this.postIfCommandSource(source, convertedSource -> {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new PlayerBannedEvent(
                     SpongeConversionUtil.fromSponge(player),
                     convertedSource,
@@ -163,11 +163,11 @@ public class SpongePlayerListener
                     SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
                     SeleneUtils.toLocalDateTime(profile.getCreationDate())
             ).post();
-            if (event.isCancelled()) this.logUnsupportedCancel(event);
+            if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
         });
     }
 
-    private void postIfCommandSource(Object source, Consumer<org.dockbox.selene.core.command.source.CommandSource> consumer)
+    private static void postIfCommandSource(Object source, Consumer<org.dockbox.selene.core.command.source.CommandSource> consumer)
     {
         if (source instanceof CommandSource)
         {
@@ -175,7 +175,7 @@ public class SpongePlayerListener
         }
     }
 
-    private void logUnsupportedCancel(Cancellable event)
+    private static void logUnsupportedCancel(Cancellable event)
     {
         Selene.log()
                 .warn("Attempted to cancel event of type '" + event.getClass().getSimpleName() + "', but this is not supported on this platform!");
@@ -187,7 +187,7 @@ public class SpongePlayerListener
                            @Getter("getSource") Object source
     )
     {
-        this.postIfCommandSource(source, convertedSource -> {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new IpBannedEvent(
                     profile.getAddress(),
                     convertedSource,
@@ -206,7 +206,7 @@ public class SpongePlayerListener
                              @Getter("getSource") Object source
     )
     {
-        this.postIfCommandSource(source, convertedSource -> {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new NameBannedEvent(
                     name,
                     convertedSource,
@@ -214,7 +214,7 @@ public class SpongePlayerListener
                     Exceptional.empty(),
                     LocalDateTime.now()
             ).post();
-            if (event.isCancelled()) this.logUnsupportedCancel(event);
+            if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
         });
     }
 
@@ -225,7 +225,7 @@ public class SpongePlayerListener
                                @Getter("getSource") Object source
     )
     {
-        this.postIfCommandSource(source, convertedSource -> {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
             PlayerWarnedEvent event = new WarnEvent.PlayerWarnedEvent(
                     SpongeConversionUtil.fromSponge(user),
                     convertedSource,
@@ -234,14 +234,14 @@ public class SpongePlayerListener
             event.post();
             if (!event.getReason().equals(reason))
             {
-                this.logUnsupportedModification(event, "reason");
+                SpongePlayerListener.logUnsupportedModification(event);
             }
         });
     }
 
-    private void logUnsupportedModification(Event event, String property)
+    private static void logUnsupportedModification(Event event)
     {
-        Selene.log().warn("Attempted to modify value '" + property + "' event of type '" + event.getClass()
+        Selene.log().warn("Attempted to modify value 'reason' event of type '" + event.getClass()
                 .getSimpleName() + "', but this is not supported on this platform!");
     }
 
@@ -252,7 +252,7 @@ public class SpongePlayerListener
                               @Getter("getSource") Object source
     )
     {
-        this.postIfCommandSource(source, convertedSource -> new NoteEvent.PlayerNotedEvent(
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> new NoteEvent.PlayerNotedEvent(
                 SpongeConversionUtil.fromSponge(user),
                 convertedSource,
                 note
@@ -276,14 +276,14 @@ public class SpongePlayerListener
                                  @Getter("getSource") Object source
     )
     {
-        this.postIfCommandSource(source, convertedSource -> {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new PlayerUnbannedEvent(
                     SpongeConversionUtil.fromSponge(player),
                     convertedSource,
                     Exceptional.of(profile.getReason().map(Text::toPlain)),
                     SeleneUtils.toLocalDateTime(profile.getCreationDate())
             ).post();
-            if (event.isCancelled()) this.logUnsupportedCancel(event);
+            if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
         });
     }
 
@@ -293,7 +293,7 @@ public class SpongePlayerListener
                              @Getter("getSource") Object source
     )
     {
-        this.postIfCommandSource(source, convertedSource -> {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new IpUnbannedEvent(
                     profile.getAddress(),
                     convertedSource,
@@ -311,14 +311,14 @@ public class SpongePlayerListener
                                @Getter("getSource") Object source
     )
     {
-        this.postIfCommandSource(source, convertedSource -> {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new NameUnbannedEvent(
                     name,
                     convertedSource,
                     Exceptional.of(reason),
                     LocalDateTime.now()
             ).post();
-            if (event.isCancelled()) this.logUnsupportedCancel(event);
+            if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
         });
     }
 
@@ -329,7 +329,7 @@ public class SpongePlayerListener
                               @Getter("getSource") Object source
     )
     {
-        this.postIfCommandSource(source, convertedSource -> new WarnEvent.PlayerWarningExpired(
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> new WarnEvent.PlayerWarningExpired(
                 SpongeConversionUtil.fromSponge(user),
                 convertedSource,
                 reason
@@ -351,7 +351,7 @@ public class SpongePlayerListener
                                @Getter("getSource") Object source
     )
     {
-        this.postIfCommandSource(source, convertedSource -> new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional
                 .empty()).post());
     }
 

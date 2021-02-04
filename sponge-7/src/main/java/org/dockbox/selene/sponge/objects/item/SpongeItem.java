@@ -221,6 +221,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @Override
     public Item withMeta(int meta)
     {
+        //noinspection deprecation
         return Item.of(SpongeItem.this.getId(), meta);
     }
 

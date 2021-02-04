@@ -148,6 +148,7 @@ public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand>
     @Override
     public Inventory getInventory()
     {
-        return null; // TODO
+        //noinspection ReturnOfNull
+        return null; // TODO: Implement entity inventory
     }
 }

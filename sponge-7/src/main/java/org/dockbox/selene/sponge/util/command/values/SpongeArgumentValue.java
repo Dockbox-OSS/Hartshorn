@@ -44,7 +44,8 @@ public class SpongeArgumentValue extends AbstractArgumentValue<CommandElement>
                     Class<? extends Enum> enumType = (Class<? extends Enum>) clazz;
                     this.setValue(GenericArguments.enumValue(Text.of(key), enumType));
                 }
-                else throw new IllegalArgumentException("Type '" + type.toLowerCase() + "' is not supported");
+                else //noinspection ThrowCaughtLocally
+                    throw new IllegalArgumentException("Type '" + type.toLowerCase() + "' is not supported");
             }
             catch (Exception e)
             {

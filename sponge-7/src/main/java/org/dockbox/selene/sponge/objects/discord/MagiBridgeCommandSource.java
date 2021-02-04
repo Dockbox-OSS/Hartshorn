@@ -70,7 +70,7 @@ public class MagiBridgeCommandSource extends DiscordCommandSource
     @Override
     public void sendPagination(@NotNull Pagination pagination)
     {
-        // TODO
+        // TODO: Discord pagination support
     }
 
 

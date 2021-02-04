@@ -88,37 +88,30 @@ public class SpongePlayerInventory extends PlayerInventory
     @Override
     public void setSlot(Item item, int row, int column)
     {
-        this.internalGetSlot(row, column).ifPresent(slot -> {
-            slot.set(SpongeConversionUtil.toSponge(item));
-        });
+        this.internalGetSlot(row, column).ifPresent(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
     }
 
     @Override
     public void setSlot(Item item, int index)
     {
-        this.internalGetSlot(index).ifPresent(slot -> {
-            slot.set(SpongeConversionUtil.toSponge(item));
-        });
+        this.internalGetSlot(index).ifPresent(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
     }
 
     @Override
     public void setSlot(Item item, Slot slotType)
     {
-        this.internalGetSlot(slotType).ifPresent(slot -> {
-            slot.set(SpongeConversionUtil.toSponge(item));
-        });
+        this.internalGetSlot(slotType).ifPresent(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
     }
 
     @Override
     public Collection<Item> getAllItems()
     {
-        return this.player.getSpongePlayer().map(player -> {
-            return StreamSupport.stream(player.getInventory().slots().spliterator(), false)
-                    .filter(inventory -> inventory instanceof org.spongepowered.api.item.inventory.Slot)
-                    .map(slot -> (org.spongepowered.api.item.inventory.Slot) slot)
-                    .map(slotLookup)
-                    .collect(Collectors.toList());
-        }).orElseGet(SeleneUtils::emptyList);
+        return this.player.getSpongePlayer().map(player -> StreamSupport.stream(player.getInventory().slots().spliterator(), false)
+                .filter(inventory -> inventory instanceof org.spongepowered.api.item.inventory.Slot)
+                .map(slot -> (org.spongepowered.api.item.inventory.Slot) slot)
+                .map(slotLookup)
+                .collect(Collectors.toList())
+        ).orElseGet(SeleneUtils::emptyList);
     }
 
     @Override

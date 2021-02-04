@@ -124,6 +124,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap
         return ((SpongeAPI7Bootstrap) getInstance()).container;
     }
 
+    @SuppressWarnings("AnonymousInnerClassMayBeStatic")
     @Listener
     public void onGamePreInit(GamePreInitializationEvent event)
     {
@@ -191,27 +192,25 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap
     {
         EventBus bus = Selene.provide(EventBus.class);
         Set<Class<? extends Packet>> adaptedPackets = SeleneUtils.emptySet();
-        bus.getListenersToInvokers().forEach((k, v) -> {
-            v.forEach(eventWrapper -> {
-                if (Reflect.isAssignableFrom(PacketEvent.class, eventWrapper.getEventType()))
-                {
-                    Class<? extends Packet> packet = eventWrapper.getMethod()
-                            .getAnnotation(org.dockbox.selene.core.annotations.event.filter.Packet.class).value();
+        bus.getListenersToInvokers().forEach((k, v) -> v.forEach(eventWrapper -> {
+            if (Reflect.isAssignableFrom(PacketEvent.class, eventWrapper.getEventType()))
+            {
+                Class<? extends Packet> packet = eventWrapper.getMethod()
+                        .getAnnotation(org.dockbox.selene.core.annotations.event.filter.Packet.class).value();
 
-                    // Adapters post the event globally, so we only need to register it once. This also avoids double-posting of the same event.
-                    if (!adaptedPackets.contains(packet))
-                    {
-                        Packet emptyPacket = Selene.provide(packet);
-                        packetGate.registerListener(
-                                SpongeAPI7Bootstrap.getPacketGateAdapter(packet),
-                                ListenerPriority.DEFAULT,
-                                emptyPacket.getNativePacketType()
-                        );
-                        adaptedPackets.add(packet);
-                    }
+                // Adapters post the event globally, so we only need to register it once. This also avoids double-posting of the same event.
+                if (!adaptedPackets.contains(packet))
+                {
+                    Packet emptyPacket = Selene.provide(packet);
+                    packetGate.registerListener(
+                            SpongeAPI7Bootstrap.getPacketGateAdapter(packet),
+                            ListenerPriority.DEFAULT,
+                            emptyPacket.getNativePacketType()
+                    );
+                    adaptedPackets.add(packet);
                 }
-            });
-        });
+            }
+        }));
     }
 
     private static PacketListenerAdapter getPacketGateAdapter(Class<? extends Packet> packet)

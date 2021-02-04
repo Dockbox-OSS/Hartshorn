@@ -45,17 +45,17 @@ public class SpongePlayerStorageService extends DefaultPlayerStorageService
     @Override
     public Exceptional<Player> getPlayer(@NotNull String name)
     {
-        return this.getPlayer(Exceptional.of(Sponge.getServer().getPlayer(name)), name);
+        return SpongePlayerStorageService.getPlayer(Exceptional.of(Sponge.getServer().getPlayer(name)), name);
     }
 
     @NotNull
     @Override
     public Exceptional<Player> getPlayer(@NotNull UUID uuid)
     {
-        return this.getPlayer(Exceptional.of(Sponge.getServer().getPlayer(uuid)), uuid);
+        return SpongePlayerStorageService.getPlayer(Exceptional.of(Sponge.getServer().getPlayer(uuid)), uuid);
     }
 
-    private Exceptional<Player> getPlayer(
+    private static Exceptional<Player> getPlayer(
             Exceptional<org.spongepowered.api.entity.living.player.Player> osp,
             Object obj
     )

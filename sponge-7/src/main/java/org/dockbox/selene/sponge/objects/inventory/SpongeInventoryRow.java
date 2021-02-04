@@ -92,9 +92,7 @@ public class SpongeInventoryRow implements InventoryRow
     @Override
     public void setSlot(Item item, int index)
     {
-        this.internalGetSlot(index).ifPresent(slot -> {
-            slot.set(SpongeConversionUtil.toSponge(item));
-        });
+        this.internalGetSlot(index).ifPresent(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
     }
 
     @Override
@@ -106,12 +104,11 @@ public class SpongeInventoryRow implements InventoryRow
     @Override
     public Collection<Item> getAllItems()
     {
-        return this.internalGetRow().map(row -> {
-            return StreamSupport.stream(row.slots().spliterator(), false)
-                    .map(slot -> (org.spongepowered.api.item.inventory.Slot) slot)
-                    .map(slotLookup)
-                    .collect(Collectors.toList());
-        }).orElseGet(SeleneUtils::emptyList);
+        return this.internalGetRow().map(row -> StreamSupport.stream(row.slots().spliterator(), false)
+                .map(slot -> (org.spongepowered.api.item.inventory.Slot) slot)
+                .map(slotLookup)
+                .collect(Collectors.toList())
+        ).orElseGet(SeleneUtils::emptyList);
     }
 
     @Override

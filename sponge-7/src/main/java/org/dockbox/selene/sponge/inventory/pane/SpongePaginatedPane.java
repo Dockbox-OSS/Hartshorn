@@ -40,9 +40,7 @@ public class SpongePaginatedPane implements PaginatedPane
     @Override
     public void open(Player player, int page)
     {
-        SpongeConversionUtil.toSponge(player).ifPresent(p -> {
-            this.page.open(p, page);
-        });
+        SpongeConversionUtil.toSponge(player).ifPresent(p -> this.page.open(p, page));
     }
 
     @Override
