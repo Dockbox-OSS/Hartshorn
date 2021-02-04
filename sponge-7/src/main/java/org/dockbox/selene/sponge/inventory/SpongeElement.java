@@ -26,28 +26,33 @@ import org.dockbox.selene.core.objects.player.Player;
 
 import java.util.function.Consumer;
 
-public class SpongeElement implements Element {
+public class SpongeElement implements Element
+{
 
     private Item item;
     private Consumer<Player> onClick;
 
     @Inject
-    public SpongeElement(@Assisted Item item, @Assisted Consumer<Player> onClick) {
+    public SpongeElement(@Assisted Item item, @Assisted Consumer<Player> onClick)
+    {
         this.item = item;
         this.onClick = onClick;
     }
 
     @Override
-    public Item getItem() {
+    public Item getItem()
+    {
         return this.item;
     }
 
     @Override
-    public void onClick(Consumer<Player> onClick) {
+    public void onClick(Consumer<Player> onClick)
+    {
         this.onClick = onClick;
     }
 
-    public void perform(Player player) {
+    public void perform(Player player)
+    {
         this.onClick.accept(player);
     }
 }

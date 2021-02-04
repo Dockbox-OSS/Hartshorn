@@ -21,33 +21,41 @@ import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
 
-public class SpongeArgumentElement extends AbstractArgumentElement<CommandElement> {
+public class SpongeArgumentElement extends AbstractArgumentElement<CommandElement>
+{
 
-    public SpongeArgumentElement(CommandElement reference) {
+    public SpongeArgumentElement(CommandElement reference)
+    {
         super(reference);
     }
 
-    public SpongeArgumentElement(SpongeArgumentElement... elements) {
+    public SpongeArgumentElement(SpongeArgumentElement... elements)
+    {
         super(elements);
     }
 
-    public SpongeArgumentElement() {
+    public SpongeArgumentElement()
+    {
         super(GenericArguments.none());
     }
 
     @Override
-    public AbstractArgumentElement<CommandElement> asOptional() {
+    public AbstractArgumentElement<CommandElement> asOptional()
+    {
         return new SpongeArgumentElement(GenericArguments.optional(this.getReference()));
     }
 
     @Override
-    protected void ofElements(AbstractArgumentElement<CommandElement>[] elements) {
+    protected void ofElements(AbstractArgumentElement<CommandElement>[] elements)
+    {
         CommandElement element;
         if (0 == elements.length) element = GenericArguments.none();
         else if (1 == elements.length) element = elements[0].getReference();
-        else {
+        else
+        {
             CommandElement[] commandElements = new CommandElement[elements.length];
-            for (int i = 0; i < elements.length; i++) {
+            for (int i = 0; i < elements.length; i++)
+            {
                 AbstractArgumentElement<CommandElement> commandElementAbstractArgumentElement = elements[i];
                 commandElements[i] = commandElementAbstractArgumentElement.getReference();
             }

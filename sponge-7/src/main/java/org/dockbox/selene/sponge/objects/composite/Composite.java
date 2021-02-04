@@ -20,7 +20,8 @@ package org.dockbox.selene.sponge.objects.composite;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.value.mutable.MapValue;
 
-public class Composite {
+public class Composite
+{
 
     public static final String ID = "item_data";
     public static final String NAME = "Selene Item Data";

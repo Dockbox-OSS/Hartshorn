@@ -24,7 +24,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class SpongePagination implements Pagination {
+public class SpongePagination implements Pagination
+{
 
     private Text padding;
     private int linesPerPage;
@@ -33,7 +34,8 @@ public class SpongePagination implements Pagination {
     private Text title;
     private List<Text> content;
 
-    SpongePagination(Text padding, int linesPerPage, Text header, Text footer, Text title, List<Text> content) {
+    SpongePagination(Text padding, int linesPerPage, Text header, Text footer, Text title, List<Text> content)
+    {
         this.padding = padding;
         this.linesPerPage = linesPerPage;
         this.header = header;
@@ -43,73 +45,86 @@ public class SpongePagination implements Pagination {
     }
 
     @Override
-    public void send(@NotNull MessageReceiver receiver) {
+    public void send(@NotNull MessageReceiver receiver)
+    {
         receiver.sendPagination(this);
     }
 
     @NotNull
     @Override
-    public Text getPadding() {
+    public Text getPadding()
+    {
         return this.padding;
     }
 
     @Override
-    public void setPadding(@NotNull Text padding) {
+    public void setPadding(@NotNull Text padding)
+    {
         this.padding = padding;
     }
 
     @NotNull
     @Override
-    public int getLinesPerPage() {
+    public int getLinesPerPage()
+    {
         return this.linesPerPage;
     }
 
     @Override
-    public void setLinesPerPage(@NotNull int linesPerPage) {
+    public void setLinesPerPage(@NotNull int linesPerPage)
+    {
         this.linesPerPage = linesPerPage;
     }
 
     @NotNull
     @Override
-    public Text getHeader() {
+    public Text getHeader()
+    {
         return this.header;
     }
 
     @Override
-    public void setHeader(@NotNull Text header) {
+    public void setHeader(@NotNull Text header)
+    {
         this.header = header;
     }
 
     @NotNull
     @Override
-    public Text getFooter() {
+    public Text getFooter()
+    {
         return this.footer;
     }
 
     @Override
-    public void setFooter(@NotNull Text footer) {
+    public void setFooter(@NotNull Text footer)
+    {
         this.footer = footer;
     }
 
     @NotNull
     @Override
-    public Text getTitle() {
+    public Text getTitle()
+    {
         return this.title;
     }
 
     @Override
-    public void setTitle(@NotNull Text title) {
+    public void setTitle(@NotNull Text title)
+    {
         this.title = title;
     }
 
     @NotNull
     @Override
-    public List<Text> getContent() {
+    public List<Text> getContent()
+    {
         return this.content;
     }
 
     @Override
-    public void setContent(@NotNull List<Text> content) {
+    public void setContent(@NotNull List<Text> content)
+    {
         this.content = content;
     }
 }

@@ -30,12 +30,14 @@ import java.util.Map;
 import java.util.Optional;
 
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
-public interface SpongeComposite extends PersistentDataHolder {
+public interface SpongeComposite extends PersistentDataHolder
+{
 
     @Override
-    default <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
+    default <T> Exceptional<T> get(PersistentDataKey<T> dataKey)
+    {
         Exceptional<MutableCompositeData> result = this.getDataHolder()
-            .map(composite -> composite.get(MutableCompositeData.class).orElse(null));
+                .map(composite -> composite.get(MutableCompositeData.class).orElse(null));
 
         if (result.isAbsent()) return Exceptional.empty();
 
@@ -51,7 +53,8 @@ public interface SpongeComposite extends PersistentDataHolder {
     }
 
     @Override
-    default <T> TransactionResult set(PersistentDataKey<T> dataKey, T value) {
+    default <T> TransactionResult set(PersistentDataKey<T> dataKey, T value)
+    {
         return this.getDataHolder().map(composite -> {
             Map<String, Object> data = composite.get(MutableCompositeData.class).orElse(new MutableCompositeData()).getData();
             data.put(dataKey.getDataKeyId(), value);
@@ -65,7 +68,8 @@ public interface SpongeComposite extends PersistentDataHolder {
     }
 
     @Override
-    default <T> void remove(PersistentDataKey<T> dataKey) {
+    default <T> void remove(PersistentDataKey<T> dataKey)
+    {
         this.getDataHolder().ifPresent(composite -> {
             Optional<MutableCompositeData> result = composite.get(MutableCompositeData.class);
             if (!result.isPresent()) return; // No data to remove

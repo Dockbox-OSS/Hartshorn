@@ -35,6 +35,7 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageUpdateEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
+import org.dockbox.selene.core.DiscordUtils;
 import org.dockbox.selene.core.events.discord.DiscordCommandContext;
 import org.dockbox.selene.core.events.discord.DiscordEvent;
 import org.dockbox.selene.core.events.discord.DiscordEvent.DiscordBotDisconnectedEvent;
@@ -54,17 +55,30 @@ import org.dockbox.selene.core.events.parents.Event;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.DiscordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-public class SpongeDiscordListener extends ListenerAdapter {
+public class SpongeDiscordListener extends ListenerAdapter
+{
 
     @Override
-    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
+    public void onReconnect(@NotNull ReconnectedEvent event)
+    {
+        new DiscordBotReconnectedEvent().post();
+    }
+
+    @Override
+    public void onDisconnect(@NotNull DisconnectEvent event)
+    {
+        new DiscordBotDisconnectedEvent().post();
+    }
+
+    @Override
+    public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event)
+    {
         new DiscordEvent.DiscordChatReceivedEvent(
                 event.getAuthor(),
                 event.getMessage(),
@@ -74,17 +88,44 @@ public class SpongeDiscordListener extends ListenerAdapter {
     }
 
     @Override
-    public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event) {
+    public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event)
+    {
+        new DiscordChatUpdatedEvent(event.getAuthor(), event.getMessage()).post();
+    }
+
+    @Override
+    public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event)
+    {
+        new DiscordChatDeletedEvent(event.getMessageId()).post();
+    }
+
+    @Override
+    public void onPrivateMessageReceived(@NotNull PrivateMessageReceivedEvent event)
+    {
         new DiscordPrivateChatReceivedEvent(event.getAuthor(), event.getMessage()).post();
     }
 
     @Override
-    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
+    public void onPrivateMessageUpdate(@NotNull PrivateMessageUpdateEvent event)
+    {
+        new DiscordPrivateChatUpdatedEvent(event.getAuthor(), event.getMessage()).post();
+    }
+
+    @Override
+    public void onPrivateMessageDelete(@NotNull PrivateMessageDeleteEvent event)
+    {
+        new DiscordPrivateChatDeletedEvent(event.getMessageId()).post();
+    }
+
+    @Override
+    public void onMessageReceived(@NotNull MessageReceivedEvent event)
+    {
         String fullCommand = event.getMessage().getContentStripped();
         if (fullCommand.isEmpty()) return;
-        
+
         char prefix = fullCommand.charAt(0);
-        if ('*' == prefix) {
+        if ('*' == prefix)
+        {
             String[] parts = fullCommand.split(" ");
             String alias = parts[0];
             alias = alias.replaceFirst("\\*", ""); // Remove prefix
@@ -105,67 +146,44 @@ public class SpongeDiscordListener extends ListenerAdapter {
     }
 
     @Override
-    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
+    public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event)
+    {
         event.getTextChannel().retrieveMessageById(event.getMessageId()).queue(message -> {
             User user = event.getJDA().getUserById(event.getUserId());
-            if (null != user) {
+            if (null != user)
+            {
                 new DiscordReactionAddedEvent(user, message, event.getReaction()).post();
             }
         });
     }
 
     @Override
-    public void onGuildMessageDelete(@NotNull GuildMessageDeleteEvent event) {
-        new DiscordChatDeletedEvent(event.getMessageId()).post();
-    }
-
-    @Override
-    public void onPrivateMessageDelete(@NotNull PrivateMessageDeleteEvent event) {
-        new DiscordPrivateChatDeletedEvent(event.getMessageId()).post();
-    }
-
-    @Override
-    public void onReconnect(@NotNull ReconnectedEvent event) {
-        new DiscordBotReconnectedEvent().post();
-    }
-
-    @Override
-    public void onDisconnect(@NotNull DisconnectEvent event) {
-        new DiscordBotDisconnectedEvent().post();
-    }
-
-    @Override
-    public void onGuildMessageUpdate(@NotNull GuildMessageUpdateEvent event) {
-        new DiscordChatUpdatedEvent(event.getAuthor(), event.getMessage()).post();
-    }
-
-    @Override
-    public void onPrivateMessageUpdate(@NotNull PrivateMessageUpdateEvent event) {
-        new DiscordPrivateChatUpdatedEvent(event.getAuthor(), event.getMessage()).post();
-    }
-
-    @Override
-    public void onGuildBan(@NotNull GuildBanEvent event) {
+    public void onGuildBan(@NotNull GuildBanEvent event)
+    {
         new DiscordUserBannedEvent(event.getUser(), event.getGuild()).post();
     }
 
     @Override
-    public void onGuildUnban(@NotNull GuildUnbanEvent event) {
+    public void onGuildUnban(@NotNull GuildUnbanEvent event)
+    {
         new DiscordUserUnbannedEvent(event.getUser(), event.getGuild()).post();
     }
 
     @Override
-    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        new DiscordUserJoinedEvent(event.getUser(), event.getGuild()).post();
-    }
-
-    @Override
-    public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event) {
+    public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent event)
+    {
         new DiscordUserLeftEvent(event.getUser(), event.getGuild()).post();
     }
 
     @Override
-    public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
+    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event)
+    {
+        new DiscordUserJoinedEvent(event.getUser(), event.getGuild()).post();
+    }
+
+    @Override
+    public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event)
+    {
         Event nce = new DiscordUserNicknameChangedEvent(
                 event.getUser(),
                 Exceptional.ofNullable(event.getOldNickname()),

@@ -20,7 +20,6 @@ package org.dockbox.selene.sponge.util.command;
 import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.context.CommandValue;
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
@@ -37,6 +36,7 @@ import org.dockbox.selene.core.impl.command.values.AbstractFlagCollection;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentElement;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentValue;
@@ -56,10 +56,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Singleton
-public class SpongeCommandBus extends DefaultCommandBus {
+public class SpongeCommandBus extends DefaultCommandBus
+{
 
     @Override
-    protected AbstractArgumentElement<?> wrapElements(List<AbstractArgumentElement<?>> elements) {
+    protected AbstractArgumentElement<?> wrapElements(List<AbstractArgumentElement<?>> elements)
+    {
         return new SpongeArgumentElement(elements.stream()
                 .filter(element -> element instanceof SpongeArgumentElement)
                 .map(element -> (SpongeArgumentElement) element)
@@ -67,21 +69,27 @@ public class SpongeCommandBus extends DefaultCommandBus {
     }
 
     @Override
-    protected AbstractArgumentValue<?> generateArgumentValue(String type, String permission, String key) {
-        try {
+    protected AbstractArgumentValue<?> generateArgumentValue(String type, String permission, String key)
+    {
+        try
+        {
             return new SpongeArgumentValue(type, permission, key);
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException e)
+        {
             return new SpongeArgumentValue(DefaultCommandBus.DEFAULT_TYPE, permission, key);
         }
     }
 
     @Override
-    protected AbstractFlagCollection<?> createEmptyFlagCollection() {
+    protected AbstractFlagCollection<?> createEmptyFlagCollection()
+    {
         return new SpongeFlagCollection();
     }
 
     @Override
-    public void apply() {
+    public void apply()
+    {
         /*
          Each context is separately registered based on its alias(es). While it is possible to use
          AbstractRegistrationContext#getAliases to register all aliases at once, some command implementations may wish
@@ -90,32 +98,43 @@ public class SpongeCommandBus extends DefaultCommandBus {
         this.getRegistrations().forEach((alias, abstractCommand) -> {
             Selene.log().info("Attempting to register /" + alias);
             CommandSpec spec = null;
-            if (abstractCommand instanceof MethodCommandContext) {
+            if (abstractCommand instanceof MethodCommandContext)
+            {
                 MethodCommandContext methodContext = (MethodCommandContext) abstractCommand;
-                if (!methodContext.getCommand().inherit() || !methodContext.getDeclaringClass().isAnnotationPresent(Command.class)) {
+                if (!methodContext.getCommand().inherit() || !methodContext.getDeclaringClass().isAnnotationPresent(Command.class))
+                {
                     spec = this.buildContextExecutor(methodContext, alias).build();
-                } else {
+                }
+                else
+                {
                     Selene.log().error("Found direct method registration of inherited command! " + methodContext.getLocation());
                 }
 
-            } else if (abstractCommand instanceof CommandInheritanceContext) {
+            }
+            else if (abstractCommand instanceof CommandInheritanceContext)
+            {
                 CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) abstractCommand;
                 spec = this.buildInheritedContextExecutor(inheritanceContext, alias);
 
-            } else {
+            }
+            else
+            {
                 Selene.log().error("Found unknown context type [" + abstractCommand.getClass().getCanonicalName() + "]");
             }
 
-            if (null != spec) {
+            if (null != spec)
+            {
                 Sponge.getCommandManager().register(Selene.getServer(), spec, alias);
                 Selene.log().info("Registered /" + alias);
-            } else
+            }
+            else
                 Selene.log().warn("Could not generate executor for '" + alias + "'. Any errors logged above.");
         });
         super.clearAliasQueue();
     }
 
-    private CommandSpec buildInheritedContextExecutor(CommandInheritanceContext context, String alias) {
+    private CommandSpec buildInheritedContextExecutor(CommandInheritanceContext context, String alias)
+    {
         CommandSpec.Builder builder = this.buildContextExecutor(context, alias);
         Selene.log().info("Children for /" + alias);
         context.getInheritedCommands().forEach(inheritedContext -> {
@@ -129,7 +148,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
         return builder.build();
     }
 
-    private CommandSpec.Builder buildContextExecutor(AbstractRegistrationContext context, String alias) {
+    private CommandSpec.Builder buildContextExecutor(AbstractRegistrationContext context, String alias)
+    {
         CommandSpec.Builder builder = CommandSpec.builder();
 
         List<AbstractArgumentElement<?>> elements = super.parseArgumentElements(context.getCommand().usage(), context.getCommand().permission());
@@ -149,7 +169,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
         return builder;
     }
 
-    private CommandExecutor buildExecutor(AbstractRegistrationContext registrationContext, String command) {
+    private CommandExecutor buildExecutor(AbstractRegistrationContext registrationContext, String command)
+    {
         return (src, args) -> {
             /*
              Command sources need to be convertable so that they can be identified by command implementations. While it
@@ -171,17 +192,21 @@ public class SpongeCommandBus extends DefaultCommandBus {
     @SuppressWarnings("unchecked")
     private SimpleCommandContext createCommandContext(CommandContext ctx,
                                                       @NotNull CommandSource sender,
-                                                      @Nullable String command) {
+                                                      @Nullable String command)
+    {
         /*
          Sponge's CommandContext does not expose parsed arguments by default, so Reflections are needed to access these
          so that they can be converted.
          */
         Multimap<String, Object> parsedArgs;
-        try {
+        try
+        {
             Field parsedArgsF = ctx.getClass().getDeclaredField("parsedArgs");
             if (!parsedArgsF.isAccessible()) parsedArgsF.setAccessible(true);
             parsedArgs = (Multimap<String, Object>) parsedArgsF.get(ctx);
-        } catch (IllegalAccessException | ClassCastException | NoSuchFieldException e) {
+        }
+        catch (IllegalAccessException | ClassCastException | NoSuchFieldException e)
+        {
             Selene.handle("Could not load parsed arguments from Sponge command context", e);
             return SimpleCommandContext.EMPTY;
         }
@@ -203,7 +228,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
         return this.constructCommandContext(sender, arguments, flags, command);
     }
 
-    private Object tryConvertObject(Object obj) {
+    private Object tryConvertObject(Object obj)
+    {
         /*
          This converts non-native (JDK) types to Selene usable types. Converters can be applied later to further convert
          and/or modify these objects.
@@ -213,9 +239,12 @@ public class SpongeCommandBus extends DefaultCommandBus {
     }
 
     @NotNull
-    private SimpleCommandContext constructCommandContext(@NotNull CommandSource sender, List<CommandValue.Argument<?>> arguments, List<CommandValue.Flag<?>> flags, String command) {
+    private SimpleCommandContext constructCommandContext(@NotNull CommandSource sender, List<CommandValue.Argument<?>> arguments,
+                                                         List<CommandValue.Flag<?>> flags, String command)
+    {
         SimpleCommandContext seleneContext;
-        if (sender instanceof Locatable) {
+        if (sender instanceof Locatable)
+        {
             org.dockbox.selene.core.objects.location.Location loc = ((Locatable) sender).getLocation();
             org.dockbox.selene.core.objects.location.World world = ((Locatable) sender).getLocation().getWorld();
             seleneContext = new SimpleCommandContext(
@@ -225,7 +254,9 @@ public class SpongeCommandBus extends DefaultCommandBus {
                     sender, Exceptional.of(loc), Exceptional.of(world),
                     new String[0]
             );
-        } else {
+        }
+        else
+        {
             seleneContext = new SimpleCommandContext(
                     command,
                     arguments.toArray(new CommandValue.Argument<?>[0]),

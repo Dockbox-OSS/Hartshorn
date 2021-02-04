@@ -38,30 +38,29 @@ import java.util.stream.Collectors;
 
 import dev.flashlabs.flashlibs.inventory.Page;
 
-public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
+public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder
+{
 
     private Page.Builder builder;
     private Collection<Element> elements = SeleneUtils.emptyList();
 
     @Override
-    public PaginatedPaneBuilder elements(Collection<Element> elements) {
+    public PaginatedPaneBuilder elements(Collection<Element> elements)
+    {
         this.elements = elements;
         return this;
     }
 
     @Override
-    public PaginatedPaneBuilder title(Text text) {
+    public PaginatedPaneBuilder title(Text text)
+    {
         this.builder.title(ctx -> SpongeConversionUtil.toSponge(text));
         return this;
     }
 
-    public void layout(InventoryLayout layout) {
-        if (layout instanceof SpongeInventoryLayout)
-            this.builder.layout(((SpongeInventoryLayout) layout).getLayout());
-    }
-
     @Override
-    public PaginatedPane build() {
+    public PaginatedPane build()
+    {
         Page page = this.builder.build(SpongeAPI7Bootstrap.getContainer());
         page.define(this.elements.stream()
                 .map(SpongeConversionUtil::toSponge)
@@ -71,7 +70,8 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void stateEnabling(InjectorProperty<?>... properties)
+    {
         Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
                 .ifPresent(layout -> {
                     this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
@@ -81,5 +81,11 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
                     Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
                     this.builder = Page.builder(InventoryArchetypes.CHEST);
                 });
+    }
+
+    public void layout(InventoryLayout layout)
+    {
+        if (layout instanceof SpongeInventoryLayout)
+            this.builder.layout(((SpongeInventoryLayout) layout).getLayout());
     }
 }
