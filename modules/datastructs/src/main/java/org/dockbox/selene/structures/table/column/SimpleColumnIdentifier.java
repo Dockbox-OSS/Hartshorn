@@ -45,8 +45,8 @@ public class SimpleColumnIdentifier<T> implements ColumnIdentifier<T>
     public String toString()
     {
         return "SimpleColumnIdentifier{" +
-                "fieldName='" + fieldName + '\'' +
-                ", type=" + type +
+                "fieldName='" + this.fieldName + '\'' +
+                ", type=" + this.type +
                 '}';
     }
 }

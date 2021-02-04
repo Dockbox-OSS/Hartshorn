@@ -26,8 +26,10 @@ import org.dockbox.selene.packets.ChangeGameStatePacket;
 
 @Module(id = "sample", name = "Selene Sample Module", description = "A sample module, providing examples on various tasks",
         authors = "GuusLieben")
-public class SampleModule
+public final class SampleModule
 {
+
+    private SampleModule() {}
 
     @Listener
     @Packet(ChangeGameStatePacket.class)

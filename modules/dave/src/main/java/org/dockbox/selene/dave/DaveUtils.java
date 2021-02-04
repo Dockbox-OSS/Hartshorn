@@ -176,9 +176,7 @@ public final class DaveUtils
         PlayerStorageService pss = Selene.provide(PlayerStorageService.class);
         pss.getOnlinePlayers().stream()
                 .filter(op -> important || !isMuted(op))
-                .forEach(op -> {
-                    op.send(message);
-                });
+                .forEach(op -> op.send(message));
 
         // Discord response
         TextChannel discordChannel = config.getChannel();
@@ -197,6 +195,7 @@ public final class DaveUtils
         return parsedLink;
     }
 
+    // TODO: Fix cyclomatic complexity
     public static String parsePlaceHolders(String message, String unparsedResponse, String playername)
     {
         String parsedResponse = unparsedResponse.replaceAll("<player>", playername);
@@ -208,7 +207,7 @@ public final class DaveUtils
             boolean replaced = false;
             for (String partial : message.split(" "))
             {
-                if (partial.startsWith("<@") && partial.length() > 2)
+                if (partial.startsWith("<@") && 2 < partial.length())
                 {
                     String mention = du.getJDA().map(jda -> jda.getUserById(
                             partial
@@ -224,7 +223,7 @@ public final class DaveUtils
                     }
                 }
 
-                if (partial.replaceAll("&.", "").startsWith("@") && partial.length() > 2)
+                if (partial.replaceAll("&.", "").startsWith("@") && 2 < partial.length())
                 {
                     parsedResponse = parsedResponse.replaceAll("<mention>", partial.replaceFirst("@", ""));
                     replaced = true;

@@ -21,7 +21,7 @@ import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.i18n.entry.Resource;
 
 @Resources(module = OldPlotsModule.class)
-public class OldPlotsResources
+public final class OldPlotsResources
 {
 
     public static final Resource SINGLE_PLOT = new Resource("$3 - $1{0}$2, $1{1}, {2}", "oldplots.list.single");
@@ -34,4 +34,5 @@ public class OldPlotsResources
     public static final Resource ERROR_NO_PLOT = new Resource("$4No plot with that ID found", "oldplots.error.plot");
     public static final Resource ERROR_NO_PLAYER = new Resource("$4No valid player provided", "oldplots.error.player");
 
+    private OldPlotsResources() {}
 }

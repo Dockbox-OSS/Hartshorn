@@ -81,7 +81,7 @@ public class OldPlotsModule
         }
         Player player = ctx.get("player");
 
-        SQLMan<?> man = this.getSQLMan();
+        SQLMan<?> man = OldPlotsModule.getSQLMan();
         Table plots = man.getTable("plot");
         plots = plots.where(OldPlotsIdentifiers.UUID, player.getUniqueId().toString());
 
@@ -117,7 +117,7 @@ public class OldPlotsModule
                 .send(source);
     }
 
-    private SQLMan<?> getSQLMan()
+    private static SQLMan<?> getSQLMan()
     {
         Path dataDirectory = Selene.provide(FileManager.class).getDataDir(OldPlotsModule.class);
         Path path = dataDirectory.resolve("oldplots.db");
@@ -138,7 +138,7 @@ public class OldPlotsModule
             throws InvalidConnectionException
     {
         Integer id = context.get("id");
-        SQLMan<?> man = this.getSQLMan();
+        SQLMan<?> man = OldPlotsModule.getSQLMan();
         Table plots = man.getTable("plot");
         plots = plots.where(OldPlotsIdentifiers.PLOT_ID, id);
         plots.first().ifPresent(plot -> {
@@ -153,16 +153,10 @@ public class OldPlotsModule
                 model.ifPresent(worldModel -> {
                     Exceptional<Location> location = worldModel.getLocation(idX, idZ);
                     location.ifPresent(source::setLocation)
-                            .ifAbsent(() -> {
-                                source.send(OldPlotsResources.ERROR_CALCULATION);
-                            });
-                }).ifAbsent(() -> {
-                    source.send(OldPlotsResources.ERROR_NO_LOCATION.format(world));
-                });
+                            .ifAbsent(() -> source.send(OldPlotsResources.ERROR_CALCULATION));
+                }).ifAbsent(() -> source.send(OldPlotsResources.ERROR_NO_LOCATION.format(world)));
             }
-        }).ifAbsent(() -> {
-            source.send(OldPlotsResources.ERROR_NO_PLOT);
-        });
+        }).ifAbsent(() -> source.send(OldPlotsResources.ERROR_NO_PLOT));
     }
 
 }

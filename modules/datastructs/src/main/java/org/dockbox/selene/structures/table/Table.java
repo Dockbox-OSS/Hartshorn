@@ -256,7 +256,7 @@ public class Table
     }
 
     private void tryPopulateMissingEntry(@NotNull Table otherTable, boolean populateEmptyEntries,
-                                         Collection<ColumnIdentifier<?>> mergedIdentifiers,
+                                         Iterable<ColumnIdentifier<?>> mergedIdentifiers,
                                          Table joinedTable, TableRow row
     )
             throws IdentifierMismatchException
@@ -281,7 +281,7 @@ public class Table
         joinedTable.addRow(row);
     }
 
-    private <T> List<TableRow> getMatchingRows(TableRow row, Table otherTable, ColumnIdentifier<T> column)
+    private static <T> List<TableRow> getMatchingRows(TableRow row, Table otherTable, ColumnIdentifier<T> column)
     {
         Exceptional<?> exceptionalValue = row.getValue(column);
         // No way to join on value if it is not present. Technically this should not be possible as a NPE
@@ -320,6 +320,7 @@ public class Table
      * @throws IdentifierMismatchException
      *         When a identifier does not exist across both tables
      */
+    // TODO: Fix cyclomatic complexity (currently at 17)
     public <T> Table join(@NotNull Table otherTable, ColumnIdentifier<T> column, Merge merge, boolean populateEmptyEntries)
             throws EmptyEntryException, IdentifierMismatchException
     {
@@ -337,7 +338,7 @@ public class Table
             {
                 try
                 {
-                    List<TableRow> matchingRows = this.getMatchingRows(row, otherTable, column);
+                    List<TableRow> matchingRows = Table.getMatchingRows(row, otherTable, column);
 
                     TableRow joinedRow = new TableRow();
                     for (ColumnIdentifier<?> identifier : this.getIdentifiers())
@@ -392,7 +393,7 @@ public class Table
             {
                 try
                 {
-                    List<TableRow> matchingRows = this.getMatchingRows(row, joinedTable, column);
+                    List<TableRow> matchingRows = Table.getMatchingRows(row, joinedTable, column);
                     if (matchingRows.isEmpty())
                     {
                         this.tryPopulateMissingEntry(otherTable, populateEmptyEntries, mergedIdentifiers, joinedTable, row);

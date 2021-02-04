@@ -81,7 +81,7 @@ public class IntegratedServer implements IntegratedModule
 
             em.getRegisteredModuleIds()
                     .forEach(id -> em.getHeader(id)
-                            .map(e -> this.generateText(e, source))
+                            .map(e -> IntegratedServer.generateText(e, source))
                             .ifPresent(content::add)
                     );
 
@@ -92,7 +92,7 @@ public class IntegratedServer implements IntegratedModule
         });
     }
 
-    private Text generateText(Module e, MessageReceiver source)
+    private static Text generateText(Module e, MessageReceiver source)
     {
         Text line = IntegratedServerResources.MODULE_ROW
                 .format(e.name(), e.id())
@@ -108,7 +108,7 @@ public class IntegratedServer implements IntegratedModule
     }
 
     @Command(aliases = "module", usage = "module <id{Module}>")
-    public void debugModule(MessageReceiver src, CommandContext ctx)
+    public static void debugModule(MessageReceiver src, CommandContext ctx)
     {
         Reflect.runWithInstance(ModuleManager.class, em -> {
             Exceptional<Argument<Module>> oarg = ctx.argument("id");
@@ -140,7 +140,7 @@ public class IntegratedServer implements IntegratedModule
     }
 
     @Command(aliases = "reload", usage = "reload [id{Module}]", confirm = true)
-    public void reload(MessageReceiver src, CommandContext ctx)
+    public static void reload(MessageReceiver src, CommandContext ctx)
     {
         EventBus eb = Selene.provide(EventBus.class);
         if (ctx.has("id"))
@@ -191,7 +191,7 @@ public class IntegratedServer implements IntegratedModule
     }
 
     @Command(aliases = "platform", usage = "platform")
-    public void platform(MessageReceiver src)
+    public static void platform(MessageReceiver src)
     {
         ServerType st = Selene.getServer().getServerType();
         String platformVersion = Selene.getServer().getPlatformVersion();
@@ -219,9 +219,9 @@ public class IntegratedServer implements IntegratedModule
 
 
     @Command(aliases = { "lang", "language" }, usage = "language <language{Language}> [player{Player}]", inherit = false)
-    public void switchLang(MessageReceiver src, CommandContext ctx,
-                           @Arg("language") Language lang,
-                           @Arg(value = "player", optional = true) Player player)
+    public static void switchLang(MessageReceiver src, CommandContext ctx,
+                                  @Arg("language") Language lang,
+                                  @Arg(value = "player", optional = true) Player player)
     {
         if (null == player)
         {

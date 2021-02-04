@@ -87,41 +87,31 @@ public final class DefaultArgumentConverters implements InjectableType
 
     public static final ArgumentConverter<Double> DOUBLE = new CommandValueConverter<>(
             Double.class,
-            in -> {
-                return Exceptional.of(in).map(Double::parseDouble);
-            },
+            in -> Exceptional.of(in).map(Double::parseDouble),
             "double"
     );
 
     public static final ArgumentConverter<Float> FLOAT = new CommandValueConverter<>(
             Float.class,
-            in -> {
-                return Exceptional.of(in).map(Float::parseFloat);
-            },
+            in -> Exceptional.of(in).map(Float::parseFloat),
             "float"
     );
 
     public static final ArgumentConverter<Integer> INTEGER = new CommandValueConverter<>(
             Integer.class,
-            in -> {
-                return Exceptional.of(in).map(Integer::parseInt);
-            },
+            in -> Exceptional.of(in).map(Integer::parseInt),
             "int", "integer"
     );
 
     public static final ArgumentConverter<Long> LONG = new CommandValueConverter<>(
             Long.class,
-            in -> {
-                return Exceptional.of(in).map(Long::parseLong);
-            },
+            in -> Exceptional.of(in).map(Long::parseLong),
             "long"
     );
 
     public static final ArgumentConverter<Short> SHORT = new CommandValueConverter<>(
             Short.class,
-            in -> {
-                return Exceptional.of(in).map(Short::parseShort);
-            },
+            in -> Exceptional.of(in).map(Short::parseShort),
             "short"
     );
 
@@ -159,24 +149,20 @@ public final class DefaultArgumentConverters implements InjectableType
 
     public static final ArgumentConverter<UUID> UNIQUE_ID = new CommandValueConverter<>(
             UUID.class,
-            in -> {
-                return Exceptional.of(() -> UUID.fromString(in));
-            },
+            in -> Exceptional.of(() -> UUID.fromString(in)),
             "uuid", "uniqueid"
     );
 
     public static final ArgumentConverter<Vector3N> VECTOR = new CommandValueConverter<>(
             Vector3N.class,
-            in -> {
-                return Exceptional.of(() -> {
-                    String[] xyz = in.split(",");
-                    // IndexOutOfBounds is caught by Callable handle in Exceptional
-                    double x = Double.parseDouble(xyz[0]);
-                    double y = Double.parseDouble(xyz[1]);
-                    double z = Double.parseDouble(xyz[2]);
-                    return new Vector3N(x, y, z);
-                });
-            },
+            in -> Exceptional.of(() -> {
+                String[] xyz = in.split(",");
+                // IndexOutOfBounds is caught by Callable handle in Exceptional
+                double x = Double.parseDouble(xyz[0]);
+                double y = Double.parseDouble(xyz[1]);
+                double z = Double.parseDouble(xyz[2]);
+                return new Vector3N(x, y, z);
+            }),
             "vec3", "vector", "v3n"
     );
 

@@ -44,7 +44,8 @@ public class ProxyHandler<T> implements MethodHandler
         this.instance = instance;
     }
 
-    public void delegate(ProxyProperty<T, ?>... properties)
+    @SafeVarargs
+    public final void delegate(ProxyProperty<T, ?>... properties)
     {
         for (ProxyProperty<T, ?> property : properties) this.delegate(property);
     }

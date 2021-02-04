@@ -77,7 +77,7 @@ public abstract class SQLMan<T> implements ISQLMan<T>
     {
         DSLContext ctx = this.getContext(target);
         R r = function.accept(ctx);
-        this.closeConnection(ctx);
+        SQLMan.closeConnection(ctx);
         return r;
     }
 
@@ -122,7 +122,7 @@ public abstract class SQLMan<T> implements ISQLMan<T>
         return DSL.using(this.getConnection(target), this.getDialect());
     }
 
-    private void closeConnection(DSLContext ctx)
+    private static void closeConnection(DSLContext ctx)
     {
         try
         {
@@ -237,11 +237,11 @@ public abstract class SQLMan<T> implements ISQLMan<T>
             // Use .drop() over .deleteIf() here, as the table definition may have changed
             if (reset) this.drop(target, name);
 
-            Field<?>[] fields = this.convertIdentifiersToFields(table);
-            this.createTableIfNotExists(name, ctx, fields);
+            Field<?>[] fields = SQLMan.convertIdentifiersToFields(table);
+            SQLMan.createTableIfNotExists(name, ctx, fields);
             InsertValuesStepN<?> insertStep = ctx.insertInto(DSL.table(name))
                     .columns();
-            this.populateRemoteTable(insertStep, table, fields);
+            SQLMan.populateRemoteTable(insertStep, table, fields);
         });
     }
 
@@ -274,12 +274,12 @@ public abstract class SQLMan<T> implements ISQLMan<T>
     {
         this.withContext(target, ctx -> {
             ctx.delete(DSL.table(name))
-                    .where(this.getNamedField(identifier).eq(value))
+                    .where(SQLMan.getNamedField(identifier).eq(value))
                     .execute();
         });
     }
 
-    private <C> Field<C> getNamedField(ColumnIdentifier<C> identifier)
+    private static <C> Field<C> getNamedField(ColumnIdentifier<C> identifier)
     {
         return DSL.field(identifier.getColumnName(), identifier.getType());
     }
@@ -289,10 +289,10 @@ public abstract class SQLMan<T> implements ISQLMan<T>
     {
         DSLContext ctx = this.getContext(target);
         consumer.accept(ctx);
-        this.closeConnection(ctx);
+        SQLMan.closeConnection(ctx);
     }
 
-    private Field<?>[] convertIdentifiersToFields(Table table)
+    private static Field<?>[] convertIdentifiersToFields(Table table)
     {
         Field<?>[] fields = new Field[table.getIdentifiers().length];
         ColumnIdentifier<?>[] tableIdentifiers = table.getIdentifiers();
@@ -304,7 +304,7 @@ public abstract class SQLMan<T> implements ISQLMan<T>
         return fields;
     }
 
-    private void populateRemoteTable(InsertValuesStepN<?> insertStep, Table table, Field<?>[] fields)
+    private static void populateRemoteTable(InsertValuesStepN<?> insertStep, Table table, Field<?>[] fields)
     {
         table.getRows().forEach(row -> {
             Object[] values = new Object[fields.length];
@@ -327,7 +327,7 @@ public abstract class SQLMan<T> implements ISQLMan<T>
         insertStep.execute();
     }
 
-    private void createTableIfNotExists(String name, DSLContext ctx, Field<?>[] fields)
+    private static void createTableIfNotExists(String name, DSLContext ctx, Field<?>[] fields)
     {
         ctx.createTableIfNotExists(name).columns(fields).execute();
     }

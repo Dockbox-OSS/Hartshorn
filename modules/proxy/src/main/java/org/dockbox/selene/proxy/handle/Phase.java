@@ -23,7 +23,7 @@ public enum Phase
     OVERWRITE,
     TAIL;
 
-    public Phase[] collect()
+    public static Phase[] collect()
     {
         return new Phase[]{ HEAD, OVERWRITE, TAIL };
     }

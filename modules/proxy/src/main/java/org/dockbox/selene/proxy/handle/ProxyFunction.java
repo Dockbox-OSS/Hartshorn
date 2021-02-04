@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.proxy.handle;
 
+@FunctionalInterface
 public interface ProxyFunction<T, R>
 {
 
