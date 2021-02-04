@@ -617,8 +617,6 @@ public final class Reflect
      *
      * @return the exceptional
      */
-    @SuppressWarnings("unchecked")
-    // TODO: Fix cyclomatic complexity (15)
     public static <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision)
     {
         T instance = inject ? Selene.provide(type) : Reflect.getInstance(type);
@@ -629,36 +627,13 @@ public final class Reflect
                 {
                     if (!field.isAccessible()) field.setAccessible(true);
                     if (field.isAnnotationPresent(Ignore.class)) continue;
-                    Object value;
-                    if (Provision.FIELD == provision)
-                    {
-                        value = valueCollector.apply((A) field);
-                    }
-                    else
-                    {
-                        String fieldName = Reflect.getFieldPropertyName(field);
-                        value = valueCollector.apply((A) fieldName);
-                    }
+
+                    Object value = extractFieldValue(field, provision, valueCollector);
                     if (null == value) continue;
 
-                    boolean useFieldDirect = true;
-                    if (field.isAnnotationPresent(Property.class))
-                    {
-                        Property property = field.getAnnotation(Property.class);
+                    boolean usedSetter = canUseSetter(type, instance, field, value);
 
-                        //noinspection CallToSuspiciousStringMethod
-                        if (!property.setter().isEmpty() && Reflect.hasMethod(type, property.setter()))
-                        {
-                            Class<?> parameterType = field.getType();
-                            if (Reflect.isNotVoid(property.accepts())) parameterType = property.accepts();
-
-                            Method method = type.getMethod(property.setter(), parameterType);
-                            method.invoke(instance, value);
-                            useFieldDirect = false;
-                        }
-                    }
-
-                    if (useFieldDirect && Reflect.isAssignableFrom(field.getType(), value.getClass()))
+                    if (!usedSetter && Reflect.isAssignableFrom(field.getType(), value.getClass()))
                         field.set(instance, value);
                 }
             }
@@ -667,6 +642,38 @@ public final class Reflect
                 return Exceptional.of(e);
             }
         return Exceptional.ofNullable(instance);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <A> Object extractFieldValue(Field field, Provision provision, Function<A, Object> valueCollector) {
+        if (Provision.FIELD == provision)
+            return valueCollector.apply((A) field);
+        else
+        {
+            String fieldName = Reflect.getFieldPropertyName(field);
+            return valueCollector.apply((A) fieldName);
+        }
+    }
+
+    private static <T> boolean canUseSetter(Class<T> type, T instance, Field field, Object value)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
+    {
+        if (field.isAnnotationPresent(Property.class))
+        {
+            Property property = field.getAnnotation(Property.class);
+
+            //noinspection CallToSuspiciousStringMethod
+            if (!property.setter().isEmpty() && Reflect.hasMethod(type, property.setter()))
+            {
+                Class<?> parameterType = field.getType();
+                if (Reflect.isNotVoid(property.accepts())) parameterType = property.accepts();
+
+                Method method = type.getMethod(property.setter(), parameterType);
+                method.invoke(instance, value);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
