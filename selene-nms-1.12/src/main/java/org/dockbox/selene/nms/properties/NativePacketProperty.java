@@ -27,7 +27,7 @@ import org.dockbox.selene.core.server.properties.InjectorProperty;
  * @param <T>
  *         The type of the native packet.
  */
-public class NativePacketProperty<T extends Packet> implements InjectorProperty<T>
+public class NativePacketProperty<T extends Packet<?>> implements InjectorProperty<T>
 {
 
     public static final String KEY = "SeleneSpongeNativePacket";
