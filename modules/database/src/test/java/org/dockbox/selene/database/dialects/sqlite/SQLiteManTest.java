@@ -19,13 +19,14 @@ package org.dockbox.selene.database.dialects.sqlite;
 
 import com.google.common.io.Files;
 
-import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.database.ISQLMan;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.database.properties.SQLColumnProperty;
 import org.dockbox.selene.structures.table.Table;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -48,10 +49,12 @@ class SQLiteManTest
             File copy = File.createTempFile("tmp", null);
             Files.copy(file, copy);
             SQLiteManTest.file = copy.toPath();
+            Assumptions.assumeTrue(SQLiteManTest.file.toFile().exists());
         }
         catch (IOException e)
         {
-            throw new UncheckedSeleneException(e);
+            Selene.log().warn("Skipping tests due to missing resources");
+            Assumptions.assumeTrue(false);
         }
     }
 
