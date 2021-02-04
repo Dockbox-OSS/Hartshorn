@@ -46,14 +46,16 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 
-public abstract class DefaultDiscordUtils implements DiscordUtils {
+public abstract class DefaultDiscordUtils implements DiscordUtils
+{
 
-    private static final Map<String, Triad<DiscordCommand, Method, Object>> commandMethods = SeleneUtils.emptyConcurrentMap();
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String WILDCARD = "*";
+    private static final Map<String, Triad<DiscordCommand, Method, Object>> commandMethods = SeleneUtils.emptyConcurrentMap();
 
     @Override
-    public boolean checkMessageExists(String messageId, String channelId) {
+    public boolean checkMessageExists(String messageId, String channelId)
+    {
         return this.getJDA().map(jda -> {
             TextChannel channel = jda.getTextChannelById(channelId);
             if (null == channel) return false;
@@ -64,7 +66,8 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
     @NotNull
     @Override
-    public Exceptional<Category> getLoggingCategory() {
+    public Exceptional<Category> getLoggingCategory()
+    {
         if (this.getJDA().isPresent())
             return Exceptional.ofNullable(this.getJDA().get().getCategoryById("638683800167251998"));
         return Exceptional.empty();
@@ -72,42 +75,50 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
     @NotNull
     @Override
-    public Exceptional<Guild> getGuild() {
+    public Exceptional<Guild> getGuild()
+    {
         return this.getGlobalTextChannel().map(GuildChannel::getGuild);
     }
 
     @Override
-    public void sendToTextChannel(@NotNull Text text, @NotNull MessageChannel channel) {
+    public void sendToTextChannel(@NotNull Text text, @NotNull MessageChannel channel)
+    {
         this.sendToTextChannel(text.toPlain(), channel);
     }
 
     @Override
-    public void sendToTextChannel(@NotNull CharSequence text, @NotNull MessageChannel channel) {
+    public void sendToTextChannel(@NotNull CharSequence text, @NotNull MessageChannel channel)
+    {
         channel.sendMessage(text).queue();
     }
 
     @Override
-    public void sendToTextChannel(@NotNull ResourceEntry text, @NotNull MessageChannel channel) {
+    public void sendToTextChannel(@NotNull ResourceEntry text, @NotNull MessageChannel channel)
+    {
         this.sendToTextChannel(text.plain(), channel);
     }
 
     @Override
-    public void sendToUser(@NotNull Text text, @NotNull User user) {
+    public void sendToUser(@NotNull Text text, @NotNull User user)
+    {
         this.sendToUser(text.toPlain(), user);
     }
 
     @Override
-    public void sendToUser(@NotNull CharSequence text, @NotNull User user) {
+    public void sendToUser(@NotNull CharSequence text, @NotNull User user)
+    {
         user.openPrivateChannel().queue(channel -> channel.sendMessage(text));
     }
 
     @Override
-    public void sendToUser(@NotNull ResourceEntry text, @NotNull User user) {
+    public void sendToUser(@NotNull ResourceEntry text, @NotNull User user)
+    {
         this.sendToUser(text.plain(), user);
     }
 
     @Override
-    public void registerCommandListener(@NotNull Object instance) {
+    public void registerCommandListener(@NotNull Object instance)
+    {
         Object obj = instance;
         if (instance instanceof Class) obj = Reflect.getInstance((Class<?>) instance);
 
@@ -131,8 +142,10 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
     @Override
     @SuppressWarnings("CallToSuspiciousStringMethod")
-    public void post(@NotNull String command, @NotNull DiscordCommandContext context) {
-        if (commandMethods.containsKey(command)) {
+    public void post(@NotNull String command, @NotNull DiscordCommandContext context)
+    {
+        if (commandMethods.containsKey(command))
+        {
             Triad<DiscordCommand, Method, Object> information = commandMethods.get(command);
             DiscordCommand annotation = information.getFirst();
 
@@ -147,7 +160,8 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
             // If all roles are allowed, we move on directly, otherwise we compare the ranks of the author first
             boolean userPermitted = WILDCARD.equals(annotation.minimumRankId());
-            if (!userPermitted) {
+            if (!userPermitted)
+            {
 
                 // Ensure the role exists at all
                 Exceptional<Role> or = this.getGuild().map(guild -> guild.getRoleById(annotation.minimumRankId()));
@@ -160,7 +174,8 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                         .orElse(false);
             }
 
-            if (!userPermitted) {
+            if (!userPermitted)
+            {
                 context.sendToChannel(IntegratedResource.DISCORD_COMMAND_NOT_PERMITTED);
                 return;
             }
@@ -168,16 +183,22 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
             Method method = information.getSecond();
             Object instance = information.getThird();
 
-            try {
+            try
+            {
                 method.invoke(instance, context);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                context.sendToChannel(IntegratedResource.DISCORD_COMMAND_ERRORED);
-                Selene.handle("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass().getCanonicalName() + "]");
             }
-        } else context.sendToChannel(IntegratedResource.DISCORD_COMMAND_UNKNOWN);
+            catch (IllegalAccessException | InvocationTargetException e)
+            {
+                context.sendToChannel(IntegratedResource.DISCORD_COMMAND_ERRORED);
+                Selene.handle("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass()
+                        .getCanonicalName() + "]");
+            }
+        }
+        else context.sendToChannel(IntegratedResource.DISCORD_COMMAND_UNKNOWN);
     }
 
-    private static boolean isValidChannel(@NotNull DiscordCommandContext context, ListeningLevel level) {
+    private static boolean isValidChannel(@NotNull DiscordCommandContext context, ListeningLevel level)
+    {
         boolean listensForBoth = ListeningLevel.BOTH == level;
         if (listensForBoth) return true;
 

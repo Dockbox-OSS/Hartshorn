@@ -19,22 +19,27 @@ package org.dockbox.selene.core.impl.command.values;
 
 import java.util.List;
 
-public abstract class AbstractFlagCollection<T> {
+public abstract class AbstractFlagCollection<T>
+{
 
     private T reference;
 
-    protected AbstractFlagCollection(T reference) {
+    protected AbstractFlagCollection(T reference)
+    {
         this.reference = reference;
     }
 
-    protected AbstractFlagCollection() {
+    protected AbstractFlagCollection()
+    {
     }
 
-    public T getReference() {
+    public T getReference()
+    {
         return this.reference;
     }
 
-    public void setReference(T reference) {
+    public void setReference(T reference)
+    {
         this.reference = reference;
     }
 

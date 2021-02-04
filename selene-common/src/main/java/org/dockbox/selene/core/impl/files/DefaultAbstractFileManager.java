@@ -29,21 +29,32 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-public abstract class DefaultAbstractFileManager extends FileManager {
+public abstract class DefaultAbstractFileManager extends FileManager
+{
 
-    protected DefaultAbstractFileManager(FileType fileType) {
+    protected DefaultAbstractFileManager(FileType fileType)
+    {
         super(fileType);
     }
 
     @NotNull
     @Override
-    public Path getDataFile(@NotNull Module module) {
+    public Path getDataFile(@NotNull Module module)
+    {
         return this.getDataFile(module, module.id());
     }
 
     @NotNull
     @Override
-    public Path getDataFile(@NotNull Module module, @NotNull String file) {
+    public Path getConfigFile(@NotNull Module module)
+    {
+        return this.getConfigFile(module, module.id());
+    }
+
+    @NotNull
+    @Override
+    public Path getDataFile(@NotNull Module module, @NotNull String file)
+    {
         return this.createFileIfNotExists(
                 this.getFileType().asPath(
                         this.getDataDir().resolve(module.id()),
@@ -54,13 +65,8 @@ public abstract class DefaultAbstractFileManager extends FileManager {
 
     @NotNull
     @Override
-    public Path getConfigFile(@NotNull Module module) {
-        return this.getConfigFile(module, module.id());
-    }
-
-    @NotNull
-    @Override
-    public Path getConfigFile(@NotNull Module module, @NotNull String file) {
+    public Path getConfigFile(@NotNull Module module, @NotNull String file)
+    {
         return this.createFileIfNotExists(
                 this.getFileType().asPath(
                         this.getModuleConfigsDir().resolve(module.id()),
@@ -71,40 +77,51 @@ public abstract class DefaultAbstractFileManager extends FileManager {
 
     @NotNull
     @Override
-    public Path createPathIfNotExists(@NotNull Path path) {
+    public Path createPathIfNotExists(@NotNull Path path)
+    {
         return SeleneUtils.createPathIfNotExists(path);
     }
 
     @NotNull
     @Override
-    public Path createFileIfNotExists(@NotNull Path file) {
+    public Path createFileIfNotExists(@NotNull Path file)
+    {
         return SeleneUtils.createFileIfNotExists(file);
     }
 
     @Override
-    public boolean move(Path sourceFile, Path targetFile) {
+    public boolean move(Path sourceFile, Path targetFile)
+    {
         this.createFileIfNotExists(targetFile);
-        try {
+        try
+        {
             Files.move(sourceFile, targetFile, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
             return true;
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             return false;
         }
     }
 
     @Override
-    public boolean copy(Path sourceFile, Path targetFile) {
+    public boolean copy(Path sourceFile, Path targetFile)
+    {
         this.createFileIfNotExists(targetFile);
-        try {
+        try
+        {
             Files.copy(sourceFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
             return true;
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             return false;
         }
     }
 
     @Override
-    public boolean copyDefaultFile(String defaultFileName, Path targetFile) {
+    public boolean copyDefaultFile(String defaultFileName, Path targetFile)
+    {
         if (targetFile.toFile().exists() && !SeleneUtils.isFileEmpty(targetFile)) return false;
         return Selene.getResourceFile(defaultFileName).map(resource -> {
             return this.copy(resource, targetFile);

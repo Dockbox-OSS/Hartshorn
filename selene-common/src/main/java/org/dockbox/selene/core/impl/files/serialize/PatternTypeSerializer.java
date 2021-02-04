@@ -32,15 +32,20 @@ import java.util.regex.Pattern;
 import io.leangen.geantyref.TypeToken;
 
 
-public class PatternTypeSerializer implements TypeSerializer<Pattern> {
+public class PatternTypeSerializer implements TypeSerializer<Pattern>
+{
 
     @Override
-    public Pattern deserialize(Type type, ConfigurationNode node) throws SerializationException {
+    public Pattern deserialize(Type type, ConfigurationNode node)
+            throws SerializationException
+    {
         return Pattern.compile(Objects.requireNonNull(node.getString()));
     }
 
     @Override
-    public void serialize(Type type, @Nullable Pattern obj, ConfigurationNode node) throws SerializationException {
+    public void serialize(Type type, @Nullable Pattern obj, ConfigurationNode node)
+            throws SerializationException
+    {
         assert null != obj : "Pattern object is required";
         node.set(TypeToken.get(String.class), obj.pattern());
     }

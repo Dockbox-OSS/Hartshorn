@@ -66,29 +66,31 @@ import java.util.regex.Pattern;
  * @see <a href="http://x-stream.github.io/tutorial.html">XStream tutorial</a>
  * @see <a href="http://x-stream.github.io/security.html">XStream security</a>
  */
-public final class XStreamUtils {
-
-    private static Map<String, Class<?>> aliasedTypes;
+public final class XStreamUtils
+{
 
     private static final String UTF_8 = "UTF-8";
+    private static Map<String, Class<?>> aliasedTypes;
 
     private XStreamUtils() { }
 
     /**
-     * NOTE: Make sure you call fromXML and toXML with UTF-8 streams!
+     * Reads an XML file with XStream using UTF-8 encoding.
      *
-     * @return an XStream object with the correct aliases
+     * @param type
+     *         the type of object to load
+     * @param file
+     *         the file to load from
+     * @param allowedTypes
+     *         any other types allowed to be loaded
      */
-    public static XStream getXStream(ClassLoader classLoader) {
-        if (null == classLoader) {
-            return getXStream();
-        }
-
-        XStream xstream = new XStream(new WstxDriver());
-        xstream.setClassLoader(classLoader);
-
-        configureXStream(xstream);
-        return xstream;
+    public static <T> T fromXML(Class<T> type, File file, Class<?>... allowedTypes)
+            throws IOException
+    {
+        XStream stream = getXStream();
+        stream.allowTypes(new Class[]{ type });
+        stream.allowTypes(allowedTypes);
+        return fromXml(stream, type, file, UTF_8);
     }
 
     /**
@@ -96,19 +98,41 @@ public final class XStreamUtils {
      *
      * @return an XStream object with the correct aliases
      */
-    public static XStream getXStream() {
+    public static XStream getXStream()
+    {
         XStream xstream = new XStream(new WstxDriver());
         configureXStream(xstream);
         return xstream;
     }
 
-    private static void configureXStream(XStream xstream) {
-        if (null == aliasedTypes) {
+    /**
+     * @param type
+     *         does not allow type, only check is instance
+     */
+    private static <T> @Nullable T fromXml(XStream stream, Class<T> type, File file, String charSet)
+            throws IOException
+    {
+        Object object = fromXml(stream, file, charSet);
+        if (type.isInstance(object))
+        {
+            return type.cast(object);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private static void configureXStream(XStream xstream)
+    {
+        if (null == aliasedTypes)
+        {
             aliasedTypes = SeleneUtils.emptyConcurrentMap();
             Collection<Class<?>> annotatedTypes = Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Metadata.class);
             annotatedTypes.forEach(type -> {
                 Metadata metadata = type.getAnnotation(Metadata.class);
-                if (aliasedTypes.containsKey(metadata.alias())) Selene.log().warn("Attempting to register a duplicate entity alias '" + metadata.alias() + "'");
+                if (aliasedTypes.containsKey(metadata.alias()))
+                    Selene.log().warn("Attempting to register a duplicate entity alias '" + metadata.alias() + "'");
                 xstream.alias(metadata.alias(), type);
                 // Put the alias last, so if xstream.alias ever throws a Exception this won't be called
                 aliasedTypes.put(metadata.alias(), type);
@@ -128,9 +152,9 @@ public final class XStreamUtils {
         xstream.allowTypeHierarchy(Map.class);
         xstream.allowTypeHierarchy(Enum.class);
 
-        xstream.allowTypes(new Class[]{Mapper.Null.class});
+        xstream.allowTypes(new Class[]{ Mapper.Null.class });
 
-        xstream.allowTypesByWildcard(new String[] {
+        xstream.allowTypesByWildcard(new String[]{
                 "org.dockbox.selene.**"
         });
 
@@ -138,50 +162,28 @@ public final class XStreamUtils {
         xstream.setMode(XStream.NO_REFERENCES);
     }
 
-    /**
-     * Reads an XML file with XStream using UTF-8 encoding.
-     *
-     * @param type
-     *         the type of object to load
-     * @param file
-     *         the file to load from
-     * @param allowedTypes
-     *         any other types allowed to be loaded
-     */
-    public static <T> T fromXML(Class<T> type, File file, Class<?>... allowedTypes) throws IOException {
-        XStream stream = getXStream();
-        stream.allowTypes(new Class[]{type});
-        stream.allowTypes(allowedTypes);
-        return fromXml(stream, type, file, UTF_8);
-    }
-
-    /**
-     * @param type
-     *         does not allow type, only check is instance
-     */
-    private static <T> @Nullable T fromXml(XStream stream, Class<T> type, File file, String charSet) throws IOException {
-        Object object = fromXml(stream, file, charSet);
-        if (type.isInstance(object)) {
-            return type.cast(object);
-        } else {
-            return null;
-        }
-    }
-
     private static Object fromXml(XStream stream, File file, String charSet)
-            throws IOException {
+            throws IOException
+    {
         InputStreamReader reader = null;
-        try {
+        try
+        {
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-            if (null != charSet) {
+            if (null != charSet)
+            {
                 reader = new InputStreamReader(in, charSet);
-            } else {
+            }
+            else
+            {
                 reader = new InputStreamReader(in);
             }
 
             return stream.fromXML(reader);
-        } finally {
-            if (null != reader) {
+        }
+        finally
+        {
+            if (null != reader)
+            {
                 reader.close();
             }
         }
@@ -190,22 +192,48 @@ public final class XStreamUtils {
     /**
      * Writes an Object to an XML file with XStream using UTF-8 encoding.
      */
-    public static void toXML(Object object, File file) throws IOException {
+    public static void toXML(Object object, File file)
+            throws IOException
+    {
         XStream stream = getXStream(object.getClass().getClassLoader());
-        stream.allowTypes(new Class[]{object.getClass()});
+        stream.allowTypes(new Class[]{ object.getClass() });
         toXml(stream, object, file);
     }
 
-    private static void toXml(XStream stream, Object object, File file) throws IOException {
+    /**
+     * NOTE: Make sure you call fromXML and toXML with UTF-8 streams!
+     *
+     * @return an XStream object with the correct aliases
+     */
+    public static XStream getXStream(ClassLoader classLoader)
+    {
+        if (null == classLoader)
+        {
+            return getXStream();
+        }
+
+        XStream xstream = new XStream(new WstxDriver());
+        xstream.setClassLoader(classLoader);
+
+        configureXStream(xstream);
+        return xstream;
+    }
+
+    private static void toXml(XStream stream, Object object, File file)
+            throws IOException
+    {
         toXml(stream, object, file, UTF_8);
     }
 
     /**
      * Prefer not to call this method directly and used the default UTF-8 export functions
      */
-    public static void toXml(XStream stream, Object object, File file, String encoding) throws IOException {
+    public static void toXml(XStream stream, Object object, File file, String encoding)
+            throws IOException
+    {
         try (OutputStreamWriter writer = new OutputStreamWriter(new BufferedOutputStream(
-                new FileOutputStream(file)), encoding)) {
+                new FileOutputStream(file)), encoding))
+        {
             stream.marshal(object, new PrettyPrintWriter(writer));
         }
     }
@@ -220,36 +248,46 @@ public final class XStreamUtils {
      *         the type of object to load, be default this type will be white listed,
      *         if additional types are needed, use create().allowTypes(types).readQuietly(file, type, fallBack).
      */
-    public static <T> @Nullable T fromXMLQuietly(File file, Class<T> type, Supplier<T> fallback) {
-        if (!file.exists() || !file.isFile()) {
+    public static <T> @Nullable T fromXMLQuietly(File file, Class<T> type, Supplier<T> fallback)
+    {
+        if (!file.exists() || !file.isFile())
+        {
             return null != fallback ? fallback.get() : null;
         }
 
         XStream stream = getXStream(type.getClassLoader());
-        stream.allowTypes(new Class[]{type});
+        stream.allowTypes(new Class[]{ type });
         return fromXmlQuietly(stream, file, UTF_8, type, fallback);
     }
 
     private static <T> @Nullable T fromXmlQuietly(XStream stream,
                                                   File file, String charSet,
-                                                  Class<T> type, Supplier<T> fallback) {
+                                                  Class<T> type, Supplier<T> fallback)
+    {
 
-        if (!file.exists() || !file.isFile()) {
+        if (!file.exists() || !file.isFile())
+        {
             return null != fallback ? fallback.get() : null;
         }
 
-        try {
+        try
+        {
             Object object = fromXml(stream, type, file, charSet);
-            if (type.isInstance(object)) {
+            if (type.isInstance(object))
+            {
                 return type.cast(object);
-            } else {
+            }
+            else
+            {
                 String message = "Unexpected object type! expected: " + type
                         + ", got " + object.getClass();
                 Selene.log().warn(message);
                 assert false : message;
                 return null != fallback ? fallback.get() : null;
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             Selene.handle(e);
             return null != fallback ? fallback.get() : null;
         }
@@ -259,16 +297,21 @@ public final class XStreamUtils {
      * Writes an Object to an XML file with XStream using UTF-8 encoding
      * using the object class ClassLoader and ignoring any exception.
      */
-    public static void toXMLQuietly(Object object, File file) {
+    public static void toXMLQuietly(Object object, File file)
+    {
         XStream stream = getXStream(object.getClass().getClassLoader());
         toXmlQuietly(stream, object, file);
     }
 
-    private static void toXmlQuietly(XStream stream, Object object, File file) {
+    private static void toXmlQuietly(XStream stream, Object object, File file)
+    {
         try (OutputStreamWriter writer = new OutputStreamWriter(new BufferedOutputStream(
-                new FileOutputStream(file)), StandardCharsets.UTF_8)) {
+                new FileOutputStream(file)), StandardCharsets.UTF_8))
+        {
             stream.toXML(object, writer);
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             Selene.handle(e);
         }
     }
@@ -277,26 +320,30 @@ public final class XStreamUtils {
     /**
      * @return a builder to configure the XStream before reading or writing a XML file.
      */
-    public static XStreamBuilder create() {
+    public static XStreamBuilder create()
+    {
         return new XStreamBuilder(getXStream());
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public static final class XStreamBuilder {
+    public static final class XStreamBuilder
+    {
 
         private final XStream stream;
 
         private boolean classLoaderSet;
         private boolean fallBackToPlatformEncoding;
 
-        private XStreamBuilder(XStream stream) {
+        private XStreamBuilder(XStream stream)
+        {
             this.stream = stream;
         }
 
         /**
          * @see XStream#alias(String, Class)
          */
-        public XStreamBuilder alias(String name, Class<?> type) {
+        public XStreamBuilder alias(String name, Class<?> type)
+        {
             this.stream.alias(name, type);
             return this;
         }
@@ -304,7 +351,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#alias(String, Class, Class)
          */
-        public <T> XStreamBuilder alias(String name, Class<T> type, Class<? extends T> defaultImplementation) {
+        public <T> XStreamBuilder alias(String name, Class<T> type, Class<? extends T> defaultImplementation)
+        {
             this.stream.alias(name, type, defaultImplementation);
             return this;
         }
@@ -312,7 +360,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#aliasPackage(String, String)
          */
-        public XStreamBuilder aliasPackage(String name, String pkgName) {
+        public XStreamBuilder aliasPackage(String name, String pkgName)
+        {
             this.stream.aliasPackage(name, pkgName);
             return this;
         }
@@ -320,7 +369,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#aliasField(String, Class, String)
          */
-        public XStreamBuilder aliasField(String alias, Class<?> definedIn, String fieldName) {
+        public XStreamBuilder aliasField(String alias, Class<?> definedIn, String fieldName)
+        {
             Reflect.hasFieldRecursive(definedIn, fieldName);
             this.stream.aliasField(alias, definedIn, fieldName);
             return this;
@@ -329,7 +379,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#aliasAttribute(String, String)
          */
-        public XStreamBuilder aliasAttribute(String alias, String attributeName) {
+        public XStreamBuilder aliasAttribute(String alias, String attributeName)
+        {
             this.stream.aliasAttribute(alias, attributeName);
             return this;
         }
@@ -337,7 +388,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#aliasAttribute(Class, String, String)
          */
-        public XStreamBuilder aliasAttribute(Class<?> definedIn, String attributeName, String alias) {
+        public XStreamBuilder aliasAttribute(Class<?> definedIn, String attributeName, String alias)
+        {
             Reflect.hasFieldRecursive(definedIn, attributeName);
             this.stream.aliasAttribute(definedIn, attributeName, alias);
             return this;
@@ -346,7 +398,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#aliasSystemAttribute(String, String)
          */
-        public XStreamBuilder aliasSystemAttribute(String alias, String systemAttributeName) {
+        public XStreamBuilder aliasSystemAttribute(String alias, String systemAttributeName)
+        {
             this.stream.aliasSystemAttribute(alias, systemAttributeName);
             return this;
         }
@@ -354,7 +407,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#aliasType(String, Class)
          */
-        public XStreamBuilder aliasType(String name, Class<?> type) {
+        public XStreamBuilder aliasType(String name, Class<?> type)
+        {
             this.stream.aliasType(name, type);
             return this;
         }
@@ -362,7 +416,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#allowTypeHierarchy(Class)
          */
-        public XStreamBuilder allowTypeHierarchy(Class<?> type) {
+        public XStreamBuilder allowTypeHierarchy(Class<?> type)
+        {
             this.stream.allowTypeHierarchy(type);
             return this;
         }
@@ -370,22 +425,25 @@ public final class XStreamUtils {
         /**
          * @see XStream#allowTypes(Class[])
          */
-        public XStreamBuilder allowTypes(Class<?>... types) {
-            this.stream.allowTypes(types);
-            return this;
+        public XStreamBuilder allowTypes(Collection<? extends Class<?>> types)
+        {
+            return this.allowTypes(types.toArray(new Class[0]));
         }
 
         /**
          * @see XStream#allowTypes(Class[])
          */
-        public XStreamBuilder allowTypes(Collection<? extends Class<?>> types) {
-            return this.allowTypes(types.toArray(new Class[0]));
+        public XStreamBuilder allowTypes(Class<?>... types)
+        {
+            this.stream.allowTypes(types);
+            return this;
         }
 
         /**
          * @see XStream#allowTypesByRegExp(Pattern[])
          */
-        public XStreamBuilder allowTypesByRegExp(Pattern... patterns) {
+        public XStreamBuilder allowTypesByRegExp(Pattern... patterns)
+        {
             this.stream.allowTypesByRegExp(patterns);
             return this;
         }
@@ -393,7 +451,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#allowTypesByRegExp(String[])
          */
-        public XStreamBuilder allowTypesByRegExp(String... patterns) {
+        public XStreamBuilder allowTypesByRegExp(String... patterns)
+        {
             this.stream.allowTypesByRegExp(patterns);
             return this;
         }
@@ -401,33 +460,17 @@ public final class XStreamUtils {
         /**
          * @see XStream#allowTypesByWildcard(String[])
          */
-        public XStreamBuilder allowTypesByWildcard(String... patterns) {
+        public XStreamBuilder allowTypesByWildcard(String... patterns)
+        {
             this.stream.allowTypesByWildcard(patterns);
             return this;
         }
 
-
-        /**
-         * @see XStream#setClassLoader(ClassLoader)
-         */
-        public XStreamBuilder classLoader(ClassLoader loader) {
-            this.stream.setClassLoader(loader);
-            this.classLoaderSet = true;
-            return this;
-        }
-
-        /**
-         * @see XStream#setClassLoader(ClassLoader)
-         */
-        public XStreamBuilder objectClassLoader(Object object) {
-            return this.classLoader(object.getClass().getClassLoader());
-        }
-
-
         /**
          * @see XStream#denyTypes(Class[])
          */
-        public XStreamBuilder denyTypes(Class<?>... types) {
+        public XStreamBuilder denyTypes(Class<?>... types)
+        {
             this.stream.denyTypes(types);
             return this;
         }
@@ -435,7 +478,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#denyTypeHierarchy(Class)
          */
-        public XStreamBuilder denyTypeHierarchy(Class<?> type) {
+        public XStreamBuilder denyTypeHierarchy(Class<?> type)
+        {
             this.stream.denyTypeHierarchy(type);
             return this;
         }
@@ -443,7 +487,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#denyTypesByRegExp(Pattern[])
          */
-        public XStreamBuilder denyTypesByRegExp(Pattern... regexps) {
+        public XStreamBuilder denyTypesByRegExp(Pattern... regexps)
+        {
             this.stream.denyTypesByRegExp(regexps);
             return this;
         }
@@ -451,7 +496,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#denyTypesByRegExp(String[])
          */
-        public XStreamBuilder denyTypesByRegExp(String... regexps) {
+        public XStreamBuilder denyTypesByRegExp(String... regexps)
+        {
             this.stream.denyTypesByRegExp(regexps);
             return this;
         }
@@ -459,16 +505,17 @@ public final class XStreamUtils {
         /**
          * @see XStream#denyTypesByWildcard(String[])
          */
-        public XStreamBuilder denyTypesByWildcard(String... patterns) {
+        public XStreamBuilder denyTypesByWildcard(String... patterns)
+        {
             this.stream.denyTypesByWildcard(patterns);
             return this;
         }
 
-
         /**
          * @see XStream#ignoreUnknownElements()
          */
-        public XStreamBuilder ignoreUnknownElements() {
+        public XStreamBuilder ignoreUnknownElements()
+        {
             this.stream.ignoreUnknownElements();
             return this;
         }
@@ -476,7 +523,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#ignoreUnknownElements(Pattern)
          */
-        public XStreamBuilder ignoreUnknownElements(Pattern pattern) {
+        public XStreamBuilder ignoreUnknownElements(Pattern pattern)
+        {
             this.stream.ignoreUnknownElements(pattern);
             return this;
         }
@@ -484,7 +532,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#ignoreUnknownElements(String)
          */
-        public XStreamBuilder ignoreUnknownElements(String pattern) {
+        public XStreamBuilder ignoreUnknownElements(String pattern)
+        {
             this.stream.ignoreUnknownElements(pattern);
             return this;
         }
@@ -492,7 +541,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#omitField(Class, String)
          */
-        public XStreamBuilder omitField(Class<?> type, String field) {
+        public XStreamBuilder omitField(Class<?> type, String field)
+        {
             Reflect.hasFieldRecursive(type, field);
             this.stream.omitField(type, field);
             return this;
@@ -501,7 +551,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#processAnnotations(Class[])
          */
-        public XStreamBuilder processAnnotations(Class<?>... types) {
+        public XStreamBuilder processAnnotations(Class<?>... types)
+        {
             this.stream.processAnnotations(types);
             return this;
         }
@@ -509,16 +560,17 @@ public final class XStreamUtils {
         /**
          * @see XStream#setMode(int)
          */
-        public XStreamBuilder setMode(int mode) {
+        public XStreamBuilder setMode(int mode)
+        {
             this.stream.setMode(mode);
             return this;
         }
 
-
         /**
          * @see XStream#registerConverter(Converter)
          */
-        public XStreamBuilder registerConverter(Converter converter) {
+        public XStreamBuilder registerConverter(Converter converter)
+        {
             this.stream.registerConverter(converter);
             return this;
         }
@@ -526,7 +578,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#registerConverter(Converter, int)
          */
-        public XStreamBuilder registerConverter(Converter converter, int priority) {
+        public XStreamBuilder registerConverter(Converter converter, int priority)
+        {
             this.stream.registerConverter(converter, priority);
             return this;
         }
@@ -534,7 +587,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#registerConverter(SingleValueConverter)
          */
-        public XStreamBuilder registerConverter(SingleValueConverter converter) {
+        public XStreamBuilder registerConverter(SingleValueConverter converter)
+        {
             this.stream.registerConverter(converter);
             return this;
         }
@@ -542,7 +596,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#registerConverter(SingleValueConverter, int)
          */
-        public XStreamBuilder registerConverter(SingleValueConverter converter, int priority) {
+        public XStreamBuilder registerConverter(SingleValueConverter converter, int priority)
+        {
             this.stream.registerConverter(converter, priority);
             return this;
         }
@@ -550,7 +605,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#registerLocalConverter(Class, String, Converter)
          */
-        public XStreamBuilder registerLocalConverter(Class<?> definedIn, String fieldName, Converter converter) {
+        public XStreamBuilder registerLocalConverter(Class<?> definedIn, String fieldName, Converter converter)
+        {
             Reflect.hasFieldRecursive(definedIn, fieldName);
             this.stream.registerLocalConverter(definedIn, fieldName, converter);
             return this;
@@ -559,7 +615,8 @@ public final class XStreamUtils {
         /**
          * @see XStream#registerLocalConverter(Class, String, SingleValueConverter)
          */
-        public XStreamBuilder registerLocalConverter(Class<?> definedIn, String fieldName, SingleValueConverter converter) {
+        public XStreamBuilder registerLocalConverter(Class<?> definedIn, String fieldName, SingleValueConverter converter)
+        {
             Reflect.hasFieldRecursive(definedIn, fieldName);
             this.stream.registerLocalConverter(definedIn, fieldName, converter);
             return this;
@@ -573,42 +630,50 @@ public final class XStreamUtils {
          * @see #readCollection(Class, File)
          * @see #readQuietly(File, Class, Supplier)
          */
-        public XStreamBuilder fallBackToPlatformEncoding() {
+        public XStreamBuilder fallBackToPlatformEncoding()
+        {
             this.fallBackToPlatformEncoding = true;
             return this;
-        }
-
-        public Object read(File file) throws IOException {
-            try {
-                return fromXml(this.stream, file, UTF_8);
-            } catch (IOException e) {
-                if (this.fallBackToPlatformEncoding) {
-                    return fromXml(this.stream, file, null);
-                } else {
-                    throw e;
-                }
-            }
         }
 
         /**
          * Allowing the given type and using its class loader if not yet set,
          * read an instance of that type from the given file.
          */
-        public <T> T read(Class<T> type, File file) throws IOException {
-            if (!this.classLoaderSet) {
+        public <T> T read(Class<T> type, File file)
+                throws IOException
+        {
+            if (!this.classLoaderSet)
+            {
                 this.classLoader(type.getClassLoader());
             }
             this.allowTypes(type);
 
-            try {
+            try
+            {
                 return fromXml(this.stream, type, file, UTF_8);
-            } catch (IOException e) {
-                if (this.fallBackToPlatformEncoding) {
+            }
+            catch (IOException e)
+            {
+                if (this.fallBackToPlatformEncoding)
+                {
                     return fromXml(this.stream, type, file, null);
-                } else {
+                }
+                else
+                {
                     throw e;
                 }
             }
+        }
+
+        /**
+         * @see XStream#setClassLoader(ClassLoader)
+         */
+        public XStreamBuilder classLoader(ClassLoader loader)
+        {
+            this.stream.setClassLoader(loader);
+            this.classLoaderSet = true;
+            return this;
         }
 
         /**
@@ -617,16 +682,21 @@ public final class XStreamUtils {
          *
          * @return the read instance of the given type, or the fall back on any error
          */
-        public <T> T readQuietly(File file, Class<T> type, Supplier<T> fallBack) {
-            if (!this.classLoaderSet) {
+        public <T> T readQuietly(File file, Class<T> type, Supplier<T> fallBack)
+        {
+            if (!this.classLoaderSet)
+            {
                 this.classLoader(type.getClassLoader());
             }
             this.allowTypes(type);
 
-            if (this.fallBackToPlatformEncoding) {
+            if (this.fallBackToPlatformEncoding)
+            {
                 return fromXmlQuietly(this.stream, file, UTF_8, type,
                         () -> fromXmlQuietly(this.stream, file, null, type, fallBack));
-            } else {
+            }
+            else
+            {
                 return fromXmlQuietly(this.stream, file, UTF_8, type, fallBack);
             }
         }
@@ -635,8 +705,11 @@ public final class XStreamUtils {
          * Allowing the given element type and using its class loader if not yet set,
          * read an collection of that type from the given file.
          */
-        public <T> Collection<T> readCollection(Class<T> elementType, File file) throws IOException {
-            if (!this.classLoaderSet) {
+        public <T> Collection<T> readCollection(Class<T> elementType, File file)
+                throws IOException
+        {
+            if (!this.classLoaderSet)
+            {
                 this.classLoader(elementType.getClassLoader());
             }
             this.allowTypes(elementType);
@@ -646,17 +719,49 @@ public final class XStreamUtils {
             return loaded;
         }
 
+        public Object read(File file)
+                throws IOException
+        {
+            try
+            {
+                return fromXml(this.stream, file, UTF_8);
+            }
+            catch (IOException e)
+            {
+                if (this.fallBackToPlatformEncoding)
+                {
+                    return fromXml(this.stream, file, null);
+                }
+                else
+                {
+                    throw e;
+                }
+            }
+        }
 
-        public void write(Object object, File file) throws IOException {
-            if (!this.classLoaderSet) {
+        public void write(Object object, File file)
+                throws IOException
+        {
+            if (!this.classLoaderSet)
+            {
                 // probably not needed for write...
                 this.objectClassLoader(object);
             }
             toXml(this.stream, object, file);
         }
 
-        public void writeQuietly(Object object, File file) {
-            if (!this.classLoaderSet) {
+        /**
+         * @see XStream#setClassLoader(ClassLoader)
+         */
+        public XStreamBuilder objectClassLoader(Object object)
+        {
+            return this.classLoader(object.getClass().getClassLoader());
+        }
+
+        public void writeQuietly(Object object, File file)
+        {
+            if (!this.classLoaderSet)
+            {
                 this.objectClassLoader(object);
             }
             toXmlQuietly(this.stream, object, file);
@@ -670,7 +775,8 @@ public final class XStreamUtils {
          *
          * @return the actual {@link XStream} configured so far
          */
-        public XStream getStream() {
+        public XStream getStream()
+        {
             return this.stream;
         }
     }

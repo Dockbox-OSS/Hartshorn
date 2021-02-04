@@ -20,8 +20,10 @@
  */
 package org.dockbox.selene.core.impl.files.util;
 
-public interface ClassConstructor<S> {
+public interface ClassConstructor<S>
+{
 
-    <T extends S> T construct(Class<T> clazz) throws Throwable;
+    <T extends S> T construct(Class<T> clazz)
+            throws Throwable;
 
 }

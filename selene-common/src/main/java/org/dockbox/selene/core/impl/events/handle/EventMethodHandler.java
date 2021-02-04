@@ -30,7 +30,8 @@ import java.util.Objects;
  * {@link com.sk89q.worldedit.util.eventbus.MethodEventHandler} so it handles exceptions appropriately according to
  * Selene conventions.
  */
-public class EventMethodHandler extends EventHandler {
+public class EventMethodHandler extends EventHandler
+{
 
     private final Object object;
     private final Method method;
@@ -38,11 +39,15 @@ public class EventMethodHandler extends EventHandler {
     /**
      * Create a new event handler.
      *
-     * @param priority The priority at which the handler should be executed
-     * @param object The listener object in which the method is invoked
-     * @param method The method which is invoked
+     * @param priority
+     *         The priority at which the handler should be executed
+     * @param object
+     *         The listener object in which the method is invoked
+     * @param method
+     *         The method which is invoked
      */
-    public EventMethodHandler(Priority priority, Object object, Method method) {
+    public EventMethodHandler(Priority priority, Object object, Method method)
+    {
         super(priority);
         Preconditions.checkNotNull(method);
         this.object = object;
@@ -54,33 +59,41 @@ public class EventMethodHandler extends EventHandler {
      *
      * @return the method
      */
-    public Method getMethod() {
+    public Method getMethod()
+    {
         return this.method;
     }
 
     @Override
-    public void dispatch(Object event) throws Exception {
-        try {
+    public void dispatch(Object event)
+            throws Exception
+    {
+        try
+        {
             this.method.invoke(this.object, event);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             Selene.handle("Could not invoke event listener", e);
         }
     }
 
     @Override
-    public boolean equals(Object o) {
+    public int hashCode()
+    {
+        int result = null != this.object ? this.object.hashCode() : 0;
+        result = 31 * result + this.method.hashCode();
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
         if (this == o) return true;
         if (null == o || this.getClass() != o.getClass()) return false;
 
         EventMethodHandler that = (EventMethodHandler) o;
 
         return this.method.equals(that.method) && Objects.equals(this.object, that.object);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = null != this.object ? this.object.hashCode() : 0;
-        result = 31 * result + this.method.hashCode();
-        return result;
     }
 }
