@@ -170,7 +170,7 @@ public class SimpleModuleManager implements ModuleManager
         {
             try
             {
-                String formattedDependency = this.convertDependencyName(dependency);
+                String formattedDependency = SimpleModuleManager.convertDependencyName(dependency);
                 // Using Package.getPackage would only return a package if the package has been used by the classloader
                 // before this call has been made. By requesting it as a resource we can ensure it can be loaded.
                 // == Warning! ==
@@ -204,7 +204,7 @@ public class SimpleModuleManager implements ModuleManager
                 Constructor<T> defaultConstructor = entry.getConstructor();
                 defaultConstructor.setAccessible(true);
                 instance = defaultConstructor.newInstance();
-                this.injectMembers(instance, context, header);
+                SimpleModuleManager.injectMembers(instance, context, header);
 
                 context.addStatus(entry, ModuleStatus.LOADED);
                 Selene.getServer().bindUtility(entry, instance);
@@ -242,14 +242,14 @@ public class SimpleModuleManager implements ModuleManager
      *
      * @return The formatted dependency format
      */
-    private String convertDependencyName(String dependency)
+    private static String convertDependencyName(String dependency)
     {
         dependency = dependency.replaceAll("\\.", "/");
         dependency = dependency.replaceAll("/class", ".class");
         return dependency;
     }
 
-    private <T> void injectMembers(T instance, ModuleContext context, Module header)
+    private static <T> void injectMembers(T instance, ModuleContext context, Module header)
     {
         Selene.getServer().injectMembers(instance);
         Selene.getServer().createModuleInjector(instance, header, context).injectMembers(instance);

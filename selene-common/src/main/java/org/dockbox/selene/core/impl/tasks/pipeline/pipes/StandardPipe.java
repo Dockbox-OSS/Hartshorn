@@ -31,6 +31,7 @@ public interface StandardPipe<I, O> extends IPipe<I, O>
     O apply(Exceptional<I> input)
             throws Exception;
 
+    @SuppressWarnings("rawtypes")
     @Override
     default Class<? extends IPipe> getType()
     {

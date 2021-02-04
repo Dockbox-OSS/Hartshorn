@@ -37,7 +37,6 @@ public class PatternTypeSerializer implements TypeSerializer<Pattern>
 
     @Override
     public Pattern deserialize(Type type, ConfigurationNode node)
-            throws SerializationException
     {
         return Pattern.compile(Objects.requireNonNull(node.getString()));
     }

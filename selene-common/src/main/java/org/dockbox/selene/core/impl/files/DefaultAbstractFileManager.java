@@ -123,8 +123,8 @@ public abstract class DefaultAbstractFileManager extends FileManager
     public boolean copyDefaultFile(String defaultFileName, Path targetFile)
     {
         if (targetFile.toFile().exists() && !SeleneUtils.isFileEmpty(targetFile)) return false;
-        return Selene.getResourceFile(defaultFileName).map(resource -> {
-            return this.copy(resource, targetFile);
-        }).orElse(false);
+        return Selene.getResourceFile(defaultFileName)
+                .map(resource -> this.copy(resource, targetFile))
+                .orElse(false);
     }
 }

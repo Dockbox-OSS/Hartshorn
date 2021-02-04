@@ -148,7 +148,8 @@ public enum DefaultParamProcessors
         }
         else if (object instanceof Optional<?>)
         {
-            if (((Optional<?>) object).isPresent()) return ((Optional<?>) object).get();
+            if (((Optional<?>) object).isPresent()) //noinspection OptionalGetWithoutIsPresent
+                return ((Optional<?>) object).get();
             else if (annotation.skipIfNull()) throw new SkipEventException();
 
         }
@@ -170,6 +171,7 @@ public enum DefaultParamProcessors
     <A extends Annotation> DefaultParamProcessors(Class<A> annotationClass, EventStage stage, AbstractEnumEventParamProcessor<A> processor)
     {
         this.stage = stage;
+        // TODO: Refactor to inner class
         this.processorSupplier = () -> new AbstractEventParamProcessor<A>()
         {
             @Override

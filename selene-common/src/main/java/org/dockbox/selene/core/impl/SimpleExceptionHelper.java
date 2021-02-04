@@ -57,7 +57,7 @@ public class SimpleExceptionHelper implements ExceptionHelper
         if (null != exception)
         {
             Selene.log().error("Exception: " + exception.getClass().getCanonicalName());
-            if (null != message && !"".equals(message)) Selene.log().error("Message: " + message);
+            if (null != message && !message.isEmpty()) Selene.log().error("Message: " + message);
 
             if (0 < exception.getStackTrace().length)
             {
@@ -88,7 +88,7 @@ public class SimpleExceptionHelper implements ExceptionHelper
     public void printMinimal(@NonNls @Nullable String message, @Nullable Throwable exception, boolean stacktrace)
     {
         Selene.log().error(SimpleExceptionHelper.separator);
-        if (null != exception && null != message && !"".equals(message))
+        if (null != exception && null != message && !message.isEmpty())
         {
             Selene.log().error(exception.getClass().getSimpleName() + ": " + message);
             if (stacktrace) Selene.log().error(Arrays.toString(exception.getStackTrace()));

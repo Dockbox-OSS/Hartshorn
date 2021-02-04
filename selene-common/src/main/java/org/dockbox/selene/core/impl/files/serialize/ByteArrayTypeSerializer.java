@@ -32,6 +32,7 @@ import java.util.List;
 
 import io.leangen.geantyref.TypeToken;
 
+@SuppressWarnings("AnonymousInnerClassMayBeStatic")
 public class ByteArrayTypeSerializer implements TypeSerializer<byte[]>
 {
 

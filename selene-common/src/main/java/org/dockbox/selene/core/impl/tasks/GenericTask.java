@@ -21,6 +21,7 @@ import org.dockbox.selene.core.impl.tasks.pipeline.pipelines.Pipeline;
 import org.dockbox.selene.core.impl.tasks.pipeline.pipes.EqualPipe;
 import org.dockbox.selene.core.tasks.AbstractTask;
 
+@SuppressWarnings("AbstractClassNeverImplemented") // API type
 public abstract class GenericTask extends AbstractTask
 {
 

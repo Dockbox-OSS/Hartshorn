@@ -59,11 +59,11 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
 
         // @formatter:off
         int c;
-        if ((c = Integer.compare(o1.priority, o2.priority)) != 0) return c;
-        if ((c = o1.method.getName().compareTo(o2.method.getName())) != 0) return c;
-        if ((c = o1.eventType.getName().compareTo(o2.eventType.getName())) != 0) return c;
-        if ((c = Integer.compare(o1.listener.hashCode(), o2.listener.hashCode())) != 0) return c;
-        if ((c = Integer.compare(o1.hashCode(), o2.hashCode())) != 0) return c;
+        if (0 != (c = Integer.compare(o1.priority, o2.priority))) return c;
+        if (0 != (c = o1.method.getName().compareTo(o2.method.getName()))) return c;
+        if (0 != (c = o1.eventType.getName().compareTo(o2.eventType.getName()))) return c;
+        if (0 != (c = Integer.compare(o1.listener.hashCode(), o2.listener.hashCode()))) return c;
+        if (0 != (c = Integer.compare(o1.hashCode(), o2.hashCode()))) return c;
         // @formatter:on
         throw new AssertionError();  // ensures the comparator will never return 0 if the two wrapper aren't equal
     };
@@ -100,7 +100,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
         {
             if (Reflect.isAssignableFrom(Event.class, param))
             {
-                Class<? extends Event> eventType = (Class<? extends Event>) param;
+                @SuppressWarnings("unchecked") Class<? extends Event> eventType = (Class<? extends Event>) param;
                 invokeWrappers.add(new SimpleEventWrapper(instance, eventType, method, priority));
             }
             else if (Reflect.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param))
@@ -264,7 +264,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
             A annotation may be decorative or provide meta-data, rather than be a processor indicator. If no processor
             is available continue looking up the next annotation (if any).
             */
-            AbstractEventParamProcessor<Annotation> processor = bus.getParamProcessor((Class<Annotation>) annotation.getClass(), stage);
+            @SuppressWarnings("unchecked") AbstractEventParamProcessor<Annotation> processor = bus.getParamProcessor((Class<Annotation>) annotation.getClass(), stage);
             if (null == processor) continue;
 
             /*

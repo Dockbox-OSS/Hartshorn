@@ -101,7 +101,7 @@ public class SimpleResourceService implements ResourceService
         Map<String, String> resources;
         if (languageConfigFile.toFile().exists() && !SeleneUtils.isFileEmpty(languageConfigFile))
         {
-            resources = this.getResourcesForFile(languageConfigFile, cm, lang);
+            resources = SimpleResourceService.getResourcesForFile(languageConfigFile, cm, lang);
         }
         else
         {
@@ -148,7 +148,7 @@ public class SimpleResourceService implements ResourceService
         return Exceptional.of(this.knownEntries.stream().filter(entry -> entry.getKey().equals(finalKey)).findFirst());
     }
 
-    private Map<String, String> getResourcesForFile(Path file, FileManager cm, Language lang)
+    private static Map<String, String> getResourcesForFile(Path file, FileManager cm, Language lang)
     {
         Exceptional<ResourceConfig> config = cm.read(file, ResourceConfig.class);
 
@@ -161,9 +161,7 @@ public class SimpleResourceService implements ResourceService
     private Map<String, String> createDefaultResourceFile(FileManager cm, Path languageConfigFile)
     {
         Map<String, String> resources = SeleneUtils.emptyConcurrentMap();
-        this.knownEntries.forEach(resource -> {
-            resources.put(resource.getKey(), resource.asString());
-        });
+        this.knownEntries.forEach(resource -> resources.put(resource.getKey(), resource.asString()));
         ResourceConfig config = new ResourceConfig();
         config.translations = resources;
         cm.write(languageConfigFile, config);

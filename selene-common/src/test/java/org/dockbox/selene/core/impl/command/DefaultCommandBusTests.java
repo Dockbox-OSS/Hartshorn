@@ -43,7 +43,7 @@ class DefaultCommandBusTests {
 
     @Test
     public void extendedCommandIsPresent() {
-        AbstractRegistrationContext context = bus.getRegistrations().get("sample");
+        AbstractRegistrationContext context = DefaultCommandBus.getRegistrations().get("sample");
         Assertions.assertTrue(context instanceof CommandInheritanceContext);
 
         CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) context;
@@ -61,7 +61,7 @@ class DefaultCommandBusTests {
 
     @Test
     public void parentCommandIsPresent() {
-        AbstractRegistrationContext context = bus.getRegistrations().get("example");
+        AbstractRegistrationContext context = DefaultCommandBus.getRegistrations().get("example");
         Assertions.assertTrue(context instanceof CommandInheritanceContext);
 
         CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) context;
@@ -71,13 +71,13 @@ class DefaultCommandBusTests {
 
     @Test
     public void nonInheritedCommandIsPresent() {
-        AbstractRegistrationContext context = bus.getRegistrations().get("noninherit");
+        AbstractRegistrationContext context = DefaultCommandBus.getRegistrations().get("noninherit");
         Assertions.assertTrue(context instanceof MethodCommandContext);
     }
 
     @Test
     public void nonInheritedCommandIsNotPresentInParent() {
-        AbstractRegistrationContext sampleContext = bus.getRegistrations().get("sample");
+        AbstractRegistrationContext sampleContext = DefaultCommandBus.getRegistrations().get("sample");
         Assertions.assertTrue(sampleContext instanceof CommandInheritanceContext);
 
         CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) sampleContext;

@@ -24,6 +24,7 @@ public interface IPipe<I, O>
      *
      * @return The {@link Class} of the pipe.
      */
+    @SuppressWarnings("rawtypes")
     default Class<? extends IPipe> getType()
     {
         return IPipe.class;

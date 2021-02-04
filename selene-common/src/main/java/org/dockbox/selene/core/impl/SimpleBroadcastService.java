@@ -38,34 +38,34 @@ public class SimpleBroadcastService implements BroadcastService
     @Override
     public void broadcastWithFilter(@NotNull Text message, @NotNull Predicate<Player> filter)
     {
-        this.sendWithPredicate(message, filter);
+        SimpleBroadcastService.sendWithPredicate(message, filter);
     }
 
     @Override
     public void broadcastForPermission(@NotNull Text message, @NotNull AbstractPermission permission)
     {
-        this.sendWithPredicate(message, p -> p.hasPermission(permission));
+        SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission));
     }
 
     @Override
     public void broadcastForPermission(@NotNull Text message, @NotNull String permission)
     {
-        this.sendWithPredicate(message, p -> p.hasPermission(permission));
+        SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission));
     }
 
     @Override
     public void broadcastForPermissionWithFilter(@NotNull Text message, @NotNull AbstractPermission permission, @NotNull Predicate<Player> filter)
     {
-        this.sendWithPredicate(message, p -> p.hasPermission(permission) && filter.test(p));
+        SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission) && filter.test(p));
     }
 
     @Override
     public void broadcastForPermissionWithFilter(@NotNull Text message, @NotNull String permission, @NotNull Predicate<Player> filter)
     {
-        this.sendWithPredicate(message, p -> p.hasPermission(permission) && filter.test(p));
+        SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission) && filter.test(p));
     }
 
-    private void sendWithPredicate(Text message, Predicate<Player> filter)
+    private static void sendWithPredicate(Text message, Predicate<Player> filter)
     {
         Selene.provide(PlayerStorageService.class).getOnlinePlayers().stream().filter(filter).forEach(message::send);
     }

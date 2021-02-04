@@ -42,6 +42,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Currency;
 import java.util.Date;
@@ -143,10 +145,9 @@ public final class XStreamUtils
 
         xstream.addPermission(PrimitiveTypePermission.PRIMITIVES);
         xstream.allowTypes(new Class[]{
-                Currency.class,
-                Date.class,
-                Locale.class,
                 String.class,
+                LocalDate.class,
+                LocalDateTime.class
         });
         xstream.allowTypeHierarchy(Collection.class);
         xstream.allowTypeHierarchy(Map.class);

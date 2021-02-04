@@ -38,6 +38,7 @@ public interface CancellablePipe<I, O> extends ComplexPipe<I, O>
     O execute(Runnable cancelPipeline, I input, Throwable throwable)
             throws Exception;
 
+    @SuppressWarnings("rawtypes")
     @Override
     default Class<CancellablePipe> getType()
     {

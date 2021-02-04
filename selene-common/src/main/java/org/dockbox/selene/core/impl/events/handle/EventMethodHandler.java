@@ -66,7 +66,6 @@ public class EventMethodHandler extends EventHandler
 
     @Override
     public void dispatch(Object event)
-            throws Exception
     {
         try
         {

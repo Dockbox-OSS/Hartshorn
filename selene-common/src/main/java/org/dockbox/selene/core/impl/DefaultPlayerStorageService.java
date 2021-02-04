@@ -34,20 +34,20 @@ public abstract class DefaultPlayerStorageService implements PlayerStorageServic
     @Override
     public void setLanguagePreference(@NotNull UUID uuid, @NotNull Language lang)
     {
-        UserDataModel userData = this.getUserData(uuid);
+        UserDataModel userData = DefaultPlayerStorageService.getUserData(uuid);
         userData.language = lang;
-        this.updateUserData(uuid, userData);
+        DefaultPlayerStorageService.updateUserData(uuid, userData);
     }
 
     @NotNull
     @Override
     public Language getLanguagePreference(@NotNull UUID uuid)
     {
-        return this.getUserData(uuid).language;
+        return DefaultPlayerStorageService.getUserData(uuid).language;
     }
 
     @SuppressWarnings("ConstantConditions")
-    private UserDataModel getUserData(UUID uuid)
+    private static UserDataModel getUserData(UUID uuid)
     {
         FileManager cm = Selene.provide(FileManager.class);
         Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
@@ -56,7 +56,7 @@ public abstract class DefaultPlayerStorageService implements PlayerStorageServic
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void updateUserData(UUID uuid, UserDataModel userData)
+    private static void updateUserData(UUID uuid, UserDataModel userData)
     {
         FileManager cm = Selene.provide(FileManager.class);
         Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);

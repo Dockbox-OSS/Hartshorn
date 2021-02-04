@@ -40,7 +40,7 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager
     public <T> Exceptional<T> read(Path file, Class<T> type)
     {
         Reflect.rejects(type, DefaultXStreamManager.class, true);
-        return Exceptional.of(() -> this.prepareXStream(type).read(type, file.toFile()));
+        return Exceptional.of(() -> DefaultXStreamManager.prepareXStream(type).read(type, file.toFile()));
     }
 
     @Override
@@ -53,7 +53,7 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager
         {
             try
             {
-                this.prepareXStream(type).write(content, file.toFile());
+                DefaultXStreamManager.prepareXStream(type).write(content, file.toFile());
                 return Exceptional.of(true);
             }
             catch (IOException e)
@@ -73,15 +73,15 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager
         }
     }
 
-    private XStreamBuilder prepareXStream(Class<?> type)
+    private static XStreamBuilder prepareXStream(Class<?> type)
     {
         XStreamBuilder builder = XStreamUtils.create();
-        this.omitIgnoredFields(type, builder);
-        this.aliasPropertyFields(type, builder);
+        DefaultXStreamManager.omitIgnoredFields(type, builder);
+        DefaultXStreamManager.aliasPropertyFields(type, builder);
         return builder;
     }
 
-    private void omitIgnoredFields(Class<?> type, XStreamBuilder builder)
+    private static void omitIgnoredFields(Class<?> type, XStreamBuilder builder)
     {
         Reflect.forEachFieldIn(type, (declaringType, field) -> {
             if (field.isAnnotationPresent(Ignore.class))
@@ -89,7 +89,7 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager
         });
     }
 
-    private void aliasPropertyFields(Class<?> type, XStreamBuilder builder)
+    private static void aliasPropertyFields(Class<?> type, XStreamBuilder builder)
     {
         Reflect.forEachFieldIn(type, (declaringType, field) -> {
             @NonNls String alias = Reflect.getFieldPropertyName(field);

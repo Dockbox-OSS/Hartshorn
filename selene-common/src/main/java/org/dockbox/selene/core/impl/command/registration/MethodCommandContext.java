@@ -31,6 +31,7 @@ import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
+import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.Reflect;
@@ -62,9 +63,9 @@ public class MethodCommandContext extends AbstractRegistrationContext
             List<Object> args = this.prepareArguments(source, context);
             Object instance = this.prepareInstance();
             Command command = this.method.getAnnotation(Command.class);
-            if (0 < command.cooldownDuration() && source instanceof AbstractIdentifiable)
+            if (0 < command.cooldownDuration() && source instanceof Identifiable)
             {
-                String registrationId = this.getRegistrationId((AbstractIdentifiable<?>) source, context);
+                String registrationId = AbstractRegistrationContext.getRegistrationId((Identifiable) source, context);
                 SeleneUtils.cooldown(registrationId, command.cooldownDuration(), command.cooldownUnit());
             }
             this.method.invoke(instance, SeleneUtils.toArray(Object.class, args));
@@ -86,15 +87,16 @@ public class MethodCommandContext extends AbstractRegistrationContext
         }
     }
 
+    // TODO: Fix cyclomatic complexity (11)
     private List<Object> prepareArguments(CommandSource source, CommandContext context)
     {
         List<Object> finalArgs = SeleneUtils.emptyList();
 
         for (Parameter parameter : this.getMethod().getParameters())
         {
-            if (this.processFromSourceParameters(parameter, context, finalArgs)) continue;
-            if (this.processFlagParameters(parameter, context, finalArgs)) continue;
-            if (this.processArgumentParameters(parameter, context, finalArgs)) continue;
+            if (MethodCommandContext.processFromSourceParameters(parameter, context, finalArgs)) continue;
+            if (MethodCommandContext.processFlagParameters(parameter, context, finalArgs)) continue;
+            if (MethodCommandContext.processArgumentParameters(parameter, context, finalArgs)) continue;
 
             Class<?> parameterType = parameter.getType();
             if (Reflect.isEitherAssignableFrom(CommandSource.class, parameterType))
@@ -142,7 +144,7 @@ public class MethodCommandContext extends AbstractRegistrationContext
         return this.method;
     }
 
-    private boolean processFromSourceParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs)
+    private static boolean processFromSourceParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs)
     {
         if (parameter.isAnnotationPresent(FromSource.class))
         {
@@ -176,7 +178,7 @@ public class MethodCommandContext extends AbstractRegistrationContext
         return false;
     }
 
-    private boolean processFlagParameters(AnnotatedElement parameter, CommandContext context, Collection<Object> finalArgs)
+    private static boolean processFlagParameters(AnnotatedElement parameter, CommandContext context, Collection<Object> finalArgs)
     {
         if (parameter.isAnnotationPresent(Flag.class))
         {
@@ -195,7 +197,7 @@ public class MethodCommandContext extends AbstractRegistrationContext
         return false;
     }
 
-    private boolean processArgumentParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs)
+    private static boolean processArgumentParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs)
     {
         if (parameter.isAnnotationPresent(Arg.class))
         {
@@ -231,7 +233,7 @@ public class MethodCommandContext extends AbstractRegistrationContext
         if (0 >= command.cooldownDuration()) return false;
         if (sender instanceof AbstractIdentifiable)
         {
-            String registrationId = this.getRegistrationId((AbstractIdentifiable<?>) sender, ctx);
+            String registrationId = AbstractRegistrationContext.getRegistrationId((Identifiable) sender, ctx);
             return SeleneUtils.isInCooldown(registrationId);
         }
         return false;

@@ -31,6 +31,7 @@ public interface ComplexPipe<I, O> extends IPipe<I, O>
     O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable)
             throws Exception;
 
+    @SuppressWarnings("rawtypes")
     @Override
     default Class<? extends IPipe> getType()
     {
