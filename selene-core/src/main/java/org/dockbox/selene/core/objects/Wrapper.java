@@ -19,9 +19,11 @@ package org.dockbox.selene.core.objects;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface Wrapper<T> {
+public interface Wrapper<T>
+{
 
-    default boolean referenceExists() {
+    default boolean referenceExists()
+    {
         return this.getReference().isPresent();
     }
 

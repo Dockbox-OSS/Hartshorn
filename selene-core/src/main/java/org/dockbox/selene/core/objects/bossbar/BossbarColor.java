@@ -17,7 +17,8 @@
 
 package org.dockbox.selene.core.objects.bossbar;
 
-public enum BossbarColor {
+public enum BossbarColor
+{
     BLUE,
     GREEN,
     PINK,

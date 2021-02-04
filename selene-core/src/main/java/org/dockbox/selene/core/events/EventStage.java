@@ -23,6 +23,9 @@ import org.dockbox.selene.core.events.processing.AbstractEventParamProcessor;
  * The stages in which event arguments are constructed, processed, and filtered. These are typically used in
  * {@link AbstractEventParamProcessor}s to indicate when the processor should be active.
  */
-public enum EventStage {
-    POPULATE, PROCESS, FILTER
+public enum EventStage
+{
+    POPULATE,
+    PROCESS,
+    FILTER
 }

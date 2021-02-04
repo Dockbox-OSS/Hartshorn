@@ -20,7 +20,8 @@ package org.dockbox.selene.core.entities;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
 
-public interface ItemFrame extends Entity<ItemFrame> {
+public interface ItemFrame extends Entity<ItemFrame>
+{
 
     Exceptional<Item> getDisplayedItem();
 
@@ -30,7 +31,8 @@ public interface ItemFrame extends Entity<ItemFrame> {
 
     void setRotation(Rotation rotation);
 
-    enum Rotation {
+    enum Rotation
+    {
         BOTTOM,
         BOTTOM_LEFT,
         BOTTOM_RIGHT,

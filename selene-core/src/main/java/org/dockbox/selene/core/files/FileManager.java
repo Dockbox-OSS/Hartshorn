@@ -31,22 +31,29 @@ import java.nio.file.Path;
  * the usage of Configurate based instances, it is possible to create implementations for alternative configuration
  * libraries and/or frameworks.
  */
-public abstract class FileManager implements InjectableType {
+public abstract class FileManager implements InjectableType
+{
 
     private FileType fileType;
 
-    protected FileManager(FileType fileType) {
+    protected FileManager(FileType fileType)
+    {
         this.fileType = fileType;
     }
 
-    public FileType getFileType() {
+    public FileType getFileType()
+    {
         return this.fileType;
     }
 
-    public abstract void requestFileType(FileType fileType);
-
-    protected void setFileType(FileType fileType) {
+    protected void setFileType(FileType fileType)
+    {
         this.fileType = fileType;
+    }
+
+    public Path getDataFile(Class<?> module)
+    {
+        return this.getDataFile(Reflect.getModule(module));
     }
 
     /**
@@ -59,8 +66,10 @@ public abstract class FileManager implements InjectableType {
      * @return A {@link Path} reference to a file
      */
     public abstract Path getDataFile(Module module);
-    public Path getDataFile(Class<?> module) {
-        return this.getDataFile(Reflect.getModule(module));
+
+    public Path getConfigFile(Class<?> module)
+    {
+        return this.getConfigFile(Reflect.getModule(module));
     }
 
     /**
@@ -73,8 +82,10 @@ public abstract class FileManager implements InjectableType {
      * @return A {@link Path} reference to a file
      */
     public abstract Path getConfigFile(Module module);
-    public Path getConfigFile(Class<?> module) {
-        return this.getConfigFile(Reflect.getModule(module));
+
+    public Path getDataFile(Class<?> module, String file)
+    {
+        return this.getDataFile(Reflect.getModule(module), file);
     }
 
     /**
@@ -89,8 +100,10 @@ public abstract class FileManager implements InjectableType {
      * @return A {@link Path} reference to a file
      */
     public abstract Path getDataFile(Module module, String file);
-    public Path getDataFile(Class<?> module, String file) {
-        return this.getDataFile(Reflect.getModule(module), file);
+
+    public Path getConfigFile(Class<?> module, String file)
+    {
+        return this.getConfigFile(Reflect.getModule(module), file);
     }
 
     /**
@@ -105,9 +118,6 @@ public abstract class FileManager implements InjectableType {
      * @return A {@link Path} reference to a file
      */
     public abstract Path getConfigFile(Module module, String file);
-    public Path getConfigFile(Class<?> module, String file) {
-        return this.getConfigFile(Reflect.getModule(module), file);
-    }
 
     /**
      * Get the content of a file, and map the given values to a generic type {@code T}. The exact file is completely
@@ -142,6 +152,11 @@ public abstract class FileManager implements InjectableType {
      */
     public abstract <T> Exceptional<Boolean> write(Path file, T content);
 
+    public Path getDataDir(Class<?> module)
+    {
+        return this.getDataDir(Reflect.getModule(module));
+    }
+
     /**
      * Get the data directory for a given {@link Module}. The exact location is decided by the top-level implementation
      * of this type.
@@ -151,11 +166,9 @@ public abstract class FileManager implements InjectableType {
      *
      * @return A {@link Path} reference to the data directory
      */
-    public Path getDataDir(Module module) {
+    public Path getDataDir(Module module)
+    {
         return this.getDataDir().resolve(module.id());
-    }
-    public Path getDataDir(Class<?> module) {
-        return this.getDataDir(Reflect.getModule(module));
     }
 
     /**
@@ -208,6 +221,11 @@ public abstract class FileManager implements InjectableType {
      */
     public abstract Path getPluginDir();
 
+    public Path getModuleConfigDir(Class<?> module)
+    {
+        return this.getModuleConfigDir(Reflect.getModule(module));
+    }
+
     /**
      * Get the configuration directory for a given {@link Module}. The exact location is decided by the top-level
      * implementation of this type.
@@ -217,11 +235,9 @@ public abstract class FileManager implements InjectableType {
      *
      * @return A {@link Path} reference to the configuration directory
      */
-    public Path getModuleConfigDir(Module module) {
+    public Path getModuleConfigDir(Module module)
+    {
         return this.getModuleConfigsDir().resolve(module.id());
-    }
-    public Path getModuleConfigDir(Class<?> module) {
-        return this.getModuleConfigDir(Reflect.getModule(module));
     }
 
     /**
@@ -275,8 +291,11 @@ public abstract class FileManager implements InjectableType {
     /**
      * Attempts to move a file to a target file. If the target file does not exist it will be created.
      *
-     * @param sourceFile The original file to move
-     * @param targetFile The target location of the file (fully qualified)
+     * @param sourceFile
+     *         The original file to move
+     * @param targetFile
+     *         The target location of the file (fully qualified)
+     *
      * @return true if the file was moved successfully, otherwise false
      */
     public abstract boolean move(Path sourceFile, Path targetFile);
@@ -284,8 +303,11 @@ public abstract class FileManager implements InjectableType {
     /**
      * Attempts to copy a file to a target file. If the target file does not exist it will be created.
      *
-     * @param sourceFile The original file to copy
-     * @param targetFile The target location of the file (fully qualified)
+     * @param sourceFile
+     *         The original file to copy
+     * @param targetFile
+     *         The target location of the file (fully qualified)
+     *
      * @return true if the file was moved successfully, otherwise false
      */
     public abstract boolean copy(Path sourceFile, Path targetFile);
@@ -293,15 +315,21 @@ public abstract class FileManager implements InjectableType {
     /**
      * Attempts to copy a pre-made resource to a target file. If the target file already exists nothing is done.
      *
-     * @param defaultFileName The name of the resource to copy
-     * @param targetFile The target location of the file (fully qualified)
+     * @param defaultFileName
+     *         The name of the resource to copy
+     * @param targetFile
+     *         The target location of the file (fully qualified)
+     *
      * @return true if the file was copied, otherwise false
      */
     public abstract boolean copyDefaultFile(String defaultFileName, Path targetFile);
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void stateEnabling(InjectorProperty<?>... properties)
+    {
         Keys.getPropertyValue(FileTypeProperty.KEY, FileType.class, properties)
                 .ifPresent(this::requestFileType);
     }
+
+    public abstract void requestFileType(FileType fileType);
 }

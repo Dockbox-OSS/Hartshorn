@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.core.events.world;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.events.AbstractCancellableEvent;
 import org.dockbox.selene.core.objects.location.World;
 import org.dockbox.selene.core.objects.location.WorldProperties;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.tuple.Vector3N;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Map;
 import java.util.UUID;
@@ -30,19 +30,23 @@ import java.util.UUID;
 /**
  * The abstract type which can be used to listen to all world related events.
  */
-public abstract class WorldEvent extends AbstractCancellableEvent {
+public abstract class WorldEvent extends AbstractCancellableEvent
+{
 
     /**
      * The abstract type which can be used to listen to all world events holding a existing {@link World} instance.
      */
-    public abstract static class WorldHoldingEvent extends WorldEvent {
+    public abstract static class WorldHoldingEvent extends WorldEvent
+    {
         private final World world;
 
-        protected WorldHoldingEvent(World world) {
+        protected WorldHoldingEvent(World world)
+        {
             this.world = world;
         }
 
-        public World getWorld() {
+        public World getWorld()
+        {
             return this.world;
         }
     }
@@ -50,9 +54,11 @@ public abstract class WorldEvent extends AbstractCancellableEvent {
     /**
      * The event fired when a world is loaded.
      */
-    public static class WorldLoadEvent extends WorldHoldingEvent {
+    public static class WorldLoadEvent extends WorldHoldingEvent
+    {
 
-        public WorldLoadEvent(World world) {
+        public WorldLoadEvent(World world)
+        {
             super(world);
         }
     }
@@ -60,14 +66,17 @@ public abstract class WorldEvent extends AbstractCancellableEvent {
     /**
      * The event fired when a world is unloaded.
      */
-    public static class WorldUnloadEvent extends WorldEvent {
+    public static class WorldUnloadEvent extends WorldEvent
+    {
         private final UUID uniqueId;
 
-        public WorldUnloadEvent(UUID uniqueId) {
+        public WorldUnloadEvent(UUID uniqueId)
+        {
             this.uniqueId = uniqueId;
         }
 
-        public UUID getUniqueId() {
+        public UUID getUniqueId()
+        {
             return this.uniqueId;
         }
     }
@@ -75,9 +84,11 @@ public abstract class WorldEvent extends AbstractCancellableEvent {
     /**
      * The event fired when a world is being saved.
      */
-    public static class WorldSaveEvent extends WorldHoldingEvent {
+    public static class WorldSaveEvent extends WorldHoldingEvent
+    {
 
-        public WorldSaveEvent(World world) {
+        public WorldSaveEvent(World world)
+        {
             super(world);
         }
     }
@@ -85,14 +96,17 @@ public abstract class WorldEvent extends AbstractCancellableEvent {
     /**
      * The event fired when a new world is being created.
      */
-    public static class WorldCreatingEvent extends WorldEvent {
+    public static class WorldCreatingEvent extends WorldEvent
+    {
         private final WorldCreatingProperties properties;
 
-        public WorldCreatingEvent(WorldCreatingProperties properties) {
+        public WorldCreatingEvent(WorldCreatingProperties properties)
+        {
             this.properties = properties;
         }
 
-        public WorldCreatingProperties getProperties() {
+        public WorldCreatingProperties getProperties()
+        {
             return this.properties;
         }
     }
@@ -100,7 +114,8 @@ public abstract class WorldEvent extends AbstractCancellableEvent {
     /**
      * The available properties used when a world is being created or generated.
      */
-    public static class WorldCreatingProperties extends WorldProperties {
+    public static class WorldCreatingProperties extends WorldProperties
+    {
 
         private final String name;
         private final UUID uniqueId;
@@ -108,7 +123,8 @@ public abstract class WorldEvent extends AbstractCancellableEvent {
         private final Map<String, String> rules = SeleneUtils.emptyConcurrentMap();
 
         public WorldCreatingProperties(String name, UUID uniqueId, boolean loadOnStartup, Vector3N spawnPosition,
-                                       long seed, Gamemode defaultGamemode, Map<String, String> gamerules) {
+                                       long seed, Gamemode defaultGamemode, Map<String, String> gamerules)
+        {
             super(loadOnStartup, spawnPosition, seed, defaultGamemode);
             this.name = name;
             this.uniqueId = uniqueId;
@@ -116,24 +132,29 @@ public abstract class WorldEvent extends AbstractCancellableEvent {
         }
 
         @Override
-        public void setGamerule(String key, String value) {
+        public void setGamerule(String key, String value)
+        {
             this.rules.put(key, value);
         }
 
         @Override
-        public Map<String, String> getGamerules() {
+        public Map<String, String> getGamerules()
+        {
             return this.rules;
         }
 
-        public String getName() {
+        public String getName()
+        {
             return this.name;
         }
 
-        public UUID getUniqueId() {
+        public UUID getUniqueId()
+        {
             return this.uniqueId;
         }
 
-        public Map<String, String> getRules() {
+        public Map<String, String> getRules()
+        {
             return this.rules;
         }
     }

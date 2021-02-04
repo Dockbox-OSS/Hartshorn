@@ -30,32 +30,38 @@ package org.dockbox.selene.core.objects.tuple;
  * @param <C>
  *         type of the third value.
  */
-public class Triad<A, B, C> {
+public class Triad<A, B, C>
+{
 
     private final A first;
     private final B second;
     private final C third;
 
-    public Triad(A first, B second, C third) {
+    public Triad(A first, B second, C third)
+    {
         this.first = first;
         this.second = second;
         this.third = third;
     }
 
-    public A getFirst() {
+    public A getFirst()
+    {
         return this.first;
     }
 
-    public B getSecond() {
+    public B getSecond()
+    {
         return this.second;
     }
 
-    public C getThird() {
+    public C getThird()
+    {
         return this.third;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "Triad[" + this.first + ", " + this.second + ", " + this.third + ']';
     }
 }

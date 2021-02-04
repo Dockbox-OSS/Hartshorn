@@ -32,7 +32,8 @@ import java.util.function.Function;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Property {
+public @interface Property
+{
     /**
      * The alternative identifier for the field. For example a field called {@code firstName} which is being injected into
      * by a property called {@code fn} could like like the following example:

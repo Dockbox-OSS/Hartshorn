@@ -52,33 +52,42 @@ import java.util.stream.Collectors;
 import sun.misc.Unsafe;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class InjectableBootstrap {
+public abstract class InjectableBootstrap
+{
 
-    private Unsafe unsafe;
-    private Injector injector;
     private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
     private final transient List<InjectionPoint<?>> injectionPoints = SeleneUtils.emptyConcurrentList();
+    private Unsafe unsafe;
+    private Injector injector;
 
-    public <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties) {
+    public <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties)
+    {
         return Exceptional.ofNullable(this.getInstance(type, additionalProperties));
     }
 
-    public <T> Exceptional<T> getInstanceSafe(Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
+    public <T> Exceptional<T> getInstanceSafe(Class<T> type, Object module, InjectorProperty<?>... additionalProperties)
+    {
         return Exceptional.ofNullable(this.getInstance(type, module, additionalProperties));
     }
 
-    public <T> Exceptional<T> getInstanceSafe(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
+    public <T> Exceptional<T> getInstanceSafe(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties)
+    {
         return Exceptional.ofNullable(this.getInstance(type, module, additionalProperties));
     }
 
-    public <T> T getInstance(Class<T> type, InjectorProperty<?>... additionalProperties) {
+    public <T> T getInstance(Class<T> type, InjectorProperty<?>... additionalProperties)
+    {
         return this.getInstance(type, type, additionalProperties);
     }
 
-    public <T> T getInstance(Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
-        if (null != module) {
+    public <T> T getInstance(Class<T> type, Object module, InjectorProperty<?>... additionalProperties)
+    {
+        if (null != module)
+        {
             return this.getInstance(type, module.getClass(), additionalProperties);
-        } else {
+        }
+        else
+        {
             return this.getInstance(type, additionalProperties);
         }
     }
@@ -100,14 +109,16 @@ public abstract class InjectableBootstrap {
      *
      * @return The instance, if present. Otherwise returns null
      */
-    public <T> T getInstance(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
+    public <T> T getInstance(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties)
+    {
         T typeInstance = null;
 
         // Modules are initially created using #getInstance here (assuming SimpleModuleManager or a derivative is
         // bound to ModuleManager). Therefore it may not yet be present in the ModuleManager's registry. In which
         // case `null` is (re-)assigned to typeInstance so that it can be created through the generated
         // module-specific injector.
-        if (type.isAnnotationPresent(Module.class)) {
+        if (type.isAnnotationPresent(Module.class))
+        {
             typeInstance = this.getInstanceSafe(ModuleManager.class)
                     .map(moduleManager -> moduleManager.getInstance(type).orNull())
                     .orNull();
@@ -118,12 +129,18 @@ public abstract class InjectableBootstrap {
 
         // Type instance can be present if it is a module. These instances are also created using Guice injectors
         // and therefore do not need late member injection here.
-        if (null == typeInstance) {
-            try {
+        if (null == typeInstance)
+        {
+            try
+            {
                 typeInstance = this.getInjectedInstance(injector, type, additionalProperties);
-            } catch (ProvisionException e) {
+            }
+            catch (ProvisionException e)
+            {
                 Selene.log().error("Could not create instance using registered injector " + injector + " for [" + type.getCanonicalName() + "]", e);
-            } catch (ConfigurationException ce) {
+            }
+            catch (ConfigurationException ce)
+            {
                 typeInstance = this
                         .getRawInstance(type, injector)
                         .orElseSupply(() -> this.getUnsafeInstance(type, injector))
@@ -131,13 +148,19 @@ public abstract class InjectableBootstrap {
             }
         }
 
-        if (null != typeInstance) {
-            for (InjectionPoint<?> injectionPoint : this.injectionPoints) {
-                if (injectionPoint.accepts(type)) {
-                    try {
+        if (null != typeInstance)
+        {
+            for (InjectionPoint<?> injectionPoint : this.injectionPoints)
+            {
+                if (injectionPoint.accepts(type))
+                {
+                    try
+                    {
                         //noinspection unchecked
                         typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance);
-                    } catch (ClassCastException e) {
+                    }
+                    catch (ClassCastException e)
+                    {
                         Selene.log().warn("Attempted to apply injection point to incompatible type [" + type.getCanonicalName() + "]");
                     }
                 }
@@ -145,7 +168,8 @@ public abstract class InjectableBootstrap {
         }
 
         // Inject properties if applicable
-        if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable()) {
+        if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable())
+        {
             ((InjectableType) typeInstance).stateEnabling(additionalProperties);
         }
 
@@ -153,37 +177,49 @@ public abstract class InjectableBootstrap {
         return typeInstance;
     }
 
-    private <T> @Nullable T getUnsafeInstance(Class<T> type, Injector injector) {
+    private <T> @Nullable T getUnsafeInstance(Class<T> type, Injector injector)
+    {
         Selene.log().warn("Attempting to get instance of [" + type.getCanonicalName() + "] through Unsafe");
-        try {
+        try
+        {
             @SuppressWarnings("unchecked") T t = (T) this.getUnsafe().allocateInstance(type);
             injector.injectMembers(t);
             return t;
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             Selene.handle("Could not create instance of [" + type.getCanonicalName() + "] through injected, raw or unsafe construction");
         }
         return null;
     }
 
-    private <T> Exceptional<T> getRawInstance(Class<T> type, Injector injector) {
-        try {
+    private <T> Exceptional<T> getRawInstance(Class<T> type, Injector injector)
+    {
+        try
+        {
             Constructor<T> ctor = type.getDeclaredConstructor();
             ctor.setAccessible(true);
             T t = ctor.newInstance();
             injector.injectMembers(t);
             return Exceptional.of(t);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             return Exceptional.of(e);
         }
     }
 
-    private <T> T getInjectedInstance(Injector injector, Class<T> type, InjectorProperty<?>... additionalProperties) {
+    private <T> T getInjectedInstance(Injector injector, Class<T> type, InjectorProperty<?>... additionalProperties)
+    {
         @SuppressWarnings("rawtypes") Exceptional<Class> annotation =
                 Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
-        if (annotation.isPresent() && annotation.get().isAnnotation()) {
+        if (annotation.isPresent() && annotation.get().isAnnotation())
+        {
             //noinspection unchecked
             return (T) injector.getInstance(Key.get(type, annotation.get()));
-        } else {
+        }
+        else
+        {
             return injector.getInstance(type);
         }
     }
@@ -202,10 +238,13 @@ public abstract class InjectableBootstrap {
      * @param implementation
      *         The class type of the implementation
      */
-    public <T> void bindUtility(Class<T> contract, Class<? extends T> implementation) {
-        AbstractModule localModule = new AbstractModule() {
+    public <T> void bindUtility(Class<T> contract, Class<? extends T> implementation)
+    {
+        AbstractModule localModule = new AbstractModule()
+        {
             @Override
-            protected void configure() {
+            protected void configure()
+            {
                 super.configure();
                 this.bind(contract).to(implementation);
             }
@@ -214,10 +253,13 @@ public abstract class InjectableBootstrap {
         this.injector = null; // Reset injector so it regenerates later
     }
 
-    public <C, T extends C> void bindUtility(Class<C> contract, T instance) {
-        AbstractModule localModule = new AbstractModule() {
+    public <C, T extends C> void bindUtility(Class<C> contract, T instance)
+    {
+        AbstractModule localModule = new AbstractModule()
+        {
             @Override
-            protected void configure() {
+            protected void configure()
+            {
                 super.configure();
                 this.bind(contract).toInstance(instance);
             }
@@ -226,8 +268,10 @@ public abstract class InjectableBootstrap {
         this.injector = null; // Reset injector so it regenerates later
     }
 
-    public Injector createModuleInjector(Object instance) {
-        if (null != instance && instance.getClass().isAnnotationPresent(Module.class)) {
+    public Injector createModuleInjector(Object instance)
+    {
+        if (null != instance && instance.getClass().isAnnotationPresent(Module.class))
+        {
             Exceptional<ModuleContext> context = this.getInstance(ModuleManager.class).getContext(instance.getClass());
             Module module;
             module = context
@@ -239,10 +283,12 @@ public abstract class InjectableBootstrap {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> ModuleInjectionConfiguration getModuleConfiguration(T instance, Module header, ModuleContext context) {
+    private <T> ModuleInjectionConfiguration getModuleConfiguration(T instance, Module header, ModuleContext context)
+    {
         ModuleInjectionConfiguration module = new ModuleInjectionConfiguration();
 
-        if (!(null == instance || instance instanceof Class<?>)) {
+        if (!(null == instance || instance instanceof Class<?>))
+        {
             module.acceptBinding((Class<T>) instance.getClass(), instance);
             module.acceptInstance(instance);
         }
@@ -254,20 +300,25 @@ public abstract class InjectableBootstrap {
         return module;
     }
 
-    public Injector createModuleInjector(Object instance, Module header, ModuleContext context) {
+    public Injector createModuleInjector(Object instance, Module header, ModuleContext context)
+    {
         return this.rebuildInjector(this.getModuleConfiguration(instance, header, context));
     }
 
-    public <T> T injectMembers(T type) {
-        if (null != type) {
+    public <T> T injectMembers(T type)
+    {
+        if (null != type)
+        {
             this.rebuildInjector().injectMembers(type);
         }
 
         return type;
     }
 
-    private Injector rebuildInjector(AbstractModule... additionalModules) {
-        if (null == this.injector) {
+    private Injector rebuildInjector(AbstractModule... additionalModules)
+    {
+        if (null == this.injector)
+        {
             Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
             modules.addAll(Arrays.stream(additionalModules)
                     .filter(Objects::nonNull)
@@ -277,47 +328,63 @@ public abstract class InjectableBootstrap {
         return this.injector;
     }
 
-    public <T> T injectMembers(T type, Object module) {
-        if (null != type) {
-            if (null != module && module.getClass().isAnnotationPresent(Module.class)) {
+    public <T> T injectMembers(T type, Object module)
+    {
+        if (null != type)
+        {
+            if (null != module && module.getClass().isAnnotationPresent(Module.class))
+            {
                 this.createModuleInjector(module).injectMembers(type);
-            } else {
+            }
+            else
+            {
                 this.rebuildInjector().injectMembers(type);
             }
         }
         return type;
     }
 
-    public Map<Key<?>, Binding<?>> getAllBindings() {
+    public Map<Key<?>, Binding<?>> getAllBindings()
+    {
         Map<Key<?>, Binding<?>> bindings = SeleneUtils.emptyConcurrentMap();
         this.rebuildInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
-            try {
+            try
+            {
                 Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
                 Class<?> providerType = binding.getProvider().get().getClass();
 
                 if (!keyType.equals(providerType) && null != providerType)
                     bindings.put(key, binding);
-            } catch (ProvisionException | AssertionError ignored) {
+            }
+            catch (ProvisionException | AssertionError ignored)
+            {
             }
         });
         return bindings;
     }
 
-    public void registerGlobal(SeleneInjectConfiguration moduleConfiguration) {
+    public void registerGlobal(SeleneInjectConfiguration moduleConfiguration)
+    {
         this.injectorModules.add(moduleConfiguration);
     }
 
-    public void injectAt(InjectionPoint<?> property) {
+    public void injectAt(InjectionPoint<?> property)
+    {
         if (null != property) this.injectionPoints.add(property);
     }
 
-    private Unsafe getUnsafe() {
-        if (null == this.unsafe) {
-            try {
+    private Unsafe getUnsafe()
+    {
+        if (null == this.unsafe)
+        {
+            try
+            {
                 Field f = Unsafe.class.getDeclaredField("theUnsafe");
                 f.setAccessible(true);
                 this.unsafe = (Unsafe) f.get(null);
-            } catch (ReflectiveOperationException e) {
+            }
+            catch (ReflectiveOperationException e)
+            {
                 Selene.handle(e);
             }
         }

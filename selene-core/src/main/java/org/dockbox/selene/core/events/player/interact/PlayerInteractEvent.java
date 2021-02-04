@@ -25,67 +25,81 @@ import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.player.Sneaking;
 import org.dockbox.selene.core.objects.targets.Target;
 
-public class PlayerInteractEvent extends AbstractTargetCancellableEvent {
+public class PlayerInteractEvent extends AbstractTargetCancellableEvent
+{
 
     private final Sneaking sneaking;
     private final Hand hand;
     private final ClickType clickType;
 
-    protected PlayerInteractEvent(Player player, Hand hand, ClickType clickType) {
+    protected PlayerInteractEvent(Player player, Hand hand, ClickType clickType)
+    {
         super(player);
         this.sneaking = player.isSneaking() ? Sneaking.SNEAKING : Sneaking.STANDING;
         this.hand = hand;
         this.clickType = clickType;
     }
 
-    public Sneaking getCrouching() {
+    public Sneaking getCrouching()
+    {
         return this.sneaking;
     }
 
-    public ClickType getClientClickType() {
+    public ClickType getClientClickType()
+    {
         return this.clickType;
     }
 
-    public Hand getHand() {
+    public Hand getHand()
+    {
         return this.hand;
     }
 
     @Override
-    public Player getTarget() {
+    public Player getTarget()
+    {
         return (Player) super.getTarget();
     }
 
     @Override
-    public void setTarget(Target target) {
+    public void setTarget(Target target)
+    {
         if (target instanceof Player)
             super.setTarget(target);
     }
 
-    public static class PlayerInteractBlockEvent extends PlayerInteractEvent {
+    public static class PlayerInteractBlockEvent extends PlayerInteractEvent
+    {
 
         private final Location blockLocation;
 
-        public PlayerInteractBlockEvent(Player player, Hand hand, ClickType clickType, Location blockLocation) {
+        public PlayerInteractBlockEvent(Player player, Hand hand, ClickType clickType, Location blockLocation)
+        {
             super(player, hand, clickType);
             this.blockLocation = blockLocation;
         }
 
-        public Location getBlockLocation() {
+        public Location getBlockLocation()
+        {
             return this.blockLocation;
         }
     }
 
-    public static final class PlayerInteractEntityEvent extends PlayerInteractEvent {
+    public static final class PlayerInteractEntityEvent extends PlayerInteractEvent
+    {
 
         // TODO, Implementation of Entity before implementing event. See #37
-        private PlayerInteractEntityEvent(Player player, Hand hand, ClickType clickType) {
+        private PlayerInteractEntityEvent(Player player, Hand hand, ClickType clickType)
+        {
             super(player, hand, clickType);
         }
     }
 
-    public static class PlayerInteractAirEvent extends PlayerInteractEvent {
+    public static class PlayerInteractAirEvent extends PlayerInteractEvent
+    {
 
-        public PlayerInteractAirEvent(Player player, Hand hand, ClickType clickType) {
+        public PlayerInteractAirEvent(Player player, Hand hand, ClickType clickType)
+        {
             super(player, hand, clickType);
         }
     }

@@ -21,6 +21,7 @@ import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.source.CommandSource;
 
 @FunctionalInterface
-public interface CommandRunner {
+public interface CommandRunner
+{
     void run(CommandSource src, CommandContext ctx);
 }

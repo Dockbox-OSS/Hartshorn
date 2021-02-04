@@ -27,7 +27,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface DiscordCommand {
+public @interface DiscordCommand
+{
     /**
      * The command/alias for the command, excluding a prefix.
      *
@@ -60,7 +61,8 @@ public @interface DiscordCommand {
      */
     ListeningLevel listeningLevel() default ListeningLevel.BOTH;
 
-    enum ListeningLevel {
+    enum ListeningLevel
+    {
         /**
          * Only private chat channels
          */

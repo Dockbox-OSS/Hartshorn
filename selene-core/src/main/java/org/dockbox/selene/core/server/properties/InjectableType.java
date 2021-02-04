@@ -17,9 +17,11 @@
 
 package org.dockbox.selene.core.server.properties;
 
-public interface InjectableType {
+public interface InjectableType
+{
 
-    default boolean canEnable() {
+    default boolean canEnable()
+    {
         return true;
     }
 

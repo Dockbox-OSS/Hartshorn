@@ -28,6 +28,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Filters {
+public @interface Filters
+{
     Filter[] value();
 }

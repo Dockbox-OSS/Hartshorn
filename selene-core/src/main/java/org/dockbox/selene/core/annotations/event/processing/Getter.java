@@ -28,7 +28,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface Getter {
+public @interface Getter
+{
     String value();
 
     boolean overrideExisting() default false;

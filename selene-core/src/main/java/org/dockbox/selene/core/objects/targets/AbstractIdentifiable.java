@@ -21,28 +21,33 @@ import org.dockbox.selene.core.objects.keys.KeyHolder;
 
 import java.util.UUID;
 
-public abstract class AbstractIdentifiable<T extends AbstractIdentifiable<T>> implements Identifiable, Target, KeyHolder<T> {
+public abstract class AbstractIdentifiable<T extends AbstractIdentifiable<T>> implements Identifiable, Target, KeyHolder<T>
+{
 
     protected UUID uniqueId;
     protected String name;
 
-    public AbstractIdentifiable(UUID uniqueId, String name) {
+    public AbstractIdentifiable(UUID uniqueId, String name)
+    {
         this.uniqueId = uniqueId;
         this.name = name;
     }
 
     @Override
-    public UUID getUniqueId() {
+    public UUID getUniqueId()
+    {
         return this.uniqueId;
     }
 
     @Override
-    public String getName() {
+    public String getName()
+    {
         return this.name;
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(String name)
+    {
         this.name = name;
     }
 }

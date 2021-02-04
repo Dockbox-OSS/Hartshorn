@@ -22,41 +22,49 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.function.Function;
 
-public abstract class ReferencedWrapper<T> implements Wrapper<T> {
+public abstract class ReferencedWrapper<T> implements Wrapper<T>
+{
 
     private transient WeakReference<T> reference;
 
-    protected ReferencedWrapper() {
+    protected ReferencedWrapper()
+    {
         this.setReference(this.constructInitialReference());
     }
 
     @Override
-    public boolean referenceExists() {
+    public boolean referenceExists()
+    {
         return this.getReference().isPresent();
     }
 
     @Override
-    public Exceptional<T> getReference() {
+    public Exceptional<T> getReference()
+    {
         this.updateReference().ifPresent(t -> this.setInternalReference(new WeakReference<>(t)));
         return Exceptional.ofNullable(this.getInternalReference().get());
     }
 
-    public Exceptional<T> updateReference() {
+    @Override
+    public void setReference(@NotNull Exceptional<T> reference)
+    {
+        this.setInternalReference(reference.map(WeakReference::new).orElseGet(() -> new WeakReference<>(null)));
+    }
+
+    public Exceptional<T> updateReference()
+    {
         return this.getUpdateReferenceTask().apply(this.getInternalReference().get());
     }
 
-    @Override
-    public void setReference(@NotNull Exceptional<T> reference) {
-        this.setInternalReference(reference.map(WeakReference::new).orElseGet(() -> new WeakReference<>(null)));
+    protected WeakReference<T> getInternalReference()
+    {
+        return this.reference;
     }
 
     public abstract Function<T, Exceptional<T>> getUpdateReferenceTask();
 
-    protected WeakReference<T> getInternalReference() {
-        return this.reference;
-    }
-
-    protected void setInternalReference(WeakReference<T> reference) {
+    protected void setInternalReference(WeakReference<T> reference)
+    {
         this.reference = reference;
     }
 }

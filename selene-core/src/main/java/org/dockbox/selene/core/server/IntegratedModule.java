@@ -28,7 +28,8 @@ import org.dockbox.selene.core.util.Reflect;
  * in a {@link Reflect#getModule(Class)} method call.
  */
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
-public interface IntegratedModule {
+public interface IntegratedModule
+{
 
     @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>")
     void confirm(MessageReceiver src, CommandContext ctx);

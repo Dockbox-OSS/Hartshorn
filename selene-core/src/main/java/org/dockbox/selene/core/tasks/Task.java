@@ -18,7 +18,8 @@
 package org.dockbox.selene.core.tasks;
 
 @FunctionalInterface
-public interface Task {
+public interface Task
+{
 
     void run();
 }

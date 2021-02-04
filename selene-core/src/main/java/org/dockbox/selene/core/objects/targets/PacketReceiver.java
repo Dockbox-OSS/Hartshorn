@@ -19,7 +19,8 @@ package org.dockbox.selene.core.objects.targets;
 
 import org.dockbox.selene.core.objects.Packet;
 
-public interface PacketReceiver {
+public interface PacketReceiver
+{
 
     void send(Packet packet);
 

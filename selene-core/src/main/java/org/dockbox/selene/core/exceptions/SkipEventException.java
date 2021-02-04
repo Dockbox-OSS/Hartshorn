@@ -23,8 +23,10 @@ import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
  * Checked exception which indicates if a event method or listener should be skipped. If the exception is thrown, the
  * method should not be invoked. This is to be respected by the underlying [org.dockbox.selene.core.util.events.EventBus].
  */
-public class SkipEventException extends CheckedSeleneException {
-    public SkipEventException() {
+public class SkipEventException extends CheckedSeleneException
+{
+    public SkipEventException()
+    {
         super("Skipping event");
     }
 }

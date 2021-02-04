@@ -22,7 +22,8 @@ import org.dockbox.selene.core.util.SeleneUtils;
 import java.util.List;
 import java.util.UUID;
 
-public final class SeleneInformation {
+public final class SeleneInformation
+{
 
     public static final String GLOBAL_BYPASS = "selene.admin.bypass-all";
     public static final String PACKAGE_PREFIX = "org.dockbox.selene";
@@ -35,7 +36,7 @@ public final class SeleneInformation {
      * Constant value holding the GitHub username(s) of the author(s) of {@link Selene}. This does not include names of
      * module developers.
      */
-    public static final String[] AUTHORS = {"GuusLieben"};
+    public static final String[] AUTHORS = { "GuusLieben" };
     public static final String PROJECT_NAME = "Selene";
 
     private SeleneInformation() {}

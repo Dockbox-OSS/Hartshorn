@@ -19,7 +19,9 @@ package org.dockbox.selene.core.objects.profile;
 
 import java.util.UUID;
 
-public interface ProfileFactory {
+public interface ProfileFactory
+{
     Profile create(UUID uuid);
+
     Profile create(Profile profile);
 }

@@ -19,4 +19,6 @@ package org.dockbox.selene.core.server;
 
 import com.google.inject.AbstractModule;
 
-public abstract class SeleneInjectConfiguration extends AbstractModule { }
+public abstract class SeleneInjectConfiguration extends AbstractModule
+{
+}

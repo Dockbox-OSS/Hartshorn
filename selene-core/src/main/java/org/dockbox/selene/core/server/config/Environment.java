@@ -17,17 +17,20 @@
 
 package org.dockbox.selene.core.server.config;
 
-public enum Environment {
+public enum Environment
+{
     PRODUCTION(false),
     DEVELOPMENT(true);
 
     private final boolean allowsDebugging;
 
-    Environment(boolean allowsDebugging) {
+    Environment(boolean allowsDebugging)
+    {
         this.allowsDebugging = allowsDebugging;
     }
 
-    public boolean allowsDebugging() {
+    public boolean allowsDebugging()
+    {
         return this.allowsDebugging;
     }
 }

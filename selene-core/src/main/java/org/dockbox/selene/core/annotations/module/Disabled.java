@@ -28,7 +28,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Disabled {
+public @interface Disabled
+{
     /**
      * The reason why the type is disabled.
      *

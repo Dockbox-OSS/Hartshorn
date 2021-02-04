@@ -22,32 +22,38 @@ import org.dockbox.selene.core.events.parents.Targetable;
 import org.dockbox.selene.core.objects.targets.Target;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class AbstractTargetCancellableEvent implements Cancellable, Targetable {
+public abstract class AbstractTargetCancellableEvent implements Cancellable, Targetable
+{
 
     private boolean isCancelled;
     private Target target;
 
-    public AbstractTargetCancellableEvent(Target target) {
+    public AbstractTargetCancellableEvent(Target target)
+    {
         this.target = target;
     }
 
     @Override
-    public boolean isCancelled() {
+    public boolean isCancelled()
+    {
         return this.isCancelled;
     }
 
     @Override
-    public void setCancelled(boolean cancelled) {
+    public void setCancelled(boolean cancelled)
+    {
         this.isCancelled = cancelled;
     }
 
     @Override
-    public Target getTarget() {
+    public Target getTarget()
+    {
         return this.target;
     }
 
     @Override
-    public void setTarget(Target target) {
+    public void setTarget(Target target)
+    {
         this.target = target;
     }
 }

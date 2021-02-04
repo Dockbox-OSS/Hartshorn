@@ -24,20 +24,24 @@ import org.dockbox.selene.core.text.Text;
 /**
  * The event fired when a player sends a message in chat.
  */
-public class SendChatEvent extends AbstractTargetCancellableEvent {
+public class SendChatEvent extends AbstractTargetCancellableEvent
+{
 
     private Text message;
 
-    public SendChatEvent(Target target, Text message) {
+    public SendChatEvent(Target target, Text message)
+    {
         super(target);
         this.message = message;
     }
 
-    public Text getMessage() {
+    public Text getMessage()
+    {
         return this.message;
     }
 
-    public void setMessage(Text message) {
+    public void setMessage(Text message)
+    {
         this.message = message;
     }
 }

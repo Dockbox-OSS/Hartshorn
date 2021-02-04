@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.objects.item;
 
-public interface ItemFactory {
+public interface ItemFactory
+{
     Item create(String id, int meta);
 }

@@ -25,47 +25,56 @@ import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class Console implements CommandSource, PermissionHolder {
+public abstract class Console implements CommandSource, PermissionHolder
+{
 
     protected static Console instance;
 
-    protected Console() {
+    protected Console()
+    {
         if (null != instance) throw new IllegalStateException("Console has already been initialized!");
         instance = this;
     }
 
-    public static Console getInstance() {
+    public static Console getInstance()
+    {
         if (null == instance) return Selene.provide(Console.class);
         return instance;
     }
 
     @Override
-    public boolean hasPermission(@NotNull String permission) {
+    public boolean hasPermission(@NotNull String permission)
+    {
         return true;
     }
 
     @Override
-    public boolean hasAnyPermission(@NotNull String @NotNull ... permissions) {
+    public boolean hasAnyPermission(@NotNull String @NotNull ... permissions)
+    {
         return true;
     }
 
     @Override
-    public boolean hasAllPermissions(@NotNull String @NotNull ... permissions) {
+    public boolean hasAllPermissions(@NotNull String @NotNull ... permissions)
+    {
         return true;
     }
 
     @Override
-    public boolean hasPermission(@NotNull AbstractPermission permission) {
+    public boolean hasPermission(@NotNull AbstractPermission permission)
+    {
         return true;
     }
 
     @Override
-    public boolean hasAnyPermission(@NotNull AbstractPermission @NotNull ... permissions) {
+    public boolean hasAnyPermission(@NotNull AbstractPermission @NotNull ... permissions)
+    {
         return true;
     }
 
     @Override
-    public boolean hasAllPermissions(@NotNull AbstractPermission @NotNull ... permissions) {
+    public boolean hasAllPermissions(@NotNull AbstractPermission @NotNull ... permissions)
+    {
         return true;
     }
 
@@ -82,13 +91,15 @@ public abstract class Console implements CommandSource, PermissionHolder {
     public void setPermissions(boolean value, @NotNull AbstractPermission @NotNull ... permissions) { }
 
     @Override
-    public void send(@NotNull ResourceEntry text) {
+    public void send(@NotNull ResourceEntry text)
+    {
         Text formattedValue = text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
         this.send(formattedValue);
     }
 
     @Override
-    public void sendWithPrefix(@NotNull ResourceEntry text) {
+    public void sendWithPrefix(@NotNull ResourceEntry text)
+    {
         Text formattedValue = text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
         this.sendWithPrefix(formattedValue);
     }

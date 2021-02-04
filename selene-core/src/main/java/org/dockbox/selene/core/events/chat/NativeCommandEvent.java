@@ -32,30 +32,41 @@ import java.util.List;
  * The event fired when a command is executed natively through the implemented platform. This typically includes both
  * external commands and commands defined within Selene.
  */
-public class NativeCommandEvent extends AbstractTargetCancellableEvent implements Filterable {
+public class NativeCommandEvent extends AbstractTargetCancellableEvent implements Filterable
+{
 
     private String alias;
     private String[] arguments;
 
-    public NativeCommandEvent(CommandSource source, String alias, String[] arguments) {
+    public NativeCommandEvent(CommandSource source, String alias, String[] arguments)
+    {
         super(source);
         this.alias = alias;
         this.arguments = arguments;
     }
 
     @Override
-    public boolean isApplicable(Filter filter) {
-        if (Arrays.asList("alias", "command").contains(filter.param())) {
+    public boolean isApplicable(Filter filter)
+    {
+        if (Arrays.asList("alias", "command").contains(filter.param()))
+        {
             return filter.type().test(filter.value(), this.getAlias());
-        } else if (Arrays.asList("args", "arguments").contains(filter.param())) {
+        }
+        else if (Arrays.asList("args", "arguments").contains(filter.param()))
+        {
             String[] expectedARguments = filter.value().split(" ");
-            if (FilterTypes.EQUALS == filter.type()) {
-                for (String expectedArg : expectedARguments) {
+            if (FilterTypes.EQUALS == filter.type())
+            {
+                for (String expectedArg : expectedARguments)
+                {
                     if (!Arrays.asList(this.getArguments()).contains(expectedArg)) return false;
                 }
                 return true;
-            } else if (FilterTypes.CONTAINS == filter.type()) {
-                for (String expectedArg : expectedARguments) {
+            }
+            else if (FilterTypes.CONTAINS == filter.type())
+            {
+                for (String expectedArg : expectedARguments)
+                {
                     if (Arrays.asList(this.getArguments()).contains(expectedArg)) return true;
                 }
                 return false;
@@ -64,29 +75,35 @@ public class NativeCommandEvent extends AbstractTargetCancellableEvent implement
         return false;
     }
 
-    public String getAlias() {
+    public String getAlias()
+    {
         return this.alias;
     }
 
-    public void setAlias(String alias) {
+    public void setAlias(String alias)
+    {
         this.alias = alias;
     }
 
-    public String[] getArguments() {
+    public String[] getArguments()
+    {
         return this.arguments;
     }
 
-    public void setArguments(String[] arguments) {
+    public void setArguments(String[] arguments)
+    {
         this.arguments = arguments;
     }
 
     @Override
-    public List<FilterType> acceptedFilters() {
+    public List<FilterType> acceptedFilters()
+    {
         return FilterTypes.commonStringTypes();
     }
 
     @Override
-    public List<String> acceptedParams() {
+    public List<String> acceptedParams()
+    {
         return SeleneUtils.asUnmodifiableList("alias", "args", "arguments", "command");
     }
 }

@@ -17,7 +17,8 @@
 
 package org.dockbox.selene.core.server.bootstrap;
 
-public interface Preloadable {
+public interface Preloadable
+{
 
     void preload();
 

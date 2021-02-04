@@ -21,16 +21,19 @@ import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.events.AbstractTargetEvent;
 import org.dockbox.selene.core.objects.player.Player;
 
-public abstract class ModerationEvent extends AbstractTargetEvent {
+public abstract class ModerationEvent extends AbstractTargetEvent
+{
 
     private final CommandSource source;
 
-    protected ModerationEvent(Player player, CommandSource source) {
+    protected ModerationEvent(Player player, CommandSource source)
+    {
         super(player);
         this.source = source;
     }
 
-    public CommandSource getSource() {
+    public CommandSource getSource()
+    {
         return this.source;
     }
 }

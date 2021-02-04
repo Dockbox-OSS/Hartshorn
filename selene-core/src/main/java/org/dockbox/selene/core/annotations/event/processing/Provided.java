@@ -31,7 +31,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface Provided {
+public @interface Provided
+{
     Class<?> value() default Void.class;
 
     boolean overrideExisting() default false;

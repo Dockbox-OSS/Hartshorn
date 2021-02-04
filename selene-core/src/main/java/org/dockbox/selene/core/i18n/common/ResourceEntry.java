@@ -23,31 +23,36 @@ import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 
-public interface ResourceEntry extends Formattable {
+public interface ResourceEntry extends Formattable
+{
 
-    ResourceEntry translate(Language lang);
-
-    String asString();
+    static String plain(String value)
+    {
+        return value.replaceAll("[$|&][0-9a-fklmnor]", "");
+    }
 
     String getKey();
 
-    default Text asText() {
+    default Text asText()
+    {
         return Text.of(this.asString());
     }
 
+    String asString();
+
     String plain();
 
-    default ResourceEntry translate(MessageReceiver receiver) {
+    default ResourceEntry translate(MessageReceiver receiver)
+    {
         if (receiver instanceof Player)
             return this.translate(((Player) receiver).getLanguage());
         else return this.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage());
     }
 
-    static String plain(String value) {
-        return value.replaceAll("[$|&][0-9a-fklmnor]", "");
-    }
+    ResourceEntry translate(Language lang);
 
-    default String parseColors(String m) {
+    default String parseColors(String m)
+    {
         String temp = m;
         char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
         for (char c : nativeFormats) temp = temp.replace(String.format("&%s", c), String.format("\u00A7%s", c));
@@ -60,7 +65,8 @@ public interface ResourceEntry extends Formattable {
 
 
     @SuppressWarnings("ClassReferencesSubclass")
-    default FormattedResource format(Object... args) {
+    default FormattedResource format(Object... args)
+    {
         return new FormattedResource(this, args);
     }
 }

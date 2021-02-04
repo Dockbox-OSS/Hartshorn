@@ -19,9 +19,11 @@ package org.dockbox.selene.core.exceptions;
 
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 
-public class TypeConversionException extends UncheckedSeleneException {
+public class TypeConversionException extends UncheckedSeleneException
+{
 
-    public TypeConversionException(Class<?> from, Class<?> target) {
+    public TypeConversionException(Class<?> from, Class<?> target)
+    {
         super("Could not convert [" + from.getCanonicalName() + "] to target type [" + target.getCanonicalName() + "]");
     }
 }

@@ -19,7 +19,8 @@ package org.dockbox.selene.core.server.config;
 
 import org.dockbox.selene.core.i18n.common.Language;
 
-public interface GlobalConfig {
+public interface GlobalConfig
+{
     Language getDefaultLanguage();
 
     boolean getStacktracesAllowed();

@@ -22,21 +22,25 @@ import org.dockbox.selene.core.events.parents.Targetable;
 import org.dockbox.selene.core.objects.targets.Target;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class AbstractTargetEvent implements Event, Targetable {
+public abstract class AbstractTargetEvent implements Event, Targetable
+{
 
     private Target target;
 
-    public AbstractTargetEvent(Target target) {
+    public AbstractTargetEvent(Target target)
+    {
         this.target = target;
     }
 
     @Override
-    public Target getTarget() {
+    public Target getTarget()
+    {
         return this.target;
     }
 
     @Override
-    public void setTarget(Target target) {
+    public void setTarget(Target target)
+    {
         this.target = target;
     }
 }

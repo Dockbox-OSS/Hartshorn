@@ -18,8 +18,10 @@
 package org.dockbox.selene.core.tasks;
 
 @FunctionalInterface
-public interface CheckedRunnable {
+public interface CheckedRunnable
+{
 
-    void run() throws Exception;
+    void run()
+            throws Exception;
 
 }

@@ -25,7 +25,8 @@ import java.util.List;
 /**
  * A low level type which accepts a {@link Filter} to be applied to it.
  */
-public interface Filterable {
+public interface Filterable
+{
 
     /**
      * Indicates whether or not the implementation and its properties match a given {@link Filter}.

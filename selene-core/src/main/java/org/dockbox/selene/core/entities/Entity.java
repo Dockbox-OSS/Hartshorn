@@ -24,7 +24,8 @@ import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.text.Text;
 
-public interface Entity<T extends Entity<T>> extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<T> {
+public interface Entity<T extends Entity<T>> extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<T>
+{
 
     Text getDisplayName();
 
@@ -48,11 +49,12 @@ public interface Entity<T extends Entity<T>> extends Identifiable, Locatable, Pe
 
     void setGravity(boolean gravity);
 
-    boolean summon(Location location);
-
-    default boolean summon() {
+    default boolean summon()
+    {
         return this.summon(this.getLocation());
     }
+
+    boolean summon(Location location);
 
     boolean destroy();
 

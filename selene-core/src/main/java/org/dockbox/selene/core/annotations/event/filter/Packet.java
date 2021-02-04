@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Packet {
+public @interface Packet
+{
     Class<? extends org.dockbox.selene.core.objects.Packet> value();
 }
