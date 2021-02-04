@@ -87,7 +87,6 @@ public class MethodCommandContext extends AbstractRegistrationContext
         }
     }
 
-    // TODO: Fix cyclomatic complexity (11)
     private List<Object> prepareArguments(CommandSource source, CommandContext context)
     {
         List<Object> finalArgs = SeleneUtils.emptyList();
@@ -100,29 +99,20 @@ public class MethodCommandContext extends AbstractRegistrationContext
 
             Class<?> parameterType = parameter.getType();
             if (Reflect.isEitherAssignableFrom(CommandSource.class, parameterType))
-            {
-                if (parameterType.equals(Player.class))
-                {
-                    if (source instanceof Player) finalArgs.add(source);
-                    else throw new IllegalSourceException("Command can only be ran by players");
-                }
-                else if (parameterType.equals(Console.class))
-                {
-                    if (source instanceof Console) finalArgs.add(source);
-                    else throw new IllegalSourceException("Command can only be ran by the console");
-                }
-                else finalArgs.add(source);
-            }
+                finalArgs.add(lookupCommandSource(parameterType, source));
             else if (Reflect.isEitherAssignableFrom(CommandContext.class, parameterType))
-            {
                 finalArgs.add(context);
-            }
-            else
-            {
-                throw new IllegalStateException("Method requested parameter type '" + parameterType.getSimpleName() + "' which is not provided");
-            }
+            else throw new IllegalStateException("Method requested parameter type '" + parameterType.getSimpleName() + "' which is not provided");
         }
         return finalArgs;
+    }
+
+    private static CommandSource lookupCommandSource(Class<?> parameterType, CommandSource source)
+    {
+        if (parameterType.equals(Player.class) && !(source instanceof Player)) throw new IllegalSourceException("Command can only be ran by players");
+        else if (parameterType.equals(Console.class) && !(source instanceof Console))
+            throw new IllegalSourceException("Command can only be ran by the console");
+        return source;
     }
 
     private Object prepareInstance()
