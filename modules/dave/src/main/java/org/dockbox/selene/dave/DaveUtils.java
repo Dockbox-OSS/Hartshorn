@@ -194,7 +194,7 @@ public final class DaveUtils
             parsedLink = "http://" + parsedLink;
         return parsedLink;
     }
-    
+
     public static String parsePlaceHolders(String message, String unparsedResponse, String playerName)
     {
         String parsedResponse = unparsedResponse.replaceAll("<player>", playerName);

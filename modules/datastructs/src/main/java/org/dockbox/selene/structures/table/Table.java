@@ -320,7 +320,6 @@ public class Table
      * @throws IdentifierMismatchException
      *         When a identifier does not exist across both tables
      */
-    // TODO: Fix cyclomatic complexity (currently at 17)
     public <T> Table join(@NotNull Table otherTable, ColumnIdentifier<T> column, Merge merge, boolean populateEmptyEntries)
             throws EmptyEntryException, IdentifierMismatchException
     {
@@ -338,46 +337,7 @@ public class Table
             {
                 try
                 {
-                    List<TableRow> matchingRows = Table.getMatchingRows(row, otherTable, column);
-
-                    TableRow joinedRow = new TableRow();
-                    for (ColumnIdentifier<?> identifier : this.getIdentifiers())
-                    {
-                        joinedRow.addValue(identifier, row.getValue(identifier).get());
-                    }
-                    for (ColumnIdentifier<?> identifier : otherTable.getIdentifiers())
-                    {
-                        for (TableRow matchingRow : matchingRows)
-                        {
-                            /*
-                             If there is already a value present on this row, look up if we want to keep the existing,
-                             or use the new value.
-                             */
-                            if (!joinedRow.getValue(identifier).isPresent() || Merge.PREFER_FOREIGN == merge)
-                            {
-                                joinedRow.addValue(identifier, matchingRow.getValue(identifier).get());
-
-                            }
-                        }
-
-                        /*
-                         If there was no value filled by either this table instance, or the foreign table, try to
-                          populate it with null. If that is not allowed throw a exception.
-                        */
-                        if (!joinedRow.getValue(identifier).isPresent())
-                        {
-                            if (populateEmptyEntries)
-                            {
-                                joinedRow.addValue(identifier, null);
-                            }
-                            else
-                            {
-                                throw new EmptyEntryException("Could not populate empty entry for column " + identifier.getColumnName());
-                            }
-                        }
-                    }
-
-                    joinedTable.addRow(joinedRow);
+                    this.populateMatchingRows(otherTable, column, merge, populateEmptyEntries, joinedTable, row);
                 }
                 catch (IllegalArgumentException e)
                 {
@@ -390,25 +350,68 @@ public class Table
              possible (if the foreign table has no additional identifiers which we cannot populate here.
              */
             for (TableRow row : otherTable.getRows())
-            {
-                try
-                {
-                    List<TableRow> matchingRows = Table.getMatchingRows(row, joinedTable, column);
-                    if (matchingRows.isEmpty())
-                    {
-                        this.tryPopulateMissingEntry(otherTable, populateEmptyEntries, mergedIdentifiers, joinedTable, row);
-                    }
-                }
-                catch (IdentifierMismatchException e)
-                {
-                    continue;
-                }
-            }
+                this.populateMissingEntries(otherTable, column, populateEmptyEntries, mergedIdentifiers, joinedTable, row);
 
             return joinedTable;
         }
         throw new IdentifierMismatchException("Column '" + column + "' does not exist in both tables");
 
+    }
+
+    private <T> void populateMatchingRows(@NotNull Table otherTable, ColumnIdentifier<T> column, Merge merge, boolean populateEmptyEntries, Table joinedTable,
+                               TableRow row)
+            throws EmptyEntryException, IdentifierMismatchException
+    {
+        List<TableRow> matchingRows = Table.getMatchingRows(row, otherTable, column);
+
+        TableRow joinedRow = new TableRow();
+        for (ColumnIdentifier<?> identifier : this.getIdentifiers())
+            joinedRow.addValue(identifier, row.getValue(identifier).get());
+        for (ColumnIdentifier<?> identifier : otherTable.getIdentifiers())
+            Table.populateAtColumn(merge, populateEmptyEntries, matchingRows, joinedRow, identifier);
+
+        joinedTable.addRow(joinedRow);
+    }
+
+    private <T> void populateMissingEntries(@NotNull Table otherTable, ColumnIdentifier<T> column, boolean populateEmptyEntries,
+                                            Iterable<ColumnIdentifier<?>> mergedIdentifiers, Table joinedTable, TableRow row)
+    {
+        try
+        {
+            List<TableRow> matchingRows = Table.getMatchingRows(row, joinedTable, column);
+            if (matchingRows.isEmpty())
+                this.tryPopulateMissingEntry(otherTable, populateEmptyEntries, mergedIdentifiers, joinedTable, row);
+        }
+        catch (IdentifierMismatchException ignored)
+        {
+        }
+    }
+
+    private static void populateAtColumn(Merge merge, boolean populateEmptyEntries, Iterable<TableRow> matchingRows, TableRow joinedRow,
+                                         ColumnIdentifier<?> identifier)
+            throws EmptyEntryException
+    {
+        for (TableRow matchingRow : matchingRows)
+        {
+            /*
+             If there is already a value present on this row, look up if we want to keep the existing,
+             or use the new value.
+             */
+            if (!joinedRow.getValue(identifier).isPresent() || Merge.PREFER_FOREIGN == merge)
+                joinedRow.addValue(identifier, matchingRow.getValue(identifier).get());
+        }
+
+        /*
+         If there was no value filled by either this table instance, or the foreign table, try to
+          populate it with null. If that is not allowed throw a exception.
+        */
+        if (!joinedRow.getValue(identifier).isPresent())
+        {
+            if (populateEmptyEntries)
+                joinedRow.addValue(identifier, null);
+            else
+                throw new EmptyEntryException("Could not populate empty entry for column " + identifier.getColumnName());
+        }
     }
 
     /**
