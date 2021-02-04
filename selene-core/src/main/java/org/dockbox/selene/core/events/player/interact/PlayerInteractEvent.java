@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.events.player.interact;
 
+import org.dockbox.selene.core.entities.Entity;
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.player.ClickType;
@@ -24,6 +25,7 @@ import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.player.Sneaking;
 import org.dockbox.selene.core.objects.targets.Target;
+import org.dockbox.selene.core.objects.tuple.Vector3N;
 
 public class PlayerInteractEvent extends AbstractTargetCancellableEvent
 {
@@ -85,13 +87,27 @@ public class PlayerInteractEvent extends AbstractTargetCancellableEvent
         }
     }
 
-    public static final class PlayerInteractEntityEvent extends PlayerInteractEvent
+    public static final class PlayerInteractEntityEvent<T extends Entity<?>> extends PlayerInteractEvent
     {
 
-        // TODO, Implementation of Entity before implementing event. See #37
-        private PlayerInteractEntityEvent(Player player, Hand hand, ClickType clickType)
+        private final T entity;
+        private final Vector3N interactionPoint;
+
+        public PlayerInteractEntityEvent(Player player, T entity, Vector3N interactionPoint)
         {
-            super(player, hand, clickType);
+            super(player, Hand.EITHER, ClickType.SECONDARY);
+            this.entity = entity;
+            this.interactionPoint = interactionPoint;
+        }
+
+        public Vector3N getInteractionPoint()
+        {
+            return this.interactionPoint;
+        }
+
+        public T getEntity()
+        {
+            return this.entity;
         }
     }
 

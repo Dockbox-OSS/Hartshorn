@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.sponge.listeners;
 
+import com.flowpowered.math.vector.Vector3d;
+
 import org.dockbox.selene.core.events.chat.SendChatEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.IpBannedEvent;
 import org.dockbox.selene.core.events.moderation.BanEvent.IpUnbannedEvent;
@@ -38,6 +40,7 @@ import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerTeleportEvent
 import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerWarpEvent;
 import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent.PlayerInteractAirEvent;
 import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent.PlayerInteractBlockEvent;
+import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent.PlayerInteractEntityEvent;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.Warp;
@@ -45,10 +48,15 @@ import org.dockbox.selene.core.objects.player.ClickType;
 import org.dockbox.selene.core.objects.player.Hand;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.sponge.entities.SpongeArmorStand;
+import org.dockbox.selene.sponge.entities.SpongeItemFrame;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Transform;
+import org.spongepowered.api.entity.hanging.ItemFrame;
+import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Listener;
@@ -351,8 +359,9 @@ public class SpongePlayerListener
                                @Getter("getSource") Object source
     )
     {
-        SpongePlayerListener.postIfCommandSource(source, convertedSource -> new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional
-                .empty()).post());
+        SpongePlayerListener
+                .postIfCommandSource(source, convertedSource -> new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional
+                        .empty()).post());
     }
 
     @Listener
@@ -392,11 +401,10 @@ public class SpongePlayerListener
         if (event instanceof InteractBlockEvent || event instanceof InteractEntityEvent) return;
         if (event.getInteractionPoint().isPresent()) return;
 
-        ClickType type;
-        Hand hand;
-
-        hand = SpongeConversionUtil.fromSponge((event.getHandType()));
+        Hand hand = SpongeConversionUtil.fromSponge((event.getHandType()));
         String canonical = event.getClass().getCanonicalName();
+
+        ClickType type;
         if (canonical.toLowerCase().contains("primary")) type = ClickType.PRIMARY;
         else if (canonical.toLowerCase().contains("secondary")) type = ClickType.SECONDARY;
         else return;
@@ -404,6 +412,24 @@ public class SpongePlayerListener
         Cancellable cancellable = new PlayerInteractAirEvent(
                 SpongeConversionUtil.fromSponge(player),
                 hand, type).post();
+        event.setCancelled(cancellable.isCancelled());
+    }
+
+    @Listener
+    public void onPlayerInteractedEntity(InteractEntityEvent event,
+                                         @Getter("getSource") Player player,
+                                         @Getter("getTargetEntity") Entity entity)
+    {
+        org.dockbox.selene.core.entities.Entity<?> targetEntity;
+        if (entity instanceof ArmorStand) targetEntity = new SpongeArmorStand((ArmorStand) entity);
+        else if (entity instanceof ItemFrame) targetEntity = new SpongeItemFrame((ItemFrame) entity);
+        else return;
+
+        Cancellable cancellable = new PlayerInteractEntityEvent<>(
+                SpongeConversionUtil.fromSponge(player),
+                targetEntity,
+                SpongeConversionUtil.fromSponge(event.getInteractionPoint().orElse(Vector3d.ZERO))
+        );
         event.setCancelled(cancellable.isCancelled());
     }
 
