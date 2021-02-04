@@ -1,0 +1,100 @@
+import java.time.LocalDate
+
+/*
+ *  Copyright (C) 2020 Guus Lieben
+ *
+ *  This framework is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as
+ *  published by the Free Software Foundation, either version 2.1 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ *  the GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
+buildscript {
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.spongepowered.plugin' version '0.9.0'
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+
+archivesBaseName = 'selene-sponge-api8'
+group = project.pluginGroup
+description = 'Sponge API8.x implementation for Selene'
+sponge.plugin.id = pluginId
+def date = LocalDate.now().toString()
+
+minecraft {
+    mappings channel: 'snapshot', version: "${minecraftMappings116}"
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo-new.spongepowered.org/repository/maven-public/' }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraftForge116}"
+    shadow project(':selene-core')
+    shadow(project(':selene-common')) {
+        exclude group: "org.spongepowered", module: "configurate**"
+    }
+    new File(parent.rootDir, 'modules').listFiles().each {
+        if (it.directory && new File(it, 'build.gradle').exists()) {
+            shadow(project(":modules:${it.name}"))
+            testCompileOnly(project(":modules:${it.name}"))
+        }
+    }
+    shadow project(':modules')
+    shadow(project(':selene-nms-1.12')) {
+        exclude group: 'net.minecraftforge', module: 'forge'
+    }
+    implementation "org.spongepowered:spongeapi:$spongeApi8Version"
+
+    testCompileOnly project(':selene-core')
+    testCompileOnly(project(':selene-common')) {
+        exclude group: "org.spongepowered", module: "configurate**"
+    }
+    testCompileOnly project(':modules')
+    testCompileOnly(project(':selene-nms-1.12')) {
+        exclude group: 'net.minecraftforge', module: 'forge'
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+}
+
+task copyArtifacts {
+    doLast {
+        def version = getVersionName()
+        def DIST_DEST_DIR = "${rootDir}/dist/${date}/${version}"
+        def DIRT_SRC_DIR = "${buildDir}/libs"
+
+        ant.mkdir(dir: DIST_DEST_DIR)
+        println("Copying all built files to $DIST_DEST_DIR")
+        ant.copy(todir: DIST_DEST_DIR) {
+            fileset dir: DIRT_SRC_DIR,
+                    includes: "*${version}-${date}*.jar"
+        }
+
+    }
+}
+
+jar.finalizedBy('reobfJar')
+build.finalizedBy copyArtifacts
