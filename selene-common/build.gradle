@@ -42,8 +42,8 @@ dependencies {
 
         compile "com.stanfy:gson-xml-java:$gsonXmlVersion"
         compile "com.thoughtworks.xstream:xstream:$xstreamVersion"
-        compile 'xpp3:xpp3:1.1.4c' // TODO, versioning
-        compile 'net.sf.kxml:kxml2:2.3.0'
+        compile "xpp3:xpp3:$xmlPullParserVersion"
+        compile "net.sf.kxml:kxml2:$kxmlVersion"
         compile "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"
 
         testImplementation "com.thoughtworks.xstream:xstream:$xstreamVersion"
