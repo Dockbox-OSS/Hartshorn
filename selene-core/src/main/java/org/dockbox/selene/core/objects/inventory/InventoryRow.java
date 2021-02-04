@@ -23,7 +23,6 @@ package org.dockbox.selene.core.objects.inventory;
 public interface InventoryRow extends Inventory
 {
 
-
     /**
      * Gets the owning {@link PlayerInventory}.
      *

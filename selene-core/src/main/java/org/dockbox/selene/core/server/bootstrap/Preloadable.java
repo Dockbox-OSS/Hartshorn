@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.server.bootstrap;
 
+@FunctionalInterface
 public interface Preloadable
 {
 

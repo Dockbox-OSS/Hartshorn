@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.tasks;
 
+@SuppressWarnings("InterfaceNeverImplemented")
 @FunctionalInterface
 public interface CheckedRunnable
 {

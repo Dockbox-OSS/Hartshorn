@@ -33,12 +33,6 @@ public abstract class ReferencedWrapper<T> implements Wrapper<T>
     }
 
     @Override
-    public boolean referenceExists()
-    {
-        return this.getReference().isPresent();
-    }
-
-    @Override
     public Exceptional<T> getReference()
     {
         this.updateReference().ifPresent(t -> this.setInternalReference(new WeakReference<>(t)));

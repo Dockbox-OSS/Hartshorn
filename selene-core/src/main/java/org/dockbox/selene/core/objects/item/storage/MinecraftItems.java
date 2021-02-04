@@ -25,7 +25,7 @@ import org.dockbox.selene.core.util.SeleneUtils;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@SuppressWarnings({ "unused", "OverlyComplexClass" })
+@SuppressWarnings({ "unused", "OverlyComplexClass", "MethodMayBeStatic" })
 public abstract class MinecraftItems
 {
 

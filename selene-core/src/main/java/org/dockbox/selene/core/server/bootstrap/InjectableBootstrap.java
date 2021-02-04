@@ -109,6 +109,7 @@ public abstract class InjectableBootstrap
      *
      * @return The instance, if present. Otherwise returns null
      */
+    // TODO: Fix cyclomatic complexity (11)
     public <T> T getInstance(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties)
     {
         T typeInstance = null;
@@ -133,7 +134,7 @@ public abstract class InjectableBootstrap
         {
             try
             {
-                typeInstance = this.getInjectedInstance(injector, type, additionalProperties);
+                typeInstance = InjectableBootstrap.getInjectedInstance(injector, type, additionalProperties);
             }
             catch (ProvisionException e)
             {
@@ -141,7 +142,7 @@ public abstract class InjectableBootstrap
             }
             catch (ConfigurationException ce)
             {
-                typeInstance = this
+                typeInstance = InjectableBootstrap
                         .getRawInstance(type, injector)
                         .orElseSupply(() -> this.getUnsafeInstance(type, injector))
                         .orNull();
@@ -193,7 +194,7 @@ public abstract class InjectableBootstrap
         return null;
     }
 
-    private <T> Exceptional<T> getRawInstance(Class<T> type, Injector injector)
+    private static <T> Exceptional<T> getRawInstance(Class<T> type, Injector injector)
     {
         try
         {
@@ -209,7 +210,7 @@ public abstract class InjectableBootstrap
         }
     }
 
-    private <T> T getInjectedInstance(Injector injector, Class<T> type, InjectorProperty<?>... additionalProperties)
+    private static <T> T getInjectedInstance(Injector injector, Class<T> type, InjectorProperty<?>... additionalProperties)
     {
         @SuppressWarnings("rawtypes") Exceptional<Class> annotation =
                 Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
@@ -240,6 +241,7 @@ public abstract class InjectableBootstrap
      */
     public <T> void bindUtility(Class<T> contract, Class<? extends T> implementation)
     {
+        // TODO: Convert to static inner class
         AbstractModule localModule = new AbstractModule()
         {
             @Override
@@ -255,6 +257,7 @@ public abstract class InjectableBootstrap
 
     public <C, T extends C> void bindUtility(Class<C> contract, T instance)
     {
+        // TODO: Convert to static inner class
         AbstractModule localModule = new AbstractModule()
         {
             @Override
@@ -283,7 +286,7 @@ public abstract class InjectableBootstrap
     }
 
     @SuppressWarnings("unchecked")
-    private <T> ModuleInjectionConfiguration getModuleConfiguration(T instance, Module header, ModuleContext context)
+    private static <T> ModuleInjectionConfiguration getModuleConfiguration(T instance, Module header, ModuleContext context)
     {
         ModuleInjectionConfiguration module = new ModuleInjectionConfiguration();
 
@@ -302,7 +305,7 @@ public abstract class InjectableBootstrap
 
     public Injector createModuleInjector(Object instance, Module header, ModuleContext context)
     {
-        return this.rebuildInjector(this.getModuleConfiguration(instance, header, context));
+        return this.rebuildInjector(InjectableBootstrap.getModuleConfiguration(instance, header, context));
     }
 
     public <T> T injectMembers(T type)

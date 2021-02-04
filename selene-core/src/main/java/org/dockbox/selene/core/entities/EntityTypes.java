@@ -22,11 +22,13 @@ import org.dockbox.selene.core.server.Selene;
 
 import java.util.function.BiFunction;
 
-public class EntityTypes
+public final class EntityTypes
 {
 
     public static final EntityType<ArmorStand> ARMOR_STAND = new EntityType<>(EntityFactory::armorStand);
     public static final EntityType<ItemFrame> ITEM_FRAME = new EntityType<>(EntityFactory::itemFrame);
+
+    private EntityTypes() {}
 
     public static final class EntityType<T extends Entity<T>>
     {

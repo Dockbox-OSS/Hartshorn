@@ -34,7 +34,7 @@ public class PacketEvent<T extends Packet> extends AbstractCancellableEvent
 
     private final Player target;
     private T packet;
-    private boolean isModified = false;
+    private boolean isModified;
 
     public PacketEvent(T packet, Player target)
     {

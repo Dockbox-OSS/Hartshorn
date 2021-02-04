@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.tasks;
 
+@SuppressWarnings("AbstractClassNeverImplemented") // API type
 public abstract class AbstractTask implements Task
 {
 

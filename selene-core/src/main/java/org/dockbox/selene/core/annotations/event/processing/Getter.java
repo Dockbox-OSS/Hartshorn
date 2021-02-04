@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 
 /**
  * Tries to obtain the value of a given (getter) method, or null for any parameter but event. By default this will not
- * override any pre-existing value unless {@link #overrideExisting()} is set to <code>true</code>.
+ * override any pre-existing value unless {@link #overrideExisting()} is set to {@code true}.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)

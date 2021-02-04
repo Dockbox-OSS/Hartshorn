@@ -19,6 +19,7 @@ package org.dockbox.selene.core.entities;
 
 import org.dockbox.selene.core.objects.location.Location;
 
+@SuppressWarnings("InterfaceNeverImplemented") // Proxied by AssistedInject
 public interface EntityFactory
 {
 

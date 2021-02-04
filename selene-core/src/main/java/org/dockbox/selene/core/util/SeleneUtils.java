@@ -552,21 +552,22 @@ public final class SeleneUtils
         return s.toString();
     }
 
-    public static int levenshteinDistance(@NonNls CharSequence s, @NonNls CharSequence t)
+    // TODO: Fix cyclomatic complexity (11)
+    public static int levenshteinDistance(@NonNls CharSequence source, @NonNls CharSequence target)
     {
-        // degenerate cases          s
-        if (null == s || "".contentEquals(s))
+        // degenerate cases
+        if (null == source || "".contentEquals(source))
         {
-            return null == t || "".contentEquals(t) ? 0 : t.length();
+            return null == target || "".contentEquals(target) ? 0 : target.length();
         }
-        else if (null == t || "".contentEquals(t))
+        else if (null == target || "".contentEquals(target))
         {
-            return s.length();
+            return source.length();
         }
 
         // create two work vectors of integer distances
-        int[] v0 = new int[t.length() + 1];
-        int[] v1 = new int[t.length() + 1];
+        int[] v0 = new int[target.length() + 1];
+        int[] v1 = new int[target.length() + 1];
 
         // initialize v0 (the previous row of distances)
         // this row is A[0][i]: edit distance for an empty s
@@ -576,8 +577,8 @@ public final class SeleneUtils
             v0[i] = i;
         }
 
-        int sLen = s.length();
-        int tLen = t.length();
+        int sLen = source.length();
+        int tLen = target.length();
         for (int i = 0; i < sLen; i++)
         {
             // calculate v1 (current row distances) from the previous row v0
@@ -589,7 +590,7 @@ public final class SeleneUtils
             // use formula to fill in the rest of the row
             for (int j = 0; j < tLen; j++)
             {
-                int cost = (s.charAt(i) == t.charAt(j)) ? 0 : 1;
+                int cost = (source.charAt(i) == target.charAt(j)) ? 0 : 1;
                 v1[j + 1] = (int) SeleneUtils.minimum(v1[j] + 1, v0[j + 1] + 1, v0[j] + cost);
             }
 
@@ -597,7 +598,7 @@ public final class SeleneUtils
             System.arraycopy(v1, 0, v0, 0, v0.length);
         }
 
-        return v1[t.length()];
+        return v1[target.length()];
     }
 
     @Contract(pure = true)
@@ -609,6 +610,7 @@ public final class SeleneUtils
         return current;
     }
 
+    // TODO: Fix cyclomatic complexity (16)
     public static int damerauLevenshteinDistance(@NonNls CharSequence source, @NonNls CharSequence target)
     {
         if (null == source || "".contentEquals(source))

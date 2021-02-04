@@ -18,7 +18,7 @@
 package org.dockbox.selene.core.events.chat;
 
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent;
-import org.dockbox.selene.core.objects.targets.Target;
+import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.text.Text;
 
 /**
@@ -29,7 +29,7 @@ public class SendChatEvent extends AbstractTargetCancellableEvent
 
     private Text message;
 
-    public SendChatEvent(Target target, Text message)
+    public SendChatEvent(MessageReceiver target, Text message)
     {
         super(target);
         this.message = message;

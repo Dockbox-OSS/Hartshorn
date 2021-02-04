@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.text.actions;
 
+@SuppressWarnings("AbstractClassWithoutAbstractMethods")
 public abstract class TextAction<R>
 {
 

@@ -19,6 +19,7 @@ package org.dockbox.selene.core.objects.targets;
 
 import org.dockbox.selene.core.objects.Packet;
 
+@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface PacketReceiver
 {
 

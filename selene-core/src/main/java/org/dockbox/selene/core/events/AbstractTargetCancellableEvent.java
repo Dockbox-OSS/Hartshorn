@@ -28,7 +28,7 @@ public abstract class AbstractTargetCancellableEvent implements Cancellable, Tar
     private boolean isCancelled;
     private Target target;
 
-    public AbstractTargetCancellableEvent(Target target)
+    protected AbstractTargetCancellableEvent(Target target)
     {
         this.target = target;
     }

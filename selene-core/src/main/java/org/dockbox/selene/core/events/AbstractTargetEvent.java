@@ -27,7 +27,7 @@ public abstract class AbstractTargetEvent implements Event, Targetable
 
     private Target target;
 
-    public AbstractTargetEvent(Target target)
+    protected AbstractTargetEvent(Target target)
     {
         this.target = target;
     }

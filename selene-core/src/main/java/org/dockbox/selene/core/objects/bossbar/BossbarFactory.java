@@ -27,6 +27,8 @@ import org.dockbox.selene.core.text.Text;
  * See <a href="https://github.com/google/guice/wiki/AssistedInject">Google/guice 'AssistedInject'</a> for further
  * details
  */
+@SuppressWarnings("InterfaceNeverImplemented")
+@FunctionalInterface
 public interface BossbarFactory
 {
     Bossbar create(String id, float percent, Text text, BossbarColor color, BossbarStyle style);

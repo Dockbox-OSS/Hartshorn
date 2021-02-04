@@ -38,6 +38,7 @@ import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.server.IntegratedModule;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
+import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
@@ -60,7 +61,7 @@ public class IntegratedServer implements IntegratedModule
 
     // Parent command
     @Command(aliases = "", usage = "")
-    public void debugModules(MessageReceiver source)
+    public static void debugModules(MessageReceiver source)
     {
         Reflect.runWithInstance(ModuleManager.class, em -> {
             PaginationBuilder pb = Selene.provide(PaginationBuilder.class);
@@ -75,7 +76,7 @@ public class IntegratedServer implements IntegratedModule
                     .translate(source).asText()
             );
             content.add(IntegratedServerResources.SERVER_AUTHORS
-                    .format(String.join(",", Selene.getServer().getAuthors()))
+                    .format(String.join(",", SeleneBootstrap.getAuthors()))
                     .translate(source).asText());
             content.add(IntegratedServerResources.SERVER_MODULES.translate(source).asText());
 

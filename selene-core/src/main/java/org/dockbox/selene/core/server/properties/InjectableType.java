@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.core.server.properties;
 
+@FunctionalInterface
 public interface InjectableType
 {
 

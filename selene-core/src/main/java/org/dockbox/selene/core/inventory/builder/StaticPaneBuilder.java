@@ -19,6 +19,7 @@ package org.dockbox.selene.core.inventory.builder;
 
 import org.dockbox.selene.core.inventory.pane.StaticPane;
 
+@SuppressWarnings("EmptyClass")
 public abstract class StaticPaneBuilder extends PaneBuilder<StaticPane, StaticPaneBuilder>
 {
 }

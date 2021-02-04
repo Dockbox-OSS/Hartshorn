@@ -52,7 +52,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({ "unused", "OverlyComplexClass" })
 public final class Reflect
 {
 
@@ -88,7 +88,7 @@ public final class Reflect
     @Contract("null, _ -> false; !null, null -> false")
     public static <T> boolean isGenericInstanceOf(T instance, Class<?> type)
     {
-        return null != instance && null != type && Reflect.isAssignableFrom(type, instance.getClass());
+        return null != instance && Reflect.isAssignableFrom(type, instance.getClass());
     }
 
     /**
@@ -618,6 +618,7 @@ public final class Reflect
      * @return the exceptional
      */
     @SuppressWarnings("unchecked")
+    // TODO: Fix cyclomatic complexity (15)
     public static <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision)
     {
         T instance = inject ? Selene.provide(type) : Reflect.getInstance(type);
@@ -646,7 +647,7 @@ public final class Reflect
                         Property property = field.getAnnotation(Property.class);
 
                         //noinspection CallToSuspiciousStringMethod
-                        if (!"".equals(property.setter()) && Reflect.hasMethod(type, property.setter()))
+                        if (!property.setter().isEmpty() && Reflect.hasMethod(type, property.setter()))
                         {
                             Class<?> parameterType = field.getType();
                             if (Reflect.isNotVoid(property.accepts())) parameterType = property.accepts();

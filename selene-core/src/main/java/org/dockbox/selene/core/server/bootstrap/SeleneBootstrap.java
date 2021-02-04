@@ -155,8 +155,8 @@ public abstract class SeleneBootstrap extends InjectableBootstrap
 
         eb.subscribe(this);
 
-        this.initialiseModules(this.getModuleConsumer(cb, eb, du));
-        this.initResources();
+        SeleneBootstrap.initialiseModules(this.getModuleConsumer(cb, eb, du));
+        SeleneBootstrap.initResources();
         cb.apply();
 
         Selene.provide(EventBus.class).post(new ServerEvent.ServerInitEvent());
@@ -179,7 +179,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap
      * @param consumer
      *         The consumer to apply
      */
-    private void initialiseModules(Consumer<ModuleContext> consumer)
+    private static void initialiseModules(Consumer<ModuleContext> consumer)
     {
         Selene.provide(ModuleManager.class).initialiseModules().forEach(consumer);
     }
@@ -203,7 +203,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap
         };
     }
 
-    private void initResources()
+    private static void initResources()
     {
         Selene.provide(ResourceService.class).init();
     }
@@ -291,7 +291,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap
      * @return A non-null array of authors
      */
     @NotNull
-    public String @NotNull [] getAuthors()
+    public static String @NotNull [] getAuthors()
     {
         return SeleneInformation.AUTHORS;
     }
@@ -301,6 +301,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap
      *
      * @return The global config
      */
+    @SuppressWarnings("MethodMayBeStatic")
     @NotNull
     public GlobalConfig getGlobalConfig()
     {
