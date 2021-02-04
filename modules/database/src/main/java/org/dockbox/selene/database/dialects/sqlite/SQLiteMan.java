@@ -28,41 +28,51 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class SQLiteMan extends SQLMan<Path> {
+public class SQLiteMan extends SQLMan<Path>
+{
 
     public static final String PATH_KEY = "sqliteFilePath";
     private Path filePath;
 
     @Override
-    public boolean canEnable() {
+    public boolean canEnable()
+    {
         return null == this.filePath && super.canEnable();
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
-        Keys.getPropertyValue(PATH_KEY, Path.class, properties)
-                .ifPresent(path -> this.filePath = path)
-                .orElseThrow(() -> new IllegalArgumentException("Missing value for '" + PATH_KEY + "'"));
-
-        super.stateEnabling(properties);
-    }
-
-    @Override
-    protected SQLDialect getDialect() {
-        return SQLDialect.SQLITE;
-    }
-
-    @Override
-    protected Connection getConnection(Path target) throws InvalidConnectionException {
-        try {
+    protected Connection getConnection(Path target)
+            throws InvalidConnectionException
+    {
+        try
+        {
             return DriverManager.getConnection("jdbc:sqlite:" + target.toFile().getAbsolutePath());
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw new InvalidConnectionException("Could not open file '" + target.toFile().getAbsolutePath(), e);
         }
     }
 
     @Override
-    protected Path getDefaultTarget() {
+    protected SQLDialect getDialect()
+    {
+        return SQLDialect.SQLITE;
+    }
+
+    @Override
+    protected Path getDefaultTarget()
+    {
         return this.filePath;
+    }
+
+    @Override
+    public void stateEnabling(InjectorProperty<?>... properties)
+    {
+        Keys.getPropertyValue(PATH_KEY, Path.class, properties)
+                .ifPresent(path -> this.filePath = path)
+                .orElseThrow(() -> new IllegalArgumentException("Missing value for '" + PATH_KEY + "'"));
+
+        super.stateEnabling(properties);
     }
 }

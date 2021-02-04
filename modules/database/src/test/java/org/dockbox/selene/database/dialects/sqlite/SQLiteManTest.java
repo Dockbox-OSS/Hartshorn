@@ -33,43 +33,54 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-class SQLiteManTest {
+class SQLiteManTest
+{
 
     private static Path file;
 
-    private Path getTestFile() {
-        return SQLiteManTest.file;
-    }
-
     @BeforeAll
-    public static void prepare() {
+    public static void prepare()
+    {
         String path = "src/test/resources/";
         File file = new File(path + "storage.db");
-        try {
+        try
+        {
             File copy = File.createTempFile("tmp", null);
             Files.copy(file, copy);
             SQLiteManTest.file = copy.toPath();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             throw new UncheckedSeleneException(e);
         }
     }
 
-    private ISQLMan<?> getSQLiteMan(boolean enableState) {
+    @Test
+    public void testGetTable()
+            throws InvalidConnectionException
+    {
+        ISQLMan<?> man = this.getSQLiteMan(true);
+        Table plots = man.getTable("plot");
+        Assertions.assertEquals(2301, plots.count());
+    }
+
+    private ISQLMan<?> getSQLiteMan(boolean enableState)
+    {
         ISQLMan<?> man = new SQLiteMan();
         if (enableState)
             man.stateEnabling(new SQLitePathProperty(this.getTestFile()));
         return man;
     }
 
-    @Test
-    public void testGetTable() throws InvalidConnectionException {
-        ISQLMan<?> man = this.getSQLiteMan(true);
-        Table plots = man.getTable("plot");
-        Assertions.assertEquals(2301, plots.count());
+    private Path getTestFile()
+    {
+        return SQLiteManTest.file;
     }
 
     @Test
-    public void testIdentifierProperties() throws InvalidConnectionException {
+    public void testIdentifierProperties()
+            throws InvalidConnectionException
+    {
         ISQLMan<?> man = this.getSQLiteMan(false);
         man.stateEnabling(
                 new SQLitePathProperty(this.getTestFile()),
@@ -81,7 +92,9 @@ class SQLiteManTest {
     }
 
     @Test
-    public void testTableConversion() throws InvalidConnectionException {
+    public void testTableConversion()
+            throws InvalidConnectionException
+    {
         ISQLMan<?> man = this.getSQLiteMan(true);
         Table plots = man.getTable("plot");
 
@@ -92,7 +105,9 @@ class SQLiteManTest {
     }
 
     @Test
-    void testStore() throws InvalidConnectionException {
+    void testStore()
+            throws InvalidConnectionException
+    {
         Table table = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME);
         ISQLMan<?> man = this.getSQLiteMan(false);
         man.stateEnabling(

@@ -21,8 +21,8 @@ import com.google.inject.Inject;
 
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.annotations.event.Listener;
-import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.annotations.files.Format;
+import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
@@ -37,11 +37,11 @@ import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.structures.table.Table;
 import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.dialects.sqlite.SQLitePathProperty;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.database.properties.SQLColumnProperty;
+import org.dockbox.selene.structures.table.Table;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +53,8 @@ import java.util.List;
         authors = "GuusLieben",
         dependencies = "org.dockbox.selene.database"
 )
-public class OldPlotsModule {
+public class OldPlotsModule
+{
 
     @Inject
     private FileManager fileManager;
@@ -62,16 +63,20 @@ public class OldPlotsModule {
     private PlotWorldModelList modelList = new PlotWorldModelList();
 
     @Listener
-    public void onLoad(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent) {
+    public void onLoad(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent)
+    {
         Path worldConfig = this.fileManager.getConfigFile(OldPlotsModule.class, "worlds");
         this.fileManager.copyDefaultFile("oldplots_worlds.yml", worldConfig);
         Exceptional<PlotWorldModelList> exceptionalList = this.fileManager.read(worldConfig, PlotWorldModelList.class);
         exceptionalList.ifPresent(modelList -> this.modelList = modelList);
     }
-    
+
     @Command(aliases = "oldplots", usage = "oldplots <player{Player}>", permission = "selene.oldplots.list")
-    public void oldPlotsCommand(Player source, CommandContext ctx) throws InvalidConnectionException {
-        if (!ctx.has("player")) {
+    public void oldPlotsCommand(Player source, CommandContext ctx)
+            throws InvalidConnectionException
+    {
+        if (!ctx.has("player"))
+        {
             source.sendWithPrefix(OldPlotsResources.ERROR_NO_PLAYER);
         }
         Player player = ctx.get("player");
@@ -88,7 +93,8 @@ public class OldPlotsModule {
             @NonNls @NotNull String world = row.getValue(OldPlotsIdentifiers.WORLD).get();
 
             // Only show worlds we can access
-            if (this.modelList.getWorld(world).isPresent()) {
+            if (this.modelList.getWorld(world).isPresent())
+            {
                 Text plotLine = Text.of(OldPlotsResources.SINGLE_PLOT
                         .format(world, idX, idZ)
                         .translate(player)
@@ -110,9 +116,27 @@ public class OldPlotsModule {
                 )).build()
                 .send(source);
     }
-    
+
+    private SQLMan<?> getSQLMan()
+    {
+        Path dataDirectory = Selene.provide(FileManager.class).getDataDir(OldPlotsModule.class);
+        Path path = dataDirectory.resolve("oldplots.db");
+
+        return Selene.provide(SQLMan.class,
+                AnnotationProperty.of(Format.SQLite.class),
+                new SQLitePathProperty(path),
+                new SQLColumnProperty("id", OldPlotsIdentifiers.PLOT_ID),
+                new SQLColumnProperty("plot_id_x", OldPlotsIdentifiers.PLOT_X),
+                new SQLColumnProperty("plot_id_z", OldPlotsIdentifiers.PLOT_Z),
+                new SQLColumnProperty("owner", OldPlotsIdentifiers.UUID),
+                new SQLColumnProperty("world", OldPlotsIdentifiers.WORLD)
+        );
+    }
+
     @Command(aliases = "optp", usage = "teleport <id{Int}>", permission = "selene.oldplots.teleport")
-    public void teleportCommand(Player source, CommandContext context) throws InvalidConnectionException {
+    public void teleportCommand(Player source, CommandContext context)
+            throws InvalidConnectionException
+    {
         Integer id = context.get("id");
         SQLMan<?> man = this.getSQLMan();
         Table plots = man.getTable("plot");
@@ -123,7 +147,8 @@ public class OldPlotsModule {
             @NonNls @NotNull String world = plot.getValue(OldPlotsIdentifiers.WORLD).get();
 
             if ("*".equals(world)) source.send(OldPlotsResources.ERROR_WORLDS);
-            else {
+            else
+            {
                 Exceptional<PlotWorldModel> model = this.modelList.getWorld(world);
                 model.ifPresent(worldModel -> {
                     Exceptional<Location> location = worldModel.getLocation(idX, idZ);
@@ -138,21 +163,6 @@ public class OldPlotsModule {
         }).ifAbsent(() -> {
             source.send(OldPlotsResources.ERROR_NO_PLOT);
         });
-    }
-
-    private SQLMan<?> getSQLMan() {
-        Path dataDirectory = Selene.provide(FileManager.class).getDataDir(OldPlotsModule.class);
-        Path path = dataDirectory.resolve("oldplots.db");
-
-        return Selene.provide(SQLMan.class,
-                AnnotationProperty.of(Format.SQLite.class),
-                new SQLitePathProperty(path),
-                new SQLColumnProperty("id", OldPlotsIdentifiers.PLOT_ID),
-                new SQLColumnProperty("plot_id_x", OldPlotsIdentifiers.PLOT_X),
-                new SQLColumnProperty("plot_id_z", OldPlotsIdentifiers.PLOT_Z),
-                new SQLColumnProperty("owner", OldPlotsIdentifiers.UUID),
-                new SQLColumnProperty("world", OldPlotsIdentifiers.WORLD)
-        );
     }
 
 }

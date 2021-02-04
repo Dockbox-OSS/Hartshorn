@@ -23,20 +23,25 @@ import org.dockbox.selene.core.objects.Packet;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 @RequiresBinding
-public abstract class SpawnEntityPacket<T extends Entity> extends Packet {
+public abstract class SpawnEntityPacket<T extends Entity> extends Packet
+{
 
     private T entity;
 
-    public T getEntity() {
+    public T getEntity()
+    {
         return this.entity;
     }
 
-    public void setEntity(T entity) {
+    public void setEntity(T entity)
+    {
         this.entity = entity;
     }
 
     @Override
-    protected Class<?> internalGetPacketType() throws ClassNotFoundException {
+    protected Class<?> internalGetPacketType()
+            throws ClassNotFoundException
+    {
         return Class.forName("net.minecraft.network.play.server.SPacketSpawnGlobalEntity");
     }
 

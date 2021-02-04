@@ -20,7 +20,8 @@ package org.dockbox.selene.proxy.handle;
 /**
  * The type passed into proxy functions. Cancellability is unused internally, but may be used by functions.
  */
-public class ProxyHolder {
+public class ProxyHolder
+{
 
     private boolean cancelled;
 
@@ -29,7 +30,8 @@ public class ProxyHolder {
      *
      * @return {@code true} if the holder is cancelled.
      */
-    public boolean isCancelled() {
+    public boolean isCancelled()
+    {
         return this.cancelled;
     }
 
@@ -40,7 +42,8 @@ public class ProxyHolder {
      * @param cancelled
      *         Whether the holder should be cancelled.
      */
-    public void setCancelled(boolean cancelled) {
+    public void setCancelled(boolean cancelled)
+    {
         this.cancelled = cancelled;
     }
 }

@@ -33,27 +33,34 @@ import java.util.List;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 
-public class ProxyHandler<T> implements MethodHandler {
+public class ProxyHandler<T> implements MethodHandler
+{
 
     private final Multimap<Method, ProxyProperty<T, ?>> handlers = ArrayListMultimap.create();
     private final T instance;
 
-    public ProxyHandler(T instance) {
+    public ProxyHandler(T instance)
+    {
         this.instance = instance;
     }
 
-    public void delegate(ProxyProperty<T, ?> property) {
-        this.handlers.put(property.getTargetMethod(), property);
-    }
-
-    public void delegate(ProxyProperty<T, ?>... properties) {
+    public void delegate(ProxyProperty<T, ?>... properties)
+    {
         for (ProxyProperty<T, ?> property : properties) this.delegate(property);
     }
 
+    public void delegate(ProxyProperty<T, ?> property)
+    {
+        this.handlers.put(property.getTargetMethod(), property);
+    }
+
     @Override
-    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
+    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args)
+            throws Throwable
+    {
         // The handler listens for all methods, while not all methods are proxied
-        if (this.handlers.containsKey(thisMethod)) {
+        if (this.handlers.containsKey(thisMethod))
+        {
             Collection<ProxyProperty<T, ?>> properties = this.handlers.get(thisMethod);
             Object returnValue = null;
             // Sort the list so all properties are prioritised. The phase at which the property will be delegated does
@@ -66,20 +73,27 @@ public class ProxyHandler<T> implements MethodHandler {
                 returnValue = this.enterPhase(phase, toSort, args, thisMethod, returnValue);
 
             return returnValue;
-        } else {
+        }
+        else
+        {
             // If no handler is known, default to the original method. This is delegated to the instance created, as it
             // is typically created through Selene's injectors and therefore DI dependent.
             return thisMethod.invoke(this.instance, args);
         }
     }
 
-    private Object enterPhase(Phase at, Iterable<ProxyProperty<T, ?>> properties, Object[] args, Method thisMethod, Object returnValue) throws InvocationTargetException, IllegalAccessException {
+    private Object enterPhase(Phase at, Iterable<ProxyProperty<T, ?>> properties, Object[] args, Method thisMethod, Object returnValue)
+            throws InvocationTargetException, IllegalAccessException
+    {
         // Used to ensure the target is performed if there is no OVERWRITE phase hook
         boolean target = true;
-        for (ProxyProperty<T, ?> property : properties) {
-            if (at == property.getTarget()) {
+        for (ProxyProperty<T, ?> property : properties)
+        {
+            if (at == property.getTarget())
+            {
                 Object result = property.delegate(this.instance, args);
-                if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType())) {
+                if (property.overwriteResult() && !Void.TYPE.equals(thisMethod.getReturnType()))
+                {
                     // A proxy returning null typically indicates the use of a non-returning function, for annotation
                     // properties this is handled internally, however proxy types should carry the annotation value to
                     // ensure no results will be overwritten. Null values may cause the initial target return value to
@@ -91,14 +105,17 @@ public class ProxyHandler<T> implements MethodHandler {
                 if (Phase.OVERWRITE == at) target = false;
             }
         }
-        if (Phase.OVERWRITE == at && target) {
+        if (Phase.OVERWRITE == at && target)
+        {
             Object result = thisMethod.invoke(this.instance, args);
             if (null == returnValue) returnValue = result;
         }
         return returnValue;
     }
 
-    public T proxy() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public T proxy()
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException
+    {
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.instance.getClass());
         //noinspection unchecked

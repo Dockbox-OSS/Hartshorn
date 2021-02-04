@@ -19,8 +19,10 @@ package org.dockbox.selene.database.exceptions;
 
 import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 
-public class InvalidConnectionException extends CheckedSeleneException {
-    public InvalidConnectionException(String message, Throwable cause) {
+public class InvalidConnectionException extends CheckedSeleneException
+{
+    public InvalidConnectionException(String message, Throwable cause)
+    {
         super(message, cause);
     }
 }

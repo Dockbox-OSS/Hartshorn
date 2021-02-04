@@ -17,28 +17,33 @@
 
 package org.dockbox.selene.structures.table.column;
 
-public class SimpleColumnIdentifier<T> implements ColumnIdentifier<T> {
+public class SimpleColumnIdentifier<T> implements ColumnIdentifier<T>
+{
 
     private final String fieldName;
     private final Class<T> type;
 
-    public SimpleColumnIdentifier(String fieldName, Class<T> type) {
+    public SimpleColumnIdentifier(String fieldName, Class<T> type)
+    {
         this.fieldName = fieldName;
         this.type = type;
     }
 
     @Override
-    public String getColumnName() {
+    public String getColumnName()
+    {
         return this.fieldName;
     }
 
     @Override
-    public Class<T> getType() {
+    public Class<T> getType()
+    {
         return this.type;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "SimpleColumnIdentifier{" +
                 "fieldName='" + fieldName + '\'' +
                 ", type=" + type +

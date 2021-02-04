@@ -21,7 +21,8 @@ import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.i18n.entry.Resource;
 
 @Resources(module = OldPlotsModule.class)
-public class OldPlotsResources {
+public class OldPlotsResources
+{
 
     public static final Resource SINGLE_PLOT = new Resource("$3 - $1{0}$2, $1{1}, {2}", "oldplots.list.single");
     public static final Resource PLOT_HOVER = new Resource("$2Teleport to $1{0}$2, $1{1}, {2}", "oldplots.list.hover");

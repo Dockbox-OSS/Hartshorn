@@ -21,7 +21,8 @@ import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.i18n.entry.Resource;
 
 @Resources(module = DaveModule.class)
-public final class DaveResources {
+public final class DaveResources
+{
 
     public static final Resource DAVE_LINK_SUGGESTION = new Resource("Here's a useful link, $1{0}", "dave.suggestion.link");
     public static final Resource DAVE_LINK_SUGGESTION_HOVER = new Resource("$2Click to open $1{0}", "dave.suggestion.link.hover");

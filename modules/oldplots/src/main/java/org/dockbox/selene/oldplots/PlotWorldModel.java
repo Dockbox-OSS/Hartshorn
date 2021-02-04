@@ -24,7 +24,8 @@ import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.server.Selene;
 
 @Metadata(alias = "plot-world-model")
-public class PlotWorldModel {
+public class PlotWorldModel
+{
 
     private String name;
     private int size;
@@ -33,10 +34,12 @@ public class PlotWorldModel {
     private int zeroZ;
     private int height;
 
-    public PlotWorldModel() {
+    public PlotWorldModel()
+    {
     }
 
-    public PlotWorldModel(String name, int size, int road, int zeroX, int zeroZ, int height) {
+    public PlotWorldModel(String name, int size, int road, int zeroX, int zeroZ, int height)
+    {
         this.name = name;
         this.size = size;
         this.road = road;
@@ -45,25 +48,30 @@ public class PlotWorldModel {
         this.height = height;
     }
 
-    public int getHomeX(int plotX) {
-        return this.zeroX + (plotX * (this.size + this.road));
-    }
-
-    public int getHomeZ(int plotZ) {
-        return this.zeroZ + (plotZ * (this.size + this.road));
-    }
-
-    public int getHeight() {
-        return this.height;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public Exceptional<Location> getLocation(int plotX, int plotZ) {
+    public Exceptional<Location> getLocation(int plotX, int plotZ)
+    {
         return Selene.provide(WorldStorageService.class).getWorld(this.getName()).map(world -> {
             return new Location(this.getHomeX(plotX), this.getHeight(), this.getHomeZ(plotZ), world);
         });
+    }
+
+    public String getName()
+    {
+        return this.name;
+    }
+
+    public int getHomeX(int plotX)
+    {
+        return this.zeroX + (plotX * (this.size + this.road));
+    }
+
+    public int getHeight()
+    {
+        return this.height;
+    }
+
+    public int getHomeZ(int plotZ)
+    {
+        return this.zeroZ + (plotZ * (this.size + this.road));
     }
 }

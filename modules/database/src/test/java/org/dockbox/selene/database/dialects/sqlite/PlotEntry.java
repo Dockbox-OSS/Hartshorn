@@ -19,7 +19,8 @@ package org.dockbox.selene.database.dialects.sqlite;
 
 import org.dockbox.selene.core.annotations.entity.Property;
 
-public class PlotEntry {
+public class PlotEntry
+{
 
     @Property("plot_id_x")
     private int plotX;
@@ -31,27 +32,33 @@ public class PlotEntry {
     private int id;
     private String world;
 
-    public int getPlotX() {
+    public int getPlotX()
+    {
         return this.plotX;
     }
 
-    public int getPlotZ() {
+    public int getPlotZ()
+    {
         return this.plotZ;
     }
 
-    public String getOwner() {
+    public String getOwner()
+    {
         return this.owner;
     }
 
-    public int getId() {
+    public void setOwner(String ownerId)
+    {
+        this.owner = owner;
+    }
+
+    public int getId()
+    {
         return this.id;
     }
 
-    public String getWorld() {
+    public String getWorld()
+    {
         return this.world;
-    }
-
-    public void setOwner(String ownerId) {
-        this.owner = owner;
     }
 }
