@@ -194,11 +194,10 @@ public final class DaveUtils
             parsedLink = "http://" + parsedLink;
         return parsedLink;
     }
-
-    // TODO: Fix cyclomatic complexity
-    public static String parsePlaceHolders(String message, String unparsedResponse, String playername)
+    
+    public static String parsePlaceHolders(String message, String unparsedResponse, String playerName)
     {
-        String parsedResponse = unparsedResponse.replaceAll("<player>", playername);
+        String parsedResponse = unparsedResponse.replaceAll("<player>", playerName);
         DiscordUtils du = Selene.provide(DiscordUtils.class);
 
 
@@ -206,47 +205,48 @@ public final class DaveUtils
         {
             boolean replaced = false;
             for (String partial : message.split(" "))
-            {
-                if (partial.startsWith("<@") && 2 < partial.length())
-                {
-                    String mention = du.getJDA().map(jda -> jda.getUserById(
-                            partial
-                                    .replaceFirst("<@", "")
-                                    .replaceFirst(">", "")
-                            ).getName()
-                    ).orElse("player");
-
-                    if (null != mention)
-                    {
-                        parsedResponse = parsedResponse.replaceAll("<mention>", partial.replaceFirst("@", ""));
-                        replaced = true;
-                    }
-                }
-
-                if (partial.replaceAll("&.", "").startsWith("@") && 2 < partial.length())
-                {
-                    parsedResponse = parsedResponse.replaceAll("<mention>", partial.replaceFirst("@", ""));
-                    replaced = true;
-                }
-            }
+                parsedResponse = parseMention(partial, parsedResponse, du);
 
             if (!replaced)
-            {
-                parsedResponse = parsedResponse.replaceAll("<mention>", playername);
-            }
+                parsedResponse = parsedResponse.replaceAll("<mention>", playerName);
         }
 
         if (parsedResponse.contains("<random>"))
-        {
-            PlayerStorageService pss = Selene.provide(PlayerStorageService.class);
-            int index = new Random().nextInt(pss.getOnlinePlayers().size());
-            String randomPlayer = pss.getOnlinePlayers().toArray(new Player[0])[index].getName();
-
-            if (null != randomPlayer) parsedResponse = parsedResponse.replaceAll("<random>", randomPlayer);
-            else parsedResponse = parsedResponse.replaceAll("<random>", playername + "*");
-        }
+            parsedResponse = parseRandomPlayer(parsedResponse, playerName);
 
         return parsedResponse;
+    }
+
+    private static String parseMention(String partial, String fullResponse, DiscordUtils du) {
+        if (partial.startsWith("<@") && 2 < partial.length())
+        {
+            String mention = du.getJDA().map(jda -> jda.getUserById(
+                    partial
+                            .replaceFirst("<@", "")
+                            .replaceFirst(">", "")
+                    ).getName()
+            ).orElse("player");
+
+            if (null != mention)
+            {
+                fullResponse.replaceAll("<mention>", partial.replaceFirst("<@", "").replaceFirst(">", ""));
+            }
+        }
+        else if (Text.of(partial).toPlain().startsWith("@") && 2 < partial.length())
+        {
+            fullResponse.replaceAll("<mention>", partial.replaceFirst("@", ""));
+        }
+        return fullResponse;
+    }
+
+    private static String parseRandomPlayer(String fullResponse, String playerName) {
+        PlayerStorageService pss = Selene.provide(PlayerStorageService.class);
+        int index = new Random().nextInt(pss.getOnlinePlayers().size());
+        String randomPlayer = pss.getOnlinePlayers().toArray(new Player[0])[index].getName();
+
+        if (null != randomPlayer) fullResponse = fullResponse.replaceAll("<random>", randomPlayer);
+        else fullResponse = fullResponse.replaceAll("<random>", playerName + "*");
+        return fullResponse;
     }
 
     public static boolean isMuted(Player player)
