@@ -23,5 +23,5 @@ jobs:
           release_name: Prerelease Selene-${{ github.event.pull_request.number }}
           body: |
             This is a automatically created pre-release for pull request #${{ github.event.pull_request.number }}
-            **Author:** ${{ github.event.sender }}
+            **Author:** @${{ github.event.sender.login }}
           prerelease: true
