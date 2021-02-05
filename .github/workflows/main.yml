@@ -1,0 +1,26 @@
+name: Create pre-release
+
+on:
+  pull_request:
+    branches:
+      - selene-main
+    types: [closed]
+
+jobs:
+  create_release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Prerelease ${{ github.ref }}
+          body: |
+            # Prerelease of ${{ github.event.pull_request.number }}
+            **Author:** ${{ github.event.pull_request.sender }}
