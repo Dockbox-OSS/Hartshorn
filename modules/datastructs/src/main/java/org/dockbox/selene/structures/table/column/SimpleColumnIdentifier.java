@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.structures.table.column;
 
+import java.util.Objects;
+
 public class SimpleColumnIdentifier<T> implements ColumnIdentifier<T>
 {
 
@@ -48,5 +50,20 @@ public class SimpleColumnIdentifier<T> implements ColumnIdentifier<T>
                 "fieldName='" + this.fieldName + '\'' +
                 ", type=" + this.type +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof SimpleColumnIdentifier)) return false;
+        SimpleColumnIdentifier<?> that = (SimpleColumnIdentifier<?>) o;
+        return Objects.equals(this.fieldName, that.fieldName) && Objects.equals(this.getType(), that.getType());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.fieldName, this.getType());
     }
 }

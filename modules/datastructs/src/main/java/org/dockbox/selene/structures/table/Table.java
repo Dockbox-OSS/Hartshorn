@@ -358,8 +358,9 @@ public class Table
 
     }
 
-    private <T> void populateMatchingRows(@NotNull Table otherTable, ColumnIdentifier<T> column, Merge merge, boolean populateEmptyEntries, Table joinedTable,
-                               TableRow row)
+    private <T> void populateMatchingRows(@NotNull Table otherTable, ColumnIdentifier<T> column, Merge merge, boolean populateEmptyEntries,
+                                          Table joinedTable,
+                                          TableRow row)
             throws EmptyEntryException, IdentifierMismatchException
     {
         List<TableRow> matchingRows = Table.getMatchingRows(row, otherTable, column);
@@ -499,7 +500,7 @@ public class Table
     {
         for (ColumnIdentifier<?> identifier : this.identifiers)
         {
-            if (identifier == column)
+            if (identifier == column || identifier.equals(column))
                 return true;
         }
         return false;

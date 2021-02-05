@@ -23,4 +23,5 @@ public interface ColumnIdentifier<T>
     String getColumnName();
 
     Class<T> getType();
+
 }
