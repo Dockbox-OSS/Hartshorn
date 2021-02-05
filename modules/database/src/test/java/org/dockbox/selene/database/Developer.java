@@ -15,50 +15,30 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.database.dialects.sqlite;
+package org.dockbox.selene.database;
 
 import org.dockbox.selene.core.annotations.entity.Property;
 
-public class PlotEntry
+public class Developer
 {
 
-    @Property("plot_id_x")
-    private int plotX;
-    @Property("plot_id_z")
-    private int plotZ;
-    @Property(value = "owner", setter = "setOwner")
-    private String owner;
-
+    @Property("numeralId")
     private int id;
-    private String world;
-
-    public int getPlotX()
-    {
-        return this.plotX;
-    }
-
-    public int getPlotZ()
-    {
-        return this.plotZ;
-    }
-
-    public String getOwner()
-    {
-        return this.owner;
-    }
-
-    public void setOwner(String ownerId)
-    {
-        this.owner = owner;
-    }
+    @Property(value = "name", setter = "setUsername")
+    private String username;
 
     public int getId()
     {
         return this.id;
     }
 
-    public String getWorld()
+    public String getUsername()
     {
-        return this.world;
+        return this.username;
+    }
+
+    public void setUsername(String username)
+    {
+        this.username = username;
     }
 }
