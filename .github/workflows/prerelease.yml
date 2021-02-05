@@ -20,7 +20,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Prerelease ${{ github.ref }}
+          release_name: Prerelease Selene-${{ github.event.pull_request.number }}
           body: |
-            # Prerelease of ${{ github.event.pull_request.number }}
-            **Author:** ${{ github.event.pull_request.sender }}
+            This is a automatically created pre-release for pull request #${{ github.event.pull_request.number }}
+            **Author:** ${{ github.event.sender }}
