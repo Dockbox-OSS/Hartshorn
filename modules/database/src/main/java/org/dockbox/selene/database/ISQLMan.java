@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.database;
 
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.properties.InjectableType;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.structures.table.Table;
@@ -59,6 +60,32 @@ public interface ISQLMan<T> extends InjectableType
      */
     Table getTable(String name, T target)
             throws InvalidConnectionException;
+
+    /**
+     * Attempts to get a table from the database and converts it to the internal {@link Table}
+     * type wrapped in a {@link Exceptional}. If the table does not exist, or no connection
+     * could be made to the database, {@link Exceptional#empty()} is returned.
+     *
+     * @param name
+     *         The name of the table as defined in the database.
+     *
+     * @return The table wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
+     */
+    Exceptional<Table> getTableSafe(String name);
+
+    /**
+     * Attempts to get a table from the database and converts it to the internal {@link Table}
+     * type wrapped in a {@link Exceptional}. If the table does not exist, or no connection
+     * could be made to the database, {@link Exceptional#empty()} is returned.
+     *
+     * @param name
+     *         The name of the table as defined in the database.
+     * @param target
+     *         The target database source
+     *
+     * @return The table wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
+     */
+    Exceptional<Table> getTableSafe(String name, T target);
 
     /**
      * Stores a table to the database under a given name. Depending on the implementation this may update a existing

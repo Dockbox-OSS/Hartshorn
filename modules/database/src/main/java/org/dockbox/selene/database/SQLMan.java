@@ -23,6 +23,7 @@ import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
+import org.dockbox.selene.database.exceptions.NoSuchTableException;
 import org.dockbox.selene.database.properties.SQLColumnProperty;
 import org.dockbox.selene.database.properties.SQLResetBehaviorProperty;
 import org.dockbox.selene.structures.table.Table;
@@ -36,6 +37,7 @@ import org.jooq.InsertValuesStepN;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
+import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
 import java.sql.Connection;
@@ -202,12 +204,29 @@ public abstract class SQLMan<T> implements ISQLMan<T>
     public Table getTable(String name, T target)
             throws InvalidConnectionException
     {
-        return this.withContext(target, ctx -> {
-            // .fetch() automatically closes the native ResultSet and leaves us with the Result.
-            // This can be used safely.
-            Result<Record> results = ctx.select().from(name).fetch();
-            return this.convertToTable(results);
-        });
+        try
+        {
+            return this.withContext(target, ctx -> {
+                // .fetch() automatically closes the native ResultSet and leaves us with the Result.
+                // This can be used safely.
+                Result<Record> results = ctx.select().from(name).fetch();
+                return this.convertToTable(results);
+            });
+        } catch (DataAccessException e) {
+            throw new NoSuchTableException(name, e);
+        }
+    }
+
+    @Override
+    public Exceptional<Table> getTableSafe(String name)
+    {
+        return Exceptional.of(() -> this.getTable(name));
+    }
+
+    @Override
+    public Exceptional<Table> getTableSafe(String name, T target)
+    {
+        return Exceptional.of(() -> this.getTable(name, target));
     }
 
     @Override
