@@ -103,6 +103,16 @@ public class RegistryTests {
     }
 
     @Test
+    public void testGetOrCreateRegistryColumn() {
+        Registry<Registry<String>> testRegistry = this.buildTestRegistry();
+
+        RegistryColumn<Registry<String>> column = testRegistry.getColumnOrCreate(TestIdentifier.WOOD, new Registry<>());
+
+        Assertions.assertEquals(1, column.size());
+        Assertions.assertTrue(testRegistry.containsColumns(TestIdentifier.WOOD));
+    }
+
+    @Test
     public void testThatRegistryCanBeAdded() {
         Registry<Registry<String>> testRegistry = this.buildTestRegistry();
 
