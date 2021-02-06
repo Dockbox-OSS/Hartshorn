@@ -17,16 +17,20 @@
 
 package org.dockbox.selene.core.exceptions.global;
 
-public class CheckedSeleneException extends Exception {
-    public CheckedSeleneException(String message) {
+public class CheckedSeleneException extends Exception
+{
+    public CheckedSeleneException(String message)
+    {
         super(message);
     }
 
-    public CheckedSeleneException(String message, Throwable cause) {
+    public CheckedSeleneException(String message, Throwable cause)
+    {
         super(message, cause);
     }
 
-    public CheckedSeleneException(Throwable cause) {
+    public CheckedSeleneException(Throwable cause)
+    {
         super(cause);
     }
 }

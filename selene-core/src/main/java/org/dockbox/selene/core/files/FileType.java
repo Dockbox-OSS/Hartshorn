@@ -22,7 +22,8 @@ import java.nio.file.Path;
 /**
  * Enumerated values containing the file extensions for several commonly used file types.
  */
-public enum FileType {
+public enum FileType
+{
 
     // Minecraft native formats
     ANVIL("mca"),
@@ -55,7 +56,8 @@ public enum FileType {
 
     private final String extension;
 
-    FileType(String extension) {
+    FileType(String extension)
+    {
         this.extension = extension;
     }
 
@@ -72,7 +74,8 @@ public enum FileType {
      *
      * @return The {@link Path} reference to a file
      */
-    public Path asPath(Path parent, String file) {
+    public Path asPath(Path parent, String file)
+    {
         return parent.resolve(this.asFileName(file));
     }
 
@@ -84,11 +87,13 @@ public enum FileType {
      *
      * @return The generated filename with extension
      */
-    public String asFileName(String file) {
+    public String asFileName(String file)
+    {
         return file + '.' + this.extension;
     }
 
-    public String getExtension() {
+    public String getExtension()
+    {
         return this.extension;
     }
 }

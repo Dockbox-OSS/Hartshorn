@@ -17,15 +17,16 @@
 
 package org.dockbox.selene.integrated;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.i18n.Resources;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.i18n.entry.Resource;
+import org.dockbox.selene.core.util.SeleneUtils;
 
-@SuppressWarnings({"StaticMethodOnlyUsedInOneClass", "ClassWithTooManyFields"})
+@SuppressWarnings({ "StaticMethodOnlyUsedInOneClass", "ClassWithTooManyFields" })
 @Resources(module = IntegratedServer.class)
-enum IntegratedServerResources {
+enum IntegratedServerResources
+{
     ;
     static final ResourceEntry PAGINATION_TITLE = new Resource("$1Selene Server Info", "selene.pagination.title");
     static final ResourceEntry SERVER_HEADER = new Resource("$2Selene $3($1Version$3: $1{0}$3)", "selene.info.header");

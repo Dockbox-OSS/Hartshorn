@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.core.objects.item;
 
-public interface ItemFactory {
+@SuppressWarnings("InterfaceNeverImplemented") // Provided by AssistedInject
+@FunctionalInterface
+public interface ItemFactory
+{
     Item create(String id, int meta);
 }

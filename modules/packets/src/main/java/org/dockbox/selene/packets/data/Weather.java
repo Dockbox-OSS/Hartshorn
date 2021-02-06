@@ -17,24 +17,29 @@
 
 package org.dockbox.selene.packets.data;
 
-public enum Weather {
+public enum Weather
+{
     CLEAR(1),
     RAIN(2);
 
     private final int gameStateId;
 
-    Weather(int gameStateId) {
+    Weather(int gameStateId)
+    {
         this.gameStateId = gameStateId;
     }
 
-    public int getGameStateId() {
-        return this.gameStateId;
-    }
-
-    public static Weather getByGameStateId(int gameStateId) {
-        for (Weather value : values()) {
+    public static Weather getByGameStateId(int gameStateId)
+    {
+        for (Weather value : values())
+        {
             if (value.getGameStateId() == gameStateId) return value;
         }
         return Weather.CLEAR;
+    }
+
+    public int getGameStateId()
+    {
+        return this.gameStateId;
     }
 }

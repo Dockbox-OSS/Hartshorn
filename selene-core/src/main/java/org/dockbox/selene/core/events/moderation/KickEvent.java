@@ -21,7 +21,8 @@ import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
 
-public class KickEvent extends ModerationEvent {
+public class KickEvent extends ModerationEvent
+{
 
     private final Exceptional<String> reason;
 
@@ -35,12 +36,14 @@ public class KickEvent extends ModerationEvent {
      * @param reason
      *         The reason, if provided
      */
-    public KickEvent(Player player, CommandSource source, Exceptional<String> reason) {
+    public KickEvent(Player player, CommandSource source, Exceptional<String> reason)
+    {
         super(player, source);
         this.reason = reason;
     }
 
-    public Exceptional<String> getReason() {
+    public Exceptional<String> getReason()
+    {
         return this.reason;
     }
 }

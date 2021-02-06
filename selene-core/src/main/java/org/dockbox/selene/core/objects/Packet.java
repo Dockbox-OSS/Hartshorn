@@ -23,22 +23,28 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Represents a packet instance which can be sent to a {@link org.dockbox.selene.core.objects.targets.PacketReceiver}.
  */
-public abstract class Packet {
+public abstract class Packet
+{
 
     /**
      * Gets the type of the native packet type (typically prefixed by {@code net.minecraft}).
      *
      * @return The {@link Class}, or {@code null}.
      */
-    public @Nullable Class<?> getNativePacketType() {
-        try {
+    public @Nullable Class<?> getNativePacketType()
+    {
+        try
+        {
             return this.internalGetPacketType();
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             Selene.handle(e);
             return null;
         }
     }
 
-    protected abstract Class<?> internalGetPacketType() throws ClassNotFoundException;
+    protected abstract Class<?> internalGetPacketType()
+            throws ClassNotFoundException;
 
 }

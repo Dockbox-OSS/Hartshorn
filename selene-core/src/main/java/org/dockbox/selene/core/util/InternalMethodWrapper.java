@@ -22,14 +22,16 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Objects;
 
-class InternalMethodWrapper {
+class InternalMethodWrapper
+{
     final Method method;
     final String name;
     final Class<?>[] paramTypes;
     final Class<?> returnType;
     final boolean canOverride;
 
-    InternalMethodWrapper(Method method) {
+    InternalMethodWrapper(Method method)
+    {
         this.method = method;
         this.name = method.getName();
         this.paramTypes = method.getParameterTypes();
@@ -39,24 +41,26 @@ class InternalMethodWrapper {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return Objects.hash(this.name, Arrays.hashCode(this.paramTypes), this.returnType);
     }
 
     // Uses custom identity function for overriden method handling
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o)
+    {
         if (this == o) return true;
         if (null == o || this.getClass() != o.getClass()) return false;
         InternalMethodWrapper that = (InternalMethodWrapper) o;
         //noinspection OverlyComplexBooleanExpression
         return Objects.equals(this.name, that.name)
-            && Arrays.equals(this.paramTypes, that.paramTypes)
-            // Java doesn't allow overloading with different return type,
-            // but bytecode does. So let's check it anyway.
-            && Objects.equals(this.returnType, that.returnType)
-            // If either of the two methods are static or final, check declaring class as well
-            && ((this.canOverride && that.canOverride)
-            || Objects.equals(this.method.getDeclaringClass(), that.method.getDeclaringClass()));
+                && Arrays.equals(this.paramTypes, that.paramTypes)
+                // Java doesn't allow overloading with different return type,
+                // but bytecode does. So let's check it anyway.
+                && Objects.equals(this.returnType, that.returnType)
+                // If either of the two methods are static or final, check declaring class as well
+                && ((this.canOverride && that.canOverride)
+                || Objects.equals(this.method.getDeclaringClass(), that.method.getDeclaringClass()));
     }
 }

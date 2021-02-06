@@ -24,7 +24,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ArgumentProvider {
+public @interface ArgumentProvider
+{
     /**
      * The module responsible for the argument provider.
      *

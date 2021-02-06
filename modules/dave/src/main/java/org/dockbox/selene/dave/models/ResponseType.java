@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.dave.models;
 
-public enum ResponseType {
-    MESSAGE, URL, COMMAND
+public enum ResponseType
+{
+    MESSAGE,
+    URL,
+    COMMAND
 }

@@ -27,31 +27,34 @@ import java.util.Map;
 
 import dev.flashlabs.flashlibs.inventory.Layout;
 
-public class SpongeInventoryLayout implements InventoryLayout {
+public class SpongeInventoryLayout implements InventoryLayout
+{
 
     private final Layout layout;
     private final InventoryType inventoryType;
 
-    public SpongeInventoryLayout(Layout initialLayout, InventoryType inventoryType) {
+    public SpongeInventoryLayout(Layout initialLayout, InventoryType inventoryType)
+    {
         this.layout = initialLayout;
         this.inventoryType = inventoryType;
     }
 
     @Override
-    public Map<Integer, Element> getElements() {
+    public Map<Integer, Element> getElements()
+    {
         Map<Integer, Element> elements = SeleneUtils.emptyMap();
-        this.layout.getElements().forEach((index, element) -> {
-            elements.put(index, SpongeConversionUtil.fromSponge(element));
-        });
+        this.layout.getElements().forEach((index, element) -> elements.put(index, SpongeConversionUtil.fromSponge(element)));
         return SeleneUtils.asUnmodifiableMap(elements);
     }
 
     @Override
-    public InventoryType getIventoryType() {
+    public InventoryType getIventoryType()
+    {
         return this.inventoryType;
     }
 
-    public Layout getLayout() {
+    public Layout getLayout()
+    {
         return this.layout;
     }
 }

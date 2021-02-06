@@ -17,16 +17,23 @@
 
 package org.dockbox.selene.core.objects.player;
 
-public enum Gamemode {
-    SURVIVAL(0), CREATIVE(1), ADVENTURE(2), SPECTATOR(3), OTHER(-1);
+public enum Gamemode
+{
+    SURVIVAL(0),
+    CREATIVE(1),
+    ADVENTURE(2),
+    SPECTATOR(3),
+    OTHER(-1);
 
     private final int value;
 
-    Gamemode(int value) {
+    Gamemode(int value)
+    {
         this.value = value;
     }
 
-    public int intValue() {
+    public int intValue()
+    {
         return this.value;
     }
 }

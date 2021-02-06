@@ -24,5 +24,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
-public @interface Specific {
+public @interface Specific
+{
 }

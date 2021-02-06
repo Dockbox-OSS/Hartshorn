@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface Flag {
+public @interface Flag
+{
     String value();
 }

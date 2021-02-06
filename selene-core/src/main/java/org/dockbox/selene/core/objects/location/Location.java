@@ -19,41 +19,70 @@ package org.dockbox.selene.core.objects.location;
 
 import org.dockbox.selene.core.objects.tuple.Vector3N;
 
-public class Location {
+public class Location
+{
 
     private final Vector3N vectorLoc;
     private final World world;
 
-    public Location(double x, double y, double z, World world) {
+    public Location(double x, double y, double z, World world)
+    {
         this(new Vector3N(x, y, z), world);
     }
 
-    public Location(Vector3N vectorLoc, World world) {
+    public Location(Vector3N vectorLoc, World world)
+    {
         this.vectorLoc = vectorLoc;
         this.world = world;
     }
 
-    public static Location empty() {
+    public static Location empty()
+    {
         return new Location(0, 0, 0, World.empty());
     }
 
-    public double getX() {
+    public double getX()
+    {
         return this.vectorLoc.getXd();
     }
 
-    public double getY() {
+    public double getY()
+    {
         return this.vectorLoc.getYd();
     }
 
-    public double getZ() {
+    public double getZ()
+    {
         return this.vectorLoc.getZd();
     }
 
-    public Vector3N getVectorLoc() {
-        return this.vectorLoc;
+    public Location expandX(double x)
+    {
+        return this.expand(new Vector3N(x, 0, 0));
     }
 
-    public World getWorld() {
+    public Location expand(Vector3N vector)
+    {
+        return new Location(this.vectorLoc.expand(vector), this.getWorld());
+    }
+
+    public World getWorld()
+    {
         return this.world;
+    }
+
+    public Location expandY(double y)
+    {
+        return this.expand(new Vector3N(0, y, 0));
+    }
+
+    public Location expandZ(double z)
+    {
+        return this.expand(new Vector3N(0, 0, z));
+    }
+
+    public Vector3N getVectorLoc()
+    {
+        return this.vectorLoc;
     }
 }

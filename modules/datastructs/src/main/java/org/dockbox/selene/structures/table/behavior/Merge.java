@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.structures.table.behavior;
 
-public enum Merge {
-    PREFER_ORIGINAL, PREFER_FOREIGN
+public enum Merge
+{
+    PREFER_ORIGINAL,
+    PREFER_FOREIGN
 }

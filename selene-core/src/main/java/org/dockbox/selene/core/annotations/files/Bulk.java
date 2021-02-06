@@ -24,5 +24,6 @@ import java.lang.annotation.RetentionPolicy;
 
 @BindingAnnotation
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Bulk {
+public @interface Bulk
+{
 }

@@ -31,22 +31,26 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@SuppressWarnings({"UnusedReturnValue", "unused"})
+@SuppressWarnings({ "UnusedReturnValue", "unused" })
 @Rejects(DefaultConfigurateManager.class)
 @Metadata(alias = "column")
-public class RegistryColumn<T> {
+public class RegistryColumn<T>
+{
 
     private List<T> data = SeleneUtils.emptyList();
 
-    public RegistryColumn() {
+    public RegistryColumn()
+    {
         super();
     }
 
-    public RegistryColumn(Collection<T> values) {
+    public RegistryColumn(Collection<T> values)
+    {
         this.data = SeleneUtils.asList(values);
     }
 
-    public RegistryColumn(RegistryColumn<T> column) {
+    public RegistryColumn(RegistryColumn<T> column)
+    {
         this.data = column.data;
     }
 
@@ -54,11 +58,13 @@ public class RegistryColumn<T> {
      * Filters the RegistryColumn based on the provided filter.
      *
      * @param filter
-     * The filter accepts a value of type {@code T} or its parents and returns false to keep that value,
-     * true to remove it.
+     *         The filter accepts a value of type {@code T} or its parents and returns false to keep that value,
+     *         true to remove it.
+     *
      * @return Itself
      */
-    public RegistryColumn<T> removeValueIf(Predicate<? super T> filter) {
+    public RegistryColumn<T> removeValueIf(Predicate<? super T> filter)
+    {
         this.data.removeIf(filter);
         return this;
     }
@@ -67,51 +73,72 @@ public class RegistryColumn<T> {
      * Maps this registryColumn to another type.
      *
      * @param mapper
-     * The mapper accepts a value of type {@code T} or its parents and returns a value of type {@code K}.
-     * @param <K> The type of the new RegistryColumn.
+     *         The mapper accepts a value of type {@code T} or its parents and returns a value of type {@code K}.
+     * @param <K>
+     *         The type of the new RegistryColumn.
+     *
      * @return A new RegistryColumn which contains the mapped values of the previous RegistryColumn.
      */
-    public <K> RegistryColumn<K> mapTo(Function<? super T, K> mapper) {
+    public <K> RegistryColumn<K> mapTo(Function<? super T, K> mapper)
+    {
         RegistryColumn<K> result = new RegistryColumn<>();
 
-        for (T value : this.data) {
+        for (T value : this.data)
+        {
             result.add(mapper.apply(value));
         }
         return result;
+    }
+
+    public boolean add(T t)
+    {
+        return this.data.add(t);
     }
 
     /**
      * Maps this registryColumn to a collection and then adds all the collections into a new single RegistryColumn
      *
      * @param mapper
-     * The mapper accepts a value of type {@code T} or its parents and returns a collection of type {@code K}.
-     * @param <K> The type of the new RegistryColumn.
+     *         The mapper accepts a value of type {@code T} or its parents and returns a collection of type {@code K}.
+     * @param <K>
+     *         The type of the new RegistryColumn.
+     *
      * @return A new RegistryColumn which contains all the values of the collections.
      */
-    public <K> RegistryColumn<K> mapToSingleList(Function<? super T, ? extends Collection<K>> mapper) {
+    public <K> RegistryColumn<K> mapToSingleList(Function<? super T, ? extends Collection<K>> mapper)
+    {
         RegistryColumn<K> result = new RegistryColumn<>();
 
-        for (T value : this.data) {
+        for (T value : this.data)
+        {
             result.addAll(mapper.apply(value));
         }
         return result;
     }
 
+    public boolean addAll(@NotNull Collection<? extends T> c) {return this.data.addAll(c);}
+
     /**
      * Attempts to cast the values to the specified type {@code K}. If the value is not an instance of type
      * {@code K} then it is not added to the resulting RegistryColumn.
      *
-     * @param clazz The class of the type to convert to.
-     * @param <K> The type of the new RegistryColumn
+     * @param clazz
+     *         The class of the type to convert to.
+     * @param <K>
+     *         The type of the new RegistryColumn
+     *
      * @return A new RegistryColumn which contains all the values of the previous RegistryColumn that could be converted.
      */
-    public <K extends T> RegistryColumn<K> convertTo(Class<K> clazz) {
+    public <K extends T> RegistryColumn<K> convertTo(Class<K> clazz)
+    {
         RegistryColumn<K> result = new RegistryColumn<>();
 
-        for (T value : this.data) {
-            if (clazz.isInstance(value)) {
+        for (T value : this.data)
+        {
+            if (clazz.isInstance(value))
+            {
                 @SuppressWarnings("unchecked")
-                K convertedValue = (K)value;
+                K convertedValue = (K) value;
                 result.add(convertedValue);
             }
         }
@@ -122,25 +149,18 @@ public class RegistryColumn<T> {
      * Finds the first value which matches the provided predicate.
      *
      * @param predicate
-     * The predicate takes in a value of type {@code T} or its parents and returns true if that value is a match,
-     * otherwise it returns false.
+     *         The predicate takes in a value of type {@code T} or its parents and returns true if that value is a match,
+     *         otherwise it returns false.
+     *
      * @return An {@link Exceptional} containing the value of the first match, if one is found.
      */
-    public Exceptional<T> firstMatch(Predicate<? super T> predicate) {
-        for (T value : this.data) {
+    public Exceptional<T> firstMatch(Predicate<? super T> predicate)
+    {
+        for (T value : this.data)
+        {
             if (predicate.test(value)) return Exceptional.of(value);
         }
         return Exceptional.empty();
-    }
-
-    /**
-     * Safely get an element by wrapping it within an {@link Exceptional}.
-     *
-     * @param index The index of the element to retrieve.
-     * @return An {@link Exceptional} containing the element at the provided index in the RegistryColumn, if one is found.
-     */
-    public Exceptional<T> getSafely(int index) {
-        return Exceptional.of(() -> this.data.get(index));
     }
 
     /**
@@ -148,8 +168,22 @@ public class RegistryColumn<T> {
      *
      * @return An {@link Exceptional} containing the first element in the RegistryColumn, if one is found.
      */
-    public Exceptional<T> first() {
+    public Exceptional<T> first()
+    {
         return this.getSafely(0);
+    }
+
+    /**
+     * Safely get an element by wrapping it within an {@link Exceptional}.
+     *
+     * @param index
+     *         The index of the element to retrieve.
+     *
+     * @return An {@link Exceptional} containing the element at the provided index in the RegistryColumn, if one is found.
+     */
+    public Exceptional<T> getSafely(int index)
+    {
+        return Exceptional.of(() -> this.data.get(index));
     }
 
     public int size() {return this.data.size();}
@@ -158,11 +192,8 @@ public class RegistryColumn<T> {
 
     public Iterator<T> iterator() {return this.data.iterator();}
 
-    public boolean add(T t) {
-        return this.data.add(t);
-    }
-
-    public boolean add(RegistryColumn<T> column) {
+    public boolean add(RegistryColumn<T> column)
+    {
         return this.data.addAll(column.data);
     }
 
@@ -170,9 +201,8 @@ public class RegistryColumn<T> {
 
     public boolean addAll(int index, @NotNull RegistryColumn<? extends T> c) {return this.data.addAll(index, c.data);}
 
-    public boolean addAll(@NotNull Collection<? extends T> c) {return this.data.addAll(c);}
-
-    public boolean addAll(@NotNull RegistryColumn<? extends T> c) {
+    public boolean addAll(@NotNull RegistryColumn<? extends T> c)
+    {
         return this.data.addAll(c.data);
     }
 

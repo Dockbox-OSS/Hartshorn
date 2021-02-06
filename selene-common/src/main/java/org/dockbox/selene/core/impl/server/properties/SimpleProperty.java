@@ -19,28 +19,33 @@ package org.dockbox.selene.core.impl.server.properties;
 
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 
-public class SimpleProperty<T> implements InjectorProperty<T> {
+public class SimpleProperty<T> implements InjectorProperty<T>
+{
 
     private final T object;
     private final String key;
 
-    public SimpleProperty(T object, String key) {
+    public SimpleProperty(T object, String key)
+    {
         this.object = object;
         this.key = key;
     }
 
     @Override
-    public String getKey() {
+    public String getKey()
+    {
         return this.key;
     }
 
     @Override
-    public T getObject() {
+    public T getObject()
+    {
         return this.object;
     }
 
     @SuppressWarnings("unchecked")
-    public Class<T> getType() {
+    public Class<T> getType()
+    {
         return (Class<T>) this.getObject().getClass();
     }
 }

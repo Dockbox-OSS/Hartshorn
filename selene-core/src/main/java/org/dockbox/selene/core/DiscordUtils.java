@@ -29,7 +29,8 @@ import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.text.Text;
 
-public interface DiscordUtils {
+public interface DiscordUtils
+{
 
     Exceptional<JDA> getJDA();
 

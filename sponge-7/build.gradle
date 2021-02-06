@@ -17,16 +17,31 @@ import java.time.LocalDate
  *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
+buildscript {
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+    }
+}
+
 plugins {
     id 'java'
     id 'org.spongepowered.plugin' version '0.9.0'
 }
+
+apply plugin: 'net.minecraftforge.gradle'
 
 archivesBaseName = 'selene-sponge-api7'
 group = project.pluginGroup
 description = 'Sponge API7.x implementation for Selene'
 sponge.plugin.id = pluginId
 def date = LocalDate.now().toString()
+
+minecraft {
+    mappings channel: 'snapshot', version: "${minecraftMappings112}"
+}
 
 repositories {
     maven {
@@ -36,18 +51,19 @@ repositories {
 }
 
 dependencies {
-    compile project(':selene-core')
-    compile(project(':selene-common')) {
+    minecraft "net.minecraftforge:forge:${minecraftForge112}"
+    shadow project(':selene-core')
+    shadow(project(':selene-common')) {
         exclude group: "org.spongepowered", module: "configurate**"
     }
     new File(parent.rootDir, 'modules').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            compile(project(":modules:${it.name}"))
+            shadow(project(":modules:${it.name}"))
             testCompileOnly(project(":modules:${it.name}"))
         }
     }
-    compile project(':modules')
-    compile(project(':selene-nms-1.12')) {
+    shadow project(':modules')
+    shadow(project(':selene-nms-1.12')) {
         exclude group: 'net.minecraftforge', module: 'forge'
     }
 
@@ -84,7 +100,7 @@ dependencies {
 }
 
 shadowJar {
-    exclude 'net/minecraft/**'
+    configurations = [project.configurations.shadow]
 }
 
 task prepareServerArtifacts(dependsOn: build) {
@@ -138,6 +154,7 @@ task copyArtifacts {
     }
 }
 
+jar.finalizedBy('reobfJar')
 build.finalizedBy copyArtifacts
 prepareServerArtifacts.dependsOn build
 runDevServer.dependsOn prepareServerArtifacts

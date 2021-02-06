@@ -17,25 +17,29 @@
 
 package org.dockbox.selene.core.inventory;
 
-public enum InventoryType {
+public enum InventoryType
+{
     CHEST(3, 9),
     DOUBLE_CHEST(6, 9),
-    HOPPER(1, 5), 
+    HOPPER(1, 5),
     DISPENSER(3, 3);
 
     private final int rows;
     private final int columns;
 
-    InventoryType(int rows, int columns) {
+    InventoryType(int rows, int columns)
+    {
         this.rows = rows;
         this.columns = columns;
     }
 
-    public int getRows() {
+    public int getRows()
+    {
         return this.rows;
     }
 
-    public int getColumns() {
+    public int getColumns()
+    {
         return this.columns;
     }
 }

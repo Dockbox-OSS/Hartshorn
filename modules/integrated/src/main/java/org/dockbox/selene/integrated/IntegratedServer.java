@@ -33,11 +33,12 @@ import org.dockbox.selene.core.module.ModuleContext;
 import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
 import org.dockbox.selene.core.server.IntegratedModule;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.ServerType;
+import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.actions.ClickAction;
 import org.dockbox.selene.core.text.actions.HoverAction;
@@ -53,13 +54,15 @@ import java.util.List;
         description = "Integrated features of Selene",
         authors = "GuusLieben"
 )
-@Command(aliases = {"selene", "darwin"}, usage = "selene")
+@Command(aliases = { "selene", "darwin" }, usage = "selene")
 @Singleton
-public class IntegratedServer implements IntegratedModule {
+public class IntegratedServer implements IntegratedModule
+{
 
     // Parent command
     @Command(aliases = "", usage = "")
-    public void debugModules(MessageReceiver source) {
+    public static void debugModules(MessageReceiver source)
+    {
         Reflect.runWithInstance(ModuleManager.class, em -> {
             PaginationBuilder pb = Selene.provide(PaginationBuilder.class);
 
@@ -73,13 +76,13 @@ public class IntegratedServer implements IntegratedModule {
                     .translate(source).asText()
             );
             content.add(IntegratedServerResources.SERVER_AUTHORS
-                    .format(String.join(",", Selene.getServer().getAuthors()))
+                    .format(String.join(",", SeleneBootstrap.getAuthors()))
                     .translate(source).asText());
             content.add(IntegratedServerResources.SERVER_MODULES.translate(source).asText());
 
             em.getRegisteredModuleIds()
                     .forEach(id -> em.getHeader(id)
-                            .map(e -> this.generateText(e, source))
+                            .map(e -> IntegratedServer.generateText(e, source))
                             .ifPresent(content::add)
                     );
 
@@ -90,7 +93,8 @@ public class IntegratedServer implements IntegratedModule {
         });
     }
 
-    private Text generateText(Module e, MessageReceiver source) {
+    private static Text generateText(Module e, MessageReceiver source)
+    {
         Text line = IntegratedServerResources.MODULE_ROW
                 .format(e.name(), e.id())
                 .translate(source)
@@ -105,10 +109,12 @@ public class IntegratedServer implements IntegratedModule {
     }
 
     @Command(aliases = "module", usage = "module <id{Module}>")
-    public void debugModule(MessageReceiver src, CommandContext ctx) {
+    public static void debugModule(MessageReceiver src, CommandContext ctx)
+    {
         Reflect.runWithInstance(ModuleManager.class, em -> {
             Exceptional<Argument<Module>> oarg = ctx.argument("id");
-            if (!oarg.isPresent()) {
+            if (!oarg.isPresent())
+            {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
                 return;
             }
@@ -116,9 +122,12 @@ public class IntegratedServer implements IntegratedModule {
             Module e = oarg.get().getValue();
             Exceptional<ModuleContext> oec = em.getContext(e.id());
 
-            if (!oec.isPresent()) {
+            if (!oec.isPresent())
+            {
                 src.sendWithPrefix(IntegratedServerResources.UNKNOWN_MODULE.format(oarg.get().getValue()));
-            } else {
+            }
+            else
+            {
                 ModuleContext ec = oec.get();
 
                 src.send(IntegratedServerResources.MODULE_INFO_BLOCK.format(
@@ -132,11 +141,14 @@ public class IntegratedServer implements IntegratedModule {
     }
 
     @Command(aliases = "reload", usage = "reload [id{Module}]", confirm = true)
-    public void reload(MessageReceiver src, CommandContext ctx) {
+    public static void reload(MessageReceiver src, CommandContext ctx)
+    {
         EventBus eb = Selene.provide(EventBus.class);
-        if (ctx.has("id")) {
+        if (ctx.has("id"))
+        {
             Exceptional<Argument<Module>> oarg = ctx.argument("id");
-            if (!oarg.isPresent()) {
+            if (!oarg.isPresent())
+            {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
                 return;
             }
@@ -149,7 +161,9 @@ public class IntegratedServer implements IntegratedModule {
                 src.send(IntegratedServerResources.MODULE_RELOAD_SUCCESSFUL.format(e.name()));
             }).ifAbsent(() ->
                     src.send(IntegratedServerResources.NODULE_RELOAD_FAILED.format(e.name())));
-        } else {
+        }
+        else
+        {
             eb.post(new ServerReloadEvent());
             src.send(IntegratedServerResources.FULL_RELOAD_SUCCESSFUL);
         }
@@ -157,8 +171,10 @@ public class IntegratedServer implements IntegratedModule {
 
     @Override
     @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>")
-    public void confirm(MessageReceiver src, CommandContext ctx) {
-        if (!(src instanceof Identifiable)) {
+    public void confirm(MessageReceiver src, CommandContext ctx)
+    {
+        if (!(src instanceof AbstractIdentifiable))
+        {
             src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
             return;
         }
@@ -176,7 +192,8 @@ public class IntegratedServer implements IntegratedModule {
     }
 
     @Command(aliases = "platform", usage = "platform")
-    public void platform(MessageReceiver src) {
+    public static void platform(MessageReceiver src)
+    {
         ServerType st = Selene.getServer().getServerType();
         String platformVersion = Selene.getServer().getPlatformVersion();
 
@@ -202,14 +219,19 @@ public class IntegratedServer implements IntegratedModule {
     }
 
 
-    @Command(aliases = {"lang", "language"}, usage = "language <language{Language}> [player{Player}]", inherit = false)
-    public void switchLang(MessageReceiver src, CommandContext ctx,
-                           @Arg("language") Language lang,
-                           @Arg(value = "player", optional = true) Player player) {
-        if (null == player) {
-            if (src instanceof Player) {
+    @Command(aliases = { "lang", "language" }, usage = "language <language{Language}> [player{Player}]", inherit = false)
+    public static void switchLang(MessageReceiver src, CommandContext ctx,
+                                  @Arg("language") Language lang,
+                                  @Arg(value = "player", optional = true) Player player)
+    {
+        if (null == player)
+        {
+            if (src instanceof Player)
+            {
                 player = (Player) src;
-            } else {
+            }
+            else
+            {
                 src.send(IntegratedResource.CONFIRM_WRONG_SOURCE);
                 return;
             }

@@ -24,6 +24,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface OwnedBy {
+public @interface OwnedBy
+{
     Class<?> value();
 }

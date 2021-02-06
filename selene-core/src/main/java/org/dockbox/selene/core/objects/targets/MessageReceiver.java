@@ -21,7 +21,8 @@ import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.text.Text;
 import org.dockbox.selene.core.text.pagination.Pagination;
 
-public interface MessageReceiver extends Target {
+public interface MessageReceiver extends Target
+{
 
     void send(ResourceEntry text);
 

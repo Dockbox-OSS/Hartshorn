@@ -21,27 +21,34 @@ import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.events.AbstractTargetCancellableEvent;
 
-public abstract class CommandEvent extends AbstractTargetCancellableEvent {
+public abstract class CommandEvent extends AbstractTargetCancellableEvent
+{
 
     private final CommandContext context;
 
-    protected CommandEvent(CommandSource source, CommandContext context) {
+    protected CommandEvent(CommandSource source, CommandContext context)
+    {
         super(source);
         this.context = context;
     }
 
-    public CommandContext getContext() {
+    public CommandContext getContext()
+    {
         return this.context;
     }
 
-    public static class Before extends CommandEvent {
-        public Before(CommandSource source, CommandContext context) {
+    public static class Before extends CommandEvent
+    {
+        public Before(CommandSource source, CommandContext context)
+        {
             super(source, context);
         }
     }
 
-    public static class After extends CommandEvent {
-        public After(CommandSource source, CommandContext context) {
+    public static class After extends CommandEvent
+    {
+        public After(CommandSource source, CommandContext context)
+        {
             super(source, context);
         }
     }

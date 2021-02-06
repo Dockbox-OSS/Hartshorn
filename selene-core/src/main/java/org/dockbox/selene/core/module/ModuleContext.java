@@ -19,7 +19,8 @@ package org.dockbox.selene.core.module;
 
 import org.dockbox.selene.core.annotations.module.Module;
 
-public interface ModuleContext {
+public interface ModuleContext
+{
 
     String getSource();
 

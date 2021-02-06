@@ -17,32 +17,38 @@
 
 package org.dockbox.selene.core.impl.command.values;
 
-public abstract class AbstractArgumentElement<T> {
+public abstract class AbstractArgumentElement<T>
+{
 
     private T reference;
 
-    protected AbstractArgumentElement(T reference) {
+    protected AbstractArgumentElement(T reference)
+    {
         this.reference = reference;
     }
 
     @SafeVarargs
-    protected AbstractArgumentElement(AbstractArgumentElement<T>... elements) {
+    protected AbstractArgumentElement(AbstractArgumentElement<T>... elements)
+    {
         this.ofElements(elements);
     }
 
-    protected AbstractArgumentElement() {
+    protected abstract void ofElements(AbstractArgumentElement<T>[] elements);
+
+    protected AbstractArgumentElement()
+    {
     }
 
-    public T getReference() {
+    public T getReference()
+    {
         return this.reference;
     }
 
-    public void setReference(T reference) {
+    public void setReference(T reference)
+    {
         this.reference = reference;
     }
 
     public abstract AbstractArgumentElement<T> asOptional();
-
-    protected abstract void ofElements(AbstractArgumentElement<T>[] elements);
 
 }

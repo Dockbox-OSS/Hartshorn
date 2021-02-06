@@ -24,7 +24,8 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Set;
 
-public interface EventBus {
+public interface EventBus
+{
 
     void subscribe(Object object);
 

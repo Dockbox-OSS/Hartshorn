@@ -63,7 +63,7 @@ public class ItemTool {
         this.modifiers.forEach(modifiers -> modifiers.accept(item));
     }
 
-    public void reset(Item item) {
+    public static void reset(Item item) {
         item.removeDisplayName();
         item.removeLore();
     }

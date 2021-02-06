@@ -23,7 +23,8 @@ import org.dockbox.selene.core.tasks.TriConsumer;
 
 import java.util.Arrays;
 
-public enum ExceptionLevels {
+public enum ExceptionLevels
+{
     FRIENDLY((message, exception, stacktrace) -> {
         Selene.provide(ExceptionHelper.class)
                 .printFriendly(message, exception, stacktrace);
@@ -39,12 +40,14 @@ public enum ExceptionLevels {
 
     private final TriConsumer<String, Throwable, Boolean> consumer;
 
-    ExceptionLevels(TriConsumer<String, Throwable, Boolean> consumer) {
+    ExceptionLevels(TriConsumer<String, Throwable, Boolean> consumer)
+    {
 
         this.consumer = consumer;
     }
 
-    public void handle(String message, Throwable exception, boolean stacktrace) {
+    public void handle(String message, Throwable exception, boolean stacktrace)
+    {
         this.consumer.accept(message, exception, stacktrace);
     }
 }

@@ -34,28 +34,30 @@ import org.dockbox.selene.core.objects.Exceptional;
  * }
  * <i>Hotbar:</i>
  * {@code 27 - - - - - - 35}
- * 
+ *
  * <p>Equipment lookups should be performed using {@link #getSlot(Slot)}.
  */
-public abstract class PlayerInventory implements Inventory {
-
-    /**
-     * Gets a specific row within the inventory. If the index is out of bounds, an empty {@link Exceptional} is returned.
-     *
-     * @param index
-     *     The index of the row.
-     *
-     * @return The row, or empty.
-     */
-    public abstract Exceptional<InventoryRow> getRow(int index);
+public abstract class PlayerInventory implements Inventory
+{
 
     /**
      * Gets the hotbar within the inventory.
      *
      * @return The hotbar.
      */
-    public InventoryRow getHotbar() {
+    public InventoryRow getHotbar()
+    {
         return this.getRow(3).get();
     }
+
+    /**
+     * Gets a specific row within the inventory. If the index is out of bounds, an empty {@link Exceptional} is returned.
+     *
+     * @param index
+     *         The index of the row.
+     *
+     * @return The row, or empty.
+     */
+    public abstract Exceptional<InventoryRow> getRow(int index);
 
 }

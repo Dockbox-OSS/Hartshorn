@@ -38,7 +38,8 @@ import java.nio.file.Path;
 
 @Singleton
 @Metadata(alias = "config")
-public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
+public class SimpleGlobalConfig implements GlobalConfig, InjectableType
+{
 
     @Inject
     private transient FileManager fileManager;
@@ -48,46 +49,49 @@ public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
     private Language defaultLanguage = Language.EN_US;
     private boolean stacktracesAllowed = true;
     private boolean friendlyExceptions = true;
-    private Environment environment = Environment.DEVELOPMENT;
+    private final Environment environment = Environment.DEVELOPMENT;
+    private boolean isConstructed;
 
     @NotNull
     @Override
-    public Language getDefaultLanguage() {
+    public Language getDefaultLanguage()
+    {
         return this.defaultLanguage;
     }
 
     @Override
-    public boolean getStacktracesAllowed() {
+    public boolean getStacktracesAllowed()
+    {
         return this.stacktracesAllowed;
     }
 
     @NotNull
     @Override
-    public ExceptionLevels getExceptionLevel() {
+    public ExceptionLevels getExceptionLevel()
+    {
         if (null == Selene.getServer()) return ExceptionLevels.NATIVE;
         return this.friendlyExceptions ? ExceptionLevels.FRIENDLY : ExceptionLevels.MINIMAL;
     }
 
-    private boolean isConstructed;
-
-    private void copyValues(GlobalConfig config) {
-        if (null != config) {
-            this.defaultLanguage = config.getDefaultLanguage();
-            this.friendlyExceptions = ExceptionLevels.FRIENDLY == config.getExceptionLevel();
-            this.stacktracesAllowed = config.getStacktracesAllowed();
-        }
-        this.isConstructed = true;
+    @NotNull
+    @Override
+    public Environment getEnvironment()
+    {
+        return this.environment;
     }
 
     @Override
-    public boolean canEnable() {
+    public boolean canEnable()
+    {
         return !this.isConstructed;
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void stateEnabling(InjectorProperty<?>... properties)
+    {
         Module module = Reflect.getModule(this.integratedModule.getClass());
-        if (null == module) {
+        if (null == module)
+        {
             throw new IllegalStateException("Integrated module not annotated as such.");
         }
 
@@ -98,9 +102,14 @@ public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
         this.copyValues(globalConfig);
     }
 
-    @NotNull
-    @Override
-    public Environment getEnvironment() {
-        return this.environment;
+    private void copyValues(GlobalConfig config)
+    {
+        if (null != config)
+        {
+            this.defaultLanguage = config.getDefaultLanguage();
+            this.friendlyExceptions = ExceptionLevels.FRIENDLY == config.getExceptionLevel();
+            this.stacktracesAllowed = config.getStacktracesAllowed();
+        }
+        this.isConstructed = true;
     }
 }

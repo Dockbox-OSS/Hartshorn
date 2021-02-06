@@ -31,8 +31,9 @@ import java.time.temporal.ChronoUnit;
  * @see <a href="https://github.com/GuusLieben/Selene/wiki/Commands">Commands</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface Command {
+@Target({ ElementType.TYPE, ElementType.METHOD })
+public @interface Command
+{
     /**
      * The aliases for the command.
      *
@@ -44,7 +45,6 @@ public @interface Command {
      * The usage context for the command.
      *
      * @return the usage context for the command.
-     *
      * @see <a href="https://github.com/GuusLieben/Selene/wiki/Commands#defining-command-usage">Commands#defining-command-usage</a>
      */
     String usage();

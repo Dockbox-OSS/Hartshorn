@@ -28,7 +28,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
-public @interface Placeholder {
+public @interface Placeholder
+{
     /**
      * The description of the scheduled module.
      *

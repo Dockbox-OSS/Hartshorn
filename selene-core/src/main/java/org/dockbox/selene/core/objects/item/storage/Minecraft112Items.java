@@ -20,8 +20,9 @@ package org.dockbox.selene.core.objects.item.storage;
 import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.objects.item.Item;
 
-@SuppressWarnings({"unused", "OverlyComplexClass", "MagicNumber"})
-public class Minecraft112Items extends MinecraftItems {
+@SuppressWarnings({ "unused", "OverlyComplexClass", "MagicNumber" })
+public class Minecraft112Items extends MinecraftItems
+{
 
     // White (0) is skipped as item meta defaults to zero
     private static final int ORANGE = 1;
@@ -49,1257 +50,1508 @@ public class Minecraft112Items extends MinecraftItems {
     private static final int DARK_OAK_2 = 5;
 
     @Override
-    public Item getAcaciaLeaves() {
-        return Item.of("minecraft:leaves2");
-    }
-
-    @Override
-    public Item getAcaciaLog() {
-        return Item.of("minecraft:log2");
-    }
-
-    @Override
-    public Item getAcaciaPlanks() {
-        return this.getOakPlanks().withMeta(ACACIA);
-    }
-
-    @Override
-    public Item getAcaciaSapling() {
-        return this.getOakSapling().withMeta(ACACIA);
-    }
-
-    @Override
-    public Item getAcaciaWoodSlab() {
-        return this.getOakWoodSlab().withMeta(ACACIA);
-    }
-
-    @Override
-    public Item getAllium() {
-        return this.getPoppy().withMeta(2);
-    }
-
-    @Override
-    public Item getAndesite() {
-        return this.getStone().withMeta(5);
-    }
-
-    @Override
-    public Item getAzureBluet() {
-        return this.getPoppy().withMeta(3);
-    }
-
-    @Override
-    public Item getBirchLeaves() {
-        return this.getOakLeaves().withMeta(BIRCH);
-    }
-
-    @Override
-    public Item getBirchLog() {
-        return this.getOakLog().withMeta(BIRCH);
-    }
-
-    @Override
-    public Item getBirchPlanks() {
-        return this.getOakPlanks().withMeta(BIRCH);
-    }
-
-    @Override
-    public Item getBirchSapling() {
-        return this.getOakSapling().withMeta(BIRCH);
-    }
-
-    @Override
-    public Item getBirchWoodSlab() {
-        return this.getOakWoodSlab().withMeta(BIRCH);
-    }
-
-    @Override
-    public MinecraftVersion getMinecraftVersion() {
+    public MinecraftVersion getMinecraftVersion()
+    {
         return MinecraftVersion.MC1_12;
     }
 
     @Override
-    public Item getBlackBanner() {
+    public Item getAcaciaLeaves()
+    {
+        return Item.of("minecraft:leaves2");
+    }
+
+    @Override
+    public Item getAcaciaLog()
+    {
+        return Item.of("minecraft:log2");
+    }
+
+    @Override
+    public Item getAcaciaPlanks()
+    {
+        return this.getOakPlanks().withMeta(ACACIA);
+    }
+
+    @Override
+    public Item getAcaciaSapling()
+    {
+        return this.getOakSapling().withMeta(ACACIA);
+    }
+
+    @Override
+    public Item getAcaciaWoodSlab()
+    {
+        return this.getOakWoodSlab().withMeta(ACACIA);
+    }
+
+    @Override
+    public Item getAllium()
+    {
+        return this.getPoppy().withMeta(2);
+    }
+
+    @Override
+    public Item getAndesite()
+    {
+        return this.getStone().withMeta(5);
+    }
+
+    @Override
+    public Item getAzureBluet()
+    {
+        return this.getPoppy().withMeta(3);
+    }
+
+    @Override
+    public Item getBirchLeaves()
+    {
+        return this.getOakLeaves().withMeta(BIRCH);
+    }
+
+    @Override
+    public Item getBirchLog()
+    {
+        return this.getOakLog().withMeta(BIRCH);
+    }
+
+    @Override
+    public Item getBirchPlanks()
+    {
+        return this.getOakPlanks().withMeta(BIRCH);
+    }
+
+    @Override
+    public Item getBirchSapling()
+    {
+        return this.getOakSapling().withMeta(BIRCH);
+    }
+
+    @Override
+    public Item getBirchWoodSlab()
+    {
+        return this.getOakWoodSlab().withMeta(BIRCH);
+    }
+
+    @Override
+    public Item getBlackBanner()
+    {
         return Item.of("minecraft:banner");
     }
 
     @Override
-    public Item getBlackBed() {
+    public Item getBlackBed()
+    {
         return this.getWhiteBed().withMeta(BLACK);
     }
 
     @Override
-    public Item getBlackCarpet() {
+    public Item getBlackCarpet()
+    {
         return this.getWhiteCarpet().withMeta(BLACK);
     }
 
     @Override
-    public Item getBlackConcrete() {
+    public Item getBlackConcrete()
+    {
         return this.getWhiteConcrete().withMeta(BLACK);
     }
 
     @Override
-    public Item getBlackConcretePowder() {
+    public Item getBlackConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(BLACK);
     }
 
     @Override
-    public Item getBlackDye() {
+    public Item getBlackDye()
+    {
         return Item.of("minecraft:dye");
     }
 
     @Override
-    public Item getBlackStainedGlass() {
+    public Item getBlackStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(BLACK);
     }
 
     @Override
-    public Item getBlackStainedGlassPane() {
+    public Item getBlackStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(BLACK);
     }
 
     @Override
-    public Item getBlackTerracotta() {
+    public Item getBlackTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(BLACK);
     }
 
     @Override
-    public Item getBlackWool() {
+    public Item getBlackWool()
+    {
         return this.getWhiteWool().withMeta(BLACK);
     }
 
     @Override
-    public Item getBlueBanner() {
+    public Item getBlueBanner()
+    {
         return this.getBlackBanner().withMeta(4);
     }
 
     @Override
-    public Item getBlueBed() {
+    public Item getBlueBed()
+    {
         return this.getWhiteBed().withMeta(BLUE);
     }
 
     @Override
-    public Item getBlueCarpet() {
+    public Item getBlueCarpet()
+    {
         return this.getWhiteCarpet().withMeta(BLUE);
     }
 
     @Override
-    public Item getBlueOrchid() {
+    public Item getBlueOrchid()
+    {
         return this.getPoppy().withMeta(1);
     }
 
     @Override
-    public Item getBlueStainedGlass() {
+    public Item getBlueStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(BLUE);
     }
 
     @Override
-    public Item getBlueStainedGlassPane() {
+    public Item getBlueStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(BLUE);
     }
 
     @Override
-    public Item getBlueTerracotta() {
+    public Item getBlueTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(BLUE);
     }
 
     @Override
-    public Item getBlueWool() {
+    public Item getBlueWool()
+    {
         return this.getWhiteWool().withMeta(BLUE);
     }
 
     @Override
-    public Item getBrickSlab() {
+    public Item getBrickSlab()
+    {
         return this.getStoneSlab().withMeta(4);
     }
 
     @Override
-    public Item getBrownBanner() {
+    public Item getBrownBanner()
+    {
         return this.getBlackBanner().withMeta(3);
     }
 
     @Override
-    public Item getBrownBed() {
+    public Item getBrownBed()
+    {
         return this.getWhiteBed().withMeta(BROWN);
     }
 
     @Override
-    public Item getBrownCarpet() {
+    public Item getBrownCarpet()
+    {
         return this.getWhiteCarpet().withMeta(BROWN);
     }
 
     @Override
-    public Item getBrownConcrete() {
+    public Item getBrownConcrete()
+    {
         return this.getWhiteConcrete().withMeta(BROWN);
     }
 
     @Override
-    public Item getBrownConcretePowder() {
+    public Item getBrownConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(BROWN);
     }
 
     @Override
-    public Item getBrownDye() {
+    public Item getBrownDye()
+    {
         return this.getBlackDye().withMeta(3);
     }
 
     @Override
-    public Item getBrownStainedGlass() {
+    public Item getBrownStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(BROWN);
     }
 
     @Override
-    public Item getBrownStainedGlassPane() {
+    public Item getBrownStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(BROWN);
     }
 
     @Override
-    public Item getBrownTerracotta() {
+    public Item getBrownTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(BROWN);
     }
 
     @Override
-    public Item getBrownWool() {
+    public Item getBrownWool()
+    {
         return this.getWhiteWool().withMeta(BROWN);
     }
 
     @Override
-    public Item getCharcoal() {
+    public Item getCharcoal()
+    {
         return this.getCoal().withMeta(1);
     }
 
     @Override
-    public Item getSlightlyDamagedAnvil() {
+    public Item getSlightlyDamagedAnvil()
+    {
         return this.getAnvil().withMeta(1);
     }
 
     @Override
-    public Item getChiseledRedSandstone() {
+    public Item getChiseledRedSandstone()
+    {
         return this.getRedSandstone().withMeta(1);
     }
 
     @Override
-    public Item getChiseledSandstone() {
+    public Item getChiseledSandstone()
+    {
         return this.getSandstone().withMeta(1);
     }
 
     @Override
-    public Item getChiseledStoneBricks() {
+    public Item getChiseledStoneBricks()
+    {
         return this.getStoneBricks().withMeta(3);
     }
 
     @Override
-    public Item getCoarseDirt() {
+    public Item getCoarseDirt()
+    {
         return this.getDirt().withMeta(1);
     }
 
     @Override
-    public Item getCobblestoneSlab() {
+    public Item getCobblestoneSlab()
+    {
         return this.getStoneSlab().withMeta(3);
     }
 
     @Override
-    public Item getCookedCod() {
-        return Item.of("minecraft:cooked_fish");
-    }
-
-    @Override
-    public Item getCookedSalmon() {
+    public Item getCookedSalmon()
+    {
         return this.getCookedCod().withMeta(1);
     }
 
     @Override
-    public Item getCrackedStoneBricks() {
+    public Item getCrackedStoneBricks()
+    {
         return this.getStoneBricks().withMeta(2);
     }
 
     @Override
-    public Item getCreeperHead() {
+    public Item getCreeperHead()
+    {
         return this.getSkeletonSkull().withMeta(4);
     }
 
     @Override
-    public Item getCyanBanner() {
+    public Item getCyanBanner()
+    {
         return this.getBlackBanner().withMeta(6);
     }
 
     @Override
-    public Item getCyanBed() {
+    public Item getCyanBed()
+    {
         return this.getWhiteBed().withMeta(CYAN);
     }
 
     @Override
-    public Item getCyanCarpet() {
+    public Item getCyanCarpet()
+    {
         return this.getWhiteCarpet().withMeta(CYAN);
     }
 
     @Override
-    public Item getCyanConcrete() {
+    public Item getCyanConcrete()
+    {
         return this.getWhiteConcrete().withMeta(CYAN);
     }
 
     @Override
-    public Item getCyanConcretePowder() {
+    public Item getCyanConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(CYAN);
     }
 
     @Override
-    public Item getCyanDye() {
+    public Item getCyanDye()
+    {
         return this.getBlackDye().withMeta(6);
     }
 
     @Override
-    public Item getCyanStainedGlass() {
+    public Item getCyanStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(CYAN);
     }
 
     @Override
-    public Item getCyanStainedGlassPane() {
+    public Item getCyanStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(CYAN);
     }
 
     @Override
-    public Item getCyanTerracotta() {
+    public Item getCyanTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(CYAN);
     }
 
     @Override
-    public Item getCyanWool() {
+    public Item getCyanWool()
+    {
         return this.getWhiteWool().withMeta(CYAN);
     }
 
     @Override
-    public Item getVeryDamagedAnvil() {
+    public Item getVeryDamagedAnvil()
+    {
         return this.getAnvil().withMeta(2);
     }
 
     @Override
-    public Item getDarkOakLeaves() {
+    public Item getDarkOakLeaves()
+    {
         return this.getAcaciaLeaves().withMeta(DARK_OAK_1);
     }
 
     @Override
-    public Item getDarkOakLog() {
+    public Item getDarkOakLog()
+    {
         return this.getAcaciaLeaves().withMeta(DARK_OAK_1);
     }
 
     @Override
-    public Item getDarkOakPlanks() {
+    public Item getDarkOakPlanks()
+    {
         return this.getOakPlanks().withMeta(DARK_OAK_2);
     }
 
     @Override
-    public Item getDarkOakSapling() {
+    public Item getDarkOakSapling()
+    {
         return this.getOakSapling().withMeta(DARK_OAK_2);
     }
 
     @Override
-    public Item getDarkOakWoodSlab() {
+    public Item getDarkOakWoodSlab()
+    {
         return this.getOakWoodSlab().withMeta(DARK_OAK_2);
     }
 
     @Override
-    public Item getDarkPrismarine() {
+    public Item getDarkPrismarine()
+    {
         return this.getPrismarine().withMeta(2);
     }
 
     @Override
-    public Item getDiorite() {
+    public Item getDiorite()
+    {
         return this.getStone().withMeta(3);
     }
 
     @Override
-    public Item getDragonHead() {
+    public Item getDragonHead()
+    {
         return this.getSkeletonSkull().withMeta(5);
     }
 
     @Override
-    public Item getEnchantedGoldenApple() {
+    public Item getEnchantedGoldenApple()
+    {
         return this.getGoldenApple().withMeta(1);
     }
 
     @Override
-    public Item getFern() {
+    public Item getFern()
+    {
         return this.getGrass().withMeta(2);
     }
 
     @Override
-    public Item getGranite() {
+    public Item getGranite()
+    {
         return this.getStone().withMeta(1);
     }
 
     @Override
-    public Item getGrass() {
+    public Item getGrass()
+    {
         return Item.of("minecraft:tallgrass");
     }
 
     @Override
-    public Item getGrayBanner() {
+    public Item getGrayBanner()
+    {
         return this.getBlackBanner().withMeta(8);
     }
 
     @Override
-    public Item getGrayBed() {
+    public Item getGrayBed()
+    {
         return this.getWhiteBed().withMeta(GRAY);
     }
 
     @Override
-    public Item getGrayCarpet() {
+    public Item getGrayCarpet()
+    {
         return this.getWhiteCarpet().withMeta(GRAY);
     }
 
     @Override
-    public Item getGrayConcrete() {
+    public Item getGrayConcrete()
+    {
         return this.getWhiteConcrete().withMeta(GRAY);
     }
 
     @Override
-    public Item getGrayConcretePowder() {
+    public Item getGrayConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(GRAY);
     }
 
     @Override
-    public Item getGrayDye() {
+    public Item getGrayDye()
+    {
         return this.getBlackDye().withMeta(8);
     }
 
     @Override
-    public Item getGrayStainedGlass() {
+    public Item getGrayStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(GRAY);
     }
 
     @Override
-    public Item getGrayStainedGlassPane() {
+    public Item getGrayStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(GRAY);
     }
 
     @Override
-    public Item getGrayTerracotta() {
+    public Item getGrayTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(GRAY);
     }
 
     @Override
-    public Item getGrayWool() {
+    public Item getGrayWool()
+    {
         return this.getWhiteWool().withMeta(GRAY);
     }
 
     @Override
-    public Item getGreenBanner() {
+    public Item getGreenBanner()
+    {
         return this.getBlackBanner().withMeta(2);
     }
 
     @Override
-    public Item getGreenBed() {
+    public Item getGreenBed()
+    {
         return this.getWhiteBed().withMeta(GREEN);
     }
 
     @Override
-    public Item getGreenCarpet() {
+    public Item getGreenCarpet()
+    {
         return this.getWhiteCarpet().withMeta(GREEN);
     }
 
     @Override
-    public Item getGreenConcrete() {
+    public Item getGreenConcrete()
+    {
         return this.getWhiteConcrete().withMeta(GREEN);
     }
 
     @Override
-    public Item getGreenConcretePowder() {
+    public Item getGreenConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(GREEN);
     }
 
     @Override
-    public Item getGreenDye() {
+    public Item getGreenDye()
+    {
         return this.getBlackDye().withMeta(2);
     }
 
     @Override
-    public Item getGreenStainedGlass() {
+    public Item getGreenStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(GREEN);
     }
 
     @Override
-    public Item getGreenStainedGlassPane() {
+    public Item getGreenStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(GREEN);
     }
 
     @Override
-    public Item getGreenTerracotta() {
+    public Item getGreenTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(GREEN);
     }
 
     @Override
-    public Item getGreenWool() {
+    public Item getGreenWool()
+    {
         return this.getWhiteWool().withMeta(GREEN);
     }
 
     @Override
-    public Item getStoneMonsterEgg() {
-        return Item.of("minecraft:monster_egg");
-    }
-
-    @Override
-    public Item getChiseledStoneBrickMonsterEgg() {
+    public Item getChiseledStoneBrickMonsterEgg()
+    {
         return this.getStoneMonsterEgg().withMeta(5);
     }
 
     @Override
-    public Item getCobblestoneMonsterEgg() {
+    public Item getCobblestoneMonsterEgg()
+    {
         return this.getStoneMonsterEgg().withMeta(1);
     }
 
     @Override
-    public Item getCrackedStoneBrickMonsterEgg() {
+    public Item getCrackedStoneBrickMonsterEgg()
+    {
         return this.getStoneMonsterEgg().withMeta(4);
     }
 
     @Override
-    public Item getMossyStoneBrickMonsterEgg() {
+    public Item getMossyStoneBrickMonsterEgg()
+    {
         return this.getStoneMonsterEgg().withMeta(3);
     }
 
     @Override
-    public Item getStoneBrickMonsterEgg() {
+    public Item getStoneBrickMonsterEgg()
+    {
         return this.getStoneMonsterEgg().withMeta(2);
     }
 
     @Override
-    public Item getJungleLeaves() {
+    public Item getJungleLeaves()
+    {
         return this.getOakLeaves().withMeta(JUNGLE);
     }
 
     @Override
-    public Item getJungleLog() {
+    public Item getJungleLog()
+    {
         return this.getOakLog().withMeta(JUNGLE);
     }
 
     @Override
-    public Item getJunglePlanks() {
+    public Item getJunglePlanks()
+    {
         return this.getOakPlanks().withMeta(JUNGLE);
     }
 
     @Override
-    public Item getJungleSapling() {
+    public Item getJungleSapling()
+    {
         return this.getOakSapling().withMeta(JUNGLE);
     }
 
     @Override
-    public Item getJungleWoodSlab() {
+    public Item getJungleWoodSlab()
+    {
         return this.getOakWoodSlab().withMeta(JUNGLE);
     }
 
     @Override
-    public Item getSunflower() {
-        return Item.of("minecraft:double_plant");
-    }
-
-    @Override
-    public Item getLargeFern() {
+    public Item getLargeFern()
+    {
         return this.getSunflower().withMeta(3);
     }
 
     @Override
-    public Item getLightBlueBanner() {
+    public Item getLightBlueBanner()
+    {
         return this.getBlackBanner().withMeta(12);
     }
 
     @Override
-    public Item getLightBlueBed() {
+    public Item getLightBlueBed()
+    {
         return this.getWhiteBed().withMeta(LIGHT_BLUE);
     }
 
     @Override
-    public Item getLightBlueCarpet() {
+    public Item getLightBlueCarpet()
+    {
         return this.getWhiteCarpet().withMeta(LIGHT_BLUE);
     }
 
     @Override
-    public Item getLightBlueConcrete() {
+    public Item getLightBlueConcrete()
+    {
         return this.getWhiteConcrete().withMeta(LIGHT_BLUE);
     }
 
     @Override
-    public Item getLightBlueConcretePowder() {
+    public Item getLightBlueConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(LIGHT_BLUE);
     }
 
     @Override
-    public Item getLightBlueDye() {
+    public Item getLightBlueDye()
+    {
         return this.getBlackDye().withMeta(12);
     }
 
     @Override
-    public Item getLightBlueStainedGlass() {
+    public Item getLightBlueStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(LIGHT_BLUE);
     }
 
     @Override
-    public Item getLightBlueStainedGlassPane() {
+    public Item getLightBlueStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(LIGHT_BLUE);
     }
 
     @Override
-    public Item getLightBlueTerracotta() {
+    public Item getLightBlueTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(LIGHT_BLUE);
     }
 
     @Override
-    public Item getLightBlueWool() {
+    public Item getLightBlueWool()
+    {
         return this.getWhiteWool().withMeta(LIGHT_BLUE);
     }
 
     @Override
-    public Item getLightGrayBanner() {
+    public Item getLightGrayBanner()
+    {
         return this.getBlackBanner().withMeta(7);
     }
 
     @Override
-    public Item getLightGrayBed() {
+    public Item getLightGrayBed()
+    {
         return this.getWhiteBed().withMeta(LIGHT_GRAY);
     }
 
     @Override
-    public Item getLightGrayCarpet() {
+    public Item getLightGrayCarpet()
+    {
         return this.getWhiteCarpet().withMeta(LIGHT_GRAY);
     }
 
     @Override
-    public Item getLightGrayConcrete() {
+    public Item getLightGrayConcrete()
+    {
         return this.getWhiteConcrete().withMeta(LIGHT_GRAY);
     }
 
     @Override
-    public Item getLightGrayConcretePowder() {
+    public Item getLightGrayConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(LIGHT_GRAY);
     }
 
     @Override
-    public Item getLightGrayDye() {
+    public Item getLightGrayDye()
+    {
         return this.getBlackDye().withMeta(7);
     }
 
     @Override
-    public Item getLightGrayStainedGlass() {
+    public Item getLightGrayStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(LIGHT_GRAY);
     }
 
     @Override
-    public Item getLightGrayStainedGlassPane() {
+    public Item getLightGrayStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(LIGHT_GRAY);
     }
 
     @Override
-    public Item getLightGrayTerracotta() {
+    public Item getLightGrayTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(LIGHT_GRAY);
     }
 
     @Override
-    public Item getLightGrayWool() {
+    public Item getLightGrayWool()
+    {
         return this.getWhiteWool().withMeta(LIGHT_GRAY);
     }
 
     @Override
-    public Item getLilac() {
+    public Item getLilac()
+    {
         return this.getSunflower().withMeta(1);
     }
 
     @Override
-    public Item getLimeBanner() {
+    public Item getLimeBanner()
+    {
         return this.getBlackBanner().withMeta(10);
     }
 
     @Override
-    public Item getLimeBed() {
+    public Item getLimeBed()
+    {
         return this.getWhiteBed().withMeta(LIME);
     }
 
     @Override
-    public Item getLimeCarpet() {
+    public Item getLimeCarpet()
+    {
         return this.getWhiteCarpet().withMeta(LIME);
     }
 
     @Override
-    public Item getLimeConcrete() {
+    public Item getLimeConcrete()
+    {
         return this.getWhiteConcrete().withMeta(LIME);
     }
 
     @Override
-    public Item getLimeConcretePowder() {
+    public Item getLimeConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(LIME);
     }
 
     @Override
-    public Item getLimeDye() {
+    public Item getLimeDye()
+    {
         return this.getBlackDye().withMeta(10);
     }
 
     @Override
-    public Item getLimeStainedGlass() {
+    public Item getLimeStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(LIME);
     }
 
     @Override
-    public Item getLimeStainedGlassPane() {
+    public Item getLimeStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(LIME);
     }
 
     @Override
-    public Item getLimeTerracotta() {
+    public Item getLimeTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(LIME);
     }
 
     @Override
-    public Item getLimeWool() {
+    public Item getLimeWool()
+    {
         return this.getWhiteWool().withMeta(LIME);
     }
 
     @Override
-    public Item getMagentaBanner() {
+    public Item getMagentaBanner()
+    {
         return this.getBlackBanner().withMeta(13);
     }
 
     @Override
-    public Item getMagentaBed() {
+    public Item getMagentaBed()
+    {
         return this.getWhiteBed().withMeta(MAGENTA);
     }
 
     @Override
-    public Item getMagentaCarpet() {
+    public Item getMagentaCarpet()
+    {
         return this.getWhiteCarpet().withMeta(MAGENTA);
     }
 
     @Override
-    public Item getMagentaConcrete() {
+    public Item getMagentaConcrete()
+    {
         return this.getWhiteConcrete().withMeta(MAGENTA);
     }
 
     @Override
-    public Item getMagentaConcretePowder() {
+    public Item getMagentaConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(MAGENTA);
     }
 
     @Override
-    public Item getMagentaDye() {
+    public Item getMagentaDye()
+    {
         return this.getBlackDye().withMeta(13);
     }
 
     @Override
-    public Item getMagentaStainedGlass() {
+    public Item getMagentaStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(MAGENTA);
     }
 
     @Override
-    public Item getMagentaStainedGlassPane() {
+    public Item getMagentaStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(MAGENTA);
     }
 
     @Override
-    public Item getMagentaTerracotta() {
+    public Item getMagentaTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(MAGENTA);
     }
 
     @Override
-    public Item getMagentaWool() {
+    public Item getMagentaWool()
+    {
         return this.getWhiteWool().withMeta(MAGENTA);
     }
 
     @Override
-    public Item getMossyCobblestoneWall() {
+    public Item getMossyCobblestoneWall()
+    {
         return this.getCobblestoneWall().withMeta(1);
     }
 
     @Override
-    public Item getMossyStoneBricks() {
+    public Item getMossyStoneBricks()
+    {
         return this.getStoneBricks().withMeta(1);
     }
 
     @Override
-    public Item getNetherBrickSlab() {
+    public Item getNetherBrickSlab()
+    {
         return this.getStoneSlab().withMeta(6);
     }
 
     @Override
-    public Item getOakWoodSlab() {
+    public Item getOakWoodSlab()
+    {
         return Item.of("minecraft:wooden_slab");
     }
 
     @Override
-    public Item getOrangeBanner() {
+    public Item getOrangeBanner()
+    {
         return this.getBlackBanner().withMeta(14);
     }
 
     @Override
-    public Item getOrangeBed() {
+    public Item getOrangeBed()
+    {
         return this.getWhiteBed().withMeta(ORANGE);
     }
 
     @Override
-    public Item getOrangeCarpet() {
+    public Item getOrangeCarpet()
+    {
         return this.getWhiteCarpet().withMeta(ORANGE);
     }
 
     @Override
-    public Item getOrangeConcrete() {
+    public Item getOrangeConcrete()
+    {
         return this.getWhiteConcrete().withMeta(ORANGE);
     }
 
     @Override
-    public Item getOrangeConcretePowder() {
+    public Item getOrangeConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(ORANGE);
     }
 
     @Override
-    public Item getOrangeDye() {
+    public Item getOrangeDye()
+    {
         return this.getBlackDye().withMeta(14);
     }
 
     @Override
-    public Item getOrangeStainedGlass() {
+    public Item getOrangeStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(ORANGE);
     }
 
     @Override
-    public Item getOrangeStainedGlassPane() {
+    public Item getOrangeStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(ORANGE);
     }
 
     @Override
-    public Item getOrangeTerracotta() {
+    public Item getOrangeTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(ORANGE);
     }
 
     @Override
-    public Item getOrangeTulip() {
+    public Item getOrangeTulip()
+    {
         return this.getPoppy().withMeta(5);
     }
 
     @Override
-    public Item getOrangeWool() {
+    public Item getOrangeWool()
+    {
         return this.getWhiteWool().withMeta(ORANGE);
     }
 
     @Override
-    public Item getOxeyeDaisy() {
+    public Item getOxeyeDaisy()
+    {
         return this.getPoppy().withMeta(8);
     }
 
     @Override
-    public Item getPoppy() {
-        return Item.of("minecraft:red_flower");
-    }
-
-    @Override
-    public Item getPeony() {
+    public Item getPeony()
+    {
         return this.getSunflower().withMeta(5);
     }
 
     @Override
-    public Item getPinkBanner() {
+    public Item getPinkBanner()
+    {
         return this.getBlackBanner().withMeta(9);
     }
 
     @Override
-    public Item getPinkBed() {
+    public Item getPinkBed()
+    {
         return this.getWhiteBed().withMeta(PINK);
     }
 
     @Override
-    public Item getPinkCarpet() {
+    public Item getPinkCarpet()
+    {
         return this.getWhiteCarpet().withMeta(PINK);
     }
 
     @Override
-    public Item getPinkConcrete() {
+    public Item getPinkConcrete()
+    {
         return this.getWhiteConcrete().withMeta(PINK);
     }
 
     @Override
-    public Item getPinkConcretePowder() {
+    public Item getPinkConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(PINK);
     }
 
     @Override
-    public Item getPinkDye() {
+    public Item getPinkDye()
+    {
         return this.getBlackDye().withMeta(9);
     }
 
     @Override
-    public Item getPinkStainedGlass() {
+    public Item getPinkStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(PINK);
     }
 
     @Override
-    public Item getPinkStainedGlassPane() {
+    public Item getPinkStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(PINK);
     }
 
     @Override
-    public Item getPinkTerracotta() {
+    public Item getPinkTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(PINK);
     }
 
     @Override
-    public Item getPinkTulip() {
+    public Item getPinkTulip()
+    {
         return this.getPoppy().withMeta(7);
     }
 
     @Override
-    public Item getPinkWool() {
+    public Item getPinkWool()
+    {
         return this.getWhiteWool().withMeta(PINK);
     }
 
     @Override
-    public Item getSteveHead() {
+    public Item getSteveHead()
+    {
         return this.getSkeletonSkull().withMeta(3);
     }
 
     @Override
-    public Item getPodzol() {
+    public Item getPodzol()
+    {
         return this.getDirt().withMeta(2);
     }
 
     @Override
-    public Item getPolishedAndesite() {
+    public Item getPolishedAndesite()
+    {
         return this.getStone().withMeta(6);
     }
 
     @Override
-    public Item getPolishedDiorite() {
+    public Item getPolishedDiorite()
+    {
         return this.getStone().withMeta(4);
     }
 
     @Override
-    public Item getPolishedGranite() {
+    public Item getPolishedGranite()
+    {
         return this.getStone().withMeta(2);
     }
 
     @Override
-    public Item getPrismarineBricks() {
+    public Item getPrismarineBricks()
+    {
         return this.getDarkPrismarine().withMeta(1);
     }
 
     @Override
-    public Item getRawCod() {
-        return Item.of("minecraft:fish");
-    }
-
-    @Override
-    public Item getPufferfish() {
+    public Item getPufferfish()
+    {
         return this.getRawCod().withMeta(3);
     }
 
     @Override
-    public Item getPurpleBanner() {
+    public Item getPurpleBanner()
+    {
         return this.getBlackBanner().withMeta(5);
     }
 
     @Override
-    public Item getPurpleBed() {
+    public Item getPurpleBed()
+    {
         return this.getWhiteBed().withMeta(PURPLE);
     }
 
     @Override
-    public Item getPurpleCarpet() {
+    public Item getPurpleCarpet()
+    {
         return this.getWhiteCarpet().withMeta(PURPLE);
     }
 
     @Override
-    public Item getPurpleConcrete() {
+    public Item getPurpleConcrete()
+    {
         return this.getWhiteConcrete().withMeta(PURPLE);
     }
 
     @Override
-    public Item getPurpleConcretePowder() {
+    public Item getPurpleConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(PURPLE);
     }
 
     @Override
-    public Item getPurpleDye() {
+    public Item getPurpleDye()
+    {
         return this.getBlackDye().withMeta(5);
     }
 
     @Override
-    public Item getPurpleStainedGlass() {
+    public Item getPurpleStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(PURPLE);
     }
 
     @Override
-    public Item getPurpleStainedGlassPane() {
+    public Item getPurpleStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(PURPLE);
     }
 
     @Override
-    public Item getPurpleTerracotta() {
+    public Item getPurpleTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(PURPLE);
     }
 
     @Override
-    public Item getPurpleWool() {
+    public Item getPurpleWool()
+    {
         return this.getWhiteWool().withMeta(PURPLE);
     }
 
     @Override
-    public Item getPillarQuartzBlock() {
+    public Item getPillarQuartzBlock()
+    {
         return this.getBlockOfQuartz().withMeta(2);
     }
 
     @Override
-    public Item getQuartzSlab() {
+    public Item getQuartzSlab()
+    {
         return this.getStoneSlab().withMeta(7);
     }
 
     @Override
-    public Item getRedBanner() {
+    public Item getRedBanner()
+    {
         return this.getBlackBanner().withMeta(1);
     }
 
     @Override
-    public Item getRedBed() {
+    public Item getRedBed()
+    {
         return this.getWhiteBed().withMeta(RED);
     }
 
     @Override
-    public Item getRedCarpet() {
+    public Item getRedCarpet()
+    {
         return this.getWhiteCarpet().withMeta(RED);
     }
 
     @Override
-    public Item getRedConcrete() {
+    public Item getRedConcrete()
+    {
         return this.getWhiteConcrete().withMeta(RED);
     }
 
     @Override
-    public Item getRedConcretePowder() {
+    public Item getRedConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(RED);
     }
 
     @Override
-    public Item getRedDye() {
+    public Item getRedDye()
+    {
         return this.getBlackDye().withMeta(1);
     }
 
     @Override
-    public Item getRedSand() {
+    public Item getRedSand()
+    {
         return this.getSand().withMeta(1);
     }
 
     @Override
-    public Item getRedSandstoneSlab() {
+    public Item getRedSandstoneSlab()
+    {
         return Item.of("minecraft:stone_slab2");
     }
 
     @Override
-    public Item getRedStainedGlass() {
+    public Item getRedStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(RED);
     }
 
     @Override
-    public Item getRedStainedGlassPane() {
+    public Item getRedStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(RED);
     }
 
     @Override
-    public Item getRedTerracotta() {
+    public Item getRedTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(RED);
     }
 
     @Override
-    public Item getRedTulip() {
+    public Item getRedTulip()
+    {
         return this.getPoppy().withMeta(4);
     }
 
     @Override
-    public Item getRedWool() {
+    public Item getRedWool()
+    {
         return this.getWhiteWool().withMeta(RED);
     }
 
     @Override
-    public Item getRoseBush() {
+    public Item getRoseBush()
+    {
         return this.getSunflower().withMeta(4);
     }
 
     @Override
-    public Item getRawSalmon() {
+    public Item getRawSalmon()
+    {
         return this.getRawCod().withMeta(1);
     }
 
     @Override
-    public Item getSandstoneSlab() {
+    public Item getSandstoneSlab()
+    {
         return this.getStoneSlab().withMeta(1);
     }
 
     @Override
-    public Item getSkeletonSkull() {
+    public Item getSkeletonSkull()
+    {
         return Item.of("minecraft:skull");
     }
 
     @Override
-    public Item getSmoothRedSandstone() {
+    public Item getSmoothRedSandstone()
+    {
         return this.getRedSandstone().withMeta(2);
     }
 
     @Override
-    public Item getSmoothSandstone() {
+    public Item getSmoothSandstone()
+    {
         return this.getSandstone().withMeta(2);
     }
 
     @Override
-    public Item getSpruceLeaves() {
+    public Item getSpruceLeaves()
+    {
         return this.getOakLeaves().withMeta(SPRUCE);
     }
 
     @Override
-    public Item getSpruceLog() {
+    public Item getSpruceLog()
+    {
         return this.getOakLog().withMeta(SPRUCE);
     }
 
     @Override
-    public Item getSprucePlanks() {
+    public Item getSprucePlanks()
+    {
         return this.getOakPlanks().withMeta(SPRUCE);
     }
 
     @Override
-    public Item getSpruceSapling() {
+    public Item getSpruceSapling()
+    {
         return this.getOakSapling().withMeta(SPRUCE);
     }
 
     @Override
-    public Item getSpruceWoodSlab() {
+    public Item getSpruceWoodSlab()
+    {
         return this.getOakWoodSlab().withMeta(SPRUCE);
     }
 
     @Override
-    public Item getStoneBrickSlab() {
+    public Item getStoneBrickSlab()
+    {
         return this.getStoneSlab().withMeta(5);
     }
 
     @Override
-    public Item getDoubleTallgrass() {
+    public Item getDoubleTallgrass()
+    {
         return this.getSunflower().withMeta(2);
     }
 
     @Override
-    public Item getTropicalFish() {
+    public Item getTropicalFish()
+    {
         return this.getRawCod().withMeta(2);
     }
 
     @Override
-    public Item getWetSponge() {
+    public Item getWetSponge()
+    {
         return this.getSponge().withMeta(1);
     }
 
     @Override
-    public Item getWhiteWool() {
-        return Item.of("minecraft:wool");
-    }
-
-    @Override
-    public Item getWhiteBanner() {
+    public Item getWhiteBanner()
+    {
         return this.getBlackBanner().withMeta(15);
     }
 
     @Override
-    public Item getWhiteBed() {
+    public Item getWhiteBed()
+    {
         return Item.of("minecraft:bed");
     }
 
     @Override
-    public Item getWhiteCarpet() {
+    public Item getWhiteCarpet()
+    {
         return Item.of("minecraft:carpet");
     }
 
     @Override
-    public Item getWhiteConcrete() {
+    public Item getWhiteConcrete()
+    {
         return Item.of("minecraft:concrete");
     }
 
     @Override
-    public Item getWhiteConcretePowder() {
+    public Item getWhiteConcretePowder()
+    {
         return Item.of("minecraft:concrete_powder");
     }
 
     @Override
-    public Item getWhiteDye() {
+    public Item getWhiteDye()
+    {
         return this.getBlackDye().withMeta(15);
     }
 
     @Override
-    public Item getWhiteStainedGlass() {
+    public Item getWhiteStainedGlass()
+    {
         return Item.of("minecraft:stained_glass");
     }
 
     @Override
-    public Item getWhiteStainedGlassPane() {
+    public Item getWhiteStainedGlassPane()
+    {
         return Item.of("minecraft:stained_glass_pane");
     }
 
     @Override
-    public Item getWhiteTulip() {
+    public Item getWhiteTulip()
+    {
         return this.getPoppy().withMeta(6);
     }
 
     @Override
-    public Item getWitherSkeletonSkull() {
+    public Item getWitherSkeletonSkull()
+    {
         return this.getSkeletonSkull().withMeta(1);
     }
 
     @Override
-    public Item getYellowBanner() {
+    public Item getYellowBanner()
+    {
         return this.getBlackBanner().withMeta(11);
     }
 
     @Override
-    public Item getCarvedPumpkin() {
+    public Item getCarvedPumpkin()
+    {
         return Item.of("minecraft:lit_pumpkin");
     }
 
     @Override
-    public Item getYellowBed() {
+    public Item getRawCod()
+    {
+        return Item.of("minecraft:fish");
+    }
+
+    @Override
+    public Item getCookedCod()
+    {
+        return Item.of("minecraft:cooked_fish");
+    }
+
+    @Override
+    public Item getStoneMonsterEgg()
+    {
+        return Item.of("minecraft:monster_egg");
+    }
+
+    @Override
+    public Item getPoppy()
+    {
+        return Item.of("minecraft:red_flower");
+    }
+
+    @Override
+    public Item getSunflower()
+    {
+        return Item.of("minecraft:double_plant");
+    }
+
+    @Override
+    public Item getWhiteWool()
+    {
+        return Item.of("minecraft:wool");
+    }
+
+    @Override
+    public Item getYellowBed()
+    {
         return this.getWhiteBed().withMeta(YELLOW);
     }
 
     @Override
-    public Item getYellowCarpet() {
+    public Item getYellowCarpet()
+    {
         return this.getWhiteCarpet().withMeta(YELLOW);
     }
 
     @Override
-    public Item getYellowConcrete() {
+    public Item getYellowConcrete()
+    {
         return this.getWhiteConcrete().withMeta(YELLOW);
     }
 
     @Override
-    public Item getYellowConcretePowder() {
+    public Item getYellowConcretePowder()
+    {
         return this.getWhiteConcretePowder().withMeta(YELLOW);
     }
 
     @Override
-    public Item getYellowDye() {
+    public Item getYellowDye()
+    {
         return this.getBlackDye().withMeta(11);
     }
 
     @Override
-    public Item getYellowStainedGlass() {
+    public Item getYellowStainedGlass()
+    {
         return this.getWhiteStainedGlass().withMeta(YELLOW);
     }
 
     @Override
-    public Item getYellowStainedGlassPane() {
+    public Item getYellowStainedGlassPane()
+    {
         return this.getWhiteStainedGlassPane().withMeta(YELLOW);
     }
 
     @Override
-    public Item getYellowTerracotta() {
+    public Item getYellowTerracotta()
+    {
         return this.getWhiteTerracotta().withMeta(YELLOW);
     }
 
     @Override
-    public Item getYellowWool() {
+    public Item getYellowWool()
+    {
         return this.getWhiteWool().withMeta(YELLOW);
     }
 
     @Override
-    public Item getZombieHead() {
+    public Item getZombieHead()
+    {
         return this.getSkeletonSkull().withMeta(0);
     }
 }

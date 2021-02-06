@@ -24,7 +24,8 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
 
-public interface CommandContext {
+public interface CommandContext
+{
 
     String alias();
 

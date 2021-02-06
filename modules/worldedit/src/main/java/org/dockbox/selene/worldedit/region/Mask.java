@@ -22,13 +22,16 @@ import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.worldedit.WorldEditService;
 
-public interface Mask {
+public interface Mask
+{
 
-    static Exceptional<Mask> parse(String mask) {
+    static Exceptional<Mask> parse(String mask)
+    {
         return Selene.provide(WorldEditService.class).parseMask(mask, null);
     }
 
-    static Exceptional<Mask> parse(String mask, Player cause) {
+    static Exceptional<Mask> parse(String mask, Player cause)
+    {
         return Selene.provide(WorldEditService.class).parseMask(mask, cause);
     }
 

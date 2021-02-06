@@ -20,22 +20,26 @@ package org.dockbox.selene.core.inventory.properties;
 import org.dockbox.selene.core.inventory.InventoryLayout;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 
-public class LayoutProperty implements InjectorProperty<InventoryLayout> {
+public class LayoutProperty implements InjectorProperty<InventoryLayout>
+{
 
     public static final String KEY = "SeleneInternalInventoryTypeKey";
     private final InventoryLayout layout;
 
-    public LayoutProperty(InventoryLayout layout) {
+    public LayoutProperty(InventoryLayout layout)
+    {
         this.layout = layout;
     }
 
     @Override
-    public String getKey() {
+    public String getKey()
+    {
         return LayoutProperty.KEY;
     }
 
     @Override
-    public InventoryLayout getObject() {
+    public InventoryLayout getObject()
+    {
         return this.layout;
     }
 }

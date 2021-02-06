@@ -102,7 +102,7 @@ public class ToolBinding {
 
         item.remove(PERSISTENT_TOOL);
         this.registry.remove(identifier.get());
-        tool.get().reset(item);
+        ItemTool.reset(item);
     }
 
     @Listener

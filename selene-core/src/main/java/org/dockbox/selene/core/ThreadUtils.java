@@ -27,7 +27,8 @@ import java.util.concurrent.Future;
  * A low-level interface for easy thread-based actions. For all cases this should only be
  * accessed through {@link org.dockbox.selene.core.server.bootstrap.InjectableBootstrap#getInstance(Class, InjectorProperty[])}}.
  */
-public interface ThreadUtils {
+public interface ThreadUtils
+{
 
     /**
      * Performs a given Runnable on a async thread, returning a Future object to be used for completion checks.

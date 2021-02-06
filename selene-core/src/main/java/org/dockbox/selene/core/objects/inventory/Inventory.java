@@ -27,38 +27,28 @@ import java.util.stream.Collectors;
 /**
  * Represents an inventory UI
  */
-public interface Inventory {
+public interface Inventory
+{
 
     /**
      * Gets the {@link Item} in the requested position within the inventory. If the position is out of bounds, or if there is no item present,
      * {@link MinecraftItems#getAir()} is returned instead. Indices start at zero.
      *
      * @param row
-     *     The row index
+     *         The row index
      * @param column
-     *     The column index
+     *         The column index
      *
      * @return The {@link Item}, or {@link MinecraftItems#getAir() air}.
      */
     Item getSlot(int row, int column);
 
     /**
-     * Gets the {@link Item} in the requested position within the inventory. If the position is out of bounds, or if there is no item present,
-     * {@link MinecraftItems#getAir()} is returned instead. Indices start at zero.
-     *
-     * @param index
-     *     The inventory index
-     *
-     * @return The {@link Item}, or {@link MinecraftItems#getAir() air}.
-     */
-    Item getSlot(int index);
-
-    /**
      * Gets the {@link Item} in the requested slot type within the inventory. If the slot type is not supported by the inventory, or if there is no
      * item present, {@link MinecraftItems#getAir()} is returned instead.
      *
      * @param slot
-     *     The slot type
+     *         The slot type
      *
      * @return The {@link Item}, or {@link MinecraftItems#getAir() air}.
      */
@@ -69,11 +59,11 @@ public interface Inventory {
      * start at zero.
      *
      * @param item
-     *     The item to place
+     *         The item to place
      * @param row
-     *     The row index
+     *         The row index
      * @param column
-     *     The column index
+     *         The column index
      */
     void setSlot(Item item, int row, int column);
 
@@ -82,9 +72,9 @@ public interface Inventory {
      * start at zero.
      *
      * @param item
-     *     The item to place
+     *         The item to place
      * @param index
-     *     The inventory index
+     *         The inventory index
      */
     void setSlot(Item item, int index);
 
@@ -93,9 +83,9 @@ public interface Inventory {
      * start at zero.
      *
      * @param item
-     *     The item to place
+     *         The item to place
      * @param slot
-     *     The slot type
+     *         The slot type
      */
     void setSlot(Item item, Slot slot);
 
@@ -103,26 +93,31 @@ public interface Inventory {
      * Returns {@code true} if the inventory contains the given {@link Item}, otherwise {@code false}.
      *
      * @param item
-     *     The item
+     *         The item
      *
      * @return {@code true} if the inventory contains the item, otherwise {@code false}
      */
-    default boolean contains(Item item) {
+    default boolean contains(Item item)
+    {
         return 0 < this.count(item);
     }
 
     /**
-     * Returns all {@link Item items} which match a given filter. If no items are present, or none match the filter, an empty list is returned.
+     * Returns the total amount of occurrences of the {@link Item} as the total quantity.
      *
-     * @param filter
-     *     The filter
+     * <p>E.g. if two stacks (64) of {@code minecraft:stone} are inside the inventory, 128 will be returned.
      *
-     * @return All items which match the given filter.
+     * @param item
+     *         The item
+     *
+     * @return The total quantity of the item
      */
-    default Collection<Item> findMatching(Predicate<Item> filter) {
+    default int count(Item item)
+    {
         return this.getAllItems().stream()
-            .filter(filter)
-            .collect(Collectors.toList());
+                .filter(inventoryItem -> inventoryItem.equals(item))
+                .mapToInt(Item::getAmount)
+                .sum();
     }
 
     /**
@@ -133,27 +128,25 @@ public interface Inventory {
     Collection<Item> getAllItems();
 
     /**
-     * Returns the total amount of occurrences of the {@link Item} as the total quantity.
+     * Returns all {@link Item items} which match a given filter. If no items are present, or none match the filter, an empty list is returned.
      *
-     * <p>E.g. if two stacks (64) of {@code minecraft:stone} are inside the inventory, 128 will be returned.
+     * @param filter
+     *         The filter
      *
-     * @param item
-     *     The item
-     *
-     * @return The total quantity of the item
+     * @return All items which match the given filter.
      */
-    default int count(Item item) {
+    default Collection<Item> findMatching(Predicate<Item> filter)
+    {
         return this.getAllItems().stream()
-            .filter(inventoryItem -> inventoryItem.equals(item))
-            .mapToInt(Item::getAmount)
-            .sum();
+                .filter(filter)
+                .collect(Collectors.toList());
     }
 
     /**
      * Attempts to give the {@link Item} to the inventory. If the item cannot be added, false is returned.
      *
      * @param item
-     *     The item to add
+     *         The item to add
      *
      * @return {@code true} if the item was added, otherwise {@code false}
      */
@@ -163,13 +156,15 @@ public interface Inventory {
      * Returns the first occurring index of the given {@link Item}. If the item is not present, -1 is returned.
      *
      * @param item
-     *     The item
+     *         The item
      *
      * @return The first index of the item, or -1
      */
-    default int indexOf(Item item) {
-        int capacity = this.capacity() -1; //-1 to correct for index offset
-        while (0 <= capacity) {
+    default int indexOf(Item item)
+    {
+        int capacity = this.capacity() - 1; //-1 to correct for index offset
+        while (0 <= capacity)
+        {
             Item slot = this.getSlot(capacity);
             if (slot.equals(item)) return capacity;
             capacity--;
@@ -183,4 +178,15 @@ public interface Inventory {
      * @return The capacity
      */
     int capacity();
+
+    /**
+     * Gets the {@link Item} in the requested position within the inventory. If the position is out of bounds, or if there is no item present,
+     * {@link MinecraftItems#getAir()} is returned instead. Indices start at zero.
+     *
+     * @param index
+     *         The inventory index
+     *
+     * @return The {@link Item}, or {@link MinecraftItems#getAir() air}.
+     */
+    Item getSlot(int index);
 }

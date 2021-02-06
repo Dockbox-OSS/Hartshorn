@@ -19,7 +19,8 @@ package org.dockbox.selene.core.command.source;
 
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
 
-public interface CommandSource extends MessageReceiver {
+public interface CommandSource extends MessageReceiver
+{
 
     void execute(String command);
 

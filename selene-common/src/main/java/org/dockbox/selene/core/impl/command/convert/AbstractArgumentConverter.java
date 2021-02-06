@@ -22,12 +22,14 @@ import org.dockbox.selene.core.command.context.ArgumentConverter;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class AbstractArgumentConverter<T> implements ArgumentConverter<T> {
+public abstract class AbstractArgumentConverter<T> implements ArgumentConverter<T>
+{
 
     private final String[] keys;
     private final Class<T> type;
 
-    protected AbstractArgumentConverter(Class<T> type, String... keys) {
+    protected AbstractArgumentConverter(Class<T> type, String... keys)
+    {
         if (0 == keys.length)
             throw new IllegalArgumentException("Cannot create argument converter without at least one key");
         this.keys = keys;
@@ -35,11 +37,13 @@ public abstract class AbstractArgumentConverter<T> implements ArgumentConverter<
         ArgumentConverterRegistry.registerConverter(this);
     }
 
-    public List<String> getKeys() {
+    public List<String> getKeys()
+    {
         return Arrays.asList(this.keys);
     }
 
-    public Class<T> getType() {
+    public Class<T> getType()
+    {
         return this.type;
     }
 

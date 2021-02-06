@@ -18,20 +18,22 @@
 package org.dockbox.selene.worldedit.events;
 
 import org.dockbox.selene.core.events.AbstractCancellableEvent;
-import org.dockbox.selene.worldedit.WorldEditKeys;
-import org.dockbox.selene.worldedit.region.Region;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.worldedit.WorldEditKeys;
+import org.dockbox.selene.worldedit.region.Region;
 
 /**
  * Cancellable event which is executed when a player performs a copy action using WorldEdit.
  * Note that this event is fired <i>before</i> the clipboard is populated.
  */
-public class WorldEditCopyEvent extends AbstractCancellableEvent {
+public class WorldEditCopyEvent extends AbstractCancellableEvent
+{
 
     private final Player player;
 
-    public WorldEditCopyEvent(Player player) {
+    public WorldEditCopyEvent(Player player)
+    {
         this.player = player;
     }
 
@@ -40,7 +42,8 @@ public class WorldEditCopyEvent extends AbstractCancellableEvent {
      *
      * @return The selection
      */
-    public Exceptional<Region> getSelection() {
+    public Exceptional<Region> getSelection()
+    {
         return this.player.get(WorldEditKeys.SELECTION);
     }
 
@@ -49,7 +52,8 @@ public class WorldEditCopyEvent extends AbstractCancellableEvent {
      *
      * @return The player
      */
-    public Player getPlayer() {
+    public Player getPlayer()
+    {
         return this.player;
     }
 }

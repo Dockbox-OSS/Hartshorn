@@ -20,6 +20,7 @@ package org.dockbox.selene.core.i18n.permissions;
 import org.dockbox.selene.core.i18n.common.Formattable;
 
 @FunctionalInterface
-public interface AbstractPermission extends Formattable {
+public interface AbstractPermission extends Formattable
+{
     String get();
 }

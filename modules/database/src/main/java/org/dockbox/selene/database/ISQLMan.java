@@ -17,10 +17,11 @@
 
 package org.dockbox.selene.database;
 
+import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.properties.InjectableType;
+import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.structures.table.Table;
 import org.dockbox.selene.structures.table.column.ColumnIdentifier;
-import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 
 /**
  * Low-level interface for communicating with SQL databases.
@@ -28,7 +29,8 @@ import org.dockbox.selene.database.exceptions.InvalidConnectionException;
  * @param <T>
  *         The type of the target database source
  */
-public interface ISQLMan<T> extends InjectableType {
+public interface ISQLMan<T> extends InjectableType
+{
 
     /**
      * Gets a table from the database and converts it to the internal {@link Table} type.
@@ -41,7 +43,8 @@ public interface ISQLMan<T> extends InjectableType {
      * @throws InvalidConnectionException
      *         If no connection could be prepared to the database
      */
-    Table getTable(String name) throws InvalidConnectionException;
+    Table getTable(String name)
+            throws InvalidConnectionException;
 
     /**
      * Gets a table from the database and converts it to the internal {@link Table} type.
@@ -55,7 +58,34 @@ public interface ISQLMan<T> extends InjectableType {
      * @throws InvalidConnectionException
      *         If no connection could be prepared to the database
      */
-    Table getTable(String name, T target) throws InvalidConnectionException;
+    Table getTable(String name, T target)
+            throws InvalidConnectionException;
+
+    /**
+     * Attempts to get a table from the database and converts it to the internal {@link Table}
+     * type wrapped in a {@link Exceptional}. If the table does not exist, or no connection
+     * could be made to the database, {@link Exceptional#empty()} is returned.
+     *
+     * @param name
+     *         The name of the table as defined in the database.
+     *
+     * @return The table wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
+     */
+    Exceptional<Table> getTableSafe(String name);
+
+    /**
+     * Attempts to get a table from the database and converts it to the internal {@link Table}
+     * type wrapped in a {@link Exceptional}. If the table does not exist, or no connection
+     * could be made to the database, {@link Exceptional#empty()} is returned.
+     *
+     * @param name
+     *         The name of the table as defined in the database.
+     * @param target
+     *         The target database source
+     *
+     * @return The table wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
+     */
+    Exceptional<Table> getTableSafe(String name, T target);
 
     /**
      * Stores a table to the database under a given name. Depending on the implementation this may update a existing
@@ -70,7 +100,8 @@ public interface ISQLMan<T> extends InjectableType {
      * @throws InvalidConnectionException
      *         the invalid connection exception
      */
-    void store(String name, Table table) throws InvalidConnectionException;
+    void store(String name, Table table)
+            throws InvalidConnectionException;
 
     /**
      * Stores a table to the database under a given name. Depending on the implementation this may update a existing
@@ -86,7 +117,8 @@ public interface ISQLMan<T> extends InjectableType {
      * @throws InvalidConnectionException
      *         If no connection could be prepared to the database
      */
-    void store(T target, String name, Table table) throws InvalidConnectionException;
+    void store(T target, String name, Table table)
+            throws InvalidConnectionException;
 
     /**
      * Stores a table to the database under a given name. If a table already exists it will be dropped and recreated
@@ -103,7 +135,8 @@ public interface ISQLMan<T> extends InjectableType {
      * @throws InvalidConnectionException
      *         If no connection could be prepared to the database
      */
-    void store(String name, Table table, boolean reset) throws InvalidConnectionException;
+    void store(String name, Table table, boolean reset)
+            throws InvalidConnectionException;
 
     /**
      * Stores a table to the database under a given name. If a table already exists it will be dropped and recreated
@@ -121,7 +154,8 @@ public interface ISQLMan<T> extends InjectableType {
      * @throws InvalidConnectionException
      *         If no connection could be prepared to the database
      */
-    void store(T target, String name, Table table, boolean reset) throws InvalidConnectionException;
+    void store(T target, String name, Table table, boolean reset)
+            throws InvalidConnectionException;
 
     /**
      * Drops a table on the database if it exists. Uses the default or no target, depending on the implementation.
@@ -132,56 +166,60 @@ public interface ISQLMan<T> extends InjectableType {
      * @throws InvalidConnectionException
      *         If no connection could be prepared to the database
      */
-    void drop(String name) throws InvalidConnectionException;
+    void drop(String name)
+            throws InvalidConnectionException;
 
     /**
      * Drops a table on the database if it exists.
      *
      * @param name
-     * The name of the table to drop
+     *         The name of the table to drop
      * @param target
-     * The target database source
+     *         The target database source
      *
      * @throws InvalidConnectionException
-     * If no connection could be prepared to the database
+     *         If no connection could be prepared to the database
      */
-    void drop(T target, String name) throws InvalidConnectionException;
+    void drop(T target, String name)
+            throws InvalidConnectionException;
 
     /**
      * Deletes a set of rows from a table if they meet a certain value on a given column. Uses the default or no target,
      * depending on the implementation.
      *
      * @param <C>
-     * The type constraint for the identifier and value
+     *         The type constraint for the identifier and value
      * @param name
-     * The name of the table
+     *         The name of the table
      * @param identifier
-     * The column identifier
+     *         The column identifier
      * @param value
-     * The matching value
+     *         The matching value
      *
      * @throws InvalidConnectionException
-     * If no connection could be prepared to the database
+     *         If no connection could be prepared to the database
      */
-    <C> void deleteIf(String name, ColumnIdentifier<C> identifier, C value) throws InvalidConnectionException;
+    <C> void deleteIf(String name, ColumnIdentifier<C> identifier, C value)
+            throws InvalidConnectionException;
 
     /**
      * Deletes a set of rows from a table if they meet a certain value on a given column.
      *
      * @param <C>
-     * The type constraint for the identifier and value
+     *         The type constraint for the identifier and value
      * @param name
-     * The name of the table
+     *         The name of the table
      * @param identifier
-     * The column identifier
+     *         The column identifier
      * @param value
-     * The matching value
+     *         The matching value
      * @param target
-     * The target database source
+     *         The target database source
      *
      * @throws InvalidConnectionException
-     * If no connection could be prepared to the database
+     *         If no connection could be prepared to the database
      */
-    <C> void deleteIf(T target, String name, ColumnIdentifier<C> identifier, C value) throws InvalidConnectionException;
+    <C> void deleteIf(T target, String name, ColumnIdentifier<C> identifier, C value)
+            throws InvalidConnectionException;
 
 }

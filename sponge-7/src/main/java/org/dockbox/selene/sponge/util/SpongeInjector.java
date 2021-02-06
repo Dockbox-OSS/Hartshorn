@@ -28,12 +28,10 @@ import org.dockbox.selene.core.WorldStorageService;
 import org.dockbox.selene.core.annotations.files.Bulk;
 import org.dockbox.selene.core.annotations.files.Format;
 import org.dockbox.selene.core.command.CommandBus;
+import org.dockbox.selene.core.entities.ArmorStand;
+import org.dockbox.selene.core.entities.EntityFactory;
+import org.dockbox.selene.core.entities.ItemFrame;
 import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.module.ModuleManager;
-import org.dockbox.selene.integrated.IntegratedServer;
-import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
-import org.dockbox.selene.packets.SpawnEntityPacket;
-import org.dockbox.selene.worldedit.WorldEditService;
 import org.dockbox.selene.core.files.FileManager;
 import org.dockbox.selene.core.i18n.common.ResourceService;
 import org.dockbox.selene.core.impl.SimpleBroadcastService;
@@ -49,6 +47,7 @@ import org.dockbox.selene.core.inventory.builder.LayoutBuilder;
 import org.dockbox.selene.core.inventory.builder.PaginatedPaneBuilder;
 import org.dockbox.selene.core.inventory.builder.StaticPaneBuilder;
 import org.dockbox.selene.core.inventory.factory.ElementFactory;
+import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.core.objects.Console;
 import org.dockbox.selene.core.objects.bossbar.Bossbar;
 import org.dockbox.selene.core.objects.bossbar.BossbarFactory;
@@ -56,7 +55,6 @@ import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.item.ItemFactory;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.objects.profile.ProfileFactory;
-import org.dockbox.selene.packets.ChangeGameStatePacket;
 import org.dockbox.selene.core.server.IntegratedModule;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.server.SeleneInjectConfiguration;
@@ -66,7 +64,13 @@ import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.dockbox.selene.core.util.web.WebUtil;
 import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.dialects.sqlite.SQLiteMan;
+import org.dockbox.selene.integrated.IntegratedServer;
 import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
+import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
+import org.dockbox.selene.packets.ChangeGameStatePacket;
+import org.dockbox.selene.packets.SpawnEntityPacket;
+import org.dockbox.selene.sponge.entities.SpongeArmorStand;
+import org.dockbox.selene.sponge.entities.SpongeItemFrame;
 import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.inventory.builder.SpongeLayoutBuilder;
 import org.dockbox.selene.sponge.inventory.builder.SpongePaginatedPaneBuilder;
@@ -79,12 +83,16 @@ import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus;
 import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager;
 import org.dockbox.selene.sponge.util.files.SpongeXStreamManager;
+import org.dockbox.selene.worldedit.WorldEditService;
 import org.slf4j.Logger;
 
-public class SpongeInjector extends SeleneInjectConfiguration {
+public class SpongeInjector extends SeleneInjectConfiguration
+{
 
+    @SuppressWarnings("OverlyCoupledMethod")
     @Override
-    protected void configure() {
+    protected void configure()
+    {
         Selene.log().info("Configuring bindings for Selene, using [" + this.getClass().getCanonicalName() + "]");
 
         // Helper types
@@ -123,6 +131,11 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.install(new FactoryModuleBuilder().implement(Item.class, SpongeItem.class).build(ItemFactory.class));
         this.install(new FactoryModuleBuilder().implement(Bossbar.class, SpongeBossbar.class).build(BossbarFactory.class));
         this.install(new FactoryModuleBuilder().implement(Profile.class, SpongeProfile.class).build(ProfileFactory.class));
+        this.install(new FactoryModuleBuilder()
+                .implement(ItemFrame.class, SpongeItemFrame.class)
+                .implement(ArmorStand.class, SpongeArmorStand.class)
+                .build(EntityFactory.class)
+        );
         // Globally accessible
         // Config can be recreated, so no external tracking is required (contents obtained from file, no cache writes)
         this.bind(GlobalConfig.class).toInstance(new SimpleGlobalConfig());

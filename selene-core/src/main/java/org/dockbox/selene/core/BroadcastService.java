@@ -23,7 +23,8 @@ import org.dockbox.selene.core.text.Text;
 
 import java.util.function.Predicate;
 
-public interface BroadcastService {
+public interface BroadcastService
+{
 
     void broadcastPublic(Text message);
 

@@ -27,7 +27,21 @@ import java.util.Map;
  * Represents the layout of a inventory. Typically this is responsible for placing the default elements in a
  * {@link org.dockbox.selene.core.inventory.pane.Pane}.
  */
-public interface InventoryLayout {
+public interface InventoryLayout
+{
+
+    /**
+     * Create a new {@link LayoutBuilder} instance.
+     *
+     * @param inventoryType
+     *         The inventory type to use while building the pane.
+     *
+     * @return The builder
+     */
+    static LayoutBuilder builder(InventoryType inventoryType)
+    {
+        return Selene.provide(LayoutBuilder.class, new InventoryTypeProperty(inventoryType));
+    }
 
     /**
      * Get all the {@link Element elements} in the inventory, identified by their position index.
@@ -42,17 +56,5 @@ public interface InventoryLayout {
      * @return The iventory type.
      */
     InventoryType getIventoryType();
-
-    /**
-     * Create a new {@link LayoutBuilder} instance.
-     *
-     * @param inventoryType
-     *         The inventory type to use while building the pane.
-     *
-     * @return The builder
-     */
-    static LayoutBuilder builder(InventoryType inventoryType) {
-        return Selene.provide(LayoutBuilder.class, new InventoryTypeProperty(inventoryType));
-    }
 
 }

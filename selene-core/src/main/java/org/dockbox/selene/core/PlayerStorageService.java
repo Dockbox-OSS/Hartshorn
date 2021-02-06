@@ -24,7 +24,8 @@ import org.dockbox.selene.core.objects.player.Player;
 import java.util.List;
 import java.util.UUID;
 
-public interface PlayerStorageService {
+public interface PlayerStorageService
+{
 
     List<Player> getOnlinePlayers();
 

@@ -22,20 +22,22 @@ import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.objects.tuple.Tuple;
 import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.database.exceptions.InvalidConnectionException;
+import org.dockbox.selene.database.exceptions.NoSuchTableException;
+import org.dockbox.selene.database.properties.SQLColumnProperty;
+import org.dockbox.selene.database.properties.SQLResetBehaviorProperty;
 import org.dockbox.selene.structures.table.Table;
 import org.dockbox.selene.structures.table.TableRow;
 import org.dockbox.selene.structures.table.column.ColumnIdentifier;
 import org.dockbox.selene.structures.table.column.SimpleColumnIdentifier;
 import org.dockbox.selene.structures.table.exceptions.IdentifierMismatchException;
-import org.dockbox.selene.database.exceptions.InvalidConnectionException;
-import org.dockbox.selene.database.properties.SQLColumnProperty;
-import org.dockbox.selene.database.properties.SQLResetBehaviorProperty;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.InsertValuesStepN;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
+import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
 import java.sql.Connection;
@@ -52,10 +54,57 @@ import java.util.Map;
  *         {@link #getContext(Object)} dynamically, so implementations can act on the given source. If a source should be
  *         constant, the implementation should make this type {@link Void}.
  */
-public abstract class SQLMan<T> implements ISQLMan<T> {
+public abstract class SQLMan<T> implements ISQLMan<T>
+{
 
     private final Map<String, ColumnIdentifier<?>> identifiers = SeleneUtils.emptyMap();
     private Boolean resetOnStore;
+
+    @Override
+    public Table getTable(String name)
+            throws InvalidConnectionException
+    {
+        return this.getTable(name, this.getDefaultTarget());
+    }
+
+    /**
+     * Get the default target if none is provided, this can be injected in {@link #stateEnabling(InjectorProperty[])}.
+     *
+     * @return The default target
+     */
+    protected abstract T getDefaultTarget();
+
+    private <R> R withContext(T target, DSLFunction<R> function)
+            throws InvalidConnectionException
+    {
+        DSLContext ctx = this.getContext(target);
+        R r = function.accept(ctx);
+        SQLMan.closeConnection(ctx);
+        return r;
+    }
+
+    private Table convertToTable(Result<Record> results)
+    {
+        // We cannot get the identifiers if no results exist, in which case we return a empty table.
+        if (results.isEmpty()) return new Table();
+
+        Table table = new Table(this.getIdentifiers(results));
+        results.map((Record record) -> this.convertToTableRow(record, table))
+                .forEach(row -> {
+                    try
+                    {
+                        table.addRow(row);
+                    }
+                    catch (IdentifierMismatchException e)
+                    {
+                        // This should typically never be thrown unless either the table or result was modified after
+                        // fetching.
+                        throw new IllegalStateException("Loaded identifiers did not match while populating table", e);
+                    }
+                });
+
+        return table;
+    }
 
     /**
      * Get the {@link DSLContext} which will be used to communicate to the database. Automatically constructs a
@@ -69,75 +118,31 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
      *         When the connection could not be prepared, either because of it being unavailable or because of invalid
      *         configurations.
      */
-    protected DSLContext getContext(T target) throws InvalidConnectionException {
+    protected DSLContext getContext(T target)
+            throws InvalidConnectionException
+    {
         return DSL.using(this.getConnection(target), this.getDialect());
     }
 
-    /**
-     * Get the connection which can be used by {@link #getContext(Object)} to prepare the internal {@link DSLContext}.
-     *
-     * @param target
-     * The target database source
-     *
-     * @return The connection
-     *
-     * @throws InvalidConnectionException
-     * When the connection could not be prepared, either because of it being unavailable or because of invalid
-     * configurations.
-     */
-    protected abstract Connection getConnection(T target) throws InvalidConnectionException;
-
-    /**
-     * Get the dialect which will be used for a given implementation.
-     *
-     * @return The SQL dialect
-     */
-    protected abstract SQLDialect getDialect();
-
-    /**
-     * Get the default target if none is provided, this can be injected in {@link #stateEnabling(InjectorProperty[])}.
-     *
-     * @return The default target
-     */
-    protected abstract T getDefaultTarget();
-
-    @Override
-    public Table getTable(String name) throws InvalidConnectionException {
-        return this.getTable(name, this.getDefaultTarget());
+    private static void closeConnection(DSLContext ctx)
+    {
+        try
+        {
+            // While DSLContext also holds a diagnostics connection, only the parsing connection is active in our use
+            // case.
+            ctx.parsingConnection().close();
+        }
+        catch (SQLException e)
+        {
+            throw new IllegalStateException("Could not release connection!", e);
+        }
     }
 
-    @Override
-    public Table getTable(String name, T target) throws InvalidConnectionException {
-        return this.withContext(target, ctx -> {
-            // .fetch() automatically closes the native ResultSet and leaves us with the Result.
-            // This can be used safely.
-            Result<Record> results = ctx.select().from(name).fetch();
-            return this.convertToTable(results);
-        });
-    }
-
-    private Table convertToTable(Result<Record> results) {
-        // We cannot get the identifiers if no results exist, in which case we return a empty table.
-        if (results.isEmpty()) return new Table();
-
-        Table table = new Table(this.getIdentifiers(results));
-        results.map((Record record) -> this.convertToTableRow(record, table))
-                .forEach(row -> {
-                    try {
-                        table.addRow(row);
-                    } catch (IdentifierMismatchException e) {
-                        // This should typically never be thrown unless either the table or result was modified after
-                        // fetching.
-                        throw new IllegalStateException("Loaded identifiers did not match while populating table", e);
-                    }
-                });
-
-        return table;
-    }
-
-    private List<ColumnIdentifier<?>> getIdentifiers(Result<Record> results) {
+    private List<ColumnIdentifier<?>> getIdentifiers(Result<Record> results)
+    {
         List<ColumnIdentifier<?>> identifiers = SeleneUtils.emptyList();
-        for (Field<?> field : results.get(0).fields()) {
+        for (Field<?> field : results.get(0).fields())
+        {
             String name = field.getName();
 
             // Developers can define custom column bindings in stateEnabling, here we look those up before constructing
@@ -151,9 +156,11 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
         return identifiers;
     }
 
-    private TableRow convertToTableRow(Record record, Table table) {
+    private TableRow convertToTableRow(Record record, Table table)
+    {
         TableRow row = new TableRow();
-        for (Field<?> field : record.fields()) {
+        for (Field<?> field : record.fields())
+        {
             Object attr = record.getValue(field);
             ColumnIdentifier<?> identifier = this.identifiers.getOrDefault(
                     field.getName(),
@@ -167,125 +174,186 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
         return row;
     }
 
-    private Exceptional<ColumnIdentifier<?>> tryGetColumn(String key) {
+    /**
+     * Get the connection which can be used by {@link #getContext(Object)} to prepare the internal {@link DSLContext}.
+     *
+     * @param target
+     *         The target database source
+     *
+     * @return The connection
+     * @throws InvalidConnectionException
+     *         When the connection could not be prepared, either because of it being unavailable or because of invalid
+     *         configurations.
+     */
+    protected abstract Connection getConnection(T target)
+            throws InvalidConnectionException;
+
+    /**
+     * Get the dialect which will be used for a given implementation.
+     *
+     * @return The SQL dialect
+     */
+    protected abstract SQLDialect getDialect();
+
+    private Exceptional<ColumnIdentifier<?>> tryGetColumn(String key)
+    {
         return Exceptional.ofNullable(this.identifiers.get(key));
     }
 
     @Override
-    public void store(String name, Table table) throws InvalidConnectionException {
+    public Table getTable(String name, T target)
+            throws InvalidConnectionException
+    {
+        try
+        {
+            return this.withContext(target, ctx -> {
+                // .fetch() automatically closes the native ResultSet and leaves us with the Result.
+                // This can be used safely.
+                Result<Record> results = ctx.select().from(name).fetch();
+                return this.convertToTable(results);
+            });
+        } catch (DataAccessException e) {
+            throw new NoSuchTableException(name, e);
+        }
+    }
+
+    @Override
+    public Exceptional<Table> getTableSafe(String name)
+    {
+        return Exceptional.of(() -> this.getTable(name));
+    }
+
+    @Override
+    public Exceptional<Table> getTableSafe(String name, T target)
+    {
+        return Exceptional.of(() -> this.getTable(name, target));
+    }
+
+    @Override
+    public void store(String name, Table table)
+            throws InvalidConnectionException
+    {
         this.store(this.getDefaultTarget(), name, table, this.resetOnStore);
     }
 
     @Override
-    public void store(T target, String name, Table table) throws InvalidConnectionException {
+    public void store(T target, String name, Table table)
+            throws InvalidConnectionException
+    {
         this.store(target, name, table, this.resetOnStore);
     }
 
-    public void store(String name, Table table, boolean reset) throws InvalidConnectionException {
+    public void store(String name, Table table, boolean reset)
+            throws InvalidConnectionException
+    {
         this.store(this.getDefaultTarget(), name, table, reset);
     }
 
-    public void store(T target, String name, Table table, boolean reset) throws InvalidConnectionException {
+    public void store(T target, String name, Table table, boolean reset)
+            throws InvalidConnectionException
+    {
         this.withContext(target, ctx -> {
             // Use .drop() over .deleteIf() here, as the table definition may have changed
             if (reset) this.drop(target, name);
 
-            Field<?>[] fields = this.convertIdentifiersToFields(table);
-            this.createTableIfNotExists(name, ctx, fields);
+            Field<?>[] fields = SQLMan.convertIdentifiersToFields(table);
+            SQLMan.createTableIfNotExists(name, ctx, fields);
             InsertValuesStepN<?> insertStep = ctx.insertInto(DSL.table(name))
                     .columns();
-            this.populateRemoteTable(insertStep, table, fields);
+            SQLMan.populateRemoteTable(insertStep, table, fields);
         });
-    }
-
-    private Field<?>[] convertIdentifiersToFields(Table table) {
-        Field<?>[] fields = new Field[table.getIdentifiers().length];
-        ColumnIdentifier<?>[] tableIdentifiers = table.getIdentifiers();
-        for (int i = 0; i < tableIdentifiers.length; i++) {
-            ColumnIdentifier<?> identifier = tableIdentifiers[i];
-            fields[i] = DSL.field(identifier.getColumnName(), identifier.getType());
-        }
-        return fields;
-    }
-
-    private void populateRemoteTable(InsertValuesStepN<?> insertStep, Table table, Field<?>[] fields) {
-        table.getRows().forEach(row -> {
-            Object[] values = new Object[fields.length];
-            // Indexed over iterative to ensure the horizontal location of our value is equal to the location of our
-            // field (read; column).
-            for (int i = 0; i < fields.length; i++) {
-                Field<?> field = fields[i];
-                ColumnIdentifier<?> identifier = table.getIdentifier(field.getName());
-                // If the identifier in our table is null, it is possible we are working with a filtered row. In this
-                // case we accept null into the remote table.
-                if (null != identifier) {
-                    values[i] = row.getValue(identifier).orNull();
-                } else values[i] = null;
-            }
-            insertStep.values(values);
-        });
-        insertStep.execute();
-    }
-
-    private void createTableIfNotExists(String name, DSLContext ctx, Field<?>[] fields) {
-        ctx.createTableIfNotExists(name).columns(fields).execute();
     }
 
     @Override
-    public void drop(String name) throws InvalidConnectionException {
+    public void drop(String name)
+            throws InvalidConnectionException
+    {
         this.drop(this.getDefaultTarget(), name);
     }
 
     @Override
-    public void drop(T target, String name) throws InvalidConnectionException {
+    public void drop(T target, String name)
+            throws InvalidConnectionException
+    {
         this.withContext(target, ctx -> {
             ctx.dropTableIfExists(DSL.table(name)).execute();
         });
     }
 
     @Override
-    public <C> void deleteIf(String name, ColumnIdentifier<C> identifier, C value) throws InvalidConnectionException {
+    public <C> void deleteIf(String name, ColumnIdentifier<C> identifier, C value)
+            throws InvalidConnectionException
+    {
         this.deleteIf(this.getDefaultTarget(), name, identifier, value);
     }
 
     @Override
-    public <C> void deleteIf(T target, String name, ColumnIdentifier<C> identifier, C value) throws InvalidConnectionException {
+    public <C> void deleteIf(T target, String name, ColumnIdentifier<C> identifier, C value)
+            throws InvalidConnectionException
+    {
         this.withContext(target, ctx -> {
             ctx.delete(DSL.table(name))
-                    .where(this.getNamedField(identifier).eq(value))
+                    .where(SQLMan.getNamedField(identifier).eq(value))
                     .execute();
         });
     }
 
-    private <C> Field<C> getNamedField(ColumnIdentifier<C> identifier) {
+    private static <C> Field<C> getNamedField(ColumnIdentifier<C> identifier)
+    {
         return DSL.field(identifier.getColumnName(), identifier.getType());
     }
 
-    private <R> R withContext(T target, DSLFunction<R> function) throws InvalidConnectionException {
-        DSLContext ctx = this.getContext(target);
-        R r = function.accept(ctx);
-        this.closeConnection(ctx);
-        return r;
-    }
-
-    private void withContext(T target, DSLConsumer consumer) throws InvalidConnectionException {
+    private void withContext(T target, DSLConsumer consumer)
+            throws InvalidConnectionException
+    {
         DSLContext ctx = this.getContext(target);
         consumer.accept(ctx);
-        this.closeConnection(ctx);
+        SQLMan.closeConnection(ctx);
     }
 
-    private void closeConnection(DSLContext ctx) {
-        try {
-            // While DSLContext also holds a diagnostics connection, only the parsing connection is active in our use
-            // case.
-            ctx.parsingConnection().close();
-        } catch (SQLException e) {
-            throw new IllegalStateException("Could not release connection!", e);
+    private static Field<?>[] convertIdentifiersToFields(Table table)
+    {
+        Field<?>[] fields = new Field[table.getIdentifiers().length];
+        ColumnIdentifier<?>[] tableIdentifiers = table.getIdentifiers();
+        for (int i = 0; i < tableIdentifiers.length; i++)
+        {
+            ColumnIdentifier<?> identifier = tableIdentifiers[i];
+            fields[i] = DSL.field(identifier.getColumnName(), identifier.getType());
         }
+        return fields;
+    }
+
+    private static void populateRemoteTable(InsertValuesStepN<?> insertStep, Table table, Field<?>[] fields)
+    {
+        table.getRows().forEach(row -> {
+            Object[] values = new Object[fields.length];
+            // Indexed over iterative to ensure the horizontal location of our value is equal to the location of our
+            // field (read; column).
+            for (int i = 0; i < fields.length; i++)
+            {
+                Field<?> field = fields[i];
+                ColumnIdentifier<?> identifier = table.getIdentifier(field.getName());
+                // If the identifier in our table is null, it is possible we are working with a filtered row. In this
+                // case we accept null into the remote table.
+                if (null != identifier)
+                {
+                    values[i] = row.getValue(identifier).orNull();
+                }
+                else values[i] = null;
+            }
+            insertStep.values(values);
+        });
+        insertStep.execute();
+    }
+
+    private static void createTableIfNotExists(String name, DSLContext ctx, Field<?>[] fields)
+    {
+        ctx.createTableIfNotExists(name).columns(fields).execute();
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void stateEnabling(InjectorProperty<?>... properties)
+    {
         Keys.getSubProperties(SQLColumnProperty.class, properties)
                 .forEach(property -> {
                     Tuple<String, ColumnIdentifier<?>> identifier = property.getObject();

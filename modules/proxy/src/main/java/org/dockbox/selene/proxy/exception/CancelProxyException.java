@@ -23,9 +23,11 @@ import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
  * The exception to be thrown by methods annotated with {@link org.dockbox.selene.proxy.annotations.Proxy.Target}
  * to indicate a proxy delegation should be cancelled.
  */
-public class CancelProxyException extends UncheckedSeleneException {
+public class CancelProxyException extends UncheckedSeleneException
+{
 
-    public CancelProxyException() {
+    public CancelProxyException()
+    {
         super("");
     }
 }

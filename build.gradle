@@ -22,7 +22,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
 
@@ -125,6 +125,7 @@ allprojects {
             testImplementation "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
             testImplementation "com.plotsquared:plotsquared-api:$plotSquaredVersion"
             testImplementation "com.google.inject:guice:$guiceVersion"
+            testImplementation "com.google.guava:guava:$guavaVersion"
         }
 
         test {

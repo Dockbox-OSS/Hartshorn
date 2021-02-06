@@ -34,7 +34,8 @@ import java.lang.reflect.Parameter;
  * @param <A>
  *         The annotation type the processor applies to.
  */
-public abstract class AbstractEventParamProcessor<A extends Annotation> {
+public abstract class AbstractEventParamProcessor<A extends Annotation>
+{
 
     /**
      * Gets the annotation {@link Class} instance, which can be used to identify the processor for a given
@@ -53,7 +54,8 @@ public abstract class AbstractEventParamProcessor<A extends Annotation> {
      * @return The target event stage
      */
     @NotNull
-    public EventStage targetStage() {
+    public EventStage targetStage()
+    {
         return EventStage.PROCESS;
     }
 
@@ -75,12 +77,11 @@ public abstract class AbstractEventParamProcessor<A extends Annotation> {
      *         The {@link EventWrapper} which contains the invoking definition.
      *
      * @return The processed object
-     *
      * @throws SkipEventException
      *         Indicates the event listener should be skipped.
      */
     @Nullable
     public abstract Object process(@Nullable Object object, A annotation, Event event, Parameter parameter, EventWrapper wrapper)
-        throws SkipEventException;
+            throws SkipEventException;
 
 }

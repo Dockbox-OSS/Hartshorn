@@ -23,52 +23,63 @@ import org.spongepowered.api.Sponge;
 
 import java.nio.file.Path;
 
-public interface SpongeDefaultFileManager {
+@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
+public interface SpongeDefaultFileManager
+{
 
     @NotNull
-    default Path getDataDir() {
+    default Path getDataDir()
+    {
         return this.getServerRoot().resolve("data/");
     }
 
     @NotNull
-    default Path getLogsDir() {
-        return this.getServerRoot().resolve("logs/");
-    }
-
-    @NotNull
-    default Path getServerRoot() {
+    default Path getServerRoot()
+    {
         return Sponge.getGame().getGameDirectory();
     }
 
     @NotNull
-    default Path getModuleDir() {
-        return this.createPathIfNotExists(this.getServerRoot().resolve("modules/"));
+    default Path getLogsDir()
+    {
+        return this.getServerRoot().resolve("logs/");
     }
 
     @NotNull
-    default Exceptional<Path> getModDir() {
+    default Path getModuleDir()
+    {
+        return this.createPathIfNotExists(this.getServerRoot().resolve("modules/"));
+    }
+
+    Path createPathIfNotExists(Path path);
+
+    @NotNull
+    default Exceptional<Path> getModDir()
+    {
         return Exceptional.of(this.createPathIfNotExists(this.getServerRoot().resolve("mods/")));
     }
 
     @NotNull
-    default Path getPluginDir() {
+    default Path getPluginDir()
+    {
         return this.createPathIfNotExists(this.getServerRoot().resolve("plugins/"));
     }
 
     @NotNull
-    default Path getModuleConfigsDir() {
+    default Path getModuleConfigsDir()
+    {
         return this.getServerRoot().resolve("config/modules/");
     }
 
     @NotNull
-    default Exceptional<Path> getModdedPlatformModsConfigDir() {
+    default Exceptional<Path> getModdedPlatformModsConfigDir()
+    {
         return Exceptional.of(this.getServerRoot().resolve("config/"));
     }
 
     @NotNull
-    default Path getPlatformPluginsConfigDir() {
+    default Path getPlatformPluginsConfigDir()
+    {
         return this.getServerRoot().resolve("config/plugins/");
     }
-
-    Path createPathIfNotExists(Path path);
 }
