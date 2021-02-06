@@ -80,12 +80,6 @@ public abstract class SpongeEntity
     }
 
     @Override
-    public void setName(String name)
-    {
-        this.setDisplayName(Text.of(name));
-    }
-
-    @Override
     public Text getDisplayName()
     {
         return SpongeConversionUtil.fromSponge(this.getRepresentation()

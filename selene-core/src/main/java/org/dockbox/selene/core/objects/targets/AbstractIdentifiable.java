@@ -45,10 +45,4 @@ public abstract class AbstractIdentifiable<T extends AbstractIdentifiable<T>> im
     {
         return this.name;
     }
-
-    @Override
-    public void setName(String name)
-    {
-        this.name = name;
-    }
 }
