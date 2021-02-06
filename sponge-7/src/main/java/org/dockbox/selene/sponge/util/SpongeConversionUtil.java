@@ -47,6 +47,7 @@ import org.dockbox.selene.core.objects.bossbar.BossbarStyle;
 import org.dockbox.selene.core.objects.inventory.Slot;
 import org.dockbox.selene.core.objects.item.Enchant;
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.location.BlockFace;
 import org.dockbox.selene.core.objects.location.Warp;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.player.Hand;
@@ -106,6 +107,7 @@ import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyle;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.util.rotation.Rotation;
 import org.spongepowered.api.util.rotation.Rotations;
 import org.spongepowered.api.world.Location;
@@ -776,5 +778,29 @@ public enum SpongeConversionUtil
         return Sponge.getRegistry()
                 .getType(Rotation.class, rotation.name())
                 .orElse(Rotations.TOP);
+    }
+
+    public static Direction toSponge(BlockFace blockFace)
+    {
+        try
+        {
+            return Direction.valueOf(blockFace.name());
+        }
+        catch (IllegalArgumentException | NullPointerException e)
+        {
+            return Direction.NONE;
+        }
+    }
+
+    public static BlockFace fromSponge(Direction direction)
+    {
+        try
+        {
+            return BlockFace.valueOf(direction.name());
+        }
+        catch (IllegalArgumentException | NullPointerException e)
+        {
+            return BlockFace.NONE;
+        }
     }
 }

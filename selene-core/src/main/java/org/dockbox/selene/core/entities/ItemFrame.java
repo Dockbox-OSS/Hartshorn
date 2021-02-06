@@ -20,6 +20,7 @@ package org.dockbox.selene.core.entities;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
+import org.dockbox.selene.core.objects.location.BlockFace;
 
 /**
  * Represents an Item Frame. See <a href="https://minecraft.gamepedia.com/Item_Frame">Item Frame on the Minecraft Wiki</a>.
@@ -61,6 +62,22 @@ public interface ItemFrame extends Entity<ItemFrame>
      */
     void setRotation(Rotation rotation);
 
+    /**
+     * Gets the {@link BlockFace} the item frame is placed against. If no blockface is configured,
+     * {@link BlockFace#NONE} is returned.
+     *
+     * @return The {@link BlockFace} the item frame is placed against, or {@link BlockFace#NONE}.
+     */
+    BlockFace getBlockFace();
+
+    /**
+     * Sets the {@link BlockFace} the item frame should be placed against.
+     *
+     * @param blockFace
+     *         The {@link BlockFace} the item frame should be placed against.
+     */
+    void setBlockFace(BlockFace blockFace);
+
     enum Rotation
     {
         BOTTOM,
@@ -72,5 +89,4 @@ public interface ItemFrame extends Entity<ItemFrame>
         TOP_LEFT,
         TOP_RIGHT
     }
-
 }

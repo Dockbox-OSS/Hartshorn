@@ -25,6 +25,7 @@ import net.minecraft.entity.item.EntityItemFrame;
 import org.dockbox.selene.core.entities.ItemFrame;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.location.BlockFace;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.data.key.Keys;
@@ -32,6 +33,7 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
+import org.spongepowered.api.util.Direction;
 
 public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> implements ItemFrame
 {
@@ -52,7 +54,7 @@ public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> im
     @Override
     public Exceptional<Item> getDisplayedItem()
     {
-        return Exceptional.of(this.representation.get(Keys.REPRESENTED_ITEM)
+        return Exceptional.of(this.getRepresentation().get(Keys.REPRESENTED_ITEM)
                 .map(ItemStackSnapshot::createStack)
                 .map(SpongeConversionUtil::fromSponge));
     }
@@ -60,14 +62,14 @@ public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> im
     @Override
     public void setDisplayedItem(Item stack)
     {
-        if (stack.isAir()) this.representation.remove(Keys.REPRESENTED_ITEM);
-        else this.representation.offer(Keys.REPRESENTED_ITEM, SpongeConversionUtil.toSponge(stack).createSnapshot());
+        if (stack.isAir()) this.getRepresentation().remove(Keys.REPRESENTED_ITEM);
+        else this.getRepresentation().offer(Keys.REPRESENTED_ITEM, SpongeConversionUtil.toSponge(stack).createSnapshot());
     }
 
     @Override
     public Rotation getRotation()
     {
-        return this.representation.get(Keys.ROTATION)
+        return this.getRepresentation().get(Keys.ROTATION)
                 .map(SpongeConversionUtil::fromSponge)
                 .orElse(Rotation.TOP);
     }
@@ -75,7 +77,20 @@ public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> im
     @Override
     public void setRotation(Rotation rotation)
     {
-        this.representation.offer(Keys.ROTATION, SpongeConversionUtil.toSponge(rotation));
+        this.getRepresentation().offer(Keys.ROTATION, SpongeConversionUtil.toSponge(rotation));
+    }
+
+    @Override
+    public BlockFace getBlockFace()
+    {
+        Direction direction = this.getRepresentation().getOrElse(Keys.DIRECTION, Direction.NONE);
+        return SpongeConversionUtil.fromSponge(direction);
+    }
+
+    @Override
+    public void setBlockFace(BlockFace blockFace)
+    {
+        this.getRepresentation().offer(Keys.DIRECTION, SpongeConversionUtil.toSponge(blockFace));
     }
 
     @Override
