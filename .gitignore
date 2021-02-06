@@ -8,4 +8,3 @@ dependency-reduced-pom.xml
 *.hprof
 extensions/src/test/resources/storage.db-journal
 servers
-docs
