@@ -61,6 +61,27 @@ public abstract class SQLMan<T> implements ISQLMan<T>
     private Boolean resetOnStore;
 
     @Override
+    public Table getOrCreateTable(String name, Table empty)
+            throws InvalidConnectionException
+    {
+        return this.getOrCreateTable(name, this.getDefaultTarget(), empty);
+    }
+
+    @Override
+    public Table getOrCreateTable(String name, T target, Table empty)
+            throws InvalidConnectionException
+    {
+        try
+        {
+            return this.getTable(name, target);
+        }
+        catch (NoSuchTableException e)
+        {
+            this.store(name, empty);
+            return this.getTableSafe(name, target).orElse(empty);
+        }
+    }
+    @Override
     public Table getTable(String name)
             throws InvalidConnectionException
     {

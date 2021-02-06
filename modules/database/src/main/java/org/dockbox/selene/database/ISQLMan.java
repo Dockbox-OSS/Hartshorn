@@ -32,6 +32,12 @@ import org.dockbox.selene.structures.table.column.ColumnIdentifier;
 public interface ISQLMan<T> extends InjectableType
 {
 
+    Table getOrCreateTable(String name, Table empty)
+            throws InvalidConnectionException;
+
+    Table getOrCreateTable(String name, T target, Table empty)
+        throws InvalidConnectionException;
+
     /**
      * Gets a table from the database and converts it to the internal {@link Table} type.
      * Uses the default or no target, depending on the implementation.
