@@ -60,7 +60,8 @@ public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> im
     @Override
     public void setDisplayedItem(Item stack)
     {
-        this.representation.offer(Keys.REPRESENTED_ITEM, SpongeConversionUtil.toSponge(stack).createSnapshot());
+        if (stack.isAir()) this.representation.remove(Keys.REPRESENTED_ITEM);
+        else this.representation.offer(Keys.REPRESENTED_ITEM, SpongeConversionUtil.toSponge(stack).createSnapshot());
     }
 
     @Override

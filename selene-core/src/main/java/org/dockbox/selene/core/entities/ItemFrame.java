@@ -19,16 +19,46 @@ package org.dockbox.selene.core.entities;
 
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.Item;
+import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 
+/**
+ * Represents an Item Frame. See <a href="https://minecraft.gamepedia.com/Item_Frame">Item Frame on the Minecraft Wiki</a>.
+ */
 public interface ItemFrame extends Entity<ItemFrame>
 {
 
+    /**
+     * Returns the current {@link Item} displayed in the item frame, wrapped in a {@link Exceptional}. If no item is currently
+     * being represented, {@link Exceptional#empty()} is returned.
+     *
+     * @return The {@link Item} displayed in the item frame, or {@link Exceptional#empty()}.
+     */
     Exceptional<Item> getDisplayedItem();
 
+    /**
+     * Sets the {@link Item} to be displayed in the item frame. If the item is equal to {@link MinecraftItems#getAir()}
+     * the displayed item is reset to display none.
+     *
+     * @param stack
+     *         The {@link Item} to display.
+     */
     void setDisplayedItem(Item stack);
 
+    /**
+     * Gets the {@link Rotation} of the currently displayed {@link Item}. If no item is displayed,
+     * {@link Rotation#TOP} is returned.
+     *
+     * @return The {@link Rotation} of the displayed {@link Item}, or {@link Rotation#TOP}.
+     */
     Rotation getRotation();
 
+    /**
+     * Sets the {@link Rotation} of the currently displayed {@link Item}. If no item is displayed, the
+     * rotation is stored for the next item which will be represented.
+     *
+     * @param rotation
+     *         The {@link Rotation} of the displayed {@link Item}.
+     */
     void setRotation(Rotation rotation);
 
     enum Rotation

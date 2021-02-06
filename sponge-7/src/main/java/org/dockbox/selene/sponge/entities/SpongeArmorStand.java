@@ -41,6 +41,7 @@ import java.util.Map;
 public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand> implements ArmorStand
 {
 
+    // Creates cached bindings for the limb keys
     private static final Map<Limbs, Key<Value<Vector3d>>> limbKeys = SeleneUtils.ofEntries(
             SeleneUtils.entry(Limbs.HEAD, Keys.HEAD_ROTATION),
             SeleneUtils.entry(Limbs.LEFT_ARM, Keys.LEFT_ARM_ROTATION),

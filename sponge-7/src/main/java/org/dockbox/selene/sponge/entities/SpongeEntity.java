@@ -43,6 +43,14 @@ import org.spongepowered.common.util.Constants;
 
 import java.util.UUID;
 
+/**
+ * Represents common functionality for all entities implemented in Sponge.
+ *
+ * @param <T>
+ *         The native Minecraft {@link Entity} type to represent
+ * @param <E>
+ *         The internal Selene {@link org.dockbox.selene.core.entities.Entity} type to represent
+ */
 public abstract class SpongeEntity
         <T extends Entity, E extends org.dockbox.selene.core.entities.Entity<E>>
         extends NMSEntity<T>
@@ -109,6 +117,8 @@ public abstract class SpongeEntity
     @Override
     public void setHealth(double health)
     {
+        double maxHealth = this.getRepresentation().getOrElse(Keys.MAX_HEALTH, DEFAULT_MAX_HEALTH);
+        if (maxHealth < health) health = maxHealth;
         this.getRepresentation().offer(Keys.HEALTH, health);
     }
 
@@ -211,8 +221,25 @@ public abstract class SpongeEntity
         return SpongeConversionUtil.fromSponge(this.getRepresentation().getWorld());
     }
 
+    /**
+     * Gets the represented {@link org.spongepowered.api.entity.Entity}, typically this is a mixed-in instance of
+     * {@link Entity}.
+     *
+     * @return The represented {@link org.spongepowered.api.entity.Entity}.
+     */
     protected abstract org.spongepowered.api.entity.Entity getRepresentation();
 
+    /**
+     * Custom implementation of {@link org.spongepowered.common.entity.SpongeEntityArchetype#toSnapshot(org.spongepowered.api.world.Location)},
+     * fixing the incompatibility with non-rotated entities. The original method did not include the rotation, scale, and type in the snapshot.
+     *
+     * @param archetype
+     *         The entity archetype to use when creating the snapshot.
+     * @param location
+     *         The base location of the entity snapshot
+     *
+     * @return The new {@link EntitySnapshot}
+     */
     private EntitySnapshot createSnapshot(AbstractArchetype<EntityType, EntitySnapshot, org.spongepowered.api.entity.Entity> archetype,
                                           org.spongepowered.api.world.Location<org.spongepowered.api.world.World> location)
     {
@@ -231,6 +258,14 @@ public abstract class SpongeEntity
         return builder.build();
     }
 
+    /**
+     * Creates a new instance of {@link org.dockbox.selene.core.entities.Entity}, representing a native {@link org.spongepowered.api.entity.Entity}.
+     *
+     * @param clone
+     *         The native entity to create the instance from
+     *
+     * @return The new {@link org.spongepowered.common.util.Constants.Entity} instance
+     */
     protected abstract E from(org.spongepowered.api.entity.Entity clone);
 
     @Override
