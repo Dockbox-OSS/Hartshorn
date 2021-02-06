@@ -36,6 +36,7 @@ import org.jooq.Field;
 import org.jooq.InsertValuesStepN;
 import org.jooq.Record;
 import org.jooq.Result;
+import org.jooq.RowCountQuery;
 import org.jooq.SQLDialect;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
@@ -81,6 +82,7 @@ public abstract class SQLMan<T> implements ISQLMan<T>
             return this.getTableSafe(name, target).orElse(empty);
         }
     }
+
     @Override
     public Table getTable(String name)
             throws InvalidConnectionException
@@ -106,10 +108,11 @@ public abstract class SQLMan<T> implements ISQLMan<T>
 
     private Table convertToTable(Result<Record> results)
     {
-        // We cannot get the identifiers if no results exist, in which case we return a empty table.
-        if (results.isEmpty()) return new Table();
+        Table table = new Table(this.getIdentifiers(results.fields()));
 
-        Table table = new Table(this.getIdentifiers(results));
+        // We cannot populate the table if no results exist, in which case we return a empty table.
+        if (results.isEmpty()) return table;
+
         results.map((Record record) -> this.convertToTableRow(record, table))
                 .forEach(row -> {
                     try
@@ -159,10 +162,9 @@ public abstract class SQLMan<T> implements ISQLMan<T>
         }
     }
 
-    private List<ColumnIdentifier<?>> getIdentifiers(Result<Record> results)
-    {
+    private List<ColumnIdentifier<?>> getIdentifiers(Field<?>[] fields) {
         List<ColumnIdentifier<?>> identifiers = SeleneUtils.emptyList();
-        for (Field<?> field : results.get(0).fields())
+        for (Field<?> field : fields)
         {
             String name = field.getName();
 
@@ -231,9 +233,17 @@ public abstract class SQLMan<T> implements ISQLMan<T>
                 // .fetch() automatically closes the native ResultSet and leaves us with the Result.
                 // This can be used safely.
                 Result<Record> results = ctx.select().from(name).fetch();
-                return this.convertToTable(results);
+                if (results.isEmpty()) {
+                    // If the table is empty we still want a accurate representation of its schema
+                    return new Table(this.getIdentifiers(results.fields()));
+                } else
+                {
+                    return this.convertToTable(results);
+                }
             });
-        } catch (DataAccessException e) {
+        }
+        catch (DataAccessException e)
+        {
             throw new NoSuchTableException(name, e);
         }
     }
