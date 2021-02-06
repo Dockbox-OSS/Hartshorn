@@ -53,6 +53,7 @@ import org.dockbox.selene.core.objects.bossbar.Bossbar;
 import org.dockbox.selene.core.objects.bossbar.BossbarFactory;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.item.ItemFactory;
+import org.dockbox.selene.core.objects.item.maps.CustomMapService;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.objects.profile.ProfileFactory;
 import org.dockbox.selene.core.server.IntegratedModule;
@@ -78,6 +79,7 @@ import org.dockbox.selene.sponge.inventory.builder.SpongeStaticPaneBuilder;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.bossbar.SpongeBossbar;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
+import org.dockbox.selene.sponge.objects.item.maps.SpongeCustomMapService;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus;
@@ -117,6 +119,7 @@ public class SpongeInjector extends SeleneInjectConfiguration
         this.bind(BroadcastService.class).to(SimpleBroadcastService.class);
         this.bind(ResourceService.class).toInstance(new SimpleResourceService());
         this.bind(WorldEditService.class).to(SpongeWorldEditService.class);
+        this.bind(CustomMapService.class).to(SpongeCustomMapService.class);
         // Internal services
         // Event- and command bus keep static references, and can thus be recreated
         this.bind(CommandBus.class).toInstance(new SpongeCommandBus());
