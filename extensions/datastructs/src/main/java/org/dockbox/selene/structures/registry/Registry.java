@@ -373,20 +373,20 @@ public class Registry<V> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        this.buildheirarchy(builder, 0);
+        this.buildhierarchy(builder, 0);
 
         return builder.toString();
     }
 
     /**
-     * Builds the registry heirarchy.
+     * Builds the registry hierarchy.
      *
      * @param builder
      *         The {@link StringBuilder} being used to build the reistry heirarchy
      * @param indents
      *         The depth of the registry (Caused by nested registries)
      */
-    private void buildheirarchy(StringBuilder builder, int indents) {
+    private void buildhierarchy(StringBuilder builder, int indents) {
         this.data.forEach((identifier, column) -> {
             for (int i = 0; i < indents; i++) builder.append("\t");
             builder.append("- ").append(identifier).append("\n");
@@ -394,7 +394,7 @@ public class Registry<V> {
             column.forEach(value -> {
                 for (int i = 0; i < indents; i++) builder.append("\t");
                 if (value instanceof Registry)
-                    ((Registry<?>) value).buildheirarchy(builder, indents + 1);
+                    ((Registry<?>) value).buildhierarchy(builder, indents + 1);
                 else
                     builder.append("| ").append(value).append("\n");
             });
