@@ -29,7 +29,6 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.Packet;
 import org.dockbox.selene.core.objects.Wrapper;
 import org.dockbox.selene.core.objects.inventory.PlayerInventory;
-import org.dockbox.selene.core.objects.inventory.Slot;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.dockbox.selene.core.objects.keys.TransactionResult;
@@ -55,6 +54,8 @@ import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.util.Tristate;
@@ -128,9 +129,12 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
         switch (hand)
         {
             case MAIN_HAND:
-                return this.getInventory().getSlot(Slot.MAIN_HAND);
             case OFF_HAND:
-                return this.getInventory().getSlot(Slot.OFF_HAND);
+                return this.getReference().map(p -> {
+                    ItemStack stack = p.getItemInHand(SpongeConversionUtil.toSponge(hand))
+                            .orElse(ItemStack.of(ItemTypes.AIR));
+                    return SpongeConversionUtil.fromSponge(stack);
+                }).map(Item.class::cast).orElse(Selene.getItems().getAir());
             default:
                 throw new IllegalArgumentException("Unsupported type: " + hand);
         }
@@ -208,7 +212,9 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     public void setReference(@NotNull Exceptional<org.spongepowered.api.entity.living.player.Player> reference)
     {
         reference.ifPresent(player -> this.reference = new WeakReference<>(player));
-    }    @NotNull
+    }
+
+    @NotNull
     @Override
     public Location getLocation()
     {
@@ -221,7 +227,9 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     public Exceptional<org.spongepowered.api.entity.living.player.Player> constructInitialReference()
     {
         return Exceptional.of(Sponge.getServer().getPlayer(this.getUniqueId()));
-    }    @Override
+    }
+
+    @Override
     public void setLocation(@NotNull Location location)
     {
         if (this.referenceExists())
@@ -235,7 +243,9 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     {
         if (this.referenceExists())
             Sponge.getCommandManager().process(this.getReference().get(), command);
-    }    @NotNull
+    }
+
+    @NotNull
     @Override
     public World getWorld()
     {
@@ -372,10 +382,6 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     {
         return this.getReference();
     }
-
-
-
-
 
 
 }
