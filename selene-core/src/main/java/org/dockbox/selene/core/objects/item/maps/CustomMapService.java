@@ -1,5 +1,7 @@
 package org.dockbox.selene.core.objects.item.maps;
 
+import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.util.images.MultiSizedImage;
 
@@ -19,4 +21,6 @@ public interface CustomMapService
     Map<Integer[], CustomMap> create(MultiSizedImage image, Identifiable source);
 
     Collection<CustomMap> getFrom(Identifiable source);
+
+    Exceptional<CustomMap> derive(Item item);
 }

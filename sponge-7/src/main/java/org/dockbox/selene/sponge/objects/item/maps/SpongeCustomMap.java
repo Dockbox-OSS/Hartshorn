@@ -23,8 +23,6 @@ import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.item.inventory.ItemStack;
 
-import java.nio.file.Path;
-
 public class SpongeCustomMap extends SpongeItem implements CustomMap
 {
 
@@ -48,11 +46,5 @@ public class SpongeCustomMap extends SpongeItem implements CustomMap
     public int getMapId()
     {
         return this.mapId;
-    }
-
-    @Override
-    public Path getFile()
-    {
-        return null;
     }
 }

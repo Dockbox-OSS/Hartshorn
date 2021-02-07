@@ -15,29 +15,27 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.objects.item.maps;
+package org.dockbox.selene.core.exceptions;
 
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.targets.Identifiable;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 
-import java.awt.image.BufferedImage;
-
-public interface CustomMap extends Item
+public class FileFormatNotSupportedException extends CheckedSeleneException
 {
+    private final String format;
 
-    Identifiable getOwner();
-
-    int getMapId();
-
-    static CustomMap of(BufferedImage image, Identifiable source)
+    public FileFormatNotSupportedException(String format, Throwable cause)
     {
-        return Selene.provide(CustomMapService.class).create(image, source);
+        super("File format '" + format + "' is not supported", cause);
+        this.format = format;
     }
 
-    static CustomMap of(byte[] image, Identifiable source)
+    public FileFormatNotSupportedException(String format)
     {
-        return Selene.provide(CustomMapService.class).create(image, source);
+        this(format, null);
     }
 
+    public String getFormat()
+    {
+        return this.format;
+    }
 }
