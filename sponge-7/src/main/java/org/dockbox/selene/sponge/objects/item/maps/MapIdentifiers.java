@@ -25,7 +25,7 @@ import java.util.UUID;
 public final class MapIdentifiers
 {
 
-    public static final ColumnIdentifier<UUID> SOURCE = new SimpleColumnIdentifier<>("source", UUID.class);
+    public static final ColumnIdentifier<String> SOURCE = new SimpleColumnIdentifier<>("source", String.class);
     public static final ColumnIdentifier<Integer> MAP = new SimpleColumnIdentifier<>("map", Integer.class);
 
     private MapIdentifiers() {}
