@@ -107,6 +107,7 @@ public class SpongeInjector extends SeleneInjectConfiguration
         // Utility types
         this.bind(DiscordUtils.class).to(SpongeDiscordUtils.class);
         this.bind(ThreadUtils.class).to(SpongeThreadUtils.class);
+        this.bind(WebUtil.class).to(GsonWebUtil.class);
         this.bind(WebUtil.class).annotatedWith(Format.Json.class).to(GsonWebUtil.class);
         this.bind(WebUtil.class).annotatedWith(Format.XML.class).to(GsonXmlWebUtil.class);
         // File management
