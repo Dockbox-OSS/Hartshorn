@@ -103,6 +103,7 @@ public final class NMSMapUtils
         return 4;
     }
 
+    @SuppressWarnings("MagicNumber")
     private static byte[] getColorData(BufferedImage image)
     {
         BufferedImage sizedImage = getResizedImage(image);
@@ -112,9 +113,17 @@ public final class NMSMapUtils
         {
             for (int j = 0; MAX_MAP_SIZE > j; j++)
             {
-                Color color = new Color(sizedImage.getRGB(j, i));
-                int index = getIndexOfTheRGB(color.getRed(), color.getGreen(), color.getBlue());
-                colors[n] = (byte) index;
+                int rgb = sizedImage.getRGB(j, i);
+                if (0 <= rgb)
+                {
+                    colors[n] = (byte) 0;
+                }
+                else
+                {
+                    Color color = new Color(rgb);
+                    int index = getIndexOfTheRGB(color.getRed(), color.getGreen(), color.getBlue());
+                    colors[n] = (byte) index;
+                }
                 n += 1;
             }
         }
