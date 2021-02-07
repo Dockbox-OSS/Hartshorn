@@ -17,8 +17,10 @@
 
 package org.dockbox.selene.core.util.web;
 
+import org.dockbox.selene.core.exceptions.FileFormatNotSupportedException;
 import org.dockbox.selene.core.objects.Exceptional;
 
+import java.awt.image.BufferedImage;
 import java.net.URL;
 
 public interface WebUtil
@@ -31,5 +33,11 @@ public interface WebUtil
     String getContent(URL url);
 
     String getContent(String url);
+
+    BufferedImage getImage(URL url)
+            throws FileFormatNotSupportedException;
+
+    BufferedImage getImage(String url)
+            throws FileFormatNotSupportedException;
 
 }

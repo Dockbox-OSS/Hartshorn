@@ -17,15 +17,20 @@
 
 package org.dockbox.selene.core.impl.web;
 
+import org.dockbox.selene.core.exceptions.FileFormatNotSupportedException;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.util.web.WebUtil;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+
+import javax.imageio.ImageIO;
 
 public abstract class DefaultWebUtil implements WebUtil
 {
@@ -78,4 +83,37 @@ public abstract class DefaultWebUtil implements WebUtil
         }
     }
 
+    @Override
+    public BufferedImage getImage(URL url)
+            throws FileFormatNotSupportedException
+    {
+        try
+        {
+            BufferedImage image = ImageIO.read(url);
+            if (null == image) {
+                URLConnection connection = url.openConnection();
+                throw new FileFormatNotSupportedException(connection.getContentType());
+            }
+            return image;
+        }
+        catch (IOException e)
+        {
+            throw new FileFormatNotSupportedException("", e);
+        }
+    }
+
+    @Override
+    public BufferedImage getImage(String url)
+            throws FileFormatNotSupportedException
+    {
+        try
+        {
+            return this.getImage(new URL(url));
+        }
+        catch (MalformedURLException e)
+        {
+            Selene.handle("Invalid URL", e);
+            throw new FileFormatNotSupportedException("Unknown", e);
+        }
+    }
 }
