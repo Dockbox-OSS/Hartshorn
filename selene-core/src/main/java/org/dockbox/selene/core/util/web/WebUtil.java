@@ -21,12 +21,15 @@ import org.dockbox.selene.core.objects.Exceptional;
 
 import java.net.URL;
 
-public interface WebUtil {
+public interface WebUtil
+{
 
     <T> Exceptional<T> getContent(Class<T> type, URL url);
+
     <T> Exceptional<T> getContent(Class<T> type, String url);
 
     String getContent(URL url);
+
     String getContent(String url);
 
 }

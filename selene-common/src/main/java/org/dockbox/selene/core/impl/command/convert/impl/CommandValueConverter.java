@@ -27,47 +27,57 @@ import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class CommandValueConverter<T> extends AbstractArgumentConverter<T> {
+public class CommandValueConverter<T> extends AbstractArgumentConverter<T>
+{
 
     private final BiFunction<CommandSource, String, Exceptional<T>> converter;
     private final Function<String, Collection<String>> suggestionProvider;
 
-    public CommandValueConverter(Class<T> type, Function<String, Exceptional<T>> converter, Function<String, Collection<String>> suggestionProvider, String... keys) {
+    public CommandValueConverter(Class<T> type, Function<String, Exceptional<T>> converter, Function<String, Collection<String>> suggestionProvider,
+                                 String... keys)
+    {
         super(type, keys);
         this.converter = (cs, in) -> converter.apply(in);
         this.suggestionProvider = suggestionProvider;
     }
 
-    public CommandValueConverter(Class<T> type, BiFunction<CommandSource, String, Exceptional<T>> converter, Function<String, Collection<String>> suggestionProvider, String... keys) {
+    public CommandValueConverter(Class<T> type, BiFunction<CommandSource, String, Exceptional<T>> converter,
+                                 Function<String, Collection<String>> suggestionProvider, String... keys)
+    {
         super(type, keys);
         this.converter = converter;
         this.suggestionProvider = suggestionProvider;
     }
 
-    public CommandValueConverter(Class<T> type, Function<String, Exceptional<T>> converter, String... keys) {
+    public CommandValueConverter(Class<T> type, Function<String, Exceptional<T>> converter, String... keys)
+    {
         super(type, keys);
         this.converter = (cs, in) -> converter.apply(in);
         this.suggestionProvider = in -> SeleneUtils.emptyList();
     }
 
-    public CommandValueConverter(Class<T> type, BiFunction<CommandSource, String, Exceptional<T>> converter, String... keys) {
+    public CommandValueConverter(Class<T> type, BiFunction<CommandSource, String, Exceptional<T>> converter, String... keys)
+    {
         super(type, keys);
         this.converter = converter;
         this.suggestionProvider = in -> SeleneUtils.emptyList();
     }
 
     @Override
-    public Exceptional<T> convert(CommandSource source, String argument) {
+    public Exceptional<T> convert(CommandSource source, String argument)
+    {
         return this.converter.apply(source, argument);
     }
 
     @Override
-    public Exceptional<T> convert(CommandSource source, CommandValue<String> value) {
+    public Exceptional<T> convert(CommandSource source, CommandValue<String> value)
+    {
         return this.convert(source, value.getValue());
     }
 
     @Override
-    public Collection<String> getSuggestions(CommandSource source, String argument) {
+    public Collection<String> getSuggestions(CommandSource source, String argument)
+    {
         return this.suggestionProvider.apply(argument);
     }
 }

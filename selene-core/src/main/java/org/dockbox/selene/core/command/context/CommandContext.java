@@ -19,45 +19,35 @@ package org.dockbox.selene.core.command.context;
 
 import org.dockbox.selene.core.command.context.CommandValue.Argument;
 import org.dockbox.selene.core.command.context.CommandValue.Flag;
-import org.dockbox.selene.core.command.context.CommandValue.Type;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.location.World;
 
-public interface CommandContext {
+public interface CommandContext
+{
 
-    String getAlias();
+    String alias();
 
-    int getArgumentCount();
+    int arguments();
 
-    int getFlagCount();
+    int flags();
 
-    Exceptional<Argument<String>> getArgument(String key);
+    <T> Exceptional<Argument<T>> argument(String key);
 
-    <T> Exceptional<Argument<T>> getArgument(String key, Class<T> type);
+    <T> T get(String key);
 
-    <T> Exceptional<T> getArgumentAndParse(String key, ArgumentConverter<T> converter);
+    <T> Exceptional<T> optional(String key);
 
+    <T> Exceptional<Flag<T>> flag(String key);
 
-    Exceptional<Flag<String>> getFlag(String key);
+    boolean has(String key);
 
-    <T> Exceptional<Flag<T>> getFlag(String key, Class<T> type);
+    CommandSource sender();
 
-    <T> Exceptional<T> getFlagAndParse(String key, ArgumentConverter<T> parser);
+    Exceptional<Location> location();
 
-    boolean hasArgument(String key);
+    Exceptional<World> world();
 
-    boolean hasFlag(String key);
-
-    <T> Exceptional<CommandValue<T>> getValue(String key, Class<T> type, Type valueType);
-
-    <T> Exceptional<T> tryCreate(Class<T> type);
-
-    CommandSource getSender();
-
-    Exceptional<Location> getLocation();
-
-    Exceptional<World> getWorld();
-
+    String[] permissions();
 }

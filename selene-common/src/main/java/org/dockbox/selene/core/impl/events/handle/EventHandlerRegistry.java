@@ -17,37 +17,46 @@
 
 package org.dockbox.selene.core.impl.events.handle;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.events.parents.Event;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.Map;
 
-public final class EventHandlerRegistry {
+public final class EventHandlerRegistry
+{
     private final Map<Class<? extends Event>, EventHandler> handlers = SeleneUtils.emptyMap();
 
-    public EventHandler getHandler(Class<? extends Event> type) {
+    public EventHandler getHandler(Class<? extends Event> type)
+    {
         EventHandler handler = this.handlers.get(type);
-        if (null == handler) {
+        if (null == handler)
+        {
             this.computeHierarchy(handler = new EventHandler(type));
             this.handlers.put(type, handler);
         }
         return handler;
     }
 
-    public boolean computeHierarchy(EventHandler subject) {
+    public boolean computeHierarchy(EventHandler subject)
+    {
         boolean associationFound = false;
-        for (EventHandler handler : this.handlers.values()) {
+        for (EventHandler handler : this.handlers.values())
+        {
             if (subject == handler) continue;
-            if (subject.isSubtypeOf(handler)) {
+            if (subject.isSubtypeOf(handler))
+            {
                 associationFound |= subject.addSupertypeHandler(handler);
-            } else if (handler.isSubtypeOf(subject)) {
+            }
+            else if (handler.isSubtypeOf(subject))
+            {
                 associationFound |= handler.addSupertypeHandler(subject);
             }
         }
         return associationFound;
     }
 
-    public Map<Class<? extends Event>, EventHandler> getHandlers() {
+    public Map<Class<? extends Event>, EventHandler> getHandlers()
+    {
         return this.handlers;
     }
 }

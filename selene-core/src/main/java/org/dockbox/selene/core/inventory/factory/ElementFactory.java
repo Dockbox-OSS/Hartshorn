@@ -23,7 +23,10 @@ import org.dockbox.selene.core.objects.player.Player;
 
 import java.util.function.Consumer;
 
-public interface ElementFactory {
+@SuppressWarnings("InterfaceNeverImplemented")
+@FunctionalInterface
+public interface ElementFactory
+{
 
     Element create(Item item, Consumer<Player> onClick);
 }

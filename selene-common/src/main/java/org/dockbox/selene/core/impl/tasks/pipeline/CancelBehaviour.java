@@ -25,7 +25,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public enum CancelBehaviour {
+public enum CancelBehaviour
+{
     UNCANCELLABLE,
     @SuppressWarnings("ReturnOfNull") DISCARD(output -> null),
     CONVERT((output, converter) -> (null == converter) ? output : converter.apply(output)),
@@ -36,17 +37,20 @@ public enum CancelBehaviour {
     @Nullable
     private final BiFunction<Object, Function<Object, Object>, Object> biFunction;
 
-    CancelBehaviour() {
+    CancelBehaviour()
+    {
         this.function = null;
         this.biFunction = null;
     }
 
-    CancelBehaviour(@NotNull Function<Object, Object> function) {
+    CancelBehaviour(@NotNull Function<Object, Object> function)
+    {
         this.function = function;
         this.biFunction = null;
     }
 
-    CancelBehaviour(@NotNull BiFunction<Object, Function<Object, Object>, Object> function) {
+    CancelBehaviour(@NotNull BiFunction<Object, Function<Object, Object>, Object> function)
+    {
         this.function = null;
         this.biFunction = function;
     }
@@ -61,8 +65,10 @@ public enum CancelBehaviour {
      * @throws UnsupportedOperationException
      *         If the cancel behaviour has no {@link Function}
      */
-    public Object act(Object output) {
-        if (null == this.function) {
+    public Object act(Object output)
+    {
+        if (null == this.function)
+        {
             throw new UnsupportedOperationException("The provided cancel behaviour is not supported by this pipeline.");
         }
         return this.function.apply(output);
@@ -81,12 +87,15 @@ public enum CancelBehaviour {
      * @throws UnsupportedOperationException
      *         If the cancel behaviour has no {@link Function} or {@link BiFunction}
      */
-    public Object act(Object output, @Nullable Function<Object, Object> converter) {
-        if (null != this.function) {
+    public Object act(Object output, @Nullable Function<Object, Object> converter)
+    {
+        if (null != this.function)
+        {
             return this.function.apply(output);
         }
 
-        if (null != this.biFunction) {
+        if (null != this.biFunction)
+        {
             return this.biFunction.apply(output, converter);
         }
         throw new UnsupportedOperationException("The provided cancel behaviour is not supported by this pipeline.");

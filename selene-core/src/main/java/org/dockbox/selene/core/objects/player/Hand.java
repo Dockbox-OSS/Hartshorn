@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.core.objects.player;
 
-public enum Hand {
-    MAIN_HAND, OFF_HAND, EITHER
+public enum Hand
+{
+    MAIN_HAND,
+    OFF_HAND,
+    EITHER
 }

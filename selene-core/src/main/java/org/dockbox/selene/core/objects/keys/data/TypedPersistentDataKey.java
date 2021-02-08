@@ -17,64 +17,72 @@
 
 package org.dockbox.selene.core.objects.keys.data;
 
-import org.dockbox.selene.core.annotations.extension.Extension;
+import org.dockbox.selene.core.annotations.module.Module;
 import org.dockbox.selene.core.objects.keys.PersistentDataKey;
 import org.jetbrains.annotations.NonNls;
 
-public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
+public class TypedPersistentDataKey<T> implements PersistentDataKey<T>
+{
 
 
     @NonNls
     private final String name;
     @NonNls
     private final String id;
-    private final Extension extension;
+    private final Module module;
     private final Class<T> type;
 
-    public TypedPersistentDataKey(String name, String id, Extension extension, Class<T> type) {
+    public TypedPersistentDataKey(String name, String id, Module module, Class<T> type)
+    {
         this.name = name;
         this.id = id;
-        this.extension = extension;
+        this.module = module;
         this.type = type;
     }
 
     @Override
-    public Class<T> getDataType() {
+    public Class<T> getDataType()
+    {
         return this.type;
     }
 
     @Override
-    public String getRegisteringExtensionId() {
-        return this.extension.id();
+    public String getRegisteringModuleId()
+    {
+        return this.module.id();
     }
 
     @Override
-    public String getDataKeyId() {
+    public String getDataKeyId()
+    {
         return this.id;
     }
 
     @Override
-    public String getDataKeyName() {
+    public String getDataKeyName()
+    {
         return this.name;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int result = this.id.hashCode();
-        result = 31 * result + this.extension.hashCode();
+        result = 31 * result + this.module.hashCode();
         result = 31 * result + this.type.hashCode();
         return result;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o)
+    {
         if (this == o) return true;
         if (!(o instanceof TypedPersistentDataKey)) return false;
 
         TypedPersistentDataKey<?> that = (TypedPersistentDataKey<?>) o;
 
         if (!this.id.equals(that.id)) return false;
-        if (!this.extension.equals(that.extension)) return false;
+        if (!this.module.equals(that.module)) return false;
         return this.type.equals(that.type);
     }
 }

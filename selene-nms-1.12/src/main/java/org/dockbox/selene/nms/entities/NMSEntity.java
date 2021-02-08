@@ -19,7 +19,8 @@ package org.dockbox.selene.nms.entities;
 
 import net.minecraft.entity.Entity;
 
-public abstract class NMSEntity<T extends Entity> implements org.dockbox.selene.core.entities.Entity {
+public abstract class NMSEntity<T extends Entity>
+{
 
     public abstract T getEntity();
 

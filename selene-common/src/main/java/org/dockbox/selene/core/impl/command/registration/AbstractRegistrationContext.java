@@ -17,49 +17,57 @@
 
 package org.dockbox.selene.core.impl.command.registration;
 
-import org.dockbox.selene.core.util.SeleneUtils;
 import org.dockbox.selene.core.annotations.command.Command;
 import org.dockbox.selene.core.command.context.CommandContext;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.core.util.SeleneUtils;
 
 import java.util.List;
 import java.util.UUID;
 
-public abstract class AbstractRegistrationContext {
+public abstract class AbstractRegistrationContext
+{
 
     private final List<String> aliases = SeleneUtils.emptyConcurrentList();
     private final Command command;
 
-    protected AbstractRegistrationContext(Command command) {
+    protected AbstractRegistrationContext(Command command)
+    {
         this.command = command;
         for (String alias : command.aliases()) this.addAlias(alias);
     }
 
-    public List<String> getAliases() {
-        return this.aliases;
-    }
-
-    public Command getCommand() {
-        return this.command;
-    }
-
-    public void addAlias(String alias) {
+    public void addAlias(String alias)
+    {
         if (null != alias)
             this.aliases.add(alias);
     }
 
+    public Command getCommand()
+    {
+        return this.command;
+    }
+
     public abstract Exceptional<IntegratedResource> call(CommandSource source, CommandContext context);
 
-    public String getRegistrationId(Identifiable<?> sender, CommandContext ctx) {
+    public static String getRegistrationId(Identifiable sender, CommandContext ctx)
+    {
         UUID uuid = sender.getUniqueId();
-        String alias = ctx.getAlias();
+        String alias = ctx.alias();
         return uuid + "$" + alias;
     }
 
-    public String getPrimaryAlias() {
+    public String getPrimaryAlias()
+    {
         return this.getAliases().get(0);
+    }
+
+    public List<String> getAliases()
+    {
+        return this.aliases;
     }
 }

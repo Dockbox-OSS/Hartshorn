@@ -20,7 +20,8 @@ package org.dockbox.selene.core.objects.item;
 import org.dockbox.selene.core.MinecraftVersion;
 import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 
-public enum Enchantment {
+public enum Enchantment
+{
 
     /**
      * Increases regular underwater mining speed.
@@ -243,21 +244,25 @@ public enum Enchantment {
     private final IntegratedResource nameResource;
     private final MinecraftVersion minimumMinecraftVersion;
 
-    Enchantment(int maximumLevel, IntegratedResource nameResource, MinecraftVersion minimumMinecraftVersion) {
+    Enchantment(int maximumLevel, IntegratedResource nameResource, MinecraftVersion minimumMinecraftVersion)
+    {
         this.maximumLevel = maximumLevel;
         this.nameResource = nameResource;
         this.minimumMinecraftVersion = minimumMinecraftVersion;
     }
 
-    public int getMaximumLevel() {
+    public int getMaximumLevel()
+    {
         return this.maximumLevel;
     }
 
-    public IntegratedResource getNameResource() {
+    public IntegratedResource getNameResource()
+    {
         return this.nameResource;
     }
 
-    public MinecraftVersion getMinimumMinecraftVersion() {
+    public MinecraftVersion getMinimumMinecraftVersion()
+    {
         return this.minimumMinecraftVersion;
     }
 }

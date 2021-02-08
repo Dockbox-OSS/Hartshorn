@@ -21,11 +21,13 @@ import org.dockbox.selene.core.text.pagination.Pagination;
 import org.dockbox.selene.core.text.pagination.PaginationBuilder;
 import org.jetbrains.annotations.NotNull;
 
-public class SpongePaginationBuilder extends PaginationBuilder {
+public class SpongePaginationBuilder extends PaginationBuilder
+{
 
     @NotNull
     @Override
-    public Pagination build() {
+    public Pagination build()
+    {
         return new SpongePagination(
                 super.getPadding(),
                 super.getLinesPerPage(),

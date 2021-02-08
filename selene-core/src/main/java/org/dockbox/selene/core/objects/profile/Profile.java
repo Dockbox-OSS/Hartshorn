@@ -24,13 +24,16 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
-public interface Profile {
+public interface Profile
+{
 
-    static Profile of(UUID uuid) {
+    static Profile of(UUID uuid)
+    {
         return Selene.provide(ProfileFactory.class).create(uuid);
     }
 
-    static Profile of(Profile profile) {
+    static Profile of(Profile profile)
+    {
         return Selene.provide(ProfileFactory.class).create(profile);
     }
 

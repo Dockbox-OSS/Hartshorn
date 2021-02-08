@@ -41,7 +41,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
+public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar>
+{
 
     @AssistedInject
     public SpongeBossbar(
@@ -50,21 +51,25 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
             @Assisted Text text,
             @Assisted BossbarColor color,
             @Assisted BossbarStyle style
-    ) {
+    )
+    {
         super(id, percent, text, color, style);
     }
 
     @Override
-    public void tick() {
+    public void tick()
+    {
         this.updateReference();
     }
 
     @Override
-    public void showTo(Player player) {
+    public void showTo(Player player)
+    {
         this.getReference().ifPresent(serverBossBar -> {
             SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::addPlayer);
             if (Bossbar.REGISTRY.containsKey(this.getId()))
-                Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player.getName() + ". This may cause unexpected behavior!");
+                Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player
+                        .getName() + ". This may cause unexpected behavior!");
             else if (Bossbar.REGISTRY.containsValue(this))
                 Selene.log().warn("Adding identical bossbar with different ID '" + this.getId() + "'. This may cause unexpected behavior!");
             Bossbar.REGISTRY.put(this.getId(), this);
@@ -72,7 +77,8 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     }
 
     @Override
-    public void showTo(Player player, Duration duration) {
+    public void showTo(Player player, Duration duration)
+    {
         this.getReference().ifPresent(serverBossBar -> {
             SpongeConversionUtil.toSponge(player).ifPresent(sp -> {
                 serverBossBar.addPlayer(sp);
@@ -83,7 +89,8 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
                 );
             });
             if (Bossbar.REGISTRY.containsKey(this.getId()))
-                Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player.getName() + ". This may cause unexpected behavior!");
+                Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player
+                        .getName() + ". This may cause unexpected behavior!");
             else if (Bossbar.REGISTRY.containsValue(this))
                 Selene.log().warn("Adding identical bossbar with different ID '" + this.getId() + "'. This may cause unexpected behavior!");
             Bossbar.REGISTRY.put(this.getId(), this);
@@ -91,7 +98,8 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     }
 
     @Override
-    public void hideFrom(Player player) {
+    public void hideFrom(Player player)
+    {
         this.getReference().ifPresent(serverBossBar -> {
             SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::removePlayer);
             if (serverBossBar.getPlayers().isEmpty()) Bossbar.REGISTRY.remove(this.getId());
@@ -99,21 +107,25 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     }
 
     @Override
-    public Collection<Player> visibleTo() {
+    public Collection<Player> visibleTo()
+    {
         return this.getReference().map(serverBossBar -> serverBossBar.getPlayers().stream()
                 .map(SpongeConversionUtil::fromSponge).collect(Collectors.toList()))
                 .orElseGet(SeleneUtils::emptyList);
     }
 
     @Override
-    public boolean isVisibleTo(Player player) {
+    public boolean isVisibleTo(Player player)
+    {
         return this.isVisibleTo(player.getUniqueId());
     }
 
     @Override
-    public boolean isVisibleTo(UUID player) {
+    public boolean isVisibleTo(UUID player)
+    {
         return this.getReference().map(serverBossBar -> {
-            for (org.spongepowered.api.entity.living.player.Player serverBossBarPlayer : serverBossBar.getPlayers()) {
+            for (org.spongepowered.api.entity.living.player.Player serverBossBarPlayer : serverBossBar.getPlayers())
+            {
                 if (serverBossBarPlayer.getUniqueId().equals(player)) return true;
             }
             return false;
@@ -121,9 +133,11 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     }
 
     @Override
-    public boolean isVisibleTo(@NonNls String name) {
+    public boolean isVisibleTo(@NonNls String name)
+    {
         return this.getReference().map(serverBossBar -> {
-            for (org.spongepowered.api.entity.living.player.Player serverBossBarPlayer : serverBossBar.getPlayers()) {
+            for (org.spongepowered.api.entity.living.player.Player serverBossBarPlayer : serverBossBar.getPlayers())
+            {
                 if (serverBossBarPlayer.getName().equals(name)) return true;
             }
             return false;
@@ -131,7 +145,8 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     }
 
     @Override
-    public Function<ServerBossBar, Exceptional<ServerBossBar>> getUpdateReferenceTask() {
+    public Function<ServerBossBar, Exceptional<ServerBossBar>> getUpdateReferenceTask()
+    {
         return bar -> {
             bar.setName(SpongeConversionUtil.toSponge(this.getText()));
             bar.setPercent(this.getPercent() / 100);
@@ -142,7 +157,8 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     }
 
     @Override
-    public Exceptional<ServerBossBar> constructInitialReference() {
+    public Exceptional<ServerBossBar> constructInitialReference()
+    {
         return Exceptional.of(ServerBossBar.builder()
                 .name(SpongeConversionUtil.toSponge(this.getText()))
                 .percent(this.getPercent() / 100)

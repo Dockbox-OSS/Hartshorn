@@ -29,7 +29,21 @@ import java.util.Collection;
 /**
  * Represents a pane containing pagination controls to display a large quantity of {@link Element elements}.
  */
-public interface PaginatedPane extends Pane {
+public interface PaginatedPane extends Pane
+{
+
+    /**
+     * Create a new {@link PaginatedPaneBuilder} instance.
+     *
+     * @param layout
+     *         The layout to use while building the pane.
+     *
+     * @return The builder
+     */
+    static PaginatedPaneBuilder builder(InventoryLayout layout)
+    {
+        return Selene.provide(PaginatedPaneBuilder.class, new LayoutProperty(layout));
+    }
 
     /**
      * Opens the pane on a specific page for the given {@link Player}.
@@ -48,16 +62,4 @@ public interface PaginatedPane extends Pane {
      *         The elements
      */
     void elements(Collection<Element> elements);
-
-    /**
-     * Create a new {@link PaginatedPaneBuilder} instance.
-     *
-     * @param layout
-     *         The layout to use while building the pane.
-     *
-     * @return The builder
-     */
-    static PaginatedPaneBuilder builder(InventoryLayout layout) {
-        return Selene.provide(PaginatedPaneBuilder.class, new LayoutProperty(layout));
-    }
 }

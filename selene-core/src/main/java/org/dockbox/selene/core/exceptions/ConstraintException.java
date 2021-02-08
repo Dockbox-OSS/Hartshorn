@@ -19,8 +19,10 @@ package org.dockbox.selene.core.exceptions;
 
 import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
 
-public class ConstraintException extends UncheckedSeleneException {
-    public ConstraintException(String message) {
+public class ConstraintException extends UncheckedSeleneException
+{
+    public ConstraintException(String message)
+    {
         super(message);
     }
 }

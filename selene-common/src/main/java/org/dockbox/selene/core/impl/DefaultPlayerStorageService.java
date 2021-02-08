@@ -28,28 +28,27 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.UUID;
 
-public abstract class DefaultPlayerStorageService implements PlayerStorageService {
+public abstract class DefaultPlayerStorageService implements PlayerStorageService
+{
 
     @Override
-    public void setLanguagePreference(@NotNull UUID uuid, @NotNull Language lang) {
-        UserDataModel userData = this.getUserData(uuid);
+    public void setLanguagePreference(@NotNull UUID uuid, @NotNull Language lang)
+    {
+        UserDataModel userData = DefaultPlayerStorageService.getUserData(uuid);
         userData.language = lang;
-        this.updateUserData(uuid, userData);
+        DefaultPlayerStorageService.updateUserData(uuid, userData);
     }
 
     @NotNull
     @Override
-    public Language getLanguagePreference(@NotNull UUID uuid) {
-        return this.getUserData(uuid).language;
-    }
-
-    @Metadata(alias = "userdata")
-    private static class UserDataModel {
-        private Language language = Selene.getServer().getGlobalConfig().getDefaultLanguage();
+    public Language getLanguagePreference(@NotNull UUID uuid)
+    {
+        return DefaultPlayerStorageService.getUserData(uuid).language;
     }
 
     @SuppressWarnings("ConstantConditions")
-    private UserDataModel getUserData(UUID uuid) {
+    private static UserDataModel getUserData(UUID uuid)
+    {
         FileManager cm = Selene.provide(FileManager.class);
         Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
         Exceptional<UserDataModel> userDataModel = cm.read(file, UserDataModel.class);
@@ -57,10 +56,17 @@ public abstract class DefaultPlayerStorageService implements PlayerStorageServic
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void updateUserData(UUID uuid, UserDataModel userData) {
+    private static void updateUserData(UUID uuid, UserDataModel userData)
+    {
         FileManager cm = Selene.provide(FileManager.class);
         Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
         cm.write(file, userData);
+    }
+
+    @Metadata(alias = "userdata")
+    private static class UserDataModel
+    {
+        private Language language = Selene.getServer().getGlobalConfig().getDefaultLanguage();
     }
 
 }

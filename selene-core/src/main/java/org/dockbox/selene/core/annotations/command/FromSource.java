@@ -24,9 +24,10 @@ import java.lang.annotation.Target;
 
 /**
  * The interface to mark a method parameter to be injected from the source of a command. Typically this is only used when
- * creating a object using {@link org.dockbox.selene.core.command.context.CommandContext#tryCreate(Class)}.
+ * calling command methods.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.PARAMETER})
-public @interface FromSource {
+@Target(ElementType.PARAMETER)
+public @interface FromSource
+{
 }

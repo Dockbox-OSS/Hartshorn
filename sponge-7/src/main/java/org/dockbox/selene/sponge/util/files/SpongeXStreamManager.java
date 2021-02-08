@@ -23,59 +23,69 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
-public class SpongeXStreamManager extends DefaultXStreamManager implements SpongeDefaultFileManager {
+public class SpongeXStreamManager extends DefaultXStreamManager implements SpongeDefaultFileManager
+{
 
     @NotNull
     @Override
-    public Path getDataDir() {
+    public Path getDataDir()
+    {
         return SpongeDefaultFileManager.super.getDataDir();
     }
 
     @NotNull
     @Override
-    public Path getLogsDir() {
+    public Path getLogsDir()
+    {
         return SpongeDefaultFileManager.super.getLogsDir();
     }
 
     @NotNull
     @Override
-    public Path getServerRoot() {
+    public Path getServerRoot()
+    {
         return SpongeDefaultFileManager.super.getServerRoot();
     }
 
     @NotNull
     @Override
-    public Path getExtensionDir() {
-        return SpongeDefaultFileManager.super.getExtensionDir();
+    public Path getModuleDir()
+    {
+        return SpongeDefaultFileManager.super.getModuleDir();
     }
 
     @NotNull
     @Override
-    public Exceptional<Path> getModDir() {
+    public Exceptional<Path> getModDir()
+    {
         return SpongeDefaultFileManager.super.getModDir();
     }
 
     @NotNull
     @Override
-    public Path getPluginDir() {
+    public Path getPluginDir()
+    {
         return SpongeDefaultFileManager.super.getPluginDir();
     }
 
     @NotNull
     @Override
-    public Path getExtensionConfigsDir() {
-        return SpongeDefaultFileManager.super.getExtensionConfigsDir();
+    public Path getModuleConfigsDir()
+    {
+        return SpongeDefaultFileManager.super.getModuleConfigsDir();
     }
 
     @NotNull
     @Override
-    public Exceptional<Path> getModdedPlatformModsConfigDir() {
+    public Exceptional<Path> getModdedPlatformModsConfigDir()
+    {
         return SpongeDefaultFileManager.super.getModdedPlatformModsConfigDir();
     }
 
     @NotNull
     @Override
-    public Path getPlatformPluginsConfigDir() {
+    public Path getPlatformPluginsConfigDir()
+    {
         return SpongeDefaultFileManager.super.getPlatformPluginsConfigDir();
     }
 }

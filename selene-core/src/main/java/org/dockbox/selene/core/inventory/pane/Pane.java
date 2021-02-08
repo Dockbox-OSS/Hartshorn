@@ -23,7 +23,8 @@ import org.dockbox.selene.core.objects.player.Player;
  * Represents a inventory pane. Depending on the implementation this may display any type of inventory UI.
  */
 @FunctionalInterface
-public interface Pane {
+public interface Pane
+{
     /**
      * Open the pane for a given player.
      *

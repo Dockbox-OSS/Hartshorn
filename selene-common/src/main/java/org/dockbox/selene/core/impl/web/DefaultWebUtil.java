@@ -27,21 +27,28 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public abstract class DefaultWebUtil implements WebUtil {
+public abstract class DefaultWebUtil implements WebUtil
+{
 
     @Override
-    public <T> Exceptional<T> getContent(Class<T> type, String url) {
-        try {
+    public <T> Exceptional<T> getContent(Class<T> type, String url)
+    {
+        try
+        {
             return this.getContent(type, new URL(url));
-        } catch (MalformedURLException e) {
+        }
+        catch (MalformedURLException e)
+        {
             Selene.handle("Invalid URL", e);
             return Exceptional.of(e);
         }
     }
 
     @Override
-    public String getContent(URL url) {
-        try {
+    public String getContent(URL url)
+    {
+        try
+        {
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
             StringBuilder builder = new StringBuilder();
 
@@ -49,17 +56,23 @@ public abstract class DefaultWebUtil implements WebUtil {
                 builder.append(builder).append("\n");
             in.close();
             return builder.toString();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             Selene.handle("Could not read content from '" + url.toExternalForm() + "'", e);
             return "";
         }
     }
 
     @Override
-    public String getContent(String url) {
-        try {
+    public String getContent(String url)
+    {
+        try
+        {
             return this.getContent(new URL(url));
-        } catch (MalformedURLException e) {
+        }
+        catch (MalformedURLException e)
+        {
             Selene.handle("Invalid URL", e);
             return "";
         }

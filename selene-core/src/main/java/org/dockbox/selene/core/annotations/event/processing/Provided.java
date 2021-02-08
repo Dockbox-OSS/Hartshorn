@@ -25,13 +25,14 @@ import java.lang.annotation.Target;
 
 /**
  * Tries to get the instance of the type through {@link org.dockbox.selene.core.server.bootstrap.InjectableBootstrap#getInstance}. Supports
- * extension-specific injected types if the listener is a extension and no value is provided. If {@link #value()} is provided, and is a extension, the
- * provided class is offered as the extension. By default this will not override any pre-existing value unless {@link #overrideExisting()} is set to
+ * module-specific injected types if the listener is a module and no value is provided. If {@link #value()} is provided, and is a module, the
+ * provided class is offered as the module. By default this will not override any pre-existing value unless {@link #overrideExisting()} is set to
  * true.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface Provided {
+public @interface Provided
+{
     Class<?> value() default Void.class;
 
     boolean overrideExisting() default false;

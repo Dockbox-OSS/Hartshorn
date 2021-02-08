@@ -30,52 +30,58 @@ import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
 import dev.flashlabs.flashlibs.inventory.Layout;
 
-public class SpongeLayoutBuilder extends LayoutBuilder {
+public class SpongeLayoutBuilder extends LayoutBuilder
+{
 
     private Layout.Builder builder;
     private InventoryType inventoryType;
 
     @Override
-    public LayoutBuilder set(Element element, int index) {
+    public LayoutBuilder set(Element element, int index)
+    {
         this.builder.set(SpongeConversionUtil.toSponge(element), index);
         return this;
     }
 
     @Override
-    public LayoutBuilder row(Element element, int index) {
+    public LayoutBuilder row(Element element, int index)
+    {
         this.builder.row(SpongeConversionUtil.toSponge(element), index);
         return this;
     }
 
     @Override
-    public LayoutBuilder column(Element element, int index) {
+    public LayoutBuilder column(Element element, int index)
+    {
         this.builder.column(SpongeConversionUtil.toSponge(element), index);
         return this;
     }
 
     @Override
-    public LayoutBuilder border(Element element) {
+    public LayoutBuilder border(Element element)
+    {
         this.builder.border(SpongeConversionUtil.toSponge(element));
         return this;
     }
 
     @Override
-    public LayoutBuilder fill(Element element) {
+    public LayoutBuilder fill(Element element)
+    {
         this.builder.fill(SpongeConversionUtil.toSponge(element));
         return this;
     }
 
     @Override
-    public InventoryLayout build() {
-        return new SpongeInventoryLayout(this.builder.build(), inventoryType);
+    public InventoryLayout build()
+    {
+        return new SpongeInventoryLayout(this.builder.build(), this.inventoryType);
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
+    public void stateEnabling(InjectorProperty<?>... properties)
+    {
         Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryType.class, properties)
-                .ifPresent(inventoryType -> {
-                    this.inventoryType = inventoryType;
-                })
+                .ifPresent(inventoryType -> this.inventoryType = inventoryType)
                 .ifAbsent(() -> {
                     Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
                     this.inventoryType = InventoryType.CHEST;

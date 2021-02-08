@@ -27,7 +27,21 @@ import org.dockbox.selene.core.server.Selene;
 /**
  * Represents a static (non-changing) pane, which can be updated without closing the pane.
  */
-public interface StaticPane extends Pane {
+public interface StaticPane extends Pane
+{
+
+    /**
+     * Create a new {@link StaticPaneBuilder} instance.
+     *
+     * @param layout
+     *         The layout to use while building the pane.
+     *
+     * @return The builder
+     */
+    static StaticPaneBuilder builder(InventoryLayout layout)
+    {
+        return Selene.provide(StaticPaneBuilder.class, new LayoutProperty(layout));
+    }
 
     /**
      * Places a specific {@link Element} on the given {@code index}.
@@ -57,17 +71,5 @@ public interface StaticPane extends Pane {
      *         The new layout to display.
      */
     void update(InventoryLayout layout);
-
-    /**
-     * Create a new {@link StaticPaneBuilder} instance.
-     *
-     * @param layout
-     *         The layout to use while building the pane.
-     *
-     * @return The builder
-     */
-    static StaticPaneBuilder builder(InventoryLayout layout) {
-        return Selene.provide(StaticPaneBuilder.class, new LayoutProperty(layout));
-    }
 
 }

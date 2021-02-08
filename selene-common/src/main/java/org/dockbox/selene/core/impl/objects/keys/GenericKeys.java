@@ -23,17 +23,19 @@ import org.dockbox.selene.core.objects.keys.Key;
 import org.dockbox.selene.core.objects.keys.Keys;
 import org.dockbox.selene.core.objects.player.Gamemode;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.core.text.Text;
 
 import java.util.List;
 import java.util.UUID;
 
-@SuppressWarnings({"rawtypes"})
-public final class GenericKeys {
+@SuppressWarnings("rawtypes")
+public final class GenericKeys
+{
 
-    public static final Key<Identifiable, UUID> UNIQUE_ID = Keys.unsafeDynamicKeyOf(Identifiable::setUniqueId, Identifiable::getUniqueId);
-    public static final Key<Identifiable, String> NAME = Keys.unsafeDynamicKeyOf(Identifiable::setName, Identifiable::getName);
+    public static final Key<AbstractIdentifiable, UUID> UNIQUE_ID = Keys.unsafeDynamicKeyOf((k, s) -> {}, AbstractIdentifiable::getUniqueId);
+    public static final Key<AbstractIdentifiable, String> NAME = Keys
+            .unsafeDynamicKeyOf(AbstractIdentifiable::setName, AbstractIdentifiable::getName);
 
     public static final Key<Player, Gamemode> GAMEMODE = Keys.unsafeDynamicKeyOf(Player::setGamemode, Player::getGamemode);
     public static final Key<Player, Language> LANGUAGE = Keys.unsafeDynamicKeyOf(Player::setLanguage, Player::getLanguage);
@@ -42,7 +44,8 @@ public final class GenericKeys {
     public static final Key<Item, Integer> AMOUNT = Keys.unsafeDynamicKeyOf(Item::setAmount, Item::getAmount);
     public static final Key<Item, List<Text>> LORE = Keys.unsafeDynamicKeyOf(Item::setLore, Item::getLore, Item::removeLore);
 
-    private GenericKeys() {
+    private GenericKeys()
+    {
     }
 
 }

@@ -29,12 +29,13 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Resources {
+public @interface Resources
+{
     /**
-     * The extension responsible for the resources. {@link org.dockbox.selene.core.i18n.entry.IntegratedResource Internal resources}
+     * The module responsible for the resources. {@link org.dockbox.selene.core.i18n.entry.IntegratedResource Internal resources}
      * are linked to {@link org.dockbox.selene.core.server.Selene}.
      *
-     * @return the responsible extension class
+     * @return the responsible module class
      */
-    Class<?> responsibleExtension();
+    Class<?> module();
 }

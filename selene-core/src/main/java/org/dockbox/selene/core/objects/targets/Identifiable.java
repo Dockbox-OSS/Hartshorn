@@ -17,33 +17,15 @@
 
 package org.dockbox.selene.core.objects.targets;
 
-import org.dockbox.selene.core.objects.keys.KeyHolder;
-
 import java.util.UUID;
 
-public abstract class Identifiable<T extends Identifiable<T>> implements Target, KeyHolder<T> {
+public interface Identifiable
+{
 
-    protected UUID uniqueId;
-    protected String name;
+    UUID getUniqueId();
 
-    public Identifiable(UUID uniqueId, String name) {
-        this.uniqueId = uniqueId;
-        this.name = name;
-    }
+    String getName();
 
-    public UUID getUniqueId() {
-        return this.uniqueId;
-    }
+    void setName(String name);
 
-    public void setUniqueId(UUID uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

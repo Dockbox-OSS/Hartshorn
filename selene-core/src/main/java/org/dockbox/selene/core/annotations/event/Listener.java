@@ -29,7 +29,8 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Listener {
+public @interface Listener
+{
     /**
      * The priority at which the listener should be called. The higher the priority the earlier the listener will be
      * called.
@@ -38,7 +39,8 @@ public @interface Listener {
      */
     Priority value() default Priority.NORMAL;
 
-    enum Priority {
+    enum Priority
+    {
         /**
          * Execute the listener after all other listeners are done.
          */
@@ -62,7 +64,8 @@ public @interface Listener {
 
         private final int priority;
 
-        Priority(int priority) {
+        Priority(int priority)
+        {
             this.priority = priority;
         }
 
@@ -71,7 +74,8 @@ public @interface Listener {
          *
          * @return the priority
          */
-        public int getPriority() {
+        public int getPriority()
+        {
             return this.priority;
         }
     }

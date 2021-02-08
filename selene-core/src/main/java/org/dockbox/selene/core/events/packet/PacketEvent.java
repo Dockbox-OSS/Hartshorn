@@ -19,45 +19,53 @@ package org.dockbox.selene.core.events.packet;
 
 import org.dockbox.selene.core.events.AbstractCancellableEvent;
 import org.dockbox.selene.core.events.EventBus;
+import org.dockbox.selene.core.objects.Packet;
 import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.packets.Packet;
 import org.dockbox.selene.core.server.Selene;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The event fired when the server <b>sends</b> a packet to a player.
+ *
  * @param <T>
  */
-public class PacketEvent<T extends Packet> extends AbstractCancellableEvent {
+public class PacketEvent<T extends Packet> extends AbstractCancellableEvent
+{
 
-    private T packet;
     private final Player target;
-    private boolean isModified = false;
+    private T packet;
+    private boolean isModified;
 
-    public PacketEvent(T packet, Player target) {
+    public PacketEvent(T packet, Player target)
+    {
         this.packet = packet;
         this.target = target;
     }
 
-    public T getPacket() {
+    public T getPacket()
+    {
         return this.packet;
     }
 
-    public Player getTarget() {
-        return this.target;
-    }
-
-    public void setPacket(T packet) {
+    public void setPacket(T packet)
+    {
         this.isModified = true;
         this.packet = packet;
     }
 
-    public boolean isModified() {
+    public Player getTarget()
+    {
+        return this.target;
+    }
+
+    public boolean isModified()
+    {
         return this.isModified;
     }
 
     @Override
-    public @NotNull PacketEvent<T> post() {
+    public @NotNull PacketEvent<T> post()
+    {
         Selene.provide(EventBus.class).post(this);
         return this;
     }

@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.core.objects.item;
 
-import com.sk89q.worldedit.blocks.BaseBlock;
-
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.core.objects.keys.KeyHolder;
@@ -30,15 +28,50 @@ import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
 
-public interface Item extends KeyHolder<Item>, PersistentDataHolder {
+public interface Item extends KeyHolder<Item>, PersistentDataHolder
+{
+
+    /**
+     * @param id
+     *         The fully qualified identifier of a block, e.g. {@code minecraft:stone}
+     *
+     * @return The item instance, or {@link MinecraftItems#getAir()}
+     */
+    static Item of(@NonNls String id)
+    {
+        Item item = Item.of(id, 0);
+        if (!Selene.getItems().getAirId().equals(id) && item.isAir())
+        {
+            item = Selene.getItems().getCustom(id);
+        }
+        return item;
+    }
+
+    /**
+     * @param id
+     *         The fully qualified identifier of a block, e.g. {@code minecraft:stone}
+     * @param meta
+     *         The unsafe damage, or meta. Constraints to range 0-15
+     *
+     * @return The item instance, or {@link MinecraftItems#getAir()}
+     * @deprecated Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As of 1.13 this will no
+     *         longer be available!
+     */
+    @Deprecated
+    static Item of(String id, int meta)
+    {
+        return Selene.provide(ItemFactory.class).create(id, meta);
+    }
+
+    boolean isAir();
 
     String getId();
 
     Text getDisplayName();
 
-    Text getDisplayName(Language language);
-
     void setDisplayName(Text displayName);
+
+    Text getDisplayName(Language language);
 
     List<Text> getLore();
 
@@ -66,57 +99,12 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder {
 
     boolean isHead();
 
-    boolean isAir();
-
     Item setProfile(Profile profile);
 
     Item stack();
 
-    @Deprecated
     Item withMeta(int meta);
 
-    /**
-     * @param id
-     *         The fully qualified identifier of a block, e.g. {@code minecraft:stone}
-     * @param meta
-     *         The unsafe damage, or meta. Constraints to range 0-15
-     *
-     * @return The item instance, or {@link MinecraftItems#getAir()}
-     *
-     * @deprecated Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As of 1.13 this will no
-     *         longer be available!
-     */
-    @Deprecated
-    static Item of(String id, int meta) {
-        return Selene.provide(ItemFactory.class).create(id, meta);
-    }
-
-
-    /**
-     * @param id
-     *     The fully qualified identifier of a block, e.g. {@code minecraft:stone}
-     *
-     * @return The item instance, or {@link MinecraftItems#getAir()}
-     */
-    static Item of(@NonNls String id) {
-        Item item = Item.of(id, 0);
-        if (!Selene.getItems().getAirId().equals(id) && item.isAir()) {
-            item = Selene.getItems().getCustom(id);
-        }
-        return item;
-    }
-
-    /**
-     * @param baseBlock
-     *         The {@link BaseBlock} instance to use when creating the item.
-     *
-     * @return The item instance, or {@link MinecraftItems#getAir()}
-     *
-     * @deprecated Note that WorldEdit rewrote their API for 1.13+, and that package/class names changes.
-     */
-    @Deprecated
-    static Item of(BaseBlock baseBlock) {
-        return Selene.provide(ItemFactory.class).create(baseBlock);
-    }
+    int getMeta();
 
 }

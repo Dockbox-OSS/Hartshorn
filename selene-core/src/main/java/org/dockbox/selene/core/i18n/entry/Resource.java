@@ -24,35 +24,41 @@ import org.dockbox.selene.core.server.Selene;
 
 import java.util.Map;
 
-public class Resource implements ResourceEntry {
+public class Resource implements ResourceEntry
+{
 
     private final String key;
     private final Map<Language, String> resourceMap = Selene.provide(ResourceService.class).getTranslations(this);
     private final String value;
 
-    public Resource(String value, String key) {
+    public Resource(String value, String key)
+    {
         this.value = value;
         this.key = key;
     }
 
     @Override
-    public ResourceEntry translate(Language lang) {
+    public ResourceEntry translate(Language lang)
+    {
         if (this.resourceMap.containsKey(lang)) return new Resource(this.resourceMap.get(lang), this.getKey());
         return this;
     }
 
     @Override
-    public String asString() {
+    public String asString()
+    {
         return this.parseColors(this.value);
     }
 
     @Override
-    public String getKey() {
+    public String getKey()
+    {
         return this.key;
     }
 
     @Override
-    public String plain() {
+    public String plain()
+    {
         return ResourceEntry.plain(this.value);
     }
 }

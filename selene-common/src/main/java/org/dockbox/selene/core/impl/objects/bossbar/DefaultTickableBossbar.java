@@ -26,7 +26,8 @@ import org.dockbox.selene.core.text.Text;
 
 import java.util.Collection;
 
-public abstract class DefaultTickableBossbar<T> extends ReferencedWrapper<T> implements Bossbar {
+public abstract class DefaultTickableBossbar<T> extends ReferencedWrapper<T> implements Bossbar
+{
 
     private final String id;
     private float percent;
@@ -34,7 +35,8 @@ public abstract class DefaultTickableBossbar<T> extends ReferencedWrapper<T> imp
     private BossbarColor color;
     private BossbarStyle style;
 
-    protected DefaultTickableBossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle style) {
+    protected DefaultTickableBossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle style)
+    {
         this.id = id;
         this.percent = percent;
         this.text = text;
@@ -42,53 +44,64 @@ public abstract class DefaultTickableBossbar<T> extends ReferencedWrapper<T> imp
         this.style = style;
     }
 
-    public abstract void tick();
-
-    public void showTo(Collection<Player> players) {
+    public void showTo(Collection<Player> players)
+    {
         players.forEach(this::showTo);
     }
 
-    public void hideFrom(Collection<Player> players) {
+    public void hideFrom(Collection<Player> players)
+    {
         players.forEach(this::hideFrom);
     }
 
-    public String getId() {
+    public String getId()
+    {
         return this.id;
     }
 
-    public float getPercent() {
+    public float getPercent()
+    {
         return this.percent;
     }
 
-    public void setPercent(float percent) {
+    public void setPercent(float percent)
+    {
         this.percent = percent;
         this.tick();
     }
 
-    public Text getText() {
+    public abstract void tick();
+
+    public Text getText()
+    {
         return this.text;
     }
 
-    public void setText(Text text) {
+    public void setText(Text text)
+    {
         this.text = text;
         this.tick();
 
     }
 
-    public BossbarColor getColor() {
+    public BossbarColor getColor()
+    {
         return this.color;
     }
 
-    public void setColor(BossbarColor color) {
+    public void setColor(BossbarColor color)
+    {
         this.color = color;
         this.tick();
     }
 
-    public BossbarStyle getStyle() {
+    public BossbarStyle getStyle()
+    {
         return this.style;
     }
 
-    public void setStyle(BossbarStyle style) {
+    public void setStyle(BossbarStyle style)
+    {
         this.style = style;
         this.tick();
     }

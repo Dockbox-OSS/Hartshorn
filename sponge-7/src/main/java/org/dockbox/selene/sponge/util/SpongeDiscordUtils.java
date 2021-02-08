@@ -26,17 +26,20 @@ import org.dockbox.selene.core.impl.DefaultDiscordUtils;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.jetbrains.annotations.NotNull;
 
-public class SpongeDiscordUtils extends DefaultDiscordUtils {
+public class SpongeDiscordUtils extends DefaultDiscordUtils
+{
 
     @NotNull
     @Override
-    public Exceptional<JDA> getJDA() {
+    public Exceptional<JDA> getJDA()
+    {
         return Exceptional.ofNullable(MagiBridge.getInstance().getJDA());
     }
 
     @NotNull
     @Override
-    public Exceptional<TextChannel> getGlobalTextChannel() {
+    public Exceptional<TextChannel> getGlobalTextChannel()
+    {
         String channelId = MagiBridge.getInstance().getConfig().CHANNELS.MAIN_CHANNEL;
         return this.getJDA().map(jda -> jda.getTextChannelById(channelId));
     }

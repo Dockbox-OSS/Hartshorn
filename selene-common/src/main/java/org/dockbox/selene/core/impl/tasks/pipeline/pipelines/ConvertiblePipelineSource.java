@@ -21,7 +21,8 @@ import org.dockbox.selene.core.objects.Exceptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
+public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I>
+{
 
     /**
      * Calls the super constructor to instantiate a new convertible pipeline.
@@ -29,7 +30,8 @@ public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
      * @param inputClass
      *         The {@link Class} of the {@code I} input type
      */
-    public ConvertiblePipelineSource(Class<I> inputClass) {
+    public ConvertiblePipelineSource(Class<I> inputClass)
+    {
         super(inputClass);
     }
 
@@ -44,7 +46,8 @@ public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
      * @return An {@link Exceptional} containing the {@code I} output
      */
     @Override
-    public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable) {
+    public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable)
+    {
         Exceptional<I> exceptionalInput = Exceptional.ofNullable(input, throwable);
         return super.process(exceptionalInput);
     }

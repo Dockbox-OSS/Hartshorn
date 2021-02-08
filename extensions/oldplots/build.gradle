@@ -1,4 +1,0 @@
-dependencies {
-    compileOnly(project(':extensions:datastructs'))
-    compileOnly(project(':extensions:database'))
-}

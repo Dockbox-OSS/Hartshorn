@@ -21,8 +21,8 @@ import com.google.inject.Injector;
 
 import org.dockbox.selene.core.ExceptionHelper;
 import org.dockbox.selene.core.MinecraftVersion;
-import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.extension.ExtensionManager;
+import org.dockbox.selene.core.annotations.module.Module;
+import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.core.objects.Exceptional;
 import org.dockbox.selene.core.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
@@ -32,6 +32,7 @@ import org.dockbox.selene.core.server.properties.InjectorProperty;
 import org.dockbox.selene.core.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,17 +45,14 @@ import java.nio.file.Path;
  * The global {@link Selene} instance used to grant access to various components.
  */
 @SuppressWarnings("ClassWithTooManyMethods")
-public final class Selene {
+public final class Selene
+{
 
     private Selene() {}
 
-    /**
-     * Gets the instance of {@link Selene}.
-     *
-     * @return The {@link Selene} instance
-     */
-    public static SeleneBootstrap getServer() {
-        return SeleneBootstrap.getInstance();
+    public static void handle(Throwable e)
+    {
+        handle(SeleneUtils.getFirstCauseMessage(e), e);
     }
 
     /**
@@ -68,24 +66,33 @@ public final class Selene {
      * @param e
      *         Zero or more exceptions (varargs)
      */
-    public static void handle(@Nullable String msg, @Nullable Throwable... e) {
+    public static void handle(@Nullable String msg, @Nullable Throwable... e)
+    {
         ExceptionLevels level = null != getServer() ? getServer().getGlobalConfig().getExceptionLevel() : ExceptionLevels.NATIVE;
         boolean stacktraces = null == getServer() || getServer().getGlobalConfig().getStacktracesAllowed();
         for (Throwable throwable : e) level.handle(msg, throwable, stacktraces);
     }
 
-    public static void handle(Throwable e) {
-        handle(SeleneUtils.getFirstCauseMessage(e), e);
+    /**
+     * Gets the instance of {@link Selene}.
+     *
+     * @return The {@link Selene} instance
+     */
+    public static SeleneBootstrap getServer()
+    {
+        return SeleneBootstrap.getInstance();
     }
 
     /**
-     * Provides quick access to {@link SeleneBootstrap#log()}. Primarily added to avoid {@link SeleneBootstrap#log()}
-     * from being used globally.
+     * Gets a log instance representing the calling type.
      *
      * @return The {@link Logger}
      */
-    public static Logger log() {
-        return SeleneBootstrap.log();
+    public static Logger log()
+    {
+        StackTraceElement element = Thread.currentThread().getStackTrace()[2];
+        String[] qualifiedClassName = element.getClassName().split("\\.");
+        return LoggerFactory.getLogger("Selene/" + qualifiedClassName[qualifiedClassName.length - 1]);
     }
 
     /**
@@ -93,7 +100,8 @@ public final class Selene {
      *
      * @return The {@link MinecraftItems} instance for the active {@link MinecraftVersion}
      */
-    public static MinecraftItems getItems() {
+    public static MinecraftItems getItems()
+    {
         return Selene.getServer().getMinecraftVersion().getItems();
     }
 
@@ -108,8 +116,10 @@ public final class Selene {
      * @return The resource file wrapped in a {@link Exceptional}, or a appropriate {@link Exceptional} (either empty or
      *         providing the appropriate exception).
      */
-    public static Exceptional<Path> getResourceFile(String name) {
-        try {
+    public static Exceptional<Path> getResourceFile(String name)
+    {
+        try
+        {
             InputStream in = Selene.class.getClassLoader().getResourceAsStream(name);
             byte[] buffer = new byte[in.available()];
             in.read(buffer);
@@ -119,14 +129,16 @@ public final class Selene {
             outStream.write(buffer);
 
             return Exceptional.of(tempFile);
-        } catch (NullPointerException | IOException e) {
+        }
+        catch (NullPointerException | IOException e)
+        {
             return Exceptional.of(e);
         }
     }
 
     /**
-     * Gets an instance of a provided {@link Class} type. If the type is annotated with {@link Extension} it is ran
-     * through the {@link ExtensionManager} instance to obtain the instance. If it is not annotated as such, it is ran
+     * Gets an instance of a provided {@link Class} type. If the type is annotated with {@link Module} it is ran
+     * through the {@link ModuleManager} instance to obtain the instance. If it is not annotated as such, it is ran
      * through the instance {@link Injector} to obtain the instance based on implementation, or manually, provided
      * mappings.
      *
@@ -134,23 +146,26 @@ public final class Selene {
      *         The type parameter for the instance to return
      * @param type
      *         The type of the instance
-     * @param extension
-     *         The type of the extension if extension specific bindings are to be used
+     * @param module
+     *         The type of the module if module specific bindings are to be used
      * @param additionalProperties
      *         The properties to be passed into the type either during or after construction
      *
      * @return The instance, if present. Otherwise returns null
      */
-    public static <T> T provide(Class<T> type, Class<?> extension, InjectorProperty<?>... additionalProperties) {
-        return Selene.getServer().getInstance(type, extension, additionalProperties);
+    public static <T> T provide(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties)
+    {
+        return Selene.getServer().getInstance(type, module, additionalProperties);
     }
 
-    public static <T> T provide(Class<T> type, InjectorProperty<?>... additionalProperties) {
+    public static <T> T provide(Class<T> type, InjectorProperty<?>... additionalProperties)
+    {
         return Selene.getServer().getInstance(type, additionalProperties);
     }
 
-    public static <T> T provide(Class<T> type, Object extension, InjectorProperty<?>... additionalProperties) {
-        return Selene.getServer().getInstance(type, extension, additionalProperties);
+    public static <T> T provide(Class<T> type, Object module, InjectorProperty<?>... additionalProperties)
+    {
+        return Selene.getServer().getInstance(type, module, additionalProperties);
     }
 
 }

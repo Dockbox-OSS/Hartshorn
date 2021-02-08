@@ -46,8 +46,9 @@ import java.util.Set;
  * A simple default implementation of {@link EventBus}, used for internal event posting and handling.
  */
 @Singleton
-@SuppressWarnings({"unchecked", "EqualsWithItself", "VolatileArrayField"})
-public class SimpleEventBus implements EventBus {
+@SuppressWarnings({ "unchecked", "EqualsWithItself", "VolatileArrayField" })
+public class SimpleEventBus implements EventBus
+{
 
     /**
      * A map of all listening objects with their associated {@link EventWrapper}s.
@@ -62,13 +63,8 @@ public class SimpleEventBus implements EventBus {
     /**
      * The internal map of {@link AbstractEventParamProcessor}s per annotation per stage.
      */
-    protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = SeleneUtils.emptyMap();
-
-    @NotNull
-    @Override
-    public Map<Object, Set<EventWrapper>> getListenersToInvokers() {
-        return listenerToInvokers;
-    }
+    protected static final Map<Class<? extends Annotation>, Map<EventStage, AbstractEventParamProcessor<?>>> parameterProcessors = SeleneUtils
+            .emptyMap();
 
     /**
      * Subscribes all event listeners in a object instance. Typically event listeners are methods annotated with
@@ -78,19 +74,23 @@ public class SimpleEventBus implements EventBus {
      *         The instance of the listener
      */
     @Override
-    public void subscribe(Object object) {
+    public void subscribe(Object object)
+    {
         if (!object.equals(object)) return;
-        if (listenerToInvokers.containsKey(object)) {
+        if (listenerToInvokers.containsKey(object))
+        {
             return;  // Already registered
         }
 
         Set<EventWrapper> invokers = getInvokers(object);
-        if (invokers.isEmpty()) {
+        if (invokers.isEmpty())
+        {
             return; // Doesn't contain any listener methods
         }
         Selene.log().info("Registered {} as event listener", object.getClass().toGenericString());
         listenerToInvokers.put(object, invokers);
-        for (EventWrapper invoker : invokers) {
+        for (EventWrapper invoker : invokers)
+        {
             handlerRegistry.getHandler(invoker.getEventType()).subscribe(invoker);
         }
     }
@@ -102,26 +102,67 @@ public class SimpleEventBus implements EventBus {
      *         The instance of the listener
      */
     @Override
-    public void unsubscribe(Object object) {
+    public void unsubscribe(Object object)
+    {
         if (!object.equals(object)) return;
         Set<EventWrapper> invokers = listenerToInvokers.remove(object);
-        if (null == invokers || invokers.isEmpty()) {
+        if (null == invokers || invokers.isEmpty())
+        {
             return; // Not registered
         }
 
-        for (EventWrapper invoker : invokers) {
+        for (EventWrapper invoker : invokers)
+        {
             handlerRegistry.getHandler(invoker.getEventType()).unsubscribe(invoker);
         }
     }
 
     @Override
-    public void post(Event event, Class<?> target) {
+    public void post(Event event, Class<?> target)
+    {
         handlerRegistry.getHandler(event.getClass()).post(event, target);
     }
 
     @Override
-    public void post(Event event) {
+    public void post(Event event)
+    {
         this.post(event, null);
+    }
+
+    @NotNull
+    @Override
+    public Map<Object, Set<EventWrapper>> getListenersToInvokers()
+    {
+        return listenerToInvokers;
+    }
+
+    @Override
+    public void registerProcessors(@NotNull AbstractEventParamProcessor<?> @NotNull ... processors)
+    {
+        for (AbstractEventParamProcessor<?> processor : processors)
+        {
+            parameterProcessors.putIfAbsent(processor.getAnnotationClass(), SeleneUtils.emptyMap());
+            parameterProcessors.get(processor.getAnnotationClass()).put(processor.targetStage(), processor);
+        }
+    }
+
+    @Nullable
+    @Override
+    public <T extends Annotation> AbstractEventParamProcessor<T> getParamProcessor(@NotNull Class<T> annotation, EventStage stage)
+    {
+        if (SimpleEventBus.parameterProcessors.isEmpty())
+        {
+            for (DefaultParamProcessors processor : DefaultParamProcessors.values())
+            {
+                this.registerProcessors(processor.getProcessor());
+            }
+        }
+
+        if (parameterProcessors.containsKey(annotation))
+        {
+            return (AbstractEventParamProcessor<T>) parameterProcessors.get(annotation).get(stage);
+        }
+        return null;
     }
 
     /**
@@ -132,12 +173,15 @@ public class SimpleEventBus implements EventBus {
      *
      * @return The invokers
      */
-    protected static Set<EventWrapper> getInvokers(Object object) {
+    protected static Set<EventWrapper> getInvokers(Object object)
+    {
         Set<EventWrapper> result = SeleneUtils.emptySet();
-        for (Method method : Reflect.getMethodsRecursively(object.getClass())) {
+        for (Method method : Reflect.getMethodsRecursively(object.getClass()))
+        {
             Listener annotation = Reflect.getAnnotationRecursively(method, Listener.class);
-            if (null != annotation) {
-                checkListenerMethod(method, false);
+            if (null != annotation)
+            {
+                checkListenerMethod(method);
                 result.addAll(SimpleEventWrapper.create(object, method, annotation.value().getPriority()));
             }
         }
@@ -155,65 +199,45 @@ public class SimpleEventBus implements EventBus {
      *
      * @param method
      *         the method
-     * @param checkAnnotation
-     *         the check annotation
-     *
      * @throws IllegalArgumentException
      *         the illegal argument exception
      */
-    protected static void checkListenerMethod(Method method, boolean checkAnnotation) throws IllegalArgumentException {
-        if (checkAnnotation && !Reflect.isAnnotationPresentRecursively(method, Listener.class)) {
+    protected static void checkListenerMethod(Method method)
+            throws IllegalArgumentException
+    {
+        if (!Reflect.isAnnotationPresentRecursively(method, Listener.class))
+        {
             throw new IllegalArgumentException("Needs @Listener annotation: " + method.toGenericString());
         }
 
         int modifiers = method.getModifiers();
-        if (Modifier.isStatic(modifiers)) {
-            throw new IllegalArgumentException("Method cannot be static: " + method.toGenericString());
-        }
-        if (Modifier.isAbstract(modifiers)) {
+        if (Modifier.isAbstract(modifiers))
+        {
             throw new IllegalArgumentException("Method cannot be abstract: " + method.toGenericString());
         }
 
-        if (0 == method.getParameterCount()) {
+        if (0 == method.getParameterCount())
+        {
             throw new IllegalArgumentException("Must have at least one parameter: " + method.toGenericString());
         }
 
-        for (Class<?> param : method.getParameterTypes()) {
-            if (Reflect.isAssignableFrom(Event.class, param)) {
+        for (Class<?> param : method.getParameterTypes())
+        {
+            if (Reflect.isAssignableFrom(Event.class, param))
+            {
                 if (Reflect.isAssignableFrom(PacketEvent.class, param)
-                && !method.isAnnotationPresent(Packet.class)) {
+                        && !method.isAnnotationPresent(Packet.class))
+                {
                     throw new IllegalArgumentException("Needs @Packet annotation: " + method.toGenericString());
                 }
                 return;
-            } else if (Reflect.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
+            }
+            else if (Reflect.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param))
+            {
                 return;
             }
         }
 
         throw new IllegalArgumentException("Parameter must be a subclass of the Event class: " + method.toGenericString());
-    }
-
-    @Override
-    public void registerProcessors(@NotNull AbstractEventParamProcessor<?> @NotNull ... processors) {
-        for (AbstractEventParamProcessor<?> processor : processors) {
-            parameterProcessors.putIfAbsent(processor.getAnnotationClass(), SeleneUtils.emptyMap());
-            parameterProcessors.get(processor.getAnnotationClass()).put(processor.targetStage(), processor);
-        }
-    }
-
-
-    @Nullable
-    @Override
-    public <T extends Annotation> AbstractEventParamProcessor<T> getParamProcessor(@NotNull Class<T> annotation, EventStage stage) {
-        if (SimpleEventBus.parameterProcessors.isEmpty()) {
-            for (DefaultParamProcessors processor : DefaultParamProcessors.values()) {
-                this.registerProcessors(processor.getProcessor());
-            }
-        }
-
-        if (parameterProcessors.containsKey(annotation)) {
-            return (AbstractEventParamProcessor<T>) parameterProcessors.get(annotation).get(stage);
-        }
-        return null;
     }
 }

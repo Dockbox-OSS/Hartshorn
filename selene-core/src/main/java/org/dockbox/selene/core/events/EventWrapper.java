@@ -21,9 +21,11 @@ import org.dockbox.selene.core.events.parents.Event;
 
 import java.lang.reflect.Method;
 
-public interface EventWrapper {
+public interface EventWrapper
+{
 
-    void invoke(Event event) throws RuntimeException;
+    void invoke(Event event)
+            throws RuntimeException;
 
     Object getListener();
 

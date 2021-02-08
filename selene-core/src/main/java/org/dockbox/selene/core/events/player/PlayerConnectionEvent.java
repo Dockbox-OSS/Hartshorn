@@ -25,22 +25,27 @@ import java.net.InetSocketAddress;
 /**
  * The abstract type which can be used to listen to all player movement related events.
  */
-public abstract class PlayerConnectionEvent extends AbstractTargetEvent {
+public abstract class PlayerConnectionEvent extends AbstractTargetEvent
+{
 
-    protected PlayerConnectionEvent(Target target) {
+    protected PlayerConnectionEvent(Target target)
+    {
         super(target);
     }
 
     @Override
-    public void setTarget(Target target) {
+    public void setTarget(Target target)
+    {
         throw new UnsupportedOperationException("Cannot change target of connection event");
     }
 
     /**
      * The event fired when a player connected to the server.
      */
-    public static class PlayerJoinEvent extends PlayerConnectionEvent {
-        public PlayerJoinEvent(Target target) {
+    public static class PlayerJoinEvent extends PlayerConnectionEvent
+    {
+        public PlayerJoinEvent(Target target)
+        {
             super(target);
         }
     }
@@ -48,8 +53,10 @@ public abstract class PlayerConnectionEvent extends AbstractTargetEvent {
     /**
      * The event fired when a player disconnected from the server.
      */
-    public static class PlayerLeaveEvent extends PlayerConnectionEvent {
-        public PlayerLeaveEvent(Target target) {
+    public static class PlayerLeaveEvent extends PlayerConnectionEvent
+    {
+        public PlayerLeaveEvent(Target target)
+        {
             super(target);
         }
     }
@@ -57,26 +64,32 @@ public abstract class PlayerConnectionEvent extends AbstractTargetEvent {
     /**
      * The event fired when a remote location is attempting to authenticate to the server.
      */
-    public static class PlayerAuthEvent extends PlayerConnectionEvent {
+    public static class PlayerAuthEvent extends PlayerConnectionEvent
+    {
         private final InetSocketAddress address;
         private final InetSocketAddress host;
 
-        public PlayerAuthEvent(InetSocketAddress address, InetSocketAddress host) {
+        public PlayerAuthEvent(InetSocketAddress address, InetSocketAddress host)
+        {
             super(null);
             this.address = address;
             this.host = host;
         }
 
-        public InetSocketAddress getAddress() {
+        public InetSocketAddress getAddress()
+        {
             return this.address;
         }
 
-        public InetSocketAddress getHost() {
+        public InetSocketAddress getHost()
+        {
             return this.host;
         }
 
         @Override
-        public Target getTarget() throws UnsupportedOperationException {
+        public Target getTarget()
+                throws UnsupportedOperationException
+        {
             throw new UnsupportedOperationException("Cannot get target while authenticating");
         }
     }

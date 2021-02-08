@@ -28,49 +28,69 @@ import org.jetbrains.annotations.NonNls;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
+public abstract class DefaultXStreamManager extends DefaultAbstractFileManager
+{
 
-    protected DefaultXStreamManager() {
+    protected DefaultXStreamManager()
+    {
         super(FileType.XML);
     }
 
     @Override
-    public <T> Exceptional<T> read(Path file, Class<T> type) {
+    public <T> Exceptional<T> read(Path file, Class<T> type)
+    {
         Reflect.rejects(type, DefaultXStreamManager.class, true);
-        return Exceptional.of(() -> this.prepareXStream(type).read(type, file.toFile()));
+        return Exceptional.of(() -> DefaultXStreamManager.prepareXStream(type).read(type, file.toFile()));
     }
 
     @Override
-    public <T> Exceptional<Boolean> write(Path file, T content) {
+    public <T> Exceptional<Boolean> write(Path file, T content)
+    {
         @SuppressWarnings("unchecked") Class<T> type = (Class<T>) content.getClass();
         Reflect.rejects(type, DefaultXStreamManager.class, true);
 
-        if (null != content) {
-            try {
-                this.prepareXStream(type).write(content, file.toFile());
+        if (null != content)
+        {
+            try
+            {
+                DefaultXStreamManager.prepareXStream(type).write(content, file.toFile());
                 return Exceptional.of(true);
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 return Exceptional.of(false, e);
             }
         }
         return Exceptional.of(false);
     }
 
-    private XStreamBuilder prepareXStream(Class<?> type) {
+    @Override
+    public void requestFileType(FileType fileType)
+    {
+        if (FileType.XML != fileType)
+        {
+            throw new UnsupportedOperationException("XStream only supports XML");
+        }
+    }
+
+    private static XStreamBuilder prepareXStream(Class<?> type)
+    {
         XStreamBuilder builder = XStreamUtils.create();
-        this.omitIgnoredFields(type, builder);
-        this.aliasPropertyFields(type, builder);
+        DefaultXStreamManager.omitIgnoredFields(type, builder);
+        DefaultXStreamManager.aliasPropertyFields(type, builder);
         return builder;
     }
 
-    private void omitIgnoredFields(Class<?> type, XStreamBuilder builder) {
+    private static void omitIgnoredFields(Class<?> type, XStreamBuilder builder)
+    {
         Reflect.forEachFieldIn(type, (declaringType, field) -> {
             if (field.isAnnotationPresent(Ignore.class))
                 builder.omitField(declaringType, field.getName());
         });
     }
 
-    private void aliasPropertyFields(Class<?> type, XStreamBuilder builder) {
+    private static void aliasPropertyFields(Class<?> type, XStreamBuilder builder)
+    {
         Reflect.forEachFieldIn(type, (declaringType, field) -> {
             @NonNls String alias = Reflect.getFieldPropertyName(field);
             if (!field.getName().equals(alias)) builder.aliasField(alias, declaringType, field.getName());

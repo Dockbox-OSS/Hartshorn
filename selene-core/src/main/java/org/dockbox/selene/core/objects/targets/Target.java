@@ -17,5 +17,6 @@
 
 package org.dockbox.selene.core.objects.targets;
 
-public interface Target {
+public interface Target
+{
 }

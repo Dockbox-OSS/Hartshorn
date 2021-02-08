@@ -26,23 +26,25 @@ import io.netty.channel.Channel;
 
 /**
  * Represents a native {@link Packet} instance. This is used primarily as a wrapper type for implementations of
- * {@link org.dockbox.selene.core.packets.Packet}.
+ * {@link org.dockbox.selene.core.objects.Packet}.
  *
  * @param <T>
- *     The type of the native packet.
+ *         The type of the native packet.
  */
-public interface NMSPacket<T extends Packet<? extends INetHandler>> extends InjectableType {
-
-    T getPacket();
+public interface NMSPacket<T extends Packet<? extends INetHandler>> extends InjectableType
+{
 
     /**
      * Writes the packet to the given channel. This allows writing native packets to Netty channels without implementations requiring access to NMS.
      *
      * @param channel
-     *     The channel to send to, typically bound to a specific {@link org.dockbox.selene.core.objects.targets.PacketReceiver}.
+     *         The channel to send to, typically bound to a specific {@link org.dockbox.selene.core.objects.targets.PacketReceiver}.
      */
-    default void write(Channel channel) {
+    default void write(Channel channel)
+    {
         channel.write(this.getPacket());
     }
+
+    T getPacket();
 
 }

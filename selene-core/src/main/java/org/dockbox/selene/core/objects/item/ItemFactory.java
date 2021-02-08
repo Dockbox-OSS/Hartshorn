@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.core.objects.item;
 
-import com.sk89q.worldedit.blocks.BaseBlock;
-
-public interface ItemFactory {
+@SuppressWarnings("InterfaceNeverImplemented") // Provided by AssistedInject
+@FunctionalInterface
+public interface ItemFactory
+{
     Item create(String id, int meta);
-    Item create(BaseBlock baseBlock);
 }

@@ -20,7 +20,8 @@ package org.dockbox.selene.core.objects.targets;
 import org.dockbox.selene.core.objects.inventory.Inventory;
 
 @SuppressWarnings("ALL")
-public interface InventoryHolder {
+public interface InventoryHolder
+{
 
     Inventory getInventory();
 }

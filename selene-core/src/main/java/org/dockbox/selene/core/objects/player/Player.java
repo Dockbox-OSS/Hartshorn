@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.core.objects.player;
 
-import com.boydti.fawe.object.FawePlayer;
-
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.i18n.common.Language;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
@@ -29,7 +27,7 @@ import org.dockbox.selene.core.objects.keys.PersistentDataHolder;
 import org.dockbox.selene.core.objects.location.Location;
 import org.dockbox.selene.core.objects.profile.Profile;
 import org.dockbox.selene.core.objects.special.Sounds;
-import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.core.objects.targets.InventoryHolder;
 import org.dockbox.selene.core.objects.targets.Locatable;
 import org.dockbox.selene.core.objects.targets.PacketReceiver;
@@ -40,16 +38,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public abstract class Player
-        extends Identifiable<Player>
-        implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder {
+        extends AbstractIdentifiable<Player>
+        implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder
+{
 
-    protected Player(@NotNull UUID uniqueId, @NotNull String name) {
+    protected Player(@NotNull UUID uniqueId, @NotNull String name)
+    {
         super(uniqueId, name);
     }
 
     public abstract boolean isOnline();
-
-    public abstract Exceptional<FawePlayer<?>> getFawePlayer();
 
     public abstract void kick(Text reason);
 
@@ -62,57 +60,71 @@ public abstract class Player
     public abstract void setLanguage(Language language);
 
     @Override
-    public boolean hasAnyPermission(@NotNull String @NotNull ... permissions) {
-        for (String permission : permissions) {
+    public boolean hasAnyPermission(@NotNull String @NotNull ... permissions)
+    {
+        for (String permission : permissions)
+        {
             if (this.hasPermission(permission)) return true;
         }
         return false;
     }
 
     @Override
-    public boolean hasAllPermissions(@NotNull String @NotNull ... permissions) {
-        for (String permission : permissions) {
+    public boolean hasAllPermissions(@NotNull String @NotNull ... permissions)
+    {
+        for (String permission : permissions)
+        {
             if (!this.hasPermission(permission)) return false;
         }
         return true;
     }
 
     @Override
-    public boolean hasPermission(@NotNull AbstractPermission permission) {
+    public boolean hasPermission(@NotNull AbstractPermission permission)
+    {
         return this.hasPermission(permission.get());
     }
 
     @Override
-    public boolean hasAnyPermission(@NotNull AbstractPermission @NotNull ... permissions) {
-        for (AbstractPermission permission : permissions) {
+    public boolean hasAnyPermission(@NotNull AbstractPermission @NotNull ... permissions)
+    {
+        for (AbstractPermission permission : permissions)
+        {
             if (this.hasPermission(permission)) return true;
         }
         return false;
     }
 
     @Override
-    public boolean hasAllPermissions(@NotNull AbstractPermission @NotNull ... permissions) {
-        for (AbstractPermission permission : permissions) {
+    public boolean hasAllPermissions(@NotNull AbstractPermission @NotNull ... permissions)
+    {
+        for (AbstractPermission permission : permissions)
+        {
             if (!this.hasPermission(permission)) return false;
         }
         return true;
     }
 
     @Override
-    public void setPermissions(boolean value, @NotNull String @NotNull ... permissions) {
-        for (String permission : permissions) {
+    public void setPermissions(boolean value, @NotNull String @NotNull ... permissions)
+    {
+        for (String permission : permissions)
+        {
             this.setPermission(permission, value);
         }
     }
 
     @Override
-    public void setPermission(@NotNull AbstractPermission permission, boolean value) {
+    public void setPermission(@NotNull AbstractPermission permission, boolean value)
+    {
         this.setPermission(permission.get(), value);
     }
 
     @Override
-    public void setPermissions(boolean value, @NotNull AbstractPermission @NotNull ... permissions) {
-        for (AbstractPermission permission : permissions) {
+    public void setPermissions(boolean value, @NotNull AbstractPermission @NotNull ... permissions)
+    {
+        for (AbstractPermission permission : permissions)
+        {
             this.setPermission(permission, value);
         }
     }
@@ -124,20 +136,22 @@ public abstract class Player
     public abstract void play(Sounds sound);
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         return this.getUniqueId().hashCode();
     }
 
     @SuppressWarnings("OverlyStrongTypeCast")
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object obj)
+    {
         if (null == obj) return false;
         if (obj instanceof Player) return this.getUniqueId().equals(((Player) obj).getUniqueId());
         return false;
     }
 
     public abstract boolean isSneaking();
-    
+
     public abstract Profile getProfile();
 
     public abstract Exceptional<Location> getLookingAtBlockPos();

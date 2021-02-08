@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.core.objects.player;
 
-public enum ClickType {
-    PRIMARY, SECONDARY, EITHER
+public enum ClickType
+{
+    PRIMARY,
+    SECONDARY,
+    EITHER
 }

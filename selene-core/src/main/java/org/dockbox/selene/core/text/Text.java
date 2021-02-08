@@ -34,7 +34,8 @@ import java.util.stream.Collectors;
 
 import javax.xml.bind.DatatypeConverter;
 
-public class Text {
+public class Text
+{
 
     public static final char legacySectionSymbol = '&';
     public static final char sectionSymbol = '\u00A7';
@@ -46,20 +47,24 @@ public class Text {
     private HoverAction<?> hoverAction;
     private ShiftClickAction<?> shiftClickAction;
 
-    public Text(Object... objects) {
-        if (0 < objects.length) {
+    public Text(Object... objects)
+    {
+        if (0 < objects.length)
+        {
             Object prim = objects[0];
 
             if (prim instanceof Text) this.text = ((Text) prim).toStringValue();
             else if (prim instanceof ResourceEntry) this.text = ((ResourceEntry) prim).asString();
             else this.text = prim.toString();
 
-            for (char styleChar : styleChars.toCharArray()) {
+            for (char styleChar : styleChars.toCharArray())
+            {
                 this.text = this.text.replaceAll(legacySectionSymbol + "" + styleChar, sectionSymbol + "" + styleChar);
             }
             objects = Arrays.copyOfRange(objects, 1, objects.length);
 
-            for (Object obj : objects) {
+            for (Object obj : objects)
+            {
                 if (obj instanceof Text) this.extra.add((Text) obj);
                 if (obj instanceof ResourceEntry) this.extra.add(of(((ResourceEntry) obj).asString()));
                 else this.extra.add(of(obj));
@@ -67,125 +72,150 @@ public class Text {
         }
     }
 
-    public String toStringValue() {
+    public String toStringValue()
+    {
         StringBuilder stringValue = new StringBuilder(this.text);
         for (Text extraText : this.extra) stringValue.append(' ').append(extraText.text);
         return stringValue.toString();
     }
 
-    public static Text of(Object... objects) {
+    public static Text of(Object... objects)
+    {
         if (0 == objects.length) return new Text("");
         return new Text(objects);
     }
 
-    public String toLegacy() {
+    public String toLegacy()
+    {
         StringBuilder legacyText = new StringBuilder(this.text.replaceAll(sectionSymbol + "", legacySectionSymbol + ""));
         for (Text extraText : this.extra) legacyText.append(' ').append(extraText.toLegacy());
         return legacyText.toString();
     }
 
-    public String toPlain() {
+    public String toPlain()
+    {
         return this.toLegacy().replaceAll(legacyRegexFormat, "");
     }
 
-    public Text append(Text text) {
+    public Text append(Text text)
+    {
         this.extra.add(text);
         return this;
     }
 
-    public Text append(CharSequence text) {
+    public Text append(CharSequence text)
+    {
         this.extra.add(of(text));
         return this;
     }
 
-    public Text append(char text) {
+    public Text append(char text)
+    {
         this.extra.add(of(text));
         return this;
     }
 
-    public Text onClick(ClickAction<?> action) {
-        this.clickAction = action;
-        return this;
-    }
-
-    public Text onHover(HoverAction<?> action) {
-        this.hoverAction = action;
-        return this;
-    }
-
-    public Text onShiftClick(ShiftClickAction<?> action) {
-        this.shiftClickAction = action;
-        return this;
-    }
-
-    public void send(MessageReceiver... receivers) {
+    public void send(MessageReceiver... receivers)
+    {
         for (MessageReceiver receiver : receivers) receiver.send(this);
     }
 
-    public void sendWithPrefix(MessageReceiver... receivers) {
+    public void sendWithPrefix(MessageReceiver... receivers)
+    {
         for (MessageReceiver receiver : receivers) receiver.sendWithPrefix(this);
     }
 
-    public ClickAction<?> getClickAction() {
+    public ClickAction<?> getClickAction()
+    {
         return this.clickAction;
     }
 
-    public HoverAction<?> getHoverAction() {
+    public HoverAction<?> getHoverAction()
+    {
         return this.hoverAction;
     }
 
-    public ShiftClickAction<?> getShiftClickAction() {
+    public ShiftClickAction<?> getShiftClickAction()
+    {
         return this.shiftClickAction;
     }
 
-    public List<Text> getParts() {
+    public List<Text> getParts()
+    {
         List<Text> parts = SeleneUtils.emptyList();
         // Do not add 'this' directly, as it'd wrap the extra parts as well and cause duplicates
         parts.add(Text.of(this.text)
-            .onClick(this.clickAction)
-            .onHover(this.hoverAction)
-            .onShiftClick(this.shiftClickAction));
+                .onClick(this.clickAction)
+                .onHover(this.hoverAction)
+                .onShiftClick(this.shiftClickAction));
         parts.addAll(this.getExtra());
         return parts;
     }
 
-    public List<Text> getExtra() {
+    public Text onShiftClick(ShiftClickAction<?> action)
+    {
+        this.shiftClickAction = action;
+        return this;
+    }
+
+    public Text onHover(HoverAction<?> action)
+    {
+        this.hoverAction = action;
+        return this;
+    }
+
+    public Text onClick(ClickAction<?> action)
+    {
+        this.clickAction = action;
+        return this;
+    }
+
+    public List<Text> getExtra()
+    {
         // To prevent stack overflows
         return this.extra.stream().filter(e -> e != this).collect(Collectors.toList());
     }
 
-    public Exceptional<String> generateHash(HashMethod method) {
-        try {
+    public Exceptional<String> generateHash(HashMethod method)
+    {
+        try
+        {
             MessageDigest md = MessageDigest.getInstance(method.toString());
             md.update(this.toStringValue().getBytes());
             return Exceptional.of(DatatypeConverter.printHexBinary(md.digest()).toUpperCase());
-        } catch (NoSuchAlgorithmException e) {
+        }
+        catch (NoSuchAlgorithmException e)
+        {
             Selene.handle("No algorithm implementation present for " + method + ". "
-                    + "This algorithm should be implemented by every implementation of the Java platform! "
-                    + "See https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html",
-                e);
+                            + "This algorithm should be implemented by every implementation of the Java platform! "
+                            + "See https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html",
+                    e);
         }
         return Exceptional.empty();
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return this.toStringValue();
     }
 
-    public enum HashMethod {
+    public enum HashMethod
+    {
         MD5("MD5"),
         SHA1("SHA-1"),
         SHA256("SHA-256");
 
         private final String alg;
 
-        HashMethod(String alg) {
+        HashMethod(String alg)
+        {
             this.alg = alg;
         }
 
         @Override
-        public String toString() {
+        public String toString()
+        {
             return this.alg;
         }
     }

@@ -24,7 +24,9 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Metadata {
+public @interface Metadata
+{
     String alias();
+
     boolean serializable() default true;
 }
