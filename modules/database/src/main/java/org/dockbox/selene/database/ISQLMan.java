@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.database;
 
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.server.properties.InjectableType;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.server.properties.InjectableType;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.structures.table.Table;
 import org.dockbox.selene.structures.table.column.ColumnIdentifier;

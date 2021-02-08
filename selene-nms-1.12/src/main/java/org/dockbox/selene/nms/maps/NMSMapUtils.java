@@ -21,8 +21,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
 import net.minecraftforge.fml.server.FMLServerHandler;
 
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.util.SeleneUtils;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

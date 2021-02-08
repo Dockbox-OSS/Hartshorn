@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.structures.registry;
 
-import org.dockbox.selene.core.annotations.Rejects;
-import org.dockbox.selene.core.annotations.entity.Metadata;
-import org.dockbox.selene.core.impl.files.DefaultConfigurateManager;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.annotations.Rejects;
+import org.dockbox.selene.api.annotations.entity.Metadata;
+import org.dockbox.selene.common.files.DefaultConfigurateManager;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

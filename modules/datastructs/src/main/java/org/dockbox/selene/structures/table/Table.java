@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.structures.table;
 
-import org.dockbox.selene.core.annotations.entity.Ignore;
-import org.dockbox.selene.core.annotations.entity.Metadata;
-import org.dockbox.selene.core.annotations.entity.Property;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.util.Reflect;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.annotations.entity.Ignore;
+import org.dockbox.selene.api.annotations.entity.Metadata;
+import org.dockbox.selene.api.annotations.entity.Property;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.util.Reflect;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.structures.table.behavior.Merge;
 import org.dockbox.selene.structures.table.behavior.Order;
 import org.dockbox.selene.structures.table.column.ColumnIdentifier;

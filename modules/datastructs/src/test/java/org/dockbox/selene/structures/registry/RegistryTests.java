@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.structures.registry;
 
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.api.objects.Exceptional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

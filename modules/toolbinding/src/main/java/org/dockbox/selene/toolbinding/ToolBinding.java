@@ -17,22 +17,22 @@
 
 package org.dockbox.selene.toolbinding;
 
-import org.dockbox.selene.core.annotations.module.Module;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.keys.Keys;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.annotations.event.Listener;
-import org.dockbox.selene.core.annotations.i18n.Resources;
-import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent;
-import org.dockbox.selene.core.i18n.common.ResourceEntry;
-import org.dockbox.selene.core.i18n.entry.Resource;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.keys.PersistentDataKey;
-import org.dockbox.selene.core.objects.keys.RemovableKey;
-import org.dockbox.selene.core.objects.keys.TransactionResult;
-import org.dockbox.selene.core.objects.keys.data.StringPersistentDataKey;
-import org.dockbox.selene.core.objects.player.Sneaking;
+import org.dockbox.selene.api.annotations.module.Module;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.keys.Keys;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.api.annotations.event.Listener;
+import org.dockbox.selene.api.annotations.i18n.Resources;
+import org.dockbox.selene.api.events.player.interact.PlayerInteractEvent;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.i18n.entry.Resource;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.keys.PersistentDataKey;
+import org.dockbox.selene.api.objects.keys.RemovableKey;
+import org.dockbox.selene.api.objects.keys.TransactionResult;
+import org.dockbox.selene.api.objects.keys.data.StringPersistentDataKey;
+import org.dockbox.selene.api.objects.player.Sneaking;
 
 import java.util.Map;
 import java.util.UUID;

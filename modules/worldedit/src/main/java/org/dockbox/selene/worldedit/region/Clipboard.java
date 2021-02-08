@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.worldedit.region;
 
-import org.dockbox.selene.core.objects.tuple.Vector3N;
+import org.dockbox.selene.api.objects.tuple.Vector3N;
 
 public class Clipboard
 {

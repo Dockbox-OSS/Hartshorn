@@ -19,9 +19,9 @@ package org.dockbox.selene.worldedit.events;
 
 import com.boydti.fawe.object.FawePlayer;
 
-import org.dockbox.selene.core.events.AbstractCancellableEvent;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.api.events.AbstractCancellableEvent;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.worldedit.WorldEditKeys;
 import org.dockbox.selene.worldedit.region.Clipboard;
 import org.dockbox.selene.worldedit.region.Region;

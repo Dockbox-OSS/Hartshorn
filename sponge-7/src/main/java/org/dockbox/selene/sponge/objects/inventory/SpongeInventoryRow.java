@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.sponge.objects.inventory;
 
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.inventory.InventoryRow;
-import org.dockbox.selene.core.objects.inventory.PlayerInventory;
-import org.dockbox.selene.core.objects.inventory.Slot;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.inventory.InventoryRow;
+import org.dockbox.selene.api.objects.inventory.PlayerInventory;
+import org.dockbox.selene.api.objects.inventory.Slot;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.item.inventory.ItemStack;

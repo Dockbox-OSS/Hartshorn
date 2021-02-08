@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.proxy.exception;
 
-import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
+import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
 
 /**
  * The exception to be thrown by methods annotated with {@link org.dockbox.selene.proxy.annotations.Proxy.Target}

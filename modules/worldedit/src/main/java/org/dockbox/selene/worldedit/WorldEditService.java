@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.worldedit;
 
-import org.dockbox.selene.core.annotations.RequiresBinding;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.api.annotations.RequiresBinding;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.worldedit.region.Clipboard;
 import org.dockbox.selene.worldedit.region.Mask;
 import org.dockbox.selene.worldedit.region.Pattern;

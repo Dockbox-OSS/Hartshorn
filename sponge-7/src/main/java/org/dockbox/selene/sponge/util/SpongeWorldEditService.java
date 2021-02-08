@@ -32,10 +32,10 @@ import com.sk89q.worldedit.function.mask.BlockMask;
 import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.session.ClipboardHolder;
 
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.sponge.external.WrappedMask;
 import org.dockbox.selene.sponge.external.WrappedPattern;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;

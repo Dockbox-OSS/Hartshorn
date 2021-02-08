@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.database;
 
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.database.dialects.sqlite.SQLiteMan;
 import org.dockbox.selene.database.dialects.sqlite.SQLitePathProperty;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;

@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.database.properties;
 
-import org.dockbox.selene.core.objects.tuple.Tuple;
-import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.api.objects.tuple.Tuple;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.structures.table.column.ColumnIdentifier;
 
 public class SQLColumnProperty implements InjectorProperty<Tuple<String, ColumnIdentifier<?>>>

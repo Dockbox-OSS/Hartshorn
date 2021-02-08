@@ -19,10 +19,10 @@ package org.dockbox.selene.sponge.objects.discord;
 
 import com.magitechserver.magibridge.util.BridgeCommandSource;
 
-import org.dockbox.selene.core.command.source.DiscordCommandSource;
-import org.dockbox.selene.core.i18n.common.ResourceEntry;
-import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.text.pagination.Pagination;
+import org.dockbox.selene.api.command.source.DiscordCommandSource;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.text.Text;
+import org.dockbox.selene.api.text.pagination.Pagination;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;

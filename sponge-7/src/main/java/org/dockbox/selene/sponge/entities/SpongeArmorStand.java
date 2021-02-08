@@ -23,11 +23,11 @@ import com.google.inject.assistedinject.AssistedInject;
 
 import net.minecraft.entity.item.EntityArmorStand;
 
-import org.dockbox.selene.core.entities.ArmorStand;
-import org.dockbox.selene.core.objects.inventory.Inventory;
-import org.dockbox.selene.core.objects.location.Location;
-import org.dockbox.selene.core.objects.tuple.Vector3N;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.entities.ArmorStand;
+import org.dockbox.selene.api.objects.inventory.Inventory;
+import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.tuple.Vector3N;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;

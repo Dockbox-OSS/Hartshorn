@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.dave;
 
-import org.dockbox.selene.core.annotations.i18n.Resources;
-import org.dockbox.selene.core.i18n.entry.Resource;
+import org.dockbox.selene.api.annotations.i18n.Resources;
+import org.dockbox.selene.api.i18n.entry.Resource;
 
 @Resources(module = DaveModule.class)
 public final class DaveResources

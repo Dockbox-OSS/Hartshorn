@@ -22,11 +22,11 @@ import com.google.inject.assistedinject.AssistedInject;
 
 import net.minecraft.entity.item.EntityItemFrame;
 
-import org.dockbox.selene.core.entities.ItemFrame;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.location.BlockFace;
-import org.dockbox.selene.core.objects.location.Location;
+import org.dockbox.selene.api.entities.ItemFrame;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.location.BlockFace;
+import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;

@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.inventory.pane;
 
-import org.dockbox.selene.core.inventory.Element;
-import org.dockbox.selene.core.inventory.pane.PaginatedPane;
-import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.api.inventory.Element;
+import org.dockbox.selene.api.inventory.pane.PaginatedPane;
+import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
 import java.util.Collection;

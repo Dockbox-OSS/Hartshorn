@@ -19,35 +19,35 @@ package org.dockbox.selene.sponge.listeners;
 
 import com.flowpowered.math.vector.Vector3d;
 
-import org.dockbox.selene.core.events.chat.SendChatEvent;
-import org.dockbox.selene.core.events.moderation.BanEvent.IpBannedEvent;
-import org.dockbox.selene.core.events.moderation.BanEvent.IpUnbannedEvent;
-import org.dockbox.selene.core.events.moderation.BanEvent.NameBannedEvent;
-import org.dockbox.selene.core.events.moderation.BanEvent.NameUnbannedEvent;
-import org.dockbox.selene.core.events.moderation.BanEvent.PlayerBannedEvent;
-import org.dockbox.selene.core.events.moderation.BanEvent.PlayerUnbannedEvent;
-import org.dockbox.selene.core.events.moderation.KickEvent;
-import org.dockbox.selene.core.events.moderation.NoteEvent;
-import org.dockbox.selene.core.events.moderation.WarnEvent;
-import org.dockbox.selene.core.events.moderation.WarnEvent.PlayerWarnedEvent;
-import org.dockbox.selene.core.events.parents.Cancellable;
-import org.dockbox.selene.core.events.parents.Event;
-import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerAuthEvent;
-import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerJoinEvent;
-import org.dockbox.selene.core.events.player.PlayerConnectionEvent.PlayerLeaveEvent;
-import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerSwitchWorldEvent;
-import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerTeleportEvent;
-import org.dockbox.selene.core.events.player.PlayerMoveEvent.PlayerWarpEvent;
-import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent.PlayerInteractAirEvent;
-import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent.PlayerInteractBlockEvent;
-import org.dockbox.selene.core.events.player.interact.PlayerInteractEvent.PlayerInteractEntityEvent;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.location.Location;
-import org.dockbox.selene.core.objects.location.Warp;
-import org.dockbox.selene.core.objects.player.ClickType;
-import org.dockbox.selene.core.objects.player.Hand;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.events.chat.SendChatEvent;
+import org.dockbox.selene.api.events.moderation.BanEvent.IpBannedEvent;
+import org.dockbox.selene.api.events.moderation.BanEvent.IpUnbannedEvent;
+import org.dockbox.selene.api.events.moderation.BanEvent.NameBannedEvent;
+import org.dockbox.selene.api.events.moderation.BanEvent.NameUnbannedEvent;
+import org.dockbox.selene.api.events.moderation.BanEvent.PlayerBannedEvent;
+import org.dockbox.selene.api.events.moderation.BanEvent.PlayerUnbannedEvent;
+import org.dockbox.selene.api.events.moderation.KickEvent;
+import org.dockbox.selene.api.events.moderation.NoteEvent;
+import org.dockbox.selene.api.events.moderation.WarnEvent;
+import org.dockbox.selene.api.events.moderation.WarnEvent.PlayerWarnedEvent;
+import org.dockbox.selene.api.events.parents.Cancellable;
+import org.dockbox.selene.api.events.parents.Event;
+import org.dockbox.selene.api.events.player.PlayerConnectionEvent.PlayerAuthEvent;
+import org.dockbox.selene.api.events.player.PlayerConnectionEvent.PlayerJoinEvent;
+import org.dockbox.selene.api.events.player.PlayerConnectionEvent.PlayerLeaveEvent;
+import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerSwitchWorldEvent;
+import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerTeleportEvent;
+import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerWarpEvent;
+import org.dockbox.selene.api.events.player.interact.PlayerInteractEvent.PlayerInteractAirEvent;
+import org.dockbox.selene.api.events.player.interact.PlayerInteractEvent.PlayerInteractBlockEvent;
+import org.dockbox.selene.api.events.player.interact.PlayerInteractEvent.PlayerInteractEntityEvent;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.Warp;
+import org.dockbox.selene.api.objects.player.ClickType;
+import org.dockbox.selene.api.objects.player.Hand;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.entities.SpongeArmorStand;
 import org.dockbox.selene.sponge.entities.SpongeItemFrame;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
@@ -175,7 +175,7 @@ public class SpongePlayerListener
         });
     }
 
-    private static void postIfCommandSource(Object source, Consumer<org.dockbox.selene.core.command.source.CommandSource> consumer)
+    private static void postIfCommandSource(Object source, Consumer<org.dockbox.selene.api.command.source.CommandSource> consumer)
     {
         if (source instanceof CommandSource)
         {
@@ -420,7 +420,7 @@ public class SpongePlayerListener
                                          @Getter("getSource") Player player,
                                          @Getter("getTargetEntity") Entity entity)
     {
-        org.dockbox.selene.core.entities.Entity<?> targetEntity;
+        org.dockbox.selene.api.entities.Entity<?> targetEntity;
         if (entity instanceof ArmorStand) targetEntity = new SpongeArmorStand((ArmorStand) entity);
         else if (entity instanceof ItemFrame) targetEntity = new SpongeItemFrame((ItemFrame) entity);
         else return;

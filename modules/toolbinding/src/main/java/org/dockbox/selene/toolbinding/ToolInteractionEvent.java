@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.toolbinding;
 
-import org.dockbox.selene.core.events.AbstractCancellableEvent;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.player.ClickType;
-import org.dockbox.selene.core.objects.player.Hand;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.objects.player.Sneaking;
+import org.dockbox.selene.api.events.AbstractCancellableEvent;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.player.ClickType;
+import org.dockbox.selene.api.objects.player.Hand;
+import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.objects.player.Sneaking;
 
 public class ToolInteractionEvent extends AbstractCancellableEvent {
 

@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.oldplots;
 
-import org.dockbox.selene.core.WorldStorageService;
-import org.dockbox.selene.core.annotations.entity.Metadata;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.location.Location;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.api.WorldStorageService;
+import org.dockbox.selene.api.annotations.entity.Metadata;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.server.Selene;
 
 @Metadata(alias = "plot-world-model")
 public class PlotWorldModel

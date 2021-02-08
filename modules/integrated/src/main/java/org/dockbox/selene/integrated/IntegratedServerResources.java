@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.integrated;
 
-import org.dockbox.selene.core.annotations.i18n.Resources;
-import org.dockbox.selene.core.i18n.common.ResourceEntry;
-import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.i18n.entry.Resource;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.annotations.i18n.Resources;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.Resource;
+import org.dockbox.selene.api.util.SeleneUtils;
 
 @SuppressWarnings({ "StaticMethodOnlyUsedInOneClass", "ClassWithTooManyFields" })
 @Resources(module = IntegratedServer.class)

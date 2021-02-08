@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.database;
 
-import org.dockbox.selene.core.annotations.module.Module;
+import org.dockbox.selene.api.annotations.module.Module;
 
 /**
  * Registers the SQL module to Selene. While no logic happens inside this class, this does indicate to server owners

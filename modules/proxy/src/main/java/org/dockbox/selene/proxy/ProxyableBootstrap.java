@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.proxy;
 
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.SeleneInformation;
-import org.dockbox.selene.core.server.inject.InjectionPoint;
-import org.dockbox.selene.core.util.Reflect;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.SeleneInformation;
+import org.dockbox.selene.api.server.inject.InjectionPoint;
+import org.dockbox.selene.api.util.Reflect;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.proxy.annotations.Instance;
 import org.dockbox.selene.proxy.annotations.Proxy;
 import org.dockbox.selene.proxy.annotations.Proxy.Target;

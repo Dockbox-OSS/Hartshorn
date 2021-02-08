@@ -20,23 +20,23 @@ package org.dockbox.selene.sponge.util.command;
 import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.annotations.command.Command;
-import org.dockbox.selene.core.command.context.CommandValue;
-import org.dockbox.selene.core.command.context.CommandValue.Argument;
-import org.dockbox.selene.core.command.context.CommandValue.Flag;
-import org.dockbox.selene.core.command.source.CommandSource;
-import org.dockbox.selene.core.impl.command.DefaultCommandBus;
-import org.dockbox.selene.core.impl.command.context.SimpleCommandContext;
-import org.dockbox.selene.core.impl.command.registration.AbstractRegistrationContext;
-import org.dockbox.selene.core.impl.command.registration.CommandInheritanceContext;
-import org.dockbox.selene.core.impl.command.registration.MethodCommandContext;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
-import org.dockbox.selene.core.impl.command.values.AbstractFlagCollection;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.targets.Locatable;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.annotations.command.Command;
+import org.dockbox.selene.api.command.context.CommandValue;
+import org.dockbox.selene.api.command.context.CommandValue.Argument;
+import org.dockbox.selene.api.command.context.CommandValue.Flag;
+import org.dockbox.selene.api.command.source.CommandSource;
+import org.dockbox.selene.common.command.DefaultCommandBus;
+import org.dockbox.selene.common.command.context.SimpleCommandContext;
+import org.dockbox.selene.common.command.registration.AbstractRegistrationContext;
+import org.dockbox.selene.common.command.registration.CommandInheritanceContext;
+import org.dockbox.selene.common.command.registration.MethodCommandContext;
+import org.dockbox.selene.common.command.values.AbstractArgumentElement;
+import org.dockbox.selene.common.command.values.AbstractArgumentValue;
+import org.dockbox.selene.common.command.values.AbstractFlagCollection;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.targets.Locatable;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentElement;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentValue;
@@ -242,8 +242,8 @@ public class SpongeCommandBus extends DefaultCommandBus
         SimpleCommandContext seleneContext;
         if (sender instanceof Locatable)
         {
-            org.dockbox.selene.core.objects.location.Location loc = ((Locatable) sender).getLocation();
-            org.dockbox.selene.core.objects.location.World world = ((Locatable) sender).getLocation().getWorld();
+            org.dockbox.selene.api.objects.location.Location loc = ((Locatable) sender).getLocation();
+            org.dockbox.selene.api.objects.location.World world = ((Locatable) sender).getLocation().getWorld();
             seleneContext = new SimpleCommandContext(
                     command,
                     arguments.toArray(new CommandValue.Argument<?>[0]),

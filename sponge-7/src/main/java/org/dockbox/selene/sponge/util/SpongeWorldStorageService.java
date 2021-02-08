@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.core.WorldStorageService;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.location.World;
+import org.dockbox.selene.api.WorldStorageService;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.location.World;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.storage.WorldProperties;

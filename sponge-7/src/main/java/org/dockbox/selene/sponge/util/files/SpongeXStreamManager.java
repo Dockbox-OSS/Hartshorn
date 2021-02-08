@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.sponge.util.files;
 
-import org.dockbox.selene.core.impl.files.DefaultXStreamManager;
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.common.files.DefaultXStreamManager;
+import org.dockbox.selene.api.objects.Exceptional;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;

@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.util.files;
 
-import org.dockbox.selene.core.files.FileManager;
-import org.dockbox.selene.core.files.FileType;
-import org.dockbox.selene.core.impl.files.DefaultConfigurateManager;
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.api.files.FileType;
+import org.dockbox.selene.common.files.DefaultConfigurateManager;
+import org.dockbox.selene.api.objects.Exceptional;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
