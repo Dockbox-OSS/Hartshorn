@@ -32,6 +32,8 @@ import org.dockbox.selene.core.i18n.entry.IntegratedResource;
 import org.dockbox.selene.core.module.ModuleContext;
 import org.dockbox.selene.core.module.ModuleManager;
 import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.objects.item.maps.CustomMap;
+import org.dockbox.selene.core.objects.item.maps.CustomMapService;
 import org.dockbox.selene.core.objects.player.Player;
 import org.dockbox.selene.core.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.core.objects.targets.MessageReceiver;
@@ -243,6 +245,13 @@ public class IntegratedServer implements IntegratedModule
         if (player != src)
             src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED_OTHER.format(player.getName(), languageLocalized));
         player.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(languageLocalized));
+    }
+
+    @Command(aliases = "demo", usage = "demo <mapId{Int}>")
+    public static void demo(Player player, @Arg("mapId") int mapId) {
+        CustomMap map = Selene.provide(CustomMapService.class).getById(mapId);
+        player.getInventory().give(map);
+        // TODO: Verify CustomMap.of() is working correctly as well
     }
 
 }

@@ -20,15 +20,20 @@ package org.dockbox.selene.core.objects;
 import org.dockbox.selene.core.command.source.CommandSource;
 import org.dockbox.selene.core.i18n.common.ResourceEntry;
 import org.dockbox.selene.core.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.objects.targets.PermissionHolder;
 import org.dockbox.selene.core.server.Selene;
 import org.dockbox.selene.core.text.Text;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class Console implements CommandSource, PermissionHolder
+import java.util.UUID;
+
+public abstract class Console implements CommandSource, PermissionHolder, Identifiable
 {
 
     protected static Console instance;
+    @SuppressWarnings("ConstantDeclaredInAbstractClass")
+    public static final UUID UNIQUE_ID = new UUID(0, 0);
 
     protected Console()
     {
@@ -103,4 +108,17 @@ public abstract class Console implements CommandSource, PermissionHolder
         Text formattedValue = text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
         this.sendWithPrefix(formattedValue);
     }
+
+    @Override
+    public UUID getUniqueId()
+    {
+        return UNIQUE_ID;
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Console";
+    }
+
 }

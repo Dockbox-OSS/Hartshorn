@@ -26,6 +26,4 @@ public interface Identifiable
 
     String getName();
 
-    void setName(String name);
-
 }

@@ -149,6 +149,7 @@ public enum SpongeConversionUtil
     @NotNull
     public static <T> Exceptional<?> autoDetectFromSponge(T object)
     {
+
         // CommandSource, Location, World, Gamemode
         if (object instanceof org.spongepowered.api.entity.living.player.Player)
         {

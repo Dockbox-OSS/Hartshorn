@@ -15,29 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util.web;
+package org.dockbox.selene.sponge.objects.item.maps;
 
-import org.dockbox.selene.core.exceptions.FileFormatNotSupportedException;
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.structures.table.column.ColumnIdentifier;
+import org.dockbox.selene.structures.table.column.SimpleColumnIdentifier;
 
-import java.awt.image.BufferedImage;
-import java.net.URL;
+import java.util.UUID;
 
-public interface WebUtil
+public final class MapIdentifiers
 {
 
-    <T> Exceptional<T> getContent(Class<T> type, URL url);
+    public static final ColumnIdentifier<String> SOURCE = new SimpleColumnIdentifier<>("source", String.class);
+    public static final ColumnIdentifier<Integer> MAP = new SimpleColumnIdentifier<>("map", Integer.class);
 
-    <T> Exceptional<T> getContent(Class<T> type, String url);
-
-    String getContent(URL url);
-
-    String getContent(String url);
-
-    BufferedImage getImage(URL url)
-            throws FileFormatNotSupportedException;
-
-    BufferedImage getImage(String url)
-            throws FileFormatNotSupportedException;
-
+    private MapIdentifiers() {}
 }

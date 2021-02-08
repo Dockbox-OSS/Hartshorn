@@ -15,29 +15,27 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.util.web;
+package org.dockbox.selene.core.exceptions;
 
-import org.dockbox.selene.core.exceptions.FileFormatNotSupportedException;
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
 
-import java.awt.image.BufferedImage;
-import java.net.URL;
-
-public interface WebUtil
+public class FileFormatNotSupportedException extends CheckedSeleneException
 {
+    private final String format;
 
-    <T> Exceptional<T> getContent(Class<T> type, URL url);
+    public FileFormatNotSupportedException(String format, Throwable cause)
+    {
+        super("File format '" + format + "' is not supported", cause);
+        this.format = format;
+    }
 
-    <T> Exceptional<T> getContent(Class<T> type, String url);
+    public FileFormatNotSupportedException(String format)
+    {
+        this(format, null);
+    }
 
-    String getContent(URL url);
-
-    String getContent(String url);
-
-    BufferedImage getImage(URL url)
-            throws FileFormatNotSupportedException;
-
-    BufferedImage getImage(String url)
-            throws FileFormatNotSupportedException;
-
+    public String getFormat()
+    {
+        return this.format;
+    }
 }

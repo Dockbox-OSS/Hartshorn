@@ -34,8 +34,7 @@ public final class GenericKeys
 {
 
     public static final Key<AbstractIdentifiable, UUID> UNIQUE_ID = Keys.unsafeDynamicKeyOf((k, s) -> {}, AbstractIdentifiable::getUniqueId);
-    public static final Key<AbstractIdentifiable, String> NAME = Keys
-            .unsafeDynamicKeyOf(AbstractIdentifiable::setName, AbstractIdentifiable::getName);
+    public static final Key<AbstractIdentifiable, String> NAME = Keys.unsafeDynamicKeyOf((k, s) -> {}, AbstractIdentifiable::getName);
 
     public static final Key<Player, Gamemode> GAMEMODE = Keys.unsafeDynamicKeyOf(Player::setGamemode, Player::getGamemode);
     public static final Key<Player, Language> LANGUAGE = Keys.unsafeDynamicKeyOf(Player::setLanguage, Player::getLanguage);

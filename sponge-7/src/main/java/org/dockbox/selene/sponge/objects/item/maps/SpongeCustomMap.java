@@ -15,34 +15,36 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.core.objects.targets;
+package org.dockbox.selene.sponge.objects.item.maps;
 
-import org.dockbox.selene.core.objects.keys.KeyHolder;
+import org.dockbox.selene.core.objects.item.maps.CustomMap;
+import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.sponge.objects.item.SpongeItem;
+import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.item.inventory.ItemStack;
 
-import java.util.UUID;
-
-@SuppressWarnings("AbstractClassWithoutAbstractMethods") // Type is used to extract side-effects of identifiable types
-public abstract class AbstractIdentifiable<T extends AbstractIdentifiable<T>> implements Identifiable, Target, KeyHolder<T>
+public class SpongeCustomMap extends SpongeItem implements CustomMap
 {
 
-    protected UUID uniqueId;
-    protected String name;
+    private final Identifiable owner;
+    private final int mapId;
 
-    protected AbstractIdentifiable(UUID uniqueId, String name)
+    public SpongeCustomMap(@NotNull ItemStack initialValue, Identifiable owner, int mapId)
     {
-        this.uniqueId = uniqueId;
-        this.name = name;
+        super(initialValue);
+        this.owner = owner;
+        this.mapId = mapId;
     }
 
     @Override
-    public UUID getUniqueId()
+    public Identifiable getOwner()
     {
-        return this.uniqueId;
+        return this.owner;
     }
 
     @Override
-    public String getName()
+    public int getMapId()
     {
-        return this.name;
+        return this.mapId;
     }
 }

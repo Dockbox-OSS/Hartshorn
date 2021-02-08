@@ -47,12 +47,10 @@ public class SpongePlayerInventory extends PlayerInventory
 
     private static final int inventorySize = 36;
     private static final Supplier<Item> air = () -> Selene.getItems().getAir();
-    private static final Function<org.spongepowered.api.item.inventory.Slot, Item> slotLookup = slot -> {
-        return slot.peek().map(SpongeConversionUtil::fromSponge)
-                .map(referencedItem -> (Item) referencedItem)
-
-                .orElseGet(air);
-    };
+    private static final Function<org.spongepowered.api.item.inventory.Slot, Item> slotLookup = slot -> slot.peek()
+            .map(SpongeConversionUtil::fromSponge)
+            .map(referencedItem -> (Item) referencedItem)
+            .orElseGet(air);
 
     private final SpongePlayer player;
 
@@ -136,8 +134,7 @@ public class SpongePlayerInventory extends PlayerInventory
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(Slot slot)
     {
         return this.player.getSpongePlayer().map(player -> {
-            EquipmentInventory equipment = player.getInventory()
-                    .query(new InventoryTypeQueryOperation(EquipmentInventory.class));
+            EquipmentInventory equipment = ((org.spongepowered.api.item.inventory.entity.PlayerInventory) player.getInventory()).getEquipment();
             EquipmentType equipmentType = SpongeConversionUtil.toSponge(slot);
             return equipment.getSlot(equipmentType).orElse(null);
         });
