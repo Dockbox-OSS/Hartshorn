@@ -171,8 +171,10 @@ public class Registry<V>
      * @return The {@link RegistryColumn}
      */
     @SafeVarargs
-    public final RegistryColumn<V> getColumnOrCreate(RegistryIdentifier identifier, V... defaultvalues) {
-        if (!this.containsColumns(identifier)) {
+    public final RegistryColumn<V> getColumnOrCreate(RegistryIdentifier identifier, V... defaultvalues)
+    {
+        if (!this.containsColumns(identifier))
+        {
             this.addColumn(identifier, defaultvalues);
         }
         return this.getMatchingColumns(identifier);
@@ -411,7 +413,8 @@ public class Registry<V>
      *         and the values in the columns.
      */
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder builder = new StringBuilder();
         this.buildhierarchy(builder, 0);
 
@@ -426,7 +429,8 @@ public class Registry<V>
      * @param indents
      *         The depth of the registry (Caused by nested registries)
      */
-    private void buildhierarchy(StringBuilder builder, int indents) {
+    private void buildhierarchy(StringBuilder builder, int indents)
+    {
         this.data.forEach((identifier, column) -> {
             for (int i = 0; i < indents; i++) builder.append("\t");
             builder.append("- ").append(identifier).append("\n");
