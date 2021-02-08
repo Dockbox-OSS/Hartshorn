@@ -20,8 +20,10 @@ package org.dockbox.selene.core.objects.item.maps;
 import org.dockbox.selene.core.objects.item.Item;
 import org.dockbox.selene.core.objects.targets.Identifiable;
 import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.core.util.images.MultiSizedImage;
 
 import java.awt.image.BufferedImage;
+import java.util.Map;
 
 public interface CustomMap extends Item
 {
@@ -36,6 +38,11 @@ public interface CustomMap extends Item
     }
 
     static CustomMap of(byte[] image, Identifiable source)
+    {
+        return Selene.provide(CustomMapService.class).create(image, source);
+    }
+
+    static Map<Integer[], CustomMap> of(MultiSizedImage image, Identifiable source)
     {
         return Selene.provide(CustomMapService.class).create(image, source);
     }
