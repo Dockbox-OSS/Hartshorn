@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.text.navigation;
 
-import org.dockbox.selene.core.objects.targets.MessageReceiver;
-import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.text.pagination.Pagination;
+import org.dockbox.selene.api.objects.targets.MessageReceiver;
+import org.dockbox.selene.api.text.Text;
+import org.dockbox.selene.api.text.pagination.Pagination;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

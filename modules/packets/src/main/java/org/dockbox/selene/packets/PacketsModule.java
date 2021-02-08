@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.packets;
 
-import org.dockbox.selene.core.annotations.module.Module;
+import org.dockbox.selene.api.annotations.module.Module;
 
 @Module(id = "packets", name = "Packets", description = "Provides additional packets to the Packet API", authors = "GuusLieben")
 public class PacketsModule

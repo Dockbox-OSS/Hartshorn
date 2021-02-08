@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.packets;
 
-import org.dockbox.selene.core.annotations.RequiresBinding;
-import org.dockbox.selene.core.entities.Entity;
-import org.dockbox.selene.core.objects.Packet;
+import org.dockbox.selene.api.annotations.RequiresBinding;
+import org.dockbox.selene.api.entities.Entity;
+import org.dockbox.selene.api.objects.Packet;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 @RequiresBinding

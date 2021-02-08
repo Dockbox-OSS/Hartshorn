@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
-import org.dockbox.selene.core.command.context.ArgumentConverter;
-import org.dockbox.selene.core.impl.command.convert.ArgumentConverterRegistry;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.api.command.context.ArgumentConverter;
+import org.dockbox.selene.common.command.convert.ArgumentConverterRegistry;
+import org.dockbox.selene.common.command.values.AbstractArgumentValue;
+import org.dockbox.selene.api.server.Selene;
 import org.jetbrains.annotations.NonNls;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;

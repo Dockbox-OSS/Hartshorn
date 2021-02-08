@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.external;
 
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.Wrapper;
-import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.tuple.Vector3N;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.Wrapper;
+import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.worldedit.region.Region;
 import org.jetbrains.annotations.NotNull;

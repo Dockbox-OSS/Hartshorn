@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.worldedit.region;
 
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.objects.tuple.Vector3N;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.objects.tuple.Vector3N;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.worldedit.WorldEditService;
 
 import java.util.Collection;

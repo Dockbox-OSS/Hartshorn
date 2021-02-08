@@ -21,9 +21,9 @@ import com.google.common.collect.Multimap;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
-import org.dockbox.selene.core.objects.profile.Profile;
-import org.dockbox.selene.core.objects.tuple.Tuple;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.objects.profile.Profile;
+import org.dockbox.selene.api.objects.tuple.Tuple;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.profile.property.ProfileProperty;
 

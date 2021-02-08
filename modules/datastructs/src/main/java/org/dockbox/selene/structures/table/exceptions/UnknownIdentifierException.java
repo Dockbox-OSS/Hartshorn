@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.structures.table.exceptions;
 
-import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
+import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
 
 public class UnknownIdentifierException extends UncheckedSeleneException
 {

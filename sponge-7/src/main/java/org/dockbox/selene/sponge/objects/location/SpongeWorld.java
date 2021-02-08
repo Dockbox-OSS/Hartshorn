@@ -19,12 +19,12 @@ package org.dockbox.selene.sponge.objects.location;
 
 import com.flowpowered.math.vector.Vector3i;
 
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.Wrapper;
-import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.objects.player.Gamemode;
-import org.dockbox.selene.core.objects.tuple.Vector3N;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.Wrapper;
+import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.player.Gamemode;
+import org.dockbox.selene.api.objects.tuple.Vector3N;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;

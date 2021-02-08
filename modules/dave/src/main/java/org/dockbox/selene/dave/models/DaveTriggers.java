@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.dave.models;
 
-import org.dockbox.selene.core.annotations.entity.Metadata;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.annotations.entity.Metadata;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.dave.DaveUtils;
 import org.jetbrains.annotations.NonNls;
 

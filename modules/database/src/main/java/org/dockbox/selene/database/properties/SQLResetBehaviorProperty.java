@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.database.properties;
 
-import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
 
 public class SQLResetBehaviorProperty implements InjectorProperty<Boolean>
 {

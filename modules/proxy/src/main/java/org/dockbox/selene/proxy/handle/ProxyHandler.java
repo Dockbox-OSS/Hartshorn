@@ -20,7 +20,7 @@ package org.dockbox.selene.proxy.handle;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.proxy.ProxyProperty;
 
 import java.lang.reflect.InvocationTargetException;

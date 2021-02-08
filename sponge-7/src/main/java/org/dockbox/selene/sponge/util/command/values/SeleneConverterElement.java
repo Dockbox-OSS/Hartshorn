@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
-import org.dockbox.selene.core.command.context.ArgumentConverter;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.command.context.ArgumentConverter;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

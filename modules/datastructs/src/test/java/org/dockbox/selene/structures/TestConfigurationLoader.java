@@ -20,7 +20,7 @@
  */
 package org.dockbox.selene.structures;
 
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.api.server.Selene;
 import org.mockito.Mockito;
 import org.spongepowered.configurate.BasicConfigurationNode;
 import org.spongepowered.configurate.ConfigurationNode;

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.proxy;
 
-import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.proxy.handle.Phase;
 import org.dockbox.selene.proxy.handle.ProxyFunction;
 import org.dockbox.selene.proxy.handle.ProxyHolder;

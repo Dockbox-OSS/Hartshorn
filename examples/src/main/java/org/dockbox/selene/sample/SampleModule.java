@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.sample;
 
-import org.dockbox.selene.core.annotations.event.Listener;
-import org.dockbox.selene.core.annotations.event.filter.Packet;
-import org.dockbox.selene.core.annotations.module.Module;
-import org.dockbox.selene.core.events.packet.PacketEvent;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.api.annotations.event.Listener;
+import org.dockbox.selene.api.annotations.event.filter.Packet;
+import org.dockbox.selene.api.annotations.module.Module;
+import org.dockbox.selene.api.events.packet.PacketEvent;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.packets.ChangeGameStatePacket;
 
 @Module(id = "sample", name = "Selene Sample Module", description = "A sample module, providing examples on various tasks",

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.composite;
 
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataView;
@@ -25,7 +25,6 @@ import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
 import org.spongepowered.api.data.persistence.InvalidDataException;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 

@@ -20,10 +20,10 @@ package org.dockbox.selene.sponge.entities;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.location.Location;
-import org.dockbox.selene.core.objects.location.World;
-import org.dockbox.selene.core.text.Text;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.nms.entities.NMSEntity;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
@@ -49,12 +49,12 @@ import java.util.UUID;
  * @param <T>
  *         The native Minecraft {@link Entity} type to represent
  * @param <E>
- *         The internal Selene {@link org.dockbox.selene.core.entities.Entity} type to represent
+ *         The internal Selene {@link org.dockbox.selene.api.entities.Entity} type to represent
  */
 public abstract class SpongeEntity
-        <T extends Entity, E extends org.dockbox.selene.core.entities.Entity<E>>
+        <T extends Entity, E extends org.dockbox.selene.api.entities.Entity<E>>
         extends NMSEntity<T>
-        implements org.dockbox.selene.core.entities.Entity<E>, SpongeComposite
+        implements org.dockbox.selene.api.entities.Entity<E>, SpongeComposite
 {
 
     @SuppressWarnings("unchecked")
@@ -253,7 +253,7 @@ public abstract class SpongeEntity
     }
 
     /**
-     * Creates a new instance of {@link org.dockbox.selene.core.entities.Entity}, representing a native {@link org.spongepowered.api.entity.Entity}.
+     * Creates a new instance of {@link org.dockbox.selene.api.entities.Entity}, representing a native {@link org.spongepowered.api.entity.Entity}.
      *
      * @param clone
      *         The native entity to create the instance from

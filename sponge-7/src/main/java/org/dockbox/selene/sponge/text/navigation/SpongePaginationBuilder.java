@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.sponge.text.navigation;
 
-import org.dockbox.selene.core.text.pagination.Pagination;
-import org.dockbox.selene.core.text.pagination.PaginationBuilder;
+import org.dockbox.selene.api.text.pagination.Pagination;
+import org.dockbox.selene.api.text.pagination.PaginationBuilder;
 import org.jetbrains.annotations.NotNull;
 
 public class SpongePaginationBuilder extends PaginationBuilder

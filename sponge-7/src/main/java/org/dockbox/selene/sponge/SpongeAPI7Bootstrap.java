@@ -23,18 +23,18 @@ import com.google.inject.Inject;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
-import org.dockbox.selene.core.DiscordUtils;
-import org.dockbox.selene.core.MinecraftVersion;
-import org.dockbox.selene.core.PlayerStorageService;
-import org.dockbox.selene.core.events.EventBus;
-import org.dockbox.selene.core.events.packet.PacketEvent;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.Packet;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.ServerType;
-import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
-import org.dockbox.selene.core.util.Reflect;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.DiscordUtils;
+import org.dockbox.selene.api.MinecraftVersion;
+import org.dockbox.selene.api.PlayerStorageService;
+import org.dockbox.selene.api.events.EventBus;
+import org.dockbox.selene.api.events.packet.PacketEvent;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.Packet;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.ServerType;
+import org.dockbox.selene.api.server.bootstrap.SeleneBootstrap;
+import org.dockbox.selene.api.util.Reflect;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
 import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
@@ -196,7 +196,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap
             if (Reflect.isAssignableFrom(PacketEvent.class, eventWrapper.getEventType()))
             {
                 Class<? extends Packet> packet = eventWrapper.getMethod()
-                        .getAnnotation(org.dockbox.selene.core.annotations.event.filter.Packet.class).value();
+                        .getAnnotation(org.dockbox.selene.api.annotations.event.filter.Packet.class).value();
 
                 // Adapters post the event globally, so we only need to register it once. This also avoids double-posting of the same event.
                 if (!adaptedPackets.contains(packet))

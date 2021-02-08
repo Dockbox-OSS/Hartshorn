@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.database.dialects.sqlite;
 
-import org.dockbox.selene.core.objects.keys.Keys;
-import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.api.objects.keys.Keys;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.jooq.SQLDialect;

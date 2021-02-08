@@ -17,23 +17,23 @@
 
 package org.dockbox.selene.dave;
 
-import org.dockbox.selene.core.annotations.command.Command;
-import org.dockbox.selene.core.annotations.event.Listener;
-import org.dockbox.selene.core.annotations.module.Module;
-import org.dockbox.selene.core.command.context.CommandContext;
-import org.dockbox.selene.core.command.source.CommandSource;
-import org.dockbox.selene.core.events.chat.SendChatEvent;
-import org.dockbox.selene.core.events.server.ServerEvent.ServerReloadEvent;
-import org.dockbox.selene.core.files.FileManager;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.properties.InjectableType;
-import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.tasks.TaskRunner;
-import org.dockbox.selene.core.text.actions.ClickAction;
-import org.dockbox.selene.core.text.actions.HoverAction;
-import org.dockbox.selene.core.text.pagination.PaginationBuilder;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.annotations.command.Command;
+import org.dockbox.selene.api.annotations.event.Listener;
+import org.dockbox.selene.api.annotations.module.Module;
+import org.dockbox.selene.api.command.context.CommandContext;
+import org.dockbox.selene.api.command.source.CommandSource;
+import org.dockbox.selene.api.events.chat.SendChatEvent;
+import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
+import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.properties.InjectableType;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
+import org.dockbox.selene.api.tasks.TaskRunner;
+import org.dockbox.selene.api.text.actions.ClickAction;
+import org.dockbox.selene.api.text.actions.HoverAction;
+import org.dockbox.selene.api.text.pagination.PaginationBuilder;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.dave.models.DaveTriggers;
 
 import java.nio.file.Path;

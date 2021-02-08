@@ -17,16 +17,16 @@
 
 package org.dockbox.selene.sponge.inventory.builder;
 
-import org.dockbox.selene.core.inventory.Element;
-import org.dockbox.selene.core.inventory.InventoryLayout;
-import org.dockbox.selene.core.inventory.builder.PaginatedPaneBuilder;
-import org.dockbox.selene.core.inventory.pane.PaginatedPane;
-import org.dockbox.selene.core.inventory.properties.InventoryTypeProperty;
-import org.dockbox.selene.core.objects.keys.Keys;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.inventory.Element;
+import org.dockbox.selene.api.inventory.InventoryLayout;
+import org.dockbox.selene.api.inventory.builder.PaginatedPaneBuilder;
+import org.dockbox.selene.api.inventory.pane.PaginatedPane;
+import org.dockbox.selene.api.inventory.properties.InventoryTypeProperty;
+import org.dockbox.selene.api.objects.keys.Keys;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
+import org.dockbox.selene.api.text.Text;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.SpongeAPI7Bootstrap;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.inventory.pane.SpongePaginatedPane;

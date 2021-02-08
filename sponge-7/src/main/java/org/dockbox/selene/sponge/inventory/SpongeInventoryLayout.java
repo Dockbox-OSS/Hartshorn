@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.inventory;
 
-import org.dockbox.selene.core.inventory.Element;
-import org.dockbox.selene.core.inventory.InventoryLayout;
-import org.dockbox.selene.core.inventory.InventoryType;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.inventory.Element;
+import org.dockbox.selene.api.inventory.InventoryLayout;
+import org.dockbox.selene.api.inventory.InventoryType;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
 import java.util.Map;

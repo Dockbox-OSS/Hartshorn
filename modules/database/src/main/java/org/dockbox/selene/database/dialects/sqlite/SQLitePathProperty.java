@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.database.dialects.sqlite;
 
-import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
 
 import java.nio.file.Path;
 

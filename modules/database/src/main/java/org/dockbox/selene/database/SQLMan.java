@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.database;
 
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.keys.Keys;
-import org.dockbox.selene.core.objects.tuple.Tuple;
-import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.keys.Keys;
+import org.dockbox.selene.api.objects.tuple.Tuple;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.database.exceptions.NoSuchTableException;
 import org.dockbox.selene.database.properties.SQLColumnProperty;
@@ -36,7 +36,6 @@ import org.jooq.Field;
 import org.jooq.InsertValuesStepN;
 import org.jooq.Record;
 import org.jooq.Result;
-import org.jooq.RowCountQuery;
 import org.jooq.SQLDialect;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;

@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.structures.registry;
 
-import org.dockbox.selene.core.annotations.Rejects;
-import org.dockbox.selene.core.impl.files.DefaultConfigurateManager;
+import org.dockbox.selene.api.annotations.Rejects;
+import org.dockbox.selene.common.files.DefaultConfigurateManager;
 
 @Rejects(DefaultConfigurateManager.class)
 public interface RegistryIdentifier

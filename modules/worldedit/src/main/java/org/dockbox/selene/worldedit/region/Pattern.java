@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.worldedit.region;
 
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.worldedit.WorldEditService;
 
 public interface Pattern

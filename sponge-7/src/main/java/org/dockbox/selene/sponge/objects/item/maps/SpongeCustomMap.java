@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.sponge.objects.item.maps;
 
-import org.dockbox.selene.core.objects.item.maps.CustomMap;
-import org.dockbox.selene.core.objects.targets.Identifiable;
+import org.dockbox.selene.api.objects.item.maps.CustomMap;
+import org.dockbox.selene.api.objects.targets.Identifiable;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.item.inventory.ItemStack;

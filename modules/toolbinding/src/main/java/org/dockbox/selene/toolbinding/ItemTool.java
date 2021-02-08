@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.toolbinding;
 
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.player.ClickType;
-import org.dockbox.selene.core.objects.player.Hand;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.objects.player.Sneaking;
-import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.player.ClickType;
+import org.dockbox.selene.api.objects.player.Hand;
+import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.objects.player.Sneaking;
+import org.dockbox.selene.api.text.Text;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.List;

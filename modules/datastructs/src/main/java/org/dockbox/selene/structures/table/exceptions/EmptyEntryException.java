@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.structures.table.exceptions;
 
-import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
+import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
 
 public class EmptyEntryException extends CheckedSeleneException
 {

@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.structures;
 
-import org.dockbox.selene.core.files.FileManager;
-import org.dockbox.selene.core.impl.files.serialize.SeleneTypeSerializers;
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.common.files.serialize.SeleneTypeSerializers;
+import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.structures.registry.Registry;
 import org.dockbox.selene.structures.registry.RegistryColumn;
 import org.dockbox.selene.structures.registry.TestIdentifier;

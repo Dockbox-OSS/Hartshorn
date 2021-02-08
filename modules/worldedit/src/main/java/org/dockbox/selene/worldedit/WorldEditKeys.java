@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.worldedit;
 
-import org.dockbox.selene.core.objects.keys.Key;
-import org.dockbox.selene.core.objects.keys.Keys;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.api.objects.keys.Key;
+import org.dockbox.selene.api.objects.keys.Keys;
+import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.worldedit.region.Clipboard;
 import org.dockbox.selene.worldedit.region.Region;
 

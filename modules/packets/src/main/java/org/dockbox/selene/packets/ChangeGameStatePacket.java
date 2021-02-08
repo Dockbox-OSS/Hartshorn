@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.packets;
 
-import org.dockbox.selene.core.annotations.RequiresBinding;
-import org.dockbox.selene.core.objects.Packet;
+import org.dockbox.selene.api.annotations.RequiresBinding;
+import org.dockbox.selene.api.objects.Packet;
 import org.dockbox.selene.packets.data.Weather;
 
 @RequiresBinding

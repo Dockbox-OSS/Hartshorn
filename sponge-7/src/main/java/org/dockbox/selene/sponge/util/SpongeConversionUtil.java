@@ -30,37 +30,37 @@ import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 
-import org.dockbox.selene.core.WorldStorageService;
-import org.dockbox.selene.core.command.source.CommandSource;
-import org.dockbox.selene.core.entities.ItemFrame;
-import org.dockbox.selene.core.events.world.WorldEvent.WorldCreatingProperties;
-import org.dockbox.selene.core.exceptions.TypeConversionException;
-import org.dockbox.selene.core.exceptions.global.CheckedSeleneException;
-import org.dockbox.selene.core.exceptions.global.UncheckedSeleneException;
-import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
-import org.dockbox.selene.core.inventory.InventoryType;
-import org.dockbox.selene.core.objects.Console;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.bossbar.BossbarColor;
-import org.dockbox.selene.core.objects.bossbar.BossbarStyle;
-import org.dockbox.selene.core.objects.inventory.Slot;
-import org.dockbox.selene.core.objects.item.Enchant;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.location.BlockFace;
-import org.dockbox.selene.core.objects.location.Warp;
-import org.dockbox.selene.core.objects.player.Gamemode;
-import org.dockbox.selene.core.objects.player.Hand;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.objects.special.Sounds;
-import org.dockbox.selene.core.objects.targets.Identifiable;
-import org.dockbox.selene.core.objects.tuple.Vector3N;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.text.actions.ClickAction;
-import org.dockbox.selene.core.text.actions.HoverAction;
-import org.dockbox.selene.core.text.actions.ShiftClickAction;
-import org.dockbox.selene.core.text.pagination.Pagination;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.WorldStorageService;
+import org.dockbox.selene.api.command.source.CommandSource;
+import org.dockbox.selene.api.entities.ItemFrame;
+import org.dockbox.selene.api.events.world.WorldEvent.WorldCreatingProperties;
+import org.dockbox.selene.api.exceptions.TypeConversionException;
+import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
+import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
+import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.common.objects.item.ReferencedItem;
+import org.dockbox.selene.api.inventory.InventoryType;
+import org.dockbox.selene.api.objects.Console;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.bossbar.BossbarColor;
+import org.dockbox.selene.api.objects.bossbar.BossbarStyle;
+import org.dockbox.selene.api.objects.inventory.Slot;
+import org.dockbox.selene.api.objects.item.Enchant;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.location.BlockFace;
+import org.dockbox.selene.api.objects.location.Warp;
+import org.dockbox.selene.api.objects.player.Gamemode;
+import org.dockbox.selene.api.objects.player.Hand;
+import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.objects.special.Sounds;
+import org.dockbox.selene.api.objects.targets.Identifiable;
+import org.dockbox.selene.api.objects.tuple.Vector3N;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.text.actions.ClickAction;
+import org.dockbox.selene.api.text.actions.HoverAction;
+import org.dockbox.selene.api.text.actions.ShiftClickAction;
+import org.dockbox.selene.api.text.pagination.Pagination;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.external.WrappedMask;
 import org.dockbox.selene.sponge.external.WrappedPattern;
 import org.dockbox.selene.sponge.external.WrappedRegion;
@@ -244,9 +244,9 @@ public enum SpongeConversionUtil
     }
 
     @NotNull
-    public static Text toSponge(org.dockbox.selene.core.text.Text message)
+    public static Text toSponge(org.dockbox.selene.api.text.Text message)
     {
-        Iterable<org.dockbox.selene.core.text.Text> parts = message.getParts();
+        Iterable<org.dockbox.selene.api.text.Text> parts = message.getParts();
         Text.Builder b = Text.builder();
         parts.forEach(part -> {
             Text.Builder pb = Text.builder();
@@ -276,7 +276,7 @@ public enum SpongeConversionUtil
         Object result = action.getResult();
         if (action instanceof ShiftClickAction.InsertText)
         {
-            return Exceptional.of(TextActions.insertText(((org.dockbox.selene.core.text.Text) result).toPlain()));
+            return Exceptional.of(TextActions.insertText(((org.dockbox.selene.api.text.Text) result).toPlain()));
         }
         return Exceptional.empty();
     }
@@ -288,7 +288,7 @@ public enum SpongeConversionUtil
         Object result = action.getResult();
         if (action instanceof HoverAction.ShowText)
         {
-            return Exceptional.of(TextActions.showText(toSponge(((org.dockbox.selene.core.text.Text) result))));
+            return Exceptional.of(TextActions.showText(toSponge(((org.dockbox.selene.api.text.Text) result))));
         }
         return Exceptional.empty();
     }
@@ -332,7 +332,7 @@ public enum SpongeConversionUtil
     }
 
     @NotNull
-    public static Exceptional<Location<World>> toSponge(org.dockbox.selene.core.objects.location.Location location)
+    public static Exceptional<Location<World>> toSponge(org.dockbox.selene.api.objects.location.Location location)
     {
         Exceptional<World> world = toSponge(location.getWorld());
         if (world.errorPresent()) return Exceptional.of(world.getError());
@@ -343,7 +343,7 @@ public enum SpongeConversionUtil
     }
 
     @NotNull
-    public static Exceptional<World> toSponge(org.dockbox.selene.core.objects.location.World world)
+    public static Exceptional<World> toSponge(org.dockbox.selene.api.objects.location.World world)
     {
         if (world instanceof SpongeWorld)
         {
@@ -362,7 +362,7 @@ public enum SpongeConversionUtil
         {
             String id = enchantment.getType().getId();
             int level = enchantment.getLevel();
-            Enchant enchant = new Enchant(org.dockbox.selene.core.objects.item.Enchantment.valueOf(id.toUpperCase()), level);
+            Enchant enchant = new Enchant(org.dockbox.selene.api.objects.item.Enchantment.valueOf(id.toUpperCase()), level);
             return Exceptional.of(enchant);
         }
         catch (IllegalArgumentException | NullPointerException e)
@@ -398,13 +398,13 @@ public enum SpongeConversionUtil
     }
 
     @NotNull
-    public static org.dockbox.selene.core.text.Text fromSponge(Text text)
+    public static org.dockbox.selene.api.text.Text fromSponge(Text text)
     {
         String style = fromSponge(text.getFormat().getStyle());
         String color = fromSponge(text.getFormat().getColor());
         String value = text.toPlainSingle();
 
-        org.dockbox.selene.core.text.Text t = org.dockbox.selene.core.text.Text.of(color + style + value);
+        org.dockbox.selene.api.text.Text t = org.dockbox.selene.api.text.Text.of(color + style + value);
 
         text.getClickAction().map(SpongeConversionUtil::fromSponge)
                 .ifPresent(action -> action.ifPresent(t::onClick));
@@ -422,7 +422,7 @@ public enum SpongeConversionUtil
     {
         if (shiftClickAction instanceof InsertText)
         {
-            return Exceptional.of(ShiftClickAction.insertText(org.dockbox.selene.core.text.Text.of(
+            return Exceptional.of(ShiftClickAction.insertText(org.dockbox.selene.api.text.Text.of(
                     ((InsertText) shiftClickAction).getResult()))
             );
         }
@@ -473,12 +473,12 @@ public enum SpongeConversionUtil
 
     private static String fromSponge(TextColor color)
     {
-        return org.dockbox.selene.core.text.Text.sectionSymbol + textColors.getOrDefault(color, 'f') + "";
+        return org.dockbox.selene.api.text.Text.sectionSymbol + textColors.getOrDefault(color, 'f') + "";
     }
 
     private static String fromSponge(TextStyle style)
     {
-        final char styleChar = org.dockbox.selene.core.text.Text.sectionSymbol;
+        final char styleChar = org.dockbox.selene.api.text.Text.sectionSymbol;
         String styleString = styleChar + "r";
         if (SeleneUtils.unwrap(style.isBold())) styleString += styleChar + 'l';
         if (SeleneUtils.unwrap(style.isItalic())) styleString += styleChar + 'o';
@@ -531,9 +531,9 @@ public enum SpongeConversionUtil
 
     public static Warp fromSponge(io.github.nucleuspowered.nucleus.api.nucleusdata.Warp warp)
     {
-        org.dockbox.selene.core.objects.location.Location location = warp.getLocation()
+        org.dockbox.selene.api.objects.location.Location location = warp.getLocation()
                 .map(SpongeConversionUtil::fromSponge)
-                .orElse(org.dockbox.selene.core.objects.location.Location.empty());
+                .orElse(org.dockbox.selene.api.objects.location.Location.empty());
 
         return new Warp(
                 Exceptional.of(warp.getDescription().map(Text::toString)),
@@ -544,20 +544,20 @@ public enum SpongeConversionUtil
     }
 
     @NotNull
-    public static org.dockbox.selene.core.objects.location.Location fromSponge(Location<World> location)
+    public static org.dockbox.selene.api.objects.location.Location fromSponge(Location<World> location)
     {
-        org.dockbox.selene.core.objects.location.World world = fromSponge(location.getExtent());
+        org.dockbox.selene.api.objects.location.World world = fromSponge(location.getExtent());
         Vector3N vector3N = new Vector3N(location.getX(), location.getY(), location.getZ());
-        return new org.dockbox.selene.core.objects.location.Location(vector3N, world);
+        return new org.dockbox.selene.api.objects.location.Location(vector3N, world);
     }
 
     @NotNull
-    public static org.dockbox.selene.core.objects.location.World fromSponge(World world)
+    public static org.dockbox.selene.api.objects.location.World fromSponge(World world)
     {
         Vector3i vector3i = world.getProperties().getSpawnPosition();
         Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
 
-        org.dockbox.selene.core.objects.location.World spongeWorld = new SpongeWorld(
+        org.dockbox.selene.api.objects.location.World spongeWorld = new SpongeWorld(
                 world.getUniqueId(),
                 world.getName(),
                 world.getProperties().loadOnStartup(),
@@ -576,7 +576,7 @@ public enum SpongeConversionUtil
         throw new UncheckedSeleneException("Invalid value in context '" + handType + "'");
     }
 
-    public static Element toSponge(org.dockbox.selene.core.inventory.Element element)
+    public static Element toSponge(org.dockbox.selene.api.inventory.Element element)
     {
         if (element instanceof SpongeElement)
         {
@@ -606,10 +606,10 @@ public enum SpongeConversionUtil
         return new SpongePlayer(player.getUniqueId(), player.getName());
     }
 
-    public static org.dockbox.selene.core.inventory.Element fromSponge(Element element)
+    public static org.dockbox.selene.api.inventory.Element fromSponge(Element element)
     {
         Item item = fromSponge(element.getItem().createStack());
-        return org.dockbox.selene.core.inventory.Element.of(item); // Action is skipped here
+        return org.dockbox.selene.api.inventory.Element.of(item); // Action is skipped here
     }
 
     @NotNull
@@ -660,7 +660,7 @@ public enum SpongeConversionUtil
         }
     }
 
-    public static com.sk89q.worldedit.world.World toWorldEdit(org.dockbox.selene.core.objects.location.World world)
+    public static com.sk89q.worldedit.world.World toWorldEdit(org.dockbox.selene.api.objects.location.World world)
     {
         return SpongeWorldEdit.inst().getAdapter().getWorld(toSponge(world).orNull());
     }
@@ -684,7 +684,7 @@ public enum SpongeConversionUtil
         return new Vector3N(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public static org.dockbox.selene.core.objects.location.World fromWorldEdit(com.sk89q.worldedit.world.World world)
+    public static org.dockbox.selene.api.objects.location.World fromWorldEdit(com.sk89q.worldedit.world.World world)
     {
         return Selene.provide(WorldStorageService.class).getWorld(world.getName()).orNull();
     }

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
+import org.dockbox.selene.common.command.values.AbstractArgumentElement;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
 

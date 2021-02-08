@@ -17,24 +17,23 @@
 
 package org.dockbox.selene.sponge.objects.item.maps;
 
-import org.dockbox.selene.core.PlayerStorageService;
-import org.dockbox.selene.core.annotations.files.Format;
-import org.dockbox.selene.core.files.FileManager;
-import org.dockbox.selene.core.impl.objects.item.DefaultCustomMapService;
-import org.dockbox.selene.core.objects.Console;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.item.maps.CustomMap;
-import org.dockbox.selene.core.objects.targets.Identifiable;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.properties.AnnotationProperty;
+import org.dockbox.selene.api.PlayerStorageService;
+import org.dockbox.selene.api.annotations.files.Format;
+import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.common.objects.item.DefaultCustomMapService;
+import org.dockbox.selene.api.objects.Console;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.item.maps.CustomMap;
+import org.dockbox.selene.api.objects.targets.Identifiable;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.properties.AnnotationProperty;
 import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.dialects.sqlite.SQLitePathProperty;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.database.exceptions.NoSuchTableException;
 import org.dockbox.selene.nms.maps.NMSMapUtils;
 import org.dockbox.selene.structures.table.Table;
-import org.dockbox.selene.structures.table.TableRow;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.item.ItemTypes;

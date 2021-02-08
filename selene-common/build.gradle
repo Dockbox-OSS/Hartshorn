@@ -19,7 +19,7 @@ plugins {
     id 'java'
 }
 
-group = 'org.dockbox.selene.core.impl'
+group = 'org.dockbox.selene.common'
 description = 'Default implementations for Selene'
 
 repositories {

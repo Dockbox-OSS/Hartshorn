@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.dave.models;
 
-import org.dockbox.selene.core.annotations.entity.Metadata;
+import org.dockbox.selene.api.annotations.entity.Metadata;
 
 @Metadata(alias = "dave-response")
 public class DaveResponse
