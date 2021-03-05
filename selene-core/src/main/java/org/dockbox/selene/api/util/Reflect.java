@@ -18,6 +18,9 @@
 package org.dockbox.selene.api.util;
 
 import org.dockbox.selene.api.annotations.Rejects;
+import org.dockbox.selene.api.annotations.entity.Accessor;
+import org.dockbox.selene.api.annotations.entity.Extract;
+import org.dockbox.selene.api.annotations.entity.Extract.Behavior;
 import org.dockbox.selene.api.annotations.entity.Ignore;
 import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.annotations.entity.Property;
@@ -51,6 +54,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({ "unused", "OverlyComplexClass" })
 public final class Reflect
@@ -76,10 +80,27 @@ public final class Reflect
         {
             Field declaredField = fieldHolder.getDeclaredField(field);
             declaredField.setAccessible(true);
-            T value = (T) declaredField.get(instance);
+            T value = (T) getFieldValue(declaredField, instance);
             return Exceptional.of(value);
         }
         catch (ClassCastException | ReflectiveOperationException e)
+        {
+            return Exceptional.of(e);
+        }
+    }
+
+    public static Exceptional<?> getFieldValue(Field field, Object instance) {
+        if (field.isAnnotationPresent(Accessor.class)) {
+            Accessor accessor = field.getAnnotation(Accessor.class);
+            if (!accessor.getter().equals("")) {
+                return getMethodValue(instance, accessor.getter(), field.getType());
+            }
+        }
+        try
+        {
+            return Exceptional.of(field.get(instance));
+        }
+        catch (IllegalAccessException | IllegalArgumentException e)
         {
             return Exceptional.of(e);
         }
@@ -899,4 +920,60 @@ public final class Reflect
             Reflect.forEachFieldIn(type.getSuperclass(), consumer);
     }
 
+    public static Collection<Field> getAccessibleFields(Class<?> type)
+    {
+        if (type.isAnnotationPresent(Extract.class))
+        {
+            Extract extract = type.getAnnotation(Extract.class);
+            Behavior behavior = extract.value();
+            if (behavior == Behavior.KEEP)
+            {
+                return getAllNonSkippedFields(type);
+            }
+            else if (behavior == Behavior.SKIP) return getAllKeptFields(type);
+            else throw new IllegalArgumentException("Unsupported behavior " + behavior);
+        } else return getAllKeptFields(type);
+    }
+
+    private static Collection<Field> getAllKeptFields(Class<?> type)
+    {
+        return Arrays.stream(type.getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(Extract.class))
+                .filter(field -> field.getAnnotation(Extract.class).value() == Behavior.KEEP)
+                .collect(Collectors.toSet());
+    }
+
+    private static Collection<Field> getAllNonSkippedFields(Class<?> type) {
+        Collection<Field> fields = SeleneUtils.emptySet();
+        for (Field field : type.getDeclaredFields())
+        {
+            if (field.isAnnotationPresent(Extract.class)) {
+                Extract extract = field.getAnnotation(Extract.class);
+                if (extract.value() == Behavior.KEEP) fields.add(field);
+            } else if (!field.isAnnotationPresent(Ignore.class)) {
+                fields.add(field);
+            }
+        }
+        return fields;
+    }
+
+    public static void setFieldValue(Field field, Object to, Object value)
+    {
+        try
+        {
+            if (field.isAnnotationPresent(Accessor.class))
+            {
+                Accessor accessor = field.getAnnotation(Accessor.class);
+                Method setter = to.getClass().getDeclaredMethod(accessor.setter(), value.getClass());
+                setter.setAccessible(true);
+                setter.invoke(to, value);
+                return;
+            }
+            field.set(to, value);
+        }
+        catch (IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e)
+        {
+            Selene.handle(e);
+        }
+    }
 }
