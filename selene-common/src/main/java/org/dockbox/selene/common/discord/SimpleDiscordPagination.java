@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.selene.api.discord.DiscordPagination;
 import org.dockbox.selene.api.discord.DiscordUtils;
+import org.dockbox.selene.api.discord.templates.MessageTemplate;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.util.SeleneUtils;
@@ -86,34 +87,12 @@ public class SimpleDiscordPagination implements DiscordPagination
     }
 
     @Override
-    public DiscordPagination addPages(Message... messages)
+    public DiscordPagination addPage(MessageTemplate... templates)
     {
-        for (Message message : messages)
-            this.addPage(message);
-        return this;
-    }
-
-    @Override
-    public DiscordPagination addPages(MessageEmbed... embeds)
-    {
-        for (MessageEmbed embed : embeds)
-            this.addPage(embed);
-        return this;
-    }
-
-    @Override
-    public DiscordPagination addPages(String... messages)
-    {
-        for (String message : messages)
-            this.addPage(message);
-        return this;
-    }
-
-    @Override
-    public DiscordPagination addPages(Text... messages)
-    {
-        for (Text message : messages)
-            this.addPage(message);
+        for (MessageTemplate template : templates)
+        {
+            this.addPage(template.getJDAMessage());
+        }
         return this;
     }
 

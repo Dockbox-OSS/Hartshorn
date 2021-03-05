@@ -63,13 +63,13 @@ public class SimpleMessageTemplate implements MessageTemplate
     @Override
     public void formatPlaceholder(String key, Object value)
     {
-        this.filledPlaceholders.put(key, String.valueOf(value));
+        this.filledPlaceholders.put('{' + key + '}', String.valueOf(value));
     }
 
     @Override
     public void formatPlaceholders(Map<String, String> values)
     {
-        this.filledPlaceholders.putAll(values);
+        values.forEach(this::formatPlaceholder);
     }
 
     @Override

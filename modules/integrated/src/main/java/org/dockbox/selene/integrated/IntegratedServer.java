@@ -29,6 +29,7 @@ import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.context.CommandValue.Argument;
 import org.dockbox.selene.api.discord.DiscordPagination;
 import org.dockbox.selene.api.discord.DiscordUtils;
+import org.dockbox.selene.api.discord.templates.MessageTemplate;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.api.i18n.common.Language;
@@ -251,10 +252,19 @@ public class IntegratedServer implements IntegratedModule
 
     @Command(aliases = "demo", usage = "demo")
     public static void demo(Player player) {
+        Text message = Text.of("Hello {name}, it's a wonderful day isn't it?");
+        MessageTemplate template = MessageTemplate.create(message);
+        template.formatPlaceholder("name", "Orion");
+
+        DiscordUtils utils = Selene.provide(DiscordUtils.class);
+        utils.sendToUser(template, null);
+
+
         DiscordPagination pagination = DiscordPagination.create()
                 .addPage(new MessageBuilder().setContent("Page 1").build())
-                .addPage(new MessageBuilder().setContent("Page 2").build())
-                .addPage(new MessageBuilder().setContent("Page 3").build());
+                .addPage(Text.of("Page 2"))
+                .addPage("Page 3");
+
         DiscordUtils utils = Selene.provide(DiscordUtils.class);
         utils.getGlobalTextChannel()
                 .ifPresent(pagination::sendTo)

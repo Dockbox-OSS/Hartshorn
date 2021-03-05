@@ -37,4 +37,10 @@ public interface MessageTemplate extends Template<Message>
         return Selene.provide(MessageTemplate.class);
     }
 
+    static MessageTemplate create(Text content) {
+        MessageTemplate template = create();
+        template.setContent(content);
+        return template;
+    }
+
 }

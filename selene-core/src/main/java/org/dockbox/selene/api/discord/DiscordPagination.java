@@ -22,6 +22,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 
+import org.dockbox.selene.api.discord.templates.MessageTemplate;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 
@@ -42,13 +43,7 @@ public interface DiscordPagination
 
     DiscordPagination addPage(Text... message);
 
-    DiscordPagination addPages(Message... messages);
-
-    DiscordPagination addPages(MessageEmbed... embeds);
-
-    DiscordPagination addPages(String... messages);
-
-    DiscordPagination addPages(Text... messages);
+    DiscordPagination addPage(MessageTemplate... template);
 
     Collection<Object> getPages();
 
