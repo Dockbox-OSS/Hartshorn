@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
+import org.dockbox.selene.api.discord.templates.Template;
 import org.dockbox.selene.api.events.discord.DiscordCommandContext;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.objects.Exceptional;
@@ -48,11 +49,15 @@ public interface DiscordUtils
 
     void sendToTextChannel(DiscordPagination pagination, MessageChannel channel);
 
+    void sendToTextChannel(Template<?> template, MessageChannel channel);
+
     void sendToUser(Text text, User user);
 
     void sendToUser(ResourceEntry text, User user);
 
     void sendToUser(DiscordPagination pagination, User user);
+
+    void sendToUser(Template<?> template, User user);
 
     void registerCommandListener(Object instance);
 

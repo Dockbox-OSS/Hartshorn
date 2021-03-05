@@ -29,6 +29,7 @@ import org.dockbox.selene.api.WorldStorageService;
 import org.dockbox.selene.api.annotations.files.Bulk;
 import org.dockbox.selene.api.annotations.files.Format;
 import org.dockbox.selene.api.command.CommandBus;
+import org.dockbox.selene.api.discord.templates.MessageTemplate;
 import org.dockbox.selene.api.entities.ArmorStand;
 import org.dockbox.selene.api.entities.EntityFactory;
 import org.dockbox.selene.api.entities.ItemFrame;
@@ -39,6 +40,7 @@ import org.dockbox.selene.common.SimpleBroadcastService;
 import org.dockbox.selene.common.SimpleExceptionHelper;
 import org.dockbox.selene.common.SimpleResourceService;
 import org.dockbox.selene.common.discord.SimpleDiscordPagination;
+import org.dockbox.selene.common.discord.SimpleMessageTemplate;
 import org.dockbox.selene.common.events.SimpleEventBus;
 import org.dockbox.selene.common.modules.SimpleModuleManager;
 import org.dockbox.selene.common.server.config.SimpleGlobalConfig;
@@ -154,5 +156,6 @@ public class SpongeInjector extends SeleneInjectConfiguration
         this.bind(SpawnEntityPacket.class).to(NMSSpawnEntityPacket.class);
         // Discord
         this.bind(DiscordPagination.class).to(SimpleDiscordPagination.class);
+        this.bind(MessageTemplate.class).to(SimpleMessageTemplate.class);
     }
 }
