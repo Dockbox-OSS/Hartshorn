@@ -29,8 +29,10 @@ import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.util.SeleneUtils;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SimpleDiscordPagination implements DiscordPagination
 {
@@ -50,29 +52,37 @@ public class SimpleDiscordPagination implements DiscordPagination
     }
 
     @Override
-    public DiscordPagination addPage(Message message)
+    public DiscordPagination addPage(Message... messages)
     {
-        this.pages.add(message);
+        this.pages.addAll(Arrays.asList(messages));
         return this;
     }
 
     @Override
-    public DiscordPagination addPage(MessageEmbed embed)
+    public DiscordPagination addPage(MessageEmbed... embed)
     {
-        this.pages.add(embed);
+        this.pages.addAll(Arrays.asList(embed));
         return this;
     }
 
     @Override
-    public DiscordPagination addPage(String message)
+    public DiscordPagination addPage(String... messages)
     {
-        return this.addPage(new MessageBuilder().setContent(message).build());
+        this.pages.addAll(Arrays.stream(messages)
+                .map(message -> new MessageBuilder().setContent(message).build())
+                .collect(Collectors.toList())
+        );
+        return this;
     }
 
     @Override
-    public DiscordPagination addPage(Text message)
+    public DiscordPagination addPage(Text... messages)
     {
-        return this.addPage(new MessageBuilder().setContent(message.toStringValue()).build());
+        this.pages.addAll(Arrays.stream(messages)
+                .map(message -> new MessageBuilder().setContent(message.toStringValue()).build())
+                .collect(Collectors.toList())
+        );
+        return this;
     }
 
     @Override

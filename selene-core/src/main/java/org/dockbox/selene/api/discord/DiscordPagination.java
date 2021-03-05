@@ -34,13 +34,13 @@ public interface DiscordPagination
 
     void sendTo(User user);
 
-    DiscordPagination addPage(Message message);
+    DiscordPagination addPage(Message... message);
 
-    DiscordPagination addPage(MessageEmbed embed);
+    DiscordPagination addPage(MessageEmbed... embed);
 
-    DiscordPagination addPage(String message);
+    DiscordPagination addPage(String... message);
 
-    DiscordPagination addPage(Text message);
+    DiscordPagination addPage(Text... message);
 
     DiscordPagination addPages(Message... messages);
 
