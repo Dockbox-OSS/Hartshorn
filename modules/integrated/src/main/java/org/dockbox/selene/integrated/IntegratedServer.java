@@ -19,12 +19,16 @@ package org.dockbox.selene.integrated;
 
 import com.google.inject.Singleton;
 
+import net.dv8tion.jda.api.MessageBuilder;
+
 import org.dockbox.selene.api.annotations.command.Arg;
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.CommandBus;
 import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.context.CommandValue.Argument;
+import org.dockbox.selene.api.discord.DiscordPagination;
+import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.api.i18n.common.Language;
@@ -32,8 +36,6 @@ import org.dockbox.selene.api.i18n.entry.IntegratedResource;
 import org.dockbox.selene.api.module.ModuleContext;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.item.maps.CustomMap;
-import org.dockbox.selene.api.objects.item.maps.CustomMapService;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.api.objects.targets.MessageReceiver;
@@ -247,11 +249,16 @@ public class IntegratedServer implements IntegratedModule
         player.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(languageLocalized));
     }
 
-    @Command(aliases = "demo", usage = "demo <mapId{Int}>")
-    public static void demo(Player player, @Arg("mapId") int mapId) {
-        CustomMap map = Selene.provide(CustomMapService.class).getById(mapId);
-        player.getInventory().give(map);
-        // TODO: Verify CustomMap.of() is working correctly as well
+    @Command(aliases = "demo", usage = "demo")
+    public static void demo(Player player) {
+        DiscordPagination pagination = DiscordPagination.create()
+                .addPage(new MessageBuilder().setContent("Page 1").build())
+                .addPage(new MessageBuilder().setContent("Page 2").build())
+                .addPage(new MessageBuilder().setContent("Page 3").build());
+        DiscordUtils utils = Selene.provide(DiscordUtils.class);
+        utils.getGlobalTextChannel()
+                .ifPresent(pagination::sendTo)
+                .ifAbsent(() -> Selene.log().info("No text channel!"));
     }
 
 }

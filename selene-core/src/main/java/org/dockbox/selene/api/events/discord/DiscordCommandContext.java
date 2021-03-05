@@ -20,7 +20,7 @@ package org.dockbox.selene.api.events.discord;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 
-import org.dockbox.selene.api.DiscordUtils;
+import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
@@ -55,11 +55,6 @@ public class DiscordCommandContext
         return this.channel;
     }
 
-    public void sendToChannel(CharSequence text)
-    {
-        Selene.provide(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
-    }
-
     public void sendToChannel(ResourceEntry text)
     {
         Selene.provide(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
@@ -73,11 +68,6 @@ public class DiscordCommandContext
     public User getAuthor()
     {
         return this.author;
-    }
-
-    public void sendToAuthor(CharSequence text)
-    {
-        Selene.provide(DiscordUtils.class).sendToUser(text, this.getAuthor());
     }
 
     public void sendToAuthor(ResourceEntry text)

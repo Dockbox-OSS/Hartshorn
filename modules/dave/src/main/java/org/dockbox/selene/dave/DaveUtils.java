@@ -19,7 +19,7 @@ package org.dockbox.selene.dave;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import org.dockbox.selene.api.DiscordUtils;
+import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.PlayerStorageService;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.objects.Console;
@@ -184,7 +184,7 @@ public final class DaveUtils
         for (String regex : new String[]{ "(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r" })
             discordMessage = discordMessage.replaceAll(regex, "");
 
-        Selene.provide(DiscordUtils.class).sendToTextChannel(DaveResources.DAVE_DISCORD_FORMAT.format(discordMessage).asString(), discordChannel);
+        Selene.provide(DiscordUtils.class).sendToTextChannel(DaveResources.DAVE_DISCORD_FORMAT.format(discordMessage), discordChannel);
     }
 
     public static String parseWebsiteLink(String unparsedLink)

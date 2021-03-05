@@ -15,34 +15,32 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.dave;
+package org.dockbox.selene.api.discord;
 
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 
-import org.dockbox.selene.api.discord.DiscordUtils;
-import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.text.Text;
 
-@Metadata(alias = "dave-config")
-public class DaveConfig
+import java.util.Collection;
+
+public interface DiscordPagination
 {
 
-    private String channelId = "622795938699673600";
-    private Text prefix = Text.of("&6Dave&e: &f");
+    void sendTo(MessageChannel channel);
 
-    public DaveConfig()
-    {
+    void sendTo(User user);
+
+    DiscordPagination addPage(Message message);
+
+    DiscordPagination addPage(MessageEmbed embed);
+
+    Collection<Object> getPages();
+
+    static DiscordPagination create() {
+        return Selene.provide(DiscordPagination.class);
     }
 
-    public TextChannel getChannel()
-    {
-        DiscordUtils du = Selene.provide(DiscordUtils.class);
-        return du.getJDA().get().getTextChannelById(this.channelId);
-    }
-
-    public Text getPrefix()
-    {
-        return this.prefix;
-    }
 }

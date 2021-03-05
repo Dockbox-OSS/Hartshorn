@@ -21,7 +21,7 @@ import com.google.inject.Binding;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
 
-import org.dockbox.selene.api.DiscordUtils;
+import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.MinecraftVersion;
 import org.dockbox.selene.api.annotations.RequiresBinding;
 import org.dockbox.selene.api.annotations.event.Listener;

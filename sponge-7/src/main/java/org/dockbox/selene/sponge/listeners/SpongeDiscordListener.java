@@ -35,7 +35,7 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageUpdateEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import org.dockbox.selene.api.DiscordUtils;
+import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.events.discord.DiscordCommandContext;
 import org.dockbox.selene.api.events.discord.DiscordEvent;
 import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordBotDisconnectedEvent;

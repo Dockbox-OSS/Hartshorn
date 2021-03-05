@@ -22,7 +22,7 @@ import com.magitechserver.magibridge.MagiBridge;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import org.dockbox.selene.common.DefaultDiscordUtils;
+import org.dockbox.selene.common.discord.DefaultDiscordUtils;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.jetbrains.annotations.NotNull;
 
