@@ -46,6 +46,8 @@ dependencies {
         compile "net.sf.kxml:kxml2:$kxmlVersion"
         compile "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"
 
+        compile 'com.github.ygimenez:Pagination-Utils:2.1.1'
+
         testImplementation "com.thoughtworks.xstream:xstream:$xstreamVersion"
         testImplementation "com.fasterxml.woodstox:woodstox-core:$woodstoxVersion"
 

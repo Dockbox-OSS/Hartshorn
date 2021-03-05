@@ -15,20 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.server.config;
+package org.dockbox.selene.api.discord.templates;
 
-import org.dockbox.selene.api.i18n.common.Language;
+import net.dv8tion.jda.api.entities.Message;
 
-public interface GlobalConfig
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.text.Text;
+
+public interface MessageTemplate extends Template<Message>
 {
-    Language getDefaultLanguage();
 
-    boolean getStacktracesAllowed();
+    void setContent(Text content);
 
-    ExceptionLevels getExceptionLevel();
+    Text getContent();
 
-    Environment getEnvironment();
+    MessageTemplate copy();
 
-    String getDiscordLoggingCategoryId();
+    MessageTemplate resetPlaceholders();
+
+    static MessageTemplate create() {
+        return Selene.provide(MessageTemplate.class);
+    }
 
 }

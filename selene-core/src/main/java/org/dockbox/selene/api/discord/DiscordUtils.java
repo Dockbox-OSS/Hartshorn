@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api;
+package org.dockbox.selene.api.discord;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Category;
@@ -24,6 +24,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
+import org.dockbox.selene.api.discord.templates.Template;
 import org.dockbox.selene.api.events.discord.DiscordCommandContext;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.objects.Exceptional;
@@ -44,15 +45,19 @@ public interface DiscordUtils
 
     void sendToTextChannel(Text text, MessageChannel channel);
 
-    void sendToTextChannel(CharSequence text, MessageChannel channel);
-
     void sendToTextChannel(ResourceEntry text, MessageChannel channel);
+
+    void sendToTextChannel(DiscordPagination pagination, MessageChannel channel);
+
+    void sendToTextChannel(Template<?> template, MessageChannel channel);
 
     void sendToUser(Text text, User user);
 
-    void sendToUser(CharSequence text, User user);
-
     void sendToUser(ResourceEntry text, User user);
+
+    void sendToUser(DiscordPagination pagination, User user);
+
+    void sendToUser(Template<?> template, User user);
 
     void registerCommandListener(Object instance);
 

@@ -70,7 +70,7 @@ public class MagiBridgeCommandSource extends DiscordCommandSource
     @Override
     public void sendPagination(@NotNull Pagination pagination)
     {
-        // TODO: Discord pagination support
+        throw new UnsupportedOperationException("Pagination not supported for virtual command source");
     }
 
 

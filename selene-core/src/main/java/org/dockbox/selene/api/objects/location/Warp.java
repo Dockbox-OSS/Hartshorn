@@ -25,10 +25,10 @@ import org.dockbox.selene.api.objects.Exceptional;
 public class Warp
 {
 
-    public final Exceptional<String> description;
-    public final Exceptional<String> category;
-    public final Location location;
-    public final String name;
+    private final Exceptional<String> description;
+    private final Exceptional<String> category;
+    private final Location location;
+    private final String name;
 
     public Warp(Exceptional<String> description, Exceptional<String> category, Location location, String name)
     {

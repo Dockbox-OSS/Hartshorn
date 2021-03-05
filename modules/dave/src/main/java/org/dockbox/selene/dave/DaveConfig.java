@@ -19,7 +19,7 @@ package org.dockbox.selene.dave;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import org.dockbox.selene.api.DiscordUtils;
+import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;

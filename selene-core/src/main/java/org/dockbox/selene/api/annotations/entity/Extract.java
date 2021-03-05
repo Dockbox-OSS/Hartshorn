@@ -15,20 +15,20 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.server.config;
+package org.dockbox.selene.api.annotations.entity;
 
-import org.dockbox.selene.api.i18n.common.Language;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface GlobalConfig
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.TYPE})
+public @interface Extract
 {
-    Language getDefaultLanguage();
+    Behavior value() default Behavior.KEEP;
 
-    boolean getStacktracesAllowed();
-
-    ExceptionLevels getExceptionLevel();
-
-    Environment getEnvironment();
-
-    String getDiscordLoggingCategoryId();
-
+    enum Behavior {
+        SKIP, KEEP
+    }
 }

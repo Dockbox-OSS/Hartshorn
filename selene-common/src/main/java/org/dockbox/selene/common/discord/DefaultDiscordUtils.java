@@ -15,7 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.common;
+package org.dockbox.selene.common.discord;
+
+import com.github.ygimenez.exception.InvalidHandlerException;
+import com.github.ygimenez.method.Pages;
+import com.github.ygimenez.model.Page;
+import com.github.ygimenez.model.Paginator;
+import com.github.ygimenez.model.PaginatorBuilder;
+import com.github.ygimenez.type.PageType;
 
 import net.dv8tion.jda.api.entities.Category;
 import net.dv8tion.jda.api.entities.ChannelType;
@@ -23,13 +30,17 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 
-import org.dockbox.selene.api.DiscordUtils;
 import org.dockbox.selene.api.annotations.command.DiscordCommand;
 import org.dockbox.selene.api.annotations.command.DiscordCommand.ListeningLevel;
+import org.dockbox.selene.api.discord.DiscordPagination;
+import org.dockbox.selene.api.discord.DiscordUtils;
+import org.dockbox.selene.api.discord.templates.MessageTemplate;
+import org.dockbox.selene.api.discord.templates.Template;
 import org.dockbox.selene.api.events.discord.DiscordCommandContext;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.IntegratedResource;
@@ -44,8 +55,11 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public abstract class DefaultDiscordUtils implements DiscordUtils
 {
 
@@ -69,7 +83,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils
     public Exceptional<Category> getLoggingCategory()
     {
         if (this.getJDA().isPresent())
-            return Exceptional.ofNullable(this.getJDA().get().getCategoryById("638683800167251998"));
+            return Exceptional.ofNullable(this.getJDA().get().getCategoryById(Selene.getServer().getGlobalConfig().getDiscordLoggingCategoryId()));
         return Exceptional.empty();
     }
 
@@ -83,37 +97,40 @@ public abstract class DefaultDiscordUtils implements DiscordUtils
     @Override
     public void sendToTextChannel(@NotNull Text text, @NotNull MessageChannel channel)
     {
-        this.sendToTextChannel(text.toPlain(), channel);
-    }
-
-    @Override
-    public void sendToTextChannel(@NotNull CharSequence text, @NotNull MessageChannel channel)
-    {
-        channel.sendMessage(text).queue();
+        DefaultDiscordUtils.sendToTextChannel(text.toPlain(), channel);
     }
 
     @Override
     public void sendToTextChannel(@NotNull ResourceEntry text, @NotNull MessageChannel channel)
     {
-        this.sendToTextChannel(text.plain(), channel);
+        DefaultDiscordUtils.sendToTextChannel(text.plain(), channel);
+    }
+
+    @Override
+    public void sendToTextChannel(Template<?> template, MessageChannel channel)
+    {
+        if (template instanceof MessageTemplate) channel.sendMessage(((MessageTemplate) template).getJDAMessage()).queue();
     }
 
     @Override
     public void sendToUser(@NotNull Text text, @NotNull User user)
     {
-        this.sendToUser(text.toPlain(), user);
-    }
-
-    @Override
-    public void sendToUser(@NotNull CharSequence text, @NotNull User user)
-    {
-        user.openPrivateChannel().queue(channel -> channel.sendMessage(text));
+        DefaultDiscordUtils.sendToUser(text.toPlain(), user);
     }
 
     @Override
     public void sendToUser(@NotNull ResourceEntry text, @NotNull User user)
     {
-        this.sendToUser(text.plain(), user);
+        DefaultDiscordUtils.sendToUser(text.plain(), user);
+    }
+
+    @Override
+    public void sendToUser(Template<?> template, User user)
+    {
+        user.openPrivateChannel().queue(channel -> {
+            if (template instanceof MessageTemplate)
+                channel.sendMessage(((MessageTemplate) template).getJDAMessage());
+        });
     }
 
     @Override
@@ -206,6 +223,56 @@ public abstract class DefaultDiscordUtils implements DiscordUtils
         boolean isTextAndValid = ListeningLevel.CHANNEL_ONLY == level && ChannelType.TEXT == context.getChannel().getType();
 
         return isPrivateAndValid || isTextAndValid;
+    }
+
+    private static void sendToTextChannel(@NotNull CharSequence text, @NotNull MessageChannel channel)
+    {
+        channel.sendMessage(text).queue();
+    }
+
+    @Override
+    public void sendToTextChannel(DiscordPagination pagination, MessageChannel channel)
+    {
+        this.getJDA().ifPresent(jda -> {
+            try
+            {
+                if (pagination.getPages().isEmpty()) return;
+
+                Paginator paginator = PaginatorBuilder.createPaginator()
+                        .setHandler(jda)
+                        .shouldRemoveOnReact(false)
+                        .build();
+                Pages.activate(paginator);
+
+                List<Page> pages = pagination.getPages().stream().map(page -> {
+                    if (page instanceof Message)
+                    {
+                        return new Page(PageType.TEXT, page);
+                    }
+                    else if (page instanceof MessageEmbed)
+                    {
+                        return new Page(PageType.EMBED, page);
+                    }
+                    else throw new IllegalArgumentException("Pages of type '" + page.getClass().getName() + "' are not supported");
+                }).collect(Collectors.toList());
+                channel.sendMessage((Message) pages.get(0).getContent()).queue(success -> Pages.paginate(success, pages));
+            }
+            catch (InvalidHandlerException e)
+            {
+                Selene.handle(e);
+            }
+        });
+    }
+
+    @Override
+    public void sendToUser(DiscordPagination pagination, User user)
+    {
+        user.openPrivateChannel().queue(privateChannel -> sendToTextChannel(pagination, privateChannel));
+    }
+
+    public static void sendToUser(@NotNull CharSequence text, @NotNull User user)
+    {
+        user.openPrivateChannel().queue(channel -> channel.sendMessage(text));
     }
 
 }

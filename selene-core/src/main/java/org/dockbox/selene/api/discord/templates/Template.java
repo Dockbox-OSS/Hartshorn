@@ -15,20 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.server.config;
+package org.dockbox.selene.api.discord.templates;
 
-import org.dockbox.selene.api.i18n.common.Language;
+import org.dockbox.selene.api.i18n.common.Formattable;
 
-public interface GlobalConfig
+import java.util.Map;
+
+public interface Template<T> extends Formattable
 {
-    Language getDefaultLanguage();
 
-    boolean getStacktracesAllowed();
+    void formatPlaceholder(String key, Object value);
 
-    ExceptionLevels getExceptionLevel();
+    void formatPlaceholders(Map<String, String> values);
 
-    Environment getEnvironment();
-
-    String getDiscordLoggingCategoryId();
+    T getJDAMessage();
 
 }

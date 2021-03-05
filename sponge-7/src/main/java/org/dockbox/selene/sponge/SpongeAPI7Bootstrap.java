@@ -23,7 +23,7 @@ import com.google.inject.Inject;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
-import org.dockbox.selene.api.DiscordUtils;
+import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.MinecraftVersion;
 import org.dockbox.selene.api.PlayerStorageService;
 import org.dockbox.selene.api.events.EventBus;
