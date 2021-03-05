@@ -267,7 +267,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils
     @Override
     public void sendToUser(DiscordPagination pagination, User user)
     {
-        // TODO
+        user.openPrivateChannel().queue(privateChannel -> sendToTextChannel(pagination, privateChannel));
     }
 
     public static void sendToUser(@NotNull CharSequence text, @NotNull User user)
