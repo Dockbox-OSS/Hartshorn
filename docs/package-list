@@ -12,6 +12,8 @@ org.dockbox.selene.api.command
 org.dockbox.selene.api.command.context
 org.dockbox.selene.api.command.registry
 org.dockbox.selene.api.command.source
+org.dockbox.selene.api.discord
+org.dockbox.selene.api.discord.templates
 org.dockbox.selene.api.entities
 org.dockbox.selene.api.events
 org.dockbox.selene.api.events.chat
@@ -71,6 +73,7 @@ org.dockbox.selene.common.command.convert
 org.dockbox.selene.common.command.convert.impl
 org.dockbox.selene.common.command.registration
 org.dockbox.selene.common.command.values
+org.dockbox.selene.common.discord
 org.dockbox.selene.common.events
 org.dockbox.selene.common.events.handle
 org.dockbox.selene.common.events.processors
