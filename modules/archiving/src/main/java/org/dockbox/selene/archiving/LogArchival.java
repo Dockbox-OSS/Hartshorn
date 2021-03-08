@@ -40,9 +40,12 @@ import java.time.Month;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Module(id = "logarchival", name = "Log Archival", description = "Automatically organises old server logs", authors = "GuusLieben")
-public class LogArchival
-{
+@Module(
+        id = "logarchival",
+        name = "Log Archival",
+        description = "Automatically organises old server logs",
+        authors = "GuusLieben")
+public class LogArchival {
 
     private final PathMatcher filter = FileSystems.getDefault().getPathMatcher("glob:*.log.gz");
     private final Pattern datePattern = Pattern.compile("((\\d{4})-(\\d{2})-\\d{2})");
@@ -53,39 +56,34 @@ public class LogArchival
     private FileManager fileManager;
 
     @Listener
-    public void onLoad(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent)
-    {
+    public void onLoad(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent) {
         this.logPath = this.fileManager.getLogsDir();
-        try
-        {
+        try {
             Selene.log().info("Checking for logs to archive in {}", this.logPath);
-            Files.list(this.logPath).filter(p -> this.filter.matches(p.getFileName())).forEach(this::archive);
+            Files.list(this.logPath)
+                    .filter(p -> this.filter.matches(p.getFileName()))
+                    .forEach(this::archive);
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             Selene.handle(e);
         }
     }
 
-    private void archive(Path source)
-    {
+    private void archive(Path source) {
         Exceptional<Path> directory = this.getArchiveDirectory(source);
-        if (directory.isAbsent())
-        {
+        if (directory.isAbsent()) {
             Selene.log().warn("Unable to determine date of file {}", source);
             return;
         }
 
         Exceptional<Path> destination = this.getArchiveName(directory.get(), source);
-        if (destination.isAbsent())
-        {
+        if (destination.isAbsent()) {
             Selene.log().warn("Unable to resolve archive name for file {}", source);
             return;
         }
 
         Path dest = destination.get();
-        if (!this.fileManager.move(source, dest))
-        {
+        if (!this.fileManager.move(source, dest)) {
             Selene.log().warn("Unable to move file {} to {}", source, dest);
             return;
         }
@@ -94,36 +92,31 @@ public class LogArchival
     }
 
     /**
-     * Returns the target archive directory for the file (if applicable). Formatted as {@code YEAR/00-MONTH}, for
-     * example {@code 2020/12-DECEMBER}.
+     * Returns the target archive directory for the file (if applicable). Formatted as {@code
+     * YEAR/00-MONTH}, for example {@code 2020/12-DECEMBER}.
      *
      * @param file
      *         The file to archive
      *
      * @return The target archive directory
      */
-    private Exceptional<Path> getArchiveDirectory(Path file)
-    {
+    private Exceptional<Path> getArchiveDirectory(Path file) {
         Matcher dateMatcher = this.datePattern.matcher(file.getFileName().toString());
 
         String year;
         String month;
-        if (dateMatcher.find())
-        {
+        if (dateMatcher.find()) {
             year = dateMatcher.group(2);
             month = dateMatcher.group(3);
         }
-        else
-        {
-            try
-            {
+        else {
+            try {
                 FileTime time = Files.getLastModifiedTime(file);
                 LocalDate date = LocalDate.from(time.toInstant());
                 year = new SimpleDateFormat("yyyy").format(date);
                 month = new SimpleDateFormat("MM").format(date);
             }
-            catch (IOException | DateTimeException e)
-            {
+            catch (IOException | DateTimeException e) {
                 return Exceptional.of(e);
             }
         }
@@ -134,8 +127,9 @@ public class LogArchival
     }
 
     /**
-     * Returns the target archive file located in the given directory for the given file. If a file with the same name
-     * already exists at the target location, it will be appended by {@code __n}, n being the next number available.
+     * Returns the target archive file located in the given directory for the given file. If a file
+     * with the same name already exists at the target location, it will be appended by {@code __n}, n
+     * being the next number available.
      *
      * @param dir
      *         The directory to place the target file in
@@ -144,18 +138,15 @@ public class LogArchival
      *
      * @return The target archive file
      */
-    private Exceptional<Path> getArchiveName(Path dir, Path file)
-    {
+    private Exceptional<Path> getArchiveName(Path dir, Path file) {
         Matcher nameMatcher = this.namePattern.matcher(file.getFileName().toString());
-        if (nameMatcher.find())
-        {
+        if (nameMatcher.find()) {
             String name = nameMatcher.group(1);
             String nameFormat = "%s__%03d.log.gz";
             String filename = String.format(nameFormat, name, 0);
 
             Path destination = dir.resolve(filename);
-            for (int i = 1; Files.exists(destination); i++)
-            {
+            for (int i = 1; Files.exists(destination); i++) {
                 filename = String.format(nameFormat, name, i);
                 destination = dir.resolve(filename);
             }
@@ -164,5 +155,4 @@ public class LogArchival
         }
         return Exceptional.empty();
     }
-
 }

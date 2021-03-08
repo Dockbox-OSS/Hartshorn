@@ -22,66 +22,55 @@ import org.dockbox.selene.api.objects.tuple.Vector3N;
 
 import java.util.Map;
 
-/**
- * Represents the properties or metadata of a world.
- */
-public abstract class WorldProperties
-{
+/** Represents the properties or metadata of a world. */
+public abstract class WorldProperties {
 
-    private boolean loadOnStartup;
-    private Vector3N spawnPosition;
-    private long seed;
-    private Gamemode defaultGamemode;
+  private boolean loadOnStartup;
+  private Vector3N spawnPosition;
+  private long seed;
+  private Gamemode defaultGamemode;
 
-    protected WorldProperties(boolean loadOnStartup, Vector3N spawnPosition, long seed, Gamemode defaultGamemode)
-    {
-        this.loadOnStartup = loadOnStartup;
-        this.spawnPosition = spawnPosition;
-        this.seed = seed;
-        this.defaultGamemode = defaultGamemode;
-    }
+  protected WorldProperties(
+      boolean loadOnStartup, Vector3N spawnPosition, long seed, Gamemode defaultGamemode) {
+    this.loadOnStartup = loadOnStartup;
+    this.spawnPosition = spawnPosition;
+    this.seed = seed;
+    this.defaultGamemode = defaultGamemode;
+  }
 
-    public abstract void setGamerule(String key, String value);
+  public abstract void setGamerule(String key, String value);
 
-    public boolean getLoadOnStartup()
-    {
-        return this.loadOnStartup;
-    }
+  public boolean getLoadOnStartup() {
+    return this.loadOnStartup;
+  }
 
-    public void setLoadOnStartup(boolean loadOnStartup)
-    {
-        this.loadOnStartup = loadOnStartup;
-    }
+  public void setLoadOnStartup(boolean loadOnStartup) {
+    this.loadOnStartup = loadOnStartup;
+  }
 
-    public Vector3N getSpawnPosition()
-    {
-        return this.spawnPosition;
-    }
+  public Vector3N getSpawnPosition() {
+    return this.spawnPosition;
+  }
 
-    public void setSpawnPosition(Vector3N spawnPosition)
-    {
-        this.spawnPosition = spawnPosition;
-    }
+  public void setSpawnPosition(Vector3N spawnPosition) {
+    this.spawnPosition = spawnPosition;
+  }
 
-    public long getSeed()
-    {
-        return this.seed;
-    }
+  public long getSeed() {
+    return this.seed;
+  }
 
-    public void setSeed(long seed)
-    {
-        this.seed = seed;
-    }
+  public void setSeed(long seed) {
+    this.seed = seed;
+  }
 
-    public Gamemode getDefaultGamemode()
-    {
-        return this.defaultGamemode;
-    }
+  public Gamemode getDefaultGamemode() {
+    return this.defaultGamemode;
+  }
 
-    public void setDefaultGamemode(Gamemode defaultGamemode)
-    {
-        this.defaultGamemode = defaultGamemode;
-    }
+  public void setDefaultGamemode(Gamemode defaultGamemode) {
+    this.defaultGamemode = defaultGamemode;
+  }
 
-    public abstract Map<String, String> getGamerules();
+  public abstract Map<String, String> getGamerules();
 }

@@ -25,89 +25,69 @@ import java.net.URL;
 import java.util.function.Consumer;
 
 @SuppressWarnings("ClassReferencesSubclass")
-public class ClickAction<R> extends TextAction<R>
-{
+public class ClickAction<R> extends TextAction<R> {
 
-    private ClickAction(R result)
-    {
+    private ClickAction(R result) {
         super(result);
     }
 
-    public static OpenUrl openUrl(String raw)
-    {
-        try
-        {
+    public static OpenUrl openUrl(String raw) {
+        try {
             URL url = new URL(raw);
             return openUrl(url);
         }
-        catch (MalformedURLException e)
-        {
+        catch (MalformedURLException e) {
             Selene.handle(e);
             return new OpenUrl(null);
         }
     }
 
-    public static OpenUrl openUrl(URL url)
-    {
+    public static OpenUrl openUrl(URL url) {
         return new OpenUrl(url);
     }
 
-    public static RunCommand runCommand(String command)
-    {
+    public static RunCommand runCommand(String command) {
         return new RunCommand(command);
     }
 
-    public static ChangePage changePage(int page)
-    {
+    public static ChangePage changePage(int page) {
         return new ChangePage(page);
     }
 
-    public static SuggestCommand suggestCommand(String command)
-    {
+    public static SuggestCommand suggestCommand(String command) {
         return new SuggestCommand(command);
     }
 
-    public static ExecuteCallback executeCallback(Consumer<CommandSource> consumer)
-    {
+    public static ExecuteCallback executeCallback(Consumer<CommandSource> consumer) {
         return new ExecuteCallback(consumer);
     }
 
-    public static final class OpenUrl extends ClickAction<URL>
-    {
-        private OpenUrl(URL result)
-        {
+    public static final class OpenUrl extends ClickAction<URL> {
+        private OpenUrl(URL result) {
             super(result);
         }
     }
 
-    public static final class RunCommand extends ClickAction<String>
-    {
-        private RunCommand(String result)
-        {
+    public static final class RunCommand extends ClickAction<String> {
+        private RunCommand(String result) {
             super(result);
         }
     }
 
-    public static final class ChangePage extends ClickAction<Integer>
-    {
-        private ChangePage(Integer result)
-        {
+    public static final class ChangePage extends ClickAction<Integer> {
+        private ChangePage(Integer result) {
             super(result);
         }
     }
 
-    public static final class SuggestCommand extends ClickAction<String>
-    {
-        private SuggestCommand(String result)
-        {
+    public static final class SuggestCommand extends ClickAction<String> {
+        private SuggestCommand(String result) {
             super(result);
         }
     }
 
-    public static final class ExecuteCallback extends ClickAction<Consumer<CommandSource>>
-    {
-        private ExecuteCallback(Consumer<CommandSource> result)
-        {
+    public static final class ExecuteCallback extends ClickAction<Consumer<CommandSource>> {
+        private ExecuteCallback(Consumer<CommandSource> result) {
             super(result);
         }
     }

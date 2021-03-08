@@ -17,8 +17,7 @@
 
 package org.dockbox.selene.api.objects.keys;
 
-public interface PersistentDataKey<T>
-{
+public interface PersistentDataKey<T> {
 
     Class<T> getDataType();
 
@@ -27,5 +26,4 @@ public interface PersistentDataKey<T>
     String getDataKeyId();
 
     String getDataKeyName();
-
 }

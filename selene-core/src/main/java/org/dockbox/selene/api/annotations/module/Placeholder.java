@@ -23,38 +23,39 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The interface to mark a module which is currently not yet implemented, but is scheduled for future implementation.
- * This is only used for reference for developers of Selene, and is therefore not available at compile/runtime.
+ * The interface to mark a module which is currently not yet implemented, but is scheduled for
+ * future implementation. This is only used for reference for developers of Selene, and is therefore
+ * not available at compile/runtime.
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
-public @interface Placeholder
-{
-    /**
-     * The description of the scheduled module.
-     *
-     * @return the string
-     */
-    String description();
+public @interface Placeholder {
+  /**
+   * The description of the scheduled module.
+   *
+   * @return the string
+   */
+  String description();
 
-    /**
-     * The reporter of the module.
-     *
-     * @return the string
-     */
-    String by();
+  /**
+   * The reporter of the module.
+   *
+   * @return the string
+   */
+  String by();
 
-    /**
-     * The person who has been assigned to implement the module.
-     *
-     * @return the string
-     */
-    String assignee();
+  /**
+   * The person who has been assigned to implement the module.
+   *
+   * @return the string
+   */
+  String assignee();
 
-    /**
-     * The <a href="https://github.com/GuusLieben/Selene/issues">GitHub issue</a> reporting the scheduled module.
-     *
-     * @return the int
-     */
-    int issue() default -1;
+  /**
+   * The <a href="https://github.com/GuusLieben/Selene/issues">GitHub issue</a> reporting the
+   * scheduled module.
+   *
+   * @return the int
+   */
+  int issue() default -1;
 }

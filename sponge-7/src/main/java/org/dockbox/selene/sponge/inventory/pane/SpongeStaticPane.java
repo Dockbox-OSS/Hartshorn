@@ -27,40 +27,32 @@ import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
 import dev.flashlabs.flashlibs.inventory.View;
 
-
-public class SpongeStaticPane implements StaticPane
-{
+public class SpongeStaticPane implements StaticPane {
 
     private final View view;
 
-    public SpongeStaticPane(View initializedView)
-    {
+    public SpongeStaticPane(View initializedView) {
         this.view = initializedView;
     }
 
     @Override
-    public void open(Player player)
-    {
+    public void open(Player player) {
         SpongeConversionUtil.toSponge(player).ifPresent(this.view::open);
     }
 
     @Override
-    public void set(Element element, int index)
-    {
+    public void set(Element element, int index) {
         this.view.set(SpongeConversionUtil.toSponge(element), index);
     }
 
     @Override
-    public void set(Item item, int index)
-    {
+    public void set(Item item, int index) {
         this.view.set(SpongeConversionUtil.toSponge(item), index);
     }
 
     @Override
-    public void update(InventoryLayout layout)
-    {
-        if (layout instanceof SpongeInventoryLayout)
-        {
+    public void update(InventoryLayout layout) {
+        if (layout instanceof SpongeInventoryLayout) {
             this.view.update(((SpongeInventoryLayout) layout).getLayout());
         }
     }

@@ -19,9 +19,10 @@ package org.dockbox.selene.structures;
 
 import org.dockbox.selene.api.annotations.module.Module;
 
-@Module(id = "datastructures", name = "Additional data structures",
+@Module(
+        id = "datastructures",
+        name = "Additional data structures",
         description = "Provides additional data structures for specific usages",
         authors = { "GuusLieben", "pumbas600", "simbolduc" })
-public class DataStructuresModule
-{
+public class DataStructuresModule {
 }

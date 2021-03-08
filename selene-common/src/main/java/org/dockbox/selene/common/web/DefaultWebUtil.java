@@ -32,63 +32,49 @@ import java.net.URLConnection;
 
 import javax.imageio.ImageIO;
 
-public abstract class DefaultWebUtil implements WebUtil
-{
+public abstract class DefaultWebUtil implements WebUtil {
 
     @Override
-    public <T> Exceptional<T> getContent(Class<T> type, String url)
-    {
-        try
-        {
+    public <T> Exceptional<T> getContent(Class<T> type, String url) {
+        try {
             return this.getContent(type, new URL(url));
         }
-        catch (MalformedURLException e)
-        {
+        catch (MalformedURLException e) {
             Selene.handle("Invalid URL", e);
             return Exceptional.of(e);
         }
     }
 
     @Override
-    public String getContent(URL url)
-    {
-        try
-        {
+    public String getContent(URL url) {
+        try {
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
             StringBuilder builder = new StringBuilder();
 
-            while (null != in.readLine())
-                builder.append(builder).append("\n");
+            while (null != in.readLine()) builder.append(builder).append("\n");
             in.close();
             return builder.toString();
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             Selene.handle("Could not read content from '" + url.toExternalForm() + "'", e);
             return "";
         }
     }
 
     @Override
-    public String getContent(String url)
-    {
-        try
-        {
+    public String getContent(String url) {
+        try {
             return this.getContent(new URL(url));
         }
-        catch (MalformedURLException e)
-        {
+        catch (MalformedURLException e) {
             Selene.handle("Invalid URL", e);
             return "";
         }
     }
 
     @Override
-    public BufferedImage getImage(URL url)
-            throws FileFormatNotSupportedException
-    {
-        try
-        {
+    public BufferedImage getImage(URL url) throws FileFormatNotSupportedException {
+        try {
             BufferedImage image = ImageIO.read(url);
             if (null == image) {
                 URLConnection connection = url.openConnection();
@@ -96,22 +82,17 @@ public abstract class DefaultWebUtil implements WebUtil
             }
             return image;
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             throw new FileFormatNotSupportedException("", e);
         }
     }
 
     @Override
-    public BufferedImage getImage(String url)
-            throws FileFormatNotSupportedException
-    {
-        try
-        {
+    public BufferedImage getImage(String url) throws FileFormatNotSupportedException {
+        try {
             return this.getImage(new URL(url));
         }
-        catch (MalformedURLException e)
-        {
+        catch (MalformedURLException e) {
             Selene.handle("Invalid URL", e);
             throw new FileFormatNotSupportedException("Unknown", e);
         }

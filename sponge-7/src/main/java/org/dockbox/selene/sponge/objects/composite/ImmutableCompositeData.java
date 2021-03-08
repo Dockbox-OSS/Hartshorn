@@ -25,47 +25,42 @@ import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutable
 
 import java.util.Map;
 
-public class ImmutableCompositeData extends AbstractImmutableData<ImmutableCompositeData, MutableCompositeData>
-{
+public class ImmutableCompositeData
+        extends AbstractImmutableData<ImmutableCompositeData, MutableCompositeData> {
 
     private final Map<String, Object> data = SeleneUtils.emptyMap();
 
     @Override
-    public @NotNull MutableCompositeData asMutable()
-    {
+    public @NotNull MutableCompositeData asMutable() {
         MutableCompositeData data = new MutableCompositeData();
         data.fillData(this.data);
         return data;
     }
 
     @Override
-    public int getContentVersion()
-    {
+    public int getContentVersion() {
         return 1;
     }
 
     @Override
-    protected void registerGetters()
-    {
+    protected void registerGetters() {
         this.registerFieldGetter(Composite.ITEM_KEY, () -> this.data);
-        this.registerKeyValue(Composite.ITEM_KEY, () ->
-                Sponge.getRegistry().getValueFactory().createMapValue(
-                        Composite.ITEM_KEY,
-                        this.data,
-                        SeleneUtils.emptyMap()).asImmutable()
-        );
+        this.registerKeyValue(
+                Composite.ITEM_KEY,
+                () ->
+                        Sponge.getRegistry()
+                                .getValueFactory()
+                                .createMapValue(Composite.ITEM_KEY, this.data, SeleneUtils.emptyMap())
+                                .asImmutable());
     }
 
     @Override
-    public @NotNull DataContainer toContainer()
-    {
+    public @NotNull DataContainer toContainer() {
         return super.toContainer().set(Composite.ITEM_KEY, this.data);
     }
 
-    public void fillData(Map<String, Object> data)
-    {
+    public void fillData(Map<String, Object> data) {
         this.data.clear();
         this.data.putAll(data);
     }
-
 }

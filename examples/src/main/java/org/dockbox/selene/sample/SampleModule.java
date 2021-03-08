@@ -24,19 +24,26 @@ import org.dockbox.selene.api.events.packet.PacketEvent;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.packets.ChangeGameStatePacket;
 
-@Module(id = "sample", name = "Selene Sample Module", description = "A sample module, providing examples on various tasks",
+@Module(
+        id = "sample",
+        name = "Selene Sample Module",
+        description = "A sample module, providing examples on various tasks",
         authors = "GuusLieben")
-public final class SampleModule
-{
+public final class SampleModule {
 
     private SampleModule() {}
 
     @Listener
     @Packet(ChangeGameStatePacket.class)
-    public static void onGameStatePacket(PacketEvent<ChangeGameStatePacket> packetEvent)
-    {
-        Selene.log().info("Sending a packet event to " + packetEvent.getTarget().getName() + " (GameStateChange: " + packetEvent.getPacket()
-                .getWeather() + ')');
+    public static void onGameStatePacket(PacketEvent<ChangeGameStatePacket> packetEvent) {
+        Selene.log()
+                .info(
+                        "Sending a packet event to "
+                                + packetEvent.getTarget().getName()
+                                + " (GameStateChange: "
+                                + packetEvent.getPacket().getWeather()
+                                + ')');
     }
+
 
 }

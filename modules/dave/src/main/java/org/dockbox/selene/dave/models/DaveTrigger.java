@@ -22,8 +22,7 @@ import org.dockbox.selene.api.annotations.entity.Metadata;
 import java.util.List;
 
 @Metadata(alias = "dave-trigger")
-public class DaveTrigger
-{
+public class DaveTrigger {
 
     private String id;
     private List<String> triggers;
@@ -31,12 +30,14 @@ public class DaveTrigger
     private List<DaveResponse> responses;
     private String permission;
 
-    public DaveTrigger()
-    {
-    }
+    public DaveTrigger() {}
 
-    public DaveTrigger(String id, List<String> triggers, boolean important, List<DaveResponse> responses, String permission)
-    {
+    public DaveTrigger(
+            String id,
+            List<String> triggers,
+            boolean important,
+            List<DaveResponse> responses,
+            String permission) {
         this.id = id;
         this.triggers = triggers;
         this.important = important;
@@ -44,29 +45,23 @@ public class DaveTrigger
         this.permission = permission;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return this.id;
     }
 
-    public List<String> getRawTriggers()
-    {
+    public List<String> getRawTriggers() {
         return this.triggers;
     }
 
-    public boolean isImportant()
-    {
+    public boolean isImportant() {
         return this.important;
     }
 
-    public List<DaveResponse> getResponses()
-    {
+    public List<DaveResponse> getResponses() {
         return this.responses;
     }
 
-    public String getPermission()
-    {
+    public String getPermission() {
         return this.permission;
     }
-
 }

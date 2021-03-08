@@ -39,118 +39,115 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class SpongeInventoryRow implements InventoryRow
-{
+public class SpongeInventoryRow implements InventoryRow {
 
     private static final Supplier<Item> air = () -> Selene.getItems().getAir();
-    private static final Function<org.spongepowered.api.item.inventory.Slot, Item> slotLookup = slot -> {
-        return slot.peek().map(SpongeConversionUtil::fromSponge)
-                .map(referencedItem -> (Item) referencedItem)
-
-                .orElseGet(air);
-    };
+    private static final Function<org.spongepowered.api.item.inventory.Slot, Item> slotLookup =
+            slot -> {
+                return slot.peek()
+                        .map(SpongeConversionUtil::fromSponge)
+                        .map(referencedItem -> (Item) referencedItem)
+                        .orElseGet(air);
+            };
 
     private final SpongePlayerInventory inventory;
     private final int rowIndex;
     private final SpongePlayer spongePlayer;
 
-    public SpongeInventoryRow(SpongePlayerInventory inventory, int rowIndex, SpongePlayer spongePlayer)
-    {
+    public SpongeInventoryRow(
+            SpongePlayerInventory inventory, int rowIndex, SpongePlayer spongePlayer) {
         this.inventory = inventory;
         this.rowIndex = rowIndex;
         this.spongePlayer = spongePlayer;
     }
 
     @Override
-    public Item getSlot(int row, int column)
-    {
+    public Item getSlot(int row, int column) {
         if (row != this.rowIndex) return Selene.getItems().getAir();
         return this.getSlot(column);
     }
 
     @Override
-    public Item getSlot(int index)
-    {
-        return this.internalGetSlot(index)
-                .map(slotLookup)
-                .orElseGet(air);
-    }
-
-    @Override
-    public Item getSlot(Slot slot)
-    {
+    public Item getSlot(Slot slot) {
         return Selene.getItems().getAir();
     }
 
     @Override
-    public void setSlot(Item item, int row, int column)
-    {
+    public void setSlot(Item item, int row, int column) {
         if (row != this.rowIndex) return;
         this.setSlot(item, column);
     }
 
     @Override
-    public void setSlot(Item item, int index)
-    {
+    public void setSlot(Item item, int index) {
         this.internalGetSlot(index).ifPresent(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
     }
 
     @Override
-    public void setSlot(Item item, Slot slot)
-    {
+    public void setSlot(Item item, Slot slot) {
         // Nothing happens
     }
 
     @Override
-    public Collection<Item> getAllItems()
-    {
-        return this.internalGetRow().map(row -> StreamSupport.stream(row.slots().spliterator(), false)
-                .map(slot -> (org.spongepowered.api.item.inventory.Slot) slot)
-                .map(slotLookup)
-                .collect(Collectors.toList())
-        ).orElseGet(SeleneUtils::emptyList);
+    public Collection<Item> getAllItems() {
+        return this.internalGetRow()
+                .map(
+                        row ->
+                                StreamSupport.stream(row.slots().spliterator(), false)
+                                        .map(slot -> (org.spongepowered.api.item.inventory.Slot) slot)
+                                        .map(slotLookup)
+                                        .collect(Collectors.toList()))
+                .orElseGet(SeleneUtils::emptyList);
     }
 
     @Override
-    public boolean give(Item item)
-    {
-        return this.internalGetRow().map(row -> {
-            ItemStack stack = SpongeConversionUtil.toSponge(item);
-            return Type.SUCCESS == row.offer(stack).getType();
-        }).orElse(false);
+    public boolean give(Item item) {
+        return this.internalGetRow()
+                .map(
+                        row -> {
+                            ItemStack stack = SpongeConversionUtil.toSponge(item);
+                            return Type.SUCCESS == row.offer(stack).getType();
+                        })
+                .orElse(false);
     }
 
     @Override
-    public int capacity()
-    {
+    public int capacity() {
         return 9;
     }
 
-    private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(int index)
-    {
+    @Override
+    public Item getSlot(int index) {
+        return this.internalGetSlot(index).map(slotLookup).orElseGet(air);
+    }
+
+    private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(int index) {
         return this.internalGetRow().map(row -> row.getSlot(new SlotIndex(index)).orElse(null));
     }
 
-    private Exceptional<? extends org.spongepowered.api.item.inventory.type.InventoryRow> internalGetRow()
-    {
-        return this.spongePlayer.getSpongePlayer().map(player -> {
-            if (3 == this.rowIndex)
-            {
-                return player.getInventory()
-                        .<Hotbar>query(new InventoryTypeQueryOperation(Hotbar.class));
-            }
-            else
-            {
-                MainPlayerInventory main = player.getInventory()
-                        .query(new InventoryTypeQueryOperation(MainPlayerInventory.class));
-                return Exceptional.of(main.getRow(this.rowIndex)).orNull();
-            }
-        });
+    private Exceptional<? extends org.spongepowered.api.item.inventory.type.InventoryRow>
+    internalGetRow() {
+        return this.spongePlayer
+                .getSpongePlayer()
+                .map(
+                        player -> {
+                            if (3 == this.rowIndex) {
+                                return player
+                                        .getInventory()
+                                        .<Hotbar>query(new InventoryTypeQueryOperation(Hotbar.class));
+                            }
+                            else {
+                                MainPlayerInventory main =
+                                        player
+                                                .getInventory()
+                                                .query(new InventoryTypeQueryOperation(MainPlayerInventory.class));
+                                return Exceptional.of(main.getRow(this.rowIndex)).orNull();
+                            }
+                        });
     }
 
     @Override
-    public PlayerInventory getInventory()
-    {
+    public PlayerInventory getInventory() {
         return this.inventory;
     }
 }

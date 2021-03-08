@@ -23,15 +23,13 @@ import org.dockbox.selene.api.objects.targets.MessageReceiver;
 import org.dockbox.selene.api.util.Reflect;
 
 /**
- * Low-level interface, used by the default integrated server module as indicated by the mappings provided by the
- * platform implementation. Used to access the module when {@link Selene} is used
- * in a {@link Reflect#getModule(Class)} method call.
+ * Low-level interface, used by the default integrated server module as indicated by the mappings
+ * provided by the platform implementation. Used to access the module when {@link Selene} is used in
+ * a {@link Reflect#getModule(Class)} method call.
  */
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
-public interface IntegratedModule
-{
+public interface IntegratedModule {
 
     @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>")
     void confirm(MessageReceiver src, CommandContext ctx);
-
 }

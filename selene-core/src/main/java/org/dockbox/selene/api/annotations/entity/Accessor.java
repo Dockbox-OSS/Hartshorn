@@ -24,8 +24,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Accessor
-{
-    String getter() default "";
-    String setter() default "";
+public @interface Accessor {
+  String getter() default "";
+
+  String setter() default "";
 }

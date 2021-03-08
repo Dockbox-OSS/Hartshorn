@@ -23,8 +23,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
-public interface WebUtil
-{
+public interface WebUtil {
 
     <T> Exceptional<T> getContent(Class<T> type, URL url);
 
@@ -34,10 +33,7 @@ public interface WebUtil
 
     String getContent(String url);
 
-    BufferedImage getImage(URL url)
-            throws FileFormatNotSupportedException;
+    BufferedImage getImage(URL url) throws FileFormatNotSupportedException;
 
-    BufferedImage getImage(String url)
-            throws FileFormatNotSupportedException;
-
+    BufferedImage getImage(String url) throws FileFormatNotSupportedException;
 }

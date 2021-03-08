@@ -26,135 +26,124 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.location.World;
 import org.dockbox.selene.api.util.SeleneUtils;
+
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 @SuppressWarnings("unchecked")
-public class SimpleCommandContext implements CommandContext
-{
+public class SimpleCommandContext implements CommandContext {
 
-    public static final SimpleCommandContext EMPTY = new SimpleCommandContext(
-            "", new Argument[0], new Flag[0],
-            null, Exceptional.empty(), Exceptional.empty(),
-            new String[0]);
+  public static final SimpleCommandContext EMPTY =
+      new SimpleCommandContext(
+          "",
+          new Argument[0],
+          new Flag[0],
+          null,
+          Exceptional.empty(),
+          Exceptional.empty(),
+          new String[0]);
 
-    private final String usage;
-    private final CommandValue.Argument<?>[] args;
-    private final CommandValue.Flag<?>[] flags;
-    private final String[] permissions;
+  private final String usage;
+  private final CommandValue.Argument<?>[] args;
+  private final CommandValue.Flag<?>[] flags;
+  private final String[] permissions;
 
-    // Location and world are snapshots of the location of our CommandSource at the time the command was processed.
-    // This way developers can ensure location data does not change while the command is being performed.
-    private final CommandSource sender;
-    private final Exceptional<Location> location;
-    private final Exceptional<World> world;
+  // Location and world are snapshots of the location of our CommandSource at the time the command
+  // was processed.
+  // This way developers can ensure location data does not change while the command is being
+  // performed.
+  private final CommandSource sender;
+  private final Exceptional<Location> location;
+  private final Exceptional<World> world;
 
-    public SimpleCommandContext(
-            String usage,
-            Argument<?>[] args,
-            Flag<?>[] flags,
-            CommandSource sender,
-            Exceptional<Location> location,
-            Exceptional<World> world,
-            String[] permissions
-    )
-    {
-        this.usage = usage;
-        this.args = args;
-        this.flags = flags;
-        this.sender = sender;
-        this.location = location;
-        this.world = world;
-        this.permissions = permissions;
-    }
+  public SimpleCommandContext(
+      String usage,
+      Argument<?>[] args,
+      Flag<?>[] flags,
+      CommandSource sender,
+      Exceptional<Location> location,
+      Exceptional<World> world,
+      String[] permissions) {
+    this.usage = usage;
+    this.args = args;
+    this.flags = flags;
+    this.sender = sender;
+    this.location = location;
+    this.world = world;
+    this.permissions = permissions;
+  }
 
+  @NotNull
+  @Override
+  public String alias() {
+    return this.usage.split(" ")[0];
+  }
 
-    @NotNull
-    @Override
-    public String alias()
-    {
-        return this.usage.split(" ")[0];
-    }
+  @Override
+  public int arguments() {
+    return this.args.length;
+  }
 
-    @Override
-    public int arguments()
-    {
-        return this.args.length;
-    }
+  @Override
+  public int flags() {
+    return this.flags.length;
+  }
 
-    @Override
-    public int flags()
-    {
-        return this.flags.length;
-    }
+  @NotNull
+  @Override
+  public <T> Exceptional<Argument<T>> argument(@NonNls @NotNull String key) {
+    return Exceptional.of(
+            Arrays.stream(this.args).filter(arg -> arg.getKey().equals(key)).findFirst())
+        .map(arg -> (Argument<T>) arg);
+  }
 
-    @NotNull
-    @Override
-    public <T> Exceptional<Argument<T>> argument(@NonNls @NotNull String key)
-    {
-        return Exceptional.of(
-                Arrays.stream(this.args)
-                        .filter(arg -> arg.getKey().equals(key))
-                        .findFirst()
-        ).map(arg -> (Argument<T>) arg);
-    }
+  @Override
+  public <T> T get(@NonNls String key) {
+    return Arrays.stream(SeleneUtils.merge(this.args, this.flags))
+        .filter(arg -> arg.getKey().equals(key))
+        .findFirst()
+        .map(arg -> (T) arg.getValue())
+        .orElse(null);
+  }
 
-    @Override
-    public <T> T get(@NonNls String key)
-    {
-        return Arrays.stream(SeleneUtils.merge(this.args, this.flags))
-                .filter(arg -> arg.getKey().equals(key))
-                .findFirst()
-                .map(arg -> (T) arg.getValue())
-                .orElse(null);
-    }
+  @Override
+  public <T> Exceptional<T> optional(String key) {
+    return Exceptional.ofNullable(this.get(key));
+  }
 
-    @Override
-    public <T> Exceptional<T> optional(String key)
-    {
-        return Exceptional.ofNullable(this.get(key));
-    }
+  @NotNull
+  @Override
+  public <T> Exceptional<Flag<T>> flag(@NonNls @NotNull String key) {
+    return Exceptional.of(
+            Arrays.stream(this.flags).filter(flag -> flag.getKey().equals(key)).findFirst())
+        .map(flag -> (Flag<T>) flag);
+  }
 
-    @NotNull
-    @Override
-    public <T> Exceptional<Flag<T>> flag(@NonNls @NotNull String key)
-    {
-        return Exceptional.of(
-                Arrays.stream(this.flags)
-                        .filter(flag -> flag.getKey().equals(key))
-                        .findFirst()
-        ).map(flag -> (Flag<T>) flag);
-    }
+  @Override
+  public boolean has(@NonNls @NotNull String key) {
+    return Arrays.stream(SeleneUtils.merge(this.args, this.flags))
+        .anyMatch(arg -> arg.getKey().equals(key));
+  }
 
-    @Override
-    public boolean has(@NonNls @NotNull String key)
-    {
-        return Arrays.stream(SeleneUtils.merge(this.args, this.flags)).anyMatch(arg -> arg.getKey().equals(key));
-    }
+  @Override
+  public CommandSource sender() {
+    return this.sender;
+  }
 
-    @Override
-    public CommandSource sender()
-    {
-        return this.sender;
-    }
+  @Override
+  public Exceptional<Location> location() {
+    return this.location;
+  }
 
-    @Override
-    public Exceptional<Location> location()
-    {
-        return this.location;
-    }
+  @Override
+  public Exceptional<World> world() {
+    return this.world;
+  }
 
-    @Override
-    public Exceptional<World> world()
-    {
-        return this.world;
-    }
-
-    @Override
-    public String[] permissions()
-    {
-        return this.permissions;
-    }
+  @Override
+  public String[] permissions() {
+    return this.permissions;
+  }
 }

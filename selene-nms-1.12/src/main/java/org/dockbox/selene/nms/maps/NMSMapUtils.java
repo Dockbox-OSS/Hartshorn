@@ -35,30 +35,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public final class NMSMapUtils
-{
+public final class NMSMapUtils {
 
-    private static final Map<Integer, int[]> COLORS = SeleneUtils.emptyMap();
     public static final int MAX_MAP_SIZE = 128;
     public static final int Z_CENTER = 999_999;
     public static final int DIMENSION = Z_CENTER;
+    private static final Map<Integer, int[]> COLORS = SeleneUtils.emptyMap();
 
     private NMSMapUtils() {}
 
-    public static int populateColoredMap(BufferedImage image)
-    {
+    public static int populateColoredMap(BufferedImage image) {
         return populateColoredMap(getColorData(image));
     }
 
-    public static int populateColoredMap(byte[] colors)
-    {
+    public static int populateColoredMap(byte[] colors) {
         World world = FMLServerHandler.instance().getServer().getWorld(0); // Root world
         int id = world.getUniqueDataId("map");
         MapData mapData = new MapData("map_" + id);
         mapData.scale = (byte) 0;
         mapData.xCenter = 0;
         mapData.zCenter = Z_CENTER;
-        mapData.dimension = DIMENSION; // Target dimension ID, realistically no server will ever reach this number
+        mapData.dimension =
+                DIMENSION; // Target dimension ID, realistically no server will ever reach this number
         mapData.unlimitedTracking = false;
         mapData.trackingPosition = false;
         mapData.colors = colors;
@@ -68,58 +66,18 @@ public final class NMSMapUtils
         return id;
     }
 
-    private static BufferedImage getResizedImage(BufferedImage originImage)
-    {
-        BufferedImage image = new BufferedImage(MAX_MAP_SIZE, MAX_MAP_SIZE, BufferedImage.TRANSLUCENT);
-        Graphics2D graphics2D = image.createGraphics();
-        graphics2D.drawImage(originImage, 0, 0, MAX_MAP_SIZE, MAX_MAP_SIZE, null);
-        graphics2D.dispose();
-        return image;
-    }
-
-    private static int getIndexOfTheRGB(int red, int green, int blue)
-    {
-        Map<Integer, Double> similarities = new HashMap<>();
-        for (Map.Entry<Integer, int[]> entry : verifyColorMap().entrySet())
-        {
-            int r = entry.getValue()[0];
-            int g = entry.getValue()[1];
-            int b = entry.getValue()[2];
-
-            double similarity = Math.pow((red - r), 2) + Math.pow((green - g), 2) + Math.pow((blue - b), 2);
-            similarities.put(entry.getKey(), similarity);
-        }
-
-        double min = Collections.min(similarities.values());
-
-        for (Map.Entry<Integer, Double> entry : similarities.entrySet())
-        {
-            if (entry.getValue() <= min)
-            {
-                return entry.getKey();
-            }
-        }
-
-        return 4;
-    }
-
     @SuppressWarnings("MagicNumber")
-    private static byte[] getColorData(BufferedImage image)
-    {
+    private static byte[] getColorData(BufferedImage image) {
         BufferedImage sizedImage = getResizedImage(image);
         byte[] colors = new byte[MAX_MAP_SIZE * MAX_MAP_SIZE];
         int n = 0;
-        for (int i = 0; MAX_MAP_SIZE > i; i++)
-        {
-            for (int j = 0; MAX_MAP_SIZE > j; j++)
-            {
+        for (int i = 0; MAX_MAP_SIZE > i; i++) {
+            for (int j = 0; MAX_MAP_SIZE > j; j++) {
                 int rgb = sizedImage.getRGB(j, i);
-                if (0 <= rgb)
-                {
+                if (0 <= rgb) {
                     colors[n] = (byte) 0;
                 }
-                else
-                {
+                else {
                     Color color = new Color(rgb);
                     int index = getIndexOfTheRGB(color.getRed(), color.getGreen(), color.getBlue());
                     colors[n] = (byte) index;
@@ -130,27 +88,54 @@ public final class NMSMapUtils
         return colors;
     }
 
-    private static Map<Integer, int[]> verifyColorMap()
-    {
-        if (COLORS.isEmpty())
-        {
-            try
-            {
+    private static BufferedImage getResizedImage(BufferedImage originImage) {
+        BufferedImage image = new BufferedImage(MAX_MAP_SIZE, MAX_MAP_SIZE, BufferedImage.TRANSLUCENT);
+        Graphics2D graphics2D = image.createGraphics();
+        graphics2D.drawImage(originImage, 0, 0, MAX_MAP_SIZE, MAX_MAP_SIZE, null);
+        graphics2D.dispose();
+        return image;
+    }
+
+    private static int getIndexOfTheRGB(int red, int green, int blue) {
+        Map<Integer, Double> similarities = new HashMap<>();
+        for (Map.Entry<Integer, int[]> entry : verifyColorMap().entrySet()) {
+            int r = entry.getValue()[0];
+            int g = entry.getValue()[1];
+            int b = entry.getValue()[2];
+
+            double similarity =
+                    Math.pow((red - r), 2) + Math.pow((green - g), 2) + Math.pow((blue - b), 2);
+            similarities.put(entry.getKey(), similarity);
+        }
+
+        double min = Collections.min(similarities.values());
+
+        for (Map.Entry<Integer, Double> entry : similarities.entrySet()) {
+            if (entry.getValue() <= min) {
+                return entry.getKey();
+            }
+        }
+
+        return 4;
+    }
+
+    private static Map<Integer, int[]> verifyColorMap() {
+        if (COLORS.isEmpty()) {
+            try {
                 Path colorMap = Selene.getResourceFile("colormap.raw").get();
-                for (String line : Files.readAllLines(colorMap))
-                {
+                for (String line : Files.readAllLines(colorMap)) {
                     String[] ints = line.split(",");
-                    int[] rgb = { Integer.parseInt(ints[1]), Integer.parseInt(ints[2]), Integer.parseInt(ints[3]) };
+                    int[] rgb = {
+                            Integer.parseInt(ints[1]), Integer.parseInt(ints[2]), Integer.parseInt(ints[3])
+                    };
                     COLORS.put(Integer.parseInt(ints[0]), rgb);
                 }
             }
-            catch (IOException | NumberFormatException e)
-            {
+            catch (IOException | NumberFormatException e) {
                 Selene.handle("Colormap could not be read", e);
                 COLORS.clear();
             }
         }
         return COLORS;
     }
-
 }

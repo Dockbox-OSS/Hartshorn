@@ -23,11 +23,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The interface to mark a method parameter to be injected from the source of a command. Typically this is only used when
- * calling command methods.
+ * The interface to mark a method parameter to be injected from the source of a command. Typically
+ * this is only used when calling command methods.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface FromSource
-{
-}
+public @interface FromSource {}

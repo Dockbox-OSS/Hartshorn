@@ -27,13 +27,10 @@ import java.lang.annotation.Target;
 import java.util.function.Function;
 
 /**
- * The interface to mark a object field as ignored when generating objects using
- * {@link Reflect#tryCreate(Class, Function, boolean, Provision)} or (de)serializing
- * them with a {@link org.dockbox.selene.api.files.FileManager} implementation.
+ * The interface to mark a object field as ignored when generating objects using {@link
+ * Reflect#tryCreate(Class, Function, boolean, Provision)} or (de)serializing them with a {@link
+ * org.dockbox.selene.api.files.FileManager} implementation.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Ignore
-{
-}
-
+public @interface Ignore {}

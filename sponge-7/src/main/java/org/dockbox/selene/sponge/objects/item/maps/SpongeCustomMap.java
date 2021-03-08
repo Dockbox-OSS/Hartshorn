@@ -23,28 +23,24 @@ import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.item.inventory.ItemStack;
 
-public class SpongeCustomMap extends SpongeItem implements CustomMap
-{
+public class SpongeCustomMap extends SpongeItem implements CustomMap {
 
     private final Identifiable owner;
     private final int mapId;
 
-    public SpongeCustomMap(@NotNull ItemStack initialValue, Identifiable owner, int mapId)
-    {
+    public SpongeCustomMap(@NotNull ItemStack initialValue, Identifiable owner, int mapId) {
         super(initialValue);
         this.owner = owner;
         this.mapId = mapId;
     }
 
     @Override
-    public Identifiable getOwner()
-    {
+    public Identifiable getOwner() {
         return this.owner;
     }
 
     @Override
-    public int getMapId()
-    {
+    public int getMapId() {
         return this.mapId;
     }
 }

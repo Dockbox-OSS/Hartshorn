@@ -19,10 +19,8 @@ package org.dockbox.selene.structures.table.exceptions;
 
 import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
 
-public class EmptyEntryException extends CheckedSeleneException
-{
-    public EmptyEntryException(String message)
-    {
+public class EmptyEntryException extends CheckedSeleneException {
+    public EmptyEntryException(String message) {
         super(message);
     }
 }

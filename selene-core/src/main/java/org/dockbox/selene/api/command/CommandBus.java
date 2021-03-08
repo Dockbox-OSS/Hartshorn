@@ -19,13 +19,11 @@ package org.dockbox.selene.api.command;
 
 import org.dockbox.selene.api.objects.Exceptional;
 
-public interface CommandBus
-{
+public interface CommandBus {
 
     void register(Object... objs);
 
     void apply();
 
     Exceptional<Boolean> confirmCommand(String confirmId);
-
 }

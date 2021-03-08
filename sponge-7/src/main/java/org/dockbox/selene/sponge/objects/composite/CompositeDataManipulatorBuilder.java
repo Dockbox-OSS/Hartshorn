@@ -28,20 +28,17 @@ import org.spongepowered.api.data.persistence.InvalidDataException;
 import java.util.Map;
 import java.util.Optional;
 
-public class CompositeDataManipulatorBuilder extends AbstractDataBuilder<MutableCompositeData> implements DataManipulatorBuilder<MutableCompositeData, ImmutableCompositeData>
-{
+public class CompositeDataManipulatorBuilder extends AbstractDataBuilder<MutableCompositeData>
+        implements DataManipulatorBuilder<MutableCompositeData, ImmutableCompositeData> {
 
-    public CompositeDataManipulatorBuilder()
-    {
+    public CompositeDataManipulatorBuilder() {
         super(MutableCompositeData.class, 1);
     }
 
     @Override
     protected @NotNull Optional<MutableCompositeData> buildContent(DataView container)
-            throws InvalidDataException
-    {
-        if (container.contains(Composite.ITEM_KEY.getQuery()))
-        {
+            throws InvalidDataException {
+        if (container.contains(Composite.ITEM_KEY.getQuery())) {
             @SuppressWarnings("OptionalGetWithoutIsPresent") final Map<?, ?> unsafeData = container.getMap(Composite.ITEM_KEY.getQuery()).get();
             Map<String, Object> safeData = SeleneUtils.emptyMap();
             unsafeData.forEach((k, v) -> safeData.put(k.toString(), v));
@@ -51,17 +48,15 @@ public class CompositeDataManipulatorBuilder extends AbstractDataBuilder<Mutable
             return Optional.of(data);
         }
         return Optional.empty();
-    }    @Override
-    public @NotNull MutableCompositeData create()
-    {
+    }
+
+    @Override
+    public @NotNull MutableCompositeData create() {
         return new MutableCompositeData();
     }
 
     @Override
-    public @NotNull Optional<MutableCompositeData> createFrom(DataHolder dataHolder)
-    {
+    public @NotNull Optional<MutableCompositeData> createFrom(DataHolder dataHolder) {
         return Optional.of(dataHolder.get(MutableCompositeData.class).orElseGet(this::create));
     }
-
-
 }

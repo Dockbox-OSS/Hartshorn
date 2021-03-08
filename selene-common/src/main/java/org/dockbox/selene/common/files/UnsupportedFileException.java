@@ -18,19 +18,19 @@
 package org.dockbox.selene.common.files;
 
 /**
- * A checked {@link Exception}, thrown if a file or {@link org.dockbox.selene.api.files.FileType} is not supported
- * by a implementation.
+ * A checked {@link Exception}, thrown if a file or {@link org.dockbox.selene.api.files.FileType} is
+ * not supported by a implementation.
  */
-public class UnsupportedFileException extends Exception
-{
+public class UnsupportedFileException extends Exception {
     /**
-     * Creates a new instance, providing a given filetype to the super type {@link Exception} as the error message.
+     * Creates a new instance, providing a given filetype to the super type {@link Exception} as the
+     * error message.
      *
      * @param fileType
-     *         The filetype providing information about the unsupport file or {@link org.dockbox.selene.api.files.FileType}
+     *         The filetype providing information about the unsupport file or {@link
+     *         org.dockbox.selene.api.files.FileType}
      */
-    public UnsupportedFileException(String fileType)
-    {
+    public UnsupportedFileException(String fileType) {
         super(fileType);
     }
 }

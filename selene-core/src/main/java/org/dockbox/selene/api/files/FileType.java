@@ -19,11 +19,8 @@ package org.dockbox.selene.api.files;
 
 import java.nio.file.Path;
 
-/**
- * Enumerated values containing the file extensions for several commonly used file types.
- */
-public enum FileType
-{
+/** Enumerated values containing the file extensions for several commonly used file types. */
+public enum FileType {
 
     // Minecraft native formats
     ANVIL("mca"),
@@ -56,16 +53,16 @@ public enum FileType
 
     private final String extension;
 
-    FileType(String extension)
-    {
+    FileType(String extension) {
         this.extension = extension;
     }
 
     /**
-     * Converts a given filename (without the file extension present), combined with a {@link Path} reference to a directory,
-     * to a new {@link Path} reference to a file. If the file did not yet exist, it is created.
-     * <p>
-     * Assumes the parent {@link Path} already exists.
+     * Converts a given filename (without the file extension present), combined with a {@link Path}
+     * reference to a directory, to a new {@link Path} reference to a file. If the file did not yet
+     * exist, it is created.
+     *
+     * <p>Assumes the parent {@link Path} already exists.
      *
      * @param parent
      *         The parent directory
@@ -74,26 +71,24 @@ public enum FileType
      *
      * @return The {@link Path} reference to a file
      */
-    public Path asPath(Path parent, String file)
-    {
+    public Path asPath(Path parent, String file) {
         return parent.resolve(this.asFileName(file));
     }
 
     /**
-     * Converts a given filename (without the file extension present) to a {@link String} value holding the correct format.
+     * Converts a given filename (without the file extension present) to a {@link String} value
+     * holding the correct format.
      *
      * @param file
      *         The filename without a file extension present
      *
      * @return The generated filename with extension
      */
-    public String asFileName(String file)
-    {
+    public String asFileName(String file) {
         return file + '.' + this.extension;
     }
 
-    public String getExtension()
-    {
+    public String getExtension() {
         return this.extension;
     }
 }

@@ -29,43 +29,36 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T>
  */
-public class PacketEvent<T extends Packet> extends AbstractCancellableEvent
-{
+public class PacketEvent<T extends Packet> extends AbstractCancellableEvent {
 
     private final Player target;
     private T packet;
     private boolean isModified;
 
-    public PacketEvent(T packet, Player target)
-    {
+    public PacketEvent(T packet, Player target) {
         this.packet = packet;
         this.target = target;
     }
 
-    public T getPacket()
-    {
+    public T getPacket() {
         return this.packet;
     }
 
-    public void setPacket(T packet)
-    {
+    public void setPacket(T packet) {
         this.isModified = true;
         this.packet = packet;
     }
 
-    public Player getTarget()
-    {
+    public Player getTarget() {
         return this.target;
     }
 
-    public boolean isModified()
-    {
+    public boolean isModified() {
         return this.isModified;
     }
 
     @Override
-    public @NotNull PacketEvent<T> post()
-    {
+    public @NotNull PacketEvent<T> post() {
         Selene.provide(EventBus.class).post(this);
         return this;
     }

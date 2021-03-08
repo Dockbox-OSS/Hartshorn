@@ -21,25 +21,21 @@ import org.dockbox.selene.api.server.properties.InjectorProperty;
 
 import java.nio.file.Path;
 
-public class SQLitePathProperty implements InjectorProperty<Path>
-{
+public class SQLitePathProperty implements InjectorProperty<Path> {
 
     private final Path path;
 
-    public SQLitePathProperty(Path path)
-    {
+    public SQLitePathProperty(Path path) {
         this.path = path;
     }
 
     @Override
-    public String getKey()
-    {
+    public String getKey() {
         return SQLiteMan.PATH_KEY;
     }
 
     @Override
-    public Path getObject()
-    {
+    public Path getObject() {
         return this.path;
     }
 }

@@ -22,31 +22,28 @@ import net.minecraft.network.Packet;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
 
 /**
- * Provides a native {@link Packet} to a property holder, typically this is only used for {@link org.dockbox.selene.nms.packets.NMSPacket NMSPackets}.
+ * Provides a native {@link Packet} to a property holder, typically this is only used for {@link
+ * org.dockbox.selene.nms.packets.NMSPacket NMSPackets}.
  *
  * @param <T>
  *         The type of the native packet.
  */
-public class NativePacketProperty<T extends Packet<?>> implements InjectorProperty<T>
-{
+public class NativePacketProperty<T extends Packet<?>> implements InjectorProperty<T> {
 
     public static final String KEY = "SeleneSpongeNativePacket";
     private final T packet;
 
-    public NativePacketProperty(T packet)
-    {
+    public NativePacketProperty(T packet) {
         this.packet = packet;
     }
 
     @Override
-    public String getKey()
-    {
+    public String getKey() {
         return NativePacketProperty.KEY;
     }
 
     @Override
-    public T getObject()
-    {
+    public T getObject() {
         return this.packet;
     }
 }

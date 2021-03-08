@@ -17,11 +17,9 @@
 
 package org.dockbox.selene.api.server.properties;
 
-public interface InjectorProperty<T>
-{
+public interface InjectorProperty<T> {
 
     String getKey();
 
     T getObject();
-
 }

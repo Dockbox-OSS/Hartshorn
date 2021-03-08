@@ -17,17 +17,13 @@
 
 package org.dockbox.selene.structures.table.objects;
 
-
-public class User
-{
+public class User {
 
     public int numeralId;
     public String name;
 
-    public User(int numeralId, String name)
-    {
+    public User(int numeralId, String name) {
         this.numeralId = numeralId;
         this.name = name;
     }
-
 }

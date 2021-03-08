@@ -51,15 +51,12 @@ import java.util.UUID;
  * @param <E>
  *         The internal Selene {@link org.dockbox.selene.api.entities.Entity} type to represent
  */
-public abstract class SpongeEntity
-        <T extends Entity, E extends org.dockbox.selene.api.entities.Entity<E>>
-        extends NMSEntity<T>
-        implements org.dockbox.selene.api.entities.Entity<E>, SpongeComposite
-{
+public abstract class SpongeEntity<
+        T extends Entity, E extends org.dockbox.selene.api.entities.Entity<E>>
+        extends NMSEntity<T> implements org.dockbox.selene.api.entities.Entity<E>, SpongeComposite {
 
     @SuppressWarnings("unchecked")
-    protected <C extends org.spongepowered.api.entity.Entity> C create(Location location)
-    {
+    protected <C extends org.spongepowered.api.entity.Entity> C create(Location location) {
         return SpongeConversionUtil.toSponge(location)
                 .map(spongeLocation -> (C) spongeLocation.createEntity(this.getEntityType()))
                 .orNull();
@@ -68,164 +65,142 @@ public abstract class SpongeEntity
     protected abstract EntityType getEntityType();
 
     @Override
-    public UUID getUniqueId()
-    {
+    public UUID getUniqueId() {
         return this.getRepresentation().getUniqueId();
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return this.getDisplayName().toPlain();
     }
 
     @Override
-    public Text getDisplayName()
-    {
-        return SpongeConversionUtil.fromSponge(this.getRepresentation()
-                .getOrElse(Keys.DISPLAY_NAME, org.spongepowered.api.text.Text.EMPTY)
-        );
+    public Text getDisplayName() {
+        return SpongeConversionUtil.fromSponge(
+                this.getRepresentation()
+                        .getOrElse(Keys.DISPLAY_NAME, org.spongepowered.api.text.Text.EMPTY));
     }
 
     @Override
-    public void setDisplayName(Text displayName)
-    {
-        if (null == displayName)
-        {
+    public void setDisplayName(Text displayName) {
+        if (null == displayName) {
             this.getRepresentation().offer(Keys.CUSTOM_NAME_VISIBLE, false);
             this.getRepresentation().remove(Keys.DISPLAY_NAME);
         }
-        else
-        {
+        else {
             this.getRepresentation().offer(Keys.DISPLAY_NAME, SpongeConversionUtil.toSponge(displayName));
             this.getRepresentation().offer(Keys.CUSTOM_NAME_VISIBLE, true);
         }
     }
 
     @Override
-    public double getHealth()
-    {
+    public double getHealth() {
         return this.getRepresentation().getOrElse(Keys.HEALTH, -1D);
     }
 
     @Override
-    public void setHealth(double health)
-    {
+    public void setHealth(double health) {
         double maxHealth = this.getRepresentation().getOrElse(Keys.MAX_HEALTH, DEFAULT_MAX_HEALTH);
         if (maxHealth < health) health = maxHealth;
         this.getRepresentation().offer(Keys.HEALTH, health);
     }
 
     @Override
-    public boolean isAlive()
-    {
+    public boolean isAlive() {
         return this.getRepresentation().isLoaded();
     }
 
     @Override
-    public boolean isInvisible()
-    {
+    public boolean isInvisible() {
         return this.getRepresentation().getOrElse(Keys.INVISIBLE, false);
     }
 
     @Override
-    public void setInvisible(boolean visible)
-    {
+    public void setInvisible(boolean visible) {
         this.getRepresentation().offer(Keys.INVISIBLE, visible);
     }
 
     @Override
-    public boolean isInvulnerable()
-    {
+    public boolean isInvulnerable() {
         return this.getRepresentation().getOrElse(Keys.INVULNERABLE, false);
     }
 
     @Override
-    public void setInvulnerable(boolean invulnerable)
-    {
+    public void setInvulnerable(boolean invulnerable) {
         this.getRepresentation().offer(Keys.INVULNERABLE, invulnerable);
     }
 
     @Override
-    public boolean hasGravity()
-    {
+    public boolean hasGravity() {
         return this.getRepresentation().getOrElse(Keys.HAS_GRAVITY, false);
     }
 
     @Override
-    public void setGravity(boolean gravity)
-    {
+    public void setGravity(boolean gravity) {
         this.getRepresentation().offer(Keys.HAS_GRAVITY, gravity);
     }
 
     @Override
-    public boolean summon(Location location)
-    {
+    public boolean summon(Location location) {
         return SpongeConversionUtil.toSponge(location)
                 .map(spongeLocation -> spongeLocation.spawnEntity(this.getRepresentation()))
                 .orElse(false);
     }
 
     @Override
-    public boolean destroy()
-    {
+    public boolean destroy() {
         this.getRepresentation().remove();
         return true;
     }
 
     @Override
-    public E copy()
-    {
+    public E copy() {
         return SpongeConversionUtil.toSponge(this.getLocation())
-                .map(spongeLocation -> {
-                    try (StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame())
-                    {
-                        frame.addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLUGIN);
-                        EntityArchetype archetype = this.getRepresentation()
-                                .createArchetype();
+                .map(
+                        spongeLocation -> {
+                            try (StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+                                frame.addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLUGIN);
+                                EntityArchetype archetype = this.getRepresentation().createArchetype();
 
-                        @SuppressWarnings("unchecked") org.spongepowered.api.entity.Entity clone =
-                                this.createSnapshot(
-                                        (AbstractArchetype<EntityType, EntitySnapshot, org.spongepowered.api.entity.Entity>) archetype,
-                                        spongeLocation
-                                )
-                                        .restore()
-                                        .orElse(null);
+                                @SuppressWarnings("unchecked")
+                                org.spongepowered.api.entity.Entity clone =
+                                        this.createSnapshot(
+                                                (AbstractArchetype<
+                                                        EntityType,
+                                                        EntitySnapshot,
+                                                        org.spongepowered.api.entity.Entity>)
+                                                        archetype,
+                                                spongeLocation)
+                                                .restore()
+                                                .orElse(null);
 
-                        return this.from(clone);
-                    }
-                }).rethrowUnchecked().orNull();
+                                return this.from(clone);
+                            }
+                        })
+                .rethrowUnchecked()
+                .orNull();
     }
 
     @Override
-    public Location getLocation()
-    {
+    public Location getLocation() {
         return SpongeConversionUtil.fromSponge(this.getRepresentation().getLocation());
     }
 
     @Override
-    public void setLocation(Location location)
-    {
+    public void setLocation(Location location) {
         this.getRepresentation().setLocation(SpongeConversionUtil.toSponge(location).orNull());
     }
 
     @Override
-    public World getWorld()
-    {
+    public World getWorld() {
         return SpongeConversionUtil.fromSponge(this.getRepresentation().getWorld());
     }
 
     /**
-     * Gets the represented {@link org.spongepowered.api.entity.Entity}, typically this is a mixed-in instance of
-     * {@link Entity}.
-     *
-     * @return The represented {@link org.spongepowered.api.entity.Entity}.
-     */
-    protected abstract org.spongepowered.api.entity.Entity getRepresentation();
-
-    /**
-     * Custom implementation of {@link org.spongepowered.common.entity.SpongeEntityArchetype#toSnapshot(org.spongepowered.api.world.Location)},
-     * fixing the incompatibility with non-rotated entities. The original method did not include the rotation, scale, and type in the snapshot.
+     * Custom implementation of {@link
+     * org.spongepowered.common.entity.SpongeEntityArchetype#toSnapshot(org.spongepowered.api.world.Location)},
+     * fixing the incompatibility with non-rotated entities. The original method did not include the
+     * rotation, scale, and type in the snapshot.
      *
      * @param archetype
      *         The entity archetype to use when creating the snapshot.
@@ -234,15 +209,21 @@ public abstract class SpongeEntity
      *
      * @return The new {@link EntitySnapshot}
      */
-    private EntitySnapshot createSnapshot(AbstractArchetype<EntityType, EntitySnapshot, org.spongepowered.api.entity.Entity> archetype,
-                                          org.spongepowered.api.world.Location<org.spongepowered.api.world.World> location)
-    {
+    private EntitySnapshot createSnapshot(
+            AbstractArchetype<EntityType, EntitySnapshot, org.spongepowered.api.entity.Entity> archetype,
+            org.spongepowered.api.world.Location<org.spongepowered.api.world.World> location) {
         final SpongeEntitySnapshotBuilder builder = new SpongeEntitySnapshotBuilder();
         builder.type(this.getEntityType());
         NBTTagCompound newCompound = archetype.getCompound().copy();
-        newCompound.setTag("Pos", Constants.NBT
-                .newDoubleNBTList(location.getPosition().getX(), location.getPosition().getY(), location.getPosition().getZ()));
-        newCompound.setInteger("Dimension", ((WorldInfoBridge) location.getExtent().getProperties()).bridge$getDimensionId());
+        newCompound.setTag(
+                "Pos",
+                Constants.NBT.newDoubleNBTList(
+                        location.getPosition().getX(),
+                        location.getPosition().getY(),
+                        location.getPosition().getZ()));
+        newCompound.setInteger(
+                "Dimension",
+                ((WorldInfoBridge) location.getExtent().getProperties()).bridge$getDimensionId());
         builder.unsafeCompound(newCompound);
         builder.worldId(location.getExtent().getUniqueId());
         builder.position(location.getPosition());
@@ -253,7 +234,8 @@ public abstract class SpongeEntity
     }
 
     /**
-     * Creates a new instance of {@link org.dockbox.selene.api.entities.Entity}, representing a native {@link org.spongepowered.api.entity.Entity}.
+     * Creates a new instance of {@link org.dockbox.selene.api.entities.Entity}, representing a native
+     * {@link org.spongepowered.api.entity.Entity}.
      *
      * @param clone
      *         The native entity to create the instance from
@@ -262,16 +244,22 @@ public abstract class SpongeEntity
      */
     protected abstract E from(org.spongepowered.api.entity.Entity clone);
 
+    /**
+     * Gets the represented {@link org.spongepowered.api.entity.Entity}, typically this is a mixed-in
+     * instance of {@link Entity}.
+     *
+     * @return The represented {@link org.spongepowered.api.entity.Entity}.
+     */
+    protected abstract org.spongepowered.api.entity.Entity getRepresentation();
+
     @Override
-    public Exceptional<? extends DataHolder> getDataHolder()
-    {
+    public Exceptional<? extends DataHolder> getDataHolder() {
         return Exceptional.ofNullable(this.getRepresentation());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public T getEntity()
-    {
+    public T getEntity() {
         return (T) this.getRepresentation();
     }
 }

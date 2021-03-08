@@ -17,12 +17,6 @@
 
 package org.dockbox.selene.common.discord;
 
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
-
 import org.dockbox.selene.api.discord.DiscordPagination;
 import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.discord.templates.MessageTemplate;
@@ -30,75 +24,71 @@ import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.util.SeleneUtils;
 
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SimpleDiscordPagination implements DiscordPagination
-{
+public class SimpleDiscordPagination implements DiscordPagination {
 
-    private final List<Object> pages = SeleneUtils.emptyList();
+  private final List<Object> pages = SeleneUtils.emptyList();
 
-    @Override
-    public void sendTo(MessageChannel channel)
-    {
-        Selene.provide(DiscordUtils.class).sendToTextChannel(this, channel);
+  @Override
+  public void sendTo(MessageChannel channel) {
+    Selene.provide(DiscordUtils.class).sendToTextChannel(this, channel);
+  }
+
+  @Override
+  public void sendTo(User user) {
+    Selene.provide(DiscordUtils.class).sendToUser(this, user);
+  }
+
+  @Override
+  public DiscordPagination addPage(Message... messages) {
+    this.pages.addAll(Arrays.asList(messages));
+    return this;
+  }
+
+  @Override
+  public DiscordPagination addPage(MessageEmbed... embed) {
+    this.pages.addAll(Arrays.asList(embed));
+    return this;
+  }
+
+  @Override
+  public DiscordPagination addPage(String... messages) {
+    this.pages.addAll(
+        Arrays.stream(messages)
+            .map(message -> new MessageBuilder().setContent(message).build())
+            .collect(Collectors.toList()));
+    return this;
+  }
+
+  @Override
+  public DiscordPagination addPage(Text... messages) {
+    this.pages.addAll(
+        Arrays.stream(messages)
+            .map(message -> new MessageBuilder().setContent(message.toStringValue()).build())
+            .collect(Collectors.toList()));
+    return this;
+  }
+
+  @Override
+  public DiscordPagination addPage(MessageTemplate... templates) {
+    for (MessageTemplate template : templates) {
+      this.addPage(template.getJDAMessage());
     }
+    return this;
+  }
 
-    @Override
-    public void sendTo(User user)
-    {
-        Selene.provide(DiscordUtils.class).sendToUser(this, user);
-    }
-
-    @Override
-    public DiscordPagination addPage(Message... messages)
-    {
-        this.pages.addAll(Arrays.asList(messages));
-        return this;
-    }
-
-    @Override
-    public DiscordPagination addPage(MessageEmbed... embed)
-    {
-        this.pages.addAll(Arrays.asList(embed));
-        return this;
-    }
-
-    @Override
-    public DiscordPagination addPage(String... messages)
-    {
-        this.pages.addAll(Arrays.stream(messages)
-                .map(message -> new MessageBuilder().setContent(message).build())
-                .collect(Collectors.toList())
-        );
-        return this;
-    }
-
-    @Override
-    public DiscordPagination addPage(Text... messages)
-    {
-        this.pages.addAll(Arrays.stream(messages)
-                .map(message -> new MessageBuilder().setContent(message.toStringValue()).build())
-                .collect(Collectors.toList())
-        );
-        return this;
-    }
-
-    @Override
-    public DiscordPagination addPage(MessageTemplate... templates)
-    {
-        for (MessageTemplate template : templates)
-        {
-            this.addPage(template.getJDAMessage());
-        }
-        return this;
-    }
-
-    @Override
-    public Collection<Object> getPages()
-    {
-        return SeleneUtils.asUnmodifiableCollection(this.pages);
-    }
+  @Override
+  public Collection<Object> getPages() {
+    return SeleneUtils.asUnmodifiableCollection(this.pages);
+  }
 }

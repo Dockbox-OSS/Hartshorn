@@ -18,18 +18,15 @@
 package org.dockbox.selene.api.text.actions;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class TextAction<R>
-{
+public abstract class TextAction<R> {
 
     private final R result;
 
-    protected TextAction(R result)
-    {
+    protected TextAction(R result) {
         this.result = result;
     }
 
-    public R getResult()
-    {
+    public R getResult() {
         return this.result;
     }
 }

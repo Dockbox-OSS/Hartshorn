@@ -30,8 +30,7 @@ import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.text.Text;
 
-public interface DiscordUtils
-{
+public interface DiscordUtils {
 
     Exceptional<JDA> getJDA();
 
@@ -62,5 +61,4 @@ public interface DiscordUtils
     void registerCommandListener(Object instance);
 
     void post(String command, DiscordCommandContext context);
-
 }

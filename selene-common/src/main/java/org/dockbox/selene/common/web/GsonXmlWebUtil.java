@@ -31,35 +31,28 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
-public class GsonXmlWebUtil extends DefaultWebUtil
-{
+public class GsonXmlWebUtil extends DefaultWebUtil {
 
     @Override
-    public <T> Exceptional<T> getContent(Class<T> type, URL url)
-    {
-        try
-        {
+    public <T> Exceptional<T> getContent(Class<T> type, URL url) {
+        try {
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 
-            XmlParserCreator parser = () -> {
-                try
-                {
-                    return XmlPullParserFactory.newInstance().newPullParser();
-                }
-                catch (Exception e)
-                {
-                    throw new RuntimeException(e);
-                }
-            };
-            GsonXml gsonXml = new GsonXmlBuilder()
-                    .setXmlParserCreator(parser)
-                    .create();
+            XmlParserCreator parser =
+                    () -> {
+                        try {
+                            return XmlPullParserFactory.newInstance().newPullParser();
+                        }
+                        catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    };
+            GsonXml gsonXml = new GsonXmlBuilder().setXmlParserCreator(parser).create();
 
             T result = gsonXml.fromXml(in, type);
             return Exceptional.ofNullable(result);
         }
-        catch (JsonIOException | JsonSyntaxException | IOException e)
-        {
+        catch (JsonIOException | JsonSyntaxException | IOException e) {
             return Exceptional.of(e);
         }
     }

@@ -18,35 +18,32 @@
 package org.dockbox.selene.api.regex.matchers;
 
 import org.dockbox.selene.api.VerbalExpression;
+
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.TypeSafeMatcher;
 
-/**
- User: lanwen
- Date: 29.05.14
- Time: 20:06
- */
+/** User: lanwen Date: 29.05.14 Time: 20:06 */
 public final class TestsExactMatcher extends TypeSafeMatcher<VerbalExpression> {
 
-    private final String toTest;
+  private final String toTest;
 
-    private TestsExactMatcher(String toTest) {
-        this.toTest = toTest;
-    }
+  private TestsExactMatcher(String toTest) {
+    this.toTest = toTest;
+  }
 
-    @Override
-    public boolean matchesSafely(VerbalExpression verbalExpression) {
-        return verbalExpression.testExact(this.toTest);
-    }
+  @Override
+  public boolean matchesSafely(VerbalExpression verbalExpression) {
+    return verbalExpression.testExact(this.toTest);
+  }
 
-    @Override
-    public void describeTo(Description description) {
-        description.appendText("regex should match exactly to ").appendValue(this.toTest);
-    }
+  @Override
+  public void describeTo(Description description) {
+    description.appendText("regex should match exactly to ").appendValue(this.toTest);
+  }
 
-    @Factory
-    public static TestsExactMatcher matchesExactly(String test) {
-        return new TestsExactMatcher(test);
-    }
+  @Factory
+  public static TestsExactMatcher matchesExactly(String test) {
+    return new TestsExactMatcher(test);
+  }
 }

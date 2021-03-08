@@ -19,88 +19,77 @@ package org.dockbox.selene.sponge.util.files;
 
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.files.FileType;
-import org.dockbox.selene.common.files.DefaultConfigurateManager;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.common.files.DefaultConfigurateManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
 /**
- * Uses SpongeDefaultFileManager to determine the directory paths. This way all directory paths can be reused by other
- * FileManager implementations without the need of redefining these when changes are made. Due to multiple inheritance
- * not being possible in Java, a interface is used for this purpose, requiring us to directly target the interface super.
+ * Uses SpongeDefaultFileManager to determine the directory paths. This way all directory paths can
+ * be reused by other FileManager implementations without the need of redefining these when changes
+ * are made. Due to multiple inheritance not being possible in Java, a interface is used for this
+ * purpose, requiring us to directly target the interface super.
  */
-public class SpongeConfigurateManager extends DefaultConfigurateManager implements SpongeDefaultFileManager
-{
+public class SpongeConfigurateManager extends DefaultConfigurateManager
+        implements SpongeDefaultFileManager {
 
-    /**
-     * Provides the given {@link FileType} to the super type {@link FileManager}.
-     */
-    protected SpongeConfigurateManager()
-    {
+    /** Provides the given {@link FileType} to the super type {@link FileManager}. */
+    protected SpongeConfigurateManager() {
         super(FileType.YAML);
     }
 
     @NotNull
     @Override
-    public Path getDataDir()
-    {
+    public Path getDataDir() {
         return SpongeDefaultFileManager.super.getDataDir();
     }
 
     @NotNull
     @Override
-    public Path getLogsDir()
-    {
+    public Path getLogsDir() {
         return SpongeDefaultFileManager.super.getLogsDir();
     }
 
     @NotNull
     @Override
-    public Path getServerRoot()
-    {
+    public Path getServerRoot() {
         return SpongeDefaultFileManager.super.getServerRoot();
     }
 
     @NotNull
     @Override
-    public Path getModuleDir()
-    {
+    public Path getModuleDir() {
         return SpongeDefaultFileManager.super.getModuleDir();
     }
 
     @NotNull
     @Override
-    public Exceptional<Path> getModDir()
-    {
+    public Exceptional<Path> getModDir() {
         return SpongeDefaultFileManager.super.getModDir();
     }
 
     @NotNull
     @Override
-    public Path getPluginDir()
-    {
+    public Path getPluginDir() {
         return SpongeDefaultFileManager.super.getPluginDir();
     }
 
     @NotNull
     @Override
-    public Path getModuleConfigsDir()
-    {
+    public Path getModuleConfigsDir() {
         return SpongeDefaultFileManager.super.getModuleConfigsDir();
     }
 
     @NotNull
     @Override
-    public Exceptional<Path> getModdedPlatformModsConfigDir()
-    {
+    public Exceptional<Path> getModdedPlatformModsConfigDir() {
         return SpongeDefaultFileManager.super.getModdedPlatformModsConfigDir();
     }
 
     @NotNull
     @Override
-    public Path getPlatformPluginsConfigDir()
-    {
+    public Path getPlatformPluginsConfigDir() {
         return SpongeDefaultFileManager.super.getPlatformPluginsConfigDir();
     }
 }

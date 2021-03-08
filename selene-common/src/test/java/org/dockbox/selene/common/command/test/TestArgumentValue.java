@@ -17,24 +17,23 @@
 
 package org.dockbox.selene.common.command.test;
 
+import org.dockbox.selene.api.command.context.ArgumentConverter;
 import org.dockbox.selene.common.command.values.AbstractArgumentElement;
 import org.dockbox.selene.common.command.values.AbstractArgumentValue;
-import org.dockbox.selene.api.command.context.ArgumentConverter;
 
-public class TestArgumentValue extends AbstractArgumentValue<String>
-{
+public class TestArgumentValue extends AbstractArgumentValue<String> {
 
-    public TestArgumentValue(String permission, String key, String type) {
-        super(permission, key, type);
-    }
+  public TestArgumentValue(String permission, String key, String type) {
+    super(permission, key, type);
+  }
 
-    @Override
-    protected String parseValue(ArgumentConverter<?> converter, String key, String type) {
-        return null;
-    }
+  @Override
+  protected String parseValue(ArgumentConverter<?> converter, String key, String type) {
+    return null;
+  }
 
-    @Override
-    public AbstractArgumentElement<String> getElement() {
-        return null;
-    }
+  @Override
+  public AbstractArgumentElement<String> getElement() {
+    return null;
+  }
 }

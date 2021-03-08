@@ -21,17 +21,15 @@ import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.text.pagination.Pagination;
 
-public interface MessageReceiver extends Target
-{
+public interface MessageReceiver extends Target {
 
-    void send(ResourceEntry text);
+  void send(ResourceEntry text);
 
-    void send(Text text);
+  void send(Text text);
 
-    void sendWithPrefix(ResourceEntry text);
+  void sendWithPrefix(ResourceEntry text);
 
-    void sendWithPrefix(Text text);
+  void sendWithPrefix(Text text);
 
-    void sendPagination(Pagination pagination);
-
+  void sendPagination(Pagination pagination);
 }

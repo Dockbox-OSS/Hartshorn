@@ -17,36 +17,39 @@
 
 package org.dockbox.selene.api.objects.tuple;
 
-public class Vector3N extends Vector2N
-{
+public class Vector3N extends Vector2N {
 
     private final Number y;
 
-    public Vector3N(Number x, Number y, Number z)
-    {
+    public Vector3N(Number x, Number y, Number z) {
         super(x, z);
         this.y = y;
     }
 
-    public static Vector3N empty()
-    {
+    public static Vector3N empty() {
         return new Vector3N(0, 0, 0);
     }
 
-    public float getYf() { return this.y.floatValue(); }
+    public float getYf() {
+        return this.y.floatValue();
+    }
 
-    public int getYi() { return this.y.intValue(); }
+    public int getYi() {
+        return this.y.intValue();
+    }
 
-    public long getYl() { return this.y.longValue(); }
+    public long getYl() {
+        return this.y.longValue();
+    }
 
-    public Vector3N expand(Vector3N vector)
-    {
+    public Vector3N expand(Vector3N vector) {
         return new Vector3N(
                 this.getXd() + vector.getXd(),
                 this.getYd() + vector.getYd(),
-                this.getZd() + vector.getZd()
-        );
+                this.getZd() + vector.getZd());
     }
 
-    public double getYd() { return this.y.doubleValue(); }
+    public double getYd() {
+        return this.y.doubleValue();
+    }
 }

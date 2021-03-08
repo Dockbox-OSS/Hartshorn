@@ -34,40 +34,34 @@ import org.spongepowered.api.event.world.SaveWorldEvent;
 import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.world.storage.WorldProperties;
 
-public class SpongeWorldListener
-{
+public class SpongeWorldListener {
 
     @Inject
     private EventBus bus;
 
     @Listener
-    public void onWorldLoaded(LoadWorldEvent loadEvent)
-    {
+    public void onWorldLoaded(LoadWorldEvent loadEvent) {
         World world = SpongeConversionUtil.fromSponge(loadEvent.getTargetWorld());
         Cancellable event = new WorldLoadEvent(world).post();
         loadEvent.setCancelled(event.isCancelled());
     }
 
     @Listener
-    public void onWorldUnloaded(UnloadWorldEvent unloadEvent)
-    {
+    public void onWorldUnloaded(UnloadWorldEvent unloadEvent) {
         Cancellable event = new WorldUnloadEvent(unloadEvent.getTargetWorld().getUniqueId()).post();
         unloadEvent.setCancelled(event.isCancelled());
     }
 
     @Listener
-    public void onWorldSaved(SaveWorldEvent saveEvent)
-    {
+    public void onWorldSaved(SaveWorldEvent saveEvent) {
         World world = SpongeConversionUtil.fromSponge(saveEvent.getTargetWorld());
         Cancellable event = new WorldSaveEvent(world).post();
         saveEvent.setCancelled(event.isCancelled());
     }
 
     @Listener
-    public void onWorldCreating(ConstructWorldPropertiesEvent constructEvent)
-    {
+    public void onWorldCreating(ConstructWorldPropertiesEvent constructEvent) {
         WorldProperties swp = constructEvent.getWorldProperties();
         new WorldCreatingEvent(SpongeConversionUtil.fromSponge(swp)).post();
     }
-
 }

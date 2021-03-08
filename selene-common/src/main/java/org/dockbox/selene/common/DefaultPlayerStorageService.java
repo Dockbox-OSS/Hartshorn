@@ -23,50 +23,44 @@ import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.server.Selene;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.UUID;
 
-public abstract class DefaultPlayerStorageService implements PlayerStorageService
-{
+public abstract class DefaultPlayerStorageService implements PlayerStorageService {
 
-    @Override
-    public void setLanguagePreference(@NotNull UUID uuid, @NotNull Language lang)
-    {
-        UserDataModel userData = DefaultPlayerStorageService.getUserData(uuid);
-        userData.language = lang;
-        DefaultPlayerStorageService.updateUserData(uuid, userData);
-    }
+  @Override
+  public void setLanguagePreference(@NotNull UUID uuid, @NotNull Language lang) {
+    UserDataModel userData = DefaultPlayerStorageService.getUserData(uuid);
+    userData.language = lang;
+    DefaultPlayerStorageService.updateUserData(uuid, userData);
+  }
 
-    @NotNull
-    @Override
-    public Language getLanguagePreference(@NotNull UUID uuid)
-    {
-        return DefaultPlayerStorageService.getUserData(uuid).language;
-    }
+  @NotNull
+  @Override
+  public Language getLanguagePreference(@NotNull UUID uuid) {
+    return DefaultPlayerStorageService.getUserData(uuid).language;
+  }
 
-    @SuppressWarnings("ConstantConditions")
-    private static UserDataModel getUserData(UUID uuid)
-    {
-        FileManager cm = Selene.provide(FileManager.class);
-        Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
-        Exceptional<UserDataModel> userDataModel = cm.read(file, UserDataModel.class);
-        return userDataModel.orElse(new UserDataModel());
-    }
+  @SuppressWarnings("ConstantConditions")
+  private static UserDataModel getUserData(UUID uuid) {
+    FileManager cm = Selene.provide(FileManager.class);
+    Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
+    Exceptional<UserDataModel> userDataModel = cm.read(file, UserDataModel.class);
+    return userDataModel.orElse(new UserDataModel());
+  }
 
-    @SuppressWarnings("ConstantConditions")
-    private static void updateUserData(UUID uuid, UserDataModel userData)
-    {
-        FileManager cm = Selene.provide(FileManager.class);
-        Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
-        cm.write(file, userData);
-    }
+  @SuppressWarnings("ConstantConditions")
+  private static void updateUserData(UUID uuid, UserDataModel userData) {
+    FileManager cm = Selene.provide(FileManager.class);
+    Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
+    cm.write(file, userData);
+  }
 
-    @Metadata(alias = "userdata")
-    private static class UserDataModel
-    {
-        private Language language = Selene.getServer().getGlobalConfig().getDefaultLanguage();
-    }
-
+  @Metadata(alias = "userdata")
+  private static class UserDataModel {
+    private Language language = Selene.getServer().getGlobalConfig().getDefaultLanguage();
+  }
 }

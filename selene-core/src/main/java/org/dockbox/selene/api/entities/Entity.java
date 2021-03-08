@@ -27,151 +27,143 @@ import org.dockbox.selene.api.text.Text;
 /**
  * An entity is a Minecraft entity.
  *
- * <p>Examples of entities include:</p>
+ * <p>Examples of entities include:
  *
  * <ul>
- *     <li>Zombies</li>
- *     <li>Sheep</li>
- *     <li>Players</li>
- *     <li>Dropped items</li>
- *     <li>Dropped experience points</li>
- *     <li>etc.</li>
+ *   <li>Zombies
+ *   <li>Sheep
+ *   <li>Players
+ *   <li>Dropped items
+ *   <li>Dropped experience points
+ *   <li>etc.
  * </ul>
  *
- * <p>Blocks and items (when they are in inventories) are not entities.</p>
+ * <p>Blocks and items (when they are in inventories) are not entities.
  *
- * @param <T>
- *         The type of {@link Entity}
+ * @param <T> The type of {@link Entity}
  */
-public interface Entity<T extends Entity<T>> extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<T>
-{
+public interface Entity<T extends Entity<T>>
+    extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<T> {
 
-    @SuppressWarnings("ConstantDeclaredInInterface")
-    double DEFAULT_MAX_HEALTH = 20D;
+  @SuppressWarnings("ConstantDeclaredInInterface")
+  double DEFAULT_MAX_HEALTH = 20D;
 
-    /**
-     * Gets the display name of the entity. If no display name is present, an empty {@link Text} instance is
-     * returned.
-     *
-     * @return The display name of the entity, or an empty {@link Text} instance.
-     */
-    Text getDisplayName();
+  /**
+   * Gets the display name of the entity. If no display name is present, an empty {@link Text}
+   * instance is returned.
+   *
+   * @return The display name of the entity, or an empty {@link Text} instance.
+   */
+  Text getDisplayName();
 
-    /**
-     * Sets the display name of the entity.
-     *
-     * @param displayName
-     *         The display name of the entity.
-     */
-    void setDisplayName(Text displayName);
+  /**
+   * Sets the display name of the entity.
+   *
+   * @param displayName The display name of the entity.
+   */
+  void setDisplayName(Text displayName);
 
-    /**
-     * Gets the current health of the entity in the form of the total HP.
-     *
-     * @return The current health of the entity.
-     */
-    double getHealth();
+  /**
+   * Gets the current health of the entity in the form of the total HP.
+   *
+   * @return The current health of the entity.
+   */
+  double getHealth();
 
-    /**
-     * Sets the health of the entity in the form of the total HP. If the given value is higher than
-     * the maximum health of the entity, the maximum health is applied instead.
-     *
-     * @param health
-     *         The new health of the entity.
-     */
-    void setHealth(double health);
+  /**
+   * Sets the health of the entity in the form of the total HP. If the given value is higher than
+   * the maximum health of the entity, the maximum health is applied instead.
+   *
+   * @param health The new health of the entity.
+   */
+  void setHealth(double health);
 
-    /**
-     * Indicates whether the entity is alive inside a {@link org.dockbox.selene.api.objects.location.World}.
-     *
-     * @return {@code true} if the entity is alive and loaded in a world, else {@code false}.
-     */
-    boolean isAlive();
+  /**
+   * Indicates whether the entity is alive inside a {@link
+   * org.dockbox.selene.api.objects.location.World}.
+   *
+   * @return {@code true} if the entity is alive and loaded in a world, else {@code false}.
+   */
+  boolean isAlive();
 
-    /**
-     * Indicates whether the entity is invisible.
-     *
-     * @return {@code true} if the entity is invisible, else {@code false}
-     */
-    boolean isInvisible();
+  /**
+   * Indicates whether the entity is invisible.
+   *
+   * @return {@code true} if the entity is invisible, else {@code false}
+   */
+  boolean isInvisible();
 
-    /**
-     * Sets whether the entity should be invisible. Depending on the type of entity, inventory items may still be
-     * visible (e.g. armor, held items, etc).
-     *
-     * @param visible
-     *         Whether the entity should be visible.
-     */
-    void setInvisible(boolean visible);
+  /**
+   * Sets whether the entity should be invisible. Depending on the type of entity, inventory items
+   * may still be visible (e.g. armor, held items, etc).
+   *
+   * @param visible Whether the entity should be visible.
+   */
+  void setInvisible(boolean visible);
 
-    /**
-     * Indicates whether the entity is invulnerable. This protects the entity from being damaged by other
-     * entities, explosions, etc. However it does not protect it from being affected by {@link #setHealth(double)}
-     * and {@link #destroy()}.
-     *
-     * @return Whether the entity is invulnerable.
-     */
-    boolean isInvulnerable();
+  /**
+   * Indicates whether the entity is invulnerable. This protects the entity from being damaged by
+   * other entities, explosions, etc. However it does not protect it from being affected by {@link
+   * #setHealth(double)} and {@link #destroy()}.
+   *
+   * @return Whether the entity is invulnerable.
+   */
+  boolean isInvulnerable();
 
-    /**
-     * Sets whether the entity should be invulnerable.
-     *
-     * @param invulnerable
-     *         Whether the entity should be invulnerable.
-     */
-    void setInvulnerable(boolean invulnerable);
+  /**
+   * Sets whether the entity should be invulnerable.
+   *
+   * @param invulnerable Whether the entity should be invulnerable.
+   */
+  void setInvulnerable(boolean invulnerable);
 
-    /**
-     * Indicates whether the entity is affected by gravity.
-     *
-     * @return {@code true} if the entity is affected by gravity, or {@code false}.
-     */
-    boolean hasGravity();
+  /**
+   * Indicates whether the entity is affected by gravity.
+   *
+   * @return {@code true} if the entity is affected by gravity, or {@code false}.
+   */
+  boolean hasGravity();
 
-    /**
-     * Sets whether the entity should be affected by gravity. If the entity does not support gravity physics,
-     * as seen in e.g. Item Frames, nothing is done.
-     *
-     * @param gravity
-     *         Whether the entity should be affected by gravity.
-     */
-    void setGravity(boolean gravity);
+  /**
+   * Sets whether the entity should be affected by gravity. If the entity does not support gravity
+   * physics, as seen in e.g. Item Frames, nothing is done.
+   *
+   * @param gravity Whether the entity should be affected by gravity.
+   */
+  void setGravity(boolean gravity);
 
-    /**
-     * Summons the entity into a world. The location at which the entity is summoned is provided by its
-     * base {@link Location}, set during the creation of the entity.
-     *
-     * @return {@code true} if the entity was summoned successfully, else {@code false}.
-     */
-    default boolean summon()
-    {
-        return this.summon(this.getLocation());
-    }
+  /**
+   * Summons the entity into a world. The location at which the entity is summoned is provided by
+   * its base {@link Location}, set during the creation of the entity.
+   *
+   * @return {@code true} if the entity was summoned successfully, else {@code false}.
+   */
+  default boolean summon() {
+    return this.summon(this.getLocation());
+  }
 
-    /**
-     * Summons the entity at a given {@link Location}.
-     *
-     * @param location
-     *         The location to summon the entity at.
-     *
-     * @return {@code true} if the entity was summoned successfully, else {@code false}.
-     */
-    boolean summon(Location location);
+  /**
+   * Summons the entity at a given {@link Location}.
+   *
+   * @param location The location to summon the entity at.
+   * @return {@code true} if the entity was summoned successfully, else {@code false}.
+   */
+  boolean summon(Location location);
 
-    /**
-     * Destroys (kills) the entity, removing it from the world. This prevents the entity from being summoned again through
-     * {@link #summon()}.
-     *
-     * @return {@code true} if the entity was destroyed successfully, else {@code false}.
-     */
-    boolean destroy();
+  /**
+   * Destroys (kills) the entity, removing it from the world. This prevents the entity from being
+   * summoned again through {@link #summon()}.
+   *
+   * @return {@code true} if the entity was destroyed successfully, else {@code false}.
+   */
+  boolean destroy();
 
-    /**
-     * Creates a copy of the entity, copying its default and custom data provided by {@link org.dockbox.selene.api.objects.keys.Key}s
-     * and {@link org.dockbox.selene.api.objects.keys.PersistentDataKey}s.
-     *
-     * @return The copy of the current entity.
-     */
-    T copy();
-
+  /**
+   * Creates a copy of the entity, copying its default and custom data provided by {@link
+   * org.dockbox.selene.api.objects.keys.Key}s and {@link
+   * org.dockbox.selene.api.objects.keys.PersistentDataKey}s.
+   *
+   * @return The copy of the current entity.
+   */
+  T copy();
 }

@@ -26,55 +26,46 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
-final class ModuleInjectionConfiguration extends AbstractModule
-{
+final class ModuleInjectionConfiguration extends AbstractModule {
 
     private final Collection<InternalBinding<Object>> bindings = SeleneUtils.emptyConcurrentList();
     private Logger logger;
 
     @Override
-    protected void configure()
-    {
-        this.bindings.forEach(binding ->
-                this.bind(binding.getSourceClass()).toInstance(binding.getInstance()));
+    protected void configure() {
+        this.bindings.forEach(
+                binding -> this.bind(binding.getSourceClass()).toInstance(binding.getInstance()));
 
         if (null != this.logger)
             this.bind(Logger.class).annotatedWith(Specific.class).toInstance(this.logger);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> void acceptBinding(Class<T> sourceClass, T instance)
-    {
+    public <T> void acceptBinding(Class<T> sourceClass, T instance) {
         InternalBinding<T> binding = new InternalBinding<>(sourceClass, instance);
         this.bindings.add((InternalBinding<Object>) binding);
     }
 
-    public void acceptInstance(Object instance)
-    {
+    public void acceptInstance(Object instance) {
         if (null != instance) this.logger = LoggerFactory.getLogger(instance.getClass());
     }
 
-    private static final class InternalBinding<T>
-    {
+    private static final class InternalBinding<T> {
 
         private final Class<T> sourceClass;
         private final T instance;
 
-        private InternalBinding(Class<T> sourceClass, T instance)
-        {
+        private InternalBinding(Class<T> sourceClass, T instance) {
             this.sourceClass = sourceClass;
             this.instance = instance;
         }
 
-        public Class<T> getSourceClass()
-        {
+        public Class<T> getSourceClass() {
             return this.sourceClass;
         }
 
-        public T getInstance()
-        {
+        public T getInstance() {
             return this.instance;
         }
     }
-
 }

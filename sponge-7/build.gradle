@@ -68,7 +68,7 @@ dependencies {
     }
 
     compileOnly "me.lucko.luckperms:luckperms-api:$luckPermsVersion"
-    compileOnly ("org.spongepowered:spongeapi:$spongeApi7Version") {
+    compileOnly("org.spongepowered:spongeapi:$spongeApi7Version") {
         exclude group: "org.spongepowered", module: "configurate**"
     }
     compileOnly("org.spongepowered:spongecommon:$spongeCommon7Version") {
@@ -78,7 +78,7 @@ dependencies {
     compileOnly "com.github.MultiChat:Development:$multiChatVersion"
     compileOnly "com.github.flash-labs:FlashLibs:$flashLibsVersion"
     compileOnly "com.sk89q.worldedit:worldedit-sponge:$worldEditSpongeVersion"
-    compileOnly "io.github.nucleuspowered:nucleus-api:$nucleusApiVersion"
+    compileOnly "io.github.NucleusPowered:Nucleus:$nucleusApiVersion"
 
     compileOnly 'io.netty:netty-all:4.1.24.Final'
 

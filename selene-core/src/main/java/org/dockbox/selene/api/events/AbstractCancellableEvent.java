@@ -20,20 +20,17 @@ package org.dockbox.selene.api.events;
 import org.dockbox.selene.api.events.parents.Cancellable;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class AbstractCancellableEvent implements Cancellable
-{
+public abstract class AbstractCancellableEvent implements Cancellable {
 
     private boolean isCancelled;
 
     @Override
-    public boolean isCancelled()
-    {
+    public boolean isCancelled() {
         return this.isCancelled;
     }
 
     @Override
-    public void setCancelled(boolean cancelled)
-    {
+    public void setCancelled(boolean cancelled) {
         this.isCancelled = cancelled;
     }
 }

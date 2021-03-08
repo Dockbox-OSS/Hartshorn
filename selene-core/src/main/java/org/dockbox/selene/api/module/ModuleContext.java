@@ -19,8 +19,7 @@ package org.dockbox.selene.api.module;
 
 import org.dockbox.selene.api.annotations.module.Module;
 
-public interface ModuleContext
-{
+public interface ModuleContext {
 
     String getSource();
 
@@ -37,5 +36,4 @@ public interface ModuleContext
     void addStatus(Class<?> clazz, ModuleStatus status);
 
     ModuleStatus getStatus(Class<?> clazz);
-
 }

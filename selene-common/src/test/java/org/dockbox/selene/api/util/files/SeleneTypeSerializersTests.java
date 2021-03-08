@@ -20,10 +20,11 @@
  */
 package org.dockbox.selene.api.util.files;
 
-import com.google.common.collect.Lists;
-
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.common.files.serialize.SeleneTypeSerializers;
+
+import com.google.common.collect.Lists;
+import io.leangen.geantyref.TypeToken;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -31,105 +32,106 @@ import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.List;
 
-import io.leangen.geantyref.TypeToken;
-
 public class SeleneTypeSerializersTests {
 
-    private TestConfigurationLoader getTestLoader() {
-        TestConfigurationLoader.Builder tlb = TestConfigurationLoader.builder();
-        tlb.defaultOptions(build -> build.serializers(SeleneTypeSerializers.collection()));
-        return tlb.build();
-    }
+  private TestConfigurationLoader getTestLoader() {
+    TestConfigurationLoader.Builder tlb = TestConfigurationLoader.builder();
+    tlb.defaultOptions(build -> build.serializers(SeleneTypeSerializers.collection()));
+    return tlb.build();
+  }
 
-    @Test
-    public void testThatByteArraysCanBeSerialised() throws SerializationException {
-        byte[] array = { 4, -2 };
+  @Test
+  public void testThatByteArraysCanBeSerialised() throws SerializationException {
+    byte[] array = {4, -2};
 
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createNode().set(new TypeToken<byte[]>() {}, array);
+    TestConfigurationLoader tl = this.getTestLoader();
+    ConfigurationNode cn = tl.createNode().set(new TypeToken<byte[]>() {}, array);
 
-        List<Byte> ls = cn.getList(TypeToken.get(Byte.class));
-        Assertions.assertTrue(ls.contains((byte)4));
-        Assertions.assertTrue(ls.contains((byte)-2));
-    }
+    List<Byte> ls = cn.getList(TypeToken.get(Byte.class));
+    Assertions.assertTrue(ls.contains((byte) 4));
+    Assertions.assertTrue(ls.contains((byte) -2));
+  }
 
-    @Test
-    public void testThatByteArraysCanBeDeserialised() throws SerializationException {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createNode().set(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
+  @Test
+  public void testThatByteArraysCanBeDeserialised() throws SerializationException {
+    TestConfigurationLoader tl = this.getTestLoader();
+    ConfigurationNode cn =
+        tl.createNode().set(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
 
-        byte[] ls = cn.get(new TypeToken<byte[]>() {});
-        Assertions.assertEquals(2, ls.length);
+    byte[] ls = cn.get(new TypeToken<byte[]>() {});
+    Assertions.assertEquals(2, ls.length);
 
-        Assertions.assertEquals(ls[0], ((byte) 4));
-        Assertions.assertEquals(ls[1], ((byte) -2));
-    }
+    Assertions.assertEquals(ls[0], ((byte) 4));
+    Assertions.assertEquals(ls[1], ((byte) -2));
+  }
 
-    @Test
-    public void testThatShortArraysCanBeSerialised() throws SerializationException {
-        short[] array = { 4, -2 };
+  @Test
+  public void testThatShortArraysCanBeSerialised() throws SerializationException {
+    short[] array = {4, -2};
 
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createNode().set(new TypeToken<short[]>() {}, array);
+    TestConfigurationLoader tl = this.getTestLoader();
+    ConfigurationNode cn = tl.createNode().set(new TypeToken<short[]>() {}, array);
 
-        List<Short> ls = cn.getList(TypeToken.get(Short.class));
-        Assertions.assertTrue(ls.contains((short)4));
-        Assertions.assertTrue(ls.contains((short)-2));
-    }
+    List<Short> ls = cn.getList(TypeToken.get(Short.class));
+    Assertions.assertTrue(ls.contains((short) 4));
+    Assertions.assertTrue(ls.contains((short) -2));
+  }
 
-    @Test
-    public void testThatShortArraysCanBeDeserialised() throws SerializationException {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createNode().set(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
+  @Test
+  public void testThatShortArraysCanBeDeserialised() throws SerializationException {
+    TestConfigurationLoader tl = this.getTestLoader();
+    ConfigurationNode cn =
+        tl.createNode().set(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
 
-        short[] ls = cn.get(new TypeToken<short[]>() {});
-        Assertions.assertEquals(2, ls.length);
+    short[] ls = cn.get(new TypeToken<short[]>() {});
+    Assertions.assertEquals(2, ls.length);
 
-        Assertions.assertEquals(ls[0], ((short) 4));
-        Assertions.assertEquals(ls[1], ((short) -2));
-    }
+    Assertions.assertEquals(ls[0], ((short) 4));
+    Assertions.assertEquals(ls[1], ((short) -2));
+  }
 
-    @Test
-    public void testThatIntArraysCanBeSerialised() throws SerializationException {
-        int[] array = { 4, -2 };
+  @Test
+  public void testThatIntArraysCanBeSerialised() throws SerializationException {
+    int[] array = {4, -2};
 
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createNode().set(new TypeToken<int[]>() {}, array);
+    TestConfigurationLoader tl = this.getTestLoader();
+    ConfigurationNode cn = tl.createNode().set(new TypeToken<int[]>() {}, array);
 
-        List<Integer> ls = cn.getList(TypeToken.get(Integer.class));
-        Assertions.assertTrue(ls.contains(4));
-        Assertions.assertTrue(ls.contains(-2));
-    }
+    List<Integer> ls = cn.getList(TypeToken.get(Integer.class));
+    Assertions.assertTrue(ls.contains(4));
+    Assertions.assertTrue(ls.contains(-2));
+  }
 
-    @Test
-    public void testThatIntArraysCanBeDeserialised() throws SerializationException {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createNode().set(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
+  @Test
+  public void testThatIntArraysCanBeDeserialised() throws SerializationException {
+    TestConfigurationLoader tl = this.getTestLoader();
+    ConfigurationNode cn =
+        tl.createNode().set(new TypeToken<List<Integer>>() {}, Lists.newArrayList(4, -2));
 
-        int[] ls = cn.get(new TypeToken<int[]>() {});
-        Assertions.assertEquals(2, ls.length);
+    int[] ls = cn.get(new TypeToken<int[]>() {});
+    Assertions.assertEquals(2, ls.length);
 
-        Assertions.assertEquals(4, ls[0]);
-        Assertions.assertEquals(ls[1], -2);
-    }
+    Assertions.assertEquals(4, ls[0]);
+    Assertions.assertEquals(ls[1], -2);
+  }
 
-    @Test
-    public void testThatLanguagesCanBeSerialised() throws SerializationException {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createNode().set(new TypeToken<Language>() {}, Language.NL_NL);
+  @Test
+  public void testThatLanguagesCanBeSerialised() throws SerializationException {
+    TestConfigurationLoader tl = this.getTestLoader();
+    ConfigurationNode cn = tl.createNode().set(new TypeToken<Language>() {}, Language.NL_NL);
 
-        Language ls = cn.get(TypeToken.get(Language.class));
-        Assertions.assertEquals(ls.getCode(), Language.NL_NL.getCode());
-        Assertions.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
-    }
+    Language ls = cn.get(TypeToken.get(Language.class));
+    Assertions.assertEquals(ls.getCode(), Language.NL_NL.getCode());
+    Assertions.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
+  }
 
-    @Test
-    public void testThatLanguagesCanBeDeserialised() throws SerializationException {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createNode().set(new TypeToken<Language>() {}, Language.NL_NL);
+  @Test
+  public void testThatLanguagesCanBeDeserialised() throws SerializationException {
+    TestConfigurationLoader tl = this.getTestLoader();
+    ConfigurationNode cn = tl.createNode().set(new TypeToken<Language>() {}, Language.NL_NL);
 
-        Language ls = cn.get(TypeToken.get(Language.class));
-        Assertions.assertEquals(ls.getCode(), Language.NL_NL.getCode());
-        Assertions.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
-    }
+    Language ls = cn.get(TypeToken.get(Language.class));
+    Assertions.assertEquals(ls.getCode(), Language.NL_NL.getCode());
+    Assertions.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
+  }
 }

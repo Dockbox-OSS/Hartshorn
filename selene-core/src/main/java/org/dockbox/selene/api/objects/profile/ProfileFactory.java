@@ -20,8 +20,7 @@ package org.dockbox.selene.api.objects.profile;
 import java.util.UUID;
 
 @SuppressWarnings("InterfaceNeverImplemented") // Provided by AssistedInject
-public interface ProfileFactory
-{
+public interface ProfileFactory {
     Profile create(UUID uuid);
 
     Profile create(Profile profile);

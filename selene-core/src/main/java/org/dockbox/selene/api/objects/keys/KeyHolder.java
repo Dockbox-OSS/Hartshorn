@@ -21,67 +21,64 @@ import org.dockbox.selene.api.i18n.entry.IntegratedResource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.server.Selene;
 
-
 /**
- * Low-level interface which can be used to access and retrieve values from a implementation of this interface using
- * the {@link Key} type. This interface provides default implementations, expecting the implementation is the type to
- * be modified.
- * For more complex implementations these methods can be overridden.
+ * Low-level interface which can be used to access and retrieve values from a implementation of this
+ * interface using the {@link Key} type. This interface provides default implementations, expecting
+ * the implementation is the type to be modified. For more complex implementations these methods can
+ * be overridden.
  *
  * @param <T>
  *         The type which the {@link Key} can modify.
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public interface KeyHolder<T extends KeyHolder>
-{
+public interface KeyHolder<T extends KeyHolder> {
 
     /**
-     * Apply a given value of type {@code A} using a given {@link Key} type to the implementation of this interface.
-     * The type parameter of the value to apply, constrained by the type parameter of the given {@link Key}.
+     * Apply a given value of type {@code A} using a given {@link Key} type to the implementation of
+     * this interface. The type parameter of the value to apply, constrained by the type parameter of
+     * the given {@link Key}.
      *
      * @param <A>
      *         The type parameter of the applied value.
      * @param key
-     *         The key to apply, providing the constraints for the type to apply to and the type of the applied value.
+     *         The key to apply, providing the constraints for the type to apply to and the type of
+     *         the applied value.
      * @param appliedValue
      *         The applied value.
      *
-     * @return The transaction result. If the transaction failed the {@link TransactionResult} will provide a
-     *         {@link TransactionResult#getMessage() message}.
+     * @return The transaction result. If the transaction failed the {@link TransactionResult} will
+     *         provide a {@link TransactionResult#getMessage() message}.
      */
-    default <A> TransactionResult set(Key<T, A> key, A appliedValue)
-    {
-        try
-        {
+    default <A> TransactionResult set(Key<T, A> key, A appliedValue) {
+        try {
             return key.set((T) this, appliedValue);
         }
-        catch (ClassCastException e)
-        {
+        catch (ClassCastException e) {
             Selene.handle("Attempted to apply " + key + " to non-supporting type " + this, e);
             return TransactionResult.fail(IntegratedResource.KEY_BINDING_FAILED);
         }
     }
 
     /**
-     * Retrieves a value from the implementation of this interface using a given {@link Key}. The {@link Key}
-     * provides the constraints for the returned type using type parameters {@code A}.
+     * Retrieves a value from the implementation of this interface using a given {@link Key}. The
+     * {@link Key} provides the constraints for the returned type using type parameters {@code A}.
      *
      * @param <A>
-     *         The type parameter of the returned value, constrained by the type parameter of the given {@link Key}.
+     *         The type parameter of the returned value, constrained by the type parameter of the
+     *         given {@link Key}.
      * @param key
-     *         The key to use when retrieving a value, providing the constraints for the returned value.
+     *         The key to use when retrieving a value, providing the constraints for the returned
+     *         value.
      *
-     * @return The value wrapped in a {@link Exceptional}, which will contain a {@link ClassCastException}
-     *         if <em>this</em> does not match the constraint of the given {@link Key}.
+     * @return The value wrapped in a {@link Exceptional}, which will contain a {@link
+     *         ClassCastException} if <em>this</em> does not match the constraint of the given {@link
+     *         Key}.
      */
-    default <A> Exceptional<A> get(Key<T, A> key)
-    {
+    default <A> Exceptional<A> get(Key<T, A> key) {
         return key.get((T) this);
     }
 
-    default <A> void remove(RemovableKey<T, A> key)
-    {
+    default <A> void remove(RemovableKey<T, A> key) {
         key.remove((T) this);
     }
-
 }

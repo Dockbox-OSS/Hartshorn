@@ -28,42 +28,39 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Parameter;
 
 /**
- * A low level type used to process a given {@link Annotation} type. Typically this is only used by {@link EventWrapper}
- * implementations to populate, filter, or skip parameter arguments.
+ * A low level type used to process a given {@link Annotation} type. Typically this is only used by
+ * {@link EventWrapper} implementations to populate, filter, or skip parameter arguments.
  *
  * @param <A>
  *         The annotation type the processor applies to.
  */
-public abstract class AbstractEventParamProcessor<A extends Annotation>
-{
+public abstract class AbstractEventParamProcessor<A extends Annotation> {
 
     /**
-     * Gets the annotation {@link Class} instance, which can be used to identify the processor for a given
-     * {@link Annotation} type.
+     * Gets the annotation {@link Class} instance, which can be used to identify the processor for a
+     * given {@link Annotation} type.
      *
      * @return the annotation class
      */
-
     @NotNull
     public abstract Class<A> getAnnotationClass();
 
     /**
-     * Gets the target {@link EventStage} in which this processor should be applied.
-     * Defaults to {@link EventStage#PROCESS}.
+     * Gets the target {@link EventStage} in which this processor should be applied. Defaults to
+     * {@link EventStage#PROCESS}.
      *
      * @return The target event stage
      */
     @NotNull
-    public EventStage targetStage()
-    {
+    public EventStage targetStage() {
         return EventStage.PROCESS;
     }
 
     /**
-     * Processes the given object based on available information in the given {@code Annotation}, {@link Event},
-     * {@link Parameter}} and/or {@link EventWrapper}.
-     * If the parameter does not meet expectations, or should not be used in a given listener method,
-     * {@link SkipEventException} is thrown.
+     * Processes the given object based on available information in the given {@code Annotation},
+     * {@link Event}, {@link Parameter}} and/or {@link EventWrapper}. If the parameter does not meet
+     * expectations, or should not be used in a given listener method, {@link SkipEventException} is
+     * thrown.
      *
      * @param object
      *         The object to process.
@@ -81,7 +78,7 @@ public abstract class AbstractEventParamProcessor<A extends Annotation>
      *         Indicates the event listener should be skipped.
      */
     @Nullable
-    public abstract Object process(@Nullable Object object, A annotation, Event event, Parameter parameter, EventWrapper wrapper)
+    public abstract Object process(
+            @Nullable Object object, A annotation, Event event, Parameter parameter, EventWrapper wrapper)
             throws SkipEventException;
-
 }

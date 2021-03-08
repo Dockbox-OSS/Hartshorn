@@ -22,29 +22,24 @@ import org.dockbox.selene.api.objects.player.Player;
 
 import java.time.LocalDateTime;
 
-public abstract class WarnEvent extends ModerationEvent
-{
+public abstract class WarnEvent extends ModerationEvent {
 
     private String reason;
 
-    protected WarnEvent(Player player, CommandSource source, String reason)
-    {
+    protected WarnEvent(Player player, CommandSource source, String reason) {
         super(player, source);
         this.reason = reason;
     }
 
-    public String getReason()
-    {
+    public String getReason() {
         return this.reason;
     }
 
-    public void setReason(String reason)
-    {
+    public void setReason(String reason) {
         this.reason = reason;
     }
 
-    public static class PlayerWarnedEvent extends WarnEvent
-    {
+    public static class PlayerWarnedEvent extends WarnEvent {
 
         private final LocalDateTime created;
 
@@ -60,24 +55,22 @@ public abstract class WarnEvent extends ModerationEvent
          * @param source
          *         The {@link CommandSource} executing the warning
          */
-        public PlayerWarnedEvent(Player player, CommandSource source, String reason, LocalDateTime created)
-        {
+        public PlayerWarnedEvent(
+                Player player, CommandSource source, String reason, LocalDateTime created) {
             super(player, source, reason);
             this.created = created;
         }
 
-        public LocalDateTime getCreated()
-        {
+        public LocalDateTime getCreated() {
             return this.created;
         }
     }
 
-    public static class PlayerWarningExpired extends WarnEvent
-    {
+    public static class PlayerWarningExpired extends WarnEvent {
 
         /**
-         * The event fired when a warning expires. This can be either a automatic expiration based on a time constraint, or
-         * it being deleted by another {@link CommandSource}.
+         * The event fired when a warning expires. This can be either a automatic expiration based on a
+         * time constraint, or it being deleted by another {@link CommandSource}.
          *
          * @param player
          *         The target player being warned
@@ -86,8 +79,7 @@ public abstract class WarnEvent extends ModerationEvent
          * @param source
          *         The {@link CommandSource} executing the warning
          */
-        public PlayerWarningExpired(Player player, CommandSource source, String reason)
-        {
+        public PlayerWarningExpired(Player player, CommandSource source, String reason) {
             super(player, source, reason);
         }
     }

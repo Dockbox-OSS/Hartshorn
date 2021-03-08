@@ -19,9 +19,11 @@ package org.dockbox.selene.worldedit;
 
 import org.dockbox.selene.api.annotations.module.Module;
 
-@Module(id = "worldedit-events", name = "WorldEdit Events", description = "Provides additional WorldEdit events for Selene",
-        authors = "GuusLieben", dependencies = { "com.boydti.fawe", "com.sk89q.worldedit" })
-public class WorldEditModule
-{
-
+@Module(
+        id = "worldedit-events",
+        name = "WorldEdit Events",
+        description = "Provides additional WorldEdit events for Selene",
+        authors = "GuusLieben",
+        dependencies = { "com.boydti.fawe", "com.sk89q.worldedit" })
+public class WorldEditModule {
 }

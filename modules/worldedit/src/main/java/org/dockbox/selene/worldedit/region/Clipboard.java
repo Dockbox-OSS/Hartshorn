@@ -19,25 +19,21 @@ package org.dockbox.selene.worldedit.region;
 
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 
-public class Clipboard
-{
+public class Clipboard {
 
     private final Region region;
     private final Vector3N origin;
 
-    public Clipboard(Region region, Vector3N origin)
-    {
+    public Clipboard(Region region, Vector3N origin) {
         this.region = region;
         this.origin = origin;
     }
 
-    public Region getRegion()
-    {
+    public Region getRegion() {
         return this.region;
     }
 
-    public Vector3N getOrigin()
-    {
+    public Vector3N getOrigin() {
         return this.origin;
     }
 }

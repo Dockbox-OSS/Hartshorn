@@ -21,31 +21,25 @@ import org.dockbox.selene.api.util.Reflect;
 
 import java.util.function.Function;
 
-public final class InjectionPoint<T>
-{
+public final class InjectionPoint<T> {
 
     private final Class<T> type;
     private final Function<T, T> point;
 
-    private InjectionPoint(Class<T> type, Function<T, T> point)
-    {
+    private InjectionPoint(Class<T> type, Function<T, T> point) {
         this.type = type;
         this.point = point;
     }
 
-    public static <T> InjectionPoint<T> of(Class<T> type, Function<T, T> point)
-    {
+    public static <T> InjectionPoint<T> of(Class<T> type, Function<T, T> point) {
         return new InjectionPoint<>(type, point);
     }
 
-    public boolean accepts(Class<?> type)
-    {
+    public boolean accepts(Class<?> type) {
         return Reflect.isAssignableFrom(this.type, type);
     }
 
-    public T apply(T instance)
-    {
+    public T apply(T instance) {
         return this.point.apply(instance);
     }
-
 }

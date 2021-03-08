@@ -23,8 +23,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import java.util.Collection;
 import java.util.List;
 
-public interface ArgumentConverter<T>
-{
+public interface ArgumentConverter<T> {
 
     List<String> getKeys();
 

@@ -17,11 +17,9 @@
 
 package org.dockbox.selene.structures.table.column;
 
-public interface ColumnIdentifier<T>
-{
+public interface ColumnIdentifier<T> {
 
     String getColumnName();
 
     Class<T> getType();
-
 }

@@ -19,17 +19,12 @@ package org.dockbox.selene.integrated;
 
 import com.google.inject.Singleton;
 
-import net.dv8tion.jda.api.MessageBuilder;
-
 import org.dockbox.selene.api.annotations.command.Arg;
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.CommandBus;
 import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.context.CommandValue.Argument;
-import org.dockbox.selene.api.discord.DiscordPagination;
-import org.dockbox.selene.api.discord.DiscordUtils;
-import org.dockbox.selene.api.discord.templates.MessageTemplate;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.api.i18n.common.Language;
@@ -61,13 +56,11 @@ import java.util.List;
 )
 @Command(aliases = { "selene", "darwin" }, usage = "selene")
 @Singleton
-public class IntegratedServer implements IntegratedModule
-{
+public class IntegratedServer implements IntegratedModule {
 
     // Parent command
     @Command(aliases = "", usage = "")
-    public static void debugModules(MessageReceiver source)
-    {
+    public static void debugModules(MessageReceiver source) {
         Reflect.runWithInstance(ModuleManager.class, em -> {
             PaginationBuilder pb = Selene.provide(PaginationBuilder.class);
 
@@ -98,8 +91,7 @@ public class IntegratedServer implements IntegratedModule
         });
     }
 
-    private static Text generateText(Module e, MessageReceiver source)
-    {
+    private static Text generateText(Module e, MessageReceiver source) {
         Text line = IntegratedServerResources.MODULE_ROW
                 .format(e.name(), e.id())
                 .translate(source)
@@ -114,12 +106,10 @@ public class IntegratedServer implements IntegratedModule
     }
 
     @Command(aliases = "module", usage = "module <id{Module}>")
-    public static void debugModule(MessageReceiver src, CommandContext ctx)
-    {
+    public static void debugModule(MessageReceiver src, CommandContext ctx) {
         Reflect.runWithInstance(ModuleManager.class, em -> {
             Exceptional<Argument<Module>> oarg = ctx.argument("id");
-            if (!oarg.isPresent())
-            {
+            if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
                 return;
             }
@@ -127,12 +117,10 @@ public class IntegratedServer implements IntegratedModule
             Module e = oarg.get().getValue();
             Exceptional<ModuleContext> oec = em.getContext(e.id());
 
-            if (!oec.isPresent())
-            {
+            if (!oec.isPresent()) {
                 src.sendWithPrefix(IntegratedServerResources.UNKNOWN_MODULE.format(oarg.get().getValue()));
             }
-            else
-            {
+            else {
                 ModuleContext ec = oec.get();
 
                 src.send(IntegratedServerResources.MODULE_INFO_BLOCK.format(
@@ -146,14 +134,11 @@ public class IntegratedServer implements IntegratedModule
     }
 
     @Command(aliases = "reload", usage = "reload [id{Module}]", confirm = true)
-    public static void reload(MessageReceiver src, CommandContext ctx)
-    {
+    public static void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = Selene.provide(EventBus.class);
-        if (ctx.has("id"))
-        {
+        if (ctx.has("id")) {
             Exceptional<Argument<Module>> oarg = ctx.argument("id");
-            if (!oarg.isPresent())
-            {
+            if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
                 return;
             }
@@ -167,38 +152,36 @@ public class IntegratedServer implements IntegratedModule
             }).ifAbsent(() ->
                     src.send(IntegratedServerResources.NODULE_RELOAD_FAILED.format(e.name())));
         }
-        else
-        {
+        else {
             eb.post(new ServerReloadEvent());
             src.send(IntegratedServerResources.FULL_RELOAD_SUCCESSFUL);
         }
     }
 
-    @Override
-    @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>")
-    public void confirm(MessageReceiver src, CommandContext ctx)
-    {
-        if (!(src instanceof AbstractIdentifiable))
-        {
-            src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
-            return;
+    @Command(aliases = { "lang", "language" }, usage = "language <language{Language}> [player{Player}]", inherit = false)
+    public static void switchLang(MessageReceiver src, CommandContext ctx,
+                                  @Arg("language") Language lang,
+                                  @Arg(value = "player", optional = true) Player player) {
+        if (null == player) {
+            if (src instanceof Player) {
+                player = (Player) src;
+            }
+            else {
+                src.send(IntegratedResource.CONFIRM_WRONG_SOURCE);
+                return;
+            }
         }
-        Exceptional<Argument<String>> optionalCooldownId = ctx.argument("cooldownId");
 
-        // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
-        // argument here is just a confirmation that the source is correct.
-        optionalCooldownId
-                .ifPresent(cooldownId -> {
-                    String cid = cooldownId.getValue();
-                    Selene.provide(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
-                            src.send(IntegratedServerResources.CONFIRM_FAILED));
-                })
-                .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));
+        player.setLanguage(lang);
+
+        String languageLocalized = lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")";
+        if (player != src)
+            src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED_OTHER.format(player.getName(), languageLocalized));
+        player.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(languageLocalized));
     }
 
     @Command(aliases = "platform", usage = "platform")
-    public static void platform(MessageReceiver src)
-    {
+    public static void platform(MessageReceiver src) {
         ServerType st = Selene.getServer().getServerType();
         String platformVersion = Selene.getServer().getPlatformVersion();
 
@@ -223,52 +206,24 @@ public class IntegratedServer implements IntegratedModule
         ));
     }
 
-
-    @Command(aliases = { "lang", "language" }, usage = "language <language{Language}> [player{Player}]", inherit = false)
-    public static void switchLang(MessageReceiver src, CommandContext ctx,
-                                  @Arg("language") Language lang,
-                                  @Arg(value = "player", optional = true) Player player)
-    {
-        if (null == player)
-        {
-            if (src instanceof Player)
-            {
-                player = (Player) src;
-            }
-            else
-            {
-                src.send(IntegratedResource.CONFIRM_WRONG_SOURCE);
-                return;
-            }
+    @Override
+    @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>")
+    public void confirm(MessageReceiver src, CommandContext ctx) {
+        if (!(src instanceof AbstractIdentifiable)) {
+            src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
+            return;
         }
+        Exceptional<Argument<String>> optionalCooldownId = ctx.argument("cooldownId");
 
-        player.setLanguage(lang);
-
-        String languageLocalized = lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")";
-        if (player != src)
-            src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED_OTHER.format(player.getName(), languageLocalized));
-        player.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(languageLocalized));
-    }
-
-    @Command(aliases = "demo", usage = "demo")
-    public static void demo(Player player) {
-        Text message = Text.of("Hello {name}, it's a wonderful day isn't it?");
-        MessageTemplate template = MessageTemplate.create(message);
-        template.formatPlaceholder("name", "Orion");
-
-        DiscordUtils utils = Selene.provide(DiscordUtils.class);
-        utils.sendToUser(template, null);
-
-
-        DiscordPagination pagination = DiscordPagination.create()
-                .addPage(new MessageBuilder().setContent("Page 1").build())
-                .addPage(Text.of("Page 2"))
-                .addPage("Page 3");
-
-        DiscordUtils utils = Selene.provide(DiscordUtils.class);
-        utils.getGlobalTextChannel()
-                .ifPresent(pagination::sendTo)
-                .ifAbsent(() -> Selene.log().info("No text channel!"));
+        // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
+        // argument here is just a confirmation that the source is correct.
+        optionalCooldownId
+                .ifPresent(cooldownId -> {
+                    String cid = cooldownId.getValue();
+                    Selene.provide(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
+                            src.send(IntegratedServerResources.CONFIRM_FAILED));
+                })
+                .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));
     }
 
 }

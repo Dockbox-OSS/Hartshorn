@@ -24,23 +24,20 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.command.SendCommandEvent;
 
-public class SpongeCommandListener
-{
+public class SpongeCommandListener {
 
     @Listener
-    public void onNativeCommand(SendCommandEvent commandEvent)
-    {
-        if (commandEvent.getSource() instanceof CommandSource)
-        {
+    public void onNativeCommand(SendCommandEvent commandEvent) {
+        if (commandEvent.getSource() instanceof CommandSource) {
             String command = commandEvent.getCommand();
             String argsJoined = commandEvent.getArguments();
             String[] args = argsJoined.split(" ");
-            Cancellable event = new NativeCommandEvent(
-                    SpongeConversionUtil.fromSponge((CommandSource) commandEvent.getSource()).orNull(),
-                    command,
-                    args);
+            Cancellable event =
+                    new NativeCommandEvent(
+                            SpongeConversionUtil.fromSponge((CommandSource) commandEvent.getSource()).orNull(),
+                            command,
+                            args);
             commandEvent.setCancelled(event.post().isCancelled());
         }
     }
-
 }

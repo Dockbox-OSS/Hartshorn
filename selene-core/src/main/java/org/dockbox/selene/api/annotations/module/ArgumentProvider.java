@@ -24,12 +24,11 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ArgumentProvider
-{
-    /**
-     * The module responsible for the argument provider.
-     *
-     * @return the responsible module class
-     */
-    Class<?> module();
+public @interface ArgumentProvider {
+  /**
+   * The module responsible for the argument provider.
+   *
+   * @return the responsible module class
+   */
+  Class<?> module();
 }

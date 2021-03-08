@@ -21,6 +21,5 @@ import org.dockbox.selene.api.annotations.Rejects;
 import org.dockbox.selene.common.files.DefaultConfigurateManager;
 
 @Rejects(DefaultConfigurateManager.class)
-public interface RegistryIdentifier
-{
+public interface RegistryIdentifier {
 }

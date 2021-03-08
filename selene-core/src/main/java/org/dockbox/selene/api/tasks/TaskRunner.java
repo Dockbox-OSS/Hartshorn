@@ -21,16 +21,13 @@ import org.dockbox.selene.api.server.Selene;
 
 import java.util.concurrent.TimeUnit;
 
-public abstract class TaskRunner
-{
+public abstract class TaskRunner {
 
-    public static TaskRunner create()
-    {
+    public static TaskRunner create() {
         return Selene.provide(TaskRunner.class);
     }
 
     public abstract void accept(Task task);
 
     public abstract void acceptDelayed(Task task, long delay, TimeUnit timeUnit);
-
 }

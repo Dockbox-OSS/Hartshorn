@@ -22,7 +22,6 @@ import org.dockbox.selene.api.command.source.CommandSource;
 
 @SuppressWarnings("InterfaceNeverImplemented")
 @FunctionalInterface
-public interface CommandRunner
-{
+public interface CommandRunner {
     void run(CommandSource src, CommandContext ctx);
 }

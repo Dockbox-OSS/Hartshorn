@@ -19,9 +19,9 @@ package org.dockbox.selene.structures;
 
 import com.google.common.io.Files;
 
-import org.dockbox.selene.common.files.DefaultXStreamManager;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.common.files.DefaultXStreamManager;
 
 import java.nio.file.Path;
 import java.util.Map;

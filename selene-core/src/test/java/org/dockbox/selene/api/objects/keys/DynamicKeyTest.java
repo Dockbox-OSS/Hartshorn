@@ -18,44 +18,43 @@
 package org.dockbox.selene.api.objects.keys;
 
 import org.dockbox.selene.api.objects.Exceptional;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class DynamicKeyTest {
 
-    @Test
-    public void canApplyToKeyHolder() {
-        final String value = "KeyTest";
-        TestKeyHolder holder = new TestKeyHolder();
-        holder.set(TestKeys.HOLDER_KEY, value);
-    }
+  @Test
+  public void canApplyToKeyHolder() {
+    final String value = "KeyTest";
+    TestKeyHolder holder = new TestKeyHolder();
+    holder.set(TestKeys.HOLDER_KEY, value);
+  }
 
-    @Test
-    public void canApplyToNonKeyHolder() {
-        final String value = "KeyTest";
-        TestNonKeyHolder holder = new TestNonKeyHolder();
-        TestKeys.NON_HOLDER_KEY.set(holder, value);
+  @Test
+  public void canApplyToNonKeyHolder() {
+    final String value = "KeyTest";
+    TestNonKeyHolder holder = new TestNonKeyHolder();
+    TestKeys.NON_HOLDER_KEY.set(holder, value);
+  }
 
-    }
+  @Test
+  public void canObtainFromKeyHolder() {
+    final String value = "KeyTest";
+    TestKeyHolder holder = new TestKeyHolder();
+    holder.set(TestKeys.HOLDER_KEY, value);
+    Exceptional<String> result = holder.get(TestKeys.HOLDER_KEY);
+    Assertions.assertTrue(result.isPresent());
+    Assertions.assertEquals(value, result.get());
+  }
 
-    @Test
-    public void canObtainFromKeyHolder() {
-        final String value = "KeyTest";
-        TestKeyHolder holder = new TestKeyHolder();
-        holder.set(TestKeys.HOLDER_KEY, value);
-        Exceptional<String> result = holder.get(TestKeys.HOLDER_KEY);
-        Assertions.assertTrue(result.isPresent());
-        Assertions.assertEquals(value, result.get());
-    }
-
-    @Test
-    public void canObtainFromNonKeyHolder() {
-        final String value = "KeyTest";
-        TestNonKeyHolder holder = new TestNonKeyHolder();
-        TestKeys.NON_HOLDER_KEY.set(holder, value);
-        Exceptional<String> result = TestKeys.NON_HOLDER_KEY.get(holder);
-        Assertions.assertTrue(result.isPresent());
-        Assertions.assertEquals(value, result.get());
-    }
-
+  @Test
+  public void canObtainFromNonKeyHolder() {
+    final String value = "KeyTest";
+    TestNonKeyHolder holder = new TestNonKeyHolder();
+    TestKeys.NON_HOLDER_KEY.set(holder, value);
+    Exceptional<String> result = TestKeys.NON_HOLDER_KEY.get(holder);
+    Assertions.assertTrue(result.isPresent());
+    Assertions.assertEquals(value, result.get());
+  }
 }

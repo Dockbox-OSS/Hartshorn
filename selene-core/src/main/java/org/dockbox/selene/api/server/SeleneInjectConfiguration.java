@@ -20,6 +20,5 @@ package org.dockbox.selene.api.server;
 import com.google.inject.AbstractModule;
 
 @SuppressWarnings("EmptyClass") // Reserved for future expansion
-public abstract class SeleneInjectConfiguration extends AbstractModule
-{
+public abstract class SeleneInjectConfiguration extends AbstractModule {
 }

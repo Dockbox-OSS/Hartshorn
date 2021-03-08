@@ -34,16 +34,12 @@ import java.util.UUID;
 
 public class TableTests {
 
-    private Table createTestTable() {
-        return new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME);
-    }
-
     @Test
     public void testSelectColumnOfTable() {
         Table table = this.createTestTable();
         table.addRow(new IdentifiedUser(1, "coulis"));
 
-        ColumnIdentifier<?>[] expectedColumns = {TestColumnIdentifiers.NAME};
+        ColumnIdentifier<?>[] expectedColumns = { TestColumnIdentifiers.NAME };
 
         Table selectedTable = table.select(TestColumnIdentifiers.NAME);
 
@@ -51,6 +47,10 @@ public class TableTests {
         Assertions.assertArrayEquals(expectedColumns, selectedTable.getIdentifiers());
         // Check if table rows' columns have been removed properly
         Assertions.assertEquals(1, selectedTable.getRows().get(0).getColumns().size());
+    }
+
+    private Table createTestTable() {
+        return new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME);
     }
 
     @Test
@@ -65,18 +65,22 @@ public class TableTests {
 
     @Test
     public void testWronglyIdentifiedFields() {
-        Assertions.assertThrows(UnknownIdentifierException.class, () -> {
-            Table table = this.createTestTable();
-            table.addRow(new WronglyIdentifiedUser(1, "coulis"));
-        });
+        Assertions.assertThrows(
+                UnknownIdentifierException.class,
+                () -> {
+                    Table table = this.createTestTable();
+                    table.addRow(new WronglyIdentifiedUser(1, "coulis"));
+                });
     }
 
     @Test
     public void testThrowsExceptionOnTypeMismatch() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Table table = this.createTestTable();
-            table.addRow("3", 1);
-        });
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Table table = this.createTestTable();
+                    table.addRow("3", 1);
+                });
     }
 
     @Test
@@ -91,14 +95,20 @@ public class TableTests {
 
     @Test
     public void testThrowsExceptionOnMissingTypeField() {
-        Assertions.assertThrows(UnknownIdentifierException.class, () -> {
-            Table table = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME, TestColumnIdentifiers.UUID);
-            table.addRow(new User(1, "pumbas600"));
+        Assertions.assertThrows(
+                UnknownIdentifierException.class,
+                () -> {
+                    Table table =
+                            new Table(
+                                    TestColumnIdentifiers.NUMERAL_ID,
+                                    TestColumnIdentifiers.NAME,
+                                    TestColumnIdentifiers.UUID);
+                    table.addRow(new User(1, "pumbas600"));
 
-            Assertions.assertEquals(1, table.getRows().size());
-            TableRow row = table.getRows().get(0);
-            Assertions.assertEquals("pumbas600", row.getValue(TestColumnIdentifiers.NAME).get());
-        });
+                    Assertions.assertEquals(1, table.getRows().size());
+                    TableRow row = table.getRows().get(0);
+                    Assertions.assertEquals("pumbas600", row.getValue(TestColumnIdentifiers.NAME).get());
+                });
     }
 
     @Test
@@ -137,11 +147,13 @@ public class TableTests {
 
     @Test
     public void testOrderByDoesNotAcceptInvalidColumn() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            Table table = this.createTestTable();
-            table.addRow(2, "Diggy");
-            table.orderBy(TestColumnIdentifiers.UUID, Order.ASC);
-        });
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Table table = this.createTestTable();
+                    table.addRow(2, "Diggy");
+                    table.orderBy(TestColumnIdentifiers.UUID, Order.ASC);
+                });
     }
 
     @Test
@@ -168,7 +180,8 @@ public class TableTests {
         Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_ORIGINAL);
         Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 2);
         Assertions.assertEquals(3, joined.getRows().size());
-        Assertions.assertEquals("NotDiggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
+        Assertions.assertEquals(
+                "NotDiggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
@@ -184,46 +197,61 @@ public class TableTests {
         Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN);
         Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 2);
         Assertions.assertEquals(3, joined.getRows().size());
-        Assertions.assertEquals("Diggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
+        Assertions.assertEquals(
+                "Diggy", whereLookup.first().get().getValue(TestColumnIdentifiers.NAME).get());
     }
 
     @Test
     public void testJoinThrowsExceptionOnEmptyEntry() {
-        Assertions.assertThrows(EmptyEntryException.class, () -> {
-            Table original = this.createTestTable();
-            original.addRow(1, "coulis");
-            original.addRow(2, "NotDiggy");
+        Assertions.assertThrows(
+                EmptyEntryException.class,
+                () -> {
+                    Table original = this.createTestTable();
+                    original.addRow(1, "coulis");
+                    original.addRow(2, "NotDiggy");
 
-            Table other = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME, TestColumnIdentifiers.UUID);
-            other.addRow(2, "Diggy", UUID.randomUUID());
-            other.addRow(3, "pumbas600", UUID.randomUUID());
+                    Table other =
+                            new Table(
+                                    TestColumnIdentifiers.NUMERAL_ID,
+                                    TestColumnIdentifiers.NAME,
+                                    TestColumnIdentifiers.UUID);
+                    other.addRow(2, "Diggy", UUID.randomUUID());
+                    other.addRow(3, "pumbas600", UUID.randomUUID());
 
-            original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, false);
-        });
+                    original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, false);
+                });
     }
 
     @Test
-    public void testJoinPopulatesNullOnEmptyEntry() throws EmptyEntryException, IdentifierMismatchException {
+    public void testJoinPopulatesNullOnEmptyEntry()
+            throws EmptyEntryException, IdentifierMismatchException {
         Table original = this.createTestTable();
         original.addRow(1, "coulis");
         original.addRow(2, "NotDiggy");
 
-        Table other = new Table(TestColumnIdentifiers.NUMERAL_ID, TestColumnIdentifiers.NAME, TestColumnIdentifiers.UUID);
+        Table other =
+                new Table(
+                        TestColumnIdentifiers.NUMERAL_ID,
+                        TestColumnIdentifiers.NAME,
+                        TestColumnIdentifiers.UUID);
         other.addRow(2, "Diggy", UUID.randomUUID());
         other.addRow(3, "pumbas600", UUID.randomUUID());
 
-        Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, true);
+        Table joined =
+                original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, true);
         Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 1);
-        Assertions.assertFalse(whereLookup.first().get().getValue(TestColumnIdentifiers.UUID).isPresent());
+        Assertions.assertFalse(
+                whereLookup.first().get().getValue(TestColumnIdentifiers.UUID).isPresent());
     }
 
     @Test
     public void testRowCanConvertToValidType() {
-        Assertions.assertDoesNotThrow(() -> {
-            Table table = this.createTestTable();
-            table.addRow(1, "coulis");
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    Table table = this.createTestTable();
+                    table.addRow(1, "coulis");
 
-            table.getRowsAs(IdentifiedUser.class);
-        });
+                    table.getRowsAs(IdentifiedUser.class);
+                });
     }
 }

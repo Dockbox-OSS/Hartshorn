@@ -22,27 +22,22 @@ import com.magitechserver.magibridge.MagiBridge;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import org.dockbox.selene.common.discord.DefaultDiscordUtils;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.common.discord.DefaultDiscordUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class SpongeDiscordUtils extends DefaultDiscordUtils
-{
+public class SpongeDiscordUtils extends DefaultDiscordUtils {
 
     @NotNull
     @Override
-    public Exceptional<JDA> getJDA()
-    {
+    public Exceptional<JDA> getJDA() {
         return Exceptional.ofNullable(MagiBridge.getInstance().getJDA());
     }
 
     @NotNull
     @Override
-    public Exceptional<TextChannel> getGlobalTextChannel()
-    {
+    public Exceptional<TextChannel> getGlobalTextChannel() {
         String channelId = MagiBridge.getInstance().getConfig().CHANNELS.MAIN_CHANNEL;
         return this.getJDA().map(jda -> jda.getTextChannelById(channelId));
     }
-
-
 }

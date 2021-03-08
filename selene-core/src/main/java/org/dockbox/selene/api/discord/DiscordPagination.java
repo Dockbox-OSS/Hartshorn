@@ -28,8 +28,11 @@ import org.dockbox.selene.api.text.Text;
 
 import java.util.Collection;
 
-public interface DiscordPagination
-{
+public interface DiscordPagination {
+
+    static DiscordPagination create() {
+        return Selene.provide(DiscordPagination.class);
+    }
 
     void sendTo(MessageChannel channel);
 
@@ -46,9 +49,4 @@ public interface DiscordPagination
     DiscordPagination addPage(MessageTemplate... template);
 
     Collection<Object> getPages();
-
-    static DiscordPagination create() {
-        return Selene.provide(DiscordPagination.class);
-    }
-
 }

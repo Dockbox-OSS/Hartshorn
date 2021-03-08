@@ -22,8 +22,7 @@ import org.dockbox.selene.api.text.Text;
 
 import java.util.UUID;
 
-public final class BossbarBuilder
-{
+public final class BossbarBuilder {
     private String id = "Bossbar#" + System.currentTimeMillis();
     private float percent;
     private Text text = Text.of();
@@ -32,14 +31,12 @@ public final class BossbarBuilder
 
     BossbarBuilder() {}
 
-    public BossbarBuilder withId(UUID id)
-    {
+    public BossbarBuilder withId(UUID id) {
         this.id = id.toString();
         return this;
     }
 
-    public BossbarBuilder but()
-    {
+    public BossbarBuilder but() {
         return Bossbar.builder()
                 .withId(this.id)
                 .withPercent(this.percent)
@@ -48,38 +45,32 @@ public final class BossbarBuilder
                 .withStyle(this.style);
     }
 
-    public BossbarBuilder withStyle(BossbarStyle style)
-    {
+    public BossbarBuilder withStyle(BossbarStyle style) {
         this.style = style;
         return this;
     }
 
-    public BossbarBuilder withColor(BossbarColor color)
-    {
+    public BossbarBuilder withColor(BossbarColor color) {
         this.color = color;
         return this;
     }
 
-    public BossbarBuilder withText(Text text)
-    {
+    public BossbarBuilder withText(Text text) {
         this.text = text;
         return this;
     }
 
-    public BossbarBuilder withPercent(float percent)
-    {
+    public BossbarBuilder withPercent(float percent) {
         this.percent = percent;
         return this;
     }
 
-    public BossbarBuilder withId(String id)
-    {
+    public BossbarBuilder withId(String id) {
         this.id = id;
         return this;
     }
 
-    public Bossbar build()
-    {
+    public Bossbar build() {
         return Selene.provide(BossbarFactory.class)
                 .create(this.id, this.percent, this.text, this.color, this.style);
     }

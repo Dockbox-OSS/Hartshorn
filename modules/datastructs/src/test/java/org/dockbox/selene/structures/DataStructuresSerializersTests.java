@@ -18,8 +18,8 @@
 package org.dockbox.selene.structures;
 
 import org.dockbox.selene.api.files.FileManager;
-import org.dockbox.selene.common.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.common.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.structures.registry.Registry;
 import org.dockbox.selene.structures.registry.RegistryColumn;
 import org.dockbox.selene.structures.registry.TestIdentifier;
@@ -38,32 +38,38 @@ public class DataStructuresSerializersTests {
         return tlb.build();
     }
 
-    private Registry<Registry<String>> buildTestRegistry() {
-        return new Registry<Registry<String>>()
-                .addColumn(TestIdentifier.BRICK, new Registry<String>()
-                        .addColumn(TestIdentifier.FULLBLOCK, "Brick Fullblock1", "Brick Fullblock2")
-                        .addColumn(TestIdentifier.STAIR, "Brick Stair1")
-                        .addColumn(TestIdentifier.SLAB, "Brick Slab1"))
-                .addColumn(TestIdentifier.SANDSTONE, new Registry<String>()
-                        .addColumn(TestIdentifier.FULLBLOCK, "Sandstone Fullblock1")
-                        .addColumn(TestIdentifier.STAIR, "Sandstone Stair1"))
-                .addColumn(TestIdentifier.COBBLESTONE, new Registry<String>()
-                        .addColumn(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock1"));
-    }
-
     @Test
     public void testThatRegistryCanBeSerialised() {
-        Assertions.assertDoesNotThrow(() -> {
-            File copy = File.createTempFile("tmp", null);
-            Path tempFile = copy.toPath();
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    File copy = File.createTempFile("tmp", null);
+                    Path tempFile = copy.toPath();
 
-            FileManager fm = new TestXStreamFileManager();
+                    FileManager fm = new TestXStreamFileManager();
 
-            fm.write(tempFile, this.buildTestRegistry());
-        });
+                    fm.write(tempFile, this.buildTestRegistry());
+                });
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    private Registry<Registry<String>> buildTestRegistry() {
+        return new Registry<Registry<String>>()
+                .addColumn(
+                        TestIdentifier.BRICK,
+                        new Registry<String>()
+                                .addColumn(TestIdentifier.FULLBLOCK, "Brick Fullblock1", "Brick Fullblock2")
+                                .addColumn(TestIdentifier.STAIR, "Brick Stair1")
+                                .addColumn(TestIdentifier.SLAB, "Brick Slab1"))
+                .addColumn(
+                        TestIdentifier.SANDSTONE,
+                        new Registry<String>()
+                                .addColumn(TestIdentifier.FULLBLOCK, "Sandstone Fullblock1")
+                                .addColumn(TestIdentifier.STAIR, "Sandstone Stair1"))
+                .addColumn(
+                        TestIdentifier.COBBLESTONE,
+                        new Registry<String>().addColumn(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock1"));
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void testThatRegistryCanBeDeserialised() throws IOException {
         File copy = File.createTempFile("tmp", null);
@@ -76,11 +82,11 @@ public class DataStructuresSerializersTests {
         Assertions.assertTrue(registry.isPresent());
 
         Registry<Registry<String>> reg = (Registry<Registry<String>>) registry.get();
-        RegistryColumn<RegistryColumn<String>> result = reg.getMatchingColumns(TestIdentifier.BRICK)
-                .mapTo(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
+        RegistryColumn<RegistryColumn<String>> result =
+                reg.getMatchingColumns(TestIdentifier.BRICK)
+                        .mapTo(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
 
         Assertions.assertTrue(result.first().get().contains("Brick Fullblock1"));
         Assertions.assertTrue(result.first().get().contains("Brick Fullblock2"));
     }
-
 }

@@ -20,9 +20,8 @@ package org.dockbox.selene.database;
 import org.dockbox.selene.structures.table.column.ColumnIdentifier;
 import org.dockbox.selene.structures.table.column.SimpleColumnIdentifier;
 
-public class SQLiteColumnIdentifiers
-{
+public class SQLiteColumnIdentifiers {
 
-    public static final ColumnIdentifier<String> PLOT_WORLD = new SimpleColumnIdentifier<>("world", String.class);
-
+    public static final ColumnIdentifier<String> PLOT_WORLD =
+            new SimpleColumnIdentifier<>("world", String.class);
 }

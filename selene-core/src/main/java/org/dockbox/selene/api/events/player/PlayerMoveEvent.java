@@ -23,104 +23,81 @@ import org.dockbox.selene.api.objects.location.Warp;
 import org.dockbox.selene.api.objects.location.World;
 import org.dockbox.selene.api.objects.targets.Target;
 
-/**
- * The abstract type which can be used to listen to all player movement related events.
- */
-public abstract class PlayerMoveEvent extends AbstractTargetCancellableEvent
-{
+/** The abstract type which can be used to listen to all player movement related events. */
+public abstract class PlayerMoveEvent extends AbstractTargetCancellableEvent {
 
-    protected PlayerMoveEvent(Target target)
-    {
+    protected PlayerMoveEvent(Target target) {
         super(target);
     }
 
-    /**
-     * The event fired when a player is teleported to another location
-     */
-    public static class PlayerTeleportEvent extends PlayerMoveEvent
-    {
+    /** The event fired when a player is teleported to another location */
+    public static class PlayerTeleportEvent extends PlayerMoveEvent {
         private final Location oldLocation;
         private final Location newLocation;
 
-        public PlayerTeleportEvent(Target target, Location oldLocation, Location newLocation)
-        {
+        public PlayerTeleportEvent(Target target, Location oldLocation, Location newLocation) {
             super(target);
             this.oldLocation = oldLocation;
             this.newLocation = newLocation;
         }
 
-        public Location getOldLocation()
-        {
+        public Location getOldLocation() {
             return this.oldLocation;
         }
 
-        public Location getNewLocation()
-        {
+        public Location getNewLocation() {
             return this.newLocation;
         }
     }
 
-    /**
-     * The event fired when a player is teleported to the spawn location.
-     */
+    /** The event fired when a player is teleported to the spawn location. */
     // TODO: Implementation (Sponge-1.12)
-    public static class PlayerSpawnEvent extends PlayerMoveEvent
-    {
+    public static class PlayerSpawnEvent extends PlayerMoveEvent {
         private final Location spawnLocation;
 
-        public PlayerSpawnEvent(Target target, Location spawnLocation)
-        {
+        public PlayerSpawnEvent(Target target, Location spawnLocation) {
             super(target);
             this.spawnLocation = spawnLocation;
         }
 
-        public Location getSpawnLocation()
-        {
+        public Location getSpawnLocation() {
             return this.spawnLocation;
         }
     }
 
-    /**
-     * The event fired when a player is teleported using a {@link Warp}.
-     */
-    public static class PlayerWarpEvent extends PlayerMoveEvent
-    {
+    /** The event fired when a player is teleported using a {@link Warp}. */
+    public static class PlayerWarpEvent extends PlayerMoveEvent {
         private final Warp warp;
 
-        public PlayerWarpEvent(Target target, Warp warp)
-        {
+        public PlayerWarpEvent(Target target, Warp warp) {
             super(target);
             this.warp = warp;
         }
 
-        public Warp getWarp()
-        {
+        public Warp getWarp() {
             return this.warp;
         }
     }
 
     /**
-     * The event fired when a player switches to another world. Typically this is fired after {@link PlayerTeleportEvent}.
+     * The event fired when a player switches to another world. Typically this is fired after {@link
+     * PlayerTeleportEvent}.
      */
-    public static class PlayerSwitchWorldEvent extends PlayerMoveEvent
-    {
+    public static class PlayerSwitchWorldEvent extends PlayerMoveEvent {
         private final World oldWorld;
         private final World newWorld;
 
-        public PlayerSwitchWorldEvent(Target target, World oldWorld, World newWorld)
-        {
+        public PlayerSwitchWorldEvent(Target target, World oldWorld, World newWorld) {
             super(target);
             this.oldWorld = oldWorld;
             this.newWorld = newWorld;
         }
 
-        public World getOldWorld()
-        {
+        public World getOldWorld() {
             return this.oldWorld;
         }
 
-        public World getNewWorld()
-        {
+        public World getNewWorld() {
             return this.newWorld;
         }
     }

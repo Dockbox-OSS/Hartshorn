@@ -17,30 +17,25 @@
 
 package org.dockbox.selene.api.objects.item;
 
-public class Enchant
-{
+public class Enchant {
 
     private final Enchantment enchantment;
     private int level;
 
-    public Enchant(Enchantment enchantment, int level)
-    {
+    public Enchant(Enchantment enchantment, int level) {
         this.enchantment = enchantment;
         this.level = level;
     }
 
-    public Enchantment getEnchantment()
-    {
+    public Enchantment getEnchantment() {
         return this.enchantment;
     }
 
-    public int getLevel()
-    {
+    public int getLevel() {
         return this.level;
     }
 
-    public void setLevel(int level)
-    {
+    public void setLevel(int level) {
         this.level = level;
     }
 }

@@ -24,8 +24,7 @@ import org.dockbox.selene.api.objects.player.Player;
 import java.util.List;
 import java.util.UUID;
 
-public interface PlayerStorageService
-{
+public interface PlayerStorageService {
 
     List<Player> getOnlinePlayers();
 
@@ -36,5 +35,4 @@ public interface PlayerStorageService
     void setLanguagePreference(UUID uuid, Language language);
 
     Language getLanguagePreference(UUID uuid);
-
 }

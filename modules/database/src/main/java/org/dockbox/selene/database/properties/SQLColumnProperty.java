@@ -21,27 +21,23 @@ import org.dockbox.selene.api.objects.tuple.Tuple;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.structures.table.column.ColumnIdentifier;
 
-public class SQLColumnProperty implements InjectorProperty<Tuple<String, ColumnIdentifier<?>>>
-{
+public class SQLColumnProperty implements InjectorProperty<Tuple<String, ColumnIdentifier<?>>> {
     private final String originColumnName;
     private final ColumnIdentifier<?> toColumn;
 
-    public SQLColumnProperty(String originColumnName, ColumnIdentifier<?> toColumn)
-    {
+    public SQLColumnProperty(String originColumnName, ColumnIdentifier<?> toColumn) {
 
         this.originColumnName = originColumnName;
         this.toColumn = toColumn;
     }
 
     @Override
-    public String getKey()
-    {
+    public String getKey() {
         return this.originColumnName;
     }
 
     @Override
-    public Tuple<String, ColumnIdentifier<?>> getObject()
-    {
+    public Tuple<String, ColumnIdentifier<?>> getObject() {
         return new Tuple<>(this.originColumnName, this.toColumn);
     }
 }

@@ -22,11 +22,10 @@ import org.dockbox.selene.api.server.Selene;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Low level event type which can be cancelled, usually this cancellable state is respected by the underlying
- * implementation.
+ * Low level event type which can be cancelled, usually this cancellable state is respected by the
+ * underlying implementation.
  */
-public interface Cancellable extends Event
-{
+public interface Cancellable extends Event {
 
     /**
      * Indicates whether or not the event is currently cancelled
@@ -45,10 +44,8 @@ public interface Cancellable extends Event
 
     @Override
     @NotNull
-    default Cancellable post()
-    {
+    default Cancellable post() {
         Selene.provide(EventBus.class).post(this);
         return this;
     }
-
 }

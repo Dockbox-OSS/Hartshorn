@@ -27,8 +27,7 @@ import org.dockbox.selene.worldedit.WorldEditService;
 
 import java.util.Collection;
 
-public interface Region
-{
+public interface Region {
 
     Vector3N getMinimumPoint();
 
@@ -46,34 +45,27 @@ public interface Region
 
     World getWorld();
 
-    default void replace(Mask mask, Pattern pattern, Player cause)
-    {
+    default void replace(Mask mask, Pattern pattern, Player cause) {
         Selene.provide(WorldEditService.class).replace(this, mask, pattern, cause);
     }
 
-    default void set(Pattern pattern, Player cause)
-    {
+    default void set(Pattern pattern, Player cause) {
         Selene.provide(WorldEditService.class).set(this, pattern, cause);
     }
 
-    default void replace(Item mask, Item pattern, Player cause)
-    {
+    default void replace(Item mask, Item pattern, Player cause) {
         this.replace(SeleneUtils.singletonList(mask), SeleneUtils.singletonList(pattern), cause);
     }
 
-    default void replace(Collection<Item> mask, Collection<Item> pattern, Player cause)
-    {
+    default void replace(Collection<Item> mask, Collection<Item> pattern, Player cause) {
         Selene.provide(WorldEditService.class).replace(this, mask, pattern, cause);
     }
 
-    default void set(Item pattern, Player cause)
-    {
+    default void set(Item pattern, Player cause) {
         this.set(SeleneUtils.singletonList(pattern), cause);
     }
 
-    default void set(Collection<Item> pattern, Player cause)
-    {
+    default void set(Collection<Item> pattern, Player cause) {
         Selene.provide(WorldEditService.class).set(this, pattern, cause);
     }
-
 }

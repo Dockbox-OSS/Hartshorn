@@ -18,5 +18,11 @@
 package org.dockbox.selene.structures.registry;
 
 public enum TestIdentifier implements RegistryIdentifier {
-    BRICK, SANDSTONE, COBBLESTONE, WOOD, FULLBLOCK, STAIR, SLAB;
+    BRICK,
+    SANDSTONE,
+    COBBLESTONE,
+    WOOD,
+    FULLBLOCK,
+    STAIR,
+    SLAB;
 }

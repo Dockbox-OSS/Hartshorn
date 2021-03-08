@@ -27,15 +27,12 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Represents a server-controlled bossbar instance.
- */
-public interface Bossbar
-{
+/** Represents a server-controlled bossbar instance. */
+public interface Bossbar {
 
     /**
-     * The registry of all active {@link Bossbar bossbars}. Typically this only contains bossbars which are currently
-     * visible to at least one player.
+     * The registry of all active {@link Bossbar bossbars}. Typically this only contains bossbars
+     * which are currently visible to at least one player.
      */
     @SuppressWarnings("ConstantDeclaredInInterface")
     Map<String, Bossbar> REGISTRY = SeleneUtils.emptyConcurrentMap();
@@ -45,36 +42,35 @@ public interface Bossbar
      *
      * @return A new builder instance.
      */
-    static BossbarBuilder builder()
-    {
+    static BossbarBuilder builder() {
         return new BossbarBuilder();
     }
 
     /**
-     * Returns a {@link Bossbar} instance based on a given {@link UUID uuid}. This identifier typically matches with the
-     * one returned by {@link Bossbar#getId()}. If no instance exists, a empty {@link Exceptional} is returned.
+     * Returns a {@link Bossbar} instance based on a given {@link UUID uuid}. This identifier
+     * typically matches with the one returned by {@link Bossbar#getId()}. If no instance exists, a
+     * empty {@link Exceptional} is returned.
      *
      * @param uuid
      *         The unique identifier of the potential bossbar
      *
      * @return The bossbar wrapped in a {@link Exceptional}, or empty.
      */
-    static Exceptional<Bossbar> get(UUID uuid)
-    {
+    static Exceptional<Bossbar> get(UUID uuid) {
         return get(uuid.toString());
     }
 
     /**
-     * Returns a {@link Bossbar} instance based on a given {@code id}. This identifier typically matches with the one
-     * returned by {@link Bossbar#getId()}. If no instance exists, a empty {@link Exceptional} is returned.
+     * Returns a {@link Bossbar} instance based on a given {@code id}. This identifier typically
+     * matches with the one returned by {@link Bossbar#getId()}. If no instance exists, a empty {@link
+     * Exceptional} is returned.
      *
      * @param id
      *         The identifier of the potential bossbar
      *
      * @return The bossbar wrapped in a {@link Exceptional}, or empty.
      */
-    static Exceptional<Bossbar> get(String id)
-    {
+    static Exceptional<Bossbar> get(String id) {
         return Exceptional.of(() -> REGISTRY.get(id));
     }
 
@@ -97,8 +93,8 @@ public interface Bossbar
     void showTo(Player player, Duration duration);
 
     /**
-     * Hides/removes the bossbar instance from the given {@link Player}. If the bossbar was not visible to the player
-     * typically nothing is done.
+     * Hides/removes the bossbar instance from the given {@link Player}. If the bossbar was not
+     * visible to the player typically nothing is done.
      *
      * @param player
      *         The player to hide the bossbar from.
@@ -114,8 +110,8 @@ public interface Bossbar
     void showTo(Collection<Player> players);
 
     /**
-     * Hides/removes the bossbar instance from the given {@link Player players}. If the bossbar was not visible to one
-     * or more of the players typically nothing is done for that specific player.
+     * Hides/removes the bossbar instance from the given {@link Player players}. If the bossbar was
+     * not visible to one or more of the players typically nothing is done for that specific player.
      *
      * @param players
      *         The collection of players to hide the bossbar from.
@@ -123,9 +119,9 @@ public interface Bossbar
     void hideFrom(Collection<Player> players);
 
     /**
-     * Returns the ID of the bossbar, typically this is registered in {@link Bossbar#REGISTRY} and a instance can be
-     * obtained using {@link Bossbar#get(String)}. The ID does not have to be unique, making it so the instance in the
-     * {@link Bossbar#REGISTRY} may differ from the current instance.
+     * Returns the ID of the bossbar, typically this is registered in {@link Bossbar#REGISTRY} and a
+     * instance can be obtained using {@link Bossbar#get(String)}. The ID does not have to be unique,
+     * making it so the instance in the {@link Bossbar#REGISTRY} may differ from the current instance.
      *
      * @return the id
      */
@@ -199,7 +195,8 @@ public interface Bossbar
     Collection<Player> visibleTo();
 
     /**
-     * Returns {@code true} if the current instance is visible/shown to the given {@link Player}, else {@code false}.
+     * Returns {@code true} if the current instance is visible/shown to the given {@link Player}, else
+     * {@code false}.
      *
      * @param player
      *         The player
@@ -209,8 +206,8 @@ public interface Bossbar
     boolean isVisibleTo(Player player);
 
     /**
-     * Returns {@code true} if the current instance is visible/shown to the {@link Player} associated with the given
-     * {@link UUID}, else {@code false}.
+     * Returns {@code true} if the current instance is visible/shown to the {@link Player} associated
+     * with the given {@link UUID}, else {@code false}.
      *
      * @param player
      *         The UUID representation of a player.
@@ -220,8 +217,8 @@ public interface Bossbar
     boolean isVisibleTo(UUID player);
 
     /**
-     * Returns {@code true} if the current instance is visible/shown to the {@link Player} associated with the given
-     * {@code name}, else {@code false}.
+     * Returns {@code true} if the current instance is visible/shown to the {@link Player} associated
+     * with the given {@code name}, else {@code false}.
      *
      * @param name
      *         The name of a player.

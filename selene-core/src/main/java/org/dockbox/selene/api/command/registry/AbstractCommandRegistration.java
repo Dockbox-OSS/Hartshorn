@@ -20,8 +20,7 @@ package org.dockbox.selene.api.command.registry;
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
 
-public class AbstractCommandRegistration<T>
-{
+public class AbstractCommandRegistration<T> {
 
     private final String primaryAlias;
     private final String[] aliases;
@@ -29,8 +28,12 @@ public class AbstractCommandRegistration<T>
     private final Command command;
     private T sourceInstance;
 
-    public AbstractCommandRegistration(String primaryAlias, String[] aliases, AbstractPermission permission, Command command, T sourceInstance)
-    {
+    public AbstractCommandRegistration(
+            String primaryAlias,
+            String[] aliases,
+            AbstractPermission permission,
+            Command command,
+            T sourceInstance) {
         this.primaryAlias = primaryAlias;
         this.aliases = aliases;
         this.permission = permission;
@@ -38,33 +41,27 @@ public class AbstractCommandRegistration<T>
         this.sourceInstance = sourceInstance;
     }
 
-    public String getPrimaryAlias()
-    {
+    public String getPrimaryAlias() {
         return this.primaryAlias;
     }
 
-    public String[] getAliases()
-    {
+    public String[] getAliases() {
         return this.aliases;
     }
 
-    public AbstractPermission getPermission()
-    {
+    public AbstractPermission getPermission() {
         return this.permission;
     }
 
-    public Command getCommand()
-    {
+    public Command getCommand() {
         return this.command;
     }
 
-    public T getSourceInstance()
-    {
+    public T getSourceInstance() {
         return this.sourceInstance;
     }
 
-    public void setSourceInstance(T sourceInstance)
-    {
+    public void setSourceInstance(T sourceInstance) {
         this.sourceInstance = sourceInstance;
     }
 }

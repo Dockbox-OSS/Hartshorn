@@ -26,41 +26,35 @@ import org.dockbox.selene.api.util.SeleneUtils;
 
 import java.util.List;
 
-public class CommandInheritanceContext extends AbstractRegistrationContext
-{
+public class CommandInheritanceContext extends AbstractRegistrationContext {
 
-    private final List<MethodCommandContext> inheritedCommands = SeleneUtils.emptyConcurrentList();
+  private final List<MethodCommandContext> inheritedCommands = SeleneUtils.emptyConcurrentList();
 
-    public CommandInheritanceContext(Command command)
-    {
-        super(command);
-    }
+  public CommandInheritanceContext(Command command) {
+    super(command);
+  }
 
-    @Override
-    public Exceptional<IntegratedResource> call(CommandSource source, CommandContext context)
-    {
-        Exceptional<MethodCommandContext> inheritedCommand = this.getParentExecutor();
-        inheritedCommand.ifPresent(ctx -> ctx.call(source, context));
-        return inheritedCommand.isAbsent() ? Exceptional.of(IntegratedResource.MISSING_ARGUMENTS) : Exceptional.empty();
-    }
+  @Override
+  public Exceptional<IntegratedResource> call(CommandSource source, CommandContext context) {
+    Exceptional<MethodCommandContext> inheritedCommand = this.getParentExecutor();
+    inheritedCommand.ifPresent(ctx -> ctx.call(source, context));
+    return inheritedCommand.isAbsent()
+        ? Exceptional.of(IntegratedResource.MISSING_ARGUMENTS)
+        : Exceptional.empty();
+  }
 
-    public Exceptional<MethodCommandContext> getParentExecutor()
-    {
-        return Exceptional.of(this.getInheritedCommands()
-                .stream()
-                .filter(ctx -> ctx.getAliases().contains(""))
-                .findFirst()
-        );
-    }
+  public Exceptional<MethodCommandContext> getParentExecutor() {
+    return Exceptional.of(
+        this.getInheritedCommands().stream()
+            .filter(ctx -> ctx.getAliases().contains(""))
+            .findFirst());
+  }
 
-    public List<MethodCommandContext> getInheritedCommands()
-    {
-        return this.inheritedCommands;
-    }
+  public List<MethodCommandContext> getInheritedCommands() {
+    return this.inheritedCommands;
+  }
 
-    public void addInheritedCommand(MethodCommandContext context)
-    {
-        if (null != context)
-            this.inheritedCommands.add(context);
-    }
+  public void addInheritedCommand(MethodCommandContext context) {
+    if (null != context) this.inheritedCommands.add(context);
+  }
 }

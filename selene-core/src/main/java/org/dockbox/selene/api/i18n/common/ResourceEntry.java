@@ -23,18 +23,15 @@ import org.dockbox.selene.api.objects.targets.MessageReceiver;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 
-public interface ResourceEntry extends Formattable
-{
+public interface ResourceEntry extends Formattable {
 
-    static String plain(String value)
-    {
+    static String plain(String value) {
         return value.replaceAll("[$|&][0-9a-fklmnor]", "");
     }
 
     String getKey();
 
-    default Text asText()
-    {
+    default Text asText() {
         return Text.of(this.asString());
     }
 
@@ -42,31 +39,32 @@ public interface ResourceEntry extends Formattable
 
     String plain();
 
-    default ResourceEntry translate(MessageReceiver receiver)
-    {
-        if (receiver instanceof Player)
-            return this.translate(((Player) receiver).getLanguage());
+    default ResourceEntry translate(MessageReceiver receiver) {
+        if (receiver instanceof Player) return this.translate(((Player) receiver).getLanguage());
         else return this.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage());
     }
 
     ResourceEntry translate(Language lang);
 
-    default String parseColors(String m)
-    {
+    default String parseColors(String m) {
         String temp = m;
         char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
-        for (char c : nativeFormats) temp = temp.replace(String.format("&%s", c), String.format("\u00A7%s", c));
-        return "\u00A7r" + temp
-                .replace("$1", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_PRIMARY.plain()))
-                .replace("$2", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_SECONDARY.plain()))
-                .replace("$3", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_MINOR.plain()))
-                .replace("$4", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_ERROR.plain()));
+        for (char c : nativeFormats)
+            temp = temp.replace(String.format("&%s", c), String.format("\u00A7%s", c));
+        return "\u00A7r"
+                + temp.replace(
+                "$1", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_PRIMARY.plain()))
+                .replace(
+                        "$2",
+                        java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_SECONDARY.plain()))
+                .replace(
+                        "$3", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_MINOR.plain()))
+                .replace(
+                        "$4", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_ERROR.plain()));
     }
 
-
     @SuppressWarnings("ClassReferencesSubclass")
-    default FormattedResource format(Object... args)
-    {
+    default FormattedResource format(Object... args) {
         return new FormattedResource(this, args);
     }
 }

@@ -29,8 +29,7 @@ import org.dockbox.selene.worldedit.region.Region;
 import java.util.Collection;
 
 @RequiresBinding
-public interface WorldEditService
-{
+public interface WorldEditService {
 
     Exceptional<Region> getPlayerSelection(Player player);
 

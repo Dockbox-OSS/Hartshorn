@@ -25,40 +25,35 @@ import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
-public final class SpongeConsole extends Console
-{
+public final class SpongeConsole extends Console {
 
-    public static Console getInstance()
-    {
+    public static Console getInstance() {
         if (null != Console.instance) return Console.instance;
         return new SpongeConsole();
     }
 
     @Override
-    public void execute(@NotNull String command)
-    {
-        Sponge.getCommandManager().process(
-                Sponge.getServer().getConsole(), command);
+    public void execute(@NotNull String command) {
+        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), command);
     }
 
     @Override
-    public void send(@NotNull Text text)
-    {
+    public void send(@NotNull Text text) {
         Sponge.getServer().getConsole().sendMessage(SpongeConversionUtil.toSponge(text));
     }
 
     @Override
-    public void sendWithPrefix(@NotNull Text text)
-    {
-        Sponge.getServer().getConsole().sendMessage(org.spongepowered.api.text.Text.of(
-                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
-                SpongeConversionUtil.toSponge(text)
-        ));
+    public void sendWithPrefix(@NotNull Text text) {
+        Sponge.getServer()
+                .getConsole()
+                .sendMessage(
+                        org.spongepowered.api.text.Text.of(
+                                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
+                                SpongeConversionUtil.toSponge(text)));
     }
 
     @Override
-    public void sendPagination(@NotNull Pagination pagination)
-    {
+    public void sendPagination(@NotNull Pagination pagination) {
         SpongeConversionUtil.toSponge(pagination).sendTo(Sponge.getServer().getConsole());
     }
 }

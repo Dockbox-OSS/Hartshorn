@@ -27,8 +27,7 @@ import org.dockbox.selene.api.util.SeleneUtils;
 import java.util.Map;
 
 @Resources(module = Selene.class)
-public enum IntegratedResource implements ResourceEntry
-{
+public enum IntegratedResource implements ResourceEntry {
     // Color formats
     COLOR_PRIMARY("b", "color.primary"),
     COLOR_SECONDARY("3", "color.secondary"),
@@ -42,7 +41,8 @@ public enum IntegratedResource implements ResourceEntry
     // Errors
     // - Confirm command errors
     CONFIRM_INVALID_ID("$4Could not confirm command: Invalid runner ID", "confirm.invalid.id"),
-    CONFIRM_INVALID_ENTRY("$4Could not confirm command: Invalid runner entry", "confirm.invalid.entry"),
+    CONFIRM_INVALID_ENTRY(
+            "$4Could not confirm command: Invalid runner entry", "confirm.invalid.entry"),
     CONFIRM_EXPIRED("$4You have no commands waiting for confirmation", "confirm.expired"),
     CONFIRM_WRONG_SOURCE("$4This command can only be used by players", "confirm.invalid.source"),
 
@@ -52,12 +52,17 @@ public enum IntegratedResource implements ResourceEntry
     LOST_REFERENCE("$4Reference to object lost", "error.reference.lost"),
 
     // Discord
-    DISCORD_COMMAND_UNKNOWN("Sorry, I don't know what to do with that command!", "discord.command.unknown"),
-    DISCORD_COMMAND_NOT_PERMITTED("You are not permitted to use that command!", "discord.command.notpermitted"),
-    DISCORD_COMMAND_ERRORED("Sorry, I could not start that command. Please report this in our support channel.", "discord.command.error"),
+    DISCORD_COMMAND_UNKNOWN(
+            "Sorry, I don't know what to do with that command!", "discord.command.unknown"),
+    DISCORD_COMMAND_NOT_PERMITTED(
+            "You are not permitted to use that command!", "discord.command.notpermitted"),
+    DISCORD_COMMAND_ERRORED(
+            "Sorry, I could not start that command. Please report this in our support channel.",
+            "discord.command.error"),
 
     // CommandBus
-    CONFIRM_COMMAND_MESSAGE("$1This command requires confirmation, click $2[here] $1to confirm", "confirm.message"),
+    CONFIRM_COMMAND_MESSAGE(
+            "$1This command requires confirmation, click $2[here] $1to confirm", "confirm.message"),
     CONFIRM_COMMAND_MESSAGE_HOVER("$1Confirm running command", "confirm.message.hover"),
     MISSING_ARGUMENTS("$4The command requires arguments", "error.command.missingargs"),
 
@@ -71,7 +76,9 @@ public enum IntegratedResource implements ResourceEntry
     CONSOLE("Console", "source.console"),
 
     // Warnings
-    IN_ACTIVE_COOLDOWN("$4You are in cooldown! Please wait before performing this action again.", "cooldown.warning"),
+    IN_ACTIVE_COOLDOWN(
+            "$4You are in cooldown! Please wait before performing this action again.",
+            "cooldown.warning"),
 
     // Enchantments
     AQUA_AFFINITY("Aqua Affinity", "minecraft.enchant.aquaaffinity"),
@@ -110,51 +117,43 @@ public enum IntegratedResource implements ResourceEntry
     private final Map<Language, String> translations = SeleneUtils.emptyConcurrentMap();
     private String value;
 
-    IntegratedResource(String value, String key)
-    {
+    IntegratedResource(String value, String key) {
         this.value = value;
         this.key = key;
     }
 
-    public static String parse(CharSequence input)
-    {
+    public static String parse(CharSequence input) {
         return NONE.parseColors(input.toString());
     }
 
-    public String getValue(Player player)
-    {
+    public String getValue(Player player) {
         return this.translate(player.getLanguage()).asString();
     }
 
     @Override
-    public ResourceEntry translate(Language lang)
-    {
-        if (this.translations.containsKey(lang)) return new Resource(this.translations.get(lang), this.getKey());
-        return this;
-    }
-
-    @Override
-    public String asString()
-    {
-        return this.parseColors(this.value);
-    }
-
-    @Override
-    public String getKey()
-    {
+    public String getKey() {
         return "selene." + this.key;
     }
 
     @Override
-    public String plain()
-    {
+    public String asString() {
+        return this.parseColors(this.value);
+    }
+
+    @Override
+    public String plain() {
         return ResourceEntry.plain(this.value);
     }
 
-    public void setLanguageValue(Language lang, String value)
-    {
+    @Override
+    public ResourceEntry translate(Language lang) {
+        if (this.translations.containsKey(lang))
+            return new Resource(this.translations.get(lang), this.getKey());
+        return this;
+    }
+
+    public void setLanguageValue(Language lang, String value) {
         this.translations.put(lang, value);
         if (lang == Selene.getServer().getGlobalConfig().getDefaultLanguage()) this.value = value;
     }
-
 }

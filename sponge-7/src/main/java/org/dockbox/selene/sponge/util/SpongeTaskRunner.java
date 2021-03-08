@@ -24,13 +24,12 @@ import org.spongepowered.api.Sponge;
 
 import java.util.concurrent.TimeUnit;
 
-public class SpongeTaskRunner extends TaskRunner
-{
+public class SpongeTaskRunner extends TaskRunner {
 
     @Override
-    public void accept(Task task)
-    {
-        Sponge.getScheduler().createTaskBuilder()
+    public void accept(Task task) {
+        Sponge.getScheduler()
+                .createTaskBuilder()
                 .execute(task::run)
                 .name("Selene$" + task.getClass().getSimpleName() + '#' + System.currentTimeMillis())
                 .async()
@@ -38,9 +37,9 @@ public class SpongeTaskRunner extends TaskRunner
     }
 
     @Override
-    public void acceptDelayed(Task task, long delay, TimeUnit timeUnit)
-    {
-        Sponge.getScheduler().createTaskBuilder()
+    public void acceptDelayed(Task task, long delay, TimeUnit timeUnit) {
+        Sponge.getScheduler()
+                .createTaskBuilder()
                 .delay(delay, timeUnit)
                 .execute(task::run)
                 .name("Selene$" + task.getClass().getSimpleName() + '#' + System.currentTimeMillis())

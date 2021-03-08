@@ -19,26 +19,23 @@ package org.dockbox.selene.database;
 
 import org.dockbox.selene.api.annotations.entity.Property;
 
-public class Developer
-{
+public class Developer {
 
     @Property("numeralId")
     private int id;
+
     @Property(value = "name", setter = "setUsername")
     private String username;
 
-    public int getId()
-    {
+    public int getId() {
         return this.id;
     }
 
-    public String getUsername()
-    {
+    public String getUsername() {
         return this.username;
     }
 
-    public void setUsername(String username)
-    {
+    public void setUsername(String username) {
         this.username = username;
     }
 }

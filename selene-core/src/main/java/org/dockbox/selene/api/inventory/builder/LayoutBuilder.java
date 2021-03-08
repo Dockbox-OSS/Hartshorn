@@ -24,68 +24,56 @@ import org.dockbox.selene.api.inventory.pane.StaticPane;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.server.properties.InjectableType;
 
-public abstract class LayoutBuilder implements InjectableType
-{
+public abstract class LayoutBuilder implements InjectableType {
 
-    public LayoutBuilder set(Item item, int index)
-    {
-        return this.set(Element.of(item), index);
+  public LayoutBuilder set(Item item, int index) {
+    return this.set(Element.of(item), index);
+  }
+
+  public abstract LayoutBuilder set(Element element, int index);
+
+  public LayoutBuilder set(Item item, int... indices) {
+    return this.set(Element.of(item), indices);
+  }
+
+  public LayoutBuilder set(Element element, int... indices) {
+    for (int index : indices) {
+      this.set(element, index);
     }
+    return this;
+  }
 
-    public abstract LayoutBuilder set(Element element, int index);
+  public LayoutBuilder row(Item item, int index) {
+    return this.row(Element.of(item), index);
+  }
 
-    public LayoutBuilder set(Item item, int... indices)
-    {
-        return this.set(Element.of(item), indices);
-    }
+  public abstract LayoutBuilder row(Element element, int index);
 
-    public LayoutBuilder set(Element element, int... indices)
-    {
-        for (int index : indices)
-        {
-            this.set(element, index);
-        }
-        return this;
-    }
+  public LayoutBuilder column(Item item, int index) {
+    return this.column(Element.of(item), index);
+  }
 
-    public LayoutBuilder row(Item item, int index)
-    {
-        return this.row(Element.of(item), index);
-    }
+  public abstract LayoutBuilder column(Element element, int index);
 
-    public abstract LayoutBuilder row(Element element, int index);
+  public LayoutBuilder border(Item item) {
+    return this.border(Element.of(item));
+  }
 
-    public LayoutBuilder column(Item item, int index)
-    {
-        return this.column(Element.of(item), index);
-    }
+  public abstract LayoutBuilder border(Element element);
 
-    public abstract LayoutBuilder column(Element element, int index);
+  public LayoutBuilder fill(Item item) {
+    return this.fill(Element.of(item));
+  }
 
-    public LayoutBuilder border(Item item)
-    {
-        return this.border(Element.of(item));
-    }
+  public abstract LayoutBuilder fill(Element element);
 
-    public abstract LayoutBuilder border(Element element);
+  public PaginatedPaneBuilder toPaginatedPaneBuilder() {
+    return PaginatedPane.builder(this.build());
+  }
 
-    public LayoutBuilder fill(Item item)
-    {
-        return this.fill(Element.of(item));
-    }
+  public abstract InventoryLayout build();
 
-    public abstract LayoutBuilder fill(Element element);
-
-    public PaginatedPaneBuilder toPaginatedPaneBuilder()
-    {
-        return PaginatedPane.builder(this.build());
-    }
-
-    public abstract InventoryLayout build();
-
-    public StaticPaneBuilder toStaticPaneBuilder()
-    {
-        return StaticPane.builder(this.build());
-    }
-
+  public StaticPaneBuilder toStaticPaneBuilder() {
+    return StaticPane.builder(this.build());
+  }
 }

@@ -21,27 +21,22 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.util.function.Supplier;
 
-public class SerializerInformation<T>
-{
+public class SerializerInformation<T> {
 
     private final Class<T> type;
     private final Supplier<TypeSerializer<?>> serializer;
 
-    public SerializerInformation(Class<T> type, Supplier<TypeSerializer<?>> serializer)
-    {
+    public SerializerInformation(Class<T> type, Supplier<TypeSerializer<?>> serializer) {
         this.type = type;
         this.serializer = serializer;
         SeleneTypeSerializers.addSerializerInformation(this);
     }
 
-    public Class<T> getType()
-    {
+    public Class<T> getType() {
         return this.type;
     }
 
-    public TypeSerializer<?> getTypeSerializer()
-    {
+    public TypeSerializer<?> getTypeSerializer() {
         return this.serializer.get();
     }
-
 }

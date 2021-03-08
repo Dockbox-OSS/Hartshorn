@@ -21,9 +21,7 @@ import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.jooq.DSLContext;
 
 @FunctionalInterface
-public interface DSLConsumer
-{
+public interface DSLConsumer {
 
-    void accept(DSLContext ctx)
-            throws InvalidConnectionException;
+    void accept(DSLContext ctx) throws InvalidConnectionException;
 }

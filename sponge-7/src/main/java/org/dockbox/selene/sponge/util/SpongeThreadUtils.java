@@ -28,53 +28,42 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * The SpongePowered implementation for {@link ThreadUtils}, using Sponge's
- * {@link org.spongepowered.api.scheduler.SpongeExecutorService} for underlying thread access.
+ * The SpongePowered implementation for {@link ThreadUtils}, using Sponge's {@link
+ * org.spongepowered.api.scheduler.SpongeExecutorService} for underlying thread access.
  */
-public class SpongeThreadUtils implements ThreadUtils
-{
+public class SpongeThreadUtils implements ThreadUtils {
 
     @Override
-    public Future<?> performAsync(Runnable runnable)
-    {
+    public Future<?> performAsync(Runnable runnable) {
         SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Selene.getServer());
         return ses.submit(runnable);
     }
 
     @Override
-    public Future<?> performSync(Runnable runnable)
-    {
+    public Future<?> performSync(Runnable runnable) {
         SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Selene.getServer());
         return ses.submit(runnable);
     }
 
     @Override
-    public <T> Exceptional<T> awaitAsync(Callable<T> callable)
-    {
+    public <T> Exceptional<T> awaitAsync(Callable<T> callable) {
         SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Selene.getServer());
-        try
-        {
+        try {
             return Exceptional.ofNullable(ses.submit(callable).get());
         }
-        catch (InterruptedException | ExecutionException e)
-        {
+        catch (InterruptedException | ExecutionException e) {
             return Exceptional.of(e);
         }
     }
 
     @Override
-    public <T> Exceptional<T> awaitSync(Callable<T> callable)
-    {
+    public <T> Exceptional<T> awaitSync(Callable<T> callable) {
         SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Selene.getServer());
-        try
-        {
+        try {
             return Exceptional.ofNullable(ses.submit(callable).get());
         }
-        catch (InterruptedException | ExecutionException e)
-        {
+        catch (InterruptedException | ExecutionException e) {
             return Exceptional.of(e);
         }
     }
-
-
 }

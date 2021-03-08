@@ -28,8 +28,7 @@ import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
 
-public interface Item extends KeyHolder<Item>, PersistentDataHolder
-{
+public interface Item extends KeyHolder<Item>, PersistentDataHolder {
 
     /**
      * @param id
@@ -37,11 +36,9 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder
      *
      * @return The item instance, or {@link MinecraftItems#getAir()}
      */
-    static Item of(@NonNls String id)
-    {
+    static Item of(@NonNls String id) {
         Item item = Item.of(id, 0);
-        if (!Selene.getItems().getAirId().equals(id) && item.isAir())
-        {
+        if (!Selene.getItems().getAirId().equals(id) && item.isAir()) {
             item = Selene.getItems().getCustom(id);
         }
         return item;
@@ -54,12 +51,11 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder
      *         The unsafe damage, or meta. Constraints to range 0-15
      *
      * @return The item instance, or {@link MinecraftItems#getAir()}
-     * @deprecated Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As of 1.13 this will no
-     *         longer be available!
+     * @deprecated Note that the use of unsafe damage (meta) is deprecated, and should be avoided. As
+     *         of 1.13 this will no longer be available!
      */
     @Deprecated
-    static Item of(String id, int meta)
-    {
+    static Item of(String id, int meta) {
         return Selene.provide(ItemFactory.class).create(id, meta);
     }
 
@@ -106,5 +102,4 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder
     Item withMeta(int meta);
 
     int getMeta();
-
 }

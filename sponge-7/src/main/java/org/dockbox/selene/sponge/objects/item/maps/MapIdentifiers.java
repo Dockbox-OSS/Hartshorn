@@ -20,13 +20,12 @@ package org.dockbox.selene.sponge.objects.item.maps;
 import org.dockbox.selene.structures.table.column.ColumnIdentifier;
 import org.dockbox.selene.structures.table.column.SimpleColumnIdentifier;
 
-import java.util.UUID;
+public final class MapIdentifiers {
 
-public final class MapIdentifiers
-{
-
-    public static final ColumnIdentifier<String> SOURCE = new SimpleColumnIdentifier<>("source", String.class);
-    public static final ColumnIdentifier<Integer> MAP = new SimpleColumnIdentifier<>("map", Integer.class);
+    public static final ColumnIdentifier<String> SOURCE =
+            new SimpleColumnIdentifier<>("source", String.class);
+    public static final ColumnIdentifier<Integer> MAP =
+            new SimpleColumnIdentifier<>("map", Integer.class);
 
     private MapIdentifiers() {}
 }

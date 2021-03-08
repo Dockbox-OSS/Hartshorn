@@ -27,38 +27,33 @@ import org.dockbox.selene.api.util.Reflect;
 import java.nio.file.Path;
 
 /**
- * Low-level interface defining functionality to interact with Configurate based file types. While this type encourages
- * the usage of Configurate based instances, it is possible to create implementations for alternative configuration
- * libraries and/or frameworks.
+ * Low-level interface defining functionality to interact with Configurate based file types. While
+ * this type encourages the usage of Configurate based instances, it is possible to create
+ * implementations for alternative configuration libraries and/or frameworks.
  */
-public abstract class FileManager implements InjectableType
-{
+public abstract class FileManager implements InjectableType {
 
     private FileType fileType;
 
-    protected FileManager(FileType fileType)
-    {
+    protected FileManager(FileType fileType) {
         this.fileType = fileType;
     }
 
-    public FileType getFileType()
-    {
+    public FileType getFileType() {
         return this.fileType;
     }
 
-    protected void setFileType(FileType fileType)
-    {
+    protected void setFileType(FileType fileType) {
         this.fileType = fileType;
     }
 
-    public Path getDataFile(Class<?> module)
-    {
+    public Path getDataFile(Class<?> module) {
         return this.getDataFile(Reflect.getModule(module));
     }
 
     /**
-     * Gets the default data file for a given {@link Module}. The exact location is decided by the top-level
-     * implementation of this type.
+     * Gets the default data file for a given {@link Module}. The exact location is decided by the
+     * top-level implementation of this type.
      *
      * @param module
      *         The {@link Module} providing identification
@@ -67,14 +62,13 @@ public abstract class FileManager implements InjectableType
      */
     public abstract Path getDataFile(Module module);
 
-    public Path getConfigFile(Class<?> module)
-    {
+    public Path getConfigFile(Class<?> module) {
         return this.getConfigFile(Reflect.getModule(module));
     }
 
     /**
-     * Gets the default config file for a given {@link Module}. The exact location is decided by the top-level
-     * implementation of this type.
+     * Gets the default config file for a given {@link Module}. The exact location is decided by the
+     * top-level implementation of this type.
      *
      * @param module
      *         The {@link Module} providing identification
@@ -83,14 +77,13 @@ public abstract class FileManager implements InjectableType
      */
     public abstract Path getConfigFile(Module module);
 
-    public Path getDataFile(Class<?> module, String file)
-    {
+    public Path getDataFile(Class<?> module, String file) {
         return this.getDataFile(Reflect.getModule(module), file);
     }
 
     /**
-     * Gets a specific data file for a given {@link Module}. The exact location is decided by the top-level
-     * implementation of this type.
+     * Gets a specific data file for a given {@link Module}. The exact location is decided by the
+     * top-level implementation of this type.
      *
      * @param module
      *         The {@link Module} providing identification
@@ -101,14 +94,13 @@ public abstract class FileManager implements InjectableType
      */
     public abstract Path getDataFile(Module module, String file);
 
-    public Path getConfigFile(Class<?> module, String file)
-    {
+    public Path getConfigFile(Class<?> module, String file) {
         return this.getConfigFile(Reflect.getModule(module), file);
     }
 
     /**
-     * Gets a specific config file for a given {@link Module}. The exact location is decided by the top-level
-     * implementation of this type.
+     * Gets a specific config file for a given {@link Module}. The exact location is decided by the
+     * top-level implementation of this type.
      *
      * @param module
      *         The {@link Module} providing identification
@@ -120,9 +112,9 @@ public abstract class FileManager implements InjectableType
     public abstract Path getConfigFile(Module module, String file);
 
     /**
-     * Get the content of a file, and map the given values to a generic type {@code T}. The exact file is completely
-     * dynamic, though it is usually encouraged to use {@link FileManager#getDataFile} or
-     * {@link FileManager#getConfigFile} to obtain appropriate files.
+     * Get the content of a file, and map the given values to a generic type {@code T}. The exact file
+     * is completely dynamic, though it is usually encouraged to use {@link FileManager#getDataFile}
+     * or {@link FileManager#getConfigFile} to obtain appropriate files.
      *
      * @param <T>
      *         The type parameter of the type to map to
@@ -131,14 +123,15 @@ public abstract class FileManager implements InjectableType
      * @param type
      *         The exact type to map to
      *
-     * @return A {@link Exceptional} instance holding either the mapping {@code T} instance, or a {@link Throwable}
+     * @return A {@link Exceptional} instance holding either the mapping {@code T} instance, or a
+     *         {@link Throwable}
      */
     public abstract <T> Exceptional<T> read(Path file, Class<T> type);
 
     /**
-     * Write a generic type {@code T} to a given file. The exact file is completely
-     * dynamic, though it is usually encouraged to use {@link FileManager#getDataFile} or
-     * {@link FileManager#getConfigFile} to obtain appropriate files.
+     * Write a generic type {@code T} to a given file. The exact file is completely dynamic, though it
+     * is usually encouraged to use {@link FileManager#getDataFile} or {@link
+     * FileManager#getConfigFile} to obtain appropriate files.
      *
      * @param <T>
      *         The type parameter of the content
@@ -147,128 +140,127 @@ public abstract class FileManager implements InjectableType
      * @param content
      *         The content to write
      *
-     * @return A {@link Exceptional} instance holding a {@link Boolean} indicating the success status of the write process, or a
-     *         {@link Throwable}. If a {@link Throwable} is present, the {@link Boolean} value should be false.
+     * @return A {@link Exceptional} instance holding a {@link Boolean} indicating the success status
+     *         of the write process, or a {@link Throwable}. If a {@link Throwable} is present, the {@link
+     *         Boolean} value should be false.
      */
     public abstract <T> Exceptional<Boolean> write(Path file, T content);
 
-    public Path getDataDir(Class<?> module)
-    {
+    public Path getDataDir(Class<?> module) {
         return this.getDataDir(Reflect.getModule(module));
     }
 
     /**
-     * Get the data directory for a given {@link Module}. The exact location is decided by the top-level implementation
-     * of this type.
+     * Get the data directory for a given {@link Module}. The exact location is decided by the
+     * top-level implementation of this type.
      *
      * @param module
      *         The {@link Module} providing identification
      *
      * @return A {@link Path} reference to the data directory
      */
-    public Path getDataDir(Module module)
-    {
+    public Path getDataDir(Module module) {
         return this.getDataDir().resolve(module.id());
     }
 
     /**
-     * Get the base data directory of a platform file system. The exact location is decided by the top-level
-     * implementation of this type.
+     * Get the base data directory of a platform file system. The exact location is decided by the
+     * top-level implementation of this type.
      *
      * @return A {@link Path} reference to a directory
      */
     public abstract Path getDataDir();
 
     /**
-     * Get the base log directory of a platform file system. The exact location is decided by the top-level
-     * implementation of this type.
+     * Get the base log directory of a platform file system. The exact location is decided by the
+     * top-level implementation of this type.
      *
      * @return A {@link Path} reference to a directory
      */
     public abstract Path getLogsDir();
 
     /**
-     * Get the base directory of a platform file system. The exact location is decided by the top-level
-     * implementation of this type.
+     * Get the base directory of a platform file system. The exact location is decided by the
+     * top-level implementation of this type.
      *
      * @return A {@link Path} reference to a directory
      */
     public abstract Path getServerRoot();
 
     /**
-     * Get the base modules directory of a platform file system. The exact location is decided by the top-level
-     * implementation of this type.
+     * Get the base modules directory of a platform file system. The exact location is decided by the
+     * top-level implementation of this type.
      *
      * @return A {@link Path} reference to a directory
      */
     public abstract Path getModuleDir();
 
     /**
-     * Get the base mods directory of a platform file system. The exact location is decided by the top-level
-     * implementation of this type.
-     * <p>
-     * Depending on the platform this directory may not be present.
+     * Get the base mods directory of a platform file system. The exact location is decided by the
+     * top-level implementation of this type.
      *
-     * @return A {@link Exceptional} object containing either a {@link Path} reference to a directory, or nothing.
+     * <p>Depending on the platform this directory may not be present.
+     *
+     * @return A {@link Exceptional} object containing either a {@link Path} reference to a directory,
+     *         or nothing.
      */
     public abstract Exceptional<Path> getModDir();
 
     /**
-     * Get the base plugin directory of a platform file system. The exact location is decided by the top-level
-     * implementation of this type.
+     * Get the base plugin directory of a platform file system. The exact location is decided by the
+     * top-level implementation of this type.
      *
      * @return A {@link Path} reference to a directory
      */
     public abstract Path getPluginDir();
 
-    public Path getModuleConfigDir(Class<?> module)
-    {
+    public Path getModuleConfigDir(Class<?> module) {
         return this.getModuleConfigDir(Reflect.getModule(module));
     }
 
     /**
-     * Get the configuration directory for a given {@link Module}. The exact location is decided by the top-level
-     * implementation of this type.
+     * Get the configuration directory for a given {@link Module}. The exact location is decided by
+     * the top-level implementation of this type.
      *
      * @param module
      *         The {@link Module} providing identification
      *
      * @return A {@link Path} reference to the configuration directory
      */
-    public Path getModuleConfigDir(Module module)
-    {
+    public Path getModuleConfigDir(Module module) {
         return this.getModuleConfigsDir().resolve(module.id());
     }
 
     /**
-     * Get the configuration folder for modules directory of a platform file system. The exact location is decided
-     * by the top-level implementation of this type.
+     * Get the configuration folder for modules directory of a platform file system. The exact
+     * location is decided by the top-level implementation of this type.
      *
      * @return A {@link Path} reference to a directory
      */
     public abstract Path getModuleConfigsDir();
 
     /**
-     * Get the configuration folder for modules directory of a platform file system. The exact location is decided
-     * by the top-level implementation of this type.
-     * <p>
-     * Depending on the platform this directory may not be present.
+     * Get the configuration folder for modules directory of a platform file system. The exact
+     * location is decided by the top-level implementation of this type.
      *
-     * @return A {@link Exceptional} object containing either a {@link Path} reference to a directory, or nothing.
+     * <p>Depending on the platform this directory may not be present.
+     *
+     * @return A {@link Exceptional} object containing either a {@link Path} reference to a directory,
+     *         or nothing.
      */
     public abstract Exceptional<Path> getModdedPlatformModsConfigDir();
 
     /**
-     * Get the configuration folder for modules directory of a platform file system. The exact location is decided
-     * by the top-level implementation of this type.
+     * Get the configuration folder for modules directory of a platform file system. The exact
+     * location is decided by the top-level implementation of this type.
      *
      * @return A {@link Path} reference to a directory
      */
     public abstract Path getPlatformPluginsConfigDir();
 
     /**
-     * Evaluates whether or not a given {@link Path} reference directory exists. If it exists nothing is done. If it did not
-     * yet exist, the directory is created.
+     * Evaluates whether or not a given {@link Path} reference directory exists. If it exists nothing
+     * is done. If it did not yet exist, the directory is created.
      *
      * @param path
      *         The {@link Path} to evaluate
@@ -278,8 +270,8 @@ public abstract class FileManager implements InjectableType
     public abstract Path createPathIfNotExists(Path path);
 
     /**
-     * Evaluates whether or not a given {@link Path} reference file exists. If it exists nothing is done. If it did not yet
-     * exist, the directory is created.
+     * Evaluates whether or not a given {@link Path} reference file exists. If it exists nothing is
+     * done. If it did not yet exist, the directory is created.
      *
      * @param file
      *         The {@link Path} to evaluate
@@ -313,7 +305,8 @@ public abstract class FileManager implements InjectableType
     public abstract boolean copy(Path sourceFile, Path targetFile);
 
     /**
-     * Attempts to copy a pre-made resource to a target file. If the target file already exists nothing is done.
+     * Attempts to copy a pre-made resource to a target file. If the target file already exists
+     * nothing is done.
      *
      * @param defaultFileName
      *         The name of the resource to copy
@@ -325,8 +318,7 @@ public abstract class FileManager implements InjectableType
     public abstract boolean copyDefaultFile(String defaultFileName, Path targetFile);
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties)
-    {
+    public void stateEnabling(InjectorProperty<?>... properties) {
         Keys.getPropertyValue(FileTypeProperty.KEY, FileType.class, properties)
                 .ifPresent(this::requestFileType);
     }

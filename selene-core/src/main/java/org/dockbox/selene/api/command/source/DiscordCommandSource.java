@@ -18,6 +18,5 @@
 package org.dockbox.selene.api.command.source;
 
 @SuppressWarnings("EmptyClass")
-public abstract class DiscordCommandSource implements CommandSource
-{
+public abstract class DiscordCommandSource implements CommandSource {
 }

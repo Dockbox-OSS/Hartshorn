@@ -23,8 +23,7 @@ import org.dockbox.selene.api.text.Text;
 
 import java.util.function.Predicate;
 
-public interface BroadcastService
-{
+public interface BroadcastService {
 
     void broadcastPublic(Text message);
 
@@ -34,8 +33,8 @@ public interface BroadcastService
 
     void broadcastForPermission(Text message, String permission);
 
-    void broadcastForPermissionWithFilter(Text message, AbstractPermission permission, Predicate<Player> filter);
+    void broadcastForPermissionWithFilter(
+            Text message, AbstractPermission permission, Predicate<Player> filter);
 
     void broadcastForPermissionWithFilter(Text message, String permission, Predicate<Player> filter);
-
 }

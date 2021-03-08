@@ -21,11 +21,10 @@ import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.objects.Exceptional;
 
 /**
- * Server type definitions containing display names, minimum/preferred versions, and whether or not the platform
- * provides access to Native Minecraft Sources (NMS).
+ * Server type definitions containing display names, minimum/preferred versions, and whether or not
+ * the platform provides access to Native Minecraft Sources (NMS).
  */
-public enum ServerType
-{
+public enum ServerType {
     JUNIT("JUnit Testing", true, true, "5.3.2", "5.3.2"),
     MAGMA("Magma", true, true, "Not (yet) supported", "Not (yet) supported"),
     OTHER("Other", true, false, "Not (yet) supported", "Not (yet) supported"),
@@ -39,8 +38,12 @@ public enum ServerType
     private final String minimumVersion;
     private final String preferredVersion;
 
-    ServerType(String displayName, boolean hasNMSAccess, boolean isModded, String minimumVersion, String preferredVersion)
-    {
+    ServerType(
+            String displayName,
+            boolean hasNMSAccess,
+            boolean isModded,
+            String minimumVersion,
+            String preferredVersion) {
         this.displayName = displayName;
         this.hasNMSAccess = hasNMSAccess;
         this.isModded = isModded;
@@ -53,8 +56,7 @@ public enum ServerType
      *
      * @return the display name
      */
-    public String getDisplayName()
-    {
+    public String getDisplayName() {
         return this.displayName;
     }
 
@@ -63,8 +65,7 @@ public enum ServerType
      *
      * @return the boolean
      */
-    public boolean hasNMSAccess()
-    {
+    public boolean hasNMSAccess() {
         return this.hasNMSAccess;
     }
 
@@ -73,8 +74,7 @@ public enum ServerType
      *
      * @return the minimum version
      */
-    public String getMinimumVersion()
-    {
+    public String getMinimumVersion() {
         return this.minimumVersion;
     }
 
@@ -83,20 +83,18 @@ public enum ServerType
      *
      * @return the preferred version
      */
-    public String getPreferredVersion()
-    {
+    public String getPreferredVersion() {
         return this.preferredVersion;
     }
 
     /**
-     * Returns whether or not the platform provides access to a mod loader.
-     * This can be especially useful when using {@link FileManager#getModdedPlatformModsConfigDir()} as it
-     * may return {@link Exceptional#empty()} depending on the availability mods on the platform.
+     * Returns whether or not the platform provides access to a mod loader. This can be especially
+     * useful when using {@link FileManager#getModdedPlatformModsConfigDir()} as it may return {@link
+     * Exceptional#empty()} depending on the availability mods on the platform.
      *
      * @return the boolean
      */
-    public boolean isModded()
-    {
+    public boolean isModded() {
         return this.isModded;
     }
 }

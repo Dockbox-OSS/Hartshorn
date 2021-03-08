@@ -25,55 +25,46 @@ import org.dockbox.selene.api.server.Selene;
 import java.util.function.Consumer;
 
 /**
- * Represents a inventory element which can be displayed by a {@link org.dockbox.selene.api.inventory.pane.Pane}
- * instance. A element can either be a static representation of a {@link Item}, or carry a action listener in the form
- * of a {@link Consumer Player consumer}.
+ * Represents a inventory element which can be displayed by a {@link
+ * org.dockbox.selene.api.inventory.pane.Pane} instance. A element can either be a static
+ * representation of a {@link Item}, or carry a action listener in the form of a {@link Consumer
+ * Player consumer}.
  */
-public interface Element
-{
+public interface Element {
 
-    /**
-     * Creates an element from the given {@link Item}.
-     *
-     * @param item
-     *         The item to represent.
-     *
-     * @return The element.
-     */
-    static Element of(Item item)
-    {
-        return of(item, p -> {});
-    }
+  /**
+   * Creates an element from the given {@link Item}.
+   *
+   * @param item The item to represent.
+   * @return The element.
+   */
+  static Element of(Item item) {
+    return of(item, p -> {});
+  }
 
-    /**
-     * Creates an element from the given {@link Item} and adds a action listener to perform the given {@code onClick}
-     * action.
-     *
-     * @param item
-     *         The item to represent.
-     * @param onClick
-     *         The action to perform when a player interacts with the item.
-     *
-     * @return The element.
-     */
-    static Element of(Item item, Consumer<Player> onClick)
-    {
-        return Selene.provide(ElementFactory.class).create(item, onClick);
-    }
+  /**
+   * Creates an element from the given {@link Item} and adds a action listener to perform the given
+   * {@code onClick} action.
+   *
+   * @param item The item to represent.
+   * @param onClick The action to perform when a player interacts with the item.
+   * @return The element.
+   */
+  static Element of(Item item, Consumer<Player> onClick) {
+    return Selene.provide(ElementFactory.class).create(item, onClick);
+  }
 
-    /**
-     * Gets the represented {@link Item}.
-     *
-     * @return The represented item.
-     */
-    Item getItem();
+  /**
+   * Gets the represented {@link Item}.
+   *
+   * @return The represented item.
+   */
+  Item getItem();
 
-    /**
-     * Sets the action to perform when a player interacts with the element.
-     *
-     * @param onClick
-     *         The action to perform.
-     */
-    void onClick(Consumer<Player> onClick);
-
+  /**
+   * Sets the action to perform when a player interacts with the element.
+   *
+   * @param onClick The action to perform.
+   */
+  void onClick(Consumer<Player> onClick);
 }

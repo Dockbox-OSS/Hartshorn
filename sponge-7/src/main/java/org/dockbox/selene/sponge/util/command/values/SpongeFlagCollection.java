@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.common.command.values.AbstractArgumentElement;
 import org.dockbox.selene.common.command.values.AbstractArgumentValue;
 import org.dockbox.selene.common.command.values.AbstractFlagCollection;
-import org.dockbox.selene.api.util.SeleneUtils;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.CommandFlags;
 import org.spongepowered.api.command.args.CommandFlags.Builder;
@@ -28,45 +28,38 @@ import org.spongepowered.api.command.args.GenericArguments;
 
 import java.util.List;
 
-public class SpongeFlagCollection extends AbstractFlagCollection<CommandFlags.Builder>
-{
+public class SpongeFlagCollection extends AbstractFlagCollection<CommandFlags.Builder> {
 
-    public SpongeFlagCollection(Builder reference)
-    {
+    public SpongeFlagCollection(Builder reference) {
         super(reference);
     }
 
-    public SpongeFlagCollection()
-    {
+    public SpongeFlagCollection() {
         super(GenericArguments.flags());
     }
 
     @Override
-    public void addNamedFlag(String name)
-    {
+    public void addNamedFlag(String name) {
         this.getReference().flag(name);
     }
 
     @Override
-    public void addNamedPermissionFlag(String name, String permission)
-    {
+    public void addNamedPermissionFlag(String name, String permission) {
         this.getReference().permissionFlag(permission, name);
     }
 
     @Override
-    public void addValueBasedFlag(String name, AbstractArgumentValue<?> value)
-    {
+    public void addValueBasedFlag(String name, AbstractArgumentValue<?> value) {
         if (value instanceof SpongeArgumentValue)
             this.getReference().valueFlag((CommandElement) value.getElement().getReference(), name);
     }
 
     @SuppressWarnings("OverlyStrongTypeCast")
     @Override
-    public List<AbstractArgumentElement<?>> buildAndCombines(AbstractArgumentElement<?> element)
-    {
-        if (element instanceof SpongeArgumentElement)
-        {
-            CommandElement commandElement = this.getReference().buildWith(((SpongeArgumentElement) element).getReference());
+    public List<AbstractArgumentElement<?>> buildAndCombines(AbstractArgumentElement<?> element) {
+        if (element instanceof SpongeArgumentElement) {
+            CommandElement commandElement =
+                    this.getReference().buildWith(((SpongeArgumentElement) element).getReference());
             return SeleneUtils.asList(new SpongeArgumentElement(commandElement));
         }
         return SeleneUtils.emptyList();

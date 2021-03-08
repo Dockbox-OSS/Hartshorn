@@ -23,26 +23,20 @@ import org.dockbox.selene.packets.data.Weather;
 
 @RequiresBinding
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
-public abstract class ChangeGameStatePacket extends Packet
-{
+public abstract class ChangeGameStatePacket extends Packet {
 
     private Weather weather = Weather.CLEAR;
 
-    public Weather getWeather()
-    {
+    public Weather getWeather() {
         return this.weather;
     }
 
-    public void setWeather(Weather weather)
-    {
+    public void setWeather(Weather weather) {
         this.weather = weather;
     }
 
     @Override
-    protected Class<?> internalGetPacketType()
-            throws ClassNotFoundException
-    {
+    protected Class<?> internalGetPacketType() throws ClassNotFoundException {
         return Class.forName("net.minecraft.network.play.server.SPacketChangeGameState");
     }
-
 }

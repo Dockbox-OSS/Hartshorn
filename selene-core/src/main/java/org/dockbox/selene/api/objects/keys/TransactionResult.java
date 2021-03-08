@@ -20,53 +20,45 @@ package org.dockbox.selene.api.objects.keys;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.IntegratedResource;
 
-public final class TransactionResult
-{
+public final class TransactionResult {
 
-    private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, IntegratedResource.NONE);
+    private static final TransactionResult SUCCESS =
+            new TransactionResult(Status.SUCCESS, IntegratedResource.NONE);
     private final Status status;
     private final ResourceEntry message;
 
-    private TransactionResult(Status status, ResourceEntry message)
-    {
+    private TransactionResult(Status status, ResourceEntry message) {
         this.status = status;
         this.message = message;
     }
 
-    public static TransactionResult success()
-    {
+    public static TransactionResult success() {
         return TransactionResult.SUCCESS;
     }
 
-    public static TransactionResult fail(ResourceEntry message)
-    {
+    public static TransactionResult fail(ResourceEntry message) {
         return new TransactionResult(Status.FAILURE, message);
     }
 
-    public static TransactionResult fail(Throwable cause)
-    {
-        return new TransactionResult(Status.FAILURE, IntegratedResource.EXCEPTION.format(cause.getMessage()));
+    public static TransactionResult fail(Throwable cause) {
+        return new TransactionResult(
+                Status.FAILURE, IntegratedResource.EXCEPTION.format(cause.getMessage()));
     }
 
-    public ResourceEntry getMessage()
-    {
+    public ResourceEntry getMessage() {
         return this.message;
     }
 
-    public boolean isSuccessfull()
-    {
+    public boolean isSuccessfull() {
         return Status.SUCCESS == this.getStatus();
     }
 
-    public Status getStatus()
-    {
+    public Status getStatus() {
         return this.status;
     }
 
-    public enum Status
-    {
+    public enum Status {
         FAILURE,
         SUCCESS
     }
-
 }

@@ -20,8 +20,7 @@ package org.dockbox.selene.api.events.moderation;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.objects.player.Player;
 
-public abstract class NoteEvent extends ModerationEvent
-{
+public abstract class NoteEvent extends ModerationEvent {
 
     private String note;
 
@@ -35,24 +34,20 @@ public abstract class NoteEvent extends ModerationEvent
      * @param player
      *         The target {@link Player} the note is being added to
      */
-    protected NoteEvent(Player player, CommandSource source, String note)
-    {
+    protected NoteEvent(Player player, CommandSource source, String note) {
         super(player, source);
         this.note = note;
     }
 
-    public String getNote()
-    {
+    public String getNote() {
         return this.note;
     }
 
-    public void setNote(String note)
-    {
+    public void setNote(String note) {
         this.note = note;
     }
 
-    public static class PlayerNotedEvent extends NoteEvent
-    {
+    public static class PlayerNotedEvent extends NoteEvent {
 
         /**
          * The event fire when a new note is added to a player.
@@ -64,8 +59,7 @@ public abstract class NoteEvent extends ModerationEvent
          * @param source
          *         The {@link CommandSource} creating the note
          */
-        public PlayerNotedEvent(Player player, CommandSource source, String note)
-        {
+        public PlayerNotedEvent(Player player, CommandSource source, String note) {
             super(player, source, note);
         }
     }

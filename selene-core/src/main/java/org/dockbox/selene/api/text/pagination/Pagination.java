@@ -22,8 +22,7 @@ import org.dockbox.selene.api.text.Text;
 
 import java.util.List;
 
-public interface Pagination
-{
+public interface Pagination {
 
     void send(MessageReceiver receiver);
 

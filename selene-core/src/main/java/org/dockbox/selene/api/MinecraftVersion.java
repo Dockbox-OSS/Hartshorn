@@ -17,17 +17,15 @@
 
 package org.dockbox.selene.api;
 
-
 import org.dockbox.selene.api.objects.item.storage.Minecraft112Items;
 import org.dockbox.selene.api.objects.item.storage.Minecraft116Items;
 import org.dockbox.selene.api.objects.item.storage.MinecraftItems;
 
 /**
- * Enum type providing the supported Minecraft versions for Selene. Typically this is used when defining vanilla
- * constants, indicating in which version they were made available.
+ * Enum type providing the supported Minecraft versions for Selene. Typically this is used when
+ * defining vanilla constants, indicating in which version they were made available.
  */
-public enum MinecraftVersion
-{
+public enum MinecraftVersion {
     MC1_12("1.12", new Minecraft112Items()),
     MC1_16("1.16", new Minecraft116Items()),
     INDEV("Indev", new Minecraft112Items());
@@ -35,19 +33,16 @@ public enum MinecraftVersion
     private final String readableVersionString;
     private final MinecraftItems minecraftItems;
 
-    MinecraftVersion(String readableVersionString, MinecraftItems minecraftItems)
-    {
+    MinecraftVersion(String readableVersionString, MinecraftItems minecraftItems) {
         this.readableVersionString = readableVersionString;
         this.minecraftItems = minecraftItems;
     }
 
-    public String getReadableVersionString()
-    {
+    public String getReadableVersionString() {
         return this.readableVersionString;
     }
 
-    public MinecraftItems getItems()
-    {
+    public MinecraftItems getItems() {
         return this.minecraftItems;
     }
 }

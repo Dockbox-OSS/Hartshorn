@@ -19,27 +19,23 @@ package org.dockbox.selene.database.properties;
 
 import org.dockbox.selene.api.server.properties.InjectorProperty;
 
-public class SQLResetBehaviorProperty implements InjectorProperty<Boolean>
-{
+public class SQLResetBehaviorProperty implements InjectorProperty<Boolean> {
 
     public static String KEY = "resetBeforeStore";
 
     private final boolean reset;
 
-    public SQLResetBehaviorProperty(boolean reset)
-    {
+    public SQLResetBehaviorProperty(boolean reset) {
         this.reset = reset;
     }
 
     @Override
-    public String getKey()
-    {
+    public String getKey() {
         return SQLResetBehaviorProperty.KEY;
     }
 
     @Override
-    public Boolean getObject()
-    {
+    public Boolean getObject() {
         return this.reset;
     }
 }

@@ -24,37 +24,32 @@ import org.dockbox.selene.api.server.Selene;
 import java.util.Map;
 
 /**
- * Represents the layout of a inventory. Typically this is responsible for placing the default elements in a
- * {@link org.dockbox.selene.api.inventory.pane.Pane}.
+ * Represents the layout of a inventory. Typically this is responsible for placing the default
+ * elements in a {@link org.dockbox.selene.api.inventory.pane.Pane}.
  */
-public interface InventoryLayout
-{
+public interface InventoryLayout {
 
-    /**
-     * Create a new {@link LayoutBuilder} instance.
-     *
-     * @param inventoryType
-     *         The inventory type to use while building the pane.
-     *
-     * @return The builder
-     */
-    static LayoutBuilder builder(InventoryType inventoryType)
-    {
-        return Selene.provide(LayoutBuilder.class, new InventoryTypeProperty(inventoryType));
-    }
+  /**
+   * Create a new {@link LayoutBuilder} instance.
+   *
+   * @param inventoryType The inventory type to use while building the pane.
+   * @return The builder
+   */
+  static LayoutBuilder builder(InventoryType inventoryType) {
+    return Selene.provide(LayoutBuilder.class, new InventoryTypeProperty(inventoryType));
+  }
 
-    /**
-     * Get all the {@link Element elements} in the inventory, identified by their position index.
-     *
-     * @return The elements in the inventory.
-     */
-    Map<Integer, Element> getElements();
+  /**
+   * Get all the {@link Element elements} in the inventory, identified by their position index.
+   *
+   * @return The elements in the inventory.
+   */
+  Map<Integer, Element> getElements();
 
-    /**
-     * Get the {@link InventoryType inventory type} used by the layout.
-     *
-     * @return The iventory type.
-     */
-    InventoryType getIventoryType();
-
+  /**
+   * Get the {@link InventoryType inventory type} used by the layout.
+   *
+   * @return The iventory type.
+   */
+  InventoryType getIventoryType();
 }

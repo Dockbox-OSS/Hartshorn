@@ -17,12 +17,11 @@
 
 package org.dockbox.selene.api.objects.inventory;
 
-public enum Slot
-{
-    HELMET,
-    CHESTPLATE,
-    LEGGINGS,
-    BOOTS,
-    MAIN_HAND,
-    OFF_HAND
+public enum Slot {
+  HELMET,
+  CHESTPLATE,
+  LEGGINGS,
+  BOOTS,
+  MAIN_HAND,
+  OFF_HAND
 }

@@ -20,21 +20,16 @@ package org.dockbox.selene.common.tasks.pipeline.pipes;
 import org.dockbox.selene.api.objects.Exceptional;
 
 @FunctionalInterface
-public interface InputPipe<I, O> extends StandardPipe<I, O>
-{
+public interface InputPipe<I, O> extends StandardPipe<I, O> {
 
-    static <I, O> InputPipe<I, O> of(InputPipe<I, O> pipe)
-    {
+    static <I, O> InputPipe<I, O> of(InputPipe<I, O> pipe) {
         return pipe;
     }
 
     @Override
-    default O apply(Exceptional<I> input)
-            throws Exception
-    {
+    default O apply(Exceptional<I> input) throws Exception {
         return this.execute(input.orNull());
     }
 
-    O execute(I input)
-            throws Exception;
+    O execute(I input) throws Exception;
 }

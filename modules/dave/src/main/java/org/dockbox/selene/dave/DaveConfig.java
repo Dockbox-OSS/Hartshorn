@@ -19,30 +19,25 @@ package org.dockbox.selene.dave;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.annotations.entity.Metadata;
+import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 
 @Metadata(alias = "dave-config")
-public class DaveConfig
-{
+public class DaveConfig {
 
     private String channelId = "622795938699673600";
     private Text prefix = Text.of("&6Dave&e: &f");
 
-    public DaveConfig()
-    {
-    }
+    public DaveConfig() {}
 
-    public TextChannel getChannel()
-    {
+    public TextChannel getChannel() {
         DiscordUtils du = Selene.provide(DiscordUtils.class);
         return du.getJDA().get().getTextChannelById(this.channelId);
     }
 
-    public Text getPrefix()
-    {
+    public Text getPrefix() {
         return this.prefix;
     }
 }

@@ -24,18 +24,19 @@ import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.worldedit.region.Clipboard;
 import org.dockbox.selene.worldedit.region.Region;
 
-public final class WorldEditKeys
-{
+public final class WorldEditKeys {
 
-    public static final Key<Player, Region> SELECTION = Keys.dynamicKeyOf(
-            (player, region) -> Selene.provide(WorldEditService.class).setPlayerSelection(player, region),
-            player -> Selene.provide(WorldEditService.class).getPlayerSelection(player)
-    );
+    public static final Key<Player, Region> SELECTION =
+            Keys.dynamicKeyOf(
+                    (player, region) ->
+                            Selene.provide(WorldEditService.class).setPlayerSelection(player, region),
+                    player -> Selene.provide(WorldEditService.class).getPlayerSelection(player));
 
-    public static final Key<Player, Clipboard> CLIPBOARD = Keys.dynamicKeyOf(
-            (player, clipboard) -> Selene.provide(WorldEditService.class).setPlayerClipboard(player, clipboard),
-            player -> Selene.provide(WorldEditService.class).getPlayerClipboard(player)
-    );
+    public static final Key<Player, Clipboard> CLIPBOARD =
+            Keys.dynamicKeyOf(
+                    (player, clipboard) ->
+                            Selene.provide(WorldEditService.class).setPlayerClipboard(player, clipboard),
+                    player -> Selene.provide(WorldEditService.class).getPlayerClipboard(player));
 
     private WorldEditKeys() {}
 }

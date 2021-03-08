@@ -17,15 +17,16 @@
 
 package org.dockbox.selene.api.module;
 
-public enum ModuleStatus
-{
+public enum ModuleStatus {
     LOADED(1),
     FAILED(2),
     DISABLED(3),
     ERRORED(4),
 
-    // Deprecated values are the negative equivalent of the values above, so they can easily be obtained using their intValue
-    // Deprecated values are only to be used when comparing status results, and never be assigned manually
+    // Deprecated values are the negative equivalent of the values above, so they can easily be
+    // obtained using their intValue
+    // Deprecated values are only to be used when comparing status results, and never be assigned
+    // manually
     DEPRECATED_LOADED(-1),
     DEPRECATED_FAILED(-2),
     DEPRECATED_DISABLED(-3),
@@ -33,19 +34,16 @@ public enum ModuleStatus
 
     private final int intValue;
 
-    ModuleStatus(int intValue)
-    {
+    ModuleStatus(int intValue) {
         this.intValue = intValue;
     }
 
-    public static ModuleStatus of(int intValue)
-    {
+    public static ModuleStatus of(int intValue) {
         for (ModuleStatus value : values()) if (value.intValue == intValue) return value;
         return FAILED;
     }
 
-    public int getIntValue()
-    {
+    public int getIntValue() {
         return this.intValue;
     }
 }

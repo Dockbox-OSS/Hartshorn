@@ -20,23 +20,18 @@ package org.dockbox.selene.api.text.actions;
 import org.dockbox.selene.api.text.Text;
 
 @SuppressWarnings("ClassReferencesSubclass")
-public class ShiftClickAction<R> extends TextAction<R>
-{
+public class ShiftClickAction<R> extends TextAction<R> {
 
-    private ShiftClickAction(R result)
-    {
+    private ShiftClickAction(R result) {
         super(result);
     }
 
-    public static InsertText insertText(Text text)
-    {
+    public static InsertText insertText(Text text) {
         return new InsertText(text);
     }
 
-    public static final class InsertText extends ShiftClickAction<Text>
-    {
-        private InsertText(Text result)
-        {
+    public static final class InsertText extends ShiftClickAction<Text> {
+        private InsertText(Text result) {
             super(result);
         }
     }

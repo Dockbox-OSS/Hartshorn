@@ -22,12 +22,14 @@ import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
 
 import java.lang.reflect.Method;
 
-public class MethodCommandRegistration extends AbstractCommandRegistration<Method>
-{
+public class MethodCommandRegistration extends AbstractCommandRegistration<Method> {
 
-    public MethodCommandRegistration(String primaryAlias, String[] aliases, Command command, Method method, AbstractPermission permission)
-    {
+    public MethodCommandRegistration(
+            String primaryAlias,
+            String[] aliases,
+            Command command,
+            Method method,
+            AbstractPermission permission) {
         super(primaryAlias, aliases, permission, command, method);
     }
-
 }

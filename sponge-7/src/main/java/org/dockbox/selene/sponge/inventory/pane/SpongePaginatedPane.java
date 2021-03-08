@@ -27,34 +27,27 @@ import java.util.stream.Collectors;
 
 import dev.flashlabs.flashlibs.inventory.Page;
 
-public class SpongePaginatedPane implements PaginatedPane
-{
+public class SpongePaginatedPane implements PaginatedPane {
 
     private final Page page;
 
-    public SpongePaginatedPane(Page initializedPage)
-    {
+    public SpongePaginatedPane(Page initializedPage) {
         this.page = initializedPage;
     }
 
     @Override
-    public void open(Player player, int page)
-    {
+    public void open(Player player, int page) {
         SpongeConversionUtil.toSponge(player).ifPresent(p -> this.page.open(p, page));
     }
 
     @Override
-    public void elements(Collection<Element> elements)
-    {
-        this.page.define(elements.stream()
-                .map(SpongeConversionUtil::toSponge)
-                .collect(Collectors.toList())
-        );
+    public void elements(Collection<Element> elements) {
+        this.page.define(
+                elements.stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList()));
     }
 
     @Override
-    public void open(Player player)
-    {
+    public void open(Player player) {
         SpongeConversionUtil.toSponge(player).ifPresent(this.page::open);
     }
 }

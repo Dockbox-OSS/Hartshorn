@@ -20,9 +20,7 @@ package org.dockbox.selene.api.objects.targets;
 import org.dockbox.selene.api.objects.Packet;
 
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
-public interface PacketReceiver
-{
+public interface PacketReceiver {
 
     void send(Packet packet);
-
 }

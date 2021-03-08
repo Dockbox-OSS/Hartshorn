@@ -33,28 +33,22 @@ import java.util.List;
 import io.leangen.geantyref.TypeToken;
 
 @SuppressWarnings("AnonymousInnerClassMayBeStatic")
-public class IntArrayTypeSerializer implements TypeSerializer<int[]>
-{
+public class IntArrayTypeSerializer implements TypeSerializer<int[]> {
 
-    private final TypeToken<Integer> ttb = new TypeToken<Integer>()
-    {
+    private final TypeToken<Integer> ttb = new TypeToken<Integer>() {
     };
-    private final TypeToken<List<Integer>> ttlb = new TypeToken<List<Integer>>()
-    {
+    private final TypeToken<List<Integer>> ttlb = new TypeToken<List<Integer>>() {
     };
 
     @Override
-    public int[] deserialize(Type type, ConfigurationNode node)
-            throws SerializationException
-    {
+    public int[] deserialize(Type type, ConfigurationNode node) throws SerializationException {
         List<Integer> list = node.getList(this.ttb);
         return Ints.toArray(list);
     }
 
     @Override
     public void serialize(Type type, int @Nullable [] obj, ConfigurationNode node)
-            throws SerializationException
-    {
+            throws SerializationException {
         List<Integer> bytes = Ints.asList(obj);
         node.set(this.ttlb, bytes);
     }

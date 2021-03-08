@@ -31,39 +31,31 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 
-public class SpongeServerListener
-{
+public class SpongeServerListener {
 
     @Inject
     private EventBus bus;
 
     @Listener
-    public void onServerStarting(GameStartingServerEvent event)
-    {
+    public void onServerStarting(GameStartingServerEvent event) {
         new ServerStartingEvent().post();
     }
 
     @Listener
-    public void onServerStarted(GameStartedServerEvent event)
-    {
+    public void onServerStarted(GameStartedServerEvent event) {
         new ServerStartedEvent().post();
     }
 
     @Listener
-    public void onServerReload(GameReloadEvent event)
-    {
+    public void onServerReload(GameReloadEvent event) {
         new ServerReloadEvent().post();
     }
 
     @Listener
-    public void onServerStopping(GameStoppingServerEvent event)
-    {
+    public void onServerStopping(GameStoppingServerEvent event) {
         new ServerStoppingEvent().post();
     }
 
     @Listener
-    public void onServerPostInit(GameLoadCompleteEvent event)
-    {
-
-    }
+    public void onServerPostInit(GameLoadCompleteEvent event) {}
 }

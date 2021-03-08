@@ -23,8 +23,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import java.util.List;
 import java.util.Map;
 
-public interface ModuleManager
-{
+public interface ModuleManager {
 
     Exceptional<ModuleContext> getContext(Class<?> type);
 
@@ -43,5 +42,4 @@ public interface ModuleManager
     List<ModuleContext> initialiseModules();
 
     List<String> getRegisteredModuleIds();
-
 }

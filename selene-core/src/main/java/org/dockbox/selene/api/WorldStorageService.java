@@ -23,8 +23,7 @@ import org.dockbox.selene.api.objects.location.World;
 import java.util.List;
 import java.util.UUID;
 
-public interface WorldStorageService
-{
+public interface WorldStorageService {
     List<World> getLoadedWorlds();
 
     List<UUID> getAllWorldUUIDs();

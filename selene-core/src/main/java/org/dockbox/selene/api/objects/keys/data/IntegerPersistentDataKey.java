@@ -21,22 +21,18 @@ import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.objects.keys.Keys;
 import org.dockbox.selene.api.util.Reflect;
 
-public final class IntegerPersistentDataKey extends TypedPersistentDataKey<Integer>
-{
+public final class IntegerPersistentDataKey extends TypedPersistentDataKey<Integer> {
 
-    private IntegerPersistentDataKey(String name, String id, Module module)
-    {
+    private IntegerPersistentDataKey(String name, String id, Module module) {
         super(name, id, module, Integer.class);
     }
 
-    public static IntegerPersistentDataKey of(String name, Class<?> owningClass)
-    {
+    public static IntegerPersistentDataKey of(String name, Class<?> owningClass) {
         Module module = Reflect.getModule(owningClass);
         return of(name, module);
     }
 
-    public static IntegerPersistentDataKey of(String name, Module module)
-    {
+    public static IntegerPersistentDataKey of(String name, Module module) {
         String id = Keys.convertToModuleIdString(name, module);
         return new IntegerPersistentDataKey(name, id, module);
     }

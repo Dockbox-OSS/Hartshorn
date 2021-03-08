@@ -18,14 +18,11 @@
 package org.dockbox.selene.api.server.properties;
 
 @FunctionalInterface
-public interface InjectableType
-{
+public interface InjectableType {
 
-    default boolean canEnable()
-    {
+    default boolean canEnable() {
         return true;
     }
 
     void stateEnabling(InjectorProperty<?>... properties);
-
 }

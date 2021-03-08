@@ -19,31 +19,26 @@ package org.dockbox.selene.api.files;
 
 import org.dockbox.selene.api.server.properties.InjectorProperty;
 
-public final class FileTypeProperty implements InjectorProperty<FileType>
-{
+public final class FileTypeProperty implements InjectorProperty<FileType> {
 
     public static final String KEY = "SeleneInternalFileTypeKey";
     private final FileType fileType;
 
-    private FileTypeProperty(FileType fileType)
-    {
+    private FileTypeProperty(FileType fileType) {
         this.fileType = fileType;
     }
 
-    public static FileTypeProperty of(FileType fileType)
-    {
+    public static FileTypeProperty of(FileType fileType) {
         return new FileTypeProperty(fileType);
     }
 
     @Override
-    public String getKey()
-    {
+    public String getKey() {
         return KEY;
     }
 
     @Override
-    public FileType getObject()
-    {
+    public FileType getObject() {
         return this.fileType;
     }
 }

@@ -21,13 +21,11 @@ import org.dockbox.selene.api.i18n.common.Formattable;
 
 import java.util.Map;
 
-public interface Template<T> extends Formattable
-{
+public interface Template<T> extends Formattable {
 
     void formatPlaceholder(String key, Object value);
 
     void formatPlaceholders(Map<String, String> values);
 
     T getJDAMessage();
-
 }

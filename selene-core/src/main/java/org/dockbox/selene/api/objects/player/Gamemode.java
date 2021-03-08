@@ -17,8 +17,7 @@
 
 package org.dockbox.selene.api.objects.player;
 
-public enum Gamemode
-{
+public enum Gamemode {
     SURVIVAL(0),
     CREATIVE(1),
     ADVENTURE(2),
@@ -27,13 +26,11 @@ public enum Gamemode
 
     private final int value;
 
-    Gamemode(int value)
-    {
+    Gamemode(int value) {
         this.value = value;
     }
 
-    public int intValue()
-    {
+    public int intValue() {
         return this.value;
     }
 }

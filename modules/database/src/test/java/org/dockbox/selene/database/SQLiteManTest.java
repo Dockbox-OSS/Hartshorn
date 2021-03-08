@@ -32,8 +32,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.UUID;
 
-class SQLiteManTest
-{
+class SQLiteManTest {
 
     private static final String MAIN_TABLE = "developers";
     private static final String ID_TABLE = "identifiers";
@@ -42,61 +41,37 @@ class SQLiteManTest
     private static final UUID uuidThree = UUID.fromString("ef9f3ad4-a397-4895-97fe-10a549f5bc6e");
 
     @Test
-    void testCanWriteToFile()
-    {
-        Assertions.assertDoesNotThrow((ThrowingSupplier<? extends ISQLMan<?>>) SQLiteManTest::writeToFile);
+    void testCanWriteToFile() {
+        Assertions.assertDoesNotThrow(
+                (ThrowingSupplier<? extends ISQLMan<?>>) SQLiteManTest::writeToFile);
     }
 
-    @Test
-    public void testGetTable()
-            throws InvalidConnectionException
-    {
-        ISQLMan<?> man = SQLiteManTest.writeToFile();
-        Table table = man.getTable(MAIN_TABLE);
-        Assertions.assertEquals(SQLiteManTest.getPopulatedMainTable().count(), table.count());
+    private static ISQLMan<?> writeToFile() throws InvalidConnectionException {
+        ISQLMan<?> man = SQLiteManTest.getSQLiteMan();
+        return writeToFile(man);
     }
 
-    @Test
-    public void testIdentifierProperties()
-            throws InvalidConnectionException
-    {
-        ISQLMan<?> man = SQLiteManTest.writeToFile();
-        Table table = man.getTable(MAIN_TABLE);
-        Table developers = table.where(TestColumnIdentifiers.NUMERAL_ID, 1);
-        Assertions.assertEquals(1, developers.count());
-    }
-
-    @Test
-    public void testTableConversion()
-            throws InvalidConnectionException
-    {
-        ISQLMan<?> man = SQLiteManTest.writeToFile();
-        Table table = man.getTable(MAIN_TABLE);
-
-        long count = table.getRowsAs(Developer.class).stream()
-                .filter(Exceptional::isPresent)
-                .count();
-        Assertions.assertEquals(3, count);
-    }
-
-    private static SQLiteMan getSQLiteMan()
-    {
+    private static SQLiteMan getSQLiteMan() {
         SQLiteMan man = new SQLiteMan();
-        if (true)
-            man.stateEnabling(new SQLitePathProperty(SQLiteManTest.getTestFile()));
+        if (true) man.stateEnabling(new SQLitePathProperty(SQLiteManTest.getTestFile()));
         return man;
     }
 
-    private static Path getTestFile()
-    {
-        try
-        {
+    private static ISQLMan<?> writeToFile(ISQLMan<?> man) throws InvalidConnectionException {
+        Table main = SQLiteManTest.getPopulatedMainTable();
+        man.store(MAIN_TABLE, main);
+        Table ids = SQLiteManTest.getPopulatedIdTable();
+        man.store(ID_TABLE, ids);
+        return man;
+    }
+
+    private static Path getTestFile() {
+        try {
             File tempFile = File.createTempFile("sqlite-", ".db");
             tempFile.deleteOnExit();
             return tempFile.toPath();
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             Assumptions.assumeTrue(false);
             //noinspection ReturnOfNull
             return null;
@@ -119,43 +94,45 @@ class SQLiteManTest
         return table;
     }
 
-    private static ISQLMan<?> writeToFile()
-            throws InvalidConnectionException
-    {
-        ISQLMan<?> man = SQLiteManTest.getSQLiteMan();
-        return writeToFile(man);
-    }
-
-    private static ISQLMan<?> writeToFile(ISQLMan<?> man)
-            throws InvalidConnectionException
-    {
-        Table main = SQLiteManTest.getPopulatedMainTable();
-        man.store(MAIN_TABLE, main);
-        Table ids = SQLiteManTest.getPopulatedIdTable();
-        man.store(ID_TABLE, ids);
-        return man;
+    @Test
+    public void testGetTable() throws InvalidConnectionException {
+        ISQLMan<?> man = SQLiteManTest.writeToFile();
+        Table table = man.getTable(MAIN_TABLE);
+        Assertions.assertEquals(SQLiteManTest.getPopulatedMainTable().count(), table.count());
     }
 
     @Test
-    void getDialectReturnsSQLite()
-    {
+    public void testIdentifierProperties() throws InvalidConnectionException {
+        ISQLMan<?> man = SQLiteManTest.writeToFile();
+        Table table = man.getTable(MAIN_TABLE);
+        Table developers = table.where(TestColumnIdentifiers.NUMERAL_ID, 1);
+        Assertions.assertEquals(1, developers.count());
+    }
+
+    @Test
+    public void testTableConversion() throws InvalidConnectionException {
+        ISQLMan<?> man = SQLiteManTest.writeToFile();
+        Table table = man.getTable(MAIN_TABLE);
+
+        long count = table.getRowsAs(Developer.class).stream().filter(Exceptional::isPresent).count();
+        Assertions.assertEquals(3, count);
+    }
+
+    @Test
+    void getDialectReturnsSQLite() {
         SQLMan<?> man = SQLiteManTest.getSQLiteMan();
         Assertions.assertEquals(SQLDialect.SQLITE, man.getDialect());
     }
 
     @Test
-    void tablesCanBeDropped()
-            throws InvalidConnectionException
-    {
+    void tablesCanBeDropped() throws InvalidConnectionException {
         ISQLMan<?> man = SQLiteManTest.writeToFile();
         man.drop(ID_TABLE);
         Assertions.assertTrue(man.getTableSafe(ID_TABLE).isAbsent());
     }
 
     @Test
-    void rowsCanBeRemovedByFilter()
-            throws InvalidConnectionException
-    {
+    void rowsCanBeRemovedByFilter() throws InvalidConnectionException {
         ISQLMan<?> man = SQLiteManTest.writeToFile();
         man.deleteIf(ID_TABLE, TestColumnIdentifiers.NUMERAL_ID, 1);
         Table filteredTable = man.getTable(ID_TABLE).where(TestColumnIdentifiers.NUMERAL_ID, 1);

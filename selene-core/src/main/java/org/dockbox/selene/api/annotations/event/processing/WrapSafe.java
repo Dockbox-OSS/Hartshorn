@@ -24,11 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Wraps the parameter in a {@link Exceptional} instance, unless the parameter is the event.
- */
+/** Wraps the parameter in a {@link Exceptional} instance, unless the parameter is the event. */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface WrapSafe
-{
-}
+public @interface WrapSafe {}

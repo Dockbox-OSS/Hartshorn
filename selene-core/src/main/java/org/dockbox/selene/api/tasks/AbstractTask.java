@@ -18,21 +18,17 @@
 package org.dockbox.selene.api.tasks;
 
 @SuppressWarnings("AbstractClassNeverImplemented") // API type
-public abstract class AbstractTask implements Task
-{
+public abstract class AbstractTask implements Task {
 
     protected abstract void perform();
 
     public abstract void cancel();
 
-    public void onTaskInit()
-    {
+    public void onTaskInit() {
         // Reserved for implementation
     }
 
-    public void onTaskComplete()
-    {
+    public void onTaskComplete() {
         // Reserved for implementation
     }
-
 }

@@ -20,14 +20,15 @@ package org.dockbox.selene.proxy;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.server.bootstrap.Preloadable;
 
-@Module(id = "proxies", name = "Proxies", description = "Adds global and dynamic proxy handling",
+@Module(
+        id = "proxies",
+        name = "Proxies",
+        description = "Adds global and dynamic proxy handling",
         authors = "GuusLieben")
-public class ProxyModule implements Preloadable
-{
+public class ProxyModule implements Preloadable {
 
     @Override
-    public void preload()
-    {
+    public void preload() {
         ProxyableBootstrap.boostrapDelegates();
     }
 }

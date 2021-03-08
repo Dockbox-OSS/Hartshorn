@@ -21,9 +21,7 @@ import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.objects.keys.PersistentDataKey;
 import org.jetbrains.annotations.NonNls;
 
-public class TypedPersistentDataKey<T> implements PersistentDataKey<T>
-{
-
+public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
 
     @NonNls
     private final String name;
@@ -32,8 +30,7 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T>
     private final Module module;
     private final Class<T> type;
 
-    public TypedPersistentDataKey(String name, String id, Module module, Class<T> type)
-    {
+    public TypedPersistentDataKey(String name, String id, Module module, Class<T> type) {
         this.name = name;
         this.id = id;
         this.module = module;
@@ -41,32 +38,27 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T>
     }
 
     @Override
-    public Class<T> getDataType()
-    {
+    public Class<T> getDataType() {
         return this.type;
     }
 
     @Override
-    public String getRegisteringModuleId()
-    {
+    public String getRegisteringModuleId() {
         return this.module.id();
     }
 
     @Override
-    public String getDataKeyId()
-    {
+    public String getDataKeyId() {
         return this.id;
     }
 
     @Override
-    public String getDataKeyName()
-    {
+    public String getDataKeyName() {
         return this.name;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result = this.id.hashCode();
         result = 31 * result + this.module.hashCode();
         result = 31 * result + this.type.hashCode();
@@ -74,8 +66,7 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T>
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof TypedPersistentDataKey)) return false;
 

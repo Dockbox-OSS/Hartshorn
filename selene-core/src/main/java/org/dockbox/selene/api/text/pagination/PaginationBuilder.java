@@ -23,8 +23,7 @@ import org.dockbox.selene.api.util.SeleneUtils;
 
 import java.util.List;
 
-public abstract class PaginationBuilder
-{
+public abstract class PaginationBuilder {
 
     protected Text padding = IntegratedResource.DEFAULT_PAGINATION_PADDING.asText();
     protected Text header;
@@ -34,71 +33,59 @@ public abstract class PaginationBuilder
     protected int linesPerPage = -1;
     protected List<Text> content = SeleneUtils.emptyConcurrentList();
 
-    public PaginationBuilder padding(Text padding)
-    {
+    public PaginationBuilder padding(Text padding) {
         this.padding = padding;
         return this;
     }
 
-    public PaginationBuilder header(Text header)
-    {
+    public PaginationBuilder header(Text header) {
         this.header = header;
         return this;
     }
 
-    public PaginationBuilder footer(Text footer)
-    {
+    public PaginationBuilder footer(Text footer) {
         this.footer = footer;
         return this;
     }
 
-    public PaginationBuilder title(Text title)
-    {
+    public PaginationBuilder title(Text title) {
         this.title = title;
         return this;
     }
 
-    public PaginationBuilder linesPerPage(int linesPerPage)
-    {
+    public PaginationBuilder linesPerPage(int linesPerPage) {
         this.linesPerPage = linesPerPage;
         return this;
     }
 
-    public PaginationBuilder content(List<Text> content)
-    {
+    public PaginationBuilder content(List<Text> content) {
         this.content = content;
         return this;
     }
 
     public abstract Pagination build();
 
-    protected Text getPadding()
-    {
+    protected Text getPadding() {
         return this.padding;
     }
 
-    protected Text getHeader()
-    {
+    protected Text getHeader() {
         return this.header;
     }
 
-    protected Text getFooter()
-    {
+    protected Text getFooter() {
         return this.footer;
     }
 
-    protected Text getTitle()
-    {
+    protected Text getTitle() {
         return this.title;
     }
 
-    protected int getLinesPerPage()
-    {
+    protected int getLinesPerPage() {
         return this.linesPerPage;
     }
 
-    protected List<Text> getContent()
-    {
+    protected List<Text> getContent() {
         return this.content;
     }
 }

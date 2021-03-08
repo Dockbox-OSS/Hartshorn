@@ -27,8 +27,7 @@ import org.dockbox.selene.api.text.Text;
 
 import java.time.LocalDateTime;
 
-public class DiscordCommandContext
-{
+public class DiscordCommandContext {
 
     private final User author;
     private final MessageChannel channel;
@@ -36,8 +35,12 @@ public class DiscordCommandContext
     private final String command;
     private final String[] arguments;
 
-    public DiscordCommandContext(User author, MessageChannel channel, LocalDateTime timeReceived, String command, String[] arguments)
-    {
+    public DiscordCommandContext(
+            User author,
+            MessageChannel channel,
+            LocalDateTime timeReceived,
+            String command,
+            String[] arguments) {
         this.author = author;
         this.channel = channel;
         this.timeReceived = timeReceived;
@@ -45,48 +48,39 @@ public class DiscordCommandContext
         this.arguments = arguments;
     }
 
-    public void sendToChannel(Text text)
-    {
+    public void sendToChannel(Text text) {
         Selene.provide(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
     }
 
-    public MessageChannel getChannel()
-    {
+    public MessageChannel getChannel() {
         return this.channel;
     }
 
-    public void sendToChannel(ResourceEntry text)
-    {
+    public void sendToChannel(ResourceEntry text) {
         Selene.provide(DiscordUtils.class).sendToTextChannel(text, this.getChannel());
     }
 
-    public void sendToAuthor(Text text)
-    {
+    public void sendToAuthor(Text text) {
         Selene.provide(DiscordUtils.class).sendToUser(text, this.getAuthor());
     }
 
-    public User getAuthor()
-    {
+    public User getAuthor() {
         return this.author;
     }
 
-    public void sendToAuthor(ResourceEntry text)
-    {
+    public void sendToAuthor(ResourceEntry text) {
         Selene.provide(DiscordUtils.class).sendToUser(text, this.getAuthor());
     }
 
-    public LocalDateTime getTimeReceived()
-    {
+    public LocalDateTime getTimeReceived() {
         return this.timeReceived;
     }
 
-    public String getCommand()
-    {
+    public String getCommand() {
         return this.command;
     }
 
-    public String[] getArguments()
-    {
+    public String[] getArguments() {
         return this.arguments;
     }
 }

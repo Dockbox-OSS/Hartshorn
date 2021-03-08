@@ -25,8 +25,7 @@ import java.util.function.Consumer;
 
 @SuppressWarnings("InterfaceNeverImplemented")
 @FunctionalInterface
-public interface ElementFactory
-{
+public interface ElementFactory {
 
-    Element create(Item item, Consumer<Player> onClick);
+  Element create(Item item, Consumer<Player> onClick);
 }

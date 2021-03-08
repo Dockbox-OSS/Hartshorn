@@ -33,79 +33,75 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class SpongeProfile implements Profile
-{
+public class SpongeProfile implements Profile {
 
     private GameProfile gameProfile;
 
     @AssistedInject
-    public SpongeProfile(@Assisted UUID uuid)
-    {
+    public SpongeProfile(@Assisted UUID uuid) {
         this.gameProfile = GameProfile.of(uuid);
     }
 
     @AssistedInject
-    public SpongeProfile(@Assisted Profile initialValue)
-    {
+    public SpongeProfile(@Assisted Profile initialValue) {
         if (initialValue instanceof SpongeProfile)
             this.gameProfile = ((SpongeProfile) initialValue).getGameProfile();
-        else throw new IllegalStateException("Cannot convert [" + initialValue.getClass().getCanonicalName() + "] to SpongeProfile");
+        else
+            throw new IllegalStateException(
+                    "Cannot convert [" + initialValue.getClass().getCanonicalName() + "] to SpongeProfile");
     }
 
-    public GameProfile getGameProfile()
-    {
+    public GameProfile getGameProfile() {
         return this.gameProfile;
     }
 
     // Internal usage only
-    public SpongeProfile(GameProfile gameProfile)
-    {
+    public SpongeProfile(GameProfile gameProfile) {
         this.gameProfile = gameProfile;
     }
 
     @Override
-    public UUID getUuid()
-    {
+    public UUID getUuid() {
         return this.gameProfile.getUniqueId();
     }
 
     @Override
-    public void setUuid(UUID uuid)
-    {
+    public void setUuid(UUID uuid) {
         Multimap<String, ProfileProperty> properties = this.gameProfile.getPropertyMap();
         this.gameProfile = GameProfile.of(uuid);
-        properties.asMap().forEach((key, propertyCollection) ->
-                propertyCollection
-                        .forEach(property -> this.gameProfile.addProperty(key, property))
-        );
+        properties
+                .asMap()
+                .forEach(
+                        (key, propertyCollection) ->
+                                propertyCollection.forEach(
+                                        property -> this.gameProfile.addProperty(key, property)));
     }
 
     @Override
-    public Map<String, Collection<Tuple<String, String>>> getAdditionalProperties()
-    {
+    public Map<String, Collection<Tuple<String, String>>> getAdditionalProperties() {
         Map<String, Collection<ProfileProperty>> properties = this.gameProfile.getPropertyMap().asMap();
         Map<String, Collection<Tuple<String, String>>> convertedProperties = SeleneUtils.emptyMap();
-        properties.forEach((key, propertyCollection) -> {
-            List<Tuple<String, String>> collection = propertyCollection.stream()
-                    .map(property -> new Tuple<>(property.getName(), property.getValue()))
-                    .collect(Collectors.toList());
-            convertedProperties.put(key, collection);
-        });
+        properties.forEach(
+                (key, propertyCollection) -> {
+                    List<Tuple<String, String>> collection =
+                            propertyCollection.stream()
+                                    .map(property -> new Tuple<>(property.getName(), property.getValue()))
+                                    .collect(Collectors.toList());
+                    convertedProperties.put(key, collection);
+                });
         return SeleneUtils.asUnmodifiableMap(convertedProperties);
     }
 
     @Override
-    public void setProperty(String property, String key, String value)
-    {
+    public void setProperty(String property, String key, String value) {
         this.gameProfile.getPropertyMap().put(property, ProfileProperty.of(key, value));
     }
 
     @Override
-    public void setProperties(Map<String, Collection<Tuple<String, String>>> properties)
-    {
-        properties.forEach((name, propertyCollection) ->
-                propertyCollection.forEach(property ->
-                        this.setProperty(name, property.getKey(), property.getValue())
-                ));
+    public void setProperties(Map<String, Collection<Tuple<String, String>>> properties) {
+        properties.forEach(
+                (name, propertyCollection) ->
+                        propertyCollection.forEach(
+                                property -> this.setProperty(name, property.getKey(), property.getValue())));
     }
 }

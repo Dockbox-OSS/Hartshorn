@@ -25,32 +25,27 @@ import org.jetbrains.annotations.NonNls;
 import java.util.List;
 
 @Metadata(alias = "plot-world-models")
-class PlotWorldModelList
-{
+class PlotWorldModelList {
     private final List<PlotWorldModel> worlds = SeleneUtils.emptyList();
 
-    public List<PlotWorldModel> getWorlds()
-    {
+    public List<PlotWorldModel> getWorlds() {
         return this.worlds;
     }
 
-    public void addWorld(PlotWorldModel model)
-    {
+    public void addWorld(PlotWorldModel model) {
         this.worlds.add(model);
     }
 
-    public Exceptional<PlotWorldModel> getWorld(@NonNls String worldName)
-    {
-        return Exceptional.of(() -> {
-            for (PlotWorldModel world : this.worlds)
-            {
-                if (world.getName().equalsIgnoreCase(worldName))
-                {
-                    return world;
-                }
-            }
-            //noinspection ReturnOfNull
-            return null;
-        });
+    public Exceptional<PlotWorldModel> getWorld(@NonNls String worldName) {
+        return Exceptional.of(
+                () -> {
+                    for (PlotWorldModel world : this.worlds) {
+                        if (world.getName().equalsIgnoreCase(worldName)) {
+                            return world;
+                        }
+                    }
+                    //noinspection ReturnOfNull
+                    return null;
+                });
     }
 }

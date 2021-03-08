@@ -18,37 +18,31 @@
 package org.dockbox.selene.common.tasks.pipeline.pipelines;
 
 import org.dockbox.selene.api.objects.Exceptional;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I>
-{
+public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
 
-    /**
-     * Calls the super constructor to instantiate a new convertible pipeline.
-     *
-     * @param inputClass
-     *         The {@link Class} of the {@code I} input type
-     */
-    public ConvertiblePipelineSource(Class<I> inputClass)
-    {
-        super(inputClass);
-    }
+  /**
+   * Calls the super constructor to instantiate a new convertible pipeline.
+   *
+   * @param inputClass The {@link Class} of the {@code I} input type
+   */
+  public ConvertiblePipelineSource(Class<I> inputClass) {
+    super(inputClass);
+  }
 
-    /**
-     * Processes an input by first wrapping it in an {@link Exceptional}.
-     *
-     * @param input
-     *         The non-null {@code I} input to be processed by the pipeline
-     * @param throwable
-     *         A nullable {@link Throwable} that may wish to be passed in
-     *
-     * @return An {@link Exceptional} containing the {@code I} output
-     */
-    @Override
-    public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable)
-    {
-        Exceptional<I> exceptionalInput = Exceptional.ofNullable(input, throwable);
-        return super.process(exceptionalInput);
-    }
+  /**
+   * Processes an input by first wrapping it in an {@link Exceptional}.
+   *
+   * @param input The non-null {@code I} input to be processed by the pipeline
+   * @param throwable A nullable {@link Throwable} that may wish to be passed in
+   * @return An {@link Exceptional} containing the {@code I} output
+   */
+  @Override
+  public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable) {
+    Exceptional<I> exceptionalInput = Exceptional.ofNullable(input, throwable);
+    return super.process(exceptionalInput);
+  }
 }

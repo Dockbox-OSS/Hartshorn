@@ -20,7 +20,6 @@ package org.dockbox.selene.sponge.objects.item.maps;
 import org.dockbox.selene.api.PlayerStorageService;
 import org.dockbox.selene.api.annotations.files.Format;
 import org.dockbox.selene.api.files.FileManager;
-import org.dockbox.selene.common.objects.item.DefaultCustomMapService;
 import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Item;
@@ -28,6 +27,7 @@ import org.dockbox.selene.api.objects.item.maps.CustomMap;
 import org.dockbox.selene.api.objects.targets.Identifiable;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.properties.AnnotationProperty;
+import org.dockbox.selene.common.objects.item.DefaultCustomMapService;
 import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.dialects.sqlite.SQLitePathProperty;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
@@ -46,43 +46,36 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class SpongeCustomMapService extends DefaultCustomMapService
-{
+public class SpongeCustomMapService extends DefaultCustomMapService {
 
     private static final String TABLE = "uploaders";
     private static final int MAP_COLOR = 16744576;
 
-    public SpongeCustomMapService()
-    {
-    }
+    public SpongeCustomMapService() {}
 
     @Override
-    public CustomMap create(BufferedImage image, Identifiable source)
-    {
+    public CustomMap create(BufferedImage image, Identifiable source) {
         int mapId = NMSMapUtils.populateColoredMap(image);
         registerOwner(mapId, source.getUniqueId());
         return createCombinedMap(mapId, source);
     }
 
     @Override
-    public CustomMap create(byte[] image, Identifiable source)
-    {
+    public CustomMap create(byte[] image, Identifiable source) {
         int mapId = NMSMapUtils.populateColoredMap(image);
         registerOwner(mapId, source.getUniqueId());
         return createCombinedMap(mapId, source);
     }
 
     @Override
-    public CustomMap getById(int id)
-    {
+    public CustomMap getById(int id) {
         return createCombinedMap(id, lookupSource(id));
     }
 
     @Override
-    public Collection<CustomMap> getFrom(Identifiable source)
-    {
-        return getHistoryTable().where(MapIdentifiers.SOURCE, source.getUniqueId().toString())
-                .getRows().stream()
+    public Collection<CustomMap> getFrom(Identifiable source) {
+        return getHistoryTable().where(MapIdentifiers.SOURCE, source.getUniqueId().toString()).getRows()
+                .stream()
                 .map(row -> row.getValue(MapIdentifiers.MAP))
                 .filter(Exceptional::isPresent)
                 .map(Exceptional::get)
@@ -91,38 +84,71 @@ public class SpongeCustomMapService extends DefaultCustomMapService
     }
 
     @Override
-    public Exceptional<CustomMap> derive(Item item)
-    {
-        if (item instanceof CustomMap)
-        {
+    public Exceptional<CustomMap> derive(Item item) {
+        if (item instanceof CustomMap) {
             return Exceptional.of((CustomMap) item);
         }
-        else if (item.getId().equals(Selene.getItems().getFilledMap().getId()))
-        {
+        else if (item.getId().equals(Selene.getItems().getFilledMap().getId())) {
             return Exceptional.of(this.getById(item.getMeta()));
         }
         return Exceptional.empty();
     }
 
-
-    private static CustomMap createCombinedMap(int mapId, Identifiable source)
-    {
-        ItemStack stack = createItemStack(mapId);
-        return new SpongeCustomMap(stack, source, mapId);
-    }
-
-    private static Identifiable lookupSource(int mapId)
-    {
-        return getHistoryTable().where(MapIdentifiers.MAP, mapId).first()
+    private static Identifiable lookupSource(int mapId) {
+        return getHistoryTable()
+                .where(MapIdentifiers.MAP, mapId)
+                .first()
                 .map(row -> row.getValue(MapIdentifiers.SOURCE).orElse(Console.UNIQUE_ID.toString()))
-                .map(uniqueId -> Selene.provide(PlayerStorageService.class).getPlayer(UUID.fromString(uniqueId)).orNull())
+                .map(
+                        uniqueId ->
+                                Selene.provide(PlayerStorageService.class)
+                                        .getPlayer(UUID.fromString(uniqueId))
+                                        .orNull())
                 .map(Identifiable.class::cast)
                 .orElse(Console.getInstance());
     }
 
+    private static void registerOwner(int mapId, UUID owner) {
+        Table history = getHistoryTable();
+        history.addRow(mapId, owner.toString());
+        store(history);
+    }
 
-    private static ItemStack createItemStack(int mapId)
-    {
+    private static CustomMap createCombinedMap(int mapId, Identifiable source) {
+        ItemStack stack = createItemStack(mapId);
+        return new SpongeCustomMap(stack, source, mapId);
+    }
+
+    private static Table getHistoryTable() {
+        try {
+            SQLMan<?> sql =
+                    Selene.provide(
+                            SQLMan.class,
+                            AnnotationProperty.of(Format.SQLite.class),
+                            new SQLitePathProperty(getHistoryStorePath()));
+            return sql.getOrCreateTable(TABLE, SpongeCustomMapService.getEmptyTable());
+        }
+        catch (InvalidConnectionException | NoSuchTableException e) {
+            Selene.handle(e);
+            return SpongeCustomMapService.getEmptyTable();
+        }
+    }
+
+    private static void store(Table table) {
+        try {
+            SQLMan<?> sql =
+                    Selene.provide(
+                            SQLMan.class,
+                            AnnotationProperty.of(Format.SQLite.class),
+                            new SQLitePathProperty(getHistoryStorePath()));
+            sql.store(TABLE, table);
+        }
+        catch (InvalidConnectionException e) {
+            Selene.handle(e);
+        }
+    }
+
+    private static ItemStack createItemStack(int mapId) {
         ItemStack stack = ItemStack.builder().itemType(ItemTypes.FILLED_MAP).quantity(1).build();
         DataView rawData = stack.toContainer();
         rawData.set(DataQuery.of("UnsafeDamage"), mapId);
@@ -133,51 +159,12 @@ public class SpongeCustomMapService extends DefaultCustomMapService
         return stack;
     }
 
-    private static void registerOwner(int mapId, UUID owner) {
-        Table history = getHistoryTable();
-        history.addRow(mapId, owner.toString());
-        store(history);
-    }
-
-    private static void store(Table table)
-    {
-        try
-        {
-            SQLMan<?> sql = Selene.provide(SQLMan.class,
-                    AnnotationProperty.of(Format.SQLite.class),
-                    new SQLitePathProperty(getHistoryStorePath()));
-            sql.store(TABLE, table);
-        }
-        catch (InvalidConnectionException e)
-        {
-            Selene.handle(e);
-        }
-    }
-
-    private static Table getHistoryTable()
-    {
-        try
-        {
-            SQLMan<?> sql = Selene.provide(SQLMan.class,
-                    AnnotationProperty.of(Format.SQLite.class),
-                    new SQLitePathProperty(getHistoryStorePath()));
-            return sql.getOrCreateTable(TABLE, SpongeCustomMapService.getEmptyTable());
-        }
-        catch (InvalidConnectionException | NoSuchTableException e)
-        {
-            Selene.handle(e);
-            return SpongeCustomMapService.getEmptyTable();
-        }
-    }
-
-    private static Path getHistoryStorePath()
-    {
+    private static Path getHistoryStorePath() {
         FileManager fileManager = Selene.provide(FileManager.class);
         return fileManager.getDataFile(Selene.class, "maps.db");
     }
 
-    private static Table getEmptyTable()
-    {
+    private static Table getEmptyTable() {
         return new Table(MapIdentifiers.MAP, MapIdentifiers.SOURCE);
     }
 }

@@ -20,20 +20,22 @@ package org.dockbox.selene.api.command.registry;
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
 
-public class ClassCommandRegistration extends AbstractCommandRegistration<Class<?>>
-{
+public class ClassCommandRegistration extends AbstractCommandRegistration<Class<?>> {
 
     private final MethodCommandRegistration[] subcommands;
 
-    public ClassCommandRegistration(String primaryAlias, String[] aliases, AbstractPermission permission, Command command, Class<?> sourceInstance,
-                                    MethodCommandRegistration[] subcommands)
-    {
+    public ClassCommandRegistration(
+            String primaryAlias,
+            String[] aliases,
+            AbstractPermission permission,
+            Command command,
+            Class<?> sourceInstance,
+            MethodCommandRegistration[] subcommands) {
         super(primaryAlias, aliases, permission, command, sourceInstance);
         this.subcommands = subcommands;
     }
 
-    public MethodCommandRegistration[] getSubcommands()
-    {
+    public MethodCommandRegistration[] getSubcommands() {
         return this.subcommands;
     }
 }

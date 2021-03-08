@@ -21,66 +21,55 @@ import org.dockbox.selene.api.objects.location.World;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.api.util.SeleneUtils;
 
-public class CuboidRegion implements Region
-{
+public class CuboidRegion implements Region {
 
     private final World world;
     private final Vector3N from;
     private final Vector3N to;
 
-    public CuboidRegion(World world, Vector3N from, Vector3N to)
-    {
+    public CuboidRegion(World world, Vector3N from, Vector3N to) {
         this.world = world;
         this.from = from;
         this.to = to;
     }
 
     @Override
-    public Vector3N getMinimumPoint()
-    {
+    public Vector3N getMinimumPoint() {
         return SeleneUtils.getMinimumPoint(this.from, this.to);
     }
 
     @Override
-    public Vector3N getMaximumPoint()
-    {
+    public Vector3N getMaximumPoint() {
         return SeleneUtils.getMaximumPoint(this.from, this.to);
     }
 
     @Override
-    public Vector3N getCenter()
-    {
+    public Vector3N getCenter() {
         return SeleneUtils.getCenterPoint(this.from, this.to);
     }
 
     @Override
-    public int getArea()
-    {
+    public int getArea() {
         return this.getWidth() * this.getWidth() * this.getLength();
     }
 
     @Override
-    public int getWidth()
-    {
+    public int getWidth() {
         return this.getMaximumPoint().getXi() - this.getMinimumPoint().getXi();
     }
 
     @Override
-    public int getHeight()
-    {
+    public int getHeight() {
         return this.getMaximumPoint().getYi() - this.getMinimumPoint().getYi();
     }
 
     @Override
-    public int getLength()
-    {
+    public int getLength() {
         return this.getMaximumPoint().getZi() - this.getMinimumPoint().getZi();
     }
 
     @Override
-    public World getWorld()
-    {
+    public World getWorld() {
         return this.world;
     }
-
 }

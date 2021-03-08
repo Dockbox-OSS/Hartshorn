@@ -23,31 +23,29 @@ import org.dockbox.selene.api.tasks.TriConsumer;
 
 import java.util.Arrays;
 
-public enum ExceptionLevels
-{
-    FRIENDLY((message, exception, stacktrace) -> {
-        Selene.provide(ExceptionHelper.class)
-                .printFriendly(message, exception, stacktrace);
-    }),
-    MINIMAL((message, exception, stacktrace) -> {
-        Selene.provide(ExceptionHelper.class)
-                .printMinimal(message, exception, stacktrace);
-    }),
-    NATIVE((message, exception, stacktrace) -> {
-        Selene.log().error(message);
-        Selene.log().error(Arrays.toString(exception.getStackTrace()));
-    });
+public enum ExceptionLevels {
+    FRIENDLY(
+            (message, exception, stacktrace) -> {
+                Selene.provide(ExceptionHelper.class).printFriendly(message, exception, stacktrace);
+            }),
+    MINIMAL(
+            (message, exception, stacktrace) -> {
+                Selene.provide(ExceptionHelper.class).printMinimal(message, exception, stacktrace);
+            }),
+    NATIVE(
+            (message, exception, stacktrace) -> {
+                Selene.log().error(message);
+                Selene.log().error(Arrays.toString(exception.getStackTrace()));
+            });
 
     private final TriConsumer<String, Throwable, Boolean> consumer;
 
-    ExceptionLevels(TriConsumer<String, Throwable, Boolean> consumer)
-    {
+    ExceptionLevels(TriConsumer<String, Throwable, Boolean> consumer) {
 
         this.consumer = consumer;
     }
 
-    public void handle(String message, Throwable exception, boolean stacktrace)
-    {
+    public void handle(String message, Throwable exception, boolean stacktrace) {
         this.consumer.accept(message, exception, stacktrace);
     }
 }

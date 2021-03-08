@@ -19,8 +19,7 @@ package org.dockbox.selene.api.server.config;
 
 import org.dockbox.selene.api.i18n.common.Language;
 
-public interface GlobalConfig
-{
+public interface GlobalConfig {
     Language getDefaultLanguage();
 
     boolean getStacktracesAllowed();
@@ -30,5 +29,4 @@ public interface GlobalConfig
     Environment getEnvironment();
 
     String getDiscordLoggingCategoryId();
-
 }

@@ -26,36 +26,28 @@ import org.jetbrains.annotations.NonNls;
 import java.util.List;
 
 @Metadata(alias = "dave-triggers")
-public class DaveTriggers
-{
+public class DaveTriggers {
 
     private final List<DaveTrigger> triggers = SeleneUtils.emptyList();
 
-    public DaveTriggers()
-    {
-    }
+    public DaveTriggers() {}
 
-    public Exceptional<DaveTrigger> getMatchingTrigger(String message)
-    {
+    public Exceptional<DaveTrigger> getMatchingTrigger(String message) {
         return DaveUtils.findMatching(this, message);
     }
 
-    public void addTrigger(DaveTrigger trigger)
-    {
+    public void addTrigger(DaveTrigger trigger) {
         this.triggers.add(trigger);
     }
 
-    public Exceptional<DaveTrigger> findById(@NonNls String id)
-    {
-        for (DaveTrigger trigger : this.triggers)
-        {
+    public Exceptional<DaveTrigger> findById(@NonNls String id) {
+        for (DaveTrigger trigger : this.triggers) {
             if (trigger.getId().equals(id)) return Exceptional.of(trigger);
         }
         return Exceptional.empty();
     }
 
-    public List<DaveTrigger> getTriggers()
-    {
+    public List<DaveTrigger> getTriggers() {
         return this.triggers;
     }
 }

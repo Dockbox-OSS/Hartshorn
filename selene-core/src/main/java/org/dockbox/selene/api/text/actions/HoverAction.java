@@ -20,23 +20,18 @@ package org.dockbox.selene.api.text.actions;
 import org.dockbox.selene.api.text.Text;
 
 @SuppressWarnings({ "ClassReferencesSubclass", "AbstractClassWithoutAbstractMethods" })
-public abstract class HoverAction<R> extends TextAction<R>
-{
+public abstract class HoverAction<R> extends TextAction<R> {
 
-    private HoverAction(R result)
-    {
+    private HoverAction(R result) {
         super(result);
     }
 
-    public static ShowText showText(Text text)
-    {
+    public static ShowText showText(Text text) {
         return new ShowText(text);
     }
 
-    public static final class ShowText extends HoverAction<Text>
-    {
-        private ShowText(Text result)
-        {
+    public static final class ShowText extends HoverAction<Text> {
+        private ShowText(Text result) {
             super(result);
         }
     }

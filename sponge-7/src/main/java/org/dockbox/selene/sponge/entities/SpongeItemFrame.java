@@ -35,79 +35,72 @@ import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.util.Direction;
 
-public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> implements ItemFrame
-{
+public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> implements ItemFrame {
 
     private final org.spongepowered.api.entity.hanging.ItemFrame representation;
 
-    public SpongeItemFrame(org.spongepowered.api.entity.hanging.ItemFrame representation)
-    {
+    public SpongeItemFrame(org.spongepowered.api.entity.hanging.ItemFrame representation) {
         this.representation = representation;
     }
 
     @AssistedInject
-    public SpongeItemFrame(@Assisted Location location)
-    {
+    public SpongeItemFrame(@Assisted Location location) {
         this.representation = super.create(location);
     }
 
     @Override
-    public Exceptional<Item> getDisplayedItem()
-    {
-        return Exceptional.of(this.getRepresentation().get(Keys.REPRESENTED_ITEM)
-                .map(ItemStackSnapshot::createStack)
-                .map(SpongeConversionUtil::fromSponge));
+    public Exceptional<Item> getDisplayedItem() {
+        return Exceptional.of(
+                this.getRepresentation()
+                        .get(Keys.REPRESENTED_ITEM)
+                        .map(ItemStackSnapshot::createStack)
+                        .map(SpongeConversionUtil::fromSponge));
     }
 
     @Override
-    public void setDisplayedItem(Item stack)
-    {
+    public void setDisplayedItem(Item stack) {
         if (stack.isAir()) this.getRepresentation().remove(Keys.REPRESENTED_ITEM);
-        else this.getRepresentation().offer(Keys.REPRESENTED_ITEM, SpongeConversionUtil.toSponge(stack).createSnapshot());
+        else
+            this.getRepresentation()
+                    .offer(Keys.REPRESENTED_ITEM, SpongeConversionUtil.toSponge(stack).createSnapshot());
     }
 
     @Override
-    public Rotation getRotation()
-    {
-        return this.getRepresentation().get(Keys.ROTATION)
+    public Rotation getRotation() {
+        return this.getRepresentation()
+                .get(Keys.ROTATION)
                 .map(SpongeConversionUtil::fromSponge)
                 .orElse(Rotation.TOP);
     }
 
     @Override
-    public void setRotation(Rotation rotation)
-    {
+    public void setRotation(Rotation rotation) {
         this.getRepresentation().offer(Keys.ROTATION, SpongeConversionUtil.toSponge(rotation));
     }
 
     @Override
-    public BlockFace getBlockFace()
-    {
+    public BlockFace getBlockFace() {
         Direction direction = this.getRepresentation().getOrElse(Keys.DIRECTION, Direction.NONE);
         return SpongeConversionUtil.fromSponge(direction);
     }
 
     @Override
-    public void setBlockFace(BlockFace blockFace)
-    {
+    public void setBlockFace(BlockFace blockFace) {
         this.getRepresentation().offer(Keys.DIRECTION, SpongeConversionUtil.toSponge(blockFace));
     }
 
     @Override
-    protected EntityType getEntityType()
-    {
+    protected EntityType getEntityType() {
         return EntityTypes.ITEM_FRAME;
     }
 
     @Override
-    protected Entity getRepresentation()
-    {
-        return this.representation;
+    protected ItemFrame from(Entity clone) {
+        return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) clone);
     }
 
     @Override
-    protected ItemFrame from(Entity clone)
-    {
-        return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) clone);
+    protected Entity getRepresentation() {
+        return this.representation;
     }
 }

@@ -22,20 +22,7 @@ import net.dv8tion.jda.api.entities.Message;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 
-public interface MessageTemplate extends Template<Message>
-{
-
-    void setContent(Text content);
-
-    Text getContent();
-
-    MessageTemplate copy();
-
-    MessageTemplate resetPlaceholders();
-
-    static MessageTemplate create() {
-        return Selene.provide(MessageTemplate.class);
-    }
+public interface MessageTemplate extends Template<Message> {
 
     static MessageTemplate create(Text content) {
         MessageTemplate template = create();
@@ -43,4 +30,15 @@ public interface MessageTemplate extends Template<Message>
         return template;
     }
 
+    static MessageTemplate create() {
+        return Selene.provide(MessageTemplate.class);
+    }
+
+    Text getContent();
+
+    void setContent(Text content);
+
+    MessageTemplate copy();
+
+    MessageTemplate resetPlaceholders();
 }

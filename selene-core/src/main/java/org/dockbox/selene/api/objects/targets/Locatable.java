@@ -20,8 +20,7 @@ package org.dockbox.selene.api.objects.targets;
 import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.location.World;
 
-public interface Locatable extends Target
-{
+public interface Locatable extends Target {
 
     Location getLocation();
 

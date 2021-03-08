@@ -27,54 +27,50 @@ import java.lang.annotation.Target;
 import java.util.function.Function;
 
 /**
- * The interface to provide custom information to a object field when creating a object using
- * {@link Reflect#tryCreate(Class, Function, boolean, Provision)}
+ * The interface to provide custom information to a object field when creating a object using {@link
+ * Reflect#tryCreate(Class, Function, boolean, Provision)}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Property
-{
-    /**
-     * The alternative identifier for the field. For example a field called {@code firstName} which is being injected into
-     * by a property called {@code fn} could like like the following example:
-     *
-     * <pre>
-     * {@code
-     * \@Property("fn")
-     * private String firstName;
-     * }
-     * </pre>
-     *
-     * @return the alternative identifier for the field
-     */
-    String value();
+public @interface Property {
+  /**
+   * The alternative identifier for the field. For example a field called {@code firstName} which is
+   * being injected into by a property called {@code fn} could like like the following example:
+   *
+   * <pre>{@code
+   * \@Property("fn")
+   * private String firstName;
+   * }</pre>
+   *
+   * @return the alternative identifier for the field
+   */
+  String value();
 
-    /**
-     * The alternative setter for the field. When defined {@link Reflect#tryCreate(Class, Function, boolean, Provision)}
-     * will first attempt to find a method which accepts a value of the type of the provided value. This means it is
-     * possible to directly apply a given {@link String} value to a {@link Integer} field. Note that type differences are
-     * only accepted when defined with {@link Property#accepts()}.
-     *
-     * <pre>
-     * {@code
-     * \@Property(setter = "setValueString")
-     * private Integer id;
-     *
-     * public void setValueString(String value) {
-     * this.id = Integer.parseInt(value);
-     * }
-     * }
-     * </pre>
-     *
-     * @return the name of the setter
-     */
-    String setter() default "";
+  /**
+   * The alternative setter for the field. When defined {@link Reflect#tryCreate(Class, Function,
+   * boolean, Provision)} will first attempt to find a method which accepts a value of the type of
+   * the provided value. This means it is possible to directly apply a given {@link String} value to
+   * a {@link Integer} field. Note that type differences are only accepted when defined with {@link
+   * Property#accepts()}.
+   *
+   * <pre>{@code
+   * \@Property(setter = "setValueString")
+   * private Integer id;
+   *
+   * public void setValueString(String value) {
+   * this.id = Integer.parseInt(value);
+   * }
+   * }</pre>
+   *
+   * @return the name of the setter
+   */
+  String setter() default "";
 
-    /**
-     * Marks the accepted value of the field. When defined this allows {@link Property#setter()} to accept a type
-     * different from the field type.
-     *
-     * @return the type to accept
-     */
-    Class<?> accepts() default Void.class;
+  /**
+   * Marks the accepted value of the field. When defined this allows {@link Property#setter()} to
+   * accept a type different from the field type.
+   *
+   * @return the type to accept
+   */
+  Class<?> accepts() default Void.class;
 }

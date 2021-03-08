@@ -17,10 +17,9 @@
 
 package org.dockbox.selene.common.tasks.pipeline;
 
-public enum PipelineDirection
-{
-    FORWARD,
-    BACKWARD,
-    BOTH,
-    NEITHER
+public enum PipelineDirection {
+  FORWARD,
+  BACKWARD,
+  BOTH,
+  NEITHER
 }

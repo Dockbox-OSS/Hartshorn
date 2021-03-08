@@ -21,52 +21,44 @@ import org.dockbox.selene.api.util.SeleneUtils;
 
 import java.util.Map;
 
-public class FormattedResource implements ResourceEntry
-{
+public class FormattedResource implements ResourceEntry {
 
     private final ResourceEntry entry;
     private final Object[] formattingArgs;
 
-    public FormattedResource(ResourceEntry entry, Object[] formattingArgs)
-    {
+    public FormattedResource(ResourceEntry entry, Object[] formattingArgs) {
         this.entry = entry;
         this.formattingArgs = formattingArgs;
     }
 
     @Override
-    public String getKey()
-    {
+    public String getKey() {
         return this.entry.getKey();
     }
 
     @Override
-    public String asString()
-    {
+    public String asString() {
         return this.formatCustom(this.entry.asString(), this.formattingArgs);
     }
 
     @Override
-    public String plain()
-    {
+    public String plain() {
         return ResourceEntry.plain(this.formatCustom(this.entry.asString(), this.formattingArgs));
     }
 
     @Override
-    public ResourceEntry translate(Language lang)
-    {
+    public ResourceEntry translate(Language lang) {
         return this.entry.translate(lang).format(this.formattingArgs);
     }
 
     // Format value placeholders and colors
     @SuppressWarnings("DuplicatedCode")
-    public String formatCustom(String m, Object... args)
-    {
+    public String formatCustom(String m, Object... args) {
         String temp = m;
         if (0 == args.length) return temp;
         Map<String, String> map = SeleneUtils.emptyMap();
 
-        for (int i = 0; i < args.length; i++)
-        {
+        for (int i = 0; i < args.length; i++) {
             String arg = "" + args[i];
             if (arg.isEmpty()) map.put(String.format("{%d}", i), "");
             else map.put(String.format("{%d}", i), arg);

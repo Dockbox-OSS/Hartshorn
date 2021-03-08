@@ -20,11 +20,9 @@ package org.dockbox.selene.api.entities;
 import org.dockbox.selene.api.objects.location.Location;
 
 @SuppressWarnings("InterfaceNeverImplemented") // Proxied by AssistedInject
-public interface EntityFactory
-{
+public interface EntityFactory {
 
-    ArmorStand armorStand(Location location);
+  ArmorStand armorStand(Location location);
 
-    ItemFrame itemFrame(Location location);
-
+  ItemFrame itemFrame(Location location);
 }

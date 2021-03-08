@@ -17,47 +17,42 @@
 
 package org.dockbox.selene.common.files;
 
-import org.dockbox.selene.common.files.util.XStreamUtils;
-import org.dockbox.selene.common.files.util.XStreamUtils.XStreamBuilder;
 import org.dockbox.selene.api.annotations.entity.Ignore;
 import org.dockbox.selene.api.files.FileType;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.util.Reflect;
+import org.dockbox.selene.common.files.util.XStreamUtils;
+import org.dockbox.selene.common.files.util.XStreamUtils.XStreamBuilder;
 import org.jetbrains.annotations.NonNls;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
-public abstract class DefaultXStreamManager extends DefaultAbstractFileManager
-{
+public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
 
-    protected DefaultXStreamManager()
-    {
+    protected DefaultXStreamManager() {
         super(FileType.XML);
     }
 
     @Override
-    public <T> Exceptional<T> read(Path file, Class<T> type)
-    {
+    public <T> Exceptional<T> read(Path file, Class<T> type) {
         Reflect.rejects(type, DefaultXStreamManager.class, true);
-        return Exceptional.of(() -> DefaultXStreamManager.prepareXStream(type).read(type, file.toFile()));
+        return Exceptional.of(
+                () -> DefaultXStreamManager.prepareXStream(type).read(type, file.toFile()));
     }
 
     @Override
-    public <T> Exceptional<Boolean> write(Path file, T content)
-    {
-        @SuppressWarnings("unchecked") Class<T> type = (Class<T>) content.getClass();
+    public <T> Exceptional<Boolean> write(Path file, T content) {
+        @SuppressWarnings("unchecked")
+        Class<T> type = (Class<T>) content.getClass();
         Reflect.rejects(type, DefaultXStreamManager.class, true);
 
-        if (null != content)
-        {
-            try
-            {
+        if (null != content) {
+            try {
                 DefaultXStreamManager.prepareXStream(type).write(content, file.toFile());
                 return Exceptional.of(true);
             }
-            catch (IOException e)
-            {
+            catch (IOException e) {
                 return Exceptional.of(false, e);
             }
         }
@@ -65,35 +60,35 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager
     }
 
     @Override
-    public void requestFileType(FileType fileType)
-    {
-        if (FileType.XML != fileType)
-        {
+    public void requestFileType(FileType fileType) {
+        if (FileType.XML != fileType) {
             throw new UnsupportedOperationException("XStream only supports XML");
         }
     }
 
-    private static XStreamBuilder prepareXStream(Class<?> type)
-    {
+    private static XStreamBuilder prepareXStream(Class<?> type) {
         XStreamBuilder builder = XStreamUtils.create();
         DefaultXStreamManager.omitIgnoredFields(type, builder);
         DefaultXStreamManager.aliasPropertyFields(type, builder);
         return builder;
     }
 
-    private static void omitIgnoredFields(Class<?> type, XStreamBuilder builder)
-    {
-        Reflect.forEachFieldIn(type, (declaringType, field) -> {
-            if (field.isAnnotationPresent(Ignore.class))
-                builder.omitField(declaringType, field.getName());
-        });
+    private static void omitIgnoredFields(Class<?> type, XStreamBuilder builder) {
+        Reflect.forEachFieldIn(
+                type,
+                (declaringType, field) -> {
+                    if (field.isAnnotationPresent(Ignore.class))
+                        builder.omitField(declaringType, field.getName());
+                });
     }
 
-    private static void aliasPropertyFields(Class<?> type, XStreamBuilder builder)
-    {
-        Reflect.forEachFieldIn(type, (declaringType, field) -> {
-            @NonNls String alias = Reflect.getFieldPropertyName(field);
-            if (!field.getName().equals(alias)) builder.aliasField(alias, declaringType, field.getName());
-        });
+    private static void aliasPropertyFields(Class<?> type, XStreamBuilder builder) {
+        Reflect.forEachFieldIn(
+                type,
+                (declaringType, field) -> {
+                    @NonNls String alias = Reflect.getFieldPropertyName(field);
+                    if (!field.getName().equals(alias))
+                        builder.aliasField(alias, declaringType, field.getName());
+                });
     }
 }

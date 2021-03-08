@@ -22,8 +22,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 
 import java.util.Map;
 
-public interface ResourceService
-{
+public interface ResourceService {
 
     void init();
 
@@ -34,5 +33,4 @@ public interface ResourceService
     String createValidKey(String raw);
 
     Exceptional<ResourceEntry> getExternalResource(String key);
-
 }

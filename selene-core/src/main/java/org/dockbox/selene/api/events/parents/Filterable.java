@@ -22,11 +22,8 @@ import org.dockbox.selene.api.events.processing.FilterType;
 
 import java.util.List;
 
-/**
- * A low level type which accepts a {@link Filter} to be applied to it.
- */
-public interface Filterable
-{
+/** A low level type which accepts a {@link Filter} to be applied to it. */
+public interface Filterable {
 
     /**
      * Indicates whether or not the implementation and its properties match a given {@link Filter}.
@@ -46,11 +43,10 @@ public interface Filterable
     List<FilterType> acceptedFilters();
 
     /**
-     * Gets the list of accepts parameters for the implementation. Typically this includes aliases for several
-     * different parameters.
+     * Gets the list of accepts parameters for the implementation. Typically this includes aliases for
+     * several different parameters.
      *
      * @return The accepted parameters
      */
     List<String> acceptedParams();
-
 }

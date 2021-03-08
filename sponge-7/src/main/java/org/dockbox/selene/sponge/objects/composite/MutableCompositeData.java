@@ -29,82 +29,76 @@ import org.spongepowered.api.data.merge.MergeFunction;
 import java.util.Map;
 import java.util.Optional;
 
-public class MutableCompositeData extends AbstractData<MutableCompositeData, ImmutableCompositeData>
-{
-
+public class MutableCompositeData
+        extends AbstractData<MutableCompositeData, ImmutableCompositeData> {
 
     private final Map<String, Object> data = SeleneUtils.emptyMap();
 
-    public MutableCompositeData()
-    {
+    public MutableCompositeData() {
         this.registerGettersAndSetters();
     }
 
     @Override
-    protected void registerGettersAndSetters()
-    {
+    protected void registerGettersAndSetters() {
         this.registerFieldGetter(Composite.ITEM_KEY, () -> this.data);
         this.registerFieldSetter(Composite.ITEM_KEY, this::fillData);
-        this.registerKeyValue(Composite.ITEM_KEY, () ->
-                Sponge.getRegistry().getValueFactory().createMapValue(Composite.ITEM_KEY, this.data, SeleneUtils.emptyMap()));
+        this.registerKeyValue(
+                Composite.ITEM_KEY,
+                () ->
+                        Sponge.getRegistry()
+                                .getValueFactory()
+                                .createMapValue(Composite.ITEM_KEY, this.data, SeleneUtils.emptyMap()));
     }
 
     @Override
-    public boolean supports(@NotNull Key<?> key)
-    {
+    public boolean supports(@NotNull Key<?> key) {
         return Composite.ITEM_KEY == key;
     }
 
     @Override
-    public @NotNull DataContainer toContainer()
-    {
+    public @NotNull DataContainer toContainer() {
         return super.toContainer().set(Composite.ITEM_KEY, this.data);
     }
 
-    public void fillData(Map<String, Object> data)
-    {
+    public void fillData(Map<String, Object> data) {
         this.data.clear();
         this.data.putAll(data);
     }
 
     @Override
-    public @NotNull Optional<MutableCompositeData> fill(@NotNull DataHolder dataHolder, @NotNull MergeFunction overlap)
-    {
-        MutableCompositeData itemData = overlap.merge(this, dataHolder.get(MutableCompositeData.class).orElse(null));
+    public @NotNull Optional<MutableCompositeData> fill(
+            @NotNull DataHolder dataHolder, @NotNull MergeFunction overlap) {
+        MutableCompositeData itemData =
+                overlap.merge(this, dataHolder.get(MutableCompositeData.class).orElse(null));
         this.fillData(itemData.data);
         return Optional.of(this);
     }
 
     @Override
-    public @NotNull Optional<MutableCompositeData> from(@NotNull DataContainer container)
-    {
+    public @NotNull Optional<MutableCompositeData> from(@NotNull DataContainer container) {
         return Optional.of(this);
     }
 
     @Override
-    public @NotNull MutableCompositeData copy()
-    {
+    public @NotNull MutableCompositeData copy() {
         MutableCompositeData itemData = new MutableCompositeData();
         itemData.fillData(this.data);
         return itemData;
     }
 
     @Override
-    public @NotNull ImmutableCompositeData asImmutable()
-    {
+    public @NotNull ImmutableCompositeData asImmutable() {
         ImmutableCompositeData data = new ImmutableCompositeData();
         data.fillData(this.data);
         return data;
     }
 
     @Override
-    public int getContentVersion()
-    {
+    public int getContentVersion() {
         return 1;
     }
 
-    public Map<String, Object> getData()
-    {
+    public Map<String, Object> getData() {
         return this.data;
     }
 }

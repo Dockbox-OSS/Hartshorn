@@ -25,26 +25,21 @@ import org.dockbox.selene.api.util.images.MultiSizedImage;
 import java.awt.image.BufferedImage;
 import java.util.Map;
 
-public interface CustomMap extends Item
-{
+public interface CustomMap extends Item {
+
+    static CustomMap of(BufferedImage image, Identifiable source) {
+        return Selene.provide(CustomMapService.class).create(image, source);
+    }
+
+    static CustomMap of(byte[] image, Identifiable source) {
+        return Selene.provide(CustomMapService.class).create(image, source);
+    }
+
+    static Map<Integer[], CustomMap> of(MultiSizedImage image, Identifiable source) {
+        return Selene.provide(CustomMapService.class).create(image, source);
+    }
 
     Identifiable getOwner();
 
     int getMapId();
-
-    static CustomMap of(BufferedImage image, Identifiable source)
-    {
-        return Selene.provide(CustomMapService.class).create(image, source);
-    }
-
-    static CustomMap of(byte[] image, Identifiable source)
-    {
-        return Selene.provide(CustomMapService.class).create(image, source);
-    }
-
-    static Map<Integer[], CustomMap> of(MultiSizedImage image, Identifiable source)
-    {
-        return Selene.provide(CustomMapService.class).create(image, source);
-    }
-
 }

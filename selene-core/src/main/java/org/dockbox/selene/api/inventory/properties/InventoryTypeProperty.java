@@ -20,26 +20,22 @@ package org.dockbox.selene.api.inventory.properties;
 import org.dockbox.selene.api.inventory.InventoryType;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
 
-public class InventoryTypeProperty implements InjectorProperty<InventoryType>
-{
+public class InventoryTypeProperty implements InjectorProperty<InventoryType> {
 
-    public static final String KEY = "SeleneInternalInventoryTypeKey";
-    private final InventoryType type;
+  public static final String KEY = "SeleneInternalInventoryTypeKey";
+  private final InventoryType type;
 
-    public InventoryTypeProperty(InventoryType type)
-    {
-        this.type = type;
-    }
+  public InventoryTypeProperty(InventoryType type) {
+    this.type = type;
+  }
 
-    @Override
-    public String getKey()
-    {
-        return InventoryTypeProperty.KEY;
-    }
+  @Override
+  public String getKey() {
+    return InventoryTypeProperty.KEY;
+  }
 
-    @Override
-    public InventoryType getObject()
-    {
-        return this.type;
-    }
+  @Override
+  public InventoryType getObject() {
+    return this.type;
+  }
 }

@@ -20,12 +20,14 @@ package org.dockbox.selene.database;
 import org.dockbox.selene.api.annotations.module.Module;
 
 /**
- * Registers the SQL module to Selene. While no logic happens inside this class, this does indicate to server owners
- * that the module is active.
+ * Registers the SQL module to Selene. While no logic happens inside this class, this does indicate
+ * to server owners that the module is active.
  */
-@Module(id = "selene-sql", name = "SQL Module",
+@Module(
+        id = "selene-sql",
+        name = "SQL Module",
         description = "Provides the ability to communicate with SQL instances using integrated types",
-        authors = "GuusLieben", dependencies = "org.jooq")
-public class SQLModule
-{
+        authors = "GuusLieben",
+        dependencies = "org.jooq")
+public class SQLModule {
 }

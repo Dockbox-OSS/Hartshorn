@@ -17,42 +17,36 @@
 
 package org.dockbox.selene.common.command.values;
 
-import org.dockbox.selene.common.command.convert.ArgumentConverterRegistry;
 import org.dockbox.selene.api.command.context.ArgumentConverter;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.common.command.convert.ArgumentConverterRegistry;
 
-public abstract class AbstractArgumentValue<T>
-{
+public abstract class AbstractArgumentValue<T> {
 
-    private final String permission;
-    private T value;
+  private final String permission;
+  private T value;
 
-    protected AbstractArgumentValue(String permission, String key, String type)
-    {
-        Exceptional<ArgumentConverter<?>> converter = ArgumentConverterRegistry.getOptionalConverter(type.toLowerCase());
-        if (converter.isPresent())
-            this.value = this.parseValue(converter.get(), key, type);
+  protected AbstractArgumentValue(String permission, String key, String type) {
+    Exceptional<ArgumentConverter<?>> converter =
+        ArgumentConverterRegistry.getOptionalConverter(type.toLowerCase());
+    if (converter.isPresent()) this.value = this.parseValue(converter.get(), key, type);
 
-        this.permission = permission;
-    }
+    this.permission = permission;
+  }
 
-    protected abstract T parseValue(ArgumentConverter<?> converter, String key, String type);
+  protected abstract T parseValue(ArgumentConverter<?> converter, String key, String type);
 
-    public String getPermission()
-    {
-        return this.permission;
-    }
+  public String getPermission() {
+    return this.permission;
+  }
 
-    public abstract AbstractArgumentElement<T> getElement();
+  public abstract AbstractArgumentElement<T> getElement();
 
-    public T getValue()
-    {
-        return this.value;
-    }
+  public T getValue() {
+    return this.value;
+  }
 
-    public void setValue(T value)
-    {
-        this.value = value;
-    }
-
+  public void setValue(T value) {
+    this.value = value;
+  }
 }

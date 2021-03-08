@@ -23,50 +23,52 @@ import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-public class SimpleBroadcastService implements BroadcastService
-{
-    @Override
-    public void broadcastPublic(@NotNull Text message)
-    {
-        Selene.provide(PlayerStorageService.class).getOnlinePlayers().forEach(message::send);
-    }
+public class SimpleBroadcastService implements BroadcastService {
+  @Override
+  public void broadcastPublic(@NotNull Text message) {
+    Selene.provide(PlayerStorageService.class).getOnlinePlayers().forEach(message::send);
+  }
 
-    @Override
-    public void broadcastWithFilter(@NotNull Text message, @NotNull Predicate<Player> filter)
-    {
-        SimpleBroadcastService.sendWithPredicate(message, filter);
-    }
+  @Override
+  public void broadcastWithFilter(@NotNull Text message, @NotNull Predicate<Player> filter) {
+    SimpleBroadcastService.sendWithPredicate(message, filter);
+  }
 
-    @Override
-    public void broadcastForPermission(@NotNull Text message, @NotNull AbstractPermission permission)
-    {
-        SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission));
-    }
+  @Override
+  public void broadcastForPermission(
+      @NotNull Text message, @NotNull AbstractPermission permission) {
+    SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission));
+  }
 
-    @Override
-    public void broadcastForPermission(@NotNull Text message, @NotNull String permission)
-    {
-        SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission));
-    }
+  @Override
+  public void broadcastForPermission(@NotNull Text message, @NotNull String permission) {
+    SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission));
+  }
 
-    @Override
-    public void broadcastForPermissionWithFilter(@NotNull Text message, @NotNull AbstractPermission permission, @NotNull Predicate<Player> filter)
-    {
-        SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission) && filter.test(p));
-    }
+  @Override
+  public void broadcastForPermissionWithFilter(
+      @NotNull Text message,
+      @NotNull AbstractPermission permission,
+      @NotNull Predicate<Player> filter) {
+    SimpleBroadcastService.sendWithPredicate(
+        message, p -> p.hasPermission(permission) && filter.test(p));
+  }
 
-    @Override
-    public void broadcastForPermissionWithFilter(@NotNull Text message, @NotNull String permission, @NotNull Predicate<Player> filter)
-    {
-        SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission) && filter.test(p));
-    }
+  @Override
+  public void broadcastForPermissionWithFilter(
+      @NotNull Text message, @NotNull String permission, @NotNull Predicate<Player> filter) {
+    SimpleBroadcastService.sendWithPredicate(
+        message, p -> p.hasPermission(permission) && filter.test(p));
+  }
 
-    private static void sendWithPredicate(Text message, Predicate<Player> filter)
-    {
-        Selene.provide(PlayerStorageService.class).getOnlinePlayers().stream().filter(filter).forEach(message::send);
-    }
+  private static void sendWithPredicate(Text message, Predicate<Player> filter) {
+    Selene.provide(PlayerStorageService.class).getOnlinePlayers().stream()
+        .filter(filter)
+        .forEach(message::send);
+  }
 }

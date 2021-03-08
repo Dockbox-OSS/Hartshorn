@@ -27,51 +27,41 @@ import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
-public class MagiBridgeCommandSource extends DiscordCommandSource
-{
+public class MagiBridgeCommandSource extends DiscordCommandSource {
 
     private final BridgeCommandSource bridge;
 
-    public MagiBridgeCommandSource(BridgeCommandSource bridge)
-    {
+    public MagiBridgeCommandSource(BridgeCommandSource bridge) {
         this.bridge = bridge;
     }
 
     @Override
-    public void execute(@NotNull String command)
-    {
+    public void execute(@NotNull String command) {
         Sponge.getCommandManager().process(this.bridge, command);
     }
 
     @Override
-    public void send(@NotNull ResourceEntry text)
-    {
+    public void send(@NotNull ResourceEntry text) {
         this.bridge.sendMessage(SpongeConversionUtil.toSponge(text.asText()));
     }
 
     @Override
-    public void send(@NotNull Text text)
-    {
+    public void send(@NotNull Text text) {
         this.bridge.sendMessage(SpongeConversionUtil.toSponge(text));
     }
 
     @Override
-    public void sendWithPrefix(@NotNull ResourceEntry text)
-    {
+    public void sendWithPrefix(@NotNull ResourceEntry text) {
         this.bridge.sendMessage(SpongeConversionUtil.toSponge(text.asText()));
     }
 
     @Override
-    public void sendWithPrefix(@NotNull Text text)
-    {
+    public void sendWithPrefix(@NotNull Text text) {
         this.bridge.sendMessage(SpongeConversionUtil.toSponge(text));
     }
 
     @Override
-    public void sendPagination(@NotNull Pagination pagination)
-    {
+    public void sendPagination(@NotNull Pagination pagination) {
         throw new UnsupportedOperationException("Pagination not supported for virtual command source");
     }
-
-
 }

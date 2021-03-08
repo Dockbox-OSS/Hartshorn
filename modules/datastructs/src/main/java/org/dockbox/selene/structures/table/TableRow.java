@@ -27,12 +27,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Set;
 
-public class TableRow
-{
+public class TableRow {
 
     private final Map<ColumnIdentifier<?>, Object> data = SeleneUtils.emptyMap();
 
-    public TableRow() { }
+    public TableRow() {}
 
     /**
      * @param column
@@ -43,18 +42,15 @@ public class TableRow
      * @return The instance of this TableRow
      */
     @NotNull
-    public TableRow addValue(@NotNull ColumnIdentifier<?> column, @Nullable Object value)
-    {
+    public TableRow addValue(@NotNull ColumnIdentifier<?> column, @Nullable Object value) {
         // Make sure both the Identifier and the Value are both the same type
         if (null == value || Reflect.isAssignableFrom(column.getType(), value.getClass()))
             this.data.put(column, value);
         else
             throw new IllegalArgumentException(
-                    String.format("The value: %s, is not of the correct type. (Expected: %s, but got %s)",
-                            value,
-                            column.getType().getSimpleName(),
-                            value.getClass().getSimpleName()
-                    ));
+                    String.format(
+                            "The value: %s, is not of the correct type. (Expected: %s, but got %s)",
+                            value, column.getType().getSimpleName(), value.getClass().getSimpleName()));
         return this;
     }
 
@@ -68,37 +64,26 @@ public class TableRow
      */
     @SuppressWarnings("unchecked")
     @NotNull
-    public <T> Exceptional<T> getValue(@NotNull ColumnIdentifier<T> column)
-    {
-        if (null == this.data.get(column))
-            return Exceptional.empty();
+    public <T> Exceptional<T> getValue(@NotNull ColumnIdentifier<T> column) {
+        if (null == this.data.get(column)) return Exceptional.empty();
 
         return Exceptional.of((T) this.data.get(column));
     }
 
-    /**
-     * @return Return a set of the values of the columns of the row
-     */
+    /** @return Return a set of the values of the columns of the row */
     @NotNull
-    public Set<Object> getValues()
-    {
+    public Set<Object> getValues() {
         return SeleneUtils.asUnmodifiableSet(this.data.values());
     }
 
-    /**
-     * @return Return a set of keys of the row
-     */
+    /** @return Return a set of keys of the row */
     @NotNull
-    public Set<ColumnIdentifier<?>> getColumns()
-    {
+    public Set<ColumnIdentifier<?>> getColumns() {
         return SeleneUtils.asUnmodifiableSet(this.data.keySet());
     }
 
     @Override
-    public String toString()
-    {
-        return "TableRow{" +
-                "data=" + this.data +
-                '}';
+    public String toString() {
+        return "TableRow{" + "data=" + this.data + '}';
     }
 }

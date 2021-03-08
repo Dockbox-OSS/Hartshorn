@@ -23,9 +23,9 @@ import com.google.inject.Inject;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
-import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.MinecraftVersion;
 import org.dockbox.selene.api.PlayerStorageService;
+import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.packet.PacketEvent;
 import org.dockbox.selene.api.objects.Exceptional;
@@ -71,9 +71,7 @@ import eu.crushedpixel.sponge.packetgate.api.listener.PacketListenerAdapter;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 
-/**
- * Sponge API 7.x implementation of Selene, using events to initiate startup tasks.
- */
+/** Sponge API 7.x implementation of Selene, using events to initiate startup tasks. */
 @Plugin(
         id = "selene",
         name = "Selene Server",
@@ -84,21 +82,18 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
                 @Dependency(id = "plotsquared"),
                 @Dependency(id = "nucleus"),
                 @Dependency(id = "luckperms")
-        }
-)
-public class SpongeAPI7Bootstrap extends SeleneBootstrap
-{
+        })
+public class SpongeAPI7Bootstrap extends SeleneBootstrap {
 
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
     @Inject
     private PluginContainer container;
 
     /**
-     * Creates a new Selene instance using the {@link org.dockbox.selene.sponge.util.SpongeInjector} bindings
-     * providing utilities.
+     * Creates a new Selene instance using the {@link org.dockbox.selene.sponge.util.SpongeInjector}
+     * bindings providing utilities.
      */
-    public SpongeAPI7Bootstrap()
-    {
+    public SpongeAPI7Bootstrap() {
         super(new SpongeInjector());
     }
 
@@ -108,34 +103,34 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap
      * @param args
      *         The input arguments
      */
-    public static void main(String[] args)
-    {
-        // This is the only place where SystemOut is allowed as no server instance can exist at this point.
+    public static void main(String[] args) {
+        // This is the only place where SystemOut is allowed as no server instance can exist at this
+        // point.
         //noinspection UseOfSystemOutOrSystemErr
-        System.out.println("Selene is a framework plugin, it should not be started as a separate application.");
+        System.out.println(
+                "Selene is a framework plugin, it should not be started as a separate application.");
 
-        // This will cause Forge to complain about direct System.exit references. This only results in a warning
+        // This will cause Forge to complain about direct System.exit references. This only results in a
+        // warning
         // message and an automatic redirect to FMLCommonHandler.exitJava.
         System.exit(8);
     }
 
-    public static PluginContainer getContainer()
-    {
+    public static PluginContainer getContainer() {
         return ((SpongeAPI7Bootstrap) getInstance()).container;
     }
 
     @SuppressWarnings("AnonymousInnerClassMayBeStatic")
     @Listener
-    public void onGamePreInit(GamePreInitializationEvent event)
-    {
-        Composite.ITEM_KEY = Key.builder()
-                .type(new TypeToken<MapValue<String, Object>>()
-                {
-                })
-                .query(DataQuery.of(Composite.QUERY))
-                .id(Composite.ID)
-                .name(Composite.NAME)
-                .build();
+    public void onGamePreInit(GamePreInitializationEvent event) {
+        Composite.ITEM_KEY =
+                Key.builder()
+                        .type(new TypeToken<MapValue<String, Object>>() {
+                        })
+                        .query(DataQuery.of(Composite.QUERY))
+                        .id(Composite.ID)
+                        .name(Composite.NAME)
+                        .build();
 
         DataRegistration.builder()
                 .dataClass(MutableCompositeData.class)
@@ -147,141 +142,141 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap
     }
 
     /**
-     * Sponge Listener method, registers additional listeners present in
-     * {@link org.dockbox.selene.sponge.listeners.SpongeServerListener}.
+     * Sponge Listener method, registers additional listeners present in {@link
+     * org.dockbox.selene.sponge.listeners.SpongeServerListener}.
      *
      * @param event
      *         Sponge's initialization event
      */
     @Listener
-    public void onServerInit(GameInitializationEvent event)
-    {
+    public void onServerInit(GameInitializationEvent event) {
         this.registerSpongeListeners(
                 Selene.provide(SpongeCommandListener.class),
                 Selene.provide(SpongeServerListener.class),
                 Selene.provide(SpongeDiscordListener.class),
-                Selene.provide(SpongePlayerListener.class)
-        );
+                Selene.provide(SpongePlayerListener.class));
 
         super.init();
 
         Optional<PacketGate> packetGate = Sponge.getServiceManager().provide(PacketGate.class);
-        if (packetGate.isPresent())
-        {
+        if (packetGate.isPresent()) {
             SpongeAPI7Bootstrap.preparePacketGateListeners(packetGate.get());
             Selene.log().info("Successfully hooked into PacketGate");
         }
-        else
-        {
+        else {
             Selene.log().warn("Missing PacketGate, packet events will not be fired!");
         }
     }
 
-    private void registerSpongeListeners(Object... listeners)
-    {
-        for (Object obj : listeners)
-        {
-            if (null != obj)
-                Sponge.getEventManager().registerListeners(this, obj);
-            else
-                Selene.log().warn("Attempted to register 'null' listener");
+    private void registerSpongeListeners(Object... listeners) {
+        for (Object obj : listeners) {
+            if (null != obj) Sponge.getEventManager().registerListeners(this, obj);
+            else Selene.log().warn("Attempted to register 'null' listener");
         }
     }
 
-    private static void preparePacketGateListeners(PacketGate packetGate)
-    {
+    private static void preparePacketGateListeners(PacketGate packetGate) {
         EventBus bus = Selene.provide(EventBus.class);
         Set<Class<? extends Packet>> adaptedPackets = SeleneUtils.emptySet();
-        bus.getListenersToInvokers().forEach((k, v) -> v.forEach(eventWrapper -> {
-            if (Reflect.isAssignableFrom(PacketEvent.class, eventWrapper.getEventType()))
-            {
-                Class<? extends Packet> packet = eventWrapper.getMethod()
-                        .getAnnotation(org.dockbox.selene.api.annotations.event.filter.Packet.class).value();
+        bus.getListenersToInvokers()
+                .forEach(
+                        (k, v) ->
+                                v.forEach(
+                                        eventWrapper -> {
+                                            if (Reflect.isAssignableFrom(
+                                                    PacketEvent.class, eventWrapper.getEventType())) {
+                                                Class<? extends Packet> packet =
+                                                        eventWrapper
+                                                                .getMethod()
+                                                                .getAnnotation(
+                                                                        org.dockbox.selene.api.annotations.event.filter.Packet.class)
+                                                                .value();
 
-                // Adapters post the event globally, so we only need to register it once. This also avoids double-posting of the same event.
-                if (!adaptedPackets.contains(packet))
-                {
-                    Packet emptyPacket = Selene.provide(packet);
-                    packetGate.registerListener(
-                            SpongeAPI7Bootstrap.getPacketGateAdapter(packet),
-                            ListenerPriority.DEFAULT,
-                            emptyPacket.getNativePacketType()
-                    );
-                    adaptedPackets.add(packet);
-                }
-            }
-        }));
+                                                // Adapters post the event globally, so we only need to register it once.
+                                                // This also avoids double-posting of the same event.
+                                                if (!adaptedPackets.contains(packet)) {
+                                                    Packet emptyPacket = Selene.provide(packet);
+                                                    packetGate.registerListener(
+                                                            SpongeAPI7Bootstrap.getPacketGateAdapter(packet),
+                                                            ListenerPriority.DEFAULT,
+                                                            emptyPacket.getNativePacketType());
+                                                    adaptedPackets.add(packet);
+                                                }
+                                            }
+                                        }));
     }
 
-    private static PacketListenerAdapter getPacketGateAdapter(Class<? extends Packet> packet)
-    {
-        return new PacketListenerAdapter()
-        {
+    private static PacketListenerAdapter getPacketGateAdapter(Class<? extends Packet> packet) {
+        return new PacketListenerAdapter() {
             @Override
-            public void onPacketWrite(eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent, PacketConnection connection)
-            {
-                Selene.provide(PlayerStorageService.class).getPlayer(connection.getPlayerUUID()).ifPresent(player -> {
-                    // Shadowed NMS type
-                    net.minecraft.network.Packet<?> nativePacket = packetEvent.getPacket();
-                    Packet internalPacket = Selene.provide(packet, new NativePacketProperty<>(nativePacket));
+            public void onPacketWrite(
+                    eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent,
+                    PacketConnection connection) {
+                Selene.provide(PlayerStorageService.class)
+                        .getPlayer(connection.getPlayerUUID())
+                        .ifPresent(
+                                player -> {
+                                    // Shadowed NMS type
+                                    net.minecraft.network.Packet<?> nativePacket = packetEvent.getPacket();
+                                    Packet internalPacket =
+                                            Selene.provide(packet, new NativePacketProperty<>(nativePacket));
 
-                    PacketEvent<? extends Packet> event = new PacketEvent<>(internalPacket, player).post();
-                    packetEvent.setCancelled(event.isCancelled());
-                    if (event.isModified() && internalPacket instanceof NMSPacket) packetEvent.setPacket(((NMSPacket<?>) internalPacket).getPacket());
-                });
+                                    PacketEvent<? extends Packet> event =
+                                            new PacketEvent<>(internalPacket, player).post();
+                                    packetEvent.setCancelled(event.isCancelled());
+                                    if (event.isModified() && internalPacket instanceof NMSPacket)
+                                        packetEvent.setPacket(((NMSPacket<?>) internalPacket).getPacket());
+                                });
             }
         };
     }
 
     @NotNull
     @Override
-    public ServerType getServerType()
-    {
+    public ServerType getServerType() {
         return ServerType.SPONGE;
     }
 
     @Override
-    public String getPlatformVersion()
-    {
-        return Sponge.getPlatform().getContainer(Component.IMPLEMENTATION).getVersion().orElse("Unknown");
+    public String getPlatformVersion() {
+        return Sponge.getPlatform()
+                .getContainer(Component.IMPLEMENTATION)
+                .getVersion()
+                .orElse("Unknown");
     }
 
     @Override
-    public MinecraftVersion getMinecraftVersion()
-    {
+    public MinecraftVersion getMinecraftVersion() {
         return MinecraftVersion.MC1_12;
     }
 
     /**
      * Sponge Listener method, registers the MagiBridge JDA instance as soon as it is available.
      *
-     * Sometimes MagiBridge takes a while to start, if this is the case we register a delayed task to execute
-     * this method again 30 seconds later.
+     * <p>Sometimes MagiBridge takes a while to start, if this is the case we register a delayed task
+     * to execute this method again 30 seconds later.
      *
      * @param event
      *         The event
      */
     @Listener
-    public void onServerStartedLate(GameStartedServerEvent event)
-    {
+    public void onServerStartedLate(GameStartedServerEvent event) {
         Exceptional<JDA> oj = Selene.provide(DiscordUtils.class).getJDA();
-        if (oj.isPresent())
-        {
+        if (oj.isPresent()) {
             JDA jda = oj.get();
             // Avoid registering it twice if the scheduler outside this condition is executing this twice.
-            // Usually cancelling all tasks would be preferred, however any module is able to schedule tasks
+            // Usually cancelling all tasks would be preferred, however any module is able to schedule
+            // tasks
             // we may not want to cancel.
-            if (!jda.getRegisteredListeners().contains(this.discordListener))
-            {
+            if (!jda.getRegisteredListeners().contains(this.discordListener)) {
                 jda.addEventListener(this.discordListener);
                 Selene.log().info("Initiated JDA" + JDAInfo.VERSION);
             }
         }
-        else
-        {
+        else {
             // Attempt to get the JDA once every 10 seconds until successful
-            new SpongeTaskRunner().acceptDelayed(() -> this.onServerStartedLate(event), 10, TimeUnit.SECONDS);
+            new SpongeTaskRunner()
+                    .acceptDelayed(() -> this.onServerStartedLate(event), 10, TimeUnit.SECONDS);
         }
     }
-
 }

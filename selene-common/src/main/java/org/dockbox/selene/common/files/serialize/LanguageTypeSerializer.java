@@ -25,32 +25,24 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
 
-/**
- * The type Language type serializer.
- */
-public class LanguageTypeSerializer implements TypeSerializer<Language>
-{
+/** The type Language type serializer. */
+public class LanguageTypeSerializer implements TypeSerializer<Language> {
 
     @Override
-    public Language deserialize(Type type, ConfigurationNode node)
-            throws SerializationException
-    {
-        try
-        {
+    public Language deserialize(Type type, ConfigurationNode node) throws SerializationException {
+        try {
             String code = node.node("code").getString();
             if (null == code) throw new SerializationException("Missing code attribute");
             return Language.valueOf(code.toUpperCase());
         }
-        catch (NullPointerException | IllegalArgumentException e)
-        {
+        catch (NullPointerException | IllegalArgumentException e) {
             throw new SerializationException(e);
         }
     }
 
     @Override
     public void serialize(Type type, @Nullable Language obj, ConfigurationNode node)
-            throws SerializationException
-    {
+            throws SerializationException {
         if (null == obj) throw new SerializationException("Language cannot be null");
         node.node("code").set(obj.getCode());
     }

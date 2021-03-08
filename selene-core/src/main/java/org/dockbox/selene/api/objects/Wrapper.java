@@ -19,18 +19,15 @@ package org.dockbox.selene.api.objects;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface Wrapper<T>
-{
+public interface Wrapper<T> {
 
-    default boolean referenceExists()
-    {
-        return this.getReference().isPresent();
-    }
+  default boolean referenceExists() {
+    return this.getReference().isPresent();
+  }
 
-    Exceptional<T> getReference();
+  Exceptional<T> getReference();
 
-    void setReference(@NotNull Exceptional<T> reference);
+  void setReference(@NotNull Exceptional<T> reference);
 
-    Exceptional<T> constructInitialReference();
-
+  Exceptional<T> constructInitialReference();
 }

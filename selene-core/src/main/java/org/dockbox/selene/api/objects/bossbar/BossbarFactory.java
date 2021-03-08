@@ -20,16 +20,15 @@ package org.dockbox.selene.api.objects.bossbar;
 import org.dockbox.selene.api.text.Text;
 
 /**
- * The interface to be used when constructing a {@link Bossbar} instance. Typically this does not have a explicit
- * implementation, and is instead used to virtually create instances using {@link com.google.inject.assistedinject.AssistedInject}.
+ * The interface to be used when constructing a {@link Bossbar} instance. Typically this does not
+ * have a explicit implementation, and is instead used to virtually create instances using {@link
+ * com.google.inject.assistedinject.AssistedInject}.
  *
- * <p>
- * See <a href="https://github.com/google/guice/wiki/AssistedInject">Google/guice 'AssistedInject'</a> for further
- * details
+ * <p>See <a href="https://github.com/google/guice/wiki/AssistedInject">Google/guice
+ * 'AssistedInject'</a> for further details
  */
 @SuppressWarnings("InterfaceNeverImplemented")
 @FunctionalInterface
-public interface BossbarFactory
-{
+public interface BossbarFactory {
     Bossbar create(String id, float percent, Text text, BossbarColor color, BossbarStyle style);
 }

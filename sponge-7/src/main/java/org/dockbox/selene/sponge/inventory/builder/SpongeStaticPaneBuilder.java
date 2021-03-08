@@ -33,45 +33,41 @@ import org.spongepowered.api.item.inventory.InventoryArchetypes;
 
 import dev.flashlabs.flashlibs.inventory.View;
 
-public class SpongeStaticPaneBuilder extends StaticPaneBuilder
-{
+public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
 
     private View.Builder builder;
     private SpongeInventoryLayout layout;
 
     @Override
-    public StaticPaneBuilder title(Text text)
-    {
+    public StaticPaneBuilder title(Text text) {
         this.builder.title(SpongeConversionUtil.toSponge(text));
         return this;
     }
 
     @Override
-    public StaticPane build()
-    {
+    public StaticPane build() {
         View view = this.builder.build(SpongeAPI7Bootstrap.getContainer());
         view.define(this.layout.getLayout());
         return new SpongeStaticPane(view);
     }
 
     @Override
-    public void stateEnabling(InjectorProperty<?>... properties)
-    {
+    public void stateEnabling(InjectorProperty<?>... properties) {
         Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
-                .ifPresent(layout -> {
-                    this.builder = View.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
-                    this.layout(layout);
-                })
-                .ifAbsent(() -> {
-                    Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
-                    this.builder = View.builder(InventoryArchetypes.CHEST);
-                });
+                .ifPresent(
+                        layout -> {
+                            this.builder = View.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
+                            this.layout(layout);
+                        })
+                .ifAbsent(
+                        () -> {
+                            Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
+                            this.builder = View.builder(InventoryArchetypes.CHEST);
+                        });
     }
 
-    private void layout(InventoryLayout layout)
-    {
-        if (layout instanceof SpongeInventoryLayout)
-        {
+    private void layout(InventoryLayout layout) {
+        if (layout instanceof SpongeInventoryLayout) {
             this.layout = (SpongeInventoryLayout) layout;
         }
     }

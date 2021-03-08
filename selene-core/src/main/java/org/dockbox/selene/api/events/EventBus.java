@@ -24,8 +24,7 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Set;
 
-public interface EventBus
-{
+public interface EventBus {
 
     void subscribe(Object object);
 
@@ -39,6 +38,6 @@ public interface EventBus
 
     void registerProcessors(AbstractEventParamProcessor<?>... processors);
 
-    <T extends Annotation> AbstractEventParamProcessor<T> getParamProcessor(Class<T> annotation, EventStage stage);
-
+    <T extends Annotation> AbstractEventParamProcessor<T> getParamProcessor(
+            Class<T> annotation, EventStage stage);
 }

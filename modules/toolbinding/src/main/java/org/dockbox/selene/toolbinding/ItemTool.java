@@ -40,13 +40,26 @@ public class ItemTool {
     private final List<Predicate<ToolInteractionEvent>> filters;
     private final List<Consumer<Item>> modifiers;
 
-    public ItemTool(Text name, List<Text> lore, BiConsumer<Player, Item> consumer,
-                    List<Predicate<ToolInteractionEvent>> filters, List<Consumer<Item>> modifiers) {
+    public ItemTool(
+            Text name,
+            List<Text> lore,
+            BiConsumer<Player, Item> consumer,
+            List<Predicate<ToolInteractionEvent>> filters,
+            List<Consumer<Item>> modifiers) {
         this.name = name;
         this.lore = lore;
         this.consumer = consumer;
         this.filters = filters;
         this.modifiers = modifiers;
+    }
+
+    public static void reset(Item item) {
+        item.removeDisplayName();
+        item.removeLore();
+    }
+
+    public static ToolBuilder builder() {
+        return new ToolBuilder();
     }
 
     public boolean accepts(ToolInteractionEvent event) {
@@ -63,20 +76,13 @@ public class ItemTool {
         this.modifiers.forEach(modifiers -> modifiers.accept(item));
     }
 
-    public static void reset(Item item) {
-        item.removeDisplayName();
-        item.removeLore();
-    }
-
-    public static ToolBuilder builder() { return new ToolBuilder(); }
-
     @SuppressWarnings("unused")
     public static final class ToolBuilder {
+        private final List<Predicate<ToolInteractionEvent>> filters = SeleneUtils.emptyConcurrentList();
+        private final List<Consumer<Item>> modifiers = SeleneUtils.emptyConcurrentList();
         private BiConsumer<Player, Item> consumer;
         private Text name;
         private List<Text> lore;
-        private final List<Predicate<ToolInteractionEvent>> filters = SeleneUtils.emptyConcurrentList();
-        private final List<Consumer<Item>> modifiers = SeleneUtils.emptyConcurrentList();
 
         private ToolBuilder() {}
 

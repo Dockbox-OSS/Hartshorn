@@ -18,33 +18,48 @@
 package org.dockbox.selene.api.objects.tuple;
 
 /**
- * Represents a 2D point on a x-, and z-axis. All axis points can be represented as any numeral value.
+ * Represents a 2D point on a x-, and z-axis. All axis points can be represented as any numeral
+ * value.
  */
-public class Vector2N
-{
+public class Vector2N {
 
     private final Number x;
     private final Number z;
 
-    public Vector2N(Number x, Number z)
-    {
+    public Vector2N(Number x, Number z) {
         this.x = x;
         this.z = z;
     }
 
-    public double getXd() { return this.x.doubleValue(); }
+    public double getXd() {
+        return this.x.doubleValue();
+    }
 
-    public float getXf() { return this.x.floatValue(); }
+    public float getXf() {
+        return this.x.floatValue();
+    }
 
-    public int getXi() { return this.x.intValue(); }
+    public int getXi() {
+        return this.x.intValue();
+    }
 
-    public long getXl() { return this.x.longValue(); }
+    public long getXl() {
+        return this.x.longValue();
+    }
 
-    public double getZd() { return this.z.doubleValue(); }
+    public double getZd() {
+        return this.z.doubleValue();
+    }
 
-    public float getZf() { return this.z.floatValue(); }
+    public float getZf() {
+        return this.z.floatValue();
+    }
 
-    public int getZi() { return this.z.intValue(); }
+    public int getZi() {
+        return this.z.intValue();
+    }
 
-    public long getZl() { return this.z.longValue(); }
+    public long getZl() {
+        return this.z.longValue();
+    }
 }

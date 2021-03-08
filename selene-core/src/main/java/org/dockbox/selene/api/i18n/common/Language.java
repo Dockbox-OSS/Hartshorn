@@ -17,8 +17,7 @@
 
 package org.dockbox.selene.api.i18n.common;
 
-public enum Language
-{
+public enum Language {
     EN_US("en_US", "English", "US"),
     NL_NL("nl_NL", "Dutch", "Nederlands"),
     FR_FR("fr_FR", "French", "Français"),
@@ -27,25 +26,21 @@ public enum Language
     private final String nameEnglish;
     private final String nameLocalized;
 
-    Language(String code, String nameEnglish, String nameLocalized)
-    {
+    Language(String code, String nameEnglish, String nameLocalized) {
         this.code = code;
         this.nameEnglish = nameEnglish;
         this.nameLocalized = nameLocalized;
     }
 
-    public String getCode()
-    {
+    public String getCode() {
         return this.code;
     }
 
-    public String getNameEnglish()
-    {
+    public String getNameEnglish() {
         return this.nameEnglish;
     }
 
-    public String getNameLocalized()
-    {
+    public String getNameLocalized() {
         return this.nameLocalized;
     }
 }

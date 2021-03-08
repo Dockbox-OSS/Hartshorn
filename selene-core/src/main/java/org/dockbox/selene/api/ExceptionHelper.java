@@ -23,11 +23,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * A low-level interface for easy exception handling. For all cases this should only be
- * accessed through {@link org.dockbox.selene.api.server.Selene}.
+ * A low-level interface for easy exception handling. For all cases this should only be accessed
+ * through {@link org.dockbox.selene.api.server.Selene}.
  */
-public interface ExceptionHelper
-{
+public interface ExceptionHelper {
 
     /**
      * Prints the exception in a user-friendly manner. Usually providing as much detail as possible
@@ -56,8 +55,8 @@ public interface ExceptionHelper
     void printMinimal(String message, Throwable exception, boolean stacktrace);
 
     /**
-     * Runs a given runnable, and handles any possible exceptions using default behavior for the implementation.
-     * Usually this will be logging to a console or file.
+     * Runs a given runnable, and handles any possible exceptions using default behavior for the
+     * implementation. Usually this will be logging to a console or file.
      *
      * @param runnable
      *         The runnable to run
@@ -65,8 +64,8 @@ public interface ExceptionHelper
     void handleSafe(Runnable runnable);
 
     /**
-     * Runs a given consumer accepting a given value, and handles any possible exceptions using default behavior
-     * for the implementation. Usually this will be logging to a console or file.
+     * Runs a given consumer accepting a given value, and handles any possible exceptions using
+     * default behavior for the implementation. Usually this will be logging to a console or file.
      *
      * @param <T>
      *         The type of value to be consumed
@@ -78,10 +77,10 @@ public interface ExceptionHelper
     <T> void handleSafe(Consumer<T> consumer, T value);
 
     /**
-     * Runs a given function accepting a given value, returning a potential result wrapped in a
-     * {@link org.dockbox.selene.api.objects.Exceptional}. The exceptional should wrap the exception if
-     * present. Handles any possible exceptions using default behavior for the implementation. Usually this will
-     * be logging to a console or file.
+     * Runs a given function accepting a given value, returning a potential result wrapped in a {@link
+     * org.dockbox.selene.api.objects.Exceptional}. The exceptional should wrap the exception if
+     * present. Handles any possible exceptions using default behavior for the implementation. Usually
+     * this will be logging to a console or file.
      *
      * @param <T>
      *         The type of the value to be consumed
@@ -107,7 +106,8 @@ public interface ExceptionHelper
     void handleSafe(Runnable runnable, Consumer<Throwable> errorConsumer);
 
     /**
-     * Runs a given consumer accepting a given value, and handles any possible exceptions using a given consumer.
+     * Runs a given consumer accepting a given value, and handles any possible exceptions using a
+     * given consumer.
      *
      * @param <T>
      *         The type of value to be consumed
@@ -121,8 +121,8 @@ public interface ExceptionHelper
     <T> void handleSafe(Consumer<T> consumer, T value, Consumer<Throwable> errorConsumer);
 
     /**
-     * Runs a given function accepting a given value, returning a potential result wrapped in a
-     * {@link org.dockbox.selene.api.objects.Exceptional}. The exceptional should wrap the exception if
+     * Runs a given function accepting a given value, returning a potential result wrapped in a {@link
+     * org.dockbox.selene.api.objects.Exceptional}. The exceptional should wrap the exception if
      * present. Handles any possible exceptions using a given consumer.
      *
      * @param <T>
@@ -138,5 +138,6 @@ public interface ExceptionHelper
      *
      * @return The exceptional holding either the return type or an exception
      */
-    <T, R> Exceptional<R> handleSafe(Function<T, R> function, T value, Consumer<Throwable> errorConsumer);
+    <T, R> Exceptional<R> handleSafe(
+            Function<T, R> function, T value, Consumer<Throwable> errorConsumer);
 }

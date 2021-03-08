@@ -26,14 +26,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates whether or not to call a event depending on it's cancelled state (if the event is a instance of
- * {@link Cancellable}). There are three options: {@code TRUE} which only calls the listener if the event is
- * cancelled, {@code FALSE} which only calls the listener if the event is not cancelled (default), and
- * {@code UNDEFINED} which calls the listener in either case.
+ * Indicates whether or not to call a event depending on it's cancelled state (if the event is a
+ * instance of {@link Cancellable}). There are three options: {@code TRUE} which only calls the
+ * listener if the event is cancelled, {@code FALSE} which only calls the listener if the event is
+ * not cancelled (default), and {@code UNDEFINED} which calls the listener in either case.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface IsCancelled
-{
-    Tristate value() default Tristate.FALSE;
+public @interface IsCancelled {
+  Tristate value() default Tristate.FALSE;
 }
