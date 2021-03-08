@@ -17,16 +17,15 @@
 
 package org.dockbox.selene.sponge.inventory.pane;
 
-import org.dockbox.selene.core.inventory.Element;
-import org.dockbox.selene.core.inventory.InventoryLayout;
-import org.dockbox.selene.core.inventory.pane.StaticPane;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.api.inventory.Element;
+import org.dockbox.selene.api.inventory.InventoryLayout;
+import org.dockbox.selene.api.inventory.pane.StaticPane;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
 import dev.flashlabs.flashlibs.inventory.View;
-
 
 public class SpongeStaticPane implements StaticPane {
 

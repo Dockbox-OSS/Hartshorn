@@ -21,9 +21,9 @@ import com.google.common.collect.Multimap;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
-import org.dockbox.selene.core.objects.profile.Profile;
-import org.dockbox.selene.core.objects.tuple.Tuple;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.objects.profile.Profile;
+import org.dockbox.selene.api.objects.tuple.Tuple;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.profile.property.ProfileProperty;
 
@@ -46,7 +46,13 @@ public class SpongeProfile implements Profile {
     public SpongeProfile(@Assisted Profile initialValue) {
         if (initialValue instanceof SpongeProfile)
             this.gameProfile = ((SpongeProfile) initialValue).getGameProfile();
-        else throw new IllegalStateException("Cannot convert [" + initialValue.getClass().getCanonicalName() + "] to SpongeProfile");
+        else
+            throw new IllegalStateException(
+                    "Cannot convert [" + initialValue.getClass().getCanonicalName() + "] to SpongeProfile");
+    }
+
+    public GameProfile getGameProfile() {
+        return this.gameProfile;
     }
 
     // Internal usage only
@@ -63,22 +69,26 @@ public class SpongeProfile implements Profile {
     public void setUuid(UUID uuid) {
         Multimap<String, ProfileProperty> properties = this.gameProfile.getPropertyMap();
         this.gameProfile = GameProfile.of(uuid);
-        properties.asMap().forEach((key, propertyCollection) ->
-                propertyCollection
-                        .forEach(property -> this.gameProfile.addProperty(key, property))
-        );
+        properties
+                .asMap()
+                .forEach(
+                        (key, propertyCollection) ->
+                                propertyCollection.forEach(
+                                        property -> this.gameProfile.addProperty(key, property)));
     }
 
     @Override
     public Map<String, Collection<Tuple<String, String>>> getAdditionalProperties() {
         Map<String, Collection<ProfileProperty>> properties = this.gameProfile.getPropertyMap().asMap();
         Map<String, Collection<Tuple<String, String>>> convertedProperties = SeleneUtils.emptyMap();
-        properties.forEach((key, propertyCollection) -> {
-            List<Tuple<String, String>> collection = propertyCollection.stream()
-                    .map(property -> new Tuple<>(property.getName(), property.getValue()))
-                    .collect(Collectors.toList());
-            convertedProperties.put(key, collection);
-        });
+        properties.forEach(
+                (key, propertyCollection) -> {
+                    List<Tuple<String, String>> collection =
+                            propertyCollection.stream()
+                                    .map(property -> new Tuple<>(property.getName(), property.getValue()))
+                                    .collect(Collectors.toList());
+                    convertedProperties.put(key, collection);
+                });
         return SeleneUtils.asUnmodifiableMap(convertedProperties);
     }
 
@@ -89,14 +99,9 @@ public class SpongeProfile implements Profile {
 
     @Override
     public void setProperties(Map<String, Collection<Tuple<String, String>>> properties) {
-        properties.forEach((name, propertyCollection) -> {
-            propertyCollection.forEach(property -> {
-                this.setProperty(name, property.getKey(), property.getValue());
-            });
-        });
-    }
-
-    public GameProfile getGameProfile() {
-        return this.gameProfile;
+        properties.forEach(
+                (name, propertyCollection) ->
+                        propertyCollection.forEach(
+                                property -> this.setProperty(name, property.getKey(), property.getValue())));
     }
 }

@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.core.ThreadUtils;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.api.ThreadUtils;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.server.Selene;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
 
@@ -28,8 +28,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 /**
- * The SpongePowered implementation for {@link ThreadUtils}, using Sponge's
- * {@link org.spongepowered.api.scheduler.SpongeExecutorService} for underlying thread access.
+ * The SpongePowered implementation for {@link ThreadUtils}, using Sponge's {@link
+ * org.spongepowered.api.scheduler.SpongeExecutorService} for underlying thread access.
  */
 public class SpongeThreadUtils implements ThreadUtils {
 
@@ -50,7 +50,8 @@ public class SpongeThreadUtils implements ThreadUtils {
         SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Selene.getServer());
         try {
             return Exceptional.ofNullable(ses.submit(callable).get());
-        } catch (InterruptedException | ExecutionException e) {
+        }
+        catch (InterruptedException | ExecutionException e) {
             return Exceptional.of(e);
         }
     }
@@ -60,10 +61,9 @@ public class SpongeThreadUtils implements ThreadUtils {
         SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Selene.getServer());
         try {
             return Exceptional.ofNullable(ses.submit(callable).get());
-        } catch (InterruptedException | ExecutionException e) {
+        }
+        catch (InterruptedException | ExecutionException e) {
             return Exceptional.of(e);
         }
     }
-
-
 }

@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.inventory.pane;
 
-import org.dockbox.selene.core.inventory.Element;
-import org.dockbox.selene.core.inventory.pane.PaginatedPane;
-import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.api.inventory.Element;
+import org.dockbox.selene.api.inventory.pane.PaginatedPane;
+import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
 import java.util.Collection;
@@ -37,17 +37,13 @@ public class SpongePaginatedPane implements PaginatedPane {
 
     @Override
     public void open(Player player, int page) {
-        SpongeConversionUtil.toSponge(player).ifPresent(p -> {
-            this.page.open(p, page);
-        });
+        SpongeConversionUtil.toSponge(player).ifPresent(p -> this.page.open(p, page));
     }
 
     @Override
     public void elements(Collection<Element> elements) {
-        this.page.define(elements.stream()
-                .map(SpongeConversionUtil::toSponge)
-                .collect(Collectors.toList())
-        );
+        this.page.define(
+                elements.stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList()));
     }
 
     @Override

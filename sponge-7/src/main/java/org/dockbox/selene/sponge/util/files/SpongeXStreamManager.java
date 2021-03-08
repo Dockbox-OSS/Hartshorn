@@ -17,13 +17,14 @@
 
 package org.dockbox.selene.sponge.util.files;
 
-import org.dockbox.selene.core.impl.files.DefaultXStreamManager;
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.common.files.DefaultXStreamManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
-public class SpongeXStreamManager extends DefaultXStreamManager implements SpongeDefaultFileManager {
+public class SpongeXStreamManager extends DefaultXStreamManager
+        implements SpongeDefaultFileManager {
 
     @NotNull
     @Override
@@ -45,8 +46,8 @@ public class SpongeXStreamManager extends DefaultXStreamManager implements Spong
 
     @NotNull
     @Override
-    public Path getExtensionDir() {
-        return SpongeDefaultFileManager.super.getExtensionDir();
+    public Path getModuleDir() {
+        return SpongeDefaultFileManager.super.getModuleDir();
     }
 
     @NotNull
@@ -63,8 +64,8 @@ public class SpongeXStreamManager extends DefaultXStreamManager implements Spong
 
     @NotNull
     @Override
-    public Path getExtensionConfigsDir() {
-        return SpongeDefaultFileManager.super.getExtensionConfigsDir();
+    public Path getModuleConfigsDir() {
+        return SpongeDefaultFileManager.super.getModuleConfigsDir();
     }
 
     @NotNull

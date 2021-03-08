@@ -17,16 +17,16 @@
 
 package org.dockbox.selene.sponge.inventory.builder;
 
-import org.dockbox.selene.core.inventory.Element;
-import org.dockbox.selene.core.inventory.InventoryLayout;
-import org.dockbox.selene.core.inventory.builder.PaginatedPaneBuilder;
-import org.dockbox.selene.core.inventory.pane.PaginatedPane;
-import org.dockbox.selene.core.inventory.properties.InventoryTypeProperty;
-import org.dockbox.selene.core.objects.keys.Keys;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.inventory.Element;
+import org.dockbox.selene.api.inventory.InventoryLayout;
+import org.dockbox.selene.api.inventory.builder.PaginatedPaneBuilder;
+import org.dockbox.selene.api.inventory.pane.PaginatedPane;
+import org.dockbox.selene.api.inventory.properties.InventoryTypeProperty;
+import org.dockbox.selene.api.objects.keys.Keys;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
+import org.dockbox.selene.api.text.Text;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.SpongeAPI7Bootstrap;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.inventory.pane.SpongePaginatedPane;
@@ -55,31 +55,31 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
         return this;
     }
 
-    public void layout(InventoryLayout layout) {
-        if (layout instanceof SpongeInventoryLayout)
-            this.builder.layout(((SpongeInventoryLayout) layout).getLayout());
-    }
-
     @Override
     public PaginatedPane build() {
         Page page = this.builder.build(SpongeAPI7Bootstrap.getContainer());
-        page.define(this.elements.stream()
-                .map(SpongeConversionUtil::toSponge)
-                .collect(Collectors.toList())
-        );
+        page.define(
+                this.elements.stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList()));
         return new SpongePaginatedPane(page);
     }
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
-                .ifPresent(layout -> {
-                    this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
-                    this.layout(layout);
-                })
-                .ifAbsent(() -> {
-                    Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
-                    this.builder = Page.builder(InventoryArchetypes.CHEST);
-                });
+                .ifPresent(
+                        layout -> {
+                            this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
+                            this.layout(layout);
+                        })
+                .ifAbsent(
+                        () -> {
+                            Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
+                            this.builder = Page.builder(InventoryArchetypes.CHEST);
+                        });
+    }
+
+    public void layout(InventoryLayout layout) {
+        if (layout instanceof SpongeInventoryLayout)
+            this.builder.layout(((SpongeInventoryLayout) layout).getLayout());
     }
 }

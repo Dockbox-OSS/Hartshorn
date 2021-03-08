@@ -17,14 +17,14 @@
 
 package org.dockbox.selene.sponge.inventory.builder;
 
-import org.dockbox.selene.core.inventory.Element;
-import org.dockbox.selene.core.inventory.InventoryLayout;
-import org.dockbox.selene.core.inventory.InventoryType;
-import org.dockbox.selene.core.inventory.builder.LayoutBuilder;
-import org.dockbox.selene.core.inventory.properties.InventoryTypeProperty;
-import org.dockbox.selene.core.objects.keys.Keys;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.api.inventory.Element;
+import org.dockbox.selene.api.inventory.InventoryLayout;
+import org.dockbox.selene.api.inventory.InventoryType;
+import org.dockbox.selene.api.inventory.builder.LayoutBuilder;
+import org.dockbox.selene.api.inventory.properties.InventoryTypeProperty;
+import org.dockbox.selene.api.objects.keys.Keys;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
@@ -67,19 +67,18 @@ public class SpongeLayoutBuilder extends LayoutBuilder {
 
     @Override
     public InventoryLayout build() {
-        return new SpongeInventoryLayout(this.builder.build(), inventoryType);
+        return new SpongeInventoryLayout(this.builder.build(), this.inventoryType);
     }
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryType.class, properties)
-                .ifPresent(inventoryType -> {
-                    this.inventoryType = inventoryType;
-                })
-                .ifAbsent(() -> {
-                    Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
-                    this.inventoryType = InventoryType.CHEST;
-                });
+                .ifPresent(inventoryType -> this.inventoryType = inventoryType)
+                .ifAbsent(
+                        () -> {
+                            Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
+                            this.inventoryType = InventoryType.CHEST;
+                        });
         this.builder = Layout.builder(this.inventoryType.getRows(), this.inventoryType.getColumns());
     }
 }

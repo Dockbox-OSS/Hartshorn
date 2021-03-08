@@ -21,10 +21,10 @@ include 'selene-core'
 include 'selene-common'
 include 'selene-nms-1.12'
 include 'sponge-7'
-include 'extensions'
+include 'modules'
 include 'examples'
-new File(rootDir, 'extensions').listFiles().each {
+new File(rootDir, 'modules').listFiles().each {
     if (it.directory && new File(it, 'build.gradle').exists()) {
-        include(":extensions:${it.name}")
+        include(":modules:${it.name}")
     }
 }

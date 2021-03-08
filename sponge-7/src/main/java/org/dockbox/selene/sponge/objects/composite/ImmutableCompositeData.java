@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.composite;
 
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
@@ -25,7 +25,8 @@ import org.spongepowered.api.data.manipulator.immutable.common.AbstractImmutable
 
 import java.util.Map;
 
-public class ImmutableCompositeData extends AbstractImmutableData<ImmutableCompositeData, MutableCompositeData> {
+public class ImmutableCompositeData
+        extends AbstractImmutableData<ImmutableCompositeData, MutableCompositeData> {
 
     private final Map<String, Object> data = SeleneUtils.emptyMap();
 
@@ -42,24 +43,24 @@ public class ImmutableCompositeData extends AbstractImmutableData<ImmutableCompo
     }
 
     @Override
-    public @NotNull DataContainer toContainer() {
-        return super.toContainer().set(Composite.ITEM_KEY, this.data);
+    protected void registerGetters() {
+        this.registerFieldGetter(Composite.ITEM_KEY, () -> this.data);
+        this.registerKeyValue(
+                Composite.ITEM_KEY,
+                () ->
+                        Sponge.getRegistry()
+                                .getValueFactory()
+                                .createMapValue(Composite.ITEM_KEY, this.data, SeleneUtils.emptyMap())
+                                .asImmutable());
     }
 
     @Override
-    protected void registerGetters() {
-        this.registerFieldGetter(Composite.ITEM_KEY, () -> this.data);
-        this.registerKeyValue(Composite.ITEM_KEY, () ->
-                Sponge.getRegistry().getValueFactory().createMapValue(
-                    Composite.ITEM_KEY,
-                        this.data,
-                        SeleneUtils.emptyMap()).asImmutable()
-        );
+    public @NotNull DataContainer toContainer() {
+        return super.toContainer().set(Composite.ITEM_KEY, this.data);
     }
 
     public void fillData(Map<String, Object> data) {
         this.data.clear();
         this.data.putAll(data);
     }
-
 }

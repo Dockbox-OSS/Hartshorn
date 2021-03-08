@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.core.impl.DefaultPlayerStorageService;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.common.DefaultPlayerStorageService;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -42,33 +42,35 @@ public class SpongePlayerStorageService extends DefaultPlayerStorageService {
     @NotNull
     @Override
     public Exceptional<Player> getPlayer(@NotNull String name) {
-        return this.getPlayer(Exceptional.of(Sponge.getServer().getPlayer(name)), name);
+        return SpongePlayerStorageService.getPlayer(
+                Exceptional.of(Sponge.getServer().getPlayer(name)), name);
     }
 
     @NotNull
     @Override
     public Exceptional<Player> getPlayer(@NotNull UUID uuid) {
-        return this.getPlayer(Exceptional.of(Sponge.getServer().getPlayer(uuid)), uuid);
+        return SpongePlayerStorageService.getPlayer(
+                Exceptional.of(Sponge.getServer().getPlayer(uuid)), uuid);
     }
 
-    private Exceptional<Player> getPlayer(
-            Exceptional<org.spongepowered.api.entity.living.player.Player> osp,
-            Object obj
-    ) {
+    private static Exceptional<Player> getPlayer(
+            Exceptional<org.spongepowered.api.entity.living.player.Player> osp, Object obj) {
         if (osp.isPresent()) {
             return osp.map(p -> new SpongePlayer(p.getUniqueId(), p.getName()));
-        } else {
+        }
+        else {
             Exceptional<Player> player = Exceptional.empty();
-            Exceptional<UserStorageService> ouss = Exceptional.of(
-                    Sponge.getServiceManager().provide(UserStorageService.class)
-            );
+            Exceptional<UserStorageService> ouss =
+                    Exceptional.of(Sponge.getServiceManager().provide(UserStorageService.class));
             Exceptional<User> ou;
             if (obj instanceof UUID) {
                 ou = ouss.flatMap(uss -> Exceptional.of(uss.get((UUID) obj)));
-            } else {
+            }
+            else {
                 try {
                     ou = ouss.flatMap(uss -> Exceptional.of(uss.get(obj.toString())));
-                } catch (IllegalArgumentException e) {
+                }
+                catch (IllegalArgumentException e) {
                     // Typically thrown if a username is invalid (length<0 or >=16)
                     // See org.spongepowered.common.service.user.SpongeUserStorageService.get:64
                     ou = Exceptional.of(e);

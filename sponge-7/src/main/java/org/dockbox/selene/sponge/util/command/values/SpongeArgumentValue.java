@@ -17,19 +17,20 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
-import org.dockbox.selene.core.command.context.ArgumentConverter;
-import org.dockbox.selene.core.impl.command.convert.ArgumentConverterRegistry;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.api.command.context.ArgumentConverter;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.common.command.convert.ArgumentConverterRegistry;
+import org.dockbox.selene.common.command.values.AbstractArgumentValue;
 import org.jetbrains.annotations.NonNls;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.text.Text;
 
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class SpongeArgumentValue extends AbstractArgumentValue<CommandElement> {
 
-    public SpongeArgumentValue(String type, String permission, String key) throws IllegalArgumentException {
+    public SpongeArgumentValue(String type, String permission, String key)
+            throws IllegalArgumentException {
         super(permission, key, type);
         if (!ArgumentConverterRegistry.hasConverter(type.toLowerCase())) {
             try {
@@ -37,15 +38,19 @@ public class SpongeArgumentValue extends AbstractArgumentValue<CommandElement> {
                 if (clazz.isEnum()) {
                     Class<? extends Enum> enumType = (Class<? extends Enum>) clazz;
                     this.setValue(GenericArguments.enumValue(Text.of(key), enumType));
-                } else throw new IllegalArgumentException("Type '" + type.toLowerCase() + "' is not supported");
-            } catch (Exception e) {
+                }
+                else //noinspection ThrowCaughtLocally
+                    throw new IllegalArgumentException("Type '" + type.toLowerCase() + "' is not supported");
+            }
+            catch (Exception e) {
                 Selene.handle("No argument of type `" + type + "` can be read", e);
             }
         }
     }
 
     @Override
-    protected CommandElement parseValue(ArgumentConverter<?> converter, String key, @NonNls String type) {
+    protected CommandElement parseValue(
+            ArgumentConverter<?> converter, String key, @NonNls String type) {
         if ("remaining".equals(type) || "remainingstring".equals(type)) {
             return GenericArguments.remainingJoinedStrings(Text.of(key));
         }

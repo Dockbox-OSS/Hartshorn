@@ -17,12 +17,13 @@
 
 package org.dockbox.selene.sponge.util.files;
 
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.api.objects.Exceptional;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
 import java.nio.file.Path;
 
+@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface SpongeDefaultFileManager {
 
     @NotNull
@@ -31,19 +32,21 @@ public interface SpongeDefaultFileManager {
     }
 
     @NotNull
-    default Path getLogsDir() {
-        return this.getServerRoot().resolve("logs/");
-    }
-
-    @NotNull
     default Path getServerRoot() {
         return Sponge.getGame().getGameDirectory();
     }
 
     @NotNull
-    default Path getExtensionDir() {
-        return this.createPathIfNotExists(this.getServerRoot().resolve("extensions/"));
+    default Path getLogsDir() {
+        return this.getServerRoot().resolve("logs/");
     }
+
+    @NotNull
+    default Path getModuleDir() {
+        return this.createPathIfNotExists(this.getServerRoot().resolve("modules/"));
+    }
+
+    Path createPathIfNotExists(Path path);
 
     @NotNull
     default Exceptional<Path> getModDir() {
@@ -56,8 +59,8 @@ public interface SpongeDefaultFileManager {
     }
 
     @NotNull
-    default Path getExtensionConfigsDir() {
-        return this.getServerRoot().resolve("config/extensions/");
+    default Path getModuleConfigsDir() {
+        return this.getServerRoot().resolve("config/modules/");
     }
 
     @NotNull
@@ -69,6 +72,4 @@ public interface SpongeDefaultFileManager {
     default Path getPlatformPluginsConfigDir() {
         return this.getServerRoot().resolve("config/plugins/");
     }
-
-    Path createPathIfNotExists(Path path);
 }

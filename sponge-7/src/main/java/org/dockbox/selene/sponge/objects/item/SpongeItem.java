@@ -19,20 +19,19 @@ package org.dockbox.selene.sponge.objects.item;
 
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
-import com.sk89q.worldedit.blocks.BaseBlock;
 
-import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.impl.objects.item.ReferencedItem;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.item.Enchant;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.keys.PersistentDataKey;
-import org.dockbox.selene.core.objects.keys.TransactionResult;
-import org.dockbox.selene.core.objects.profile.Profile;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.i18n.common.Language;
+import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.item.Enchant;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.keys.PersistentDataKey;
+import org.dockbox.selene.api.objects.keys.TransactionResult;
+import org.dockbox.selene.api.objects.profile.Profile;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.text.Text;
+import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.common.objects.item.ReferencedItem;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
@@ -71,42 +70,55 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         super(id, meta);
     }
 
-    @AssistedInject
-    @Deprecated
-    public SpongeItem(@Assisted BaseBlock baseBlock) {
-        this(SpongeConversionUtil.toSponge(baseBlock).orElse(ItemStack.empty()));
+    @Override
+    public boolean isAir() {
+        if (this.equals(Selene.getItems().getAir())) return true;
+        else {
+            return this.getReference()
+                    .map(itemStack -> itemStack.isEmpty() || itemStack.getType().getType() == ItemTypes.AIR)
+                    .orElse(true);
+        }
     }
 
     @Override
-    protected ItemStack getById(String id, int meta) {
-        ItemStack stack = Sponge.getGame().getRegistry()
-                .getType(ItemType.class, id)
-                .map(ItemStack::of)
-                .orElse(ItemStack.empty());
-
-        stack = ItemStack.builder()
-                .fromContainer(stack.toContainer().set(Constants.ItemStack.DAMAGE_VALUE, meta))
-                .build();
-
-        return stack;
+    public void setDisplayName(Text displayName) {
+        this.getReference()
+                .ifPresent(i -> i.offer(Keys.DISPLAY_NAME, SpongeConversionUtil.toSponge(displayName)));
     }
 
     @Override
     public Text getDisplayName(Language language) {
         Exceptional<ItemStack> ref = this.getReference();
-        Exceptional<Text> name = Exceptional.of(ref.map(i -> i.get(Keys.DISPLAY_NAME)).get()).map(SpongeConversionUtil::fromSponge);
+        Exceptional<Text> name =
+                Exceptional.of(ref.map(i -> i.get(Keys.DISPLAY_NAME)).get())
+                        .map(SpongeConversionUtil::fromSponge);
         if (name.isPresent()) return name.get();
 
         Exceptional<String> translatedName = ref.map(i -> i.getTranslation().get());
         if (translatedName.isPresent()) return Text.of(translatedName.get());
 
-        return Text.of(ref.map(i -> i.getItem().getId()).orElse(IntegratedResource.UNKNOWN.translate(language).asString()));
+        return Text.of(
+                ref.map(i -> i.getType().getId())
+                        .orElse(IntegratedResource.UNKNOWN.translate(language).asString()));
     }
 
     @Override
     public List<Text> getLore() {
-        List<org.spongepowered.api.text.Text> sl = this.getReference().map(i -> i.get(Keys.ITEM_LORE)).get().orElseGet(ArrayList::new);
+        List<org.spongepowered.api.text.Text> sl =
+                this.getReference().map(i -> i.get(Keys.ITEM_LORE)).get().orElseGet(ArrayList::new);
         return sl.stream().map(SpongeConversionUtil::fromSponge).collect(Collectors.toList());
+    }
+
+    @Override
+    public void setLore(List<Text> lore) {
+        this.getReference()
+                .ifPresent(
+                        i ->
+                                i.offer(
+                                        Keys.ITEM_LORE,
+                                        lore.stream()
+                                                .map(SpongeConversionUtil::toSponge)
+                                                .collect(Collectors.toList())));
     }
 
     @Override
@@ -115,18 +127,13 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public void setDisplayName(Text displayName) {
-        this.getReference().ifPresent(i -> i.offer(Keys.DISPLAY_NAME, SpongeConversionUtil.toSponge(displayName)));
+    public void setAmount(int amount) {
+        this.getReference().ifPresent(i -> i.setQuantity(amount));
     }
 
     @Override
     public void removeDisplayName() {
         this.getReference().ifPresent(i -> i.remove(DisplayNameData.class));
-    }
-
-    @Override
-    public void setLore(List<Text> lore) {
-        this.getReference().ifPresent(i -> i.offer(Keys.ITEM_LORE, lore.stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList())));
     }
 
     @Override
@@ -142,29 +149,21 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public void setAmount(int amount) {
-        this.getReference().ifPresent(i -> i.setQuantity(amount));
-    }
-
-    @Override
-    public String getId() {
-        if (this.referenceExists()) {
-            this.setId(this.getReference().get().getType().getId());
-        }
-        return super.getId();
-    }
-
-    @Override
     public int getStackSize() {
         return this.getReference().map(ItemStack::getMaxStackQuantity).orElse(DEFAULT_STACK_SIZE);
     }
 
     @Override
     public List<Enchant> getEnchantments() {
-        List<org.spongepowered.api.item.enchantment.Enchantment> enchantments = this.getReference()
-                .map(i -> i.get(Keys.ITEM_ENCHANTMENTS).orElse(SeleneUtils.emptyList()))
-                .orElse(SeleneUtils.emptyList());
-        return enchantments.stream().map(SpongeConversionUtil::fromSponge).filter(Exceptional::isPresent).map(Exceptional::get).collect(Collectors.toList());
+        List<org.spongepowered.api.item.enchantment.Enchantment> enchantments =
+                this.getReference()
+                        .map(i -> i.get(Keys.ITEM_ENCHANTMENTS).orElse(SeleneUtils.emptyList()))
+                        .orElse(SeleneUtils.emptyList());
+        return enchantments.stream()
+                .map(SpongeConversionUtil::fromSponge)
+                .filter(Exceptional::isPresent)
+                .map(Exceptional::get)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -191,52 +190,103 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
                 .orElse(false);
     }
 
-    @Override
-    public boolean isAir() {
-        if (this.equals(Selene.getItems().getAir())) return true;
-        else {
-            return this.getReference()
-                    .map(itemStack -> itemStack.isEmpty() || itemStack.getType().getType() == ItemTypes.AIR)
-                    .orElse(true);
-        }
-    }
-
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public Item setProfile(Profile profile) {
         if (this.isHead() && profile instanceof SpongeProfile) {
-            this.getReference().ifPresent(itemStack -> {
-                SkullData skullData = Sponge.getGame()
-                        .getDataManager()
-                        .getManipulatorBuilder(SkullData.class)
-                        .get().create()
-                        .set(Keys.SKULL_TYPE, SkullTypes.PLAYER);
-                itemStack.offer(skullData);
+            this.getReference()
+                    .ifPresent(
+                            itemStack -> {
+                                SkullData skullData =
+                                        Sponge.getGame()
+                                                .getDataManager()
+                                                .getManipulatorBuilder(SkullData.class)
+                                                .get()
+                                                .create()
+                                                .set(Keys.SKULL_TYPE, SkullTypes.PLAYER);
+                                itemStack.offer(skullData);
 
-                RepresentedPlayerData representedPlayerData = Sponge.getGame()
-                        .getDataManager()
-                        .getManipulatorBuilder(RepresentedPlayerData.class)
-                        .get().create()
-                        .set(Keys.REPRESENTED_PLAYER, ((SpongeProfile) profile).getGameProfile());
-                itemStack.offer(representedPlayerData);
-            });
+                                RepresentedPlayerData representedPlayerData =
+                                        Sponge.getGame()
+                                                .getDataManager()
+                                                .getManipulatorBuilder(RepresentedPlayerData.class)
+                                                .get()
+                                                .create()
+                                                .set(Keys.REPRESENTED_PLAYER, ((SpongeProfile) profile).getGameProfile());
+                                itemStack.offer(representedPlayerData);
+                            });
         }
         return this;
     }
 
     @Override
     public Item withMeta(int meta) {
+        //noinspection deprecation
         return Item.of(SpongeItem.this.getId(), meta);
     }
 
+    @Override
+    public String getId() {
+        if (this.referenceExists()) {
+            this.setId(this.getReference().get().getType().getId());
+        }
+        return super.getId();
+    }
+
+    @Override
+    protected ItemStack getById(String id, int meta) {
+        ItemStack stack =
+                Sponge.getGame()
+                        .getRegistry()
+                        .getType(ItemType.class, id)
+                        .map(ItemStack::of)
+                        .orElse(ItemStack.empty());
+
+        stack =
+                ItemStack.builder()
+                        .fromContainer(stack.toContainer().set(Constants.ItemStack.DAMAGE_VALUE, meta))
+                        .build();
+
+        return stack;
+    }
+
+    @Override
+    public int getMeta() {
+        return (int)
+                this.getReference()
+                        .map(stack -> stack.toContainer().get(Constants.ItemStack.DAMAGE_VALUE).orElse(0))
+                        .orElse(0);
+    }
+
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    private void performOnEnchantmentData(Enchant enchant, BiConsumer<EnchantmentData, Enchantment> action) {
-        this.getReference().ifPresent(itemStack -> {
-            EnchantmentData enchantmentData = itemStack.getOrCreate(EnchantmentData.class).get();
-            @NotNull Exceptional<org.spongepowered.api.item.enchantment.Enchantment> enchantment =
-                    SpongeConversionUtil.toSponge(enchant);
-            enchantment.ifPresent(e -> action.accept(enchantmentData, e));
-        });
+    private void performOnEnchantmentData(
+            Enchant enchant, BiConsumer<EnchantmentData, Enchantment> action) {
+        this.getReference()
+                .ifPresent(
+                        itemStack -> {
+                            EnchantmentData enchantmentData = itemStack.getOrCreate(EnchantmentData.class).get();
+                            @NotNull
+                            Exceptional<org.spongepowered.api.item.enchantment.Enchantment> enchantment =
+                                    SpongeConversionUtil.toSponge(enchant);
+                            enchantment.ifPresent(e -> action.accept(enchantmentData, e));
+                        });
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (null == obj) return false;
+        if (obj instanceof SpongeItem) {
+            SpongeItem that = (SpongeItem) obj;
+            Exceptional<ItemStack> thisReference = this.getReference();
+            Exceptional<ItemStack> thatReference = that.getReference();
+            if (thisReference.isAbsent() || thatReference.isAbsent()) return false;
+            ItemStack thisStack = thisReference.get().copy();
+            ItemStack thatStack = thatReference.get().copy();
+            thatStack.setQuantity(1);
+            thisStack.setQuantity(1);
+            return thisStack.equalTo(thatStack);
+        }
+        return false;
     }
 
     @Override
@@ -262,22 +312,5 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @Override
     public Exceptional<? extends DataHolder> getDataHolder() {
         return this.getReference();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (null == obj) return false;
-        if (obj instanceof SpongeItem) {
-            SpongeItem that = (SpongeItem) obj;
-            Exceptional<ItemStack> thisReference = this.getReference();
-            Exceptional<ItemStack> thatReference = that.getReference();
-            if (thisReference.isAbsent() || thatReference.isAbsent()) return false;
-            ItemStack thisStack = thisReference.get().copy();
-            ItemStack thatStack = thatReference.get().copy();
-            thatStack.setQuantity(1);
-            thisStack.setQuantity(1);
-            return thisStack.equalTo(thatStack);
-        }
-        return false;
     }
 }

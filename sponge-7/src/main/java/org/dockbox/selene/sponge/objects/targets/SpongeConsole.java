@@ -17,20 +17,24 @@
 
 package org.dockbox.selene.sponge.objects.targets;
 
-import org.dockbox.selene.core.i18n.entry.IntegratedResource;
-import org.dockbox.selene.core.objects.Console;
-import org.dockbox.selene.core.text.Text;
-import org.dockbox.selene.core.text.pagination.Pagination;
+import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.objects.Console;
+import org.dockbox.selene.api.text.Text;
+import org.dockbox.selene.api.text.pagination.Pagination;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
 public final class SpongeConsole extends Console {
 
+    public static Console getInstance() {
+        if (null != Console.instance) return Console.instance;
+        return new SpongeConsole();
+    }
+
     @Override
     public void execute(@NotNull String command) {
-        Sponge.getCommandManager().process(
-                Sponge.getServer().getConsole(), command);
+        Sponge.getCommandManager().process(Sponge.getServer().getConsole(), command);
     }
 
     @Override
@@ -40,19 +44,16 @@ public final class SpongeConsole extends Console {
 
     @Override
     public void sendWithPrefix(@NotNull Text text) {
-        Sponge.getServer().getConsole().sendMessage(org.spongepowered.api.text.Text.of(
-                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
-                SpongeConversionUtil.toSponge(text)
-        ));
+        Sponge.getServer()
+                .getConsole()
+                .sendMessage(
+                        org.spongepowered.api.text.Text.of(
+                                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
+                                SpongeConversionUtil.toSponge(text)));
     }
 
     @Override
     public void sendPagination(@NotNull Pagination pagination) {
         SpongeConversionUtil.toSponge(pagination).sendTo(Sponge.getServer().getConsole());
-    }
-
-    public static Console getInstance() {
-        if (null != Console.instance) return Console.instance;
-        return new SpongeConsole();
     }
 }

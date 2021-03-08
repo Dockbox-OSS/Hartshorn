@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
+import org.dockbox.selene.common.command.values.AbstractArgumentElement;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.GenericArguments;
 
@@ -36,11 +36,6 @@ public class SpongeArgumentElement extends AbstractArgumentElement<CommandElemen
     }
 
     @Override
-    public AbstractArgumentElement<CommandElement> asOptional() {
-        return new SpongeArgumentElement(GenericArguments.optional(this.getReference()));
-    }
-
-    @Override
     protected void ofElements(AbstractArgumentElement<CommandElement>[] elements) {
         CommandElement element;
         if (0 == elements.length) element = GenericArguments.none();
@@ -54,5 +49,10 @@ public class SpongeArgumentElement extends AbstractArgumentElement<CommandElemen
             element = GenericArguments.seq(commandElements);
         }
         this.setReference(element);
+    }
+
+    @Override
+    public AbstractArgumentElement<CommandElement> asOptional() {
+        return new SpongeArgumentElement(GenericArguments.optional(this.getReference()));
     }
 }

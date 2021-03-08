@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
-import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.command.context.ArgumentConverter;
+import org.dockbox.selene.api.command.context.ArgumentConverter;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,22 +42,22 @@ final class SeleneConverterElement extends CommandElement {
 
     @Nullable
     @Override
-    protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
-        return this.argument.convert(
-                SpongeConversionUtil.fromSponge(source).get(),
-                args.next()
-        ).orNull();
+    protected Object parseValue(@NotNull CommandSource source, CommandArgs args)
+            throws ArgumentParseException {
+        return this.argument
+                .convert(SpongeConversionUtil.fromSponge(source).get(), args.next())
+                .orNull();
     }
 
     @NotNull
     @Override
-    public List<String> complete(@NotNull CommandSource src, CommandArgs args, @NotNull CommandContext context) {
+    public List<String> complete(
+            @NotNull CommandSource src, CommandArgs args, @NotNull CommandContext context) {
         try {
-            return SeleneUtils.asList(this.argument.getSuggestions(
-                    SpongeConversionUtil.fromSponge(src).get(),
-                    args.next()
-            ));
-        } catch (ArgumentParseException e) {
+            return SeleneUtils.asList(
+                    this.argument.getSuggestions(SpongeConversionUtil.fromSponge(src).get(), args.next()));
+        }
+        catch (ArgumentParseException e) {
             return SeleneUtils.emptyList();
         }
     }

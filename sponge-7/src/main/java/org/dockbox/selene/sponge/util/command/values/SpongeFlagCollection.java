@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
-import org.dockbox.selene.core.util.SeleneUtils;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentElement;
-import org.dockbox.selene.core.impl.command.values.AbstractArgumentValue;
-import org.dockbox.selene.core.impl.command.values.AbstractFlagCollection;
+import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.common.command.values.AbstractArgumentElement;
+import org.dockbox.selene.common.command.values.AbstractArgumentValue;
+import org.dockbox.selene.common.command.values.AbstractFlagCollection;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.CommandFlags;
 import org.spongepowered.api.command.args.CommandFlags.Builder;
@@ -58,7 +58,8 @@ public class SpongeFlagCollection extends AbstractFlagCollection<CommandFlags.Bu
     @Override
     public List<AbstractArgumentElement<?>> buildAndCombines(AbstractArgumentElement<?> element) {
         if (element instanceof SpongeArgumentElement) {
-            CommandElement commandElement = this.getReference().buildWith(((SpongeArgumentElement) element).getReference());
+            CommandElement commandElement =
+                    this.getReference().buildWith(((SpongeArgumentElement) element).getReference());
             return SeleneUtils.asList(new SpongeArgumentElement(commandElement));
         }
         return SeleneUtils.emptyList();

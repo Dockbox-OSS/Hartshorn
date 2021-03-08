@@ -19,29 +19,32 @@ package org.dockbox.selene.nms.packets;
 
 import net.minecraft.network.play.server.SPacketChangeGameState;
 
-import org.dockbox.selene.core.Weather;
-import org.dockbox.selene.core.objects.keys.Keys;
-import org.dockbox.selene.core.packets.ChangeGameStatePacket;
-import org.dockbox.selene.core.server.properties.InjectorProperty;
-import org.dockbox.selene.core.util.Reflect;
+import org.dockbox.selene.api.objects.keys.Keys;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
+import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
+import org.dockbox.selene.packets.ChangeGameStatePacket;
+import org.dockbox.selene.packets.data.Weather;
 
 /**
- * Represents a global gamestate change packet. See <a href="https://wiki.vg/Protocol#Change_Game_State">Protocol - Change Game State</a> for more
+ * Represents a global gamestate change packet. See <a
+ * href="https://wiki.vg/Protocol#Change_Game_State">Protocol - Change Game State</a> for more
  * details. Only supports weather gamestates.
  */
-public class NMSChangeGameStatePacket extends ChangeGameStatePacket implements NMSPacket<SPacketChangeGameState> {
+public class NMSChangeGameStatePacket extends ChangeGameStatePacket
+        implements NMSPacket<SPacketChangeGameState> {
 
     private SPacketChangeGameState nativePacket;
 
     @Override
     public Weather getWeather() {
-        int state = Reflect.getFieldValue(
-            SPacketChangeGameState.class,
-            this.nativePacket,
-            "field_149140_b", // state
-            int.class)
-            .orElse(Weather.CLEAR.getGameStateId());
+        int state =
+                Reflect.getFieldValue(
+                        SPacketChangeGameState.class,
+                        this.nativePacket,
+                        "field_149140_b", // state
+                        int.class)
+                        .orElse(Weather.CLEAR.getGameStateId());
         return Weather.getByGameStateId(state);
     }
 
@@ -52,15 +55,16 @@ public class NMSChangeGameStatePacket extends ChangeGameStatePacket implements N
 
     @Override
     public SPacketChangeGameState getPacket() {
-        return null == this.nativePacket ? new SPacketChangeGameState(super.getWeather().getGameStateId(), 0f) : this.nativePacket;
+        return null == this.nativePacket
+                ? new SPacketChangeGameState(super.getWeather().getGameStateId(), 0f)
+                : this.nativePacket;
     }
 
     @Override
     public void stateEnabling(InjectorProperty<?>... injectorProperties) {
-        this.nativePacket = Keys.getPropertyValue(
-            NativePacketProperty.KEY,
-            SPacketChangeGameState.class,
-            injectorProperties
-        ).orElseGet(SPacketChangeGameState::new);
+        this.nativePacket =
+                Keys.getPropertyValue(
+                        NativePacketProperty.KEY, SPacketChangeGameState.class, injectorProperties)
+                        .orElseGet(SPacketChangeGameState::new);
     }
 }

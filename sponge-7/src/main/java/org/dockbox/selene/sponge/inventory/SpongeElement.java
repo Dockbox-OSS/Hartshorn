@@ -20,15 +20,15 @@ package org.dockbox.selene.sponge.inventory;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
-import org.dockbox.selene.core.inventory.Element;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.player.Player;
+import org.dockbox.selene.api.inventory.Element;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.player.Player;
 
 import java.util.function.Consumer;
 
 public class SpongeElement implements Element {
 
-    private Item item;
+    private final Item item;
     private Consumer<Player> onClick;
 
     @Inject

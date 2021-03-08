@@ -22,7 +22,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
 
@@ -38,7 +38,7 @@ static def getVersionName() {
 
 version = getVersionName()
 group = project.pluginGroup
-description = 'Common sources for Selene extensions'
+description = 'Common sources for Selene modules'
 def date = LocalDate.now().toString()
 
 subprojects { Project subProject ->
@@ -46,6 +46,7 @@ subprojects { Project subProject ->
     apply plugin: 'maven'
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'org.cadixdev.licenser'
+
     license {
         header = rootProject.file("HEADER.txt")
         ignoreFailures = true
@@ -61,12 +62,14 @@ subprojects { Project subProject ->
     tasks.build {
         dependsOn tasks.updateLicenses
         dependsOn tasks.shadowJar
+        finalizedBy tasks.clean
     }
 
     shadowJar {
         relocate 'com.fasterxml.jackson', 'org.dockbox.selene.internal.jackson'
         relocate 'org.apache.commons', 'org.dockbox.selene.internal.apache.commons'
     }
+
 }
 
 allprojects {
@@ -101,6 +104,9 @@ allprojects {
                 exclude module: 'opus-java'
             }
 
+            compile group: 'com.mortennobel', name: 'java-image-scaling', version: '0.8.6'
+            compile group: 'com.jhlabs', name: 'filters', version: '2.0.235-1'
+
             // Required plugins for all platforms
             compileOnly "com.boydti:fawe-api:$faweVersion"
             compileOnly "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
@@ -124,6 +130,7 @@ allprojects {
             testImplementation "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
             testImplementation "com.plotsquared:plotsquared-api:$plotSquaredVersion"
             testImplementation "com.google.inject:guice:$guiceVersion"
+            testImplementation "com.google.guava:guava:$guavaVersion"
         }
 
         test {
@@ -150,3 +157,5 @@ task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all 
         }
     }
 }
+
+wrapper { gradleVersion = '5.6' }

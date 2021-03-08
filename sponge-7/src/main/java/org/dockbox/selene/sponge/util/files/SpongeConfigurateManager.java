@@ -17,24 +17,24 @@
 
 package org.dockbox.selene.sponge.util.files;
 
-import org.dockbox.selene.core.files.FileManager;
-import org.dockbox.selene.core.files.FileType;
-import org.dockbox.selene.core.impl.files.DefaultConfigurateManager;
-import org.dockbox.selene.core.objects.Exceptional;
+import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.api.files.FileType;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.common.files.DefaultConfigurateManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
 /**
- * Uses SpongeDefaultFileManager to determine the directory paths. This way all directory paths can be reused by other
- * FileManager implementations without the need of redefining these when changes are made. Due to multiple inheritance
- * not being possible in Java, a interface is used for this purpose, requiring us to directly target the interface super.
+ * Uses SpongeDefaultFileManager to determine the directory paths. This way all directory paths can
+ * be reused by other FileManager implementations without the need of redefining these when changes
+ * are made. Due to multiple inheritance not being possible in Java, a interface is used for this
+ * purpose, requiring us to directly target the interface super.
  */
-public class SpongeConfigurateManager extends DefaultConfigurateManager implements SpongeDefaultFileManager {
+public class SpongeConfigurateManager extends DefaultConfigurateManager
+        implements SpongeDefaultFileManager {
 
-    /**
-     * Provides the given {@link FileType} to the super type {@link FileManager}.
-     */
+    /** Provides the given {@link FileType} to the super type {@link FileManager}. */
     protected SpongeConfigurateManager() {
         super(FileType.YAML);
     }
@@ -59,8 +59,8 @@ public class SpongeConfigurateManager extends DefaultConfigurateManager implemen
 
     @NotNull
     @Override
-    public Path getExtensionDir() {
-        return SpongeDefaultFileManager.super.getExtensionDir();
+    public Path getModuleDir() {
+        return SpongeDefaultFileManager.super.getModuleDir();
     }
 
     @NotNull
@@ -77,8 +77,8 @@ public class SpongeConfigurateManager extends DefaultConfigurateManager implemen
 
     @NotNull
     @Override
-    public Path getExtensionConfigsDir() {
-        return SpongeDefaultFileManager.super.getExtensionConfigsDir();
+    public Path getModuleConfigsDir() {
+        return SpongeDefaultFileManager.super.getModuleConfigsDir();
     }
 
     @NotNull

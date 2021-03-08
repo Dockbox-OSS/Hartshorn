@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.tasks.Task;
-import org.dockbox.selene.core.tasks.TaskRunner;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.tasks.Task;
+import org.dockbox.selene.api.tasks.TaskRunner;
 import org.spongepowered.api.Sponge;
 
 import java.util.concurrent.TimeUnit;
@@ -28,7 +28,8 @@ public class SpongeTaskRunner extends TaskRunner {
 
     @Override
     public void accept(Task task) {
-        Sponge.getScheduler().createTaskBuilder()
+        Sponge.getScheduler()
+                .createTaskBuilder()
                 .execute(task::run)
                 .name("Selene$" + task.getClass().getSimpleName() + '#' + System.currentTimeMillis())
                 .async()
@@ -37,7 +38,8 @@ public class SpongeTaskRunner extends TaskRunner {
 
     @Override
     public void acceptDelayed(Task task, long delay, TimeUnit timeUnit) {
-        Sponge.getScheduler().createTaskBuilder()
+        Sponge.getScheduler()
+                .createTaskBuilder()
                 .delay(delay, timeUnit)
                 .execute(task::run)
                 .name("Selene$" + task.getClass().getSimpleName() + '#' + System.currentTimeMillis())

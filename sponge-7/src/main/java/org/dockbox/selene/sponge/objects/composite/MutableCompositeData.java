@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.composite;
 
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataContainer;
@@ -29,33 +29,49 @@ import org.spongepowered.api.data.merge.MergeFunction;
 import java.util.Map;
 import java.util.Optional;
 
-public class MutableCompositeData extends AbstractData<MutableCompositeData, ImmutableCompositeData> {
+public class MutableCompositeData
+        extends AbstractData<MutableCompositeData, ImmutableCompositeData> {
 
+    private final Map<String, Object> data = SeleneUtils.emptyMap();
 
     public MutableCompositeData() {
         this.registerGettersAndSetters();
     }
 
-    private final Map<String, Object> data = SeleneUtils.emptyMap();
-
     @Override
     protected void registerGettersAndSetters() {
         this.registerFieldGetter(Composite.ITEM_KEY, () -> this.data);
         this.registerFieldSetter(Composite.ITEM_KEY, this::fillData);
-        this.registerKeyValue(Composite.ITEM_KEY, () ->
-                Sponge.getRegistry().getValueFactory().createMapValue(Composite.ITEM_KEY, this.data, SeleneUtils.emptyMap()));
-    }
-
-    @Override
-    public @NotNull Optional<MutableCompositeData> fill(@NotNull DataHolder dataHolder, @NotNull MergeFunction overlap) {
-        MutableCompositeData itemData = overlap.merge(this, dataHolder.get(MutableCompositeData.class).orElse(null));
-        this.fillData(itemData.data);
-        return Optional.of(this);
+        this.registerKeyValue(
+                Composite.ITEM_KEY,
+                () ->
+                        Sponge.getRegistry()
+                                .getValueFactory()
+                                .createMapValue(Composite.ITEM_KEY, this.data, SeleneUtils.emptyMap()));
     }
 
     @Override
     public boolean supports(@NotNull Key<?> key) {
         return Composite.ITEM_KEY == key;
+    }
+
+    @Override
+    public @NotNull DataContainer toContainer() {
+        return super.toContainer().set(Composite.ITEM_KEY, this.data);
+    }
+
+    public void fillData(Map<String, Object> data) {
+        this.data.clear();
+        this.data.putAll(data);
+    }
+
+    @Override
+    public @NotNull Optional<MutableCompositeData> fill(
+            @NotNull DataHolder dataHolder, @NotNull MergeFunction overlap) {
+        MutableCompositeData itemData =
+                overlap.merge(this, dataHolder.get(MutableCompositeData.class).orElse(null));
+        this.fillData(itemData.data);
+        return Optional.of(this);
     }
 
     @Override
@@ -80,16 +96,6 @@ public class MutableCompositeData extends AbstractData<MutableCompositeData, Imm
     @Override
     public int getContentVersion() {
         return 1;
-    }
-
-    public void fillData(Map<String, Object> data) {
-        this.data.clear();
-        this.data.putAll(data);
-    }
-
-    @Override
-    public @NotNull DataContainer toContainer() {
-        return super.toContainer().set(Composite.ITEM_KEY, this.data);
     }
 
     public Map<String, Object> getData() {

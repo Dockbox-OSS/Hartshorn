@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.sponge.listeners;
 
-import org.dockbox.selene.core.events.chat.NativeCommandEvent;
-import org.dockbox.selene.core.events.parents.Cancellable;
+import org.dockbox.selene.api.events.chat.NativeCommandEvent;
+import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.event.Listener;
@@ -32,12 +32,12 @@ public class SpongeCommandListener {
             String command = commandEvent.getCommand();
             String argsJoined = commandEvent.getArguments();
             String[] args = argsJoined.split(" ");
-            Cancellable event = new NativeCommandEvent(
-                    SpongeConversionUtil.fromSponge((CommandSource) commandEvent.getSource()).orNull(),
-                    command,
-                    args);
+            Cancellable event =
+                    new NativeCommandEvent(
+                            SpongeConversionUtil.fromSponge((CommandSource) commandEvent.getSource()).orNull(),
+                            command,
+                            args);
             commandEvent.setCancelled(event.post().isCancelled());
         }
     }
-
 }

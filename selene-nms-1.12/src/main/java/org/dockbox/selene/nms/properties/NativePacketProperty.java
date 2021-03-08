@@ -19,15 +19,16 @@ package org.dockbox.selene.nms.properties;
 
 import net.minecraft.network.Packet;
 
-import org.dockbox.selene.core.server.properties.InjectorProperty;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
 
 /**
- * Provides a native {@link Packet} to a property holder, typically this is only used for {@link org.dockbox.selene.nms.packets.NMSPacket NMSPackets}.
+ * Provides a native {@link Packet} to a property holder, typically this is only used for {@link
+ * org.dockbox.selene.nms.packets.NMSPacket NMSPackets}.
  *
  * @param <T>
- *     The type of the native packet.
+ *         The type of the native packet.
  */
-public class NativePacketProperty<T extends Packet> implements InjectorProperty<T> {
+public class NativePacketProperty<T extends Packet<?>> implements InjectorProperty<T> {
 
     public static final String KEY = "SeleneSpongeNativePacket";
     private final T packet;
