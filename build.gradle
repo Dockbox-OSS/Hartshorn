@@ -46,6 +46,7 @@ subprojects { Project subProject ->
     apply plugin: 'maven'
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'org.cadixdev.licenser'
+
     license {
         header = rootProject.file("HEADER.txt")
         ignoreFailures = true
@@ -68,6 +69,7 @@ subprojects { Project subProject ->
         relocate 'com.fasterxml.jackson', 'org.dockbox.selene.internal.jackson'
         relocate 'org.apache.commons', 'org.dockbox.selene.internal.apache.commons'
     }
+
 }
 
 allprojects {
@@ -155,3 +157,5 @@ task aggregatedJavadocs(type: Javadoc, description: 'Generate javadocs from all 
         }
     }
 }
+
+wrapper { gradleVersion = '5.6' }
