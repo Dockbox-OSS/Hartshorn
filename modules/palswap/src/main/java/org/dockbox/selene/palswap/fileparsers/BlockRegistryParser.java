@@ -2,12 +2,12 @@ package org.dockbox.selene.palswap.fileparsers;
 
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.core.MinecraftVersion;
-import org.dockbox.selene.core.files.FileManager;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.MinecraftVersion;
+import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.palswap.BlockRegistryExtension;
 import org.jetbrains.annotations.NotNull;
 

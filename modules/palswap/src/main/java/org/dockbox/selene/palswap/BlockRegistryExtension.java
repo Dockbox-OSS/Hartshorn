@@ -1,24 +1,23 @@
 package org.dockbox.selene.palswap;
 
 import com.google.inject.Inject;
-import com.sk89q.worldedit.blocks.BaseBlock;
 
-import org.dockbox.selene.core.annotations.command.Command;
-import org.dockbox.selene.core.annotations.event.Listener;
-import org.dockbox.selene.core.annotations.extension.Extension;
-import org.dockbox.selene.core.annotations.files.Bulk;
-import org.dockbox.selene.core.command.context.CommandContext;
-import org.dockbox.selene.core.command.source.CommandSource;
-import org.dockbox.selene.core.events.server.ServerEvent.ServerStartedEvent;
-import org.dockbox.selene.core.events.server.ServerEvent.ServerStoppingEvent;
-import org.dockbox.selene.core.files.FileManager;
-import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.inventory.Slot;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.objects.player.Player;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.properties.AnnotationProperty;
+import org.dockbox.selene.api.annotations.command.Command;
+import org.dockbox.selene.api.annotations.event.Listener;
+import org.dockbox.selene.api.annotations.files.Bulk;
+import org.dockbox.selene.api.annotations.module.Module;
+import org.dockbox.selene.api.command.context.CommandContext;
+import org.dockbox.selene.api.command.source.CommandSource;
+import org.dockbox.selene.api.events.server.ServerEvent.ServerStartedEvent;
+import org.dockbox.selene.api.events.server.ServerEvent.ServerStoppingEvent;
+import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.api.i18n.common.Language;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.inventory.Slot;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.properties.AnnotationProperty;
 import org.dockbox.selene.palswap.fileparsers.BlockRegistryParser;
 import org.dockbox.selene.structures.registry.Registry;
 import org.jetbrains.annotations.Nullable;
@@ -29,9 +28,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 @Command(aliases = "registry", usage = "registry")
-@Extension(id = "blockregistrygenerator", name = "Block Registry Generator",
-           description = "Generates the block identifiers and a registry of all the blocks",
-           authors = "pumbas600")
+@Module(id = "blockregistrygenerator", name = "Block Registry Generator",
+        description = "Generates the block identifiers and a registry of all the blocks",
+        authors = "pumbas600")
 public class BlockRegistryExtension {
 
     @Inject
@@ -109,10 +108,10 @@ public class BlockRegistryExtension {
         blockRegistry = loadBlockRegistry();
     }
 
-    @Command(aliases = "add", usage = "add <item>{BaseBlock}")
+    @Command(aliases = "add", usage = "add <item{String}>")
     public void addItem(CommandSource src, CommandContext context) {
-        BaseBlock baseBlock = context.getArgument("item", BaseBlock.class).get().getValue();
-        addItem(Item.of(baseBlock));
+        String blockId = context.get("item");
+        addItem(Item.of(blockId));
     }
 
     @Command(aliases = "add", usage = "add")

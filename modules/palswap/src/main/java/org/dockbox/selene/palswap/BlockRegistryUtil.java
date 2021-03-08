@@ -1,8 +1,8 @@
 package org.dockbox.selene.palswap;
 
-import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.server.Selene;
+import org.dockbox.selene.api.i18n.common.Language;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.palswap.fileparsers.BlockRegistryParser;
 import org.dockbox.selene.palswap.fileparsers.MC1_12BlockRegistryParser;
 

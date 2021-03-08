@@ -1,6 +1,6 @@
 package org.dockbox.selene.palswap.fileparsers;
 
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 

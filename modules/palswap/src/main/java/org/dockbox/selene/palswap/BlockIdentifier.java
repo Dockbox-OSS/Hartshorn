@@ -1,9 +1,9 @@
 package org.dockbox.selene.palswap;
 
-import org.dockbox.selene.core.i18n.common.Language;
-import org.dockbox.selene.core.objects.Exceptional;
-import org.dockbox.selene.core.objects.item.Item;
-import org.dockbox.selene.core.util.SeleneUtils;
+import org.dockbox.selene.api.i18n.common.Language;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.structures.registry.RegistryIdentifier;
 
 import java.util.Map;
