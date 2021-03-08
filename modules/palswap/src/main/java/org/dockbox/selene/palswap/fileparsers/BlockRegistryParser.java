@@ -1,6 +1,21 @@
-package org.dockbox.selene.palswap.fileparsers;
+/*
+ * Copyright (C) 2020 Guus Lieben
+ *
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
 
-import com.google.inject.Singleton;
+package org.dockbox.selene.palswap.fileparsers;
 
 import org.dockbox.selene.api.MinecraftVersion;
 import org.dockbox.selene.api.files.FileManager;
@@ -19,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Singleton
 public abstract class BlockRegistryParser {
 
     //TODO: add command updates ItemData
@@ -60,8 +74,10 @@ public abstract class BlockRegistryParser {
             String id = this.getItemID(item);
             String blockIdentifier = eBlockIdentifier.get();
             this.blockIdentifierIDs.put(id, blockIdentifier);
-            blockIdentifiers.add(blockIdentifier);
 
+            if (!blockIdentifiers.contains(blockIdentifier)) {
+                blockIdentifiers.add(blockIdentifier);
+            }
             this.registerItem(rawID, item);
         }
         return blockIdentifiers;
@@ -133,7 +149,4 @@ public abstract class BlockRegistryParser {
     public abstract String getItemID(Item item);
 
     public abstract Item getItemFromRawID(String rawID);
-
-    //TODO: Remove (Not really needed?)
-    public abstract String getOverridenBlockNamesFile();
 }
