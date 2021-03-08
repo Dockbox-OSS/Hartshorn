@@ -41,7 +41,7 @@ public class BlockRegistryTestExtension {
         player.getInventory().give(Item.of(id));
     }
 
-    @Command(aliases = "blockmeta", usage = "blockmeta <id>{String} <meta>{Integer}")
+    @Command(aliases = "blockmeta", usage = "blockmeta <id> <meta{Integer}>")
     public void blockMeta(@NotNull Player player, CommandContext context) {
 
         String id = context.get("id");
