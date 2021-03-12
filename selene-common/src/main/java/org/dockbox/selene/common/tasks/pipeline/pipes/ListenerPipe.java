@@ -23,15 +23,15 @@ import org.dockbox.selene.api.objects.Exceptional;
 @FunctionalInterface
 public interface ListenerPipe<I> extends StandardPipe<I, I> {
 
-  static <I> ListenerPipe<I> of(ListenerPipe<I> pipe) {
-    return pipe;
-  }
+    static <I> ListenerPipe<I> of(ListenerPipe<I> pipe) {
+        return pipe;
+    }
 
-  @Override
-  default I apply(Exceptional<I> input) throws Exception {
-    this.execute(input.orNull());
-    return input.orNull();
-  }
+    @Override
+    default I apply(Exceptional<I> input) throws Exception {
+        this.execute(input.orNull());
+        return input.orNull();
+    }
 
-  void execute(I input) throws Exception;
+    void execute(I input) throws Exception;
 }

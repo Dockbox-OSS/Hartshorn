@@ -35,6 +35,7 @@ import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.events.player.PlayerConnectionEvent.PlayerAuthEvent;
 import org.dockbox.selene.api.events.player.PlayerConnectionEvent.PlayerJoinEvent;
 import org.dockbox.selene.api.events.player.PlayerConnectionEvent.PlayerLeaveEvent;
+import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerPortalEvent;
 import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerSwitchWorldEvent;
 import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerTeleportEvent;
 import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerWarpEvent;
@@ -46,6 +47,7 @@ import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.location.Warp;
 import org.dockbox.selene.api.objects.player.ClickType;
 import org.dockbox.selene.api.objects.player.Hand;
+import org.dockbox.selene.api.objects.special.PortalType;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.entities.SpongeArmorStand;
@@ -122,9 +124,9 @@ public class SpongePlayerListener {
         Location fromLocation = SpongeConversionUtil.fromSponge(from.getLocation());
         Location toLocation = SpongeConversionUtil.fromSponge(to.getLocation());
 
-        Cancellable event =
-                new PlayerTeleportEvent(SpongeConversionUtil.fromSponge(player), fromLocation, toLocation)
-                        .post();
+        PlayerTeleportEvent event =
+                new PlayerTeleportEvent(SpongeConversionUtil.fromSponge(player), fromLocation, toLocation);
+        event.post();
         teleportEvent.setCancelled(event.isCancelled());
 
         if (!fromLocation.getWorld().equals(toLocation.getWorld()) && !event.isCancelled()) {
@@ -136,6 +138,32 @@ public class SpongePlayerListener {
                             .post();
 
             teleportEvent.setCancelled(worldEvent.isCancelled());
+        }
+
+        if (!event.getNewLocation().equals(toLocation)) {
+            teleportEvent.getToTransform().setExtent(SpongeConversionUtil.toSponge(toLocation.getWorld()).orNull());
+            teleportEvent.getToTransform().setPosition(SpongeConversionUtil.toSponge(toLocation.getVectorLoc()));
+        }
+    }
+
+    @Listener
+    public void onPlayerPortalUse(MoveEntityEvent.Teleport.Portal portalEvent,
+                                  @First Player player,
+                                  @Getter("getUsePortalAgent") boolean usePortalAgent,
+                                  @Getter("getFromTransform") Transform<World> from,
+                                  @Getter("getToTransform") Transform<World> to) {
+        Location fromLocation = SpongeConversionUtil.fromSponge(from.getLocation());
+        Location toLocation = SpongeConversionUtil.fromSponge(to.getLocation());
+
+        PortalType portalType = PortalType.NETHER; // TODO: Implementation to detect portal type
+        PlayerPortalEvent event = new PlayerPortalEvent(SpongeConversionUtil.fromSponge(player), fromLocation, toLocation,
+                usePortalAgent, portalType);
+        portalEvent.setCancelled(event.isCancelled());
+        portalEvent.setUsePortalAgent(portalEvent.getPortalAgent() != null && event.usesPortal());
+
+        if (!event.getNewLocation().equals(toLocation)) {
+            portalEvent.getToTransform().setExtent(SpongeConversionUtil.toSponge(toLocation.getWorld()).orNull());
+            portalEvent.getToTransform().setPosition(SpongeConversionUtil.toSponge(toLocation.getVectorLoc()));
         }
     }
 

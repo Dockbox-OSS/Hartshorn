@@ -57,4 +57,16 @@ public class SpongeWorldStorageService implements WorldStorageService {
     public Exceptional<World> getWorld(@NotNull UUID uuid) {
         return Exceptional.of(Sponge.getServer().loadWorld(uuid)).map(SpongeConversionUtil::fromSponge);
     }
+
+    @Override
+    public boolean hasWorld(String name) {
+        return Sponge.getServer().getAllWorldProperties().stream()
+                .anyMatch(properties -> properties.getWorldName().equalsIgnoreCase(name));
+    }
+
+    @Override
+    public boolean hasWorld(UUID uuid) {
+        return Sponge.getServer().getAllWorldProperties().stream()
+                .anyMatch(properties -> properties.getUniqueId().equals(uuid));
+    }
 }

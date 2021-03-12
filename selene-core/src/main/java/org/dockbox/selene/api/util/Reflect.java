@@ -566,11 +566,10 @@ public final class Reflect {
         Module module = type.getAnnotation(Module.class);
         module = null != module ? module : Reflect.getModule(type.getSuperclass());
         if (null == module)
-            module =
-                    Selene.getServer()
-                            .getInstanceSafe(ModuleManager.class)
-                            .map(em -> em.getHeader(type).orNull())
-                            .orNull();
+            module = Selene.getServer()
+                    .getInstanceSafe(ModuleManager.class)
+                    .map(em -> em.getHeader(type).orNull())
+                    .orNull();
         return module;
     }
 

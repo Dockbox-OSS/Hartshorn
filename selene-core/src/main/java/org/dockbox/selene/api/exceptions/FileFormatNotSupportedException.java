@@ -20,18 +20,18 @@ package org.dockbox.selene.api.exceptions;
 import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
 
 public class FileFormatNotSupportedException extends CheckedSeleneException {
-  private final String format;
+    private final String format;
 
-  public FileFormatNotSupportedException(String format, Throwable cause) {
-    super("File format '" + format + "' is not supported", cause);
-    this.format = format;
-  }
+    public FileFormatNotSupportedException(String format) {
+        this(format, null);
+    }
 
-  public FileFormatNotSupportedException(String format) {
-    this(format, null);
-  }
+    public FileFormatNotSupportedException(String format, Throwable cause) {
+        super("File format '" + format + "' is not supported", cause);
+        this.format = format;
+    }
 
-  public String getFormat() {
-    return this.format;
-  }
+    public String getFormat() {
+        return this.format;
+    }
 }

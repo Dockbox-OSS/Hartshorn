@@ -18,15 +18,15 @@
 package org.dockbox.selene.api.exceptions.global;
 
 public class CheckedSeleneException extends Exception {
-  public CheckedSeleneException(String message) {
-    super(message);
-  }
+    public CheckedSeleneException(String message) {
+        super(message);
+    }
 
-  public CheckedSeleneException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public CheckedSeleneException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public CheckedSeleneException(Throwable cause) {
-    super(cause);
-  }
+    public CheckedSeleneException(Throwable cause) {
+        super(cause);
+    }
 }

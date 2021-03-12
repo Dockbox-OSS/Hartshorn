@@ -37,11 +37,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Filter {
-  String param();
+    String param();
 
-  String value() default "";
+    String value() default "";
 
-  Class<?> target() default Void.class;
+    Class<?> target() default Void.class;
 
-  FilterTypes type() default FilterTypes.EQUALS;
+    FilterTypes type() default FilterTypes.EQUALS;
 }

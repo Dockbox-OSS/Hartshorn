@@ -33,4 +33,5 @@ import java.util.function.Function;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Ignore {}
+public @interface Ignore {
+}

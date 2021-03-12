@@ -31,6 +31,7 @@ import org.dockbox.selene.palswap.fileparsers.ItemData;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -123,23 +124,24 @@ public enum VariantIdentifier implements RegistryIdentifier {
     }
 
     public static String getBlockNameWithoutVariant(String name) {
-        name = getOverridenBlockNames().getItemRegistry().getOrDefault(name.replace(" ", "_"), name);
+        name = getOverridenBlockNames().getItemRegistry().getOrDefault(name.replace(" ", "_"), name.replaceAll("_", " "));
 
         Matcher matcher = blockNameIdentifierRegex.matcher(prepareForMatcher(name));
 
+        String blockName = name;
         if (matcher.matches()) {
             String lastWord = matcher.group(2);
             String secondLastWord = matcher.group(1);
 
             if (of(secondLastWord + lastWord).isPresent())
-                return name.replace(" " + secondLastWord + lastWord, "").trim();
-            if (of(lastWord).isPresent())
-                return name.replace(lastWord, "").trim();
-            if (name.split(" ")[0].equalsIgnoreCase("horizontal") && lastWord.equalsIgnoreCase("beam"))
-                return name.replace("Horizontal", "").trim();
+                blockName = name.replace(" " + secondLastWord + lastWord, "").trim();
+            else if (of(lastWord).isPresent())
+                blockName = name.replace(lastWord, "").trim();
+            else if (name.split(" ")[0].equalsIgnoreCase("horizontal") && lastWord.equalsIgnoreCase("beam"))
+                blockName = name.replace("Horizontal", "").trim();
         }
 
-        return name.trim();
+        return SeleneUtils.capitalize(blockName.toLowerCase(Locale.ROOT).trim());
     }
 
     public static Exceptional<VariantIdentifier> ofName(String name) {

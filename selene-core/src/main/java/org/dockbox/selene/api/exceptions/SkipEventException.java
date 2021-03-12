@@ -25,7 +25,7 @@ import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
  * {@link org.dockbox.selene.api.events.EventBus}.
  */
 public class SkipEventException extends CheckedSeleneException {
-  public SkipEventException() {
-    super("Skipping event");
-  }
+    public SkipEventException() {
+        super("Skipping event");
+    }
 }

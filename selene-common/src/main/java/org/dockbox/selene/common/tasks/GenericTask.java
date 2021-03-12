@@ -24,22 +24,22 @@ import org.dockbox.selene.common.tasks.pipeline.pipes.EqualPipe;
 @SuppressWarnings("AbstractClassNeverImplemented") // API type
 public abstract class GenericTask extends AbstractTask {
 
-  private final Pipeline<Void> pipeline;
+    private final Pipeline<Void> pipeline;
 
-  protected GenericTask() {
-    this.pipeline = new Pipeline<>();
-    this.pipeline.addPipe((EqualPipe<Void>) this::onTaskInit);
-    this.pipeline.addPipe((EqualPipe<Void>) GenericTask.this::perform);
-    this.pipeline.addPipe((EqualPipe<Void>) this::onTaskComplete);
-  }
+    protected GenericTask() {
+        this.pipeline = new Pipeline<>();
+        this.pipeline.addPipe((EqualPipe<Void>) this::onTaskInit);
+        this.pipeline.addPipe((EqualPipe<Void>) GenericTask.this::perform);
+        this.pipeline.addPipe((EqualPipe<Void>) this::onTaskComplete);
+    }
 
-  @Override
-  public void run() {
-    this.pipeline.process(null);
-  }
+    @Override
+    public void run() {
+        this.pipeline.process(null);
+    }
 
-  @Override
-  public void cancel() {
-    this.pipeline.cancelPipeline();
-  }
+    @Override
+    public void cancel() {
+        this.pipeline.cancelPipeline();
+    }
 }

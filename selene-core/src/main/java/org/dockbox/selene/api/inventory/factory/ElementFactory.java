@@ -27,5 +27,5 @@ import java.util.function.Consumer;
 @FunctionalInterface
 public interface ElementFactory {
 
-  Element create(Item item, Consumer<Player> onClick);
+    Element create(Item item, Consumer<Player> onClick);
 }

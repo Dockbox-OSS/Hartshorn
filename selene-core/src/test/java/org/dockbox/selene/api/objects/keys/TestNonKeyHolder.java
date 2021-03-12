@@ -19,6 +19,6 @@ package org.dockbox.selene.api.objects.keys;
 
 public class TestNonKeyHolder {
 
-  // Nothing needs to be done here
+    // Nothing needs to be done here
 
 }

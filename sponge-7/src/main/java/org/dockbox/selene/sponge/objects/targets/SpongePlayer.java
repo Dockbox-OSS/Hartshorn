@@ -214,6 +214,12 @@ public class SpongePlayer extends Player
     public Exceptional<org.spongepowered.api.entity.living.player.Player>
     constructInitialReference() {
         return Exceptional.of(Sponge.getServer().getPlayer(this.getUniqueId()));
+    }
+
+    @Override
+    public void execute(@NotNull String command) {
+        if (this.referenceExists())
+            Sponge.getCommandManager().process(this.getReference().get(), command);
     }    @NotNull
     @Override
     public Location getLocation() {
@@ -223,22 +229,10 @@ public class SpongePlayer extends Player
     }
 
     @Override
-    public void execute(@NotNull String command) {
-        if (this.referenceExists())
-            Sponge.getCommandManager().process(this.getReference().get(), command);
-    }
-
-    @Override
     public void send(@NotNull ResourceEntry text) {
         String formattedValue =
                 IntegratedResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
         this.send(Text.of(formattedValue));
-    }    @Override
-    public void setLocation(@NotNull Location location) {
-        if (this.referenceExists()) {
-            SpongeConversionUtil.toSponge(location)
-                    .ifPresent(loc -> this.getReference().get().setLocation(loc));
-        }
     }
 
     @Override
@@ -257,13 +251,12 @@ public class SpongePlayer extends Player
         String formattedValue =
                 IntegratedResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
         this.sendWithPrefix(Text.of(formattedValue));
-    }    @NotNull
-    @Override
-    public World getWorld() {
-        // No reference refresh required as this is done by getLocation. Should never throw NPE as
-        // Location is either
-        // valid or EMPTY (World instance follows this same guideline).
-        return this.getLocation().getWorld();
+    }    @Override
+    public void setLocation(@NotNull Location location) {
+        if (this.referenceExists()) {
+            SpongeConversionUtil.toSponge(location)
+                    .ifPresent(loc -> this.getReference().get().setLocation(loc));
+        }
     }
 
     @Override
@@ -295,6 +288,13 @@ public class SpongePlayer extends Player
         text = event.getMessage();
         if (event.isCancelled()) return Exceptional.empty();
         else return Exceptional.ofNullable(text);
+    }    @NotNull
+    @Override
+    public World getWorld() {
+        // No reference refresh required as this is done by getLocation. Should never throw NPE as
+        // Location is either
+        // valid or EMPTY (World instance follows this same guideline).
+        return this.getLocation().getWorld();
     }
 
     @Override
@@ -382,6 +382,8 @@ public class SpongePlayer extends Player
     public Exceptional<org.spongepowered.api.entity.living.player.Player> getSpongePlayer() {
         return this.getReference();
     }
+
+
 
 
 

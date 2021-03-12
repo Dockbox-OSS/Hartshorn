@@ -28,41 +28,41 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Module {
-  /**
-   * The identifier of the module, in snake_case. This is typically used to obtain the module
-   * instance, header, or context through {@link ModuleManager}.
-   *
-   * @return the identifier
-   */
-  String id();
+    /**
+     * The identifier of the module, in snake_case. This is typically used to obtain the module
+     * instance, header, or context through {@link ModuleManager}.
+     *
+     * @return the identifier
+     */
+    String id();
 
-  /**
-   * The human-readable name of the module.
-   *
-   * @return the name
-   */
-  String name();
+    /**
+     * The human-readable name of the module.
+     *
+     * @return the name
+     */
+    String name();
 
-  /**
-   * The human-readable description of the module.
-   *
-   * @return the human-readable description
-   */
-  String description();
+    /**
+     * The human-readable description of the module.
+     *
+     * @return the human-readable description
+     */
+    String description();
 
-  /**
-   * The authors of the module. Preferably using GitHub usernames, though real names or other
-   * aliases are permitted.
-   *
-   * @return the authors of the module
-   */
-  String[] authors();
+    /**
+     * The authors of the module. Preferably using GitHub usernames, though real names or other
+     * aliases are permitted.
+     *
+     * @return the authors of the module
+     */
+    String[] authors();
 
-  /**
-   * The qualified names of packages required to be present by the module. For example {@code
-   * java.lang}.
-   *
-   * @return the packages requires by the module.
-   */
-  String[] dependencies() default {};
+    /**
+     * The qualified names of packages required to be present by the module. For example {@code
+     * java.lang}.
+     *
+     * @return the packages requires by the module.
+     */
+    String[] dependencies() default {};
 }

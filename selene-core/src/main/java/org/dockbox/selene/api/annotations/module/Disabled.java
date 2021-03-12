@@ -29,10 +29,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Disabled {
-  /**
-   * The reason why the type is disabled.
-   *
-   * @return the reason
-   */
-  String reason();
+    /**
+     * The reason why the type is disabled.
+     *
+     * @return the reason
+     */
+    String reason();
 }

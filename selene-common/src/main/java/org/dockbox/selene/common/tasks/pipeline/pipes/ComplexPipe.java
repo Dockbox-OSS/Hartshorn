@@ -22,15 +22,15 @@ import org.dockbox.selene.common.tasks.pipeline.pipelines.AbstractPipeline;
 @FunctionalInterface
 public interface ComplexPipe<I, O> extends IPipe<I, O> {
 
-  static <I, O> ComplexPipe<I, O> of(ComplexPipe<I, O> pipe) {
-    return pipe;
-  }
+    static <I, O> ComplexPipe<I, O> of(ComplexPipe<I, O> pipe) {
+        return pipe;
+    }
 
-  O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception;
+    O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception;
 
-  @SuppressWarnings("rawtypes")
-  @Override
-  default Class<? extends IPipe> getType() {
-    return ComplexPipe.class;
-  }
+    @SuppressWarnings("rawtypes")
+    @Override
+    default Class<? extends IPipe> getType() {
+        return ComplexPipe.class;
+    }
 }
