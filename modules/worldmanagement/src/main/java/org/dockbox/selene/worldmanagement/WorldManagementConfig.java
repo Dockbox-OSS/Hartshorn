@@ -25,13 +25,9 @@ import org.dockbox.selene.api.annotations.entity.Extract;
 import org.dockbox.selene.api.annotations.entity.Extract.Behavior;
 import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.api.objects.AbstractConfiguration;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
-import org.dockbox.selene.api.server.properties.InjectableType;
-import org.dockbox.selene.api.server.properties.InjectorProperty;
-import org.dockbox.selene.api.util.Reflect;
-import org.dockbox.selene.api.util.SeleneUtils;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,14 +35,11 @@ import java.util.List;
 @Singleton
 @Extract(Behavior.KEEP)
 @Metadata(alias = "worldmanagement")
-public class WorldManagementConfig implements InjectableType {
+public class WorldManagementConfig extends AbstractConfiguration<WorldManagementConfig> {
 
     @Inject
     @Extract(Behavior.SKIP)
     private transient FileManager fileManager;
-
-    @Extract(Behavior.SKIP)
-    private transient boolean isConstructed;
 
     @Accessor(getter = "getPortalPosition")
     private Vector3N portalPosition = new Vector3N(0, 64, 0);
@@ -85,22 +78,7 @@ public class WorldManagementConfig implements InjectableType {
     }
 
     @Override
-    public boolean canEnable() {
-        return !this.isConstructed;
-    }
-
-    @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
-        WorldManagementConfig config = this.fileManager.read(getStoragePath(), WorldManagementConfig.class).orElse(this);
-        SeleneUtils.shallowCopy(config, this);
-        this.isConstructed = true;
-    }
-
-    public void save() {
-        fileManager.write(getStoragePath(), this);
-    }
-
-    private Path getStoragePath() {
-        return this.fileManager.getConfigFile(Reflect.getModule(WorldManagement.class));
+    protected Class<?> getModuleClass() {
+        return WorldManagement.class;
     }
 }
