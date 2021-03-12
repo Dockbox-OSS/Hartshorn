@@ -21,11 +21,11 @@ import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
 
 public class IllegalPipeException extends UncheckedSeleneException {
 
-  public IllegalPipeException(String errorMessage, Throwable throwable) {
-    super(errorMessage, throwable);
-  }
+    public IllegalPipeException(String errorMessage, Throwable throwable) {
+        super(errorMessage, throwable);
+    }
 
-  public IllegalPipeException(String errorMessage) {
-    super(errorMessage);
-  }
+    public IllegalPipeException(String errorMessage) {
+        super(errorMessage);
+    }
 }

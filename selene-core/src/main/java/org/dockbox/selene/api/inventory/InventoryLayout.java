@@ -29,27 +29,29 @@ import java.util.Map;
  */
 public interface InventoryLayout {
 
-  /**
-   * Create a new {@link LayoutBuilder} instance.
-   *
-   * @param inventoryType The inventory type to use while building the pane.
-   * @return The builder
-   */
-  static LayoutBuilder builder(InventoryType inventoryType) {
-    return Selene.provide(LayoutBuilder.class, new InventoryTypeProperty(inventoryType));
-  }
+    /**
+     * Create a new {@link LayoutBuilder} instance.
+     *
+     * @param inventoryType
+     *         The inventory type to use while building the pane.
+     *
+     * @return The builder
+     */
+    static LayoutBuilder builder(InventoryType inventoryType) {
+        return Selene.provide(LayoutBuilder.class, new InventoryTypeProperty(inventoryType));
+    }
 
-  /**
-   * Get all the {@link Element elements} in the inventory, identified by their position index.
-   *
-   * @return The elements in the inventory.
-   */
-  Map<Integer, Element> getElements();
+    /**
+     * Get all the {@link Element elements} in the inventory, identified by their position index.
+     *
+     * @return The elements in the inventory.
+     */
+    Map<Integer, Element> getElements();
 
-  /**
-   * Get the {@link InventoryType inventory type} used by the layout.
-   *
-   * @return The iventory type.
-   */
-  InventoryType getIventoryType();
+    /**
+     * Get the {@link InventoryType inventory type} used by the layout.
+     *
+     * @return The iventory type.
+     */
+    InventoryType getIventoryType();
 }

@@ -29,11 +29,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface SkipIf {
-  Type value() default Type.NULL;
+    Type value() default Type.NULL;
 
-  enum Type {
-    NULL,
-    EMPTY,
-    ZERO
-  }
+    enum Type {
+        NULL,
+        EMPTY,
+        ZERO
+    }
 }

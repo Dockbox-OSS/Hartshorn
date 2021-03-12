@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Arg {
-  String value();
+    String value();
 
-  boolean optional() default false;
+    boolean optional() default false;
 }

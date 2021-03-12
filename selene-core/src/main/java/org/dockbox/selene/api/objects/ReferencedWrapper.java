@@ -24,35 +24,35 @@ import java.util.function.Function;
 
 public abstract class ReferencedWrapper<T> implements Wrapper<T> {
 
-  private transient WeakReference<T> reference;
+    private transient WeakReference<T> reference;
 
-  protected ReferencedWrapper() {
-    this.setReference(this.constructInitialReference());
-  }
+    protected ReferencedWrapper() {
+        this.setReference(this.constructInitialReference());
+    }
 
-  @Override
-  public Exceptional<T> getReference() {
-    this.updateReference().ifPresent(t -> this.setInternalReference(new WeakReference<>(t)));
-    return Exceptional.ofNullable(this.getInternalReference().get());
-  }
+    @Override
+    public Exceptional<T> getReference() {
+        this.updateReference().ifPresent(t -> this.setInternalReference(new WeakReference<>(t)));
+        return Exceptional.ofNullable(this.getInternalReference().get());
+    }
 
-  @Override
-  public void setReference(@NotNull Exceptional<T> reference) {
-    this.setInternalReference(
-        reference.map(WeakReference::new).orElseGet(() -> new WeakReference<>(null)));
-  }
+    @Override
+    public void setReference(@NotNull Exceptional<T> reference) {
+        this.setInternalReference(
+                reference.map(WeakReference::new).orElseGet(() -> new WeakReference<>(null)));
+    }
 
-  public Exceptional<T> updateReference() {
-    return this.getUpdateReferenceTask().apply(this.getInternalReference().get());
-  }
+    public Exceptional<T> updateReference() {
+        return this.getUpdateReferenceTask().apply(this.getInternalReference().get());
+    }
 
-  protected WeakReference<T> getInternalReference() {
-    return this.reference;
-  }
+    protected WeakReference<T> getInternalReference() {
+        return this.reference;
+    }
 
-  public abstract Function<T, Exceptional<T>> getUpdateReferenceTask();
+    public abstract Function<T, Exceptional<T>> getUpdateReferenceTask();
 
-  protected void setInternalReference(WeakReference<T> reference) {
-    this.reference = reference;
-  }
+    protected void setInternalReference(WeakReference<T> reference) {
+        this.reference = reference;
+    }
 }

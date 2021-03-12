@@ -20,10 +20,10 @@ package org.dockbox.selene.api.objects.inventory;
 /** Represents a single row inside a {@link PlayerInventory}, a 1x9 row. */
 public interface InventoryRow extends Inventory {
 
-  /**
-   * Gets the owning {@link PlayerInventory}.
-   *
-   * @return The inventory
-   */
-  PlayerInventory getInventory();
+    /**
+     * Gets the owning {@link PlayerInventory}.
+     *
+     * @return The inventory
+     */
+    PlayerInventory getInventory();
 }

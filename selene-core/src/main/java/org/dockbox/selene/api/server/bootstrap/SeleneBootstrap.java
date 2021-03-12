@@ -77,10 +77,6 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         this.construct();
     }
 
-    public static boolean isConstructed() {
-        return instance != null;
-    }
-
     /**
      * Loads various properties from selene.properties, including the latest update and version. Once
      * done sets the static instance equal to this instance.
@@ -112,6 +108,10 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         this.lastUpdate = tLU;
 
         instance = this;
+    }
+
+    public static boolean isConstructed() {
+        return instance != null;
     }
 
     public static SeleneBootstrap getInstance() {

@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Getter {
-  String value();
+    String value();
 
-  boolean overrideExisting() default false;
+    boolean overrideExisting() default false;
 }

@@ -22,9 +22,9 @@ import org.dockbox.selene.api.server.properties.InjectableType;
 import org.dockbox.selene.api.text.Text;
 
 public abstract class PaneBuilder<T extends Pane, B extends PaneBuilder<T, B>>
-    implements InjectableType {
+        implements InjectableType {
 
-  public abstract B title(Text text);
+    public abstract B title(Text text);
 
-  public abstract T build();
+    public abstract T build();
 }

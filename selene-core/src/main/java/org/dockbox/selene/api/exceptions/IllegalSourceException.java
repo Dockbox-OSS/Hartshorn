@@ -20,7 +20,7 @@ package org.dockbox.selene.api.exceptions;
 import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
 
 public class IllegalSourceException extends UncheckedSeleneException {
-  public IllegalSourceException(String message) {
-    super(message);
-  }
+    public IllegalSourceException(String message) {
+        super(message);
+    }
 }

@@ -32,28 +32,33 @@ import java.util.Collection;
  */
 public interface PaginatedPane extends Pane {
 
-  /**
-   * Create a new {@link PaginatedPaneBuilder} instance.
-   *
-   * @param layout The layout to use while building the pane.
-   * @return The builder
-   */
-  static PaginatedPaneBuilder builder(InventoryLayout layout) {
-    return Selene.provide(PaginatedPaneBuilder.class, new LayoutProperty(layout));
-  }
+    /**
+     * Create a new {@link PaginatedPaneBuilder} instance.
+     *
+     * @param layout
+     *         The layout to use while building the pane.
+     *
+     * @return The builder
+     */
+    static PaginatedPaneBuilder builder(InventoryLayout layout) {
+        return Selene.provide(PaginatedPaneBuilder.class, new LayoutProperty(layout));
+    }
 
-  /**
-   * Opens the pane on a specific page for the given {@link Player}.
-   *
-   * @param player The player to show the pane to.
-   * @param page The number of the page to show.
-   */
-  void open(Player player, int page);
+    /**
+     * Opens the pane on a specific page for the given {@link Player}.
+     *
+     * @param player
+     *         The player to show the pane to.
+     * @param page
+     *         The number of the page to show.
+     */
+    void open(Player player, int page);
 
-  /**
-   * Set the {@link Element elements} to be displayed by the pane.
-   *
-   * @param elements The elements
-   */
-  void elements(Collection<Element> elements);
+    /**
+     * Set the {@link Element elements} to be displayed by the pane.
+     *
+     * @param elements
+     *         The elements
+     */
+    void elements(Collection<Element> elements);
 }

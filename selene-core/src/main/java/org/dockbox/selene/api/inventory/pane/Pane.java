@@ -25,10 +25,11 @@ import org.dockbox.selene.api.objects.player.Player;
  */
 @FunctionalInterface
 public interface Pane {
-  /**
-   * Open the pane for a given player.
-   *
-   * @param player The player to show the pane to.
-   */
-  void open(Player player);
+    /**
+     * Open the pane for a given player.
+     *
+     * @param player
+     *         The player to show the pane to.
+     */
+    void open(Player player);
 }

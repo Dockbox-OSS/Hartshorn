@@ -23,12 +23,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.TYPE})
+@Target({ ElementType.FIELD, ElementType.TYPE })
 public @interface Extract {
-  Behavior value() default Behavior.KEEP;
+    Behavior value() default Behavior.KEEP;
 
-  enum Behavior {
-    SKIP,
-    KEEP
-  }
+    enum Behavior {
+        SKIP,
+        KEEP
+    }
 }

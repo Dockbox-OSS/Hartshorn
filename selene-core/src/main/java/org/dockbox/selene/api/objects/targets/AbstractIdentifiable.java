@@ -22,26 +22,26 @@ import org.dockbox.selene.api.objects.keys.KeyHolder;
 import java.util.UUID;
 
 @SuppressWarnings(
-    "AbstractClassWithoutAbstractMethods") // Type is used to extract side-effects of identifiable
+        "AbstractClassWithoutAbstractMethods") // Type is used to extract side-effects of identifiable
 // types
 public abstract class AbstractIdentifiable<T extends AbstractIdentifiable<T>>
-    implements Identifiable, Target, KeyHolder<T> {
+        implements Identifiable, Target, KeyHolder<T> {
 
-  protected UUID uniqueId;
-  protected String name;
+    protected UUID uniqueId;
+    protected String name;
 
-  protected AbstractIdentifiable(UUID uniqueId, String name) {
-    this.uniqueId = uniqueId;
-    this.name = name;
-  }
+    protected AbstractIdentifiable(UUID uniqueId, String name) {
+        this.uniqueId = uniqueId;
+        this.name = name;
+    }
 
-  @Override
-  public UUID getUniqueId() {
-    return this.uniqueId;
-  }
+    @Override
+    public UUID getUniqueId() {
+        return this.uniqueId;
+    }
 
-  @Override
-  public String getName() {
-    return this.name;
-  }
+    @Override
+    public String getName() {
+        return this.name;
+    }
 }

@@ -34,5 +34,5 @@ import java.util.Optional;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface UnwrapOrSkip {
-  boolean skipIfNull() default false;
+    boolean skipIfNull() default false;
 }
