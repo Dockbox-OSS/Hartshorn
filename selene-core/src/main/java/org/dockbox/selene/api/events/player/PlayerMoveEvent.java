@@ -21,6 +21,7 @@ import org.dockbox.selene.api.events.AbstractTargetCancellableEvent;
 import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.location.Warp;
 import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.special.PortalType;
 import org.dockbox.selene.api.objects.targets.Target;
 
 /** The abstract type which can be used to listen to all player movement related events. */
@@ -33,7 +34,7 @@ public abstract class PlayerMoveEvent extends AbstractTargetCancellableEvent {
     /** The event fired when a player is teleported to another location */
     public static class PlayerTeleportEvent extends PlayerMoveEvent {
         private final Location oldLocation;
-        private final Location newLocation;
+        private Location newLocation;
 
         public PlayerTeleportEvent(Target target, Location oldLocation, Location newLocation) {
             super(target);
@@ -47,6 +48,34 @@ public abstract class PlayerMoveEvent extends AbstractTargetCancellableEvent {
 
         public Location getNewLocation() {
             return this.newLocation;
+        }
+
+        public void setNewLocation(Location newLocation) {
+            this.newLocation = newLocation;
+        }
+    }
+
+    public static class PlayerPortalEvent extends PlayerTeleportEvent {
+        private boolean usesPortal;
+        private final PortalType portalType;
+
+        public PlayerPortalEvent(Target target, Location oldLocation, Location newLocation, boolean usesPortal,
+                                 PortalType portalType) {
+            super(target, oldLocation, newLocation);
+            this.usesPortal = usesPortal;
+            this.portalType = portalType;
+        }
+
+        public boolean usesPortal() {
+            return usesPortal;
+        }
+
+        public PortalType getPortalType() {
+            return portalType;
+        }
+
+        public void setUsePortal(boolean usePortal) {
+            this.usesPortal = usePortal;
         }
     }
 
