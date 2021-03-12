@@ -17,29 +17,34 @@
 
 package org.dockbox.selene.worldmanagement;
 
+import com.google.inject.Inject;
+
 import org.dockbox.selene.api.WorldStorageService;
+import org.dockbox.selene.api.annotations.command.Arg;
+import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.module.Module;
+import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerPortalEvent;
 import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.api.events.server.ServerEvent.ServerStartedEvent;
 import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.location.World;
 import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.properties.InjectableType;
-import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.api.tasks.TaskRunner;
 
 import java.util.concurrent.TimeUnit;
 
+@Command(aliases = {"unloader", "wu"}, usage = "unloader")
 @Module(id = "worldmanagement", name = "World Management", description = "Manages several aspects of the various worlds on a server", authors = "GuusLieben")
-public class WorldManagement implements InjectableType {
+public class WorldManagement {
 
+    @Inject
     private WorldManagementConfig config;
 
     @Listener
     public void onServerReload(ServerReloadEvent event) {
-        stateEnabling();
+        this.config = Selene.provide(WorldManagementConfig.class); // Reload from file, clean instance
     }
 
     @Listener
@@ -55,9 +60,15 @@ public class WorldManagement implements InjectableType {
         }
     }
 
-    @Override
-    public void stateEnabling(InjectorProperty<?>... properties) {
-        config = Selene.provide(WorldManagementConfig.class);
+    @Command(aliases = "blacklist", usage = "blacklist <world{String}>")
+    public void blacklist(CommandSource src, @Arg("world") String world) {
+        if (Selene.provide(WorldStorageService.class).hasWorld(world)) {
+            config.getUnloadBlacklist().add(world);
+            config.save();
+            src.send(WorldManagementResources.WORLD_BLACKLIST_ADDED.format(world));
+        } else {
+            src.send(WorldManagementResources.WORLD_BLACKLIST_FAILED.format(world));
+        }
     }
 
     private void unloadEmptyWorlds() {

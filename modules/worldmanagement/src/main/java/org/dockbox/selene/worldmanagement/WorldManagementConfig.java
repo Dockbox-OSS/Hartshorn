@@ -91,9 +91,16 @@ public class WorldManagementConfig implements InjectableType {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Path configPath = this.fileManager.getConfigFile(Reflect.getModule(WorldManagement.class));
-        WorldManagementConfig config = this.fileManager.read(configPath, WorldManagementConfig.class).orElse(this);
+        WorldManagementConfig config = this.fileManager.read(getStoragePath(), WorldManagementConfig.class).orElse(this);
         SeleneUtils.shallowCopy(config, this);
         this.isConstructed = true;
+    }
+
+    public void save() {
+        fileManager.write(getStoragePath(), this);
+    }
+
+    private Path getStoragePath() {
+        return this.fileManager.getConfigFile(Reflect.getModule(WorldManagement.class));
     }
 }

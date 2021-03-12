@@ -15,24 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api;
+package org.dockbox.selene.worldmanagement;
 
-import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.annotations.i18n.Resources;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.i18n.entry.Resource;
 
-import java.util.List;
-import java.util.UUID;
+@Resources(module = WorldManagement.class)
+public class WorldManagementResources {
 
-public interface WorldStorageService {
-    List<World> getLoadedWorlds();
+    public static final ResourceEntry WORLD_BLACKLIST_ADDED = new Resource("$2{0} $1was added to the blacklist and will not be unloaded", "worldmanagement.unloader.blacklist.added");
+    public static final ResourceEntry WORLD_BLACKLIST_FAILED = new Resource("$2{0} $1could not be blacklisted, are you sure it exists?", "worldmanagement.unloader.blacklist.failed");
 
-    List<UUID> getAllWorldUUIDs();
-
-    Exceptional<World> getWorld(String name);
-
-    Exceptional<World> getWorld(UUID uuid);
-
-    boolean hasWorld(String name);
-
-    boolean hasWorld(UUID uuid);
 }
