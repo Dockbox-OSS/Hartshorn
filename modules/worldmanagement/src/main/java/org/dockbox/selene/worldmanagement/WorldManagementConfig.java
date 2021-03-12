@@ -32,6 +32,8 @@ import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("FieldMayBeFinal")
 @Singleton
@@ -52,12 +54,34 @@ public class WorldManagementConfig implements InjectableType {
     @Accessor(getter = "getPortalWorldTarget")
     private String portalWorldTarget = "worlds";
 
+    @Accessor(getter = "getMaximumWorldsToUnload")
+    private int maximumWorldsToUnload = 10;
+
+    @Accessor(getter = "getUnloadBlacklist")
+    private List<String> unloadBlacklist = new ArrayList<>();
+
+    @Accessor(getter = "getUnloadDelay")
+    private int unloadDelay = 2;
+
     public Vector3N getPortalPosition() {
         return portalPosition;
     }
 
     public String getPortalWorldTarget() {
         return portalWorldTarget;
+    }
+
+    public int getMaximumWorldsToUnload() {
+        return maximumWorldsToUnload;
+    }
+
+    public List<String> getUnloadBlacklist() {
+        return unloadBlacklist;
+    }
+
+
+    public int getUnloadDelay() {
+        return unloadDelay;
     }
 
     @Override
