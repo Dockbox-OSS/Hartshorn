@@ -45,6 +45,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -928,5 +929,14 @@ public final class Reflect {
                 | InvocationTargetException e) {
             Selene.handle(e);
         }
+    }
+
+    public static Collection<Field> getAnnotatedFields(Class<? extends Annotation> annotation, Class<?> type) {
+        Collection<Field> fields = new ArrayList<>();
+        for (Field declaredField : type.getDeclaredFields()) {
+            if (declaredField.isAnnotationPresent(annotation)) fields.add(declaredField);
+        }
+        if (type.getSuperclass() != null) fields.addAll(getAnnotatedFields(annotation, type.getSuperclass()));
+        return fields;
     }
 }

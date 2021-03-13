@@ -1210,6 +1210,15 @@ public final class SeleneUtils {
         return null == throwable.getMessage() ? noCause : throwable.getMessage();
     }
 
+    @SafeVarargs
+    public static <T> Collection<T> merge(Collection<T>... collections) {
+        Collection<T> merged = new ArrayList<>();
+        for (Collection<T> collection : collections) {
+            merged.addAll(collection);
+        }
+        return merged;
+    }
+
     /**
      * Common enumeration of processed field information in {@link
      * Reflect#tryCreateFromProcessed(Class, Function, boolean) tryCreate}.

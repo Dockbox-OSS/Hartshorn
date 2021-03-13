@@ -21,10 +21,12 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Binding;
 import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
 
+import org.dockbox.selene.api.annotations.entity.DoNotEnable;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.module.ModuleContext;
 import org.dockbox.selene.api.module.ModuleManager;
@@ -38,6 +40,7 @@ import org.dockbox.selene.api.server.inject.InjectionPoint;
 import org.dockbox.selene.api.server.properties.AnnotationProperty;
 import org.dockbox.selene.api.server.properties.InjectableType;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
+import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -177,12 +180,31 @@ public abstract class InjectableBootstrap {
 
         if (null != typeInstance) typeInstance = this.applyInjectionPoints(type, typeInstance);
 
+        // Enables all fields which are not annotated with @Module or @DoNotEnable
+        enableInjectionPoints(typeInstance);
+
         // Inject properties if applicable
         if (typeInstance instanceof InjectableType && ((InjectableType) typeInstance).canEnable())
             ((InjectableType) typeInstance).stateEnabling(additionalProperties);
 
         // May be null, but we have used all possible injectors, it's up to the developer now
         return typeInstance;
+    }
+
+    private <T> void enableInjectionPoints(T typeInstance) {
+        if (typeInstance == null) return;
+        if (typeInstance.getClass().isAnnotationPresent(Module.class)) return;
+        SeleneUtils.merge(
+                Reflect.getAnnotatedFields(Inject.class, typeInstance.getClass()),
+                Reflect.getAnnotatedFields(javax.inject.Inject.class, typeInstance.getClass()))
+                .stream()
+                .filter(field -> field.isAnnotationPresent(DoNotEnable.class))
+                .filter(field -> Reflect.isAssignableFrom(InjectableType.class, field.getType()))
+                .map(field -> Selene.handle(() -> field.get(typeInstance)))
+                .filter(Objects::nonNull)
+                .map(fieldInstance -> (InjectableType) fieldInstance)
+                .filter(InjectableType::canEnable)
+                .forEach(InjectableType::stateEnabling);
     }
 
     @Nullable

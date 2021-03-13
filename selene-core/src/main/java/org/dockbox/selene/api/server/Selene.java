@@ -29,6 +29,7 @@ import org.dockbox.selene.api.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.api.server.config.ExceptionLevels;
 import org.dockbox.selene.api.server.config.GlobalConfig;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
+import org.dockbox.selene.api.tasks.CheckedRunnable;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -40,12 +41,30 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.Callable;
 
 /** The global {@link Selene} instance used to grant access to various components. */
 @SuppressWarnings("ClassWithTooManyMethods")
 public final class Selene {
 
     private Selene() {}
+
+    public static void handle(CheckedRunnable runnable) {
+        try {
+            runnable.run();
+        } catch (Exception e) {
+            handle(e);
+        }
+    }
+
+    public static <T> T handle(Callable<T> callable) {
+        try {
+            return callable.call();
+        } catch (Exception e) {
+            handle(e);
+            return null;
+        }
+    }
 
     public static void handle(Throwable e) {
         handle(SeleneUtils.getFirstCauseMessage(e), e);
