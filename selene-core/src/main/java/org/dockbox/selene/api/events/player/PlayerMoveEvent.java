@@ -21,6 +21,7 @@ import org.dockbox.selene.api.events.AbstractTargetCancellableEvent;
 import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.location.Warp;
 import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.objects.special.PortalType;
 import org.dockbox.selene.api.objects.targets.Target;
 
@@ -29,6 +30,11 @@ public abstract class PlayerMoveEvent extends AbstractTargetCancellableEvent {
 
     protected PlayerMoveEvent(Target target) {
         super(target);
+    }
+
+    @Override
+    public Player getTarget() {
+        return (Player) super.getTarget();
     }
 
     /** The event fired when a player is teleported to another location */
