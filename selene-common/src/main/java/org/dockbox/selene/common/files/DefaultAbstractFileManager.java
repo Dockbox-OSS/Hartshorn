@@ -116,6 +116,8 @@ public abstract class DefaultAbstractFileManager extends FileManager {
     @SuppressWarnings("unchecked")
     protected <T> Exceptional<T> correctPersistentCapable(Path file, Class<T> type) {
         if (Reflect.isAssignableFrom(PersistentCapable.class, type)) {
+            // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
+            // regular instance is created (either through available constructors or Unsafe instantiation).
             Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Selene.provide(type)).getModelClass();
             @NotNull Exceptional<? extends PersistentModel<?>> model = read(file, modelType);
             return model.map(PersistentModel::toPersistentCapable).map(content -> (T) content);
