@@ -53,7 +53,6 @@ public class SpongeCustomMap extends SpongeItem implements CustomMap {
 
     @Override
     public PersistentItemModel toPersistentModel() {
-        // TODO
-        return new SpongePersistentCustomMapModel();
+        return new SpongePersistentCustomMapModel(this);
     }
 }

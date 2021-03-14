@@ -323,7 +323,6 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
 
     @Override
     public PersistentItemModel toPersistentModel() {
-        // TODO
-        return new SpongePersistentItemModel();
+        return new SpongePersistentItemModel(this);
     }
 }

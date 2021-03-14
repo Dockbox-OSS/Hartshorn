@@ -17,11 +17,25 @@
 
 package org.dockbox.selene.sponge.objects.item.persistence;
 
+import com.google.inject.Singleton;
+
+import org.dockbox.selene.api.annotations.entity.Extract;
+import org.dockbox.selene.api.annotations.entity.Extract.Behavior;
+import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.objects.item.Item;
-import org.dockbox.selene.api.objects.item.persistence.PersistentItemModel;
+import org.dockbox.selene.api.objects.item.maps.CustomMapService;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.sponge.objects.item.maps.SpongeCustomMap;
 
-public class SpongePersistentCustomMapModel extends PersistentItemModel {
+@Singleton
+@Extract(Behavior.KEEP)
+@Metadata(alias = "map")
+public class SpongePersistentCustomMapModel extends SpongePersistentItemModel {
+
+    public SpongePersistentCustomMapModel(SpongeCustomMap map) {
+        super(map);
+    }
+
     @Override
     public Class<? extends Item> getCapableType() {
         return SpongeCustomMap.class;
@@ -29,6 +43,6 @@ public class SpongePersistentCustomMapModel extends PersistentItemModel {
 
     @Override
     public Item toPersistentCapable() {
-        return null;
+        return repopulate(Selene.provide(CustomMapService.class).getById(getMeta()));
     }
 }
