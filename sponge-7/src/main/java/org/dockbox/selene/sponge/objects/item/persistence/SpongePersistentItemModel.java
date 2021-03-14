@@ -25,10 +25,14 @@ import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.objects.item.Enchant;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.item.persistence.PersistentItemModel;
+import org.dockbox.selene.api.objects.keys.PersistentDataKey;
+import org.dockbox.selene.api.objects.keys.StoredPersistentKey;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 @SuppressWarnings("FieldMayBeFinal")
 @Singleton
@@ -42,6 +46,7 @@ public class SpongePersistentItemModel extends PersistentItemModel {
     private List<Text> lore;
     private int amount;
     private List<Enchant> enchantments;
+    private Map<String, Object> persistentData;
 
     public SpongePersistentItemModel(SpongeItem item) {
         this.id = item.getId();
@@ -50,6 +55,9 @@ public class SpongePersistentItemModel extends PersistentItemModel {
         this.lore = item.getLore();
         this.amount = item.getAmount();
         this.enchantments = item.getEnchantments();
+        for (Entry<PersistentDataKey<?>, Object> persistentEntry : item.getPersistentData().entrySet()) {
+            persistentData.put(persistentEntry.getKey().getDataKeyId(), persistentEntry.getValue());
+        }
     }
 
     public int getMeta() {
@@ -60,20 +68,8 @@ public class SpongePersistentItemModel extends PersistentItemModel {
         return id;
     }
 
-    public Text getTitle() {
-        return title;
-    }
-
-    public List<Text> getLore() {
-        return lore;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public List<Enchant> getEnchantments() {
-        return enchantments;
+    public Map<String, Object> getPersistentData() {
+        return persistentData;
     }
 
     @Override
@@ -90,7 +86,26 @@ public class SpongePersistentItemModel extends PersistentItemModel {
         item.setDisplayName(this.getTitle());
         item.setLore(this.getLore());
         item.setAmount(this.getAmount());
-        for (Enchant enchantment : this.getEnchantments()) item.addEnchant(enchantment);
+        for (Enchant enchantment : this.getEnchantments())
+            item.addEnchant(enchantment);
+        for (Entry<String, Object> persistentEntry : persistentData.entrySet())
+            item.set(StoredPersistentKey.of(persistentEntry.getKey()), persistentEntry.getValue());
         return item;
+    }
+
+    public Text getTitle() {
+        return title;
+    }
+
+    public List<Text> getLore() {
+        return lore;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public List<Enchant> getEnchantments() {
+        return enchantments;
     }
 }
