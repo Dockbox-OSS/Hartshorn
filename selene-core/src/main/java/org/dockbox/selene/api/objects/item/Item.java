@@ -18,9 +18,11 @@
 package org.dockbox.selene.api.objects.item;
 
 import org.dockbox.selene.api.i18n.common.Language;
+import org.dockbox.selene.api.objects.item.persistence.PersistentItemModel;
 import org.dockbox.selene.api.objects.item.storage.MinecraftItems;
 import org.dockbox.selene.api.objects.keys.KeyHolder;
 import org.dockbox.selene.api.objects.keys.PersistentDataHolder;
+import org.dockbox.selene.api.objects.persistence.PersistentCapable;
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
@@ -28,7 +30,7 @@ import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
 
-public interface Item extends KeyHolder<Item>, PersistentDataHolder {
+public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentCapable<PersistentItemModel> {
 
     /**
      * @param id
