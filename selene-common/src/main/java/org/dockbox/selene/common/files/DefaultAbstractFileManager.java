@@ -20,7 +20,11 @@ package org.dockbox.selene.common.files;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.files.FileType;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.persistence.PersistentCapable;
+import org.dockbox.selene.api.objects.persistence.PersistentModel;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -107,5 +111,15 @@ public abstract class DefaultAbstractFileManager extends FileManager {
         return Selene.getResourceFile(defaultFileName)
                 .map(resource -> this.copy(resource, targetFile))
                 .orElse(false);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> Exceptional<T> correctPersistentCapable(Path file, Class<T> type) {
+        if (Reflect.isAssignableFrom(PersistentCapable.class, type)) {
+            Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Selene.provide(type)).getModelClass();
+            @NotNull Exceptional<? extends PersistentModel<?>> model = read(file, modelType);
+            return model.map(PersistentModel::toPersistentCapable).map(content -> (T) content);
+        }
+        return Exceptional.empty();
     }
 }
