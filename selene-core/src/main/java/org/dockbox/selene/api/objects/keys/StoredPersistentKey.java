@@ -17,18 +17,17 @@
 
 package org.dockbox.selene.api.objects.keys;
 
-import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.keys.data.TypedPersistentDataKey;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.util.Reflect;
 
-import java.util.Map;
+public class StoredPersistentKey extends TypedPersistentDataKey<Object> {
 
-public interface PersistentDataHolder {
+    private StoredPersistentKey(String id) {
+        super(id, id, Reflect.getModule(Selene.class), Object.class);
+    }
 
-    <T> Exceptional<T> get(PersistentDataKey<T> dataKey);
-
-    <T> TransactionResult set(PersistentDataKey<T> dataKey, T value);
-
-    <T> void remove(PersistentDataKey<T> dataKey);
-
-    Map<PersistentDataKey<?>, Object> getPersistentData();
-
+    public static StoredPersistentKey of(String name) {
+        return new StoredPersistentKey(name);
+    }
 }
