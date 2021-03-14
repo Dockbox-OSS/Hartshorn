@@ -19,11 +19,13 @@ package org.dockbox.selene.api.text;
 
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.persistence.PersistentCapable;
 import org.dockbox.selene.api.objects.targets.MessageReceiver;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.actions.ClickAction;
 import org.dockbox.selene.api.text.actions.HoverAction;
 import org.dockbox.selene.api.text.actions.ShiftClickAction;
+import org.dockbox.selene.api.text.persistence.PersistentTextModel;
 import org.dockbox.selene.api.util.SeleneUtils;
 
 import java.security.MessageDigest;
@@ -34,7 +36,7 @@ import java.util.stream.Collectors;
 
 import javax.xml.bind.DatatypeConverter;
 
-public class Text {
+public class Text implements PersistentCapable<PersistentTextModel> {
 
     public static final char legacySectionSymbol = '&';
     public static final char sectionSymbol = '\u00A7';
@@ -178,7 +180,17 @@ public class Text {
 
     @Override
     public String toString() {
-        return this.toStringValue();
+        return this.toLegacy();
+    }
+
+    @Override
+    public Class<? extends PersistentTextModel> getModelClass() {
+        return PersistentTextModel.class;
+    }
+
+    @Override
+    public PersistentTextModel toPersistentModel() {
+        return new PersistentTextModel(this);
     }
 
     public enum HashMethod {
