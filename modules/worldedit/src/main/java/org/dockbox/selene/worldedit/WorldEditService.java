@@ -50,4 +50,10 @@ public interface WorldEditService {
     void replace(Region region, Collection<Item> mask, Collection<Item> pattern, Player cause);
 
     void set(Region region, Collection<Item> pattern, Player cause);
+
+    boolean hasActiveGmask(Player player);
+
+    Exceptional<Mask> getGmask(Player player);
+
+    void setGmask(Player player, Mask mask);
 }
