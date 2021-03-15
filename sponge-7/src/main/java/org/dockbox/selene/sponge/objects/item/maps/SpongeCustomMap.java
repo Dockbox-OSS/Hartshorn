@@ -18,8 +18,10 @@
 package org.dockbox.selene.sponge.objects.item.maps;
 
 import org.dockbox.selene.api.objects.item.maps.CustomMap;
+import org.dockbox.selene.api.objects.item.persistence.PersistentItemModel;
 import org.dockbox.selene.api.objects.targets.Identifiable;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
+import org.dockbox.selene.sponge.objects.item.persistence.SpongePersistentCustomMapModel;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.item.inventory.ItemStack;
 
@@ -42,5 +44,15 @@ public class SpongeCustomMap extends SpongeItem implements CustomMap {
     @Override
     public int getMapId() {
         return this.mapId;
+    }
+
+    @Override
+    public Class<? extends PersistentItemModel> getModelClass() {
+        return SpongePersistentCustomMapModel.class;
+    }
+
+    @Override
+    public PersistentItemModel toPersistentModel() {
+        return new SpongePersistentCustomMapModel(this);
     }
 }

@@ -22,6 +22,7 @@ import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.files.FileType;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.persistence.PersistentCapable;
 import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.common.files.serialize.SeleneTypeSerializers;
@@ -66,6 +67,9 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
     @NotNull
     @Override
     public <T> Exceptional<T> read(@NotNull Path file, @NotNull Class<T> type) {
+        Exceptional<T> persistentCapableContent = correctPersistentCapable(file, type);
+        if (persistentCapableContent.isPresent()) return persistentCapableContent;
+
         Reflect.rejects(type, DefaultConfigurateManager.class, true);
 
         try {
@@ -128,6 +132,8 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
     @NotNull
     @Override
     public <T> Exceptional<Boolean> write(@NotNull Path file, @NotNull T content) {
+        if (content instanceof PersistentCapable) return write(file, ((PersistentCapable<?>) content).toPersistentModel());
+
         Reflect.rejects(content.getClass(), DefaultConfigurateManager.class, true);
 
         try {

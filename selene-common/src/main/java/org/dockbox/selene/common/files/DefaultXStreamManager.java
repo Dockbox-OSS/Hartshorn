@@ -20,6 +20,7 @@ package org.dockbox.selene.common.files;
 import org.dockbox.selene.api.annotations.entity.Ignore;
 import org.dockbox.selene.api.files.FileType;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.persistence.PersistentCapable;
 import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.common.files.util.XStreamUtils;
 import org.dockbox.selene.common.files.util.XStreamUtils.XStreamBuilder;
@@ -36,6 +37,9 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
 
     @Override
     public <T> Exceptional<T> read(Path file, Class<T> type) {
+        Exceptional<T> persistentCapable = correctPersistentCapable(file, type);
+        if (persistentCapable.isPresent()) return persistentCapable;
+
         Reflect.rejects(type, DefaultXStreamManager.class, true);
         return Exceptional.of(
                 () -> DefaultXStreamManager.prepareXStream(type).read(type, file.toFile()));
@@ -43,6 +47,8 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
 
     @Override
     public <T> Exceptional<Boolean> write(Path file, T content) {
+        if (content instanceof PersistentCapable) return write(file, ((PersistentCapable<?>) content).toPersistentModel());
+
         @SuppressWarnings("unchecked")
         Class<T> type = (Class<T>) content.getClass();
         Reflect.rejects(type, DefaultXStreamManager.class, true);

@@ -15,20 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.objects.keys;
+package org.dockbox.selene.api.objects.item.persistence;
 
-import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.persistence.PersistentModel;
 
-import java.util.Map;
-
-public interface PersistentDataHolder {
-
-    <T> Exceptional<T> get(PersistentDataKey<T> dataKey);
-
-    <T> TransactionResult set(PersistentDataKey<T> dataKey, T value);
-
-    <T> void remove(PersistentDataKey<T> dataKey);
-
-    Map<PersistentDataKey<?>, Object> getPersistentData();
-
+public abstract class PersistentItemModel implements PersistentModel<Item> {
 }
