@@ -52,8 +52,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings({ "MagicNumber", "deprecation" })
 public class SpongeWorldEditService extends MethodCommands implements WorldEditService {
 
-    private static com.sk89q.worldedit.function.mask.Mask toMask(
-            Collection<Item> mask, Player cause) {
+    private static com.sk89q.worldedit.function.mask.Mask toMask(Collection<Item> mask, Player cause) {
         Extent extent = SpongeConversionUtil.toWorldEdit(cause.getWorld());
         List<BaseBlock> baseBlocks = deriveBlocks(mask, cause);
         return new BlockMask(extent, baseBlocks);
@@ -68,107 +67,110 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
 
     @Override
     public void setPlayerSelection(Player player, Region region) {
-        SpongeWorldEditService.wrapPlayer(player)
-                .ifPresent(fawePlayer -> fawePlayer.setSelection(SpongeConversionUtil.toWorldEdit(region)));
+        SpongeWorldEditService.wrapPlayer(player).ifPresent(fawePlayer -> fawePlayer.setSelection(SpongeConversionUtil.toWorldEdit(region)));
     }
 
     @Override
     public Exceptional<Clipboard> getPlayerClipboard(Player player) {
         return SpongeWorldEditService.wrapPlayer(player)
                 .map(FawePlayer::getSession)
-                .map(
-                        session -> {
-                            try {
-                                return session.getClipboard();
-                            }
-                            catch (Exception e) {
-                                //noinspection ReturnOfNull
-                                return null;
-                            }
-                        })
+                .map(session -> {
+                    try {
+                        return session.getClipboard();
+                    }
+                    catch (Exception e) {
+                        //noinspection ReturnOfNull
+                        return null;
+                    }
+                })
                 .map(clipboardHolder -> clipboardHolder.getClipboards().get(0))
                 .map(SpongeConversionUtil::fromSponge);
     }
 
     @Override
     public void setPlayerClipboard(Player player, Clipboard clipboard) {
-        SpongeWorldEditService.wrapPlayer(player)
-                .ifPresent(
-                        fawePlayer ->
-                                fawePlayer
-                                        .getSession()
-                                        .setClipboard(
-                                                new ClipboardHolder(
-                                                        SpongeConversionUtil.toWorldEdit(clipboard),
-                                                        SpongeConversionUtil.toWorldEdit(clipboard.getRegion().getWorld())
-                                                                .getWorldData())));
+        SpongeWorldEditService.wrapPlayer(player).ifPresent(fawePlayer -> fawePlayer.getSession()
+                .setClipboard(new ClipboardHolder(
+                        SpongeConversionUtil.toWorldEdit(clipboard),
+                        SpongeConversionUtil.toWorldEdit(clipboard.getRegion().getWorld())
+                                .getWorldData()))
+        );
     }
 
     @Override
     public void replace(Region region, Mask mask, Pattern pattern, Player cause) {
-        this.checkConfirmationRegion(
-                cause,
-                (player, session) ->
-                        session.replaceBlocks(
-                                SpongeConversionUtil.toWorldEdit(region),
-                                SpongeConversionUtil.toWorldEdit(mask),
-                                SpongeConversionUtil.toWorldEdit(pattern)));
+        this.checkConfirmationRegion(cause, (player, session) -> session.replaceBlocks(
+                SpongeConversionUtil.toWorldEdit(region),
+                SpongeConversionUtil.toWorldEdit(mask),
+                SpongeConversionUtil.toWorldEdit(pattern))
+        );
     }
 
     @Override
     public void set(Region region, Pattern pattern, Player cause) {
-        this.checkConfirmationRegion(
-                cause,
-                (player, session) ->
-                        session.setBlocks(
-                                SpongeConversionUtil.toWorldEdit(region),
-                                SpongeConversionUtil.toWorldEdit(pattern)));
+        this.checkConfirmationRegion(cause, (player, session) -> session.setBlocks(
+                SpongeConversionUtil.toWorldEdit(region),
+                SpongeConversionUtil.toWorldEdit(pattern))
+        );
     }
 
     @Override
     public Exceptional<Pattern> parsePattern(String pattern, Player cause) {
-        return Exceptional.of(
-                () -> {
-                    ParserContext context = prepareContext(cause);
-                    com.sk89q.worldedit.function.pattern.Pattern worldEditPattern =
-                            WorldEdit.getInstance().getPatternFactory().parseFromInput(pattern, context);
-                    return new WrappedPattern(worldEditPattern);
-                });
+        return Exceptional.of(() -> {
+            ParserContext context = prepareContext(cause);
+            com.sk89q.worldedit.function.pattern.Pattern worldEditPattern =
+                    WorldEdit.getInstance().getPatternFactory().parseFromInput(pattern, context);
+            return new WrappedPattern(worldEditPattern);
+        });
     }
 
     @Override
     public Exceptional<Mask> parseMask(String mask, Player cause) {
-        return Exceptional.of(
-                () -> {
-                    ParserContext context = prepareContext(cause);
-                    com.sk89q.worldedit.function.mask.Mask worldEditMask =
-                            WorldEdit.getInstance().getMaskFactory().parseFromInput(mask, context);
-                    return new WrappedMask(worldEditMask);
-                });
+        return Exceptional.of(() -> {
+            ParserContext context = prepareContext(cause);
+            com.sk89q.worldedit.function.mask.Mask worldEditMask =
+                    WorldEdit.getInstance().getMaskFactory().parseFromInput(mask, context);
+            return new WrappedMask(worldEditMask);
+        });
     }
 
     @Override
-    public void replace(
-            Region region, Collection<Item> mask, Collection<Item> pattern, Player cause) {
-        this.checkConfirmationRegion(
-                cause,
-                (player, session) ->
-                        session.replaceBlocks(
-                                SpongeConversionUtil.toWorldEdit(region),
-                                toMask(mask, cause),
-                                toPattern(pattern, cause)));
+    public void replace(Region region, Collection<Item> mask, Collection<Item> pattern, Player cause) {
+        this.checkConfirmationRegion(cause, (player, session) ->
+                session.replaceBlocks(
+                        SpongeConversionUtil.toWorldEdit(region),
+                        toMask(mask, cause),
+                        toPattern(pattern, cause)
+                ));
     }
 
     @Override
     public void set(Region region, Collection<Item> pattern, Player cause) {
-        this.checkConfirmationRegion(
-                cause,
-                (player, session) ->
-                        session.setBlocks(SpongeConversionUtil.toWorldEdit(region), toPattern(pattern, cause)));
+        this.checkConfirmationRegion(cause, (player, session) ->
+                session.setBlocks(SpongeConversionUtil.toWorldEdit(region), toPattern(pattern, cause)));
     }
 
-    private static com.sk89q.worldedit.function.pattern.Pattern toPattern(
-            Collection<Item> pattern, Player cause) {
+    @Override
+    public boolean hasActiveGmask(Player player) {
+        return SpongeConversionUtil.toWorldEdit(player).getSession().getMask() != null;
+    }
+
+    @Override
+    public Exceptional<Mask> getGmask(Player player) {
+        FawePlayer<?> fawePlayer = SpongeConversionUtil.toWorldEdit(player);
+        return Exceptional.of(fawePlayer.getSession().getMask()).map(WrappedMask::new);
+    }
+
+    @Override
+    public void setGmask(Player player, Mask mask) {
+        com.sk89q.worldedit.function.mask.Mask worldEditMask = null;
+        if (mask != null) {
+            worldEditMask = SpongeConversionUtil.toWorldEdit(mask);
+        }
+        SpongeConversionUtil.toWorldEdit(player).getSession().setMask(worldEditMask);
+    }
+
+    private static com.sk89q.worldedit.function.pattern.Pattern toPattern(Collection<Item> pattern, Player cause) {
         List<BaseBlock> baseBlocks = deriveBlocks(pattern, cause);
         double chance = 100d / (double) baseBlocks.size();
         RandomPattern blockPattern = new RandomPattern();
@@ -206,8 +208,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
             // Disallow fast mode internally
             session.setFastMode(false);
             // Ensure the area is within the bounds, or request the player to confirm the action
-            player.checkConfirmationRegion(
-                    () -> {
+            player.checkConfirmationRegion(() -> {
                         int affected = consumer.accept(player, session);
                         BBC.VISITOR_BLOCK.send(player, affected);
                     },
