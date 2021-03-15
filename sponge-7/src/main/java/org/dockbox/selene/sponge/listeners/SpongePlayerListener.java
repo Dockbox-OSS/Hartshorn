@@ -54,6 +54,8 @@ import org.dockbox.selene.sponge.entities.SpongeArmorStand;
 import org.dockbox.selene.sponge.entities.SpongeItemFrame;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NonNls;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Transform;
@@ -62,12 +64,14 @@ import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.entity.living.humanoid.HandInteractEvent;
 import org.spongepowered.api.event.entity.living.humanoid.player.KickPlayerEvent;
 import org.spongepowered.api.event.filter.Getter;
+import org.spongepowered.api.event.filter.IsCancelled;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.BanIpEvent;
@@ -77,6 +81,7 @@ import org.spongepowered.api.event.user.BanUserEvent;
 import org.spongepowered.api.event.user.PardonUserEvent;
 import org.spongepowered.api.network.RemoteConnection;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.util.ban.Ban;
 import org.spongepowered.api.world.World;
 
@@ -146,7 +151,8 @@ public class SpongePlayerListener {
         }
     }
 
-    @Listener
+    @Listener(order = Order.EARLY, beforeModifications = true)
+    @IsCancelled(Tristate.UNDEFINED)
     public void onPlayerPortalUse(MoveEntityEvent.Teleport.Portal portalEvent,
                                   @First Player player,
                                   @Getter("getUsePortalAgent") boolean usePortalAgent,
@@ -154,10 +160,23 @@ public class SpongePlayerListener {
                                   @Getter("getToTransform") Transform<World> to) {
         Location fromLocation = SpongeConversionUtil.fromSponge(from.getLocation());
         Location toLocation = SpongeConversionUtil.fromSponge(to.getLocation());
+        BlockType blockType = portalEvent.getFromTransform().getExtent().getBlockType(player.getPosition().toInt());
 
-        PortalType portalType = PortalType.NETHER; // TODO: Implementation to detect portal type
+        // A bit of a hack, but Sponge does not expose the portal type through their events natively. Here we use the initial position of the player
+        // to get the block they are in/against, if either is a portal type (Nether or End) we pass it into our event. If neither is detected the
+        // portal is either placed oddly or not a native portal type in which case Unknown is used instead.
+        PortalType portalType = getPortalType(blockType);
+
+        if (portalType == PortalType.UNKOWN) {
+            portalType = getPortalType(portalEvent.getFromTransform()
+                    .getExtent()
+                    .getBlockType(player.getPosition().toInt().add(0, 0, 1))
+            );
+        }
+
         PlayerPortalEvent event = new PlayerPortalEvent(SpongeConversionUtil.fromSponge(player), fromLocation, toLocation,
                 usePortalAgent, portalType);
+        event.post();
         portalEvent.setCancelled(event.isCancelled());
         portalEvent.setUsePortalAgent(portalEvent.getPortalAgent() != null && event.usesPortal());
 
@@ -165,6 +184,12 @@ public class SpongePlayerListener {
             portalEvent.getToTransform().setExtent(SpongeConversionUtil.toSponge(toLocation.getWorld()).orNull());
             portalEvent.getToTransform().setPosition(SpongeConversionUtil.toSponge(toLocation.getVectorLoc()));
         }
+    }
+
+    private PortalType getPortalType(BlockType blockType) {
+        if (blockType.equals(BlockTypes.PORTAL)) return PortalType.NETHER;
+        else if (blockType.equals(BlockTypes.END_PORTAL)) return PortalType.END;
+        return PortalType.UNKOWN;
     }
 
     @Listener
