@@ -19,5 +19,6 @@ package org.dockbox.selene.api.objects.special;
 
 public enum PortalType {
     END,
+    UNKOWN,
     NETHER
 }
