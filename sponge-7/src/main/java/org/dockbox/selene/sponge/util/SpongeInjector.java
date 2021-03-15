@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.sponge.util;
 
+import com.google.inject.Module;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 import org.dockbox.selene.api.BroadcastService;
@@ -96,28 +97,28 @@ public class SpongeInjector extends SeleneInjectConfiguration {
 
     @SuppressWarnings("OverlyCoupledMethod")
     @Override
-    protected void configure() {
-        Selene.log()
-                .info(
-                        "Configuring bindings for Selene, using [" + this.getClass().getCanonicalName() + "]");
-
+    protected final void configure() {
         // Helper types
         this.bind(ExceptionHelper.class).to(SimpleExceptionHelper.class);
         this.bind(TaskRunner.class).to(SpongeTaskRunner.class);
+
         // Module management
         // Module manager keeps static references, and can thus be recreated
         this.bind(ModuleManager.class).toInstance(new SimpleModuleManager());
         this.bind(IntegratedModule.class).to(IntegratedServer.class);
+
         // Utility types
         this.bind(DiscordUtils.class).to(SpongeDiscordUtils.class);
         this.bind(ThreadUtils.class).to(SpongeThreadUtils.class);
         this.bind(WebUtil.class).to(GsonWebUtil.class);
         this.bind(WebUtil.class).annotatedWith(Format.Json.class).to(GsonWebUtil.class);
         this.bind(WebUtil.class).annotatedWith(Format.XML.class).to(GsonXmlWebUtil.class);
+
         // File management
         this.bind(FileManager.class).to(SpongeConfigurateManager.class);
         this.bind(FileManager.class).annotatedWith(Bulk.class).to(SpongeXStreamManager.class);
         this.bind(SQLMan.class).annotatedWith(Format.SQLite.class).to(SQLiteMan.class);
+
         // Services
         this.bind(PlayerStorageService.class).to(SpongePlayerStorageService.class);
         this.bind(WorldStorageService.class).to(SpongeWorldStorageService.class);
@@ -125,50 +126,51 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(ResourceService.class).toInstance(new SimpleResourceService());
         this.bind(WorldEditService.class).to(SpongeWorldEditService.class);
         this.bind(CustomMapService.class).to(SpongeCustomMapService.class);
+
         // Internal services
         // Event- and command bus keep static references, and can thus be recreated
         this.bind(CommandBus.class).toInstance(new SpongeCommandBus());
         this.bind(EventBus.class).toInstance(new SimpleEventBus());
+
         // Builder types
         this.bind(PaginationBuilder.class).to(SpongePaginationBuilder.class);
         this.bind(LayoutBuilder.class).to(SpongeLayoutBuilder.class);
         this.bind(PaginatedPaneBuilder.class).to(SpongePaginatedPaneBuilder.class);
         this.bind(StaticPaneBuilder.class).to(SpongeStaticPaneBuilder.class);
+
         // Factory types
-        this.install(
-                new FactoryModuleBuilder()
-                        .implement(Element.class, SpongeElement.class)
-                        .build(ElementFactory.class));
-        this.install(
-                new FactoryModuleBuilder()
-                        .implement(Item.class, SpongeItem.class)
-                        .build(ItemFactory.class));
-        this.install(
-                new FactoryModuleBuilder()
-                        .implement(Bossbar.class, SpongeBossbar.class)
-                        .build(BossbarFactory.class));
-        this.install(
-                new FactoryModuleBuilder()
-                        .implement(Profile.class, SpongeProfile.class)
-                        .build(ProfileFactory.class));
-        this.install(
-                new FactoryModuleBuilder()
-                        .implement(ItemFrame.class, SpongeItemFrame.class)
-                        .implement(ArmorStand.class, SpongeArmorStand.class)
-                        .build(EntityFactory.class));
+        this.install(factory(ElementFactory.class, Element.class, SpongeElement.class));
+        this.install(factory(ItemFactory.class, Item.class, SpongeItem.class));
+        this.install(factory(BossbarFactory.class, Bossbar.class, SpongeBossbar.class));
+        this.install(factory(ProfileFactory.class, Profile.class, SpongeProfile.class));
+        this.install(new FactoryModuleBuilder()
+                .implement(ItemFrame.class, SpongeItemFrame.class)
+                .implement(ArmorStand.class, SpongeArmorStand.class)
+                .build(EntityFactory.class));
+
         // Globally accessible
         // Config can be recreated, so no external tracking is required (contents obtained from file, no
         // cache writes)
         this.bind(GlobalConfig.class).toInstance(new SimpleGlobalConfig());
+
         // Log is created from LoggerFactory externally
         this.bind(Logger.class).toInstance(Selene.log());
+
         // Console is a constant singleton, to avoid
         this.bind(Console.class).toInstance(SpongeConsole.getInstance());
+
         // Packets
         this.bind(ChangeGameStatePacket.class).to(NMSChangeGameStatePacket.class);
         this.bind(SpawnEntityPacket.class).to(NMSSpawnEntityPacket.class);
+
         // Discord
         this.bind(DiscordPagination.class).to(SimpleDiscordPagination.class);
         this.bind(MessageTemplate.class).to(SimpleMessageTemplate.class);
+    }
+
+    private <T> Module factory(Class<?> factory, Class<T> source, Class<? extends T> target) {
+        return new FactoryModuleBuilder()
+                .implement(source, target)
+                .build(source);
     }
 }
