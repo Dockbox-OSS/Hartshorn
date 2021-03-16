@@ -996,6 +996,7 @@ public final class SeleneUtils {
      *         The type of both objects
      */
     public static <T> void shallowCopy(T from, T to) {
+        if (to == null || from == null) return;
         Collection<Field> fields = Reflect.getAccessibleFields(from.getClass());
         for (Field field : fields) {
             field.setAccessible(true);
