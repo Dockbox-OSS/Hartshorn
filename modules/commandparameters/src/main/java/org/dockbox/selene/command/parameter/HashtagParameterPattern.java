@@ -20,9 +20,9 @@ package org.dockbox.selene.command.parameter;
 import org.dockbox.selene.annotations.command.CustomParameter;
 import org.dockbox.selene.api.command.context.ArgumentConverter;
 import org.dockbox.selene.api.command.source.CommandSource;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.commandparameters.CommandParameterResources;
 import org.dockbox.selene.common.command.convert.ArgumentConverterRegistry;
 
 import java.lang.reflect.Constructor;
@@ -48,7 +48,7 @@ public class HashtagParameterPattern implements CustomParameterPattern {
     @SuppressWarnings("ConstantConditions")
     @Override
     public <T> Exceptional<T> request(Class<T> type, CommandSource source, String raw) {
-        if (!raw.startsWith("#")) return Exceptional.of(new IllegalArgumentException("Pattern has to be formatted as #type[arg1][arg2][etc.]"));
+        if (!raw.startsWith("#")) return Exceptional.of(new IllegalArgumentException(CommandParameterResources.HASHTAG_PATTERN_WRONG_FORMAT.asString()));
 
         List<String> rawArguments = SeleneUtils.emptyList();
         Matcher matcher = ARGUMENT.matcher(raw);
@@ -67,9 +67,9 @@ public class HashtagParameterPattern implements CustomParameterPattern {
 
         if (rawArguments.size() != parameters.length) {
             String usage = type.getAnnotation(CustomParameter.class).usage();
-            if (!usage.equals("")) usage = IntegratedResource.USAGE.format(usage).asString();
-            if (rawArguments.size() < parameters.length) return Exceptional.of(new IllegalArgumentException("Not enough arguments"));
-            else if (rawArguments.size() > parameters.length) return Exceptional.of(new IllegalArgumentException("Too many arguments"));
+            if (!usage.equals("")) usage = CommandParameterResources.USAGE.format(usage).asString();
+            if (rawArguments.size() < parameters.length) return Exceptional.of(new IllegalArgumentException(CommandParameterResources.NOT_ENOUGH_ARGUMENTS.format(usage).asString()));
+            else if (rawArguments.size() > parameters.length) return Exceptional.of(new IllegalArgumentException(CommandParameterResources.TOO_MANY_ARGUMENTS.format(usage).asString()));
         }
 
         for (int i = 0; i < rawArguments.size(); i++) {
@@ -77,7 +77,7 @@ public class HashtagParameterPattern implements CustomParameterPattern {
             Class<?> parameterType = parameterTypes[i];
             ArgumentConverter<?> converter = ArgumentConverterRegistry.getConverter(parameterType);
             if (converter == null) return Exceptional
-                    .of(new IllegalArgumentException("Parameter of type " + parameterType.getCanonicalName() + " has no registered converter"));
+                    .of(new IllegalArgumentException(CommandParameterResources.MISSING_CONVERTER.format(type.getCanonicalName()).asString()));
 
             Exceptional<?> value = converter.convert(source, argument);
             if (value.isAbsent()) return Exceptional.of(value.getError());
