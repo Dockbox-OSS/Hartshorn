@@ -171,6 +171,6 @@ public class SpongeInjector extends SeleneInjectConfiguration {
     private <T> Module factory(Class<?> factory, Class<T> source, Class<? extends T> target) {
         return new FactoryModuleBuilder()
                 .implement(source, target)
-                .build(source);
+                .build(factory);
     }
 }
