@@ -17,9 +17,12 @@
 
 package org.dockbox.selene.sample;
 
+import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.event.filter.Packet;
 import org.dockbox.selene.api.annotations.module.Module;
+import org.dockbox.selene.api.command.context.CommandContext;
+import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.events.packet.PacketEvent;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.packets.ChangeGameStatePacket;
@@ -45,5 +48,12 @@ public final class SampleModule {
                                 + ')');
     }
 
+    // Uses the Custom Parameter from the Shape class
+    @Command(aliases = "parameter", usage = "parameter <shape{shape}>")
+    public void parameterDemo(CommandSource source, CommandContext context) {
+        System.out.println(context.has("shape"));
+        Shape shape = context.get("shape");
+        System.out.println(shape);
+    }
 
 }

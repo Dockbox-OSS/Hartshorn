@@ -15,13 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.demo;
+package org.dockbox.selene.sample;
 
 import org.dockbox.selene.annotations.command.CustomParameter;
 import org.dockbox.selene.annotations.command.ParameterConstruction;
 
 @CustomParameter("shape")
 public class Shape {
+
+    private final String name;
+    private final int sides;
 
     private Shape() {
         name = "circle";
@@ -33,15 +36,11 @@ public class Shape {
         this.name = sides + "-sided shape";
         this.sides = sides;
     }
-
     @ParameterConstruction
     public Shape(String name, int sides) {
         this.name = name;
         this.sides = sides;
     }
-
-    private final String name;
-    private final int sides;
 
     public String getName() {
         return name;
