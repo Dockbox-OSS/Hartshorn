@@ -52,17 +52,9 @@ public final class Selene {
     public static void handle(CheckedRunnable runnable) {
         try {
             runnable.run();
-        } catch (Exception e) {
-            handle(e);
         }
-    }
-
-    public static <T> T handle(Callable<T> callable) {
-        try {
-            return callable.call();
-        } catch (Exception e) {
+        catch (Exception e) {
             handle(e);
-            return null;
         }
     }
 
@@ -101,6 +93,16 @@ public final class Selene {
         return SeleneBootstrap.getInstance();
     }
 
+    public static <T> T handle(Callable<T> callable) {
+        try {
+            return callable.call();
+        }
+        catch (Exception e) {
+            handle(e);
+            return null;
+        }
+    }
+
     /**
      * Gets a log instance representing the calling type.
      *
@@ -109,7 +111,7 @@ public final class Selene {
     public static Logger log() {
         StackTraceElement element = Thread.currentThread().getStackTrace()[2];
         String[] qualifiedClassName = element.getClassName().split("\\.");
-        return LoggerFactory.getLogger("Selene/" + qualifiedClassName[qualifiedClassName.length - 1]);
+        return LoggerFactory.getLogger(SeleneInformation.PROJECT_NAME + '/' + qualifiedClassName[qualifiedClassName.length - 1]);
     }
 
     /**
@@ -169,8 +171,7 @@ public final class Selene {
      *
      * @return The instance, if present. Otherwise returns null
      */
-    public static <T> T provide(
-            Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
+    public static <T> T provide(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
         return Selene.getServer().getInstance(type, module, additionalProperties);
     }
 
@@ -178,8 +179,7 @@ public final class Selene {
         return Selene.getServer().getInstance(type, additionalProperties);
     }
 
-    public static <T> T provide(
-            Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
+    public static <T> T provide(Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
         return Selene.getServer().getInstance(type, module, additionalProperties);
     }
 }

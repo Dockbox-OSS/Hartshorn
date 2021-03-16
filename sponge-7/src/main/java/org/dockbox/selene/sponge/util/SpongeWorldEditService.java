@@ -136,12 +136,11 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
 
     @Override
     public void replace(Region region, Collection<Item> mask, Collection<Item> pattern, Player cause) {
-        this.checkConfirmationRegion(cause, (player, session) ->
-                session.replaceBlocks(
-                        SpongeConversionUtil.toWorldEdit(region),
-                        toMask(mask, cause),
-                        toPattern(pattern, cause)
-                ));
+        this.checkConfirmationRegion(cause, (player, session) -> session.replaceBlocks(
+                SpongeConversionUtil.toWorldEdit(region),
+                toMask(mask, cause),
+                toPattern(pattern, cause)
+        ));
     }
 
     @Override

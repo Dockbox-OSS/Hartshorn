@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 /**
  * A container object which may or may not contain a non-null value. If a value is present, {@code
  * isPresent()} will return {@code true} and {@code get()} will return the value. If no value is
- * present, {@code isAbsent()} will return {@code false}.
+ * present, {@code isAbsent()} will return {@code true}.
  *
  * <p>Additional methods that depend on the presence or absence of a contained value are provided,
  * such as {@link #orElse(java.lang.Object) orElse()} (return a default value if value not present)

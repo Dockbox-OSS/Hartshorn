@@ -22,6 +22,7 @@ package org.dockbox.selene.common.files;
  * not supported by a implementation.
  */
 public class UnsupportedFileException extends Exception {
+
     /**
      * Creates a new instance, providing a given filetype to the super type {@link Exception} as the
      * error message.
