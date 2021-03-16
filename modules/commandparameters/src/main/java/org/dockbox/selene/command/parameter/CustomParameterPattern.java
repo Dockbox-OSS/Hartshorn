@@ -17,11 +17,13 @@
 
 package org.dockbox.selene.command.parameter;
 
+import org.dockbox.selene.annotations.command.CustomParameter;
 import org.dockbox.selene.annotations.command.ParameterConstruction;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.commandparameters.CommandParameterResources;
 import org.dockbox.selene.commandparameters.exception.ConstructorDefinitionError;
 
 import java.lang.reflect.Constructor;
@@ -52,9 +54,14 @@ public interface CustomParameterPattern {
             }
         }
 
-        if (availableConstructors.size() > 1) return Exceptional
-                .of(new ConstructorDefinitionError("Found more than one constructor with @ParamaterConstruction with " + size + " parameters for " + type
-                        .getCanonicalName()));
+        if (availableConstructors.size() > 1)
+            return Exceptional
+                    .of(new ConstructorDefinitionError("Found more than one constructor with @ParamaterConstruction with " + size + " parameters for " + type
+                            .getCanonicalName()));
+
+        if (availableConstructors.isEmpty()) {
+            return Exceptional.of(new IllegalArgumentException(CommandParameterResources.USAGE.format(type.getAnnotation(CustomParameter.class).usage()).asString()));
+        }
 
         return Exceptional.of(availableConstructors.get(0));
     }
