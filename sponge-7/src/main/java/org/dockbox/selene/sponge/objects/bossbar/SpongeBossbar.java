@@ -60,79 +60,46 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
 
     @Override
     public void showTo(Player player) {
-        this.getReference()
-                .ifPresent(
-                        serverBossBar -> {
-                            SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::addPlayer);
-                            if (Bossbar.REGISTRY.containsKey(this.getId()))
-                                Selene.log()
-                                        .warn(
-                                                "Adding a bossbar with duplicate ID '"
-                                                        + this.getId()
-                                                        + "' to "
-                                                        + player.getName()
-                                                        + ". This may cause unexpected behavior!");
-                            else if (Bossbar.REGISTRY.containsValue(this))
-                                Selene.log()
-                                        .warn(
-                                                "Adding identical bossbar with different ID '"
-                                                        + this.getId()
-                                                        + "'. This may cause unexpected behavior!");
-                            Bossbar.REGISTRY.put(this.getId(), this);
-                        });
+        this.getReference().ifPresent(serverBossBar -> {
+            SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::addPlayer);
+            if (Bossbar.REGISTRY.containsKey(this.getId()))
+                Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to "
+                        + player.getName() + ". This may cause unexpected behavior!");
+            else if (Bossbar.REGISTRY.containsValue(this))
+                Selene.log().warn("Adding identical bossbar with different ID '" + this.getId() + "'. This may cause unexpected behavior!");
+            Bossbar.REGISTRY.put(this.getId(), this);
+        });
     }
 
     @Override
     public void showTo(Player player, Duration duration) {
-        this.getReference()
-                .ifPresent(
-                        serverBossBar -> {
-                            SpongeConversionUtil.toSponge(player)
-                                    .ifPresent(
-                                            sp -> {
-                                                serverBossBar.addPlayer(sp);
-                                                TaskRunner.create()
-                                                        .acceptDelayed(
-                                                                () -> this.hideFrom(player),
-                                                                duration.getSeconds(),
-                                                                TimeUnit.SECONDS);
-                                            });
-                            if (Bossbar.REGISTRY.containsKey(this.getId()))
-                                Selene.log()
-                                        .warn(
-                                                "Adding a bossbar with duplicate ID '"
-                                                        + this.getId()
-                                                        + "' to "
-                                                        + player.getName()
-                                                        + ". This may cause unexpected behavior!");
-                            else if (Bossbar.REGISTRY.containsValue(this))
-                                Selene.log()
-                                        .warn(
-                                                "Adding identical bossbar with different ID '"
-                                                        + this.getId()
-                                                        + "'. This may cause unexpected behavior!");
-                            Bossbar.REGISTRY.put(this.getId(), this);
-                        });
+        this.getReference().ifPresent(serverBossBar -> {
+            SpongeConversionUtil.toSponge(player).ifPresent(sp -> {
+                serverBossBar.addPlayer(sp);
+                TaskRunner.create().acceptDelayed(() -> this.hideFrom(player), duration.getSeconds(), TimeUnit.SECONDS);
+            });
+            if (Bossbar.REGISTRY.containsKey(this.getId()))
+                Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to "
+                        + player.getName() + ". This may cause unexpected behavior!");
+            else if (Bossbar.REGISTRY.containsValue(this))
+                Selene.log().warn("Adding identical bossbar with different ID '" + this.getId() + "'. This may cause unexpected behavior!");
+            Bossbar.REGISTRY.put(this.getId(), this);
+        });
     }
 
     @Override
     public void hideFrom(Player player) {
-        this.getReference()
-                .ifPresent(
-                        serverBossBar -> {
-                            SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::removePlayer);
-                            if (serverBossBar.getPlayers().isEmpty()) Bossbar.REGISTRY.remove(this.getId());
-                        });
+        this.getReference().ifPresent(serverBossBar -> {
+            SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::removePlayer);
+            if (serverBossBar.getPlayers().isEmpty()) Bossbar.REGISTRY.remove(this.getId());
+        });
     }
 
     @Override
     public Collection<Player> visibleTo() {
-        return this.getReference()
-                .map(
-                        serverBossBar ->
-                                serverBossBar.getPlayers().stream()
-                                        .map(SpongeConversionUtil::fromSponge)
-                                        .collect(Collectors.toList()))
+        return this.getReference().map(serverBossBar -> serverBossBar.getPlayers().stream()
+                .map(SpongeConversionUtil::fromSponge)
+                .collect(Collectors.toList()))
                 .orElseGet(SeleneUtils::emptyList);
     }
 
@@ -143,30 +110,24 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
 
     @Override
     public boolean isVisibleTo(UUID player) {
-        return this.getReference()
-                .map(
-                        serverBossBar -> {
-                            for (org.spongepowered.api.entity.living.player.Player serverBossBarPlayer :
-                                    serverBossBar.getPlayers()) {
-                                if (serverBossBarPlayer.getUniqueId().equals(player)) return true;
-                            }
-                            return false;
-                        })
-                .orElse(false);
+        return this.getReference().map(serverBossBar -> {
+            for (org.spongepowered.api.entity.living.player.Player serverBossBarPlayer :
+                    serverBossBar.getPlayers()) {
+                if (serverBossBarPlayer.getUniqueId().equals(player)) return true;
+            }
+            return false;
+        }).orElse(false);
     }
 
     @Override
     public boolean isVisibleTo(@NonNls String name) {
-        return this.getReference()
-                .map(
-                        serverBossBar -> {
-                            for (org.spongepowered.api.entity.living.player.Player serverBossBarPlayer :
-                                    serverBossBar.getPlayers()) {
-                                if (serverBossBarPlayer.getName().equals(name)) return true;
-                            }
-                            return false;
-                        })
-                .orElse(false);
+        return this.getReference().map(serverBossBar -> {
+            for (org.spongepowered.api.entity.living.player.Player serverBossBarPlayer :
+                    serverBossBar.getPlayers()) {
+                if (serverBossBarPlayer.getName().equals(name)) return true;
+            }
+            return false;
+        }).orElse(false);
     }
 
     @Override
