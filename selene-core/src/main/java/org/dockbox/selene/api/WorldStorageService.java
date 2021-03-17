@@ -35,4 +35,6 @@ public interface WorldStorageService {
     boolean hasWorld(String name);
 
     boolean hasWorld(UUID uuid);
+
+    UUID getRootWorldId();
 }
