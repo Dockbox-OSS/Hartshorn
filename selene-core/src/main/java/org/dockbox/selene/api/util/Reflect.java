@@ -939,4 +939,13 @@ public final class Reflect {
         if (type.getSuperclass() != null) fields.addAll(getAnnotatedFields(annotation, type.getSuperclass()));
         return fields;
     }
+
+    public static <T> Collection<Constructor<T>> getAnnotatedConstructors(Class<? extends Annotation> annotation, Class<T> type) {
+        Collection<Constructor<T>> constructors = SeleneUtils.emptyList();
+        //noinspection unchecked
+        for (Constructor<T> constructor : (Constructor<T>[]) type.getDeclaredConstructors()) {
+            if (constructor.isAnnotationPresent(annotation)) constructors.add(constructor);
+        }
+        return constructors;
+    }
 }
