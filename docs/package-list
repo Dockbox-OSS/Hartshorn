@@ -1,3 +1,4 @@
+org.dockbox.selene.annotations.command
 org.dockbox.selene.api
 org.dockbox.selene.api.annotations
 org.dockbox.selene.api.annotations.command
@@ -43,10 +44,12 @@ org.dockbox.selene.api.objects.bossbar
 org.dockbox.selene.api.objects.inventory
 org.dockbox.selene.api.objects.item
 org.dockbox.selene.api.objects.item.maps
+org.dockbox.selene.api.objects.item.persistence
 org.dockbox.selene.api.objects.item.storage
 org.dockbox.selene.api.objects.keys
 org.dockbox.selene.api.objects.keys.data
 org.dockbox.selene.api.objects.location
+org.dockbox.selene.api.objects.persistence
 org.dockbox.selene.api.objects.player
 org.dockbox.selene.api.objects.profile
 org.dockbox.selene.api.objects.special
@@ -62,10 +65,15 @@ org.dockbox.selene.api.tasks
 org.dockbox.selene.api.text
 org.dockbox.selene.api.text.actions
 org.dockbox.selene.api.text.pagination
+org.dockbox.selene.api.text.persistence
 org.dockbox.selene.api.util
 org.dockbox.selene.api.util.images
 org.dockbox.selene.api.util.web
 org.dockbox.selene.archiving
+org.dockbox.selene.command.convert
+org.dockbox.selene.command.parameter
+org.dockbox.selene.commandparameters
+org.dockbox.selene.commandparameters.exception
 org.dockbox.selene.common
 org.dockbox.selene.common.command
 org.dockbox.selene.common.command.context
@@ -106,6 +114,9 @@ org.dockbox.selene.nms.properties
 org.dockbox.selene.oldplots
 org.dockbox.selene.packets
 org.dockbox.selene.packets.data
+org.dockbox.selene.palswap
+org.dockbox.selene.palswap.fileparsers
+org.dockbox.selene.playeractions
 org.dockbox.selene.proxy
 org.dockbox.selene.proxy.annotations
 org.dockbox.selene.proxy.exception
@@ -125,6 +136,7 @@ org.dockbox.selene.sponge.objects.discord
 org.dockbox.selene.sponge.objects.inventory
 org.dockbox.selene.sponge.objects.item
 org.dockbox.selene.sponge.objects.item.maps
+org.dockbox.selene.sponge.objects.item.persistence
 org.dockbox.selene.sponge.objects.location
 org.dockbox.selene.sponge.objects.targets
 org.dockbox.selene.sponge.text.navigation
@@ -142,3 +154,4 @@ org.dockbox.selene.toolbinding
 org.dockbox.selene.worldedit
 org.dockbox.selene.worldedit.events
 org.dockbox.selene.worldedit.region
+org.dockbox.selene.worldmanagement
