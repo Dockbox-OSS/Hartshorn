@@ -17,12 +17,32 @@
 
 package org.dockbox.selene.playeractions;
 
-import org.dockbox.selene.api.objects.AbstractConfiguration;
+import com.google.inject.Singleton;
 
+import org.dockbox.selene.api.annotations.entity.Accessor;
+import org.dockbox.selene.api.annotations.entity.Extract;
+import org.dockbox.selene.api.annotations.entity.Extract.Behavior;
+import org.dockbox.selene.api.objects.AbstractConfiguration;
+import org.dockbox.selene.api.util.SeleneUtils;
+
+import java.util.List;
+
+@Singleton
+@Extract(Behavior.KEEP)
+@SuppressWarnings("FieldMayBeFinal")
 public class PlayerActionConfiguration extends AbstractConfiguration<PlayerActionConfiguration> {
+
+    @Accessor(getter = "getTeleportWhitelist")
+    private List<String> teleportWhitelist = SeleneUtils.emptyList();
+
+    public List<String> getTeleportWhitelist() {
+        return teleportWhitelist;
+    }
 
     @Override
     protected Class<?> getModuleClass() {
         return PlayerActions.class;
     }
 }
+
+
