@@ -112,6 +112,7 @@ import org.spongepowered.api.util.rotation.Rotation;
 import org.spongepowered.api.util.rotation.Rotations;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.net.URL;
 import java.util.List;
@@ -505,7 +506,7 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    public static WorldCreatingProperties fromSponge(
+    public static WorldCreatingProperties fromSpongeCreating(
             org.spongepowered.api.world.storage.WorldProperties worldProperties) {
         Vector3i vector3i = worldProperties.getSpawnPosition();
         Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
@@ -553,18 +554,21 @@ public enum SpongeConversionUtil {
 
     @NotNull
     public static org.dockbox.selene.api.objects.location.World fromSponge(World world) {
-        Vector3i vector3i = world.getProperties().getSpawnPosition();
-        Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
+        return fromSponge(world.getProperties());
+    }
 
+    public static org.dockbox.selene.api.objects.location.World fromSponge(WorldProperties properties) {
+        Vector3i vector3i = properties.getSpawnPosition();
+        Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
         org.dockbox.selene.api.objects.location.World spongeWorld =
                 new SpongeWorld(
-                        world.getUniqueId(),
-                        world.getName(),
-                        world.getProperties().loadOnStartup(),
+                        properties.getUniqueId(),
+                        properties.getWorldName(),
+                        properties.loadOnStartup(),
                         spawnLocation,
-                        world.getProperties().getSeed(),
-                        fromSponge(world.getProperties().getGameMode()));
-        world.getProperties().getGameRules().forEach(spongeWorld::setGamerule);
+                        properties.getSeed(),
+                        fromSponge(properties.getGameMode()));
+        properties.getGameRules().forEach(spongeWorld::setGamerule);
         return spongeWorld;
     }
 
@@ -768,5 +772,22 @@ public enum SpongeConversionUtil {
         catch (IllegalArgumentException | NullPointerException e) {
             return BlockFace.NONE;
         }
+    }
+
+    public static com.intellectualcrafters.plot.object.Location toPlotSquared(org.dockbox.selene.api.objects.location.Location location) {
+        return new com.intellectualcrafters.plot.object.Location(
+                location.getWorld().getName(),
+                (int) location.getX(),
+                (int) location.getY(),
+                (int) location.getZ(),
+                0, 0
+        );
+    }
+
+    public static org.dockbox.selene.api.objects.location.Location fromPlotSquared(com.intellectualcrafters.plot.object.Location location) {
+        org.dockbox.selene.api.objects.location.World world = Selene.provide(WorldStorageService.class).getWorld(location.getWorld()).orNull();
+        return new org.dockbox.selene.api.objects.location.Location(
+                location.getX(), location.getY(), location.getZ(), world
+        );
     }
 }
