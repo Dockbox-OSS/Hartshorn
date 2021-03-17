@@ -19,6 +19,8 @@ package org.dockbox.selene.api.objects.keys;
 
 import org.dockbox.selene.api.objects.Exceptional;
 
+import java.util.Map;
+
 public interface PersistentDataHolder {
 
     <T> Exceptional<T> get(PersistentDataKey<T> dataKey);
@@ -26,4 +28,7 @@ public interface PersistentDataHolder {
     <T> TransactionResult set(PersistentDataKey<T> dataKey, T value);
 
     <T> void remove(PersistentDataKey<T> dataKey);
+
+    Map<PersistentDataKey<?>, Object> getPersistentData();
+
 }

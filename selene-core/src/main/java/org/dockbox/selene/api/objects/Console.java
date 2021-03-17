@@ -24,91 +24,89 @@ import org.dockbox.selene.api.objects.targets.Identifiable;
 import org.dockbox.selene.api.objects.targets.PermissionHolder;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public abstract class Console implements CommandSource, PermissionHolder, Identifiable {
 
-  protected static Console instance;
+    @SuppressWarnings("ConstantDeclaredInAbstractClass")
+    public static final UUID UNIQUE_ID = new UUID(0, 0);
+    protected static Console instance;
 
-  @SuppressWarnings("ConstantDeclaredInAbstractClass")
-  public static final UUID UNIQUE_ID = new UUID(0, 0);
+    protected Console() {
+        if (null != instance) throw new IllegalStateException("Console has already been initialized!");
+        instance = this;
+    }
 
-  protected Console() {
-    if (null != instance) throw new IllegalStateException("Console has already been initialized!");
-    instance = this;
-  }
+    public static Console getInstance() {
+        if (null == instance) return Selene.provide(Console.class);
+        return instance;
+    }
 
-  public static Console getInstance() {
-    if (null == instance) return Selene.provide(Console.class);
-    return instance;
-  }
+    @Override
+    public boolean hasPermission(@NotNull String permission) {
+        return true;
+    }
 
-  @Override
-  public boolean hasPermission(@NotNull String permission) {
-    return true;
-  }
+    @Override
+    public boolean hasAnyPermission(@NotNull String @NotNull ... permissions) {
+        return true;
+    }
 
-  @Override
-  public boolean hasAnyPermission(@NotNull String @NotNull ... permissions) {
-    return true;
-  }
+    @Override
+    public boolean hasAllPermissions(@NotNull String @NotNull ... permissions) {
+        return true;
+    }
 
-  @Override
-  public boolean hasAllPermissions(@NotNull String @NotNull ... permissions) {
-    return true;
-  }
+    @Override
+    public boolean hasPermission(@NotNull AbstractPermission permission) {
+        return true;
+    }
 
-  @Override
-  public boolean hasPermission(@NotNull AbstractPermission permission) {
-    return true;
-  }
+    @Override
+    public boolean hasAnyPermission(@NotNull AbstractPermission @NotNull ... permissions) {
+        return true;
+    }
 
-  @Override
-  public boolean hasAnyPermission(@NotNull AbstractPermission @NotNull ... permissions) {
-    return true;
-  }
+    @Override
+    public boolean hasAllPermissions(@NotNull AbstractPermission @NotNull ... permissions) {
+        return true;
+    }
 
-  @Override
-  public boolean hasAllPermissions(@NotNull AbstractPermission @NotNull ... permissions) {
-    return true;
-  }
+    @Override
+    public void setPermission(@NotNull String permission, boolean value) {}
 
-  @Override
-  public void setPermission(@NotNull String permission, boolean value) {}
+    @Override
+    public void setPermissions(boolean value, @NotNull String @NotNull ... permissions) {}
 
-  @Override
-  public void setPermissions(boolean value, @NotNull String @NotNull ... permissions) {}
+    @Override
+    public void setPermission(@NotNull AbstractPermission permission, boolean value) {}
 
-  @Override
-  public void setPermission(@NotNull AbstractPermission permission, boolean value) {}
+    @Override
+    public void setPermissions(boolean value, @NotNull AbstractPermission @NotNull ... permissions) {}
 
-  @Override
-  public void setPermissions(boolean value, @NotNull AbstractPermission @NotNull ... permissions) {}
+    @Override
+    public void send(@NotNull ResourceEntry text) {
+        Text formattedValue =
+                text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
+        this.send(formattedValue);
+    }
 
-  @Override
-  public void send(@NotNull ResourceEntry text) {
-    Text formattedValue =
-        text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
-    this.send(formattedValue);
-  }
+    @Override
+    public void sendWithPrefix(@NotNull ResourceEntry text) {
+        Text formattedValue =
+                text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
+        this.sendWithPrefix(formattedValue);
+    }
 
-  @Override
-  public void sendWithPrefix(@NotNull ResourceEntry text) {
-    Text formattedValue =
-        text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
-    this.sendWithPrefix(formattedValue);
-  }
+    @Override
+    public UUID getUniqueId() {
+        return UNIQUE_ID;
+    }
 
-  @Override
-  public UUID getUniqueId() {
-    return UNIQUE_ID;
-  }
-
-  @Override
-  public String getName() {
-    return "Console";
-  }
+    @Override
+    public String getName() {
+        return "Console";
+    }
 }

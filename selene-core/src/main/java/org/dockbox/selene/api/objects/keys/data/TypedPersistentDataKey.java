@@ -19,6 +19,8 @@ package org.dockbox.selene.api.objects.keys.data;
 
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.objects.keys.PersistentDataKey;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.util.Reflect;
 import org.jetbrains.annotations.NonNls;
 
 public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
@@ -59,8 +61,9 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
 
     @Override
     public int hashCode() {
+        // Does not include the responsible module, as comparisons may be made against the StoredPersistentKey type
+        // which uses the IntegratedModule.
         int result = this.id.hashCode();
-        result = 31 * result + this.module.hashCode();
         result = 31 * result + this.type.hashCode();
         return result;
     }
@@ -73,7 +76,7 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
         TypedPersistentDataKey<?> that = (TypedPersistentDataKey<?>) o;
 
         if (!this.id.equals(that.id)) return false;
-        if (!this.module.equals(that.module)) return false;
+        if (!this.module.equals(that.module) && !this.module.equals(Reflect.getModule(Selene.class))) return false;
         return this.type.equals(that.type);
     }
 }

@@ -31,4 +31,10 @@ public interface WorldStorageService {
     Exceptional<World> getWorld(String name);
 
     Exceptional<World> getWorld(UUID uuid);
+
+    boolean hasWorld(String name);
+
+    boolean hasWorld(UUID uuid);
+
+    UUID getRootWorldId();
 }

@@ -25,6 +25,7 @@ import org.dockbox.selene.api.i18n.entry.IntegratedResource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Enchant;
 import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.item.persistence.PersistentItemModel;
 import org.dockbox.selene.api.objects.keys.PersistentDataKey;
 import org.dockbox.selene.api.objects.keys.TransactionResult;
 import org.dockbox.selene.api.objects.profile.Profile;
@@ -34,6 +35,7 @@ import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.common.objects.item.ReferencedItem;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
+import org.dockbox.selene.sponge.objects.item.persistence.SpongePersistentItemModel;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -312,5 +314,15 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @Override
     public Exceptional<? extends DataHolder> getDataHolder() {
         return this.getReference();
+    }
+
+    @Override
+    public Class<? extends PersistentItemModel> getModelClass() {
+        return SpongePersistentItemModel.class;
+    }
+
+    @Override
+    public PersistentItemModel toPersistentModel() {
+        return new SpongePersistentItemModel(this);
     }
 }

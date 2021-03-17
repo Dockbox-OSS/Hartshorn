@@ -18,15 +18,15 @@
 package org.dockbox.selene.api.exceptions.global;
 
 public class UncheckedSeleneException extends RuntimeException {
-  public UncheckedSeleneException(String message) {
-    super(message);
-  }
+    public UncheckedSeleneException(String message) {
+        super(message);
+    }
 
-  public UncheckedSeleneException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public UncheckedSeleneException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-  public UncheckedSeleneException(Throwable cause) {
-    super(cause);
-  }
+    public UncheckedSeleneException(Throwable cause) {
+        super(cause);
+    }
 }

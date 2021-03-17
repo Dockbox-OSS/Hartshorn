@@ -17,108 +17,72 @@
 
 package org.dockbox.selene.common.server.config;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import org.dockbox.selene.api.annotations.entity.Accessor;
 import org.dockbox.selene.api.annotations.entity.Extract;
 import org.dockbox.selene.api.annotations.entity.Extract.Behavior;
 import org.dockbox.selene.api.annotations.entity.Metadata;
-import org.dockbox.selene.api.annotations.module.Module;
-import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.i18n.common.Language;
+import org.dockbox.selene.api.objects.AbstractConfiguration;
 import org.dockbox.selene.api.server.IntegratedModule;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.config.Environment;
 import org.dockbox.selene.api.server.config.ExceptionLevels;
 import org.dockbox.selene.api.server.config.GlobalConfig;
-import org.dockbox.selene.api.server.properties.InjectableType;
-import org.dockbox.selene.api.server.properties.InjectorProperty;
-import org.dockbox.selene.api.util.Reflect;
-import org.dockbox.selene.api.util.SeleneUtils;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.Path;
-
+@SuppressWarnings("FieldMayBeFinal")
 @Singleton
 @Extract(Behavior.KEEP)
 @Metadata(alias = "config")
-public class SimpleGlobalConfig implements GlobalConfig, InjectableType {
+public class SimpleGlobalConfig extends AbstractConfiguration<SimpleGlobalConfig> implements GlobalConfig {
 
-  @Inject
-  @Extract(Behavior.SKIP)
-  private transient FileManager fileManager;
+    @Accessor(getter = "getEnvironment")
+    private final Environment environment = Environment.DEVELOPMENT;
+    @Inject
+    @Extract(Behavior.SKIP)
+    private transient IntegratedModule integratedModule;
+    @Accessor(getter = "getDefaultLanguage")
+    private Language defaultLanguage = Language.EN_US;
+    @Accessor(getter = "getStacktracesAllowed")
+    private boolean stacktracesAllowed = true;
+    private boolean friendlyExceptions = true;
+    @Accessor(getter = "getDiscordLoggingCategoryId")
+    private String discordLoggingCategoryId = "0";
 
-  @Inject
-  @Extract(Behavior.SKIP)
-  private transient IntegratedModule integratedModule;
-
-  @Accessor(getter = "getDefaultLanguage")
-  private Language defaultLanguage = Language.EN_US;
-
-  @Accessor(getter = "getStacktracesAllowed")
-  private boolean stacktracesAllowed = true;
-
-  private boolean friendlyExceptions = true;
-
-  @Accessor(getter = "getEnvironment")
-  private final Environment environment = Environment.DEVELOPMENT;
-
-  @Accessor(getter = "getDiscordLoggingCategoryId")
-  private String discordLoggingCategoryId = "0";
-
-  @Extract(Behavior.SKIP)
-  private transient boolean isConstructed;
-
-  @NotNull
-  @Override
-  public Language getDefaultLanguage() {
-    return this.defaultLanguage;
-  }
-
-  @Override
-  public boolean getStacktracesAllowed() {
-    return this.stacktracesAllowed;
-  }
-
-  @NotNull
-  @Override
-  public ExceptionLevels getExceptionLevel() {
-    if (null == Selene.getServer()) return ExceptionLevels.NATIVE;
-    return this.friendlyExceptions ? ExceptionLevels.FRIENDLY : ExceptionLevels.MINIMAL;
-  }
-
-  @NotNull
-  @Override
-  public Environment getEnvironment() {
-    return this.environment;
-  }
-
-  @Override
-  public String getDiscordLoggingCategoryId() {
-    return this.discordLoggingCategoryId;
-  }
-
-  @Override
-  public boolean canEnable() {
-    return !this.isConstructed;
-  }
-
-  @Override
-  public void stateEnabling(InjectorProperty<?>... properties) {
-    Module module = Reflect.getModule(this.integratedModule.getClass());
-    if (null == module) {
-      throw new IllegalStateException("Integrated module not annotated as such.");
+    @NotNull
+    @Override
+    public Language getDefaultLanguage() {
+        return this.defaultLanguage;
     }
 
-    Path configPath = this.fileManager.getConfigFile(module);
-    SimpleGlobalConfig globalConfig =
-        this.fileManager.read(configPath, SimpleGlobalConfig.class).orNull();
-    this.copyValues(globalConfig);
-  }
+    @Override
+    public boolean getStacktracesAllowed() {
+        return this.stacktracesAllowed;
+    }
 
-  private void copyValues(SimpleGlobalConfig config) {
-    SeleneUtils.shallowCopy(config, this);
-    this.isConstructed = true;
-  }
+    @NotNull
+    @Override
+    public ExceptionLevels getExceptionLevel() {
+        if (null == Selene.getServer()) return ExceptionLevels.NATIVE;
+        return this.friendlyExceptions ? ExceptionLevels.FRIENDLY : ExceptionLevels.MINIMAL;
+    }
+
+    @NotNull
+    @Override
+    public Environment getEnvironment() {
+        return this.environment;
+    }
+
+    @Override
+    public String getDiscordLoggingCategoryId() {
+        return this.discordLoggingCategoryId;
+    }
+
+    @Override
+    protected Class<?> getModuleClass() {
+        return integratedModule.getClass();
+    }
 }

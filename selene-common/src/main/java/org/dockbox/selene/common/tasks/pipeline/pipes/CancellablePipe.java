@@ -22,20 +22,20 @@ import org.dockbox.selene.common.tasks.pipeline.pipelines.AbstractPipeline;
 @FunctionalInterface
 public interface CancellablePipe<I, O> extends ComplexPipe<I, O> {
 
-  static <I, O> CancellablePipe<I, O> of(CancellablePipe<I, O> pipe) {
-    return pipe;
-  }
+    static <I, O> CancellablePipe<I, O> of(CancellablePipe<I, O> pipe) {
+        return pipe;
+    }
 
-  @Override
-  default O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception {
-    return this.execute(pipeline::cancelPipeline, input, throwable);
-  }
+    @Override
+    default O apply(AbstractPipeline<?, I> pipeline, I input, Throwable throwable) throws Exception {
+        return this.execute(pipeline::cancelPipeline, input, throwable);
+    }
 
-  O execute(Runnable cancelPipeline, I input, Throwable throwable) throws Exception;
+    O execute(Runnable cancelPipeline, I input, Throwable throwable) throws Exception;
 
-  @SuppressWarnings("rawtypes")
-  @Override
-  default Class<CancellablePipe> getType() {
-    return CancellablePipe.class;
-  }
+    @SuppressWarnings("rawtypes")
+    @Override
+    default Class<CancellablePipe> getType() {
+        return CancellablePipe.class;
+    }
 }

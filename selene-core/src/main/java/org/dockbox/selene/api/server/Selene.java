@@ -29,6 +29,7 @@ import org.dockbox.selene.api.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.api.server.config.ExceptionLevels;
 import org.dockbox.selene.api.server.config.GlobalConfig;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
+import org.dockbox.selene.api.tasks.CheckedRunnable;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -40,12 +41,22 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.Callable;
 
 /** The global {@link Selene} instance used to grant access to various components. */
 @SuppressWarnings("ClassWithTooManyMethods")
 public final class Selene {
 
     private Selene() {}
+
+    public static void handle(CheckedRunnable runnable) {
+        try {
+            runnable.run();
+        }
+        catch (Exception e) {
+            handle(e);
+        }
+    }
 
     public static void handle(Throwable e) {
         handle(SeleneUtils.getFirstCauseMessage(e), e);
@@ -82,6 +93,16 @@ public final class Selene {
         return SeleneBootstrap.getInstance();
     }
 
+    public static <T> T handle(Callable<T> callable) {
+        try {
+            return callable.call();
+        }
+        catch (Exception e) {
+            handle(e);
+            return null;
+        }
+    }
+
     /**
      * Gets a log instance representing the calling type.
      *
@@ -90,7 +111,7 @@ public final class Selene {
     public static Logger log() {
         StackTraceElement element = Thread.currentThread().getStackTrace()[2];
         String[] qualifiedClassName = element.getClassName().split("\\.");
-        return LoggerFactory.getLogger("Selene/" + qualifiedClassName[qualifiedClassName.length - 1]);
+        return LoggerFactory.getLogger(SeleneInformation.PROJECT_NAME + '/' + qualifiedClassName[qualifiedClassName.length - 1]);
     }
 
     /**
@@ -150,8 +171,7 @@ public final class Selene {
      *
      * @return The instance, if present. Otherwise returns null
      */
-    public static <T> T provide(
-            Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
+    public static <T> T provide(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
         return Selene.getServer().getInstance(type, module, additionalProperties);
     }
 
@@ -159,8 +179,7 @@ public final class Selene {
         return Selene.getServer().getInstance(type, additionalProperties);
     }
 
-    public static <T> T provide(
-            Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
+    public static <T> T provide(Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
         return Selene.getServer().getInstance(type, module, additionalProperties);
     }
 }

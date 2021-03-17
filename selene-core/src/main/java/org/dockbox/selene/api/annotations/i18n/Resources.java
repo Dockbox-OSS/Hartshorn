@@ -31,12 +31,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Resources {
-  /**
-   * The module responsible for the resources. {@link
-   * org.dockbox.selene.api.i18n.entry.IntegratedResource Internal resources} are linked to {@link
-   * org.dockbox.selene.api.server.Selene}.
-   *
-   * @return the responsible module class
-   */
-  Class<?> module();
+    /**
+     * The module responsible for the resources. {@link
+     * org.dockbox.selene.api.i18n.entry.IntegratedResource Internal resources} are linked to {@link
+     * org.dockbox.selene.api.server.Selene}.
+     *
+     * @return the responsible module class
+     */
+    Class<?> module();
 }

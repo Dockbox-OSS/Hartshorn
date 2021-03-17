@@ -996,6 +996,7 @@ public final class SeleneUtils {
      *         The type of both objects
      */
     public static <T> void shallowCopy(T from, T to) {
+        if (to == null || from == null) return;
         Collection<Field> fields = Reflect.getAccessibleFields(from.getClass());
         for (Field field : fields) {
             field.setAccessible(true);
@@ -1208,6 +1209,15 @@ public final class SeleneUtils {
             else break;
         }
         return null == throwable.getMessage() ? noCause : throwable.getMessage();
+    }
+
+    @SafeVarargs
+    public static <T> Collection<T> merge(Collection<T>... collections) {
+        Collection<T> merged = new ArrayList<>();
+        for (Collection<T> collection : collections) {
+            merged.addAll(collection);
+        }
+        return merged;
     }
 
     /**

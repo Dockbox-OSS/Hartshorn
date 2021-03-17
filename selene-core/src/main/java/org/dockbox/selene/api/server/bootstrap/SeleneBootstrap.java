@@ -110,6 +110,10 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         instance = this;
     }
 
+    public static boolean isConstructed() {
+        return instance != null;
+    }
+
     public static SeleneBootstrap getInstance() {
         return instance;
     }

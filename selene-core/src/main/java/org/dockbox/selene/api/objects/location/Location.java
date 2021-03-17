@@ -21,55 +21,55 @@ import org.dockbox.selene.api.objects.tuple.Vector3N;
 
 public class Location {
 
-  private final Vector3N vectorLoc;
-  private final World world;
+    private final Vector3N vectorLoc;
+    private final World world;
 
-  public Location(double x, double y, double z, World world) {
-    this(new Vector3N(x, y, z), world);
-  }
+    public Location(double x, double y, double z, World world) {
+        this(new Vector3N(x, y, z), world);
+    }
 
-  public Location(Vector3N vectorLoc, World world) {
-    this.vectorLoc = vectorLoc;
-    this.world = world;
-  }
+    public Location(Vector3N vectorLoc, World world) {
+        this.vectorLoc = vectorLoc;
+        this.world = world;
+    }
 
-  public static Location empty() {
-    return new Location(0, 0, 0, World.empty());
-  }
+    public static Location empty() {
+        return new Location(0, 0, 0, World.empty());
+    }
 
-  public double getX() {
-    return this.vectorLoc.getXd();
-  }
+    public double getX() {
+        return this.vectorLoc.getXd();
+    }
 
-  public double getY() {
-    return this.vectorLoc.getYd();
-  }
+    public double getY() {
+        return this.vectorLoc.getYd();
+    }
 
-  public double getZ() {
-    return this.vectorLoc.getZd();
-  }
+    public double getZ() {
+        return this.vectorLoc.getZd();
+    }
 
-  public Location expandX(double x) {
-    return this.expand(new Vector3N(x, 0, 0));
-  }
+    public Location expandX(double x) {
+        return this.expand(new Vector3N(x, 0, 0));
+    }
 
-  public Location expand(Vector3N vector) {
-    return new Location(this.vectorLoc.expand(vector), this.getWorld());
-  }
+    public Location expand(Vector3N vector) {
+        return new Location(this.vectorLoc.expand(vector), this.getWorld());
+    }
 
-  public World getWorld() {
-    return this.world;
-  }
+    public World getWorld() {
+        return this.world;
+    }
 
-  public Location expandY(double y) {
-    return this.expand(new Vector3N(0, y, 0));
-  }
+    public Location expandY(double y) {
+        return this.expand(new Vector3N(0, y, 0));
+    }
 
-  public Location expandZ(double z) {
-    return this.expand(new Vector3N(0, 0, z));
-  }
+    public Location expandZ(double z) {
+        return this.expand(new Vector3N(0, 0, z));
+    }
 
-  public Vector3N getVectorLoc() {
-    return this.vectorLoc;
-  }
+    public Vector3N getVectorLoc() {
+        return this.vectorLoc;
+    }
 }

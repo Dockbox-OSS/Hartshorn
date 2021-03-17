@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Provided {
-  Class<?> value() default Void.class;
+    Class<?> value() default Void.class;
 
-  boolean overrideExisting() default false;
+    boolean overrideExisting() default false;
 }

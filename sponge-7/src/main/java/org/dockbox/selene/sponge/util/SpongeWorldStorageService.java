@@ -20,6 +20,7 @@ package org.dockbox.selene.sponge.util;
 import org.dockbox.selene.api.WorldStorageService;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.storage.WorldProperties;
@@ -56,5 +57,22 @@ public class SpongeWorldStorageService implements WorldStorageService {
     @Override
     public Exceptional<World> getWorld(@NotNull UUID uuid) {
         return Exceptional.of(Sponge.getServer().loadWorld(uuid)).map(SpongeConversionUtil::fromSponge);
+    }
+
+    @Override
+    public boolean hasWorld(String name) {
+        return Sponge.getServer().getAllWorldProperties().stream()
+                .anyMatch(properties -> properties.getWorldName().equalsIgnoreCase(name));
+    }
+
+    @Override
+    public boolean hasWorld(UUID uuid) {
+        return Sponge.getServer().getAllWorldProperties().stream()
+                .anyMatch(properties -> properties.getUniqueId().equals(uuid));
+    }
+
+    @Override
+    public UUID getRootWorldId() {
+        return Sponge.getServer().getDefaultWorld().map(WorldProperties::getUniqueId).orElse(SeleneUtils.EMPTY_UUID);
     }
 }

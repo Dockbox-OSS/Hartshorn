@@ -18,7 +18,6 @@
 package org.dockbox.selene.api.regex.matchers;
 
 import org.dockbox.selene.api.VerbalExpression;
-
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.TypeSafeMatcher;
@@ -28,24 +27,24 @@ import org.hamcrest.TypeSafeMatcher;
 /** User: lanwen Date: 29.05.14 Time: 20:06 */
 public final class TestMatchMatcher extends TypeSafeMatcher<VerbalExpression> {
 
-  private final String toTest;
+    private final String toTest;
 
-  private TestMatchMatcher(String toTest) {
-    this.toTest = toTest;
-  }
+    private TestMatchMatcher(String toTest) {
+        this.toTest = toTest;
+    }
 
-  @Override
-  public boolean matchesSafely(VerbalExpression verbalExpression) {
-    return verbalExpression.test(this.toTest);
-  }
+    @Factory
+    public static TestMatchMatcher matchesTo(String test) {
+        return new TestMatchMatcher(test);
+    }
 
-  @Override
-  public void describeTo(Description description) {
-    description.appendText("regex should match to ").appendValue(this.toTest);
-  }
+    @Override
+    public boolean matchesSafely(VerbalExpression verbalExpression) {
+        return verbalExpression.test(this.toTest);
+    }
 
-  @Factory
-  public static TestMatchMatcher matchesTo(String test) {
-    return new TestMatchMatcher(test);
-  }
+    @Override
+    public void describeTo(Description description) {
+        description.appendText("regex should match to ").appendValue(this.toTest);
+    }
 }

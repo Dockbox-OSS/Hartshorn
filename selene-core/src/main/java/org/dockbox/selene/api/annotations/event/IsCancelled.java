@@ -34,5 +34,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface IsCancelled {
-  Tristate value() default Tristate.FALSE;
+    Tristate value() default Tristate.FALSE;
 }

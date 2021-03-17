@@ -45,6 +45,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -566,11 +567,10 @@ public final class Reflect {
         Module module = type.getAnnotation(Module.class);
         module = null != module ? module : Reflect.getModule(type.getSuperclass());
         if (null == module)
-            module =
-                    Selene.getServer()
-                            .getInstanceSafe(ModuleManager.class)
-                            .map(em -> em.getHeader(type).orNull())
-                            .orNull();
+            module = Selene.getServer()
+                    .getInstanceSafe(ModuleManager.class)
+                    .map(em -> em.getHeader(type).orNull())
+                    .orNull();
         return module;
     }
 
@@ -929,5 +929,23 @@ public final class Reflect {
                 | InvocationTargetException e) {
             Selene.handle(e);
         }
+    }
+
+    public static Collection<Field> getAnnotatedFields(Class<? extends Annotation> annotation, Class<?> type) {
+        Collection<Field> fields = new ArrayList<>();
+        for (Field declaredField : type.getDeclaredFields()) {
+            if (declaredField.isAnnotationPresent(annotation)) fields.add(declaredField);
+        }
+        if (type.getSuperclass() != null) fields.addAll(getAnnotatedFields(annotation, type.getSuperclass()));
+        return fields;
+    }
+
+    public static <T> Collection<Constructor<T>> getAnnotatedConstructors(Class<? extends Annotation> annotation, Class<T> type) {
+        Collection<Constructor<T>> constructors = SeleneUtils.emptyList();
+        //noinspection unchecked
+        for (Constructor<T> constructor : (Constructor<T>[]) type.getDeclaredConstructors()) {
+            if (constructor.isAnnotationPresent(annotation)) constructors.add(constructor);
+        }
+        return constructors;
     }
 }

@@ -18,7 +18,6 @@
 package org.dockbox.selene.api.regex;
 
 import org.dockbox.selene.api.VerbalExpression;
-
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsNot;
@@ -27,36 +26,36 @@ import org.junit.jupiter.api.Test;
 /** User: lanwen Date: 11.05.14 Time: 3:30 */
 public class UsageLibTest {
 
-  @Test
-  public void staticFabricsRetunSameAsConstructorExpressions() {
-    VerbalExpression regexViaFactory = VerbalExpression.regex().anything().build();
-    VerbalExpression regexViaConstructor = VerbalExpression.regex().anything().build();
+    @Test
+    public void staticFabricsRetunSameAsConstructorExpressions() {
+        VerbalExpression regexViaFactory = VerbalExpression.regex().anything().build();
+        VerbalExpression regexViaConstructor = VerbalExpression.regex().anything().build();
 
-    MatcherAssert.assertThat(
-        "Factory builder method produce not same as constructor regex",
-        regexViaFactory.toString(),
-        CoreMatchers.equalTo(regexViaConstructor.toString()));
-  }
+        MatcherAssert.assertThat(
+                "Factory builder method produce not same as constructor regex",
+                regexViaFactory.toString(),
+                CoreMatchers.equalTo(regexViaConstructor.toString()));
+    }
 
-  @Test
-  public void clonedBuilderEqualsOriginal() {
-    VerbalExpression.Builder builder = VerbalExpression.regex().anything().addModifier('i');
-    VerbalExpression.Builder clonedBuilder = VerbalExpression.regex(builder);
+    @Test
+    public void clonedBuilderEqualsOriginal() {
+        VerbalExpression.Builder builder = VerbalExpression.regex().anything().addModifier('i');
+        VerbalExpression.Builder clonedBuilder = VerbalExpression.regex(builder);
 
-    MatcherAssert.assertThat(
-        "Cloned builder changed after creating new one",
-        builder.build().toString(),
-        CoreMatchers.equalTo(clonedBuilder.build().toString()));
-  }
+        MatcherAssert.assertThat(
+                "Cloned builder changed after creating new one",
+                builder.build().toString(),
+                CoreMatchers.equalTo(clonedBuilder.build().toString()));
+    }
 
-  @Test
-  public void clonedBuilderCantChangeOriginal() {
-    VerbalExpression.Builder builder = VerbalExpression.regex().anything().addModifier('i');
-    VerbalExpression.Builder clonedBuilder = VerbalExpression.regex(builder).endOfLine();
+    @Test
+    public void clonedBuilderCantChangeOriginal() {
+        VerbalExpression.Builder builder = VerbalExpression.regex().anything().addModifier('i');
+        VerbalExpression.Builder clonedBuilder = VerbalExpression.regex(builder).endOfLine();
 
-    MatcherAssert.assertThat(
-        "Cloned builder changed after creating new one",
-        builder.build().toString(),
-        IsNot.not(clonedBuilder.build().toString()));
-  }
+        MatcherAssert.assertThat(
+                "Cloned builder changed after creating new one",
+                builder.build().toString(),
+                IsNot.not(clonedBuilder.build().toString()));
+    }
 }
