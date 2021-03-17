@@ -26,6 +26,13 @@ import org.dockbox.selene.common.command.convert.AbstractArgumentConverter;
 
 import java.util.Collection;
 
+/**
+ * The default converter for any type which can be constructed with a {@link CustomParameterPattern}. Typically
+ * this only applies to types annotated with {@link org.dockbox.selene.annotations.command.CustomParameter},
+ * however this is not a requirement.
+ *
+ * @param <T> The generic type
+ */
 public class DynamicPatternConverter<T> extends AbstractArgumentConverter<T> {
 
     private final CustomParameterPattern pattern;

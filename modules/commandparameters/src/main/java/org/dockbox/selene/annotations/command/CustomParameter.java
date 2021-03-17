@@ -25,6 +25,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Used to indicate that a type can be provided to command definitions. When a type is annotated with this annotation, it can be automatically
+ * constructed using its available constructors. If there are more than one constructor, the target constructors are to be annotated with
+ * {@link ParameterConstruction}.
+ *
+ * <p>Also see <a href="https://github.com/GuusLieben/Selene/wiki/Command-Arguments>Selene/Command Arguments</a>.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface CustomParameter {

@@ -43,6 +43,13 @@ import java.util.regex.Pattern;
  */
 public class HashtagParameterPattern implements CustomParameterPattern {
 
+    /*
+     * Scans for arguments wrapped in square brackets. Matches anything that is not a square bracket on its own. E.g.:
+     * - [arg1] matches, 1 group [arg1]
+     * - [arg1][arg2] matches, 2 groups [arg1] and [arg2]
+     * - [[]] does not match
+     * - [[arg1]] matches, 1 group [arg1]
+     */
     private static final Pattern ARGUMENT = Pattern.compile("\\[[^\\[\\]]+\\]");
 
     @SuppressWarnings("ConstantConditions")

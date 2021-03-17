@@ -22,6 +22,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Used to indicate a constructor is available for automatic construction based on given parameters. If a constructor is annotated with
+ * this annotation, the type is expected to have the {@link CustomParameter} annotation.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.CONSTRUCTOR)
 public @interface ParameterConstruction {
