@@ -48,6 +48,18 @@ repositories {
         name 'Nucleus'
         url 'http://repo.drnaylor.co.uk/artifactory/list/minecraft'
     }
+    maven {
+        name 'fawe'
+        url 'http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/'
+    }
+    maven {
+        name 'sk89q'
+        url 'https://maven.enginehub.org/repo/'
+    }
+//    maven {
+//        name 'plotsquared'
+//        url 'https://plotsquared.com/mvn/'
+//    }
 }
 
 dependencies {
@@ -97,6 +109,16 @@ dependencies {
     }
 
     compileOnly files('libs/PacketGate-0.1.2.jar')
+    compileOnly files('libs/PlotSquared-modified-latest.jar')
+
+    // Required plugins for all platforms
+    compileOnly "com.boydti:fawe-api:$faweVersion"
+    compileOnly "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
+//    compileOnly "com.plotsquared:plotsquared-api:$plotSquaredVersion"
+
+    testImplementation "com.boydti:fawe-api:$faweVersion"
+    testImplementation "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
+//    testImplementation "com.plotsquared:plotsquared-api:$plotSquaredVersion"
 }
 
 shadowJar {

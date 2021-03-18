@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.worldedit.events;
 
-import com.boydti.fawe.object.FawePlayer;
-
 import org.dockbox.selene.api.events.AbstractCancellableEvent;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.player.Player;
@@ -36,7 +34,7 @@ public class WorldEditPasteEvent extends AbstractCancellableEvent {
     }
 
     /**
-     * Gets the selection of the executing {@link FawePlayer}
+     * Gets the selection of the executing {@link Player}
      *
      * @return The selection
      */
@@ -45,7 +43,7 @@ public class WorldEditPasteEvent extends AbstractCancellableEvent {
     }
 
     /**
-     * Gets the clipboard of the executing {@link FawePlayer} if one is present. If no clipboard is
+     * Gets the clipboard of the executing {@link Player} if one is present. If no clipboard is
      * present a empty {@link Exceptional} is returned.
      *
      * @return the clipboard

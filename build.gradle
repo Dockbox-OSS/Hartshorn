@@ -81,18 +81,6 @@ allprojects {
                 name 'Jitpack'
                 url 'https://jitpack.io'
             }
-            maven {
-                name 'fawe'
-                url 'http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/'
-            }
-            maven {
-                name 'sk89q'
-                url 'https://maven.enginehub.org/repo/'
-            }
-            maven {
-                name 'plotsquared'
-                url 'https://plotsquared.com/mvn/'
-            }
         }
 
         configurations {
@@ -106,11 +94,6 @@ allprojects {
 
             compile group: 'com.mortennobel', name: 'java-image-scaling', version: '0.8.6'
             compile group: 'com.jhlabs', name: 'filters', version: '2.0.235-1'
-
-            // Required plugins for all platforms
-            compileOnly "com.boydti:fawe-api:$faweVersion"
-            compileOnly "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
-            compileOnly "com.plotsquared:plotsquared-api:$plotSquaredVersion"
 
             // Typically included by platforms
             compileOnly "org.slf4j:slf4j-api:$slf4jVersion"
@@ -126,9 +109,6 @@ allprojects {
 
             testCompile "org.mockito:mockito-all:$mockitoVersion"
 
-            testImplementation "com.boydti:fawe-api:$faweVersion"
-            testImplementation "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
-            testImplementation "com.plotsquared:plotsquared-api:$plotSquaredVersion"
             testImplementation "com.google.inject:guice:$guiceVersion"
             testImplementation "com.google.guava:guava:$guavaVersion"
         }
