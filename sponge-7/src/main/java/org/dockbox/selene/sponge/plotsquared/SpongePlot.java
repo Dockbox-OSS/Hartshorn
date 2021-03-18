@@ -55,11 +55,12 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
     }
 
     @Override
-    public Player getOwner() {
+    public Exceptional<Player> getOwner() {
         if (referenceExists()) {
             Plot plot = getReference().get();
+            if (plot.getOwners().isEmpty()) return Exceptional.empty();
             UUID ownerUuid = plot.getOwners().iterator().next();
-            return Selene.provide(PlayerStorageService.class).getPlayer(ownerUuid).orNull();
+            return Selene.provide(PlayerStorageService.class).getPlayer(ownerUuid);
         }
         throw new IllegalStateException("Reference plot at " + center.getWorld().getName() + ";" + x + "," + y + " could not be found");
     }

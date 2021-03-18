@@ -31,7 +31,7 @@ import java.util.Map;
 
 public interface Plot extends KeyHolder<Plot> {
 
-    Player getOwner();
+    Exceptional<Player> getOwner();
 
     Collection<Player> getPlayers(PlotMembership membership);
 
@@ -55,7 +55,7 @@ public interface Plot extends KeyHolder<Plot> {
 
     Exceptional<Plot> getRelative(Direction direction);
 
-    static Plot getById(World world, int x, int y) {
+    static Exceptional<Plot> getById(World world, int x, int y) {
         return Selene.provide(PlotService.class).getPlot(world, x, y);
     }
 

@@ -178,7 +178,7 @@ public class PlotSquaredEventListener {
         PlotProperties finalProperty = property;
         worlds.getWorld(event.getWorld()).ifPresent(world -> {
             new PlotChangePropertyEvent(
-                    Plot.getById(world, event.getPlotId().x, event.getPlotId().y),
+                    Plot.getById(world, event.getPlotId().x, event.getPlotId().y).orNull(),
                     finalProperty
             ).post();
         });
