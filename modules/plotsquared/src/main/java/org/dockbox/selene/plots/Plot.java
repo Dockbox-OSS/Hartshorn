@@ -18,6 +18,7 @@
 package org.dockbox.selene.plots;
 
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.keys.KeyHolder;
 import org.dockbox.selene.api.objects.location.Direction;
 import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.location.World;
@@ -28,7 +29,7 @@ import org.dockbox.selene.plots.flags.PlotFlag;
 import java.util.Collection;
 import java.util.Map;
 
-public interface Plot {
+public interface Plot extends KeyHolder<Plot> {
 
     Player getOwner();
 

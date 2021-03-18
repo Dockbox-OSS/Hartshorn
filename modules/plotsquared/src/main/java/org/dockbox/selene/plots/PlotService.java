@@ -19,8 +19,11 @@ package org.dockbox.selene.plots;
 
 import org.dockbox.selene.api.annotations.RequiresBinding;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.World;
 import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.plots.flags.PlotFlag;
 
 @RequiresBinding
@@ -32,4 +35,27 @@ public interface PlotService {
 
     void registerFlag(PlotFlag<?> flag);
 
+    Exceptional<Plot> getPlot(World world, int x, int y);
+
+    void setFilling(Plot plot, Item item);
+
+    void setFloor(Plot plot, Item item);
+
+    void setAir(Plot plot, Item item);
+
+    void setAll(Plot plot, Item item);
+
+    void setWallBorder(Plot plot, Item item);
+
+    void setWallFilling(Plot plot, Item item);
+
+    void setOutline(Plot plot, Item item);
+
+    void setMiddle(Plot plot, Item item);
+
+    Integer getSize(Plot plot);
+
+    Text getAlias(Plot plot);
+
+    void setAlias(Plot plot, Text item);
 }
