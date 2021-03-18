@@ -56,10 +56,6 @@ repositories {
         name 'sk89q'
         url 'https://maven.enginehub.org/repo/'
     }
-//    maven {
-//        name 'plotsquared'
-//        url 'https://plotsquared.com/mvn/'
-//    }
 }
 
 dependencies {

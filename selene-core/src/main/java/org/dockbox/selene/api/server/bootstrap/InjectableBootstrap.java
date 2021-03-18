@@ -193,7 +193,6 @@ public abstract class InjectableBootstrap {
 
     private <T> void enableInjectionPoints(T typeInstance) {
         if (typeInstance == null) return;
-        if (typeInstance.getClass().isAnnotationPresent(Module.class)) return;
         SeleneUtils.merge(
                 Reflect.getAnnotatedFields(Inject.class, typeInstance.getClass()),
                 Reflect.getAnnotatedFields(javax.inject.Inject.class, typeInstance.getClass()))
@@ -215,24 +214,15 @@ public abstract class InjectableBootstrap {
             InjectorProperty<?>[] additionalProperties) {
         if (null == typeInstance) {
             try {
-                typeInstance =
-                        InjectableBootstrap.getInjectedInstance(injector, type, additionalProperties);
+                typeInstance = InjectableBootstrap.getInjectedInstance(injector, type, additionalProperties);
             }
             catch (ProvisionException e) {
-                Selene.log()
-                        .error(
-                                "Could not create instance using registered injector "
-                                        + injector
-                                        + " for ["
-                                        + type.getCanonicalName()
-                                        + "]",
-                                e);
+                Selene.log().error("Could not create instance using registered injector " + injector + " for [" + type.getCanonicalName() + "]", e);
             }
             catch (ConfigurationException ce) {
-                typeInstance =
-                        InjectableBootstrap.getRawInstance(type, injector)
-                                .orElseSupply(() -> this.getUnsafeInstance(type, injector))
-                                .orNull();
+                typeInstance = InjectableBootstrap.getRawInstance(type, injector)
+                        .orElseSupply(() -> this.getUnsafeInstance(type, injector))
+                        .orNull();
             }
         }
         return typeInstance;
@@ -246,11 +236,7 @@ public abstract class InjectableBootstrap {
                     typeInstance = ((InjectionPoint<T>) injectionPoint).apply(typeInstance);
                 }
                 catch (ClassCastException e) {
-                    Selene.log()
-                            .warn(
-                                    "Attempted to apply injection point to incompatible type ["
-                                            + type.getCanonicalName()
-                                            + "]");
+                    Selene.log().warn("Attempted to apply injection point to incompatible type [" + type.getCanonicalName() + "]");
                 }
             }
         }
@@ -258,8 +244,7 @@ public abstract class InjectableBootstrap {
     }
 
     private <T> @Nullable T getUnsafeInstance(Class<T> type, Injector injector) {
-        Selene.log()
-                .warn("Attempting to get instance of [" + type.getCanonicalName() + "] through Unsafe");
+        Selene.log().warn("Attempting to get instance of [" + type.getCanonicalName() + "] through Unsafe");
         try {
             @SuppressWarnings("unchecked")
             T t = (T) this.getUnsafe().allocateInstance(type);
@@ -267,10 +252,7 @@ public abstract class InjectableBootstrap {
             return t;
         }
         catch (Exception e) {
-            Selene.handle(
-                    "Could not create instance of ["
-                            + type.getCanonicalName()
-                            + "] through injected, raw or unsafe construction");
+            Selene.handle("Could not create instance of [" + type.getCanonicalName() + "] through injected, raw or unsafe construction", e);
         }
         return null;
     }
