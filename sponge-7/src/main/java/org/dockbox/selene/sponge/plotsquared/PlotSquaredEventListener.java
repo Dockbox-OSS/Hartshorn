@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.sponge.plotsquared;
 
+import com.intellectualcrafters.plot.object.PlotId;
 import com.plotsquared.sponge.events.PlayerClaimPlotEvent;
 import com.plotsquared.sponge.events.PlayerEnterPlotEvent;
 import com.plotsquared.sponge.events.PlayerLeavePlotEvent;
@@ -56,6 +57,8 @@ import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.event.Listener;
 
 import java.util.Collection;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -221,8 +224,7 @@ public class PlotSquaredEventListener {
 
     @Listener
     public void onPlotAutoMerge(PlotAutoMergeEvent event) {
-        World world = worlds.getWorld(event.getWorld().getUniqueId()).orNull();
-        Collection<Plot> plots = event.getPlots().stream().map(plotId -> Plot.getById(world, plotId.x, plotId.y)).collect(Collectors.toList());
+        Collection<Plot> plots = getPlots(event.getWorld().getUniqueId(), event.getPlots());
         Cancellable cancellable = new org.dockbox.selene.plots.events.merge.PlotAutoMergeEvent(
                 new SpongePlot(event.getPlot()),
                 plots
@@ -233,10 +235,18 @@ public class PlotSquaredEventListener {
 
     @Listener
     public void onPlotUnlink(PlotUnlinkEvent event) {
-        World world = worlds.getWorld(event.getWorld().getUniqueId()).orNull();
-        Collection<Plot> plots = event.getPlots().stream().map(plotId -> Plot.getById(world, plotId.x, plotId.y)).collect(Collectors.toList());
+        Collection<Plot> plots = getPlots(event.getWorld().getUniqueId(), event.getPlots());
         Cancellable cancellable = new org.dockbox.selene.plots.events.merge.PlotUnlinkEvent(plots).post();
         event.setCancelled(cancellable.isCancelled());
+    }
+
+    private Collection<Plot> getPlots(UUID worldId, Collection<PlotId> plotIds) {
+        World world = worlds.getWorld(worldId).orNull();
+        return plotIds.stream()
+                .map(plotId -> Plot.getById(world, plotId.x, plotId.y).orNull())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
     }
 
 }
