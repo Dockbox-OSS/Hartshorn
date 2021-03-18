@@ -62,6 +62,6 @@ public class SpongeWorldListener {
     @Listener
     public void onWorldCreating(ConstructWorldPropertiesEvent constructEvent) {
         WorldProperties swp = constructEvent.getWorldProperties();
-        new WorldCreatingEvent(SpongeConversionUtil.fromSponge(swp)).post();
+        new WorldCreatingEvent(SpongeConversionUtil.fromSpongeCreating(swp)).post();
     }
 }

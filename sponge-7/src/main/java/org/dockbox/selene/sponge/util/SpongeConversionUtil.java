@@ -20,6 +20,7 @@ package org.dockbox.selene.sponge.util;
 import com.boydti.fawe.object.FawePlayer;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
+import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.magitechserver.magibridge.util.BridgeCommandSource;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.WorldEdit;
@@ -789,5 +790,16 @@ public enum SpongeConversionUtil {
         return new org.dockbox.selene.api.objects.location.Location(
                 location.getX(), location.getY(), location.getZ(), world
         );
+    }
+
+    public static Player fromPlotSquared(PlotPlayer player) {
+        return new SpongePlayer(player.getUUID(), player.getName());
+    }
+
+    public static PlotPlayer toPlotSquared(Player player) {
+        if (player instanceof SpongePlayer) {
+            return PlotPlayer.wrap(((SpongePlayer) player).getSpongePlayer().orNull());
+        }
+        return PlotPlayer.get(player.getName());
     }
 }
