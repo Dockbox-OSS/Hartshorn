@@ -459,4 +459,8 @@ public final class Keys {
         return new Key<K, A>(Keys.transactSetter(setter), getter) {
         };
     }
+
+    public static <K, A> Key<K, A> setterKey(BiConsumer<K, A> setter) {
+        return dynamicKeyOf(setter, in -> Exceptional.empty());
+    }
 }

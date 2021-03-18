@@ -19,6 +19,8 @@ package org.dockbox.selene.sponge.objects.item;
 
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
+import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.extension.input.ParserContext;
 
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.entry.IntegratedResource;
@@ -37,6 +39,7 @@ import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.objects.item.persistence.SpongePersistentItemModel;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.dockbox.selene.sponge.util.SpongeWorldEditService;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataHolder;
@@ -258,6 +261,14 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
                 this.getReference()
                         .map(stack -> stack.toContainer().get(Constants.ItemStack.DAMAGE_VALUE).orElse(0))
                         .orElse(0);
+    }
+
+    @Override
+    public int getIdNumeric() {
+        // ID is typically used for WorldEdit hooks, to ensure this is consistent we delegate this to WorldEdit directly.
+        // By providing null to the context, the console actor will be used to prepare context.
+        ParserContext context = SpongeWorldEditService.prepareContext(null);
+        return SpongeConversionUtil.toWorldEdit(this, context).map(BaseBlock::getId).orElse(0);
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
