@@ -18,7 +18,11 @@
 package org.dockbox.selene.plots;
 
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.location.Direction;
+import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.World;
 import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.plots.flags.PlotFlag;
 
 import java.util.Collection;
@@ -43,5 +47,17 @@ public interface Plot {
     int getPlotX();
 
     int getPlotY();
+
+    Location getHome();
+
+    Location getCenter();
+
+    Exceptional<Plot> getRelative(Direction direction);
+
+    static Plot getById(World world, int x, int y) {
+        return Selene.provide(PlotService.class).getPlot(world, x, y);
+    }
+
+    boolean isWorld();
 
 }
