@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.api.objects.tuple;
 
+import java.util.Objects;
+
 /**
  * Represents a 2D point on a x-, and z-axis. All axis points can be represented as any numeral
  * value.
@@ -61,5 +63,18 @@ public class Vector2N {
 
     public long getZl() {
         return this.z.longValue();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Vector2N)) return false;
+        Vector2N vector2N = (Vector2N) o;
+        return x.equals(vector2N.x) && z.equals(vector2N.z);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, z);
     }
 }

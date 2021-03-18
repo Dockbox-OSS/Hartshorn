@@ -23,6 +23,7 @@ import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public abstract class World extends WorldProperties {
@@ -60,6 +61,27 @@ public abstract class World extends WorldProperties {
 
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof World)) return false;
+        World world = (World) o;
+        return getWorldUniqueId().equals(world.getWorldUniqueId()) && getName().equals(world.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getWorldUniqueId(), getName());
+    }
+
+    @Override
+    public String toString() {
+        return "World{" +
+                "worldUniqueId=" + worldUniqueId +
+                ", name='" + name + '\'' +
+                '}';
     }
 
     private static final class EmptyWorld extends World {
