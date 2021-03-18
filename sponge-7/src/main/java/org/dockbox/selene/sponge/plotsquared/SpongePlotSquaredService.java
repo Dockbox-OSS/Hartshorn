@@ -161,6 +161,10 @@ public class SpongePlotSquaredService implements PlotService {
     }
 
     protected static Exceptional<PlotFlag<?>> getFlag(String id) {
-        return Exceptional.ofNullable(flagRegistrations.getOrDefault(id, null));
+        if (flagRegistrations.containsKey(id)) {
+            return Exceptional.ofNullable(flagRegistrations.get(id));
+        } else {
+            return getPlotSquaredFlag(id).map(SpongeFlagWrapper::new);
+        }
     }
 }

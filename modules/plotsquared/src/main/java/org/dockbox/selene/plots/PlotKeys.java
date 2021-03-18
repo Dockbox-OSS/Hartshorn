@@ -57,7 +57,7 @@ public class PlotKeys {
     );
 
     public static Collection<Key<Plot, ?>> persistentDataKeys() {
-        return SeleneUtils.asUnmodifiableList(FILLING, FLOOR, AIR, ALL, WALL_BORDER, WALL_FILLING, OUTLINE, MIDDLE, SIZE, ALIAS);
+        return SeleneUtils.asUnmodifiableList(FILLING, FLOOR, AIR, ALL, WALL_BORDER, WALL_FILLING, OUTLINE, SIZE, ALIAS);
     }
 
     public static Collection<Key<Plot, ?>> getObtainablePersistentKeys() {
