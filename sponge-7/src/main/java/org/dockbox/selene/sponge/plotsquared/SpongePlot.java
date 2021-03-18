@@ -23,6 +23,7 @@ import com.intellectualcrafters.plot.object.Plot;
 import org.dockbox.selene.api.PlayerStorageService;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.ReferencedWrapper;
+import org.dockbox.selene.api.objects.location.Direction;
 import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;
@@ -117,6 +118,34 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
     @Override
     public int getPlotY() {
         return this.y;
+    }
+
+    @Override
+    public Location getHome() {
+        if (getReference().isPresent()) {
+            return SpongeConversionUtil.fromPlotSquared(getReference().get().getHome());
+        }
+        return Location.empty();
+    }
+
+    @Override
+    public Location getCenter() {
+        return this.center;
+    }
+
+    @Override
+    public Exceptional<org.dockbox.selene.plots.Plot> getRelative(Direction direction) {
+        if (getReference().isPresent()) {
+            return Exceptional.of(new SpongePlot(getReference().get().getRelative(direction.ordinal())));
+        }
+        return Exceptional.empty();
+    }
+
+    @Override
+    public boolean isWorld() {
+        return getReference()
+                .map(plot -> plot.getWorldName().replaceAll(",", ";").equals(plot.getId().toString()))
+                .orElse(false);
     }
 
     private Set<UUID> getUUIDs(PlotMembership membership) {
