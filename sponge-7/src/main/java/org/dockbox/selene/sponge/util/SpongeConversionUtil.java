@@ -20,6 +20,7 @@ package org.dockbox.selene.sponge.util;
 import com.boydti.fawe.object.FawePlayer;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
+import com.intellectualcrafters.plot.object.PlotBlock;
 import com.intellectualcrafters.plot.object.PlotPlayer;
 import com.magitechserver.magibridge.util.BridgeCommandSource;
 import com.sk89q.worldedit.Vector;
@@ -801,5 +802,13 @@ public enum SpongeConversionUtil {
             return PlotPlayer.wrap(((SpongePlayer) player).getSpongePlayer().orNull());
         }
         return PlotPlayer.get(player.getName());
+    }
+
+    public static Exceptional<PlotBlock> toPlotSquared(Item item) {
+        if (!item.isBlock()) return Exceptional.empty();
+        int id = item.getIdNumeric();
+        int meta = item.getMeta();
+        // Casting is safe in this use-case, as this is the same approach used by PlotSquared (legacy) in PlotBlock itself
+        return Exceptional.of(new PlotBlock((short) id, (byte) meta));
     }
 }
