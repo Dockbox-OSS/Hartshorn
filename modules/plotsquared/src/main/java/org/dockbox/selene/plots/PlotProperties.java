@@ -34,8 +34,6 @@ public enum PlotProperties {
     WALL_FILLING(PlotKeys.WALL_FILLING),
     // The filling of the outer edges of the plot (including top) from the plot floor (inclusive)
     OUTLINE(PlotKeys.OUTLINE),
-    // The filling of the center block(s) of the plot on the plot floor (inclusive)
-    MIDDLE(PlotKeys.MIDDLE),
     // The size of the plot, excluding plot borders
     SIZE(PlotKeys.SIZE),
     // The name of the plot

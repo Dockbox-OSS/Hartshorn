@@ -153,6 +153,7 @@ public class PlotSquaredEventListener {
         PlotProperties property = null;
         switch (event.getComponent()) {
             case "main":
+            case "middle":
                 property = PlotProperties.FILLING;
                 break;
             case "floor":
@@ -172,9 +173,6 @@ public class PlotSquaredEventListener {
                 break;
             case "outline":
                 property = PlotProperties.OUTLINE;
-                break;
-            case "middle":
-                property = PlotProperties.MIDDLE;
                 break;
         }
         PlotProperties finalProperty = property;

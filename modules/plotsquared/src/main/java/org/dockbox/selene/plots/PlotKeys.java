@@ -48,8 +48,6 @@ public class PlotKeys {
     public static final Key<Plot, Item> WALL_FILLING = Keys.setterKey(((plot, item) -> Selene.provide(PlotService.class).setFilling(plot, item)));
     // The filling of the outer edges of the plot (including top) from the plot floor (inclusive)
     public static final Key<Plot, Item> OUTLINE = Keys.setterKey(((plot, item) -> Selene.provide(PlotService.class).setFilling(plot, item)));
-    // The filling of the center block(s) of the plot on the plot floor (inclusive)
-    public static final Key<Plot, Item> MIDDLE = Keys.setterKey(((plot, item) -> Selene.provide(PlotService.class).setFilling(plot, item)));
     // The size of the plot, excluding plot borders
     public static final Key<Plot, Integer> SIZE = Keys.getterKey(plot -> Exceptional.of(Selene.provide(PlotService.class).getSize(plot)));
     // The name of the plot
