@@ -191,13 +191,15 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
     public static ParserContext prepareContext(Player cause) {
         ParserContext context = new ParserContext();
         context.setPreferringWildcard(true);
-        Actor actor =FakePlayer.getConsole();
+        Actor actor = FakePlayer.getConsole();
         if (null != cause) {
             FawePlayer<?> player = SpongeConversionUtil.toWorldEdit(cause);
             // setWorld also targets setExtent
             context.setWorld(player.getWorldForEditing());
             context.setSession(player.getSession());
             actor = player.getPlayer();
+        } else {
+            context.setWorld(FakePlayer.getConsole().getWorld());
         }
         context.setActor(actor);
         return context;
