@@ -117,6 +117,13 @@ org.dockbox.selene.packets.data
 org.dockbox.selene.palswap
 org.dockbox.selene.palswap.fileparsers
 org.dockbox.selene.playeractions
+org.dockbox.selene.plots
+org.dockbox.selene.plots.events
+org.dockbox.selene.plots.events.flags
+org.dockbox.selene.plots.events.membership
+org.dockbox.selene.plots.events.merge
+org.dockbox.selene.plots.events.movement
+org.dockbox.selene.plots.flags
 org.dockbox.selene.proxy
 org.dockbox.selene.proxy.annotations
 org.dockbox.selene.proxy.exception
@@ -139,6 +146,7 @@ org.dockbox.selene.sponge.objects.item.maps
 org.dockbox.selene.sponge.objects.item.persistence
 org.dockbox.selene.sponge.objects.location
 org.dockbox.selene.sponge.objects.targets
+org.dockbox.selene.sponge.plotsquared
 org.dockbox.selene.sponge.text.navigation
 org.dockbox.selene.sponge.util
 org.dockbox.selene.sponge.util.command
