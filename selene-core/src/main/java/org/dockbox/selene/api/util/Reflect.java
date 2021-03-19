@@ -682,8 +682,7 @@ public final class Reflect {
      *
      * @return the exceptional
      */
-    public static <T, A> Exceptional<T> tryCreate(
-            Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision) {
+    public static <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision) {
         T instance = inject ? Selene.provide(type) : Reflect.getInstance(type);
         if (null != instance)
             try {
@@ -733,8 +732,7 @@ public final class Reflect {
     }
 
     @SuppressWarnings("unchecked")
-    private static <A> Object extractFieldValue(
-            Field field, Provision provision, Function<A, Object> valueCollector) {
+    private static <A> Object extractFieldValue(            Field field, Provision provision, Function<A, Object> valueCollector) {
         if (Provision.FIELD == provision) return valueCollector.apply((A) field);
         else {
             String fieldName = Reflect.getFieldPropertyName(field);
