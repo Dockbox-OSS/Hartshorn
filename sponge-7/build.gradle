@@ -131,12 +131,12 @@ task prepareServerArtifacts(dependsOn: build) {
             include "**/*selene*.jar"
         }
 
-        println("Copying from: $DIST_DIR:")
-        println("$archivesBaseName-$version-${date}-all.jar")
+        println("Copying from: $DIST_DIR")
+        println("- $archivesBaseName-$version-${date}.jar")
         println("Copying to: $PLUGIN_DIR")
         ant.copy(todir: PLUGIN_DIR) {
             fileset dir: DIST_DIR,
-                    includes: "$archivesBaseName-$version-${date}-all.jar"
+                    includes: "$archivesBaseName-$version-${date}.jar"
         }
     }
 }
