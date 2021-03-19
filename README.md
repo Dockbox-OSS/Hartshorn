@@ -24,7 +24,8 @@ all sources within Selene. To generate these JavaDocs yourself, use `gradle aggr
 
 ## Development Server
 Selene contains pre-made servers for its supported platforms, with automatic build distributions towards those platforms. 
-These servers are included in the `servers` submodule. Depending on your Git client these may not be cloned directly, to ensure their availability use `git clone --recurse-submodules https://github.com/GuusLieben/Selene.git`.
+These servers can be generated using the appropriate `downloadDevServer` task for each relevant platform module. 
+This automatically downloads the appropriate server files from their respective authors/approved CDNs, see [this PR](https://github.com/GuusLieben/Selene/pull/214) for more details.
 
 To run the server, we recommend using [IntelliJ IDEA](https://www.jetbrains.com/idea/). 
 Each relevant platform module will have a `runDevServer` task which prepares and executes the development server for that platform.

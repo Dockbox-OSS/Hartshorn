@@ -29,6 +29,7 @@ buildscript {
 plugins {
     id 'java'
     id 'org.spongepowered.plugin' version '0.9.0'
+    id 'de.undercouch.download' version '4.1.1'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -62,7 +63,7 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraftForge112}"
     shadow project(':selene-core')
     shadow(project(':selene-common')) {
-        exclude group: "org.spongepowered", module: "configurate**"
+        exclude group: 'org.spongepowered', module: 'configurate**'
     }
     new File(parent.rootDir, 'modules').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
@@ -110,47 +111,108 @@ dependencies {
     // Required plugins for all platforms
     compileOnly "com.boydti:fawe-api:$faweVersion"
     compileOnly "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
-//    compileOnly "com.plotsquared:plotsquared-api:$plotSquaredVersion"
 
     testImplementation "com.boydti:fawe-api:$faweVersion"
     testImplementation "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
-//    testImplementation "com.plotsquared:plotsquared-api:$plotSquaredVersion"
 }
 
 shadowJar {
     configurations = [project.configurations.shadow]
 }
 
-task prepareServerArtifacts(dependsOn: build) {
+task downloadServerCustom(type: Download) {
+    src([
+            'http://dockbox.org/selene/sponge-112-custom.zip',
+            'http://dockbox.org/selene/sponge-112-libraries.zip',
+            'https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.12.2-14.23.5.2847/forge-1.12.2-14.23.5.2847-universal.jar',
+            'https://launcher.mojang.com/mc/game/1.12.2/server/886945bfb2b978778c3a0288fd7fab09d315b25f/server.jar'
+    ])
+    dest "${rootDir}/servers/sponge-112"
+}
+
+task downloadServerMods(type: Download) {
+    src([
+            'https://media.forgecdn.net/files/2565/963/ConquestReforged-3.0.2-mc1.12.2.jar',
+            'https://media.forgecdn.net/files/2897/804/FantasticLib-1.12.2.034.jar',
+            'https://media.forgecdn.net/files/2654/852/GlobalGameRules-1.12.2-2.2.7.jar',
+            'https://media.forgecdn.net/files/2853/556/NoAdvancements-1.12.2.002.jar',
+            'https://repo.spongepowered.org/maven/org/spongepowered/spongeforge/1.12.2-2838-7.3.0/spongeforge-1.12.2-2838-7.3.0.jar'
+    ])
+    dest "${rootDir}/servers/sponge-112/mods"
+}
+
+task downloadDevServer(type: Copy) {
+    def serverDir = new File("${rootDir}/servers/sponge-112")
+
+    println("Resetting directory $serverDir")
+    if (serverDir.exists()) {
+        serverDir.deleteDir()
+    }
+
+    println("Creating directory $serverDir")
+    mkdir serverDir
+
+    dependsOn 'downloadServerMods'
+    dependsOn 'downloadServerCustom'
+
+    def customZip = new File(serverDir, 'sponge-112-custom.zip')
+    println('Unzipping Selene-specific server plugins and configurations')
+    from zipTree(customZip)
+    into serverDir
+
+    def libZip = new File(serverDir, 'sponge-112-libraries.zip')
+    println('Unzipping server libraries')
+    from zipTree(libZip)
+    into serverDir
+
+    doLast {
+        def serverJar = new File(serverDir, 'server.jar')
+
+        println('Moving Minecraft 1.12.2 server')
+        copy {
+            from serverJar
+            into serverDir
+            rename('server.jar', 'minecraft_server.1.12.2.jar')
+        }
+
+        println('Cleaning up')
+        delete fileTree(serverDir).matching {
+            include 'server.jar'
+            include 'sponge-112-custom.zip'
+            include 'sponge-112-libraries.zip'
+        }
+    }
+}
+
+task relocateSeleneDistribution(dependsOn: build) {
     doLast {
         def version = getVersionName()
         def DIST_DIR = "${rootDir}/dist/${date}/${version}"
         def PLUGIN_DIR = "${rootDir}/servers/sponge-112/plugins"
 
         delete fileTree(PLUGIN_DIR).matching {
-            include "**/*selene*.jar"
+            include '**/*selene*.jar'
         }
 
-        println("Copying from: $DIST_DIR")
-        println("- $archivesBaseName-$version-${date}.jar")
-        println("Copying to: $PLUGIN_DIR")
+        println("Relocating $DIST_DIR/$archivesBaseName-$version-${date}.jar to $PLUGIN_DIR")
         ant.copy(todir: PLUGIN_DIR) {
             fileset dir: DIST_DIR,
                     includes: "$archivesBaseName-$version-${date}.jar"
         }
     }
 }
-task runDevServer(dependsOn: prepareServerArtifacts) {
+
+task runDevServer(dependsOn: relocateSeleneDistribution) {
     doLast {
         javaexec {
             workingDir = "${project.rootDir}/servers/sponge-112"
-            main = "-jar"
+            main = '-jar'
             args = [
-                    "-Xmx6G",
-                    "-Dsponge.debugcauseframes=true",
-                    "-Xdebug",
-                    "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005",
-                    "${project.rootDir}/servers/sponge-112/forge-1.12.2-2709.jar"
+                    '-Xmx6G',
+                    '-Dsponge.debugcauseframes=true',
+                    '-Xdebug',
+                    '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005',
+                    "${project.rootDir}/servers/sponge-112/forge-1.12.2-14.23.5.2847-universal.jar"
             ]
         }
     }
@@ -174,5 +236,5 @@ task copyArtifacts {
 
 jar.finalizedBy('reobfJar')
 build.finalizedBy copyArtifacts
-prepareServerArtifacts.dependsOn build
-runDevServer.dependsOn prepareServerArtifacts
+relocateSeleneDistribution.dependsOn build
+runDevServer.dependsOn relocateSeleneDistribution
