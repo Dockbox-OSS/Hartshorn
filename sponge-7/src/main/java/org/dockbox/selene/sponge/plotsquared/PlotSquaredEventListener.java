@@ -48,7 +48,7 @@ import org.dockbox.selene.plots.events.PlotChangePropertyEvent;
 import org.dockbox.selene.plots.events.flags.PlotFlagAddedEvent;
 import org.dockbox.selene.plots.events.flags.PlotFlagRemovedEvent;
 import org.dockbox.selene.plots.events.membership.ClaimPlotEvent;
-import org.dockbox.selene.plots.events.membership.PlotMembershipChanged;
+import org.dockbox.selene.plots.events.membership.PlotMembershipChangedEvent;
 import org.dockbox.selene.plots.events.merge.PlotMergeEvent;
 import org.dockbox.selene.plots.events.movement.EnterPlotEvent;
 import org.dockbox.selene.plots.events.movement.LeavePlotEvent;
@@ -94,7 +94,7 @@ public class PlotSquaredEventListener {
 
     @Listener
     public void onPlotDenied(PlayerPlotDeniedEvent event) {
-        new PlotMembershipChanged(
+        new PlotMembershipChangedEvent(
                 new SpongePlot(event.getPlot()),
                 players.getPlayer(event.getPlayer()).orNull(),
                 SpongeConversionUtil.fromSponge(event.getInitiator()),
@@ -104,7 +104,7 @@ public class PlotSquaredEventListener {
 
     @Listener
     public void onPlotHelper(PlayerPlotHelperEvent event) {
-        new PlotMembershipChanged(
+        new PlotMembershipChangedEvent(
                 new SpongePlot(event.getPlot()),
                 players.getPlayer(event.getPlayer()).orNull(),
                 SpongeConversionUtil.fromSponge(event.getInitiator()),
@@ -114,7 +114,7 @@ public class PlotSquaredEventListener {
 
     @Listener
     public void onPlotTrusted(PlayerPlotTrustedEvent event) {
-        new PlotMembershipChanged(
+        new PlotMembershipChangedEvent(
                 new SpongePlot(event.getPlot()),
                 players.getPlayer(event.getPlayer()).orNull(),
                 SpongeConversionUtil.fromSponge(event.getInitiator()),
@@ -134,7 +134,7 @@ public class PlotSquaredEventListener {
 
     @Listener
     public void onPlotChangeOwner(PlotChangeOwnerEvent event) {
-        new PlotMembershipChanged(
+        new PlotMembershipChangedEvent(
                 new SpongePlot(event.getPlot()),
                 players.getPlayer(event.getNewOwner()).orNull(),
                 SpongeConversionUtil.fromSponge(event.getInitiator()),

@@ -48,6 +48,6 @@ public class SpongePlotSquaredCustomFlag<V> extends Flag<V> {
 
     @Override
     public String getValueDescription() {
-        return flag.getDescription();
+        return flag.getDescription().asString();
     }
 }
