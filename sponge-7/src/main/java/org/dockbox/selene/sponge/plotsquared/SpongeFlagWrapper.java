@@ -19,6 +19,7 @@ package org.dockbox.selene.sponge.plotsquared;
 
 import com.intellectualcrafters.plot.flag.Flag;
 
+import org.dockbox.selene.api.i18n.entry.FakeResource;
 import org.dockbox.selene.plots.flags.AbstractPlotFlag;
 
 import java.lang.reflect.ParameterizedType;
@@ -28,7 +29,7 @@ public class SpongeFlagWrapper<T> extends AbstractPlotFlag<T> {
     private final Flag<T> flag;
 
     public SpongeFlagWrapper(Flag<T> flag) {
-        super(flag.getName(), flag.getValueDescription());
+        super(flag.getName(), new FakeResource(flag.getValueDescription()));
         this.flag = flag;
     }
 
