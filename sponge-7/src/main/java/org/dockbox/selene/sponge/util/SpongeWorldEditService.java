@@ -19,6 +19,7 @@ package org.dockbox.selene.sponge.util;
 
 import com.boydti.fawe.config.BBC;
 import com.boydti.fawe.object.FawePlayer;
+import com.boydti.fawe.wrappers.FakePlayer;
 import com.sk89q.minecraft.util.commands.CommandContext;
 import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.EditSession;
@@ -27,6 +28,7 @@ import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.command.MethodCommands;
 import com.sk89q.worldedit.extension.input.ParserContext;
+import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.function.mask.BlockMask;
 import com.sk89q.worldedit.function.pattern.RandomPattern;
@@ -186,16 +188,20 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
                 .collect(Collectors.toList());
     }
 
-    private static ParserContext prepareContext(Player cause) {
+    public static ParserContext prepareContext(Player cause) {
         ParserContext context = new ParserContext();
         context.setPreferringWildcard(true);
+        Actor actor = FakePlayer.getConsole();
         if (null != cause) {
             FawePlayer<?> player = SpongeConversionUtil.toWorldEdit(cause);
-            context.setActor(player.getPlayer());
             // setWorld also targets setExtent
             context.setWorld(player.getWorldForEditing());
             context.setSession(player.getSession());
+            actor = player.getPlayer();
+        } else {
+            context.setWorld(FakePlayer.getConsole().getWorld());
         }
+        context.setActor(actor);
         return context;
     }
 

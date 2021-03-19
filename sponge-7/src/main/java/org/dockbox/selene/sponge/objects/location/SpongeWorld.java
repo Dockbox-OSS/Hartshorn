@@ -59,7 +59,7 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
         if (this.referenceExists()) {
             return Sponge.getServer().unloadWorld(this.getReference().get());
         }
-        else return false;
+        else return true; // Already unloaded
     }
 
     @Override
@@ -75,14 +75,13 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
         if (this.referenceExists()) {
             return this.getReference().get().isLoaded();
         }
-        else return false;
+        else return false; // No reference means the world is not loaded (as it is obtained through #getWorld rather than #loadWorld
     }
 
     @Override
     public Exceptional<org.spongepowered.api.world.World> getReference() {
         // Do NOT load the world here as this reference is also used for several methods where the world
-        // does
-        // not have to be loaded, or even _should_ not be loaded due to the performance impact of
+        // does not have to be loaded, or even _should_ not be loaded due to the performance impact of
         // loading a world.
         if (null == this.reference.get())
             this.setReference(Exceptional.of(Sponge.getServer().getWorld(this.getWorldUniqueId())));

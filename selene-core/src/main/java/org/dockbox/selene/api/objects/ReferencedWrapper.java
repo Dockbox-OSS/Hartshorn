@@ -50,7 +50,9 @@ public abstract class ReferencedWrapper<T> implements Wrapper<T> {
         return this.reference;
     }
 
-    public abstract Function<T, Exceptional<T>> getUpdateReferenceTask();
+    public Function<T, Exceptional<T>> getUpdateReferenceTask() {
+        return value -> Exceptional.ofNullable(value).orElseSupply(() -> constructInitialReference().orNull());
+    }
 
     protected void setInternalReference(WeakReference<T> reference) {
         this.reference = reference;

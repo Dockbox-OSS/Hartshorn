@@ -104,4 +104,6 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
     Item withMeta(int meta);
 
     int getMeta();
+
+    int getIdNumeric();
 }

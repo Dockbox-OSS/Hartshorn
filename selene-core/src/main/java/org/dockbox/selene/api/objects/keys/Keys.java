@@ -243,7 +243,7 @@ public final class Keys {
     }
 
     /**
-     * Dynamic key of key.
+     * Checked dynamic key of key.
      *
      * @param <K>
      *         the type parameter
@@ -256,9 +256,30 @@ public final class Keys {
      *
      * @return the key
      */
-    public static <K, A> Key<K, A> dynamicKeyOf(
-            BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter) {
-        return new Key<K, A>(Keys.transactSetter(setter), getter) {
+    public static <K, A> Key<K, A> checkedDynamicKeyOf(
+            BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
+        return new Key<K, A>(setter, getter) {
+        };
+    }
+
+    /**
+     * Unsafe dynamic key of key.
+     *
+     * @param <K>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param setter
+     *         the setter
+     * @param getter
+     *         the getter
+     *
+     * @return the key
+     */
+    public static <K, A> Key<K, A> unsafeDynamicKeyOf(
+            BiConsumer<K, A> setter, CheckedFunction<K, A> getter) {
+        return new Key<K, A>(
+                Keys.transactSetter(setter), k -> Exceptional.of(() -> getter.apply(k))) {
         };
     }
 
@@ -297,47 +318,6 @@ public final class Keys {
         return (t, u) -> {
             setter.accept(t, u);
             return defaultResult;
-        };
-    }
-
-    /**
-     * Checked dynamic key of key.
-     *
-     * @param <K>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param setter
-     *         the setter
-     * @param getter
-     *         the getter
-     *
-     * @return the key
-     */
-    public static <K, A> Key<K, A> checkedDynamicKeyOf(
-            BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
-        return new Key<K, A>(setter, getter) {
-        };
-    }
-
-    /**
-     * Unsafe dynamic key of key.
-     *
-     * @param <K>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param setter
-     *         the setter
-     * @param getter
-     *         the getter
-     *
-     * @return the key
-     */
-    public static <K, A> Key<K, A> unsafeDynamicKeyOf(
-            BiConsumer<K, A> setter, CheckedFunction<K, A> getter) {
-        return new Key<K, A>(
-                Keys.transactSetter(setter), k -> Exceptional.of(() -> getter.apply(k))) {
         };
     }
 
@@ -452,5 +432,35 @@ public final class Keys {
             Consumer<K> remover) {
         return new RemovableKey<K, A>(setter, k -> Exceptional.of(() -> getter.apply(k)), remover) {
         };
+    }
+
+    public static <K, A> Key<K, A> getterKey(Function<K, Exceptional<A>> getter) {
+        return dynamicKeyOf((k, a) -> {
+            throw new UnsupportedOperationException("Cannot set the value of this key");
+        }, getter);
+    }
+
+    /**
+     * Dynamic key of key.
+     *
+     * @param <K>
+     *         the type parameter
+     * @param <A>
+     *         the type parameter
+     * @param setter
+     *         the setter
+     * @param getter
+     *         the getter
+     *
+     * @return the key
+     */
+    public static <K, A> Key<K, A> dynamicKeyOf(
+            BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter) {
+        return new Key<K, A>(Keys.transactSetter(setter), getter) {
+        };
+    }
+
+    public static <K, A> Key<K, A> setterKey(BiConsumer<K, A> setter) {
+        return dynamicKeyOf(setter, in -> Exceptional.empty());
     }
 }

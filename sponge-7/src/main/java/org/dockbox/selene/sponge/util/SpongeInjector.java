@@ -75,6 +75,7 @@ import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
 import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
 import org.dockbox.selene.packets.ChangeGameStatePacket;
 import org.dockbox.selene.packets.SpawnEntityPacket;
+import org.dockbox.selene.plots.PlotService;
 import org.dockbox.selene.sponge.entities.SpongeArmorStand;
 import org.dockbox.selene.sponge.entities.SpongeItemFrame;
 import org.dockbox.selene.sponge.inventory.SpongeElement;
@@ -86,6 +87,7 @@ import org.dockbox.selene.sponge.objects.bossbar.SpongeBossbar;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.item.maps.SpongeCustomMapService;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
+import org.dockbox.selene.sponge.plotsquared.SpongePlotSquaredService;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus;
 import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager;
@@ -126,6 +128,7 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(ResourceService.class).toInstance(new SimpleResourceService());
         this.bind(WorldEditService.class).to(SpongeWorldEditService.class);
         this.bind(CustomMapService.class).to(SpongeCustomMapService.class);
+        this.bind(PlotService.class).to(SpongePlotSquaredService.class);
 
         // Internal services
         // Event- and command bus keep static references, and can thus be recreated

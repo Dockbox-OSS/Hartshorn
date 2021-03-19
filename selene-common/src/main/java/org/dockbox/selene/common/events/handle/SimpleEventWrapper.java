@@ -34,8 +34,6 @@ import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
 
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.util.eventbus.EventHandler.Priority;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,10 +95,6 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
         @SuppressWarnings("unchecked")
         Class<? extends Event> eventType = (Class<? extends Event>) param;
         invokeWrappers.add(new SimpleEventWrapper(instance, eventType, method, priority));
-      } else if (Reflect.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
-        WorldEdit.getInstance()
-            .getEventBus()
-            .subscribe(param, new EventMethodHandler(Priority.EARLY, instance, method));
       }
     }
     return invokeWrappers;

@@ -50,13 +50,13 @@ public class SpongeWorldStorageService implements WorldStorageService {
     @NotNull
     @Override
     public Exceptional<World> getWorld(@NotNull String name) {
-        return Exceptional.of(Sponge.getServer().loadWorld(name)).map(SpongeConversionUtil::fromSponge);
+        return Exceptional.of(Sponge.getServer().getWorldProperties(name)).map(SpongeConversionUtil::fromSponge);
     }
 
     @NotNull
     @Override
     public Exceptional<World> getWorld(@NotNull UUID uuid) {
-        return Exceptional.of(Sponge.getServer().loadWorld(uuid)).map(SpongeConversionUtil::fromSponge);
+        return Exceptional.of(Sponge.getServer().getWorldProperties(uuid)).map(SpongeConversionUtil::fromSponge);
     }
 
     @Override

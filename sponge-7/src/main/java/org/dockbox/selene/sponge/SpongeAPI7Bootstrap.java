@@ -45,6 +45,7 @@ import org.dockbox.selene.sponge.objects.composite.Composite;
 import org.dockbox.selene.sponge.objects.composite.CompositeDataManipulatorBuilder;
 import org.dockbox.selene.sponge.objects.composite.ImmutableCompositeData;
 import org.dockbox.selene.sponge.objects.composite.MutableCompositeData;
+import org.dockbox.selene.sponge.plotsquared.PlotSquaredEventListener;
 import org.dockbox.selene.sponge.util.SpongeInjector;
 import org.dockbox.selene.sponge.util.SpongeTaskRunner;
 import org.jetbrains.annotations.NotNull;
@@ -154,7 +155,9 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
                 Selene.provide(SpongeCommandListener.class),
                 Selene.provide(SpongeServerListener.class),
                 Selene.provide(SpongeDiscordListener.class),
-                Selene.provide(SpongePlayerListener.class));
+                Selene.provide(SpongePlayerListener.class),
+                Selene.provide(PlotSquaredEventListener.class)
+        );
 
         super.init();
 

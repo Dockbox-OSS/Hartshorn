@@ -94,6 +94,11 @@ public final class Exceptional<T> {
         return optional.map(Exceptional::of).orElseGet(Exceptional::empty);
     }
 
+    @SuppressWarnings({ "OptionalUsedAsFieldOrParameterType", "Guava" })
+    public static <T> Exceptional<T> of(com.google.common.base.Optional<T> optional) {
+        return ofNullable(optional.orNull());
+    }
+
     /**
      * Provides a {@code Exceptional} instance which contains a non-null value of type {@code T}. This
      * requires the provided value to be non-null. If the value is null, a {@link

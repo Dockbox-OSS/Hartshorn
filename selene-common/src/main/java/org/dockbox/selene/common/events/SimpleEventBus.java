@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.common.events;
 
+import com.google.inject.Singleton;
+
 import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.event.filter.Packet;
 import org.dockbox.selene.api.events.EventBus;
@@ -31,8 +33,6 @@ import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.common.events.handle.EventHandlerRegistry;
 import org.dockbox.selene.common.events.handle.SimpleEventWrapper;
 import org.dockbox.selene.common.events.processors.DefaultParamProcessors;
-
-import com.google.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -198,8 +198,6 @@ public class SimpleEventBus implements EventBus {
           throw new IllegalArgumentException(
               "Needs @Packet annotation: " + method.toGenericString());
         }
-        return;
-      } else if (Reflect.isAssignableFrom(com.sk89q.worldedit.event.Event.class, param)) {
         return;
       }
     }
