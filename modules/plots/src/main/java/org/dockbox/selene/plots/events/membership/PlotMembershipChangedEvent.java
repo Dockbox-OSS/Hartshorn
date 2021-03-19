@@ -22,12 +22,12 @@ import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.PlotMembership;
 import org.dockbox.selene.plots.events.PlotPlayerEvent;
 
-public class PlotMembershipChanged extends PlotPlayerEvent {
+public class PlotMembershipChangedEvent extends PlotPlayerEvent {
 
     private final Player initiator;
     private final PlotMembership membership;
 
-    public PlotMembershipChanged(Plot plot, Player player, Player initiator, PlotMembership membership) {
+    public PlotMembershipChangedEvent(Plot plot, Player player, Player initiator, PlotMembership membership) {
         super(plot, player);
         this.initiator = initiator;
         this.membership = membership;

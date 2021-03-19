@@ -15,13 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.plots.events;
+package org.dockbox.selene.plots.flags;
 
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.plots.PlotService;
 
-public class DeletePlotEvent extends ClearPlotEvent{
+public interface PlotFlag<T> {
 
-    public DeletePlotEvent(World world, int x, int y) {
-        super(world, x, y);
+    String getId();
+
+    ResourceEntry getDescription();
+
+    String serialize(T object);
+
+    T parse(String raw);
+
+    Class<T> getType();
+
+    default void register() {
+        Selene.provide(PlotService.class).registerFlag(this);
     }
+
 }
