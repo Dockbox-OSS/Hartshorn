@@ -17,13 +17,8 @@
 
 package org.dockbox.selene.command.parameter;
 
-import org.dockbox.selene.api.command.source.CommandSource;
-import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.commandparameters.CommandParameterResources;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Converts Hashtag-patterns into type instances used by command executors. The pattern follows the HashtagPatternParser from WorldEdit.
@@ -36,53 +31,30 @@ import java.util.regex.Pattern;
  * }</pre>
  * The pattern for this type is expected to be <pre>#shape[square][4]</pre>
  */
-public class HashtagParameterPattern implements CustomParameterPattern {
-
-    /*
-     * Scans for arguments wrapped in square brackets. Matches anything that is not a square bracket on its own. E.g.:
-     * - [arg1] matches, 1 group [arg1]
-     * - [arg1][arg2] matches, 2 groups [arg1] and [arg2]
-     * - [[]] does not match
-     * - [[arg1]] matches, 1 group [arg1]
-     */
-    private static final Pattern ARGUMENT = Pattern.compile("\\[[^\\[\\]]+\\]");
+public class HashtagParameterPattern extends PrefixedParameterPattern {
 
     @Override
-    public <T> Exceptional<Boolean> preconditionsMatch(Class<T> type, CommandSource source, String raw) {
-        return Exceptional.of(() -> raw.startsWith("#"),
-                () -> true,
-                () -> new IllegalArgumentException(CommandParameterResources.HASHTAG_PATTERN_WRONG_FORMAT.asString())
-        );
+    protected char getOpening() {
+        return '[';
     }
 
     @Override
-    public List<String> splitArguments(String raw) {
-        String group = raw.substring(raw.indexOf('['));
-        List<String> arguments = new ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        int openCount = 0;
-        for (char c : group.toCharArray()) {
-            System.out.println(c + " : " + openCount);
-            current.append(c);
-            if ('[' == c) {
-                openCount++;
-            } else if (']' == c) {
-                openCount--;
-                if (0 == openCount) {
-                    String out = current.toString();
-                    arguments.add(out.substring(1, out.length()-1));
-                    current = new StringBuilder();
-                }
-            }
-        }
-        return arguments;
+    protected char getClosing() {
+        return ']';
     }
 
     @Override
-    public Exceptional<String> parseIdentifier(String argument) {
-        return Exceptional.of(() -> argument.startsWith("#"),
-                () -> argument.substring(1, argument.indexOf("[")),
-                () -> new IllegalArgumentException(CommandParameterResources.HASHTAG_PATTERN_WRONG_FORMAT.asString())
-        );
+    protected char getPrefix() {
+        return '#';
+    }
+
+    @Override
+    protected boolean requiresTypeName() {
+        return true;
+    }
+
+    @Override
+    protected ResourceEntry getWrongFormatResource() {
+        return CommandParameterResources.HASHTAG_PATTERN_WRONG_FORMAT;
     }
 }
