@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.integrated;
 
-import org.dockbox.selene.api.PlayerStorageService;
-import org.dockbox.selene.api.WorldStorageService;
+import org.dockbox.selene.api.Players;
+import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.annotations.module.ArgumentProvider;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.context.ArgumentConverter;
@@ -130,7 +130,7 @@ public final class DefaultArgumentConverters implements InjectableType {
     );
 
     public static final ArgumentConverter<World> WORLD = new CommandValueConverter<>(World.class, in -> {
-        WorldStorageService wss = Selene.provide(WorldStorageService.class);
+        Worlds wss = Selene.provide(Worlds.class);
         Exceptional<World> world = wss.getWorld(in);
         return world.orElseSupply(
                 () -> {
@@ -160,7 +160,7 @@ public final class DefaultArgumentConverters implements InjectableType {
     }, "resource", "i18n", "translation");
 
     public static final ArgumentConverter<Player> PLAYER = new CommandValueConverter<>(Player.class, in -> {
-        PlayerStorageService pss = Selene.provide(PlayerStorageService.class);
+        Players pss = Selene.provide(Players.class);
         Exceptional<Player> player = pss.getPlayer(in);
         return player.orElseSupply(
                 () -> {
@@ -173,7 +173,7 @@ public final class DefaultArgumentConverters implements InjectableType {
                         return null;
                     }
                 });
-    }, in -> Selene.provide(PlayerStorageService.class).getOnlinePlayers().stream()
+    }, in -> Selene.provide(Players.class).getOnlinePlayers().stream()
             .map(Player::getName)
             .filter(n -> n.startsWith(in))
             .collect(Collectors.toList()),

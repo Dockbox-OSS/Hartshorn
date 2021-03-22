@@ -50,11 +50,10 @@ public class SpongeItemFrame extends SpongeEntity<EntityItemFrame, ItemFrame> im
 
     @Override
     public Exceptional<Item> getDisplayedItem() {
-        return Exceptional.of(
-                this.getRepresentation()
-                        .get(Keys.REPRESENTED_ITEM)
-                        .map(ItemStackSnapshot::createStack)
-                        .map(SpongeConversionUtil::fromSponge));
+        return Exceptional.of(this.getRepresentation()
+                .get(Keys.REPRESENTED_ITEM)
+                .map(ItemStackSnapshot::createStack)
+                .map(SpongeConversionUtil::fromSponge));
     }
 
     @Override

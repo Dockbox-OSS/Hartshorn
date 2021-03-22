@@ -17,9 +17,6 @@
 
 package org.dockbox.selene.sponge.listeners;
 
-import com.google.inject.Inject;
-
-import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.events.world.WorldEvent.WorldCreatingEvent;
 import org.dockbox.selene.api.events.world.WorldEvent.WorldLoadEvent;
@@ -35,9 +32,6 @@ import org.spongepowered.api.event.world.UnloadWorldEvent;
 import org.spongepowered.api.world.storage.WorldProperties;
 
 public class SpongeWorldListener {
-
-    @Inject
-    private EventBus bus;
 
     @Listener
     public void onWorldLoaded(LoadWorldEvent loadEvent) {

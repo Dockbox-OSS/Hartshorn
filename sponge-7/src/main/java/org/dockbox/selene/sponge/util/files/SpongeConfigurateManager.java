@@ -31,8 +31,7 @@ import java.nio.file.Path;
  * are made. Due to multiple inheritance not being possible in Java, a interface is used for this
  * purpose, requiring us to directly target the interface super.
  */
-public class SpongeConfigurateManager extends DefaultConfigurateManager
-        implements SpongeDefaultFileManager {
+public class SpongeConfigurateManager extends DefaultConfigurateManager implements SpongeDefaultFileManager {
 
     /** Provides the given {@link FileType} to the super type {@link FileManager}. */
     protected SpongeConfigurateManager() {

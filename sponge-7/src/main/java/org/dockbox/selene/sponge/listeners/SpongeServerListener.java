@@ -17,9 +17,7 @@
 
 package org.dockbox.selene.sponge.listeners;
 
-import com.google.inject.Inject;
-
-import org.dockbox.selene.api.events.EventBus;
+import org.dockbox.selene.api.events.server.ServerEvent.ServerPostInitEvent;
 import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
 import org.dockbox.selene.api.events.server.ServerEvent.ServerStartedEvent;
 import org.dockbox.selene.api.events.server.ServerEvent.ServerStartingEvent;
@@ -32,9 +30,6 @@ import org.spongepowered.api.event.game.state.GameStartingServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 
 public class SpongeServerListener {
-
-    @Inject
-    private EventBus bus;
 
     @Listener
     public void onServerStarting(GameStartingServerEvent event) {
@@ -57,5 +52,7 @@ public class SpongeServerListener {
     }
 
     @Listener
-    public void onServerPostInit(GameLoadCompleteEvent event) {}
+    public void onServerPostInit(GameLoadCompleteEvent event) {
+        new ServerPostInitEvent().post();
+    }
 }

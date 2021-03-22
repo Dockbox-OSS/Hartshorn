@@ -22,9 +22,9 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 import org.dockbox.selene.api.BroadcastService;
 import org.dockbox.selene.api.ExceptionHelper;
-import org.dockbox.selene.api.PlayerStorageService;
+import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.ThreadUtils;
-import org.dockbox.selene.api.WorldStorageService;
+import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.annotations.files.Bulk;
 import org.dockbox.selene.api.annotations.files.Format;
 import org.dockbox.selene.api.command.CommandBus;
@@ -122,8 +122,8 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(SQLMan.class).annotatedWith(Format.SQLite.class).to(SQLiteMan.class);
 
         // Services
-        this.bind(PlayerStorageService.class).to(SpongePlayerStorageService.class);
-        this.bind(WorldStorageService.class).to(SpongeWorldStorageService.class);
+        this.bind(Players.class).to(SpongePlayers.class);
+        this.bind(Worlds.class).to(SpongeWorlds.class);
         this.bind(BroadcastService.class).to(SimpleBroadcastService.class);
         this.bind(ResourceService.class).toInstance(new SimpleResourceService());
         this.bind(WorldEditService.class).to(SpongeWorldEditService.class);

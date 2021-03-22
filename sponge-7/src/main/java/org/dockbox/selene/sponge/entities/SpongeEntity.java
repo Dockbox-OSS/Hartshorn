@@ -51,8 +51,7 @@ import java.util.UUID;
  * @param <E>
  *         The internal Selene {@link org.dockbox.selene.api.entities.Entity} type to represent
  */
-public abstract class SpongeEntity<
-        T extends Entity, E extends org.dockbox.selene.api.entities.Entity<E>>
+public abstract class SpongeEntity<T extends Entity, E extends org.dockbox.selene.api.entities.Entity<E>>
         extends NMSEntity<T> implements org.dockbox.selene.api.entities.Entity<E>, SpongeComposite {
 
     @SuppressWarnings("unchecked")
@@ -76,9 +75,7 @@ public abstract class SpongeEntity<
 
     @Override
     public Text getDisplayName() {
-        return SpongeConversionUtil.fromSponge(
-                this.getRepresentation()
-                        .getOrElse(Keys.DISPLAY_NAME, org.spongepowered.api.text.Text.EMPTY));
+        return SpongeConversionUtil.fromSponge(this.getRepresentation().getOrElse(Keys.DISPLAY_NAME, org.spongepowered.api.text.Text.EMPTY));
     }
 
     @Override
@@ -156,27 +153,20 @@ public abstract class SpongeEntity<
     @Override
     public E copy() {
         return SpongeConversionUtil.toSponge(this.getLocation())
-                .map(
-                        spongeLocation -> {
-                            try (StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                                frame.addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLUGIN);
-                                EntityArchetype archetype = this.getRepresentation().createArchetype();
+                .map(spongeLocation -> {
+                    try (StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+                        frame.addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLUGIN);
+                        EntityArchetype archetype = this.getRepresentation().createArchetype();
 
-                                @SuppressWarnings("unchecked")
-                                org.spongepowered.api.entity.Entity clone =
-                                        this.createSnapshot(
-                                                (AbstractArchetype<
-                                                        EntityType,
-                                                        EntitySnapshot,
-                                                        org.spongepowered.api.entity.Entity>)
-                                                        archetype,
-                                                spongeLocation)
-                                                .restore()
-                                                .orElse(null);
+                        @SuppressWarnings("unchecked")
+                        org.spongepowered.api.entity.Entity clone = this.createSnapshot(
+                                (AbstractArchetype<EntityType, EntitySnapshot, org.spongepowered.api.entity.Entity>) archetype,
+                                spongeLocation
+                        ).restore().orElse(null);
 
-                                return this.from(clone);
-                            }
-                        })
+                        return this.from(clone);
+                    }
+                })
                 .rethrowUnchecked()
                 .orNull();
     }
@@ -211,19 +201,17 @@ public abstract class SpongeEntity<
      */
     private EntitySnapshot createSnapshot(
             AbstractArchetype<EntityType, EntitySnapshot, org.spongepowered.api.entity.Entity> archetype,
-            org.spongepowered.api.world.Location<org.spongepowered.api.world.World> location) {
+            org.spongepowered.api.world.Location<org.spongepowered.api.world.World> location
+    ) {
         final SpongeEntitySnapshotBuilder builder = new SpongeEntitySnapshotBuilder();
         builder.type(this.getEntityType());
         NBTTagCompound newCompound = archetype.getCompound().copy();
-        newCompound.setTag(
-                "Pos",
-                Constants.NBT.newDoubleNBTList(
-                        location.getPosition().getX(),
-                        location.getPosition().getY(),
-                        location.getPosition().getZ()));
-        newCompound.setInteger(
-                "Dimension",
-                ((WorldInfoBridge) location.getExtent().getProperties()).bridge$getDimensionId());
+        newCompound.setTag("Pos", Constants.NBT.newDoubleNBTList(
+                location.getPosition().getX(),
+                location.getPosition().getY(),
+                location.getPosition().getZ()));
+        //noinspection ConstantConditions
+        newCompound.setInteger("Dimension", ((WorldInfoBridge) location.getExtent().getProperties()).bridge$getDimensionId());
         builder.unsafeCompound(newCompound);
         builder.worldId(location.getExtent().getUniqueId());
         builder.position(location.getPosition());

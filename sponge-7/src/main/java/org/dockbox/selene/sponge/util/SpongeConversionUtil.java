@@ -32,7 +32,7 @@ import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 
-import org.dockbox.selene.api.WorldStorageService;
+import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.entities.ItemFrame;
 import org.dockbox.selene.api.events.world.WorldEvent.WorldCreatingProperties;
@@ -187,14 +187,9 @@ public enum SpongeConversionUtil {
 
     @NotNull
     public static Exceptional<Enchantment> toSponge(Enchant enchantment) {
-        Exceptional<EnchantmentType> type =
-                Exceptional.of(
-                        Sponge.getRegistry()
-                                .getType(EnchantmentType.class, enchantment.getEnchantment().name()));
+        Exceptional<EnchantmentType> type = Exceptional.of(Sponge.getRegistry().getType(EnchantmentType.class, enchantment.getEnchantment().name()));
 
-        return type.map(
-                enchantmentType ->
-                        Enchantment.builder().type(enchantmentType).level(enchantment.getLevel()).build());
+        return type.map(enchantmentType -> Enchantment.builder().type(enchantmentType).level(enchantment.getLevel()).build());
     }
 
     public static BossBarColor toSponge(BossbarColor bossbarColor) {
@@ -215,11 +210,9 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    public static Exceptional<? extends org.spongepowered.api.command.CommandSource> toSponge(
-            CommandSource src) {
+    public static Exceptional<? extends org.spongepowered.api.command.CommandSource> toSponge(CommandSource src) {
         if (src instanceof Console) return Exceptional.of(Sponge.getServer().getConsole());
-        else if (src instanceof Player)
-            return Exceptional.of(Sponge.getServer().getPlayer(((Player) src).getUniqueId()));
+        else if (src instanceof Player) return Exceptional.of(Sponge.getServer().getPlayer(((Player) src).getUniqueId()));
         return Exceptional.empty();
     }
 
@@ -233,10 +226,9 @@ public enum SpongeConversionUtil {
 
         builder.padding(toSponge(pagination.getPadding()));
         if (0 < pagination.getLinesPerPage()) builder.linesPerPage(pagination.getLinesPerPage());
-        List<Text> convertedContent =
-                pagination.getContent().stream()
-                        .map(SpongeConversionUtil::toSponge)
-                        .collect(Collectors.toList());
+        List<Text> convertedContent = pagination.getContent().stream()
+                .map(SpongeConversionUtil::toSponge)
+                .collect(Collectors.toList());
         builder.contents(convertedContent);
         return builder.build();
     }
@@ -245,62 +237,52 @@ public enum SpongeConversionUtil {
     public static Text toSponge(org.dockbox.selene.api.text.Text message) {
         Iterable<org.dockbox.selene.api.text.Text> parts = message.getParts();
         Text.Builder b = Text.builder();
-        parts.forEach(
-                part -> {
-                    Text.Builder pb = Text.builder();
-                    // Wrapping in parseColors first so internal color codes are parsed as well. Technically
-                    // the FormattingCode
-                    // from TextSerializers won't be needed, but to ensure no trailing codes are left we use
-                    // it here anyway.
-                    pb.append(
-                            TextSerializers.FORMATTING_CODE.deserialize(
-                                    IntegratedResource.parse(part.toLegacy())));
+        parts.forEach(part -> {
+            Text.Builder pb = Text.builder();
+            // Wrapping in parseColors first so internal color codes are parsed as well. Technically
+            // the FormattingCode
+            // from TextSerializers won't be needed, but to ensure no trailing codes are left we use
+            // it here anyway.
+            pb.append(TextSerializers.FORMATTING_CODE.deserialize(
+                    IntegratedResource.parse(part.toLegacy())));
 
-                    Exceptional<org.spongepowered.api.text.action.ClickAction<?>> clickAction =
-                            toSponge(part.getClickAction());
-                    clickAction.ifPresent(pb::onClick);
+            Exceptional<org.spongepowered.api.text.action.ClickAction<?>> clickAction = toSponge(part.getClickAction());
+            clickAction.ifPresent(pb::onClick);
 
-                    Exceptional<org.spongepowered.api.text.action.HoverAction<?>> hoverAction =
-                            toSponge(part.getHoverAction());
-                    hoverAction.ifPresent(pb::onHover);
+            Exceptional<org.spongepowered.api.text.action.HoverAction<?>> hoverAction = toSponge(part.getHoverAction());
+            hoverAction.ifPresent(pb::onHover);
 
-                    Exceptional<org.spongepowered.api.text.action.ShiftClickAction<?>> shiftClickAction =
-                            toSponge(part.getShiftClickAction());
-                    shiftClickAction.ifPresent(pb::onShiftClick);
+            Exceptional<org.spongepowered.api.text.action.ShiftClickAction<?>> shiftClickAction = toSponge(part.getShiftClickAction());
+            shiftClickAction.ifPresent(pb::onShiftClick);
 
-                    b.append(pb.build());
-                });
+            b.append(pb.build());
+        });
 
         return b.build();
     }
 
     @NotNull
-    private static Exceptional<org.spongepowered.api.text.action.ShiftClickAction<?>> toSponge(
-            ShiftClickAction<?> action) {
+    private static Exceptional<org.spongepowered.api.text.action.ShiftClickAction<?>> toSponge(ShiftClickAction<?> action) {
         if (null == action) return Exceptional.empty();
         Object result = action.getResult();
         if (action instanceof ShiftClickAction.InsertText) {
-            return Exceptional.of(
-                    TextActions.insertText(((org.dockbox.selene.api.text.Text) result).toPlain()));
+            return Exceptional.of(TextActions.insertText(((org.dockbox.selene.api.text.Text) result).toPlain()));
         }
         return Exceptional.empty();
     }
 
     @NotNull
-    private static Exceptional<org.spongepowered.api.text.action.HoverAction<?>> toSponge(
-            HoverAction<?> action) {
+    private static Exceptional<org.spongepowered.api.text.action.HoverAction<?>> toSponge(HoverAction<?> action) {
         if (null == action) return Exceptional.empty();
         Object result = action.getResult();
         if (action instanceof HoverAction.ShowText) {
-            return Exceptional.of(
-                    TextActions.showText(toSponge(((org.dockbox.selene.api.text.Text) result))));
+            return Exceptional.of(TextActions.showText(toSponge(((org.dockbox.selene.api.text.Text) result))));
         }
         return Exceptional.empty();
     }
 
     @NotNull
-    private static Exceptional<org.spongepowered.api.text.action.ClickAction<?>> toSponge(
-            ClickAction<?> action) {
+    private static Exceptional<org.spongepowered.api.text.action.ClickAction<?>> toSponge(ClickAction<?> action) {
         if (null == action) return Exceptional.empty();
         Object result = action.getResult();
         if (action instanceof ClickAction.OpenUrl) {
@@ -316,34 +298,29 @@ public enum SpongeConversionUtil {
             return Exceptional.of(TextActions.suggestCommand((String) result));
         }
         else if (action instanceof ClickAction.ExecuteCallback) {
-            return Exceptional.of(
-                    TextActions.executeCallback(
-                            commandSource -> {
-                                Consumer<CommandSource> consumer =
-                                        ((ClickAction.ExecuteCallback) action).getResult();
-                                try {
-                                    fromSponge(commandSource).ifPresent(consumer).rethrow();
-                                }
-                                catch (CheckedSeleneException throwable) {
-                                    commandSource.sendMessage(
-                                            Text.of(IntegratedResource.UNKNOWN_ERROR.format(throwable.getMessage())));
-                                }
-                            }));
+            return Exceptional.of(TextActions.executeCallback(commandSource -> {
+                Consumer<CommandSource> consumer = ((ClickAction.ExecuteCallback) action).getResult();
+                try {
+                    fromSponge(commandSource).ifPresent(consumer).rethrow();
+                }
+                catch (CheckedSeleneException throwable) {
+                    commandSource.sendMessage(Text.of(IntegratedResource.UNKNOWN_ERROR.format(throwable.getMessage())));
+                }
+            }));
         }
         return Exceptional.empty();
     }
 
     @NotNull
-    public static Exceptional<Location<World>> toSponge(
-            org.dockbox.selene.api.objects.location.Location location) {
+    public static Exceptional<Location<World>> toSponge(org.dockbox.selene.api.objects.location.Location location) {
         Exceptional<World> world = toSponge(location.getWorld());
         if (world.errorPresent()) return Exceptional.of(world.getError());
         if (!world.isPresent()) return Exceptional.empty();
-        Vector3d vector3d =
-                new Vector3d(
-                        location.getVectorLoc().getXd(),
-                        location.getVectorLoc().getYd(),
-                        location.getVectorLoc().getZd());
+        Vector3d vector3d = new Vector3d(
+                location.getVectorLoc().getXd(),
+                location.getVectorLoc().getYd(),
+                location.getVectorLoc().getZd()
+        );
         return Exceptional.of(new Location<>(world.get(), vector3d));
     }
 
@@ -354,11 +331,10 @@ public enum SpongeConversionUtil {
             if (null != wref) return Exceptional.of(wref);
         }
 
-        return Exceptional.of(
-                () ->
-                        Sponge.getServer()
-                                .getWorld(world.getWorldUniqueId())
-                                .orElseThrow(() -> new RuntimeException("World reference not present on server")));
+        return Exceptional.of(() -> Sponge.getServer()
+                .getWorld(world.getWorldUniqueId())
+                .orElseThrow(() -> new RuntimeException("World reference not present on server"))
+        );
     }
 
     @NotNull
@@ -366,9 +342,7 @@ public enum SpongeConversionUtil {
         try {
             String id = enchantment.getType().getId();
             int level = enchantment.getLevel();
-            Enchant enchant =
-                    new Enchant(
-                            org.dockbox.selene.api.objects.item.Enchantment.valueOf(id.toUpperCase()), level);
+            Enchant enchant = new Enchant(org.dockbox.selene.api.objects.item.Enchantment.valueOf(id.toUpperCase()), level);
             return Exceptional.of(enchant);
         }
         catch (IllegalArgumentException | NullPointerException e) {
@@ -422,65 +396,47 @@ public enum SpongeConversionUtil {
         return t;
     }
 
-    private static Exceptional<ShiftClickAction<?>> fromSponge(
-            org.spongepowered.api.text.action.ShiftClickAction<?> shiftClickAction) {
+    private static Exceptional<ShiftClickAction<?>> fromSponge(org.spongepowered.api.text.action.ShiftClickAction<?> shiftClickAction) {
         if (shiftClickAction instanceof InsertText) {
-            return Exceptional.of(
-                    ShiftClickAction.insertText(
-                            org.dockbox.selene.api.text.Text.of(((InsertText) shiftClickAction).getResult())));
+            return Exceptional.of(ShiftClickAction.insertText(org.dockbox.selene.api.text.Text.of(((InsertText) shiftClickAction).getResult())));
         }
         else return Exceptional.empty();
     }
 
-    private static Exceptional<HoverAction<?>> fromSponge(
-            org.spongepowered.api.text.action.HoverAction<?> hoverAction) {
+    private static Exceptional<HoverAction<?>> fromSponge(org.spongepowered.api.text.action.HoverAction<?> hoverAction) {
         if (hoverAction instanceof ShowText) {
             return Exceptional.of(HoverAction.showText(fromSponge(((ShowText) hoverAction).getResult())));
         }
         else return Exceptional.empty();
     }
 
-    private static Exceptional<ClickAction<?>> fromSponge(
-            org.spongepowered.api.text.action.ClickAction<?> clickAction) {
+    private static Exceptional<ClickAction<?>> fromSponge(org.spongepowered.api.text.action.ClickAction<?> clickAction) {
         if (clickAction instanceof OpenUrl) {
             return Exceptional.of(ClickAction.openUrl(((OpenUrl) clickAction).getResult()));
-
         }
         else if (clickAction instanceof RunCommand) {
             return Exceptional.of(ClickAction.runCommand((((RunCommand) clickAction).getResult())));
-
         }
         else if (clickAction instanceof ChangePage) {
             return Exceptional.of(ClickAction.changePage((((ChangePage) clickAction).getResult())));
-
         }
         else if (clickAction instanceof SuggestCommand) {
-            return Exceptional.of(
-                    ClickAction.suggestCommand((((SuggestCommand) clickAction).getResult())));
-
+            return Exceptional.of(ClickAction.suggestCommand((((SuggestCommand) clickAction).getResult())));
         }
         else if (clickAction instanceof ExecuteCallback) {
-            return Exceptional.of(
-                    ClickAction.executeCallback(
-                            src ->
-                                    toSponge(src)
-                                            .ifPresent(ssrc -> ((ExecuteCallback) clickAction).getResult().accept(ssrc))
-                                            .ifAbsent(
-                                                    () ->
-                                                            Selene.log()
-                                                                    .warn(
-                                                                            "Attempted to execute callback with unknown source type '"
-                                                                                    + src
-                                                                                    + "', is it convertable?"))));
+            return Exceptional.of(ClickAction.executeCallback(src ->
+                    toSponge(src)
+                            .ifPresent(ssrc -> ((ExecuteCallback) clickAction).getResult().accept(ssrc))
+                            .ifAbsent(() ->
+                                    Selene.log().warn("Attempted to execute callback with unknown source type '" + src + "', is it convertable?")))
+            );
 
         }
         else return Exceptional.empty();
     }
 
     private static String fromSponge(TextColor color) {
-        return org.dockbox.selene.api.text.Text.sectionSymbol
-                + textColors.getOrDefault(color, 'f')
-                + "";
+        return org.dockbox.selene.api.text.Text.sectionSymbol + textColors.getOrDefault(color, 'f') + "";
     }
 
     private static String fromSponge(TextStyle style) {
@@ -495,21 +451,21 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    public static Exceptional<CommandSource> fromSponge(
-            org.spongepowered.api.command.CommandSource commandSource) {
-        if (commandSource instanceof ConsoleSource) return Exceptional.of(SpongeConsole.getInstance());
-        else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player)
-            return Exceptional.of(
-                    fromSponge((org.spongepowered.api.entity.living.player.Player) commandSource));
-        else if (commandSource instanceof BridgeCommandSource)
+    public static Exceptional<CommandSource> fromSponge(org.spongepowered.api.command.CommandSource commandSource) {
+        if (commandSource instanceof ConsoleSource) {
+            return Exceptional.of(SpongeConsole.getInstance());
+        }
+        else if (commandSource instanceof org.spongepowered.api.entity.living.player.Player) {
+            return Exceptional.of(fromSponge((org.spongepowered.api.entity.living.player.Player) commandSource));
+        }
+        else if (commandSource instanceof BridgeCommandSource) {
             return Exceptional.of(new MagiBridgeCommandSource((BridgeCommandSource) commandSource));
-        return Exceptional.of(
-                new TypeConversionException(commandSource.getClass(), CommandSource.class));
+        }
+        return Exceptional.of(new TypeConversionException(commandSource.getClass(), CommandSource.class));
     }
 
     @NotNull
-    public static WorldCreatingProperties fromSpongeCreating(
-            org.spongepowered.api.world.storage.WorldProperties worldProperties) {
+    public static WorldCreatingProperties fromSpongeCreating(org.spongepowered.api.world.storage.WorldProperties worldProperties) {
         Vector3i vector3i = worldProperties.getSpawnPosition();
         Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
 
@@ -520,7 +476,8 @@ public enum SpongeConversionUtil {
                 spawnLocation,
                 worldProperties.getSeed(),
                 fromSponge(worldProperties.getGameMode()),
-                worldProperties.getGameRules());
+                worldProperties.getGameRules()
+        );
     }
 
     @NotNull
@@ -534,21 +491,20 @@ public enum SpongeConversionUtil {
     }
 
     public static Warp fromSponge(io.github.nucleuspowered.nucleus.api.nucleusdata.Warp warp) {
-        org.dockbox.selene.api.objects.location.Location location =
-                warp.getLocation()
-                        .map(SpongeConversionUtil::fromSponge)
-                        .orElse(org.dockbox.selene.api.objects.location.Location.empty());
+        org.dockbox.selene.api.objects.location.Location location = warp.getLocation()
+                .map(SpongeConversionUtil::fromSponge)
+                .orElse(org.dockbox.selene.api.objects.location.Location.empty());
 
         return new Warp(
                 Exceptional.of(warp.getDescription().map(Text::toString)),
                 Exceptional.of(warp.getCategory()),
                 location,
-                warp.getName());
+                warp.getName()
+        );
     }
 
     @NotNull
-    public static org.dockbox.selene.api.objects.location.Location fromSponge(
-            Location<World> location) {
+    public static org.dockbox.selene.api.objects.location.Location fromSponge(Location<World> location) {
         org.dockbox.selene.api.objects.location.World world = fromSponge(location.getExtent());
         Vector3N vector3N = new Vector3N(location.getX(), location.getY(), location.getZ());
         return new org.dockbox.selene.api.objects.location.Location(vector3N, world);
@@ -562,14 +518,14 @@ public enum SpongeConversionUtil {
     public static org.dockbox.selene.api.objects.location.World fromSponge(WorldProperties properties) {
         Vector3i vector3i = properties.getSpawnPosition();
         Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
-        org.dockbox.selene.api.objects.location.World spongeWorld =
-                new SpongeWorld(
-                        properties.getUniqueId(),
-                        properties.getWorldName(),
-                        properties.loadOnStartup(),
-                        spawnLocation,
-                        properties.getSeed(),
-                        fromSponge(properties.getGameMode()));
+        org.dockbox.selene.api.objects.location.World spongeWorld = new SpongeWorld(
+                properties.getUniqueId(),
+                properties.getWorldName(),
+                properties.loadOnStartup(),
+                spawnLocation,
+                properties.getSeed(),
+                fromSponge(properties.getGameMode())
+        );
         properties.getGameRules().forEach(spongeWorld::setGamerule);
         return spongeWorld;
     }
@@ -582,9 +538,9 @@ public enum SpongeConversionUtil {
 
     public static Element toSponge(org.dockbox.selene.api.inventory.Element element) {
         if (element instanceof SpongeElement) {
-            return Element.of(
-                    toSponge(element.getItem()),
-                    a -> ((SpongeElement) element).perform(fromSponge(a.getPlayer())));
+            return Element.of(toSponge(element.getItem()),
+                    a -> ((SpongeElement) element).perform(fromSponge(a.getPlayer()))
+            );
         }
         return Element.EMPTY;
     }
@@ -631,8 +587,7 @@ public enum SpongeConversionUtil {
     public static com.sk89q.worldedit.extent.clipboard.Clipboard toWorldEdit(Clipboard clipboard) {
         com.sk89q.worldedit.regions.Region region = toWorldEdit(clipboard.getRegion());
         Vector3N origin = clipboard.getOrigin();
-        com.sk89q.worldedit.extent.clipboard.Clipboard worldEditClipboard =
-                new BlockArrayClipboard(region);
+        com.sk89q.worldedit.extent.clipboard.Clipboard worldEditClipboard = new BlockArrayClipboard(region);
         worldEditClipboard.setOrigin(new Vector(origin.getXd(), origin.getYd(), origin.getZd()));
         return worldEditClipboard;
     }
@@ -649,12 +604,12 @@ public enum SpongeConversionUtil {
             return new com.sk89q.worldedit.regions.CuboidRegion(
                     world,
                     new Vector(min.getXd(), min.getYd(), min.getZd()),
-                    new Vector(max.getXd(), max.getYd(), max.getZd()));
+                    new Vector(max.getXd(), max.getYd(), max.getZd())
+            );
         }
     }
 
-    public static com.sk89q.worldedit.world.World toWorldEdit(
-            org.dockbox.selene.api.objects.location.World world) {
+    public static com.sk89q.worldedit.world.World toWorldEdit(org.dockbox.selene.api.objects.location.World world) {
         return SpongeWorldEdit.inst().getAdapter().getWorld(toSponge(world).orNull());
     }
 
@@ -662,8 +617,7 @@ public enum SpongeConversionUtil {
         return FawePlayer.wrap(toSponge(player).orNull());
     }
 
-    public static Exceptional<org.spongepowered.api.entity.living.player.Player> toSponge(
-            Player player) {
+    public static Exceptional<org.spongepowered.api.entity.living.player.Player> toSponge(Player player) {
         if (player instanceof SpongePlayer) {
             return ((SpongePlayer) player).getSpongePlayer();
         }
@@ -674,20 +628,17 @@ public enum SpongeConversionUtil {
         return new Vector3N(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public static org.dockbox.selene.api.objects.location.World fromWorldEdit(
-            com.sk89q.worldedit.world.World world) {
-        return Selene.provide(WorldStorageService.class).getWorld(world.getName()).orNull();
+    public static org.dockbox.selene.api.objects.location.World fromWorldEdit(com.sk89q.worldedit.world.World world) {
+        return Selene.provide(Worlds.class).getWorld(world.getName()).orNull();
     }
 
     public static Exceptional<BaseBlock> toWorldEdit(Item item, ParserContext context) {
         if (!item.isBlock())
-            return Exceptional.of(
-                    new IllegalArgumentException("Cannot derive BaseBlock from non-block item"));
-        return Exceptional.of(
-                () ->
-                        WorldEdit.getInstance()
-                                .getBlockFactory()
-                                .parseFromInput(item.getId() + ':' + item.getMeta(), context));
+            return Exceptional.of(new IllegalArgumentException("Cannot derive BaseBlock from non-block item"));
+        return Exceptional.of(() -> WorldEdit.getInstance()
+                .getBlockFactory()
+                .parseFromInput(item.getId() + ':' + item.getMeta(), context)
+        );
     }
 
     public static InventoryArchetype toSponge(InventoryType inventoryType) {
@@ -733,8 +684,7 @@ public enum SpongeConversionUtil {
         if (pattern instanceof WrappedPattern) {
             return ((WrappedPattern) pattern).getReference().orNull();
         }
-        throw new IllegalStateException(
-                "Unknown implementation for Pattern: [" + pattern.getClass() + "]");
+        throw new IllegalStateException("Unknown implementation for Pattern: [" + pattern.getClass() + "]");
     }
 
     public static Vector3N fromSponge(Vector3d v3d) {
@@ -787,7 +737,7 @@ public enum SpongeConversionUtil {
     }
 
     public static org.dockbox.selene.api.objects.location.Location fromPlotSquared(com.intellectualcrafters.plot.object.Location location) {
-        org.dockbox.selene.api.objects.location.World world = Selene.provide(WorldStorageService.class).getWorld(location.getWorld()).orNull();
+        org.dockbox.selene.api.objects.location.World world = Selene.provide(Worlds.class).getWorld(location.getWorld()).orNull();
         return new org.dockbox.selene.api.objects.location.Location(
                 location.getX(), location.getY(), location.getZ(), world
         );

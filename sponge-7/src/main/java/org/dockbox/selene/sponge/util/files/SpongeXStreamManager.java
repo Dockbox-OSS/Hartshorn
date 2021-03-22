@@ -23,8 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 
-public class SpongeXStreamManager extends DefaultXStreamManager
-        implements SpongeDefaultFileManager {
+public class SpongeXStreamManager extends DefaultXStreamManager implements SpongeDefaultFileManager {
 
     @NotNull
     @Override

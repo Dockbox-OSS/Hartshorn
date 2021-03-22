@@ -49,7 +49,8 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
             @Assisted float percent,
             @Assisted Text text,
             @Assisted BossbarColor color,
-            @Assisted BossbarStyle style) {
+            @Assisted BossbarStyle style
+    ) {
         super(id, percent, text, color, style);
     }
 
@@ -62,11 +63,13 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     public void showTo(Player player) {
         this.getReference().ifPresent(serverBossBar -> {
             SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::addPlayer);
+
             if (Bossbar.REGISTRY.containsKey(this.getId()))
-                Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to "
-                        + player.getName() + ". This may cause unexpected behavior!");
+                Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player.getName() + ". This may cause unexpected behavior!");
+
             else if (Bossbar.REGISTRY.containsValue(this))
                 Selene.log().warn("Adding identical bossbar with different ID '" + this.getId() + "'. This may cause unexpected behavior!");
+
             Bossbar.REGISTRY.put(this.getId(), this);
         });
     }
@@ -74,15 +77,18 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
     @Override
     public void showTo(Player player, Duration duration) {
         this.getReference().ifPresent(serverBossBar -> {
+
             SpongeConversionUtil.toSponge(player).ifPresent(sp -> {
                 serverBossBar.addPlayer(sp);
                 TaskRunner.create().acceptDelayed(() -> this.hideFrom(player), duration.getSeconds(), TimeUnit.SECONDS);
             });
+
             if (Bossbar.REGISTRY.containsKey(this.getId()))
-                Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to "
-                        + player.getName() + ". This may cause unexpected behavior!");
+                Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player.getName() + ". This may cause unexpected behavior!");
+
             else if (Bossbar.REGISTRY.containsValue(this))
                 Selene.log().warn("Adding identical bossbar with different ID '" + this.getId() + "'. This may cause unexpected behavior!");
+
             Bossbar.REGISTRY.put(this.getId(), this);
         });
     }

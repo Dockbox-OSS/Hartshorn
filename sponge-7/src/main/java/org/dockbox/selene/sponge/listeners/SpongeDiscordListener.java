@@ -76,8 +76,11 @@ public class SpongeDiscordListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
         new DiscordEvent.DiscordChatReceivedEvent(
-                event.getAuthor(), event.getMessage(), event.getGuild(), event.getChannel())
-                .post();
+                event.getAuthor(),
+                event.getMessage(),
+                event.getGuild(),
+                event.getChannel()
+        ).post();
     }
 
     @Override
@@ -120,29 +123,27 @@ public class SpongeDiscordListener extends ListenerAdapter {
             List<String> arguments = SeleneUtils.asList(Arrays.asList(parts));
             arguments.remove(0); // Remove command
 
-            DiscordCommandContext ctx =
-                    new DiscordCommandContext(
-                            event.getAuthor(),
-                            event.getChannel(),
-                            LocalDateTime.now(),
-                            alias,
-                            arguments.toArray(new String[0]));
+            DiscordCommandContext ctx = new DiscordCommandContext(
+                    event.getAuthor(),
+                    event.getChannel(),
+                    LocalDateTime.now(),
+                    alias,
+                    arguments.toArray(new String[0])
+            );
             Selene.provide(DiscordUtils.class).post(alias, ctx);
         }
     }
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
-        event
-                .getTextChannel()
+        event.getTextChannel()
                 .retrieveMessageById(event.getMessageId())
-                .queue(
-                        message -> {
-                            User user = event.getJDA().getUserById(event.getUserId());
-                            if (null != user) {
-                                new DiscordReactionAddedEvent(user, message, event.getReaction()).post();
-                            }
-                        });
+                .queue(message -> {
+                    User user = event.getJDA().getUserById(event.getUserId());
+                    if (null != user) {
+                        new DiscordReactionAddedEvent(user, message, event.getReaction()).post();
+                    }
+                });
     }
 
     @Override
@@ -167,11 +168,10 @@ public class SpongeDiscordListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
-        Event nce =
-                new DiscordUserNicknameChangedEvent(
-                        event.getUser(),
-                        Exceptional.ofNullable(event.getOldNickname()),
-                        Exceptional.ofNullable(event.getNewNickname()))
-                        .post();
+        Event nce = new DiscordUserNicknameChangedEvent(
+                event.getUser(),
+                Exceptional.ofNullable(event.getOldNickname()),
+                Exceptional.ofNullable(event.getNewNickname())
+        ).post();
     }
 }

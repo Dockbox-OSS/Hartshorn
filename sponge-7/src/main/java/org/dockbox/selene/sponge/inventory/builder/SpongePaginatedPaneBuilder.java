@@ -58,24 +58,24 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
     @Override
     public PaginatedPane build() {
         Page page = this.builder.build(SpongeAPI7Bootstrap.getContainer());
-        page.define(
-                this.elements.stream().map(SpongeConversionUtil::toSponge).collect(Collectors.toList()));
+        page.define(this.elements.stream()
+                .map(SpongeConversionUtil::toSponge)
+                .collect(Collectors.toList())
+        );
         return new SpongePaginatedPane(page);
     }
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
-                .ifPresent(
-                        layout -> {
-                            this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
-                            this.layout(layout);
-                        })
-                .ifAbsent(
-                        () -> {
-                            Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
-                            this.builder = Page.builder(InventoryArchetypes.CHEST);
-                        });
+                .ifPresent(layout -> {
+                    this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
+                    this.layout(layout);
+                })
+                .ifAbsent(() -> {
+                    Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
+                    this.builder = Page.builder(InventoryArchetypes.CHEST);
+                });
     }
 
     public void layout(InventoryLayout layout) {

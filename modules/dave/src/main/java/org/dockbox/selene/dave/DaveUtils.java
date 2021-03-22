@@ -19,7 +19,7 @@ package org.dockbox.selene.dave;
 
 import net.dv8tion.jda.api.entities.TextChannel;
 
-import org.dockbox.selene.api.PlayerStorageService;
+import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.objects.Console;
@@ -160,7 +160,7 @@ public final class DaveUtils {
         else message.append(response);
 
         // Regular chat response
-        PlayerStorageService pss = Selene.provide(PlayerStorageService.class);
+        Players pss = Selene.provide(Players.class);
         pss.getOnlinePlayers().stream()
                 .filter(op -> important || !isMuted(op))
                 .forEach(op -> op.send(message));
@@ -223,7 +223,7 @@ public final class DaveUtils {
     }
 
     private static String parseRandomPlayer(String fullResponse, String playerName) {
-        PlayerStorageService pss = Selene.provide(PlayerStorageService.class);
+        Players pss = Selene.provide(Players.class);
         int index = new Random().nextInt(pss.getOnlinePlayers().size());
         String randomPlayer = pss.getOnlinePlayers().toArray(new Player[0])[index].getName();
 

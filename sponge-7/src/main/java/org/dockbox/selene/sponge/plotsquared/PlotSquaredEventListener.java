@@ -34,8 +34,8 @@ import com.plotsquared.sponge.events.PlotFlagAddEvent;
 import com.plotsquared.sponge.events.PlotFlagRemoveEvent;
 import com.plotsquared.sponge.events.PlotUnlinkEvent;
 
-import org.dockbox.selene.api.PlayerStorageService;
-import org.dockbox.selene.api.WorldStorageService;
+import org.dockbox.selene.api.Players;
+import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.objects.location.Direction;
 import org.dockbox.selene.api.objects.location.World;
@@ -67,10 +67,10 @@ import javax.inject.Inject;
 public class PlotSquaredEventListener {
 
     @Inject
-    private PlayerStorageService players;
+    private Players players;
 
     @Inject
-    private WorldStorageService worlds;
+    private Worlds worlds;
 
     @Listener
     public void onPlotClaimed(PlayerClaimPlotEvent event) {

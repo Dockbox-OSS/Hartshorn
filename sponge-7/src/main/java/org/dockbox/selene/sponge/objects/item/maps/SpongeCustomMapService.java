@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.item.maps;
 
-import org.dockbox.selene.api.PlayerStorageService;
+import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.annotations.files.Format;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.objects.Console;
@@ -99,11 +99,10 @@ public class SpongeCustomMapService extends DefaultCustomMapService {
                 .where(MapIdentifiers.MAP, mapId)
                 .first()
                 .map(row -> row.getValue(MapIdentifiers.SOURCE).orElse(Console.UNIQUE_ID.toString()))
-                .map(
-                        uniqueId ->
-                                Selene.provide(PlayerStorageService.class)
-                                        .getPlayer(UUID.fromString(uniqueId))
-                                        .orNull())
+                .map(uniqueId ->
+                        Selene.provide(Players.class)
+                                .getPlayer(UUID.fromString(uniqueId))
+                                .orNull())
                 .map(Identifiable.class::cast)
                 .orElse(Console.getInstance());
     }
@@ -121,11 +120,9 @@ public class SpongeCustomMapService extends DefaultCustomMapService {
 
     private static Table getHistoryTable() {
         try {
-            SQLMan<?> sql =
-                    Selene.provide(
-                            SQLMan.class,
-                            AnnotationProperty.of(Format.SQLite.class),
-                            new SQLitePathProperty(getHistoryStorePath()));
+            SQLMan<?> sql = Selene.provide(SQLMan.class,
+                    AnnotationProperty.of(Format.SQLite.class),
+                    new SQLitePathProperty(getHistoryStorePath()));
             return sql.getOrCreateTable(TABLE, SpongeCustomMapService.getEmptyTable());
         }
         catch (InvalidConnectionException | NoSuchTableException e) {
@@ -136,11 +133,9 @@ public class SpongeCustomMapService extends DefaultCustomMapService {
 
     private static void store(Table table) {
         try {
-            SQLMan<?> sql =
-                    Selene.provide(
-                            SQLMan.class,
-                            AnnotationProperty.of(Format.SQLite.class),
-                            new SQLitePathProperty(getHistoryStorePath()));
+            SQLMan<?> sql = Selene.provide(SQLMan.class,
+                    AnnotationProperty.of(Format.SQLite.class),
+                    new SQLitePathProperty(getHistoryStorePath()));
             sql.store(TABLE, table);
         }
         catch (InvalidConnectionException e) {

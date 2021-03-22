@@ -19,7 +19,7 @@ package org.dockbox.selene.sponge.objects.targets;
 
 import com.flowpowered.math.vector.Vector3d;
 
-import org.dockbox.selene.api.PlayerStorageService;
+import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.chat.SendMessageEvent;
 import org.dockbox.selene.api.i18n.common.Language;
@@ -68,12 +68,10 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
 
 @SuppressWarnings({ "ClassWithTooManyMethods", "CodeBlock2Expr" })
-public class SpongePlayer extends Player
-        implements SpongeComposite, Wrapper<org.spongepowered.api.entity.living.player.Player> {
+public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org.spongepowered.api.entity.living.player.Player> {
 
     private static final double BLOCKRAY_LIMIT = 50d;
-    private WeakReference<org.spongepowered.api.entity.living.player.Player> reference =
-            new WeakReference<>(null);
+    private WeakReference<org.spongepowered.api.entity.living.player.Player> reference = new WeakReference<>(null);
 
     public SpongePlayer(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
@@ -108,12 +106,12 @@ public class SpongePlayer extends Player
     @NotNull
     @Override
     public Language getLanguage() {
-        return Selene.provide(PlayerStorageService.class).getLanguagePreference(this.getUniqueId());
+        return Selene.provide(Players.class).getLanguagePreference(this.getUniqueId());
     }
 
     @Override
     public void setLanguage(@NotNull Language lang) {
-        Selene.provide(PlayerStorageService.class).setLanguagePreference(this.getUniqueId(), lang);
+        Selene.provide(Players.class).setLanguagePreference(this.getUniqueId(), lang);
     }
 
     @Override
@@ -121,16 +119,11 @@ public class SpongePlayer extends Player
         switch (hand) {
             case MAIN_HAND:
             case OFF_HAND:
-                return this.getReference()
-                        .map(
-                                p -> {
-                                    ItemStack stack =
-                                            p.getItemInHand(SpongeConversionUtil.toSponge(hand))
-                                                    .orElse(ItemStack.of(ItemTypes.AIR));
-                                    return SpongeConversionUtil.fromSponge(stack);
-                                })
-                        .map(Item.class::cast)
-                        .orElse(Selene.getItems().getAir());
+                return this.getReference().map(p -> {
+                    ItemStack stack = p.getItemInHand(SpongeConversionUtil.toSponge(hand))
+                            .orElse(ItemStack.of(ItemTypes.AIR));
+                    return SpongeConversionUtil.fromSponge(stack);
+                }).map(Item.class::cast).orElse(Selene.getItems().getAir());
             default:
                 throw new IllegalArgumentException("Unsupported type: " + hand);
         }
@@ -138,25 +131,18 @@ public class SpongePlayer extends Player
 
     @Override
     public void setItemInHand(Hand hand, Item item) {
-        this.getReference()
-                .ifPresent(
-                        player -> {
-                            player.setItemInHand(
-                                    SpongeConversionUtil.toSponge(hand), SpongeConversionUtil.toSponge(item));
-                        });
+        this.getReference().ifPresent(player -> {
+            player.setItemInHand(SpongeConversionUtil.toSponge(hand), SpongeConversionUtil.toSponge(item));
+        });
     }
 
     @Override
     public void play(Sounds sound) {
-        this.getReference()
-                .ifPresent(
-                        player -> {
-                            SpongeConversionUtil.toSponge(sound)
-                                    .ifPresent(
-                                            soundType -> {
-                                                player.playSound(soundType, Vector3d.ZERO, 1);
-                                            });
-                        });
+        this.getReference().ifPresent(player -> {
+            SpongeConversionUtil.toSponge(sound).ifPresent(soundType -> {
+                player.playSound(soundType, Vector3d.ZERO, 1);
+            });
+        });
     }
 
     @Override
@@ -173,21 +159,19 @@ public class SpongePlayer extends Player
 
     @Override
     public Exceptional<Location> getLookingAtBlockPos() {
-        return this.getReference()
-                .map(
-                        p -> {
-                            BlockRay<org.spongepowered.api.world.World> ray =
-                                    BlockRay.from(p)
-                                            .select(BlockRay.notAirFilter())
-                                            .whilst(BlockRay.allFilter())
-                                            .distanceLimit(BLOCKRAY_LIMIT)
-                                            .build();
-                            if (ray.hasNext()) {
-                                return SpongeConversionUtil.fromSponge(ray.next().getLocation());
-                            }
-                            else //noinspection ReturnOfNull
-                                return null;
-                        });
+        return this.getReference().map(p -> {
+            BlockRay<org.spongepowered.api.world.World> ray =
+                    BlockRay.from(p)
+                            .select(BlockRay.notAirFilter())
+                            .whilst(BlockRay.allFilter())
+                            .distanceLimit(BLOCKRAY_LIMIT)
+                            .build();
+            if (ray.hasNext()) {
+                return SpongeConversionUtil.fromSponge(ray.next().getLocation());
+            }
+            else //noinspection ReturnOfNull
+                return null;
+        });
     }
 
     @NotNull
@@ -205,14 +189,12 @@ public class SpongePlayer extends Player
     }
 
     @Override
-    public void setReference(
-            @NotNull Exceptional<org.spongepowered.api.entity.living.player.Player> reference) {
+    public void setReference(@NotNull Exceptional<org.spongepowered.api.entity.living.player.Player> reference) {
         reference.ifPresent(player -> this.reference = new WeakReference<>(player));
     }
 
     @Override
-    public Exceptional<org.spongepowered.api.entity.living.player.Player>
-    constructInitialReference() {
+    public Exceptional<org.spongepowered.api.entity.living.player.Player> constructInitialReference() {
         return Exceptional.of(Sponge.getServer().getPlayer(this.getUniqueId()));
     }
 
@@ -220,58 +202,38 @@ public class SpongePlayer extends Player
     public void execute(@NotNull String command) {
         if (this.referenceExists())
             Sponge.getCommandManager().process(this.getReference().get(), command);
-    }    @NotNull
-    @Override
-    public Location getLocation() {
-        if (this.referenceExists())
-            return SpongeConversionUtil.fromSponge(this.getReference().get().getLocation());
-        else return Location.empty();
     }
 
     @Override
     public void send(@NotNull ResourceEntry text) {
-        String formattedValue =
-                IntegratedResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
+        String formattedValue = IntegratedResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
         this.send(Text.of(formattedValue));
     }
 
     @Override
     public void send(@NotNull Text text) {
         if (this.referenceExists()) {
-            this.postEventPre(text)
-                    .ifPresent(
-                            msg -> {
-                                this.getReference().get().sendMessage(SpongeConversionUtil.toSponge(msg));
-                            });
+            this.postEventPre(text).ifPresent(msg -> {
+                this.getReference().get().sendMessage(SpongeConversionUtil.toSponge(msg));
+            });
         }
     }
 
     @Override
     public void sendWithPrefix(@NotNull ResourceEntry text) {
-        String formattedValue =
-                IntegratedResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
+        String formattedValue = IntegratedResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
         this.sendWithPrefix(Text.of(formattedValue));
-    }    @Override
-    public void setLocation(@NotNull Location location) {
-        if (this.referenceExists()) {
-            SpongeConversionUtil.toSponge(location)
-                    .ifPresent(loc -> this.getReference().get().setLocation(loc));
-        }
     }
 
     @Override
     public void sendWithPrefix(@NotNull Text text) {
         if (this.referenceExists()) {
-            this.postEventPre(text)
-                    .ifPresent(
-                            msg -> {
-                                this.getReference()
-                                        .get()
-                                        .sendMessage(
-                                                org.spongepowered.api.text.Text.of(
-                                                        SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
-                                                        SpongeConversionUtil.toSponge(msg)));
-                            });
+            this.postEventPre(text).ifPresent(msg -> {
+                this.getReference().get().sendMessage(org.spongepowered.api.text.Text.of(
+                        SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
+                        SpongeConversionUtil.toSponge(msg))
+                );
+            });
         }
     }
 
@@ -288,28 +250,18 @@ public class SpongePlayer extends Player
         text = event.getMessage();
         if (event.isCancelled()) return Exceptional.empty();
         else return Exceptional.ofNullable(text);
-    }    @NotNull
-    @Override
-    public World getWorld() {
-        // No reference refresh required as this is done by getLocation. Should never throw NPE as
-        // Location is either
-        // valid or EMPTY (World instance follows this same guideline).
-        return this.getLocation().getWorld();
     }
 
     @Override
     public boolean hasPermission(@NotNull String permission) {
         if (SeleneInformation.GLOBALLY_PERMITTED.contains(this.getUniqueId())) return true;
         if (this.referenceExists()) return this.getReference().get().hasPermission(permission);
-        else
-            return Sponge.getServiceManager()
-                    .provide(UserStorageService.class)
-                    .map(
-                            uss ->
-                                    uss.get(this.getUniqueId())
-                                            .map(user -> user.hasPermission(permission))
-                                            .orElse(false))
-                    .orElse(false);
+        else return Sponge.getServiceManager()
+                .provide(UserStorageService.class)
+                .map(uss -> uss.get(this.getUniqueId())
+                        .map(user -> user.hasPermission(permission))
+                        .orElse(false))
+                .orElse(false);
     }
 
     @Override
@@ -323,39 +275,26 @@ public class SpongePlayer extends Player
             Sponge.getServiceManager()
                     .provide(UserStorageService.class)
                     .flatMap(uss -> uss.get(this.getUniqueId()))
-                    .ifPresent(
-                            user -> {
-                                user.getSubjectData()
-                                        .setPermission(
-                                                SubjectData.GLOBAL_CONTEXT, permission, Tristate.fromBoolean(value));
-                            });
+                    .ifPresent(user -> {
+                        user.getSubjectData()
+                                .setPermission(SubjectData.GLOBAL_CONTEXT, permission, Tristate.fromBoolean(value));
+                    });
     }
 
     @Override
     public void send(Packet packet) {
         if (packet instanceof NMSPacket) {
-            Sponge.getServiceManager()
-                    .provide(PacketGate.class)
-                    .ifPresent(
-                            packetGate -> {
-                                // connectionByPlayer only calls getUniqueId on the Sponge Player object. Avoid
-                                // constant rewrapping of types.
-                                Exceptional<PacketConnection> connection =
-                                        Exceptional.of(packetGate.connectionByUniqueId(this.getUniqueId()));
-                                connection
-                                        .ifPresent(
-                                                packetConnection -> {
-                                                    ((NMSPacket<?>) packet).write(packetConnection.getChannel());
-                                                })
-                                        .ifAbsent(
-                                                () -> {
-                                                    Selene.log()
-                                                            .warn(
-                                                                    "Could not create packet connection for player '"
-                                                                            + this.getName()
-                                                                            + "'");
-                                                });
-                            });
+            Sponge.getServiceManager().provide(PacketGate.class)
+                    .ifPresent(packetGate -> {
+                        // connectionByPlayer only calls getUniqueId on the Sponge Player object. Avoid
+                        // constant rewrapping of types.
+                        Exceptional<PacketConnection> connection = Exceptional.of(packetGate.connectionByUniqueId(this.getUniqueId()));
+                        connection.ifPresent(packetConnection -> {
+                            ((NMSPacket<?>) packet).write(packetConnection.getChannel());
+                        }).ifAbsent(() -> {
+                            Selene.log().warn("Could not create packet connection for player '" + this.getName() + "'");
+                        });
+                    });
         }
     }
 
@@ -383,11 +322,32 @@ public class SpongePlayer extends Player
         return this.getReference();
     }
 
+    @NotNull
+    @Override
+    public Location getLocation() {
+        if (this.referenceExists())
+            return SpongeConversionUtil.fromSponge(this.getReference().get().getLocation());
+        else return Location.empty();
+    }
 
 
+    @Override
+    public void setLocation(@NotNull Location location) {
+        if (this.referenceExists()) {
+            SpongeConversionUtil.toSponge(location)
+                    .ifPresent(loc -> this.getReference().get().setLocation(loc));
+        }
+    }
 
 
-
+    @NotNull
+    @Override
+    public World getWorld() {
+        // No reference refresh required as this is done by getLocation. Should never throw NPE as
+        // Location is either
+        // valid or EMPTY (World instance follows this same guideline).
+        return this.getLocation().getWorld();
+    }
 
 
 }

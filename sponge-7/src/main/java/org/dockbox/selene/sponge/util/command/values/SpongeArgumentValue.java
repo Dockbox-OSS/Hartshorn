@@ -29,8 +29,7 @@ import org.spongepowered.api.text.Text;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class SpongeArgumentValue extends AbstractArgumentValue<CommandElement> {
 
-    public SpongeArgumentValue(String type, String permission, String key)
-            throws IllegalArgumentException {
+    public SpongeArgumentValue(String type, String permission, String key) throws IllegalArgumentException {
         super(permission, key, type);
         if (!ArgumentConverterRegistry.hasConverter(type.toLowerCase())) {
             try {
@@ -49,8 +48,7 @@ public class SpongeArgumentValue extends AbstractArgumentValue<CommandElement> {
     }
 
     @Override
-    protected CommandElement parseValue(
-            ArgumentConverter<?> converter, String key, @NonNls String type) {
+    protected CommandElement parseValue(ArgumentConverter<?> converter, String key, @NonNls String type) {
         if ("remaining".equals(type) || "remainingstring".equals(type)) {
             return GenericArguments.remainingJoinedStrings(Text.of(key));
         }

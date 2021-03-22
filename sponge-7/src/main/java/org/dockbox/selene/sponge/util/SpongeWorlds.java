@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.api.WorldStorageService;
+import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.World;
 import org.dockbox.selene.api.util.SeleneUtils;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class SpongeWorldStorageService implements WorldStorageService {
+public class SpongeWorlds implements Worlds {
 
     @NotNull
     @Override

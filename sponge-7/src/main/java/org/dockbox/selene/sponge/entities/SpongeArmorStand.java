@@ -38,17 +38,16 @@ import org.spongepowered.api.entity.EntityTypes;
 
 import java.util.Map;
 
-public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand>
-        implements ArmorStand {
+public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand> implements ArmorStand {
 
     // Creates cached bindings for the limb keys
-    private static final Map<Limbs, Key<Value<Vector3d>>> limbKeys =
-            SeleneUtils.ofEntries(
-                    SeleneUtils.entry(Limbs.HEAD, Keys.HEAD_ROTATION),
-                    SeleneUtils.entry(Limbs.LEFT_ARM, Keys.LEFT_ARM_ROTATION),
-                    SeleneUtils.entry(Limbs.RIGHT_ARM, Keys.RIGHT_ARM_ROTATION),
-                    SeleneUtils.entry(Limbs.LEFT_LEG, Keys.LEFT_LEG_ROTATION),
-                    SeleneUtils.entry(Limbs.RIGHT_LEG, Keys.RIGHT_LEG_ROTATION));
+    private static final Map<Limbs, Key<Value<Vector3d>>> limbKeys = SeleneUtils.ofEntries(
+            SeleneUtils.entry(Limbs.HEAD, Keys.HEAD_ROTATION),
+            SeleneUtils.entry(Limbs.LEFT_ARM, Keys.LEFT_ARM_ROTATION),
+            SeleneUtils.entry(Limbs.RIGHT_ARM, Keys.RIGHT_ARM_ROTATION),
+            SeleneUtils.entry(Limbs.LEFT_LEG, Keys.LEFT_LEG_ROTATION),
+            SeleneUtils.entry(Limbs.RIGHT_LEG, Keys.RIGHT_LEG_ROTATION));
+
     private final org.spongepowered.api.entity.living.ArmorStand representation;
 
     public SpongeArmorStand(org.spongepowered.api.entity.living.ArmorStand representation) {
@@ -78,8 +77,7 @@ public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand>
     @Override
     public Vector3N getRotation(Limbs limb) {
         if (Limbs.BODY == limb) {
-            return SpongeConversionUtil.fromSponge(
-                    this.representation.getBodyPartRotationalData().bodyRotation().get());
+            return SpongeConversionUtil.fromSponge(this.representation.getBodyPartRotationalData().bodyRotation().get());
         }
         else {
             Key<Value<Vector3d>> rotationKey = limbKeys.get(limb);

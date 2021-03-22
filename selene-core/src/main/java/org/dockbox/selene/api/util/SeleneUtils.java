@@ -1220,6 +1220,15 @@ public final class SeleneUtils {
         return merged;
     }
 
+    @SafeVarargs
+    public static <T, R> R[] getAll(Function<T, R> function, T... input) {
+        List<R> out = SeleneUtils.emptyList();
+        for (T t : input) {
+            out.add(function.apply(t));
+        }
+        return convertGenericArray(out.toArray());
+    }
+
     /**
      * Common enumeration of processed field information in {@link
      * Reflect#tryCreateFromProcessed(Class, Function, boolean) tryCreate}.

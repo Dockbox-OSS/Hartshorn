@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.common;
 
-import org.dockbox.selene.api.PlayerStorageService;
+import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.i18n.common.Language;
@@ -28,19 +28,19 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.file.Path;
 import java.util.UUID;
 
-public abstract class DefaultPlayerStorageService implements PlayerStorageService {
+public abstract class DefaultPlayers implements Players {
 
     @Override
     public void setLanguagePreference(@NotNull UUID uuid, @NotNull Language lang) {
-        UserDataModel userData = DefaultPlayerStorageService.getUserData(uuid);
+        UserDataModel userData = DefaultPlayers.getUserData(uuid);
         userData.language = lang;
-        DefaultPlayerStorageService.updateUserData(uuid, userData);
+        DefaultPlayers.updateUserData(uuid, userData);
     }
 
     @NotNull
     @Override
     public Language getLanguagePreference(@NotNull UUID uuid) {
-        return DefaultPlayerStorageService.getUserData(uuid).language;
+        return DefaultPlayers.getUserData(uuid).language;
     }
 
     @SuppressWarnings("ConstantConditions")

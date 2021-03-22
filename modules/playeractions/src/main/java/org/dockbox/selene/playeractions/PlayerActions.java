@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.playeractions;
 
-import org.dockbox.selene.api.WorldStorageService;
+import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.events.player.PlayerMoveEvent;
@@ -34,7 +34,7 @@ public class PlayerActions {
     private PlayerActionConfiguration configuration;
 
     @Inject
-    private WorldStorageService worldStorageService;
+    private Worlds worlds;
 
     /*
         TODO: // P2 Dependency
@@ -58,7 +58,7 @@ public class PlayerActions {
         if (event instanceof PlayerTeleportEvent) return; // Allow players to teleport out of the world
         if (event.getTarget().hasPermission(PlayerActionPermissions.NAVIGATE_DEFAULT_WORLD)) return;
 
-        if (event.getTarget().getWorld().getWorldUniqueId().equals(worldStorageService.getRootWorldId())) {
+        if (event.getTarget().getWorld().getWorldUniqueId().equals(worlds.getRootWorldId())) {
             event.setCancelled(true);
         }
     }

@@ -42,20 +42,16 @@ import java.util.stream.StreamSupport;
 public class SpongeInventoryRow implements InventoryRow {
 
     private static final Supplier<Item> air = () -> Selene.getItems().getAir();
-    private static final Function<org.spongepowered.api.item.inventory.Slot, Item> slotLookup =
-            slot -> {
-                return slot.peek()
-                        .map(SpongeConversionUtil::fromSponge)
-                        .map(referencedItem -> (Item) referencedItem)
-                        .orElseGet(air);
-            };
+    private static final Function<org.spongepowered.api.item.inventory.Slot, Item> slotLookup = slot -> slot.peek()
+            .map(SpongeConversionUtil::fromSponge)
+            .map(referencedItem -> (Item) referencedItem)
+            .orElseGet(air);
 
     private final SpongePlayerInventory inventory;
     private final int rowIndex;
     private final SpongePlayer spongePlayer;
 
-    public SpongeInventoryRow(
-            SpongePlayerInventory inventory, int rowIndex, SpongePlayer spongePlayer) {
+    public SpongeInventoryRow(SpongePlayerInventory inventory, int rowIndex, SpongePlayer spongePlayer) {
         this.inventory = inventory;
         this.rowIndex = rowIndex;
         this.spongePlayer = spongePlayer;
@@ -90,25 +86,20 @@ public class SpongeInventoryRow implements InventoryRow {
 
     @Override
     public Collection<Item> getAllItems() {
-        return this.internalGetRow()
-                .map(
-                        row ->
-                                StreamSupport.stream(row.slots().spliterator(), false)
-                                        .map(slot -> (org.spongepowered.api.item.inventory.Slot) slot)
-                                        .map(slotLookup)
-                                        .collect(Collectors.toList()))
-                .orElseGet(SeleneUtils::emptyList);
+        return this.internalGetRow().map(row ->
+                StreamSupport.stream(row.slots().spliterator(), false)
+                        .map(slot -> (org.spongepowered.api.item.inventory.Slot) slot)
+                        .map(slotLookup)
+                        .collect(Collectors.toList())
+        ).orElseGet(SeleneUtils::emptyList);
     }
 
     @Override
     public boolean give(Item item) {
-        return this.internalGetRow()
-                .map(
-                        row -> {
-                            ItemStack stack = SpongeConversionUtil.toSponge(item);
-                            return Type.SUCCESS == row.offer(stack).getType();
-                        })
-                .orElse(false);
+        return this.internalGetRow().map(row -> {
+            ItemStack stack = SpongeConversionUtil.toSponge(item);
+            return Type.SUCCESS == row.offer(stack).getType();
+        }).orElse(false);
     }
 
     @Override
@@ -125,25 +116,18 @@ public class SpongeInventoryRow implements InventoryRow {
         return this.internalGetRow().map(row -> row.getSlot(new SlotIndex(index)).orElse(null));
     }
 
-    private Exceptional<? extends org.spongepowered.api.item.inventory.type.InventoryRow>
-    internalGetRow() {
-        return this.spongePlayer
-                .getSpongePlayer()
-                .map(
-                        player -> {
-                            if (3 == this.rowIndex) {
-                                return player
-                                        .getInventory()
-                                        .<Hotbar>query(new InventoryTypeQueryOperation(Hotbar.class));
-                            }
-                            else {
-                                MainPlayerInventory main =
-                                        player
-                                                .getInventory()
-                                                .query(new InventoryTypeQueryOperation(MainPlayerInventory.class));
-                                return Exceptional.of(main.getRow(this.rowIndex)).orNull();
-                            }
-                        });
+    private Exceptional<? extends org.spongepowered.api.item.inventory.type.InventoryRow> internalGetRow() {
+        return this.spongePlayer.getSpongePlayer().map(player -> {
+            if (3 == this.rowIndex) {
+                return player.getInventory()
+                        .<Hotbar>query(new InventoryTypeQueryOperation(Hotbar.class));
+            }
+            else {
+                MainPlayerInventory main = player.getInventory()
+                        .query(new InventoryTypeQueryOperation(MainPlayerInventory.class));
+                return Exceptional.of(main.getRow(this.rowIndex)).orNull();
+            }
+        });
     }
 
     @Override

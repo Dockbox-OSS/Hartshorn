@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.oldplots;
 
-import org.dockbox.selene.api.WorldStorageService;
+import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.Location;
@@ -45,7 +45,7 @@ public class PlotWorldModel {
     }
 
     public Exceptional<Location> getLocation(int plotX, int plotZ) {
-        return Selene.provide(WorldStorageService.class)
+        return Selene.provide(Worlds.class)
                 .getWorld(this.getName())
                 .map(world -> new Location(this.getHomeX(plotX), this.getHeight(), this.getHomeZ(plotZ), world));
     }
