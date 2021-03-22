@@ -18,16 +18,15 @@
 package org.dockbox.selene.command.parameter;
 
 import org.dockbox.selene.annotations.command.CustomParameter;
-import org.dockbox.selene.annotations.command.ParameterConstruction;
+import org.dockbox.selene.api.command.context.ArgumentConverter;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.commandparameters.CommandParameterResources;
-import org.dockbox.selene.commandparameters.exception.ConstructorDefinitionError;
+import org.dockbox.selene.common.command.convert.ArgumentConverterRegistry;
 
 import java.lang.reflect.Constructor;
-import java.util.Collection;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -39,61 +38,85 @@ public interface CustomParameterPattern {
     /**
      * Attempts to parse a {@code raw} argument into the requested {@code type}.
      *
-     * @param type The target type to parse into
-     * @param source The source of the command, provided in case the parser is context sensitive
-     * @param raw The raw argument
-     * @param <T> The generic type of the target
+     * @param type
+     *         The target type to parse into
+     * @param source
+     *         The source of the command, provided in case the parser is context sensitive
+     * @param raw
+     *         The raw argument
+     * @param <T>
+     *         The generic type of the target
+     *
      * @return An instance of {@code T}, wrapped in a {@link Exceptional}, or {@link Exceptional#empty()} if {@code null}
      */
-    <T> Exceptional<T> request(Class<T> type, CommandSource source, String raw);
+    default <T> Exceptional<T> request(Class<T> type, CommandSource source, String raw) {
+        Exceptional<Boolean> preconditionsMatch = preconditionsMatch(type, source, raw);
+        if (preconditionsMatch.errorPresent()) return Exceptional.of(preconditionsMatch.getError());
 
-    /**
-     * Looks up a constructor which can be used to construct a parameter instance. If there is only one constructor present that will
-     * be returned even if it is not annotated with {@link ParameterConstruction}, as long as the amount of parameters matches the
-     * expected amount. If there are more than one constructor present, only the constructors annotated with {@link ParameterConstruction}
-     * are scanned.
-     *
-     * <p>It is expected that each constructor with this annotation has a different amount of parameters. Currently it is
-     * not possible to have two constructors with the same amount of arguments, due to the unavailability of argument types during
-     * construction.
-     *
-     * <p>Any {@link Exceptional} with a present {@link Throwable} returned by this method are to be handled by the developer, and
-     * should be handled before it is returned to the user.
-     *
-     * @param type The type to scan for constructors
-     * @param size The amount of parameters expected on the constructor
-     * @param <T> The generic type of the declaring type
-     * @return The constructor, wrapped in a {@link Exceptional}, or {@link Exceptional#empty()}
-     */
-    default <T> Exceptional<Constructor<T>> getParameterConstructor(Class<T> type, int size) {
-        @SuppressWarnings("unchecked") Constructor<T>[] ctors = (Constructor<T>[]) type.getDeclaredConstructors();
-        if (ctors.length == 1 && ctors[0].getParameterCount() == size) {
-            return Exceptional.of(ctors[0]);
-        }
+        List<String> rawArguments = splitArguments(raw);
+        List<Class<?>> argumentTypes = SeleneUtils.emptyList();
+        List<Object> arguments = SeleneUtils.emptyList();
 
-        Collection<Constructor<T>> constructors = Reflect.getAnnotatedConstructors(ParameterConstruction.class, type);
-        if (constructors.isEmpty()) {
-            return Exceptional.of(new ConstructorDefinitionError("No constructors with @ParameterConstruction found for " + type.getCanonicalName()));
-        }
-
-        List<Constructor<T>> availableConstructors = SeleneUtils.emptyList();
-
-        for (Constructor<T> declaredConstructor : constructors) {
-            if (declaredConstructor.getParameters().length == size) {
-                declaredConstructor.setAccessible(true);
-                availableConstructors.add(declaredConstructor);
+        for (String rawArgument : rawArguments) {
+            Exceptional<String> argumentIdentifier = this.parseIdentifier(rawArgument);
+            if (argumentIdentifier.isAbsent()) {
+                // If a non-pattern argument is required, the converter needs to be looked up by type instead of by its identifier. This will be done when the constructor is being looked up
+                argumentTypes.add(null);
+                arguments.add(rawArgument);
+                continue;
             }
+            String typeIdentifier = argumentIdentifier.get();
+
+            ArgumentConverter<?> converter = ArgumentConverterRegistry.getConverter(typeIdentifier);
+            if (converter == null) return Exceptional
+                    .of(new IllegalArgumentException(CommandParameterResources.MISSING_CONVERTER.format(type.getCanonicalName()).asString()));
+
+            argumentTypes.add(converter.getType());
+            arguments.add(converter.convert(source, rawArgument).orNull());
         }
 
-        if (availableConstructors.size() > 1)
-            return Exceptional
-                    .of(new ConstructorDefinitionError("Found more than one constructor with @ParamaterConstruction with " + size + " parameters for " + type
-                            .getCanonicalName()));
 
-        if (availableConstructors.isEmpty()) {
-            return Exceptional.of(new IllegalArgumentException(CommandParameterResources.USAGE.format(type.getAnnotation(CustomParameter.class).usage()).asString()));
+        return getConstructor(argumentTypes, arguments, type, source).map(constructor -> {
+            try {
+                return constructor.newInstance(arguments.toArray(new Object[0]));
+            }
+            catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                return null;
+            }
+        });
+    }
+
+    <T> Exceptional<Boolean> preconditionsMatch(Class<T> type, CommandSource source, String raw);
+
+    List<String> splitArguments(String raw);
+
+    Exceptional<String> parseIdentifier(String argument);
+
+    default <T> Exceptional<Constructor<T>> getConstructor(List<Class<?>> argumentTypes, List<Object> arguments, Class<T> type,
+                                                           CommandSource source) {
+        //noinspection unchecked
+        for (Constructor<T> declaredConstructor : (Constructor<T>[]) type.getDeclaredConstructors()) {
+            Class<?>[] parameterTypes = declaredConstructor.getParameterTypes();
+            if (parameterTypes.length != arguments.size()) continue;
+
+            boolean passed = true;
+            for (int i = 0; i < parameterTypes.length; i++) {
+                Class<?> parameterType = parameterTypes[i];
+                Class<?> requiredType = argumentTypes.get(i);
+                if (requiredType == null) {
+                    Exceptional<?> result = ArgumentConverterRegistry.getConverter(parameterType).convert(source, (String) arguments.get(i));
+                    if (result.isPresent()) {
+                        arguments.set(i, result.get());
+                        continue; // Generic type, will be parsed later
+                    }
+                }
+                else if (parameterType.equals(requiredType)) continue;
+
+                passed = false;
+                break; // Parameter is not what we expected, do not continue
+            }
+            if (passed) return Exceptional.of(declaredConstructor);
         }
-
-        return Exceptional.of(availableConstructors.get(0));
+        return Exceptional.of(new IllegalArgumentException(CommandParameterResources.NOT_ENOUGH_ARGUMENTS.asString()));
     }
 }

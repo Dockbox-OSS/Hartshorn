@@ -648,4 +648,9 @@ public final class Exceptional<T> {
     public Class<?> getType() {
         return this.isPresent() ? this.value.getClass() : null;
     }
+
+    public static <T> Exceptional<T> of(Supplier<Boolean> condition, Callable<T> ifTrue, Supplier<Throwable> ifFalse) {
+        if (condition.get()) return of(ifTrue);
+        else return of(ifFalse.get());
+    }
 }

@@ -15,18 +15,34 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.annotations.command;
+package org.dockbox.selene.sample;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dockbox.selene.annotations.command.CustomParameter;
 
-/**
- * Used to indicate a constructor is available for automatic construction based on given parameters. If a constructor is annotated with
- * this annotation, the type is expected to have the {@link CustomParameter} annotation.
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.CONSTRUCTOR)
-public @interface ParameterConstruction {
+@CustomParameter("cuboid")
+public class Cuboid {
+
+    private final String name;
+    private final Shape shape;
+
+    public Cuboid(String name, Shape shape) {
+        this.name = name;
+        this.shape = shape;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Shape getShape() {
+        return shape;
+    }
+
+    @Override
+    public String toString() {
+        return "Cuboid{" +
+                "name='" + name + '\'' +
+                ", shape=" + shape +
+                '}';
+    }
 }

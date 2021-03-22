@@ -144,11 +144,6 @@ task downloadServerMods(type: Download) {
 task downloadDevServer(type: Copy) {
     def serverDir = new File("${rootDir}/servers/sponge-112")
 
-    println("Resetting directory $serverDir")
-    if (serverDir.exists()) {
-        serverDir.deleteDir()
-    }
-
     println("Creating directory $serverDir")
     mkdir serverDir
 

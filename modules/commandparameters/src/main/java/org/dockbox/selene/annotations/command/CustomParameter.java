@@ -27,8 +27,7 @@ import java.lang.annotation.Target;
 
 /**
  * Used to indicate that a type can be provided to command definitions. When a type is annotated with this annotation, it can be automatically
- * constructed using its available constructors. If there are more than one constructor, the target constructors are to be annotated with
- * {@link ParameterConstruction}.
+ * constructed using its available constructors.
  *
  * <p>Also see <a href="https://github.com/GuusLieben/Selene/wiki/Command-Arguments>Selene/Command Arguments</a>.
  */

@@ -18,7 +18,6 @@
 package org.dockbox.selene.sample;
 
 import org.dockbox.selene.annotations.command.CustomParameter;
-import org.dockbox.selene.annotations.command.ParameterConstruction;
 
 @CustomParameter("shape")
 public class Shape {
@@ -31,12 +30,11 @@ public class Shape {
         sides = 1;
     }
 
-    @ParameterConstruction
     public Shape(int sides) {
         this.name = sides + "-sided shape";
         this.sides = sides;
     }
-    @ParameterConstruction
+
     public Shape(String name, int sides) {
         this.name = name;
         this.sides = sides;
