@@ -87,6 +87,10 @@ allprojects {
             all*.exclude group: 'junit', module:'junit'
         }
 
+        compileJava {
+            options.compilerArgs << '-parameters'
+        }
+
         dependencies {
             compile("net.dv8tion:JDA:$jdaVersion") {
                 exclude module: 'opus-java'
