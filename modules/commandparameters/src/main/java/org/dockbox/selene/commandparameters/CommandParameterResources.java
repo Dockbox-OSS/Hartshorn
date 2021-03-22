@@ -24,9 +24,7 @@ import org.dockbox.selene.api.i18n.entry.Resource;
 @Resources(module = CommandParameters.class)
 public class CommandParameterResources {
 
-    public static final ResourceEntry USAGE = new Resource("Usage: {0}", "selene.command.usage");
-    public static final ResourceEntry NOT_ENOUGH_ARGUMENTS = new Resource("Not enough arguments. {0}", "selene.command.missing_args");
-    public static final ResourceEntry TOO_MANY_ARGUMENTS = new Resource("Too many arguments. {0}", "selene.command.too_many_args");
+    public static final ResourceEntry NOT_ENOUGH_ARGUMENTS = new Resource("Not enough arguments.", "selene.command.missing_args");
     public static final ResourceEntry HASHTAG_PATTERN_WRONG_FORMAT = new Resource("Pattern has to be formatted as #type[arg1][arg2][etc.]", "selene.command.hashtag.wrong_format");
     public static final ResourceEntry MISSING_CONVERTER = new Resource("Parameter of type {0} has no register converter", "selene.command.missing_converter");
 
