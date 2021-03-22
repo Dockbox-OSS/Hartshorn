@@ -31,20 +31,18 @@ import org.dockbox.selene.packets.data.Weather;
  * href="https://wiki.vg/Protocol#Change_Game_State">Protocol - Change Game State</a> for more
  * details. Only supports weather gamestates.
  */
-public class NMSChangeGameStatePacket extends ChangeGameStatePacket
-        implements NMSPacket<SPacketChangeGameState> {
+public class NMSChangeGameStatePacket extends ChangeGameStatePacket implements NMSPacket<SPacketChangeGameState> {
 
     private SPacketChangeGameState nativePacket;
 
     @Override
     public Weather getWeather() {
-        int state =
-                Reflect.getFieldValue(
-                        SPacketChangeGameState.class,
-                        this.nativePacket,
-                        "field_149140_b", // state
-                        int.class)
-                        .orElse(Weather.CLEAR.getGameStateId());
+        int state = Reflect.getFieldValue(
+                SPacketChangeGameState.class,
+                this.nativePacket,
+                "field_149140_b", // state
+                int.class)
+                .orElse(Weather.CLEAR.getGameStateId());
         return Weather.getByGameStateId(state);
     }
 
@@ -62,9 +60,7 @@ public class NMSChangeGameStatePacket extends ChangeGameStatePacket
 
     @Override
     public void stateEnabling(InjectorProperty<?>... injectorProperties) {
-        this.nativePacket =
-                Keys.getPropertyValue(
-                        NativePacketProperty.KEY, SPacketChangeGameState.class, injectorProperties)
-                        .orElseGet(SPacketChangeGameState::new);
+        this.nativePacket = Keys.getPropertyValue(NativePacketProperty.KEY, SPacketChangeGameState.class, injectorProperties)
+                .orElseGet(SPacketChangeGameState::new);
     }
 }

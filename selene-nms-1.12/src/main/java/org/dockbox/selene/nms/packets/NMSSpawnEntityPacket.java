@@ -24,8 +24,7 @@ import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.nms.entities.NMSEntity;
 import org.dockbox.selene.packets.SpawnEntityPacket;
 
-public class NMSSpawnEntityPacket<T extends Entity<?>> extends SpawnEntityPacket<T>
-        implements NMSPacket<SPacketSpawnGlobalEntity> {
+public class NMSSpawnEntityPacket<T extends Entity<?>> extends SpawnEntityPacket<T> implements NMSPacket<SPacketSpawnGlobalEntity> {
 
     @Override
     public SPacketSpawnGlobalEntity getPacket() {

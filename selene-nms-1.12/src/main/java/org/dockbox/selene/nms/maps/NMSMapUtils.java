@@ -55,8 +55,7 @@ public final class NMSMapUtils {
         mapData.scale = (byte) 0;
         mapData.xCenter = 0;
         mapData.zCenter = Z_CENTER;
-        mapData.dimension =
-                DIMENSION; // Target dimension ID, realistically no server will ever reach this number
+        mapData.dimension = DIMENSION; // Target dimension ID, realistically no server will ever reach this number
         mapData.unlimitedTracking = false;
         mapData.trackingPosition = false;
         mapData.colors = colors;
@@ -126,7 +125,9 @@ public final class NMSMapUtils {
                 for (String line : Files.readAllLines(colorMap)) {
                     String[] ints = line.split(",");
                     int[] rgb = {
-                            Integer.parseInt(ints[1]), Integer.parseInt(ints[2]), Integer.parseInt(ints[3])
+                            Integer.parseInt(ints[1]),
+                            Integer.parseInt(ints[2]),
+                            Integer.parseInt(ints[3])
                     };
                     COLORS.put(Integer.parseInt(ints[0]), rgb);
                 }
