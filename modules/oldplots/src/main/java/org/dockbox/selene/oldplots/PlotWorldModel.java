@@ -47,9 +47,7 @@ public class PlotWorldModel {
     public Exceptional<Location> getLocation(int plotX, int plotZ) {
         return Selene.provide(WorldStorageService.class)
                 .getWorld(this.getName())
-                .map(
-                        world ->
-                                new Location(this.getHomeX(plotX), this.getHeight(), this.getHomeZ(plotZ), world));
+                .map(world -> new Location(this.getHomeX(plotX), this.getHeight(), this.getHomeZ(plotZ), world));
     }
 
     public String getName() {

@@ -55,12 +55,6 @@ public class SimpleColumnIdentifier<T> implements ColumnIdentifier<T> {
 
     @Override
     public String toString() {
-        return "SimpleColumnIdentifier{"
-                + "fieldName='"
-                + this.fieldName
-                + '\''
-                + ", type="
-                + this.type
-                + '}';
+        return "SimpleColumnIdentifier{" + "fieldName='" + this.fieldName + '\'' + ", type=" + this.type + '}';
     }
 }

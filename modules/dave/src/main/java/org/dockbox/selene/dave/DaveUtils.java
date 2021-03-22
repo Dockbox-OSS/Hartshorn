@@ -45,33 +45,26 @@ import java.util.Random;
 
 public final class DaveUtils {
 
-    public static final IntegerPersistentDataKey mutedKey =
-            IntegerPersistentDataKey.of("dave_muting", DaveModule.class);
-    private static final Map<DaveTrigger, LocalDateTime> timeSinceTrigger =
-            SeleneUtils.emptyConcurrentMap();
+    public static final IntegerPersistentDataKey mutedKey = IntegerPersistentDataKey.of("dave_muting", DaveModule.class);
+    private static final Map<DaveTrigger, LocalDateTime> timeSinceTrigger = SeleneUtils.emptyConcurrentMap();
 
     private DaveUtils() {}
 
     public static void toggleMute(Player player) {
-        player
-                .get(mutedKey)
-                .ifPresent(
-                        state -> {
-                            if (1 == state) {
-                                player.remove(mutedKey);
-                                player.sendWithPrefix(DaveResources.DAVE_UNMUTED);
+        player.get(mutedKey).ifPresent(state -> {
+            if (1 == state) {
+                player.remove(mutedKey);
+                player.sendWithPrefix(DaveResources.DAVE_UNMUTED);
 
-                            }
-                            else {
-                                throw new IllegalStateException(
-                                        "Unexpected muted state value '" + state + "', was I modified externally?");
-                            }
-                        })
-                .ifAbsent(
-                        () -> {
-                            player.set(mutedKey, 1);
-                            player.sendWithPrefix(DaveResources.DAVE_MUTED);
-                        });
+            }
+            else {
+                throw new IllegalStateException(
+                        "Unexpected muted state value '" + state + "', was I modified externally?");
+            }
+        }).ifAbsent(() -> {
+            player.set(mutedKey, 1);
+            player.sendWithPrefix(DaveResources.DAVE_MUTED);
+        });
     }
 
     public static Exceptional<DaveTrigger> findMatching(DaveTriggers triggers, String message) {
@@ -96,7 +89,8 @@ public final class DaveUtils {
             String displayName,
             DaveTrigger trigger,
             String originalMessage,
-            DaveConfig config) {
+            DaveConfig config
+    ) {
         LocalDateTime timeOfLastTriggered = timeSinceTrigger.get(trigger);
         long secondsSinceLastResponse = 10;
         if (null != timeOfLastTriggered)
@@ -111,7 +105,8 @@ public final class DaveUtils {
             String displayName,
             DaveTrigger trigger,
             String originalMessage,
-            DaveConfig config) {
+            DaveConfig config
+    ) {
         String perm = trigger.getPermission();
 
         if (null != perm) {
@@ -125,23 +120,20 @@ public final class DaveUtils {
 
         boolean important = trigger.isImportant();
 
-        responses.forEach(
-                response -> {
-                    if (ResponseType.COMMAND == response.getType()) {
-                        executeCommand(source, response.getMessage());
-                    }
-                    else if (ResponseType.URL == response.getType()) {
-                        printResponse(
-                                DaveUtils.parseWebsiteLink(response.getMessage()), true, important, config);
-                    }
-                    else {
-                        printResponse(
-                                DaveUtils.parsePlaceHolders(originalMessage, response.getMessage(), displayName),
-                                false,
-                                important,
-                                config);
-                    }
-                });
+        responses.forEach(response -> {
+            if (ResponseType.COMMAND == response.getType()) {
+                executeCommand(source, response.getMessage());
+            }
+            else if (ResponseType.URL == response.getType()) {
+                printResponse(DaveUtils.parseWebsiteLink(response.getMessage()), true, important, config);
+            }
+            else {
+                printResponse(DaveUtils.parsePlaceHolders(originalMessage, response.getMessage(), displayName),
+                        false,
+                        important,
+                        config);
+            }
+        });
 
         timeSinceTrigger.put(trigger, LocalDateTime.now());
     }
@@ -176,8 +168,7 @@ public final class DaveUtils {
         // Discord response
         TextChannel discordChannel = config.getChannel();
         String discordMessage = response.replaceAll("§", "&");
-        for (String regex :
-                new String[]{ "(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r" })
+        for (String regex : new String[]{ "(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r" })
             discordMessage = discordMessage.replaceAll(regex, "");
 
         Selene.provide(DiscordUtils.class)
@@ -217,20 +208,16 @@ public final class DaveUtils {
 
     private static String parseMention(String partial, String fullResponse, DiscordUtils du) {
         if (partial.startsWith("<@") && 2 < partial.length()) {
-            String mention =
-                    du.getJDA()
-                            .map(
-                                    jda ->
-                                            jda.getUserById(partial.replaceFirst("<@", "").replaceFirst(">", ""))
-                                                    .getName())
-                            .orElse("player");
+            String mention = du.getJDA().map(jda ->
+                    jda.getUserById(partial.replaceFirst("<@", "").replaceFirst(">", "")).getName()
+            ).orElse("player");
 
             if (null != mention) {
-                fullResponse.replaceAll("<mention>", partial.replaceFirst("<@", "").replaceFirst(">", ""));
+                fullResponse = fullResponse.replaceAll("<mention>", partial.replaceFirst("<@", "").replaceFirst(">", ""));
             }
         }
         else if (Text.of(partial).toPlain().startsWith("@") && 2 < partial.length()) {
-            fullResponse.replaceAll("<mention>", partial.replaceFirst("@", ""));
+            fullResponse = fullResponse.replaceAll("<mention>", partial.replaceFirst("@", ""));
         }
         return fullResponse;
     }

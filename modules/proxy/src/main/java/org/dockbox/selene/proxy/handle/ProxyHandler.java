@@ -52,8 +52,7 @@ public class ProxyHandler<T> implements MethodHandler {
     }
 
     @Override
-    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args)
-            throws Throwable {
+    public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
         // The handler listens for all methods, while not all methods are proxied
         if (this.handlers.containsKey(thisMethod)) {
             Collection<ProxyProperty<T, ?>> properties = this.handlers.get(thisMethod);
@@ -83,8 +82,8 @@ public class ProxyHandler<T> implements MethodHandler {
             Iterable<ProxyProperty<T, ?>> properties,
             Object[] args,
             Method thisMethod,
-            Object returnValue)
-            throws InvocationTargetException, IllegalAccessException {
+            Object returnValue
+    ) throws InvocationTargetException, IllegalAccessException {
         // Used to ensure the target is performed if there is no OVERWRITE phase hook
         boolean target = true;
         for (ProxyProperty<T, ?> property : properties) {
@@ -98,12 +97,7 @@ public class ProxyHandler<T> implements MethodHandler {
                     // ensure no results will be overwritten. Null values may cause the initial target return
                     // value to
                     // be used instead if no other phase hook changes the final return value.
-                    if (null == result)
-                        Selene.log()
-                                .warn(
-                                        "Proxy method for '"
-                                                + thisMethod.getName()
-                                                + "' returned null while overwriting results!");
+                    if (null == result) Selene.log().warn("Proxy method for '" + thisMethod.getName() + "' returned null while overwriting results!");
                     returnValue = result;
                 }
                 // If at least one overwrite is present,
@@ -117,9 +111,7 @@ public class ProxyHandler<T> implements MethodHandler {
         return returnValue;
     }
 
-    public T proxy()
-            throws InvocationTargetException, NoSuchMethodException, InstantiationException,
-            IllegalAccessException {
+    public T proxy() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         ProxyFactory factory = new ProxyFactory();
         factory.setSuperclass(this.instance.getClass());
         //noinspection unchecked

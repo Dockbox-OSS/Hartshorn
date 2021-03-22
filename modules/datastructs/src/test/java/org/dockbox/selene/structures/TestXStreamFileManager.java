@@ -26,6 +26,7 @@ import org.dockbox.selene.common.files.DefaultXStreamManager;
 import java.nio.file.Path;
 import java.util.Map;
 
+@SuppressWarnings("UnstableApiUsage")
 public class TestXStreamFileManager extends DefaultXStreamManager {
 
     private final Map<String, Path> pathDictionary = SeleneUtils.emptyMap();

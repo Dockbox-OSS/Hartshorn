@@ -45,7 +45,8 @@ public class ItemTool {
             List<Text> lore,
             BiConsumer<Player, Item> consumer,
             List<Predicate<ToolInteractionEvent>> filters,
-            List<Consumer<Item>> modifiers) {
+            List<Consumer<Item>> modifiers
+    ) {
         this.name = name;
         this.lore = lore;
         this.consumer = consumer;

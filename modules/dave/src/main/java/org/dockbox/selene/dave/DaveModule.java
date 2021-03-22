@@ -56,20 +56,18 @@ public class DaveModule implements InjectableType {
     public void triggers(CommandSource source) {
         Selene.provide(PaginationBuilder.class)
                 .title(DaveResources.DAVE_TRIGGER_HEADER.asText())
-                .content(
-                        this.triggers.getTriggers().stream()
-                                .map(
-                                        trigger -> {
-                                            //noinspection MagicNumber
-                                            return DaveResources.DAVE_TRIGGER_LIST_ITEM
-                                                    .format(
-                                                            SeleneUtils.shorten(trigger.getResponses().get(0).getMessage(), 75)
-                                                                    + " ...")
-                                                    .asText()
-                                                    .onHover(HoverAction.showText(DaveResources.DAVE_TRIGGER_HOVER.asText()))
-                                                    .onClick(ClickAction.runCommand("/dave run " + trigger.getId()));
-                                        })
-                                .collect(Collectors.toList()))
+                .content(this.triggers.getTriggers().stream()
+                        .map(trigger -> {
+                            //noinspection MagicNumber
+                            return DaveResources.DAVE_TRIGGER_LIST_ITEM
+                                    .format(
+                                            SeleneUtils.shorten(trigger.getResponses().get(0).getMessage(), 75)
+                                                    + " ...")
+                                    .asText()
+                                    .onHover(HoverAction.showText(DaveResources.DAVE_TRIGGER_HOVER.asText()))
+                                    .onClick(ClickAction.runCommand("/dave run " + trigger.getId()));
+                        })
+                        .collect(Collectors.toList()))
                 .build()
                 .send(source);
     }
@@ -77,8 +75,7 @@ public class DaveModule implements InjectableType {
     @Command(aliases = "run", usage = "run <trigger{String}>")
     public void run(Player source, CommandContext context) {
         String triggerId = context.get("trigger");
-        this.triggers
-                .findById(triggerId)
+        this.triggers.findById(triggerId)
                 .ifPresent(
                         trigger -> {
                             DaveUtils.performTrigger(source, source.getName(), trigger, "", this.config);
@@ -102,14 +99,8 @@ public class DaveModule implements InjectableType {
         if (SeleneUtils.isFileEmpty(triggerFile)) this.restoreTriggerFile(fm, triggerFile);
 
         fm.read(triggerFile, DaveTriggers.class)
-                .ifPresent(
-                        triggers -> {
-                            this.triggers = triggers;
-                        })
-                .ifAbsent(
-                        () -> {
-                            Selene.log().warn("Could not load triggers for Dave");
-                        });
+                .ifPresent(triggers -> this.triggers = triggers)
+                .ifAbsent(() -> Selene.log().warn("Could not load triggers for Dave"));
 
         Path configFile = fm.getConfigFile(DaveModule.class);
         fm.read(configFile, DaveConfig.class).ifPresent(config -> this.config = config);
@@ -128,20 +119,14 @@ public class DaveModule implements InjectableType {
     public void onChat(SendChatEvent sendChatEvent) {
         Player player = (Player) sendChatEvent.getTarget();
         DaveUtils.findMatching(this.triggers, sendChatEvent.getMessage().toPlain())
-                .ifPresent(
-                        trigger -> {
-                            Selene.provide(TaskRunner.class)
-                                    .acceptDelayed(
-                                            () -> {
-                                                DaveUtils.performTrigger(
-                                                        player,
-                                                        player.getName(),
-                                                        trigger,
-                                                        sendChatEvent.getMessage().toPlain(),
-                                                        this.config);
-                                            },
-                                            10,
-                                            TimeUnit.MILLISECONDS);
-                        });
+                .ifPresent(trigger -> Selene.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+                        player,
+                        player.getName(),
+                        trigger,
+                        sendChatEvent.getMessage().toPlain(),
+                        this.config),
+                        10,
+                        TimeUnit.MILLISECONDS)
+                );
     }
 }

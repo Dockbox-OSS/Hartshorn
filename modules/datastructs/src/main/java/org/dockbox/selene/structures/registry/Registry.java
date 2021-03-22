@@ -67,8 +67,7 @@ public class Registry<V> {
      *
      * @return Itself.
      */
-    public Registry<V> addRegistry(
-            @NotNull Map<RegistryIdentifier, RegistryColumn<V>> otherRegistry) {
+    public Registry<V> addRegistry(@NotNull Map<RegistryIdentifier, RegistryColumn<V>> otherRegistry) {
         otherRegistry.forEach(this::addData);
         return this;
     }
@@ -114,8 +113,7 @@ public class Registry<V> {
      * @return The {@link RegistryColumn}
      */
     @SafeVarargs
-    public final RegistryColumn<V> getColumnOrCreate(
-            RegistryIdentifier identifier, V... defaultvalues) {
+    public final RegistryColumn<V> getColumnOrCreate(RegistryIdentifier identifier, V... defaultvalues) {
         if (!this.containsColumns(identifier)) {
             this.addColumn(identifier, defaultvalues);
         }
@@ -228,16 +226,14 @@ public class Registry<V> {
      *
      * @return The new Registry containing the filtered columns.
      */
-    public Registry<V> removeColumnsIf(
-            BiPredicate<RegistryIdentifier, RegistryColumn<? super V>> biFilter) {
+    public Registry<V> removeColumnsIf(BiPredicate<RegistryIdentifier, RegistryColumn<? super V>> biFilter) {
         Registry<V> registry = new Registry<>();
 
-        this.data.forEach(
-                (columnID, column) -> {
-                    if (!biFilter.test(columnID, column)) {
-                        registry.addColumn(columnID, column);
-                    }
-                });
+        this.data.forEach((columnID, column) -> {
+            if (!biFilter.test(columnID, column)) {
+                registry.addColumn(columnID, column);
+            }
+        });
         return registry;
     }
 
@@ -278,14 +274,11 @@ public class Registry<V> {
     public Registry<V> removeValuesIf(BiPredicate<RegistryIdentifier, ? super V> biFilter) {
         Registry<V> registry = new Registry<>();
 
-        this.data.forEach(
-                (columnID, column) ->
-                        column.forEach(
-                                v -> {
-                                    if (!biFilter.test(columnID, v)) {
-                                        registry.addData(columnID, v);
-                                    }
-                                }));
+        this.data.forEach((columnID, column) -> column.forEach(v -> {
+            if (!biFilter.test(columnID, v)) {
+                registry.addData(columnID, v);
+            }
+        }));
         return registry;
     }
 
@@ -402,18 +395,16 @@ public class Registry<V> {
      *         The depth of the registry (Caused by nested registries)
      */
     private void buildhierarchy(StringBuilder builder, int indents) {
-        this.data.forEach(
-                (identifier, column) -> {
-                    for (int i = 0; i < indents; i++) builder.append("\t");
-                    builder.append("- ").append(identifier).append("\n");
+        this.data.forEach((identifier, column) -> {
+            for (int i = 0; i < indents; i++) builder.append("\t");
+            builder.append("- ").append(identifier).append("\n");
 
-                    column.forEach(
-                            value -> {
-                                for (int i = 0; i < indents; i++) builder.append("\t");
-                                if (value instanceof Registry)
-                                    ((Registry<?>) value).buildhierarchy(builder, indents + 1);
-                                else builder.append("| ").append(value).append("\n");
-                            });
-                });
+            column.forEach(value -> {
+                for (int i = 0; i < indents; i++) builder.append("\t");
+                if (value instanceof Registry)
+                    ((Registry<?>) value).buildhierarchy(builder, indents + 1);
+                else builder.append("| ").append(value).append("\n");
+            });
+        });
     }
 }

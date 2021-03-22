@@ -77,11 +77,10 @@ public class IntegratedServer implements IntegratedModule {
                     .translate(source).asText());
             content.add(IntegratedServerResources.SERVER_MODULES.translate(source).asText());
 
-            em.getRegisteredModuleIds()
-                    .forEach(id -> em.getHeader(id)
-                            .map(e -> IntegratedServer.generateText(e, source))
-                            .ifPresent(content::add)
-                    );
+            em.getRegisteredModuleIds().forEach(id -> em.getHeader(id)
+                    .map(e -> IntegratedServer.generateText(e, source))
+                    .ifPresent(content::add)
+            );
 
             pb.title(IntegratedServerResources.PAGINATION_TITLE.translate(source).asText());
             pb.content(content);
@@ -184,23 +183,12 @@ public class IntegratedServer implements IntegratedModule {
 
         String mcVersion = Selene.getServer().getMinecraftVersion().getReadableVersionString();
 
-        String javaVersion = System.getProperty("java.version");
-        String javaVendor = System.getProperty("java.vendor");
-
-        String jvmVersion = System.getProperty("java.vm.version");
-        String jvmName = System.getProperty("java.vm.name");
-        String jvmVendor = System.getProperty("java.vm.vendor");
-
-        String javaRuntimeVersion = System.getProperty("java.runtime.version");
-        String classVersion = System.getProperty("java.class.version");
+        String[] system = SeleneUtils.getAll(System::getProperty,
+                "java.version", "java.vendor", "java.vm.version", "java.vm.name", "java.vm.vendor", "java.runtime.version", "java.class.version");
 
         src.send(IntegratedServerResources.PLATFORM_INFORMATION.format(
-                st.getDisplayName(), platformVersion,
-                mcVersion,
-                javaVersion, javaVendor,
-                jvmName, jvmVersion, jvmVendor,
-                javaRuntimeVersion, classVersion
-        ));
+                st.getDisplayName(), platformVersion, mcVersion, system[0], system[1], system[2], system[2], system[3], system[4], system[5])
+        );
     }
 
     @Override

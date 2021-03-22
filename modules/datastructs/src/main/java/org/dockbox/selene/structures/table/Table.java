@@ -79,8 +79,7 @@ public class Table {
         this.rows = SeleneUtils.emptyConcurrentList();
     }
 
-    private static <T> List<TableRow> getMatchingRows(
-            TableRow row, Table otherTable, ColumnIdentifier<T> column) {
+    private static <T> List<TableRow> getMatchingRows(TableRow row, Table otherTable, ColumnIdentifier<T> column) {
         Exceptional<?> exceptionalValue = row.getValue(column);
         // No way to join on value if it is not present. Technically this should not be possible as a
         // NPE
@@ -97,21 +96,21 @@ public class Table {
             boolean populateEmptyEntries,
             Iterable<TableRow> matchingRows,
             TableRow joinedRow,
-            ColumnIdentifier<?> identifier)
-            throws EmptyEntryException {
+            ColumnIdentifier<?> identifier
+    ) throws EmptyEntryException {
         for (TableRow matchingRow : matchingRows) {
-      /*
-      If there is already a value present on this row, look up if we want to keep the existing,
-      or use the new value.
-      */
+            /*
+             * If there is already a value present on this row, look up if we want to keep the existing,
+             * or use the new value.
+             */
             if (!joinedRow.getValue(identifier).isPresent() || Merge.PREFER_FOREIGN == merge)
                 joinedRow.addValue(identifier, matchingRow.getValue(identifier).get());
         }
 
-    /*
-     If there was no value filled by either this table instance, or the foreign table, try to
-      populate it with null. If that is not allowed throw a exception.
-    */
+        /*
+         * If there was no value filled by either this table instance, or the foreign table, try to
+         *  populate it with null. If that is not allowed throw a exception.
+         */
         if (!joinedRow.getValue(identifier).isPresent()) {
             if (populateEmptyEntries) joinedRow.addValue(identifier, null);
             else
@@ -287,8 +286,8 @@ public class Table {
             boolean populateEmptyEntries,
             Iterable<ColumnIdentifier<?>> mergedIdentifiers,
             Table joinedTable,
-            TableRow row)
-            throws IdentifierMismatchException {
+            TableRow row
+    ) throws IdentifierMismatchException {
         if (!Arrays.equals(this.getIdentifiers(), otherTable.getIdentifiers())) {
             if (populateEmptyEntries) {
                 for (ColumnIdentifier<?> identifier : mergedIdentifiers) {
@@ -338,12 +337,12 @@ public class Table {
             @NotNull Table otherTable,
             ColumnIdentifier<T> column,
             Merge merge,
-            boolean populateEmptyEntries)
-            throws EmptyEntryException, IdentifierMismatchException {
+            boolean populateEmptyEntries
+    ) throws EmptyEntryException, IdentifierMismatchException {
         if (this.hasColumn(column) && otherTable.hasColumn(column)) {
+
             List<ColumnIdentifier<?>> mergedIdentifiers = SeleneUtils.emptyList();
-            for (ColumnIdentifier<?> identifier :
-                    SeleneUtils.addAll(this.getIdentifiers(), otherTable.getIdentifiers())) {
+            for (ColumnIdentifier<?> identifier : SeleneUtils.addAll(this.getIdentifiers(), otherTable.getIdentifiers())) {
                 if (mergedIdentifiers.contains(identifier)) continue;
                 mergedIdentifiers.add(identifier);
             }
@@ -359,13 +358,12 @@ public class Table {
                 }
             }
 
-      /*
-      It is possible not all foreign rows had a matching value, if that is the case we will add them here if
-      possible (if the foreign table has no additional identifiers which we cannot populate here.
-      */
+            /*
+            It is possible not all foreign rows had a matching value, if that is the case we will add them here if
+            possible (if the foreign table has no additional identifiers which we cannot populate here.
+            */
             for (TableRow row : otherTable.getRows())
-                this.populateMissingEntries(
-                        otherTable, column, populateEmptyEntries, mergedIdentifiers, joinedTable, row);
+                this.populateMissingEntries(otherTable, column, populateEmptyEntries, mergedIdentifiers, joinedTable, row);
 
             return joinedTable;
         }
@@ -378,13 +376,14 @@ public class Table {
             Merge merge,
             boolean populateEmptyEntries,
             Table joinedTable,
-            TableRow row)
-            throws EmptyEntryException, IdentifierMismatchException {
+            TableRow row
+    ) throws EmptyEntryException, IdentifierMismatchException {
         List<TableRow> matchingRows = Table.getMatchingRows(row, otherTable, column);
 
         TableRow joinedRow = new TableRow();
         for (ColumnIdentifier<?> identifier : this.getIdentifiers())
             joinedRow.addValue(identifier, row.getValue(identifier).get());
+
         for (ColumnIdentifier<?> identifier : otherTable.getIdentifiers())
             Table.populateAtColumn(merge, populateEmptyEntries, matchingRows, joinedRow, identifier);
 
@@ -397,7 +396,8 @@ public class Table {
             boolean populateEmptyEntries,
             Iterable<ColumnIdentifier<?>> mergedIdentifiers,
             Table joinedTable,
-            TableRow row) {
+            TableRow row
+    ) {
         try {
             List<TableRow> matchingRows = Table.getMatchingRows(row, joinedTable, column);
             if (matchingRows.isEmpty())
@@ -429,21 +429,20 @@ public class Table {
     public Table select(ColumnIdentifier<?>... columns) {
         Table table = new Table(columns);
 
-        this.rows.forEach(
-                row -> {
-                    TableRow tmpRow = new TableRow();
-                    for (ColumnIdentifier<?> column : columns) {
-                        row.getColumns().stream()
-                                .filter(column::equals)
-                                .forEach(tCol -> tmpRow.addValue(column, row.getValue(column).get()));
-                    }
-                    try {
-                        table.addRow(tmpRow);
-                    }
-                    catch (IdentifierMismatchException e) {
-                        throw new IllegalArgumentException(e);
-                    }
-                });
+        this.rows.forEach(row -> {
+            TableRow tmpRow = new TableRow();
+            for (ColumnIdentifier<?> column : columns) {
+                row.getColumns().stream()
+                        .filter(column::equals)
+                        .forEach(tCol -> tmpRow.addValue(column, row.getValue(column).get()));
+            }
+            try {
+                table.addRow(tmpRow);
+            }
+            catch (IdentifierMismatchException e) {
+                throw new IllegalArgumentException(e);
+            }
+        });
 
         return table;
     }
@@ -547,12 +546,11 @@ public class Table {
             throw new IllegalArgumentException(
                     "Column does not contain a comparable data type : " + column.getColumnName());
 
-        this.rows.sort(
-                (r1, r2) -> {
-                    Comparable c1 = r1.getValue(column).get();
-                    Comparable c2 = r2.getValue(column).get();
-                    return Order.ASC == order ? c1.compareTo(c2) : c2.compareTo(c1);
-                });
+        this.rows.sort((r1, r2) -> {
+            Comparable c1 = r1.getValue(column).get();
+            Comparable c2 = r2.getValue(column).get();
+            return Order.ASC == order ? c1.compareTo(c2) : c2.compareTo(c1);
+        });
     }
 
     /**

@@ -28,10 +28,9 @@ public class RegistryTests {
     public void testThatRegistryCanGetCorrectMatchingColumns() {
         Registry<Registry<String>> testRegistry = this.buildTestRegistry();
 
-        RegistryColumn<RegistryColumn<String>> result =
-                testRegistry
-                        .getMatchingColumns(TestIdentifier.BRICK)
-                        .mapTo(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
+        RegistryColumn<RegistryColumn<String>> result = testRegistry
+                .getMatchingColumns(TestIdentifier.BRICK)
+                .mapTo(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
 
         Assertions.assertTrue(result.first().get().contains("Brick Fullblock1"));
         Assertions.assertTrue(result.first().get().contains("Brick Fullblock2"));
@@ -62,11 +61,10 @@ public class RegistryTests {
         testRegistry
                 .get(TestIdentifier.COBBLESTONE)
                 .first()
-                .ifPresent(
-                        r -> {
-                            r.addData(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock2");
-                            r.addData(TestIdentifier.STAIR, "Cobblestone Stair1");
-                        });
+                .ifPresent(r -> {
+                    r.addData(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock2");
+                    r.addData(TestIdentifier.STAIR, "Cobblestone Stair1");
+                });
 
         Exceptional<Registry<String>> eCobblestoneRegistry =
                 testRegistry.getMatchingColumns(TestIdentifier.COBBLESTONE).first();
@@ -94,11 +92,9 @@ public class RegistryTests {
     public void testThatRegistryCanBeFilteredByColumn() {
         Registry<Registry<String>> testRegistry = this.buildTestRegistry();
 
-        Registry<Registry<String>> result =
-                testRegistry.removeColumnsIf(i -> TestIdentifier.BRICK == i);
+        Registry<Registry<String>> result = testRegistry.removeColumnsIf(i -> TestIdentifier.BRICK == i);
 
-        Assertions.assertTrue(
-                result.containsColumns(TestIdentifier.SANDSTONE, TestIdentifier.COBBLESTONE));
+        Assertions.assertTrue(result.containsColumns(TestIdentifier.SANDSTONE, TestIdentifier.COBBLESTONE));
         Assertions.assertFalse(result.containsColumns(TestIdentifier.BRICK));
     }
 
@@ -109,9 +105,7 @@ public class RegistryTests {
         Registry<Registry<String>> result = testRegistry.removeValuesIf(r -> 2 <= r.size());
         int brickColumnSize = result.getMatchingColumns(TestIdentifier.BRICK).size();
 
-        Assertions.assertTrue(
-                result.containsColumns(
-                        TestIdentifier.BRICK, TestIdentifier.SANDSTONE, TestIdentifier.COBBLESTONE));
+        Assertions.assertTrue(result.containsColumns(TestIdentifier.BRICK, TestIdentifier.SANDSTONE, TestIdentifier.COBBLESTONE));
         Assertions.assertEquals(0, brickColumnSize);
     }
 
@@ -119,8 +113,7 @@ public class RegistryTests {
     public void testGetOrCreateRegistryColumn() {
         Registry<Registry<String>> testRegistry = this.buildTestRegistry();
 
-        RegistryColumn<Registry<String>> column =
-                testRegistry.getColumnOrCreate(TestIdentifier.WOOD, new Registry<>());
+        RegistryColumn<Registry<String>> column = testRegistry.getColumnOrCreate(TestIdentifier.WOOD, new Registry<>());
 
         Assertions.assertEquals(1, column.size());
         Assertions.assertTrue(testRegistry.containsColumns(TestIdentifier.WOOD));
@@ -130,20 +123,18 @@ public class RegistryTests {
     public void testThatRegistryCanBeAdded() {
         Registry<Registry<String>> testRegistry = this.buildTestRegistry();
 
-        Registry<Registry<String>> secondRegistry =
-                new Registry<Registry<String>>()
-                        .addColumn(
-                                TestIdentifier.SANDSTONE,
-                                new Registry<String>().addColumn(TestIdentifier.STAIR, "Sandstone Stair2"))
-                        .addColumn(
-                                TestIdentifier.WOOD,
-                                new Registry<String>().addColumn(TestIdentifier.STAIR, "Wooden Stair1"));
+        Registry<Registry<String>> secondRegistry = new Registry<Registry<String>>()
+                .addColumn(
+                        TestIdentifier.SANDSTONE,
+                        new Registry<String>().addColumn(TestIdentifier.STAIR, "Sandstone Stair2"))
+                .addColumn(
+                        TestIdentifier.WOOD,
+                        new Registry<String>().addColumn(TestIdentifier.STAIR, "Wooden Stair1"));
 
         testRegistry.addRegistry(secondRegistry);
-        RegistryColumn<Object> result =
-                testRegistry
-                        .getMatchingColumns(TestIdentifier.SANDSTONE, TestIdentifier.WOOD)
-                        .mapTo(r -> r.getMatchingColumns(TestIdentifier.STAIR).getSafely(0).orNull());
+        RegistryColumn<Object> result = testRegistry
+                .getMatchingColumns(TestIdentifier.SANDSTONE, TestIdentifier.WOOD)
+                .mapTo(r -> r.getMatchingColumns(TestIdentifier.STAIR).getSafely(0).orNull());
 
         Assertions.assertTrue(result.contains("Sandstone Stair1"));
         Assertions.assertTrue(result.contains("Sandstone Stair2"));
