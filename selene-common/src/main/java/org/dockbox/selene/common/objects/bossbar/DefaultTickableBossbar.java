@@ -28,68 +28,67 @@ import java.util.Collection;
 
 public abstract class DefaultTickableBossbar<T> extends ReferencedWrapper<T> implements Bossbar {
 
-  private final String id;
-  private float percent;
-  private Text text;
-  private BossbarColor color;
-  private BossbarStyle style;
+    private final String id;
+    private float percent;
+    private Text text;
+    private BossbarColor color;
+    private BossbarStyle style;
 
-  protected DefaultTickableBossbar(
-      String id, float percent, Text text, BossbarColor color, BossbarStyle style) {
-    this.id = id;
-    this.percent = percent;
-    this.text = text;
-    this.color = color;
-    this.style = style;
-  }
+    protected DefaultTickableBossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle style) {
+        this.id = id;
+        this.percent = percent;
+        this.text = text;
+        this.color = color;
+        this.style = style;
+    }
 
-  public void showTo(Collection<Player> players) {
-    players.forEach(this::showTo);
-  }
+    public void showTo(Collection<Player> players) {
+        players.forEach(this::showTo);
+    }
 
-  public void hideFrom(Collection<Player> players) {
-    players.forEach(this::hideFrom);
-  }
+    public void hideFrom(Collection<Player> players) {
+        players.forEach(this::hideFrom);
+    }
 
-  public String getId() {
-    return this.id;
-  }
+    public String getId() {
+        return this.id;
+    }
 
-  public float getPercent() {
-    return this.percent;
-  }
+    public float getPercent() {
+        return this.percent;
+    }
 
-  public void setPercent(float percent) {
-    this.percent = percent;
-    this.tick();
-  }
+    public void setPercent(float percent) {
+        this.percent = percent;
+        this.tick();
+    }
 
-  public abstract void tick();
+    public abstract void tick();
 
-  public Text getText() {
-    return this.text;
-  }
+    public Text getText() {
+        return this.text;
+    }
 
-  public void setText(Text text) {
-    this.text = text;
-    this.tick();
-  }
+    public void setText(Text text) {
+        this.text = text;
+        this.tick();
+    }
 
-  public BossbarColor getColor() {
-    return this.color;
-  }
+    public BossbarColor getColor() {
+        return this.color;
+    }
 
-  public void setColor(BossbarColor color) {
-    this.color = color;
-    this.tick();
-  }
+    public void setColor(BossbarColor color) {
+        this.color = color;
+        this.tick();
+    }
 
-  public BossbarStyle getStyle() {
-    return this.style;
-  }
+    public BossbarStyle getStyle() {
+        return this.style;
+    }
 
-  public void setStyle(BossbarStyle style) {
-    this.style = style;
-    this.tick();
-  }
+    public void setStyle(BossbarStyle style) {
+        this.style = style;
+        this.tick();
+    }
 }

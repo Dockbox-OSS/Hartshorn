@@ -151,28 +151,25 @@ public abstract class AbstractPipeline<P, I> {
         // Create a temporary final version that can be used within the supplier.
         final Exceptional<I> finalInput = exceptionalInput;
 
-        exceptionalInput =
-                Exceptional.of(
-                        () -> {
-                            if (Reflect.isAssignableFrom(ComplexPipe.class, pipe.getType())) {
-                                ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
-                                return complexPipe.apply(
-                                        this, finalInput.orElse(null), finalInput.orElseExcept(null));
-                            }
-                            else if (Reflect.isAssignableFrom(StandardPipe.class, pipe.getType())) {
-                                StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
-                                return standardPipe.apply(finalInput);
-                            }
-                            else {
-                                return finalInput.orNull();
-                            }
-                        });
+        exceptionalInput = Exceptional.of(() -> {
+            if (Reflect.isAssignableFrom(ComplexPipe.class, pipe.getType())) {
+                ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
+                return complexPipe.apply(
+                        this, finalInput.orElse(null), finalInput.orElseExcept(null));
+            }
+            else if (Reflect.isAssignableFrom(StandardPipe.class, pipe.getType())) {
+                StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
+                return standardPipe.apply(finalInput);
+            }
+            else {
+                return finalInput.orNull();
+            }
+        });
 
         // If there was an error, the supplier won't have captured any input, so we'll try and
         // pass the previous input forwards.
         if (exceptionalInput.errorPresent()) {
-            exceptionalInput =
-                    Exceptional.ofNullable(finalInput.orElse(null), exceptionalInput.getError());
+            exceptionalInput = Exceptional.ofNullable(finalInput.orElse(null), exceptionalInput.getError());
         }
         return exceptionalInput;
     }

@@ -67,7 +67,8 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
                 this.uncancelPipeline();
                 return Exceptional.ofNullable(
                         (I) super.getCancelBehaviour().act(exceptionalInput.orNull()),
-                        exceptionalInput.orElseExcept(null));
+                        exceptionalInput.orElseExcept(null)
+                );
             }
         }
 

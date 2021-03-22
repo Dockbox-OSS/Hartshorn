@@ -27,35 +27,35 @@ import java.util.List;
 
 public class TestCommandBus extends DefaultCommandBus {
 
-  @Override
-  protected AbstractArgumentElement<?> wrapElements(List<AbstractArgumentElement<?>> elements) {
-    return elements.get(0);
-  }
+    @Override
+    protected AbstractArgumentElement<?> wrapElements(List<AbstractArgumentElement<?>> elements) {
+        return elements.get(0);
+    }
 
-  @Override
-  protected TestArgumentValue generateArgumentValue(String type, String permission, String key) {
-    return new TestArgumentValue(permission, key, type);
-  }
+    @Override
+    protected TestArgumentValue generateArgumentValue(String type, String permission, String key) {
+        return new TestArgumentValue(permission, key, type);
+    }
 
-  @Override
-  protected AbstractFlagCollection<?> createEmptyFlagCollection() {
-    return new AbstractFlagCollection<Object>() {
-      @Override
-      public void addNamedFlag(String name) {}
+    @Override
+    protected AbstractFlagCollection<?> createEmptyFlagCollection() {
+        return new AbstractFlagCollection<Object>() {
+            @Override
+            public void addNamedFlag(String name) {}
 
-      @Override
-      public void addNamedPermissionFlag(String name, String permission) {}
+            @Override
+            public void addNamedPermissionFlag(String name, String permission) {}
 
-      @Override
-      public void addValueBasedFlag(String name, AbstractArgumentValue<?> value) {}
+            @Override
+            public void addValueBasedFlag(String name, AbstractArgumentValue<?> value) {}
 
-      @Override
-      public List<AbstractArgumentElement<?>> buildAndCombines(AbstractArgumentElement<?> element) {
-        return SeleneUtils.asUnmodifiableList(element);
-      }
-    };
-  }
+            @Override
+            public List<AbstractArgumentElement<?>> buildAndCombines(AbstractArgumentElement<?> element) {
+                return SeleneUtils.asUnmodifiableList(element);
+            }
+        };
+    }
 
-  @Override
-  public void apply() {}
+    @Override
+    public void apply() {}
 }

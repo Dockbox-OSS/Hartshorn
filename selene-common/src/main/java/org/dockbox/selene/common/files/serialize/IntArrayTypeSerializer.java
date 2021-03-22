@@ -47,8 +47,7 @@ public class IntArrayTypeSerializer implements TypeSerializer<int[]> {
     }
 
     @Override
-    public void serialize(Type type, int @Nullable [] obj, ConfigurationNode node)
-            throws SerializationException {
+    public void serialize(Type type, int @Nullable [] obj, ConfigurationNode node) throws SerializationException {
         List<Integer> bytes = Ints.asList(obj);
         node.set(this.ttlb, bytes);
     }

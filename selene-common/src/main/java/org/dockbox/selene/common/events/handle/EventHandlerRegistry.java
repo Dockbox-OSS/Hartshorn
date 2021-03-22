@@ -23,31 +23,32 @@ import org.dockbox.selene.api.util.SeleneUtils;
 import java.util.Map;
 
 public final class EventHandlerRegistry {
-  private final Map<Class<? extends Event>, EventHandler> handlers = SeleneUtils.emptyMap();
 
-  public EventHandler getHandler(Class<? extends Event> type) {
-    EventHandler handler = this.handlers.get(type);
-    if (null == handler) {
-      this.computeHierarchy(handler = new EventHandler(type));
-      this.handlers.put(type, handler);
+    private final Map<Class<? extends Event>, EventHandler> handlers = SeleneUtils.emptyMap();
+
+    public EventHandler getHandler(Class<? extends Event> type) {
+        EventHandler handler = this.handlers.get(type);
+        if (null == handler) {
+            this.computeHierarchy(handler = new EventHandler(type));
+            this.handlers.put(type, handler);
+        }
+        return handler;
     }
-    return handler;
-  }
 
-  public boolean computeHierarchy(EventHandler subject) {
-    boolean associationFound = false;
-    for (EventHandler handler : this.handlers.values()) {
-      if (subject == handler) continue;
-      if (subject.isSubtypeOf(handler)) {
-        associationFound |= subject.addSupertypeHandler(handler);
-      } else if (handler.isSubtypeOf(subject)) {
-        associationFound |= handler.addSupertypeHandler(subject);
-      }
+    public void computeHierarchy(EventHandler subject) {
+        boolean associationFound = false;
+        for (EventHandler handler : this.handlers.values()) {
+            if (subject == handler) continue;
+            if (subject.isSubtypeOf(handler)) {
+                associationFound |= subject.addSupertypeHandler(handler);
+            }
+            else if (handler.isSubtypeOf(subject)) {
+                associationFound |= handler.addSupertypeHandler(subject);
+            }
+        }
     }
-    return associationFound;
-  }
 
-  public Map<Class<? extends Event>, EventHandler> getHandlers() {
-    return this.handlers;
-  }
+    public Map<Class<? extends Event>, EventHandler> getHandlers() {
+        return this.handlers;
+    }
 }

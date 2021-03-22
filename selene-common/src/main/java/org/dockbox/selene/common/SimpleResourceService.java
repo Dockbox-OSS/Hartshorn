@@ -49,31 +49,30 @@ public class SimpleResourceService implements ResourceService {
     @Override
     public void init() {
         Collection<Class<?>> resourceProviders = Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Resources.class);
-        resourceProviders.forEach(
-                provider -> {
-                    if (provider.isEnum()) {
-                        for (Enum<?> e : Reflect.getEnumValues(provider)) {
-                            if (Reflect.isAssignableFrom(ResourceEntry.class, e.getClass())) {
-                                ResourceEntry resource = (ResourceEntry) e;
-                                this.knownEntries.add(resource);
-                            }
+        resourceProviders.forEach(provider -> {
+            if (provider.isEnum()) {
+                for (Enum<?> e : Reflect.getEnumValues(provider)) {
+                    if (Reflect.isAssignableFrom(ResourceEntry.class, e.getClass())) {
+                        ResourceEntry resource = (ResourceEntry) e;
+                        this.knownEntries.add(resource);
+                    }
+                }
+            }
+            else {
+                for (Field field : Reflect.getStaticFields(provider)) {
+                    if (Reflect.isAssignableFrom(ResourceEntry.class, field.getType())) {
+                        try {
+                            if (!field.isAccessible()) field.setAccessible(true);
+                            ResourceEntry resource = (ResourceEntry) field.get(null);
+                            this.knownEntries.add(resource);
+                        }
+                        catch (IllegalAccessException e) {
+                            Selene.handle("Could not access static resource", e);
                         }
                     }
-                    else {
-                        for (Field field : Reflect.getStaticFields(provider)) {
-                            if (Reflect.isAssignableFrom(ResourceEntry.class, field.getType())) {
-                                try {
-                                    if (!field.isAccessible()) field.setAccessible(true);
-                                    ResourceEntry resource = (ResourceEntry) field.get(null);
-                                    this.knownEntries.add(resource);
-                                }
-                                catch (IllegalAccessException e) {
-                                    Selene.handle("Could not access static resource", e);
-                                }
-                            }
-                        }
-                    }
-                });
+                }
+            }
+        });
         this.getResourceMap(Selene.getServer().getGlobalConfig().getDefaultLanguage());
     }
 
@@ -86,7 +85,7 @@ public class SimpleResourceService implements ResourceService {
         Path languageConfigFile = cm.getConfigFile(Reflect.getModule(Selene.class), lang.getCode());
         Map<String, String> resources;
         if (languageConfigFile.toFile().exists() && !SeleneUtils.isFileEmpty(languageConfigFile)) {
-            resources = SimpleResourceService.getResourcesForFile(languageConfigFile, cm, lang);
+            resources = SimpleResourceService.getResourcesForFile(languageConfigFile, cm);
         }
         else {
             resources = this.createDefaultResourceFile(cm, languageConfigFile);
@@ -98,7 +97,6 @@ public class SimpleResourceService implements ResourceService {
     @NotNull
     @Override
     public Map<Language, String> getTranslations(@NotNull Resource entry) {
-        @NonNls String code = entry.getKey();
         this.knownEntries.add(entry);
         Map<Language, String> resourceMap = SeleneUtils.emptyConcurrentMap();
         for (Language language : Language.values()) {
@@ -125,7 +123,7 @@ public class SimpleResourceService implements ResourceService {
         return Exceptional.of(this.knownEntries.stream().filter(entry -> entry.getKey().equals(finalKey)).findFirst());
     }
 
-    private static Map<String, String> getResourcesForFile(Path file, FileManager cm, Language lang) {
+    private static Map<String, String> getResourcesForFile(Path file, FileManager cm) {
         Exceptional<ResourceConfig> config = cm.read(file, ResourceConfig.class);
 
         Map<String, String> resources = SeleneUtils.emptyConcurrentMap();

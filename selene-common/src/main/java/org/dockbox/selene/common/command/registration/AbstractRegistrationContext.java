@@ -30,36 +30,35 @@ import java.util.UUID;
 
 public abstract class AbstractRegistrationContext {
 
-  private final List<String> aliases = SeleneUtils.emptyConcurrentList();
-  private final Command command;
+    private final List<String> aliases = SeleneUtils.emptyConcurrentList();
+    private final Command command;
 
-  protected AbstractRegistrationContext(Command command) {
-    this.command = command;
-    for (String alias : command.aliases()) this.addAlias(alias);
-  }
+    protected AbstractRegistrationContext(Command command) {
+        this.command = command;
+        for (String alias : command.aliases()) this.addAlias(alias);
+    }
 
-  public void addAlias(String alias) {
-    if (null != alias) this.aliases.add(alias);
-  }
+    public void addAlias(String alias) {
+        if (null != alias) this.aliases.add(alias);
+    }
 
-  public Command getCommand() {
-    return this.command;
-  }
+    public static String getRegistrationId(Identifiable sender, CommandContext ctx) {
+        UUID uuid = sender.getUniqueId();
+        String alias = ctx.alias();
+        return uuid + "$" + alias;
+    }
 
-  public abstract Exceptional<IntegratedResource> call(
-      CommandSource source, CommandContext context);
+    public Command getCommand() {
+        return this.command;
+    }
 
-  public static String getRegistrationId(Identifiable sender, CommandContext ctx) {
-    UUID uuid = sender.getUniqueId();
-    String alias = ctx.alias();
-    return uuid + "$" + alias;
-  }
+    public abstract Exceptional<IntegratedResource> call(CommandSource source, CommandContext context);
 
-  public String getPrimaryAlias() {
-    return this.getAliases().get(0);
-  }
+    public String getPrimaryAlias() {
+        return this.getAliases().get(0);
+    }
 
-  public List<String> getAliases() {
-    return this.aliases;
-  }
+    public List<String> getAliases() {
+        return this.aliases;
+    }
 }

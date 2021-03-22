@@ -29,23 +29,18 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * The default (simple) implementation of {@link ExceptionHelper}. Formats: - Friendly
- *
+ * The default (simple) implementation of {@link ExceptionHelper}. Formats:
+ * <p><b>Friendly</b>
  * <pre>{@code
  * Headline: java.lang.NullPointerException
  * Message: Foo bar
  * Location: SourceFile.java line 19
- * Stack: [...]
+ * Stack: [...] * }</pre>
  *
- * }</pre>
- *
- * <p>- Minimal
- *
+ * <p><b>Minimal</b>
  * <pre>{@code
  * NullPointerException: Foo bar
- * Stack: [...]
- *
- * }</pre>
+ * Stack: [...] * }</pre>
  */
 public class SimpleExceptionHelper implements ExceptionHelper {
 

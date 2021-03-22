@@ -21,7 +21,6 @@
 package org.dockbox.selene.api.util.files;
 
 import org.dockbox.selene.api.server.Selene;
-
 import org.mockito.Mockito;
 import org.spongepowered.configurate.BasicConfigurationNode;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -40,63 +39,67 @@ import java.io.Writer;
  */
 public class TestConfigurationLoader extends AbstractConfigurationLoader<BasicConfigurationNode> {
 
-  private ConfigurationNode result = BasicConfigurationNode.root();
+    private ConfigurationNode result = BasicConfigurationNode.root();
 
-  public static final class Builder
-      extends AbstractConfigurationLoader.Builder<Builder, TestConfigurationLoader> {
+    protected TestConfigurationLoader(Builder builder) {
+        super(builder, CommentHandlers.values());
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 
     @Override
-    public TestConfigurationLoader build() {
-      this.defaultOptions(this.defaultOptions())
-          .source(() -> Mockito.mock(BufferedReader.class))
-          .sink(() -> Mockito.mock(BufferedWriter.class));
-      return new TestConfigurationLoader(this);
+    protected void loadInternal(BasicConfigurationNode node, BufferedReader reader) {
+        try {
+            node.set(this.result);
+        }
+        catch (IOException e) {
+            Selene.handle(e);
+        }
     }
-  }
 
-  public static Builder builder() {
-    return new Builder();
-  }
-
-  protected TestConfigurationLoader(Builder builder) {
-    super(builder, CommentHandlers.values());
-  }
-
-  @Override
-  protected void loadInternal(BasicConfigurationNode node, BufferedReader reader) {
-    try {
-      node.set(this.result);
-    } catch (IOException e) {
-      Selene.handle(e);
+    @Override
+    protected void saveInternal(ConfigurationNode node, Writer writer) {
+        try {
+            this.result.set(node);
+        }
+        catch (IOException e) {
+            Selene.handle(e);
+        }
     }
-  }
 
-  @Override
-  protected void saveInternal(ConfigurationNode node, Writer writer) {
-    try {
-      this.result.set(node);
-    } catch (IOException e) {
-      Selene.handle(e);
+    public ConfigurationNode getNode() {
+        return this.result;
     }
-  }
 
-  public ConfigurationNode getNode() {
-    return this.result;
-  }
+    public void setNode(ConfigurationNode node) {
+        this.result = node;
+    }
 
-  public void setNode(ConfigurationNode node) {
-    this.result = node;
-  }
+    /**
+     * Return an empty node of the most appropriate type for this loader
+     *
+     * @param options
+     *         The options to use with this node. Must not be null (take a look at {@link
+     *         ConfigurationOptions#defaults()})
+     *
+     * @return The appropriate node type
+     */
+    @Override
+    public BasicConfigurationNode createNode(ConfigurationOptions options) {
+        return BasicConfigurationNode.root(options);
+    }
 
-  /**
-   * Return an empty node of the most appropriate type for this loader
-   *
-   * @param options The options to use with this node. Must not be null (take a look at {@link
-   *     ConfigurationOptions#defaults()})
-   * @return The appropriate node type
-   */
-  @Override
-  public BasicConfigurationNode createNode(ConfigurationOptions options) {
-    return BasicConfigurationNode.root(options);
-  }
+    public static final class Builder
+            extends AbstractConfigurationLoader.Builder<Builder, TestConfigurationLoader> {
+
+        @Override
+        public TestConfigurationLoader build() {
+            this.defaultOptions(this.defaultOptions())
+                    .source(() -> Mockito.mock(BufferedReader.class))
+                    .sink(() -> Mockito.mock(BufferedWriter.class));
+            return new TestConfigurationLoader(this);
+        }
+    }
 }

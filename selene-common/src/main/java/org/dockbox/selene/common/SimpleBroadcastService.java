@@ -39,8 +39,7 @@ public class SimpleBroadcastService implements BroadcastService {
     }
 
     @Override
-    public void broadcastForPermission(
-            @NotNull Text message, @NotNull AbstractPermission permission) {
+    public void broadcastForPermission(@NotNull Text message, @NotNull AbstractPermission permission) {
         SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission));
     }
 
@@ -56,8 +55,7 @@ public class SimpleBroadcastService implements BroadcastService {
 
     @Override
     public void broadcastForPermissionWithFilter(@NotNull Text message, @NotNull String permission, @NotNull Predicate<Player> filter) {
-        SimpleBroadcastService.sendWithPredicate(
-                message, p -> p.hasPermission(permission) && filter.test(p));
+        SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission) && filter.test(p));
     }
 
     private static void sendWithPredicate(Text message, Predicate<Player> filter) {
