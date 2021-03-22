@@ -19,11 +19,10 @@ package org.dockbox.selene.command.parameter;
 
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.commandparameters.CommandParameterResources;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -58,15 +57,25 @@ public class HashtagParameterPattern implements CustomParameterPattern {
 
     @Override
     public List<String> splitArguments(String raw) {
-        // TODO: Fix this so #cuboid[pyramid][#shape[triangle][4]] splits into 'pyramid' and '#shape[triangle][4]' instead of 'pyramid', 'triangle', '4'
-        List<String> rawArguments = SeleneUtils.emptyList();
-        Matcher matcher = ARGUMENT.matcher(raw);
-        while (matcher.find()) {
-            String argument = matcher.group();
-            argument = argument.substring(1, argument.length() - 1);
-            rawArguments.add(argument);
+        String group = raw.substring(raw.indexOf('['));
+        List<String> arguments = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        int openCount = 0;
+        for (char c : group.toCharArray()) {
+            System.out.println(c + " : " + openCount);
+            current.append(c);
+            if ('[' == c) {
+                openCount++;
+            } else if (']' == c) {
+                openCount--;
+                if (0 == openCount) {
+                    String out = current.toString();
+                    arguments.add(out.substring(1, out.length()-1));
+                    current = new StringBuilder();
+                }
+            }
         }
-        return rawArguments;
+        return arguments;
     }
 
     @Override
