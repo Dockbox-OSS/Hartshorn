@@ -97,6 +97,8 @@ public interface CustomParameterPattern {
         //noinspection unchecked
         for (Constructor<T> declaredConstructor : (Constructor<T>[]) type.getDeclaredConstructors()) {
             Class<?>[] parameterTypes = declaredConstructor.getParameterTypes();
+            if (parameterTypes.length != arguments.size()) continue;
+
             boolean passed = true;
             for (int i = 0; i < parameterTypes.length; i++) {
                 Class<?> parameterType = parameterTypes[i];
