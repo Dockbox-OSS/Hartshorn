@@ -19,40 +19,30 @@ package org.dockbox.selene.sample;
 
 import org.dockbox.selene.annotations.command.CustomParameter;
 
-@CustomParameter("shape")
-public class Shape {
+@CustomParameter("cuboid")
+public class Cuboid {
 
     private final String name;
-    private final int sides;
+    private final Shape shape;
 
-    private Shape() {
-        name = "circle";
-        sides = 1;
-    }
-
-    public Shape(int sides) {
-        this.name = sides + "-sided shape";
-        this.sides = sides;
-    }
-
-    public Shape(String name, int sides) {
+    public Cuboid(String name, Shape shape) {
         this.name = name;
-        this.sides = sides;
+        this.shape = shape;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getSides() {
-        return sides;
+    public Shape getShape() {
+        return shape;
     }
 
     @Override
     public String toString() {
-        return "Shape{" +
+        return "Cuboid{" +
                 "name='" + name + '\'' +
-                ", sides=" + sides +
+                ", shape=" + shape +
                 '}';
     }
 }
