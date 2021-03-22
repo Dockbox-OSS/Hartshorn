@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.sample;
 
-import org.dockbox.selene.api.annotations.command.Arg;
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.event.filter.Packet;
@@ -49,7 +48,7 @@ public final class SampleModule {
 
     // Uses the Custom Parameter from the Cuboid class, with a nested Shape parameter
     @Command(aliases = "demo", usage = "demo <cuboid{Cuboid}>")
-    public void buildCuboid(@Arg("cuboid") Cuboid cuboid) {
+    public void buildCuboid(Cuboid cuboid) {
         Selene.log().info("Cuboid: " + cuboid);
     }
 

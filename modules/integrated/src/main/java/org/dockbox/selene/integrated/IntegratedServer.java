@@ -19,7 +19,6 @@ package org.dockbox.selene.integrated;
 
 import com.google.inject.Singleton;
 
-import org.dockbox.selene.api.annotations.command.Arg;
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.CommandBus;
@@ -159,9 +158,7 @@ public class IntegratedServer implements IntegratedModule {
     }
 
     @Command(aliases = { "lang", "language" }, usage = "language <language{Language}> [player{Player}]", inherit = false)
-    public static void switchLang(MessageReceiver src, CommandContext ctx,
-                                  @Arg("language") Language lang,
-                                  @Arg(value = "player", optional = true) Player player) {
+    public static void switchLang(MessageReceiver src, CommandContext ctx, Language language, Player player) {
         if (null == player) {
             if (src instanceof Player) {
                 player = (Player) src;
@@ -172,9 +169,9 @@ public class IntegratedServer implements IntegratedModule {
             }
         }
 
-        player.setLanguage(lang);
+        player.setLanguage(language);
 
-        String languageLocalized = lang.getNameLocalized() + " (" + lang.getNameEnglish() + ")";
+        String languageLocalized = language.getNameLocalized() + " (" + language.getNameEnglish() + ")";
         if (player != src)
             src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED_OTHER.format(player.getName(), languageLocalized));
         player.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(languageLocalized));
