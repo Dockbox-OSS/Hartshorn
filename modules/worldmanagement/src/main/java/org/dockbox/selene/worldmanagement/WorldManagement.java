@@ -20,7 +20,6 @@ package org.dockbox.selene.worldmanagement;
 import com.google.inject.Inject;
 
 import org.dockbox.selene.api.WorldStorageService;
-import org.dockbox.selene.api.annotations.command.Arg;
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.module.Module;
@@ -61,7 +60,7 @@ public class WorldManagement {
     }
 
     @Command(aliases = "blacklist", usage = "blacklist <world{String}>")
-    public void blacklist(CommandSource src, @Arg("world") String world) {
+    public void blacklist(CommandSource src, String world) {
         if (Selene.provide(WorldStorageService.class).hasWorld(world)) {
             config.getUnloadBlacklist().add(world);
             config.save();
