@@ -24,7 +24,6 @@ import org.dockbox.selene.api.annotations.event.filter.Packet;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.events.packet.PacketEvent;
 import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.commandparameters.Cuboid;
 import org.dockbox.selene.packets.ChangeGameStatePacket;
 
 @Module(
