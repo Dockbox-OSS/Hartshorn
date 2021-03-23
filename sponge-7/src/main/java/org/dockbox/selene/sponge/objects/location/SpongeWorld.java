@@ -21,17 +21,31 @@ import com.flowpowered.math.vector.Vector3i;
 
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.Wrapper;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.location.BlockFace;
 import org.dockbox.selene.api.objects.location.World;
 import org.dockbox.selene.api.objects.player.Gamemode;
+import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.util.Direction;
 
 import java.lang.ref.WeakReference;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.world.World> {
 
@@ -77,6 +91,59 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
             return this.getReference().get().isLoaded();
         }
         else return false; // No reference means the world is not loaded (as it is obtained through #getWorld rather than #loadWorld
+    }
+
+    @Override
+    public Vector3N minimumPosition() {
+        return SpongeConversionUtil.fromSponge(this.getReference().get().getBlockMin().toDouble());
+    }
+
+    @Override
+    public Vector3N maximumPosition() {
+        return SpongeConversionUtil.fromSponge(this.getReference().get().getBlockMin().toDouble());
+    }
+
+    @Override
+    public Vector3N floor(Vector3N position) {
+        Vector3i floor = this.getReferenceWorld().getHighestPositionAt(SpongeConversionUtil.toSponge(position).toInt());
+        return SpongeConversionUtil.fromSponge(floor.toDouble());
+    }
+
+    @Override
+    public boolean hasBlock(Vector3N position) {
+        if (this.referenceExists()) {
+            Vector3d loc = SpongeConversionUtil.toSponge(position);
+            return this.getReference().get().containsBlock(loc.toInt());
+        }
+        return false;
+    }
+
+    @Override
+    public Exceptional<Item> getBlock(Vector3N position) {
+        if (this.referenceExists()) {
+            Vector3d loc = SpongeConversionUtil.toSponge(position);
+            BlockState blockState = this.reference.get().getBlock(loc.toInt());
+            if (blockState.getType() == BlockTypes.AIR) return Exceptional.of(Selene.getItems().getAir());
+            ItemStack stack = ItemStack.builder().fromBlockState(blockState).build();
+            return Exceptional.of(SpongeConversionUtil.fromSponge(stack));
+        }
+        return Exceptional.empty();
+    }
+
+    @Override
+    public boolean setBlock(Vector3N position, Item item, BlockFace direction, Profile placer) {
+        if (this.referenceExists()) {
+            Vector3d loc = SpongeConversionUtil.toSponge(position);
+            Optional<BlockType> blockType = SpongeConversionUtil.toSponge(item).getType().getBlock();
+            if (!blockType.isPresent()) return false;
+            BlockState state = blockType.get().getDefaultState();
+            Direction dir = SpongeConversionUtil.toSponge(direction);
+            GameProfile profile = null;
+            if (placer instanceof SpongeProfile) {
+                profile = ((SpongeProfile) placer).getGameProfile();
+            }
+            return this.reference.get().placeBlock(loc.toInt(), state, dir, profile);
+        } else return false;
     }
 
     @Override

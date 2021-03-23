@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.api.objects.location;
 
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 
 import java.util.Objects;
@@ -75,17 +77,30 @@ public class Location {
         return this.vectorLoc;
     }
 
+    public boolean place(Item item, Profile placer) {
+        return this.place(item, BlockFace.NONE, placer);
+    }
+
+    public boolean place(Item item, BlockFace direction) {
+        return this.place(item, direction, null);
+    }
+
+    public boolean place(Item item, BlockFace direction, Profile placer) {
+        if (!item.isBlock() && !item.isAir()) return false;
+        return this.getWorld().setBlock(this.getVectorLoc(), item, direction, placer);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Location)) return false;
         Location location = (Location) o;
-        return getVectorLoc().equals(location.getVectorLoc()) && Objects.equals(getWorld(), location.getWorld());
+        return this.getVectorLoc().equals(location.getVectorLoc()) && Objects.equals(this.getWorld(), location.getWorld());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getVectorLoc(), getWorld());
+        return Objects.hash(this.getVectorLoc(), this.getWorld());
     }
 
 }
