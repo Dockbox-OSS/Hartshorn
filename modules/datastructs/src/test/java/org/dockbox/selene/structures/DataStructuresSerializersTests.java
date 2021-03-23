@@ -40,15 +40,14 @@ public class DataStructuresSerializersTests {
 
     @Test
     public void testThatRegistryCanBeSerialised() {
-        Assertions.assertDoesNotThrow(
-                () -> {
-                    File copy = File.createTempFile("tmp", null);
-                    Path tempFile = copy.toPath();
+        Assertions.assertDoesNotThrow(() -> {
+            File copy = File.createTempFile("tmp", null);
+            Path tempFile = copy.toPath();
 
-                    FileManager fm = new TestXStreamFileManager();
+            FileManager fm = new TestXStreamFileManager();
 
-                    fm.write(tempFile, this.buildTestRegistry());
-                });
+            fm.write(tempFile, this.buildTestRegistry());
+        });
     }
 
     private Registry<Registry<String>> buildTestRegistry() {
@@ -82,9 +81,8 @@ public class DataStructuresSerializersTests {
         Assertions.assertTrue(registry.isPresent());
 
         Registry<Registry<String>> reg = (Registry<Registry<String>>) registry.get();
-        RegistryColumn<RegistryColumn<String>> result =
-                reg.getMatchingColumns(TestIdentifier.BRICK)
-                        .mapTo(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
+        RegistryColumn<RegistryColumn<String>> result = reg.getMatchingColumns(TestIdentifier.BRICK)
+                .mapTo(r -> r.getMatchingColumns(TestIdentifier.FULLBLOCK));
 
         Assertions.assertTrue(result.first().get().contains("Brick Fullblock1"));
         Assertions.assertTrue(result.first().get().contains("Brick Fullblock2"));

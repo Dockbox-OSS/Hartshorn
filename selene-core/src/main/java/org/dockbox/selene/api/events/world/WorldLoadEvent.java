@@ -15,24 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api;
+package org.dockbox.selene.api.events.world;
 
-import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.objects.location.World;
 
-import java.util.List;
-import java.util.UUID;
+/** The event fired when a world is loaded. */
+public class WorldLoadEvent extends WorldHoldingEvent {
 
-public interface PlayerStorageService {
-
-    List<Player> getOnlinePlayers();
-
-    Exceptional<Player> getPlayer(String name);
-
-    Exceptional<Player> getPlayer(UUID uuid);
-
-    void setLanguagePreference(UUID uuid, Language language);
-
-    Language getLanguagePreference(UUID uuid);
+    public WorldLoadEvent(World world) {
+        super(world);
+    }
 }

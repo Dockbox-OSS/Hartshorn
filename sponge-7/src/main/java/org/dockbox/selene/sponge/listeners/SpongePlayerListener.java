@@ -20,28 +20,28 @@ package org.dockbox.selene.sponge.listeners;
 import com.flowpowered.math.vector.Vector3d;
 
 import org.dockbox.selene.api.events.chat.SendChatEvent;
-import org.dockbox.selene.api.events.moderation.BanEvent.IpBannedEvent;
-import org.dockbox.selene.api.events.moderation.BanEvent.IpUnbannedEvent;
-import org.dockbox.selene.api.events.moderation.BanEvent.NameBannedEvent;
-import org.dockbox.selene.api.events.moderation.BanEvent.NameUnbannedEvent;
-import org.dockbox.selene.api.events.moderation.BanEvent.PlayerBannedEvent;
-import org.dockbox.selene.api.events.moderation.BanEvent.PlayerUnbannedEvent;
+import org.dockbox.selene.api.events.moderation.IpBannedEvent;
+import org.dockbox.selene.api.events.moderation.IpUnbannedEvent;
+import org.dockbox.selene.api.events.moderation.NameBannedEvent;
+import org.dockbox.selene.api.events.moderation.NameUnbannedEvent;
+import org.dockbox.selene.api.events.moderation.PlayerBannedEvent;
+import org.dockbox.selene.api.events.moderation.PlayerNotedEvent;
+import org.dockbox.selene.api.events.moderation.PlayerUnbannedEvent;
 import org.dockbox.selene.api.events.moderation.KickEvent;
-import org.dockbox.selene.api.events.moderation.NoteEvent;
-import org.dockbox.selene.api.events.moderation.WarnEvent;
-import org.dockbox.selene.api.events.moderation.WarnEvent.PlayerWarnedEvent;
+import org.dockbox.selene.api.events.moderation.PlayerWarningExpired;
+import org.dockbox.selene.api.events.moderation.PlayerWarnedEvent;
 import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.events.parents.Event;
-import org.dockbox.selene.api.events.player.PlayerConnectionEvent.PlayerAuthEvent;
-import org.dockbox.selene.api.events.player.PlayerConnectionEvent.PlayerJoinEvent;
-import org.dockbox.selene.api.events.player.PlayerConnectionEvent.PlayerLeaveEvent;
-import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerPortalEvent;
-import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerSwitchWorldEvent;
-import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerTeleportEvent;
-import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerWarpEvent;
-import org.dockbox.selene.api.events.player.interact.PlayerInteractEvent.PlayerInteractAirEvent;
-import org.dockbox.selene.api.events.player.interact.PlayerInteractEvent.PlayerInteractBlockEvent;
-import org.dockbox.selene.api.events.player.interact.PlayerInteractEvent.PlayerInteractEntityEvent;
+import org.dockbox.selene.api.events.player.PlayerAuthEvent;
+import org.dockbox.selene.api.events.player.PlayerJoinEvent;
+import org.dockbox.selene.api.events.player.PlayerLeaveEvent;
+import org.dockbox.selene.api.events.player.PlayerPortalEvent;
+import org.dockbox.selene.api.events.player.PlayerSwitchWorldEvent;
+import org.dockbox.selene.api.events.player.PlayerTeleportEvent;
+import org.dockbox.selene.api.events.player.PlayerWarpEvent;
+import org.dockbox.selene.api.events.player.interact.PlayerInteractAirEvent;
+import org.dockbox.selene.api.events.player.interact.PlayerInteractBlockEvent;
+import org.dockbox.selene.api.events.player.interact.PlayerInteractEntityEvent;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.location.Warp;
@@ -94,6 +94,7 @@ import io.github.nucleuspowered.nucleus.api.events.NucleusNoteEvent;
 import io.github.nucleuspowered.nucleus.api.events.NucleusWarnEvent;
 import io.github.nucleuspowered.nucleus.api.events.NucleusWarpEvent;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class SpongePlayerListener {
 
     @Listener
@@ -102,14 +103,12 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerDisconnected(
-            ClientConnectionEvent.Disconnect disconnectEvent, @First Player sp) {
+    public void onPlayerDisconnected(ClientConnectionEvent.Disconnect disconnectEvent, @First Player sp) {
         new PlayerLeaveEvent(SpongeConversionUtil.fromSponge(sp)).post();
     }
 
     @Listener
-    public void onPlayerAuthenticating(
-            ClientConnectionEvent.Auth authEvent, @Getter("getConnection") RemoteConnection connection) {
+    public void onPlayerAuthenticating(ClientConnectionEvent.Auth authEvent, @Getter("getConnection") RemoteConnection connection) {
         new PlayerAuthEvent(connection.getAddress(), connection.getVirtualHost()).post();
     }
 
@@ -125,22 +124,21 @@ public class SpongePlayerListener {
             MoveEntityEvent.Teleport teleportEvent,
             @First Player player,
             @Getter("getFromTransform") Transform<World> from,
-            @Getter("getToTransform") Transform<World> to) {
+            @Getter("getToTransform") Transform<World> to
+    ) {
         Location fromLocation = SpongeConversionUtil.fromSponge(from.getLocation());
         Location toLocation = SpongeConversionUtil.fromSponge(to.getLocation());
 
-        PlayerTeleportEvent event =
-                new PlayerTeleportEvent(SpongeConversionUtil.fromSponge(player), fromLocation, toLocation);
+        PlayerTeleportEvent event = new PlayerTeleportEvent(SpongeConversionUtil.fromSponge(player), fromLocation, toLocation);
         event.post();
         teleportEvent.setCancelled(event.isCancelled());
 
         if (!fromLocation.getWorld().equals(toLocation.getWorld()) && !event.isCancelled()) {
-            Cancellable worldEvent =
-                    new PlayerSwitchWorldEvent(
-                            SpongeConversionUtil.fromSponge(player),
-                            fromLocation.getWorld(),
-                            toLocation.getWorld())
-                            .post();
+            Cancellable worldEvent = new PlayerSwitchWorldEvent(
+                    SpongeConversionUtil.fromSponge(player),
+                    fromLocation.getWorld(),
+                    toLocation.getWorld()
+            ).post();
 
             teleportEvent.setCancelled(worldEvent.isCancelled());
         }
@@ -157,7 +155,8 @@ public class SpongePlayerListener {
                                   @First Player player,
                                   @Getter("getUsePortalAgent") boolean usePortalAgent,
                                   @Getter("getFromTransform") Transform<World> from,
-                                  @Getter("getToTransform") Transform<World> to) {
+                                  @Getter("getToTransform") Transform<World> to
+    ) {
         Location fromLocation = SpongeConversionUtil.fromSponge(from.getLocation());
         Location toLocation = SpongeConversionUtil.fromSponge(to.getLocation());
         BlockType blockType = portalEvent.getFromTransform().getExtent().getBlockType(player.getPosition().toInt());
@@ -178,6 +177,7 @@ public class SpongePlayerListener {
                 usePortalAgent, portalType);
         event.post();
         portalEvent.setCancelled(event.isCancelled());
+        //noinspection ConstantConditions
         portalEvent.setUsePortalAgent(portalEvent.getPortalAgent() != null && event.usesPortal());
 
         if (!event.getNewLocation().equals(toLocation)) {
@@ -196,11 +196,9 @@ public class SpongePlayerListener {
     public void onPlayerChat(
             MessageChannelEvent.Chat chatEvent,
             @First Player player,
-            @Getter("getMessage") Text message) {
-        Cancellable event =
-                new SendChatEvent(
-                        SpongeConversionUtil.fromSponge(player), SpongeConversionUtil.fromSponge(message))
-                        .post();
+            @Getter("getMessage") Text message
+    ) {
+        Cancellable event = new SendChatEvent(SpongeConversionUtil.fromSponge(player), SpongeConversionUtil.fromSponge(message)).post();
         chatEvent.setCancelled(event.isCancelled());
     }
 
@@ -209,53 +207,42 @@ public class SpongePlayerListener {
             BanUserEvent banEvent,
             @First Player player,
             @Getter("getBan") Ban.Profile profile,
-            @Getter("getSource") Object source) {
-        SpongePlayerListener.postIfCommandSource(
-                source,
-                convertedSource -> {
-                    Cancellable event =
-                            new PlayerBannedEvent(
-                                    SpongeConversionUtil.fromSponge(player),
-                                    convertedSource,
-                                    Exceptional.of(profile.getReason().map(Text::toPlain)),
-                                    SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
-                                    SeleneUtils.toLocalDateTime(profile.getCreationDate()))
-                                    .post();
-                    if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
-                });
+            @Getter("getSource") Object source
+    ) {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
+            Cancellable event = new PlayerBannedEvent(
+                    SpongeConversionUtil.fromSponge(player),
+                    convertedSource,
+                    Exceptional.of(profile.getReason().map(Text::toPlain)),
+                    SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
+                    SeleneUtils.toLocalDateTime(profile.getCreationDate())
+            ).post();
+            if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
+        });
     }
 
-    private static void postIfCommandSource(
-            Object source, Consumer<org.dockbox.selene.api.command.source.CommandSource> consumer) {
+    private static void postIfCommandSource(Object source, Consumer<org.dockbox.selene.api.command.source.CommandSource> consumer) {
         if (source instanceof CommandSource) {
             SpongeConversionUtil.fromSponge((CommandSource) source).ifPresent(consumer);
         }
     }
 
     private static void logUnsupportedCancel(Cancellable event) {
-        Selene.log()
-                .warn(
-                        "Attempted to cancel event of type '"
-                                + event.getClass().getSimpleName()
-                                + "', but this is not supported on this platform!");
+        Selene.log().warn("Attempted to cancel event of type '" + event.getClass().getSimpleName() + "', but this is not supported on this platform!");
     }
 
     @Listener
-    public void onIPBanned(
-            BanIpEvent banEvent, @Getter("getBan") Ban.Ip profile, @Getter("getSource") Object source) {
-        SpongePlayerListener.postIfCommandSource(
-                source,
-                convertedSource -> {
-                    Cancellable event =
-                            new IpBannedEvent(
-                                    profile.getAddress(),
-                                    convertedSource,
-                                    Exceptional.of(profile.getReason().map(Text::toPlain)),
-                                    SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
-                                    SeleneUtils.toLocalDateTime(profile.getCreationDate()))
-                                    .post();
-                    banEvent.setCancelled(event.isCancelled());
-                });
+    public void onIPBanned(BanIpEvent banEvent, @Getter("getBan") Ban.Ip profile, @Getter("getSource") Object source) {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
+            Cancellable event = new IpBannedEvent(
+                    profile.getAddress(),
+                    convertedSource,
+                    Exceptional.of(profile.getReason().map(Text::toPlain)),
+                    SeleneUtils.toLocalDateTime(profile.getExpirationDate()),
+                    SeleneUtils.toLocalDateTime(profile.getCreationDate())
+            ).post();
+            banEvent.setCancelled(event.isCancelled());
+        });
     }
 
     @Listener
@@ -263,20 +250,18 @@ public class SpongePlayerListener {
             NucleusNameBanEvent.Banned banEvent,
             @Getter("getEntry") String name,
             @Getter("getReason") String reason,
-            @Getter("getSource") Object source) {
-        SpongePlayerListener.postIfCommandSource(
-                source,
-                convertedSource -> {
-                    Cancellable event =
-                            new NameBannedEvent(
-                                    name,
-                                    convertedSource,
-                                    Exceptional.ofNullable(reason),
-                                    Exceptional.empty(),
-                                    LocalDateTime.now())
-                                    .post();
-                    if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
-                });
+            @Getter("getSource") Object source
+    ) {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
+            Cancellable event = new NameBannedEvent(
+                    name,
+                    convertedSource,
+                    Exceptional.ofNullable(reason),
+                    Exceptional.empty(),
+                    LocalDateTime.now()
+            ).post();
+            if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
+        });
     }
 
     @Listener
@@ -284,29 +269,23 @@ public class SpongePlayerListener {
             NucleusWarnEvent.Warned warnEvent,
             @Getter("getTargetUser") User user,
             @NonNls @Getter("getReason") String reason,
-            @Getter("getSource") Object source) {
-        SpongePlayerListener.postIfCommandSource(
-                source,
-                convertedSource -> {
-                    PlayerWarnedEvent event =
-                            new WarnEvent.PlayerWarnedEvent(
-                                    SpongeConversionUtil.fromSponge(user),
-                                    convertedSource,
-                                    reason,
-                                    LocalDateTime.now());
-                    event.post();
-                    if (!event.getReason().equals(reason)) {
-                        SpongePlayerListener.logUnsupportedModification(event);
-                    }
-                });
+            @Getter("getSource") Object source
+    ) {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
+            PlayerWarnedEvent event = new PlayerWarnedEvent(
+                    SpongeConversionUtil.fromSponge(user),
+                    convertedSource,
+                    reason,
+                    LocalDateTime.now());
+            event.post();
+            if (!event.getReason().equals(reason)) {
+                SpongePlayerListener.logUnsupportedModification(event);
+            }
+        });
     }
 
     private static void logUnsupportedModification(Event event) {
-        Selene.log()
-                .warn(
-                        "Attempted to modify value 'reason' event of type '"
-                                + event.getClass().getSimpleName()
-                                + "', but this is not supported on this platform!");
+        Selene.log().warn("Attempted to modify value 'reason' event of type '" + event.getClass().getSimpleName() + "', but this is not supported on this platform!");
     }
 
     @Listener
@@ -314,13 +293,11 @@ public class SpongePlayerListener {
             NucleusNoteEvent.Created event,
             @Getter("getTargetUser") User user,
             @Getter("getNote") String note,
-            @Getter("getSource") Object source) {
-        SpongePlayerListener.postIfCommandSource(
-                source,
-                convertedSource ->
-                        new NoteEvent.PlayerNotedEvent(
-                                SpongeConversionUtil.fromSponge(user), convertedSource, note)
-                                .post());
+            @Getter("getSource") Object source
+    ) {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource ->
+                new PlayerNotedEvent(SpongeConversionUtil.fromSponge(user), convertedSource, note).post()
+        );
     }
 
     @Listener
@@ -328,7 +305,8 @@ public class SpongePlayerListener {
             NucleusMuteEvent.Muted event,
             @Getter("getTargetUser") User user,
             @Getter("getReason") Text reason,
-            @Getter("getSource") Object source) {
+            @Getter("getSource") Object source
+    ) {
         // TODO GuusLieben, MultiChat replaces this event. Look into Bungee hooking if possible
     }
 
@@ -337,38 +315,34 @@ public class SpongePlayerListener {
             PardonUserEvent pardonEvent,
             @First Player player,
             @Getter("getBan") Ban.Profile profile,
-            @Getter("getSource") Object source) {
-        SpongePlayerListener.postIfCommandSource(
-                source,
-                convertedSource -> {
-                    Cancellable event =
-                            new PlayerUnbannedEvent(
-                                    SpongeConversionUtil.fromSponge(player),
-                                    convertedSource,
-                                    Exceptional.of(profile.getReason().map(Text::toPlain)),
-                                    SeleneUtils.toLocalDateTime(profile.getCreationDate()))
-                                    .post();
-                    if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
-                });
+            @Getter("getSource") Object source
+    ) {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
+            Cancellable event = new PlayerUnbannedEvent(
+                    SpongeConversionUtil.fromSponge(player),
+                    convertedSource,
+                    Exceptional.of(profile.getReason().map(Text::toPlain)),
+                    SeleneUtils.toLocalDateTime(profile.getCreationDate())
+            ).post();
+            if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
+        });
     }
 
     @Listener
     public void onIPUnbanned(
             PardonIpEvent pardonEvent,
             @Getter("getBan") Ban.Ip profile,
-            @Getter("getSource") Object source) {
-        SpongePlayerListener.postIfCommandSource(
-                source,
-                convertedSource -> {
-                    Cancellable event =
-                            new IpUnbannedEvent(
-                                    profile.getAddress(),
-                                    convertedSource,
-                                    Exceptional.of(profile.getReason().map(Text::toPlain)),
-                                    SeleneUtils.toLocalDateTime(profile.getCreationDate()))
-                                    .post();
-                    pardonEvent.setCancelled(event.isCancelled());
-                });
+            @Getter("getSource") Object source
+    ) {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
+            Cancellable event = new IpUnbannedEvent(
+                    profile.getAddress(),
+                    convertedSource,
+                    Exceptional.of(profile.getReason().map(Text::toPlain)),
+                    SeleneUtils.toLocalDateTime(profile.getCreationDate())
+            ).post();
+            pardonEvent.setCancelled(event.isCancelled());
+        });
     }
 
     @Listener
@@ -376,16 +350,14 @@ public class SpongePlayerListener {
             NucleusNameBanEvent.Unbanned pardonEvent,
             @Getter("getEntry") String name,
             @Getter("getReason") String reason,
-            @Getter("getSource") Object source) {
-        SpongePlayerListener.postIfCommandSource(
-                source,
-                convertedSource -> {
-                    Cancellable event =
-                            new NameUnbannedEvent(
-                                    name, convertedSource, Exceptional.of(reason), LocalDateTime.now())
-                                    .post();
-                    if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
-                });
+            @Getter("getSource") Object source
+    ) {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
+            Cancellable event = new NameUnbannedEvent(
+                    name, convertedSource, Exceptional.of(reason), LocalDateTime.now()
+            ).post();
+            if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
+        });
     }
 
     @Listener
@@ -393,20 +365,19 @@ public class SpongePlayerListener {
             NucleusWarnEvent.Expired warnEvent,
             @Getter("getTargetUser") User user,
             @Getter("getReason") String reason,
-            @Getter("getSource") Object source) {
-        SpongePlayerListener.postIfCommandSource(
-                source,
-                convertedSource ->
-                        new WarnEvent.PlayerWarningExpired(
-                                SpongeConversionUtil.fromSponge(user), convertedSource, reason)
-                                .post());
+            @Getter("getSource") Object source
+    ) {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource ->
+                new PlayerWarningExpired(SpongeConversionUtil.fromSponge(user), convertedSource, reason).post()
+        );
     }
 
     @Listener
     public void onMuteExpired(
             NucleusMuteEvent.Unmuted event,
             @Getter("getTargetUser") User user,
-            @Getter("getSource") Object source) {
+            @Getter("getSource") Object source
+    ) {
         // TODO GuusLieben, MultiChat replaces this event. Look into Bungee hooking if possible
     }
 
@@ -414,20 +385,16 @@ public class SpongePlayerListener {
     public void onPlayerKicked(
             KickPlayerEvent event,
             @Getter("getTargetEntity") Player player,
-            @Getter("getSource") Object source) {
-        SpongePlayerListener.postIfCommandSource(
-                source,
-                convertedSource ->
-                        new KickEvent(
-                                SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional.empty())
-                                .post());
+            @Getter("getSource") Object source
+    ) {
+        SpongePlayerListener.postIfCommandSource(source, convertedSource ->
+                new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional.empty()).post()
+        );
     }
 
     @Listener
-    public void onPlayerInteractedWithBlock(
-            InteractBlockEvent event, @Getter("getSource") Player player) {
-        Exceptional<Location> location =
-                Exceptional.of(event.getTargetBlock().getLocation().map(SpongeConversionUtil::fromSponge));
+    public void onPlayerInteractedWithBlock(InteractBlockEvent event, @Getter("getSource") Player player) {
+        Exceptional<Location> location = Exceptional.of(event.getTargetBlock().getLocation().map(SpongeConversionUtil::fromSponge));
         if (location.isAbsent()) return;
         Location blockLocation = location.get();
         ClickType type;
@@ -442,10 +409,7 @@ public class SpongePlayerListener {
         }
         else return;
 
-        Cancellable cancellable =
-                new PlayerInteractBlockEvent(
-                        SpongeConversionUtil.fromSponge(player), hand, type, blockLocation)
-                        .post();
+        Cancellable cancellable = new PlayerInteractBlockEvent(SpongeConversionUtil.fromSponge(player), hand, type, blockLocation).post();
         event.setCancelled(cancellable.isCancelled());
     }
 
@@ -462,8 +426,7 @@ public class SpongePlayerListener {
         else if (canonical.toLowerCase().contains("secondary")) type = ClickType.SECONDARY;
         else return;
 
-        Cancellable cancellable =
-                new PlayerInteractAirEvent(SpongeConversionUtil.fromSponge(player), hand, type).post();
+        Cancellable cancellable = new PlayerInteractAirEvent(SpongeConversionUtil.fromSponge(player), hand, type).post();
         event.setCancelled(cancellable.isCancelled());
     }
 
@@ -471,17 +434,18 @@ public class SpongePlayerListener {
     public void onPlayerInteractedEntity(
             InteractEntityEvent event,
             @Getter("getSource") Player player,
-            @Getter("getTargetEntity") Entity entity) {
+            @Getter("getTargetEntity") Entity entity
+    ) {
         org.dockbox.selene.api.entities.Entity<?> targetEntity;
         if (entity instanceof ArmorStand) targetEntity = new SpongeArmorStand((ArmorStand) entity);
         else if (entity instanceof ItemFrame) targetEntity = new SpongeItemFrame((ItemFrame) entity);
         else return;
 
-        Cancellable cancellable =
-                new PlayerInteractEntityEvent<>(
-                        SpongeConversionUtil.fromSponge(player),
-                        targetEntity,
-                        SpongeConversionUtil.fromSponge(event.getInteractionPoint().orElse(Vector3d.ZERO)));
+        Cancellable cancellable = new PlayerInteractEntityEvent<>(
+                SpongeConversionUtil.fromSponge(player),
+                targetEntity,
+                SpongeConversionUtil.fromSponge(event.getInteractionPoint().orElse(Vector3d.ZERO))
+        );
         event.setCancelled(cancellable.isCancelled());
     }
 }

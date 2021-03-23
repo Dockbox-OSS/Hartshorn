@@ -27,8 +27,7 @@ import java.util.Map;
 public class Resource implements ResourceEntry {
 
     private final String key;
-    private final Map<Language, String> resourceMap =
-            Selene.provide(ResourceService.class).getTranslations(this);
+    private final Map<Language, String> resourceMap = Selene.provide(ResourceService.class).getTranslations(this);
     private final String value;
 
     public Resource(String value, String key) {

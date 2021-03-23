@@ -56,11 +56,12 @@ public class MethodCommandContext extends AbstractRegistrationContext {
             List<Object> args = this.prepareArguments(source, context);
             Object instance = this.prepareInstance();
             Command command = this.method.getAnnotation(Command.class);
+
             if (0 < command.cooldownDuration() && source instanceof Identifiable) {
-                String registrationId =
-                        AbstractRegistrationContext.getRegistrationId((Identifiable) source, context);
+                String registrationId = AbstractRegistrationContext.getRegistrationId((Identifiable) source, context);
                 SeleneUtils.cooldown(registrationId, command.cooldownDuration(), command.cooldownUnit());
             }
+
             this.method.invoke(instance, SeleneUtils.toArray(Object.class, args));
             return Exceptional.empty();
         }
@@ -83,25 +84,24 @@ public class MethodCommandContext extends AbstractRegistrationContext {
 
         for (Parameter parameter : this.getMethod().getParameters()) {
             Class<?> parameterType = parameter.getType();
+
             if (Reflect.isEitherAssignableFrom(CommandSource.class, parameterType))
                 finalArgs.add(lookupCommandSource(parameterType, source));
             else if (Reflect.isEitherAssignableFrom(CommandContext.class, parameterType))
                 finalArgs.add(context);
+
             else if (MethodCommandContext.processFromSourceParameters(parameter, context, finalArgs)) continue;
             else if (MethodCommandContext.processFlagParameters(parameter, context, finalArgs)) continue;
             else if (MethodCommandContext.processArgumentParameters(parameter, context, finalArgs)) continue;
-            else throw new IllegalStateException(
-                        "Method requested parameter type '"
-                                + parameterType.getSimpleName()
-                                + "' which is not provided");
+
+            else throw new IllegalStateException("Method requested parameter type '" + parameterType.getSimpleName() + "' which is not provided");
         }
         return finalArgs;
     }
 
     private Object prepareInstance() {
         Object instance;
-        if (this.getDeclaringClass().equals(Selene.class)
-                || Reflect.isAssignableFrom(Selene.class, this.getDeclaringClass())) {
+        if (this.getDeclaringClass().equals(Selene.class) || Reflect.isAssignableFrom(Selene.class, this.getDeclaringClass())) {
             instance = Selene.getServer();
         }
         else {
@@ -138,13 +138,8 @@ public class MethodCommandContext extends AbstractRegistrationContext {
                 finalArgs.add(context.sender());
             }
             else {
-                Selene.log()
-                        .warn(
-                                "Parameter '"
-                                        + parameter.getName()
-                                        + "' has @FromSource annotation but cannot be provided ["
-                                        + parameterType.getCanonicalName()
-                                        + "]");
+                Selene.log().warn("Parameter '" + parameter.getName() + "' has @FromSource annotation but cannot be provided [" + parameterType
+                        .getCanonicalName() + "]");
                 finalArgs.add(null);
             }
             return true;
@@ -178,8 +173,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         Command command = this.getMethod().getAnnotation(Command.class);
         if (0 >= command.cooldownDuration()) return false;
         if (sender instanceof AbstractIdentifiable) {
-            String registrationId =
-                    AbstractRegistrationContext.getRegistrationId((Identifiable) sender, ctx);
+            String registrationId = AbstractRegistrationContext.getRegistrationId((Identifiable) sender, ctx);
             return SeleneUtils.isInCooldown(registrationId);
         }
         return false;

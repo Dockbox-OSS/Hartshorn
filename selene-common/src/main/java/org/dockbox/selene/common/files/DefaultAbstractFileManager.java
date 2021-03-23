@@ -54,15 +54,13 @@ public abstract class DefaultAbstractFileManager extends FileManager {
     @NotNull
     @Override
     public Path getDataFile(@NotNull Module module, @NotNull String file) {
-        return this.createFileIfNotExists(
-                this.getFileType().asPath(this.getDataDir().resolve(module.id()), file));
+        return this.createFileIfNotExists(this.getFileType().asPath(this.getDataDir().resolve(module.id()), file));
     }
 
     @NotNull
     @Override
     public Path getConfigFile(@NotNull Module module, @NotNull String file) {
-        return this.createFileIfNotExists(
-                this.getFileType().asPath(this.getModuleConfigsDir().resolve(module.id()), file));
+        return this.createFileIfNotExists(this.getFileType().asPath(this.getModuleConfigsDir().resolve(module.id()), file));
     }
 
     @NotNull
@@ -81,9 +79,7 @@ public abstract class DefaultAbstractFileManager extends FileManager {
     public boolean move(Path sourceFile, Path targetFile) {
         this.createFileIfNotExists(targetFile);
         try {
-            Files.move(
-                    sourceFile,
-                    targetFile,
+            Files.move(sourceFile, targetFile,
                     StandardCopyOption.ATOMIC_MOVE,
                     StandardCopyOption.REPLACE_EXISTING);
             return true;

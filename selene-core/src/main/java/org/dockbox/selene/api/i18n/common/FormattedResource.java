@@ -52,7 +52,6 @@ public class FormattedResource implements ResourceEntry {
     }
 
     // Format value placeholders and colors
-    @SuppressWarnings("DuplicatedCode")
     public String formatCustom(String m, Object... args) {
         String temp = m;
         if (0 == args.length) return temp;

@@ -25,6 +25,8 @@ import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.worldedit.region.Region;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class WrappedRegion implements Region, Wrapper<com.sk89q.worldedit.regions.Region> {
 
     private com.sk89q.worldedit.regions.Region region;
@@ -70,7 +72,7 @@ public class WrappedRegion implements Region, Wrapper<com.sk89q.worldedit.region
 
     @Override
     public World getWorld() {
-        return SpongeConversionUtil.fromWorldEdit(this.region.getWorld());
+        return SpongeConversionUtil.fromWorldEdit(Objects.requireNonNull(this.region.getWorld()));
     }
 
     @Override

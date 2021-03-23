@@ -33,8 +33,7 @@ public interface BroadcastService {
 
     void broadcastForPermission(Text message, String permission);
 
-    void broadcastForPermissionWithFilter(
-            Text message, AbstractPermission permission, Predicate<Player> filter);
+    void broadcastForPermissionWithFilter(Text message, AbstractPermission permission, Predicate<Player> filter);
 
     void broadcastForPermissionWithFilter(Text message, String permission, Predicate<Player> filter);
 }

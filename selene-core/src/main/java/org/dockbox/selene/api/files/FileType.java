@@ -17,44 +17,37 @@
 
 package org.dockbox.selene.api.files;
 
+import org.dockbox.selene.api.annotations.files.Format;
+
+import java.lang.annotation.Annotation;
 import java.nio.file.Path;
 
 /** Enumerated values containing the file extensions for several commonly used file types. */
 public enum FileType {
-
-    // Minecraft native formats
-    ANVIL("mca"),
-
     // Compiled Java formats
     CLASS("class"),
     JAR("jar"),
 
-    // Image formats
-    PNG("png"),
-    JPG("jpg"),
-    BITMAP("bmp"),
-
-    // Database formats
-    FAWE_HISTORY("bd"),
-    OLDPLOTS("db"),
-    SQLITE("sqlite"),
-
-    // Data/config formats
-    YAML("yml"),
-    JSON("json"),
-    MOD_CONFIG("cfg"),
-    CONFIG("conf"),
-    XML("xml"),
-    PROPERTIES("properties"),
-
-    // Other
-    ZIP("zip"),
-    LOG("log");
+    // Formats with file/web utilities
+    SQLITE("sqlite", Format.SQLite.class),
+    YAML("yml", Format.YAML.class),
+    JSON("json", Format.Json.class),
+    XML("xml", Format.XML.class),
+    MOD_CONFIG("cfg", Format.HOCON.class),
+    CONFIG("conf", Format.HOCON.class),
+    ;
 
     private final String extension;
+    private final Class<? extends Annotation> format;
+
+    FileType(String extension, Class<? extends Annotation> format) {
+        this.extension = extension;
+        this.format = format;
+    }
 
     FileType(String extension) {
         this.extension = extension;
+        this.format = null;
     }
 
     /**
@@ -90,5 +83,9 @@ public enum FileType {
 
     public String getExtension() {
         return this.extension;
+    }
+
+    public Class<? extends Annotation> getFormat() {
+        return this.format;
     }
 }

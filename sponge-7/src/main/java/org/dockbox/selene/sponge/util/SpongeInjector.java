@@ -22,11 +22,9 @@ import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 import org.dockbox.selene.api.BroadcastService;
 import org.dockbox.selene.api.ExceptionHelper;
-import org.dockbox.selene.api.PlayerStorageService;
+import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.ThreadUtils;
-import org.dockbox.selene.api.WorldStorageService;
-import org.dockbox.selene.api.annotations.files.Bulk;
-import org.dockbox.selene.api.annotations.files.Format;
+import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.command.CommandBus;
 import org.dockbox.selene.api.discord.DiscordPagination;
 import org.dockbox.selene.api.discord.DiscordUtils;
@@ -36,6 +34,7 @@ import org.dockbox.selene.api.entities.EntityFactory;
 import org.dockbox.selene.api.entities.ItemFrame;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.api.files.FileType;
 import org.dockbox.selene.api.i18n.common.ResourceService;
 import org.dockbox.selene.api.inventory.Element;
 import org.dockbox.selene.api.inventory.builder.LayoutBuilder;
@@ -113,17 +112,18 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(DiscordUtils.class).to(SpongeDiscordUtils.class);
         this.bind(ThreadUtils.class).to(SpongeThreadUtils.class);
         this.bind(WebUtil.class).to(GsonWebUtil.class);
-        this.bind(WebUtil.class).annotatedWith(Format.Json.class).to(GsonWebUtil.class);
-        this.bind(WebUtil.class).annotatedWith(Format.XML.class).to(GsonXmlWebUtil.class);
+        this.bind(WebUtil.class).annotatedWith(FileType.JSON.getFormat()).to(GsonWebUtil.class);
+        this.bind(WebUtil.class).annotatedWith(FileType.XML.getFormat()).to(GsonXmlWebUtil.class);
 
         // File management
         this.bind(FileManager.class).to(SpongeConfigurateManager.class);
-        this.bind(FileManager.class).annotatedWith(Bulk.class).to(SpongeXStreamManager.class);
-        this.bind(SQLMan.class).annotatedWith(Format.SQLite.class).to(SQLiteMan.class);
+        this.bind(FileManager.class).annotatedWith(FileType.YAML.getFormat()).to(SpongeConfigurateManager.class);
+        this.bind(FileManager.class).annotatedWith(FileType.XML.getFormat()).to(SpongeXStreamManager.class);
+        this.bind(SQLMan.class).annotatedWith(FileType.SQLITE.getFormat()).to(SQLiteMan.class);
 
         // Services
-        this.bind(PlayerStorageService.class).to(SpongePlayerStorageService.class);
-        this.bind(WorldStorageService.class).to(SpongeWorldStorageService.class);
+        this.bind(Players.class).to(SpongePlayers.class);
+        this.bind(Worlds.class).to(SpongeWorlds.class);
         this.bind(BroadcastService.class).to(SimpleBroadcastService.class);
         this.bind(ResourceService.class).toInstance(new SimpleResourceService());
         this.bind(WorldEditService.class).to(SpongeWorldEditService.class);

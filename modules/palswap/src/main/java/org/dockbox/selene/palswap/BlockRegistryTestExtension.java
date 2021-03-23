@@ -22,7 +22,7 @@ import com.google.inject.Inject;
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.context.CommandContext;
-import org.dockbox.selene.api.command.context.CommandValue.Argument;
+import org.dockbox.selene.api.command.context.CommandArgument;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Item;
@@ -46,7 +46,7 @@ public class BlockRegistryTestExtension {
 
     @Command(aliases = "blockid", usage = "blockid <id>")
     public void blockID(@NotNull Player player, CommandContext context) {
-        Exceptional<Argument<String>> eID = context.argument("id");
+        Exceptional<CommandArgument<String>> eID = context.argument("id");
 
         if (eID.isAbsent()) return;
 

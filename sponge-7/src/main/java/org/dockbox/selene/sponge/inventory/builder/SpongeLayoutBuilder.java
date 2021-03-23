@@ -74,11 +74,10 @@ public class SpongeLayoutBuilder extends LayoutBuilder {
     public void stateEnabling(InjectorProperty<?>... properties) {
         Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryType.class, properties)
                 .ifPresent(inventoryType -> this.inventoryType = inventoryType)
-                .ifAbsent(
-                        () -> {
-                            Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
-                            this.inventoryType = InventoryType.CHEST;
-                        });
+                .ifAbsent(() -> {
+                    Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
+                    this.inventoryType = InventoryType.CHEST;
+                });
         this.builder = Layout.builder(this.inventoryType.getRows(), this.inventoryType.getColumns());
     }
 }

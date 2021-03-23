@@ -37,7 +37,8 @@ public abstract class World extends WorldProperties {
             boolean loadOnStartup,
             @NotNull Vector3N spawnPosition,
             long seed,
-            Gamemode defaultGamemode) {
+            Gamemode defaultGamemode
+    ) {
         super(loadOnStartup, spawnPosition, seed, defaultGamemode);
         this.worldUniqueId = worldUniqueId;
         this.name = name;
@@ -55,12 +56,9 @@ public abstract class World extends WorldProperties {
 
     public abstract boolean isLoaded();
 
-    public UUID getWorldUniqueId() {
-        return this.worldUniqueId;
-    }
-
-    public String getName() {
-        return this.name;
+    @Override
+    public int hashCode() {
+        return Objects.hash(getWorldUniqueId(), getName());
     }
 
     @Override
@@ -71,17 +69,17 @@ public abstract class World extends WorldProperties {
         return getWorldUniqueId().equals(world.getWorldUniqueId()) && getName().equals(world.getName());
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getWorldUniqueId(), getName());
+    public UUID getWorldUniqueId() {
+        return this.worldUniqueId;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     @Override
     public String toString() {
-        return "World{" +
-                "worldUniqueId=" + worldUniqueId +
-                ", name='" + name + '\'' +
-                '}';
+        return "World{" + "worldUniqueId=" + worldUniqueId + ", name='" + name + '\'' + '}';
     }
 
     private static final class EmptyWorld extends World {

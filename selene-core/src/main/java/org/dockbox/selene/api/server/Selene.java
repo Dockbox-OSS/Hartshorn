@@ -44,7 +44,6 @@ import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
 /** The global {@link Selene} instance used to grant access to various components. */
-@SuppressWarnings("ClassWithTooManyMethods")
 public final class Selene {
 
     private Selene() {}
@@ -75,12 +74,10 @@ public final class Selene {
      *         Zero or more exceptions (varargs)
      */
     public static void handle(@Nullable String msg, @Nullable Throwable... e) {
-        ExceptionLevels level =
-                null != getServer()
-                        ? getServer().getGlobalConfig().getExceptionLevel()
-                        : ExceptionLevels.NATIVE;
-        boolean stacktraces =
-                null == getServer() || getServer().getGlobalConfig().getStacktracesAllowed();
+        ExceptionLevels level = null != getServer()
+                ? getServer().getGlobalConfig().getExceptionLevel()
+                : ExceptionLevels.NATIVE;
+        boolean stacktraces = null == getServer() || getServer().getGlobalConfig().getStacktracesAllowed();
         for (Throwable throwable : e) level.handle(msg, throwable, stacktraces);
     }
 

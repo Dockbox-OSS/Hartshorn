@@ -19,12 +19,12 @@ package org.dockbox.selene.api.server.properties;
 
 import java.lang.annotation.Annotation;
 
-public final class AnnotationProperty<T extends Annotation> implements InjectorProperty<Class<T>> {
+public class AnnotationProperty<T extends Annotation> implements InjectorProperty<Class<T>> {
 
     public static final String KEY = "SeleneInternalAnnotationProperty";
     private final Class<T> annotationType;
 
-    private AnnotationProperty(Class<T> annotationType) {
+    protected AnnotationProperty(Class<T> annotationType) {
         this.annotationType = annotationType;
     }
 

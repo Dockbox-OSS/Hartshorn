@@ -45,21 +45,20 @@ import java.util.UUID;
 @Resources(module = ToolBinding.class)
 public class ToolBinding {
 
-    private static final PersistentDataKey<String> PERSISTENT_TOOL =
-            StringPersistentDataKey.of("Tool Binding", ToolBinding.class);
-    private static final ResourceEntry TOOL_ERROR_BLOCK =
-            new Resource("Tool cannot be bound to blocks", "toolbinding.error.block");
-    private static final ResourceEntry TOOL_ERROR_HAND =
-            new Resource("Tool cannot be bound to hand", "toolbinding.error.hand");
-    private static final ResourceEntry TOOL_ERROR_DUPLICATE =
-            new Resource("There is already a tool bound to this item", "toolbinding.error.duplicate");
+    // TODO: Continue
+
+    private static final PersistentDataKey<String> PERSISTENT_TOOL = StringPersistentDataKey.of("Tool Binding", ToolBinding.class);
+    private static final ResourceEntry TOOL_ERROR_BLOCK = new Resource("Tool cannot be bound to blocks", "toolbinding.error.block");
+    private static final ResourceEntry TOOL_ERROR_HAND = new Resource("Tool cannot be bound to hand", "toolbinding.error.hand");
+    private static final ResourceEntry TOOL_ERROR_DUPLICATE = new Resource("There is already a tool bound to this item", "toolbinding.error.duplicate");
+
     private static ToolBinding instance;
-    public static final RemovableKey<Item, ItemTool> TOOL =
-            Keys.checkedDynamicKeyOf(
-                    // Not possible to use method references here due to instance being initialized later
-                    (item, tool) -> instance.setTool(item, tool),
-                    item -> instance.getTool(item),
-                    item -> instance.removeTool(item));
+
+    public static final RemovableKey<Item, ItemTool> TOOL = Keys.checkedDynamicKeyOf(
+            // Not possible to use method references here due to instance being initialized later
+            (item, tool) -> instance.setTool(item, tool),
+            item -> instance.getTool(item),
+            item -> instance.removeTool(item));
     private final Map<String, ItemTool> registry = SeleneUtils.emptyConcurrentMap();
 
     public ToolBinding() {
@@ -115,14 +114,13 @@ public class ToolBinding {
         if (!this.registry.containsKey(identifier.get())) return;
         ItemTool tool = this.registry.get(identifier.get());
 
-        ToolInteractionEvent toolInteractionEvent =
-                new ToolInteractionEvent(
-                        event.getTarget(),
-                        itemInHand,
-                        tool,
-                        event.getHand(),
-                        event.getClientClickType(),
-                        event.getTarget().isSneaking() ? Sneaking.SNEAKING : Sneaking.STANDING);
+        ToolInteractionEvent toolInteractionEvent = new ToolInteractionEvent(
+                event.getTarget(),
+                itemInHand,
+                tool,
+                event.getHand(),
+                event.getClientClickType(),
+                event.getTarget().isSneaking() ? Sneaking.SNEAKING : Sneaking.STANDING);
 
         if (tool.accepts(toolInteractionEvent)) {
             toolInteractionEvent.post();

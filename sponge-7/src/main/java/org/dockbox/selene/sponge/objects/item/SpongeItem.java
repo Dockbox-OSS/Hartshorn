@@ -87,43 +87,36 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
 
     @Override
     public void setDisplayName(Text displayName) {
-        this.getReference()
-                .ifPresent(i -> i.offer(Keys.DISPLAY_NAME, SpongeConversionUtil.toSponge(displayName)));
+        this.getReference().ifPresent(i -> i.offer(Keys.DISPLAY_NAME, SpongeConversionUtil.toSponge(displayName)));
     }
 
     @Override
     public Text getDisplayName(Language language) {
         Exceptional<ItemStack> ref = this.getReference();
-        Exceptional<Text> name =
-                Exceptional.of(ref.map(i -> i.get(Keys.DISPLAY_NAME)).get())
-                        .map(SpongeConversionUtil::fromSponge);
+        Exceptional<Text> name = Exceptional.of(ref.map(i -> i.get(Keys.DISPLAY_NAME)).get())
+                .map(SpongeConversionUtil::fromSponge);
         if (name.isPresent()) return name.get();
 
         Exceptional<String> translatedName = ref.map(i -> i.getTranslation().get());
         if (translatedName.isPresent()) return Text.of(translatedName.get());
 
-        return Text.of(
-                ref.map(i -> i.getType().getId())
-                        .orElse(IntegratedResource.UNKNOWN.translate(language).asString()));
+        return Text.of(ref.map(i -> i.getType().getId())
+                .orElse(IntegratedResource.UNKNOWN.translate(language).asString()));
     }
 
     @Override
     public List<Text> getLore() {
-        List<org.spongepowered.api.text.Text> sl =
-                this.getReference().map(i -> i.get(Keys.ITEM_LORE)).get().orElseGet(ArrayList::new);
+        List<org.spongepowered.api.text.Text> sl = this.getReference().map(i -> i.get(Keys.ITEM_LORE)).get().orElseGet(ArrayList::new);
         return sl.stream().map(SpongeConversionUtil::fromSponge).collect(Collectors.toList());
     }
 
     @Override
     public void setLore(List<Text> lore) {
-        this.getReference()
-                .ifPresent(
-                        i ->
-                                i.offer(
-                                        Keys.ITEM_LORE,
-                                        lore.stream()
-                                                .map(SpongeConversionUtil::toSponge)
-                                                .collect(Collectors.toList())));
+        this.getReference().ifPresent(i ->
+                i.offer(Keys.ITEM_LORE, lore.stream()
+                        .map(SpongeConversionUtil::toSponge)
+                        .collect(Collectors.toList()))
+        );
     }
 
     @Override
@@ -199,27 +192,26 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @Override
     public Item setProfile(Profile profile) {
         if (this.isHead() && profile instanceof SpongeProfile) {
-            this.getReference()
-                    .ifPresent(
-                            itemStack -> {
-                                SkullData skullData =
-                                        Sponge.getGame()
-                                                .getDataManager()
-                                                .getManipulatorBuilder(SkullData.class)
-                                                .get()
-                                                .create()
-                                                .set(Keys.SKULL_TYPE, SkullTypes.PLAYER);
-                                itemStack.offer(skullData);
+            this.getReference().ifPresent(
+                    itemStack -> {
+                        SkullData skullData =
+                                Sponge.getGame()
+                                        .getDataManager()
+                                        .getManipulatorBuilder(SkullData.class)
+                                        .get()
+                                        .create()
+                                        .set(Keys.SKULL_TYPE, SkullTypes.PLAYER);
+                        itemStack.offer(skullData);
 
-                                RepresentedPlayerData representedPlayerData =
-                                        Sponge.getGame()
-                                                .getDataManager()
-                                                .getManipulatorBuilder(RepresentedPlayerData.class)
-                                                .get()
-                                                .create()
-                                                .set(Keys.REPRESENTED_PLAYER, ((SpongeProfile) profile).getGameProfile());
-                                itemStack.offer(representedPlayerData);
-                            });
+                        RepresentedPlayerData representedPlayerData =
+                                Sponge.getGame()
+                                        .getDataManager()
+                                        .getManipulatorBuilder(RepresentedPlayerData.class)
+                                        .get()
+                                        .create()
+                                        .set(Keys.REPRESENTED_PLAYER, ((SpongeProfile) profile).getGameProfile());
+                        itemStack.offer(representedPlayerData);
+                    });
         }
         return this;
     }
@@ -240,27 +232,24 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
 
     @Override
     protected ItemStack getById(String id, int meta) {
-        ItemStack stack =
-                Sponge.getGame()
-                        .getRegistry()
-                        .getType(ItemType.class, id)
-                        .map(ItemStack::of)
-                        .orElse(ItemStack.empty());
+        ItemStack stack = Sponge.getGame()
+                .getRegistry()
+                .getType(ItemType.class, id)
+                .map(ItemStack::of)
+                .orElse(ItemStack.empty());
 
-        stack =
-                ItemStack.builder()
-                        .fromContainer(stack.toContainer().set(Constants.ItemStack.DAMAGE_VALUE, meta))
-                        .build();
+        stack = ItemStack.builder()
+                .fromContainer(stack.toContainer().set(Constants.ItemStack.DAMAGE_VALUE, meta))
+                .build();
 
         return stack;
     }
 
     @Override
     public int getMeta() {
-        return (int)
-                this.getReference()
-                        .map(stack -> stack.toContainer().get(Constants.ItemStack.DAMAGE_VALUE).orElse(0))
-                        .orElse(0);
+        return (int) this.getReference()
+                .map(stack -> stack.toContainer().get(Constants.ItemStack.DAMAGE_VALUE).orElse(0))
+                .orElse(0);
     }
 
     @Override
@@ -274,15 +263,12 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void performOnEnchantmentData(
             Enchant enchant, BiConsumer<EnchantmentData, Enchantment> action) {
-        this.getReference()
-                .ifPresent(
-                        itemStack -> {
-                            EnchantmentData enchantmentData = itemStack.getOrCreate(EnchantmentData.class).get();
-                            @NotNull
-                            Exceptional<org.spongepowered.api.item.enchantment.Enchantment> enchantment =
-                                    SpongeConversionUtil.toSponge(enchant);
-                            enchantment.ifPresent(e -> action.accept(enchantmentData, e));
-                        });
+        this.getReference().ifPresent(itemStack -> {
+            EnchantmentData enchantmentData = itemStack.getOrCreate(EnchantmentData.class).get();
+            @NotNull
+            Exceptional<org.spongepowered.api.item.enchantment.Enchantment> enchantment = SpongeConversionUtil.toSponge(enchant);
+            enchantment.ifPresent(e -> action.accept(enchantmentData, e));
+        });
     }
 
     @Override

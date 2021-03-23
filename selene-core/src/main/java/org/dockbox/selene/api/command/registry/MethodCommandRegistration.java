@@ -29,7 +29,8 @@ public class MethodCommandRegistration extends AbstractCommandRegistration<Metho
             String[] aliases,
             Command command,
             Method method,
-            AbstractPermission permission) {
+            AbstractPermission permission
+    ) {
         super(primaryAlias, aliases, permission, command, method);
     }
 }

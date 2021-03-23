@@ -58,8 +58,7 @@ public class SpongeFlagCollection extends AbstractFlagCollection<CommandFlags.Bu
     @Override
     public List<AbstractArgumentElement<?>> buildAndCombines(AbstractArgumentElement<?> element) {
         if (element instanceof SpongeArgumentElement) {
-            CommandElement commandElement =
-                    this.getReference().buildWith(((SpongeArgumentElement) element).getReference());
+            CommandElement commandElement = this.getReference().buildWith(((SpongeArgumentElement) element).getReference());
             return SeleneUtils.asList(new SpongeArgumentElement(commandElement));
         }
         return SeleneUtils.emptyList();

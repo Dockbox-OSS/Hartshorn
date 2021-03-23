@@ -66,10 +66,10 @@ public interface SpongeComposite extends PersistentDataHolder {
             MutableCompositeData compositeData = new MutableCompositeData();
             compositeData.fillData(data);
             DataTransactionResult result = composite.offer(compositeData);
+
             if (result.isSuccessful()) return TransactionResult.success();
             else return TransactionResult.fail(IntegratedResource.KEY_BINDING_FAILED);
-        })
-                .orElseGet(() -> TransactionResult.fail(IntegratedResource.LOST_REFERENCE));
+        }).orElseGet(() -> TransactionResult.fail(IntegratedResource.LOST_REFERENCE));
     }
 
     @Override
@@ -94,6 +94,7 @@ public interface SpongeComposite extends PersistentDataHolder {
 
         Map<PersistentDataKey<?>, Object> persistentData = SeleneUtils.emptyMap();
         DataHolder dataHolder = dataHolderExceptional.get();
+
         for (ImmutableValue<?> value : dataHolder.getValues()) {
             PersistentDataKey<?> dataKey = StoredPersistentKey.of(value.getKey().getName());
             Object dataValue = value.get();

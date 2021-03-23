@@ -29,7 +29,7 @@ public final class BossbarBuilder {
     private BossbarColor color = BossbarColor.WHITE;
     private BossbarStyle style = BossbarStyle.PROGRESS;
 
-    BossbarBuilder() {}
+    protected BossbarBuilder() {}
 
     public BossbarBuilder withId(UUID id) {
         this.id = id.toString();
@@ -71,7 +71,6 @@ public final class BossbarBuilder {
     }
 
     public Bossbar build() {
-        return Selene.provide(BossbarFactory.class)
-                .create(this.id, this.percent, this.text, this.color, this.style);
+        return Selene.provide(BossbarFactory.class).create(this.id, this.percent, this.text, this.color, this.style);
     }
 }

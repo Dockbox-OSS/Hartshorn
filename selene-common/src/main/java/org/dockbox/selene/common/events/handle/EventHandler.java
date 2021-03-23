@@ -21,7 +21,6 @@ import org.dockbox.selene.api.events.EventWrapper;
 import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
-
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
@@ -34,12 +33,12 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class EventHandler {
+
     private final Class<? extends Event> eventType;
 
     private final Set<EventHandler> supertypeHandlers = SeleneUtils.emptySet();
 
-    private final SortedSet<SimpleEventWrapper> invokers =
-            new TreeSet<>(SimpleEventWrapper.COMPARATOR);
+    private final SortedSet<SimpleEventWrapper> invokers = new TreeSet<>(SimpleEventWrapper.COMPARATOR);
 
     private transient volatile SimpleEventWrapper @Nullable [] computedInvokerCache;
 
@@ -100,7 +99,7 @@ public class EventHandler {
     }
 
     public boolean isSubtypeOf(EventHandler handler) {
-        if (handler instanceof EventHandler) return this.isSubtypeOf(handler.eventType());
+        if (handler != null) return this.isSubtypeOf(handler.eventType());
         return false;
     }
 
@@ -118,7 +117,7 @@ public class EventHandler {
     }
 
     public boolean addSupertypeHandler(EventHandler handler) {
-        if (!(handler instanceof EventHandler)) return false;
+        if (handler == null) return false;
         if (handler == this) return false;
         return this.invalidateCache(this.supertypeHandlers.add(handler));
     }

@@ -22,8 +22,7 @@ import org.dockbox.selene.api.i18n.entry.IntegratedResource;
 
 public final class TransactionResult {
 
-    private static final TransactionResult SUCCESS =
-            new TransactionResult(Status.SUCCESS, IntegratedResource.NONE);
+    private static final TransactionResult SUCCESS = new TransactionResult(Status.SUCCESS, IntegratedResource.NONE);
     private final Status status;
     private final ResourceEntry message;
 
@@ -41,8 +40,7 @@ public final class TransactionResult {
     }
 
     public static TransactionResult fail(Throwable cause) {
-        return new TransactionResult(
-                Status.FAILURE, IntegratedResource.EXCEPTION.format(cause.getMessage()));
+        return new TransactionResult(Status.FAILURE, IntegratedResource.EXCEPTION.format(cause.getMessage()));
     }
 
     public ResourceEntry getMessage() {

@@ -34,8 +34,7 @@ public class ToolInteractionEvent extends AbstractCancellableEvent {
     private final ClickType type;
     private final Sneaking sneaking;
 
-    public ToolInteractionEvent(
-            Player player, Item item, ItemTool tool, Hand hand, ClickType type, Sneaking sneaking) {
+    public ToolInteractionEvent(Player player, Item item, ItemTool tool, Hand hand, ClickType type, Sneaking sneaking) {
         this.player = player;
         this.item = item;
         this.tool = tool;

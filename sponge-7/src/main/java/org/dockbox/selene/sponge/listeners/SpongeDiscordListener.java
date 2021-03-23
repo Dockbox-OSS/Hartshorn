@@ -36,21 +36,21 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import org.dockbox.selene.api.discord.DiscordUtils;
+import org.dockbox.selene.api.events.discord.DiscordChatReceivedEvent;
 import org.dockbox.selene.api.events.discord.DiscordCommandContext;
-import org.dockbox.selene.api.events.discord.DiscordEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordBotDisconnectedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordBotReconnectedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordChatDeletedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordChatUpdatedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordPrivateChatDeletedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordPrivateChatReceivedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordPrivateChatUpdatedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordReactionAddedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordUserBannedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordUserJoinedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordUserLeftEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordUserNicknameChangedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordUserUnbannedEvent;
+import org.dockbox.selene.api.events.discord.DiscordBotDisconnectedEvent;
+import org.dockbox.selene.api.events.discord.DiscordBotReconnectedEvent;
+import org.dockbox.selene.api.events.discord.DiscordChatDeletedEvent;
+import org.dockbox.selene.api.events.discord.DiscordChatUpdatedEvent;
+import org.dockbox.selene.api.events.discord.DiscordPrivateChatDeletedEvent;
+import org.dockbox.selene.api.events.discord.DiscordPrivateChatReceivedEvent;
+import org.dockbox.selene.api.events.discord.DiscordPrivateChatUpdatedEvent;
+import org.dockbox.selene.api.events.discord.DiscordReactionAddedEvent;
+import org.dockbox.selene.api.events.discord.DiscordUserBannedEvent;
+import org.dockbox.selene.api.events.discord.DiscordUserJoinedEvent;
+import org.dockbox.selene.api.events.discord.DiscordUserLeftEvent;
+import org.dockbox.selene.api.events.discord.DiscordUserNicknameChangedEvent;
+import org.dockbox.selene.api.events.discord.DiscordUserUnbannedEvent;
 import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.server.Selene;
@@ -75,9 +75,12 @@ public class SpongeDiscordListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        new DiscordEvent.DiscordChatReceivedEvent(
-                event.getAuthor(), event.getMessage(), event.getGuild(), event.getChannel())
-                .post();
+        new DiscordChatReceivedEvent(
+                event.getAuthor(),
+                event.getMessage(),
+                event.getGuild(),
+                event.getChannel()
+        ).post();
     }
 
     @Override
@@ -120,29 +123,27 @@ public class SpongeDiscordListener extends ListenerAdapter {
             List<String> arguments = SeleneUtils.asList(Arrays.asList(parts));
             arguments.remove(0); // Remove command
 
-            DiscordCommandContext ctx =
-                    new DiscordCommandContext(
-                            event.getAuthor(),
-                            event.getChannel(),
-                            LocalDateTime.now(),
-                            alias,
-                            arguments.toArray(new String[0]));
+            DiscordCommandContext ctx = new DiscordCommandContext(
+                    event.getAuthor(),
+                    event.getChannel(),
+                    LocalDateTime.now(),
+                    alias,
+                    arguments.toArray(new String[0])
+            );
             Selene.provide(DiscordUtils.class).post(alias, ctx);
         }
     }
 
     @Override
     public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
-        event
-                .getTextChannel()
+        event.getTextChannel()
                 .retrieveMessageById(event.getMessageId())
-                .queue(
-                        message -> {
-                            User user = event.getJDA().getUserById(event.getUserId());
-                            if (null != user) {
-                                new DiscordReactionAddedEvent(user, message, event.getReaction()).post();
-                            }
-                        });
+                .queue(message -> {
+                    User user = event.getJDA().getUserById(event.getUserId());
+                    if (null != user) {
+                        new DiscordReactionAddedEvent(user, message, event.getReaction()).post();
+                    }
+                });
     }
 
     @Override
@@ -167,11 +168,10 @@ public class SpongeDiscordListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
-        Event nce =
-                new DiscordUserNicknameChangedEvent(
-                        event.getUser(),
-                        Exceptional.ofNullable(event.getOldNickname()),
-                        Exceptional.ofNullable(event.getNewNickname()))
-                        .post();
+        Event nce = new DiscordUserNicknameChangedEvent(
+                event.getUser(),
+                Exceptional.ofNullable(event.getOldNickname()),
+                Exceptional.ofNullable(event.getNewNickname())
+        ).post();
     }
 }

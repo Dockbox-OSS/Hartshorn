@@ -31,8 +31,7 @@ public class UsageLibTest {
         VerbalExpression regexViaFactory = VerbalExpression.regex().anything().build();
         VerbalExpression regexViaConstructor = VerbalExpression.regex().anything().build();
 
-        MatcherAssert.assertThat(
-                "Factory builder method produce not same as constructor regex",
+        MatcherAssert.assertThat("Factory builder method produce not same as constructor regex",
                 regexViaFactory.toString(),
                 CoreMatchers.equalTo(regexViaConstructor.toString()));
     }
@@ -42,8 +41,7 @@ public class UsageLibTest {
         VerbalExpression.Builder builder = VerbalExpression.regex().anything().addModifier('i');
         VerbalExpression.Builder clonedBuilder = VerbalExpression.regex(builder);
 
-        MatcherAssert.assertThat(
-                "Cloned builder changed after creating new one",
+        MatcherAssert.assertThat("Cloned builder changed after creating new one",
                 builder.build().toString(),
                 CoreMatchers.equalTo(clonedBuilder.build().toString()));
     }
@@ -53,8 +51,7 @@ public class UsageLibTest {
         VerbalExpression.Builder builder = VerbalExpression.regex().anything().addModifier('i');
         VerbalExpression.Builder clonedBuilder = VerbalExpression.regex(builder).endOfLine();
 
-        MatcherAssert.assertThat(
-                "Cloned builder changed after creating new one",
+        MatcherAssert.assertThat("Cloned builder changed after creating new one",
                 builder.build().toString(),
                 IsNot.not(clonedBuilder.build().toString()));
     }

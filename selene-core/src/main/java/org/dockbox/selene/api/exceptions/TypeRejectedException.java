@@ -22,11 +22,6 @@ import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
 public class TypeRejectedException extends UncheckedSeleneException {
 
     public TypeRejectedException(Class<?> rejectedType, Class<?> rejectedBy) {
-        super(
-                "Type '"
-                        + rejectedType.getSimpleName()
-                        + "' was rejected by '"
-                        + rejectedBy.getSimpleName()
-                        + "'");
+        super("Type '" + rejectedType.getSimpleName() + "' was rejected by '" + rejectedBy.getSimpleName() + "'");
     }
 }

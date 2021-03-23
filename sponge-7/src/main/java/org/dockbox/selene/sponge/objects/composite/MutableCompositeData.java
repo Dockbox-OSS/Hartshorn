@@ -42,12 +42,10 @@ public class MutableCompositeData
     protected void registerGettersAndSetters() {
         this.registerFieldGetter(Composite.ITEM_KEY, () -> this.data);
         this.registerFieldSetter(Composite.ITEM_KEY, this::fillData);
-        this.registerKeyValue(
-                Composite.ITEM_KEY,
-                () ->
-                        Sponge.getRegistry()
-                                .getValueFactory()
-                                .createMapValue(Composite.ITEM_KEY, this.data, SeleneUtils.emptyMap()));
+        this.registerKeyValue(Composite.ITEM_KEY, () -> Sponge.getRegistry()
+                .getValueFactory()
+                .createMapValue(Composite.ITEM_KEY, this.data, SeleneUtils.emptyMap())
+        );
     }
 
     @Override
@@ -68,8 +66,7 @@ public class MutableCompositeData
     @Override
     public @NotNull Optional<MutableCompositeData> fill(
             @NotNull DataHolder dataHolder, @NotNull MergeFunction overlap) {
-        MutableCompositeData itemData =
-                overlap.merge(this, dataHolder.get(MutableCompositeData.class).orElse(null));
+        MutableCompositeData itemData = overlap.merge(this, dataHolder.get(MutableCompositeData.class).orElse(null));
         this.fillData(itemData.data);
         return Optional.of(this);
     }

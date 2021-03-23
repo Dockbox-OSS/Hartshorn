@@ -37,15 +37,14 @@ class PlotWorldModelList {
     }
 
     public Exceptional<PlotWorldModel> getWorld(@NonNls String worldName) {
-        return Exceptional.of(
-                () -> {
-                    for (PlotWorldModel world : this.worlds) {
-                        if (world.getName().equalsIgnoreCase(worldName)) {
-                            return world;
-                        }
-                    }
-                    //noinspection ReturnOfNull
-                    return null;
-                });
+        return Exceptional.of(() -> {
+            for (PlotWorldModel world : this.worlds) {
+                if (world.getName().equalsIgnoreCase(worldName)) {
+                    return world;
+                }
+            }
+            //noinspection ReturnOfNull
+            return null;
+        });
     }
 }

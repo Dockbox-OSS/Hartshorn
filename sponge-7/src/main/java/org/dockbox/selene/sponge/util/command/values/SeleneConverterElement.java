@@ -45,8 +45,7 @@ final class SeleneConverterElement extends CommandElement {
 
     @Nullable
     @Override
-    protected Object parseValue(@NotNull CommandSource source, CommandArgs args)
-            throws ArgumentParseException {
+    protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
         String argument = args.next();
         Exceptional<?> value = this.argument.convert(SpongeConversionUtil.fromSponge(source).get(), argument);
         if (value.errorPresent()) { // So returning null is still permitted
@@ -58,11 +57,9 @@ final class SeleneConverterElement extends CommandElement {
 
     @NotNull
     @Override
-    public List<String> complete(
-            @NotNull CommandSource src, CommandArgs args, @NotNull CommandContext context) {
+    public List<String> complete(@NotNull CommandSource src, CommandArgs args, @NotNull CommandContext context) {
         try {
-            return SeleneUtils.asList(
-                    this.argument.getSuggestions(SpongeConversionUtil.fromSponge(src).get(), args.next()));
+            return SeleneUtils.asList(this.argument.getSuggestions(SpongeConversionUtil.fromSponge(src).get(), args.next()));
         }
         catch (ArgumentParseException e) {
             return SeleneUtils.emptyList();

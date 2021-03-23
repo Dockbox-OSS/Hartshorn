@@ -41,8 +41,7 @@ public class LanguageTypeSerializer implements TypeSerializer<Language> {
     }
 
     @Override
-    public void serialize(Type type, @Nullable Language obj, ConfigurationNode node)
-            throws SerializationException {
+    public void serialize(Type type, @Nullable Language obj, ConfigurationNode node) throws SerializationException {
         if (null == obj) throw new SerializationException("Language cannot be null");
         node.node("code").set(obj.getCode());
     }

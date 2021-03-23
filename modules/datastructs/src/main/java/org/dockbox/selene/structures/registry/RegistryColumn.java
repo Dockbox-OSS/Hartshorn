@@ -100,8 +100,7 @@ public class RegistryColumn<T> {
      *
      * @return A new RegistryColumn which contains all the values of the collections.
      */
-    public <K> RegistryColumn<K> mapToSingleList(
-            Function<? super T, ? extends Collection<K>> mapper) {
+    public <K> RegistryColumn<K> mapToSingleList(Function<? super T, ? extends Collection<K>> mapper) {
         RegistryColumn<K> result = new RegistryColumn<>();
 
         for (T value : this.data) {

@@ -80,11 +80,7 @@ public class SimpleModuleContext implements ModuleContext {
     @Override
     public void addStatus(@NotNull Class<?> clazz, @NotNull ModuleStatus status) {
         if (0 > status.getIntValue())
-            Selene.log()
-                    .warn(
-                            "Manually assigning deprecated status to ["
-                                    + clazz.getCanonicalName()
-                                    + "]! Deprecated statuses should only be assigned automatically on annotation presence!");
+            Selene.log().warn("Manually assigning deprecated status to [" + clazz.getCanonicalName() + "]! Deprecated statuses should only be assigned automatically on annotation presence!");
 
         if (clazz.isAnnotationPresent(Deprecated.class))
             this.entryStatus.put(clazz, ModuleStatus.of(-status.getIntValue()));

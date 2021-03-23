@@ -20,6 +20,7 @@ package org.dockbox.selene.api.server.bootstrap.modules;
 import com.google.inject.AbstractModule;
 
 public class SingleInstanceModule<T> extends AbstractModule {
+
     private final Class<T> target;
     private final T instance;
 

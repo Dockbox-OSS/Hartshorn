@@ -47,8 +47,7 @@ public class SpongeProfile implements Profile {
         if (initialValue instanceof SpongeProfile)
             this.gameProfile = ((SpongeProfile) initialValue).getGameProfile();
         else
-            throw new IllegalStateException(
-                    "Cannot convert [" + initialValue.getClass().getCanonicalName() + "] to SpongeProfile");
+            throw new IllegalStateException("Cannot convert [" + initialValue.getClass().getCanonicalName() + "] to SpongeProfile");
     }
 
     public GameProfile getGameProfile() {
@@ -69,26 +68,19 @@ public class SpongeProfile implements Profile {
     public void setUuid(UUID uuid) {
         Multimap<String, ProfileProperty> properties = this.gameProfile.getPropertyMap();
         this.gameProfile = GameProfile.of(uuid);
-        properties
-                .asMap()
-                .forEach(
-                        (key, propertyCollection) ->
-                                propertyCollection.forEach(
-                                        property -> this.gameProfile.addProperty(key, property)));
+        properties.asMap().forEach((key, propertyCollection) -> propertyCollection.forEach(property -> this.gameProfile.addProperty(key, property)));
     }
 
     @Override
     public Map<String, Collection<Tuple<String, String>>> getAdditionalProperties() {
         Map<String, Collection<ProfileProperty>> properties = this.gameProfile.getPropertyMap().asMap();
         Map<String, Collection<Tuple<String, String>>> convertedProperties = SeleneUtils.emptyMap();
-        properties.forEach(
-                (key, propertyCollection) -> {
-                    List<Tuple<String, String>> collection =
-                            propertyCollection.stream()
-                                    .map(property -> new Tuple<>(property.getName(), property.getValue()))
-                                    .collect(Collectors.toList());
-                    convertedProperties.put(key, collection);
-                });
+        properties.forEach((key, propertyCollection) -> {
+            List<Tuple<String, String>> collection = propertyCollection.stream()
+                    .map(property -> new Tuple<>(property.getName(), property.getValue()))
+                    .collect(Collectors.toList());
+            convertedProperties.put(key, collection);
+        });
         return SeleneUtils.asUnmodifiableMap(convertedProperties);
     }
 
@@ -99,9 +91,8 @@ public class SpongeProfile implements Profile {
 
     @Override
     public void setProperties(Map<String, Collection<Tuple<String, String>>> properties) {
-        properties.forEach(
-                (name, propertyCollection) ->
-                        propertyCollection.forEach(
-                                property -> this.setProperty(name, property.getKey(), property.getValue())));
+        properties.forEach((name, propertyCollection) ->
+                propertyCollection.forEach(property -> this.setProperty(name, property.getKey(), property.getValue()))
+        );
     }
 }

@@ -29,12 +29,10 @@ import java.util.function.Supplier;
 public abstract class MinecraftItems {
 
     // Static as it is possible multiple instances of this type are created
-    private static final Map<MinecraftVersion, Map<String, Supplier<Item>>> customItems =
-            SeleneUtils.emptyConcurrentMap();
+    private static final Map<MinecraftVersion, Map<String, Supplier<Item>>> customItems = SeleneUtils.emptyConcurrentMap();
 
     public Item getCustom(String identifier) {
-        Map<String, Supplier<Item>> customItemsForVersion =
-                customItems.getOrDefault(this.getMinecraftVersion(), SeleneUtils.emptyMap());
+        Map<String, Supplier<Item>> customItemsForVersion = customItems.getOrDefault(this.getMinecraftVersion(), SeleneUtils.emptyMap());
         return customItemsForVersion.getOrDefault(identifier, () -> Selene.getItems().getAir()).get();
     }
 

@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 class InternalMethodWrapper {
+
     final Method method;
     final String name;
     final Class<?>[] paramTypes;

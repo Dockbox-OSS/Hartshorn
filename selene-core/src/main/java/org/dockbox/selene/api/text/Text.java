@@ -57,9 +57,7 @@ public class Text implements PersistentCapable<PersistentTextModel> {
             else this.text = prim.toString();
 
             for (char styleChar : styleChars.toCharArray()) {
-                this.text =
-                        this.text.replaceAll(
-                                legacySectionSymbol + "" + styleChar, sectionSymbol + "" + styleChar);
+                this.text = this.text.replaceAll(legacySectionSymbol + "" + styleChar, sectionSymbol + "" + styleChar);
             }
             objects = Arrays.copyOfRange(objects, 1, objects.length);
 
@@ -83,8 +81,7 @@ public class Text implements PersistentCapable<PersistentTextModel> {
     }
 
     public String toLegacy() {
-        StringBuilder legacyText =
-                new StringBuilder(this.text.replaceAll(sectionSymbol + "", legacySectionSymbol + ""));
+        StringBuilder legacyText = new StringBuilder(this.text.replaceAll(sectionSymbol + "", legacySectionSymbol + ""));
         for (Text extraText : this.extra) legacyText.append(' ').append(extraText.toLegacy());
         return legacyText.toString();
     }
@@ -131,11 +128,10 @@ public class Text implements PersistentCapable<PersistentTextModel> {
     public List<Text> getParts() {
         List<Text> parts = SeleneUtils.emptyList();
         // Do not add 'this' directly, as it'd wrap the extra parts as well and cause duplicates
-        parts.add(
-                Text.of(this.text)
-                        .onClick(this.clickAction)
-                        .onHover(this.hoverAction)
-                        .onShiftClick(this.shiftClickAction));
+        parts.add(Text.of(this.text)
+                .onClick(this.clickAction)
+                .onHover(this.hoverAction)
+                .onShiftClick(this.shiftClickAction));
         parts.addAll(this.getExtra());
         return parts;
     }
@@ -167,13 +163,7 @@ public class Text implements PersistentCapable<PersistentTextModel> {
             return Exceptional.of(DatatypeConverter.printHexBinary(md.digest()).toUpperCase());
         }
         catch (NoSuchAlgorithmException e) {
-            Selene.handle(
-                    "No algorithm implementation present for "
-                            + method
-                            + ". "
-                            + "This algorithm should be implemented by every implementation of the Java platform! "
-                            + "See https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html",
-                    e);
+            Selene.handle("No algorithm implementation present for " + method + ". " + "This algorithm should be implemented by every implementation of the Java platform! " + "See https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html", e);
         }
         return Exceptional.empty();
     }

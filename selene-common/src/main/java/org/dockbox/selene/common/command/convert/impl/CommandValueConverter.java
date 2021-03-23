@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.common.command.convert.impl;
 
-import org.dockbox.selene.api.command.context.CommandValue;
+import org.dockbox.selene.api.command.context.CommandParameter;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.util.SeleneUtils;
@@ -29,55 +29,55 @@ import java.util.function.Function;
 
 public class CommandValueConverter<T> extends AbstractArgumentConverter<T> {
 
-  private final BiFunction<CommandSource, String, Exceptional<T>> converter;
-  private final Function<String, Collection<String>> suggestionProvider;
+    private final BiFunction<CommandSource, String, Exceptional<T>> converter;
+    private final Function<String, Collection<String>> suggestionProvider;
 
-  public CommandValueConverter(
-      Class<T> type,
-      Function<String, Exceptional<T>> converter,
-      Function<String, Collection<String>> suggestionProvider,
-      String... keys) {
-    super(type, keys);
-    this.converter = (cs, in) -> converter.apply(in);
-    this.suggestionProvider = suggestionProvider;
-  }
+    public CommandValueConverter(
+            Class<T> type,
+            Function<String, Exceptional<T>> converter,
+            Function<String, Collection<String>> suggestionProvider,
+            String... keys
+    ) {
+        super(type, keys);
+        this.converter = (cs, in) -> converter.apply(in);
+        this.suggestionProvider = suggestionProvider;
+    }
 
-  public CommandValueConverter(
-      Class<T> type,
-      BiFunction<CommandSource, String, Exceptional<T>> converter,
-      Function<String, Collection<String>> suggestionProvider,
-      String... keys) {
-    super(type, keys);
-    this.converter = converter;
-    this.suggestionProvider = suggestionProvider;
-  }
+    public CommandValueConverter(
+            Class<T> type,
+            BiFunction<CommandSource, String, Exceptional<T>> converter,
+            Function<String, Collection<String>> suggestionProvider,
+            String... keys
+    ) {
+        super(type, keys);
+        this.converter = converter;
+        this.suggestionProvider = suggestionProvider;
+    }
 
-  public CommandValueConverter(
-      Class<T> type, Function<String, Exceptional<T>> converter, String... keys) {
-    super(type, keys);
-    this.converter = (cs, in) -> converter.apply(in);
-    this.suggestionProvider = in -> SeleneUtils.emptyList();
-  }
+    public CommandValueConverter(Class<T> type, Function<String, Exceptional<T>> converter, String... keys) {
+        super(type, keys);
+        this.converter = (cs, in) -> converter.apply(in);
+        this.suggestionProvider = in -> SeleneUtils.emptyList();
+    }
 
-  public CommandValueConverter(
-      Class<T> type, BiFunction<CommandSource, String, Exceptional<T>> converter, String... keys) {
-    super(type, keys);
-    this.converter = converter;
-    this.suggestionProvider = in -> SeleneUtils.emptyList();
-  }
+    public CommandValueConverter(Class<T> type, BiFunction<CommandSource, String, Exceptional<T>> converter, String... keys) {
+        super(type, keys);
+        this.converter = converter;
+        this.suggestionProvider = in -> SeleneUtils.emptyList();
+    }
 
-  @Override
-  public Exceptional<T> convert(CommandSource source, String argument) {
-    return this.converter.apply(source, argument);
-  }
+    @Override
+    public Exceptional<T> convert(CommandSource source, String argument) {
+        return this.converter.apply(source, argument);
+    }
 
-  @Override
-  public Exceptional<T> convert(CommandSource source, CommandValue<String> value) {
-    return this.convert(source, value.getValue());
-  }
+    @Override
+    public Exceptional<T> convert(CommandSource source, CommandParameter<String> value) {
+        return this.convert(source, value.getValue());
+    }
 
-  @Override
-  public Collection<String> getSuggestions(CommandSource source, String argument) {
-    return this.suggestionProvider.apply(argument);
-  }
+    @Override
+    public Collection<String> getSuggestions(CommandSource source, String argument) {
+        return this.suggestionProvider.apply(argument);
+    }
 }

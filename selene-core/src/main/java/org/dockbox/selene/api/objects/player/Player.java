@@ -37,13 +37,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public abstract class Player extends AbstractIdentifiable<Player>
-        implements CommandSource,
-        PermissionHolder,
-        Locatable,
-        InventoryHolder,
-        PacketReceiver,
-        PersistentDataHolder {
+public abstract class Player extends AbstractIdentifiable<Player> implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder {
 
     protected Player(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);

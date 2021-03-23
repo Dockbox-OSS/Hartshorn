@@ -17,59 +17,59 @@
 
 package org.dockbox.selene.common.discord;
 
+import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.Message;
+
 import org.dockbox.selene.api.discord.templates.MessageTemplate;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.util.SeleneUtils;
-
-import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Message;
 
 import java.util.Map;
 
 public class SimpleMessageTemplate implements MessageTemplate {
 
-  private Text content = Text.of();
-  private final Map<String, String> filledPlaceholders = SeleneUtils.emptyMap();
+    private final Map<String, String> filledPlaceholders = SeleneUtils.emptyMap();
+    private Text content = Text.of();
 
-  @Override
-  public void setContent(Text content) {
-    this.content = content;
-  }
+    @Override
+    public Text getContent() {
+        return this.content;
+    }
 
-  @Override
-  public Text getContent() {
-    return this.content;
-  }
+    @Override
+    public void setContent(Text content) {
+        this.content = content;
+    }
 
-  @Override
-  public MessageTemplate copy() {
-    SimpleMessageTemplate template = new SimpleMessageTemplate();
-    template.formatPlaceholders(filledPlaceholders);
-    template.setContent(content);
-    return template;
-  }
+    @Override
+    public MessageTemplate copy() {
+        SimpleMessageTemplate template = new SimpleMessageTemplate();
+        template.formatPlaceholders(filledPlaceholders);
+        template.setContent(content);
+        return template;
+    }
 
-  @Override
-  public MessageTemplate resetPlaceholders() {
-    filledPlaceholders.clear();
-    return this;
-  }
+    @Override
+    public MessageTemplate resetPlaceholders() {
+        filledPlaceholders.clear();
+        return this;
+    }
 
-  @Override
-  public void formatPlaceholder(String key, Object value) {
-    this.filledPlaceholders.put('{' + key + '}', String.valueOf(value));
-  }
+    @Override
+    public void formatPlaceholder(String key, Object value) {
+        this.filledPlaceholders.put('{' + key + '}', String.valueOf(value));
+    }
 
-  @Override
-  public void formatPlaceholders(Map<String, String> values) {
-    values.forEach(this::formatPlaceholder);
-  }
+    @Override
+    public void formatPlaceholders(Map<String, String> values) {
+        values.forEach(this::formatPlaceholder);
+    }
 
-  @Override
-  public Message getJDAMessage() {
-    MessageBuilder builder = new MessageBuilder();
-    String message = replaceFromMap(content.toStringValue(), filledPlaceholders);
-    builder.setContent(message);
-    return builder.build();
-  }
+    @Override
+    public Message getJDAMessage() {
+        MessageBuilder builder = new MessageBuilder();
+        String message = replaceFromMap(content.toStringValue(), filledPlaceholders);
+        builder.setContent(message);
+        return builder.build();
+    }
 }

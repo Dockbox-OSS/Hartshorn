@@ -22,8 +22,7 @@ import org.dockbox.selene.api.inventory.pane.PaginatedPane;
 
 import java.util.Collection;
 
-public abstract class PaginatedPaneBuilder
-        extends PaneBuilder<PaginatedPane, PaginatedPaneBuilder> {
+public abstract class PaginatedPaneBuilder extends PaneBuilder<PaginatedPane, PaginatedPaneBuilder> {
 
     public abstract PaginatedPaneBuilder elements(Collection<Element> elements);
 }

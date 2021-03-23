@@ -60,24 +60,21 @@ import java.util.stream.Collectors;
 @SuppressWarnings({ "unused", "OverlyComplexClass" })
 public final class Reflect {
 
-    private static final Map<String, Reflections> reflectedPrefixes =
-            SeleneUtils.emptyConcurrentMap();
-    private static final Map<Class<?>, Class<?>> primitiveWrapperMap =
-            SeleneUtils.ofEntries(
-                    SeleneUtils.entry(boolean.class, Boolean.class),
-                    SeleneUtils.entry(byte.class, Byte.class),
-                    SeleneUtils.entry(char.class, Character.class),
-                    SeleneUtils.entry(double.class, Double.class),
-                    SeleneUtils.entry(float.class, Float.class),
-                    SeleneUtils.entry(int.class, Integer.class),
-                    SeleneUtils.entry(long.class, Long.class),
-                    SeleneUtils.entry(short.class, Short.class));
+    private static final Map<String, Reflections> reflectedPrefixes = SeleneUtils.emptyConcurrentMap();
+    private static final Map<Class<?>, Class<?>> primitiveWrapperMap = SeleneUtils.ofEntries(
+            SeleneUtils.entry(boolean.class, Boolean.class),
+            SeleneUtils.entry(byte.class, Byte.class),
+            SeleneUtils.entry(char.class, Character.class),
+            SeleneUtils.entry(double.class, Double.class),
+            SeleneUtils.entry(float.class, Float.class),
+            SeleneUtils.entry(int.class, Integer.class),
+            SeleneUtils.entry(long.class, Long.class),
+            SeleneUtils.entry(short.class, Short.class));
 
     private Reflect() {}
 
     @SuppressWarnings("unchecked")
-    public static <T> Exceptional<T> getFieldValue(
-            Class<?> fieldHolder, Object instance, String field, Class<T> expectedType) {
+    public static <T> Exceptional<T> getFieldValue(Class<?> fieldHolder, Object instance, String field, Class<T> expectedType) {
         try {
             Field declaredField = fieldHolder.getDeclaredField(field);
             declaredField.setAccessible(true);
@@ -123,8 +120,7 @@ public final class Reflect {
      *
      * @return The result of the method call, wrapped in {@link Exceptional}
      */
-    public static <T> Exceptional<T> getMethodValue(
-            Object instance, String method, Class<T> expectedType, Object... args) {
+    public static <T> Exceptional<T> getMethodValue(Object instance, String method, Class<T> expectedType, Object... args) {
         Class<?>[] argTypes = new Class<?>[args.length];
         for (int i = 0; i < args.length; i++) {
             argTypes[i] = args[i].getClass();
@@ -163,7 +159,8 @@ public final class Reflect {
             String method,
             Class<T> expectedType,
             Class<?>[] argumentTypes,
-            Object... args) {
+            Object... args
+    ) {
         try {
             Method m = methodHolder.getDeclaredMethod(method, argumentTypes);
             if (!m.isAccessible()) m.setAccessible(true);
@@ -209,6 +206,7 @@ public final class Reflect {
      */
     public static boolean isAssignableFrom(Class<?> to, Class<?> from) {
         if (null == to || null == from) return false;
+        //noinspection ConstantConditions
         if (to == from || to.equals(from)) return true;
 
         if (to.isAssignableFrom(from)) {
@@ -258,8 +256,7 @@ public final class Reflect {
      */
     @NotNull
     @Unmodifiable
-    public static <A extends Annotation> Collection<Method> getAnnotedMethods(
-            Class<?> clazz, Class<A> annotation, Predicate<A> rule) {
+    public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule) {
         return Reflect.getAnnotedMethods(clazz, annotation, rule, false);
     }
 
@@ -284,11 +281,9 @@ public final class Reflect {
      */
     @NotNull
     @Unmodifiable
-    public static <A extends Annotation> Collection<Method> getAnnotedMethods(
-            Class<?> clazz, Class<A> annotation, Predicate<A> rule, boolean skipParents) {
+    public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule, boolean skipParents) {
         List<Method> annotatedMethods = SeleneUtils.emptyList();
-        for (Method method :
-                SeleneUtils.asList(skipParents ? clazz.getMethods() : clazz.getDeclaredMethods())) {
+        for (Method method : SeleneUtils.asList(skipParents ? clazz.getMethods() : clazz.getDeclaredMethods())) {
             if (!method.isAccessible()) method.setAccessible(true);
             if (method.isAnnotationPresent(annotation) && rule.test(method.getAnnotation(annotation))) {
                 annotatedMethods.add(method);
@@ -311,8 +306,7 @@ public final class Reflect {
      *
      * @return The annotated types
      */
-    public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(
-            String prefix, Class<A> annotation) {
+    public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation) {
         return Reflect.getAnnotatedTypes(prefix, annotation, false);
     }
 
@@ -332,8 +326,7 @@ public final class Reflect {
      *
      * @return The annotated types
      */
-    public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(
-            String prefix, Class<A> annotation, boolean skipParents) {
+    public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation, boolean skipParents) {
         Reflections reflections = getReflectedPrefix(prefix);
         Set<Class<?>> types = reflections.getTypesAnnotatedWith(annotation, !skipParents);
         return SeleneUtils.asList(types);
@@ -416,11 +409,7 @@ public final class Reflect {
             Enum<?>[] e = (Enum<?>[]) o;
             constants.addAll(Arrays.asList(e));
         }
-        catch (IllegalAccessException
-                | IllegalArgumentException
-                | NoSuchFieldException
-                | SecurityException
-                | ClassCastException e) {
+        catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException | ClassCastException e) {
             Selene.log().warn("Error obtaining enum constants in " + type.getCanonicalName(), e);
         }
         return constants;
@@ -440,8 +429,7 @@ public final class Reflect {
      * @throws SecurityException
      *         the security exception
      */
-    public static <T extends Annotation> boolean isAnnotationPresentRecursively(
-            Method method, Class<T> annotationClass) throws SecurityException {
+    public static <T extends Annotation> boolean isAnnotationPresentRecursively(Method method, Class<T> annotationClass) throws SecurityException {
         return null != Reflect.getAnnotationRecursively(method, annotationClass);
     }
 
@@ -459,8 +447,7 @@ public final class Reflect {
      * @throws SecurityException
      *         the security exception
      */
-    public static <T extends Annotation> T getAnnotationRecursively(
-            Method method, Class<T> annotationClass) throws SecurityException {
+    public static <T extends Annotation> T getAnnotationRecursively(Method method, Class<T> annotationClass) throws SecurityException {
         T result;
         if (null == (result = method.getAnnotation(annotationClass))) {
             final String name = method.getName();
@@ -496,17 +483,21 @@ public final class Reflect {
         Set<Class<?>> supertypes = SeleneUtils.emptySet();
         Set<Class<?>> next = SeleneUtils.emptySet();
         Class<?> superclass = current.getSuperclass();
+
         if (Object.class != superclass && null != superclass) {
             supertypes.add(superclass);
             next.add(superclass);
         }
+
         for (Class<?> interfaceClass : current.getInterfaces()) {
             supertypes.add(interfaceClass);
             next.add(interfaceClass);
         }
+
         for (Class<?> cls : next) {
             supertypes.addAll(Reflect.getSupertypes(cls));
         }
+
         return supertypes;
     }
 
@@ -732,7 +723,7 @@ public final class Reflect {
     }
 
     @SuppressWarnings("unchecked")
-    private static <A> Object extractFieldValue(            Field field, Provision provision, Function<A, Object> valueCollector) {
+    private static <A> Object extractFieldValue(Field field, Provision provision, Function<A, Object> valueCollector) {
         if (Provision.FIELD == provision) return valueCollector.apply((A) field);
         else {
             String fieldName = Reflect.getFieldPropertyName(field);
@@ -745,7 +736,6 @@ public final class Reflect {
         if (field.isAnnotationPresent(Property.class)) {
             Property property = field.getAnnotation(Property.class);
 
-            //noinspection CallToSuspiciousStringMethod
             if (!property.setter().isEmpty() && Reflect.hasMethod(type, property.setter())) {
                 Class<?> parameterType = field.getType();
                 if (Reflect.isNotVoid(property.accepts())) parameterType = property.accepts();
@@ -816,8 +806,7 @@ public final class Reflect {
      *
      * @return the exceptional
      */
-    public static <T> Exceptional<T> tryCreateFromRaw(
-            Class<T> type, Function<Field, Object> valueCollector, boolean inject) {
+    public static <T> Exceptional<T> tryCreateFromRaw(Class<T> type, Function<Field, Object> valueCollector, boolean inject) {
         return Reflect.tryCreate(type, valueCollector, inject, Provision.FIELD);
     }
 
@@ -856,13 +845,14 @@ public final class Reflect {
         return Reflect.rejects(holder, potentialReject, false);
     }
 
-    public static boolean rejects(
-            Class<?> holder, Class<?> potentialReject, boolean throwIfRejected) {
+    public static boolean rejects(Class<?> holder, Class<?> potentialReject, boolean throwIfRejected) {
         if (holder.isAnnotationPresent(Rejects.class)) {
             Rejects rejects = holder.getAnnotation(Rejects.class);
+
             boolean rejected = false;
             for (Class<?> rejectedType : rejects.value())
                 if (potentialReject.isAssignableFrom(rejectedType)) rejected = true;
+
             if (rejected && throwIfRejected) throw new TypeRejectedException(potentialReject, holder);
             return rejected;
         }
@@ -921,10 +911,7 @@ public final class Reflect {
             }
             field.set(to, value);
         }
-        catch (IllegalArgumentException
-                | NoSuchMethodException
-                | IllegalAccessException
-                | InvocationTargetException e) {
+        catch (IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             Selene.handle(e);
         }
     }

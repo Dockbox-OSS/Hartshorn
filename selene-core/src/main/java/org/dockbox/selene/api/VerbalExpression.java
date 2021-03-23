@@ -191,15 +191,14 @@ public final class VerbalExpression {
 
     public static class Builder {
 
-        private static final Map<Character, Integer> SYMBOL_MAP =
-                SeleneUtils.ofEntries(
-                        SeleneUtils.entry('d', Pattern.UNIX_LINES),
-                        SeleneUtils.entry('i', Pattern.CASE_INSENSITIVE),
-                        SeleneUtils.entry('x', Pattern.COMMENTS),
-                        SeleneUtils.entry('m', Pattern.MULTILINE),
-                        SeleneUtils.entry('s', Pattern.DOTALL),
-                        SeleneUtils.entry('u', Pattern.UNICODE_CASE),
-                        SeleneUtils.entry('U', Pattern.UNICODE_CHARACTER_CLASS));
+        private static final Map<Character, Integer> SYMBOL_MAP = SeleneUtils.ofEntries(
+                SeleneUtils.entry('d', Pattern.UNIX_LINES),
+                SeleneUtils.entry('i', Pattern.CASE_INSENSITIVE),
+                SeleneUtils.entry('x', Pattern.COMMENTS),
+                SeleneUtils.entry('m', Pattern.MULTILINE),
+                SeleneUtils.entry('s', Pattern.DOTALL),
+                SeleneUtils.entry('u', Pattern.UNICODE_CASE),
+                SeleneUtils.entry('U', Pattern.UNICODE_CHARACTER_CLASS));
         private final StringBuilder source = new StringBuilder();
         private StringBuilder prefixes = new StringBuilder();
         private StringBuilder suffixes = new StringBuilder();
@@ -552,9 +551,7 @@ public final class VerbalExpression {
          */
         public Builder range(final String... pArgs) {
             StringBuilder value = new StringBuilder("[");
-            for (int firstInPairPosition = 1;
-                 firstInPairPosition < pArgs.length;
-                 firstInPairPosition += 2) {
+            for (int firstInPairPosition = 1; firstInPairPosition < pArgs.length; firstInPairPosition += 2) {
                 String from = this.sanitize(pArgs[firstInPairPosition - 1]);
                 String to = this.sanitize(pArgs[firstInPairPosition]);
 

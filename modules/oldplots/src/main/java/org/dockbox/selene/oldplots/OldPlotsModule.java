@@ -21,17 +21,17 @@ import com.google.inject.Inject;
 
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.event.Listener;
-import org.dockbox.selene.api.annotations.files.Format;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.context.CommandContext;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerStartedEvent;
+import org.dockbox.selene.api.events.server.ServerReloadEvent;
+import org.dockbox.selene.api.events.server.ServerStartedEvent;
 import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.api.files.FileType;
+import org.dockbox.selene.api.files.FileTypeProperty;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.properties.AnnotationProperty;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.text.actions.ClickAction;
 import org.dockbox.selene.api.text.actions.HoverAction;
@@ -66,15 +66,11 @@ public class OldPlotsModule {
     public void onLoad(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent) {
         Path worldConfig = this.fileManager.getConfigFile(OldPlotsModule.class, "worlds");
         this.fileManager.copyDefaultFile("oldplots_worlds.yml", worldConfig);
-        Exceptional<PlotWorldModelList> exceptionalList =
-                this.fileManager.read(worldConfig, PlotWorldModelList.class);
+        Exceptional<PlotWorldModelList> exceptionalList = this.fileManager.read(worldConfig, PlotWorldModelList.class);
         exceptionalList.ifPresent(modelList -> this.modelList = modelList);
     }
 
-    @Command(
-            aliases = "oldplots",
-            usage = "oldplots <player{Player}>",
-            permission = "selene.oldplots.list")
+    @Command(aliases = "oldplots", usage = "oldplots <player{Player}>", permission = "selene.oldplots.list")
     public void oldPlotsCommand(Player source, CommandContext ctx) throws InvalidConnectionException {
         if (!ctx.has("player")) {
             source.sendWithPrefix(OldPlotsResources.ERROR_NO_PLAYER);
@@ -86,27 +82,26 @@ public class OldPlotsModule {
         plots = plots.where(OldPlotsIdentifiers.UUID, player.getUniqueId().toString());
 
         List<Text> plotContent = SeleneUtils.emptyList();
-        plots.forEach(
-                row -> {
-                    @NotNull Integer id = row.getValue(OldPlotsIdentifiers.PLOT_ID).get();
-                    @NotNull Integer idX = row.getValue(OldPlotsIdentifiers.PLOT_X).get();
-                    @NotNull Integer idZ = row.getValue(OldPlotsIdentifiers.PLOT_Z).get();
-                    @NonNls
-                    @NotNull
-                    String world = row.getValue(OldPlotsIdentifiers.WORLD).get();
+        plots.forEach(row -> {
+            @NotNull Integer id = row.getValue(OldPlotsIdentifiers.PLOT_ID).get();
+            @NotNull Integer idX = row.getValue(OldPlotsIdentifiers.PLOT_X).get();
+            @NotNull Integer idZ = row.getValue(OldPlotsIdentifiers.PLOT_Z).get();
+            @NonNls
+            @NotNull
+            String world = row.getValue(OldPlotsIdentifiers.WORLD).get();
 
-                    // Only show worlds we can access
-                    if (this.modelList.getWorld(world).isPresent()) {
-                        Text plotLine =
-                                Text.of(OldPlotsResources.SINGLE_PLOT.format(world, idX, idZ).translate(player));
-                        plotLine.onClick(ClickAction.runCommand("/optp " + id));
-                        plotLine.onHover(
-                                HoverAction.showText(
-                                        Text.of(
-                                                OldPlotsResources.PLOT_HOVER.format(world, idX, idZ).translate(player))));
-                        plotContent.add(plotLine);
-                    }
-                });
+            // Only show worlds we can access
+            if (this.modelList.getWorld(world).isPresent()) {
+                Text plotLine =
+                        Text.of(OldPlotsResources.SINGLE_PLOT.format(world, idX, idZ).translate(player));
+                plotLine.onClick(ClickAction.runCommand("/optp " + id));
+                plotLine.onHover(
+                        HoverAction.showText(
+                                Text.of(
+                                        OldPlotsResources.PLOT_HOVER.format(world, idX, idZ).translate(player))));
+                plotContent.add(plotLine);
+            }
+        });
 
         Selene.provide(PaginationBuilder.class)
                 .content(plotContent)
@@ -119,9 +114,8 @@ public class OldPlotsModule {
         Path dataDirectory = Selene.provide(FileManager.class).getDataDir(OldPlotsModule.class);
         Path path = dataDirectory.resolve("oldplots.db");
 
-        return Selene.provide(
-                SQLMan.class,
-                AnnotationProperty.of(Format.SQLite.class),
+        return Selene.provide(SQLMan.class,
+                FileTypeProperty.of(FileType.SQLITE),
                 new SQLitePathProperty(path),
                 new SQLColumnProperty("id", OldPlotsIdentifiers.PLOT_ID),
                 new SQLColumnProperty("plot_id_x", OldPlotsIdentifiers.PLOT_X),
@@ -137,30 +131,22 @@ public class OldPlotsModule {
         SQLMan<?> man = OldPlotsModule.getSQLMan();
         Table plots = man.getTable("plot");
         plots = plots.where(OldPlotsIdentifiers.PLOT_ID, id);
-        plots
-                .first()
-                .ifPresent(
-                        plot -> {
-                            @NotNull Integer idX = plot.getValue(OldPlotsIdentifiers.PLOT_X).get();
-                            @NotNull Integer idZ = plot.getValue(OldPlotsIdentifiers.PLOT_Z).get();
-                            @NonNls
-                            @NotNull
-                            String world = plot.getValue(OldPlotsIdentifiers.WORLD).get();
+        plots.first().ifPresent(plot -> {
+            @NotNull Integer idX = plot.getValue(OldPlotsIdentifiers.PLOT_X).get();
+            @NotNull Integer idZ = plot.getValue(OldPlotsIdentifiers.PLOT_Z).get();
+            @NonNls
+            @NotNull
+            String world = plot.getValue(OldPlotsIdentifiers.WORLD).get();
 
-                            if ("*".equals(world)) source.send(OldPlotsResources.ERROR_WORLDS);
-                            else {
-                                Exceptional<PlotWorldModel> model = this.modelList.getWorld(world);
-                                model
-                                        .ifPresent(
-                                                worldModel -> {
-                                                    Exceptional<Location> location = worldModel.getLocation(idX, idZ);
-                                                    location
-                                                            .ifPresent(source::setLocation)
-                                                            .ifAbsent(() -> source.send(OldPlotsResources.ERROR_CALCULATION));
-                                                })
-                                        .ifAbsent(() -> source.send(OldPlotsResources.ERROR_NO_LOCATION.format(world)));
-                            }
-                        })
-                .ifAbsent(() -> source.send(OldPlotsResources.ERROR_NO_PLOT));
+            if ("*".equals(world)) source.send(OldPlotsResources.ERROR_WORLDS);
+            else {
+                Exceptional<PlotWorldModel> model = this.modelList.getWorld(world);
+                model.ifPresent(worldModel -> {
+                    Exceptional<Location> location = worldModel.getLocation(idX, idZ);
+                    location.ifPresent(source::setLocation)
+                            .ifAbsent(() -> source.send(OldPlotsResources.ERROR_CALCULATION));
+                }).ifAbsent(() -> source.send(OldPlotsResources.ERROR_NO_LOCATION.format(world)));
+            }
+        }).ifAbsent(() -> source.send(OldPlotsResources.ERROR_NO_PLOT));
     }
 }

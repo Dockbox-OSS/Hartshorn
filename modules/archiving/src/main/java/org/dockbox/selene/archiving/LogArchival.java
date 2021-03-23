@@ -21,8 +21,8 @@ import com.google.inject.Inject;
 
 import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.module.Module;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerStartedEvent;
+import org.dockbox.selene.api.events.server.ServerReloadEvent;
+import org.dockbox.selene.api.events.server.ServerStartedEvent;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.server.Selene;

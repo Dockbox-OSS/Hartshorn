@@ -53,7 +53,7 @@ class SQLiteManTest {
 
     private static SQLiteMan getSQLiteMan() {
         SQLiteMan man = new SQLiteMan();
-        if (true) man.stateEnabling(new SQLitePathProperty(SQLiteManTest.getTestFile()));
+        man.stateEnabling(new SQLitePathProperty(SQLiteManTest.getTestFile()));
         return man;
     }
 

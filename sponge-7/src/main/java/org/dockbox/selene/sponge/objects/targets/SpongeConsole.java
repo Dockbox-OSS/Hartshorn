@@ -44,12 +44,10 @@ public final class SpongeConsole extends Console {
 
     @Override
     public void sendWithPrefix(@NotNull Text text) {
-        Sponge.getServer()
-                .getConsole()
-                .sendMessage(
-                        org.spongepowered.api.text.Text.of(
-                                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
-                                SpongeConversionUtil.toSponge(text)));
+        Sponge.getServer().getConsole().sendMessage(org.spongepowered.api.text.Text.of(
+                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
+                SpongeConversionUtil.toSponge(text)
+        ));
     }
 
     @Override

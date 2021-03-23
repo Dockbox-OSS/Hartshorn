@@ -22,48 +22,47 @@ import org.dockbox.selene.api.objects.ReferencedWrapper;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
-
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements Item {
 
-  private String id;
+    private String id;
 
-  protected ReferencedItem(@NotNull T reference) {
-    this.id = this.getId();
-    this.setReference(Exceptional.of(reference));
-  }
+    protected ReferencedItem(@NotNull T reference) {
+        this.id = this.getId();
+        this.setReference(Exceptional.of(reference));
+    }
 
-  @Override
-  public String getId() {
-    return this.id;
-  }
+    @Override
+    public String getId() {
+        return this.id;
+    }
 
-  protected void setId(String id) {
-    this.id = id;
-  }
+    protected void setId(String id) {
+        this.id = id;
+    }
 
-  @Override
-  public Text getDisplayName() {
-    return this.getDisplayName(Selene.getServer().getGlobalConfig().getDefaultLanguage());
-  }
+    @Override
+    public Text getDisplayName() {
+        return this.getDisplayName(Selene.getServer().getGlobalConfig().getDefaultLanguage());
+    }
 
-  @Override
-  public Item stack() {
-    this.setAmount(this.getStackSize());
-    return this;
-  }
+    @Override
+    public Item stack() {
+        this.setAmount(this.getStackSize());
+        return this;
+    }
 
-  protected ReferencedItem(String id, int meta) {
-    this.id = id;
-    T type = this.getById(id, meta);
-    super.setReference(Exceptional.of(type));
-  }
+    protected ReferencedItem(String id, int meta) {
+        this.id = id;
+        T type = this.getById(id, meta);
+        super.setReference(Exceptional.of(type));
+    }
 
-  protected abstract T getById(String id, int meta);
+    protected abstract T getById(String id, int meta);
 
-  @Override
-  public Exceptional<T> constructInitialReference() {
-    return Exceptional.empty(); // Handled by constructors
-  }
+    @Override
+    public Exceptional<T> constructInitialReference() {
+        return Exceptional.empty(); // Handled by constructors
+    }
 }

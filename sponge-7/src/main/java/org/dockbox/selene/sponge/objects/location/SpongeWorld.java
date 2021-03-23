@@ -43,7 +43,8 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
             boolean loadOnStartup,
             @NotNull Vector3N spawnPosition,
             long seed,
-            @NotNull Gamemode defaultGamemode) {
+            @NotNull Gamemode defaultGamemode
+    ) {
         super(worldUniqueId, name, loadOnStartup, spawnPosition, seed, defaultGamemode);
         this.setReference(this.constructInitialReference());
     }

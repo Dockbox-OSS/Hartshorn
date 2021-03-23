@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.util.Map;
 
 public class MultiSizedImage {
+
     private final BufferedImage image;
     private final int xSize;
     private final int ySize;
@@ -47,8 +48,7 @@ public class MultiSizedImage {
     }
 
     private BufferedImage getResizedImage() {
-        BufferedImage bufferedImage =
-                new BufferedImage(xSize * 128, ySize * 128, BufferedImage.TRANSLUCENT);
+        BufferedImage bufferedImage = new BufferedImage(xSize * 128, ySize * 128, BufferedImage.TRANSLUCENT);
         Graphics2D graphics2D = bufferedImage.createGraphics();
         graphics2D.drawImage(image, 0, 0, xSize * 128, ySize * 128, null);
         graphics2D.dispose();

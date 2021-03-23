@@ -138,6 +138,5 @@ public interface ExceptionHelper {
      *
      * @return The exceptional holding either the return type or an exception
      */
-    <T, R> Exceptional<R> handleSafe(
-            Function<T, R> function, T value, Consumer<Throwable> errorConsumer);
+    <T, R> Exceptional<R> handleSafe(Function<T, R> function, T value, Consumer<Throwable> errorConsumer);
 }

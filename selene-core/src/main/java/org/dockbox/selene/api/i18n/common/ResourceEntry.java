@@ -51,16 +51,11 @@ public interface ResourceEntry extends Formattable {
         char[] nativeFormats = "abcdef1234567890klmnor".toCharArray();
         for (char c : nativeFormats)
             temp = temp.replace(String.format("&%s", c), String.format("\u00A7%s", c));
-        return "\u00A7r"
-                + temp.replace(
-                "$1", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_PRIMARY.plain()))
-                .replace(
-                        "$2",
-                        java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_SECONDARY.plain()))
-                .replace(
-                        "$3", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_MINOR.plain()))
-                .replace(
-                        "$4", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_ERROR.plain()));
+        return "\u00A7r" + temp
+                .replace("$1", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_PRIMARY.plain()))
+                .replace("$2", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_SECONDARY.plain()))
+                .replace("$3", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_MINOR.plain()))
+                .replace("$4", java.lang.String.format("\u00A7%s", IntegratedResource.COLOR_ERROR.plain()));
     }
 
     @SuppressWarnings("ClassReferencesSubclass")

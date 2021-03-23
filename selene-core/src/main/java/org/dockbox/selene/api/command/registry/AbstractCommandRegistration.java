@@ -33,7 +33,8 @@ public class AbstractCommandRegistration<T> {
             String[] aliases,
             AbstractPermission permission,
             Command command,
-            T sourceInstance) {
+            T sourceInstance
+    ) {
         this.primaryAlias = primaryAlias;
         this.aliases = aliases;
         this.permission = permission;

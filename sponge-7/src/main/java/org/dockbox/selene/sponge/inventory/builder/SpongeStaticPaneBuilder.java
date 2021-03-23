@@ -54,16 +54,14 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
-                .ifPresent(
-                        layout -> {
-                            this.builder = View.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
-                            this.layout(layout);
-                        })
-                .ifAbsent(
-                        () -> {
-                            Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
-                            this.builder = View.builder(InventoryArchetypes.CHEST);
-                        });
+                .ifPresent(layout -> {
+                    this.builder = View.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
+                    this.layout(layout);
+                })
+                .ifAbsent(() -> {
+                    Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
+                    this.builder = View.builder(InventoryArchetypes.CHEST);
+                });
     }
 
     private void layout(InventoryLayout layout) {

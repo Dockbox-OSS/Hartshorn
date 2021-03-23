@@ -41,8 +41,7 @@ public enum IntegratedResource implements ResourceEntry {
     // Errors
     // - Confirm command errors
     CONFIRM_INVALID_ID("$4Could not confirm command: Invalid runner ID", "confirm.invalid.id"),
-    CONFIRM_INVALID_ENTRY(
-            "$4Could not confirm command: Invalid runner entry", "confirm.invalid.entry"),
+    CONFIRM_INVALID_ENTRY("$4Could not confirm command: Invalid runner entry", "confirm.invalid.entry"),
     CONFIRM_EXPIRED("$4You have no commands waiting for confirmation", "confirm.expired"),
     CONFIRM_WRONG_SOURCE("$4This command can only be used by players", "confirm.invalid.source"),
 
@@ -52,17 +51,13 @@ public enum IntegratedResource implements ResourceEntry {
     LOST_REFERENCE("$4Reference to object lost", "error.reference.lost"),
 
     // Discord
-    DISCORD_COMMAND_UNKNOWN(
-            "Sorry, I don't know what to do with that command!", "discord.command.unknown"),
-    DISCORD_COMMAND_NOT_PERMITTED(
-            "You are not permitted to use that command!", "discord.command.notpermitted"),
-    DISCORD_COMMAND_ERRORED(
-            "Sorry, I could not start that command. Please report this in our support channel.",
+    DISCORD_COMMAND_UNKNOWN("Sorry, I don't know what to do with that command!", "discord.command.unknown"),
+    DISCORD_COMMAND_NOT_PERMITTED("You are not permitted to use that command!", "discord.command.notpermitted"),
+    DISCORD_COMMAND_ERRORED("Sorry, I could not start that command. Please report this in our support channel.",
             "discord.command.error"),
 
     // CommandBus
-    CONFIRM_COMMAND_MESSAGE(
-            "$1This command requires confirmation, click $2[here] $1to confirm", "confirm.message"),
+    CONFIRM_COMMAND_MESSAGE("$1This command requires confirmation, click $2[here] $1to confirm", "confirm.message"),
     CONFIRM_COMMAND_MESSAGE_HOVER("$1Confirm running command", "confirm.message.hover"),
     MISSING_ARGUMENTS("$4The command requires arguments", "error.command.missingargs"),
 
@@ -76,9 +71,7 @@ public enum IntegratedResource implements ResourceEntry {
     CONSOLE("Console", "source.console"),
 
     // Warnings
-    IN_ACTIVE_COOLDOWN(
-            "$4You are in cooldown! Please wait before performing this action again.",
-            "cooldown.warning"),
+    IN_ACTIVE_COOLDOWN("$4You are in cooldown! Please wait before performing this action again.", "cooldown.warning"),
 
     // Enchantments
     AQUA_AFFINITY("Aqua Affinity", "minecraft.enchant.aquaaffinity"),

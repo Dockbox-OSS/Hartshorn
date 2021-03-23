@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.api.command.context;
 
-import org.dockbox.selene.api.command.context.CommandValue.Argument;
-import org.dockbox.selene.api.command.context.CommandValue.Flag;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.Location;
@@ -32,13 +30,13 @@ public interface CommandContext {
 
     int flags();
 
-    <T> Exceptional<Argument<T>> argument(String key);
+    <T> Exceptional<CommandArgument<T>> argument(String key);
 
     <T> T get(String key);
 
     <T> Exceptional<T> optional(String key);
 
-    <T> Exceptional<Flag<T>> flag(String key);
+    <T> Exceptional<CommandFlag<T>> flag(String key);
 
     boolean has(String key);
 

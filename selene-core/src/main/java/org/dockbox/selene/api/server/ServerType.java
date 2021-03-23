@@ -43,7 +43,8 @@ public enum ServerType {
             boolean hasNMSAccess,
             boolean isModded,
             String minimumVersion,
-            String preferredVersion) {
+            String preferredVersion
+    ) {
         this.displayName = displayName;
         this.hasNMSAccess = hasNMSAccess;
         this.isModded = isModded;

@@ -19,14 +19,14 @@ package org.dockbox.selene.worldmanagement;
 
 import com.google.inject.Inject;
 
-import org.dockbox.selene.api.WorldStorageService;
+import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.source.CommandSource;
-import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerPortalEvent;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerStartedEvent;
+import org.dockbox.selene.api.events.player.PlayerPortalEvent;
+import org.dockbox.selene.api.events.server.ServerReloadEvent;
+import org.dockbox.selene.api.events.server.ServerStartedEvent;
 import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.location.World;
 import org.dockbox.selene.api.server.Selene;
@@ -61,7 +61,7 @@ public class WorldManagement {
 
     @Command(aliases = "blacklist", usage = "blacklist <world{String}>")
     public void blacklist(CommandSource src, String world) {
-        if (Selene.provide(WorldStorageService.class).hasWorld(world)) {
+        if (Selene.provide(Worlds.class).hasWorld(world)) {
             config.getUnloadBlacklist().add(world);
             config.save();
             src.send(WorldManagementResources.WORLD_BLACKLIST_ADDED.format(world));
@@ -71,7 +71,7 @@ public class WorldManagement {
     }
 
     private void unloadEmptyWorlds() {
-        Selene.provide(WorldStorageService.class).getLoadedWorlds()
+        Selene.provide(Worlds.class).getLoadedWorlds()
                 .stream()
                 .filter(world -> world.getPlayerCount() == 0)
                 .filter(world -> config.getUnloadBlacklist().contains(world.getName()))

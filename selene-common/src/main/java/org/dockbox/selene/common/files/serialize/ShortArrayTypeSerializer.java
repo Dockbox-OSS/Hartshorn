@@ -47,8 +47,7 @@ public class ShortArrayTypeSerializer implements TypeSerializer<short[]> {
     }
 
     @Override
-    public void serialize(Type type, short @Nullable [] obj, ConfigurationNode node)
-            throws SerializationException {
+    public void serialize(Type type, short @Nullable [] obj, ConfigurationNode node) throws SerializationException {
         List<Short> bytes = Shorts.asList(obj);
         node.set(this.ttlb, bytes);
     }

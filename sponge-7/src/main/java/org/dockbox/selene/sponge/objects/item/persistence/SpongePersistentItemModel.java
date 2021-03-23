@@ -28,6 +28,7 @@ import org.dockbox.selene.api.objects.item.persistence.PersistentItemModel;
 import org.dockbox.selene.api.objects.keys.PersistentDataKey;
 import org.dockbox.selene.api.objects.keys.StoredPersistentKey;
 import org.dockbox.selene.api.text.Text;
+import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 
 import java.util.List;
@@ -55,6 +56,7 @@ public class SpongePersistentItemModel extends PersistentItemModel {
         this.lore = item.getLore();
         this.amount = item.getAmount();
         this.enchantments = item.getEnchantments();
+        this.persistentData = SeleneUtils.emptyMap();
         for (Entry<PersistentDataKey<?>, Object> persistentEntry : item.getPersistentData().entrySet()) {
             persistentData.put(persistentEntry.getKey().getDataKeyId(), persistentEntry.getValue());
         }

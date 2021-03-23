@@ -91,43 +91,6 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
         }
     }
 
-    private ConfigurationLoader<?> getConfigurationLoader(Path file) throws UnsupportedFileException {
-        AbstractConfigurationLoader.Builder<?, ?> builder;
-        switch (this.getFileType()) {
-            case YAML:
-                builder = YamlConfigurationLoader.builder().nodeStyle(NodeStyle.FLOW);
-                break;
-            case JSON:
-                builder = GsonConfigurationLoader.builder();
-                break;
-            case XML:
-                builder = XmlConfigurationLoader.builder();
-                break;
-            case MOD_CONFIG:
-            case CONFIG:
-                builder = HoconConfigurationLoader.builder();
-                break;
-            default:
-                throw new UnsupportedFileException(this.getFileType().getExtension());
-        }
-        return builder
-                .path(file)
-                .defaultOptions(
-                        opts ->
-                                opts.serializers(
-                                        build ->
-                                                build
-                                                        .registerAll(SeleneTypeSerializers.collection())
-                                                        .register(
-                                                                type -> {
-                                                                    AnnotatedType annotatedType = GenericTypeReflector.annotate(type);
-                                                                    return annotatedType.isAnnotationPresent(Metadata.class)
-                                                                            && annotatedType.getAnnotation(Metadata.class).serializable();
-                                                                },
-                                                                ObjectMapper.factory().asTypeSerializer())))
-                .build();
-    }
-
     @SuppressWarnings("unchecked")
     @NotNull
     @Override
@@ -167,5 +130,36 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
                 throw new UnsupportedOperationException(
                         "Configurate does not support " + fileType.getExtension());
         }
+    }
+
+    private ConfigurationLoader<?> getConfigurationLoader(Path file) throws UnsupportedFileException {
+        AbstractConfigurationLoader.Builder<?, ?> builder;
+        switch (this.getFileType()) {
+            case YAML:
+                builder = YamlConfigurationLoader.builder().nodeStyle(NodeStyle.FLOW);
+                break;
+            case JSON:
+                builder = GsonConfigurationLoader.builder();
+                break;
+            case XML:
+                builder = XmlConfigurationLoader.builder();
+                break;
+            case MOD_CONFIG:
+            case CONFIG:
+                builder = HoconConfigurationLoader.builder();
+                break;
+            default:
+                throw new UnsupportedFileException(this.getFileType().getExtension());
+        }
+        return builder
+                .path(file).defaultOptions(opts ->
+                        opts.serializers(build -> build
+                                .registerAll(SeleneTypeSerializers.collection())
+                                .register(type -> {
+                                    AnnotatedType annotatedType = GenericTypeReflector.annotate(type);
+                                    return annotatedType.isAnnotationPresent(Metadata.class)
+                                            && annotatedType.getAnnotation(Metadata.class).serializable();
+                                }, ObjectMapper.factory().asTypeSerializer()))
+                ).build();
     }
 }

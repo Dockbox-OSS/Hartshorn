@@ -91,8 +91,7 @@ public class TestConfigurationLoader extends AbstractConfigurationLoader<BasicCo
         return BasicConfigurationNode.root(options);
     }
 
-    public static final class Builder
-            extends AbstractConfigurationLoader.Builder<Builder, TestConfigurationLoader> {
+    public static final class Builder extends AbstractConfigurationLoader.Builder<Builder, TestConfigurationLoader> {
 
         @Override
         public TestConfigurationLoader build() {

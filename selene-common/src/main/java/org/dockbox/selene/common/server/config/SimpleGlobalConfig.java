@@ -41,14 +41,19 @@ public class SimpleGlobalConfig extends AbstractConfiguration<SimpleGlobalConfig
 
     @Accessor(getter = "getEnvironment")
     private final Environment environment = Environment.DEVELOPMENT;
+
     @Inject
     @Extract(Behavior.SKIP)
     private transient IntegratedModule integratedModule;
+
     @Accessor(getter = "getDefaultLanguage")
     private Language defaultLanguage = Language.EN_US;
+
     @Accessor(getter = "getStacktracesAllowed")
     private boolean stacktracesAllowed = true;
+
     private boolean friendlyExceptions = true;
+
     @Accessor(getter = "getDiscordLoggingCategoryId")
     private String discordLoggingCategoryId = "0";
 

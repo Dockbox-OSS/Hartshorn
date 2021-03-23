@@ -24,7 +24,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
 import org.dockbox.selene.api.MinecraftVersion;
-import org.dockbox.selene.api.PlayerStorageService;
+import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.packet.PacketEvent;
@@ -39,6 +39,7 @@ import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
 import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
+import org.dockbox.selene.sponge.listeners.SpongeEntityListener;
 import org.dockbox.selene.sponge.listeners.SpongePlayerListener;
 import org.dockbox.selene.sponge.listeners.SpongeServerListener;
 import org.dockbox.selene.sponge.objects.composite.Composite;
@@ -121,17 +122,16 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
         return ((SpongeAPI7Bootstrap) getInstance()).container;
     }
 
-    @SuppressWarnings("AnonymousInnerClassMayBeStatic")
+    @SuppressWarnings({ "AnonymousInnerClassMayBeStatic", "UnstableApiUsage" })
     @Listener
     public void onGamePreInit(GamePreInitializationEvent event) {
-        Composite.ITEM_KEY =
-                Key.builder()
-                        .type(new TypeToken<MapValue<String, Object>>() {
-                        })
-                        .query(DataQuery.of(Composite.QUERY))
-                        .id(Composite.ID)
-                        .name(Composite.NAME)
-                        .build();
+        Composite.ITEM_KEY = Key.builder()
+                .type(new TypeToken<MapValue<String, Object>>() {
+                })
+                .query(DataQuery.of(Composite.QUERY))
+                .id(Composite.ID)
+                .name(Composite.NAME)
+                .build();
 
         DataRegistration.builder()
                 .dataClass(MutableCompositeData.class)
@@ -156,6 +156,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
                 Selene.provide(SpongeServerListener.class),
                 Selene.provide(SpongeDiscordListener.class),
                 Selene.provide(SpongePlayerListener.class),
+                Selene.provide(SpongeEntityListener.class),
                 Selene.provide(PlotSquaredEventListener.class)
         );
 
@@ -181,55 +182,46 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
     private static void preparePacketGateListeners(PacketGate packetGate) {
         EventBus bus = Selene.provide(EventBus.class);
         Set<Class<? extends Packet>> adaptedPackets = SeleneUtils.emptySet();
-        bus.getListenersToInvokers()
-                .forEach(
-                        (k, v) ->
-                                v.forEach(
-                                        eventWrapper -> {
-                                            if (Reflect.isAssignableFrom(
-                                                    PacketEvent.class, eventWrapper.getEventType())) {
-                                                Class<? extends Packet> packet =
-                                                        eventWrapper
-                                                                .getMethod()
-                                                                .getAnnotation(
-                                                                        org.dockbox.selene.api.annotations.event.filter.Packet.class)
-                                                                .value();
+        bus.getListenersToInvokers().forEach((k, v) -> v.forEach(
+                eventWrapper -> {
+                    if (Reflect.isAssignableFrom(
+                            PacketEvent.class, eventWrapper.getEventType())) {
+                        Class<? extends Packet> packet = eventWrapper.getMethod()
+                                .getAnnotation(org.dockbox.selene.api.annotations.event.filter.Packet.class)
+                                .value();
 
-                                                // Adapters post the event globally, so we only need to register it once.
-                                                // This also avoids double-posting of the same event.
-                                                if (!adaptedPackets.contains(packet)) {
-                                                    Packet emptyPacket = Selene.provide(packet);
-                                                    packetGate.registerListener(
-                                                            SpongeAPI7Bootstrap.getPacketGateAdapter(packet),
-                                                            ListenerPriority.DEFAULT,
-                                                            emptyPacket.getNativePacketType());
-                                                    adaptedPackets.add(packet);
-                                                }
-                                            }
-                                        }));
+                        // Adapters post the event globally, so we only need to register it once.
+                        // This also avoids double-posting of the same event.
+                        if (!adaptedPackets.contains(packet)) {
+                            Packet emptyPacket = Selene.provide(packet);
+                            packetGate.registerListener(
+                                    SpongeAPI7Bootstrap.getPacketGateAdapter(packet),
+                                    ListenerPriority.DEFAULT,
+                                    emptyPacket.getNativePacketType());
+                            adaptedPackets.add(packet);
+                        }
+                    }
+                }));
     }
 
     private static PacketListenerAdapter getPacketGateAdapter(Class<? extends Packet> packet) {
         return new PacketListenerAdapter() {
             @Override
             public void onPacketWrite(
-                    eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent,
-                    PacketConnection connection) {
-                Selene.provide(PlayerStorageService.class)
+                    eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent, PacketConnection connection) {
+                Selene.provide(Players.class)
                         .getPlayer(connection.getPlayerUUID())
-                        .ifPresent(
-                                player -> {
-                                    // Shadowed NMS type
-                                    net.minecraft.network.Packet<?> nativePacket = packetEvent.getPacket();
-                                    Packet internalPacket =
-                                            Selene.provide(packet, new NativePacketProperty<>(nativePacket));
+                        .ifPresent(player -> {
+                            // Shadowed NMS type
+                            net.minecraft.network.Packet<?> nativePacket = packetEvent.getPacket();
+                            Packet internalPacket = Selene.provide(packet, new NativePacketProperty<>(nativePacket));
 
-                                    PacketEvent<? extends Packet> event =
-                                            new PacketEvent<>(internalPacket, player).post();
-                                    packetEvent.setCancelled(event.isCancelled());
-                                    if (event.isModified() && internalPacket instanceof NMSPacket)
-                                        packetEvent.setPacket(((NMSPacket<?>) internalPacket).getPacket());
-                                });
+                            PacketEvent<? extends Packet> event =
+                                    new PacketEvent<>(internalPacket, player).post();
+                            packetEvent.setCancelled(event.isCancelled());
+                            if (event.isModified() && internalPacket instanceof NMSPacket)
+                                packetEvent.setPacket(((NMSPacket<?>) internalPacket).getPacket());
+                        });
             }
         };
     }
@@ -278,8 +270,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
         }
         else {
             // Attempt to get the JDA once every 10 seconds until successful
-            new SpongeTaskRunner()
-                    .acceptDelayed(() -> this.onServerStartedLate(event), 10, TimeUnit.SECONDS);
+            new SpongeTaskRunner().acceptDelayed(() -> this.onServerStartedLate(event), 10, TimeUnit.SECONDS);
         }
     }
 }

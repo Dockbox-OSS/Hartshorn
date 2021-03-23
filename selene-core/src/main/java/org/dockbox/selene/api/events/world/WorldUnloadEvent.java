@@ -15,26 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api;
+package org.dockbox.selene.api.events.world;
 
-import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.World;
-
-import java.util.List;
 import java.util.UUID;
 
-public interface WorldStorageService {
-    List<World> getLoadedWorlds();
+/** The event fired when a world is unloaded. */
+public class WorldUnloadEvent extends WorldEvent {
+    private final UUID uniqueId;
 
-    List<UUID> getAllWorldUUIDs();
+    public WorldUnloadEvent(UUID uniqueId) {
+        this.uniqueId = uniqueId;
+    }
 
-    Exceptional<World> getWorld(String name);
-
-    Exceptional<World> getWorld(UUID uuid);
-
-    boolean hasWorld(String name);
-
-    boolean hasWorld(UUID uuid);
-
-    UUID getRootWorldId();
+    public UUID getUniqueId() {
+        return this.uniqueId;
+    }
 }

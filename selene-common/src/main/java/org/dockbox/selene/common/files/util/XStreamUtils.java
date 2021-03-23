@@ -68,6 +68,7 @@ import java.util.regex.Pattern;
  * @see <a href="http://x-stream.github.io/tutorial.html">XStream tutorial</a>
  * @see <a href="http://x-stream.github.io/security.html">XStream security</a>
  */
+@SuppressWarnings("unused")
 public final class XStreamUtils {
 
     private static final String UTF_8 = "UTF-8";
@@ -85,8 +86,7 @@ public final class XStreamUtils {
      * @param allowedTypes
      *         any other types allowed to be loaded
      */
-    public static <T> T fromXML(Class<T> type, File file, Class<?>... allowedTypes)
-            throws IOException {
+    public static <T> T fromXML(Class<T> type, File file, Class<?>... allowedTypes) throws IOException {
         XStream stream = getXStream();
         stream.allowTypes(new Class[]{ type });
         stream.allowTypes(allowedTypes);
@@ -108,8 +108,7 @@ public final class XStreamUtils {
      * @param type
      *         does not allow type, only check is instance
      */
-    private static <T> @Nullable T fromXml(XStream stream, Class<T> type, File file, String charSet)
-            throws IOException {
+    private static <T> @Nullable T fromXml(XStream stream, Class<T> type, File file, String charSet) throws IOException {
         Object object = fromXml(stream, file, charSet);
         if (type.isInstance(object)) {
             return type.cast(object);
@@ -122,19 +121,15 @@ public final class XStreamUtils {
     private static void configureXStream(XStream xstream) {
         if (null == aliasedTypes) {
             aliasedTypes = SeleneUtils.emptyConcurrentMap();
-            Collection<Class<?>> annotatedTypes =
-                    Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Metadata.class);
-            annotatedTypes.forEach(
-                    type -> {
-                        Metadata metadata = type.getAnnotation(Metadata.class);
-                        if (aliasedTypes.containsKey(metadata.alias()))
-                            Selene.log()
-                                    .warn(
-                                            "Attempting to register a duplicate entity alias '" + metadata.alias() + "'");
-                        xstream.alias(metadata.alias(), type);
-                        // Put the alias last, so if xstream.alias ever throws a Exception this won't be called
-                        aliasedTypes.put(metadata.alias(), type);
-                    });
+            Collection<Class<?>> annotatedTypes = Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Metadata.class);
+            annotatedTypes.forEach(type -> {
+                Metadata metadata = type.getAnnotation(Metadata.class);
+                if (aliasedTypes.containsKey(metadata.alias()))
+                    Selene.log().warn("Attempting to register a duplicate entity alias '" + metadata.alias() + "'");
+                xstream.alias(metadata.alias(), type);
+                // Put the alias last, so if xstream.alias ever throws a Exception this won't be called
+                aliasedTypes.put(metadata.alias(), type);
+            });
         }
 
         xstream.addPermission(NoTypePermission.NONE);
@@ -202,10 +197,8 @@ public final class XStreamUtils {
     }
 
     /** Prefer not to call this method directly and used the default UTF-8 export functions */
-    public static void toXml(XStream stream, Object object, File file, String encoding)
-            throws IOException {
-        try (OutputStreamWriter writer =
-                     new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(file)), encoding)) {
+    public static void toXml(XStream stream, Object object, File file, String encoding) throws IOException {
+        try (OutputStreamWriter writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(file)), encoding)) {
             stream.marshal(object, new PrettyPrintWriter(writer));
         }
     }
@@ -230,9 +223,7 @@ public final class XStreamUtils {
         return fromXmlQuietly(stream, file, UTF_8, type, fallback);
     }
 
-    private static <T> @Nullable T fromXmlQuietly(
-            XStream stream, File file, String charSet, Class<T> type, Supplier<T> fallback) {
-
+    private static <T> @Nullable T fromXmlQuietly(XStream stream, File file, String charSet, Class<T> type, Supplier<T> fallback) {
         if (!file.exists() || !file.isFile()) {
             return null != fallback ? fallback.get() : null;
         }
@@ -243,7 +234,7 @@ public final class XStreamUtils {
                 return type.cast(object);
             }
             else {
-                String message = "Unexpected object type! expected: " + type + ", got " + object.getClass();
+                String message = "Unexpected object type! expected: " + type + ", got " + (object != null ? object.getClass() : "null");
                 Selene.log().warn(message);
                 assert false : message;
                 return null != fallback ? fallback.get() : null;
@@ -265,9 +256,7 @@ public final class XStreamUtils {
     }
 
     private static void toXmlQuietly(XStream stream, Object object, File file) {
-        try (OutputStreamWriter writer =
-                     new OutputStreamWriter(
-                             new BufferedOutputStream(new FileOutputStream(file)), StandardCharsets.UTF_8)) {
+        try (OutputStreamWriter writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(file)), StandardCharsets.UTF_8)) {
             stream.toXML(object, writer);
         }
         catch (IOException e) {

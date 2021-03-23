@@ -24,23 +24,22 @@ import java.util.List;
 
 public abstract class AbstractArgumentConverter<T> implements ArgumentConverter<T> {
 
-  private final String[] keys;
-  private final Class<T> type;
+    private final String[] keys;
+    private final Class<T> type;
 
-  protected AbstractArgumentConverter(Class<T> type, String... keys) {
-    if (0 == keys.length)
-      throw new IllegalArgumentException(
-          "Cannot create argument converter without at least one key");
-    this.keys = keys;
-    this.type = type;
-    ArgumentConverterRegistry.registerConverter(this);
-  }
+    protected AbstractArgumentConverter(Class<T> type, String... keys) {
+        if (0 == keys.length)
+            throw new IllegalArgumentException("Cannot create argument converter without at least one key");
+        this.keys = keys;
+        this.type = type;
+        ArgumentConverterRegistry.registerConverter(this);
+    }
 
-  public List<String> getKeys() {
-    return Arrays.asList(this.keys);
-  }
+    public List<String> getKeys() {
+        return Arrays.asList(this.keys);
+    }
 
-  public Class<T> getType() {
-    return this.type;
-  }
+    public Class<T> getType() {
+        return this.type;
+    }
 }

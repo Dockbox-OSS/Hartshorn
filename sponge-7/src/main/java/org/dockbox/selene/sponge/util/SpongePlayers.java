@@ -19,7 +19,7 @@ package org.dockbox.selene.sponge.util;
 
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.player.Player;
-import org.dockbox.selene.common.DefaultPlayerStorageService;
+import org.dockbox.selene.common.DefaultPlayers;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class SpongePlayerStorageService extends DefaultPlayerStorageService {
+public class SpongePlayers extends DefaultPlayers {
     @NotNull
     @Override
     public List<Player> getOnlinePlayers() {
@@ -42,15 +42,13 @@ public class SpongePlayerStorageService extends DefaultPlayerStorageService {
     @NotNull
     @Override
     public Exceptional<Player> getPlayer(@NotNull String name) {
-        return SpongePlayerStorageService.getPlayer(
-                Exceptional.of(Sponge.getServer().getPlayer(name)), name);
+        return SpongePlayers.getPlayer(Exceptional.of(Sponge.getServer().getPlayer(name)), name);
     }
 
     @NotNull
     @Override
     public Exceptional<Player> getPlayer(@NotNull UUID uuid) {
-        return SpongePlayerStorageService.getPlayer(
-                Exceptional.of(Sponge.getServer().getPlayer(uuid)), uuid);
+        return SpongePlayers.getPlayer(Exceptional.of(Sponge.getServer().getPlayer(uuid)), uuid);
     }
 
     private static Exceptional<Player> getPlayer(
@@ -60,8 +58,7 @@ public class SpongePlayerStorageService extends DefaultPlayerStorageService {
         }
         else {
             Exceptional<Player> player = Exceptional.empty();
-            Exceptional<UserStorageService> ouss =
-                    Exceptional.of(Sponge.getServiceManager().provide(UserStorageService.class));
+            Exceptional<UserStorageService> ouss = Exceptional.of(Sponge.getServiceManager().provide(UserStorageService.class));
             Exceptional<User> ou;
             if (obj instanceof UUID) {
                 ou = ouss.flatMap(uss -> Exceptional.of(uss.get((UUID) obj)));

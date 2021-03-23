@@ -15,20 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.commandparameters.exception;
+package org.dockbox.selene.api.events.server;
 
-import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
-
-public class ConstructorDefinitionError extends CheckedSeleneException {
-    public ConstructorDefinitionError(String message) {
-        super(message);
-    }
-
-    public ConstructorDefinitionError(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ConstructorDefinitionError(Throwable cause) {
-        super(cause);
-    }
+/**
+ * The event fired when the server is initiating/initializing. Typically this is the first event
+ * to be fired.
+ */
+public class ServerInitEvent extends ServerEvent {
 }

@@ -23,9 +23,9 @@ import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.CommandBus;
 import org.dockbox.selene.api.command.context.CommandContext;
-import org.dockbox.selene.api.command.context.CommandValue.Argument;
+import org.dockbox.selene.api.command.context.CommandArgument;
 import org.dockbox.selene.api.events.EventBus;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
+import org.dockbox.selene.api.events.server.ServerReloadEvent;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.entry.IntegratedResource;
 import org.dockbox.selene.api.module.ModuleContext;
@@ -77,11 +77,10 @@ public class IntegratedServer implements IntegratedModule {
                     .translate(source).asText());
             content.add(IntegratedServerResources.SERVER_MODULES.translate(source).asText());
 
-            em.getRegisteredModuleIds()
-                    .forEach(id -> em.getHeader(id)
-                            .map(e -> IntegratedServer.generateText(e, source))
-                            .ifPresent(content::add)
-                    );
+            em.getRegisteredModuleIds().forEach(id -> em.getHeader(id)
+                    .map(e -> IntegratedServer.generateText(e, source))
+                    .ifPresent(content::add)
+            );
 
             pb.title(IntegratedServerResources.PAGINATION_TITLE.translate(source).asText());
             pb.content(content);
@@ -107,7 +106,7 @@ public class IntegratedServer implements IntegratedModule {
     @Command(aliases = "module", usage = "module <id{Module}>")
     public static void debugModule(MessageReceiver src, CommandContext ctx) {
         Reflect.runWithInstance(ModuleManager.class, em -> {
-            Exceptional<Argument<Module>> oarg = ctx.argument("id");
+            Exceptional<CommandArgument<Module>> oarg = ctx.argument("id");
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
                 return;
@@ -136,7 +135,7 @@ public class IntegratedServer implements IntegratedModule {
     public static void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = Selene.provide(EventBus.class);
         if (ctx.has("id")) {
-            Exceptional<Argument<Module>> oarg = ctx.argument("id");
+            Exceptional<CommandArgument<Module>> oarg = ctx.argument("id");
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
                 return;
@@ -184,23 +183,12 @@ public class IntegratedServer implements IntegratedModule {
 
         String mcVersion = Selene.getServer().getMinecraftVersion().getReadableVersionString();
 
-        String javaVersion = System.getProperty("java.version");
-        String javaVendor = System.getProperty("java.vendor");
-
-        String jvmVersion = System.getProperty("java.vm.version");
-        String jvmName = System.getProperty("java.vm.name");
-        String jvmVendor = System.getProperty("java.vm.vendor");
-
-        String javaRuntimeVersion = System.getProperty("java.runtime.version");
-        String classVersion = System.getProperty("java.class.version");
+        String[] system = SeleneUtils.getAll(System::getProperty,
+                "java.version", "java.vendor", "java.vm.version", "java.vm.name", "java.vm.vendor", "java.runtime.version", "java.class.version");
 
         src.send(IntegratedServerResources.PLATFORM_INFORMATION.format(
-                st.getDisplayName(), platformVersion,
-                mcVersion,
-                javaVersion, javaVendor,
-                jvmName, jvmVersion, jvmVendor,
-                javaRuntimeVersion, classVersion
-        ));
+                st.getDisplayName(), platformVersion, mcVersion, system[0], system[1], system[2], system[2], system[3], system[4], system[5])
+        );
     }
 
     @Override
@@ -210,7 +198,7 @@ public class IntegratedServer implements IntegratedModule {
             src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
             return;
         }
-        Exceptional<Argument<String>> optionalCooldownId = ctx.argument("cooldownId");
+        Exceptional<CommandArgument<String>> optionalCooldownId = ctx.argument("cooldownId");
 
         // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
         // argument here is just a confirmation that the source is correct.

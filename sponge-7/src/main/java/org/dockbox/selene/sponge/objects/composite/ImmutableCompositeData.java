@@ -45,13 +45,11 @@ public class ImmutableCompositeData
     @Override
     protected void registerGetters() {
         this.registerFieldGetter(Composite.ITEM_KEY, () -> this.data);
-        this.registerKeyValue(
-                Composite.ITEM_KEY,
-                () ->
-                        Sponge.getRegistry()
-                                .getValueFactory()
-                                .createMapValue(Composite.ITEM_KEY, this.data, SeleneUtils.emptyMap())
-                                .asImmutable());
+        this.registerKeyValue(Composite.ITEM_KEY, () -> Sponge.getRegistry()
+                .getValueFactory()
+                .createMapValue(Composite.ITEM_KEY, this.data, SeleneUtils.emptyMap())
+                .asImmutable()
+        );
     }
 
     @Override

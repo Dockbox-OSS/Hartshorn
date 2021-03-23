@@ -17,23 +17,14 @@
 
 package org.dockbox.selene.api.command.context;
 
-@SuppressWarnings("ClassReferencesSubclass")
-public class CommandValue<T> {
+public abstract class CommandParameter<T> {
 
     private final String key;
     private final T value;
 
-    public CommandValue(T value, String key) {
+    protected CommandParameter(T value, String key) {
         this.key = key;
         this.value = value;
-    }
-
-    public Argument<T> asArgument() {
-        return (Argument<T>) this;
-    }
-
-    public Flag<T> asFlag() {
-        return (Flag<T>) this;
     }
 
     public String getKey() {
@@ -44,21 +35,4 @@ public class CommandValue<T> {
         return this.value;
     }
 
-    public enum Type {
-        ARGUMENT,
-        FLAG,
-        BOTH
-    }
-
-    public static class Argument<T> extends CommandValue<T> {
-        public Argument(T value, String key) {
-            super(value, key);
-        }
-    }
-
-    public static class Flag<T> extends CommandValue<T> {
-        public Flag(T value, String key) {
-            super(value, key);
-        }
-    }
 }

@@ -43,26 +43,19 @@ public final class ProxyProperty<T, R> implements InjectorProperty<Class<T>> {
         this.delegate = delegate;
     }
 
-    public static <T, R> ProxyProperty<T, R> of(
-            Class<T> type, Method target, BiFunction<T, Object[], R> proxyFunction) {
-        return new ProxyProperty<>(
-                type, target, (instance, args, holder) -> proxyFunction.apply(instance, args));
+    public static <T, R> ProxyProperty<T, R> of(Class<T> type, Method target, BiFunction<T, Object[], R> proxyFunction) {
+        return new ProxyProperty<>(type, target, (instance, args, holder) -> proxyFunction.apply(instance, args));
     }
 
-    public static <T, R> ProxyProperty<T, R> of(
-            Class<T> type, Method target, BiConsumer<T, Object[]> proxyFunction) {
-        return new ProxyProperty<>(
-                type,
-                target,
-                (instance, args, holder) -> {
-                    proxyFunction.accept(instance, args);
-                    //noinspection ReturnOfNull
-                    return null;
-                });
+    public static <T, R> ProxyProperty<T, R> of(Class<T> type, Method target, BiConsumer<T, Object[]> proxyFunction) {
+        return new ProxyProperty<>(type, target, (instance, args, holder) -> {
+            proxyFunction.accept(instance, args);
+            //noinspection ReturnOfNull
+            return null;
+        });
     }
 
-    public static <T, R> ProxyProperty<T, R> of(
-            Class<T> type, Method target, ProxyFunction<T, R> proxyFunction) {
+    public static <T, R> ProxyProperty<T, R> of(Class<T> type, Method target, ProxyFunction<T, R> proxyFunction) {
         return new ProxyProperty<>(type, target, proxyFunction);
     }
 

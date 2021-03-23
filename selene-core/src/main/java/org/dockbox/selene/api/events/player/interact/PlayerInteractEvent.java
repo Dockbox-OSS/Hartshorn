@@ -17,17 +17,14 @@
 
 package org.dockbox.selene.api.events.player.interact;
 
-import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.events.AbstractTargetCancellableEvent;
-import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.player.ClickType;
 import org.dockbox.selene.api.objects.player.Hand;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.objects.player.Sneaking;
 import org.dockbox.selene.api.objects.targets.Target;
-import org.dockbox.selene.api.objects.tuple.Vector3N;
 
-public class PlayerInteractEvent extends AbstractTargetCancellableEvent {
+public abstract class PlayerInteractEvent extends AbstractTargetCancellableEvent {
 
     private final Sneaking sneaking;
     private final Hand hand;
@@ -62,46 +59,4 @@ public class PlayerInteractEvent extends AbstractTargetCancellableEvent {
         if (target instanceof Player) super.setTarget(target);
     }
 
-    public static class PlayerInteractBlockEvent extends PlayerInteractEvent {
-
-        private final Location blockLocation;
-
-        public PlayerInteractBlockEvent(
-                Player player, Hand hand, ClickType clickType, Location blockLocation) {
-            super(player, hand, clickType);
-            this.blockLocation = blockLocation;
-        }
-
-        public Location getBlockLocation() {
-            return this.blockLocation;
-        }
-    }
-
-    public static final class PlayerInteractEntityEvent<T extends Entity<?>>
-            extends PlayerInteractEvent {
-
-        private final T entity;
-        private final Vector3N interactionPoint;
-
-        public PlayerInteractEntityEvent(Player player, T entity, Vector3N interactionPoint) {
-            super(player, Hand.EITHER, ClickType.SECONDARY);
-            this.entity = entity;
-            this.interactionPoint = interactionPoint;
-        }
-
-        public Vector3N getInteractionPoint() {
-            return this.interactionPoint;
-        }
-
-        public T getEntity() {
-            return this.entity;
-        }
-    }
-
-    public static class PlayerInteractAirEvent extends PlayerInteractEvent {
-
-        public PlayerInteractAirEvent(Player player, Hand hand, ClickType clickType) {
-            super(player, hand, clickType);
-        }
-    }
 }

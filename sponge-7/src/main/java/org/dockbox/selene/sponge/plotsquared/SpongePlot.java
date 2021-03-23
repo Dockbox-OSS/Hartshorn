@@ -20,7 +20,7 @@ package org.dockbox.selene.sponge.plotsquared;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
 
-import org.dockbox.selene.api.PlayerStorageService;
+import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.ReferencedWrapper;
 import org.dockbox.selene.api.objects.location.Direction;
@@ -60,14 +60,14 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
             Plot plot = getReference().get();
             if (plot.getOwners().isEmpty()) return Exceptional.empty();
             UUID ownerUuid = plot.getOwners().iterator().next();
-            return Selene.provide(PlayerStorageService.class).getPlayer(ownerUuid);
+            return Selene.provide(Players.class).getPlayer(ownerUuid);
         }
         throw new IllegalStateException("Reference plot at " + center.getWorld().getName() + ";" + x + "," + y + " could not be found");
     }
 
     @Override
     public Collection<Player> getPlayers(PlotMembership membership) {
-        PlayerStorageService service = Selene.provide(PlayerStorageService.class);
+        Players service = Selene.provide(Players.class);
         return getUUIDs(membership).stream()
                 .map(service::getPlayer)
                 .filter(Exceptional::isPresent)

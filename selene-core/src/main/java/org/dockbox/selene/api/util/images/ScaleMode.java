@@ -23,10 +23,7 @@ import com.mortennobel.imagescaling.ResampleFilters;
 import java.util.function.Supplier;
 
 public enum ScaleMode {
-    NoScale(
-            () -> {
-                throw new UnsupportedOperationException("Unsupported resample filter!");
-            }),
+    NoScale(() -> { throw new UnsupportedOperationException("Unsupported resample filter!"); }),
     BSpline(ResampleFilters::getBSplineFilter),
     Bell(ResampleFilters::getBellFilter),
     BiCubic(ResampleFilters::getBiCubicFilter),

@@ -39,8 +39,7 @@ public class PatternTypeSerializer implements TypeSerializer<Pattern> {
     }
 
     @Override
-    public void serialize(Type type, @Nullable Pattern obj, ConfigurationNode node)
-            throws SerializationException {
+    public void serialize(Type type, @Nullable Pattern obj, ConfigurationNode node) throws SerializationException {
         assert null != obj : "Pattern object is required";
         node.set(TypeToken.get(String.class), obj.pattern());
     }

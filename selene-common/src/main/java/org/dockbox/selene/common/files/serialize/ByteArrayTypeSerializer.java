@@ -47,8 +47,7 @@ public class ByteArrayTypeSerializer implements TypeSerializer<byte[]> {
     }
 
     @Override
-    public void serialize(Type type, byte @Nullable [] obj, ConfigurationNode node)
-            throws SerializationException {
+    public void serialize(Type type, byte @Nullable [] obj, ConfigurationNode node) throws SerializationException {
         List<Byte> bytes = Bytes.asList(obj);
         node.set(this.ttlb, bytes);
     }

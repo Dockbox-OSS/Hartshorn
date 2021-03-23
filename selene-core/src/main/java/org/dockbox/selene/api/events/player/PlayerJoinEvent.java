@@ -15,14 +15,13 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.annotations.files;
+package org.dockbox.selene.api.events.player;
 
-import com.google.inject.BindingAnnotation;
+import org.dockbox.selene.api.objects.targets.Target;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-@BindingAnnotation
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Bulk {
+/** The event fired when a player connected to the server. */
+public class PlayerJoinEvent extends PlayerConnectionEvent {
+    public PlayerJoinEvent(Target target) {
+        super(target);
+    }
 }

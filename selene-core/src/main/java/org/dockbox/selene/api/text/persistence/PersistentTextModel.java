@@ -156,14 +156,4 @@ public class PersistentTextModel implements PersistentModel<Text> {
         return text;
     }
 
-    protected enum ActionTypes {
-        // Click
-        CHANGE_PAGE, EXECUTE_CALLBACK, RUN_COMMAND, OPEN_URL, SUGGEST_COMMAND,
-        // Shift-click
-        INSERT_TEXT,
-        // Hover
-        SHOW_TEXT,
-        // Global
-        NONE
-    }
 }

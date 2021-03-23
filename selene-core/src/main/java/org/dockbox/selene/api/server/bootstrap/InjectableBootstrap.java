@@ -60,8 +60,7 @@ import sun.misc.Unsafe;
 public abstract class InjectableBootstrap {
 
     private final transient List<AbstractModule> injectorModules = SeleneUtils.emptyConcurrentList();
-    private final transient List<InjectionPoint<?>> injectionPoints =
-            SeleneUtils.emptyConcurrentList();
+    private final transient List<InjectionPoint<?>> injectionPoints = SeleneUtils.emptyConcurrentList();
     private Unsafe unsafe;
     private Injector injector;
 
@@ -78,11 +77,9 @@ public abstract class InjectableBootstrap {
         }
     }
 
-    private static <T> T getInjectedInstance(
-            Injector injector, Class<T> type, InjectorProperty<?>... additionalProperties) {
+    private static <T> T getInjectedInstance(Injector injector, Class<T> type, InjectorProperty<?>... additionalProperties) {
         @SuppressWarnings("rawtypes")
-        Exceptional<Class> annotation =
-                Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
+        Exceptional<Class> annotation = Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
         if (annotation.isPresent() && annotation.get().isAnnotation()) {
             //noinspection unchecked
             return (T) injector.getInstance(Key.get(type, annotation.get()));
@@ -93,8 +90,7 @@ public abstract class InjectableBootstrap {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> ModuleInjectionConfiguration getModuleConfiguration(
-            T instance, Module header, ModuleContext context) {
+    private static <T> ModuleInjectionConfiguration getModuleConfiguration(T instance, Module header, ModuleContext context) {
         ModuleInjectionConfiguration module = new ModuleInjectionConfiguration();
 
         if (!(null == instance || instance instanceof Class<?>)) {
@@ -107,18 +103,15 @@ public abstract class InjectableBootstrap {
         return module;
     }
 
-    public <T> Exceptional<T> getInstanceSafe(
-            Class<T> type, InjectorProperty<?>... additionalProperties) {
+    public <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties) {
         return Exceptional.ofNullable(this.getInstance(type, additionalProperties));
     }
 
-    public <T> Exceptional<T> getInstanceSafe(
-            Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
+    public <T> Exceptional<T> getInstanceSafe(Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
         return Exceptional.ofNullable(this.getInstance(type, module, additionalProperties));
     }
 
-    public <T> Exceptional<T> getInstanceSafe(
-            Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
+    public <T> Exceptional<T> getInstanceSafe(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
         return Exceptional.ofNullable(this.getInstance(type, module, additionalProperties));
     }
 
@@ -126,8 +119,7 @@ public abstract class InjectableBootstrap {
         return this.getInstance(type, type, additionalProperties);
     }
 
-    public <T> T getInstance(
-            Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
+    public <T> T getInstance(Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
         if (null != module) {
             return this.getInstance(type, module.getClass(), additionalProperties);
         }
@@ -154,8 +146,7 @@ public abstract class InjectableBootstrap {
      *
      * @return The instance, if present. Otherwise returns null
      */
-    public <T> T getInstance(
-            Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
+    public <T> T getInstance(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
         T typeInstance = null;
 
         // Modules are initially created using #getInstance here (assuming SimpleModuleManager or a
@@ -195,8 +186,8 @@ public abstract class InjectableBootstrap {
         if (typeInstance == null) return;
         SeleneUtils.merge(
                 Reflect.getAnnotatedFields(Inject.class, typeInstance.getClass()),
-                Reflect.getAnnotatedFields(javax.inject.Inject.class, typeInstance.getClass()))
-                .stream()
+                Reflect.getAnnotatedFields(javax.inject.Inject.class, typeInstance.getClass())
+        ).stream()
                 .filter(field -> field.isAnnotationPresent(DoNotEnable.class))
                 .filter(field -> Reflect.isAssignableFrom(InjectableType.class, field.getType()))
                 .map(field -> Selene.handle(() -> field.get(typeInstance)))
@@ -207,11 +198,7 @@ public abstract class InjectableBootstrap {
     }
 
     @Nullable
-    private <T> T createInstanceOf(
-            Class<T> type,
-            T typeInstance,
-            Injector injector,
-            InjectorProperty<?>[] additionalProperties) {
+    private <T> T createInstanceOf(Class<T> type, T typeInstance, Injector injector, InjectorProperty<?>[] additionalProperties) {
         if (null == typeInstance) {
             try {
                 typeInstance = InjectableBootstrap.getInjectedInstance(injector, type, additionalProperties);
@@ -285,21 +272,17 @@ public abstract class InjectableBootstrap {
 
     public Injector createModuleInjector(Object instance) {
         if (null != instance && instance.getClass().isAnnotationPresent(Module.class)) {
-            Exceptional<ModuleContext> context =
-                    this.getInstance(ModuleManager.class).getContext(instance.getClass());
-            Module module;
-            module =
-                    context
-                            .map(ModuleContext::getModule)
-                            .orElseGet(() -> instance.getClass().getAnnotation(Module.class));
+            Exceptional<ModuleContext> context = this.getInstance(ModuleManager.class).getContext(instance.getClass());
+            Module module = context
+                    .map(ModuleContext::getModule)
+                    .orElseGet(() -> instance.getClass().getAnnotation(Module.class));
             return this.createModuleInjector(instance, module, context.orNull());
         }
         return this.rebuildInjector();
     }
 
     public Injector createModuleInjector(Object instance, Module header, ModuleContext context) {
-        return this.rebuildInjector(
-                InjectableBootstrap.getModuleConfiguration(instance, header, context));
+        return this.rebuildInjector(InjectableBootstrap.getModuleConfiguration(instance, header, context));
     }
 
     public <T> T injectMembers(T type) {
@@ -313,8 +296,7 @@ public abstract class InjectableBootstrap {
     private Injector rebuildInjector(AbstractModule... additionalModules) {
         if (null == this.injector) {
             Collection<AbstractModule> modules = new ArrayList<>(this.injectorModules);
-            modules.addAll(
-                    Arrays.stream(additionalModules).filter(Objects::nonNull).collect(Collectors.toList()));
+            modules.addAll(Arrays.stream(additionalModules).filter(Objects::nonNull).collect(Collectors.toList()));
             this.injector = Guice.createInjector(modules);
         }
         return this.injector;
@@ -334,20 +316,17 @@ public abstract class InjectableBootstrap {
 
     public Map<Key<?>, Binding<?>> getAllBindings() {
         Map<Key<?>, Binding<?>> bindings = SeleneUtils.emptyConcurrentMap();
-        this.rebuildInjector()
-                .getAllBindings()
-                .forEach(
-                        (Key<?> key, Binding<?> binding) -> {
-                            try {
-                                Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
-                                Class<?> providerType = binding.getProvider().get().getClass();
+        this.rebuildInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
+            try {
+                Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
+                Class<?> providerType = binding.getProvider().get().getClass();
 
-                                if (!keyType.equals(providerType) && null != providerType)
-                                    bindings.put(key, binding);
-                            }
-                            catch (ProvisionException | AssertionError ignored) {
-                            }
-                        });
+                if (!keyType.equals(providerType) && null != providerType)
+                    bindings.put(key, binding);
+            }
+            catch (ProvisionException | AssertionError ignored) {
+            }
+        });
         return bindings;
     }
 

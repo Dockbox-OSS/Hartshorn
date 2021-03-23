@@ -32,10 +32,13 @@ import java.util.function.Function;
 public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
 
     private final Class<I> inputClass;
+
     @Nullable
     private ConvertiblePipeline<P, ?> previousPipeline;
+
     @Nullable
     private ConvertiblePipeline<P, ?> nextPipeline;
+
     @Nullable
     private Function<? super I, ?> converter;
 
@@ -156,8 +159,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
         // ConvertiblePipelineSource.
         // (Which shouldn't be possible due to the protected constructor).
         if (null == this.getPreviousPipeline()) {
-            throw new IllegalPipelineException(
-                    "Pipeline wasn't constructed using ConvertiblePipelineSource.");
+            throw new IllegalPipelineException("Pipeline wasn't constructed using ConvertiblePipelineSource.");
         }
         else {
             exceptionalInput = this.getPreviousPipeline().processConverted(input, throwable);
@@ -214,10 +216,9 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
             super.uncancelPipeline();
 
             return Exceptional.ofNullable(
-                    (K)
-                            super.getCancelBehaviour()
-                                    .act(result.orNull(), (Function<Object, Object>) this.converter),
-                    result.orElseExcept(null));
+                    (K) super.getCancelBehaviour().act(result.orNull(), (Function<Object, Object>) this.converter),
+                    result.orElseExcept(null)
+            );
         }
         else return (Exceptional<K>) result.map(this.converter);
     }
@@ -237,8 +238,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
      *
      * @return A pipeline of the new type
      */
-    public <K> ConvertiblePipeline<P, K> convertPipeline(
-            @NotNull Function<? super I, K> converter, @NotNull Class<K> outputClass) {
+    public <K> ConvertiblePipeline<P, K> convertPipeline(@NotNull Function<? super I, K> converter, @NotNull Class<K> outputClass) {
         this.converter = converter;
 
         ConvertiblePipeline<P, K> nextPipeline = new ConvertiblePipeline<>(outputClass);
@@ -278,11 +278,11 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
                 return previousPipeline;
             }
             else {
-                throw new IllegalArgumentException(
-                        String.format(
-                                "Input class was not correct. [Expected: %s, Actual: %s]",
-                                this.getPreviousPipeline().getInputClass().getCanonicalName(),
-                                previousClass.getCanonicalName()));
+                throw new IllegalArgumentException(String.format(
+                        "Input class was not correct. [Expected: %s, Actual: %s]",
+                        this.getPreviousPipeline().getInputClass().getCanonicalName(),
+                        previousClass.getCanonicalName())
+                );
             }
         }
     }

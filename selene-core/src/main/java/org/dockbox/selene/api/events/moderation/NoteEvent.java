@@ -47,20 +47,4 @@ public abstract class NoteEvent extends ModerationEvent {
         this.note = note;
     }
 
-    public static class PlayerNotedEvent extends NoteEvent {
-
-        /**
-         * The event fire when a new note is added to a player.
-         *
-         * @param player
-         *         The target {@link Player} the note is being added to
-         * @param note
-         *         The note
-         * @param source
-         *         The {@link CommandSource} creating the note
-         */
-        public PlayerNotedEvent(Player player, CommandSource source, String note) {
-            super(player, source, note);
-        }
-    }
 }

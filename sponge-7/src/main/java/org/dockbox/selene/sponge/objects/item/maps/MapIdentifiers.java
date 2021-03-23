@@ -22,10 +22,8 @@ import org.dockbox.selene.structures.table.column.SimpleColumnIdentifier;
 
 public final class MapIdentifiers {
 
-    public static final ColumnIdentifier<String> SOURCE =
-            new SimpleColumnIdentifier<>("source", String.class);
-    public static final ColumnIdentifier<Integer> MAP =
-            new SimpleColumnIdentifier<>("map", Integer.class);
+    public static final ColumnIdentifier<String> SOURCE = new SimpleColumnIdentifier<>("source", String.class);
+    public static final ColumnIdentifier<Integer> MAP = new SimpleColumnIdentifier<>("map", Integer.class);
 
     private MapIdentifiers() {}
 }

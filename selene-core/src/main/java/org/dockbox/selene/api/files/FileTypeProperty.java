@@ -17,19 +17,22 @@
 
 package org.dockbox.selene.api.files;
 
-import org.dockbox.selene.api.server.properties.InjectorProperty;
+import org.dockbox.selene.api.server.properties.AnnotationProperty;
 
-public final class FileTypeProperty implements InjectorProperty<FileType> {
+import java.lang.annotation.Annotation;
+
+public final class FileTypeProperty<T extends Annotation> extends AnnotationProperty<T> {
 
     public static final String KEY = "SeleneInternalFileTypeKey";
     private final FileType fileType;
 
     private FileTypeProperty(FileType fileType) {
+        super(null);
         this.fileType = fileType;
     }
 
-    public static FileTypeProperty of(FileType fileType) {
-        return new FileTypeProperty(fileType);
+    public static FileTypeProperty<?> of(FileType fileType) {
+        return new FileTypeProperty<>(fileType);
     }
 
     @Override
@@ -37,8 +40,9 @@ public final class FileTypeProperty implements InjectorProperty<FileType> {
         return KEY;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public FileType getObject() {
-        return this.fileType;
+    public Class<T> getObject() {
+        return (Class<T>) this.fileType.getFormat();
     }
 }

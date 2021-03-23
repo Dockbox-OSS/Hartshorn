@@ -19,7 +19,6 @@ package org.dockbox.selene.api.util.images;
 
 import org.dockbox.selene.api.objects.tuple.Tristate;
 
-@SuppressWarnings("MagicNumber")
 public enum DitherMode {
     NoDither,
     FloydSteinberg(
@@ -158,8 +157,7 @@ public enum DitherMode {
 
     double[][] getErrorDiffusionMatrix() {
         if (MatrixType.ERROR_DIFFUSION != this.matrixType) {
-            throw new UnsupportedOperationException(
-                    "Only error diffusion matrices supported, invalid dither mode");
+            throw new UnsupportedOperationException("Only error diffusion matrices supported, invalid dither mode");
         }
 
         double[][] result = this.matrix;
@@ -173,8 +171,7 @@ public enum DitherMode {
 
     double[][] getBayerMatrix() {
         if (MatrixType.BAYER != this.matrixType) {
-            throw new UnsupportedOperationException(
-                    "Only ordered dither matrices supported, invalid dither mode");
+            throw new UnsupportedOperationException("Only ordered dither matrices supported, invalid dither mode");
         }
 
         double[][] result = this.matrix;

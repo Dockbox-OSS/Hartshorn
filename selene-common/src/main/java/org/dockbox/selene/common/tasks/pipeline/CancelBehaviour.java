@@ -65,8 +65,7 @@ public enum CancelBehaviour {
      */
     public Object act(Object output) {
         if (null == this.function) {
-            throw new UnsupportedOperationException(
-                    "The provided cancel behaviour is not supported by this pipeline.");
+            throw new UnsupportedOperationException("The provided cancel behaviour is not supported by this pipeline.");
         }
         return this.function.apply(output);
     }
@@ -93,7 +92,6 @@ public enum CancelBehaviour {
         if (null != this.biFunction) {
             return this.biFunction.apply(output, converter);
         }
-        throw new UnsupportedOperationException(
-                "The provided cancel behaviour is not supported by this pipeline.");
+        throw new UnsupportedOperationException("The provided cancel behaviour is not supported by this pipeline.");
     }
 }

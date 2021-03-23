@@ -28,16 +28,14 @@ import org.spongepowered.api.data.persistence.InvalidDataException;
 import java.util.Map;
 import java.util.Optional;
 
-public class CompositeDataManipulatorBuilder extends AbstractDataBuilder<MutableCompositeData>
-        implements DataManipulatorBuilder<MutableCompositeData, ImmutableCompositeData> {
+public class CompositeDataManipulatorBuilder extends AbstractDataBuilder<MutableCompositeData> implements DataManipulatorBuilder<MutableCompositeData, ImmutableCompositeData> {
 
     public CompositeDataManipulatorBuilder() {
         super(MutableCompositeData.class, 1);
     }
 
     @Override
-    protected @NotNull Optional<MutableCompositeData> buildContent(DataView container)
-            throws InvalidDataException {
+    protected @NotNull Optional<MutableCompositeData> buildContent(DataView container) throws InvalidDataException {
         if (container.contains(Composite.ITEM_KEY.getQuery())) {
             @SuppressWarnings("OptionalGetWithoutIsPresent") final Map<?, ?> unsafeData = container.getMap(Composite.ITEM_KEY.getQuery()).get();
             Map<String, Object> safeData = SeleneUtils.emptyMap();

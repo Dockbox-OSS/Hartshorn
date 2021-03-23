@@ -37,7 +37,8 @@ public class DaveTrigger {
             List<String> triggers,
             boolean important,
             List<DaveResponse> responses,
-            String permission) {
+            String permission
+    ) {
         this.id = id;
         this.triggers = triggers;
         this.important = important;
