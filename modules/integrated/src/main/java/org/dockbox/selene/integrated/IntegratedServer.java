@@ -23,7 +23,7 @@ import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.CommandBus;
 import org.dockbox.selene.api.command.context.CommandContext;
-import org.dockbox.selene.api.command.context.CommandValue.Argument;
+import org.dockbox.selene.api.command.context.CommandArgument;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.server.ServerReloadEvent;
 import org.dockbox.selene.api.i18n.common.Language;
@@ -106,7 +106,7 @@ public class IntegratedServer implements IntegratedModule {
     @Command(aliases = "module", usage = "module <id{Module}>")
     public static void debugModule(MessageReceiver src, CommandContext ctx) {
         Reflect.runWithInstance(ModuleManager.class, em -> {
-            Exceptional<Argument<Module>> oarg = ctx.argument("id");
+            Exceptional<CommandArgument<Module>> oarg = ctx.argument("id");
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
                 return;
@@ -135,7 +135,7 @@ public class IntegratedServer implements IntegratedModule {
     public static void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = Selene.provide(EventBus.class);
         if (ctx.has("id")) {
-            Exceptional<Argument<Module>> oarg = ctx.argument("id");
+            Exceptional<CommandArgument<Module>> oarg = ctx.argument("id");
             if (!oarg.isPresent()) {
                 src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
                 return;
@@ -198,7 +198,7 @@ public class IntegratedServer implements IntegratedModule {
             src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
             return;
         }
-        Exceptional<Argument<String>> optionalCooldownId = ctx.argument("cooldownId");
+        Exceptional<CommandArgument<String>> optionalCooldownId = ctx.argument("cooldownId");
 
         // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
         // argument here is just a confirmation that the source is correct.

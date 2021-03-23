@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.common.command.convert.impl;
 
-import org.dockbox.selene.api.command.context.CommandValue;
+import org.dockbox.selene.api.command.context.CommandParameter;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.util.SeleneUtils;
@@ -72,7 +72,7 @@ public class CommandValueConverter<T> extends AbstractArgumentConverter<T> {
     }
 
     @Override
-    public Exceptional<T> convert(CommandSource source, CommandValue<String> value) {
+    public Exceptional<T> convert(CommandSource source, CommandParameter<String> value) {
         return this.convert(source, value.getValue());
     }
 

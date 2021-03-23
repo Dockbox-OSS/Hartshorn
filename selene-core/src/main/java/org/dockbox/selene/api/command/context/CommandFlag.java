@@ -17,34 +17,8 @@
 
 package org.dockbox.selene.api.command.context;
 
-import org.dockbox.selene.api.command.source.CommandSource;
-import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.Location;
-import org.dockbox.selene.api.objects.location.World;
-
-public interface CommandContext {
-
-    String alias();
-
-    int arguments();
-
-    int flags();
-
-    <T> Exceptional<CommandArgument<T>> argument(String key);
-
-    <T> T get(String key);
-
-    <T> Exceptional<T> optional(String key);
-
-    <T> Exceptional<CommandFlag<T>> flag(String key);
-
-    boolean has(String key);
-
-    CommandSource sender();
-
-    Exceptional<Location> location();
-
-    Exceptional<World> world();
-
-    String[] permissions();
+public class CommandFlag<T> extends CommandParameter<T> {
+    public CommandFlag(T value, String key) {
+        super(value, key);
+    }
 }

@@ -21,9 +21,8 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Singleton;
 
 import org.dockbox.selene.api.annotations.command.Command;
-import org.dockbox.selene.api.command.context.CommandValue;
-import org.dockbox.selene.api.command.context.CommandValue.Argument;
-import org.dockbox.selene.api.command.context.CommandValue.Flag;
+import org.dockbox.selene.api.command.context.CommandArgument;
+import org.dockbox.selene.api.command.context.CommandFlag;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.targets.Locatable;
@@ -93,8 +92,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
             return SimpleCommandContext.EMPTY;
         }
 
-        List<CommandValue.Argument<?>> arguments = SeleneUtils.emptyList();
-        List<CommandValue.Flag<?>> flags = SeleneUtils.emptyList();
+        List<CommandArgument<?>> arguments = SeleneUtils.emptyList();
+        List<CommandFlag<?>> flags = SeleneUtils.emptyList();
 
         assert null != command : "Context carrier command was null";
         parsedArgs.asMap().forEach((key, parsedArguments) ->
@@ -104,9 +103,9 @@ public class SpongeCommandBus extends DefaultCommandBus {
                     does not have to check for anything but the flag prefix (-f or --flag).
                     */
                     if (Pattern.compile("-(-?" + key + ")").matcher(command).find())
-                        flags.add(new Flag<>(SpongeCommandBus.tryConvertObject(obj), key));
+                        flags.add(new CommandFlag<>(SpongeCommandBus.tryConvertObject(obj), key));
                     else
-                        arguments.add(new Argument<>(SpongeCommandBus.tryConvertObject(obj), key));
+                        arguments.add(new CommandArgument<>(SpongeCommandBus.tryConvertObject(obj), key));
                 }));
 
         return SpongeCommandBus.constructCommandContext(sender, arguments, flags, command);
@@ -124,8 +123,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
     @NotNull
     private static SimpleCommandContext constructCommandContext(
             @NotNull CommandSource sender,
-            List<CommandValue.Argument<?>> arguments,
-            List<CommandValue.Flag<?>> flags,
+            List<CommandArgument<?>> arguments,
+            List<CommandFlag<?>> flags,
             String command
     ) {
         SimpleCommandContext seleneContext;
@@ -136,8 +135,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
 
             seleneContext = new SimpleCommandContext(
                     command,
-                    arguments.toArray(new CommandValue.Argument<?>[0]),
-                    flags.toArray(new CommandValue.Flag<?>[0]),
+                    arguments.toArray(new CommandArgument<?>[0]),
+                    flags.toArray(new CommandFlag<?>[0]),
                     sender,
                     Exceptional.of(loc),
                     Exceptional.of(world),
@@ -146,8 +145,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
         else {
             seleneContext = new SimpleCommandContext(
                     command,
-                    arguments.toArray(new CommandValue.Argument<?>[0]),
-                    flags.toArray(new CommandValue.Flag<?>[0]),
+                    arguments.toArray(new CommandArgument<?>[0]),
+                    flags.toArray(new CommandFlag<?>[0]),
                     sender,
                     Exceptional.empty(),
                     Exceptional.empty(),
