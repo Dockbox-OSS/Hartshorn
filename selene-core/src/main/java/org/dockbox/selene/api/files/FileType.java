@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.api.files;
 
+import org.dockbox.selene.api.annotations.files.Format;
+
+import java.lang.annotation.Annotation;
 import java.nio.file.Path;
 
 /** Enumerated values containing the file extensions for several commonly used file types. */
@@ -37,14 +40,14 @@ public enum FileType {
     // Database formats
     FAWE_HISTORY("bd"),
     OLDPLOTS("db"),
-    SQLITE("sqlite"),
+    SQLITE("sqlite", Format.SQLite.class),
 
     // Data/config formats
-    YAML("yml"),
-    JSON("json"),
+    YAML("yml", Format.YAML.class),
+    JSON("json", Format.Json.class),
     MOD_CONFIG("cfg"),
     CONFIG("conf"),
-    XML("xml"),
+    XML("xml", Format.XML.class),
     PROPERTIES("properties"),
 
     // Other
@@ -52,9 +55,16 @@ public enum FileType {
     LOG("log");
 
     private final String extension;
+    private final Class<? extends Annotation> format;
+
+    FileType(String extension, Class<? extends Annotation> format) {
+        this.extension = extension;
+        this.format = format;
+    }
 
     FileType(String extension) {
         this.extension = extension;
+        this.format = null;
     }
 
     /**
@@ -90,5 +100,9 @@ public enum FileType {
 
     public String getExtension() {
         return this.extension;
+    }
+
+    public Class<? extends Annotation> getFormat() {
+        return this.format;
     }
 }

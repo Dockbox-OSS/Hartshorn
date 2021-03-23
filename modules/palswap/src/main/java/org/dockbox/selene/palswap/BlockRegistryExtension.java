@@ -21,20 +21,20 @@ import com.google.inject.Inject;
 
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.event.Listener;
-import org.dockbox.selene.api.annotations.files.Bulk;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.events.server.ServerStartedEvent;
 import org.dockbox.selene.api.events.server.ServerStoppingEvent;
 import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.api.files.FileType;
+import org.dockbox.selene.api.files.FileTypeProperty;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.inventory.Slot;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.properties.AnnotationProperty;
 import org.dockbox.selene.palswap.fileparsers.BlockRegistryParser;
 import org.dockbox.selene.structures.registry.Registry;
 import org.jetbrains.annotations.Nullable;
@@ -50,12 +50,11 @@ import java.nio.file.Path;
         authors = "pumbas600")
 public class BlockRegistryExtension {
 
+    private static Registry<Registry<Item>> blockRegistry = new Registry<>();
+    private final String itemRegistryFile = "itemdata";
     @Inject
     private Logger logger;
-    private static Registry<Registry<Item>> blockRegistry = new Registry<>();
-
     private BlockRegistryParser blockRegistryParser;
-    private final String itemRegistryFile = "itemdata";
 
     @Listener
     public void OnServerStartedEvent(ServerStartedEvent event) {
@@ -71,12 +70,28 @@ public class BlockRegistryExtension {
         else this.logger.info("Block registry loaded.");
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static @Nullable Registry<Registry<Item>> loadBlockRegistry() {
+        FileManager fm = Selene.provide(FileManager.class, FileTypeProperty.of(FileType.XML));
+        Path path = fm.getDataFile(BlockRegistryExtension.class, "blockregistry");
+
+        Exceptional<Registry> eRegistry = fm.read(path, Registry.class);
+        return (Registry<Registry<Item>>) eRegistry.orElse(new Registry<Registry<Item>>());
+    }
+
     @Listener
     public void OnServerStoppingEvent(ServerStoppingEvent event) {
         this.blockRegistryParser.SaveItemData(this.itemRegistryFile);
         saveBlockRegistry();
     }
 
+    public static void saveBlockRegistry() {
+        if (null == blockRegistry) return;
+
+        FileManager fm = Selene.provide(FileManager.class, FileTypeProperty.of(FileType.XML));
+        Path path = fm.getDataFile(BlockRegistryExtension.class, "blockregistry");
+        fm.write(path, blockRegistry);
+    }
 
     @Command(aliases = "generateblockidentifiers", usage = "generateblockidentifiers")
     public void generateBlockIdentifiers(CommandSource src) {
@@ -90,7 +105,8 @@ public class BlockRegistryExtension {
             ));
 
             writer.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             Selene.handle(e);
         }
     }
@@ -132,11 +148,6 @@ public class BlockRegistryExtension {
         addItem(Item.of(baseBlock));
     }
 
-    @Command(aliases = "add", usage = "add")
-    public void addItemInHand(Player src, CommandSource context) {
-        addItem(src.getInventory().getSlot(Slot.MAIN_HAND));
-    }
-
     public static void addItem(Item item) {
         BlockIdentifier blockIdentifier = BlockIdentifier.ofItem(item);
         if (!blockIdentifier.isAir() && blockRegistry.containsColumns(blockIdentifier)) {
@@ -164,25 +175,14 @@ public class BlockRegistryExtension {
                     .append(" | ID: ")
                     .append(item.getId());
             writer.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             Selene.handle(e);
         }
     }
 
-    public static void saveBlockRegistry() {
-        if (null == blockRegistry) return;
-
-        FileManager fm = Selene.provide(FileManager.class, AnnotationProperty.of(Bulk.class));
-        Path path = fm.getDataFile(BlockRegistryExtension.class, "blockregistry");
-        fm.write(path, blockRegistry);
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static @Nullable Registry<Registry<Item>> loadBlockRegistry() {
-        FileManager fm = Selene.provide(FileManager.class, AnnotationProperty.of(Bulk.class));
-        Path path = fm.getDataFile(BlockRegistryExtension.class, "blockregistry");
-
-        Exceptional<Registry> eRegistry = fm.read(path, Registry.class);
-        return (Registry<Registry<Item>>) eRegistry.orElse(new Registry<Registry<Item>>());
+    @Command(aliases = "add", usage = "add")
+    public void addItemInHand(Player src, CommandSource context) {
+        addItem(src.getInventory().getSlot(Slot.MAIN_HAND));
     }
 }

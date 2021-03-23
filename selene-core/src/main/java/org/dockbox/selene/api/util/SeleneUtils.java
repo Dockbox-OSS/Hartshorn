@@ -83,16 +83,13 @@ public final class SeleneUtils {
     public static final int MAXIMUM_DECIMALS = 15;
 
     private static final Random random = new Random();
-    private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns =
-            SeleneUtils.emptyConcurrentMap();
+    private static final Map<Object, Triad<LocalDateTime, Long, TemporalUnit>> activeCooldowns = SeleneUtils.emptyConcurrentMap();
     private static final char[] _hex = {
             '0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
     };
-    private static final java.util.regex.Pattern minorTimeString =
-            java.util.regex.Pattern.compile("^\\d+$");
-    private static final java.util.regex.Pattern timeString =
-            java.util.regex.Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
+    private static final java.util.regex.Pattern minorTimeString = java.util.regex.Pattern.compile("^\\d+$");
+    private static final java.util.regex.Pattern timeString = java.util.regex.Pattern.compile("^((\\d+)w)?((\\d+)d)?((\\d+)h)?((\\d+)m)?((\\d+)s)?$");
     private static final int secondsInMinute = 60;
     private static final int secondsInHour = 60 * SeleneUtils.secondsInMinute;
     private static final int secondsInDay = 24 * SeleneUtils.secondsInHour;
@@ -298,8 +295,7 @@ public final class SeleneUtils {
      * @param overwriteExisting
      *         Whether or not to overwrite existing cooldowns
      */
-    public static void cooldown(
-            Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
+    public static void cooldown(Object o, Long duration, TemporalUnit timeUnit, boolean overwriteExisting) {
         if (SeleneUtils.isInCooldown(o) && !overwriteExisting) return;
         activeCooldowns.put(o, new Triad<>(LocalDateTime.now(), duration, timeUnit));
     }
@@ -587,17 +583,15 @@ public final class SeleneUtils {
 
                 // Find the current distance by determining the shortest path to a
                 // match (hence the 'minimum' calculation on distances).
-                distanceMatrix[srcIndex][targetIndex] =
-                        (int)
-                                SeleneUtils.minimum(
-                                        // Character match between current character in
-                                        // source string and next character in target
-                                        distanceMatrix[srcIndex - 1][targetIndex] + 1,
-                                        // Character match between next character in
-                                        // source string and current character in target
-                                        distanceMatrix[srcIndex][targetIndex - 1] + 1,
-                                        // No match, at current, add cumulative penalty
-                                        distanceMatrix[srcIndex - 1][targetIndex - 1] + cost);
+                distanceMatrix[srcIndex][targetIndex] = (int) SeleneUtils.minimum(
+                        // Character match between current character in
+                        // source string and next character in target
+                        distanceMatrix[srcIndex - 1][targetIndex] + 1,
+                        // Character match between next character in
+                        // source string and current character in target
+                        distanceMatrix[srcIndex][targetIndex - 1] + 1,
+                        // No match, at current, add cumulative penalty
+                        distanceMatrix[srcIndex - 1][targetIndex - 1] + cost);
 
                 // We don't want to do the next series of calculations on
                 // the first pass because we would get an index out of bounds
@@ -608,17 +602,14 @@ public final class SeleneUtils {
 
                 // transposition check (if the current and previous
                 // character are switched around (e.g.: t[se]t and t[es]t)...
-                if (source.charAt(srcIndex - 1) == target.charAt(targetIndex - 2)
-                        && source.charAt(srcIndex - 2) == target.charAt(targetIndex - 1)) {
+                if (source.charAt(srcIndex - 1) == target.charAt(targetIndex - 2) && source.charAt(srcIndex - 2) == target.charAt(targetIndex - 1)) {
                     // What's the minimum cost between the current distance
                     // and a transposition.
-                    distanceMatrix[srcIndex][targetIndex] =
-                            (int)
-                                    SeleneUtils.minimum(
-                                            // Current cost
-                                            distanceMatrix[srcIndex][targetIndex],
-                                            // Transposition
-                                            distanceMatrix[srcIndex - 2][targetIndex - 2] + cost);
+                    distanceMatrix[srcIndex][targetIndex] = (int) SeleneUtils.minimum(
+                            // Current cost
+                            distanceMatrix[srcIndex][targetIndex],
+                            // Transposition
+                            distanceMatrix[srcIndex - 2][targetIndex - 2] + cost);
                 }
             }
         }
@@ -654,8 +645,7 @@ public final class SeleneUtils {
             return null == bytes ? "" : new String(bytes, encoding);
         }
         catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException(
-                    String.format("Encoding (%s) is not supported by your JVM", encoding), e);
+            throw new IllegalArgumentException(String.format("Encoding (%s) is not supported by your JVM", encoding), e);
         }
     }
 
@@ -668,8 +658,7 @@ public final class SeleneUtils {
             return null == s ? new byte[0] : s.getBytes(encoding);
         }
         catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException(
-                    String.format("Encoding (%s) is not supported by your JVM", encoding), e);
+            throw new IllegalArgumentException(String.format("Encoding (%s) is not supported by your JVM", encoding), e);
         }
     }
 
@@ -828,15 +817,11 @@ public final class SeleneUtils {
      */
     public static boolean isInCuboidRegion(Vector3N min, Vector3N max, Vector3N vec) {
         return SeleneUtils.isInCuboidRegion(
-                min.getXi(),
-                max.getXi(),
-                min.getYi(),
-                max.getYi(),
-                min.getZi(),
-                max.getZi(),
-                vec.getXi(),
-                vec.getYi(),
-                vec.getZi());
+                min.getXi(), max.getXi(),
+                min.getYi(), max.getYi(),
+                min.getZi(), max.getZi(),
+                vec.getXi(), vec.getYi(), vec.getZi()
+        );
     }
 
     /**
@@ -869,9 +854,10 @@ public final class SeleneUtils {
      */
     @SuppressWarnings("OverlyComplexBooleanExpression")
     @Contract(pure = true)
-    public static boolean isInCuboidRegion(
-            int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
-        return x_min <= x && x <= x_max && y_min <= y && y <= y_max && z_min <= z && z <= z_max;
+    public static boolean isInCuboidRegion(int x_min, int x_max, int y_min, int y_max, int z_min, int z_max, int x, int y, int z) {
+        return x_min <= x && x <= x_max
+                && y_min <= y && y <= y_max
+                && z_min <= z && z <= z_max;
     }
 
     public static Vector3N getMinimumPoint(Vector3N pos1, Vector3N pos2) {
@@ -956,9 +942,7 @@ public final class SeleneUtils {
         else if (null == array2) {
             return SeleneUtils.shallowCopy(array1);
         }
-        final T[] newArray =
-                (T[])
-                        Array.newInstance(array1.getClass().getComponentType(), array1.length + array2.length);
+        final T[] newArray = (T[]) Array.newInstance(array1.getClass().getComponentType(), array1.length + array2.length);
         System.arraycopy(array1, 0, newArray, 0, array1.length);
         System.arraycopy(array2, 0, newArray, array1.length, array2.length);
         return newArray;
@@ -1143,8 +1127,7 @@ public final class SeleneUtils {
      * @return true if the function does not throw a exception
      * @see SeleneUtils#throwsException(CheckedRunnable, Class)
      */
-    public static boolean doesNotThrow(
-            CheckedRunnable runnable, Class<? extends Throwable> exception) {
+    public static boolean doesNotThrow(CheckedRunnable runnable, Class<? extends Throwable> exception) {
         return !SeleneUtils.throwsException(runnable, exception);
     }
 
@@ -1159,8 +1142,7 @@ public final class SeleneUtils {
      *
      * @return true if the function throws the expected exception
      */
-    public static boolean throwsException(
-            CheckedRunnable runnable, Class<? extends Throwable> exception) {
+    public static boolean throwsException(CheckedRunnable runnable, Class<? extends Throwable> exception) {
         try {
             runnable.run();
             return false;

@@ -33,8 +33,7 @@ final class ModuleInjectionConfiguration extends AbstractModule {
 
     @Override
     protected void configure() {
-        this.bindings.forEach(
-                binding -> this.bind(binding.getSourceClass()).toInstance(binding.getInstance()));
+        this.bindings.forEach(binding -> this.bind(binding.getSourceClass()).toInstance(binding.getInstance()));
 
         if (null != this.logger)
             this.bind(Logger.class).annotatedWith(Specific.class).toInstance(this.logger);

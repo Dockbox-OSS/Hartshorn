@@ -30,7 +30,8 @@ public class ClassCommandRegistration extends AbstractCommandRegistration<Class<
             AbstractPermission permission,
             Command command,
             Class<?> sourceInstance,
-            MethodCommandRegistration[] subcommands) {
+            MethodCommandRegistration[] subcommands
+    ) {
         super(primaryAlias, aliases, permission, command, sourceInstance);
         this.subcommands = subcommands;
     }

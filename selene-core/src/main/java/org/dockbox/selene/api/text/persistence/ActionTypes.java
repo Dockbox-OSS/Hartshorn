@@ -15,14 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.annotations.files;
+package org.dockbox.selene.api.text.persistence;
 
-import com.google.inject.BindingAnnotation;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
-@BindingAnnotation
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Bulk {
+enum ActionTypes {
+    // Click
+    CHANGE_PAGE,
+    EXECUTE_CALLBACK,
+    RUN_COMMAND,
+    OPEN_URL,
+    SUGGEST_COMMAND,
+    // Shift-click
+    INSERT_TEXT,
+    // Hover
+    SHOW_TEXT,
+    // Global
+    NONE
 }

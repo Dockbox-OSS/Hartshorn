@@ -18,15 +18,15 @@
 package org.dockbox.selene.sponge.objects.item.maps;
 
 import org.dockbox.selene.api.Players;
-import org.dockbox.selene.api.annotations.files.Format;
 import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.api.files.FileType;
+import org.dockbox.selene.api.files.FileTypeProperty;
 import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.item.maps.CustomMap;
 import org.dockbox.selene.api.objects.targets.Identifiable;
 import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.properties.AnnotationProperty;
 import org.dockbox.selene.common.objects.item.DefaultCustomMapService;
 import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.dialects.sqlite.SQLitePathProperty;
@@ -120,8 +120,7 @@ public class SpongeCustomMapService extends DefaultCustomMapService {
 
     private static Table getHistoryTable() {
         try {
-            SQLMan<?> sql = Selene.provide(SQLMan.class,
-                    AnnotationProperty.of(Format.SQLite.class),
+            SQLMan<?> sql = Selene.provide(SQLMan.class, FileTypeProperty.of(FileType.SQLITE),
                     new SQLitePathProperty(getHistoryStorePath()));
             return sql.getOrCreateTable(TABLE, SpongeCustomMapService.getEmptyTable());
         }
@@ -133,8 +132,7 @@ public class SpongeCustomMapService extends DefaultCustomMapService {
 
     private static void store(Table table) {
         try {
-            SQLMan<?> sql = Selene.provide(SQLMan.class,
-                    AnnotationProperty.of(Format.SQLite.class),
+            SQLMan<?> sql = Selene.provide(SQLMan.class, FileTypeProperty.of(FileType.SQLITE),
                     new SQLitePathProperty(getHistoryStorePath()));
             sql.store(TABLE, table);
         }

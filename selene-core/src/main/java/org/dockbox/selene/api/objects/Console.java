@@ -88,15 +88,13 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
 
     @Override
     public void send(@NotNull ResourceEntry text) {
-        Text formattedValue =
-                text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
+        Text formattedValue = text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
         this.send(formattedValue);
     }
 
     @Override
     public void sendWithPrefix(@NotNull ResourceEntry text) {
-        Text formattedValue =
-                text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
+        Text formattedValue = text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
         this.sendWithPrefix(formattedValue);
     }
 

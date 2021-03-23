@@ -43,4 +43,10 @@ public @interface Format {
     @Target(ElementType.TYPE)
     @interface SQLite {
     }
+
+    @BindingAnnotation
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    @interface YAML {
+    }
 }

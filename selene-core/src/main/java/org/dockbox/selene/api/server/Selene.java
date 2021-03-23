@@ -75,12 +75,10 @@ public final class Selene {
      *         Zero or more exceptions (varargs)
      */
     public static void handle(@Nullable String msg, @Nullable Throwable... e) {
-        ExceptionLevels level =
-                null != getServer()
-                        ? getServer().getGlobalConfig().getExceptionLevel()
-                        : ExceptionLevels.NATIVE;
-        boolean stacktraces =
-                null == getServer() || getServer().getGlobalConfig().getStacktracesAllowed();
+        ExceptionLevels level = null != getServer()
+                ? getServer().getGlobalConfig().getExceptionLevel()
+                : ExceptionLevels.NATIVE;
+        boolean stacktraces = null == getServer() || getServer().getGlobalConfig().getStacktracesAllowed();
         for (Throwable throwable : e) level.handle(msg, throwable, stacktraces);
     }
 

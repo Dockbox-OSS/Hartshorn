@@ -56,7 +56,8 @@ public abstract class RemovableKey<K, A> extends Key<K, A> {
     protected RemovableKey(
             BiFunction<K, A, TransactionResult> setter,
             Function<K, Exceptional<A>> getter,
-            Consumer<K> remover) {
+            Consumer<K> remover
+    ) {
         super(setter, getter);
         this.remover = remover;
     }

@@ -30,8 +30,7 @@ public abstract class WorldProperties {
     private long seed;
     private Gamemode defaultGamemode;
 
-    protected WorldProperties(
-            boolean loadOnStartup, Vector3N spawnPosition, long seed, Gamemode defaultGamemode) {
+    protected WorldProperties(boolean loadOnStartup, Vector3N spawnPosition, long seed, Gamemode defaultGamemode) {
         this.loadOnStartup = loadOnStartup;
         this.spawnPosition = spawnPosition;
         this.seed = seed;

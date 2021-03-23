@@ -21,17 +21,17 @@ import com.google.inject.Inject;
 
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.event.Listener;
-import org.dockbox.selene.api.annotations.files.Format;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.events.server.ServerReloadEvent;
 import org.dockbox.selene.api.events.server.ServerStartedEvent;
 import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.api.files.FileType;
+import org.dockbox.selene.api.files.FileTypeProperty;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.properties.AnnotationProperty;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.text.actions.ClickAction;
 import org.dockbox.selene.api.text.actions.HoverAction;
@@ -115,7 +115,7 @@ public class OldPlotsModule {
         Path path = dataDirectory.resolve("oldplots.db");
 
         return Selene.provide(SQLMan.class,
-                AnnotationProperty.of(Format.SQLite.class),
+                FileTypeProperty.of(FileType.SQLITE),
                 new SQLitePathProperty(path),
                 new SQLColumnProperty("id", OldPlotsIdentifiers.PLOT_ID),
                 new SQLColumnProperty("plot_id_x", OldPlotsIdentifiers.PLOT_X),

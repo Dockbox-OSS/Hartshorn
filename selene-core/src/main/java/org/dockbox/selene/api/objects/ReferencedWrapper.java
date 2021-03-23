@@ -38,8 +38,7 @@ public abstract class ReferencedWrapper<T> implements Wrapper<T> {
 
     @Override
     public void setReference(@NotNull Exceptional<T> reference) {
-        this.setInternalReference(
-                reference.map(WeakReference::new).orElseGet(() -> new WeakReference<>(null)));
+        this.setInternalReference(reference.map(WeakReference::new).orElseGet(() -> new WeakReference<>(null)));
     }
 
     public Exceptional<T> updateReference() {
