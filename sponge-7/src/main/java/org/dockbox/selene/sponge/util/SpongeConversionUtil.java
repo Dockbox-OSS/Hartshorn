@@ -63,6 +63,9 @@ import org.dockbox.selene.api.text.actions.ShiftClickAction;
 import org.dockbox.selene.api.text.pagination.Pagination;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.common.objects.item.ReferencedItem;
+import org.dockbox.selene.sponge.entities.SpongeArmorStand;
+import org.dockbox.selene.sponge.entities.SpongeGenericEntity;
+import org.dockbox.selene.sponge.entities.SpongeItemFrame;
 import org.dockbox.selene.sponge.external.WrappedMask;
 import org.dockbox.selene.sponge.external.WrappedPattern;
 import org.dockbox.selene.sponge.external.WrappedRegion;
@@ -84,7 +87,11 @@ import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.sound.SoundType;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.Tamer;
+import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
@@ -760,5 +767,16 @@ public enum SpongeConversionUtil {
         int meta = item.getMeta();
         // Casting is safe in this use-case, as this is the same approach used by PlotSquared (legacy) in PlotBlock itself
         return Exceptional.of(new PlotBlock((short) id, (byte) meta));
+    }
+
+    public static org.dockbox.selene.api.entities.Entity<?> fromSponge(Entity entity) {
+        EntityType type = entity.getType();
+        if (type == EntityTypes.ARMOR_STAND) {
+            return new SpongeArmorStand((ArmorStand) entity);
+        } else if (type == EntityTypes.ITEM_FRAME) {
+            return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) entity);
+        } else {
+            return new SpongeGenericEntity(entity);
+        }
     }
 }

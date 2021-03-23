@@ -71,19 +71,16 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
         return fields;
     }
 
-    private static void populateRemoteTable(
-            InsertValuesStepN<?> insertStep, Table table, Field<?>[] fields) {
+    private static void populateRemoteTable(InsertValuesStepN<?> insertStep, Table table, Field<?>[] fields) {
         table.getRows().forEach(row -> {
             Object[] values = new Object[fields.length];
             // Indexed over iterative to ensure the horizontal location of our value is equal to
-            // the location of our
-            // field (read; column).
+            // the location of our field (read; column).
             for (int i = 0; i < fields.length; i++) {
                 Field<?> field = fields[i];
                 ColumnIdentifier<?> identifier = table.getIdentifier(field.getName());
                 // If the identifier in our table is null, it is possible we are working with a
-                // filtered row. In this
-                // case we accept null into the remote table.
+                // filtered row. In this case we accept null into the remote table.
                 if (null != identifier) {
                     values[i] = row.getValue(identifier).orNull();
                 }
@@ -167,8 +164,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
             String name = field.getName();
 
             // Developers can define custom column bindings in stateEnabling, here we look those up before
-            // constructing
-            // a custom column identifier.
+            // constructing a custom column identifier.
             ColumnIdentifier<?> identifier = this.tryGetColumn(name).orElseGet(() -> {
                 Class<?> type = field.getDataType().getType();
                 return new SimpleColumnIdentifier<>(name, type);
@@ -192,8 +188,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
                     }
                     catch (IdentifierMismatchException e) {
                         // This should typically never be thrown unless either the table or result was
-                        // modified after
-                        // fetching.
+                        // modified after fetching.
                         throw new IllegalStateException(
                                 "Loaded identifiers did not match while populating table", e);
                     }
@@ -221,8 +216,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     private static void closeConnection(DSLContext ctx) {
         try {
             // While DSLContext also holds a diagnostics connection, only the parsing connection is active
-            // in our use
-            // case.
+            // in our use case.
             ctx.parsingConnection().close();
         }
         catch (SQLException e) {
@@ -241,8 +235,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
             ColumnIdentifier<?> identifier =
                     this.identifiers.getOrDefault(field.getName(), table.getIdentifier(field.getName()));
             // May cause the row to be rejected by the target Table, though typically the identifier is
-            // never null
-            // unless the result was modified after fetching.
+            // never null unless the result was modified after fetching.
             if (null != identifier) row.addValue(identifier, attr);
         }
         return row;

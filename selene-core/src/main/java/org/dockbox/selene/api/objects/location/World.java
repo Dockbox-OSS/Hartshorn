@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.api.objects.location;
 
+import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.player.Gamemode;
@@ -147,6 +148,11 @@ public abstract class World extends WorldProperties implements BlockDimension, E
         @Override
         public Map<String, String> getGamerules() {
             return SeleneUtils.emptyMap();
+        }
+
+        @Override
+        public Collection<Entity<?>> getEntities() {
+            return SeleneUtils.emptyList();
         }
     }
 }

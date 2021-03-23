@@ -350,4 +350,76 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     }
 
 
+    @Override
+    public Text getDisplayName() {
+        if (this.referenceExists()) {
+            return SpongeConversionUtil.fromSponge(this.getSpongePlayer().get().getOrElse(Keys.DISPLAY_NAME, org.spongepowered.api.text.Text.EMPTY));
+        }
+        return Text.of();
+    }
+
+    @Override
+    public void setDisplayName(Text displayName) {
+        if (this.referenceExists()) this.getSpongePlayer().get().offer(Keys.DISPLAY_NAME, SpongeConversionUtil.toSponge(displayName));
+    }
+
+    @Override
+    public double getHealth() {
+        return this.getSpongePlayer().map(player -> player.get(Keys.HEALTH).orElse(0D)).orElse(0D);
+    }
+
+    @Override
+    public void setHealth(double health) {
+        this.getSpongePlayer().ifPresent(player -> player.offer(Keys.HEALTH, health));
+    }
+
+    @Override
+    public boolean isAlive() {
+        return this.getHealth() > 0;
+    }
+
+    @Override
+    public boolean isInvisible() {
+        return this.getSpongePlayer().map(player -> player.get(Keys.VANISH).orElse(false)).orElse(false);
+    }
+
+    @Override
+    public void setInvisible(boolean invisible) {
+        this.getSpongePlayer().ifPresent(player -> player.offer(Keys.VANISH, invisible));
+    }
+
+    @Override
+    public boolean isInvulnerable() {
+        return this.getSpongePlayer().map(player -> player.get(Keys.INVULNERABLE).orElse(false)).orElse(false);
+    }
+
+    @Override
+    public void setInvulnerable(boolean invulnerable) {
+        this.getSpongePlayer().ifPresent(player -> player.offer(Keys.INVULNERABLE, invulnerable));
+    }
+
+    @Override
+    public boolean hasGravity() {
+        return this.getSpongePlayer().map(player -> player.get(Keys.HAS_GRAVITY).orElse(false)).orElse(false);
+    }
+
+    @Override
+    public void setGravity(boolean gravity) {
+        this.getSpongePlayer().ifPresent(player -> player.offer(Keys.HAS_GRAVITY, gravity));
+    }
+
+    @Override
+    public boolean summon(Location location) {
+        throw new UnsupportedOperationException("Cannot re-summon players");
+    }
+
+    @Override
+    public boolean destroy() {
+        throw new UnsupportedOperationException("Cannot destroy players");
+    }
+
+    @Override
+    public Player copy() {
+        throw new UnsupportedOperationException("Cannot copy players");
+    }
 }

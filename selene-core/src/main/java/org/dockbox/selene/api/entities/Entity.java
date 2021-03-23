@@ -43,8 +43,7 @@ import org.dockbox.selene.api.text.Text;
  * @param <T>
  *         The type of {@link Entity}
  */
-public interface Entity<T extends Entity<T>>
-        extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<T> {
+public interface Entity<T extends Entity<T>> extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<T> {
 
     @SuppressWarnings("ConstantDeclaredInInterface")
     double DEFAULT_MAX_HEALTH = 20D;

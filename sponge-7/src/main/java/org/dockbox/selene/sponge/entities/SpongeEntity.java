@@ -51,8 +51,7 @@ import java.util.UUID;
  * @param <E>
  *         The internal Selene {@link org.dockbox.selene.api.entities.Entity} type to represent
  */
-public abstract class SpongeEntity<T extends Entity, E extends org.dockbox.selene.api.entities.Entity<E>>
-        extends NMSEntity<T> implements org.dockbox.selene.api.entities.Entity<E>, SpongeComposite {
+public abstract class SpongeEntity<T extends Entity, E extends org.dockbox.selene.api.entities.Entity<E>> extends NMSEntity<T> implements org.dockbox.selene.api.entities.Entity<E>, SpongeComposite {
 
     @SuppressWarnings("unchecked")
     protected <C extends org.spongepowered.api.entity.Entity> C create(Location location) {
@@ -152,23 +151,20 @@ public abstract class SpongeEntity<T extends Entity, E extends org.dockbox.selen
 
     @Override
     public E copy() {
-        return SpongeConversionUtil.toSponge(this.getLocation())
-                .map(spongeLocation -> {
-                    try (StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                        frame.addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLUGIN);
-                        EntityArchetype archetype = this.getRepresentation().createArchetype();
+        return SpongeConversionUtil.toSponge(this.getLocation()).map(spongeLocation -> {
+            try (StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
+                frame.addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLUGIN);
+                EntityArchetype archetype = this.getRepresentation().createArchetype();
 
-                        @SuppressWarnings("unchecked")
-                        org.spongepowered.api.entity.Entity clone = this.createSnapshot(
-                                (AbstractArchetype<EntityType, EntitySnapshot, org.spongepowered.api.entity.Entity>) archetype,
-                                spongeLocation
-                        ).restore().orElse(null);
+                @SuppressWarnings("unchecked")
+                org.spongepowered.api.entity.Entity clone = this.createSnapshot(
+                        (AbstractArchetype<EntityType, EntitySnapshot, org.spongepowered.api.entity.Entity>) archetype,
+                        spongeLocation
+                ).restore().orElse(null);
 
-                        return this.from(clone);
-                    }
-                })
-                .rethrowUnchecked()
-                .orNull();
+                return this.from(clone);
+            }
+        }).rethrowUnchecked().orNull();
     }
 
     @Override

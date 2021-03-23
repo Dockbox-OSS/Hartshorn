@@ -17,8 +17,10 @@
 
 package org.dockbox.selene.sponge.objects.location;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 
+import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.Wrapper;
 import org.dockbox.selene.api.objects.item.Item;
@@ -46,6 +48,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.world.World> {
 
@@ -255,4 +258,25 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
         }
         return SeleneUtils.emptyMap();
     }
+
+    @Override
+    public Collection<Entity<?>> getEntities() {
+        if (this.referenceExists()) {
+            return this.getReference().get().getEntities().stream().map(SpongeConversionUtil::fromSponge).collect(Collectors.toList());
+        }
+        return SeleneUtils.emptyList();
+    }
+
+    @Override
+    public Collection<Entity<?>> getEntities(Predicate<Entity<?>> predicate) {
+        if (this.referenceExists()) {
+            return this.getReference().get().getEntities(entity -> {
+                Entity<?> seleneEntity = SpongeConversionUtil.fromSponge(entity);
+                return predicate.test(seleneEntity);
+            }).stream().map(SpongeConversionUtil::fromSponge).collect(Collectors.toList());
+        }
+        return SeleneUtils.emptyList();
+    }
+
+
 }
