@@ -1,6 +1,6 @@
 ---
 name: Module
-about: If you have a idea for a new module, whether integrated or external, you
+about: If you have an idea for a new module, whether integrated or external, you
   can use this template
 title: ''
 labels: 'Type: Module'

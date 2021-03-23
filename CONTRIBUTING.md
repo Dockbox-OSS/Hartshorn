@@ -55,7 +55,7 @@ Pull Requests always follow the [Pull Request Template](https://github.com/GuusL
 - Try to limit pull requests to a few commits which resolve a specific issue
 - Make sure commit messages are descriptive of the changes made
 - All proposed changes must be reviewed and approved by at least one organization member
-- Ensure all new code is documented according to the [JavaDoc styleguide](TODO LINK)
+- Ensure all new code is documented according to the [JavaDoc styleguide](https://github.com/GuusLieben/Selene/blob/selene-main/CONTRIBUTING.md#javadocs)
 - Describe the proposed changes with a relevant motivation and additional context
 - Link to the original issue(s) which your changes relate to
 

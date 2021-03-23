@@ -222,8 +222,7 @@ public abstract class AbstractPipeline<P, I> {
      * @return An {@link Exceptional} containing the {@code I} output. If the output is not present it
      *         will contain a throwable describing why
      */
-    @SuppressWarnings("NullableProblems") // Performed by GenericTask
-    public Exceptional<I> process(@NotNull P input) {
+    public Exceptional<I> process(P input) {
         return this.process(input, null);
     }
 

@@ -28,6 +28,7 @@ public final class BlockRegistryUtil {
     private BlockRegistryUtil() {}
 
     public static Class<? extends BlockRegistryParser> getBlockRegistryParserClass() {
+        //noinspection SwitchStatementWithTooFewBranches
         switch (Selene.getServer().getMinecraftVersion()) {
             default:
                 return MC1_12BlockRegistryParser.class;

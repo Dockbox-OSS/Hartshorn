@@ -19,7 +19,6 @@ package org.dockbox.selene.api.util.images;
 
 import org.dockbox.selene.api.objects.tuple.Tristate;
 
-@SuppressWarnings("MagicNumber")
 public enum DitherMode {
     NoDither,
     FloydSteinberg(

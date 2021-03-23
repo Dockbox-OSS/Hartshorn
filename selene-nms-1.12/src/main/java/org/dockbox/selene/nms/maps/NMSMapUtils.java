@@ -65,7 +65,6 @@ public final class NMSMapUtils {
         return id;
     }
 
-    @SuppressWarnings("MagicNumber")
     private static byte[] getColorData(BufferedImage image) {
         BufferedImage sizedImage = getResizedImage(image);
         byte[] colors = new byte[MAX_MAP_SIZE * MAX_MAP_SIZE];

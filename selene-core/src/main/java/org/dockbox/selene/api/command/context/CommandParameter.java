@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.api.command.context;
 
-@SuppressWarnings("ClassReferencesSubclass")
 public abstract class CommandParameter<T> {
 
     private final String key;

@@ -49,7 +49,6 @@ import javax.annotation.Nullable;
  * @param <T>
  *         the type parameter
  */
-@SuppressWarnings({ "AssignmentToNull", "unused" })
 public final class Exceptional<T> {
 
     private static final Exceptional<?> EMPTY = new Exceptional<>();

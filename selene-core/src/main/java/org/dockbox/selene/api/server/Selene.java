@@ -44,7 +44,6 @@ import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
 /** The global {@link Selene} instance used to grant access to various components. */
-@SuppressWarnings("ClassWithTooManyMethods")
 public final class Selene {
 
     private Selene() {}

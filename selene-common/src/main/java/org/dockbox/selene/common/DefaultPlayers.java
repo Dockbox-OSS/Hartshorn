@@ -43,7 +43,6 @@ public abstract class DefaultPlayers implements Players {
         return DefaultPlayers.getUserData(uuid).language;
     }
 
-    @SuppressWarnings("ConstantConditions")
     private static UserDataModel getUserData(UUID uuid) {
         FileManager cm = Selene.provide(FileManager.class);
         Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
@@ -51,7 +50,6 @@ public abstract class DefaultPlayers implements Players {
         return userDataModel.orElse(new UserDataModel());
     }
 
-    @SuppressWarnings("ConstantConditions")
     private static void updateUserData(UUID uuid, UserDataModel userData) {
         FileManager cm = Selene.provide(FileManager.class);
         Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);

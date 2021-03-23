@@ -122,7 +122,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
         return ((SpongeAPI7Bootstrap) getInstance()).container;
     }
 
-    @SuppressWarnings("AnonymousInnerClassMayBeStatic")
+    @SuppressWarnings({ "AnonymousInnerClassMayBeStatic", "UnstableApiUsage" })
     @Listener
     public void onGamePreInit(GamePreInitializationEvent event) {
         Composite.ITEM_KEY = Key.builder()

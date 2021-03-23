@@ -46,8 +46,8 @@ import java.util.Set;
  * A simple default implementation of {@link EventBus}, used for internal event posting and
  * handling.
  */
+@SuppressWarnings({ "EqualsWithItself", "unchecked" })
 @Singleton
-@SuppressWarnings({ "unchecked", "EqualsWithItself", "VolatileArrayField" })
 public class SimpleEventBus implements EventBus {
 
     /** A map of all listening objects with their associated {@link EventWrapper}s. */

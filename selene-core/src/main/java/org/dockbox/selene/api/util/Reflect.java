@@ -206,6 +206,7 @@ public final class Reflect {
      */
     public static boolean isAssignableFrom(Class<?> to, Class<?> from) {
         if (null == to || null == from) return false;
+        //noinspection ConstantConditions
         if (to == from || to.equals(from)) return true;
 
         if (to.isAssignableFrom(from)) {
@@ -735,7 +736,6 @@ public final class Reflect {
         if (field.isAnnotationPresent(Property.class)) {
             Property property = field.getAnnotation(Property.class);
 
-            //noinspection CallToSuspiciousStringMethod
             if (!property.setter().isEmpty() && Reflect.hasMethod(type, property.setter())) {
                 Class<?> parameterType = field.getType();
                 if (Reflect.isNotVoid(property.accepts())) parameterType = property.accepts();
