@@ -24,35 +24,18 @@ import java.nio.file.Path;
 
 /** Enumerated values containing the file extensions for several commonly used file types. */
 public enum FileType {
-
-    // Minecraft native formats
-    ANVIL("mca"),
-
     // Compiled Java formats
     CLASS("class"),
     JAR("jar"),
 
-    // Image formats
-    PNG("png"),
-    JPG("jpg"),
-    BITMAP("bmp"),
-
-    // Database formats
-    FAWE_HISTORY("bd"),
-    OLDPLOTS("db"),
+    // Formats with file/web utilities
     SQLITE("sqlite", Format.SQLite.class),
-
-    // Data/config formats
     YAML("yml", Format.YAML.class),
     JSON("json", Format.Json.class),
-    MOD_CONFIG("cfg"),
-    CONFIG("conf"),
     XML("xml", Format.XML.class),
-    PROPERTIES("properties"),
-
-    // Other
-    ZIP("zip"),
-    LOG("log");
+    MOD_CONFIG("cfg", Format.HOCON.class),
+    CONFIG("conf", Format.HOCON.class),
+    ;
 
     private final String extension;
     private final Class<? extends Annotation> format;

@@ -49,4 +49,10 @@ public @interface Format {
     @Target(ElementType.TYPE)
     @interface YAML {
     }
+
+    @BindingAnnotation
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    @interface HOCON {
+    }
 }
