@@ -43,7 +43,7 @@ import org.dockbox.selene.api.events.player.interact.PlayerInteractAirEvent;
 import org.dockbox.selene.api.events.player.interact.PlayerInteractBlockEvent;
 import org.dockbox.selene.api.events.player.interact.PlayerInteractEntityEvent;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.location.Warp;
 import org.dockbox.selene.api.objects.player.ClickType;
 import org.dockbox.selene.api.objects.player.Hand;

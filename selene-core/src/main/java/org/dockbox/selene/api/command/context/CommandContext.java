@@ -19,8 +19,8 @@ package org.dockbox.selene.api.command.context;
 
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.Location;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.position.Location;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 
 public interface CommandContext {
 

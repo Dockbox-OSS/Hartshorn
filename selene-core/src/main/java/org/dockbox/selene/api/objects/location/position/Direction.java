@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.objects.location;
+package org.dockbox.selene.api.objects.location.position;
 
 public enum Direction {
     NORTH, EAST, SOUTH, WEST, OTHER;

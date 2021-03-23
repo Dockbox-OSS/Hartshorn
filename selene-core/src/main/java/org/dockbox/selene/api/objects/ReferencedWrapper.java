@@ -30,6 +30,10 @@ public abstract class ReferencedWrapper<T> implements Wrapper<T> {
         this.setReference(this.constructInitialReference());
     }
 
+    protected ReferencedWrapper(T reference) {
+        this.setReference(Exceptional.ofNullable(reference));
+    }
+
     @Override
     public Exceptional<T> getReference() {
         this.updateReference().ifPresent(t -> this.setInternalReference(new WeakReference<>(t)));

@@ -25,7 +25,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.inventory.PlayerInventory;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.keys.PersistentDataHolder;
-import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.special.Sounds;
 import org.dockbox.selene.api.objects.targets.AbstractIdentifiable;

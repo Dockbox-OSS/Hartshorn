@@ -25,6 +25,8 @@ import org.dockbox.selene.api.command.context.CommandArgument;
 import org.dockbox.selene.api.command.context.CommandFlag;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.location.dimensions.World;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.targets.Locatable;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.SeleneUtils;
@@ -129,8 +131,8 @@ public class SpongeCommandBus extends DefaultCommandBus {
     ) {
         SimpleCommandContext seleneContext;
         if (sender instanceof Locatable) {
-            org.dockbox.selene.api.objects.location.Location loc = ((Locatable) sender).getLocation();
-            org.dockbox.selene.api.objects.location.World world =
+            Location loc = ((Locatable) sender).getLocation();
+            World world =
                     ((Locatable) sender).getLocation().getWorld();
 
             seleneContext = new SimpleCommandContext(

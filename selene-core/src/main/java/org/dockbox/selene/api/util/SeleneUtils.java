@@ -60,6 +60,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -68,6 +70,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Wraps all utility classes to a common accessor. This way all {@code final} utility classes can be
@@ -1209,6 +1212,14 @@ public final class SeleneUtils {
             out.add(function.apply(t));
         }
         return convertGenericArray(out.toArray());
+    }
+
+    public static <T> Stream<T> stream(Iterable<T> iterable) {
+        return stream(iterable.iterator());
+    }
+
+    public static <T> Stream<T> stream(Iterator<T> tIterator) {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(tIterator, Spliterator.ORDERED), false);
     }
 
     /**

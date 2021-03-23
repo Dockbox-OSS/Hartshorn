@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.events.world;
 
-import org.dockbox.selene.api.objects.location.WorldProperties;
+import org.dockbox.selene.api.objects.location.dimensions.WorldProperties;
 import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.api.util.SeleneUtils;

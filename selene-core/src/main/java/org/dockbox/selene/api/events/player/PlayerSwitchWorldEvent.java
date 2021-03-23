@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.events.player;
 
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.targets.Target;
 
 /**

@@ -18,7 +18,7 @@
 package org.dockbox.selene.api;
 
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 
 import java.util.List;
 import java.util.UUID;

@@ -15,11 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.objects.location;
+package org.dockbox.selene.api.objects.location.dimensions;
 
 import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.location.position.BlockFace;
 import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
@@ -30,8 +31,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
 
-public abstract class World extends WorldProperties implements BlockDimension, EntityHolding {
+public abstract class World extends WorldProperties implements BlockDimension, EntityHolding, ChunkHolder {
 
     protected UUID worldUniqueId;
     protected String name;
@@ -152,6 +154,26 @@ public abstract class World extends WorldProperties implements BlockDimension, E
 
         @Override
         public Collection<Entity<?>> getEntities() {
+            return SeleneUtils.emptyList();
+        }
+
+        @Override
+        public Collection<Entity<?>> getEntities(Predicate<Entity<?>> predicate) {
+            return SeleneUtils.emptyList();
+        }
+
+        @Override
+        public Collection<Chunk> getChunks() {
+            return SeleneUtils.emptyList();
+        }
+
+        @Override
+        public Exceptional<Chunk> getChunk(int x, int y) {
+            return Exceptional.empty();
+        }
+
+        @Override
+        public Collection<Chunk> getLoadedChunks() {
             return SeleneUtils.emptyList();
         }
     }

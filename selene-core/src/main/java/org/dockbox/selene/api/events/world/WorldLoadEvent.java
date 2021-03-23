@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.events.world;
 
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 
 /** The event fired when a world is loaded. */
 public class WorldLoadEvent extends WorldHoldingEvent {

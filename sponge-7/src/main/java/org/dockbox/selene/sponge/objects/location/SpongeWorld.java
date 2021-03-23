@@ -17,40 +17,27 @@
 
 package org.dockbox.selene.sponge.objects.location;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 
-import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.Wrapper;
-import org.dockbox.selene.api.objects.item.Item;
-import org.dockbox.selene.api.objects.location.BlockFace;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.dimensions.Chunk;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.player.Gamemode;
-import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
-import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.profile.GameProfile;
-import org.spongepowered.api.util.Direction;
+import org.spongepowered.api.world.extent.Extent;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.world.World> {
+public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.world.World>, SpongeDimension {
 
     private WeakReference<org.spongepowered.api.world.World> reference = new WeakReference<>(null);
 
@@ -94,59 +81,6 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
             return this.getReference().get().isLoaded();
         }
         else return false; // No reference means the world is not loaded (as it is obtained through #getWorld rather than #loadWorld
-    }
-
-    @Override
-    public Vector3N minimumPosition() {
-        return SpongeConversionUtil.fromSponge(this.getReference().get().getBlockMin().toDouble());
-    }
-
-    @Override
-    public Vector3N maximumPosition() {
-        return SpongeConversionUtil.fromSponge(this.getReference().get().getBlockMin().toDouble());
-    }
-
-    @Override
-    public Vector3N floor(Vector3N position) {
-        Vector3i floor = this.getReferenceWorld().getHighestPositionAt(SpongeConversionUtil.toSponge(position).toInt());
-        return SpongeConversionUtil.fromSponge(floor.toDouble());
-    }
-
-    @Override
-    public boolean hasBlock(Vector3N position) {
-        if (this.referenceExists()) {
-            Vector3d loc = SpongeConversionUtil.toSponge(position);
-            return this.getReference().get().containsBlock(loc.toInt());
-        }
-        return false;
-    }
-
-    @Override
-    public Exceptional<Item> getBlock(Vector3N position) {
-        if (this.referenceExists()) {
-            Vector3d loc = SpongeConversionUtil.toSponge(position);
-            BlockState blockState = this.reference.get().getBlock(loc.toInt());
-            if (blockState.getType() == BlockTypes.AIR) return Exceptional.of(Selene.getItems().getAir());
-            ItemStack stack = ItemStack.builder().fromBlockState(blockState).build();
-            return Exceptional.of(SpongeConversionUtil.fromSponge(stack));
-        }
-        return Exceptional.empty();
-    }
-
-    @Override
-    public boolean setBlock(Vector3N position, Item item, BlockFace direction, Profile placer) {
-        if (this.referenceExists()) {
-            Vector3d loc = SpongeConversionUtil.toSponge(position);
-            Optional<BlockType> blockType = SpongeConversionUtil.toSponge(item).getType().getBlock();
-            if (!blockType.isPresent()) return false;
-            BlockState state = blockType.get().getDefaultState();
-            Direction dir = SpongeConversionUtil.toSponge(direction);
-            GameProfile profile = null;
-            if (placer instanceof SpongeProfile) {
-                profile = ((SpongeProfile) placer).getGameProfile();
-            }
-            return this.reference.get().placeBlock(loc.toInt(), state, dir, profile);
-        } else return false;
     }
 
     @Override
@@ -260,23 +194,24 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
     }
 
     @Override
-    public Collection<Entity<?>> getEntities() {
+    public Exceptional<Chunk> getChunk(int x, int y) {
         if (this.referenceExists()) {
-            return this.getReference().get().getEntities().stream().map(SpongeConversionUtil::fromSponge).collect(Collectors.toList());
+            Exceptional<org.spongepowered.api.world.Chunk> exceptional = Exceptional.of(this.getReferenceWorld().getChunk(x, 0, y));
+            return exceptional.map(SpongeConversionUtil::fromSponge);
+        }
+        return Exceptional.empty();
+    }
+
+    @Override
+    public Collection<Chunk> getLoadedChunks() {
+        if (this.referenceExists()) {
+            return SeleneUtils.stream(this.getReferenceWorld().getLoadedChunks()).map(SpongeConversionUtil::fromSponge).collect(Collectors.toList());
         }
         return SeleneUtils.emptyList();
     }
 
     @Override
-    public Collection<Entity<?>> getEntities(Predicate<Entity<?>> predicate) {
-        if (this.referenceExists()) {
-            return this.getReference().get().getEntities(entity -> {
-                Entity<?> seleneEntity = SpongeConversionUtil.fromSponge(entity);
-                return predicate.test(seleneEntity);
-            }).stream().map(SpongeConversionUtil::fromSponge).collect(Collectors.toList());
-        }
-        return SeleneUtils.emptyList();
+    public Extent getExtent() {
+        return this.getReferenceWorld();
     }
-
-
 }

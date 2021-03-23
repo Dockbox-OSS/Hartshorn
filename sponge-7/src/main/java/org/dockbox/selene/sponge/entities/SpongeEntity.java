@@ -21,8 +21,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.Location;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.position.Location;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.nms.entities.NMSEntity;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;

@@ -19,7 +19,7 @@ package org.dockbox.selene.sponge.external;
 
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.Wrapper;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.worldedit.region.Region;

@@ -27,8 +27,8 @@ import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.events.player.PlayerPortalEvent;
 import org.dockbox.selene.api.events.server.ServerReloadEvent;
 import org.dockbox.selene.api.events.server.ServerStartedEvent;
-import org.dockbox.selene.api.objects.location.Location;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.position.Location;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.tasks.TaskRunner;
 

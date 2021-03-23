@@ -15,14 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.objects.location;
+package org.dockbox.selene.api.objects.location.dimensions;
 
-public enum BlockFace {
-    NONE,
-    NORTH,
-    EAST,
-    SOUTH,
-    WEST,
-    TOP,
-    BOTTOM
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.location.position.BlockFace;
+import org.dockbox.selene.api.objects.profile.Profile;
+import org.dockbox.selene.api.objects.tuple.Vector3N;
+
+public interface BlockDimension {
+
+    Vector3N minimumPosition();
+
+    Vector3N maximumPosition();
+
+    Vector3N floor(Vector3N position);
+
+    boolean hasBlock(Vector3N position);
+
+    Exceptional<Item> getBlock(Vector3N position);
+
+    boolean setBlock(Vector3N position, Item item, BlockFace direction, Profile placer);
+
 }

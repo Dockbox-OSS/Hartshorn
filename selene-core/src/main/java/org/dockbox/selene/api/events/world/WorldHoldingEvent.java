@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.events.world;
 
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 
 /**
  * The abstract type which can be used to listen to all world events holding a existing {@link

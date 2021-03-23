@@ -20,7 +20,7 @@ package org.dockbox.selene.api.entities;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.item.storage.MinecraftItems;
-import org.dockbox.selene.api.objects.location.BlockFace;
+import org.dockbox.selene.api.objects.location.position.BlockFace;
 
 /**
  * Represents an Item Frame. See <a href="https://minecraft.gamepedia.com/Item_Frame">Item Frame on

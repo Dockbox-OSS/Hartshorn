@@ -25,7 +25,7 @@ import net.minecraft.entity.item.EntityArmorStand;
 
 import org.dockbox.selene.api.entities.ArmorStand;
 import org.dockbox.selene.api.objects.inventory.Inventory;
-import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.entities;
 
-import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.server.Selene;
 
 import java.util.function.BiFunction;
