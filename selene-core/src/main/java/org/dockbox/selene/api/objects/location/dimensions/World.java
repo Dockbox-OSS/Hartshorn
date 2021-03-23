@@ -21,6 +21,7 @@ import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.location.position.BlockFace;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
@@ -163,8 +164,8 @@ public abstract class World extends WorldProperties implements BlockDimension, E
         }
 
         @Override
-        public Collection<Chunk> getChunks() {
-            return SeleneUtils.emptyList();
+        public Exceptional<Chunk> getChunk(Location location) {
+            return Exceptional.empty();
         }
 
         @Override

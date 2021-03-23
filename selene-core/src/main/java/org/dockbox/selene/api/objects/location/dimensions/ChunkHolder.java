@@ -18,10 +18,13 @@
 package org.dockbox.selene.api.objects.location.dimensions;
 
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.location.position.Location;
 
 import java.util.Collection;
 
 public interface ChunkHolder {
+
+    Exceptional<Chunk> getChunk(Location location);
 
     Exceptional<Chunk> getChunk(int x, int y);
 

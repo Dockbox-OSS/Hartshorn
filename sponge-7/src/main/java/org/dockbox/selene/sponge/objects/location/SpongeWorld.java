@@ -23,6 +23,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.Wrapper;
 import org.dockbox.selene.api.objects.location.dimensions.Chunk;
 import org.dockbox.selene.api.objects.location.dimensions.World;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.api.util.SeleneUtils;
@@ -191,6 +192,16 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
             return this.getReference().get().getProperties().getGameRules();
         }
         return SeleneUtils.emptyMap();
+    }
+
+    @Override
+    public Exceptional<Chunk> getChunk(Location location) {
+        if (this.referenceExists()) {
+            Vector3i position = SpongeConversionUtil.toSponge(location).get().getBlockPosition();
+            Exceptional<org.spongepowered.api.world.Chunk> chunkAtBlock = Exceptional.of(this.getReferenceWorld().getChunkAtBlock(position));
+            return chunkAtBlock.map(SpongeConversionUtil::fromSponge);
+        }
+        return Exceptional.empty();
     }
 
     @Override
