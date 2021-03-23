@@ -22,38 +22,4 @@ import org.dockbox.selene.api.events.parents.Event;
 /** The abstract type which can be used to listen to all server related events. */
 public abstract class ServerEvent implements Event {
 
-    /**
-     * The event fired when the server is initiating/initializing. Typically this is the first event
-     * to be fired.
-     */
-    public static class ServerInitEvent extends ServerEvent {
-    }
-
-    /**
-     * The event fired when the server is done initiating/initializing. Typically this is fired after
-     * {@link ServerInitEvent} and before {@link ServerStartingEvent}.
-     */
-    public static class ServerPostInitEvent extends ServerEvent {
-    }
-
-    /** The event fired when a server-wide reload is performed. */
-    public static class ServerReloadEvent extends ServerEvent {
-    }
-
-    /**
-     * The event fired when the server is starting. Typically this is fired after {@link
-     * ServerPostInitEvent} and before {@link ServerStartedEvent}.
-     */
-    public static class ServerStartingEvent extends ServerEvent {
-    }
-
-    /**
-     * The event fired when the server is done starting. Typically this is the last event to be fired.
-     */
-    public static class ServerStartedEvent extends ServerEvent {
-    }
-
-    /** The event fired when the server is stopping. */
-    public static class ServerStoppingEvent extends ServerEvent {
-    }
 }

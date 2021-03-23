@@ -40,7 +40,8 @@ public class DiscordCommandContext {
             MessageChannel channel,
             LocalDateTime timeReceived,
             String command,
-            String[] arguments) {
+            String[] arguments
+    ) {
         this.author = author;
         this.channel = channel;
         this.timeReceived = timeReceived;

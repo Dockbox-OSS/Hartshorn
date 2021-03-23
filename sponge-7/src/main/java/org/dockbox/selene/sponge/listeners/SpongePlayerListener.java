@@ -20,28 +20,28 @@ package org.dockbox.selene.sponge.listeners;
 import com.flowpowered.math.vector.Vector3d;
 
 import org.dockbox.selene.api.events.chat.SendChatEvent;
-import org.dockbox.selene.api.events.moderation.BanEvent.IpBannedEvent;
-import org.dockbox.selene.api.events.moderation.BanEvent.IpUnbannedEvent;
-import org.dockbox.selene.api.events.moderation.BanEvent.NameBannedEvent;
-import org.dockbox.selene.api.events.moderation.BanEvent.NameUnbannedEvent;
-import org.dockbox.selene.api.events.moderation.BanEvent.PlayerBannedEvent;
-import org.dockbox.selene.api.events.moderation.BanEvent.PlayerUnbannedEvent;
+import org.dockbox.selene.api.events.moderation.IpBannedEvent;
+import org.dockbox.selene.api.events.moderation.IpUnbannedEvent;
+import org.dockbox.selene.api.events.moderation.NameBannedEvent;
+import org.dockbox.selene.api.events.moderation.NameUnbannedEvent;
+import org.dockbox.selene.api.events.moderation.PlayerBannedEvent;
+import org.dockbox.selene.api.events.moderation.PlayerNotedEvent;
+import org.dockbox.selene.api.events.moderation.PlayerUnbannedEvent;
 import org.dockbox.selene.api.events.moderation.KickEvent;
-import org.dockbox.selene.api.events.moderation.NoteEvent;
-import org.dockbox.selene.api.events.moderation.WarnEvent;
-import org.dockbox.selene.api.events.moderation.WarnEvent.PlayerWarnedEvent;
+import org.dockbox.selene.api.events.moderation.PlayerWarningExpired;
+import org.dockbox.selene.api.events.moderation.PlayerWarnedEvent;
 import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.events.parents.Event;
-import org.dockbox.selene.api.events.player.PlayerConnectionEvent.PlayerAuthEvent;
-import org.dockbox.selene.api.events.player.PlayerConnectionEvent.PlayerJoinEvent;
-import org.dockbox.selene.api.events.player.PlayerConnectionEvent.PlayerLeaveEvent;
-import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerPortalEvent;
-import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerSwitchWorldEvent;
-import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerTeleportEvent;
-import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerWarpEvent;
-import org.dockbox.selene.api.events.player.interact.PlayerInteractEvent.PlayerInteractAirEvent;
-import org.dockbox.selene.api.events.player.interact.PlayerInteractEvent.PlayerInteractBlockEvent;
-import org.dockbox.selene.api.events.player.interact.PlayerInteractEvent.PlayerInteractEntityEvent;
+import org.dockbox.selene.api.events.player.PlayerAuthEvent;
+import org.dockbox.selene.api.events.player.PlayerJoinEvent;
+import org.dockbox.selene.api.events.player.PlayerLeaveEvent;
+import org.dockbox.selene.api.events.player.PlayerPortalEvent;
+import org.dockbox.selene.api.events.player.PlayerSwitchWorldEvent;
+import org.dockbox.selene.api.events.player.PlayerTeleportEvent;
+import org.dockbox.selene.api.events.player.PlayerWarpEvent;
+import org.dockbox.selene.api.events.player.interact.PlayerInteractAirEvent;
+import org.dockbox.selene.api.events.player.interact.PlayerInteractBlockEvent;
+import org.dockbox.selene.api.events.player.interact.PlayerInteractEntityEvent;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.Location;
 import org.dockbox.selene.api.objects.location.Warp;
@@ -272,7 +272,7 @@ public class SpongePlayerListener {
             @Getter("getSource") Object source
     ) {
         SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
-            PlayerWarnedEvent event = new WarnEvent.PlayerWarnedEvent(
+            PlayerWarnedEvent event = new PlayerWarnedEvent(
                     SpongeConversionUtil.fromSponge(user),
                     convertedSource,
                     reason,
@@ -296,7 +296,7 @@ public class SpongePlayerListener {
             @Getter("getSource") Object source
     ) {
         SpongePlayerListener.postIfCommandSource(source, convertedSource ->
-                new NoteEvent.PlayerNotedEvent(SpongeConversionUtil.fromSponge(user), convertedSource, note).post()
+                new PlayerNotedEvent(SpongeConversionUtil.fromSponge(user), convertedSource, note).post()
         );
     }
 
@@ -368,7 +368,7 @@ public class SpongePlayerListener {
             @Getter("getSource") Object source
     ) {
         SpongePlayerListener.postIfCommandSource(source, convertedSource ->
-                new WarnEvent.PlayerWarningExpired(SpongeConversionUtil.fromSponge(user), convertedSource, reason).post()
+                new PlayerWarningExpired(SpongeConversionUtil.fromSponge(user), convertedSource, reason).post()
         );
     }
 

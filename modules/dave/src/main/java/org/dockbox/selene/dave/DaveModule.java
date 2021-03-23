@@ -23,7 +23,7 @@ import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.events.chat.SendChatEvent;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
+import org.dockbox.selene.api.events.server.ServerReloadEvent;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;

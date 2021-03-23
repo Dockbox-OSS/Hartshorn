@@ -29,8 +29,8 @@ import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.CommandBus;
 import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.events.EventBus;
-import org.dockbox.selene.api.events.server.ServerEvent;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerStartedEvent;
+import org.dockbox.selene.api.events.server.ServerStartedEvent;
+import org.dockbox.selene.api.events.server.ServerInitEvent;
 import org.dockbox.selene.api.i18n.common.ResourceService;
 import org.dockbox.selene.api.module.ModuleContext;
 import org.dockbox.selene.api.module.ModuleManager;
@@ -168,7 +168,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         SeleneBootstrap.initResources();
         cb.apply();
 
-        Selene.provide(EventBus.class).post(new ServerEvent.ServerInitEvent());
+        Selene.provide(EventBus.class).post(new ServerInitEvent());
     }
 
     /**

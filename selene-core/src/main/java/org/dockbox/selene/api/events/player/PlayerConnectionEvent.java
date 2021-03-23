@@ -20,8 +20,6 @@ package org.dockbox.selene.api.events.player;
 import org.dockbox.selene.api.events.AbstractTargetEvent;
 import org.dockbox.selene.api.objects.targets.Target;
 
-import java.net.InetSocketAddress;
-
 /** The abstract type which can be used to listen to all player movement related events. */
 public abstract class PlayerConnectionEvent extends AbstractTargetEvent {
 
@@ -34,42 +32,4 @@ public abstract class PlayerConnectionEvent extends AbstractTargetEvent {
         throw new UnsupportedOperationException("Cannot change target of connection event");
     }
 
-    /** The event fired when a player connected to the server. */
-    public static class PlayerJoinEvent extends PlayerConnectionEvent {
-        public PlayerJoinEvent(Target target) {
-            super(target);
-        }
-    }
-
-    /** The event fired when a player disconnected from the server. */
-    public static class PlayerLeaveEvent extends PlayerConnectionEvent {
-        public PlayerLeaveEvent(Target target) {
-            super(target);
-        }
-    }
-
-    /** The event fired when a remote location is attempting to authenticate to the server. */
-    public static class PlayerAuthEvent extends PlayerConnectionEvent {
-        private final InetSocketAddress address;
-        private final InetSocketAddress host;
-
-        public PlayerAuthEvent(InetSocketAddress address, InetSocketAddress host) {
-            super(null);
-            this.address = address;
-            this.host = host;
-        }
-
-        public InetSocketAddress getAddress() {
-            return this.address;
-        }
-
-        public InetSocketAddress getHost() {
-            return this.host;
-        }
-
-        @Override
-        public Target getTarget() throws UnsupportedOperationException {
-            throw new UnsupportedOperationException("Cannot get target while authenticating");
-        }
-    }
 }

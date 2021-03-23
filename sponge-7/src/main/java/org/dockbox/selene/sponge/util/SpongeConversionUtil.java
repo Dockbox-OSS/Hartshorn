@@ -35,7 +35,7 @@ import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.entities.ItemFrame;
-import org.dockbox.selene.api.events.world.WorldEvent.WorldCreatingProperties;
+import org.dockbox.selene.api.events.world.WorldCreatingProperties;
 import org.dockbox.selene.api.exceptions.TypeConversionException;
 import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;

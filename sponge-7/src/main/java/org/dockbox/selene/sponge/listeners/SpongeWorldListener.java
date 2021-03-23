@@ -18,10 +18,10 @@
 package org.dockbox.selene.sponge.listeners;
 
 import org.dockbox.selene.api.events.parents.Cancellable;
-import org.dockbox.selene.api.events.world.WorldEvent.WorldCreatingEvent;
-import org.dockbox.selene.api.events.world.WorldEvent.WorldLoadEvent;
-import org.dockbox.selene.api.events.world.WorldEvent.WorldSaveEvent;
-import org.dockbox.selene.api.events.world.WorldEvent.WorldUnloadEvent;
+import org.dockbox.selene.api.events.world.WorldCreatingEvent;
+import org.dockbox.selene.api.events.world.WorldLoadEvent;
+import org.dockbox.selene.api.events.world.WorldSaveEvent;
+import org.dockbox.selene.api.events.world.WorldUnloadEvent;
 import org.dockbox.selene.api.objects.location.World;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.event.Listener;

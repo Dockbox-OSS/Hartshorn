@@ -18,11 +18,7 @@
 package org.dockbox.selene.api.events.player;
 
 import org.dockbox.selene.api.events.AbstractTargetCancellableEvent;
-import org.dockbox.selene.api.objects.location.Location;
-import org.dockbox.selene.api.objects.location.Warp;
-import org.dockbox.selene.api.objects.location.World;
 import org.dockbox.selene.api.objects.player.Player;
-import org.dockbox.selene.api.objects.special.PortalType;
 import org.dockbox.selene.api.objects.targets.Target;
 
 /** The abstract type which can be used to listen to all player movement related events. */
@@ -37,103 +33,4 @@ public abstract class PlayerMoveEvent extends AbstractTargetCancellableEvent {
         return (Player) super.getTarget();
     }
 
-    /** The event fired when a player is teleported to another location */
-    public static class PlayerTeleportEvent extends PlayerMoveEvent {
-        private final Location oldLocation;
-        private Location newLocation;
-
-        public PlayerTeleportEvent(Target target, Location oldLocation, Location newLocation) {
-            super(target);
-            this.oldLocation = oldLocation;
-            this.newLocation = newLocation;
-        }
-
-        public Location getOldLocation() {
-            return this.oldLocation;
-        }
-
-        public Location getNewLocation() {
-            return this.newLocation;
-        }
-
-        public void setNewLocation(Location newLocation) {
-            this.newLocation = newLocation;
-        }
-    }
-
-    public static class PlayerPortalEvent extends PlayerTeleportEvent {
-        private boolean usesPortal;
-        private final PortalType portalType;
-
-        public PlayerPortalEvent(Target target, Location oldLocation, Location newLocation, boolean usesPortal,
-                                 PortalType portalType) {
-            super(target, oldLocation, newLocation);
-            this.usesPortal = usesPortal;
-            this.portalType = portalType;
-        }
-
-        public boolean usesPortal() {
-            return usesPortal;
-        }
-
-        public PortalType getPortalType() {
-            return portalType;
-        }
-
-        public void setUsePortal(boolean usePortal) {
-            this.usesPortal = usePortal;
-        }
-    }
-
-    /** The event fired when a player is teleported to the spawn location. */
-    // TODO: Implementation (Sponge-1.12)
-    public static class PlayerSpawnEvent extends PlayerMoveEvent {
-        private final Location spawnLocation;
-
-        public PlayerSpawnEvent(Target target, Location spawnLocation) {
-            super(target);
-            this.spawnLocation = spawnLocation;
-        }
-
-        public Location getSpawnLocation() {
-            return this.spawnLocation;
-        }
-    }
-
-    /** The event fired when a player is teleported using a {@link Warp}. */
-    public static class PlayerWarpEvent extends PlayerMoveEvent {
-        private final Warp warp;
-
-        public PlayerWarpEvent(Target target, Warp warp) {
-            super(target);
-            this.warp = warp;
-        }
-
-        public Warp getWarp() {
-            return this.warp;
-        }
-    }
-
-    /**
-     * The event fired when a player switches to another world. Typically this is fired after {@link
-     * PlayerTeleportEvent}.
-     */
-    public static class PlayerSwitchWorldEvent extends PlayerMoveEvent {
-        private final World oldWorld;
-        private final World newWorld;
-
-        public PlayerSwitchWorldEvent(Target target, World oldWorld, World newWorld) {
-            super(target);
-            this.oldWorld = oldWorld;
-            this.newWorld = newWorld;
-        }
-
-        public World getOldWorld() {
-            return this.oldWorld;
-        }
-
-        public World getNewWorld() {
-            return this.newWorld;
-        }
-    }
 }

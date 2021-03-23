@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.sponge.listeners;
 
-import org.dockbox.selene.api.events.server.ServerEvent.ServerPostInitEvent;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerStartedEvent;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerStartingEvent;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerStoppingEvent;
+import org.dockbox.selene.api.events.server.ServerPostInitEvent;
+import org.dockbox.selene.api.events.server.ServerReloadEvent;
+import org.dockbox.selene.api.events.server.ServerStartedEvent;
+import org.dockbox.selene.api.events.server.ServerStartingEvent;
+import org.dockbox.selene.api.events.server.ServerStoppingEvent;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameLoadCompleteEvent;

@@ -21,7 +21,7 @@ import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.events.player.PlayerMoveEvent;
-import org.dockbox.selene.api.events.player.PlayerMoveEvent.PlayerTeleportEvent;
+import org.dockbox.selene.api.events.player.PlayerTeleportEvent;
 import org.dockbox.selene.api.objects.player.Gamemode;
 
 import javax.inject.Inject;

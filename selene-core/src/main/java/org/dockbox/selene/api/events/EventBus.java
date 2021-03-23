@@ -38,6 +38,5 @@ public interface EventBus {
 
     void registerProcessors(AbstractEventParamProcessor<?>... processors);
 
-    <T extends Annotation> AbstractEventParamProcessor<T> getParamProcessor(
-            Class<T> annotation, EventStage stage);
+    <T extends Annotation> AbstractEventParamProcessor<T> getParamProcessor(Class<T> annotation, EventStage stage);
 }

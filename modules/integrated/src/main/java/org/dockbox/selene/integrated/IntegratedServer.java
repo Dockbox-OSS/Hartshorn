@@ -25,7 +25,7 @@ import org.dockbox.selene.api.command.CommandBus;
 import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.context.CommandValue.Argument;
 import org.dockbox.selene.api.events.EventBus;
-import org.dockbox.selene.api.events.server.ServerEvent.ServerReloadEvent;
+import org.dockbox.selene.api.events.server.ServerReloadEvent;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.entry.IntegratedResource;
 import org.dockbox.selene.api.module.ModuleContext;

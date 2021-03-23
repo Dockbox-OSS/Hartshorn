@@ -36,21 +36,21 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import org.dockbox.selene.api.discord.DiscordUtils;
+import org.dockbox.selene.api.events.discord.DiscordChatReceivedEvent;
 import org.dockbox.selene.api.events.discord.DiscordCommandContext;
-import org.dockbox.selene.api.events.discord.DiscordEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordBotDisconnectedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordBotReconnectedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordChatDeletedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordChatUpdatedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordPrivateChatDeletedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordPrivateChatReceivedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordPrivateChatUpdatedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordReactionAddedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordUserBannedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordUserJoinedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordUserLeftEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordUserNicknameChangedEvent;
-import org.dockbox.selene.api.events.discord.DiscordEvent.DiscordUserUnbannedEvent;
+import org.dockbox.selene.api.events.discord.DiscordBotDisconnectedEvent;
+import org.dockbox.selene.api.events.discord.DiscordBotReconnectedEvent;
+import org.dockbox.selene.api.events.discord.DiscordChatDeletedEvent;
+import org.dockbox.selene.api.events.discord.DiscordChatUpdatedEvent;
+import org.dockbox.selene.api.events.discord.DiscordPrivateChatDeletedEvent;
+import org.dockbox.selene.api.events.discord.DiscordPrivateChatReceivedEvent;
+import org.dockbox.selene.api.events.discord.DiscordPrivateChatUpdatedEvent;
+import org.dockbox.selene.api.events.discord.DiscordReactionAddedEvent;
+import org.dockbox.selene.api.events.discord.DiscordUserBannedEvent;
+import org.dockbox.selene.api.events.discord.DiscordUserJoinedEvent;
+import org.dockbox.selene.api.events.discord.DiscordUserLeftEvent;
+import org.dockbox.selene.api.events.discord.DiscordUserNicknameChangedEvent;
+import org.dockbox.selene.api.events.discord.DiscordUserUnbannedEvent;
 import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.server.Selene;
@@ -75,7 +75,7 @@ public class SpongeDiscordListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(@NotNull GuildMessageReceivedEvent event) {
-        new DiscordEvent.DiscordChatReceivedEvent(
+        new DiscordChatReceivedEvent(
                 event.getAuthor(),
                 event.getMessage(),
                 event.getGuild(),

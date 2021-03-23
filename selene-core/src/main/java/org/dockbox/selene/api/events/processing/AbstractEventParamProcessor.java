@@ -78,7 +78,5 @@ public abstract class AbstractEventParamProcessor<A extends Annotation> {
      *         Indicates the event listener should be skipped.
      */
     @Nullable
-    public abstract Object process(
-            @Nullable Object object, A annotation, Event event, Parameter parameter, EventWrapper wrapper)
-            throws SkipEventException;
+    public abstract Object process(@Nullable Object object, A annotation, Event event, Parameter parameter, EventWrapper wrapper) throws SkipEventException;
 }
