@@ -15,32 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.plots.events;
+package org.dockbox.selene.api.objects.location.position;
 
-import org.dockbox.selene.api.events.AbstractCancellableEvent;
-import org.dockbox.selene.api.objects.location.dimensions.World;
-
-public class ClearPlotEvent extends AbstractCancellableEvent {
-
-    private final World world;
-    private final int x;
-    private final int y;
-
-    public ClearPlotEvent(World world, int x, int y) {
-        this.world = world;
-        this.x = x;
-        this.y = y;
-    }
-
-    public World getWorld() {
-        return world;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
+public enum BlockFace {
+    NONE,
+    NORTH,
+    EAST,
+    SOUTH,
+    WEST,
+    TOP,
+    BOTTOM
 }

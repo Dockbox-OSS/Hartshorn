@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.events.player;
 
-import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.targets.Target;
 
 /** The event fired when a player is teleported to another location */

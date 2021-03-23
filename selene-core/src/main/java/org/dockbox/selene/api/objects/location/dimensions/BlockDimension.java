@@ -15,32 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.plots.events;
+package org.dockbox.selene.api.objects.location.dimensions;
 
-import org.dockbox.selene.api.events.AbstractCancellableEvent;
-import org.dockbox.selene.api.objects.location.dimensions.World;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.location.position.BlockFace;
+import org.dockbox.selene.api.objects.profile.Profile;
+import org.dockbox.selene.api.objects.tuple.Vector3N;
 
-public class ClearPlotEvent extends AbstractCancellableEvent {
+public interface BlockDimension {
 
-    private final World world;
-    private final int x;
-    private final int y;
+    Vector3N minimumPosition();
 
-    public ClearPlotEvent(World world, int x, int y) {
-        this.world = world;
-        this.x = x;
-        this.y = y;
-    }
+    Vector3N maximumPosition();
 
-    public World getWorld() {
-        return world;
-    }
+    Vector3N floor(Vector3N position);
 
-    public int getX() {
-        return x;
-    }
+    boolean hasBlock(Vector3N position);
 
-    public int getY() {
-        return y;
-    }
+    Exceptional<Item> getBlock(Vector3N position);
+
+    boolean setBlock(Vector3N position, Item item, BlockFace direction, Profile placer);
+
 }

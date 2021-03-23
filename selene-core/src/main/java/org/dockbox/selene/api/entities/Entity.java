@@ -19,7 +19,8 @@ package org.dockbox.selene.api.entities;
 
 import org.dockbox.selene.api.objects.keys.KeyHolder;
 import org.dockbox.selene.api.objects.keys.PersistentDataHolder;
-import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.dimensions.World;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.targets.Identifiable;
 import org.dockbox.selene.api.objects.targets.Locatable;
 import org.dockbox.selene.api.text.Text;
@@ -43,8 +44,7 @@ import org.dockbox.selene.api.text.Text;
  * @param <T>
  *         The type of {@link Entity}
  */
-public interface Entity<T extends Entity<T>>
-        extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<T> {
+public interface Entity<T extends Entity<T>> extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<T> {
 
     @SuppressWarnings("ConstantDeclaredInInterface")
     double DEFAULT_MAX_HEALTH = 20D;
@@ -83,7 +83,7 @@ public interface Entity<T extends Entity<T>>
 
     /**
      * Indicates whether the entity is alive inside a {@link
-     * org.dockbox.selene.api.objects.location.World}.
+     * World}.
      *
      * @return {@code true} if the entity is alive and loaded in a world, else {@code false}.
      */

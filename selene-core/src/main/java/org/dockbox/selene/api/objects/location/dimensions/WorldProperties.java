@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.objects.location;
+package org.dockbox.selene.api.objects.location.dimensions;
 
 import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.objects.tuple.Vector3N;

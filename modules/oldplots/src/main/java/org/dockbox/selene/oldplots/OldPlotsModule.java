@@ -29,7 +29,7 @@ import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.files.FileType;
 import org.dockbox.selene.api.files.FileTypeProperty;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;

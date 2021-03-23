@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.plots.events;
 
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 
 public class DeletePlotEvent extends ClearPlotEvent {
 

@@ -20,7 +20,7 @@ package org.dockbox.selene.oldplots;
 import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.server.Selene;
 
 @Metadata(alias = "plot-world-model")

@@ -15,14 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.objects.location;
+package org.dockbox.selene.api.objects.location.dimensions;
 
-public enum BlockFace {
-    NONE,
-    NORTH,
-    EAST,
-    SOUTH,
-    WEST,
-    TOP,
-    BOTTOM
+import org.dockbox.selene.api.objects.tuple.Vector3N;
+
+public interface Chunk extends BlockDimension, EntityHolding {
+
+    Vector3N getPosition();
+
+    World getWorld();
+
 }

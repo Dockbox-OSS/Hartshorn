@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.api.objects.targets;
 
-import org.dockbox.selene.api.objects.location.Location;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.position.Location;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 
 public interface Locatable extends Target {
 

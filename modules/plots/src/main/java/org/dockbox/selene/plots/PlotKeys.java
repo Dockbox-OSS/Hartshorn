@@ -21,7 +21,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.keys.Key;
 import org.dockbox.selene.api.objects.keys.Keys;
-import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;

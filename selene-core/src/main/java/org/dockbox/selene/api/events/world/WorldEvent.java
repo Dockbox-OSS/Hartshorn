@@ -18,9 +18,6 @@
 package org.dockbox.selene.api.events.world;
 
 import org.dockbox.selene.api.events.AbstractCancellableEvent;
-import org.dockbox.selene.api.objects.location.World;
-
-import java.util.UUID;
 
 /** The abstract type which can be used to listen to all world related events. */
 public abstract class WorldEvent extends AbstractCancellableEvent {

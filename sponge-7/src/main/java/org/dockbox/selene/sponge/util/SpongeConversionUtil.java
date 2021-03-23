@@ -48,7 +48,8 @@ import org.dockbox.selene.api.objects.bossbar.BossbarStyle;
 import org.dockbox.selene.api.objects.inventory.Slot;
 import org.dockbox.selene.api.objects.item.Enchant;
 import org.dockbox.selene.api.objects.item.Item;
-import org.dockbox.selene.api.objects.location.BlockFace;
+import org.dockbox.selene.api.objects.location.dimensions.Chunk;
+import org.dockbox.selene.api.objects.location.position.BlockFace;
 import org.dockbox.selene.api.objects.location.Warp;
 import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.objects.player.Hand;
@@ -63,12 +64,16 @@ import org.dockbox.selene.api.text.actions.ShiftClickAction;
 import org.dockbox.selene.api.text.pagination.Pagination;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.common.objects.item.ReferencedItem;
+import org.dockbox.selene.sponge.entities.SpongeArmorStand;
+import org.dockbox.selene.sponge.entities.SpongeGenericEntity;
+import org.dockbox.selene.sponge.entities.SpongeItemFrame;
 import org.dockbox.selene.sponge.external.WrappedMask;
 import org.dockbox.selene.sponge.external.WrappedPattern;
 import org.dockbox.selene.sponge.external.WrappedRegion;
 import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.objects.discord.MagiBridgeCommandSource;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
+import org.dockbox.selene.sponge.objects.location.SpongeChunk;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
@@ -84,7 +89,11 @@ import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.sound.SoundType;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.Tamer;
+import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
@@ -312,7 +321,7 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    public static Exceptional<Location<World>> toSponge(org.dockbox.selene.api.objects.location.Location location) {
+    public static Exceptional<Location<World>> toSponge(org.dockbox.selene.api.objects.location.position.Location location) {
         Exceptional<World> world = toSponge(location.getWorld());
         if (world.errorPresent()) return Exceptional.of(world.getError());
         if (!world.isPresent()) return Exceptional.empty();
@@ -325,7 +334,7 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    public static Exceptional<World> toSponge(org.dockbox.selene.api.objects.location.World world) {
+    public static Exceptional<World> toSponge(org.dockbox.selene.api.objects.location.dimensions.World world) {
         if (world instanceof SpongeWorld) {
             World wref = ((SpongeWorld) world).getReferenceWorld();
             if (null != wref) return Exceptional.of(wref);
@@ -491,9 +500,9 @@ public enum SpongeConversionUtil {
     }
 
     public static Warp fromSponge(io.github.nucleuspowered.nucleus.api.nucleusdata.Warp warp) {
-        org.dockbox.selene.api.objects.location.Location location = warp.getLocation()
+        org.dockbox.selene.api.objects.location.position.Location location = warp.getLocation()
                 .map(SpongeConversionUtil::fromSponge)
-                .orElse(org.dockbox.selene.api.objects.location.Location.empty());
+                .orElse(org.dockbox.selene.api.objects.location.position.Location.empty());
 
         return new Warp(
                 Exceptional.of(warp.getDescription().map(Text::toString)),
@@ -504,21 +513,25 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    public static org.dockbox.selene.api.objects.location.Location fromSponge(Location<World> location) {
-        org.dockbox.selene.api.objects.location.World world = fromSponge(location.getExtent());
+    public static org.dockbox.selene.api.objects.location.position.Location fromSponge(Location<World> location) {
+        org.dockbox.selene.api.objects.location.dimensions.World world = fromSponge(location.getExtent());
         Vector3N vector3N = new Vector3N(location.getX(), location.getY(), location.getZ());
-        return new org.dockbox.selene.api.objects.location.Location(vector3N, world);
+        return new org.dockbox.selene.api.objects.location.position.Location(vector3N, world);
     }
 
     @NotNull
-    public static org.dockbox.selene.api.objects.location.World fromSponge(World world) {
+    public static org.dockbox.selene.api.objects.location.dimensions.World fromSponge(World world) {
         return fromSponge(world.getProperties());
     }
 
-    public static org.dockbox.selene.api.objects.location.World fromSponge(WorldProperties properties) {
+    public static Chunk fromSponge(org.spongepowered.api.world.Chunk chunk) {
+        return new SpongeChunk(chunk);
+    }
+
+    public static org.dockbox.selene.api.objects.location.dimensions.World fromSponge(WorldProperties properties) {
         Vector3i vector3i = properties.getSpawnPosition();
         Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
-        org.dockbox.selene.api.objects.location.World spongeWorld = new SpongeWorld(
+        org.dockbox.selene.api.objects.location.dimensions.World spongeWorld = new SpongeWorld(
                 properties.getUniqueId(),
                 properties.getWorldName(),
                 properties.loadOnStartup(),
@@ -609,7 +622,7 @@ public enum SpongeConversionUtil {
         }
     }
 
-    public static com.sk89q.worldedit.world.World toWorldEdit(org.dockbox.selene.api.objects.location.World world) {
+    public static com.sk89q.worldedit.world.World toWorldEdit(org.dockbox.selene.api.objects.location.dimensions.World world) {
         return SpongeWorldEdit.inst().getAdapter().getWorld(toSponge(world).orNull());
     }
 
@@ -628,7 +641,7 @@ public enum SpongeConversionUtil {
         return new Vector3N(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public static org.dockbox.selene.api.objects.location.World fromWorldEdit(com.sk89q.worldedit.world.World world) {
+    public static org.dockbox.selene.api.objects.location.dimensions.World fromWorldEdit(com.sk89q.worldedit.world.World world) {
         return Selene.provide(Worlds.class).getWorld(world.getName()).orNull();
     }
 
@@ -726,7 +739,7 @@ public enum SpongeConversionUtil {
         }
     }
 
-    public static com.intellectualcrafters.plot.object.Location toPlotSquared(org.dockbox.selene.api.objects.location.Location location) {
+    public static com.intellectualcrafters.plot.object.Location toPlotSquared(org.dockbox.selene.api.objects.location.position.Location location) {
         return new com.intellectualcrafters.plot.object.Location(
                 location.getWorld().getName(),
                 (int) location.getX(),
@@ -736,9 +749,9 @@ public enum SpongeConversionUtil {
         );
     }
 
-    public static org.dockbox.selene.api.objects.location.Location fromPlotSquared(com.intellectualcrafters.plot.object.Location location) {
-        org.dockbox.selene.api.objects.location.World world = Selene.provide(Worlds.class).getWorld(location.getWorld()).orNull();
-        return new org.dockbox.selene.api.objects.location.Location(
+    public static org.dockbox.selene.api.objects.location.position.Location fromPlotSquared(com.intellectualcrafters.plot.object.Location location) {
+        org.dockbox.selene.api.objects.location.dimensions.World world = Selene.provide(Worlds.class).getWorld(location.getWorld()).orNull();
+        return new org.dockbox.selene.api.objects.location.position.Location(
                 location.getX(), location.getY(), location.getZ(), world
         );
     }
@@ -760,5 +773,16 @@ public enum SpongeConversionUtil {
         int meta = item.getMeta();
         // Casting is safe in this use-case, as this is the same approach used by PlotSquared (legacy) in PlotBlock itself
         return Exceptional.of(new PlotBlock((short) id, (byte) meta));
+    }
+
+    public static org.dockbox.selene.api.entities.Entity<?> fromSponge(Entity entity) {
+        EntityType type = entity.getType();
+        if (type == EntityTypes.ARMOR_STAND) {
+            return new SpongeArmorStand((ArmorStand) entity);
+        } else if (type == EntityTypes.ITEM_FRAME) {
+            return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) entity);
+        } else {
+            return new SpongeGenericEntity(entity);
+        }
     }
 }

@@ -19,9 +19,9 @@ package org.dockbox.selene.plots;
 
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.keys.KeyHolder;
-import org.dockbox.selene.api.objects.location.Direction;
-import org.dockbox.selene.api.objects.location.Location;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.position.Direction;
+import org.dockbox.selene.api.objects.location.position.Location;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.plots.flags.PlotFlag;

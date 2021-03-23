@@ -15,32 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.plots.events;
+package org.dockbox.selene.api.objects.location.dimensions;
 
-import org.dockbox.selene.api.events.AbstractCancellableEvent;
-import org.dockbox.selene.api.objects.location.dimensions.World;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.location.position.Location;
 
-public class ClearPlotEvent extends AbstractCancellableEvent {
+import java.util.Collection;
 
-    private final World world;
-    private final int x;
-    private final int y;
+public interface ChunkHolder {
 
-    public ClearPlotEvent(World world, int x, int y) {
-        this.world = world;
-        this.x = x;
-        this.y = y;
-    }
+    Exceptional<Chunk> getChunk(Location location);
 
-    public World getWorld() {
-        return world;
-    }
+    Exceptional<Chunk> getChunk(int x, int y);
 
-    public int getX() {
-        return x;
-    }
+    Collection<Chunk> getLoadedChunks();
 
-    public int getY() {
-        return y;
-    }
 }

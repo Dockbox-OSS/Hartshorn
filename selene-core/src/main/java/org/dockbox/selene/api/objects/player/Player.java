@@ -18,13 +18,14 @@
 package org.dockbox.selene.api.objects.player;
 
 import org.dockbox.selene.api.command.source.CommandSource;
+import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.inventory.PlayerInventory;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.keys.PersistentDataHolder;
-import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.special.Sounds;
 import org.dockbox.selene.api.objects.targets.AbstractIdentifiable;
@@ -37,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public abstract class Player extends AbstractIdentifiable<Player> implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder {
+public abstract class Player extends AbstractIdentifiable<Player> implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder, Entity<Player> {
 
     protected Player(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);

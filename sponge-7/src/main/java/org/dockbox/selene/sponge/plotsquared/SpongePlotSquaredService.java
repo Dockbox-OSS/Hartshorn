@@ -26,8 +26,8 @@ import com.intellectualcrafters.plot.object.PlotBlock;
 
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Item;
-import org.dockbox.selene.api.objects.location.Location;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.position.Location;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.util.SeleneUtils;

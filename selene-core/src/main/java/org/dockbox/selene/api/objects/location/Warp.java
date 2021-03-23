@@ -18,6 +18,7 @@
 package org.dockbox.selene.api.objects.location;
 
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.location.position.Location;
 
 /** Represents a warp, a virtual location inside a world, with descriptive properties. */
 public class Warp {

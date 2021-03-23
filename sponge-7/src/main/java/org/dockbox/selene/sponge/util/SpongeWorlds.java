@@ -19,7 +19,7 @@ package org.dockbox.selene.sponge.util;
 
 import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;

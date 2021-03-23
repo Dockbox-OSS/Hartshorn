@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.plots.events.movement;
 
-import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.events.CancellablePlotPlayerEvent;

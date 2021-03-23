@@ -15,32 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.plots.events;
+package org.dockbox.selene.api.objects.location.dimensions;
 
-import org.dockbox.selene.api.events.AbstractCancellableEvent;
-import org.dockbox.selene.api.objects.location.dimensions.World;
+import org.dockbox.selene.api.entities.Entity;
 
-public class ClearPlotEvent extends AbstractCancellableEvent {
+import java.util.Collection;
+import java.util.function.Predicate;
 
-    private final World world;
-    private final int x;
-    private final int y;
+public interface EntityHolding {
 
-    public ClearPlotEvent(World world, int x, int y) {
-        this.world = world;
-        this.x = x;
-        this.y = y;
-    }
+    Collection<Entity<?>> getEntities();
 
-    public World getWorld() {
-        return world;
-    }
+    Collection<Entity<?>> getEntities(Predicate<Entity<?>> predicate);
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
 }

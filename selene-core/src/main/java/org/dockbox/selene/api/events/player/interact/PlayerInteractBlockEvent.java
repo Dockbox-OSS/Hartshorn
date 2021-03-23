@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.events.player.interact;
 
-import org.dockbox.selene.api.objects.location.Location;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.ClickType;
 import org.dockbox.selene.api.objects.player.Hand;
 import org.dockbox.selene.api.objects.player.Player;

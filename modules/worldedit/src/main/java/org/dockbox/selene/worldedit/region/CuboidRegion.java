@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.worldedit.region;
 
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.api.util.SeleneUtils;
 

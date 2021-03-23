@@ -21,19 +21,24 @@ import com.flowpowered.math.vector.Vector3i;
 
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.Wrapper;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.dimensions.Chunk;
+import org.dockbox.selene.api.objects.location.dimensions.World;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.world.extent.Extent;
 
 import java.lang.ref.WeakReference;
+import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.world.World> {
+public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.world.World>, SpongeDimension {
 
     private WeakReference<org.spongepowered.api.world.World> reference = new WeakReference<>(null);
 
@@ -187,5 +192,37 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
             return this.getReference().get().getProperties().getGameRules();
         }
         return SeleneUtils.emptyMap();
+    }
+
+    @Override
+    public Exceptional<Chunk> getChunk(Location location) {
+        if (this.referenceExists()) {
+            Vector3i position = SpongeConversionUtil.toSponge(location).get().getBlockPosition();
+            Exceptional<org.spongepowered.api.world.Chunk> chunkAtBlock = Exceptional.of(this.getReferenceWorld().getChunkAtBlock(position));
+            return chunkAtBlock.map(SpongeConversionUtil::fromSponge);
+        }
+        return Exceptional.empty();
+    }
+
+    @Override
+    public Exceptional<Chunk> getChunk(int x, int y) {
+        if (this.referenceExists()) {
+            Exceptional<org.spongepowered.api.world.Chunk> exceptional = Exceptional.of(this.getReferenceWorld().getChunk(x, 0, y));
+            return exceptional.map(SpongeConversionUtil::fromSponge);
+        }
+        return Exceptional.empty();
+    }
+
+    @Override
+    public Collection<Chunk> getLoadedChunks() {
+        if (this.referenceExists()) {
+            return SeleneUtils.stream(this.getReferenceWorld().getLoadedChunks()).map(SpongeConversionUtil::fromSponge).collect(Collectors.toList());
+        }
+        return SeleneUtils.emptyList();
+    }
+
+    @Override
+    public Extent getExtent() {
+        return this.getReferenceWorld();
     }
 }

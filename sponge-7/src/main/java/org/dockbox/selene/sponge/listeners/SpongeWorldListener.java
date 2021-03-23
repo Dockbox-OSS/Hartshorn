@@ -22,7 +22,7 @@ import org.dockbox.selene.api.events.world.WorldCreatingEvent;
 import org.dockbox.selene.api.events.world.WorldLoadEvent;
 import org.dockbox.selene.api.events.world.WorldSaveEvent;
 import org.dockbox.selene.api.events.world.WorldUnloadEvent;
-import org.dockbox.selene.api.objects.location.World;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.world.ConstructWorldPropertiesEvent;
