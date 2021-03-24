@@ -19,7 +19,6 @@ package org.dockbox.selene.api.files;
 
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.keys.Keys;
 import org.dockbox.selene.api.server.properties.InjectableType;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.api.util.Reflect;
@@ -319,8 +318,11 @@ public abstract class FileManager implements InjectableType {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Keys.getPropertyValue(FileTypeProperty.KEY, FileType.class, properties)
-                .ifPresent(this::requestFileType);
+        for (InjectorProperty<?> property : properties)
+            if (property instanceof FileTypeProperty) {
+                this.requestFileType(((FileTypeProperty<?>) property).getFileType());
+                break;
+            }
     }
 
     public abstract void requestFileType(FileType fileType);

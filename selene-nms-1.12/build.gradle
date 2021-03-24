@@ -30,8 +30,8 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 
 archivesBaseName = 'selene-nms-1.12'
-group = project.pluginGroup
-description = 'NMS resources for Selene on Minecraft 1.12'
+group project.pluginGroup
+description 'NMS resources for Selene on Minecraft 1.12'
 
 minecraft {
     mappings channel: 'snapshot', version: "${minecraftMappings112}"

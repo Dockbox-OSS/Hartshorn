@@ -20,7 +20,7 @@ plugins {
 }
 
 group = 'org.dockbox.selene.integrated'
-description = 'Integrated modules for Selene'
+description 'Integrated modules for Selene'
 
 subprojects { Project subProject ->
     dependencies {

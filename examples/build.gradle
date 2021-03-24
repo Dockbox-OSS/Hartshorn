@@ -20,7 +20,7 @@ plugins {
 }
 
 group = 'org.dockbox.selene.sample'
-description = 'Sample modules for Selene'
+description 'Sample modules for Selene'
 
 dependencies {
     compileOnly project(':selene-core')

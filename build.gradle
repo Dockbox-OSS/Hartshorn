@@ -37,8 +37,8 @@ static def getVersionName() {
 }
 
 version = getVersionName()
-group = project.pluginGroup
-description = 'Common sources for Selene modules'
+group project.pluginGroup
+description 'Common sources for Selene modules'
 def date = LocalDate.now().toString()
 
 subprojects { Project subProject ->
@@ -53,7 +53,7 @@ subprojects { Project subProject ->
         include '**/*.java'
     }
 
-    group = project.pluginGroup
+    group project.pluginGroup
     version = "${getVersionName()}-$date"
 
     sourceCompatibility = 1.8

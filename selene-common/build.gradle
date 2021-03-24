@@ -20,7 +20,7 @@ plugins {
 }
 
 group = 'org.dockbox.selene.common'
-description = 'Default implementations for Selene'
+description 'Default implementations for Selene'
 
 repositories {
     maven { // Only used for Configurate, not for platform implementations

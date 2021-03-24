@@ -35,6 +35,10 @@ public final class FileTypeProperty<T extends Annotation> extends AnnotationProp
         return new FileTypeProperty<>(fileType);
     }
 
+    public FileType getFileType() {
+        return this.fileType;
+    }
+
     @Override
     public String getKey() {
         return KEY;
