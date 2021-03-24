@@ -18,8 +18,9 @@
 package org.dockbox.selene.api.i18n.permissions;
 
 import org.dockbox.selene.api.i18n.common.Formattable;
+import org.dockbox.selene.api.objects.Exceptional;
 
-@FunctionalInterface
 public interface AbstractPermission extends Formattable {
     String get();
+    Exceptional<PermissionContext> getContext();
 }
