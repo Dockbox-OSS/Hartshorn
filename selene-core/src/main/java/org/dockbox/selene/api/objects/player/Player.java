@@ -74,11 +74,6 @@ public abstract class Player extends AbstractIdentifiable<Player> implements Com
     }
 
     @Override
-    public boolean hasPermission(@NotNull AbstractPermission permission) {
-        return this.hasPermission(permission.get());
-    }
-
-    @Override
     public boolean hasAnyPermission(@NotNull AbstractPermission @NotNull ... permissions) {
         for (AbstractPermission permission : permissions) {
             if (this.hasPermission(permission)) return true;
@@ -99,11 +94,6 @@ public abstract class Player extends AbstractIdentifiable<Player> implements Com
         for (String permission : permissions) {
             this.setPermission(permission, state);
         }
-    }
-
-    @Override
-    public void setPermission(@NotNull AbstractPermission permission, boolean value) {
-        this.setPermission(permission.get(), value);
     }
 
     @Override
