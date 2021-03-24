@@ -49,9 +49,9 @@ import org.dockbox.selene.api.objects.bossbar.BossbarStyle;
 import org.dockbox.selene.api.objects.inventory.Slot;
 import org.dockbox.selene.api.objects.item.Enchant;
 import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.location.Warp;
 import org.dockbox.selene.api.objects.location.dimensions.Chunk;
 import org.dockbox.selene.api.objects.location.position.BlockFace;
-import org.dockbox.selene.api.objects.location.Warp;
 import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.objects.player.Hand;
 import org.dockbox.selene.api.objects.player.Player;
@@ -136,7 +136,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import dev.flashlabs.flashlibs.inventory.Element;
-import scala.reflect.internal.util.TriState;
 
 @SuppressWarnings({
                           "ClassWithTooManyMethods",
@@ -822,6 +821,7 @@ public enum SpongeConversionUtil {
             case FALSE:
                 return org.spongepowered.api.util.Tristate.FALSE;
             case UNDEFINED:
+            default:
                 return org.spongepowered.api.util.Tristate.UNDEFINED;
         }
     }
