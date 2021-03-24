@@ -18,7 +18,7 @@
 package org.dockbox.selene.playeractions;
 
 import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
-import org.dockbox.selene.api.i18n.permissions.Permission;
+import org.dockbox.selene.common.i18n.Permission;
 
 public class PlayerActionPermissions {
 

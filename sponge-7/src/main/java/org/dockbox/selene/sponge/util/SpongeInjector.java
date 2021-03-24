@@ -36,6 +36,8 @@ import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.files.FileType;
 import org.dockbox.selene.api.i18n.common.ResourceService;
+import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.PermissionFactory;
 import org.dockbox.selene.api.inventory.Element;
 import org.dockbox.selene.api.inventory.builder.LayoutBuilder;
 import org.dockbox.selene.api.inventory.builder.PaginatedPaneBuilder;
@@ -63,6 +65,7 @@ import org.dockbox.selene.common.SimpleResourceService;
 import org.dockbox.selene.common.discord.SimpleDiscordPagination;
 import org.dockbox.selene.common.discord.SimpleMessageTemplate;
 import org.dockbox.selene.common.events.SimpleEventBus;
+import org.dockbox.selene.common.i18n.Permission;
 import org.dockbox.selene.common.modules.SimpleModuleManager;
 import org.dockbox.selene.common.server.config.SimpleGlobalConfig;
 import org.dockbox.selene.common.web.GsonWebUtil;
@@ -142,10 +145,11 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(StaticPaneBuilder.class).to(SpongeStaticPaneBuilder.class);
 
         // Factory types
-        this.install(factory(ElementFactory.class, Element.class, SpongeElement.class));
-        this.install(factory(ItemFactory.class, Item.class, SpongeItem.class));
-        this.install(factory(BossbarFactory.class, Bossbar.class, SpongeBossbar.class));
-        this.install(factory(ProfileFactory.class, Profile.class, SpongeProfile.class));
+        this.install(this.factory(ElementFactory.class, Element.class, SpongeElement.class));
+        this.install(this.factory(ItemFactory.class, Item.class, SpongeItem.class));
+        this.install(this.factory(BossbarFactory.class, Bossbar.class, SpongeBossbar.class));
+        this.install(this.factory(ProfileFactory.class, Profile.class, SpongeProfile.class));
+        this.install(this.factory(PermissionFactory.class, AbstractPermission.class, Permission.class));
         this.install(new FactoryModuleBuilder()
                 .implement(ItemFrame.class, SpongeItemFrame.class)
                 .implement(ArmorStand.class, SpongeArmorStand.class)

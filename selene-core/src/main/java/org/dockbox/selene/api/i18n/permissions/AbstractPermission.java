@@ -23,4 +23,5 @@ import org.dockbox.selene.api.objects.Exceptional;
 public interface AbstractPermission extends Formattable {
     String get();
     Exceptional<PermissionContext> getContext();
+    AbstractPermission withContext(PermissionContext context);
 }

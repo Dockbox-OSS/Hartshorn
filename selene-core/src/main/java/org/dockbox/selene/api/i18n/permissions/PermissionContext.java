@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.api.i18n.permissions;
 
+import org.dockbox.selene.api.server.Selene;
+
 public class PermissionContext {
 
     private String user;
@@ -35,6 +37,10 @@ public class PermissionContext {
 
     public static PermissionContextBuilder builder() {
         return new PermissionContextBuilder();
+    }
+
+    public AbstractPermission toPermission(String key) {
+        return Selene.provide(PermissionFactory.class).of(key, this);
     }
 
     public String getUser() {
