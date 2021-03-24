@@ -15,22 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.objects.player;
+package org.dockbox.selene.test.util;
 
-import org.dockbox.selene.api.objects.inventory.Slot;
+import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.test.objects.JUnitPlayer;
 
-public enum Hand {
-    MAIN_HAND(Slot.MAIN_HAND),
-    OFF_HAND(Slot.OFF_HAND),
-    EITHER(Slot.MAIN_HAND);
+import java.util.UUID;
 
-    private final Slot slot;
+public class JUnitUtils {
 
-    Hand(Slot slot) {
-        this.slot = slot;
+    public static JUnitPlayer mockPlayer() {
+        return new JUnitPlayer(UUID.randomUUID(), SeleneUtils.getRandomString(5, 10));
     }
 
-    public Slot getSlot() {
-        return this.slot;
-    }
 }

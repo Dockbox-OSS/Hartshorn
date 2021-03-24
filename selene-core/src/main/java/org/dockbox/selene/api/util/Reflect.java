@@ -29,7 +29,7 @@ import org.dockbox.selene.api.annotations.module.OwnedBy;
 import org.dockbox.selene.api.exceptions.TypeRejectedException;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.server.IntegratedModule;
+import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.SeleneUtils.Provision;
 import org.jetbrains.annotations.Contract;
@@ -548,7 +548,7 @@ public final class Reflect {
     public static Module getModule(Class<?> type) {
         if (null == type) return null;
         if (type.equals(Selene.class))
-            return Reflect.getModule(Selene.provide(IntegratedModule.class).getClass());
+            return Reflect.getModule(Selene.provide(Server.class).getClass());
 
         if (type.isAnnotationPresent(OwnedBy.class)) {
             OwnedBy owner = type.getAnnotation(OwnedBy.class);

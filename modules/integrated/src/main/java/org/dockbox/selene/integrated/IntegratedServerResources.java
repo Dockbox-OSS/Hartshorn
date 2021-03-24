@@ -19,12 +19,12 @@ package org.dockbox.selene.integrated;
 
 import org.dockbox.selene.api.annotations.i18n.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.entry.Resource;
 import org.dockbox.selene.api.util.SeleneUtils;
 
 @SuppressWarnings({ "StaticMethodOnlyUsedInOneClass", "ClassWithTooManyFields" })
-@Resources(module = IntegratedServer.class)
+@Resources(module = DefaultServer.class)
 enum IntegratedServerResources {
     ;
     static final ResourceEntry PAGINATION_TITLE = new Resource("$1Selene Server Info", "selene.pagination.title");
@@ -37,7 +37,7 @@ enum IntegratedServerResources {
     static final ResourceEntry MODULE_INFO_BLOCK = new Resource(
             String.join(
                     "",
-                    SeleneUtils.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20),
+                    SeleneUtils.repeat(DefaultResource.DEFAULT_PAGINATION_PADDING.asString(), 20),
                     "\n",
                     "$2Name : $1{0}",
                     "\n",
@@ -51,7 +51,7 @@ enum IntegratedServerResources {
                     "\n",
                     "$2Source : $1{5}",
                     "\n",
-                    SeleneUtils.repeat(IntegratedResource.DEFAULT_PAGINATION_PADDING.asString(), 20)),
+                    SeleneUtils.repeat(DefaultResource.DEFAULT_PAGINATION_PADDING.asString(), 20)),
             "selene.info.module.block");
     static final ResourceEntry UNKNOWN_MODULE = new Resource("$4Could not find module with ID '{0}'", "selene.info.module.unknown");
     static final ResourceEntry LANG_SWITCHED = new Resource("$1Your preferred language has been switched to: $2{0}", "i18n.lang.updated");

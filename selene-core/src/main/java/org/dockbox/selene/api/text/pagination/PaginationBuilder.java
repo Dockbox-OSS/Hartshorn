@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.text.pagination;
 
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.util.SeleneUtils;
 
@@ -25,7 +25,7 @@ import java.util.List;
 
 public abstract class PaginationBuilder {
 
-    protected Text padding = IntegratedResource.DEFAULT_PAGINATION_PADDING.asText();
+    protected Text padding = DefaultResource.DEFAULT_PAGINATION_PADDING.asText();
     protected Text header;
     protected Text footer;
     protected Text title;

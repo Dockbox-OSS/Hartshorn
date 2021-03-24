@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.util;
+package org.dockbox.selene.test.util;
 
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
@@ -69,46 +69,24 @@ import org.dockbox.selene.common.modules.SimpleModuleManager;
 import org.dockbox.selene.common.server.config.SimpleGlobalConfig;
 import org.dockbox.selene.common.web.GsonWebUtil;
 import org.dockbox.selene.common.web.GsonXmlWebUtil;
-import org.dockbox.selene.database.SQLMan;
-import org.dockbox.selene.database.dialects.sqlite.SQLiteMan;
-import org.dockbox.selene.integrated.DefaultServer;
-import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
-import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
-import org.dockbox.selene.packets.ChangeGameStatePacket;
-import org.dockbox.selene.packets.SpawnEntityPacket;
-import org.dockbox.selene.plots.PlotService;
-import org.dockbox.selene.sponge.entities.SpongeArmorStand;
-import org.dockbox.selene.sponge.entities.SpongeItemFrame;
-import org.dockbox.selene.sponge.inventory.SpongeElement;
-import org.dockbox.selene.sponge.inventory.builder.SpongeLayoutBuilder;
-import org.dockbox.selene.sponge.inventory.builder.SpongePaginatedPaneBuilder;
-import org.dockbox.selene.sponge.inventory.builder.SpongeStaticPaneBuilder;
-import org.dockbox.selene.sponge.objects.SpongeProfile;
-import org.dockbox.selene.sponge.objects.bossbar.SpongeBossbar;
-import org.dockbox.selene.sponge.objects.item.SpongeItem;
-import org.dockbox.selene.sponge.objects.item.maps.SpongeCustomMapService;
-import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
-import org.dockbox.selene.sponge.plotsquared.SpongePlotSquaredService;
-import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
-import org.dockbox.selene.sponge.util.command.SpongeCommandBus;
-import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager;
-import org.dockbox.selene.sponge.util.files.SpongeXStreamManager;
-import org.dockbox.selene.worldedit.WorldEditService;
+import org.dockbox.selene.test.files.JUnitConfigurateManager;
+import org.dockbox.selene.test.files.JUnitFileManager;
+import org.dockbox.selene.test.files.JUnitXStreamManager;
+import org.dockbox.selene.test.services.JUnitPlayers;
 import org.slf4j.Logger;
 
-public class SpongeInjector extends SeleneInjectConfiguration {
+public class JUnitInjector extends SeleneInjectConfiguration {
 
-    @SuppressWarnings("OverlyCoupledMethod")
     @Override
-    protected final void configure() {
+    protected void configure() {
         // Helper types
         this.bind(ExceptionHelper.class).to(SimpleExceptionHelper.class);
-        this.bind(TaskRunner.class).to(SpongeTaskRunner.class);
+        this.bind(TaskRunner.class).to(JUnitTaskRunner.class);
 
         // Module management
         // Module manager keeps static references, and can thus be recreated
         this.bind(ModuleManager.class).toInstance(new SimpleModuleManager());
-        this.bind(Server.class).to(DefaultServer.class);
+        this.bind(Server.class).to(JUnitServer.class);
 
         // Utility types
         this.bind(DiscordUtils.class).to(SpongeDiscordUtils.class);
@@ -118,13 +96,12 @@ public class SpongeInjector extends SeleneInjectConfiguration {
         this.bind(WebUtil.class).annotatedWith(FileType.XML.getFormat()).to(GsonXmlWebUtil.class);
 
         // File management
-        this.bind(FileManager.class).to(SpongeConfigurateManager.class);
-        this.bind(FileManager.class).annotatedWith(FileType.YAML.getFormat()).to(SpongeConfigurateManager.class);
-        this.bind(FileManager.class).annotatedWith(FileType.XML.getFormat()).to(SpongeXStreamManager.class);
-        this.bind(SQLMan.class).annotatedWith(FileType.SQLITE.getFormat()).to(SQLiteMan.class);
+        this.bind(FileManager.class).to(JUnitConfigurateManager.class);
+        this.bind(FileManager.class).annotatedWith(FileType.YAML.getFormat()).to(JUnitConfigurateManager.class);
+        this.bind(FileManager.class).annotatedWith(FileType.XML.getFormat()).to(JUnitXStreamManager.class);
 
         // Services
-        this.bind(Players.class).to(SpongePlayers.class);
+        this.bind(Players.class).to(JUnitPlayers.class);
         this.bind(Worlds.class).to(SpongeWorlds.class);
         this.bind(BroadcastService.class).to(SimpleBroadcastService.class);
         this.bind(ResourceService.class).toInstance(new SimpleResourceService());

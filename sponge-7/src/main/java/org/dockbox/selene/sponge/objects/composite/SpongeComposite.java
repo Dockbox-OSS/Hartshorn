@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.composite;
 
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.keys.PersistentDataHolder;
 import org.dockbox.selene.api.objects.keys.PersistentDataKey;
@@ -68,8 +68,8 @@ public interface SpongeComposite extends PersistentDataHolder {
             DataTransactionResult result = composite.offer(compositeData);
 
             if (result.isSuccessful()) return TransactionResult.success();
-            else return TransactionResult.fail(IntegratedResource.KEY_BINDING_FAILED);
-        }).orElseGet(() -> TransactionResult.fail(IntegratedResource.LOST_REFERENCE));
+            else return TransactionResult.fail(DefaultResource.KEY_BINDING_FAILED);
+        }).orElseGet(() -> TransactionResult.fail(DefaultResource.LOST_REFERENCE));
     }
 
     @Override

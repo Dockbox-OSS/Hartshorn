@@ -25,6 +25,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.inventory.PlayerInventory;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.keys.PersistentDataHolder;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.special.Sounds;
@@ -101,6 +102,34 @@ public abstract class Player extends AbstractIdentifiable<Player> implements Com
         for (AbstractPermission permission : permissions) {
             this.setPermission(permission, state);
         }
+    }
+
+    @Override
+    public boolean isAlive() {
+        return this.getHealth() > 0;
+    }
+
+    @Override
+    public boolean summon(Location location) {
+        throw new UnsupportedOperationException("Cannot re-summon players");
+    }
+
+    @Override
+    public boolean destroy() {
+        throw new UnsupportedOperationException("Cannot destroy players");
+    }
+
+    @Override
+    public Player copy() {
+        throw new UnsupportedOperationException("Cannot copy players");
+    }
+
+    @Override
+    public World getWorld() {
+        // No reference refresh required as this is done by getLocation. Should never throw NPE as
+        // Location is either
+        // valid or EMPTY (World instance follows this same guideline).
+        return this.getLocation().getWorld();
     }
 
     public abstract Item getItemInHand(Hand hand);

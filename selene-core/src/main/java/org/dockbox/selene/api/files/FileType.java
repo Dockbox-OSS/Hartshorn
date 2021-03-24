@@ -34,7 +34,7 @@ public enum FileType {
     JSON("json", Format.Json.class),
     XML("xml", Format.XML.class),
     MOD_CONFIG("cfg", Format.HOCON.class),
-    CONFIG("conf", Format.HOCON.class),
+    CONFIG("conf", Format.HOCON.class)
     ;
 
     private final String extension;

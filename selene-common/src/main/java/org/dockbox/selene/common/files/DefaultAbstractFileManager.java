@@ -35,8 +35,22 @@ import java.nio.file.StandardCopyOption;
 
 public abstract class DefaultAbstractFileManager extends FileManager {
 
+    private FileType fileType;
+
     protected DefaultAbstractFileManager(FileType fileType) {
-        super(fileType);
+        this.fileType = fileType;
+    }
+
+    public FileType getFileType() {
+        return this.fileType;
+    }
+
+    protected void setFileType(FileType fileType) {
+        this.fileType = fileType;
+    }
+
+    public Path getDataFile(Class<?> module) {
+        return this.getDataFile(Reflect.getModule(module));
     }
 
     @NotNull

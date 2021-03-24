@@ -39,7 +39,7 @@ import org.dockbox.selene.api.events.world.WorldCreatingProperties;
 import org.dockbox.selene.api.exceptions.TypeConversionException;
 import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.inventory.InventoryType;
 import org.dockbox.selene.api.objects.Console;
@@ -257,7 +257,7 @@ public enum SpongeConversionUtil {
             // from TextSerializers won't be needed, but to ensure no trailing codes are left we use
             // it here anyway.
             pb.append(TextSerializers.FORMATTING_CODE.deserialize(
-                    IntegratedResource.parse(part.toLegacy())));
+                    DefaultResource.parse(part.toLegacy())));
 
             Exceptional<org.spongepowered.api.text.action.ClickAction<?>> clickAction = toSponge(part.getClickAction());
             clickAction.ifPresent(pb::onClick);
@@ -317,7 +317,7 @@ public enum SpongeConversionUtil {
                     fromSponge(commandSource).ifPresent(consumer).rethrow();
                 }
                 catch (CheckedSeleneException throwable) {
-                    commandSource.sendMessage(Text.of(IntegratedResource.UNKNOWN_ERROR.format(throwable.getMessage())));
+                    commandSource.sendMessage(Text.of(DefaultResource.UNKNOWN_ERROR.format(throwable.getMessage())));
                 }
             }));
         }

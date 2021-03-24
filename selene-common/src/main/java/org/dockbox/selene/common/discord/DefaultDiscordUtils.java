@@ -43,7 +43,7 @@ import org.dockbox.selene.api.discord.templates.MessageTemplate;
 import org.dockbox.selene.api.discord.templates.Template;
 import org.dockbox.selene.api.events.discord.DiscordCommandContext;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.tuple.Triad;
 import org.dockbox.selene.api.server.Selene;
@@ -216,7 +216,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
             }
 
             if (!userPermitted) {
-                context.sendToChannel(IntegratedResource.DISCORD_COMMAND_NOT_PERMITTED);
+                context.sendToChannel(DefaultResource.DISCORD_COMMAND_NOT_PERMITTED);
                 return;
             }
 
@@ -227,12 +227,12 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                 method.invoke(instance, context);
             }
             catch (IllegalAccessException | InvocationTargetException e) {
-                context.sendToChannel(IntegratedResource.DISCORD_COMMAND_ERRORED);
+                context.sendToChannel(DefaultResource.DISCORD_COMMAND_ERRORED);
                 Selene.handle("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass()
                         .getCanonicalName() + "]");
             }
         }
-        else context.sendToChannel(IntegratedResource.DISCORD_COMMAND_UNKNOWN);
+        else context.sendToChannel(DefaultResource.DISCORD_COMMAND_UNKNOWN);
     }
 
     private static boolean isValidChannel(@NotNull DiscordCommandContext context, ListeningLevel level) {

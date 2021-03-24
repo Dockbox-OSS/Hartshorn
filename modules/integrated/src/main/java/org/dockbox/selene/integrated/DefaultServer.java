@@ -27,14 +27,14 @@ import org.dockbox.selene.api.command.context.CommandArgument;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.server.ServerReloadEvent;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.module.ModuleContext;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.api.objects.targets.MessageReceiver;
-import org.dockbox.selene.api.server.IntegratedModule;
+import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.ServerType;
 import org.dockbox.selene.api.server.bootstrap.SeleneBootstrap;
@@ -55,7 +55,7 @@ import java.util.List;
 )
 @Command(aliases = { "selene", "darwin" }, usage = "selene")
 @Singleton
-public class IntegratedServer implements IntegratedModule {
+public class DefaultServer implements Server {
 
     // Parent command
     @Command(aliases = "", usage = "")
@@ -78,7 +78,7 @@ public class IntegratedServer implements IntegratedModule {
             content.add(IntegratedServerResources.SERVER_MODULES.translate(source).asText());
 
             em.getRegisteredModuleIds().forEach(id -> em.getHeader(id)
-                    .map(e -> IntegratedServer.generateText(e, source))
+                    .map(e -> DefaultServer.generateText(e, source))
                     .ifPresent(content::add)
             );
 
@@ -163,7 +163,7 @@ public class IntegratedServer implements IntegratedModule {
                 player = (Player) src;
             }
             else {
-                src.send(IntegratedResource.CONFIRM_WRONG_SOURCE);
+                src.send(DefaultResource.CONFIRM_WRONG_SOURCE);
                 return;
             }
         }

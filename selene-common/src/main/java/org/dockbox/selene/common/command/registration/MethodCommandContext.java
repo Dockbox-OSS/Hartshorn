@@ -22,7 +22,7 @@ import org.dockbox.selene.api.annotations.command.FromSource;
 import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.exceptions.IllegalSourceException;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.position.Location;
@@ -51,7 +51,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
     }
 
     @Override
-    public Exceptional<IntegratedResource> call(CommandSource source, CommandContext context) {
+    public Exceptional<DefaultResource> call(CommandSource source, CommandContext context) {
         try {
             List<Object> args = this.prepareArguments(source, context);
             Object instance = this.prepareInstance();

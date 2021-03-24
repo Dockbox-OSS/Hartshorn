@@ -15,22 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.command.registry;
+package org.dockbox.selene.test.util;
 
-import org.dockbox.selene.api.annotations.command.Command;
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.tasks.Task;
+import org.dockbox.selene.api.tasks.TaskRunner;
 
-import java.lang.reflect.Method;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
-public class MethodCommandRegistration extends AbstractCommandRegistration<Method> {
+public class JUnitTaskRunner extends TaskRunner {
 
-    public MethodCommandRegistration(
-            String primaryAlias,
-            String[] aliases,
-            Command command,
-            Method method,
-            AbstractPermission permission
-    ) {
-        super(primaryAlias, aliases, permission, command, method);
+    @Override
+    public void accept(Task task) {
+        Executors.newSingleThreadExecutor().submit(task::run);
+    }
+
+    @Override
+    public void acceptDelayed(Task task, long delay, TimeUnit timeUnit) {
+        ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
+        executor.schedule(task::run, delay, timeUnit);
     }
 }

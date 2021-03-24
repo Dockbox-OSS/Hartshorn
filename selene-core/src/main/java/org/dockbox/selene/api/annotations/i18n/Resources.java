@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.api.annotations.i18n;
 
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -33,7 +35,7 @@ import java.lang.annotation.Target;
 public @interface Resources {
     /**
      * The module responsible for the resources. {@link
-     * org.dockbox.selene.api.i18n.entry.IntegratedResource Internal resources} are linked to {@link
+     * DefaultResource Internal resources} are linked to {@link
      * org.dockbox.selene.api.server.Selene}.
      *
      * @return the responsible module class

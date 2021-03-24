@@ -26,7 +26,7 @@ import org.dockbox.selene.api.annotations.entity.Extract.Behavior;
 import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.objects.AbstractConfiguration;
-import org.dockbox.selene.api.server.IntegratedModule;
+import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.config.Environment;
 import org.dockbox.selene.api.server.config.ExceptionLevels;
@@ -44,7 +44,7 @@ public class SimpleGlobalConfig extends AbstractConfiguration<SimpleGlobalConfig
 
     @Inject
     @Extract(Behavior.SKIP)
-    private transient IntegratedModule integratedModule;
+    private transient Server server;
 
     @Accessor(getter = "getDefaultLanguage")
     private Language defaultLanguage = Language.EN_US;
@@ -88,6 +88,6 @@ public class SimpleGlobalConfig extends AbstractConfiguration<SimpleGlobalConfig
 
     @Override
     protected Class<?> getModuleClass() {
-        return integratedModule.getClass();
+        return server.getClass();
     }
 }

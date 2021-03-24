@@ -23,7 +23,7 @@ import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.events.chat.CommandEvent;
 import org.dockbox.selene.api.events.parents.Cancellable;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.targets.AbstractIdentifiable;
@@ -147,18 +147,18 @@ public abstract class DefaultCommandBus implements CommandBus {
             ConfirmableQueueItem queueItem = new ConfirmableQueueItem((AbstractIdentifiable<?>) sender, ctx, registrationContext);
             DefaultCommandBus.queueConfirmable(registrationId, queueItem);
 
-            Text confirmText = IntegratedResource.CONFIRM_COMMAND_MESSAGE.asText();
-            confirmText.onHover(HoverAction.showText(IntegratedResource.CONFIRM_COMMAND_MESSAGE_HOVER.asText()));
+            Text confirmText = DefaultResource.CONFIRM_COMMAND_MESSAGE.asText();
+            confirmText.onHover(HoverAction.showText(DefaultResource.CONFIRM_COMMAND_MESSAGE_HOVER.asText()));
             confirmText.onClick(ClickAction.runCommand("/selene confirm " + registrationId));
 
             sender.sendWithPrefix(confirmText);
 
         }
         else {
-            Exceptional<IntegratedResource> response = DefaultCommandBus.callCommandWithEvents(sender, ctx, command, registrationContext);
+            Exceptional<DefaultResource> response = DefaultCommandBus.callCommandWithEvents(sender, ctx, command, registrationContext);
 
             if (response.errorPresent())
-                sender.sendWithPrefix(IntegratedResource.UNKNOWN_ERROR.format(response.getError().getMessage()));
+                sender.sendWithPrefix(DefaultResource.UNKNOWN_ERROR.format(response.getError().getMessage()));
         }
     }
 
@@ -166,7 +166,7 @@ public abstract class DefaultCommandBus implements CommandBus {
         DefaultCommandBus.confirmQueue.put(identifier, queueItem);
     }
 
-    private static Exceptional<IntegratedResource> callCommandWithEvents(
+    private static Exceptional<DefaultResource> callCommandWithEvents(
             CommandSource sender,
             CommandContext context,
             String command,
@@ -179,7 +179,7 @@ public abstract class DefaultCommandBus implements CommandBus {
         Cancellable ceb = new CommandEvent.Before(sender, context).post();
 
         if (!ceb.isCancelled()) {
-            Exceptional<IntegratedResource> response = registrationContext.call(sender, context);
+            Exceptional<DefaultResource> response = registrationContext.call(sender, context);
             new CommandEvent.After(sender, context).post();
             return response;
         }

@@ -25,7 +25,7 @@ import org.dockbox.selene.api.command.context.ArgumentConverter;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.common.ResourceService;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.position.Location;
@@ -49,7 +49,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({ "unused", "ClassWithTooManyFields" })
-@ArgumentProvider(module = IntegratedServer.class)
+@ArgumentProvider(module = DefaultServer.class)
 public final class DefaultArgumentConverters implements InjectableType {
 
     public static final ArgumentConverter<String> STRING = new CommandValueConverter<>(String.class, (Function<String, Exceptional<String>>) Exceptional::ofNullable, "string");
@@ -156,7 +156,7 @@ public final class DefaultArgumentConverters implements InjectableType {
         if (or.isPresent()) return or.map(ResourceEntry.class::cast);
 
         String finalValue = in;
-        return Exceptional.of(() -> IntegratedResource.valueOf(finalValue));
+        return Exceptional.of(() -> DefaultResource.valueOf(finalValue));
     }, "resource", "i18n", "translation");
 
     public static final ArgumentConverter<Player> PLAYER = new CommandValueConverter<>(Player.class, in -> {

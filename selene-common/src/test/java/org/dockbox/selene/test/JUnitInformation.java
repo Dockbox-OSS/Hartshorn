@@ -15,13 +15,30 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.exceptions;
+package org.dockbox.selene.test;
 
-import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-public class ConfirmFailedException extends CheckedSeleneException {
+public class JUnitInformation {
 
-    public ConfirmFailedException(String message) {
-        super(message);
+    private final Path filePath;
+    private int onlinePlayerCount = 10;
+
+    public JUnitInformation() throws IOException {
+        this.filePath = Files.createTempDirectory("selene-");
+    }
+
+    public Path getFilePath() {
+        return this.filePath;
+    }
+
+    public int getOnlinePlayerCount() {
+        return this.onlinePlayerCount;
+    }
+
+    public void setOnlinePlayerCount(int onlinePlayerCount) {
+        this.onlinePlayerCount = onlinePlayerCount;
     }
 }

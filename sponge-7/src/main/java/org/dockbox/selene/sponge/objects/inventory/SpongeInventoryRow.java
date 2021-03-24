@@ -18,12 +18,9 @@
 package org.dockbox.selene.sponge.objects.inventory;
 
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.inventory.InventoryRow;
-import org.dockbox.selene.api.objects.inventory.PlayerInventory;
-import org.dockbox.selene.api.objects.inventory.Slot;
 import org.dockbox.selene.api.objects.item.Item;
-import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.common.objects.inventory.AbstractInventoryRow;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -35,53 +32,26 @@ import org.spongepowered.common.item.inventory.query.operation.InventoryTypeQuer
 
 import java.util.Collection;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class SpongeInventoryRow implements InventoryRow {
+public class SpongeInventoryRow extends AbstractInventoryRow {
 
-    private static final Supplier<Item> air = () -> Selene.getItems().getAir();
     private static final Function<org.spongepowered.api.item.inventory.Slot, Item> slotLookup = slot -> slot.peek()
             .map(SpongeConversionUtil::fromSponge)
             .map(referencedItem -> (Item) referencedItem)
-            .orElseGet(air);
+            .orElseGet(AIR);
 
-    private final SpongePlayerInventory inventory;
-    private final int rowIndex;
     private final SpongePlayer spongePlayer;
 
     public SpongeInventoryRow(SpongePlayerInventory inventory, int rowIndex, SpongePlayer spongePlayer) {
-        this.inventory = inventory;
-        this.rowIndex = rowIndex;
+        super(rowIndex, inventory);
         this.spongePlayer = spongePlayer;
-    }
-
-    @Override
-    public Item getSlot(int row, int column) {
-        if (row != this.rowIndex) return Selene.getItems().getAir();
-        return this.getSlot(column);
-    }
-
-    @Override
-    public Item getSlot(Slot slot) {
-        return Selene.getItems().getAir();
-    }
-
-    @Override
-    public void setSlot(Item item, int row, int column) {
-        if (row != this.rowIndex) return;
-        this.setSlot(item, column);
     }
 
     @Override
     public void setSlot(Item item, int index) {
         this.internalGetSlot(index).ifPresent(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
-    }
-
-    @Override
-    public void setSlot(Item item, Slot slot) {
-        // Nothing happens
     }
 
     @Override
@@ -103,13 +73,8 @@ public class SpongeInventoryRow implements InventoryRow {
     }
 
     @Override
-    public int capacity() {
-        return 9;
-    }
-
-    @Override
     public Item getSlot(int index) {
-        return this.internalGetSlot(index).map(slotLookup).orElseGet(air);
+        return this.internalGetSlot(index).map(slotLookup).orElseGet(AIR);
     }
 
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(int index) {
@@ -118,20 +83,16 @@ public class SpongeInventoryRow implements InventoryRow {
 
     private Exceptional<? extends org.spongepowered.api.item.inventory.type.InventoryRow> internalGetRow() {
         return this.spongePlayer.getSpongePlayer().map(player -> {
-            if (3 == this.rowIndex) {
+            if (3 == this.getRowIndex()) {
                 return player.getInventory()
                         .<Hotbar>query(new InventoryTypeQueryOperation(Hotbar.class));
             }
             else {
                 MainPlayerInventory main = player.getInventory()
                         .query(new InventoryTypeQueryOperation(MainPlayerInventory.class));
-                return Exceptional.of(main.getRow(this.rowIndex)).orNull();
+                return Exceptional.of(main.getRow(this.getRowIndex())).orNull();
             }
         });
     }
 
-    @Override
-    public PlayerInventory getInventory() {
-        return this.inventory;
-    }
 }

@@ -15,17 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.util.files;
+package org.dockbox.selene.test.files;
 
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.test.JUnit5Bootstrap;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.api.Sponge;
 
 import java.nio.file.Path;
 
-@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
-public interface SpongeDefaultFileManager extends FileManager {
+public interface JUnitFileManager extends FileManager {
 
     @NotNull
     default Path getDataDir() {
@@ -34,7 +33,7 @@ public interface SpongeDefaultFileManager extends FileManager {
 
     @NotNull
     default Path getServerRoot() {
-        return Sponge.getGame().getGameDirectory();
+        return JUnit5Bootstrap.getInstance().getInformation().getFilePath();
     }
 
     @NotNull
@@ -46,8 +45,6 @@ public interface SpongeDefaultFileManager extends FileManager {
     default Path getModuleDir() {
         return this.createPathIfNotExists(this.getServerRoot().resolve("modules/"));
     }
-
-    Path createPathIfNotExists(Path path);
 
     @NotNull
     default Exceptional<Path> getModDir() {
@@ -73,4 +70,5 @@ public interface SpongeDefaultFileManager extends FileManager {
     default Path getPlatformPluginsConfigDir() {
         return this.getServerRoot().resolve("config/plugins/");
     }
+
 }

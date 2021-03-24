@@ -23,7 +23,7 @@ import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.extension.input.ParserContext;
 
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Enchant;
 import org.dockbox.selene.api.objects.item.Item;
@@ -101,7 +101,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         if (translatedName.isPresent()) return Text.of(translatedName.get());
 
         return Text.of(ref.map(i -> i.getType().getId())
-                .orElse(IntegratedResource.UNKNOWN.translate(language).asString()));
+                .orElse(DefaultResource.UNKNOWN.translate(language).asString()));
     }
 
     @Override

@@ -18,7 +18,15 @@
 package org.dockbox.selene.api.server;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
-@SuppressWarnings("EmptyClass") // Reserved for future expansion
 public abstract class SeleneInjectConfiguration extends AbstractModule {
+
+    protected  <T> Module factory(Class<?> factory, Class<T> source, Class<? extends T> target) {
+        return new FactoryModuleBuilder()
+                .implement(source, target)
+                .build(factory);
+    }
+
 }

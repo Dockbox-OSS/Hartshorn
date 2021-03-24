@@ -15,28 +15,21 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.command.registry;
+package org.dockbox.selene.api.server;
 
 import org.dockbox.selene.api.annotations.command.Command;
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.command.context.CommandContext;
+import org.dockbox.selene.api.objects.targets.MessageReceiver;
+import org.dockbox.selene.api.util.Reflect;
 
-public class ClassCommandRegistration extends AbstractCommandRegistration<Class<?>> {
+/**
+ * Low-level interface, used by the default integrated server module as indicated by the mappings
+ * provided by the platform implementation. Used to access the module when {@link Selene} is used in
+ * a {@link Reflect#getModule(Class)} method call.
+ */
+@SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
+public interface Server {
 
-    private final MethodCommandRegistration[] subcommands;
-
-    public ClassCommandRegistration(
-            String primaryAlias,
-            String[] aliases,
-            AbstractPermission permission,
-            Command command,
-            Class<?> sourceInstance,
-            MethodCommandRegistration[] subcommands
-    ) {
-        super(primaryAlias, aliases, permission, command, sourceInstance);
-        this.subcommands = subcommands;
-    }
-
-    public MethodCommandRegistration[] getSubcommands() {
-        return this.subcommands;
-    }
+    @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>")
+    void confirm(MessageReceiver src, CommandContext ctx);
 }

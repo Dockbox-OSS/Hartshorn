@@ -27,7 +27,7 @@ import org.dockbox.selene.api.util.SeleneUtils;
 import java.util.Map;
 
 @Resources(module = Selene.class)
-public enum IntegratedResource implements ResourceEntry {
+public enum DefaultResource implements ResourceEntry {
     // Color formats
     COLOR_PRIMARY("b", "color.primary"),
     COLOR_SECONDARY("3", "color.secondary"),
@@ -110,7 +110,7 @@ public enum IntegratedResource implements ResourceEntry {
     private final Map<Language, String> translations = SeleneUtils.emptyConcurrentMap();
     private String value;
 
-    IntegratedResource(String value, String key) {
+    DefaultResource(String value, String key) {
         this.value = value;
         this.key = key;
     }

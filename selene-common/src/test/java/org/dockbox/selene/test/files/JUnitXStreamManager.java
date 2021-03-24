@@ -15,22 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.objects.player;
+package org.dockbox.selene.test.files;
 
-import org.dockbox.selene.api.objects.inventory.Slot;
+import org.dockbox.selene.common.files.DefaultXStreamManager;
 
-public enum Hand {
-    MAIN_HAND(Slot.MAIN_HAND),
-    OFF_HAND(Slot.OFF_HAND),
-    EITHER(Slot.MAIN_HAND);
-
-    private final Slot slot;
-
-    Hand(Slot slot) {
-        this.slot = slot;
-    }
-
-    public Slot getSlot() {
-        return this.slot;
-    }
+public class JUnitXStreamManager extends DefaultXStreamManager implements JUnitFileManager {
 }
