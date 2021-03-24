@@ -17,16 +17,10 @@
 
 package org.dockbox.selene.api.i18n.permissions;
 
-public class Permission implements AbstractPermission {
+@SuppressWarnings("InterfaceNeverImplemented") // Provided by AssistedInject
+public interface PermissionFactory {
 
-    private final String key;
+    AbstractPermission of(String key, PermissionContext context);
+    AbstractPermission of(String key);
 
-    public Permission(String key) {
-        this.key = key;
-    }
-
-    @Override
-    public String get() {
-        return this.key;
-    }
 }

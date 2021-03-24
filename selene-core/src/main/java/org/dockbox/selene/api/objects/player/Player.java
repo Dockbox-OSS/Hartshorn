@@ -33,6 +33,7 @@ import org.dockbox.selene.api.objects.targets.InventoryHolder;
 import org.dockbox.selene.api.objects.targets.Locatable;
 import org.dockbox.selene.api.objects.targets.PacketReceiver;
 import org.dockbox.selene.api.objects.targets.PermissionHolder;
+import org.dockbox.selene.api.objects.tuple.Tristate;
 import org.dockbox.selene.api.text.Text;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,11 +74,6 @@ public abstract class Player extends AbstractIdentifiable<Player> implements Com
     }
 
     @Override
-    public boolean hasPermission(@NotNull AbstractPermission permission) {
-        return this.hasPermission(permission.get());
-    }
-
-    @Override
     public boolean hasAnyPermission(@NotNull AbstractPermission @NotNull ... permissions) {
         for (AbstractPermission permission : permissions) {
             if (this.hasPermission(permission)) return true;
@@ -94,21 +90,16 @@ public abstract class Player extends AbstractIdentifiable<Player> implements Com
     }
 
     @Override
-    public void setPermissions(boolean value, @NotNull String @NotNull ... permissions) {
+    public void setPermissions(Tristate state, @NotNull String @NotNull ... permissions) {
         for (String permission : permissions) {
-            this.setPermission(permission, value);
+            this.setPermission(permission, state);
         }
     }
 
     @Override
-    public void setPermission(@NotNull AbstractPermission permission, boolean value) {
-        this.setPermission(permission.get(), value);
-    }
-
-    @Override
-    public void setPermissions(boolean value, @NotNull AbstractPermission @NotNull ... permissions) {
+    public void setPermissions(Tristate state, @NotNull AbstractPermission @NotNull ... permissions) {
         for (AbstractPermission permission : permissions) {
-            this.setPermission(permission, value);
+            this.setPermission(permission, state);
         }
     }
 

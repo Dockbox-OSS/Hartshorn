@@ -40,6 +40,7 @@ import org.dockbox.selene.api.exceptions.TypeConversionException;
 import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.inventory.InventoryType;
 import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.objects.Exceptional;
@@ -48,14 +49,15 @@ import org.dockbox.selene.api.objects.bossbar.BossbarStyle;
 import org.dockbox.selene.api.objects.inventory.Slot;
 import org.dockbox.selene.api.objects.item.Enchant;
 import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.location.Warp;
 import org.dockbox.selene.api.objects.location.dimensions.Chunk;
 import org.dockbox.selene.api.objects.location.position.BlockFace;
-import org.dockbox.selene.api.objects.location.Warp;
 import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.objects.player.Hand;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.objects.special.Sounds;
 import org.dockbox.selene.api.objects.targets.Identifiable;
+import org.dockbox.selene.api.objects.tuple.Tristate;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.actions.ClickAction;
@@ -104,6 +106,7 @@ import org.spongepowered.api.item.inventory.InventoryArchetypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.equipment.EquipmentType;
 import org.spongepowered.api.item.inventory.equipment.EquipmentTypes;
+import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.pagination.PaginationList;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.ClickAction.ChangePage;
@@ -128,6 +131,7 @@ import org.spongepowered.api.world.storage.WorldProperties;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -783,6 +787,42 @@ public enum SpongeConversionUtil {
             return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) entity);
         } else {
             return new SpongeGenericEntity(entity);
+        }
+    }
+
+    public static Set<Context> toSponge(PermissionContext context) {
+        Set<Context> contexts = SeleneUtils.emptySet();
+
+        if (!SeleneUtils.isEmpty(context.getDimension()))
+            contexts.add(new Context(Context.DIMENSION_KEY, context.getDimension()));
+
+        if (!SeleneUtils.isEmpty(context.getLocalHost()))
+            contexts.add(new Context(Context.LOCAL_HOST_KEY, context.getLocalHost()));
+
+        if (!SeleneUtils.isEmpty(context.getLocalIp()))
+            contexts.add(new Context(Context.LOCAL_IP_KEY, context.getLocalIp()));
+
+        if (!SeleneUtils.isEmpty(context.getRemoteIp()))
+            contexts.add(new Context(Context.REMOTE_IP_KEY, context.getRemoteIp()));
+
+        if (!SeleneUtils.isEmpty(context.getUser()))
+            contexts.add(new Context(Context.USER_KEY, context.getUser()));
+
+        if (!SeleneUtils.isEmpty(context.getWorld()))
+            contexts.add(new Context(Context.WORLD_KEY, context.getWorld()));
+
+        return contexts;
+    }
+
+    public static org.spongepowered.api.util.Tristate toSponge(Tristate state) {
+        switch (state) {
+            case TRUE:
+                return org.spongepowered.api.util.Tristate.TRUE;
+            case FALSE:
+                return org.spongepowered.api.util.Tristate.FALSE;
+            case UNDEFINED:
+            default:
+                return org.spongepowered.api.util.Tristate.UNDEFINED;
         }
     }
 }

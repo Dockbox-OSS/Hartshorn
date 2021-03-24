@@ -25,6 +25,8 @@ import org.dockbox.selene.api.events.chat.SendMessageEvent;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.Packet;
 import org.dockbox.selene.api.objects.Wrapper;
@@ -32,8 +34,8 @@ import org.dockbox.selene.api.objects.inventory.PlayerInventory;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.keys.PersistentDataKey;
 import org.dockbox.selene.api.objects.keys.TransactionResult;
-import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.location.dimensions.World;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.objects.player.Hand;
 import org.dockbox.selene.api.objects.player.Player;
@@ -56,12 +58,14 @@ import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.service.context.Context;
 import org.spongepowered.api.service.permission.SubjectData;
 import org.spongepowered.api.service.user.UserStorageService;
 import org.spongepowered.api.util.Tristate;
 import org.spongepowered.api.util.blockray.BlockRay;
 
 import java.lang.ref.WeakReference;
+import java.util.Set;
 import java.util.UUID;
 
 import eu.crushedpixel.sponge.packetgate.api.registry.PacketConnection;
@@ -255,29 +259,62 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     @Override
     public boolean hasPermission(@NotNull String permission) {
         if (SeleneInformation.GLOBALLY_PERMITTED.contains(this.getUniqueId())) return true;
-        if (this.referenceExists()) return this.getReference().get().hasPermission(permission);
+        return this.hasPermission(permission, SubjectData.GLOBAL_CONTEXT);
+    }
+
+    @Override
+    public boolean hasPermission(AbstractPermission permission) {
+        if (permission.getContext().isAbsent()) {
+            return this.hasPermission(permission.get());
+        }
+        else {
+            PermissionContext context = permission.getContext().get();
+            if (SeleneInformation.GLOBALLY_PERMITTED.contains(this.getUniqueId())) return true;
+
+            Set<Context> contexts = SpongeConversionUtil.toSponge(context);
+            return this.hasPermission(permission.get(), contexts);
+        }
+    }
+
+    private boolean hasPermission(String permission, Set<Context> contexts) {
+        if (this.referenceExists()) return this.getReference().get().hasPermission(contexts, permission);
         else return Sponge.getServiceManager()
                 .provide(UserStorageService.class)
                 .map(uss -> uss.get(this.getUniqueId())
-                        .map(user -> user.hasPermission(permission))
+                        .map(user -> user.hasPermission(contexts, permission))
                         .orElse(false))
                 .orElse(false);
     }
 
     @Override
-    public void setPermission(String permission, boolean value) {
+    public void setPermission(String permission, org.dockbox.selene.api.objects.tuple.Tristate state) {
+        this.setPermission(permission, SubjectData.GLOBAL_CONTEXT, state);
+    }
+
+    @Override
+    public void setPermission(AbstractPermission permission, org.dockbox.selene.api.objects.tuple.Tristate state) {
+        if (permission.getContext().isAbsent()) {
+            this.setPermission(permission.get(), state);
+        } else {
+            Set<Context> contexts = SpongeConversionUtil.toSponge(permission.getContext().get());
+            this.setPermission(permission.get(), contexts, state);
+        }
+    }
+
+    private void setPermission(String permission, Set<Context> contexts, org.dockbox.selene.api.objects.tuple.Tristate state) {
+        Tristate tristate = SpongeConversionUtil.toSponge(state);
         if (this.referenceExists())
             this.getReference()
                     .get()
                     .getSubjectData()
-                    .setPermission(SubjectData.GLOBAL_CONTEXT, permission, Tristate.fromBoolean(value));
+                    .setPermission(contexts, permission, tristate);
         else
             Sponge.getServiceManager()
                     .provide(UserStorageService.class)
                     .flatMap(uss -> uss.get(this.getUniqueId()))
                     .ifPresent(user -> {
                         user.getSubjectData()
-                                .setPermission(SubjectData.GLOBAL_CONTEXT, permission, Tristate.fromBoolean(value));
+                                .setPermission(contexts, permission, tristate);
                     });
     }
 
@@ -322,7 +359,13 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
         return this.getReference();
     }
 
-    @NotNull
+    @Override
+    public Text getDisplayName() {
+        if (this.referenceExists()) {
+            return SpongeConversionUtil.fromSponge(this.getSpongePlayer().get().getOrElse(Keys.DISPLAY_NAME, org.spongepowered.api.text.Text.EMPTY));
+        }
+        return Text.of();
+    }    @NotNull
     @Override
     public Location getLocation() {
         if (this.referenceExists())
@@ -330,8 +373,10 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
         else return Location.empty();
     }
 
-
     @Override
+    public void setDisplayName(Text displayName) {
+        if (this.referenceExists()) this.getSpongePlayer().get().offer(Keys.DISPLAY_NAME, SpongeConversionUtil.toSponge(displayName));
+    }    @Override
     public void setLocation(@NotNull Location location) {
         if (this.referenceExists()) {
             SpongeConversionUtil.toSponge(location)
@@ -339,33 +384,16 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
         }
     }
 
-
-    @NotNull
+    @Override
+    public double getHealth() {
+        return this.getSpongePlayer().map(player -> player.get(Keys.HEALTH).orElse(0D)).orElse(0D);
+    }    @NotNull
     @Override
     public World getWorld() {
         // No reference refresh required as this is done by getLocation. Should never throw NPE as
         // Location is either
         // valid or EMPTY (World instance follows this same guideline).
         return this.getLocation().getWorld();
-    }
-
-
-    @Override
-    public Text getDisplayName() {
-        if (this.referenceExists()) {
-            return SpongeConversionUtil.fromSponge(this.getSpongePlayer().get().getOrElse(Keys.DISPLAY_NAME, org.spongepowered.api.text.Text.EMPTY));
-        }
-        return Text.of();
-    }
-
-    @Override
-    public void setDisplayName(Text displayName) {
-        if (this.referenceExists()) this.getSpongePlayer().get().offer(Keys.DISPLAY_NAME, SpongeConversionUtil.toSponge(displayName));
-    }
-
-    @Override
-    public double getHealth() {
-        return this.getSpongePlayer().map(player -> player.get(Keys.HEALTH).orElse(0D)).orElse(0D);
     }
 
     @Override
@@ -422,4 +450,10 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     public Player copy() {
         throw new UnsupportedOperationException("Cannot copy players");
     }
+
+
+
+
+
+
 }

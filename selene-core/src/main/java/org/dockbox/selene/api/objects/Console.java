@@ -22,6 +22,7 @@ import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.api.objects.targets.Identifiable;
 import org.dockbox.selene.api.objects.targets.PermissionHolder;
+import org.dockbox.selene.api.objects.tuple.Tristate;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 import org.jetbrains.annotations.NotNull;
@@ -75,16 +76,16 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
     }
 
     @Override
-    public void setPermission(@NotNull String permission, boolean value) {}
+    public void setPermission(@NotNull String permission, Tristate state) {}
 
     @Override
-    public void setPermissions(boolean value, @NotNull String @NotNull ... permissions) {}
+    public void setPermissions(Tristate state, @NotNull String @NotNull ... permissions) {}
 
     @Override
-    public void setPermission(@NotNull AbstractPermission permission, boolean value) {}
+    public void setPermission(@NotNull AbstractPermission permission, Tristate state) {}
 
     @Override
-    public void setPermissions(boolean value, @NotNull AbstractPermission @NotNull ... permissions) {}
+    public void setPermissions(Tristate state, @NotNull AbstractPermission @NotNull ... permissions) {}
 
     @Override
     public void send(@NotNull ResourceEntry text) {
