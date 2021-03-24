@@ -33,11 +33,11 @@ public interface PermissionHolder extends Target {
 
     boolean hasAllPermissions(AbstractPermission... permissions);
 
-    void setPermission(String permission, boolean value);
+    void setPermission(String permission, org.dockbox.selene.api.objects.tuple.Tristate state);
 
-    void setPermissions(boolean value, String... permissions);
+    void setPermissions(org.dockbox.selene.api.objects.tuple.Tristate state, String... permissions);
 
-    void setPermission(AbstractPermission permission, boolean value);
+    void setPermission(AbstractPermission permission, org.dockbox.selene.api.objects.tuple.Tristate state);
 
-    void setPermissions(boolean value, AbstractPermission... permissions);
+    void setPermissions(org.dockbox.selene.api.objects.tuple.Tristate state, AbstractPermission... permissions);
 }
