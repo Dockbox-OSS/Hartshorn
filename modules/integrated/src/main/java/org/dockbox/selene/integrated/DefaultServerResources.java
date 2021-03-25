@@ -25,7 +25,7 @@ import org.dockbox.selene.api.util.SeleneUtils;
 
 @SuppressWarnings({ "StaticMethodOnlyUsedInOneClass", "ClassWithTooManyFields" })
 @Resources(module = DefaultServer.class)
-enum IntegratedServerResources {
+enum DefaultServerResources {
     ;
     static final ResourceEntry PAGINATION_TITLE = new Resource("$1Selene Server Info", "selene.pagination.title");
     static final ResourceEntry SERVER_HEADER = new Resource("$2Selene $3($1Version$3: $1{0}$3)", "selene.info.header");

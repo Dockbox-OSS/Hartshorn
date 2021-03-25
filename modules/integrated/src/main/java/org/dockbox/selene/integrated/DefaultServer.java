@@ -64,25 +64,25 @@ public class DefaultServer implements Server {
             PaginationBuilder pb = Selene.provide(PaginationBuilder.class);
 
             List<Text> content = SeleneUtils.emptyList();
-            content.add(IntegratedServerResources.SERVER_HEADER
+            content.add(DefaultServerResources.SERVER_HEADER
                     .format(Selene.getServer().getVersion())
                     .translate(source).asText()
             );
-            content.add(IntegratedServerResources.SERVER_UPDATE
+            content.add(DefaultServerResources.SERVER_UPDATE
                     .format(Selene.getServer().getLastUpdate())
                     .translate(source).asText()
             );
-            content.add(IntegratedServerResources.SERVER_AUTHORS
+            content.add(DefaultServerResources.SERVER_AUTHORS
                     .format(String.join(",", SeleneBootstrap.getAuthors()))
                     .translate(source).asText());
-            content.add(IntegratedServerResources.SERVER_MODULES.translate(source).asText());
+            content.add(DefaultServerResources.SERVER_MODULES.translate(source).asText());
 
             em.getRegisteredModuleIds().forEach(id -> em.getHeader(id)
                     .map(e -> DefaultServer.generateText(e, source))
                     .ifPresent(content::add)
             );
 
-            pb.title(IntegratedServerResources.PAGINATION_TITLE.translate(source).asText());
+            pb.title(DefaultServerResources.PAGINATION_TITLE.translate(source).asText());
             pb.content(content);
 
             source.sendPagination(pb.build());
@@ -90,12 +90,12 @@ public class DefaultServer implements Server {
     }
 
     private static Text generateText(Module e, MessageReceiver source) {
-        Text line = IntegratedServerResources.MODULE_ROW
+        Text line = DefaultServerResources.MODULE_ROW
                 .format(e.name(), e.id())
                 .translate(source)
                 .asText();
         line.onClick(ClickAction.runCommand("/dserver module " + e.id()));
-        line.onHover(HoverAction.showText(IntegratedServerResources.MODULE_ROW_HOVER
+        line.onHover(HoverAction.showText(DefaultServerResources.MODULE_ROW_HOVER
                 .format(e.name())
                 .translate(source)
                 .asText()
@@ -108,7 +108,7 @@ public class DefaultServer implements Server {
         Reflect.runWithInstance(ModuleManager.class, em -> {
             Exceptional<CommandArgument<Module>> oarg = ctx.argument("id");
             if (!oarg.isPresent()) {
-                src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
+                src.send(DefaultServerResources.MISSING_ARGUMENT.format("id"));
                 return;
             }
 
@@ -116,12 +116,12 @@ public class DefaultServer implements Server {
             Exceptional<ModuleContext> oec = em.getContext(e.id());
 
             if (!oec.isPresent()) {
-                src.sendWithPrefix(IntegratedServerResources.UNKNOWN_MODULE.format(oarg.get().getValue()));
+                src.sendWithPrefix(DefaultServerResources.UNKNOWN_MODULE.format(oarg.get().getValue()));
             }
             else {
                 ModuleContext ec = oec.get();
 
-                src.send(IntegratedServerResources.MODULE_INFO_BLOCK.format(
+                src.send(DefaultServerResources.MODULE_INFO_BLOCK.format(
                         e.name(), e.id(), e.description(),
                         0 == e.dependencies().length ? "None" : String.join("$3, $1", e.dependencies()),
                         String.join("$3, $1", e.authors()),
@@ -137,7 +137,7 @@ public class DefaultServer implements Server {
         if (ctx.has("id")) {
             Exceptional<CommandArgument<Module>> oarg = ctx.argument("id");
             if (!oarg.isPresent()) {
-                src.send(IntegratedServerResources.MISSING_ARGUMENT.format("id"));
+                src.send(DefaultServerResources.MISSING_ARGUMENT.format("id"));
                 return;
             }
 
@@ -146,13 +146,13 @@ public class DefaultServer implements Server {
 
             oi.ifPresent(o -> {
                 eb.post(new ServerReloadEvent(), o.getClass());
-                src.send(IntegratedServerResources.MODULE_RELOAD_SUCCESSFUL.format(e.name()));
+                src.send(DefaultServerResources.MODULE_RELOAD_SUCCESSFUL.format(e.name()));
             }).ifAbsent(() ->
-                    src.send(IntegratedServerResources.NODULE_RELOAD_FAILED.format(e.name())));
+                    src.send(DefaultServerResources.NODULE_RELOAD_FAILED.format(e.name())));
         }
         else {
             eb.post(new ServerReloadEvent());
-            src.send(IntegratedServerResources.FULL_RELOAD_SUCCESSFUL);
+            src.send(DefaultServerResources.FULL_RELOAD_SUCCESSFUL);
         }
     }
 
@@ -172,8 +172,8 @@ public class DefaultServer implements Server {
 
         String languageLocalized = language.getNameLocalized() + " (" + language.getNameEnglish() + ")";
         if (player != src)
-            src.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED_OTHER.format(player.getName(), languageLocalized));
-        player.sendWithPrefix(IntegratedServerResources.LANG_SWITCHED.format(languageLocalized));
+            src.sendWithPrefix(DefaultServerResources.LANG_SWITCHED_OTHER.format(player.getName(), languageLocalized));
+        player.sendWithPrefix(DefaultServerResources.LANG_SWITCHED.format(languageLocalized));
     }
 
     @Command(aliases = "platform", usage = "platform")
@@ -186,7 +186,7 @@ public class DefaultServer implements Server {
         String[] system = SeleneUtils.getAll(System::getProperty,
                 "java.version", "java.vendor", "java.vm.version", "java.vm.name", "java.vm.vendor", "java.runtime.version", "java.class.version");
 
-        src.send(IntegratedServerResources.PLATFORM_INFORMATION.format(
+        src.send(DefaultServerResources.PLATFORM_INFORMATION.format(
                 st.getDisplayName(), platformVersion, mcVersion, system[0], system[1], system[2], system[2], system[3], system[4], system[5])
         );
     }
@@ -195,7 +195,7 @@ public class DefaultServer implements Server {
     @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>")
     public void confirm(MessageReceiver src, CommandContext ctx) {
         if (!(src instanceof AbstractIdentifiable)) {
-            src.send(IntegratedServerResources.CONFIRM_WRONG_SOURCE);
+            src.send(DefaultServerResources.CONFIRM_WRONG_SOURCE);
             return;
         }
         Exceptional<CommandArgument<String>> optionalCooldownId = ctx.argument("cooldownId");
@@ -206,9 +206,9 @@ public class DefaultServer implements Server {
                 .ifPresent(cooldownId -> {
                     String cid = cooldownId.getValue();
                     Selene.provide(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
-                            src.send(IntegratedServerResources.CONFIRM_FAILED));
+                            src.send(DefaultServerResources.CONFIRM_FAILED));
                 })
-                .ifAbsent(() -> src.send(IntegratedServerResources.CONFIRM_INVALID_ID));
+                .ifAbsent(() -> src.send(DefaultServerResources.CONFIRM_INVALID_ID));
     }
 
 }

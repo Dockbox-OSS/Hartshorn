@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.common.i18n;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+
 import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.objects.Exceptional;
@@ -26,12 +29,17 @@ public class Permission implements AbstractPermission {
     private final String key;
     private final PermissionContext context;
 
-    public Permission(String key, PermissionContext context) {
+    @AssistedInject
+    public Permission(
+            @Assisted String key,
+            @Assisted PermissionContext context
+    ) {
         this.key = key;
         this.context = context;
     }
 
-    public Permission(String key) {
+    @AssistedInject
+    public Permission(@Assisted String key) {
         this.key = key;
         this.context = null;
     }

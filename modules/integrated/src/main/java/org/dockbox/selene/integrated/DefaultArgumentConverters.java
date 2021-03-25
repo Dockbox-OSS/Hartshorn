@@ -28,8 +28,8 @@ import org.dockbox.selene.api.i18n.common.ResourceService;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.location.dimensions.World;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.api.server.Selene;
@@ -162,17 +162,16 @@ public final class DefaultArgumentConverters implements InjectableType {
     public static final ArgumentConverter<Player> PLAYER = new CommandValueConverter<>(Player.class, in -> {
         Players pss = Selene.provide(Players.class);
         Exceptional<Player> player = pss.getPlayer(in);
-        return player.orElseSupply(
-                () -> {
-                    try {
-                        UUID uuid = UUID.fromString(in);
-                        return pss.getPlayer(uuid).orNull();
-                    }
-                    catch (IllegalArgumentException e) {
-                        //noinspection ReturnOfNull
-                        return null;
-                    }
-                });
+        return player.orElseSupply(() -> {
+            try {
+                UUID uuid = UUID.fromString(in);
+                return pss.getPlayer(uuid).orNull();
+            }
+            catch (IllegalArgumentException e) {
+                //noinspection ReturnOfNull
+                return null;
+            }
+        });
     }, in -> Selene.provide(Players.class).getOnlinePlayers().stream()
             .map(Player::getName)
             .filter(n -> n.startsWith(in))

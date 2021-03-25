@@ -19,8 +19,6 @@ package org.dockbox.selene.api.server.bootstrap.modules;
 
 import com.google.inject.AbstractModule;
 
-import org.dockbox.selene.api.annotations.event.Listener;
-
 public class SingleImplementationModule<T> extends AbstractModule {
 
     private final Class<T> target;
@@ -34,6 +32,6 @@ public class SingleImplementationModule<T> extends AbstractModule {
     @Override
     protected void configure() {
         super.configure();
-        this.bind(this.target).annotatedWith(Listener.class).to(this.implementation);
+        this.bind(this.target).to(this.implementation);
     }
 }
