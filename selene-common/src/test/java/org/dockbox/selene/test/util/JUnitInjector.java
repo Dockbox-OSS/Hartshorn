@@ -34,6 +34,9 @@ import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.item.ItemFactory;
+import org.dockbox.selene.api.objects.item.maps.CustomMapService;
+import org.dockbox.selene.api.objects.profile.Profile;
+import org.dockbox.selene.api.objects.profile.ProfileFactory;
 import org.dockbox.selene.api.server.InjectConfiguration;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.Server;
@@ -55,6 +58,8 @@ import org.dockbox.selene.test.files.JUnitConfigurateManager;
 import org.dockbox.selene.test.files.JUnitXStreamManager;
 import org.dockbox.selene.test.objects.JUnitConsole;
 import org.dockbox.selene.test.objects.JUnitItem;
+import org.dockbox.selene.test.objects.JUnitProfile;
+import org.dockbox.selene.test.services.JUnitCustomMapService;
 import org.dockbox.selene.test.services.JUnitPlayers;
 import org.dockbox.selene.test.services.JUnitWorlds;
 import org.slf4j.Logger;
@@ -88,7 +93,7 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(Worlds.class).to(JUnitWorlds.class);
         this.bind(BroadcastService.class).to(SimpleBroadcastService.class);
         this.bind(ResourceService.class).toInstance(new SimpleResourceService());
-//        this.bind(CustomMapService.class).to(SpongeCustomMapService.class);
+        this.bind(CustomMapService.class).to(JUnitCustomMapService.class);
 
         // Internal services
         // Event- and command bus keep static references, and can thus be recreated
@@ -98,7 +103,7 @@ public class JUnitInjector extends InjectConfiguration {
         // Factory types
         this.install(this.factory(ItemFactory.class, Item.class, JUnitItem.class));
 //        this.install(this.factory(BossbarFactory.class, Bossbar.class, SpongeBossbar.class));
-//        this.install(this.factory(ProfileFactory.class, Profile.class, SpongeProfile.class));
+        this.install(this.factory(ProfileFactory.class, Profile.class, JUnitProfile.class));
         this.install(this.factory(PermissionFactory.class, AbstractPermission.class, Permission.class));
 //        this.install(new FactoryModuleBuilder()
 //                .implement(ItemFrame.class, SpongeItemFrame.class)

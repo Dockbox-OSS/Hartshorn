@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.test.objects;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.tuple.Tuple;
 import org.dockbox.selene.api.util.SeleneUtils;
@@ -31,8 +34,15 @@ public class JUnitProfile implements Profile {
     private UUID uuid;
     private Map<String, Collection<Tuple<String, String>>> properties = SeleneUtils.emptyMap();
 
-    public JUnitProfile(UUID uuid) {
+    @AssistedInject
+    public JUnitProfile(@Assisted UUID uuid) {
         this.uuid = uuid;
+    }
+
+    @AssistedInject
+    public JUnitProfile(@Assisted JUnitProfile profile) {
+        this(profile.getUuid());
+        this.properties = new HashMap<>(profile.properties);
     }
 
     @Override

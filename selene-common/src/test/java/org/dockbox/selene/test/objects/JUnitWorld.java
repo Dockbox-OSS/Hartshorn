@@ -25,6 +25,7 @@ import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.location.position.BlockFace;
 import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Gamemode;
+import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.api.util.SeleneUtils;
@@ -34,11 +35,13 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class JUnitWorld extends World {
 
     private final Map<Vector3N, Item> blocks = SeleneUtils.emptyMap();
     private final Map<UUID, Entity<?>> entities = SeleneUtils.emptyMap();
+    private final Map<String, String> gamerules = SeleneUtils.emptyMap();
     private boolean isLoaded;
 
     public JUnitWorld(UUID worldUniqueId, String name, boolean loadOnStartup, @NotNull Vector3N spawnPosition, long seed, Gamemode defaultGamemode) {
@@ -48,12 +51,12 @@ public class JUnitWorld extends World {
 
     @Override
     public Vector3N minimumPosition() {
-        return Vector3N.of(-10, 0, -10);
+        return Vector3N.of(-16, 0, -16);
     }
 
     @Override
     public Vector3N maximumPosition() {
-        return Vector3N.of(10, 256, 10);
+        return Vector3N.of(16, 256, 16);
     }
 
     @Override
@@ -77,21 +80,19 @@ public class JUnitWorld extends World {
         return true;
     }
 
-    // TODO: Finish implementation
-
     @Override
     public Exceptional<Chunk> getChunk(Location location) {
-        return null;
+        return Exceptional.empty();
     }
 
     @Override
     public Exceptional<Chunk> getChunk(int x, int y) {
-        return null;
+        return Exceptional.empty();
     }
 
     @Override
     public Collection<Chunk> getLoadedChunks() {
-        return null;
+        return SeleneUtils.emptyList();
     }
 
     @Override
@@ -101,12 +102,12 @@ public class JUnitWorld extends World {
 
     @Override
     public Collection<Entity<?>> getEntities(Predicate<Entity<?>> predicate) {
-        return null;
+        return this.getEntities().stream().filter(predicate).collect(Collectors.toList());
     }
 
     @Override
     public int getPlayerCount() {
-        return 0;
+        return this.getEntities(entity -> entity instanceof Player).size();
     }
 
     @Override
@@ -128,12 +129,12 @@ public class JUnitWorld extends World {
 
     @Override
     public void setGamerule(String key, String value) {
-
+        this.gamerules.put(key, value);
     }
 
     @Override
     public Map<String, String> getGamerules() {
-        return null;
+        return this.gamerules;
     }
 
     public void addEntity(Entity<?> entity) {
