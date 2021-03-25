@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.sponge.inventory;
 
-import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 
 import org.dockbox.selene.api.inventory.Element;
 import org.dockbox.selene.api.objects.item.Item;
@@ -31,7 +31,7 @@ public class SpongeElement implements Element {
     private final Item item;
     private Consumer<Player> onClick;
 
-    @Inject
+    @AssistedInject
     public SpongeElement(@Assisted Item item, @Assisted Consumer<Player> onClick) {
         this.item = item;
         this.onClick = onClick;

@@ -17,11 +17,10 @@
 
 package org.dockbox.selene.test.util;
 
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.objects.targets.PermissionHolder;
 import org.dockbox.selene.api.objects.tuple.Tristate;
 import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.common.i18n.Permission;
 
 import java.util.Collection;
 import java.util.Map;
@@ -29,17 +28,17 @@ import java.util.UUID;
 
 public class JUnitPermissionRegistry {
 
-    private static final Map<UUID, Collection<AbstractPermission>> permissions = SeleneUtils.emptyConcurrentMap();
+    private static final Map<UUID, Collection<Permission>> permissions = SeleneUtils.emptyConcurrentMap();
 
-    public static void setPermission(PermissionHolder holder, AbstractPermission permission) {
+    public static void setPermission(PermissionHolder holder, Permission permission) {
         permissions.putIfAbsent(holder.getUniqueId(), SeleneUtils.emptyList());
         permissions.get(holder.getUniqueId()).add(permission);
     }
 
     // Specific context
-    public static boolean hasPermission(PermissionHolder holder, AbstractPermission permission) {
+    public static boolean hasPermission(PermissionHolder holder, Permission permission) {
         if (permission.getContext().isAbsent()) return hasPermission(holder, permission.get());
-        for (AbstractPermission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), SeleneUtils.emptyList())) {
+        for (Permission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), SeleneUtils.emptyList())) {
             if (abstractPermission.getContext().isPresent() && abstractPermission.get().equals(permission.get())) {
                 if (abstractPermission.getContext().get().equals(permission.getContext().get())) return true;
             }
@@ -49,7 +48,7 @@ public class JUnitPermissionRegistry {
 
     // Global context
     public static boolean hasPermission(PermissionHolder holder, String permission) {
-        for (AbstractPermission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), SeleneUtils.emptyList())) {
+        for (Permission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), SeleneUtils.emptyList())) {
             if (abstractPermission.getContext().isAbsent() && abstractPermission.get().equals(permission)) {
                 return true;
             }
@@ -59,22 +58,22 @@ public class JUnitPermissionRegistry {
 
     public static void setPermission(PermissionHolder holder, String permission, Tristate tristate) {
         if (tristate.booleanValue()) {
-            permissions.get(holder.getUniqueId()).add(new Permission(permission));
+            permissions.get(holder.getUniqueId()).add(Permission.of(permission));
         }
         else
-            for (AbstractPermission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), SeleneUtils.emptyList())) {
+            for (Permission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), SeleneUtils.emptyList())) {
                 if (abstractPermission.get().equals(permission) && abstractPermission.getContext().isAbsent()) {
                     permissions.get(holder.getUniqueId()).remove(abstractPermission);
                 }
             }
     }
 
-    public static void setPermission(PermissionHolder holder, AbstractPermission permission, Tristate tristate) {
+    public static void setPermission(PermissionHolder holder, Permission permission, Tristate tristate) {
         if (tristate.booleanValue()) {
             permissions.get(holder.getUniqueId()).add(permission);
         }
         else
-            for (AbstractPermission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), SeleneUtils.emptyList())) {
+            for (Permission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), SeleneUtils.emptyList())) {
                 if (abstractPermission.equals(permission)) {
                     permissions.get(holder.getUniqueId()).remove(abstractPermission);
                 }

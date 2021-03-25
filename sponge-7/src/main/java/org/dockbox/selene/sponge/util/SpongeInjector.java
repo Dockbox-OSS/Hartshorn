@@ -29,31 +29,25 @@ import org.dockbox.selene.api.discord.DiscordPagination;
 import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.discord.templates.MessageTemplate;
 import org.dockbox.selene.api.entities.ArmorStand;
-import org.dockbox.selene.api.entities.EntityFactory;
 import org.dockbox.selene.api.entities.ItemFrame;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.files.FileType;
 import org.dockbox.selene.api.i18n.common.ResourceService;
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
-import org.dockbox.selene.api.i18n.permissions.PermissionFactory;
+import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.inventory.Element;
 import org.dockbox.selene.api.inventory.builder.LayoutBuilder;
 import org.dockbox.selene.api.inventory.builder.PaginatedPaneBuilder;
 import org.dockbox.selene.api.inventory.builder.StaticPaneBuilder;
-import org.dockbox.selene.api.inventory.factory.ElementFactory;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.objects.bossbar.Bossbar;
-import org.dockbox.selene.api.objects.bossbar.BossbarFactory;
 import org.dockbox.selene.api.objects.item.Item;
-import org.dockbox.selene.api.objects.item.ItemFactory;
 import org.dockbox.selene.api.objects.item.maps.CustomMapService;
 import org.dockbox.selene.api.objects.profile.Profile;
-import org.dockbox.selene.api.objects.profile.ProfileFactory;
-import org.dockbox.selene.api.server.Server;
-import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.InjectConfiguration;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.api.server.config.GlobalConfig;
 import org.dockbox.selene.api.tasks.TaskRunner;
 import org.dockbox.selene.api.text.pagination.PaginationBuilder;
@@ -64,7 +58,7 @@ import org.dockbox.selene.common.SimpleResourceService;
 import org.dockbox.selene.common.discord.SimpleDiscordPagination;
 import org.dockbox.selene.common.discord.SimpleMessageTemplate;
 import org.dockbox.selene.common.events.SimpleEventBus;
-import org.dockbox.selene.common.i18n.Permission;
+import org.dockbox.selene.common.i18n.SimplePermission;
 import org.dockbox.selene.common.modules.SimpleModuleManager;
 import org.dockbox.selene.common.server.config.SimpleGlobalConfig;
 import org.dockbox.selene.common.web.GsonWebUtil;
@@ -144,15 +138,16 @@ public class SpongeInjector extends InjectConfiguration {
         this.bind(StaticPaneBuilder.class).to(SpongeStaticPaneBuilder.class);
 
         // Factory types
-        this.install(this.factory(ElementFactory.class, Element.class, SpongeElement.class));
-        this.install(this.factory(ItemFactory.class, Item.class, SpongeItem.class));
-        this.install(this.factory(BossbarFactory.class, Bossbar.class, SpongeBossbar.class));
-        this.install(this.factory(ProfileFactory.class, Profile.class, SpongeProfile.class));
-        this.install(this.factory(PermissionFactory.class, AbstractPermission.class, Permission.class));
-        this.install(new FactoryModuleBuilder()
+        FactoryModuleBuilder factory = new FactoryModuleBuilder()
+                .implement(Element.class, SpongeElement.class)
+                .implement(Item.class, SpongeItem.class)
+                .implement(Bossbar.class, SpongeBossbar.class)
+                .implement(Profile.class, SpongeProfile.class)
+                .implement(Permission.class, SimplePermission.class)
                 .implement(ItemFrame.class, SpongeItemFrame.class)
-                .implement(ArmorStand.class, SpongeArmorStand.class)
-                .build(EntityFactory.class));
+                .implement(ArmorStand.class, SpongeArmorStand.class);
+
+        this.install(super.verify(factory));
 
         // Globally accessible
         // Config can be recreated, so no external tracking is required (contents obtained from file, no

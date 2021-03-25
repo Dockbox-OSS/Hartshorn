@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.api.inventory;
 
-import org.dockbox.selene.api.inventory.factory.ElementFactory;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.SeleneFactory;
 
 import java.util.function.Consumer;
 
@@ -56,7 +56,7 @@ public interface Element {
      * @return The element.
      */
     static Element of(Item item, Consumer<Player> onClick) {
-        return Selene.provide(ElementFactory.class).create(item, onClick);
+        return Selene.provide(SeleneFactory.class).element(item, onClick);
     }
 
     /**

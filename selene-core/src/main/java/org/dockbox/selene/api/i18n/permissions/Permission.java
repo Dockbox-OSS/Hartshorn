@@ -15,13 +15,24 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.objects.profile;
+package org.dockbox.selene.api.i18n.permissions;
 
-import java.util.UUID;
+import org.dockbox.selene.api.i18n.common.Formattable;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.SeleneFactory;
 
-@SuppressWarnings("InterfaceNeverImplemented") // Provided by AssistedInject
-public interface ProfileFactory {
-    Profile create(UUID uuid);
+public interface Permission extends Formattable {
 
-    Profile create(Profile profile);
+    static Permission of(String node) {
+        return Selene.provide(SeleneFactory.class).permission(node);
+    }
+
+    static Permission of(String key, PermissionContext context) {
+        return Selene.provide(SeleneFactory.class).permission(key, context);
+    }
+
+    String get();
+    Exceptional<PermissionContext> getContext();
+    Permission withContext(PermissionContext context);
 }

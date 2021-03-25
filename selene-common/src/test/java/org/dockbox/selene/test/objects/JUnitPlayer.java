@@ -20,7 +20,7 @@ package org.dockbox.selene.test.objects;
 import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.Packet;
 import org.dockbox.selene.api.objects.inventory.PlayerInventory;
@@ -245,7 +245,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public boolean hasPermission(AbstractPermission permission) {
+    public boolean hasPermission(Permission permission) {
         return JUnitPermissionRegistry.hasPermission(this, permission);
     }
 
@@ -255,7 +255,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public void setPermission(AbstractPermission permission, Tristate state) {
+    public void setPermission(Permission permission, Tristate state) {
         JUnitPermissionRegistry.setPermission(this, permission, state);
     }
 }

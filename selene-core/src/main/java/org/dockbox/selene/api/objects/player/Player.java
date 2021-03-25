@@ -20,7 +20,7 @@ package org.dockbox.selene.api.objects.player;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.inventory.PlayerInventory;
@@ -79,16 +79,16 @@ public abstract class Player extends AbstractIdentifiable<Player> implements Com
     }
 
     @Override
-    public boolean hasAnyPermission(@NotNull AbstractPermission @NotNull ... permissions) {
-        for (AbstractPermission permission : permissions) {
+    public boolean hasAnyPermission(@NotNull Permission @NotNull ... permissions) {
+        for (Permission permission : permissions) {
             if (this.hasPermission(permission)) return true;
         }
         return false;
     }
 
     @Override
-    public boolean hasAllPermissions(@NotNull AbstractPermission @NotNull ... permissions) {
-        for (AbstractPermission permission : permissions) {
+    public boolean hasAllPermissions(@NotNull Permission @NotNull ... permissions) {
+        for (Permission permission : permissions) {
             if (!this.hasPermission(permission)) return false;
         }
         return true;
@@ -102,8 +102,8 @@ public abstract class Player extends AbstractIdentifiable<Player> implements Com
     }
 
     @Override
-    public void setPermissions(Tristate state, @NotNull AbstractPermission @NotNull ... permissions) {
-        for (AbstractPermission permission : permissions) {
+    public void setPermissions(Tristate state, @NotNull Permission @NotNull ... permissions) {
+        for (Permission permission : permissions) {
             this.setPermission(permission, state);
         }
     }

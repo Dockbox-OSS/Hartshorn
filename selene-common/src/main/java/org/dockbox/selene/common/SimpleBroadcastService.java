@@ -19,7 +19,7 @@ package org.dockbox.selene.common;
 
 import org.dockbox.selene.api.BroadcastService;
 import org.dockbox.selene.api.Players;
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
@@ -39,7 +39,7 @@ public class SimpleBroadcastService implements BroadcastService {
     }
 
     @Override
-    public void broadcastForPermission(@NotNull Text message, @NotNull AbstractPermission permission) {
+    public void broadcastForPermission(@NotNull Text message, @NotNull Permission permission) {
         SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission));
     }
 
@@ -49,7 +49,7 @@ public class SimpleBroadcastService implements BroadcastService {
     }
 
     @Override
-    public void broadcastForPermissionWithFilter(@NotNull Text message, @NotNull AbstractPermission permission, @NotNull Predicate<Player> filter) {
+    public void broadcastForPermissionWithFilter(@NotNull Text message, @NotNull Permission permission, @NotNull Predicate<Player> filter) {
         SimpleBroadcastService.sendWithPredicate(message, p -> p.hasPermission(permission) && filter.test(p));
     }
 

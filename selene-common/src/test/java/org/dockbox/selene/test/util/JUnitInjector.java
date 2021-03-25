@@ -28,15 +28,9 @@ import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.files.FileType;
 import org.dockbox.selene.api.i18n.common.ResourceService;
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
-import org.dockbox.selene.api.i18n.permissions.PermissionFactory;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Console;
-import org.dockbox.selene.api.objects.item.Item;
-import org.dockbox.selene.api.objects.item.ItemFactory;
 import org.dockbox.selene.api.objects.item.maps.CustomMapService;
-import org.dockbox.selene.api.objects.profile.Profile;
-import org.dockbox.selene.api.objects.profile.ProfileFactory;
 import org.dockbox.selene.api.server.InjectConfiguration;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.Server;
@@ -49,7 +43,6 @@ import org.dockbox.selene.common.SimpleResourceService;
 import org.dockbox.selene.common.discord.SimpleDiscordPagination;
 import org.dockbox.selene.common.discord.SimpleMessageTemplate;
 import org.dockbox.selene.common.events.SimpleEventBus;
-import org.dockbox.selene.common.i18n.Permission;
 import org.dockbox.selene.common.modules.SimpleModuleManager;
 import org.dockbox.selene.common.server.config.SimpleGlobalConfig;
 import org.dockbox.selene.common.web.GsonWebUtil;
@@ -57,8 +50,6 @@ import org.dockbox.selene.common.web.GsonXmlWebUtil;
 import org.dockbox.selene.test.files.JUnitConfigurateManager;
 import org.dockbox.selene.test.files.JUnitXStreamManager;
 import org.dockbox.selene.test.objects.JUnitConsole;
-import org.dockbox.selene.test.objects.JUnitItem;
-import org.dockbox.selene.test.objects.JUnitProfile;
 import org.dockbox.selene.test.services.JUnitCustomMapService;
 import org.dockbox.selene.test.services.JUnitPlayers;
 import org.dockbox.selene.test.services.JUnitWorlds;
@@ -101,10 +92,10 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(EventBus.class).toInstance(new SimpleEventBus());
 
         // Factory types
-        this.install(this.factory(ItemFactory.class, Item.class, JUnitItem.class));
+//        this.install(this.factory(ItemFactory.class, Item.class, JUnitItem.class));
 //        this.install(this.factory(BossbarFactory.class, Bossbar.class, SpongeBossbar.class));
-        this.install(this.factory(ProfileFactory.class, Profile.class, JUnitProfile.class));
-        this.install(this.factory(PermissionFactory.class, AbstractPermission.class, Permission.class));
+//        this.install(this.factory(ProfileFactory.class, Profile.class, JUnitProfile.class));
+//        this.install(this.factory(PermissionFactory.class, AbstractPermission.class, Permission.class));
 //        this.install(new FactoryModuleBuilder()
 //                .implement(ItemFrame.class, SpongeItemFrame.class)
 //                .implement(ArmorStand.class, SpongeArmorStand.class)

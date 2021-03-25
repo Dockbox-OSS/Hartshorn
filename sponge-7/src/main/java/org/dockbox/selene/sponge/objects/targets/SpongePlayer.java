@@ -25,7 +25,7 @@ import org.dockbox.selene.api.events.chat.SendMessageEvent;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.Packet;
@@ -262,7 +262,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     }
 
     @Override
-    public boolean hasPermission(AbstractPermission permission) {
+    public boolean hasPermission(Permission permission) {
         if (permission.getContext().isAbsent()) {
             return this.hasPermission(permission.get());
         }
@@ -291,7 +291,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     }
 
     @Override
-    public void setPermission(AbstractPermission permission, org.dockbox.selene.api.objects.tuple.Tristate state) {
+    public void setPermission(Permission permission, org.dockbox.selene.api.objects.tuple.Tristate state) {
         if (permission.getContext().isAbsent()) {
             this.setPermission(permission.get(), state);
         } else {

@@ -19,7 +19,7 @@ package org.dockbox.selene.api.objects;
 
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.objects.targets.Identifiable;
 import org.dockbox.selene.api.objects.targets.PermissionHolder;
@@ -62,17 +62,17 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
     }
 
     @Override
-    public boolean hasPermission(@NotNull AbstractPermission permission) {
+    public boolean hasPermission(@NotNull Permission permission) {
         return true;
     }
 
     @Override
-    public boolean hasAnyPermission(@NotNull AbstractPermission @NotNull ... permissions) {
+    public boolean hasAnyPermission(@NotNull Permission @NotNull ... permissions) {
         return true;
     }
 
     @Override
-    public boolean hasAllPermissions(@NotNull AbstractPermission @NotNull ... permissions) {
+    public boolean hasAllPermissions(@NotNull Permission @NotNull ... permissions) {
         return true;
     }
 
@@ -83,10 +83,10 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
     public void setPermissions(Tristate state, @NotNull String @NotNull ... permissions) {}
 
     @Override
-    public void setPermission(@NotNull AbstractPermission permission, Tristate state) {}
+    public void setPermission(@NotNull Permission permission, Tristate state) {}
 
     @Override
-    public void setPermissions(Tristate state, @NotNull AbstractPermission @NotNull ... permissions) {}
+    public void setPermissions(Tristate state, @NotNull Permission @NotNull ... permissions) {}
 
     @Override
     public void send(@NotNull ResourceEntry text) {
