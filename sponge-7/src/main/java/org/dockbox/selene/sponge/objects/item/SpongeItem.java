@@ -27,7 +27,6 @@ import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Enchant;
 import org.dockbox.selene.api.objects.item.Item;
-import org.dockbox.selene.api.objects.item.persistence.PersistentItemModel;
 import org.dockbox.selene.api.objects.keys.PersistentDataKey;
 import org.dockbox.selene.api.objects.keys.TransactionResult;
 import org.dockbox.selene.api.objects.profile.Profile;
@@ -37,7 +36,6 @@ import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.common.objects.item.ReferencedItem;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
-import org.dockbox.selene.sponge.objects.item.persistence.SpongePersistentItemModel;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.sponge.util.SpongeWorldEditService;
 import org.jetbrains.annotations.NotNull;
@@ -58,13 +56,12 @@ import org.spongepowered.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeComposite {
-
-    public static final int DEFAULT_STACK_SIZE = 64;
 
     public SpongeItem(@NotNull ItemStack initialValue) {
         super(initialValue);
@@ -152,7 +149,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     }
 
     @Override
-    public List<Enchant> getEnchantments() {
+    public Set<Enchant> getEnchantments() {
         List<org.spongepowered.api.item.enchantment.Enchantment> enchantments =
                 this.getReference()
                         .map(i -> i.get(Keys.ITEM_ENCHANTMENTS).orElse(SeleneUtils.emptyList()))
@@ -161,7 +158,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
                 .map(SpongeConversionUtil::fromSponge)
                 .filter(Exceptional::isPresent)
                 .map(Exceptional::get)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -311,15 +308,5 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @Override
     public Exceptional<? extends DataHolder> getDataHolder() {
         return this.getReference();
-    }
-
-    @Override
-    public Class<? extends PersistentItemModel> getModelClass() {
-        return SpongePersistentItemModel.class;
-    }
-
-    @Override
-    public PersistentItemModel toPersistentModel() {
-        return new SpongePersistentItemModel(this);
     }
 }

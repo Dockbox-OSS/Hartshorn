@@ -19,21 +19,23 @@ package org.dockbox.selene.api.server.bootstrap.modules;
 
 import com.google.inject.AbstractModule;
 
-import org.dockbox.selene.api.annotations.event.Listener;
+import java.lang.annotation.Annotation;
 
-public class SingleImplementationModule<T> extends AbstractModule {
+public class SingleAnnotatedImplementationModule<T> extends AbstractModule {
 
     private final Class<T> target;
     private final Class<? extends T> implementation;
+    private final Class<? extends Annotation> annotation;
 
-    public SingleImplementationModule(Class<T> target, Class<? extends T> implementation) {
+    public SingleAnnotatedImplementationModule(Class<T> target, Class<? extends T> implementation, Class<? extends Annotation> annotation) {
         this.target = target;
         this.implementation = implementation;
+        this.annotation = annotation;
     }
 
     @Override
     protected void configure() {
         super.configure();
-        this.bind(this.target).annotatedWith(Listener.class).to(this.implementation);
+        this.bind(this.target).annotatedWith(this.annotation).to(this.implementation);
     }
 }

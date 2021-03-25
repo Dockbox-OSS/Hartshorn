@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.objects.item.persistence;
+package org.dockbox.selene.common.objects.item;
 
 import com.google.inject.Singleton;
 
@@ -29,8 +29,8 @@ import org.dockbox.selene.api.objects.keys.PersistentDataKey;
 import org.dockbox.selene.api.objects.keys.StoredPersistentKey;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.sponge.objects.item.SpongeItem;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,7 +39,7 @@ import java.util.Map.Entry;
 @Singleton
 @Extract(Behavior.KEEP)
 @Metadata(alias = "item")
-public class SpongePersistentItemModel extends PersistentItemModel {
+public class SimplePersistentItemModel extends PersistentItemModel {
 
     private String id;
     private int meta;
@@ -49,13 +49,13 @@ public class SpongePersistentItemModel extends PersistentItemModel {
     private List<Enchant> enchantments;
     private Map<String, Object> persistentData;
 
-    public SpongePersistentItemModel(SpongeItem item) {
+    public SimplePersistentItemModel(Item item) {
         this.id = item.getId();
         this.meta = item.getMeta();
         this.title = item.getDisplayName();
         this.lore = item.getLore();
         this.amount = item.getAmount();
-        this.enchantments = item.getEnchantments();
+        this.enchantments = new ArrayList<>(item.getEnchantments());
         this.persistentData = SeleneUtils.emptyMap();
         for (Entry<PersistentDataKey<?>, Object> persistentEntry : item.getPersistentData().entrySet()) {
             persistentData.put(persistentEntry.getKey().getDataKeyId(), persistentEntry.getValue());
@@ -76,7 +76,7 @@ public class SpongePersistentItemModel extends PersistentItemModel {
 
     @Override
     public Class<? extends Item> getCapableType() {
-        return SpongeItem.class;
+        return Item.class;
     }
 
     @Override

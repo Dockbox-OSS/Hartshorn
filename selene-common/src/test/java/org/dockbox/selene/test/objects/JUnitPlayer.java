@@ -35,6 +35,7 @@ import org.dockbox.selene.api.objects.tuple.Tristate;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.text.pagination.Pagination;
+import org.dockbox.selene.test.util.JUnitPermissionRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -61,11 +62,12 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
         this.displayName = Text.of(name);
         Worlds worlds = Selene.provide(Worlds.class);
         this.location = new Location(0, 0, 0, worlds.getWorld(worlds.getRootWorldId()).orNull());
+        ((JUnitWorld) this.getWorld()).addEntity(this);
     }
 
     @Override
     public void execute(String command) {
-
+        // TODO: CommandBus implementation
     }
 
     @Override
@@ -202,7 +204,9 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
     @Override
     public void setLocation(Location location) {
+        ((JUnitWorld) this.getWorld()).destroyEntity(this.getUniqueId());
         this.location = location;
+        ((JUnitWorld) this.getWorld()).addEntity(this);
     }
 
     @Override
@@ -237,21 +241,21 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
     @Override
     public boolean hasPermission(String permission) {
-        return false;
+        return JUnitPermissionRegistry.hasPermission(this, permission);
     }
 
     @Override
     public boolean hasPermission(AbstractPermission permission) {
-        return false;
+        return JUnitPermissionRegistry.hasPermission(this, permission);
     }
 
     @Override
     public void setPermission(String permission, Tristate state) {
-
+        JUnitPermissionRegistry.setPermission(this, permission, state);
     }
 
     @Override
     public void setPermission(AbstractPermission permission, Tristate state) {
-
+        JUnitPermissionRegistry.setPermission(this, permission, state);
     }
 }

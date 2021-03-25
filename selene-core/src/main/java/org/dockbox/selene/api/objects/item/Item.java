@@ -29,6 +29,7 @@ import org.dockbox.selene.api.text.Text;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
+import java.util.Set;
 
 public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentCapable<PersistentItemModel> {
 
@@ -87,7 +88,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
 
     int getStackSize();
 
-    List<Enchant> getEnchantments();
+    Set<Enchant> getEnchantments();
 
     void addEnchant(Enchant enchant);
 

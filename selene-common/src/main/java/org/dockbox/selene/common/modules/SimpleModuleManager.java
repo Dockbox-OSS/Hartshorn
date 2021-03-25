@@ -183,7 +183,7 @@ public class SimpleModuleManager implements ModuleManager {
                 SimpleModuleManager.injectMembers(instance, context, header);
 
                 context.addStatus(entry, ModuleStatus.LOADED);
-                Selene.getServer().bindUtility(entry, instance);
+                Selene.getServer().bind(entry, instance);
             }
             catch (NoSuchMethodException | IllegalAccessException e) {
                 context.addStatus(entry, ModuleStatus.FAILED);

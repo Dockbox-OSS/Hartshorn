@@ -21,6 +21,7 @@ import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.inventory.PlayerInventory;
 import org.dockbox.selene.api.objects.item.Item;
@@ -41,6 +42,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public abstract class Player extends AbstractIdentifiable<Player> implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder, Entity<Player> {
+
+    // An empty context targets only global permissions
+    private static final PermissionContext GLOBAL = PermissionContext.builder().build();
 
     protected Player(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
@@ -130,6 +134,17 @@ public abstract class Player extends AbstractIdentifiable<Player> implements Com
         // Location is either
         // valid or EMPTY (World instance follows this same guideline).
         return this.getLocation().getWorld();
+    }
+
+    @Override
+    public PermissionContext activeContext() {
+        if (!this.isOnline()) {
+            return GLOBAL;
+        } else {
+            return PermissionContext.builder()
+                    .forWorld(this.getWorld().getName())
+                    .build();
+        }
     }
 
     public abstract Item getItemInHand(Hand hand);

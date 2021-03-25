@@ -53,7 +53,7 @@ import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.profile.ProfileFactory;
 import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.SeleneInjectConfiguration;
+import org.dockbox.selene.api.server.InjectConfiguration;
 import org.dockbox.selene.api.server.config.GlobalConfig;
 import org.dockbox.selene.api.tasks.TaskRunner;
 import org.dockbox.selene.api.text.pagination.PaginationBuilder;
@@ -96,7 +96,7 @@ import org.dockbox.selene.sponge.util.files.SpongeXStreamManager;
 import org.dockbox.selene.worldedit.WorldEditService;
 import org.slf4j.Logger;
 
-public class SpongeInjector extends SeleneInjectConfiguration {
+public class SpongeInjector extends InjectConfiguration {
 
     @SuppressWarnings("OverlyCoupledMethod")
     @Override

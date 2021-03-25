@@ -15,25 +15,31 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.server.bootstrap.modules;
+package org.dockbox.selene.test.objects;
 
-import com.google.inject.AbstractModule;
+import org.dockbox.selene.api.objects.Console;
+import org.dockbox.selene.api.text.Text;
+import org.dockbox.selene.api.text.pagination.Pagination;
 
-import org.dockbox.selene.api.annotations.event.Listener;
+public class JUnitConsole extends Console {
 
-public class SingleImplementationModule<T> extends AbstractModule {
-
-    private final Class<T> target;
-    private final Class<? extends T> implementation;
-
-    public SingleImplementationModule(Class<T> target, Class<? extends T> implementation) {
-        this.target = target;
-        this.implementation = implementation;
+    @Override
+    public void execute(String command) {
+        // TODO: CommandBus implementation
     }
 
     @Override
-    protected void configure() {
-        super.configure();
-        this.bind(this.target).annotatedWith(Listener.class).to(this.implementation);
+    public void send(Text text) {
+        // TODO: Test implementation, mocking client?
+    }
+
+    @Override
+    public void sendWithPrefix(Text text) {
+        // TODO: Test implementation, mocking client?
+    }
+
+    @Override
+    public void sendPagination(Pagination pagination) {
+        // TODO: Test implementation, mocking client?
     }
 }

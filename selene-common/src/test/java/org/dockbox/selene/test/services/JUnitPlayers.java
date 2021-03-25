@@ -21,34 +21,53 @@ import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.test.objects.JUnitPlayer;
 
 import java.util.List;
 import java.util.UUID;
 
 public class JUnitPlayers implements Players {
 
+    private static final String PLAYER_ONE_NAME = "PlayerOne";
+    private static final String PLAYER_TWO_NAME = "PlayerTwo";
+    private static final String PLAYER_THREE_NAME = "PlayerThree";
+
+    public static final Player PLAYER_ONE = new JUnitPlayer(UUID.randomUUID(), PLAYER_ONE_NAME);
+    public static final Player PLAYER_TWO = new JUnitPlayer(UUID.randomUUID(), PLAYER_TWO_NAME);
+    public static final Player PLAYER_THREE = new JUnitPlayer(UUID.randomUUID(), PLAYER_THREE_NAME);
+
     @Override
     public List<Player> getOnlinePlayers() {
-        return null;
+        return SeleneUtils.asList(Player::isOnline, PLAYER_ONE, PLAYER_TWO, PLAYER_THREE);
     }
 
     @Override
     public Exceptional<Player> getPlayer(String name) {
-        return null;
+        if (PLAYER_ONE_NAME.equals(name)) return Exceptional.of(PLAYER_ONE);
+        else if (PLAYER_TWO_NAME.equals(name)) return Exceptional.of(PLAYER_TWO);
+        else if (PLAYER_THREE_NAME.equals(name)) return Exceptional.of(PLAYER_THREE);
+        return Exceptional.empty();
     }
 
     @Override
     public Exceptional<Player> getPlayer(UUID uuid) {
-        return null;
+        if (PLAYER_ONE.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_ONE);
+        else if (PLAYER_TWO.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_TWO);
+        else if (PLAYER_THREE.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_THREE);
+        return Exceptional.empty();
     }
 
     @Override
     public void setLanguagePreference(UUID uuid, Language language) {
-
+        this.getPlayer(uuid).ifPresent(player ->  player.setLanguage(language));
     }
 
     @Override
     public Language getLanguagePreference(UUID uuid) {
-        return null;
+        return this.getPlayer(uuid)
+                .map(Player::getLanguage)
+                .orElse(Selene.getServer().getGlobalConfig().getDefaultLanguage());
     }
 }

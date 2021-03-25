@@ -20,6 +20,7 @@ package org.dockbox.selene.api.objects;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.objects.targets.Identifiable;
 import org.dockbox.selene.api.objects.targets.PermissionHolder;
 import org.dockbox.selene.api.objects.tuple.Tristate;
@@ -107,5 +108,11 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
     @Override
     public String getName() {
         return "Console";
+    }
+
+    @Override
+    public PermissionContext activeContext() {
+        // Console will always have all permissions, context is therefore global by default
+        return PermissionContext.builder().build();
     }
 }

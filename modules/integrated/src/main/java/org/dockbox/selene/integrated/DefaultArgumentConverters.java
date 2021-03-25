@@ -124,7 +124,7 @@ public final class DefaultArgumentConverters implements InjectableType {
                         double x = Double.parseDouble(xyz[0]);
                         double y = Double.parseDouble(xyz[1]);
                         double z = Double.parseDouble(xyz[2]);
-                        return new Vector3N(x, y, z);
+                        return Vector3N.of(x, y, z);
                     }),
             "vec3", "vector", "v3n"
     );
@@ -142,7 +142,7 @@ public final class DefaultArgumentConverters implements InjectableType {
     public static final ArgumentConverter<Location> LOCATION = new CommandValueConverter<>(Location.class, (cs, in) -> {
         String[] xyzw = in.split(",");
         String xyz = String.join(",", xyzw[0], xyzw[1], xyzw[2]);
-        Vector3N vec = VECTOR.convert(cs, xyz).orElse(new Vector3N(0, 0, 0));
+        Vector3N vec = VECTOR.convert(cs, xyz).orElse(Vector3N.of(0, 0, 0));
         World world = WORLD.convert(cs, xyzw[3]).orElse(World.empty());
 
         return Exceptional.of(new Location(vec, world));

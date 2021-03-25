@@ -21,7 +21,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 
-public abstract class SeleneInjectConfiguration extends AbstractModule {
+public abstract class InjectConfiguration extends AbstractModule {
 
     protected  <T> Module factory(Class<?> factory, Class<T> source, Class<? extends T> target) {
         return new FactoryModuleBuilder()

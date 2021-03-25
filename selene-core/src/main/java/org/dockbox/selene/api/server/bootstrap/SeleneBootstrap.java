@@ -37,7 +37,7 @@ import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.SeleneInformation;
-import org.dockbox.selene.api.server.SeleneInjectConfiguration;
+import org.dockbox.selene.api.server.InjectConfiguration;
 import org.dockbox.selene.api.server.ServerType;
 import org.dockbox.selene.api.server.config.GlobalConfig;
 import org.dockbox.selene.api.util.Reflect;
@@ -66,14 +66,14 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
 
     /**
      * Instantiates {@link Selene}, creating a local injector based on the provided {@link
-     * SeleneInjectConfiguration}. Also verifies dependency artifacts and injector bindings. Proceeds
+     * InjectConfiguration}. Also verifies dependency artifacts and injector bindings. Proceeds
      * to {@link SeleneBootstrap#construct()} once verified.
      *
      * @param moduleConfiguration
      *         the injector provided by the Selene implementation
      */
-    protected SeleneBootstrap(SeleneInjectConfiguration moduleConfiguration) {
-        super.registerGlobal(moduleConfiguration);
+    protected SeleneBootstrap(InjectConfiguration moduleConfiguration) {
+        super.bind(moduleConfiguration);
         this.construct();
     }
 

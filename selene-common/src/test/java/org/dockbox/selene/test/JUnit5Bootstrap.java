@@ -19,7 +19,7 @@ package org.dockbox.selene.test;
 
 import org.dockbox.selene.api.MinecraftVersion;
 import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.SeleneInjectConfiguration;
+import org.dockbox.selene.api.server.InjectConfiguration;
 import org.dockbox.selene.api.server.ServerType;
 import org.dockbox.selene.api.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.test.util.JUnitInjector;
@@ -33,7 +33,7 @@ public class JUnit5Bootstrap extends SeleneBootstrap {
 
     /**
      * Instantiates {@link Selene}, creating a local injector based on the provided {@link
-     * SeleneInjectConfiguration}. Also verifies dependency artifacts and injector bindings. Proceeds
+     * InjectConfiguration}. Also verifies dependency artifacts and injector bindings. Proceeds
      * to {@link SeleneBootstrap#construct()} once verified.
      */
     protected JUnit5Bootstrap() throws IOException {

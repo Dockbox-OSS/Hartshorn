@@ -18,8 +18,11 @@
 package org.dockbox.selene.api.objects.targets;
 
 import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 
 public interface PermissionHolder extends Identifiable {
+
+    PermissionContext activeContext();
 
     boolean hasPermission(String permission);
 
