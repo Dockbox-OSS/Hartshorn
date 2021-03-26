@@ -18,21 +18,22 @@
 package org.dockbox.selene.api.objects.keys.data;
 
 import org.dockbox.selene.api.annotations.module.Module;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.objects.keys.Keys;
 import org.dockbox.selene.api.util.Reflect;
 
 public final class StringPersistentDataKey extends TypedPersistentDataKey<String> {
 
-    private StringPersistentDataKey(String name, String id, Module module) {
+    private StringPersistentDataKey(String name, String id, ModuleContainer module) {
         super(name, id, module, String.class);
     }
 
     public static StringPersistentDataKey of(String name, Class<?> owningClass) {
-        Module module = Reflect.getModule(owningClass);
+        ModuleContainer module = Reflect.getModule(owningClass);
         return of(name, module);
     }
 
-    public static StringPersistentDataKey of(String name, Module module) {
+    public static StringPersistentDataKey of(String name, ModuleContainer module) {
         String id = Keys.convertToModuleIdString(name, module);
         return new StringPersistentDataKey(name, id, module);
     }

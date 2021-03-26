@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.api.objects.keys;
 
-import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.keys.data.DoublePersistentDataKey;
 import org.dockbox.selene.api.objects.keys.data.IntegerPersistentDataKey;
@@ -181,7 +181,7 @@ public final class Keys {
      * @return the persistent data key
      */
     @SuppressWarnings("unchecked")
-    public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, Module module) {
+    public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, ModuleContainer module) {
         if (!Keys.isNbtSupportedType(type))
             throw new UncheckedSeleneException("Unsupported data type for persistent key: " + type.getCanonicalName());
 
@@ -226,7 +226,7 @@ public final class Keys {
      *
      * @return the string
      */
-    public static String convertToModuleIdString(String name, Module module) {
+    public static String convertToModuleIdString(String name, ModuleContainer module) {
         name = name.toLowerCase(Locale.ROOT).replaceAll("[ .]", "").replaceAll("-", "_");
         return module.id() + ':' + name;
     }

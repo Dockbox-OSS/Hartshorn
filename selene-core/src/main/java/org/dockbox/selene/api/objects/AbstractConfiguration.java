@@ -21,8 +21,8 @@ import com.google.inject.Inject;
 
 import org.dockbox.selene.api.annotations.entity.Extract;
 import org.dockbox.selene.api.annotations.entity.Extract.Behavior;
-import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.files.FileManager;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.server.properties.InjectableType;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.api.util.Reflect;
@@ -41,33 +41,33 @@ public abstract class AbstractConfiguration<C extends AbstractConfiguration<C>> 
 
     @Override
     public boolean canEnable() {
-        return !isConstructed;
+        return !this.isConstructed;
     }
 
     public Exceptional<Boolean> save() {
-        return this.fileManager.write(getConfigFile(), this);
+        return this.fileManager.write(this.getConfigFile(), this);
     }
 
     protected void transferOrReuse() {
-        Module module = Reflect.getModule(getModuleClass());
+        ModuleContainer module = Reflect.getModule(this.getModuleClass());
         if (null == module) {
             throw new IllegalArgumentException("Provided module not annotated as such.");
         }
 
-        Path configPath = getConfigFile();
-        @SuppressWarnings("unchecked") C config = (C) this.fileManager.read(configPath, getClass()).orNull();
+        Path configPath = this.getConfigFile();
+        @SuppressWarnings("unchecked") C config = (C) this.fileManager.read(configPath, this.getClass()).orNull();
         SeleneUtils.shallowCopy(config, this);
         this.isConstructed = true;
     }
 
     protected Path getConfigFile() {
-        return this.fileManager.getConfigFile(getModuleClass());
+        return this.fileManager.getConfigFile(this.getModuleClass());
     }
 
     protected abstract Class<?> getModuleClass();
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        transferOrReuse();
+        this.transferOrReuse();
     }
 }

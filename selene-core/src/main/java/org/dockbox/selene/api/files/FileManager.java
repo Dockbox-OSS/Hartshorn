@@ -18,6 +18,7 @@
 package org.dockbox.selene.api.files;
 
 import org.dockbox.selene.api.annotations.module.Module;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.server.properties.InjectableType;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
@@ -41,7 +42,7 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a file
      */
-    Path getDataFile(Module module);
+    Path getDataFile(ModuleContainer module);
 
     default Path getConfigFile(Class<?> module) {
         return this.getConfigFile(Reflect.getModule(module));
@@ -56,7 +57,7 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a file
      */
-    Path getConfigFile(Module module);
+    Path getConfigFile(ModuleContainer module);
 
     default Path getDataFile(Class<?> module, String file) {
         return this.getDataFile(Reflect.getModule(module), file);
@@ -73,7 +74,7 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a file
      */
-    Path getDataFile(Module module, String file);
+    Path getDataFile(ModuleContainer module, String file);
 
     default Path getConfigFile(Class<?> module, String file) {
         return this.getConfigFile(Reflect.getModule(module), file);
@@ -90,7 +91,7 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to a file
      */
-    Path getConfigFile(Module module, String file);
+    Path getConfigFile(ModuleContainer module, String file);
 
     /**
      * Get the content of a file, and map the given values to a generic type {@code T}. The exact file
@@ -140,7 +141,7 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to the data directory
      */
-    default Path getDataDir(Module module) {
+    default Path getDataDir(ModuleContainer module) {
         return this.getDataDir().resolve(module.id());
     }
 
@@ -208,7 +209,7 @@ public interface FileManager extends InjectableType {
      *
      * @return A {@link Path} reference to the configuration directory
      */
-    default Path getModuleConfigDir(Module module) {
+    default Path getModuleConfigDir(ModuleContainer module) {
         return this.getModuleConfigsDir().resolve(module.id());
     }
 

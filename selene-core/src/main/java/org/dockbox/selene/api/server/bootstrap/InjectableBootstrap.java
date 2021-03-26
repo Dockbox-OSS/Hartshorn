@@ -28,12 +28,12 @@ import com.google.inject.ProvisionException;
 
 import org.dockbox.selene.api.annotations.entity.DoNotEnable;
 import org.dockbox.selene.api.annotations.module.Module;
-import org.dockbox.selene.api.module.ModuleContext;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.keys.Keys;
-import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.InjectConfiguration;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.bootstrap.modules.SingleAnnotatedImplementationModule;
 import org.dockbox.selene.api.server.bootstrap.modules.SingleImplementationModule;
 import org.dockbox.selene.api.server.bootstrap.modules.SingleInstanceModule;
@@ -92,15 +92,14 @@ public abstract class InjectableBootstrap {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> ModuleInjectionConfiguration getModuleConfiguration(T instance, Module header, ModuleContext context) {
+    private static <T> ModuleInjectionConfiguration getModuleConfiguration(T instance, ModuleContainer header) {
         ModuleInjectionConfiguration module = new ModuleInjectionConfiguration();
 
         if (!(null == instance || instance instanceof Class<?>)) {
             module.acceptBinding((Class<T>) instance.getClass(), instance);
             module.acceptInstance(instance);
         }
-        if (null != header) module.acceptBinding(Module.class, header);
-        if (null != context) module.acceptBinding(ModuleContext.class, context);
+        if (null != header) module.acceptBinding(ModuleContainer.class, header);
 
         return module;
     }
@@ -248,17 +247,14 @@ public abstract class InjectableBootstrap {
 
     public Injector createModuleInjector(Object instance) {
         if (null != instance && instance.getClass().isAnnotationPresent(Module.class)) {
-            Exceptional<ModuleContext> context = this.getInstance(ModuleManager.class).getContext(instance.getClass());
-            Module module = context
-                    .map(ModuleContext::getModule)
-                    .orElseGet(() -> instance.getClass().getAnnotation(Module.class));
-            return this.createModuleInjector(instance, module, context.orNull());
+            Exceptional<ModuleContainer> context = this.getInstance(ModuleManager.class).getContext(instance.getClass());
+            return this.createModuleInjector(instance, context.orNull());
         }
         return this.rebuildInjector();
     }
 
-    public Injector createModuleInjector(Object instance, Module header, ModuleContext context) {
-        return this.rebuildInjector(InjectableBootstrap.getModuleConfiguration(instance, header, context));
+    public Injector createModuleInjector(Object instance, ModuleContainer container) {
+        return this.rebuildInjector(InjectableBootstrap.getModuleConfiguration(instance, container));
     }
 
     public <T> T injectMembers(T type) {

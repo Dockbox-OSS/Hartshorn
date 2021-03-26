@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.common.files;
 
-import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.files.FileType;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.persistence.PersistentCapable;
 import org.dockbox.selene.api.objects.persistence.PersistentModel;
@@ -55,25 +55,25 @@ public abstract class DefaultAbstractFileManager implements FileManager {
 
     @NotNull
     @Override
-    public Path getDataFile(@NotNull Module module) {
+    public Path getDataFile(@NotNull ModuleContainer module) {
         return this.getDataFile(module, module.id());
     }
 
     @NotNull
     @Override
-    public Path getConfigFile(@NotNull Module module) {
+    public Path getConfigFile(@NotNull ModuleContainer module) {
         return this.getConfigFile(module, module.id());
     }
 
     @NotNull
     @Override
-    public Path getDataFile(@NotNull Module module, @NotNull String file) {
+    public Path getDataFile(@NotNull ModuleContainer module, @NotNull String file) {
         return this.createFileIfNotExists(this.getFileType().asPath(this.getDataDir().resolve(module.id()), file));
     }
 
     @NotNull
     @Override
-    public Path getConfigFile(@NotNull Module module, @NotNull String file) {
+    public Path getConfigFile(@NotNull ModuleContainer module, @NotNull String file) {
         return this.createFileIfNotExists(this.getFileType().asPath(this.getModuleConfigsDir().resolve(module.id()), file));
     }
 

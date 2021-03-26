@@ -21,7 +21,7 @@ import com.google.inject.Singleton;
 
 import org.dockbox.selene.api.annotations.module.Disabled;
 import org.dockbox.selene.api.annotations.module.Module;
-import org.dockbox.selene.api.module.ModuleContext;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.module.ModuleStatus;
 import org.dockbox.selene.api.objects.Exceptional;
@@ -44,38 +44,44 @@ import java.util.stream.Collectors;
 @Singleton
 public class SimpleModuleManager implements ModuleManager {
 
-    private static final Collection<SimpleModuleContext> globalContexts = SeleneUtils.emptyConcurrentList();
+    private static final Collection<ModuleContainer> moduleContainers = SeleneUtils.emptyConcurrentList();
     private static final Map<String, Object> instanceMappings = SeleneUtils.emptyConcurrentMap();
 
     @NotNull
     @Override
-    public Exceptional<ModuleContext> getContext(@NotNull Class<?> type) {
-        for (SimpleModuleContext ctx : globalContexts) {
-            Class<?> componentClassType = ctx.getType();
-            if (componentClassType.equals(type)) return Exceptional.of(ctx);
+    public Exceptional<ModuleContainer> getContext(@NotNull Class<?> type) {
+        for (ModuleContainer container : moduleContainers) {
+            Class<?> componentClassType = container.type();
+            if (componentClassType.equals(type)) return Exceptional.of(container);
         }
         return Exceptional.empty();
     }
 
     @NotNull
     @Override
-    public Exceptional<ModuleContext> getContext(@NonNls @NotNull String id) {
-        for (SimpleModuleContext ctx : globalContexts) {
-            if (ctx.getModule().id().equals(id)) return Exceptional.of(ctx);
+    public Exceptional<ModuleContainer> getContext(@NonNls @NotNull String id) {
+        for (ModuleContainer container : moduleContainers) {
+            if (container.id().equals(id)) return Exceptional.of(container);
         }
         return Exceptional.empty();
     }
 
     @NotNull
     @Override
-    public Exceptional<Module> getHeader(@NotNull Class<?> type) {
-        return Exceptional.ofNullable(type.getAnnotation(Module.class));
+    public Exceptional<ModuleContainer> getContainer(@NotNull Class<?> type) {
+        for (ModuleContainer moduleContainer : moduleContainers) {
+            if (moduleContainer.type().equals(type)) return Exceptional.of(moduleContainer);
+        }
+        return Exceptional.empty();
     }
 
     @NotNull
     @Override
-    public Exceptional<Module> getHeader(@NotNull String id) {
-        return this.getInstance(id).map(i -> i.getClass().getAnnotation(Module.class));
+    public Exceptional<ModuleContainer> getContainer(@NotNull String id) {
+        for (ModuleContainer moduleContainer : moduleContainers) {
+            if (moduleContainer.id().equals(id)) return Exceptional.of(moduleContainer);
+        }
+        return Exceptional.empty();
     }
 
     @NotNull
@@ -106,7 +112,7 @@ public class SimpleModuleManager implements ModuleManager {
 
     @NotNull
     @Override
-    public List<ModuleContext> initialiseModules() {
+    public List<ModuleContainer> initialiseModules() {
         Collection<Class<?>> annotatedTypes =
                 Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Module.class);
         Selene.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
@@ -116,11 +122,12 @@ public class SimpleModuleManager implements ModuleManager {
                     Selene.log().info(" - [" + type.getCanonicalName() + "]");
                     SimpleModuleContext context = new SimpleModuleContext(type.getCanonicalName(), type, type.getAnnotation(Module.class));
 
-                    return new Tuple<>(context, type);
+                    return new Tuple<>(new ModuleContainer(context), type);
                 })
                 .filter(tuple -> {
-                    if (this.createComponentInstance(tuple.getValue(), tuple.getKey())) {
-                        globalContexts.add(tuple.getKey());
+                    ModuleContainer container = tuple.getKey();
+                    if (this.createComponentInstance(tuple.getValue(), container)) {
+                        moduleContainers.add(container);
                         return true;
                     }
                     return false;
@@ -135,10 +142,10 @@ public class SimpleModuleManager implements ModuleManager {
         return SeleneUtils.asList(instanceMappings.keySet());
     }
 
-    private <T> boolean createComponentInstance(Class<T> entry, ModuleContext context) {
+    private <T> boolean createComponentInstance(Class<T> entry, ModuleContainer container) {
         Module header = entry.getAnnotation(Module.class);
         List<Module> existingHeaders = SeleneUtils.emptyList();
-        globalContexts.forEach(ctx -> existingHeaders.add(ctx.getModule()));
+        moduleContainers.forEach(c -> existingHeaders.add(c.module()));
         //noinspection CallToSuspiciousStringMethod
         if (existingHeaders.stream().anyMatch(e -> e.id().equals(header.id()))) {
             Selene.log().warn("Module with unique ID " + header.id() + " already present!");
@@ -163,7 +170,7 @@ public class SimpleModuleManager implements ModuleManager {
                 if (null == pkg) {
                     Selene.log().warn("Dependent package '" + dependency + " (" + formattedDependency + ")' is not present, failing " + header.name());
                     // Do not instantiate entries which require dependencies which are not present.
-                    context.addStatus(entry, ModuleStatus.FAILED);
+                    container.status(entry, ModuleStatus.FAILED);
                     return false;
                 }
             }
@@ -180,18 +187,18 @@ public class SimpleModuleManager implements ModuleManager {
                 Constructor<T> defaultConstructor = entry.getConstructor();
                 defaultConstructor.setAccessible(true);
                 instance = defaultConstructor.newInstance();
-                SimpleModuleManager.injectMembers(instance, context, header);
+                SimpleModuleManager.injectMembers(instance, container);
 
-                context.addStatus(entry, ModuleStatus.LOADED);
+                container.status(entry, ModuleStatus.LOADED);
                 Selene.getServer().bind(entry, instance);
             }
             catch (NoSuchMethodException | IllegalAccessException e) {
-                context.addStatus(entry, ModuleStatus.FAILED);
+                container.status(entry, ModuleStatus.FAILED);
                 Selene.log().warn("No default accessible constructor available for [" + entry.getCanonicalName() + ']');
                 return false;
             }
             catch (InstantiationException | InvocationTargetException e) {
-                context.addStatus(entry, ModuleStatus.ERRORED);
+                container.status(entry, ModuleStatus.ERRORED);
                 Selene.log().warn("Failed to instantiate default constructor for [" + entry.getCanonicalName() + "]. Proceeding to look for injectable constructors.");
                 return false;
             }
@@ -222,8 +229,8 @@ public class SimpleModuleManager implements ModuleManager {
         return dependency;
     }
 
-    private static <T> void injectMembers(T instance, ModuleContext context, Module header) {
+    private static <T> void injectMembers(T instance, ModuleContainer container) {
         Selene.getServer().injectMembers(instance);
-        Selene.getServer().createModuleInjector(instance, header, context).injectMembers(instance);
+        Selene.getServer().createModuleInjector(instance, container).injectMembers(instance);
     }
 }

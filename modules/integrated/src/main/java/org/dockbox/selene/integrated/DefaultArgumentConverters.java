@@ -20,12 +20,12 @@ package org.dockbox.selene.integrated;
 import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.annotations.module.ArgumentProvider;
-import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.context.ArgumentConverter;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.common.ResourceService;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.dimensions.World;
@@ -180,8 +180,8 @@ public final class DefaultArgumentConverters implements InjectableType {
 
     public static final ArgumentConverter<Duration> DURATION = new CommandValueConverter<>(Duration.class, SeleneUtils::durationOf, "duration");
 
-    public static final ArgumentConverter<Module> MODULE = new CommandValueConverter<>(Module.class, in -> Selene.provide(ModuleManager.class)
-            .getHeader(in), in ->
+    public static final ArgumentConverter<ModuleContainer> MODULE = new CommandValueConverter<>(ModuleContainer.class, in -> Selene.provide(ModuleManager.class)
+            .getContainer(in), in ->
             Selene.provide(ModuleManager.class).getRegisteredModuleIds().stream()
                     .filter(id -> id.toLowerCase().contains(in.toLowerCase()))
                     .collect(Collectors.toList()),

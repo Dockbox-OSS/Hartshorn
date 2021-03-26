@@ -22,20 +22,20 @@ import com.google.inject.Singleton;
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.CommandBus;
-import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.context.CommandArgument;
+import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.server.ServerReloadEvent;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
-import org.dockbox.selene.api.module.ModuleContext;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.api.objects.targets.MessageReceiver;
-import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.api.server.ServerType;
 import org.dockbox.selene.api.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.api.text.Text;
@@ -77,7 +77,7 @@ public class DefaultServer implements Server {
                     .translate(source).asText());
             content.add(DefaultServerResources.SERVER_MODULES.translate(source).asText());
 
-            em.getRegisteredModuleIds().forEach(id -> em.getHeader(id)
+            em.getRegisteredModuleIds().forEach(id -> em.getContainer(id)
                     .map(e -> DefaultServer.generateText(e, source))
                     .ifPresent(content::add)
             );
@@ -89,7 +89,7 @@ public class DefaultServer implements Server {
         });
     }
 
-    private static Text generateText(Module e, MessageReceiver source) {
+    private static Text generateText(ModuleContainer e, MessageReceiver source) {
         Text line = DefaultServerResources.MODULE_ROW
                 .format(e.name(), e.id())
                 .translate(source)
@@ -105,50 +105,27 @@ public class DefaultServer implements Server {
 
     @Command(aliases = "module", usage = "module <id{Module}>")
     public static void debugModule(MessageReceiver src, CommandContext ctx) {
-        Reflect.runWithInstance(ModuleManager.class, em -> {
-            Exceptional<CommandArgument<Module>> oarg = ctx.argument("id");
-            if (!oarg.isPresent()) {
-                src.send(DefaultServerResources.MISSING_ARGUMENT.format("id"));
-                return;
-            }
+        ModuleContainer container = ctx.get("id");
 
-            Module e = oarg.get().getValue();
-            Exceptional<ModuleContext> oec = em.getContext(e.id());
-
-            if (!oec.isPresent()) {
-                src.sendWithPrefix(DefaultServerResources.UNKNOWN_MODULE.format(oarg.get().getValue()));
-            }
-            else {
-                ModuleContext ec = oec.get();
-
-                src.send(DefaultServerResources.MODULE_INFO_BLOCK.format(
-                        e.name(), e.id(), e.description(),
-                        0 == e.dependencies().length ? "None" : String.join("$3, $1", e.dependencies()),
-                        String.join("$3, $1", e.authors()),
-                        ec.getSource()
-                ));
-            }
-        });
+        src.send(DefaultServerResources.MODULE_INFO_BLOCK.format(
+                container.name(), container.id(), container.description(),
+                0 == container.dependencies().length ? "None" : String.join("$3, $1", container.dependencies()),
+                String.join("$3, $1", container.authors()), container.source()
+        ));
     }
 
     @Command(aliases = "reload", usage = "reload [id{Module}]", confirm = true)
     public static void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = Selene.provide(EventBus.class);
         if (ctx.has("id")) {
-            Exceptional<CommandArgument<Module>> oarg = ctx.argument("id");
-            if (!oarg.isPresent()) {
-                src.send(DefaultServerResources.MISSING_ARGUMENT.format("id"));
-                return;
-            }
-
-            Module e = oarg.get().getValue();
-            Exceptional<?> oi = Selene.provide(ModuleManager.class).getInstance(e.id());
+            ModuleContainer container = ctx.get("id");
+            Exceptional<?> oi = Selene.provide(ModuleManager.class).getInstance(container.id());
 
             oi.ifPresent(o -> {
                 eb.post(new ServerReloadEvent(), o.getClass());
-                src.send(DefaultServerResources.MODULE_RELOAD_SUCCESSFUL.format(e.name()));
+                src.send(DefaultServerResources.MODULE_RELOAD_SUCCESSFUL.format(container.name()));
             }).ifAbsent(() ->
-                    src.send(DefaultServerResources.NODULE_RELOAD_FAILED.format(e.name())));
+                    src.send(DefaultServerResources.NODULE_RELOAD_FAILED.format(container.name())));
         }
         else {
             eb.post(new ServerReloadEvent());
