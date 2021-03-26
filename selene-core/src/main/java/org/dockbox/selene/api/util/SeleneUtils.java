@@ -277,8 +277,8 @@ public final class SeleneUtils {
     @UnmodifiableView
     @NotNull
     @Contract(value = "_ -> new", pure = true)
-    public static <T> Set<T> asUnmodifiableSet(Set<T> objects) {
-        return Collections.unmodifiableSet(objects);
+    public static <T> Set<T> asUnmodifiableSet(Collection<T> objects) {
+        return Collections.unmodifiableSet(new HashSet<>(objects));
     }
 
     @SuppressWarnings("RedundantUnmodifiable")
@@ -1239,6 +1239,32 @@ public final class SeleneUtils {
 
     public static <T> Stream<T> stream(Iterator<T> tIterator) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(tIterator, Spliterator.ORDERED), false);
+    }
+
+    public static String asTable(List<List<String>> rows)
+    {
+        int[] maxLengths = new int[rows.get(0).size()];
+        for (List<String> row : rows)
+        {
+            for (int i = 0; i < row.size(); i++)
+            {
+                maxLengths[i] = Math.max(maxLengths[i], row.get(i).length());
+            }
+        }
+
+        StringBuilder formatBuilder = new StringBuilder();
+        for (int maxLength : maxLengths)
+        {
+            formatBuilder.append("%-").append(maxLength + 2).append("s");
+        }
+        String format = formatBuilder.toString();
+
+        StringBuilder result = new StringBuilder();
+        for (List<String> row : rows)
+        {
+            result.append(String.format(format, row.toArray(new String[0]))).append("\n");
+        }
+        return result.toString();
     }
 
     /**
