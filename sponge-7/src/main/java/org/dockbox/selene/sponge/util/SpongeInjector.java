@@ -55,6 +55,8 @@ import org.dockbox.selene.api.util.web.WebUtil;
 import org.dockbox.selene.common.SimpleBroadcastService;
 import org.dockbox.selene.common.SimpleExceptionHelper;
 import org.dockbox.selene.common.SimpleResourceService;
+import org.dockbox.selene.common.command.ArgumentValueFactory;
+import org.dockbox.selene.common.command.values.AbstractArgumentValue;
 import org.dockbox.selene.common.discord.SimpleDiscordPagination;
 import org.dockbox.selene.common.discord.SimpleMessageTemplate;
 import org.dockbox.selene.common.events.SimpleEventBus;
@@ -85,6 +87,7 @@ import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.plotsquared.SpongePlotSquaredService;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus;
+import org.dockbox.selene.sponge.util.command.values.SpongeArgumentValue;
 import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager;
 import org.dockbox.selene.sponge.util.files.SpongeXStreamManager;
 import org.dockbox.selene.worldedit.WorldEditService;
@@ -148,6 +151,10 @@ public class SpongeInjector extends InjectConfiguration {
                 .implement(ArmorStand.class, SpongeArmorStand.class);
 
         this.install(super.verify(factory));
+        this.install(new FactoryModuleBuilder()
+                .implement(AbstractArgumentValue.class, SpongeArgumentValue.class)
+                .build(ArgumentValueFactory.class)
+        );
 
         // Globally accessible
         // Config can be recreated, so no external tracking is required (contents obtained from file, no

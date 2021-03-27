@@ -17,31 +17,14 @@
 
 package org.dockbox.selene.common.command.values;
 
-import java.util.List;
+public interface ArgumentValue<T> {
 
-public abstract class AbstractFlagCollection<T> {
+    String getPermission();
 
-    private T reference;
+    AbstractArgumentElement<T> getElement();
 
-    protected AbstractFlagCollection(T reference) {
-        this.reference = reference;
-    }
+    T getValue();
 
-    protected AbstractFlagCollection() {}
+    void setValue(T value);
 
-    public T getReference() {
-        return this.reference;
-    }
-
-    public void setReference(T reference) {
-        this.reference = reference;
-    }
-
-    public abstract void addNamedFlag(String name);
-
-    public abstract void addNamedPermissionFlag(String name, String permission);
-
-    public abstract void addValueBasedFlag(String name, ArgumentValue<?> value);
-
-    public abstract List<AbstractArgumentElement<?>> buildAndCombines(AbstractArgumentElement<?> element);
 }

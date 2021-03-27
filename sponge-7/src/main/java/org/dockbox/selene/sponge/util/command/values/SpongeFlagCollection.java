@@ -19,8 +19,8 @@ package org.dockbox.selene.sponge.util.command.values;
 
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.common.command.values.AbstractArgumentElement;
-import org.dockbox.selene.common.command.values.AbstractArgumentValue;
 import org.dockbox.selene.common.command.values.AbstractFlagCollection;
+import org.dockbox.selene.common.command.values.ArgumentValue;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.CommandFlags;
 import org.spongepowered.api.command.args.CommandFlags.Builder;
@@ -49,7 +49,7 @@ public class SpongeFlagCollection extends AbstractFlagCollection<CommandFlags.Bu
     }
 
     @Override
-    public void addValueBasedFlag(String name, AbstractArgumentValue<?> value) {
+    public void addValueBasedFlag(String name, ArgumentValue<?> value) {
         if (value instanceof SpongeArgumentValue)
             this.getReference().valueFlag((CommandElement) value.getElement().getReference(), name);
     }
