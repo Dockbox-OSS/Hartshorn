@@ -23,7 +23,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.test.objects.JUnitPlayer;
+import org.dockbox.selene.test.objects.living.JUnitPlayer;
 
 import java.util.List;
 import java.util.UUID;

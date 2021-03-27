@@ -18,7 +18,7 @@
 package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.test.objects.JUnitPlayer;
+import org.dockbox.selene.test.objects.living.JUnitPlayer;
 
 import java.util.UUID;
 

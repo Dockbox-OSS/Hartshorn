@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.objects;
+package org.dockbox.selene.test.objects.living;
 
 import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.i18n.common.Language;
@@ -35,6 +35,10 @@ import org.dockbox.selene.api.objects.tuple.Tristate;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.text.pagination.Pagination;
+import org.dockbox.selene.test.objects.JUnitInventory;
+import org.dockbox.selene.test.objects.JUnitPersistentDataHolder;
+import org.dockbox.selene.test.objects.JUnitProfile;
+import org.dockbox.selene.test.objects.JUnitWorld;
 import org.dockbox.selene.test.util.JUnitPermissionRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,81 +47,26 @@ import java.util.UUID;
 public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
     private final PlayerInventory inventory = new JUnitInventory();
-    private Text displayName;
-    private double health = 20;
-    private boolean invisible = false;
-    private boolean invulnerable = false;
-    private boolean gravity = true;
+
     private boolean online = true;
     private Gamemode gamemode = Gamemode.CREATIVE;
     private Language language = Selene.getServer().getGlobalConfig().getDefaultLanguage();
     private boolean sneaking = false;
     private Location lookingAt = null;
-    private Location location;
 
 
 
     public JUnitPlayer(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
-        this.displayName = Text.of(name);
+        this.setDisplayName(Text.of(name));
         Worlds worlds = Selene.provide(Worlds.class);
-        this.location = new Location(0, 0, 0, worlds.getWorld(worlds.getRootWorldId()).orNull());
+        this.setLocation(new Location(0, 0, 0, worlds.getWorld(worlds.getRootWorldId()).orNull()));
         ((JUnitWorld) this.getWorld()).addEntity(this);
     }
 
     @Override
     public void execute(String command) {
         // TODO: CommandBus implementation
-    }
-
-    @Override
-    public Text getDisplayName() {
-        return this.displayName;
-    }
-
-    @Override
-    public void setDisplayName(Text displayName) {
-        this.displayName = displayName;
-    }
-
-    @Override
-    public double getHealth() {
-        return this.health;
-    }
-
-    @Override
-    public void setHealth(double health) {
-        this.health = health;
-    }
-
-    @Override
-    public boolean isInvisible() {
-        return this.invisible;
-    }
-
-    @Override
-    public void setInvisible(boolean invisible) {
-        this.invisible = invisible;
-    }
-
-    @Override
-    public boolean isInvulnerable() {
-        return this.invulnerable;
-    }
-
-    @Override
-    public void setInvulnerable(boolean invulnerable) {
-        this.invulnerable = invulnerable;
-    }
-
-    @Override
-    public boolean hasGravity() {
-        return this.gravity;
-    }
-
-    @Override
-    public void setGravity(boolean gravity) {
-        this.gravity = gravity;
     }
 
     @Override
@@ -197,17 +146,6 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
         this.lookingAt = lookingAt;
     }
 
-    @Override
-    public Location getLocation() {
-        return this.location;
-    }
-
-    @Override
-    public void setLocation(Location location) {
-        ((JUnitWorld) this.getWorld()).destroyEntity(this.getUniqueId());
-        this.location = location;
-        ((JUnitWorld) this.getWorld()).addEntity(this);
-    }
 
     @Override
     public void send(ResourceEntry text) {
