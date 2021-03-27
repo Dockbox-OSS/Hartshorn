@@ -31,16 +31,8 @@ import org.spongepowered.api.item.inventory.transaction.InventoryTransactionResu
 import org.spongepowered.common.item.inventory.query.operation.InventoryTypeQueryOperation;
 
 import java.util.Collection;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-public class SpongeInventoryRow extends AbstractInventoryRow {
-
-    private static final Function<org.spongepowered.api.item.inventory.Slot, Item> slotLookup = slot -> slot.peek()
-            .map(SpongeConversionUtil::fromSponge)
-            .map(referencedItem -> (Item) referencedItem)
-            .orElseGet(AIR);
+public class SpongeInventoryRow extends AbstractInventoryRow implements SpongeInventory {
 
     private final SpongePlayer spongePlayer;
 
@@ -55,26 +47,8 @@ public class SpongeInventoryRow extends AbstractInventoryRow {
     }
 
     @Override
-    public Collection<Item> getAllItems() {
-        return this.internalGetRow().map(row ->
-                StreamSupport.stream(row.slots().spliterator(), false)
-                        .map(slot -> (org.spongepowered.api.item.inventory.Slot) slot)
-                        .map(slotLookup)
-                        .collect(Collectors.toList())
-        ).orElseGet(SeleneUtils::emptyList);
-    }
-
-    @Override
-    public boolean give(Item item) {
-        return this.internalGetRow().map(row -> {
-            ItemStack stack = SpongeConversionUtil.toSponge(item);
-            return Type.SUCCESS == row.offer(stack).getType();
-        }).orElse(false);
-    }
-
-    @Override
     public Item getSlot(int index) {
-        return this.internalGetSlot(index).map(slotLookup).orElseGet(AIR);
+        return this.internalGetSlot(index).map(SLOT_LOOKUP).orElseGet(AIR);
     }
 
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(int index) {
@@ -93,6 +67,19 @@ public class SpongeInventoryRow extends AbstractInventoryRow {
                 return Exceptional.of(main.getRow(this.getRowIndex())).orNull();
             }
         });
+    }
+
+    @Override
+    public Collection<Item> getAllItems() {
+        return this.internalGetRow().map(this::getAllItems).orElseGet(SeleneUtils::emptyList);
+    }
+
+    @Override
+    public boolean give(Item item) {
+        return this.internalGetRow().map(row -> {
+            ItemStack stack = SpongeConversionUtil.toSponge(item);
+            return Type.SUCCESS == row.offer(stack).getType();
+        }).orElse(false);
     }
 
 }
