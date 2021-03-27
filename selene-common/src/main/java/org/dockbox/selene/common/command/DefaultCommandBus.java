@@ -28,7 +28,6 @@ import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.api.objects.targets.Identifiable;
@@ -131,11 +130,6 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
     private static final Map<String, AbstractRegistrationContext> registrations = SeleneUtils.emptyConcurrentMap();
     private static final Map<String, List<CommandInheritanceContext>> queuedAliases = SeleneUtils.emptyConcurrentMap();
 
-    protected static void clearAliasQueue() {
-        // This should be called after #apply has finished, to avoid unexpected alias extensions.
-        DefaultCommandBus.queuedAliases.clear();
-    }
-
     protected static void callCommandContext(
             AbstractRegistrationContext registrationContext,
             String command,
@@ -190,10 +184,6 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
             return response;
         }
         return Exceptional.empty();
-    }
-
-    protected static Map<String, AbstractRegistrationContext> getRegistrations() {
-        return DefaultCommandBus.registrations;
     }
 
     @Override
@@ -333,6 +323,60 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         return new MethodCommandContext(command, method);
     }
 
+    @Override
+    public void apply() {
+        /*
+        Each context is separately registered based on its alias(es). While it is possible to use
+        AbstractRegistrationContext#getAliases to register all aliases at once, some command implementations may wish
+        to be aware of the used alias.
+        */
+        DefaultCommandBus.getRegistrations().forEach((alias, abstractCommand) -> {
+            Selene.log().info("Attempting to register /" + alias);
+            E spec = null;
+            if (abstractCommand instanceof MethodCommandContext) {
+                MethodCommandContext methodContext = (MethodCommandContext) abstractCommand;
+                if (!methodContext.getCommand().inherit()
+                        || !methodContext.getDeclaringClass().isAnnotationPresent(Command.class)) {
+                    spec = this.buildContextExecutor(methodContext, alias);
+                }
+                else {
+                    Selene.log().error("Found direct method registration of inherited command! " + methodContext.getLocation());
+                }
+
+            }
+            else if (abstractCommand instanceof CommandInheritanceContext) {
+                CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) abstractCommand;
+                spec = this.buildInheritedContextExecutor(inheritanceContext, alias);
+            }
+            else {
+                Selene.log().error("Found unknown context type [" + abstractCommand.getClass().getCanonicalName() + "]");
+            }
+
+            if (null != spec) {
+                this.registerExecutor(spec, alias);
+                Selene.log().info("Registered /" + alias);
+            }
+            else
+                Selene.log().warn("Could not generate executor for '" + alias + "'. Any errors logged above.");
+        });
+        clearAliasQueue();
+    }
+
+    protected static Map<String, AbstractRegistrationContext> getRegistrations() {
+        return DefaultCommandBus.registrations;
+    }
+
+    protected abstract E buildContextExecutor(AbstractRegistrationContext context, String alias);
+
+    protected abstract E buildInheritedContextExecutor(CommandInheritanceContext context, String alias);
+
+    protected abstract void registerExecutor(E executor, String alias);
+
+    protected static void clearAliasQueue() {
+        // This should be called after #apply has finished, to avoid unexpected alias extensions.
+        DefaultCommandBus.queuedAliases.clear();
+    }
+
     public Exceptional<Boolean> confirmCommand(String confirmId) {
         if (DefaultCommandBus.confirmQueue.containsKey(confirmId)) {
             ConfirmableQueueItem confirmableQueueItem = DefaultCommandBus.confirmQueue.get(confirmId);
@@ -381,10 +425,10 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
             permission = elementValue.group(3);
 
         try {
-            return Selene.provide(ArgumentValueFactory.class).create(type, permission, key);
+            return this.getArgumentValue(type, permission, key);
         }
         catch (IllegalArgumentException e) {
-            return Selene.provide(ArgumentValueFactory.class).create(DefaultCommandBus.DEFAULT_TYPE, permission, key);
+            return this.getArgumentValue(DefaultCommandBus.DEFAULT_TYPE, permission, key);
         }
     }
 
@@ -492,81 +536,24 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
                         arguments.add(new CommandArgument<>(this.tryConvertObject(obj), key));
                 }));
 
-        SimpleCommandContext seleneContext;
-        if (sender instanceof Locatable) {
-            Location loc = ((Locatable) sender).getLocation();
-            World world =
-                    ((Locatable) sender).getLocation().getWorld();
+        Exceptional<Location> location = sender instanceof Locatable
+                ? Exceptional.of(((Locatable) sender).getLocation())
+                : Exceptional.empty();
 
-            seleneContext = new SimpleCommandContext(
-                    command,
-                    arguments.toArray(new CommandArgument<?>[0]),
-                    flags.toArray(new CommandFlag<?>[0]),
-                    sender,
-                    Exceptional.of(loc),
-                    Exceptional.of(world),
-                    new String[0]);
-        }
-        else {
-            seleneContext = new SimpleCommandContext(
-                    command,
-                    arguments.toArray(new CommandArgument<?>[0]),
-                    flags.toArray(new CommandFlag<?>[0]),
-                    sender,
-                    Exceptional.empty(),
-                    Exceptional.empty(),
-                    new String[0]);
-        }
-        return seleneContext;
-    }
-
-    @Override
-    public void apply() {
-        /*
-        Each context is separately registered based on its alias(es). While it is possible to use
-        AbstractRegistrationContext#getAliases to register all aliases at once, some command implementations may wish
-        to be aware of the used alias.
-        */
-        DefaultCommandBus.getRegistrations().forEach((alias, abstractCommand) -> {
-            Selene.log().info("Attempting to register /" + alias);
-            E spec = null;
-            if (abstractCommand instanceof MethodCommandContext) {
-                MethodCommandContext methodContext = (MethodCommandContext) abstractCommand;
-                if (!methodContext.getCommand().inherit()
-                        || !methodContext.getDeclaringClass().isAnnotationPresent(Command.class)) {
-                    spec = this.buildContextExecutor(methodContext, alias);
-                }
-                else {
-                    Selene.log().error("Found direct method registration of inherited command! " + methodContext.getLocation());
-                }
-
-            }
-            else if (abstractCommand instanceof CommandInheritanceContext) {
-                CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) abstractCommand;
-                spec = this.buildInheritedContextExecutor(inheritanceContext, alias);
-            }
-            else {
-                Selene.log().error("Found unknown context type [" + abstractCommand.getClass().getCanonicalName() + "]");
-            }
-
-            if (null != spec) {
-                this.registerExecutor(spec, alias);
-                Selene.log().info("Registered /" + alias);
-            }
-            else
-                Selene.log().warn("Could not generate executor for '" + alias + "'. Any errors logged above.");
-        });
-        clearAliasQueue();
+        return new SimpleCommandContext(
+                command,
+                arguments.toArray(new CommandArgument<?>[0]),
+                flags.toArray(new CommandFlag<?>[0]),
+                sender,
+                location,
+                location.map(Location::getWorld),
+                new String[0]);
     }
 
     protected abstract Object tryConvertObject(Object obj);
 
+    protected abstract ArgumentValue<?> getArgumentValue(String type, String permission, String key);
+
     protected abstract AbstractArgumentElement<?> wrapElements(List<AbstractArgumentElement<?>> elements);
-
-    protected abstract E buildContextExecutor(AbstractRegistrationContext context, String alias);
-
-    protected abstract E buildInheritedContextExecutor(CommandInheritanceContext context, String alias);
-
-    protected abstract void registerExecutor(E executor, String alias);
 
 }

@@ -56,9 +56,7 @@ import org.dockbox.selene.api.util.web.WebUtil;
 import org.dockbox.selene.common.SimpleBroadcastService;
 import org.dockbox.selene.common.SimpleExceptionHelper;
 import org.dockbox.selene.common.SimpleResourceService;
-import org.dockbox.selene.common.command.ArgumentValueFactory;
 import org.dockbox.selene.common.command.values.AbstractFlagCollection;
-import org.dockbox.selene.common.command.values.ArgumentValue;
 import org.dockbox.selene.common.discord.SimpleDiscordPagination;
 import org.dockbox.selene.common.discord.SimpleMessageTemplate;
 import org.dockbox.selene.common.events.SimpleEventBus;
@@ -89,7 +87,6 @@ import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.plotsquared.SpongePlotSquaredService;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus;
-import org.dockbox.selene.sponge.util.command.values.SpongeArgumentValue;
 import org.dockbox.selene.sponge.util.command.values.SpongeFlagCollection;
 import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager;
 import org.dockbox.selene.sponge.util.files.SpongeXStreamManager;
@@ -155,11 +152,6 @@ public class SpongeInjector extends InjectConfiguration {
                 .implement(ArmorStand.class, SpongeArmorStand.class);
 
         this.install(factory.build(SeleneFactory.class));
-        this.install(new FactoryModuleBuilder()
-                // TODO: Remove generic from ArgumentValue, AI doesn't like it
-                .implement(ArgumentValue.class, SpongeArgumentValue.class)
-                .build(ArgumentValueFactory.class)
-        );
 
         // Globally accessible
         // Config can be recreated, so no external tracking is required (contents obtained from file, no

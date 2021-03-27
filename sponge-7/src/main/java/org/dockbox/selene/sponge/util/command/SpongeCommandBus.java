@@ -28,8 +28,10 @@ import org.dockbox.selene.common.command.context.SimpleCommandContext;
 import org.dockbox.selene.common.command.registration.AbstractRegistrationContext;
 import org.dockbox.selene.common.command.registration.CommandInheritanceContext;
 import org.dockbox.selene.common.command.values.AbstractArgumentElement;
+import org.dockbox.selene.common.command.values.ArgumentValue;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentElement;
+import org.dockbox.selene.sponge.util.command.values.SpongeArgumentValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.Sponge;
@@ -88,6 +90,11 @@ public class SpongeCommandBus extends DefaultCommandBus<CommandSpec.Builder> {
             Selene.handle("Could not load parsed arguments from Sponge command context", e);
             return SimpleCommandContext.EMPTY;
         }
+    }
+
+    @Override
+    protected ArgumentValue<?> getArgumentValue(String type, String permission, String key) {
+        return new SpongeArgumentValue(type, permission, key);
     }
 
     @Override
