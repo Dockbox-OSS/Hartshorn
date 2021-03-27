@@ -19,6 +19,7 @@ package org.dockbox.selene.api.objects.profile;
 
 import org.dockbox.selene.api.objects.tuple.Tuple;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.SeleneFactory;
 
 import java.util.Collection;
 import java.util.Map;
@@ -27,11 +28,11 @@ import java.util.UUID;
 public interface Profile {
 
     static Profile of(UUID uuid) {
-        return Selene.provide(ProfileFactory.class).create(uuid);
+        return Selene.provide(SeleneFactory.class).profile(uuid);
     }
 
     static Profile of(Profile profile) {
-        return Selene.provide(ProfileFactory.class).create(profile);
+        return Selene.provide(SeleneFactory.class).profile(profile);
     }
 
     UUID getUuid();

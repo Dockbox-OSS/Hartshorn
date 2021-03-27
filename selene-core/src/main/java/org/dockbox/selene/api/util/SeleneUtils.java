@@ -67,6 +67,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -214,6 +215,15 @@ public final class SeleneUtils {
         return new ArrayList<>(collection);
     }
 
+    @SafeVarargs
+    public static <T> List<T> asList(Predicate<T> predicate, T... objects) {
+        List<T> list = SeleneUtils.emptyList();
+        for (T object : objects) {
+            if (predicate.test(object)) list.add(object);
+        }
+        return list;
+    }
+
     public static <T> List<T> asUnmodifiableList(Collection<T> collection) {
         return Collections.unmodifiableList(SeleneUtils.emptyList());
     }
@@ -242,6 +252,15 @@ public final class SeleneUtils {
     }
 
     @SafeVarargs
+    public static <T> Set<T> asSet(Predicate<T> predicate, T... objects) {
+        Set<T> list = SeleneUtils.emptySet();
+        for (T object : objects) {
+            if (predicate.test(object)) list.add(object);
+        }
+        return list;
+    }
+
+    @SafeVarargs
     public static <T> Collection<T> asUnmodifiableCollection(T... collection) {
         return Collections.unmodifiableCollection(Arrays.asList(collection));
     }
@@ -258,8 +277,8 @@ public final class SeleneUtils {
     @UnmodifiableView
     @NotNull
     @Contract(value = "_ -> new", pure = true)
-    public static <T> Set<T> asUnmodifiableSet(Set<T> objects) {
-        return Collections.unmodifiableSet(objects);
+    public static <T> Set<T> asUnmodifiableSet(Collection<T> objects) {
+        return Collections.unmodifiableSet(new HashSet<>(objects));
     }
 
     @SuppressWarnings("RedundantUnmodifiable")
@@ -867,21 +886,21 @@ public final class SeleneUtils {
         float minX = Math.min(pos1.getXf(), pos2.getXf());
         float minY = Math.min(pos1.getYf(), pos2.getYf());
         float minZ = Math.min(pos1.getZf(), pos2.getZf());
-        return new Vector3N(minX, minY, minZ);
+        return Vector3N.of(minX, minY, minZ);
     }
 
     public static Vector3N getMaximumPoint(Vector3N pos1, Vector3N pos2) {
         float maxX = Math.max(pos1.getXf(), pos2.getXf());
         float maxY = Math.max(pos1.getYf(), pos2.getYf());
         float maxZ = Math.max(pos1.getZf(), pos2.getZf());
-        return new Vector3N(maxX, maxY, maxZ);
+        return Vector3N.of(maxX, maxY, maxZ);
     }
 
     public static Vector3N getCenterPoint(Vector3N pos1, Vector3N pos2) {
         float centerX = (pos1.getXf() + pos2.getXf()) / 2;
         float centerY = (pos1.getYf() + pos2.getYf()) / 2;
         float centerZ = (pos1.getZf() + pos2.getZf()) / 2;
-        return new Vector3N(centerX, centerY, centerZ);
+        return Vector3N.of(centerX, centerY, centerZ);
     }
 
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -1220,6 +1239,32 @@ public final class SeleneUtils {
 
     public static <T> Stream<T> stream(Iterator<T> tIterator) {
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(tIterator, Spliterator.ORDERED), false);
+    }
+
+    public static String asTable(List<List<String>> rows)
+    {
+        int[] maxLengths = new int[rows.get(0).size()];
+        for (List<String> row : rows)
+        {
+            for (int i = 0; i < row.size(); i++)
+            {
+                maxLengths[i] = Math.max(maxLengths[i], row.get(i).length());
+            }
+        }
+
+        StringBuilder formatBuilder = new StringBuilder();
+        for (int maxLength : maxLengths)
+        {
+            formatBuilder.append("%-").append(maxLength + 2).append("s");
+        }
+        String format = formatBuilder.toString();
+
+        StringBuilder result = new StringBuilder();
+        for (List<String> row : rows)
+        {
+            result.append(String.format(format, row.toArray(new String[0]))).append("\n");
+        }
+        return result.toString();
     }
 
     /**

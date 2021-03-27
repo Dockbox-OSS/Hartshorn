@@ -23,7 +23,6 @@ import java.lang.annotation.Annotation;
 
 public final class FileTypeProperty<T extends Annotation> extends AnnotationProperty<T> {
 
-    public static final String KEY = "SeleneInternalFileTypeKey";
     private final FileType fileType;
 
     private FileTypeProperty(FileType fileType) {
@@ -41,7 +40,7 @@ public final class FileTypeProperty<T extends Annotation> extends AnnotationProp
 
     @Override
     public String getKey() {
-        return KEY;
+        return AnnotationProperty.KEY;
     }
 
     @SuppressWarnings("unchecked")

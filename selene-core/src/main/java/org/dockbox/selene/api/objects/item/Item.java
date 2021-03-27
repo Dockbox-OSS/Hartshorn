@@ -25,10 +25,12 @@ import org.dockbox.selene.api.objects.keys.PersistentDataHolder;
 import org.dockbox.selene.api.objects.persistence.PersistentCapable;
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.SeleneFactory;
 import org.dockbox.selene.api.text.Text;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
+import java.util.Set;
 
 public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentCapable<PersistentItemModel> {
 
@@ -58,7 +60,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
      */
     @Deprecated
     static Item of(String id, int meta) {
-        return Selene.provide(ItemFactory.class).create(id, meta);
+        return Selene.provide(SeleneFactory.class).item(id, meta);
     }
 
     boolean isAir();
@@ -87,7 +89,7 @@ public interface Item extends KeyHolder<Item>, PersistentDataHolder, PersistentC
 
     int getStackSize();
 
-    List<Enchant> getEnchantments();
+    Set<Enchant> getEnchantments();
 
     void addEnchant(Enchant enchant);
 

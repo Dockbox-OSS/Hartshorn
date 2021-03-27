@@ -17,8 +17,20 @@
 
 package org.dockbox.selene.api.objects.player;
 
+import org.dockbox.selene.api.objects.inventory.Slot;
+
 public enum Hand {
-    MAIN_HAND,
-    OFF_HAND,
-    EITHER
+    MAIN_HAND(Slot.MAIN_HAND),
+    OFF_HAND(Slot.OFF_HAND),
+    EITHER(Slot.MAIN_HAND);
+
+    private final Slot slot;
+
+    Hand(Slot slot) {
+        this.slot = slot;
+    }
+
+    public Slot getSlot() {
+        return this.slot;
+    }
 }

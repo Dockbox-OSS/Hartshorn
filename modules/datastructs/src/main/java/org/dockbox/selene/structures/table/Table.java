@@ -604,4 +604,23 @@ public class Table {
                 .map(row -> this.convertRowTo(type, row, true))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public String toString() {
+        List<List<String>> rows = SeleneUtils.emptyList();
+        List<String> headers = SeleneUtils.emptyList();
+        for (ColumnIdentifier<?> identifier : this.identifiers) {
+            headers.add(identifier.getColumnName());
+        }
+        rows.add(headers);
+        for (TableRow row : this.rows) {
+            List<String> rowValues = SeleneUtils.emptyList();
+            // In order of identifiers to ensure values are ordered
+            for (ColumnIdentifier<?> identifier : this.identifiers) {
+                rowValues.add(String.valueOf(row.getValue(identifier).orNull()));
+            }
+            rows.add(rowValues);
+        }
+        return SeleneUtils.asTable(rows);
+    }
 }

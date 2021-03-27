@@ -17,22 +17,22 @@
 
 package org.dockbox.selene.api.objects.keys.data;
 
-import org.dockbox.selene.api.annotations.module.Module;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.objects.keys.Keys;
 import org.dockbox.selene.api.util.Reflect;
 
 public final class DoublePersistentDataKey extends TypedPersistentDataKey<Double> {
 
-    private DoublePersistentDataKey(String name, String id, Module module) {
+    private DoublePersistentDataKey(String name, String id, ModuleContainer module) {
         super(name, id, module, Double.class);
     }
 
     public static DoublePersistentDataKey of(String name, Class<?> owningClass) {
-        Module module = Reflect.getModule(owningClass);
+        ModuleContainer module = Reflect.getModule(owningClass);
         return of(name, module);
     }
 
-    public static DoublePersistentDataKey of(String name, Module module) {
+    public static DoublePersistentDataKey of(String name, ModuleContainer module) {
         String id = Keys.convertToModuleIdString(name, module);
         return new DoublePersistentDataKey(name, id, module);
     }

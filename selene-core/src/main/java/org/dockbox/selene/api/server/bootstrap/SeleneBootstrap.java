@@ -25,19 +25,18 @@ import org.dockbox.selene.api.MinecraftVersion;
 import org.dockbox.selene.api.annotations.RequiresBinding;
 import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.module.ArgumentProvider;
-import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.CommandBus;
 import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.server.ServerInitEvent;
 import org.dockbox.selene.api.events.server.ServerStartedEvent;
 import org.dockbox.selene.api.i18n.common.ResourceService;
-import org.dockbox.selene.api.module.ModuleContext;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.server.InjectConfiguration;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.SeleneInformation;
-import org.dockbox.selene.api.server.SeleneInjectConfiguration;
 import org.dockbox.selene.api.server.ServerType;
 import org.dockbox.selene.api.server.config.GlobalConfig;
 import org.dockbox.selene.api.util.Reflect;
@@ -66,14 +65,14 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
 
     /**
      * Instantiates {@link Selene}, creating a local injector based on the provided {@link
-     * SeleneInjectConfiguration}. Also verifies dependency artifacts and injector bindings. Proceeds
+     * InjectConfiguration}. Also verifies dependency artifacts and injector bindings. Proceeds
      * to {@link SeleneBootstrap#construct()} once verified.
      *
      * @param moduleConfiguration
      *         the injector provided by the Selene implementation
      */
-    protected SeleneBootstrap(SeleneInjectConfiguration moduleConfiguration) {
-        super.registerGlobal(moduleConfiguration);
+    protected SeleneBootstrap(InjectConfiguration moduleConfiguration) {
+        super.bind(moduleConfiguration);
         this.construct();
     }
 
@@ -180,14 +179,14 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * @param consumer
      *         The consumer to apply
      */
-    private static void initialiseModules(Consumer<ModuleContext> consumer) {
+    private static void initialiseModules(Consumer<ModuleContainer> consumer) {
         Selene.provide(ModuleManager.class).initialiseModules().forEach(consumer);
     }
 
-    private Consumer<ModuleContext> getModuleConsumer(CommandBus cb, EventBus eb, DiscordUtils du) {
-        return (ModuleContext ctx) -> {
+    private Consumer<ModuleContainer> getModuleConsumer(CommandBus cb, EventBus eb, DiscordUtils du) {
+        return (ModuleContainer ctx) -> {
 
-            Class<?> type = ctx.getType();
+            Class<?> type = ctx.type();
             Selene.log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
             Exceptional<?> oi = super.getInstanceSafe(type);
 
@@ -235,9 +234,9 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded modules: ");
         ModuleManager em = Selene.provide(ModuleManager.class);
         em.getRegisteredModuleIds().forEach(ext -> {
-            Exceptional<Module> header = em.getHeader(ext);
+            Exceptional<ModuleContainer> header = em.getContainer(ext);
             if (header.isPresent()) {
-                Module ex = header.get();
+                ModuleContainer ex = header.get();
                 Selene.log().info("  - \u00A77" + ex.name());
                 Selene.log().info("  | - \u00A77ID: \u00A78" + ex.id());
                 Selene.log().info("  | - \u00A77Authors: \u00A78" + Arrays.toString(ex.authors()));

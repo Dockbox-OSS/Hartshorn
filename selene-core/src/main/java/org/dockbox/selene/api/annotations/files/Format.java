@@ -24,35 +24,35 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public @interface Format {
+public final class Format {
 
     @BindingAnnotation
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface Json {
+    @Target({ElementType.TYPE, ElementType.FIELD})
+    public @interface Json {
     }
 
     @BindingAnnotation
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface XML {
+    @Target({ElementType.TYPE, ElementType.FIELD})
+    public @interface XML {
     }
 
     @BindingAnnotation
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface SQLite {
+    @Target({ElementType.TYPE, ElementType.FIELD})
+    public @interface SQLite {
     }
 
     @BindingAnnotation
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface YAML {
+    @Target({ElementType.TYPE, ElementType.FIELD})
+    public @interface YAML {
     }
 
     @BindingAnnotation
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
-    @interface HOCON {
+    @Target({ElementType.TYPE, ElementType.FIELD})
+    public @interface HOCON {
     }
 }

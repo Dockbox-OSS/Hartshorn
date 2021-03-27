@@ -17,12 +17,11 @@
 
 package org.dockbox.selene.playeractions;
 
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
-import org.dockbox.selene.common.i18n.Permission;
+import org.dockbox.selene.api.i18n.permissions.Permission;
 
 public class PlayerActionPermissions {
 
-    public static final AbstractPermission SPECTATOR_BYPASS = new Permission("selene.playeractions.bypass.spectator");
-    public static final AbstractPermission NAVIGATE_DEFAULT_WORLD = new Permission("selene.playeractions.navigate");
+    public static final Permission SPECTATOR_BYPASS = Permission.of("selene.playeractions.bypass.spectator");
+    public static final Permission NAVIGATE_DEFAULT_WORLD = Permission.of("selene.playeractions.navigate");
 
 }

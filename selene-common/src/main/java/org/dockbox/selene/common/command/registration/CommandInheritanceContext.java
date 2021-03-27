@@ -20,7 +20,7 @@ package org.dockbox.selene.common.command.registration;
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.source.CommandSource;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.util.SeleneUtils;
 
@@ -35,11 +35,11 @@ public class CommandInheritanceContext extends AbstractRegistrationContext {
     }
 
     @Override
-    public Exceptional<IntegratedResource> call(CommandSource source, CommandContext context) {
+    public Exceptional<DefaultResource> call(CommandSource source, CommandContext context) {
         Exceptional<MethodCommandContext> inheritedCommand = this.getParentExecutor();
         inheritedCommand.ifPresent(ctx -> ctx.call(source, context));
         return inheritedCommand.isAbsent()
-                ? Exceptional.of(IntegratedResource.MISSING_ARGUMENTS)
+                ? Exceptional.of(DefaultResource.MISSING_ARGUMENTS)
                 : Exceptional.empty();
     }
 

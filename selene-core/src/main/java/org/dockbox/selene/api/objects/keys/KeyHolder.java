@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.objects.keys;
 
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.server.Selene;
 
@@ -55,7 +55,7 @@ public interface KeyHolder<T extends KeyHolder> {
         }
         catch (ClassCastException e) {
             Selene.handle("Attempted to apply " + key + " to non-supporting type " + this, e);
-            return TransactionResult.fail(IntegratedResource.KEY_BINDING_FAILED);
+            return TransactionResult.fail(DefaultResource.KEY_BINDING_FAILED);
         }
     }
 

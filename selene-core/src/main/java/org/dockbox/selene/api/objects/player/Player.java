@@ -20,11 +20,13 @@ package org.dockbox.selene.api.objects.player;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.Permission;
+import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.inventory.PlayerInventory;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.keys.PersistentDataHolder;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.special.Sounds;
@@ -40,6 +42,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public abstract class Player extends AbstractIdentifiable<Player> implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder, Entity<Player> {
+
+    // An empty context targets only global permissions
+    private static final PermissionContext GLOBAL = PermissionContext.builder().build();
 
     protected Player(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
@@ -74,16 +79,16 @@ public abstract class Player extends AbstractIdentifiable<Player> implements Com
     }
 
     @Override
-    public boolean hasAnyPermission(@NotNull AbstractPermission @NotNull ... permissions) {
-        for (AbstractPermission permission : permissions) {
+    public boolean hasAnyPermission(@NotNull Permission @NotNull ... permissions) {
+        for (Permission permission : permissions) {
             if (this.hasPermission(permission)) return true;
         }
         return false;
     }
 
     @Override
-    public boolean hasAllPermissions(@NotNull AbstractPermission @NotNull ... permissions) {
-        for (AbstractPermission permission : permissions) {
+    public boolean hasAllPermissions(@NotNull Permission @NotNull ... permissions) {
+        for (Permission permission : permissions) {
             if (!this.hasPermission(permission)) return false;
         }
         return true;
@@ -97,9 +102,48 @@ public abstract class Player extends AbstractIdentifiable<Player> implements Com
     }
 
     @Override
-    public void setPermissions(Tristate state, @NotNull AbstractPermission @NotNull ... permissions) {
-        for (AbstractPermission permission : permissions) {
+    public void setPermissions(Tristate state, @NotNull Permission @NotNull ... permissions) {
+        for (Permission permission : permissions) {
             this.setPermission(permission, state);
+        }
+    }
+
+    @Override
+    public boolean isAlive() {
+        return this.getHealth() > 0;
+    }
+
+    @Override
+    public boolean summon(Location location) {
+        throw new UnsupportedOperationException("Cannot re-summon players");
+    }
+
+    @Override
+    public boolean destroy() {
+        throw new UnsupportedOperationException("Cannot destroy players");
+    }
+
+    @Override
+    public Player copy() {
+        throw new UnsupportedOperationException("Cannot copy players");
+    }
+
+    @Override
+    public World getWorld() {
+        // No reference refresh required as this is done by getLocation. Should never throw NPE as
+        // Location is either
+        // valid or EMPTY (World instance follows this same guideline).
+        return this.getLocation().getWorld();
+    }
+
+    @Override
+    public PermissionContext activeContext() {
+        if (!this.isOnline()) {
+            return GLOBAL;
+        } else {
+            return PermissionContext.builder()
+                    .forWorld(this.getWorld().getName())
+                    .build();
         }
     }
 

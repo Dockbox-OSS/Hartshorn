@@ -28,8 +28,12 @@ public class Vector3N extends Vector2N {
         this.y = y;
     }
 
+    public static Vector3N of(Number x, Number y, Number z) {
+        return new Vector3N(x, y, z);
+    }
+
     public static Vector3N empty() {
-        return new Vector3N(0, 0, 0);
+        return Vector3N.of(0, 0, 0);
     }
 
     public float getYf() {
@@ -45,7 +49,7 @@ public class Vector3N extends Vector2N {
     }
 
     public Vector3N expand(Vector3N vector) {
-        return new Vector3N(
+        return Vector3N.of(
                 this.getXd() + vector.getXd(),
                 this.getYd() + vector.getYd(),
                 this.getZd() + vector.getZd());

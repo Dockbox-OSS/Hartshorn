@@ -58,7 +58,7 @@ public class BlockRegistryExtension {
 
     @Listener
     public void OnServerStartedEvent(ServerStartedEvent event) {
-        Selene.getServer().bindUtility(
+        Selene.getServer().bind(
                 BlockRegistryParser.class, BlockRegistryUtil.getBlockRegistryParserClass());
 
         this.blockRegistryParser = Selene.provide(BlockRegistryParser.class);

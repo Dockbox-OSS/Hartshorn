@@ -135,9 +135,9 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
     public Vector3N getSpawnPosition() {
         if (this.referenceExists()) {
             Vector3i vector3i = this.getReference().get().getProperties().getSpawnPosition();
-            return new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
+            return Vector3N.of(vector3i.getX(), vector3i.getY(), vector3i.getZ());
         }
-        else return new Vector3N(0, 0, 0);
+        else return Vector3N.empty();
     }
 
     @Override

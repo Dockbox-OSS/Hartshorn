@@ -17,65 +17,7 @@
 
 package org.dockbox.selene.sponge.util.files;
 
-import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.common.files.DefaultXStreamManager;
-import org.jetbrains.annotations.NotNull;
-
-import java.nio.file.Path;
 
 public class SpongeXStreamManager extends DefaultXStreamManager implements SpongeDefaultFileManager {
-
-    @NotNull
-    @Override
-    public Path getDataDir() {
-        return SpongeDefaultFileManager.super.getDataDir();
-    }
-
-    @NotNull
-    @Override
-    public Path getLogsDir() {
-        return SpongeDefaultFileManager.super.getLogsDir();
-    }
-
-    @NotNull
-    @Override
-    public Path getServerRoot() {
-        return SpongeDefaultFileManager.super.getServerRoot();
-    }
-
-    @NotNull
-    @Override
-    public Path getModuleDir() {
-        return SpongeDefaultFileManager.super.getModuleDir();
-    }
-
-    @NotNull
-    @Override
-    public Exceptional<Path> getModDir() {
-        return SpongeDefaultFileManager.super.getModDir();
-    }
-
-    @NotNull
-    @Override
-    public Path getPluginDir() {
-        return SpongeDefaultFileManager.super.getPluginDir();
-    }
-
-    @NotNull
-    @Override
-    public Path getModuleConfigsDir() {
-        return SpongeDefaultFileManager.super.getModuleConfigsDir();
-    }
-
-    @NotNull
-    @Override
-    public Exceptional<Path> getModdedPlatformModsConfigDir() {
-        return SpongeDefaultFileManager.super.getModdedPlatformModsConfigDir();
-    }
-
-    @NotNull
-    @Override
-    public Path getPlatformPluginsConfigDir() {
-        return SpongeDefaultFileManager.super.getPlatformPluginsConfigDir();
-    }
 }

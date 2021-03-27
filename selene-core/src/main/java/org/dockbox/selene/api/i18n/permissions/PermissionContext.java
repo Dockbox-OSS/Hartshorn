@@ -18,6 +18,9 @@
 package org.dockbox.selene.api.i18n.permissions;
 
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.SeleneFactory;
+
+import java.util.Objects;
 
 public class PermissionContext {
 
@@ -39,8 +42,27 @@ public class PermissionContext {
         return new PermissionContextBuilder();
     }
 
-    public AbstractPermission toPermission(String key) {
-        return Selene.provide(PermissionFactory.class).of(key, this);
+    public Permission toPermission(String key) {
+        return Selene.provide(SeleneFactory.class).permission(key, this);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getUser(), this.getDimension(), this.getRemoteIp(), this.getLocalHost(), this.getLocalIp(), this.getWorld());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PermissionContext)) return false;
+        PermissionContext context = (PermissionContext) o;
+        return Objects.equals(this.getUser(), context.getUser())
+                && Objects.equals(this.getDimension(), context.getDimension())
+                && Objects.equals(this.getRemoteIp(), context.getRemoteIp())
+                && Objects.equals(this.getLocalHost(), context.getLocalHost())
+                && Objects.equals(this.getLocalIp(), context.getLocalIp())
+                && Objects.equals(this.getWorld(), context.getWorld()
+        );
     }
 
     public String getUser() {
@@ -90,7 +112,6 @@ public class PermissionContext {
     public void setWorld(String world) {
         this.world = world;
     }
-
 
     public static final class PermissionContextBuilder {
 

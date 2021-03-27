@@ -92,7 +92,7 @@ public abstract class World extends WorldProperties implements BlockDimension, E
 
     private static final class EmptyWorld extends World {
         private EmptyWorld() {
-            super(SeleneUtils.EMPTY_UUID, "Empty", false, new Vector3N(0, 0, 0), -1, Gamemode.OTHER);
+            super(SeleneUtils.EMPTY_UUID, "Empty", false, Vector3N.empty(), -1, Gamemode.OTHER);
         }
 
         @Override

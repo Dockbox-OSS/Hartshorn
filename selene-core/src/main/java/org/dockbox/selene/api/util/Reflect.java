@@ -24,13 +24,13 @@ import org.dockbox.selene.api.annotations.entity.Extract.Behavior;
 import org.dockbox.selene.api.annotations.entity.Ignore;
 import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.annotations.entity.Property;
-import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.annotations.module.OwnedBy;
 import org.dockbox.selene.api.exceptions.TypeRejectedException;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.server.IntegratedModule;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.api.util.SeleneUtils.Provision;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -545,24 +545,20 @@ public final class Reflect {
      * @return the module
      */
     @Nullable
-    public static Module getModule(Class<?> type) {
+    public static ModuleContainer getModule(Class<?> type) {
         if (null == type) return null;
         if (type.equals(Selene.class))
-            return Reflect.getModule(Selene.provide(IntegratedModule.class).getClass());
+            return Reflect.getModule(Selene.provide(Server.class).getClass());
 
         if (type.isAnnotationPresent(OwnedBy.class)) {
             OwnedBy owner = type.getAnnotation(OwnedBy.class);
             return Reflect.getModule(owner.value());
         }
 
-        Module module = type.getAnnotation(Module.class);
-        module = null != module ? module : Reflect.getModule(type.getSuperclass());
-        if (null == module)
-            module = Selene.getServer()
+        return Selene.getServer()
                     .getInstanceSafe(ModuleManager.class)
-                    .map(em -> em.getHeader(type).orNull())
+                    .map(em -> em.getContainer(type).orNull())
                     .orNull();
-        return module;
     }
 
     /**
@@ -578,8 +574,8 @@ public final class Reflect {
      * @return the t
      */
     @Nullable
-    public static <T> T runWithModule(Class<?> type, Function<Module, T> function) {
-        Module module = Reflect.getModule(type);
+    public static <T> T runWithModule(Class<?> type, Function<ModuleContainer, T> function) {
+        ModuleContainer module = Reflect.getModule(type);
         if (null != module) return function.apply(module);
         return null;
     }
@@ -592,8 +588,8 @@ public final class Reflect {
      * @param consumer
      *         the consumer
      */
-    public static void runWithModule(Class<?> type, Consumer<Module> consumer) {
-        Module module = Reflect.getModule(type);
+    public static void runWithModule(Class<?> type, Consumer<ModuleContainer> consumer) {
+        ModuleContainer module = Reflect.getModule(type);
         if (null != module) consumer.accept(module);
     }
 

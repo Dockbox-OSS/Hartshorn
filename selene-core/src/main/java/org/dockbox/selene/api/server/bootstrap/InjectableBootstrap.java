@@ -28,12 +28,13 @@ import com.google.inject.ProvisionException;
 
 import org.dockbox.selene.api.annotations.entity.DoNotEnable;
 import org.dockbox.selene.api.annotations.module.Module;
-import org.dockbox.selene.api.module.ModuleContext;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.keys.Keys;
+import org.dockbox.selene.api.server.InjectConfiguration;
 import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.SeleneInjectConfiguration;
+import org.dockbox.selene.api.server.bootstrap.modules.SingleAnnotatedImplementationModule;
 import org.dockbox.selene.api.server.bootstrap.modules.SingleImplementationModule;
 import org.dockbox.selene.api.server.bootstrap.modules.SingleInstanceModule;
 import org.dockbox.selene.api.server.inject.InjectionPoint;
@@ -44,6 +45,7 @@ import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -90,15 +92,14 @@ public abstract class InjectableBootstrap {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> ModuleInjectionConfiguration getModuleConfiguration(T instance, Module header, ModuleContext context) {
+    private static <T> ModuleInjectionConfiguration getModuleConfiguration(T instance, ModuleContainer header) {
         ModuleInjectionConfiguration module = new ModuleInjectionConfiguration();
 
         if (!(null == instance || instance instanceof Class<?>)) {
             module.acceptBinding((Class<T>) instance.getClass(), instance);
             module.acceptInstance(instance);
         }
-        if (null != header) module.acceptBinding(Module.class, header);
-        if (null != context) module.acceptBinding(ModuleContext.class, context);
+        if (null != header) module.acceptBinding(ModuleContainer.class, header);
 
         return module;
     }
@@ -244,45 +245,16 @@ public abstract class InjectableBootstrap {
         return null;
     }
 
-    /**
-     * Creates a custom binding for a given contract and implementation using a custom {@link
-     * AbstractModule}. Requires the implementation to extend the contract type.
-     *
-     * <p>The binding is created by Guice, and can be annotated using Guice supported annotations
-     * (e.g. {@link com.google.inject.Singleton})
-     *
-     * @param <T>
-     *         The type parameter of the contract
-     * @param contract
-     *         The class type of the contract
-     * @param implementation
-     *         The class type of the implementation
-     */
-    public <T> void bindUtility(Class<T> contract, Class<? extends T> implementation) {
-        AbstractModule localModule = new SingleImplementationModule<>(contract, implementation);
-        this.injectorModules.add(localModule);
-        this.injector = null; // Reset injector so it regenerates later
-    }
-
-    public <C, T extends C> void bindUtility(Class<C> contract, T instance) {
-        AbstractModule localModule = new SingleInstanceModule<>(contract, instance);
-        this.injectorModules.add(localModule);
-        this.injector = null; // Reset injector so it regenerates later
-    }
-
     public Injector createModuleInjector(Object instance) {
         if (null != instance && instance.getClass().isAnnotationPresent(Module.class)) {
-            Exceptional<ModuleContext> context = this.getInstance(ModuleManager.class).getContext(instance.getClass());
-            Module module = context
-                    .map(ModuleContext::getModule)
-                    .orElseGet(() -> instance.getClass().getAnnotation(Module.class));
-            return this.createModuleInjector(instance, module, context.orNull());
+            Exceptional<ModuleContainer> context = this.getInstance(ModuleManager.class).getContext(instance.getClass());
+            return this.createModuleInjector(instance, context.orNull());
         }
         return this.rebuildInjector();
     }
 
-    public Injector createModuleInjector(Object instance, Module header, ModuleContext context) {
-        return this.rebuildInjector(InjectableBootstrap.getModuleConfiguration(instance, header, context));
+    public Injector createModuleInjector(Object instance, ModuleContainer container) {
+        return this.rebuildInjector(InjectableBootstrap.getModuleConfiguration(instance, container));
     }
 
     public <T> T injectMembers(T type) {
@@ -330,7 +302,39 @@ public abstract class InjectableBootstrap {
         return bindings;
     }
 
-    public void registerGlobal(SeleneInjectConfiguration moduleConfiguration) {
+    /**
+     * Creates a custom binding for a given contract and implementation using a custom {@link
+     * AbstractModule}. Requires the implementation to extend the contract type.
+     *
+     * <p>The binding is created by Guice, and can be annotated using Guice supported annotations
+     * (e.g. {@link com.google.inject.Singleton})
+     *
+     * @param <T>
+     *         The type parameter of the contract
+     * @param contract
+     *         The class type of the contract
+     * @param implementation
+     *         The class type of the implementation
+     */
+    public <T> void bind(Class<T> contract, Class<? extends T> implementation) {
+        AbstractModule localModule = new SingleImplementationModule<>(contract, implementation);
+        this.injectorModules.add(localModule);
+        this.injector = null; // Reset injector so it regenerates later
+    }
+
+    public <C, T extends C> void bind(Class<C> contract, T instance) {
+        AbstractModule localModule = new SingleInstanceModule<>(contract, instance);
+        this.injectorModules.add(localModule);
+        this.injector = null; // Reset injector so it regenerates later
+    }
+
+    public <C, T extends C, A extends Annotation> void bind(Class<C> contract, Class<? extends T> implementation, Class<A> annotation) {
+        AbstractModule localModule = new SingleAnnotatedImplementationModule<>(contract, implementation, annotation);
+        this.injectorModules.add(localModule);
+        this.injector = null; // Reset injector so it regenerates later
+    }
+
+    public void bind(InjectConfiguration moduleConfiguration) {
         this.injectorModules.add(moduleConfiguration);
     }
 

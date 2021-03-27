@@ -20,12 +20,14 @@ package org.dockbox.selene.common.objects.item;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.ReferencedWrapper;
 import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.item.persistence.PersistentItemModel;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements Item {
 
+    public static final int DEFAULT_STACK_SIZE = 64;
     private String id;
 
     protected ReferencedItem(@NotNull T reference) {
@@ -64,5 +66,15 @@ public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements 
     @Override
     public Exceptional<T> constructInitialReference() {
         return Exceptional.empty(); // Handled by constructors
+    }
+
+    @Override
+    public Class<? extends PersistentItemModel> getModelClass() {
+        return SimplePersistentItemModel.class;
+    }
+
+    @Override
+    public PersistentItemModel toPersistentModel() {
+        return new SimplePersistentItemModel(this);
     }
 }

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.objects.keys.data;
 
-import org.dockbox.selene.api.annotations.module.Module;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.objects.keys.PersistentDataKey;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.Reflect;
@@ -29,10 +29,10 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     private final String name;
     @NonNls
     private final String id;
-    private final Module module;
+    private final ModuleContainer module;
     private final Class<T> type;
 
-    public TypedPersistentDataKey(String name, String id, Module module, Class<T> type) {
+    public TypedPersistentDataKey(String name, String id, ModuleContainer module, Class<T> type) {
         this.name = name;
         this.id = id;
         this.module = module;

@@ -20,16 +20,16 @@ package org.dockbox.selene.integrated;
 import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.annotations.module.ArgumentProvider;
-import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.context.ArgumentConverter;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.common.ResourceService;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.location.dimensions.World;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.api.server.Selene;
@@ -49,7 +49,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({ "unused", "ClassWithTooManyFields" })
-@ArgumentProvider(module = IntegratedServer.class)
+@ArgumentProvider(module = DefaultServer.class)
 public final class DefaultArgumentConverters implements InjectableType {
 
     public static final ArgumentConverter<String> STRING = new CommandValueConverter<>(String.class, (Function<String, Exceptional<String>>) Exceptional::ofNullable, "string");
@@ -124,7 +124,7 @@ public final class DefaultArgumentConverters implements InjectableType {
                         double x = Double.parseDouble(xyz[0]);
                         double y = Double.parseDouble(xyz[1]);
                         double z = Double.parseDouble(xyz[2]);
-                        return new Vector3N(x, y, z);
+                        return Vector3N.of(x, y, z);
                     }),
             "vec3", "vector", "v3n"
     );
@@ -142,7 +142,7 @@ public final class DefaultArgumentConverters implements InjectableType {
     public static final ArgumentConverter<Location> LOCATION = new CommandValueConverter<>(Location.class, (cs, in) -> {
         String[] xyzw = in.split(",");
         String xyz = String.join(",", xyzw[0], xyzw[1], xyzw[2]);
-        Vector3N vec = VECTOR.convert(cs, xyz).orElse(new Vector3N(0, 0, 0));
+        Vector3N vec = VECTOR.convert(cs, xyz).orElse(Vector3N.of(0, 0, 0));
         World world = WORLD.convert(cs, xyzw[3]).orElse(World.empty());
 
         return Exceptional.of(new Location(vec, world));
@@ -156,23 +156,22 @@ public final class DefaultArgumentConverters implements InjectableType {
         if (or.isPresent()) return or.map(ResourceEntry.class::cast);
 
         String finalValue = in;
-        return Exceptional.of(() -> IntegratedResource.valueOf(finalValue));
+        return Exceptional.of(() -> DefaultResource.valueOf(finalValue));
     }, "resource", "i18n", "translation");
 
     public static final ArgumentConverter<Player> PLAYER = new CommandValueConverter<>(Player.class, in -> {
         Players pss = Selene.provide(Players.class);
         Exceptional<Player> player = pss.getPlayer(in);
-        return player.orElseSupply(
-                () -> {
-                    try {
-                        UUID uuid = UUID.fromString(in);
-                        return pss.getPlayer(uuid).orNull();
-                    }
-                    catch (IllegalArgumentException e) {
-                        //noinspection ReturnOfNull
-                        return null;
-                    }
-                });
+        return player.orElseSupply(() -> {
+            try {
+                UUID uuid = UUID.fromString(in);
+                return pss.getPlayer(uuid).orNull();
+            }
+            catch (IllegalArgumentException e) {
+                //noinspection ReturnOfNull
+                return null;
+            }
+        });
     }, in -> Selene.provide(Players.class).getOnlinePlayers().stream()
             .map(Player::getName)
             .filter(n -> n.startsWith(in))
@@ -181,8 +180,8 @@ public final class DefaultArgumentConverters implements InjectableType {
 
     public static final ArgumentConverter<Duration> DURATION = new CommandValueConverter<>(Duration.class, SeleneUtils::durationOf, "duration");
 
-    public static final ArgumentConverter<Module> MODULE = new CommandValueConverter<>(Module.class, in -> Selene.provide(ModuleManager.class)
-            .getHeader(in), in ->
+    public static final ArgumentConverter<ModuleContainer> MODULE = new CommandValueConverter<>(ModuleContainer.class, in -> Selene.provide(ModuleManager.class)
+            .getContainer(in), in ->
             Selene.provide(ModuleManager.class).getRegisteredModuleIds().stream()
                     .filter(id -> id.toLowerCase().contains(in.toLowerCase()))
                     .collect(Collectors.toList()),

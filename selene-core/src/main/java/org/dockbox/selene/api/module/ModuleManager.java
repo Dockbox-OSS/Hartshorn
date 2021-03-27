@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.api.module;
 
-import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.objects.Exceptional;
 
 import java.util.List;
@@ -25,13 +24,13 @@ import java.util.Map;
 
 public interface ModuleManager {
 
-    Exceptional<ModuleContext> getContext(Class<?> type);
+    Exceptional<ModuleContainer> getContext(Class<?> type);
 
-    Exceptional<ModuleContext> getContext(String id);
+    Exceptional<ModuleContainer> getContext(String id);
 
-    Exceptional<Module> getHeader(Class<?> type);
+    Exceptional<ModuleContainer> getContainer(Class<?> type);
 
-    Exceptional<Module> getHeader(String id);
+    Exceptional<ModuleContainer> getContainer(String id);
 
     <T> Exceptional<T> getInstance(Class<T> type);
 
@@ -39,7 +38,7 @@ public interface ModuleManager {
 
     Map<String, Object> getInstanceMappings();
 
-    List<ModuleContext> initialiseModules();
+    List<ModuleContainer> initialiseModules();
 
     List<String> getRegisteredModuleIds();
 }

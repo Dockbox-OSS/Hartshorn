@@ -30,7 +30,7 @@ public class Location {
     private final World world;
 
     public Location(double x, double y, double z, World world) {
-        this(new Vector3N(x, y, z), world);
+        this(Vector3N.of(x, y, z), world);
     }
 
     public Location(Vector3N vectorLoc, World world) {
@@ -55,7 +55,7 @@ public class Location {
     }
 
     public Location expandX(double x) {
-        return this.expand(new Vector3N(x, 0, 0));
+        return this.expand(Vector3N.of(x, 0, 0));
     }
 
     public Location expand(Vector3N vector) {
@@ -67,11 +67,11 @@ public class Location {
     }
 
     public Location expandY(double y) {
-        return this.expand(new Vector3N(0, y, 0));
+        return this.expand(Vector3N.of(0, y, 0));
     }
 
     public Location expandZ(double z) {
-        return this.expand(new Vector3N(0, 0, z));
+        return this.expand(Vector3N.of(0, 0, z));
     }
 
     public Vector3N getVectorLoc() {

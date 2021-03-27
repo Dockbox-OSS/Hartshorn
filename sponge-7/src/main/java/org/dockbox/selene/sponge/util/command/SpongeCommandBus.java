@@ -37,11 +37,9 @@ import org.dockbox.selene.common.command.registration.CommandInheritanceContext;
 import org.dockbox.selene.common.command.registration.MethodCommandContext;
 import org.dockbox.selene.common.command.values.AbstractArgumentElement;
 import org.dockbox.selene.common.command.values.AbstractArgumentValue;
-import org.dockbox.selene.common.command.values.AbstractFlagCollection;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentElement;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentValue;
-import org.dockbox.selene.sponge.util.command.values.SpongeFlagCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.Sponge;
@@ -174,11 +172,6 @@ public class SpongeCommandBus extends DefaultCommandBus {
         catch (IllegalArgumentException e) {
             return new SpongeArgumentValue(DefaultCommandBus.DEFAULT_TYPE, permission, key);
         }
-    }
-
-    @Override
-    protected AbstractFlagCollection<?> createEmptyFlagCollection() {
-        return new SpongeFlagCollection();
     }
 
     @Override

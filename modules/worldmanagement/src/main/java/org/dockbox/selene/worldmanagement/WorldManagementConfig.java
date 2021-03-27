@@ -42,7 +42,7 @@ public class WorldManagementConfig extends AbstractConfiguration<WorldManagement
     private transient FileManager fileManager;
 
     @Accessor(getter = "getPortalPosition")
-    private Vector3N portalPosition = new Vector3N(0, 64, 0);
+    private Vector3N portalPosition = Vector3N.of(0, 64, 0);
 
     @Accessor(getter = "getPortalWorldTarget")
     private String portalWorldTarget = "worlds";

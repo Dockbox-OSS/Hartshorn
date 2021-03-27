@@ -19,7 +19,7 @@ package org.dockbox.selene.sponge.util.command.values;
 
 import org.dockbox.selene.api.command.context.ArgumentConverter;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
@@ -49,7 +49,7 @@ final class SeleneConverterElement extends CommandElement {
         String argument = args.next();
         Exceptional<?> value = this.argument.convert(SpongeConversionUtil.fromSponge(source).get(), argument);
         if (value.errorPresent()) { // So returning null is still permitted
-            ResourceEntry errorResource = IntegratedResource.UNKNOWN_ERROR.format(value.getError().getMessage());
+            ResourceEntry errorResource = DefaultResource.UNKNOWN_ERROR.format(value.getError().getMessage());
             throw new ArgumentParseException(SpongeConversionUtil.toSponge(errorResource.asText()), value.getError(), argument, 0);
         }
         return value.orNull();

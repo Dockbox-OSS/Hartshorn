@@ -70,7 +70,7 @@ public class SpongeArmorStand extends SpongeEntity<EntityArmorStand, ArmorStand>
     }
 
     @Override
-    protected Entity getRepresentation() {
+    protected org.spongepowered.api.entity.living.ArmorStand getRepresentation() {
         return this.representation;
     }
 

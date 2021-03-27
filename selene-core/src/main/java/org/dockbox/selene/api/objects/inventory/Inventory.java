@@ -28,67 +28,6 @@ import java.util.stream.Collectors;
 public interface Inventory {
 
     /**
-     * Gets the {@link Item} in the requested position within the inventory. If the position is out of
-     * bounds, or if there is no item present, {@link MinecraftItems#getAir()} is returned instead.
-     * Indices start at zero.
-     *
-     * @param row
-     *         The row index
-     * @param column
-     *         The column index
-     *
-     * @return The {@link Item}, or {@link MinecraftItems#getAir() air}.
-     */
-    Item getSlot(int row, int column);
-
-    /**
-     * Gets the {@link Item} in the requested slot type within the inventory. If the slot type is not
-     * supported by the inventory, or if there is no item present, {@link MinecraftItems#getAir()} is
-     * returned instead.
-     *
-     * @param slot
-     *         The slot type
-     *
-     * @return The {@link Item}, or {@link MinecraftItems#getAir() air}.
-     */
-    Item getSlot(Slot slot);
-
-    /**
-     * Sets the item at the given position within the inventory to the given {@link Item}. If the
-     * position is out of bounds, nothing happens. Indices start at zero.
-     *
-     * @param item
-     *         The item to place
-     * @param row
-     *         The row index
-     * @param column
-     *         The column index
-     */
-    void setSlot(Item item, int row, int column);
-
-    /**
-     * Sets the item at the given position within the inventory to the given {@link Item}. If the
-     * position is out of bounds, nothing happens. Indices start at zero.
-     *
-     * @param item
-     *         The item to place
-     * @param index
-     *         The inventory index
-     */
-    void setSlot(Item item, int index);
-
-    /**
-     * Sets the item at the given slot type to the given {@link Item}. If the slot type is not
-     * supported by the inventory, nothing happens. Indices start at zero.
-     *
-     * @param item
-     *         The item to place
-     * @param slot
-     *         The slot type
-     */
-    void setSlot(Item item, Slot slot);
-
-    /**
      * Returns {@code true} if the inventory contains the given {@link Item}, otherwise {@code false}.
      *
      * @param item
@@ -150,25 +89,6 @@ public interface Inventory {
     boolean give(Item item);
 
     /**
-     * Returns the first occurring index of the given {@link Item}. If the item is not present, -1 is
-     * returned.
-     *
-     * @param item
-     *         The item
-     *
-     * @return The first index of the item, or -1
-     */
-    default int indexOf(Item item) {
-        int capacity = this.capacity() - 1; // -1 to correct for index offset
-        while (0 <= capacity) {
-            Item slot = this.getSlot(capacity);
-            if (slot.equals(item)) return capacity;
-            capacity--;
-        }
-        return -1; // No matches
-    }
-
-    /**
      * Returns the total capacity of the inventory. This is equal to the maximum index, plus one (to
      * correct for starting at 0).
      *
@@ -176,15 +96,4 @@ public interface Inventory {
      */
     int capacity();
 
-    /**
-     * Gets the {@link Item} in the requested position within the inventory. If the position is out of
-     * bounds, or if there is no item present, {@link MinecraftItems#getAir()} is returned instead.
-     * Indices start at zero.
-     *
-     * @param index
-     *         The inventory index
-     *
-     * @return The {@link Item}, or {@link MinecraftItems#getAir() air}.
-     */
-    Item getSlot(int index);
 }

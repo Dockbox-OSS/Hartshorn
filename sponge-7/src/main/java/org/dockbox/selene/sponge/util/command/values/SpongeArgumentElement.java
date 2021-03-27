@@ -31,10 +31,6 @@ public class SpongeArgumentElement extends AbstractArgumentElement<CommandElemen
         super(elements);
     }
 
-    public SpongeArgumentElement() {
-        super(GenericArguments.none());
-    }
-
     @Override
     protected void ofElements(AbstractArgumentElement<CommandElement>[] elements) {
         CommandElement element;

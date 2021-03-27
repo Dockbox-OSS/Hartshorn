@@ -17,9 +17,15 @@
 
 package org.dockbox.selene.api.objects.targets;
 
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.permissions.Permission;
+import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 
-public interface PermissionHolder extends Target {
+public interface PermissionHolder extends Identifiable {
+
+    // An empty context targets only global permissions
+    PermissionContext GLOBAL = PermissionContext.builder().build();
+
+    PermissionContext activeContext();
 
     boolean hasPermission(String permission);
 
@@ -27,17 +33,17 @@ public interface PermissionHolder extends Target {
 
     boolean hasAllPermissions(String... permissions);
 
-    boolean hasPermission(AbstractPermission permission);
+    boolean hasPermission(Permission permission);
 
-    boolean hasAnyPermission(AbstractPermission... permissions);
+    boolean hasAnyPermission(Permission... permissions);
 
-    boolean hasAllPermissions(AbstractPermission... permissions);
+    boolean hasAllPermissions(Permission... permissions);
 
     void setPermission(String permission, org.dockbox.selene.api.objects.tuple.Tristate state);
 
     void setPermissions(org.dockbox.selene.api.objects.tuple.Tristate state, String... permissions);
 
-    void setPermission(AbstractPermission permission, org.dockbox.selene.api.objects.tuple.Tristate state);
+    void setPermission(Permission permission, org.dockbox.selene.api.objects.tuple.Tristate state);
 
-    void setPermissions(org.dockbox.selene.api.objects.tuple.Tristate state, AbstractPermission... permissions);
+    void setPermissions(org.dockbox.selene.api.objects.tuple.Tristate state, Permission... permissions);
 }

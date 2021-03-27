@@ -19,6 +19,7 @@ package org.dockbox.selene.api.entities;
 
 import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.SeleneFactory;
 
 import java.util.function.BiFunction;
 
@@ -30,9 +31,9 @@ public final class EntityTypes {
 
     /** The Armor Stand entity type, referencing the {@link ArmorStand} entity. */
     public static final EntityType<ArmorStand> ARMOR_STAND =
-            new EntityType<>(EntityFactory::armorStand);
+            new EntityType<>(SeleneFactory::armorStand);
     /** The Item Frame entity type, referencing the {@link ItemFrame} entity. */
-    public static final EntityType<ItemFrame> ITEM_FRAME = new EntityType<>(EntityFactory::itemFrame);
+    public static final EntityType<ItemFrame> ITEM_FRAME = new EntityType<>(SeleneFactory::itemFrame);
 
     private EntityTypes() {}
 
@@ -45,9 +46,9 @@ public final class EntityTypes {
      */
     public static final class EntityType<T extends Entity<T>> {
 
-        private final BiFunction<EntityFactory, Location, T> provider;
+        private final BiFunction<SeleneFactory, Location, T> provider;
 
-        EntityType(BiFunction<EntityFactory, Location, T> provider) {
+        EntityType(BiFunction<SeleneFactory, Location, T> provider) {
             this.provider = provider;
         }
 
@@ -61,7 +62,7 @@ public final class EntityTypes {
          * @return The new {@link Entity} instance.
          */
         public T create(Location location) {
-            return this.provider.apply(Selene.provide(EntityFactory.class), location);
+            return this.provider.apply(Selene.provide(SeleneFactory.class), location);
         }
     }
 }

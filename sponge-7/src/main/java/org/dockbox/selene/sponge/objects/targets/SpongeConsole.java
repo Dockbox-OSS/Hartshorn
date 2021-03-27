@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.targets;
 
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.text.pagination.Pagination;
@@ -45,7 +45,7 @@ public final class SpongeConsole extends Console {
     @Override
     public void sendWithPrefix(@NotNull Text text) {
         Sponge.getServer().getConsole().sendMessage(org.spongepowered.api.text.Text.of(
-                SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
+                SpongeConversionUtil.toSponge(DefaultResource.PREFIX.asText()),
                 SpongeConversionUtil.toSponge(text)
         ));
     }

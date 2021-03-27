@@ -39,7 +39,7 @@ import org.dockbox.selene.api.events.world.WorldCreatingProperties;
 import org.dockbox.selene.api.exceptions.TypeConversionException;
 import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.inventory.InventoryType;
 import org.dockbox.selene.api.objects.Console;
@@ -65,6 +65,7 @@ import org.dockbox.selene.api.text.actions.HoverAction;
 import org.dockbox.selene.api.text.actions.ShiftClickAction;
 import org.dockbox.selene.api.text.pagination.Pagination;
 import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.common.inventory.SimpleElement;
 import org.dockbox.selene.common.objects.item.ReferencedItem;
 import org.dockbox.selene.sponge.entities.SpongeArmorStand;
 import org.dockbox.selene.sponge.entities.SpongeGenericEntity;
@@ -72,7 +73,6 @@ import org.dockbox.selene.sponge.entities.SpongeItemFrame;
 import org.dockbox.selene.sponge.external.WrappedMask;
 import org.dockbox.selene.sponge.external.WrappedPattern;
 import org.dockbox.selene.sponge.external.WrappedRegion;
-import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.objects.discord.MagiBridgeCommandSource;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.location.SpongeChunk;
@@ -257,7 +257,7 @@ public enum SpongeConversionUtil {
             // from TextSerializers won't be needed, but to ensure no trailing codes are left we use
             // it here anyway.
             pb.append(TextSerializers.FORMATTING_CODE.deserialize(
-                    IntegratedResource.parse(part.toLegacy())));
+                    DefaultResource.parse(part.toLegacy())));
 
             Exceptional<org.spongepowered.api.text.action.ClickAction<?>> clickAction = toSponge(part.getClickAction());
             clickAction.ifPresent(pb::onClick);
@@ -317,7 +317,7 @@ public enum SpongeConversionUtil {
                     fromSponge(commandSource).ifPresent(consumer).rethrow();
                 }
                 catch (CheckedSeleneException throwable) {
-                    commandSource.sendMessage(Text.of(IntegratedResource.UNKNOWN_ERROR.format(throwable.getMessage())));
+                    commandSource.sendMessage(Text.of(DefaultResource.UNKNOWN_ERROR.format(throwable.getMessage())));
                 }
             }));
         }
@@ -480,7 +480,7 @@ public enum SpongeConversionUtil {
     @NotNull
     public static WorldCreatingProperties fromSpongeCreating(org.spongepowered.api.world.storage.WorldProperties worldProperties) {
         Vector3i vector3i = worldProperties.getSpawnPosition();
-        Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
+        Vector3N spawnLocation = Vector3N.of(vector3i.getX(), vector3i.getY(), vector3i.getZ());
 
         return new WorldCreatingProperties(
                 worldProperties.getWorldName(),
@@ -519,7 +519,7 @@ public enum SpongeConversionUtil {
     @NotNull
     public static org.dockbox.selene.api.objects.location.position.Location fromSponge(Location<World> location) {
         org.dockbox.selene.api.objects.location.dimensions.World world = fromSponge(location.getExtent());
-        Vector3N vector3N = new Vector3N(location.getX(), location.getY(), location.getZ());
+        Vector3N vector3N = Vector3N.of(location.getX(), location.getY(), location.getZ());
         return new org.dockbox.selene.api.objects.location.position.Location(vector3N, world);
     }
 
@@ -534,7 +534,7 @@ public enum SpongeConversionUtil {
 
     public static org.dockbox.selene.api.objects.location.dimensions.World fromSponge(WorldProperties properties) {
         Vector3i vector3i = properties.getSpawnPosition();
-        Vector3N spawnLocation = new Vector3N(vector3i.getX(), vector3i.getY(), vector3i.getZ());
+        Vector3N spawnLocation = Vector3N.of(vector3i.getX(), vector3i.getY(), vector3i.getZ());
         org.dockbox.selene.api.objects.location.dimensions.World spongeWorld = new SpongeWorld(
                 properties.getUniqueId(),
                 properties.getWorldName(),
@@ -554,9 +554,9 @@ public enum SpongeConversionUtil {
     }
 
     public static Element toSponge(org.dockbox.selene.api.inventory.Element element) {
-        if (element instanceof SpongeElement) {
+        if (element instanceof SimpleElement) {
             return Element.of(toSponge(element.getItem()),
-                    a -> ((SpongeElement) element).perform(fromSponge(a.getPlayer()))
+                    a -> ((SimpleElement) element).perform(fromSponge(a.getPlayer()))
             );
         }
         return Element.EMPTY;
@@ -594,7 +594,7 @@ public enum SpongeConversionUtil {
     public static Clipboard fromSponge(com.sk89q.worldedit.extent.clipboard.Clipboard clipboard) {
         Region region = fromWorldEdit(clipboard.getRegion());
         Vector origin = clipboard.getOrigin();
-        return new Clipboard(region, new Vector3N(origin.getX(), origin.getY(), origin.getZ()));
+        return new Clipboard(region, Vector3N.of(origin.getX(), origin.getY(), origin.getZ()));
     }
 
     public static Region fromWorldEdit(com.sk89q.worldedit.regions.Region region) {
@@ -642,7 +642,7 @@ public enum SpongeConversionUtil {
     }
 
     public static Vector3N fromWorldEdit(Vector vector) {
-        return new Vector3N(vector.getX(), vector.getY(), vector.getZ());
+        return Vector3N.of(vector.getX(), vector.getY(), vector.getZ());
     }
 
     public static org.dockbox.selene.api.objects.location.dimensions.World fromWorldEdit(com.sk89q.worldedit.world.World world) {
@@ -705,7 +705,7 @@ public enum SpongeConversionUtil {
     }
 
     public static Vector3N fromSponge(Vector3d v3d) {
-        return new Vector3N(v3d.getX(), v3d.getY(), v3d.getZ());
+        return Vector3N.of(v3d.getX(), v3d.getY(), v3d.getZ());
     }
 
     public static Vector3d toSponge(Vector3N v3n) {

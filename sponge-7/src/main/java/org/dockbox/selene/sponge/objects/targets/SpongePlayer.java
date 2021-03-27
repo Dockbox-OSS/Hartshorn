@@ -24,8 +24,8 @@ import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.chat.SendMessageEvent;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.IntegratedResource;
-import org.dockbox.selene.api.i18n.permissions.AbstractPermission;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.Packet;
@@ -34,7 +34,6 @@ import org.dockbox.selene.api.objects.inventory.PlayerInventory;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.keys.PersistentDataKey;
 import org.dockbox.selene.api.objects.keys.TransactionResult;
-import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.objects.player.Hand;
@@ -210,7 +209,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     @Override
     public void send(@NotNull ResourceEntry text) {
-        String formattedValue = IntegratedResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
+        String formattedValue = DefaultResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
         this.send(Text.of(formattedValue));
     }
 
@@ -225,7 +224,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     @Override
     public void sendWithPrefix(@NotNull ResourceEntry text) {
-        String formattedValue = IntegratedResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
+        String formattedValue = DefaultResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
         this.sendWithPrefix(Text.of(formattedValue));
     }
 
@@ -234,7 +233,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
         if (this.referenceExists()) {
             this.postEventPre(text).ifPresent(msg -> {
                 this.getReference().get().sendMessage(org.spongepowered.api.text.Text.of(
-                        SpongeConversionUtil.toSponge(IntegratedResource.PREFIX.asText()),
+                        SpongeConversionUtil.toSponge(DefaultResource.PREFIX.asText()),
                         SpongeConversionUtil.toSponge(msg))
                 );
             });
@@ -263,7 +262,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     }
 
     @Override
-    public boolean hasPermission(AbstractPermission permission) {
+    public boolean hasPermission(Permission permission) {
         if (permission.getContext().isAbsent()) {
             return this.hasPermission(permission.get());
         }
@@ -292,7 +291,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     }
 
     @Override
-    public void setPermission(AbstractPermission permission, org.dockbox.selene.api.objects.tuple.Tristate state) {
+    public void setPermission(Permission permission, org.dockbox.selene.api.objects.tuple.Tristate state) {
         if (permission.getContext().isAbsent()) {
             this.setPermission(permission.get(), state);
         } else {
@@ -388,22 +387,10 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     public double getHealth() {
         return this.getSpongePlayer().map(player -> player.get(Keys.HEALTH).orElse(0D)).orElse(0D);
     }    @NotNull
-    @Override
-    public World getWorld() {
-        // No reference refresh required as this is done by getLocation. Should never throw NPE as
-        // Location is either
-        // valid or EMPTY (World instance follows this same guideline).
-        return this.getLocation().getWorld();
-    }
 
     @Override
     public void setHealth(double health) {
         this.getSpongePlayer().ifPresent(player -> player.offer(Keys.HEALTH, health));
-    }
-
-    @Override
-    public boolean isAlive() {
-        return this.getHealth() > 0;
     }
 
     @Override
@@ -435,25 +422,5 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     public void setGravity(boolean gravity) {
         this.getSpongePlayer().ifPresent(player -> player.offer(Keys.HAS_GRAVITY, gravity));
     }
-
-    @Override
-    public boolean summon(Location location) {
-        throw new UnsupportedOperationException("Cannot re-summon players");
-    }
-
-    @Override
-    public boolean destroy() {
-        throw new UnsupportedOperationException("Cannot destroy players");
-    }
-
-    @Override
-    public Player copy() {
-        throw new UnsupportedOperationException("Cannot copy players");
-    }
-
-
-
-
-
 
 }

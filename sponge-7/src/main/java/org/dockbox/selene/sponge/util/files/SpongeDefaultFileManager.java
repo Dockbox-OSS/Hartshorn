@@ -17,6 +17,7 @@
 
 package org.dockbox.selene.sponge.util.files;
 
+import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -24,7 +25,7 @@ import org.spongepowered.api.Sponge;
 import java.nio.file.Path;
 
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
-public interface SpongeDefaultFileManager {
+public interface SpongeDefaultFileManager extends FileManager {
 
     @NotNull
     default Path getDataDir() {

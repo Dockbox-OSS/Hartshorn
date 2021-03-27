@@ -19,6 +19,7 @@ package org.dockbox.selene.common.command.values;
 
 import org.dockbox.selene.api.command.context.ArgumentConverter;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.common.command.convert.ArgumentConverterRegistry;
 
 public abstract class AbstractArgumentValue<T> {
@@ -30,9 +31,30 @@ public abstract class AbstractArgumentValue<T> {
         Exceptional<ArgumentConverter<?>> converter = ArgumentConverterRegistry.getOptionalConverter(type.toLowerCase());
         if (converter.isPresent()) this.value = this.parseValue(converter.get(), key, type);
         this.permission = permission;
+        this.prepareValue(type, key);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <E extends Enum<E>> void prepareValue(String type, String key) {
+        if (!ArgumentConverterRegistry.hasConverter(type.toLowerCase())) {
+            try {
+                Class<?> clazz = Class.forName(type);
+                if (clazz.isEnum()) {
+                    Class<E> enumType = (Class<E>) clazz;
+                    this.setEnumType(enumType, key);
+                }
+                else //noinspection ThrowCaughtLocally
+                    throw new IllegalArgumentException("Type '" + type.toLowerCase() + "' is not supported");
+            }
+            catch (Exception e) {
+                Selene.handle("No argument of type `" + type + "` can be read", e);
+            }
+        }
     }
 
     protected abstract T parseValue(ArgumentConverter<?> converter, String key, String type);
+
+    protected abstract <E extends Enum<E>> void setEnumType(Class<E> enumType, String key);
 
     public String getPermission() {
         return this.permission;
