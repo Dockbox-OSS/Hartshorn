@@ -27,7 +27,7 @@ import org.dockbox.selene.test.objects.inventory.JUnitArmorStandInventory;
 import java.util.Map;
 import java.util.UUID;
 
-public class JUnitArmorStand extends JUnitLivingEntity<ArmorStand> implements ArmorStand {
+public class JUnitArmorStand extends JUnitEntity<ArmorStand> implements ArmorStand, org.dockbox.selene.test.objects.JUnitPersistentDataHolder {
 
     private boolean baseplate = true;
     private boolean arms = false;

@@ -18,20 +18,50 @@
 package org.dockbox.selene.test.objects.living;
 
 import org.dockbox.selene.api.entities.Entity;
+import org.dockbox.selene.api.objects.keys.PersistentDataHolder;
 import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.test.objects.JUnitWorld;
 
-public abstract class JUnitGenericEntity<T extends Entity<T>> implements Entity<T> {
+import java.util.UUID;
+
+public abstract class JUnitEntity<T extends Entity<T>> implements Entity<T>, PersistentDataHolder {
 
     private Text displayName;
     private double health = 20;
-
     private Location location;
     private boolean invisible = false;
     private boolean invulnerable = false;
     private boolean gravity = true;
+    private final UUID uuid;
+
+    public JUnitEntity(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public boolean summon(Location location) {
+        ((JUnitWorld) location.getWorld()).addEntity(this);
+        this.setLocation(location);
+        return true;
+    }
+
+    @Override
+    public boolean destroy() {
+        ((JUnitWorld) this.getLocation().getWorld()).destroyEntity(this.getUniqueId());
+        return true;
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return this.uuid;
+    }
+
+    @Override
+    public String getName() {
+        return this.getDisplayName().toPlain();
+    }
 
     @Override
     public Text getDisplayName() {

@@ -25,6 +25,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.Packet;
 import org.dockbox.selene.api.objects.inventory.PlayerInventory;
 import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.objects.player.Hand;
@@ -47,14 +48,17 @@ import java.util.UUID;
 public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
     private final PlayerInventory inventory = new JUnitInventory();
-
     private boolean online = true;
     private Gamemode gamemode = Gamemode.CREATIVE;
     private Language language = Selene.getServer().getGlobalConfig().getDefaultLanguage();
     private boolean sneaking = false;
     private Location lookingAt = null;
-
-
+    private Text displayName;
+    private double health = 20;
+    private Location location;
+    private boolean invisible = false;
+    private boolean invulnerable = false;
+    private boolean gravity = true;
 
     public JUnitPlayer(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
@@ -62,6 +66,78 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
         Worlds worlds = Selene.provide(Worlds.class);
         this.setLocation(new Location(0, 0, 0, worlds.getWorld(worlds.getRootWorldId()).orNull()));
         ((JUnitWorld) this.getWorld()).addEntity(this);
+    }
+
+    @Override
+    public Text getDisplayName() {
+        return this.displayName;
+    }
+
+    @Override
+    public void setDisplayName(Text displayName) {
+        this.displayName = displayName;
+    }
+
+    @Override
+    public double getHealth() {
+        return this.health;
+    }
+
+    @Override
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
+    @Override
+    public boolean isAlive() {
+        return this.getHealth() > 0;
+    }
+
+    @Override
+    public boolean isInvisible() {
+        return this.invisible;
+    }
+
+    @Override
+    public void setInvisible(boolean invisible) {
+        this.invisible = invisible;
+    }
+
+    @Override
+    public boolean isInvulnerable() {
+        return this.invulnerable;
+    }
+
+    @Override
+    public void setInvulnerable(boolean invulnerable) {
+        this.invulnerable = invulnerable;
+    }
+
+    @Override
+    public boolean hasGravity() {
+        return this.gravity;
+    }
+
+    @Override
+    public void setGravity(boolean gravity) {
+        this.gravity = gravity;
+    }
+
+    @Override
+    public Location getLocation() {
+        return this.location;
+    }
+
+    @Override
+    public void setLocation(Location location) {
+        ((JUnitWorld) this.getWorld()).destroyEntity(this.getUniqueId());
+        this.location = location;
+        ((JUnitWorld) this.getWorld()).addEntity(this);
+    }
+
+    @Override
+    public World getWorld() {
+        return this.getLocation().getWorld();
     }
 
     @Override

@@ -24,7 +24,7 @@ import org.dockbox.selene.api.objects.location.position.BlockFace;
 
 import java.util.UUID;
 
-public class JUnitItemFrame extends JUnitLivingEntity<ItemFrame> implements ItemFrame {
+public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame, org.dockbox.selene.test.objects.JUnitPersistentDataHolder {
 
     private Item displayItem;
     private Rotation rotation = Rotation.TOP;

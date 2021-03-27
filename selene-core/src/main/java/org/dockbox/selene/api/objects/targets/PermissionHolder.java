@@ -22,6 +22,9 @@ import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 
 public interface PermissionHolder extends Identifiable {
 
+    // An empty context targets only global permissions
+    PermissionContext GLOBAL = PermissionContext.builder().build();
+
     PermissionContext activeContext();
 
     boolean hasPermission(String permission);
