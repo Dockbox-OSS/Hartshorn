@@ -23,11 +23,19 @@ import org.dockbox.selene.common.command.registration.AbstractRegistrationContex
 import org.dockbox.selene.common.command.registration.CommandInheritanceContext;
 import org.dockbox.selene.common.command.registration.MethodCommandContext;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
 class DefaultCommandBusTests {
+
+    private static final DefaultCommandBus bus = new TestCommandBus();
+
+    @BeforeAll
+    static void prepareRegistration() {
+        bus.register(ExampleCommandClass.class, ExampleExtendingCommandClass.class);
+    }
 
     @Test
     public void extendedCommandIsPresent() {
