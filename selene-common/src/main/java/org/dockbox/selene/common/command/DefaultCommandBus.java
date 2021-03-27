@@ -411,7 +411,7 @@ public abstract class DefaultCommandBus implements CommandBus {
             String defaultPermission
     ) {
         if (flagMatcher.matches()) {
-            if (null == flagCollection) flagCollection = this.createEmptyFlagCollection();
+            if (null == flagCollection) flagCollection = Selene.provide(AbstractFlagCollection.class);
             this.parseFlag(flagCollection, flagMatcher.group(1), flagMatcher.group(2), defaultPermission);
         }
         return flagCollection;
@@ -468,5 +468,4 @@ public abstract class DefaultCommandBus implements CommandBus {
 
     protected abstract AbstractArgumentValue<?> generateArgumentValue(String type, String permission, String key);
 
-    protected abstract AbstractFlagCollection<?> createEmptyFlagCollection();
 }

@@ -24,7 +24,6 @@ import org.dockbox.selene.api.ExceptionHelper;
 import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.ThreadUtils;
 import org.dockbox.selene.api.Worlds;
-import org.dockbox.selene.api.command.CommandBus;
 import org.dockbox.selene.api.discord.DiscordPagination;
 import org.dockbox.selene.api.discord.templates.MessageTemplate;
 import org.dockbox.selene.api.entities.ArmorStand;
@@ -70,7 +69,6 @@ import org.dockbox.selene.test.objects.living.JUnitItemFrame;
 import org.dockbox.selene.test.services.JUnitCustomMapService;
 import org.dockbox.selene.test.services.JUnitPlayers;
 import org.dockbox.selene.test.services.JUnitWorlds;
-import org.dockbox.selene.test.util.command.JUnitCommandBus;
 import org.slf4j.Logger;
 
 public class JUnitInjector extends InjectConfiguration {
