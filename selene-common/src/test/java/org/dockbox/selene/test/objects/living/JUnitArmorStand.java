@@ -17,9 +17,13 @@
 
 package org.dockbox.selene.test.objects.living;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+
 import org.dockbox.selene.api.entities.ArmorStand;
 import org.dockbox.selene.api.entities.ArmorStandInventory;
 import org.dockbox.selene.api.objects.inventory.Inventory;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.test.objects.inventory.JUnitArmorStandInventory;
@@ -37,6 +41,12 @@ public class JUnitArmorStand extends JUnitEntity<ArmorStand> implements ArmorSta
 
     public JUnitArmorStand(UUID uuid) {
         super(uuid);
+    }
+
+    @AssistedInject
+    public JUnitArmorStand(@Assisted Location location) {
+        super(UUID.randomUUID());
+        this.setLocation(location);
     }
 
     @Override

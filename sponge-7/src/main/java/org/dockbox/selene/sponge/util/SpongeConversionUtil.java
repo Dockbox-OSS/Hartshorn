@@ -65,6 +65,7 @@ import org.dockbox.selene.api.text.actions.HoverAction;
 import org.dockbox.selene.api.text.actions.ShiftClickAction;
 import org.dockbox.selene.api.text.pagination.Pagination;
 import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.common.inventory.SimpleElement;
 import org.dockbox.selene.common.objects.item.ReferencedItem;
 import org.dockbox.selene.sponge.entities.SpongeArmorStand;
 import org.dockbox.selene.sponge.entities.SpongeGenericEntity;
@@ -72,7 +73,6 @@ import org.dockbox.selene.sponge.entities.SpongeItemFrame;
 import org.dockbox.selene.sponge.external.WrappedMask;
 import org.dockbox.selene.sponge.external.WrappedPattern;
 import org.dockbox.selene.sponge.external.WrappedRegion;
-import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.objects.discord.MagiBridgeCommandSource;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.location.SpongeChunk;
@@ -554,9 +554,9 @@ public enum SpongeConversionUtil {
     }
 
     public static Element toSponge(org.dockbox.selene.api.inventory.Element element) {
-        if (element instanceof SpongeElement) {
+        if (element instanceof SimpleElement) {
             return Element.of(toSponge(element.getItem()),
-                    a -> ((SpongeElement) element).perform(fromSponge(a.getPlayer()))
+                    a -> ((SimpleElement) element).perform(fromSponge(a.getPlayer()))
             );
         }
         return Element.EMPTY;

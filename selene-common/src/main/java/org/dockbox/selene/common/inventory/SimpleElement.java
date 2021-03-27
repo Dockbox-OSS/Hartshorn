@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.sponge.inventory;
+package org.dockbox.selene.common.inventory;
 
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
@@ -26,13 +26,13 @@ import org.dockbox.selene.api.objects.player.Player;
 
 import java.util.function.Consumer;
 
-public class SpongeElement implements Element {
+public class SimpleElement implements Element {
 
     private final Item item;
     private Consumer<Player> onClick;
 
     @AssistedInject
-    public SpongeElement(@Assisted Item item, @Assisted Consumer<Player> onClick) {
+    public SimpleElement(@Assisted Item item, @Assisted Consumer<Player> onClick) {
         this.item = item;
         this.onClick = onClick;
     }

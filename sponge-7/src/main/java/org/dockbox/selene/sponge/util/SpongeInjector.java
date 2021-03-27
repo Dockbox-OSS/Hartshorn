@@ -59,6 +59,7 @@ import org.dockbox.selene.common.discord.SimpleDiscordPagination;
 import org.dockbox.selene.common.discord.SimpleMessageTemplate;
 import org.dockbox.selene.common.events.SimpleEventBus;
 import org.dockbox.selene.common.i18n.SimplePermission;
+import org.dockbox.selene.common.inventory.SimpleElement;
 import org.dockbox.selene.common.modules.SimpleModuleManager;
 import org.dockbox.selene.common.server.config.SimpleGlobalConfig;
 import org.dockbox.selene.common.web.GsonWebUtil;
@@ -73,7 +74,6 @@ import org.dockbox.selene.packets.SpawnEntityPacket;
 import org.dockbox.selene.plots.PlotService;
 import org.dockbox.selene.sponge.entities.SpongeArmorStand;
 import org.dockbox.selene.sponge.entities.SpongeItemFrame;
-import org.dockbox.selene.sponge.inventory.SpongeElement;
 import org.dockbox.selene.sponge.inventory.builder.SpongeLayoutBuilder;
 import org.dockbox.selene.sponge.inventory.builder.SpongePaginatedPaneBuilder;
 import org.dockbox.selene.sponge.inventory.builder.SpongeStaticPaneBuilder;
@@ -139,7 +139,7 @@ public class SpongeInjector extends InjectConfiguration {
 
         // Factory types
         FactoryModuleBuilder factory = new FactoryModuleBuilder()
-                .implement(Element.class, SpongeElement.class)
+                .implement(Element.class, SimpleElement.class)
                 .implement(Item.class, SpongeItem.class)
                 .implement(Bossbar.class, SpongeBossbar.class)
                 .implement(Profile.class, SpongeProfile.class)

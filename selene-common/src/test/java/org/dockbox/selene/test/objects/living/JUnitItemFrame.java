@@ -17,10 +17,14 @@
 
 package org.dockbox.selene.test.objects.living;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+
 import org.dockbox.selene.api.entities.ItemFrame;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.objects.location.position.BlockFace;
+import org.dockbox.selene.api.objects.location.position.Location;
 
 import java.util.UUID;
 
@@ -32,6 +36,12 @@ public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame,
 
     public JUnitItemFrame(UUID uuid) {
         super(uuid);
+    }
+
+    @AssistedInject
+    public JUnitItemFrame(@Assisted Location location) {
+        super(UUID.randomUUID());
+        this.setLocation(location);
     }
 
     @Override
