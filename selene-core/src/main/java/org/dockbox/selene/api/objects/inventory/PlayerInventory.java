@@ -36,7 +36,7 @@ import org.dockbox.selene.api.objects.Exceptional;
  *
  * <p>Equipment lookups should be performed using {@link #getSlot(Slot)}.
  */
-public abstract class PlayerInventory implements Inventory {
+public abstract class PlayerInventory implements IndexedInventory, PositionInventory, SlotInventory {
 
     /**
      * Gets the hotbar within the inventory.

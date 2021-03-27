@@ -15,15 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.objects.inventory;
+package org.dockbox.selene.api.entities;
 
-/** Represents a single row inside a {@link PlayerInventory}, a 1x9 row. */
-public interface InventoryRow extends IndexedInventory, PositionInventory {
+import org.dockbox.selene.api.objects.inventory.SlotInventory;
 
-    /**
-     * Gets the owning {@link PlayerInventory}.
-     *
-     * @return The inventory
-     */
-    PlayerInventory getInventory();
+public abstract class ArmorStandInventory implements SlotInventory {
 }
