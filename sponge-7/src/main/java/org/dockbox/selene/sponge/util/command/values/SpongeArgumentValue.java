@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
+
 import org.dockbox.selene.api.command.context.ArgumentConverter;
 import org.dockbox.selene.common.command.values.AbstractArgumentValue;
 import org.jetbrains.annotations.NonNls;
@@ -26,7 +29,12 @@ import org.spongepowered.api.text.Text;
 
 public class SpongeArgumentValue extends AbstractArgumentValue<CommandElement> {
 
-    public SpongeArgumentValue(String type, String permission, String key) throws IllegalArgumentException {
+    @AssistedInject
+    public SpongeArgumentValue(
+            @Assisted String type,
+            @Assisted String permission,
+            @Assisted String key
+    ) throws IllegalArgumentException {
         super(permission, key, type);
     }
 

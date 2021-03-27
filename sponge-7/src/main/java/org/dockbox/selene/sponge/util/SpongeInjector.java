@@ -47,6 +47,7 @@ import org.dockbox.selene.api.objects.item.maps.CustomMapService;
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.server.InjectConfiguration;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.SeleneFactory;
 import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.api.server.config.GlobalConfig;
 import org.dockbox.selene.api.tasks.TaskRunner;
@@ -56,7 +57,8 @@ import org.dockbox.selene.common.SimpleBroadcastService;
 import org.dockbox.selene.common.SimpleExceptionHelper;
 import org.dockbox.selene.common.SimpleResourceService;
 import org.dockbox.selene.common.command.ArgumentValueFactory;
-import org.dockbox.selene.common.command.values.AbstractArgumentValue;
+import org.dockbox.selene.common.command.values.AbstractFlagCollection;
+import org.dockbox.selene.common.command.values.ArgumentValue;
 import org.dockbox.selene.common.discord.SimpleDiscordPagination;
 import org.dockbox.selene.common.discord.SimpleMessageTemplate;
 import org.dockbox.selene.common.events.SimpleEventBus;
@@ -88,6 +90,7 @@ import org.dockbox.selene.sponge.plotsquared.SpongePlotSquaredService;
 import org.dockbox.selene.sponge.text.navigation.SpongePaginationBuilder;
 import org.dockbox.selene.sponge.util.command.SpongeCommandBus;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentValue;
+import org.dockbox.selene.sponge.util.command.values.SpongeFlagCollection;
 import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager;
 import org.dockbox.selene.sponge.util.files.SpongeXStreamManager;
 import org.dockbox.selene.worldedit.WorldEditService;
@@ -133,6 +136,7 @@ public class SpongeInjector extends InjectConfiguration {
         // Event- and command bus keep static references, and can thus be recreated
         this.bind(CommandBus.class).toInstance(new SpongeCommandBus());
         this.bind(EventBus.class).toInstance(new SimpleEventBus());
+        this.bind(AbstractFlagCollection.class).to(SpongeFlagCollection.class);
 
         // Builder types
         this.bind(PaginationBuilder.class).to(SpongePaginationBuilder.class);
@@ -150,9 +154,10 @@ public class SpongeInjector extends InjectConfiguration {
                 .implement(ItemFrame.class, SpongeItemFrame.class)
                 .implement(ArmorStand.class, SpongeArmorStand.class);
 
-        this.install(super.verify(factory));
+        this.install(factory.build(SeleneFactory.class));
         this.install(new FactoryModuleBuilder()
-                .implement(AbstractArgumentValue.class, SpongeArgumentValue.class)
+                // TODO: Remove generic from ArgumentValue, AI doesn't like it
+                .implement(ArgumentValue.class, SpongeArgumentValue.class)
                 .build(ArgumentValueFactory.class)
         );
 
