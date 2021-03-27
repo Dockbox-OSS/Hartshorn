@@ -117,7 +117,7 @@ public class JUnitInjector extends InjectConfiguration {
                 .implement(ItemFrame.class, JUnitItemFrame.class)
                 .implement(ArmorStand.class, JUnitArmorStand.class);
 
-        this.install(verify(factory));
+        this.install(this.verify(factory));
 
         // Globally accessible
         // Config can be recreated, so no external tracking is required (contents obtained from file, no
