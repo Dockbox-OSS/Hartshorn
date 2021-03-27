@@ -35,7 +35,7 @@ import org.dockbox.selene.api.objects.tuple.Tristate;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.text.pagination.Pagination;
-import org.dockbox.selene.test.objects.JUnitInventory;
+import org.dockbox.selene.test.objects.inventory.JUnitInventory;
 import org.dockbox.selene.test.objects.JUnitPersistentDataHolder;
 import org.dockbox.selene.test.objects.JUnitProfile;
 import org.dockbox.selene.test.objects.JUnitWorld;

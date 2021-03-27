@@ -19,7 +19,6 @@ package org.dockbox.selene.common.objects.inventory;
 
 import org.dockbox.selene.api.objects.inventory.InventoryRow;
 import org.dockbox.selene.api.objects.inventory.PlayerInventory;
-import org.dockbox.selene.api.objects.inventory.Slot;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.server.Selene;
 
@@ -27,7 +26,7 @@ import java.util.function.Supplier;
 
 public abstract class AbstractInventoryRow implements InventoryRow {
 
-    protected static final Supplier<Item> AIR = () -> Selene.getItems().getAir();
+    public static final Supplier<Item> AIR = () -> Selene.getItems().getAir();
 
     private final int rowIndex;
     private final PlayerInventory inventory;
@@ -44,19 +43,9 @@ public abstract class AbstractInventoryRow implements InventoryRow {
     }
 
     @Override
-    public Item getSlot(Slot slot) {
-        return Selene.getItems().getAir();
-    }
-
-    @Override
     public void setSlot(Item item, int row, int column) {
         if (row != this.rowIndex) return;
         this.setSlot(item, column);
-    }
-
-    @Override
-    public void setSlot(Item item, Slot slot) {
-        // Nothing happens
     }
 
     protected int getRowIndex() {

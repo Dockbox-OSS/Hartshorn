@@ -18,15 +18,21 @@
 package org.dockbox.selene.test.objects.living;
 
 import org.dockbox.selene.api.entities.ArmorStand;
+import org.dockbox.selene.api.entities.ArmorStandInventory;
 import org.dockbox.selene.api.objects.inventory.Inventory;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.test.objects.inventory.JUnitArmorStandInventory;
 
 import java.util.Map;
 import java.util.UUID;
 
 public class JUnitArmorStand extends JUnitLivingEntity<ArmorStand> implements ArmorStand {
 
+    private boolean baseplate = true;
+    private boolean arms = false;
+    private boolean small = false;
+    private final ArmorStandInventory inventory = new JUnitArmorStandInventory();
     private final Map<Limbs, Vector3N> limbs = SeleneUtils.emptyMap();
 
     public JUnitArmorStand(UUID uuid) {
@@ -45,41 +51,41 @@ public class JUnitArmorStand extends JUnitLivingEntity<ArmorStand> implements Ar
 
     @Override
     public boolean hasBaseplate() {
-        return false;
+        return this.baseplate;
     }
 
     @Override
     public void setBaseplate(boolean baseplate) {
-
+        this.baseplate = baseplate;
     }
 
     @Override
     public boolean isSmall() {
-        return false;
+        return this.small;
     }
 
     @Override
     public void setSmall(boolean small) {
-
+        this.small = small;
     }
 
     @Override
     public boolean hasArms() {
-        return false;
+        return this.arms;
     }
 
     @Override
     public void setArms(boolean arms) {
-
+        this.arms = arms;
     }
 
     @Override
     public ArmorStand copy() {
-        return null;
+        return new JUnitArmorStand(UUID.randomUUID());
     }
 
     @Override
     public Inventory getInventory() {
-        return null;
+        return this.inventory;
     }
 }

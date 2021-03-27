@@ -15,40 +15,31 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.objects;
+package org.dockbox.selene.test.objects.inventory;
 
-import org.dockbox.selene.api.objects.inventory.PlayerInventory;
+import org.dockbox.selene.api.entities.ArmorStandInventory;
+import org.dockbox.selene.api.objects.inventory.Slot;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.common.objects.inventory.AbstractInventoryRow;
 
 import java.util.Collection;
 import java.util.Map;
 
-public class JUnitInventoryRow extends AbstractInventoryRow {
+public class JUnitArmorStandInventory extends ArmorStandInventory {
 
-    private final Map<Integer, Item> slots = SeleneUtils.emptyMap();
-
-    public JUnitInventoryRow(int rowIndex, PlayerInventory inventory) {
-        super(rowIndex, inventory);
-    }
-
-    @Override
-    public void setSlot(Item item, int index) {
-        if (index < this.capacity()) this.slots.put(index, item);
-    }
+    private final Map<Slot, Item> items = SeleneUtils.emptyMap();
 
     @Override
     public Collection<Item> getAllItems() {
-        return SeleneUtils.asUnmodifiableList(this.slots.values());
+        return SeleneUtils.asUnmodifiableList(this.items.values());
     }
 
     @Override
     public boolean give(Item item) {
-        for (int i = 0; i < this.capacity(); i++) {
-            if (this.getSlot(i).isAir()) {
-                this.setSlot(item, i);
+        for (Slot slot : Slot.values()) {
+            if (!this.items.containsKey(slot)) {
+                this.setSlot(item, slot);
                 return true;
             }
         }
@@ -56,7 +47,12 @@ public class JUnitInventoryRow extends AbstractInventoryRow {
     }
 
     @Override
-    public Item getSlot(int index) {
-        return this.slots.getOrDefault(index, Selene.getItems().getAir());
+    public Item getSlot(Slot slot) {
+        return this.items.getOrDefault(slot, Selene.getItems().getAir());
+    }
+
+    @Override
+    public void setSlot(Item item, Slot slot) {
+        this.items.put(slot, item);
     }
 }
