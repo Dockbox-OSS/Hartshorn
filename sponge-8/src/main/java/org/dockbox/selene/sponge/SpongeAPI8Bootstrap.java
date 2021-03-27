@@ -1,10 +1,10 @@
 package org.dockbox.selene.sponge;
 
-import org.dockbox.selene.core.MinecraftVersion;
-import org.dockbox.selene.core.server.Selene;
-import org.dockbox.selene.core.server.SeleneInjectConfiguration;
-import org.dockbox.selene.core.server.ServerType;
-import org.dockbox.selene.core.server.bootstrap.SeleneBootstrap;
+import org.dockbox.selene.api.MinecraftVersion;
+import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.SeleneInjectConfiguration;
+import org.dockbox.selene.api.server.ServerType;
+import org.dockbox.selene.api.server.bootstrap.SeleneBootstrap;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Sponge;
@@ -34,7 +34,7 @@ public class SpongeAPI8Bootstrap extends SeleneBootstrap
     @Override
     public String getPlatformVersion()
     {
-        return Sponge.getPlatform().getContainer(Component.IMPLEMENTATION).getMetadata().getVersion();
+        return Sponge.platform().container(Component.IMPLEMENTATION).getMetadata().getVersion();
     }
 
     @Override

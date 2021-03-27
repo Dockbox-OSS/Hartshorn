@@ -45,7 +45,7 @@ minecraft {
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo-new.spongepowered.org/repository/maven-public/' }
+    maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
 }
 
 dependencies {
