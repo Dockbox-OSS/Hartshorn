@@ -126,11 +126,7 @@ public class SimpleModuleManager implements ModuleManager {
                 })
                 .filter(tuple -> {
                     ModuleContainer container = tuple.getKey();
-                    if (this.createComponentInstance(tuple.getValue(), container)) {
-                        moduleContainers.add(container);
-                        return true;
-                    }
-                    return false;
+                    return this.createComponentInstance(tuple.getValue(), container);
                 })
                 .map(Tuple::getKey)
                 .collect(Collectors.toList());
@@ -178,6 +174,9 @@ public class SimpleModuleManager implements ModuleManager {
                 Selene.handle("Failed to obtain package [" + dependency + "].", e);
             }
         }
+
+        // Make sure the container is available here before the instance is created, but after the existence checks are done
+        moduleContainers.add(container);
 
         T instance;
         instance = Selene.provide(entry);
