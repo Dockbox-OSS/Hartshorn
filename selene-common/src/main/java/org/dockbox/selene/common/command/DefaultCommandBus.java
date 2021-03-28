@@ -19,27 +19,32 @@ package org.dockbox.selene.common.command;
 
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.command.CommandBus;
+import org.dockbox.selene.api.command.context.CommandArgument;
 import org.dockbox.selene.api.command.context.CommandContext;
+import org.dockbox.selene.api.command.context.CommandFlag;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.events.chat.CommandEvent;
 import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.api.objects.targets.Identifiable;
+import org.dockbox.selene.api.objects.targets.Locatable;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.text.actions.ClickAction;
 import org.dockbox.selene.api.text.actions.HoverAction;
 import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.common.command.context.SimpleCommandContext;
 import org.dockbox.selene.common.command.registration.AbstractRegistrationContext;
 import org.dockbox.selene.common.command.registration.CommandInheritanceContext;
 import org.dockbox.selene.common.command.registration.MethodCommandContext;
 import org.dockbox.selene.common.command.values.AbstractArgumentElement;
-import org.dockbox.selene.common.command.values.AbstractArgumentValue;
 import org.dockbox.selene.common.command.values.AbstractFlagCollection;
+import org.dockbox.selene.common.command.values.ArgumentValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -51,7 +56,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class DefaultCommandBus implements CommandBus {
+public abstract class DefaultCommandBus<E> implements CommandBus {
 
     /**
      * Represents the default type for command elements matched by {@link DefaultCommandBus#FLAG} or
@@ -125,11 +130,6 @@ public abstract class DefaultCommandBus implements CommandBus {
     private static final Map<String, AbstractRegistrationContext> registrations = SeleneUtils.emptyConcurrentMap();
     private static final Map<String, List<CommandInheritanceContext>> queuedAliases = SeleneUtils.emptyConcurrentMap();
 
-    protected static void clearAliasQueue() {
-        // This should be called after #apply has finished, to avoid unexpected alias extensions.
-        DefaultCommandBus.queuedAliases.clear();
-    }
-
     protected static void callCommandContext(
             AbstractRegistrationContext registrationContext,
             String command,
@@ -184,10 +184,6 @@ public abstract class DefaultCommandBus implements CommandBus {
             return response;
         }
         return Exceptional.empty();
-    }
-
-    protected static Map<String, AbstractRegistrationContext> getRegistrations() {
-        return DefaultCommandBus.registrations;
     }
 
     @Override
@@ -327,6 +323,60 @@ public abstract class DefaultCommandBus implements CommandBus {
         return new MethodCommandContext(command, method);
     }
 
+    @Override
+    public void apply() {
+        /*
+        Each context is separately registered based on its alias(es). While it is possible to use
+        AbstractRegistrationContext#getAliases to register all aliases at once, some command implementations may wish
+        to be aware of the used alias.
+        */
+        DefaultCommandBus.getRegistrations().forEach((alias, abstractCommand) -> {
+            Selene.log().info("Attempting to register /" + alias);
+            E spec = null;
+            if (abstractCommand instanceof MethodCommandContext) {
+                MethodCommandContext methodContext = (MethodCommandContext) abstractCommand;
+                if (!methodContext.getCommand().inherit()
+                        || !methodContext.getDeclaringClass().isAnnotationPresent(Command.class)) {
+                    spec = this.buildContextExecutor(methodContext, alias);
+                }
+                else {
+                    Selene.log().error("Found direct method registration of inherited command! " + methodContext.getLocation());
+                }
+
+            }
+            else if (abstractCommand instanceof CommandInheritanceContext) {
+                CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) abstractCommand;
+                spec = this.buildInheritedContextExecutor(inheritanceContext, alias);
+            }
+            else {
+                Selene.log().error("Found unknown context type [" + abstractCommand.getClass().getCanonicalName() + "]");
+            }
+
+            if (null != spec) {
+                this.registerExecutor(spec, alias);
+                Selene.log().info("Registered /" + alias);
+            }
+            else
+                Selene.log().warn("Could not generate executor for '" + alias + "'. Any errors logged above.");
+        });
+        clearAliasQueue();
+    }
+
+    protected static Map<String, AbstractRegistrationContext> getRegistrations() {
+        return DefaultCommandBus.registrations;
+    }
+
+    protected abstract E buildContextExecutor(AbstractRegistrationContext context, String alias);
+
+    protected abstract E buildInheritedContextExecutor(CommandInheritanceContext context, String alias);
+
+    protected abstract void registerExecutor(E executor, String alias);
+
+    protected static void clearAliasQueue() {
+        // This should be called after #apply has finished, to avoid unexpected alias extensions.
+        DefaultCommandBus.queuedAliases.clear();
+    }
+
     public Exceptional<Boolean> confirmCommand(String confirmId) {
         if (DefaultCommandBus.confirmQueue.containsKey(confirmId)) {
             ConfirmableQueueItem confirmableQueueItem = DefaultCommandBus.confirmQueue.get(confirmId);
@@ -341,7 +391,7 @@ public abstract class DefaultCommandBus implements CommandBus {
         return Exceptional.empty();
     }
 
-    protected AbstractArgumentValue<?> generateArgumentValue(String argumentDefinition, String defaultPermission) {
+    protected ArgumentValue<?> generateArgumentValue(String argumentDefinition, String defaultPermission) {
         String type = DefaultCommandBus.DEFAULT_TYPE;
         String key;
         String permission = defaultPermission;
@@ -374,7 +424,12 @@ public abstract class DefaultCommandBus implements CommandBus {
         if (3 <= elementValue.groupCount() && null != elementValue.group(3))
             permission = elementValue.group(3);
 
-        return this.generateArgumentValue(type, permission, key);
+        try {
+            return this.getArgumentValue(type, permission, key);
+        }
+        catch (IllegalArgumentException e) {
+            return this.getArgumentValue(DefaultCommandBus.DEFAULT_TYPE, permission, key);
+        }
     }
 
     protected List<AbstractArgumentElement<?>> parseArgumentElements(CharSequence argString, String defaultPermission) {
@@ -423,7 +478,7 @@ public abstract class DefaultCommandBus implements CommandBus {
 
         List<AbstractArgumentElement<?>> result = this.parseArgumentElements(elementValue, defaultPermission);
         if (result.isEmpty()) {
-            AbstractArgumentValue<?> argumentValue = this.generateArgumentValue(argumentMatcher.group(2), defaultPermission);
+            ArgumentValue<?> argumentValue = this.generateArgumentValue(argumentMatcher.group(2), defaultPermission);
             AbstractArgumentElement<?> argumentElement = argumentValue.getElement();
             result = SeleneUtils.asList(argumentElement);
         }
@@ -456,7 +511,7 @@ public abstract class DefaultCommandBus implements CommandBus {
 
         }
         else {
-            AbstractArgumentValue<?> argumentValue = this.generateArgumentValue(value, defaultPermission);
+            ArgumentValue<?> argumentValue = this.generateArgumentValue(value, defaultPermission);
             if (0 <= name.indexOf(':')) {
                 Selene.handle("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
@@ -464,8 +519,41 @@ public abstract class DefaultCommandBus implements CommandBus {
         }
     }
 
-    protected abstract AbstractArgumentElement<?> wrapElements(List<AbstractArgumentElement<?>> elements);
+    protected SimpleCommandContext createCommandContext(String command, CommandSource sender, Map<String, Collection<Object>> args) {
+        List<CommandArgument<?>> arguments = SeleneUtils.emptyList();
+        List<CommandFlag<?>> flags = SeleneUtils.emptyList();
 
-    protected abstract AbstractArgumentValue<?> generateArgumentValue(String type, String permission, String key);
+        assert null != command : "Context carrier command was null";
+        args.forEach((key, parsedArguments) ->
+                parsedArguments.forEach(obj -> {
+                    /*
+                    Simple pattern check to see if a parsed element is a flag. As these elements are already parsed the pattern
+                    does not have to check for anything but the flag prefix (-f or --flag).
+                    */
+                    if (Pattern.compile("-(-?" + key + ")").matcher(command).find())
+                        flags.add(new CommandFlag<>(this.tryConvertObject(obj), key));
+                    else
+                        arguments.add(new CommandArgument<>(this.tryConvertObject(obj), key));
+                }));
+
+        Exceptional<Location> location = sender instanceof Locatable
+                ? Exceptional.of(((Locatable) sender).getLocation())
+                : Exceptional.empty();
+
+        return new SimpleCommandContext(
+                command,
+                arguments.toArray(new CommandArgument<?>[0]),
+                flags.toArray(new CommandFlag<?>[0]),
+                sender,
+                location,
+                location.map(Location::getWorld),
+                new String[0]);
+    }
+
+    protected abstract Object tryConvertObject(Object obj);
+
+    protected abstract ArgumentValue<?> getArgumentValue(String type, String permission, String key);
+
+    protected abstract AbstractArgumentElement<?> wrapElements(List<AbstractArgumentElement<?>> elements);
 
 }

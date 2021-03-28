@@ -17,22 +17,43 @@
 
 package org.dockbox.selene.common.command;
 
+import org.dockbox.selene.common.command.registration.AbstractRegistrationContext;
+import org.dockbox.selene.common.command.registration.CommandInheritanceContext;
 import org.dockbox.selene.common.command.values.AbstractArgumentElement;
+import org.dockbox.selene.common.command.values.ArgumentValue;
 
 import java.util.List;
 
-public class TestCommandBus extends DefaultCommandBus {
+public class TestCommandBus extends DefaultCommandBus<Void> {
 
     @Override
-    protected AbstractArgumentElement<?> wrapElements(List<AbstractArgumentElement<?>> elements) {
-        return elements.get(0);
+    protected Void buildContextExecutor(AbstractRegistrationContext context, String alias) {
+        return null;
     }
 
     @Override
-    protected TestArgumentValue generateArgumentValue(String type, String permission, String key) {
+    protected Void buildInheritedContextExecutor(CommandInheritanceContext context, String alias) {
+        return null;
+    }
+
+    @Override
+    protected void registerExecutor(Void executor, String alias) {
+
+    }
+
+    @Override
+    protected Object tryConvertObject(Object obj) {
+        return null;
+    }
+
+    @Override
+    protected ArgumentValue<?> getArgumentValue(String type, String permission, String key) {
         return new TestArgumentValue(permission, key, type);
     }
 
     @Override
-    public void apply() {}
+    protected AbstractArgumentElement<?> wrapElements(List<AbstractArgumentElement<?>> elements) {
+        return null;
+    }
+
 }

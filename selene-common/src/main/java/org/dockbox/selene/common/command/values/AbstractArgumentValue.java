@@ -22,7 +22,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.common.command.convert.ArgumentConverterRegistry;
 
-public abstract class AbstractArgumentValue<T> {
+public abstract class AbstractArgumentValue<T> implements ArgumentValue<T> {
 
     private final String permission;
     private T value;
@@ -56,16 +56,20 @@ public abstract class AbstractArgumentValue<T> {
 
     protected abstract <E extends Enum<E>> void setEnumType(Class<E> enumType, String key);
 
+    @Override
     public String getPermission() {
         return this.permission;
     }
 
+    @Override
     public abstract AbstractArgumentElement<T> getElement();
 
+    @Override
     public T getValue() {
         return this.value;
     }
 
+    @Override
     public void setValue(T value) {
         this.value = value;
     }

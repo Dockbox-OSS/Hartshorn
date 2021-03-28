@@ -31,16 +31,16 @@ public class SpongeArgumentValue extends AbstractArgumentValue<CommandElement> {
     }
 
     @Override
-    protected <E extends Enum<E>> void setEnumType(Class<E> enumType, String key) {
-        this.setValue(GenericArguments.enumValue(Text.of(key), enumType));
-    }
-
-    @Override
     protected CommandElement parseValue(ArgumentConverter<?> converter, String key, @NonNls String type) {
         if ("remaining".equals(type) || "remainingstring".equals(type)) {
             return GenericArguments.remainingJoinedStrings(Text.of(key));
         }
         return new SeleneConverterElement(key, converter);
+    }
+
+    @Override
+    protected <E extends Enum<E>> void setEnumType(Class<E> enumType, String key) {
+        this.setValue(GenericArguments.enumValue(Text.of(key), enumType));
     }
 
     @Override
