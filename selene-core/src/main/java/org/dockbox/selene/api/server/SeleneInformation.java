@@ -39,5 +39,7 @@ public final class SeleneInformation {
 
     public static final String PROJECT_NAME = "Selene";
 
+    public static final String PROJECT_ID = "selene";
+
     private SeleneInformation() {}
 }

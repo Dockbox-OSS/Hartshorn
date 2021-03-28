@@ -35,6 +35,7 @@ import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.api.objects.targets.MessageReceiver;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.SeleneInformation;
 import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.api.server.ServerType;
 import org.dockbox.selene.api.server.bootstrap.SeleneBootstrap;
@@ -48,12 +49,12 @@ import org.dockbox.selene.api.util.SeleneUtils;
 import java.util.List;
 
 @Module(
-        id = "selene",
-        name = "Selene",
+        id = SeleneInformation.PROJECT_ID,
+        name = SeleneInformation.PROJECT_NAME,
         description = "Integrated features of Selene",
         authors = "GuusLieben"
 )
-@Command(aliases = { "selene", "darwin" }, usage = "selene")
+@Command(aliases = SeleneInformation.PROJECT_ID, usage = SeleneInformation.PROJECT_ID)
 @Singleton
 public class DefaultServer implements Server {
 
@@ -94,7 +95,7 @@ public class DefaultServer implements Server {
                 .format(e.name(), e.id())
                 .translate(source)
                 .asText();
-        line.onClick(ClickAction.runCommand("/dserver module " + e.id()));
+        line.onClick(ClickAction.runCommand("/" + SeleneInformation.PROJECT_ID + " module " + e.id()));
         line.onHover(HoverAction.showText(DefaultServerResources.MODULE_ROW_HOVER
                 .format(e.name())
                 .translate(source)
@@ -160,7 +161,7 @@ public class DefaultServer implements Server {
 
         String mcVersion = Selene.getServer().getMinecraftVersion().getReadableVersionString();
 
-        String[] system = SeleneUtils.getAll(System::getProperty,
+        Object[] system = SeleneUtils.getAll(System::getProperty,
                 "java.version", "java.vendor", "java.vm.version", "java.vm.name", "java.vm.vendor", "java.runtime.version", "java.class.version");
 
         src.send(DefaultServerResources.PLATFORM_INFORMATION.format(
