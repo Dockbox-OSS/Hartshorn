@@ -61,8 +61,8 @@ public final class Keys {
     /**
      * Looks up a {@link InjectorProperty} based on a given {@code key}. If a property with that key
      * is present, and matches the expected type it is returned wrapped in a {@link Exceptional}. If
-     * no property is present, or the type of the object does not match the expected type, a none
-     * {@link Exceptional} is returned.
+     * no property is present, or the type of the object does not match the expected type,
+     * {@link Exceptional#none()} is returned.
      *
      * @param <T>
      *         The expected type of the property

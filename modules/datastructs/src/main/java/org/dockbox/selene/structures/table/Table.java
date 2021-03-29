@@ -115,7 +115,7 @@ public class Table {
             if (populateEmptyEntries) joinedRow.addValue(identifier, null);
             else
                 throw new EmptyEntryException(
-                        "Could not populate none entry for column " + identifier.getColumnName());
+                        "Could not populate empty entry for column " + identifier.getColumnName());
         }
     }
 
@@ -272,7 +272,7 @@ public class Table {
      *
      * @return A new table with the joined rows
      * @throws EmptyEntryException
-     *         Thrown if a entry is none and cannot be populated
+     *         Thrown if a entry is empty and cannot be populated
      * @throws IdentifierMismatchException
      *         When a identifier does not exist across both tables
      */
@@ -325,11 +325,11 @@ public class Table {
      * @param merge
      *         The merge behavior
      * @param populateEmptyEntries
-     *         Whether or not none entries should be populated (with null)
+     *         Whether or not empty entries should be populated (with null)
      *
      * @return A new table with the joined rows
      * @throws EmptyEntryException
-     *         Thrown if a entry is none and cannot be populated
+     *         Thrown if a entry is empty and cannot be populated
      * @throws IdentifierMismatchException
      *         When a identifier does not exist across both tables
      */

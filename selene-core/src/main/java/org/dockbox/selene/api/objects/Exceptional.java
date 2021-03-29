@@ -141,7 +141,7 @@ public final class Exceptional<T> {
      * non-null. If the throwable is null, a {@link NullPointerException} is thrown.
      *
      * @param <T>
-     *         The type parameter of the none value
+     *         The type parameter of the empty value
      * @param throwable
      *         The throwable to wrap
      *
@@ -272,10 +272,10 @@ public final class Exceptional<T> {
     }
 
     /**
-     * If a value is none, invoke the specified runnable, otherwise do nothing.
+     * If a value is empty, invoke the specified runnable, otherwise do nothing.
      *
      * @param runnable
-     *         Block to be executed if a value is none
+     *         Block to be executed if a value is empty
      *
      * @return The {@code Exceptional}, for chaining
      * @throws NullPointerException
@@ -404,7 +404,7 @@ public final class Exceptional<T> {
      *         A predicate to apply to the value, if present
      *
      * @return an {@code Exceptional} describing the value of this {@code Exceptional} if a value is
-     *         present and the value matches the given predicate, otherwise an none {@code Exceptional}
+     *         present and the value matches the given predicate, otherwise {@link Exceptional#none()}
      * @throws NullPointerException
      *         If the predicate is null
      */
@@ -433,8 +433,7 @@ public final class Exceptional<T> {
      *         A mapping function to apply to the value, if present
      *
      * @return an {@code Exceptional} describing the result of applying a mapping function to the
-     *         value of this {@code Exceptional}, if a value is present, otherwise an none {@code
-     *         Optional}
+     *         value of this {@code Exceptional}, if a value is present, otherwise {@link Exceptional#none()}
      * @throws NullPointerException
      *         If the mapping function is null
      */

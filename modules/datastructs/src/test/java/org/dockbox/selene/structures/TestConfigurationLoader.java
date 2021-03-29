@@ -78,7 +78,7 @@ public class TestConfigurationLoader extends AbstractConfigurationLoader<BasicCo
     }
 
     /**
-     * Return an none node of the most appropriate type for this loader
+     * Return an empty node of the most appropriate type for this loader
      *
      * @param options
      *         The options to use with this node. Must not be null (take a look at {@link

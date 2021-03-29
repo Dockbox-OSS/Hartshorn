@@ -99,7 +99,7 @@ public final class SeleneUtils {
     private static final int secondsInDay = 24 * SeleneUtils.secondsInHour;
     private static final int secondsInWeek = 7 * SeleneUtils.secondsInDay;
     /**
-     * The globally 'none' unique ID which can be used for none implementations of {@link
+     * The globally 'empty' unique ID which can be used for empty implementations of {@link
      * AbstractIdentifiable}.
      */
     public static UUID EMPTY_UUID = UUID.fromString("00000000-1111-2222-3333-000000000000");
@@ -139,7 +139,7 @@ public final class SeleneUtils {
     }
 
     /**
-     * Returns a new none map. This should be used globally instead of instantiating maps manually.
+     * Returns a new empty map. This should be used globally instead of instantiating maps manually.
      * The returned map is not concurrent.
      *
      * @param <K>
@@ -528,7 +528,7 @@ public final class SeleneUtils {
         int[] v1 = new int[target.length() + 1];
 
         // initialize v0 (the previous row of distances)
-        // this row is A[0][i]: edit distance for an none s
+        // this row is A[0][i]: edit distance for an empty s
         // the distance is just the number of characters to delete from t
         for (int i = 0; i < v0.length; i++) {
             v0[i] = i;
@@ -540,7 +540,7 @@ public final class SeleneUtils {
             // calculate v1 (current row distances) from the previous row v0
 
             // first element of v1 is A[i+1][0]
-            //   edit distance is delete (i+1) chars from s to match none t
+            //   edit distance is delete (i+1) chars from s to match empty t
             v1[0] = i + 1;
 
             // use formula to fill in the rest of the row

@@ -371,7 +371,7 @@ public final class VerbalExpression {
         }
 
         /**
-         * Add expression that matches anything (includes none string)
+         * Add expression that matches anything (includes empty string)
          *
          * @return this builder
          */

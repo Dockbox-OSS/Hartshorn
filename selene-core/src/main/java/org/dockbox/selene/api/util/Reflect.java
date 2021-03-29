@@ -341,7 +341,7 @@ public final class Reflect {
 
     /**
      * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist
-     * for the given type, and none list is returned.
+     * for the given type, and empty list is returned.
      *
      * @param prefix
      *         The package prefix
@@ -350,7 +350,7 @@ public final class Reflect {
      * @param <T>
      *         The type of the parent
      *
-     * @return The list of sub-types, or an none list
+     * @return The list of sub-types, or a empty list
      */
     public static <T> Collection<Class<? extends T>> getSubTypes(String prefix, Class<T> parent) {
         Reflections reflections = getReflectedPrefix(prefix);

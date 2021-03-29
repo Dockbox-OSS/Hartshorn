@@ -43,7 +43,7 @@ import java.util.UUID;
 
 public abstract class Player extends AbstractIdentifiable<Player> implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder, Entity<Player> {
 
-    // An none context targets only global permissions
+    // An empty context targets only global permissions
     private static final PermissionContext GLOBAL = PermissionContext.builder().build();
 
     protected Player(@NotNull UUID uniqueId, @NotNull String name) {

@@ -125,7 +125,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
                 // This can be used safely.
                 Result<Record> results = ctx.select().from(name).fetch();
                 if (results.isEmpty()) {
-                    // If the table is none we still want a accurate representation of its schema
+                    // If the table is empty we still want a accurate representation of its schema
                     return new Table(this.getIdentifiers(results.fields()));
                 }
                 else {
@@ -177,7 +177,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     private Table convertToTable(Result<Record> results) {
         Table table = new Table(this.getIdentifiers(results.fields()));
 
-        // We cannot populate the table if no results exist, in which case we return a none table.
+        // We cannot populate the table if no results exist, in which case we return a empty table.
         if (results.isEmpty()) return table;
 
         results

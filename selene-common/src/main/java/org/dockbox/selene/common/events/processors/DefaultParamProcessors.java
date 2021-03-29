@@ -95,7 +95,7 @@ public enum DefaultParamProcessors {
      *
      * <ul>
      *   <li>Performs a {@code null} check.
-     *   <li>Checks if the object is none (applies to {@link java.util.Collection}s, {@link String}s,
+     *   <li>Checks if the object is empty (applies to {@link java.util.Collection}s, {@link String}s,
      *       and any type with a method {@code isEmpty} which returns a {@link Boolean}.
      *   <li>Checks if the object is a instance of {@link Number} and is equal to {@code 0}.
      * </ul>

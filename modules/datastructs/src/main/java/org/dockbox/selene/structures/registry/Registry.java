@@ -158,7 +158,7 @@ public class Registry<V> {
      *         contained.
      *
      * @return All the matching columns data combined into a single {@link RegistryColumn}. If no
-     *         matches are found, an none {@link RegistryColumn} will be returned.
+     *         matches are found, an empty {@link RegistryColumn} will be returned.
      */
     public RegistryColumn<V> getMatchingColumns(RegistryIdentifier... columnIDs) {
         RegistryColumn<V> result = new RegistryColumn<>();
