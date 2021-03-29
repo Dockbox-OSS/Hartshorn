@@ -22,7 +22,13 @@ import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.events.player.PlayerMoveEvent;
 import org.dockbox.selene.api.events.player.PlayerTeleportEvent;
+import org.dockbox.selene.api.objects.Exceptional;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Gamemode;
+import org.dockbox.selene.api.objects.player.Player;
+import org.dockbox.selene.plots.Plot;
+import org.dockbox.selene.plots.PlotKeys;
+import org.dockbox.selene.plots.PlotMembership;
 
 import javax.inject.Inject;
 
@@ -44,13 +50,28 @@ public class PlayerActions {
      */
 
     @Listener
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if (event.getTarget().getGamemode() != Gamemode.SPECTATOR) return;
-        if (event.getTarget().hasPermission(PlayerActionPermissions.SPECTATOR_BYPASS)) return;
-        if (configuration.getTeleportWhitelist().contains(event.getOldLocation().getWorld().getName())) return;
+    public void onSpectatorTeleport(PlayerTeleportEvent event) {
+        if (event.getTarget().getGamemode() == Gamemode.SPECTATOR) {
+            if (event.getTarget().hasPermission(PlayerActionPermissions.SPECTATOR_BYPASS)) return;
+            if (this.configuration.getTeleportWhitelist().contains(event.getOldLocation().getWorld().getName())) return;
 
-        event.setCancelled(true);
-        event.getTarget().sendWithPrefix(PlayerActionResources.SPECTATOR_TELEPORT_NOT_ALLOWED);
+            event.setCancelled(true);
+            event.getTarget().sendWithPrefix(PlayerActionResources.SPECTATOR_TELEPORT_NOT_ALLOWED);
+        }
+    }
+
+    @Listener
+    public void onTeleportToPlot(PlayerTeleportEvent event) {
+        Player player = event.getTarget();
+        Location target = event.getNewLocation();
+        Exceptional<Plot> plotTarget = target.get(PlotKeys.PLOT);
+
+        if (plotTarget.absent()) return;
+        Plot plot = plotTarget.get();
+        if (plot.hasMembership(player, PlotMembership.DENIED)) {
+            event.setCancelled(true);
+            player.sendWithPrefix(PlayerActionResources.DENIED_FROM_TARGET_PLOT);
+        }
     }
 
     @Listener
@@ -58,7 +79,7 @@ public class PlayerActions {
         if (event instanceof PlayerTeleportEvent) return; // Allow players to teleport out of the world
         if (event.getTarget().hasPermission(PlayerActionPermissions.NAVIGATE_DEFAULT_WORLD)) return;
 
-        if (event.getTarget().getWorld().getWorldUniqueId().equals(worlds.getRootWorldId())) {
+        if (event.getTarget().getWorld().getWorldUniqueId().equals(this.worlds.getRootWorldId())) {
             event.setCancelled(true);
         }
     }

@@ -26,4 +26,5 @@ public class PlayerActionResources {
 
     public static final ResourceEntry SPECTATOR_TELEPORT_NOT_ALLOWED = new Resource("$4You are not allowed to teleport while in spectator mode", "playeractions.spectator.notallowed");
 
+    public static final ResourceEntry DENIED_FROM_TARGET_PLOT = new Resource("$4You are denied from the plot you are teleporting to", "playeractions.plot.denied");
 }
