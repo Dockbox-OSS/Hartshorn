@@ -51,7 +51,7 @@ public final class DaveUtils {
     private DaveUtils() {}
 
     public static void toggleMute(Player player) {
-        player.get(mutedKey).ifPresent(state -> {
+        player.get(mutedKey).present(state -> {
             if (1 == state) {
                 player.remove(mutedKey);
                 player.sendWithPrefix(DaveResources.DAVE_UNMUTED);
@@ -61,7 +61,7 @@ public final class DaveUtils {
                 throw new IllegalStateException(
                         "Unexpected muted state value '" + state + "', was I modified externally?");
             }
-        }).ifAbsent(() -> {
+        }).absent(() -> {
             player.set(mutedKey, 1);
             player.sendWithPrefix(DaveResources.DAVE_MUTED);
         });
@@ -81,7 +81,7 @@ public final class DaveUtils {
                 if (containsAll) return Exceptional.of(trigger);
             }
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     public static void performTrigger(
@@ -203,14 +203,14 @@ public final class DaveUtils {
     }
 
     public static boolean isMuted(Player player) {
-        return player.get(mutedKey).map(state -> 1 == state).orElse(false);
+        return player.get(mutedKey).map(state -> 1 == state).or(false);
     }
 
     private static String parseMention(String partial, String fullResponse, DiscordUtils du) {
         if (partial.startsWith("<@") && 2 < partial.length()) {
             String mention = du.getJDA().map(jda ->
                     jda.getUserById(partial.replaceFirst("<@", "").replaceFirst(">", "")).getName()
-            ).orElse("player");
+            ).or("player");
 
             if (null != mention) {
                 fullResponse = fullResponse.replaceAll("<mention>", partial.replaceFirst("<@", "").replaceFirst(">", ""));

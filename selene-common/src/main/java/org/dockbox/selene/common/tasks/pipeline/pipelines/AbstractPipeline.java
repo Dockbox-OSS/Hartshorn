@@ -129,7 +129,7 @@ public abstract class AbstractPipeline<P, I> {
     /**
      * A default method for processing a pipe, which handles converting the pipe, checking that
      * they're not illegal {@link CancellablePipe}s and passing forward the previous input if the pipe
-     * throws an error.
+     * throws an caught.
      *
      * @param pipe
      *         The {@link IPipe} to be processed
@@ -155,7 +155,7 @@ public abstract class AbstractPipeline<P, I> {
             if (Reflect.isAssignableFrom(ComplexPipe.class, pipe.getType())) {
                 ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
                 return complexPipe.apply(
-                        this, finalInput.orElse(null), finalInput.orElseExcept(null));
+                        this, finalInput.orNull(), finalInput.error());
             }
             else if (Reflect.isAssignableFrom(StandardPipe.class, pipe.getType())) {
                 StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;
@@ -166,10 +166,10 @@ public abstract class AbstractPipeline<P, I> {
             }
         });
 
-        // If there was an error, the supplier won't have captured any input, so we'll try and
+        // If there was an caught, the supplier won't have captured any input, so we'll try and
         // pass the previous input forwards.
-        if (exceptionalInput.errorPresent()) {
-            exceptionalInput = Exceptional.ofNullable(finalInput.orElse(null), exceptionalInput.getError());
+        if (exceptionalInput.caught()) {
+            exceptionalInput = Exceptional.of(finalInput.orNull(), exceptionalInput.error());
         }
         return exceptionalInput;
     }
@@ -269,7 +269,7 @@ public abstract class AbstractPipeline<P, I> {
     public List<I> processAllSafe(@NotNull Collection<P> inputs) {
         return inputs.stream()
                 .map(this::process)
-                .filter(Exceptional::isPresent)
+                .filter(Exceptional::present)
                 .map(Exceptional::get)
                 .collect(Collectors.toList());
     }

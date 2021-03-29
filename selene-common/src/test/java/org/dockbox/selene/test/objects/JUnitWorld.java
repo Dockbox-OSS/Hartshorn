@@ -71,7 +71,7 @@ public class JUnitWorld extends World {
 
     @Override
     public Exceptional<Item> getBlock(Vector3N position) {
-        return Exceptional.ofNullable(this.blocks.getOrDefault(position, null));
+        return Exceptional.of(this.blocks.getOrDefault(position, null));
     }
 
     @Override
@@ -82,12 +82,12 @@ public class JUnitWorld extends World {
 
     @Override
     public Exceptional<Chunk> getChunk(Location location) {
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @Override
     public Exceptional<Chunk> getChunk(int x, int y) {
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @Override

@@ -91,12 +91,12 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
         // loading a world.
         if (null == this.reference.get())
             this.setReference(Exceptional.of(Sponge.getServer().getWorld(this.getWorldUniqueId())));
-        return Exceptional.ofNullable(this.reference.get());
+        return Exceptional.of(this.reference.get());
     }
 
     @Override
     public void setReference(@NotNull Exceptional<org.spongepowered.api.world.World> reference) {
-        reference.ifPresent(world -> this.reference = new WeakReference<>(world));
+        reference.present(world -> this.reference = new WeakReference<>(world));
     }
 
     @Override
@@ -201,7 +201,7 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
             Exceptional<org.spongepowered.api.world.Chunk> chunkAtBlock = Exceptional.of(this.getReferenceWorld().getChunkAtBlock(position));
             return chunkAtBlock.map(SpongeConversionUtil::fromSponge);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @Override
@@ -210,7 +210,7 @@ public class SpongeWorld extends World implements Wrapper<org.spongepowered.api.
             Exceptional<org.spongepowered.api.world.Chunk> exceptional = Exceptional.of(this.getReferenceWorld().getChunk(x, 0, y));
             return exceptional.map(SpongeConversionUtil::fromSponge);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @Override

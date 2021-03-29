@@ -34,7 +34,7 @@ public interface JUnitPersistentDataHolder extends PersistentDataHolder, Identif
 
     @Override
     default <T> Exceptional<T> get(PersistentDataKey<T> dataKey) {
-        return Exceptional.ofNullable((T) this.getPersistentData().getOrDefault(dataKey, null));
+        return Exceptional.of((T) this.getPersistentData().getOrDefault(dataKey, null));
     }
 
     @Override

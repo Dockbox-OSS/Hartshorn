@@ -54,7 +54,7 @@ public class SimpleModuleManager implements ModuleManager {
             Class<?> componentClassType = container.type();
             if (componentClassType.equals(type)) return Exceptional.of(container);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @NotNull
@@ -63,7 +63,7 @@ public class SimpleModuleManager implements ModuleManager {
         for (ModuleContainer container : moduleContainers) {
             if (container.id().equals(id)) return Exceptional.of(container);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @NotNull
@@ -72,7 +72,7 @@ public class SimpleModuleManager implements ModuleManager {
         for (ModuleContainer moduleContainer : moduleContainers) {
             if (moduleContainer.type().equals(type)) return Exceptional.of(moduleContainer);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @NotNull
@@ -81,7 +81,7 @@ public class SimpleModuleManager implements ModuleManager {
         for (ModuleContainer moduleContainer : moduleContainers) {
             if (moduleContainer.id().equals(id)) return Exceptional.of(moduleContainer);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @NotNull
@@ -94,14 +94,14 @@ public class SimpleModuleManager implements ModuleManager {
                 //noinspection unchecked
                 return Exceptional.of((T) o);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @SuppressWarnings("unchecked")
     @NotNull
     @Override
     public Exceptional<?> getInstance(@NotNull String id) {
-        return Exceptional.ofNullable(instanceMappings.get(id));
+        return Exceptional.of(instanceMappings.get(id));
     }
 
     @NotNull

@@ -120,7 +120,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
         if (targetFile.toFile().exists() && !SeleneUtils.isFileEmpty(targetFile)) return false;
         return Selene.getResourceFile(defaultFileName)
                 .map(resource -> this.copy(resource, targetFile))
-                .orElse(false);
+                .or(false);
     }
 
     @SuppressWarnings("unchecked")
@@ -132,6 +132,6 @@ public abstract class DefaultAbstractFileManager implements FileManager {
             @NotNull Exceptional<? extends PersistentModel<?>> model = read(file, modelType);
             return model.map(PersistentModel::toPersistentCapable).map(content -> (T) content);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 }

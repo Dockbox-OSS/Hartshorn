@@ -69,7 +69,7 @@ public class SpongeCommandBus extends DefaultCommandBus<CommandSpec.Builder> {
             Only the console, players, and Discord command sources can be converted natively.
             */
             CommandSource sender = SpongeConversionUtil.fromSponge(src)
-                    .orElseThrow(() -> new IllegalArgumentException("Command sender is not a convertable source type, did a plugin call me?"));
+                    .cause(() -> new IllegalArgumentException("Command sender is not a convertable source type, did a plugin call me?"));
             SimpleCommandContext ctx = this.createCommandContext(args, sender, command);
             callCommandContext(registrationContext, command, sender, ctx);
             return CommandResult.success();
@@ -104,7 +104,7 @@ public class SpongeCommandBus extends DefaultCommandBus<CommandSpec.Builder> {
         and/or modify these objects.
         */
         Exceptional<?> oo = SpongeConversionUtil.autoDetectFromSponge(obj);
-        return oo.isPresent() ? oo.get() : obj; // oo.orElse() cannot be cast due to generic ? type
+        return oo.present() ? oo.get() : obj; // oo.or() cannot be cast due to generic ? type
     }
 
     @Override

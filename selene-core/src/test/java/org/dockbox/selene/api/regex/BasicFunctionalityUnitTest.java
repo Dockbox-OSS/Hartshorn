@@ -35,7 +35,7 @@ public class BasicFunctionalityUnitTest {
         VerbalExpression testRegex = VerbalExpression.regex().something().build();
 
         MatcherAssert.assertThat("Null object doesn't have something", testRegex, CoreMatchers.not(TestMatchMatcher.matchesTo(null)));
-        MatcherAssert.assertThat("empty string doesn't have something", testRegex, CoreMatchers.not(TestMatchMatcher.matchesTo("")));
+        MatcherAssert.assertThat("none string doesn't have something", testRegex, CoreMatchers.not(TestMatchMatcher.matchesTo("")));
         MatcherAssert.assertThat("a", testRegex, TestMatchMatcher.matchesTo("a"));
     }
 
@@ -63,7 +63,7 @@ public class BasicFunctionalityUnitTest {
         VerbalExpression testRegex = VerbalExpression.regex().somethingButNot("a").build();
 
         Assertions.assertFalse(testRegex.testExact(null), "Null string");
-        Assertions.assertFalse(testRegex.testExact(""), "empty string doesn't have something");
+        Assertions.assertFalse(testRegex.testExact(""), "none string doesn't have something");
         Assertions.assertTrue(testRegex.testExact("b"), "doesn't contain a");
         Assertions.assertFalse(testRegex.testExact("a"), "Contain a");
     }
@@ -73,7 +73,7 @@ public class BasicFunctionalityUnitTest {
         VerbalExpression testRegex = VerbalExpression.regex().startOfLine().then("a").build();
 
         Assertions.assertFalse(testRegex.testExact(null), "Null string");
-        Assertions.assertFalse(testRegex.testExact(""), "empty string doesn't have something");
+        Assertions.assertFalse(testRegex.testExact(""), "none string doesn't have something");
         MatcherAssert.assertThat("Starts with a", testRegex, TestMatchMatcher.matchesTo("a"));
         MatcherAssert.assertThat("Starts with a", testRegex, TestMatchMatcher.matchesTo("ab"));
         MatcherAssert.assertThat("Doesn't start with a", testRegex, CoreMatchers.not(TestMatchMatcher.matchesTo("ba")));
@@ -326,8 +326,8 @@ public class BasicFunctionalityUnitTest {
         VerbalExpression regex = VerbalExpression.regex().find("d").capture().find("e").build();
 
         MatcherAssert.assertThat("regex don't match string", regex.getText(text), CoreMatchers.equalTo(""));
-        MatcherAssert.assertThat("first captured group not empty string", regex.getText(text, 1), CoreMatchers.equalTo(""));
-        MatcherAssert.assertThat("second captured group not empty string", regex.getText(text, 2), CoreMatchers.equalTo(""));
+        MatcherAssert.assertThat("first captured group not none string", regex.getText(text, 1), CoreMatchers.equalTo(""));
+        MatcherAssert.assertThat("second captured group not none string", regex.getText(text, 2), CoreMatchers.equalTo(""));
     }
 
     @Test

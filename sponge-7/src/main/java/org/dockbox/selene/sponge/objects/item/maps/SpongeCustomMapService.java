@@ -77,7 +77,7 @@ public class SpongeCustomMapService extends DefaultCustomMapService {
         return getHistoryTable().where(MapIdentifiers.SOURCE, source.getUniqueId().toString()).getRows()
                 .stream()
                 .map(row -> row.getValue(MapIdentifiers.MAP))
-                .filter(Exceptional::isPresent)
+                .filter(Exceptional::present)
                 .map(Exceptional::get)
                 .map(mapId -> createCombinedMap(mapId, source))
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -91,20 +91,20 @@ public class SpongeCustomMapService extends DefaultCustomMapService {
         else if (item.getId().equals(Selene.getItems().getFilledMap().getId())) {
             return Exceptional.of(this.getById(item.getMeta()));
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     private static Identifiable lookupSource(int mapId) {
         return getHistoryTable()
                 .where(MapIdentifiers.MAP, mapId)
                 .first()
-                .map(row -> row.getValue(MapIdentifiers.SOURCE).orElse(Console.UNIQUE_ID.toString()))
+                .map(row -> row.getValue(MapIdentifiers.SOURCE).or(Console.UNIQUE_ID.toString()))
                 .map(uniqueId ->
                         Selene.provide(Players.class)
                                 .getPlayer(UUID.fromString(uniqueId))
                                 .orNull())
                 .map(Identifiable.class::cast)
-                .orElse(Console.getInstance());
+                .or(Console.getInstance());
     }
 
     private static void registerOwner(int mapId, UUID owner) {

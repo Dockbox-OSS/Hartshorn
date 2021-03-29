@@ -32,7 +32,7 @@ public enum DefaultResource implements ResourceEntry {
     COLOR_PRIMARY("b", "color.primary"),
     COLOR_SECONDARY("3", "color.secondary"),
     COLOR_MINOR("7", "color.minor"),
-    COLOR_ERROR("c", "color.error"),
+    COLOR_ERROR("c", "color.caught"),
 
     // Message formats
     PREFIX("$3[] $1", "prefix"),
@@ -45,21 +45,21 @@ public enum DefaultResource implements ResourceEntry {
     CONFIRM_EXPIRED("$4You have no commands waiting for confirmation", "confirm.expired"),
     CONFIRM_WRONG_SOURCE("$4This command can only be used by players", "confirm.invalid.source"),
 
-    // - Generic common error message
-    UNKNOWN_ERROR("$4An error occurred. $3{0}", "error"),
-    KEY_BINDING_FAILED("$4Key cannot be applied to this type", "error.keys.failedbinding"),
-    LOST_REFERENCE("$4Reference to object lost", "error.reference.lost"),
+    // - Generic common caught message
+    UNKNOWN_ERROR("$4An caught occurred. $3{0}", "caught"),
+    KEY_BINDING_FAILED("$4Key cannot be applied to this type", "caught.keys.failedbinding"),
+    LOST_REFERENCE("$4Reference to object lost", "caught.reference.lost"),
 
     // Discord
     DISCORD_COMMAND_UNKNOWN("Sorry, I don't know what to do with that command!", "discord.command.unknown"),
     DISCORD_COMMAND_NOT_PERMITTED("You are not permitted to use that command!", "discord.command.notpermitted"),
     DISCORD_COMMAND_ERRORED("Sorry, I could not start that command. Please report this in our support channel.",
-            "discord.command.error"),
+            "discord.command.caught"),
 
     // CommandBus
     CONFIRM_COMMAND_MESSAGE("$1This command requires confirmation, click $2[here] $1to confirm", "confirm.message"),
     CONFIRM_COMMAND_MESSAGE_HOVER("$1Confirm running command", "confirm.message.hover"),
-    MISSING_ARGUMENTS("$4The command requires arguments", "error.command.missingargs"),
+    MISSING_ARGUMENTS("$4The command requires arguments", "caught.command.missingargs"),
 
     // Default characters
     DEFAULT_SEPARATOR(" - ", "separator"),

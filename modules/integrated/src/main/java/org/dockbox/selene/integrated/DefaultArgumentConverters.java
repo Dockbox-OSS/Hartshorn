@@ -52,11 +52,11 @@ import java.util.stream.Collectors;
 @ArgumentProvider(module = DefaultServer.class)
 public final class DefaultArgumentConverters implements InjectableType {
 
-    public static final ArgumentConverter<String> STRING = new CommandValueConverter<>(String.class, (Function<String, Exceptional<String>>) Exceptional::ofNullable, "string");
+    public static final ArgumentConverter<String> STRING = new CommandValueConverter<>(String.class, (Function<String, Exceptional<String>>) Exceptional::of, "string");
 
     public static final ArgumentConverter<Character> CHARACTER = new CommandValueConverter<>(Character.class, in -> {
         int length = in.length();
-        return 1 == length ? Exceptional.of(in.charAt(0)) : Exceptional.empty();
+        return 1 == length ? Exceptional.of(in.charAt(0)) : Exceptional.none();
     },
             "char", "character"
     );
@@ -132,7 +132,7 @@ public final class DefaultArgumentConverters implements InjectableType {
     public static final ArgumentConverter<World> WORLD = new CommandValueConverter<>(World.class, in -> {
         Worlds wss = Selene.provide(Worlds.class);
         Exceptional<World> world = wss.getWorld(in);
-        return world.orElseSupply(
+        return world.then(
                 () -> {
                     UUID uuid = UUID.fromString(in);
                     return wss.getWorld(uuid).orNull();
@@ -142,8 +142,8 @@ public final class DefaultArgumentConverters implements InjectableType {
     public static final ArgumentConverter<Location> LOCATION = new CommandValueConverter<>(Location.class, (cs, in) -> {
         String[] xyzw = in.split(",");
         String xyz = String.join(",", xyzw[0], xyzw[1], xyzw[2]);
-        Vector3N vec = VECTOR.convert(cs, xyz).orElse(Vector3N.of(0, 0, 0));
-        World world = WORLD.convert(cs, xyzw[3]).orElse(World.empty());
+        Vector3N vec = VECTOR.convert(cs, xyz).or(Vector3N.of(0, 0, 0));
+        World world = WORLD.convert(cs, xyzw[3]).or(World.empty());
 
         return Exceptional.of(new Location(vec, world));
     }, "location", "position", "pos");
@@ -153,7 +153,7 @@ public final class DefaultArgumentConverters implements InjectableType {
         in = rs.createValidKey(in);
 
         Exceptional<? extends ResourceEntry> or = rs.getExternalResource(in);
-        if (or.isPresent()) return or.map(ResourceEntry.class::cast);
+        if (or.present()) return or.map(ResourceEntry.class::cast);
 
         String finalValue = in;
         return Exceptional.of(() -> DefaultResource.valueOf(finalValue));
@@ -162,7 +162,7 @@ public final class DefaultArgumentConverters implements InjectableType {
     public static final ArgumentConverter<Player> PLAYER = new CommandValueConverter<>(Player.class, in -> {
         Players pss = Selene.provide(Players.class);
         Exceptional<Player> player = pss.getPlayer(in);
-        return player.orElseSupply(() -> {
+        return player.then(() -> {
             try {
                 UUID uuid = UUID.fromString(in);
                 return pss.getPlayer(uuid).orNull();

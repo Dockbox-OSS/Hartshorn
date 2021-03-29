@@ -48,9 +48,9 @@ public class ToolBinding {
     // TODO: Continue
 
     private static final PersistentDataKey<String> PERSISTENT_TOOL = StringPersistentDataKey.of("Tool Binding", ToolBinding.class);
-    private static final ResourceEntry TOOL_ERROR_BLOCK = new Resource("Tool cannot be bound to blocks", "toolbinding.error.block");
-    private static final ResourceEntry TOOL_ERROR_HAND = new Resource("Tool cannot be bound to hand", "toolbinding.error.hand");
-    private static final ResourceEntry TOOL_ERROR_DUPLICATE = new Resource("There is already a tool bound to this item", "toolbinding.error.duplicate");
+    private static final ResourceEntry TOOL_ERROR_BLOCK = new Resource("Tool cannot be bound to blocks", "toolbinding.caught.block");
+    private static final ResourceEntry TOOL_ERROR_HAND = new Resource("Tool cannot be bound to hand", "toolbinding.caught.hand");
+    private static final ResourceEntry TOOL_ERROR_DUPLICATE = new Resource("There is already a tool bound to this item", "toolbinding.caught.duplicate");
 
     private static ToolBinding instance;
 
@@ -68,7 +68,7 @@ public class ToolBinding {
     private TransactionResult setTool(Item item, ItemTool tool) {
         if (item.isBlock()) return TransactionResult.fail(TOOL_ERROR_BLOCK);
         if (item == Selene.getItems().getAir()) return TransactionResult.fail(TOOL_ERROR_HAND);
-        if (item.get(PERSISTENT_TOOL).isPresent()) return TransactionResult.fail(TOOL_ERROR_DUPLICATE);
+        if (item.get(PERSISTENT_TOOL).present()) return TransactionResult.fail(TOOL_ERROR_DUPLICATE);
 
         String bindingId = UUID.randomUUID().toString();
 
@@ -83,10 +83,10 @@ public class ToolBinding {
 
     private void removeTool(Item item) {
         Exceptional<String> identifier = item.get(PERSISTENT_TOOL);
-        if (identifier.isAbsent()) return;
+        if (identifier.absent()) return;
 
         Exceptional<ItemTool> tool = this.getTool(item);
-        if (tool.isAbsent()) return;
+        if (tool.absent()) return;
 
         item.remove(PERSISTENT_TOOL);
         this.registry.remove(identifier.get());
@@ -95,13 +95,13 @@ public class ToolBinding {
 
     private Exceptional<ItemTool> getTool(Item item) {
         Exceptional<String> identifier = item.get(PERSISTENT_TOOL);
-        if (identifier.isAbsent()) return Exceptional.empty();
+        if (identifier.absent()) return Exceptional.none();
 
         String registryIdentifier = identifier.get();
-        if (!this.registry.containsKey(registryIdentifier)) return Exceptional.empty();
+        if (!this.registry.containsKey(registryIdentifier)) return Exceptional.none();
         ItemTool itemTool = this.registry.get(registryIdentifier);
 
-        return Exceptional.ofNullable(itemTool);
+        return Exceptional.of(itemTool);
     }
 
     @Listener
@@ -110,7 +110,7 @@ public class ToolBinding {
         if (itemInHand.equals(Selene.getItems().getAir()) || itemInHand.isBlock()) return;
 
         Exceptional<String> identifier = itemInHand.get(PERSISTENT_TOOL);
-        if (identifier.isAbsent()) return;
+        if (identifier.absent()) return;
         if (!this.registry.containsKey(identifier.get())) return;
         ItemTool tool = this.registry.get(identifier.get());
 

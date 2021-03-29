@@ -45,7 +45,7 @@ public class ConvertiblePipelineSource<I> extends ConvertiblePipeline<I, I> {
      */
     @Override
     public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable) {
-        Exceptional<I> exceptionalInput = Exceptional.ofNullable(input, throwable);
+        Exceptional<I> exceptionalInput = Exceptional.of(input, throwable);
         return super.process(exceptionalInput);
     }
 }

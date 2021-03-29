@@ -63,7 +63,7 @@ public final class BlockRegistryUtil {
     }
 
     public static String getItemVariant(Item item) {
-        return VariantIdentifier.ofRawItem(item).orElse(VariantIdentifier.FULL)
+        return VariantIdentifier.ofRawItem(item).or(VariantIdentifier.FULL)
                 .toString()
                 .toLowerCase()
                 .replace("_", "");

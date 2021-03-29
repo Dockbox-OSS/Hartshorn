@@ -36,7 +36,7 @@ public final class ArgumentConverterRegistry {
     private ArgumentConverterRegistry() {}
 
     public static boolean hasConverter(String key) {
-        return getOptionalConverter(key).isPresent();
+        return getOptionalConverter(key).present();
     }
 
     public static Exceptional<ArgumentConverter<?>> getOptionalConverter(String key) {
@@ -52,7 +52,7 @@ public final class ArgumentConverterRegistry {
     }
 
     public static boolean hasConverter(Class<?> type) {
-        return getOptionalConverter(type).isPresent();
+        return getOptionalConverter(type).present();
     }
 
     private static <T> Exceptional<ArgumentConverter<T>> getOptionalConverter(Class<T> type) {
@@ -64,7 +64,7 @@ public final class ArgumentConverterRegistry {
     }
 
     public static ArgumentConverter<?> getConverter(String key) {
-        return getOptionalConverter(key).rethrowUnchecked().orNull();
+        return getOptionalConverter(key).rethrow().orNull();
     }
 
     public static <T> ArgumentConverter<T> getConverter(Class<T> type) {

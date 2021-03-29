@@ -102,8 +102,8 @@ public class ConvertiblePipelineTests {
 
         // Does cancel - Will return a Float as its not converted.
         Exceptional<Integer> safeOutput = pipeline.process(0F);
-        Assertions.assertTrue(safeOutput.isPresent());
-        Assertions.assertEquals(Float.class, safeOutput.getType());
+        Assertions.assertTrue(safeOutput.present());
+        Assertions.assertEquals(Float.class, safeOutput.type());
     }
 
     @Test
@@ -125,9 +125,9 @@ public class ConvertiblePipelineTests {
         int output = pipeline.processUnsafe(2F);
         Assertions.assertEquals(5, output);
 
-        // Does cancel - Will return an empty exceptional as output is discarded.
+        // Does cancel - Will return an none exceptional as output is discarded.
         Exceptional<Integer> safeOutput = pipeline.process(0F);
-        Assertions.assertFalse(safeOutput.isPresent());
+        Assertions.assertFalse(safeOutput.present());
     }
 
     @Test

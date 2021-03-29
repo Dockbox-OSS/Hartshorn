@@ -51,12 +51,12 @@ public class SpongeArmorStandInventory extends ArmorStandInventory implements Sp
     @Override
     public Item getSlot(Slot slot) {
         Exceptional<org.spongepowered.api.item.inventory.Slot> inventorySlot = this.internalGetSlot(slot);
-        return inventorySlot.map(SLOT_LOOKUP).orElseGet(AbstractInventoryRow.AIR);
+        return inventorySlot.map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
     }
 
     @Override
     public void setSlot(Item item, Slot slot) {
-        this.internalGetSlot(slot).ifPresent(inventorySlot -> inventorySlot.set(SpongeConversionUtil.toSponge(item)));
+        this.internalGetSlot(slot).present(inventorySlot -> inventorySlot.set(SpongeConversionUtil.toSponge(item)));
     }
 
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(Slot slot) {

@@ -49,12 +49,12 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
 
     @Override
     public Item getSlot(int row, int column) {
-        return this.internalGetSlot(row, column).map(SLOT_LOOKUP).orElseGet(AbstractInventoryRow.AIR);
+        return this.internalGetSlot(row, column).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
     }
 
     @Override
     public void setSlot(Item item, int row, int column) {
-        this.internalGetSlot(row, column).ifPresent(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
+        this.internalGetSlot(row, column).present(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
     }
 
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(
@@ -78,12 +78,12 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
 
     @Override
     public Item getSlot(Slot slot) {
-        return this.internalGetSlot(slot).map(SLOT_LOOKUP).orElseGet(AbstractInventoryRow.AIR);
+        return this.internalGetSlot(slot).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
     }
 
     @Override
     public void setSlot(Item item, Slot slotType) {
-        this.internalGetSlot(slotType).ifPresent(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
+        this.internalGetSlot(slotType).present(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
     }
 
     @Override
@@ -101,12 +101,12 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
 
     @Override
     public void setSlot(Item item, int index) {
-        this.internalGetSlot(index).ifPresent(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
+        this.internalGetSlot(index).present(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
     }
 
     @Override
     public Item getSlot(int index) {
-        return this.internalGetSlot(index).map(SLOT_LOOKUP).orElseGet(AbstractInventoryRow.AIR);
+        return this.internalGetSlot(index).map(SLOT_LOOKUP).get(AbstractInventoryRow.AIR);
     }
 
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(int index) {
@@ -135,7 +135,7 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
     public Collection<Item> getAllItems() {
         return this.player.getSpongePlayer()
                 .map(player -> this.getAllItems(player.getInventory()))
-                .orElseGet(SeleneUtils::emptyList);
+                .get(SeleneUtils::emptyList);
     }
 
     @Override
@@ -148,7 +148,7 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
             if (Type.SUCCESS == result.getType()) return true;
 
             return Type.SUCCESS == inventory.offer(stack).getType();
-        }).orElse(false);
+        }).or(false);
     }
 
     @Override
@@ -156,6 +156,6 @@ public class SpongePlayerInventory extends PlayerInventory implements SpongeInve
         if (4 >= index) {
             return Exceptional.of(new SpongeInventoryRow(this, index, this.player));
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 }

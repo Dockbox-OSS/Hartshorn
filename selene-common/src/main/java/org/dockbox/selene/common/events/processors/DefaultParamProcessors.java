@@ -61,7 +61,7 @@ public enum DefaultParamProcessors {
                 if (null != object && !annotation.overrideExisting()) return object;
 
                 AtomicReference<Object> arg = new AtomicReference<>(null);
-                Reflect.getMethodValue(event, annotation.value(), parameter.getType()).ifPresent(arg::set);
+                Reflect.getMethodValue(event, annotation.value(), parameter.getType()).present(arg::set);
                 return arg.get();
             }),
 
@@ -95,7 +95,7 @@ public enum DefaultParamProcessors {
      *
      * <ul>
      *   <li>Performs a {@code null} check.
-     *   <li>Checks if the object is empty (applies to {@link java.util.Collection}s, {@link String}s,
+     *   <li>Checks if the object is none (applies to {@link java.util.Collection}s, {@link String}s,
      *       and any type with a method {@code isEmpty} which returns a {@link Boolean}.
      *   <li>Checks if the object is a instance of {@link Number} and is equal to {@code 0}.
      * </ul>
@@ -131,7 +131,7 @@ public enum DefaultParamProcessors {
                 if (object instanceof Exceptional<?>) return object;
                 if (object instanceof Optional<?>) return Exceptional.of((Optional<?>) object);
 
-                return Exceptional.ofNullable(object);
+                return Exceptional.of(object);
             }),
 
     /**
@@ -143,7 +143,7 @@ public enum DefaultParamProcessors {
     UNWRAP_OR_SKIP(UnwrapOrSkip.class, EventStage.FILTER,
             (object, annotation, event, parameter, wrapper) -> {
                 if (object instanceof Exceptional<?>) {
-                    if (((Exceptional<?>) object).isPresent()) return ((Exceptional<?>) object).get();
+                    if (((Exceptional<?>) object).present()) return ((Exceptional<?>) object).get();
                     else if (annotation.skipIfNull()) throw new SkipEventException();
 
                 }

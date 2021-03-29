@@ -46,13 +46,13 @@ public class SpongePlotSquaredService implements PlotService {
     @Override
     public Exceptional<Plot> getPlotAt(Location location) {
         com.intellectualcrafters.plot.object.Plot plot = com.intellectualcrafters.plot.object.Plot.getPlot(SpongeConversionUtil.toPlotSquared(location));
-        return Exceptional.ofNullable(plot).map(SpongePlot::new);
+        return Exceptional.of(plot).map(SpongePlot::new);
     }
 
     @Override
     public Exceptional<Plot> getCurrentPlot(Player player) {
         com.intellectualcrafters.plot.object.Plot plot = SpongeConversionUtil.toPlotSquared(player).getCurrentPlot();
-        return Exceptional.ofNullable(plot).map(SpongePlot::new);
+        return Exceptional.of(plot).map(SpongePlot::new);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class SpongePlotSquaredService implements PlotService {
         for (com.intellectualcrafters.plot.object.Plot plot : PS.get().getPlots(world.getName())) {
             if (plot.getId().x == x && plot.getId().y == y) return Exceptional.of(new SpongePlot(plot));
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @Override
@@ -111,7 +111,7 @@ public class SpongePlotSquaredService implements PlotService {
     }
 
     private void setBlocks(Plot plot, Item item, String component) {
-        SpongeConversionUtil.toPlotSquared(item).ifPresent(block -> executeWithPlot(plot, item,
+        SpongeConversionUtil.toPlotSquared(item).present(block -> executeWithPlot(plot, item,
                 (p, $) -> p.setComponent(component, new PlotBlock[]{block}))
         );
     }
@@ -127,7 +127,7 @@ public class SpongePlotSquaredService implements PlotService {
                     return ((SquarePlotWorld) area).PLOT_WIDTH;
                 }
                 return negative;
-            }).orElse(negative);
+            }).or(negative);
         }
         return negative;
     }
@@ -150,19 +150,19 @@ public class SpongePlotSquaredService implements PlotService {
     private <T> void executeWithPlot(Plot plot, T value, BiConsumer<com.intellectualcrafters.plot.object.Plot, T> consumer) {
         if (plot instanceof SpongePlot) {
             Exceptional<com.intellectualcrafters.plot.object.Plot> reference = ((SpongePlot) plot).getReference();
-            if (reference.isPresent()) {
+            if (reference.present()) {
                 consumer.accept(reference.get(), value);
             }
         }
     }
 
     protected static Exceptional<Flag<?>> getPlotSquaredFlag(String id) {
-        return Exceptional.ofNullable(Flags.getFlag(id));
+        return Exceptional.of(Flags.getFlag(id));
     }
 
     protected static Exceptional<PlotFlag<?>> getFlag(String id) {
         if (flagRegistrations.containsKey(id)) {
-            return Exceptional.ofNullable(flagRegistrations.get(id));
+            return Exceptional.of(flagRegistrations.get(id));
         } else {
             return getPlotSquaredFlag(id).map(SpongeFlagWrapper::new);
         }

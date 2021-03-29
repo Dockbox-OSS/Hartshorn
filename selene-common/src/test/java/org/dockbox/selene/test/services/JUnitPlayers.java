@@ -48,7 +48,7 @@ public class JUnitPlayers implements Players {
         if (PLAYER_ONE_NAME.equals(name)) return Exceptional.of(PLAYER_ONE);
         else if (PLAYER_TWO_NAME.equals(name)) return Exceptional.of(PLAYER_TWO);
         else if (PLAYER_THREE_NAME.equals(name)) return Exceptional.of(PLAYER_THREE);
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @Override
@@ -56,18 +56,18 @@ public class JUnitPlayers implements Players {
         if (PLAYER_ONE.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_ONE);
         else if (PLAYER_TWO.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_TWO);
         else if (PLAYER_THREE.getUniqueId().equals(uuid)) return Exceptional.of(PLAYER_THREE);
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @Override
     public void setLanguagePreference(UUID uuid, Language language) {
-        this.getPlayer(uuid).ifPresent(player ->  player.setLanguage(language));
+        this.getPlayer(uuid).present(player ->  player.setLanguage(language));
     }
 
     @Override
     public Language getLanguagePreference(UUID uuid) {
         return this.getPlayer(uuid)
                 .map(Player::getLanguage)
-                .orElse(Selene.getServer().getGlobalConfig().getDefaultLanguage());
+                .or(Selene.getServer().getGlobalConfig().getDefaultLanguage());
     }
 }

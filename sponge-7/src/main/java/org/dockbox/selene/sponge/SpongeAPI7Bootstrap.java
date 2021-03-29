@@ -211,7 +211,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
                     eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent, PacketConnection connection) {
                 Selene.provide(Players.class)
                         .getPlayer(connection.getPlayerUUID())
-                        .ifPresent(player -> {
+                        .present(player -> {
                             // Shadowed NMS type
                             net.minecraft.network.Packet<?> nativePacket = packetEvent.getPacket();
                             Packet internalPacket = Selene.provide(packet, new NativePacketProperty<>(nativePacket));
@@ -257,7 +257,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
     @Listener
     public void onServerStartedLate(GameStartedServerEvent event) {
         Exceptional<JDA> oj = Selene.provide(DiscordUtils.class).getJDA();
-        if (oj.isPresent()) {
+        if (oj.present()) {
             JDA jda = oj.get();
             // Avoid registering it twice if the scheduler outside this condition is executing this twice.
             // Usually cancelling all tasks would be preferred, however any module is able to schedule

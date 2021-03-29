@@ -36,7 +36,7 @@ public class GsonWebUtil extends DefaultWebUtil {
             BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
             Gson gson = new Gson();
             T result = gson.fromJson(in, type);
-            return Exceptional.ofNullable(result);
+            return Exceptional.of(result);
         }
         catch (JsonIOException | JsonSyntaxException | IOException e) {
             return Exceptional.of(e);

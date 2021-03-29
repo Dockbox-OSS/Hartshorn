@@ -50,10 +50,10 @@ public interface Entity<T extends Entity<T>> extends Identifiable, Locatable, Pe
     double DEFAULT_MAX_HEALTH = 20D;
 
     /**
-     * Gets the display name of the entity. If no display name is present, an empty {@link Text}
+     * Gets the display name of the entity. If no display name is present, an none {@link Text}
      * instance is returned.
      *
-     * @return The display name of the entity, or an empty {@link Text} instance.
+     * @return The display name of the entity, or an none {@link Text} instance.
      */
     Text getDisplayName();
 

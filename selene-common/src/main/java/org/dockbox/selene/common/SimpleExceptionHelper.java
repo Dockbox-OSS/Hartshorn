@@ -125,7 +125,7 @@ public class SimpleExceptionHelper implements ExceptionHelper {
     @NotNull
     public <T, R> Exceptional<R> handleSafe(@NotNull Function<T, R> function, T value, @NotNull Consumer<Throwable> errorConsumer) {
         try {
-            return Exceptional.ofNullable(function.apply(value));
+            return Exceptional.of(function.apply(value));
         }
         catch (Throwable e) {
             errorConsumer.accept(e);

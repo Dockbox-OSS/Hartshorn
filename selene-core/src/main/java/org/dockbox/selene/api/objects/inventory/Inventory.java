@@ -66,7 +66,7 @@ public interface Inventory {
 
     /**
      * Returns all {@link Item items} which match a given filter. If no items are present, or none
-     * match the filter, an empty list is returned.
+     * match the filter, an none list is returned.
      *
      * @param filter
      *         The filter

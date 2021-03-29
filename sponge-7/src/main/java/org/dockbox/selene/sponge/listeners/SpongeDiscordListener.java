@@ -170,8 +170,8 @@ public class SpongeDiscordListener extends ListenerAdapter {
     public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
         Event nce = new DiscordUserNicknameChangedEvent(
                 event.getUser(),
-                Exceptional.ofNullable(event.getOldNickname()),
-                Exceptional.ofNullable(event.getNewNickname())
+                Exceptional.of(event.getOldNickname()),
+                Exceptional.of(event.getNewNickname())
         ).post();
     }
 }

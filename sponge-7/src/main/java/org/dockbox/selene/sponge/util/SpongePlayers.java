@@ -53,19 +53,19 @@ public class SpongePlayers extends DefaultPlayers {
 
     private static Exceptional<Player> getPlayer(
             Exceptional<org.spongepowered.api.entity.living.player.Player> osp, Object obj) {
-        if (osp.isPresent()) {
+        if (osp.present()) {
             return osp.map(p -> new SpongePlayer(p.getUniqueId(), p.getName()));
         }
         else {
-            Exceptional<Player> player = Exceptional.empty();
+            Exceptional<Player> player = Exceptional.none();
             Exceptional<UserStorageService> ouss = Exceptional.of(Sponge.getServiceManager().provide(UserStorageService.class));
             Exceptional<User> ou;
             if (obj instanceof UUID) {
-                ou = ouss.flatMap(uss -> Exceptional.of(uss.get((UUID) obj)));
+                ou = ouss.then(uss -> Exceptional.of(uss.get((UUID) obj)));
             }
             else {
                 try {
-                    ou = ouss.flatMap(uss -> Exceptional.of(uss.get(obj.toString())));
+                    ou = ouss.then(uss -> Exceptional.of(uss.get(obj.toString())));
                 }
                 catch (IllegalArgumentException e) {
                     // Typically thrown if a username is invalid (length<0 or >=16)
@@ -73,7 +73,7 @@ public class SpongePlayers extends DefaultPlayers {
                     ou = Exceptional.of(e);
                 }
             }
-            if (ou.isPresent()) player = ou.map(u -> new SpongePlayer(u.getUniqueId(), u.getName()));
+            if (ou.present()) player = ou.map(u -> new SpongePlayer(u.getUniqueId(), u.getName()));
             return player;
         }
     }

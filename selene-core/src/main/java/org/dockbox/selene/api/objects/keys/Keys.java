@@ -61,7 +61,7 @@ public final class Keys {
     /**
      * Looks up a {@link InjectorProperty} based on a given {@code key}. If a property with that key
      * is present, and matches the expected type it is returned wrapped in a {@link Exceptional}. If
-     * no property is present, or the type of the object does not match the expected type, a empty
+     * no property is present, or the type of the object does not match the expected type, a none
      * {@link Exceptional} is returned.
      *
      * @param <T>
@@ -77,11 +77,11 @@ public final class Keys {
      */
     public static <T> Exceptional<T> getPropertyValue(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
         InjectorProperty<T> property = Keys.getProperty(key, expectedType, properties);
-        // As the object is provided by a supplier this cannot currently be simplified to #ofNullable
+        // As the object is provided by a supplier this cannot currently be simplified to #of
         if (null != property) {
             return Exceptional.of(property::getObject);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     /**
@@ -445,6 +445,6 @@ public final class Keys {
     }
 
     public static <K, A> Key<K, A> setterKey(BiConsumer<K, A> setter) {
-        return dynamicKeyOf(setter, in -> Exceptional.empty());
+        return dynamicKeyOf(setter, in -> Exceptional.none());
     }
 }

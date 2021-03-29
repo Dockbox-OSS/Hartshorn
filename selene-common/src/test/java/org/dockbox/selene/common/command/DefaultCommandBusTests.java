@@ -62,7 +62,7 @@ class DefaultCommandBusTests {
 
         CommandInheritanceContext inheritanceContext = (CommandInheritanceContext) context;
         Exceptional<MethodCommandContext> parentContext = inheritanceContext.getParentExecutor();
-        Assertions.assertTrue(parentContext.isPresent());
+        Assertions.assertTrue(parentContext.present());
     }
 
     @Test

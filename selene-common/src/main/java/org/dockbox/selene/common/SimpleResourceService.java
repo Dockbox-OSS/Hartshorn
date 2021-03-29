@@ -127,7 +127,7 @@ public class SimpleResourceService implements ResourceService {
         Exceptional<ResourceConfig> config = cm.read(file, ResourceConfig.class);
 
         Map<String, String> resources = SeleneUtils.emptyConcurrentMap();
-        config.ifPresent(cfg -> resources.putAll(cfg.translations));
+        config.present(cfg -> resources.putAll(cfg.translations));
         return resources;
     }
 

@@ -93,8 +93,8 @@ public enum VariantIdentifier implements RegistryIdentifier {
             Path file = fm.getDataFile(BlockRegistryExtension.class, "overridenblocknames");
 
             Exceptional<ItemData> mappings = fm.read(file, ItemData.class);
-            mappings.ifPresent(m -> overridenBlockNames = m)
-                    .ifAbsent(() -> overridenBlockNames = new ItemData());
+            mappings.present(m -> overridenBlockNames = m)
+                    .absent(() -> overridenBlockNames = new ItemData());
         }
         return overridenBlockNames;
     }
@@ -116,7 +116,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
 
         return identifierMap.containsKey(identifier)
                 ? Exceptional.of(identifierMap.get(identifier))
-                : Exceptional.empty();
+                : Exceptional.none();
     }
 
     public static Exceptional<VariantIdentifier> ofItem(Item item) {
@@ -133,9 +133,9 @@ public enum VariantIdentifier implements RegistryIdentifier {
             String lastWord = matcher.group(2);
             String secondLastWord = matcher.group(1);
 
-            if (of(secondLastWord + lastWord).isPresent())
+            if (of(secondLastWord + lastWord).present())
                 blockName = name.replace(" " + secondLastWord + lastWord, "").trim();
-            else if (of(lastWord).isPresent())
+            else if (of(lastWord).present())
                 blockName = name.replace(lastWord, "").trim();
             else if (name.split(" ")[0].equalsIgnoreCase("horizontal") && lastWord.equalsIgnoreCase("beam"))
                 blockName = name.replace("Horizontal", "").trim();
@@ -148,14 +148,14 @@ public enum VariantIdentifier implements RegistryIdentifier {
         name = getOverridenBlockNames().getItemRegistry().getOrDefault(name.replace(" ", "_"), name);
 
         Matcher matcher = blockNameIdentifierRegex.matcher(prepareForMatcher(name));
-        Exceptional<VariantIdentifier> variant = Exceptional.empty();
+        Exceptional<VariantIdentifier> variant = Exceptional.none();
 
         if (matcher.matches()) {
             variant = of(matcher.group(1) + matcher.group(2));
 
-            if (variant.isAbsent())
+            if (variant.absent())
                 variant = of(matcher.group(2));
-            if (variant.isAbsent() && matcher.group(2).equalsIgnoreCase("beam"))
+            if (variant.absent() && matcher.group(2).equalsIgnoreCase("beam"))
                 if(name.split(" ")[0].equalsIgnoreCase("horizontal"))
                     return Exceptional.of(VariantIdentifier.HORIZONTAL_BEAM);
                 //The vertical beam and full block have the same name.
@@ -164,7 +164,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
                             name, VariantIdentifier.FULL, VariantIdentifier.VERTICAL_BEAM)));
         }
 
-        if (variant.isAbsent() && !BlockIdentifier.ofName(name).isAir())
+        if (variant.absent() && !BlockIdentifier.ofName(name).isAir())
             return Exceptional.of(VariantIdentifier.FULL);
 
         return variant;
@@ -197,7 +197,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
                 return of(matcher.group(1));
             }
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     public static String prepareForMatcher(String name) {

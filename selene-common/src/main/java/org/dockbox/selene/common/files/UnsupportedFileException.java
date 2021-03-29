@@ -25,7 +25,7 @@ public class UnsupportedFileException extends Exception {
 
     /**
      * Creates a new instance, providing a given filetype to the super type {@link Exception} as the
-     * error message.
+     * caught message.
      *
      * @param fileType
      *         The filetype providing information about the unsupport file or {@link

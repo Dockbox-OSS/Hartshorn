@@ -67,7 +67,7 @@ public class OldPlotsModule {
         Path worldConfig = this.fileManager.getConfigFile(OldPlotsModule.class, "worlds");
         this.fileManager.copyDefaultFile("oldplots_worlds.yml", worldConfig);
         Exceptional<PlotWorldModelList> exceptionalList = this.fileManager.read(worldConfig, PlotWorldModelList.class);
-        exceptionalList.ifPresent(modelList -> this.modelList = modelList);
+        exceptionalList.present(modelList -> this.modelList = modelList);
     }
 
     @Command(aliases = "oldplots", usage = "oldplots <player{Player}>", permission = "selene.oldplots.list")
@@ -91,7 +91,7 @@ public class OldPlotsModule {
             String world = row.getValue(OldPlotsIdentifiers.WORLD).get();
 
             // Only show worlds we can access
-            if (this.modelList.getWorld(world).isPresent()) {
+            if (this.modelList.getWorld(world).present()) {
                 Text plotLine =
                         Text.of(OldPlotsResources.SINGLE_PLOT.format(world, idX, idZ).translate(player));
                 plotLine.onClick(ClickAction.runCommand("/optp " + id));
@@ -131,7 +131,7 @@ public class OldPlotsModule {
         SQLMan<?> man = OldPlotsModule.getSQLMan();
         Table plots = man.getTable("plot");
         plots = plots.where(OldPlotsIdentifiers.PLOT_ID, id);
-        plots.first().ifPresent(plot -> {
+        plots.first().present(plot -> {
             @NotNull Integer idX = plot.getValue(OldPlotsIdentifiers.PLOT_X).get();
             @NotNull Integer idZ = plot.getValue(OldPlotsIdentifiers.PLOT_Z).get();
             @NonNls
@@ -141,12 +141,12 @@ public class OldPlotsModule {
             if ("*".equals(world)) source.send(OldPlotsResources.ERROR_WORLDS);
             else {
                 Exceptional<PlotWorldModel> model = this.modelList.getWorld(world);
-                model.ifPresent(worldModel -> {
+                model.present(worldModel -> {
                     Exceptional<Location> location = worldModel.getLocation(idX, idZ);
-                    location.ifPresent(source::setLocation)
-                            .ifAbsent(() -> source.send(OldPlotsResources.ERROR_CALCULATION));
-                }).ifAbsent(() -> source.send(OldPlotsResources.ERROR_NO_LOCATION.format(world)));
+                    location.present(source::setLocation)
+                            .absent(() -> source.send(OldPlotsResources.ERROR_CALCULATION));
+                }).absent(() -> source.send(OldPlotsResources.ERROR_NO_LOCATION.format(world)));
             }
-        }).ifAbsent(() -> source.send(OldPlotsResources.ERROR_NO_PLOT));
+        }).absent(() -> source.send(OldPlotsResources.ERROR_NO_PLOT));
     }
 }

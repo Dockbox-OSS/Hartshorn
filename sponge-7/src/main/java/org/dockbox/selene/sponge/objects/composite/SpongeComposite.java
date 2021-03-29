@@ -40,10 +40,10 @@ public interface SpongeComposite extends PersistentDataHolder {
         Exceptional<MutableCompositeData> result = this.getDataHolder()
                 .map(composite -> composite.get(MutableCompositeData.class).orElse(null));
 
-        if (result.isAbsent()) return Exceptional.empty();
+        if (result.absent()) return Exceptional.none();
 
         MutableCompositeData data = result.get();
-        if (!data.getData().containsKey(dataKey.getDataKeyId())) return Exceptional.empty();
+        if (!data.getData().containsKey(dataKey.getDataKeyId())) return Exceptional.none();
 
         Object value = data.getData().get(dataKey.getDataKeyId());
         if (Reflect.isAssignableFrom(dataKey.getDataType(), value.getClass()))
@@ -51,7 +51,7 @@ public interface SpongeComposite extends PersistentDataHolder {
             //noinspection unchecked
             return Exceptional.of(() -> (T) value);
 
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @Override
@@ -69,12 +69,12 @@ public interface SpongeComposite extends PersistentDataHolder {
 
             if (result.isSuccessful()) return TransactionResult.success();
             else return TransactionResult.fail(DefaultResource.KEY_BINDING_FAILED);
-        }).orElseGet(() -> TransactionResult.fail(DefaultResource.LOST_REFERENCE));
+        }).get(() -> TransactionResult.fail(DefaultResource.LOST_REFERENCE));
     }
 
     @Override
     default <T> void remove(PersistentDataKey<T> dataKey) {
-        this.getDataHolder().ifPresent(composite -> {
+        this.getDataHolder().present(composite -> {
             Optional<MutableCompositeData> result = composite.get(MutableCompositeData.class);
             if (!result.isPresent()) return; // No data to remove
 
@@ -90,7 +90,7 @@ public interface SpongeComposite extends PersistentDataHolder {
     @Override
     default Map<PersistentDataKey<?>, Object> getPersistentData() {
         Exceptional<? extends DataHolder> dataHolderExceptional = this.getDataHolder();
-        if (dataHolderExceptional.isAbsent()) return SeleneUtils.emptyMap();
+        if (dataHolderExceptional.absent()) return SeleneUtils.emptyMap();
 
         Map<PersistentDataKey<?>, Object> persistentData = SeleneUtils.emptyMap();
         DataHolder dataHolder = dataHolderExceptional.get();

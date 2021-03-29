@@ -40,10 +40,10 @@ public class JUnitServer implements Server {
 
         // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
         // argument here is just a confirmation that the source is correct.
-        optionalCooldownId.ifPresent(cooldownId -> {
+        optionalCooldownId.present(cooldownId -> {
             String cid = cooldownId.getValue();
-            Selene.provide(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
+            Selene.provide(CommandBus.class).confirmCommand(cid).absent(() ->
                     src.send(TestResources.SERVER$CONFIRMED));
-        }).ifAbsent(() -> src.send(TestResources.SERVER$NOT_CONFIRMED));
+        }).absent(() -> src.send(TestResources.SERVER$NOT_CONFIRMED));
     }
 }

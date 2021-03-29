@@ -61,8 +61,8 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
 
     @Override
     public void showTo(Player player) {
-        this.getReference().ifPresent(serverBossBar -> {
-            SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::addPlayer);
+        this.getReference().present(serverBossBar -> {
+            SpongeConversionUtil.toSponge(player).present(serverBossBar::addPlayer);
 
             if (Bossbar.REGISTRY.containsKey(this.getId()))
                 Selene.log().warn("Adding a bossbar with duplicate ID '" + this.getId() + "' to " + player.getName() + ". This may cause unexpected behavior!");
@@ -76,9 +76,9 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
 
     @Override
     public void showTo(Player player, Duration duration) {
-        this.getReference().ifPresent(serverBossBar -> {
+        this.getReference().present(serverBossBar -> {
 
-            SpongeConversionUtil.toSponge(player).ifPresent(sp -> {
+            SpongeConversionUtil.toSponge(player).present(sp -> {
                 serverBossBar.addPlayer(sp);
                 TaskRunner.create().acceptDelayed(() -> this.hideFrom(player), duration.getSeconds(), TimeUnit.SECONDS);
             });
@@ -95,8 +95,8 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
 
     @Override
     public void hideFrom(Player player) {
-        this.getReference().ifPresent(serverBossBar -> {
-            SpongeConversionUtil.toSponge(player).ifPresent(serverBossBar::removePlayer);
+        this.getReference().present(serverBossBar -> {
+            SpongeConversionUtil.toSponge(player).present(serverBossBar::removePlayer);
             if (serverBossBar.getPlayers().isEmpty()) Bossbar.REGISTRY.remove(this.getId());
         });
     }
@@ -106,7 +106,7 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
         return this.getReference().map(serverBossBar -> serverBossBar.getPlayers().stream()
                 .map(SpongeConversionUtil::fromSponge)
                 .collect(Collectors.toList()))
-                .orElseGet(SeleneUtils::emptyList);
+                .get(SeleneUtils::emptyList);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
                 if (serverBossBarPlayer.getUniqueId().equals(player)) return true;
             }
             return false;
-        }).orElse(false);
+        }).or(false);
     }
 
     @Override
@@ -133,7 +133,7 @@ public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
                 if (serverBossBarPlayer.getName().equals(name)) return true;
             }
             return false;
-        }).orElse(false);
+        }).or(false);
     }
 
     @Override

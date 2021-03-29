@@ -224,7 +224,7 @@ public class TableTests {
         Table joined = original.join(other, TestColumnIdentifiers.NUMERAL_ID, Merge.PREFER_FOREIGN, true);
         Table whereLookup = joined.where(TestColumnIdentifiers.NUMERAL_ID, 1);
         Assertions.assertFalse(
-                whereLookup.first().get().getValue(TestColumnIdentifiers.UUID).isPresent());
+                whereLookup.first().get().getValue(TestColumnIdentifiers.UUID).present());
     }
 
     @Test

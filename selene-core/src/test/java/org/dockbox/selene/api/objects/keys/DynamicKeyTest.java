@@ -43,7 +43,7 @@ class DynamicKeyTest {
         TestKeyHolder holder = new TestKeyHolder();
         holder.set(TestKeys.HOLDER_KEY, value);
         Exceptional<String> result = holder.get(TestKeys.HOLDER_KEY);
-        Assertions.assertTrue(result.isPresent());
+        Assertions.assertTrue(result.present());
         Assertions.assertEquals(value, result.get());
     }
 
@@ -53,7 +53,7 @@ class DynamicKeyTest {
         TestNonKeyHolder holder = new TestNonKeyHolder();
         TestKeys.NON_HOLDER_KEY.set(holder, value);
         Exceptional<String> result = TestKeys.NON_HOLDER_KEY.get(holder);
-        Assertions.assertTrue(result.isPresent());
+        Assertions.assertTrue(result.present());
         Assertions.assertEquals(value, result.get());
     }
 }

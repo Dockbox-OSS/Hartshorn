@@ -140,7 +140,7 @@ public abstract class SpongeEntity<T extends Entity, E extends org.dockbox.selen
     public boolean summon(Location location) {
         return SpongeConversionUtil.toSponge(location)
                 .map(spongeLocation -> spongeLocation.spawnEntity(this.getRepresentation()))
-                .orElse(false);
+                .or(false);
     }
 
     @Override
@@ -164,7 +164,7 @@ public abstract class SpongeEntity<T extends Entity, E extends org.dockbox.selen
 
                 return this.from(clone);
             }
-        }).rethrowUnchecked().orNull();
+        }).rethrow().orNull();
     }
 
     @Override
@@ -238,7 +238,7 @@ public abstract class SpongeEntity<T extends Entity, E extends org.dockbox.selen
 
     @Override
     public Exceptional<? extends DataHolder> getDataHolder() {
-        return Exceptional.ofNullable(this.getRepresentation());
+        return Exceptional.of(this.getRepresentation());
     }
 
     @SuppressWarnings("unchecked")

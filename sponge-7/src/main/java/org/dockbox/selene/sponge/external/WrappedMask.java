@@ -32,16 +32,16 @@ public class WrappedMask implements Mask, Wrapper<com.sk89q.worldedit.function.m
 
     @Override
     public Exceptional<com.sk89q.worldedit.function.mask.Mask> getReference() {
-        return Exceptional.ofNullable(this.mask);
+        return Exceptional.of(this.mask);
     }
 
     @Override
     public void setReference(@NotNull Exceptional<com.sk89q.worldedit.function.mask.Mask> reference) {
-        reference.ifPresent(mask -> this.mask = mask);
+        reference.present(mask -> this.mask = mask);
     }
 
     @Override
     public Exceptional<com.sk89q.worldedit.function.mask.Mask> constructInitialReference() {
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 }

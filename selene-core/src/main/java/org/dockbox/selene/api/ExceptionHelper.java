@@ -33,11 +33,11 @@ public interface ExceptionHelper {
      * while maintaining readability.
      *
      * @param message
-     *         The error message provided by the developer
+     *         The caught message provided by the developer
      * @param exception
      *         The exception instance
      * @param stacktrace
-     *         Whether or not to print a stacktrace after the error information
+     *         Whether or not to print a stacktrace after the caught information
      */
     void printFriendly(String message, Throwable exception, boolean stacktrace);
 
@@ -46,11 +46,11 @@ public interface ExceptionHelper {
      * developers to understand what went wrong.
      *
      * @param message
-     *         The error message provided by the developer
+     *         The caught message provided by the developer
      * @param exception
      *         The exception instance
      * @param stacktrace
-     *         Whether or not to print a stacktrace after the error information
+     *         Whether or not to print a stacktrace after the caught information
      */
     void printMinimal(String message, Throwable exception, boolean stacktrace);
 

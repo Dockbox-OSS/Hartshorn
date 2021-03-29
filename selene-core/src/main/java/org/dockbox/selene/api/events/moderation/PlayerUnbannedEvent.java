@@ -39,6 +39,6 @@ public class PlayerUnbannedEvent extends BanEvent<Target> {
      *         The {@link LocalDateTime} of when the pardon was issued.
      */
     public PlayerUnbannedEvent(Target target, CommandSource source, Exceptional<String> reason, LocalDateTime creation) {
-        super(target, source, reason, Exceptional.empty(), creation);
+        super(target, source, reason, Exceptional.none(), creation);
     }
 }

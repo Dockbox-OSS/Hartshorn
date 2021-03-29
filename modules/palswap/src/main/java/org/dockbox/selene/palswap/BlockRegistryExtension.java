@@ -76,7 +76,7 @@ public class BlockRegistryExtension {
         Path path = fm.getDataFile(BlockRegistryExtension.class, "blockregistry");
 
         Exceptional<Registry> eRegistry = fm.read(path, Registry.class);
-        return (Registry<Registry<Item>>) eRegistry.orElse(new Registry<Registry<Item>>());
+        return (Registry<Registry<Item>>) eRegistry.or(new Registry<Registry<Item>>());
     }
 
     @Listener
@@ -120,7 +120,7 @@ public class BlockRegistryExtension {
             for (String id : blockIdentifier.getIds()) {
                 Exceptional<VariantIdentifier> eVariantIdentifier = VariantIdentifier.ofID(id);
 
-                if (eVariantIdentifier.isAbsent()) {
+                if (eVariantIdentifier.absent()) {
                     this.logger.info(String.format("Couldn't find variant for id %s : %s",
                             id, eVariantIdentifier));
                     continue;
@@ -152,7 +152,7 @@ public class BlockRegistryExtension {
         BlockIdentifier blockIdentifier = BlockIdentifier.ofItem(item);
         if (!blockIdentifier.isAir() && blockRegistry.containsColumns(blockIdentifier)) {
             Exceptional<VariantIdentifier> eVariantIdentifier = VariantIdentifier.ofItem(item);
-            if (eVariantIdentifier.isPresent()) {
+            if (eVariantIdentifier.present()) {
                 VariantIdentifier variantIdentifier = eVariantIdentifier.get();
 
                 Registry<Item> variants = blockRegistry.getMatchingColumns(blockIdentifier).first().get();

@@ -48,7 +48,7 @@ public class BlockRegistryTestExtension {
     public void blockID(@NotNull Player player, CommandContext context) {
         Exceptional<CommandArgument<String>> eID = context.argument("id");
 
-        if (eID.isAbsent()) return;
+        if (eID.absent()) return;
 
         String id = eID.get().getValue();
 

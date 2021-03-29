@@ -98,7 +98,7 @@ public class JUnitInventory extends PlayerInventory {
         if (index < this.rowCount) {
             return Exceptional.of(new JUnitInventoryRow(index, this));
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     private int row(int index) {

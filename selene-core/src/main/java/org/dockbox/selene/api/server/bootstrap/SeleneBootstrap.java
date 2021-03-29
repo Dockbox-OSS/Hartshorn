@@ -190,7 +190,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
             Selene.log().info("Found type [" + type.getCanonicalName() + "] in integrated context");
             Exceptional<?> oi = super.getInstanceSafe(type);
 
-            oi.ifPresent(i -> {
+            oi.present(i -> {
                 Package pkg = i.getClass().getPackage();
                 if (null != pkg) {
                     Selene.log().info("Registering [" + type.getCanonicalName() + "] as Event and Command listener");
@@ -235,7 +235,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         ModuleManager em = Selene.provide(ModuleManager.class);
         em.getRegisteredModuleIds().forEach(ext -> {
             Exceptional<ModuleContainer> header = em.getContainer(ext);
-            if (header.isPresent()) {
+            if (header.present()) {
                 ModuleContainer ex = header.get();
                 Selene.log().info("  - \u00A77" + ex.name());
                 Selene.log().info("  | - \u00A77ID: \u00A78" + ex.id());

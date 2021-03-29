@@ -144,7 +144,7 @@ public class PlotSquaredEventListener {
 
     @Listener
     public void onPlotClear(PlotClearEvent event) {
-        worlds.getWorld(event.getWorld()).ifPresent(world -> {
+        worlds.getWorld(event.getWorld()).present(world -> {
             Cancellable cancellable = new ClearPlotEvent(world, event.getPlotId().x, event.getPlotId().y);
             event.setCancelled(cancellable.isCancelled());
         });
@@ -179,7 +179,7 @@ public class PlotSquaredEventListener {
                 break;
         }
         PlotProperties finalProperty = property;
-        worlds.getWorld(event.getWorld()).ifPresent(world -> {
+        worlds.getWorld(event.getWorld()).present(world -> {
             new PlotChangePropertyEvent(
                     Plot.getById(world, event.getPlotId().x, event.getPlotId().y).orNull(),
                     finalProperty
@@ -189,7 +189,7 @@ public class PlotSquaredEventListener {
 
     @Listener
     public void onPlotDelete(PlotDeleteEvent event) {
-        worlds.getWorld(event.getWorld()).ifPresent(world -> {
+        worlds.getWorld(event.getWorld()).present(world -> {
             Cancellable cancellable = new DeletePlotEvent(world, event.getPlotId().x, event.getPlotId().y);
             event.setCancelled(cancellable.isCancelled());
         });

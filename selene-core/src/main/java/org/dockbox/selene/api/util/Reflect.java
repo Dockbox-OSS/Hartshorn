@@ -103,7 +103,7 @@ public final class Reflect {
 
     /**
      * Attempts to get the return value of a method which may not be publicly accessible (e.g.
-     * protected or private). If the method does not exist, or throws a exception the error is wrapped
+     * protected or private). If the method does not exist, or throws a exception the caught is wrapped
      * in a {@link Exceptional}. Otherwise the (nullable) return value is returned wrapped in a {@link
      * Exceptional}.
      *
@@ -131,7 +131,7 @@ public final class Reflect {
 
     /**
      * Attempts to get the return value of a method which may not be publicly accessible (e.g.
-     * protected or private). If the method does not exist, or throws a exception the error is wrapped
+     * protected or private). If the method does not exist, or throws a exception the caught is wrapped
      * in a {@link Exceptional}. Otherwise the (nullable) return value is returned wrapped in a {@link
      * Exceptional}.
      *
@@ -165,7 +165,7 @@ public final class Reflect {
             Method m = methodHolder.getDeclaredMethod(method, argumentTypes);
             if (!m.isAccessible()) m.setAccessible(true);
             T value = (T) m.invoke(instance, args);
-            return Exceptional.ofNullable(value);
+            return Exceptional.of(value);
         }
         catch (ClassCastException
                 | NoSuchMethodException
@@ -341,7 +341,7 @@ public final class Reflect {
 
     /**
      * Gets all sub-types of a given type. The prefix is typically a package. If no sub-types exist
-     * for the given type, and empty list is returned.
+     * for the given type, and none list is returned.
      *
      * @param prefix
      *         The package prefix
@@ -350,7 +350,7 @@ public final class Reflect {
      * @param <T>
      *         The type of the parent
      *
-     * @return The list of sub-types, or an empty list
+     * @return The list of sub-types, or an none list
      */
     public static <T> Collection<Class<? extends T>> getSubTypes(String prefix, Class<T> parent) {
         Reflections reflections = getReflectedPrefix(prefix);
@@ -692,7 +692,7 @@ public final class Reflect {
                     | ClassCastException e) {
                 return Exceptional.of(e);
             }
-        return Exceptional.ofNullable(instance);
+        return Exceptional.of(instance);
     }
 
     /**

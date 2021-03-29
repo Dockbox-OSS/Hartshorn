@@ -77,16 +77,16 @@ public class WrappedRegion implements Region, Wrapper<com.sk89q.worldedit.region
 
     @Override
     public Exceptional<com.sk89q.worldedit.regions.Region> getReference() {
-        return Exceptional.ofNullable(this.region);
+        return Exceptional.of(this.region);
     }
 
     @Override
     public void setReference(@NotNull Exceptional<com.sk89q.worldedit.regions.Region> reference) {
-        reference.ifPresent(region -> this.region = region);
+        reference.present(region -> this.region = region);
     }
 
     @Override
     public Exceptional<com.sk89q.worldedit.regions.Region> constructInitialReference() {
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 }

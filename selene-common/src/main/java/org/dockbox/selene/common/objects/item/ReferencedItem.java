@@ -65,7 +65,7 @@ public abstract class ReferencedItem<T> extends ReferencedWrapper<T> implements 
 
     @Override
     public Exceptional<T> constructInitialReference() {
-        return Exceptional.empty(); // Handled by constructors
+        return Exceptional.none(); // Handled by constructors
     }
 
     @Override
