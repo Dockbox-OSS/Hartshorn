@@ -554,6 +554,10 @@ public final class Exceptional<T> {
         }
         return this.throwable;
     }
+    
+    public Throwable unsafeError() {
+        return this.throwable;
+    }
 
     /**
      * Returns the type of the value, if it is present. Otherwise returns {@code null}.

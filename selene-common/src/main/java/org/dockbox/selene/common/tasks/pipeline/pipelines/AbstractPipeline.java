@@ -155,7 +155,7 @@ public abstract class AbstractPipeline<P, I> {
             if (Reflect.isAssignableFrom(ComplexPipe.class, pipe.getType())) {
                 ComplexPipe<I, I> complexPipe = (ComplexPipe<I, I>) pipe;
                 return complexPipe.apply(
-                        this, finalInput.orNull(), finalInput.error());
+                        this, finalInput.orNull(), finalInput.unsafeError());
             }
             else if (Reflect.isAssignableFrom(StandardPipe.class, pipe.getType())) {
                 StandardPipe<I, I> standardPipe = (StandardPipe<I, I>) pipe;

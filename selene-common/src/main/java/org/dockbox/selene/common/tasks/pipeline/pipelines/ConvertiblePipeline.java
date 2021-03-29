@@ -217,7 +217,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
 
             return Exceptional.of(
                     (K) super.getCancelBehaviour().act(result.orNull(), (Function<Object, Object>) this.converter),
-                    result.or(null)
+                    result.unsafeError()
             );
         }
         else return (Exceptional<K>) result.map(this.converter);
