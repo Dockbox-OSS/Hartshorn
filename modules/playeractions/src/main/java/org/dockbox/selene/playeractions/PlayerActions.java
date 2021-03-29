@@ -20,8 +20,12 @@ package org.dockbox.selene.playeractions;
 import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.module.Module;
+import org.dockbox.selene.api.entities.Entity;
+import org.dockbox.selene.api.events.entity.SpawnSource;
 import org.dockbox.selene.api.events.player.PlayerMoveEvent;
 import org.dockbox.selene.api.events.player.PlayerTeleportEvent;
+import org.dockbox.selene.api.events.player.interact.PlayerInteractEntityEvent;
+import org.dockbox.selene.api.events.player.interact.PlayerSummonEntityEvent;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Gamemode;
@@ -41,13 +45,6 @@ public class PlayerActions {
 
     @Inject
     private Worlds worlds;
-
-    /*
-        TODO: // P2 Dependency
-         - Teleport player if denied on a (P2 managed) world
-         - Check plot on entity spawning
-         - Check plot on entity interaction
-     */
 
     @Listener
     public void onSpectatorTeleport(PlayerTeleportEvent event) {
@@ -72,6 +69,37 @@ public class PlayerActions {
             event.setCancelled(true);
             player.sendWithPrefix(PlayerActionResources.DENIED_FROM_TARGET_PLOT);
         }
+    }
+
+    @Listener
+    public void onEntityInteract(PlayerInteractEntityEvent<?> event) {
+        if (event.getEntity() instanceof Player) return; // Allowed
+        Player player = event.getTarget();
+        event.setCancelled(this.cancelEvent(player, event.getEntity()));
+    }
+
+    @Listener
+    public void onEntitySummon(PlayerSummonEntityEvent<?> event) {
+        Player player = event.getPlayer();
+        SpawnSource source = event.getSource();
+        if (SpawnSource.PLACEMENT.equals(source) || SpawnSource.SPAWN_EGG.equals(source)) {
+            event.setCancelled(this.cancelEvent(player, event.getEntity()));
+        }
+    }
+
+    private boolean cancelEvent(Player player, Entity<?> entity) {
+        Exceptional<Plot> targetPlot = entity.getLocation().get(PlotKeys.PLOT);
+        if (targetPlot.absent()) {
+            player.sendWithPrefix(PlayerActionResources.OUTSIDE_PLOT);
+            return true;
+        } else {
+            Plot plot = targetPlot.get();
+            if (!plot.hasAnyMembership(player, PlotMembership.MEMBER, PlotMembership.TRUSTED, PlotMembership.OWNER)) {
+                player.sendWithPrefix(PlayerActionResources.CANNOT_INTERACT);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Listener
