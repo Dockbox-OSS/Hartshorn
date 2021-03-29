@@ -37,6 +37,8 @@ public interface Plot extends KeyHolder<Plot> {
 
     boolean hasMembership(Player player, PlotMembership membership);
 
+    boolean hasAnyMembership(Player player, PlotMembership... membership);
+
     Map<PlotFlag<?>, ?> getFlags();
 
     <T> void addFlag(PlotFlag<T> flag, T value);

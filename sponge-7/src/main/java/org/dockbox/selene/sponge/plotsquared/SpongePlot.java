@@ -56,19 +56,19 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
 
     @Override
     public Exceptional<Player> getOwner() {
-        if (referenceExists()) {
-            Plot plot = getReference().get();
+        if (this.referenceExists()) {
+            Plot plot = this.getReference().get();
             if (plot.getOwners().isEmpty()) return Exceptional.none();
             UUID ownerUuid = plot.getOwners().iterator().next();
             return Selene.provide(Players.class).getPlayer(ownerUuid);
         }
-        throw new IllegalStateException("Reference plot at " + center.getWorld().getName() + ";" + x + "," + y + " could not be found");
+        throw new IllegalStateException("Reference plot at " + this.center.getWorld().getName() + ";" + this.x + "," + this.y + " could not be found");
     }
 
     @Override
     public Collection<Player> getPlayers(PlotMembership membership) {
         Players service = Selene.provide(Players.class);
-        return getUUIDs(membership).stream()
+        return this.getUUIDs(membership).stream()
                 .map(service::getPlayer)
                 .filter(Exceptional::present)
                 .map(Exceptional::get)
@@ -77,13 +77,21 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
 
     @Override
     public boolean hasMembership(Player player, PlotMembership membership) {
-        return getUUIDs(membership).contains(player.getUniqueId());
+        return this.getUUIDs(membership).contains(player.getUniqueId());
+    }
+
+    @Override
+    public boolean hasAnyMembership(Player player, PlotMembership... memberships) {
+        for (PlotMembership membership : memberships) {
+            if (this.hasMembership(player, membership)) return true;
+        }
+        return false;
     }
 
     @Override
     public Map<PlotFlag<?>, Object> getFlags() {
         Map<PlotFlag<?>, Object> flags = SeleneUtils.emptyMap();
-        getReference().get().getFlags().forEach(((flag, o) ->
+        this.getReference().get().getFlags().forEach(((flag, o) ->
                 SpongePlotSquaredService.getFlag(flag.getName())
                         .present(plotFlag -> flags.put(plotFlag, o)))
         );
@@ -92,21 +100,21 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
 
     @Override
     public <T> void addFlag(PlotFlag<T> flag, T value) {
-        getReference().present(plot -> SpongePlotSquaredService.getPlotSquaredFlag(flag.getId()).present(plotFlag -> plot.setFlag(plotFlag, value)));
+        this.getReference().present(plot -> SpongePlotSquaredService.getPlotSquaredFlag(flag.getId()).present(plotFlag -> plot.setFlag(plotFlag, value)));
     }
 
     @Override
     public void removeFlag(PlotFlag<?> flag) {
-        getReference().present(plot -> SpongePlotSquaredService.getPlotSquaredFlag(flag.getId()).present(plot::removeFlag));
+        this.getReference().present(plot -> SpongePlotSquaredService.getPlotSquaredFlag(flag.getId()).present(plot::removeFlag));
     }
 
     @Override
     public <T> Exceptional<T> getFlag(PlotFlag<T> flag) {
-        if (getReference().present()) {
+        if (this.getReference().present()) {
             Flag<?> plotFlag = SpongePlotSquaredService.getPlotSquaredFlag(flag.getId()).orNull();
             if (plotFlag == null) return Exceptional.none();
             //noinspection unchecked
-            return Exceptional.of(getReference().get().getFlag(plotFlag).transform(value -> (T) value));
+            return Exceptional.of(this.getReference().get().getFlag(plotFlag).transform(value -> (T) value));
         }
         return Exceptional.none();
     }
@@ -123,8 +131,8 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
 
     @Override
     public Location getHome() {
-        if (getReference().present()) {
-            return SpongeConversionUtil.fromPlotSquared(getReference().get().getHome());
+        if (this.getReference().present()) {
+            return SpongeConversionUtil.fromPlotSquared(this.getReference().get().getHome());
         }
         return Location.empty();
     }
@@ -136,15 +144,15 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
 
     @Override
     public Exceptional<org.dockbox.selene.plots.Plot> getRelative(Direction direction) {
-        if (getReference().present()) {
-            return Exceptional.of(new SpongePlot(getReference().get().getRelative(direction.ordinal())));
+        if (this.getReference().present()) {
+            return Exceptional.of(new SpongePlot(this.getReference().get().getRelative(direction.ordinal())));
         }
         return Exceptional.none();
     }
 
     @Override
     public boolean isWorld() {
-        return getReference()
+        return this.getReference()
                 .map(plot -> plot.getWorldName().replaceAll(",", ";").equals(plot.getId().toString()))
                 .or(false);
     }
@@ -153,16 +161,16 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
         Set<UUID> uuids = new HashSet<>();
         switch (membership) {
             case OWNER:
-                uuids = getReference().get().getOwners();
+                uuids = this.getReference().get().getOwners();
                 break;
             case TRUSTED:
-                uuids = getReference().get().getTrusted();
+                uuids = this.getReference().get().getTrusted();
                 break;
             case MEMBER:
-                uuids = getReference().get().getMembers();
+                uuids = this.getReference().get().getMembers();
                 break;
             case DENIED:
-                uuids = getReference().get().getDenied();
+                uuids = this.getReference().get().getDenied();
                 break;
         }
         return uuids;
@@ -179,6 +187,6 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
         if (this == o) return true;
         if (!(o instanceof SpongePlot)) return false;
         SpongePlot that = (SpongePlot) o;
-        return x == that.x && y == that.y && Objects.equals(center, that.center);
+        return this.x == that.x && this.y == that.y && Objects.equals(this.center, that.center);
     }
 }

@@ -18,13 +18,14 @@
 package org.dockbox.selene.api.objects.location.position;
 
 import org.dockbox.selene.api.objects.item.Item;
+import org.dockbox.selene.api.objects.keys.KeyHolder;
 import org.dockbox.selene.api.objects.location.dimensions.World;
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 
 import java.util.Objects;
 
-public class Location {
+public class Location implements KeyHolder<Location> {
 
     private final Vector3N vectorLoc;
     private final World world;
