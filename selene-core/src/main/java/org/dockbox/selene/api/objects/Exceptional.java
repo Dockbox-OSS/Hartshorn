@@ -132,7 +132,7 @@ public final class Exceptional<T> {
      * @return The {@code Exceptional}
      */
     public static <T> Exceptional<T> of(T value) {
-        return null == value ? none() : of(value);
+        return null == value ? none() : new Exceptional<>(value);
     }
 
     /**
@@ -182,7 +182,7 @@ public final class Exceptional<T> {
         if (null == value && null == throwable) return none();
         if (null == value) return of(throwable);
         if (null == throwable) return of(value);
-        else return of(value, throwable);
+        else return new Exceptional<>(value, throwable);
     }
 
     public static <T> Exceptional<T> of(Supplier<Boolean> condition, Callable<T> ifTrue, Supplier<Throwable> ifFalse) {
