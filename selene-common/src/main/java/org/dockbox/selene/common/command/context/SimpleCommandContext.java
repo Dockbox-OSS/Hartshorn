@@ -109,7 +109,7 @@ public class SimpleCommandContext implements CommandContext {
 
     @Override
     public <T> Exceptional<T> optional(String key) {
-        return Exceptional.of(this.get(key));
+        return Exceptional.of((T) this.get(key));
     }
 
     @NotNull
