@@ -126,7 +126,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
                     ItemStack stack = p.getItemInHand(SpongeConversionUtil.toSponge(hand))
                             .orElse(ItemStack.of(ItemTypes.AIR));
                     return SpongeConversionUtil.fromSponge(stack);
-                }).map(Item.class::cast).orElse(Selene.getItems().getAir());
+                }).map(Item.class::cast).or(Selene.getItems().getAir());
             default:
                 throw new IllegalArgumentException("Unsupported type: " + hand);
         }
@@ -134,15 +134,15 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     @Override
     public void setItemInHand(Hand hand, Item item) {
-        this.getReference().ifPresent(player -> {
+        this.getReference().present(player -> {
             player.setItemInHand(SpongeConversionUtil.toSponge(hand), SpongeConversionUtil.toSponge(item));
         });
     }
 
     @Override
     public void play(Sounds sound) {
-        this.getReference().ifPresent(player -> {
-            SpongeConversionUtil.toSponge(sound).ifPresent(soundType -> {
+        this.getReference().present(player -> {
+            SpongeConversionUtil.toSponge(sound).present(soundType -> {
                 player.playSound(soundType, Vector3d.ZERO, 1);
             });
         });
@@ -150,14 +150,14 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     @Override
     public boolean isSneaking() {
-        return this.getReference().map(p -> p.get(Keys.IS_SNEAKING).orElse(false)).orElse(false);
+        return this.getReference().map(p -> p.get(Keys.IS_SNEAKING).orElse(false)).or(false);
     }
 
     @Override
     public Profile getProfile() {
         return this.getReference()
                 .map(p -> new SpongeProfile(p.getProfile()))
-                .orElseGet(() -> new SpongeProfile(this.getUniqueId()));
+                .get(() -> new SpongeProfile(this.getUniqueId()));
     }
 
     @Override
@@ -193,7 +193,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     @Override
     public void setReference(@NotNull Exceptional<org.spongepowered.api.entity.living.player.Player> reference) {
-        reference.ifPresent(player -> this.reference = new WeakReference<>(player));
+        reference.present(player -> this.reference = new WeakReference<>(player));
     }
 
     @Override
@@ -216,7 +216,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     @Override
     public void send(@NotNull Text text) {
         if (this.referenceExists()) {
-            this.postEventPre(text).ifPresent(msg -> {
+            this.postEventPre(text).present(msg -> {
                 this.getReference().get().sendMessage(SpongeConversionUtil.toSponge(msg));
             });
         }
@@ -231,7 +231,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     @Override
     public void sendWithPrefix(@NotNull Text text) {
         if (this.referenceExists()) {
-            this.postEventPre(text).ifPresent(msg -> {
+            this.postEventPre(text).present(msg -> {
                 this.getReference().get().sendMessage(org.spongepowered.api.text.Text.of(
                         SpongeConversionUtil.toSponge(DefaultResource.PREFIX.asText()),
                         SpongeConversionUtil.toSponge(msg))
@@ -251,8 +251,8 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
         SendMessageEvent event = new SendMessageEvent(this, text);
         Selene.provide(EventBus.class).post(event);
         text = event.getMessage();
-        if (event.isCancelled()) return Exceptional.empty();
-        else return Exceptional.ofNullable(text);
+        if (event.isCancelled()) return Exceptional.none();
+        else return Exceptional.of(text);
     }
 
     @Override
@@ -263,7 +263,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     @Override
     public boolean hasPermission(Permission permission) {
-        if (permission.getContext().isAbsent()) {
+        if (permission.getContext().absent()) {
             return this.hasPermission(permission.get());
         }
         else {
@@ -292,7 +292,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     @Override
     public void setPermission(Permission permission, org.dockbox.selene.api.objects.tuple.Tristate state) {
-        if (permission.getContext().isAbsent()) {
+        if (permission.getContext().absent()) {
             this.setPermission(permission.get(), state);
         } else {
             Set<Context> contexts = SpongeConversionUtil.toSponge(permission.getContext().get());
@@ -325,9 +325,9 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
                         // connectionByPlayer only calls getUniqueId on the Sponge Player object. Avoid
                         // constant rewrapping of types.
                         Exceptional<PacketConnection> connection = Exceptional.of(packetGate.connectionByUniqueId(this.getUniqueId()));
-                        connection.ifPresent(packetConnection -> {
+                        connection.present(packetConnection -> {
                             ((NMSPacket<?>) packet).write(packetConnection.getChannel());
-                        }).ifAbsent(() -> {
+                        }).absent(() -> {
                             Selene.log().warn("Could not create packet connection for player '" + this.getName() + "'");
                         });
                     });
@@ -379,48 +379,48 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     public void setLocation(@NotNull Location location) {
         if (this.referenceExists()) {
             SpongeConversionUtil.toSponge(location)
-                    .ifPresent(loc -> this.getReference().get().setLocation(loc));
+                    .present(loc -> this.getReference().get().setLocation(loc));
         }
     }
 
     @Override
     public double getHealth() {
-        return this.getSpongePlayer().map(player -> player.get(Keys.HEALTH).orElse(0D)).orElse(0D);
+        return this.getSpongePlayer().map(player -> player.get(Keys.HEALTH).orElse(0D)).or(0D);
     }    @NotNull
 
     @Override
     public void setHealth(double health) {
-        this.getSpongePlayer().ifPresent(player -> player.offer(Keys.HEALTH, health));
+        this.getSpongePlayer().present(player -> player.offer(Keys.HEALTH, health));
     }
 
     @Override
     public boolean isInvisible() {
-        return this.getSpongePlayer().map(player -> player.get(Keys.VANISH).orElse(false)).orElse(false);
+        return this.getSpongePlayer().map(player -> player.get(Keys.VANISH).orElse(false)).or(false);
     }
 
     @Override
     public void setInvisible(boolean invisible) {
-        this.getSpongePlayer().ifPresent(player -> player.offer(Keys.VANISH, invisible));
+        this.getSpongePlayer().present(player -> player.offer(Keys.VANISH, invisible));
     }
 
     @Override
     public boolean isInvulnerable() {
-        return this.getSpongePlayer().map(player -> player.get(Keys.INVULNERABLE).orElse(false)).orElse(false);
+        return this.getSpongePlayer().map(player -> player.get(Keys.INVULNERABLE).orElse(false)).or(false);
     }
 
     @Override
     public void setInvulnerable(boolean invulnerable) {
-        this.getSpongePlayer().ifPresent(player -> player.offer(Keys.INVULNERABLE, invulnerable));
+        this.getSpongePlayer().present(player -> player.offer(Keys.INVULNERABLE, invulnerable));
     }
 
     @Override
     public boolean hasGravity() {
-        return this.getSpongePlayer().map(player -> player.get(Keys.HAS_GRAVITY).orElse(false)).orElse(false);
+        return this.getSpongePlayer().map(player -> player.get(Keys.HAS_GRAVITY).orElse(false)).or(false);
     }
 
     @Override
     public void setGravity(boolean gravity) {
-        this.getSpongePlayer().ifPresent(player -> player.offer(Keys.HAS_GRAVITY, gravity));
+        this.getSpongePlayer().present(player -> player.offer(Keys.HAS_GRAVITY, gravity));
     }
 
 }

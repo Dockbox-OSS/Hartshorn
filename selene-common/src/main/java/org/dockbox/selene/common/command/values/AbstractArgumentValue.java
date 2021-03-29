@@ -29,7 +29,7 @@ public abstract class AbstractArgumentValue<T> implements ArgumentValue<T> {
 
     protected AbstractArgumentValue(String permission, String key, String type) {
         Exceptional<ArgumentConverter<?>> converter = ArgumentConverterRegistry.getOptionalConverter(type.toLowerCase());
-        if (converter.isPresent()) this.value = this.parseValue(converter.get(), key, type);
+        if (converter.present()) this.value = this.parseValue(converter.get(), key, type);
         this.permission = permission;
         this.prepareValue(type, key);
     }

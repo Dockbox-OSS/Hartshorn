@@ -69,7 +69,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
 
     @Override
     public void setPlayerSelection(Player player, Region region) {
-        SpongeWorldEditService.wrapPlayer(player).ifPresent(fawePlayer -> fawePlayer.setSelection(SpongeConversionUtil.toWorldEdit(region)));
+        SpongeWorldEditService.wrapPlayer(player).present(fawePlayer -> fawePlayer.setSelection(SpongeConversionUtil.toWorldEdit(region)));
     }
 
     @Override
@@ -91,7 +91,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
 
     @Override
     public void setPlayerClipboard(Player player, Clipboard clipboard) {
-        SpongeWorldEditService.wrapPlayer(player).ifPresent(fawePlayer -> fawePlayer.getSession()
+        SpongeWorldEditService.wrapPlayer(player).present(fawePlayer -> fawePlayer.getSession()
                 .setClipboard(new ClipboardHolder(
                         SpongeConversionUtil.toWorldEdit(clipboard),
                         SpongeConversionUtil.toWorldEdit(clipboard.getRegion().getWorld())
@@ -183,7 +183,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
         ParserContext context = prepareContext(cause);
         return items.stream()
                 .map(item -> SpongeConversionUtil.toWorldEdit(item, context))
-                .filter(Exceptional::isPresent)
+                .filter(Exceptional::present)
                 .map(Exceptional::get)
                 .collect(Collectors.toList());
     }
@@ -233,7 +233,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
         if (player instanceof SpongePlayer) {
             return ((SpongePlayer) player).getReference().map(FawePlayer::wrap);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @FunctionalInterface

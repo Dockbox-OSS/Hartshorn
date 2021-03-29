@@ -49,7 +49,7 @@ public class SpongeThreadUtils implements ThreadUtils {
     public <T> Exceptional<T> awaitAsync(Callable<T> callable) {
         SpongeExecutorService ses = Sponge.getScheduler().createAsyncExecutor(Selene.getServer());
         try {
-            return Exceptional.ofNullable(ses.submit(callable).get());
+            return Exceptional.of(ses.submit(callable).get());
         }
         catch (InterruptedException | ExecutionException e) {
             return Exceptional.of(e);
@@ -60,7 +60,7 @@ public class SpongeThreadUtils implements ThreadUtils {
     public <T> Exceptional<T> awaitSync(Callable<T> callable) {
         SpongeExecutorService ses = Sponge.getScheduler().createSyncExecutor(Selene.getServer());
         try {
-            return Exceptional.ofNullable(ses.submit(callable).get());
+            return Exceptional.of(ses.submit(callable).get());
         }
         catch (InterruptedException | ExecutionException e) {
             return Exceptional.of(e);

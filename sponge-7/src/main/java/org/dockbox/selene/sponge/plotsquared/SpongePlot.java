@@ -58,7 +58,7 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
     public Exceptional<Player> getOwner() {
         if (referenceExists()) {
             Plot plot = getReference().get();
-            if (plot.getOwners().isEmpty()) return Exceptional.empty();
+            if (plot.getOwners().isEmpty()) return Exceptional.none();
             UUID ownerUuid = plot.getOwners().iterator().next();
             return Selene.provide(Players.class).getPlayer(ownerUuid);
         }
@@ -70,7 +70,7 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
         Players service = Selene.provide(Players.class);
         return getUUIDs(membership).stream()
                 .map(service::getPlayer)
-                .filter(Exceptional::isPresent)
+                .filter(Exceptional::present)
                 .map(Exceptional::get)
                 .collect(Collectors.toList());
     }
@@ -85,30 +85,30 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
         Map<PlotFlag<?>, Object> flags = SeleneUtils.emptyMap();
         getReference().get().getFlags().forEach(((flag, o) ->
                 SpongePlotSquaredService.getFlag(flag.getName())
-                        .ifPresent(plotFlag -> flags.put(plotFlag, o)))
+                        .present(plotFlag -> flags.put(plotFlag, o)))
         );
         return flags;
     }
 
     @Override
     public <T> void addFlag(PlotFlag<T> flag, T value) {
-        getReference().ifPresent(plot -> SpongePlotSquaredService.getPlotSquaredFlag(flag.getId()).ifPresent(plotFlag -> plot.setFlag(plotFlag, value)));
+        getReference().present(plot -> SpongePlotSquaredService.getPlotSquaredFlag(flag.getId()).present(plotFlag -> plot.setFlag(plotFlag, value)));
     }
 
     @Override
     public void removeFlag(PlotFlag<?> flag) {
-        getReference().ifPresent(plot -> SpongePlotSquaredService.getPlotSquaredFlag(flag.getId()).ifPresent(plot::removeFlag));
+        getReference().present(plot -> SpongePlotSquaredService.getPlotSquaredFlag(flag.getId()).present(plot::removeFlag));
     }
 
     @Override
     public <T> Exceptional<T> getFlag(PlotFlag<T> flag) {
-        if (getReference().isPresent()) {
+        if (getReference().present()) {
             Flag<?> plotFlag = SpongePlotSquaredService.getPlotSquaredFlag(flag.getId()).orNull();
-            if (plotFlag == null) return Exceptional.empty();
+            if (plotFlag == null) return Exceptional.none();
             //noinspection unchecked
             return Exceptional.of(getReference().get().getFlag(plotFlag).transform(value -> (T) value));
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @Override
@@ -123,7 +123,7 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
 
     @Override
     public Location getHome() {
-        if (getReference().isPresent()) {
+        if (getReference().present()) {
             return SpongeConversionUtil.fromPlotSquared(getReference().get().getHome());
         }
         return Location.empty();
@@ -136,17 +136,17 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
 
     @Override
     public Exceptional<org.dockbox.selene.plots.Plot> getRelative(Direction direction) {
-        if (getReference().isPresent()) {
+        if (getReference().present()) {
             return Exceptional.of(new SpongePlot(getReference().get().getRelative(direction.ordinal())));
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @Override
     public boolean isWorld() {
         return getReference()
                 .map(plot -> plot.getWorldName().replaceAll(",", ";").equals(plot.getId().toString()))
-                .orElse(false);
+                .or(false);
     }
 
     private Set<UUID> getUUIDs(PlotMembership membership) {
@@ -170,8 +170,8 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
 
     @Override
     public Exceptional<Plot> constructInitialReference() {
-        if (this.center == null) return Exceptional.empty();
-        return Exceptional.ofNullable(Plot.getPlot(SpongeConversionUtil.toPlotSquared(this.center)));
+        if (this.center == null) return Exceptional.none();
+        return Exceptional.of(Plot.getPlot(SpongeConversionUtil.toPlotSquared(this.center)));
     }
 
     @Override

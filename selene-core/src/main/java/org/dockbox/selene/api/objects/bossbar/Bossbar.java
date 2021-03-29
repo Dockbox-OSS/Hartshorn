@@ -48,13 +48,13 @@ public interface Bossbar {
 
     /**
      * Returns a {@link Bossbar} instance based on a given {@link UUID uuid}. This identifier
-     * typically matches with the one returned by {@link Bossbar#getId()}. If no instance exists, a
-     * empty {@link Exceptional} is returned.
+     * typically matches with the one returned by {@link Bossbar#getId()}. If no instance exists,
+     * {@link Exceptional#none()} is returned.
      *
      * @param uuid
      *         The unique identifier of the potential bossbar
      *
-     * @return The bossbar wrapped in a {@link Exceptional}, or empty.
+     * @return The bossbar wrapped in a {@link Exceptional}, or none.
      */
     static Exceptional<Bossbar> get(UUID uuid) {
         return get(uuid.toString());
@@ -62,13 +62,13 @@ public interface Bossbar {
 
     /**
      * Returns a {@link Bossbar} instance based on a given {@code id}. This identifier typically
-     * matches with the one returned by {@link Bossbar#getId()}. If no instance exists, a empty {@link
-     * Exceptional} is returned.
+     * matches with the one returned by {@link Bossbar#getId()}. If no instance exists, {@link
+     * Exceptional#none()} is returned.
      *
      * @param id
      *         The identifier of the potential bossbar
      *
-     * @return The bossbar wrapped in a {@link Exceptional}, or empty.
+     * @return The bossbar wrapped in a {@link Exceptional}, or none.
      */
     static Exceptional<Bossbar> get(String id) {
         return Exceptional.of(() -> REGISTRY.get(id));

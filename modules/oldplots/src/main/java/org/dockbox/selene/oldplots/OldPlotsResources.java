@@ -27,11 +27,11 @@ public final class OldPlotsResources {
     public static final Resource PLOT_HOVER = new Resource("$2Teleport to $1{0}$2, $1{1}, {2}", "oldplots.list.hover");
     public static final Resource LIST_TITLE = new Resource("$1OldPlots for $2{0}", "oldplots.list.title");
 
-    public static final Resource ERROR_WORLDS = new Resource("$4Worlds are not stored as OldPlots", "oldplots.error.worlds");
-    public static final Resource ERROR_CALCULATION = new Resource("$4Could not calculate plot location", "oldplots.error.calculation");
-    public static final Resource ERROR_NO_LOCATION = new Resource("$4No world location configured for '{0}'", "oldplots.error.location");
-    public static final Resource ERROR_NO_PLOT = new Resource("$4No plot with that ID found", "oldplots.error.plot");
-    public static final Resource ERROR_NO_PLAYER = new Resource("$4No valid player provided", "oldplots.error.player");
+    public static final Resource ERROR_WORLDS = new Resource("$4Worlds are not stored as OldPlots", "oldplots.caught.worlds");
+    public static final Resource ERROR_CALCULATION = new Resource("$4Could not calculate plot location", "oldplots.caught.calculation");
+    public static final Resource ERROR_NO_LOCATION = new Resource("$4No world location configured for '{0}'", "oldplots.caught.location");
+    public static final Resource ERROR_NO_PLOT = new Resource("$4No plot with that ID found", "oldplots.caught.plot");
+    public static final Resource ERROR_NO_PLAYER = new Resource("$4No valid player provided", "oldplots.caught.player");
 
     private OldPlotsResources() {}
 }

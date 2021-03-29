@@ -31,18 +31,18 @@ public abstract class ReferencedWrapper<T> implements Wrapper<T> {
     }
 
     protected ReferencedWrapper(T reference) {
-        this.setReference(Exceptional.ofNullable(reference));
+        this.setReference(Exceptional.of(reference));
     }
 
     @Override
     public Exceptional<T> getReference() {
-        this.updateReference().ifPresent(t -> this.setInternalReference(new WeakReference<>(t)));
-        return Exceptional.ofNullable(this.getInternalReference().get());
+        this.updateReference().present(t -> this.setInternalReference(new WeakReference<>(t)));
+        return Exceptional.of(this.getInternalReference().get());
     }
 
     @Override
     public void setReference(@NotNull Exceptional<T> reference) {
-        this.setInternalReference(reference.map(WeakReference::new).orElseGet(() -> new WeakReference<>(null)));
+        this.setInternalReference(reference.map(WeakReference::new).get(() -> new WeakReference<>(null)));
     }
 
     public Exceptional<T> updateReference() {
@@ -54,7 +54,7 @@ public abstract class ReferencedWrapper<T> implements Wrapper<T> {
     }
 
     public Function<T, Exceptional<T>> getUpdateReferenceTask() {
-        return value -> Exceptional.ofNullable(value).orElseSupply(() -> constructInitialReference().orNull());
+        return value -> Exceptional.of(value).then(() -> constructInitialReference().orNull());
     }
 
     protected void setInternalReference(WeakReference<T> reference) {

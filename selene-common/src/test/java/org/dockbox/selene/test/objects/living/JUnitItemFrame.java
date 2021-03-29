@@ -51,7 +51,7 @@ public class JUnitItemFrame extends JUnitEntity<ItemFrame> implements ItemFrame,
 
     @Override
     public Exceptional<Item> getDisplayedItem() {
-        return Exceptional.ofNullable(this.displayItem);
+        return Exceptional.of(this.displayItem);
     }
 
     @Override

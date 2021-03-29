@@ -38,8 +38,8 @@ public class SimpleCommandContext implements CommandContext {
             new CommandArgument[0],
             new CommandFlag[0],
             null,
-            Exceptional.empty(),
-            Exceptional.empty(),
+            Exceptional.none(),
+            Exceptional.none(),
             new String[0]);
 
     private final String usage;
@@ -109,7 +109,7 @@ public class SimpleCommandContext implements CommandContext {
 
     @Override
     public <T> Exceptional<T> optional(String key) {
-        return Exceptional.ofNullable(this.get(key));
+        return Exceptional.of((T) this.get(key));
     }
 
     @NotNull

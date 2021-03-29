@@ -38,7 +38,7 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
     @Override
     public <T> Exceptional<T> read(Path file, Class<T> type) {
         Exceptional<T> persistentCapable = correctPersistentCapable(file, type);
-        if (persistentCapable.isPresent()) return persistentCapable;
+        if (persistentCapable.present()) return persistentCapable;
 
         Reflect.rejects(type, DefaultXStreamManager.class, true);
         return Exceptional.of(() -> DefaultXStreamManager.prepareXStream(type).read(type, file.toFile()));

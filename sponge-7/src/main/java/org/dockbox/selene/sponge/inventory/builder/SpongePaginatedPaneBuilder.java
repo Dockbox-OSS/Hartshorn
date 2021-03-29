@@ -68,11 +68,11 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
         Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
-                .ifPresent(layout -> {
+                .present(layout -> {
                     this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
                     this.layout(layout);
                 })
-                .ifAbsent(() -> {
+                .absent(() -> {
                     Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");
                     this.builder = Page.builder(InventoryArchetypes.CHEST);
                 });

@@ -1022,7 +1022,7 @@ public final class SeleneUtils {
         else if (object instanceof Collection) return ((Collection<?>) object).isEmpty();
         else if (object instanceof Map) return ((Map<?, ?>) object).isEmpty();
         else if (Reflect.hasMethod(object, "isEmpty"))
-            return Reflect.getMethodValue(object, "isEmpty", Boolean.class).orElse(false);
+            return Reflect.getMethodValue(object, "isEmpty", Boolean.class).or(false);
         else return false;
     }
 
@@ -1193,7 +1193,7 @@ public final class SeleneUtils {
                 return Exceptional.of(Duration.ofSeconds(time));
             }
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     private static long durationAmount(@Nullable String g, int multipler) {

@@ -521,7 +521,7 @@ public final class XStreamUtils {
          * Allowing the given type and using its class loader if not yet set, read an instance of that
          * type from the given file.
          *
-         * @return the read instance of the given type, or the fall back on any error
+         * @return the read instance of the given type, or the fall back on any caught
          */
         public <T> T readQuietly(File file, Class<T> type, Supplier<T> fallBack) {
             if (!this.classLoaderSet) {

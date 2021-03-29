@@ -38,7 +38,7 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
      */
     @Override
     public Exceptional<I> process(@NotNull I input, @Nullable Throwable throwable) {
-        Exceptional<I> exceptionalInput = Exceptional.ofNullable(input, throwable);
+        Exceptional<I> exceptionalInput = Exceptional.of(input, throwable);
 
         return this.process(exceptionalInput);
     }
@@ -65,9 +65,9 @@ public class Pipeline<I> extends AbstractPipeline<I, I> {
             if (this.isCancelled()) {
                 // Reset it straight after its been detected for next time the pipeline's used.
                 this.uncancelPipeline();
-                return Exceptional.ofNullable(
+                return Exceptional.of(
                         (I) super.getCancelBehaviour().act(exceptionalInput.orNull()),
-                        exceptionalInput.orElseExcept(null)
+                        exceptionalInput.unsafeError()
                 );
             }
         }

@@ -74,15 +74,15 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
             if (null == channel) return false;
             Message message = channel.retrieveMessageById(messageId).complete();
             return null != message;
-        }).orElse(false);
+        }).or(false);
     }
 
     @NotNull
     @Override
     public Exceptional<Category> getLoggingCategory() {
-        if (this.getJDA().isPresent())
-            return Exceptional.ofNullable(this.getJDA().get().getCategoryById(Selene.getServer().getGlobalConfig().getDiscordLoggingCategoryId()));
-        return Exceptional.empty();
+        if (this.getJDA().present())
+            return Exceptional.of(this.getJDA().get().getCategoryById(Selene.getServer().getGlobalConfig().getDiscordLoggingCategoryId()));
+        return Exceptional.none();
     }
 
     @NotNull
@@ -103,7 +103,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
     @Override
     public void sendToTextChannel(DiscordPagination pagination, MessageChannel channel) {
-        this.getJDA().ifPresent(jda -> {
+        this.getJDA().present(jda -> {
             try {
                 if (pagination.getPages().isEmpty()) return;
 
@@ -206,13 +206,13 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
                 // Ensure the role exists at all
                 Exceptional<Role> or = this.getGuild().map(guild -> guild.getRoleById(annotation.minimumRankId()));
-                if (!or.isPresent()) return;
+                if (!or.present()) return;
 
                 // Ensure the player has the required role
                 userPermitted = this.getGuild()
                         .map(guild -> guild.getMember(context.getAuthor()))
                         .map(member -> member.getRoles().contains(or.get()))
-                        .orElse(false);
+                        .or(false);
             }
 
             if (!userPermitted) {

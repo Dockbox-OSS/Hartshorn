@@ -47,11 +47,11 @@ public interface CustomParameterPattern {
      * @param <T>
      *         The generic type of the target
      *
-     * @return An instance of {@code T}, wrapped in a {@link Exceptional}, or {@link Exceptional#empty()} if {@code null}
+     * @return An instance of {@code T}, wrapped in a {@link Exceptional}, or {@link Exceptional#none()} if {@code null}
      */
     default <T> Exceptional<T> request(Class<T> type, CommandSource source, String raw) {
         Exceptional<Boolean> preconditionsMatch = preconditionsMatch(type, source, raw);
-        if (preconditionsMatch.errorPresent()) return Exceptional.of(preconditionsMatch.getError());
+        if (preconditionsMatch.caught()) return Exceptional.of(preconditionsMatch.error());
 
         List<String> rawArguments = splitArguments(raw);
         List<Class<?>> argumentTypes = SeleneUtils.emptyList();
@@ -59,7 +59,7 @@ public interface CustomParameterPattern {
 
         for (String rawArgument : rawArguments) {
             Exceptional<String> argumentIdentifier = this.parseIdentifier(rawArgument);
-            if (argumentIdentifier.isAbsent()) {
+            if (argumentIdentifier.absent()) {
                 // If a non-pattern argument is required, the converter needs to be looked up by type instead of by its identifier. This will be done when the constructor is being looked up
                 argumentTypes.add(null);
                 arguments.add(rawArgument);
@@ -105,7 +105,7 @@ public interface CustomParameterPattern {
                 Class<?> requiredType = argumentTypes.get(i);
                 if (requiredType == null) {
                     Exceptional<?> result = ArgumentConverterRegistry.getConverter(parameterType).convert(source, (String) arguments.get(i));
-                    if (result.isPresent()) {
+                    if (result.present()) {
                         arguments.set(i, result.get());
                         continue; // Generic type, will be parsed later
                     }

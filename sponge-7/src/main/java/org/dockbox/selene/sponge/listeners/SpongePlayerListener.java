@@ -223,7 +223,7 @@ public class SpongePlayerListener {
 
     private static void postIfCommandSource(Object source, Consumer<org.dockbox.selene.api.command.source.CommandSource> consumer) {
         if (source instanceof CommandSource) {
-            SpongeConversionUtil.fromSponge((CommandSource) source).ifPresent(consumer);
+            SpongeConversionUtil.fromSponge((CommandSource) source).present(consumer);
         }
     }
 
@@ -256,8 +256,8 @@ public class SpongePlayerListener {
             Cancellable event = new NameBannedEvent(
                     name,
                     convertedSource,
-                    Exceptional.ofNullable(reason),
-                    Exceptional.empty(),
+                    Exceptional.of(reason),
+                    Exceptional.none(),
                     LocalDateTime.now()
             ).post();
             if (event.isCancelled()) SpongePlayerListener.logUnsupportedCancel(event);
@@ -388,14 +388,14 @@ public class SpongePlayerListener {
             @Getter("getSource") Object source
     ) {
         SpongePlayerListener.postIfCommandSource(source, convertedSource ->
-                new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional.empty()).post()
+                new KickEvent(SpongeConversionUtil.fromSponge(player), convertedSource, Exceptional.none()).post()
         );
     }
 
     @Listener
     public void onPlayerInteractedWithBlock(InteractBlockEvent event, @Getter("getSource") Player player) {
         Exceptional<Location> location = Exceptional.of(event.getTargetBlock().getLocation().map(SpongeConversionUtil::fromSponge));
-        if (location.isAbsent()) return;
+        if (location.absent()) return;
         Location blockLocation = location.get();
         ClickType type;
         Hand hand;

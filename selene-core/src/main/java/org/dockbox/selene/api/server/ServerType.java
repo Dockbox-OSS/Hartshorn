@@ -91,7 +91,7 @@ public enum ServerType {
     /**
      * Returns whether or not the platform provides access to a mod loader. This can be especially
      * useful when using {@link FileManager#getModdedPlatformModsConfigDir()} as it may return {@link
-     * Exceptional#empty()} depending on the availability mods on the platform.
+     * Exceptional#none()} depending on the availability mods on the platform.
      *
      * @return the boolean
      */

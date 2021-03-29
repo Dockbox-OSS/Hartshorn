@@ -31,7 +31,7 @@ public class SpongeDiscordUtils extends DefaultDiscordUtils {
     @NotNull
     @Override
     public Exceptional<JDA> getJDA() {
-        return Exceptional.ofNullable(MagiBridge.getInstance().getJDA());
+        return Exceptional.of(MagiBridge.getInstance().getJDA());
     }
 
     @NotNull

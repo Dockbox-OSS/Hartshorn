@@ -689,7 +689,7 @@ public enum BlockIdentifier implements RegistryIdentifier {
         return Exceptional.of(() -> valueOf(
                 formatBlockName(
                     VariantIdentifier.getBlockNameWithoutVariant(name))
-        )).orElse(BlockIdentifier.AIR);
+        )).or(BlockIdentifier.AIR);
     }
 
     /*

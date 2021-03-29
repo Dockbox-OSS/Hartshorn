@@ -43,12 +43,12 @@ public class SpongeInventoryRow extends AbstractInventoryRow implements SpongeIn
 
     @Override
     public void setSlot(Item item, int index) {
-        this.internalGetSlot(index).ifPresent(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
+        this.internalGetSlot(index).present(slot -> slot.set(SpongeConversionUtil.toSponge(item)));
     }
 
     @Override
     public Item getSlot(int index) {
-        return this.internalGetSlot(index).map(SLOT_LOOKUP).orElseGet(AIR);
+        return this.internalGetSlot(index).map(SLOT_LOOKUP).get(AIR);
     }
 
     private Exceptional<org.spongepowered.api.item.inventory.Slot> internalGetSlot(int index) {
@@ -71,7 +71,7 @@ public class SpongeInventoryRow extends AbstractInventoryRow implements SpongeIn
 
     @Override
     public Collection<Item> getAllItems() {
-        return this.internalGetRow().map(this::getAllItems).orElseGet(SeleneUtils::emptyList);
+        return this.internalGetRow().map(this::getAllItems).get(SeleneUtils::emptyList);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class SpongeInventoryRow extends AbstractInventoryRow implements SpongeIn
         return this.internalGetRow().map(row -> {
             ItemStack stack = SpongeConversionUtil.toSponge(item);
             return Type.SUCCESS == row.offer(stack).getType();
-        }).orElse(false);
+        }).or(false);
     }
 
 }

@@ -41,7 +41,7 @@ public class SpongeChunk extends ReferencedWrapper<org.spongepowered.api.world.C
         return this.getReference()
                 .map(chunk -> chunk.getPosition().toDouble())
                 .map(SpongeConversionUtil::fromSponge)
-                .orElse(Vector3N.empty());
+                .or(Vector3N.empty());
     }
 
     @Override
@@ -49,7 +49,7 @@ public class SpongeChunk extends ReferencedWrapper<org.spongepowered.api.world.C
         return this.getReference()
                 .map(org.spongepowered.api.world.Chunk::getWorld)
                 .map(SpongeConversionUtil::fromSponge)
-                .orElse(World.empty());
+                .or(World.empty());
     }
 
     @Override

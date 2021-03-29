@@ -61,7 +61,7 @@ public enum DefaultParamProcessors {
                 if (null != object && !annotation.overrideExisting()) return object;
 
                 AtomicReference<Object> arg = new AtomicReference<>(null);
-                Reflect.getMethodValue(event, annotation.value(), parameter.getType()).ifPresent(arg::set);
+                Reflect.getMethodValue(event, annotation.value(), parameter.getType()).present(arg::set);
                 return arg.get();
             }),
 
@@ -131,7 +131,7 @@ public enum DefaultParamProcessors {
                 if (object instanceof Exceptional<?>) return object;
                 if (object instanceof Optional<?>) return Exceptional.of((Optional<?>) object);
 
-                return Exceptional.ofNullable(object);
+                return Exceptional.of(object);
             }),
 
     /**
@@ -143,7 +143,7 @@ public enum DefaultParamProcessors {
     UNWRAP_OR_SKIP(UnwrapOrSkip.class, EventStage.FILTER,
             (object, annotation, event, parameter, wrapper) -> {
                 if (object instanceof Exceptional<?>) {
-                    if (((Exceptional<?>) object).isPresent()) return ((Exceptional<?>) object).get();
+                    if (((Exceptional<?>) object).present()) return ((Exceptional<?>) object).get();
                     else if (annotation.skipIfNull()) throw new SkipEventException();
 
                 }

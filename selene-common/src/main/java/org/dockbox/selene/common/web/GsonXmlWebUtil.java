@@ -49,7 +49,7 @@ public class GsonXmlWebUtil extends DefaultWebUtil {
             GsonXml gsonXml = new GsonXmlBuilder().setXmlParserCreator(parser).create();
 
             T result = gsonXml.fromXml(in, type);
-            return Exceptional.ofNullable(result);
+            return Exceptional.of(result);
         }
         catch (JsonIOException | JsonSyntaxException | IOException e) {
             return Exceptional.of(e);

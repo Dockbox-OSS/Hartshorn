@@ -80,7 +80,7 @@ public class DefaultServer implements Server {
 
             em.getRegisteredModuleIds().forEach(id -> em.getContainer(id)
                     .map(e -> DefaultServer.generateText(e, source))
-                    .ifPresent(content::add)
+                    .present(content::add)
             );
 
             pb.title(DefaultServerResources.PAGINATION_TITLE.translate(source).asText());
@@ -122,10 +122,10 @@ public class DefaultServer implements Server {
             ModuleContainer container = ctx.get("id");
             Exceptional<?> oi = Selene.provide(ModuleManager.class).getInstance(container.id());
 
-            oi.ifPresent(o -> {
+            oi.present(o -> {
                 eb.post(new ServerReloadEvent(), o.getClass());
                 src.send(DefaultServerResources.MODULE_RELOAD_SUCCESSFUL.format(container.name()));
-            }).ifAbsent(() ->
+            }).absent(() ->
                     src.send(DefaultServerResources.NODULE_RELOAD_FAILED.format(container.name())));
         }
         else {
@@ -181,12 +181,12 @@ public class DefaultServer implements Server {
         // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
         // argument here is just a confirmation that the source is correct.
         optionalCooldownId
-                .ifPresent(cooldownId -> {
+                .present(cooldownId -> {
                     String cid = cooldownId.getValue();
-                    Selene.provide(CommandBus.class).confirmCommand(cid).ifAbsent(() ->
+                    Selene.provide(CommandBus.class).confirmCommand(cid).absent(() ->
                             src.send(DefaultServerResources.CONFIRM_FAILED));
                 })
-                .ifAbsent(() -> src.send(DefaultServerResources.CONFIRM_INVALID_ID));
+                .absent(() -> src.send(DefaultServerResources.CONFIRM_INVALID_ID));
     }
 
 }

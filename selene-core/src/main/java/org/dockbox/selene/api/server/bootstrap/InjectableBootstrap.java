@@ -82,7 +82,7 @@ public abstract class InjectableBootstrap {
     private static <T> T getInjectedInstance(Injector injector, Class<T> type, InjectorProperty<?>... additionalProperties) {
         @SuppressWarnings("rawtypes")
         Exceptional<Class> annotation = Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
-        if (annotation.isPresent() && annotation.get().isAnnotation()) {
+        if (annotation.present() && annotation.get().isAnnotation()) {
             //noinspection unchecked
             return (T) injector.getInstance(Key.get(type, annotation.get()));
         }
@@ -105,15 +105,15 @@ public abstract class InjectableBootstrap {
     }
 
     public <T> Exceptional<T> getInstanceSafe(Class<T> type, InjectorProperty<?>... additionalProperties) {
-        return Exceptional.ofNullable(this.getInstance(type, additionalProperties));
+        return Exceptional.of(this.getInstance(type, additionalProperties));
     }
 
     public <T> Exceptional<T> getInstanceSafe(Class<T> type, Object module, InjectorProperty<?>... additionalProperties) {
-        return Exceptional.ofNullable(this.getInstance(type, module, additionalProperties));
+        return Exceptional.of(this.getInstance(type, module, additionalProperties));
     }
 
     public <T> Exceptional<T> getInstanceSafe(Class<T> type, Class<?> module, InjectorProperty<?>... additionalProperties) {
-        return Exceptional.ofNullable(this.getInstance(type, module, additionalProperties));
+        return Exceptional.of(this.getInstance(type, module, additionalProperties));
     }
 
     public <T> T getInstance(Class<T> type, InjectorProperty<?>... additionalProperties) {
@@ -209,7 +209,7 @@ public abstract class InjectableBootstrap {
             }
             catch (ConfigurationException ce) {
                 typeInstance = InjectableBootstrap.getRawInstance(type, injector)
-                        .orElseSupply(() -> this.getUnsafeInstance(type, injector))
+                        .then(() -> this.getUnsafeInstance(type, injector))
                         .orNull();
             }
         }

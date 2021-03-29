@@ -30,9 +30,9 @@ public interface ItemFrame extends Entity<ItemFrame> {
 
     /**
      * Returns the current {@link Item} displayed in the item frame, wrapped in a {@link Exceptional}.
-     * If no item is currently being represented, {@link Exceptional#empty()} is returned.
+     * If no item is currently being represented, {@link Exceptional#none()} is returned.
      *
-     * @return The {@link Item} displayed in the item frame, or {@link Exceptional#empty()}.
+     * @return The {@link Item} displayed in the item frame, or {@link Exceptional#none()}.
      */
     Exceptional<Item> getDisplayedItem();
 

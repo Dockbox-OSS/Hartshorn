@@ -157,8 +157,8 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         else {
             Exceptional<DefaultResource> response = DefaultCommandBus.callCommandWithEvents(sender, ctx, command, registrationContext);
 
-            if (response.errorPresent())
-                sender.sendWithPrefix(DefaultResource.UNKNOWN_ERROR.format(response.getError().getMessage()));
+            if (response.caught())
+                sender.sendWithPrefix(DefaultResource.UNKNOWN_ERROR.format(response.error().getMessage()));
         }
     }
 
@@ -183,7 +183,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
             new CommandEvent.After(sender, context).post();
             return response;
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @Override
@@ -388,7 +388,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
                 return Exceptional.of(true);
             }
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     protected ArgumentValue<?> generateArgumentValue(String argumentDefinition, String defaultPermission) {
@@ -538,7 +538,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
 
         Exceptional<Location> location = sender instanceof Locatable
                 ? Exceptional.of(((Locatable) sender).getLocation())
-                : Exceptional.empty();
+                : Exceptional.none();
 
         return new SimpleCommandContext(
                 command,

@@ -33,17 +33,17 @@ public class WrappedPattern
 
     @Override
     public Exceptional<com.sk89q.worldedit.function.pattern.Pattern> getReference() {
-        return Exceptional.ofNullable(this.pattern);
+        return Exceptional.of(this.pattern);
     }
 
     @Override
     public void setReference(
             @NotNull Exceptional<com.sk89q.worldedit.function.pattern.Pattern> reference) {
-        reference.ifPresent(pattern -> this.pattern = pattern);
+        reference.present(pattern -> this.pattern = pattern);
     }
 
     @Override
     public Exceptional<com.sk89q.worldedit.function.pattern.Pattern> constructInitialReference() {
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 }

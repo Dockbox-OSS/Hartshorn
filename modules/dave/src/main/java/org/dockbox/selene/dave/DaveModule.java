@@ -76,11 +76,11 @@ public class DaveModule implements InjectableType {
     public void run(Player source, CommandContext context) {
         String triggerId = context.get("trigger");
         this.triggers.findById(triggerId)
-                .ifPresent(
+                .present(
                         trigger -> {
                             DaveUtils.performTrigger(source, source.getName(), trigger, "", this.config);
                         })
-                .ifAbsent(
+                .absent(
                         () -> {
                             source.send(DaveResources.NO_MATCHING_TRIGGER.format(triggerId));
                         });
@@ -99,11 +99,11 @@ public class DaveModule implements InjectableType {
         if (SeleneUtils.isFileEmpty(triggerFile)) this.restoreTriggerFile(fm, triggerFile);
 
         fm.read(triggerFile, DaveTriggers.class)
-                .ifPresent(triggers -> this.triggers = triggers)
-                .ifAbsent(() -> Selene.log().warn("Could not load triggers for Dave"));
+                .present(triggers -> this.triggers = triggers)
+                .absent(() -> Selene.log().warn("Could not load triggers for Dave"));
 
         Path configFile = fm.getConfigFile(DaveModule.class);
-        fm.read(configFile, DaveConfig.class).ifPresent(config -> this.config = config);
+        fm.read(configFile, DaveConfig.class).present(config -> this.config = config);
     }
 
     private void restoreTriggerFile(FileManager fm, Path triggerFile) {
@@ -119,7 +119,7 @@ public class DaveModule implements InjectableType {
     public void onChat(SendChatEvent sendChatEvent) {
         Player player = (Player) sendChatEvent.getTarget();
         DaveUtils.findMatching(this.triggers, sendChatEvent.getMessage().toPlain())
-                .ifPresent(trigger -> Selene.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+                .present(trigger -> Selene.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
                         player,
                         player.getName(),
                         trigger,

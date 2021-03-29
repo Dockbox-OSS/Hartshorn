@@ -44,7 +44,7 @@ public abstract class BlockRegistryParser {
     protected List<String> parseFile(String filename) {
         try {
             Exceptional<Path> ePath = Selene.getResourceFile(filename);
-            if (ePath.isAbsent()) {
+            if (ePath.absent()) {
                 Selene.log().info("Can't find " + filename);
             } else {
                 return Files.lines(ePath.get()).collect(Collectors.toList());
@@ -69,7 +69,7 @@ public abstract class BlockRegistryParser {
             Item item = this.getItemFromRawID(rawID);
 
             Exceptional<String> eBlockIdentifier = this.determineBlockIdentifier(item);
-            if (eBlockIdentifier.isAbsent()) continue;
+            if (eBlockIdentifier.absent()) continue;
 
             String id = this.getItemID(item);
             String blockIdentifier = eBlockIdentifier.get();
@@ -109,7 +109,7 @@ public abstract class BlockRegistryParser {
             FileManager fm = Selene.provide(FileManager.class);
             Path file = fm.getDataFile(BlockRegistryExtension.class, filename);
 
-            ItemData itemData = fm.read(file, ItemData.class).orElse(new ItemData());
+            ItemData itemData = fm.read(file, ItemData.class).or(new ItemData());
             this.itemRegistry = itemData.getItemRegistry();
             this.blockIdentifierIDs = itemData.getBlockIdentifierIDs();
         }

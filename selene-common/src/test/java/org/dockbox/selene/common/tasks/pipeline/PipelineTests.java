@@ -40,7 +40,7 @@ public class PipelineTests {
                 .addVarargPipes(
                         Pipe.of((input, throwable) -> input * 2),
                         Pipe.of(((input, throwable) -> input - 3)))
-                .addPipe(StandardPipe.of(input -> input.orElse(-1)))
+                .addPipe(StandardPipe.of(input -> input.or(-1)))
                 .processUnsafe(5);
 
         Assertions.assertEquals(9, result);
@@ -62,7 +62,7 @@ public class PipelineTests {
     public void passingInputForwardOnErrorTest() {
         int output = new Pipeline<Integer>()
                 .addPipe(InputPipe.of(input -> 1 / input))
-                .addPipe(StandardPipe.of(input -> input.orElse(1)))
+                .addPipe(StandardPipe.of(input -> input.or(1)))
                 .processUnsafe(0);
 
         Assertions.assertEquals(0, output);
@@ -74,8 +74,8 @@ public class PipelineTests {
                 .addPipe(InputPipe.of(input -> 1 / input))
                 .addPipe(StandardPipe.of(
                         input -> {
-                            if (input.errorPresent()) return -1;
-                            else return input.orElse(1);
+                            if (input.caught()) return -1;
+                            else return input.or(1);
                         }))
                 .processUnsafe(0);
 
@@ -125,7 +125,7 @@ public class PipelineTests {
                 .addPipe(InputPipe.of(input -> input / 2F))
                 .process(4F);
 
-        Assertions.assertFalse(output.isPresent());
+        Assertions.assertFalse(output.present());
     }
 
     @Test

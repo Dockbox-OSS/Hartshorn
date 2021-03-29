@@ -210,7 +210,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
 
     @Override
     public Exceptional<Location> getLookingAtBlockPos() {
-        return Exceptional.ofNullable(this.lookingAt);
+        return Exceptional.of(this.lookingAt);
     }
 
     @Override

@@ -28,7 +28,7 @@ public interface Pipe<I, O> extends StandardPipe<I, O> {
 
     @Override
     default O apply(Exceptional<I> input) throws Exception {
-        return this.execute(input.orNull(), input.orElseExcept(null));
+        return this.execute(input.orNull(), input.unsafeError());
     }
 
     O execute(I input, Throwable throwable) throws Exception;

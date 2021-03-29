@@ -48,9 +48,9 @@ final class SeleneConverterElement extends CommandElement {
     protected Object parseValue(@NotNull CommandSource source, CommandArgs args) throws ArgumentParseException {
         String argument = args.next();
         Exceptional<?> value = this.argument.convert(SpongeConversionUtil.fromSponge(source).get(), argument);
-        if (value.errorPresent()) { // So returning null is still permitted
-            ResourceEntry errorResource = DefaultResource.UNKNOWN_ERROR.format(value.getError().getMessage());
-            throw new ArgumentParseException(SpongeConversionUtil.toSponge(errorResource.asText()), value.getError(), argument, 0);
+        if (value.caught()) { // So returning null is still permitted
+            ResourceEntry errorResource = DefaultResource.UNKNOWN_ERROR.format(value.error().getMessage());
+            throw new ArgumentParseException(SpongeConversionUtil.toSponge(errorResource.asText()), value.error(), argument, 0);
         }
         return value.orNull();
     }

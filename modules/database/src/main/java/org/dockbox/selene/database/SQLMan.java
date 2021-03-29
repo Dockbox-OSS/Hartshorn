@@ -108,7 +108,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
         }
         catch (NoSuchTableException e) {
             this.store(name, empty);
-            return this.getTableSafe(name, target).orElse(empty);
+            return this.getTableSafe(name, target).or(empty);
         }
     }
 
@@ -165,7 +165,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
 
             // Developers can define custom column bindings in stateEnabling, here we look those up before
             // constructing a custom column identifier.
-            ColumnIdentifier<?> identifier = this.tryGetColumn(name).orElseGet(() -> {
+            ColumnIdentifier<?> identifier = this.tryGetColumn(name).get(() -> {
                 Class<?> type = field.getDataType().getType();
                 return new SimpleColumnIdentifier<>(name, type);
             });
@@ -225,7 +225,7 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
     }
 
     private Exceptional<ColumnIdentifier<?>> tryGetColumn(String key) {
-        return Exceptional.ofNullable(this.identifiers.get(key));
+        return Exceptional.of(this.identifiers.get(key));
     }
 
     private TableRow convertToTableRow(Record record, Table table) {
@@ -337,6 +337,6 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
             this.identifiers.put(identifier.getKey(), identifier.getValue());
         });
 
-        this.resetOnStore = Keys.getPropertyValue(SQLResetBehaviorProperty.KEY, Boolean.class, properties).orElse(true);
+        this.resetOnStore = Keys.getPropertyValue(SQLResetBehaviorProperty.KEY, Boolean.class, properties).or(true);
     }
 }

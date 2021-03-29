@@ -84,7 +84,7 @@ public class Table {
         // No way to join on value if it is not present. Technically this should not be possible as a
         // NPE
         // is typically thrown if a null value is added to a row.
-        if (exceptionalValue.isAbsent())
+        if (exceptionalValue.absent())
             throw new IndexOutOfBoundsException("No value present for " + column.getColumnName());
         T expectedValue = (T) exceptionalValue.get();
 
@@ -103,7 +103,7 @@ public class Table {
              * If there is already a value present on this row, look up if we want to keep the existing,
              * or use the new value.
              */
-            if (!joinedRow.getValue(identifier).isPresent() || Merge.PREFER_FOREIGN == merge)
+            if (!joinedRow.getValue(identifier).present() || Merge.PREFER_FOREIGN == merge)
                 joinedRow.addValue(identifier, matchingRow.getValue(identifier).get());
         }
 
@@ -111,7 +111,7 @@ public class Table {
          * If there was no value filled by either this table instance, or the foreign table, try to
          *  populate it with null. If that is not allowed throw a exception.
          */
-        if (!joinedRow.getValue(identifier).isPresent()) {
+        if (!joinedRow.getValue(identifier).present()) {
             if (populateEmptyEntries) joinedRow.addValue(identifier, null);
             else
                 throw new EmptyEntryException(
@@ -240,7 +240,7 @@ public class Table {
         Collection<TableRow> filteredRows = SeleneUtils.emptyList();
         for (TableRow row : this.rows) {
             Exceptional<T> value = row.getValue(column);
-            if (!value.isPresent()) continue;
+            if (!value.present()) continue;
             if (value.get() == filter || value.get().equals(filter)) {
                 filteredRows.add(row);
             }
@@ -293,8 +293,8 @@ public class Table {
                 for (ColumnIdentifier<?> identifier : mergedIdentifiers) {
                     Exceptional<?> exceptionalValue = row.getValue(identifier);
                     exceptionalValue
-                            .ifPresent(value -> row.addValue(identifier, value))
-                            .ifAbsent(() -> row.addValue(identifier, null));
+                            .present(value -> row.addValue(identifier, value))
+                            .absent(() -> row.addValue(identifier, null));
                 }
             }
             else {

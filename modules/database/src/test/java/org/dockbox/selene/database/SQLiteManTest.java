@@ -114,7 +114,7 @@ class SQLiteManTest {
         ISQLMan<?> man = SQLiteManTest.writeToFile();
         Table table = man.getTable(MAIN_TABLE);
 
-        long count = table.getRowsAs(Developer.class).stream().filter(Exceptional::isPresent).count();
+        long count = table.getRowsAs(Developer.class).stream().filter(Exceptional::present).count();
         Assertions.assertEquals(3, count);
     }
 
@@ -128,7 +128,7 @@ class SQLiteManTest {
     void tablesCanBeDropped() throws InvalidConnectionException {
         ISQLMan<?> man = SQLiteManTest.writeToFile();
         man.drop(ID_TABLE);
-        Assertions.assertTrue(man.getTableSafe(ID_TABLE).isAbsent());
+        Assertions.assertTrue(man.getTableSafe(ID_TABLE).absent());
     }
 
     @Test

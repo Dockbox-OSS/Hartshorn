@@ -157,7 +157,7 @@ public enum DitherMode {
 
     double[][] getErrorDiffusionMatrix() {
         if (MatrixType.ERROR_DIFFUSION != this.matrixType) {
-            throw new UnsupportedOperationException("Only error diffusion matrices supported, invalid dither mode");
+            throw new UnsupportedOperationException("Only caught diffusion matrices supported, invalid dither mode");
         }
 
         double[][] result = this.matrix;

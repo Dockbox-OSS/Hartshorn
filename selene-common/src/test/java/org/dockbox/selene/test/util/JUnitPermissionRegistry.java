@@ -37,9 +37,9 @@ public class JUnitPermissionRegistry {
 
     // Specific context
     public static boolean hasPermission(PermissionHolder holder, Permission permission) {
-        if (permission.getContext().isAbsent()) return hasPermission(holder, permission.get());
+        if (permission.getContext().absent()) return hasPermission(holder, permission.get());
         for (Permission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), SeleneUtils.emptyList())) {
-            if (abstractPermission.getContext().isPresent() && abstractPermission.get().equals(permission.get())) {
+            if (abstractPermission.getContext().present() && abstractPermission.get().equals(permission.get())) {
                 if (abstractPermission.getContext().get().equals(permission.getContext().get())) return true;
             }
         }
@@ -49,7 +49,7 @@ public class JUnitPermissionRegistry {
     // Global context
     public static boolean hasPermission(PermissionHolder holder, String permission) {
         for (Permission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), SeleneUtils.emptyList())) {
-            if (abstractPermission.getContext().isAbsent() && abstractPermission.get().equals(permission)) {
+            if (abstractPermission.getContext().absent() && abstractPermission.get().equals(permission)) {
                 return true;
             }
         }
@@ -62,7 +62,7 @@ public class JUnitPermissionRegistry {
         }
         else
             for (Permission abstractPermission : permissions.getOrDefault(holder.getUniqueId(), SeleneUtils.emptyList())) {
-                if (abstractPermission.get().equals(permission) && abstractPermission.getContext().isAbsent()) {
+                if (abstractPermission.get().equals(permission) && abstractPermission.getContext().absent()) {
                     permissions.get(holder.getUniqueId()).remove(abstractPermission);
                 }
             }

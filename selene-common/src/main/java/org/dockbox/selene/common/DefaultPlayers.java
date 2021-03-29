@@ -47,7 +47,7 @@ public abstract class DefaultPlayers implements Players {
         FileManager cm = Selene.provide(FileManager.class);
         Path file = cm.getDataFile(Selene.class, "userdata/" + uuid);
         Exceptional<UserDataModel> userDataModel = cm.read(file, UserDataModel.class);
-        return userDataModel.orElse(new UserDataModel());
+        return userDataModel.or(new UserDataModel());
     }
 
     private static void updateUserData(UUID uuid, UserDataModel userData) {

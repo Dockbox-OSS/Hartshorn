@@ -42,7 +42,7 @@ public class NMSChangeGameStatePacket extends ChangeGameStatePacket implements N
                 this.nativePacket,
                 "field_149140_b", // state
                 int.class)
-                .orElse(Weather.CLEAR.getGameStateId());
+                .or(Weather.CLEAR.getGameStateId());
         return Weather.getByGameStateId(state);
     }
 
@@ -61,6 +61,6 @@ public class NMSChangeGameStatePacket extends ChangeGameStatePacket implements N
     @Override
     public void stateEnabling(InjectorProperty<?>... injectorProperties) {
         this.nativePacket = Keys.getPropertyValue(NativePacketProperty.KEY, SPacketChangeGameState.class, injectorProperties)
-                .orElseGet(SPacketChangeGameState::new);
+                .get(SPacketChangeGameState::new);
     }
 }

@@ -37,7 +37,7 @@ public class SpongeStaticPane implements StaticPane {
 
     @Override
     public void open(Player player) {
-        SpongeConversionUtil.toSponge(player).ifPresent(this.view::open);
+        SpongeConversionUtil.toSponge(player).present(this.view::open);
     }
 
     @Override

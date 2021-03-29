@@ -151,7 +151,7 @@ public class RegistryColumn<T> {
         for (T value : this.data) {
             if (predicate.test(value)) return Exceptional.of(value);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     /**

@@ -61,7 +61,7 @@ public class RegistryTests {
         testRegistry
                 .get(TestIdentifier.COBBLESTONE)
                 .first()
-                .ifPresent(r -> {
+                .present(r -> {
                     r.addData(TestIdentifier.FULLBLOCK, "Cobblestone Fullblock2");
                     r.addData(TestIdentifier.STAIR, "Cobblestone Stair1");
                 });

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 public interface Wrapper<T> {
 
     default boolean referenceExists() {
-        return this.getReference().isPresent();
+        return this.getReference().present();
     }
 
     Exceptional<T> getReference();

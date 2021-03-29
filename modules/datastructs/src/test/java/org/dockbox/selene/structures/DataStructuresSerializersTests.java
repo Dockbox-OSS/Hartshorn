@@ -78,7 +78,7 @@ public class DataStructuresSerializersTests {
 
         fm.write(tempFile, this.buildTestRegistry());
         Exceptional<Registry> registry = fm.read(tempFile, Registry.class);
-        Assertions.assertTrue(registry.isPresent());
+        Assertions.assertTrue(registry.present());
 
         Registry<Registry<String>> reg = (Registry<Registry<String>>) registry.get();
         RegistryColumn<RegistryColumn<String>> result = reg.getMatchingColumns(TestIdentifier.BRICK)

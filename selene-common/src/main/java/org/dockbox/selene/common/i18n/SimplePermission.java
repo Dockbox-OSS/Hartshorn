@@ -51,7 +51,7 @@ public class SimplePermission implements Permission {
 
     @Override
     public Exceptional<PermissionContext> getContext() {
-        return Exceptional.ofNullable(this.context);
+        return Exceptional.of(this.context);
     }
 
     @Override

@@ -71,13 +71,13 @@ public class LogArchival {
 
     private void archive(Path source) {
         Exceptional<Path> directory = this.getArchiveDirectory(source);
-        if (directory.isAbsent()) {
+        if (directory.absent()) {
             Selene.log().warn("Unable to determine date of file {}", source);
             return;
         }
 
         Exceptional<Path> destination = this.getArchiveName(directory.get(), source);
-        if (destination.isAbsent()) {
+        if (destination.absent()) {
             Selene.log().warn("Unable to resolve archive name for file {}", source);
             return;
         }
@@ -153,6 +153,6 @@ public class LogArchival {
 
             return Exceptional.of(destination);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 }

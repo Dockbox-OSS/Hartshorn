@@ -37,10 +37,10 @@ public class CommandInheritanceContext extends AbstractRegistrationContext {
     @Override
     public Exceptional<DefaultResource> call(CommandSource source, CommandContext context) {
         Exceptional<MethodCommandContext> inheritedCommand = this.getParentExecutor();
-        inheritedCommand.ifPresent(ctx -> ctx.call(source, context));
-        return inheritedCommand.isAbsent()
+        inheritedCommand.present(ctx -> ctx.call(source, context));
+        return inheritedCommand.absent()
                 ? Exceptional.of(DefaultResource.MISSING_ARGUMENTS)
-                : Exceptional.empty();
+                : Exceptional.none();
     }
 
     public Exceptional<MethodCommandContext> getParentExecutor() {

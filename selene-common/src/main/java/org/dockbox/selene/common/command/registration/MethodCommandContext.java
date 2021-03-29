@@ -63,7 +63,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
             }
 
             this.method.invoke(instance, SeleneUtils.toArray(Object.class, args));
-            return Exceptional.empty();
+            return Exceptional.none();
         }
         catch (IllegalSourceException e) {
             return Exceptional.of(e);
@@ -149,7 +149,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
 
     private static boolean processFlagParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs) {
         String flagName = parameter.getName();
-        if (context.has(flagName) && context.flag(flagName).isPresent()) {
+        if (context.has(flagName) && context.flag(flagName).present()) {
             finalArgs.add(context.flag(flagName).get().getValue());
             return true;
         }
@@ -158,7 +158,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
 
     private static boolean processArgumentParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs) {
         String argumentName = parameter.getName();
-        if (context.has(argumentName) && context.argument(argumentName).isPresent()) {
+        if (context.has(argumentName) && context.argument(argumentName).present()) {
             finalArgs.add(context.argument(argumentName).get().getValue());
             return true;
         }

@@ -37,7 +37,6 @@ import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.entities.ItemFrame;
 import org.dockbox.selene.api.events.world.WorldCreatingProperties;
 import org.dockbox.selene.api.exceptions.TypeConversionException;
-import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
@@ -195,7 +194,7 @@ public enum SpongeConversionUtil {
         else if (object instanceof Enchantment) {
             return fromSponge((Enchantment) object);
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @NotNull
@@ -226,7 +225,7 @@ public enum SpongeConversionUtil {
     public static Exceptional<? extends org.spongepowered.api.command.CommandSource> toSponge(CommandSource src) {
         if (src instanceof Console) return Exceptional.of(Sponge.getServer().getConsole());
         else if (src instanceof Player) return Exceptional.of(Sponge.getServer().getPlayer(((Player) src).getUniqueId()));
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @NotNull
@@ -260,13 +259,13 @@ public enum SpongeConversionUtil {
                     DefaultResource.parse(part.toLegacy())));
 
             Exceptional<org.spongepowered.api.text.action.ClickAction<?>> clickAction = toSponge(part.getClickAction());
-            clickAction.ifPresent(pb::onClick);
+            clickAction.present(pb::onClick);
 
             Exceptional<org.spongepowered.api.text.action.HoverAction<?>> hoverAction = toSponge(part.getHoverAction());
-            hoverAction.ifPresent(pb::onHover);
+            hoverAction.present(pb::onHover);
 
             Exceptional<org.spongepowered.api.text.action.ShiftClickAction<?>> shiftClickAction = toSponge(part.getShiftClickAction());
-            shiftClickAction.ifPresent(pb::onShiftClick);
+            shiftClickAction.present(pb::onShiftClick);
 
             b.append(pb.build());
         });
@@ -276,27 +275,27 @@ public enum SpongeConversionUtil {
 
     @NotNull
     private static Exceptional<org.spongepowered.api.text.action.ShiftClickAction<?>> toSponge(ShiftClickAction<?> action) {
-        if (null == action) return Exceptional.empty();
+        if (null == action) return Exceptional.none();
         Object result = action.getResult();
         if (action instanceof ShiftClickAction.InsertText) {
             return Exceptional.of(TextActions.insertText(((org.dockbox.selene.api.text.Text) result).toPlain()));
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @NotNull
     private static Exceptional<org.spongepowered.api.text.action.HoverAction<?>> toSponge(HoverAction<?> action) {
-        if (null == action) return Exceptional.empty();
+        if (null == action) return Exceptional.none();
         Object result = action.getResult();
         if (action instanceof HoverAction.ShowText) {
             return Exceptional.of(TextActions.showText(toSponge(((org.dockbox.selene.api.text.Text) result))));
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @NotNull
     private static Exceptional<org.spongepowered.api.text.action.ClickAction<?>> toSponge(ClickAction<?> action) {
-        if (null == action) return Exceptional.empty();
+        if (null == action) return Exceptional.none();
         Object result = action.getResult();
         if (action instanceof ClickAction.OpenUrl) {
             return Exceptional.of(TextActions.openUrl((URL) result));
@@ -314,21 +313,21 @@ public enum SpongeConversionUtil {
             return Exceptional.of(TextActions.executeCallback(commandSource -> {
                 Consumer<CommandSource> consumer = ((ClickAction.ExecuteCallback) action).getResult();
                 try {
-                    fromSponge(commandSource).ifPresent(consumer).rethrow();
+                    fromSponge(commandSource).present(consumer).rethrow();
                 }
-                catch (CheckedSeleneException throwable) {
+                catch (UncheckedSeleneException throwable) {
                     commandSource.sendMessage(Text.of(DefaultResource.UNKNOWN_ERROR.format(throwable.getMessage())));
                 }
             }));
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     @NotNull
     public static Exceptional<Location<World>> toSponge(org.dockbox.selene.api.objects.location.position.Location location) {
         Exceptional<World> world = toSponge(location.getWorld());
-        if (world.errorPresent()) return Exceptional.of(world.getError());
-        if (!world.isPresent()) return Exceptional.empty();
+        if (world.caught()) return Exceptional.of(world.error());
+        if (!world.present()) return Exceptional.none();
         Vector3d vector3d = new Vector3d(
                 location.getVectorLoc().getXd(),
                 location.getVectorLoc().getYd(),
@@ -396,13 +395,13 @@ public enum SpongeConversionUtil {
 
         text.getClickAction()
                 .map(SpongeConversionUtil::fromSponge)
-                .ifPresent(action -> action.ifPresent(t::onClick));
+                .ifPresent(action -> action.present(t::onClick));
         text.getHoverAction()
                 .map(SpongeConversionUtil::fromSponge)
-                .ifPresent(action -> action.ifPresent(t::onHover));
+                .ifPresent(action -> action.present(t::onHover));
         text.getShiftClickAction()
                 .map(SpongeConversionUtil::fromSponge)
-                .ifPresent(action -> action.ifPresent(t::onShiftClick));
+                .ifPresent(action -> action.present(t::onShiftClick));
 
         // Last step
         text.getChildren().stream().map(SpongeConversionUtil::fromSponge).forEach(t::append);
@@ -413,14 +412,14 @@ public enum SpongeConversionUtil {
         if (shiftClickAction instanceof InsertText) {
             return Exceptional.of(ShiftClickAction.insertText(org.dockbox.selene.api.text.Text.of(((InsertText) shiftClickAction).getResult())));
         }
-        else return Exceptional.empty();
+        else return Exceptional.none();
     }
 
     private static Exceptional<HoverAction<?>> fromSponge(org.spongepowered.api.text.action.HoverAction<?> hoverAction) {
         if (hoverAction instanceof ShowText) {
             return Exceptional.of(HoverAction.showText(fromSponge(((ShowText) hoverAction).getResult())));
         }
-        else return Exceptional.empty();
+        else return Exceptional.none();
     }
 
     private static Exceptional<ClickAction<?>> fromSponge(org.spongepowered.api.text.action.ClickAction<?> clickAction) {
@@ -439,13 +438,13 @@ public enum SpongeConversionUtil {
         else if (clickAction instanceof ExecuteCallback) {
             return Exceptional.of(ClickAction.executeCallback(src ->
                     toSponge(src)
-                            .ifPresent(ssrc -> ((ExecuteCallback) clickAction).getResult().accept(ssrc))
-                            .ifAbsent(() ->
+                            .present(ssrc -> ((ExecuteCallback) clickAction).getResult().accept(ssrc))
+                            .absent(() ->
                                     Selene.log().warn("Attempted to execute callback with unknown source type '" + src + "', is it convertable?")))
             );
 
         }
-        else return Exceptional.empty();
+        else return Exceptional.none();
     }
 
     private static String fromSponge(TextColor color) {
@@ -566,7 +565,7 @@ public enum SpongeConversionUtil {
     public static ItemStack toSponge(Item item) {
         if (item instanceof SpongeItem)
             // Create a copy of the ItemStack so Sponge doesn't modify the Item reference
-            return ((SpongeItem) item).getReference().orElse(ItemStack.empty()).copy();
+            return ((SpongeItem) item).getReference().or(ItemStack.empty()).copy();
         return ItemStack.empty();
     }
 
@@ -638,7 +637,7 @@ public enum SpongeConversionUtil {
         if (player instanceof SpongePlayer) {
             return ((SpongePlayer) player).getSpongePlayer();
         }
-        return Exceptional.empty();
+        return Exceptional.none();
     }
 
     public static Vector3N fromWorldEdit(Vector vector) {
@@ -772,7 +771,7 @@ public enum SpongeConversionUtil {
     }
 
     public static Exceptional<PlotBlock> toPlotSquared(Item item) {
-        if (!item.isBlock()) return Exceptional.empty();
+        if (!item.isBlock()) return Exceptional.none();
         int id = item.getIdNumeric();
         int meta = item.getMeta();
         // Casting is safe in this use-case, as this is the same approach used by PlotSquared (legacy) in PlotBlock itself
