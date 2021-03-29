@@ -37,7 +37,6 @@ import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.entities.ItemFrame;
 import org.dockbox.selene.api.events.world.WorldCreatingProperties;
 import org.dockbox.selene.api.exceptions.TypeConversionException;
-import org.dockbox.selene.api.exceptions.global.CheckedSeleneException;
 import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
@@ -316,7 +315,7 @@ public enum SpongeConversionUtil {
                 try {
                     fromSponge(commandSource).present(consumer).rethrow();
                 }
-                catch (CheckedSeleneException throwable) {
+                catch (UncheckedSeleneException throwable) {
                     commandSource.sendMessage(Text.of(DefaultResource.UNKNOWN_ERROR.format(throwable.getMessage())));
                 }
             }));
