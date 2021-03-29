@@ -22,14 +22,14 @@ import com.flowpowered.math.vector.Vector3d;
 import org.dockbox.selene.api.events.chat.SendChatEvent;
 import org.dockbox.selene.api.events.moderation.IpBannedEvent;
 import org.dockbox.selene.api.events.moderation.IpUnbannedEvent;
+import org.dockbox.selene.api.events.moderation.KickEvent;
 import org.dockbox.selene.api.events.moderation.NameBannedEvent;
 import org.dockbox.selene.api.events.moderation.NameUnbannedEvent;
 import org.dockbox.selene.api.events.moderation.PlayerBannedEvent;
 import org.dockbox.selene.api.events.moderation.PlayerNotedEvent;
 import org.dockbox.selene.api.events.moderation.PlayerUnbannedEvent;
-import org.dockbox.selene.api.events.moderation.KickEvent;
-import org.dockbox.selene.api.events.moderation.PlayerWarningExpired;
 import org.dockbox.selene.api.events.moderation.PlayerWarnedEvent;
+import org.dockbox.selene.api.events.moderation.PlayerWarningExpired;
 import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.events.player.PlayerAuthEvent;
@@ -43,15 +43,13 @@ import org.dockbox.selene.api.events.player.interact.PlayerInteractAirEvent;
 import org.dockbox.selene.api.events.player.interact.PlayerInteractBlockEvent;
 import org.dockbox.selene.api.events.player.interact.PlayerInteractEntityEvent;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.location.Warp;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.ClickType;
 import org.dockbox.selene.api.objects.player.Hand;
 import org.dockbox.selene.api.objects.special.PortalType;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.sponge.entities.SpongeArmorStand;
-import org.dockbox.selene.sponge.entities.SpongeItemFrame;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.spongepowered.api.block.BlockType;
@@ -59,8 +57,6 @@ import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Transform;
-import org.spongepowered.api.entity.hanging.ItemFrame;
-import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.Listener;
@@ -436,10 +432,7 @@ public class SpongePlayerListener {
             @Getter("getSource") Player player,
             @Getter("getTargetEntity") Entity entity
     ) {
-        org.dockbox.selene.api.entities.Entity<?> targetEntity;
-        if (entity instanceof ArmorStand) targetEntity = new SpongeArmorStand((ArmorStand) entity);
-        else if (entity instanceof ItemFrame) targetEntity = new SpongeItemFrame((ItemFrame) entity);
-        else return;
+        org.dockbox.selene.api.entities.Entity<?> targetEntity = SpongeConversionUtil.fromSponge(entity);
 
         Cancellable cancellable = new PlayerInteractEntityEvent<>(
                 SpongeConversionUtil.fromSponge(player),

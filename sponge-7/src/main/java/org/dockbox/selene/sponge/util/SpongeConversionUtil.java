@@ -35,6 +35,7 @@ import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.entities.ItemFrame;
+import org.dockbox.selene.api.events.entity.SpawnSource;
 import org.dockbox.selene.api.events.world.WorldCreatingProperties;
 import org.dockbox.selene.api.exceptions.TypeConversionException;
 import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
@@ -98,6 +99,8 @@ import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.event.cause.entity.spawn.SpawnType;
+import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
 import org.spongepowered.api.item.enchantment.Enchantment;
 import org.spongepowered.api.item.enchantment.EnchantmentType;
 import org.spongepowered.api.item.inventory.InventoryArchetype;
@@ -527,10 +530,6 @@ public enum SpongeConversionUtil {
         return fromSponge(world.getProperties());
     }
 
-    public static Chunk fromSponge(org.spongepowered.api.world.Chunk chunk) {
-        return new SpongeChunk(chunk);
-    }
-
     public static org.dockbox.selene.api.objects.location.dimensions.World fromSponge(WorldProperties properties) {
         Vector3i vector3i = properties.getSpawnPosition();
         Vector3N spawnLocation = Vector3N.of(vector3i.getX(), vector3i.getY(), vector3i.getZ());
@@ -544,6 +543,10 @@ public enum SpongeConversionUtil {
         );
         properties.getGameRules().forEach(spongeWorld::setGamerule);
         return spongeWorld;
+    }
+
+    public static Chunk fromSponge(org.spongepowered.api.world.Chunk chunk) {
+        return new SpongeChunk(chunk);
     }
 
     public static Hand fromSponge(HandType handType) {
@@ -782,9 +785,14 @@ public enum SpongeConversionUtil {
         EntityType type = entity.getType();
         if (type == EntityTypes.ARMOR_STAND) {
             return new SpongeArmorStand((ArmorStand) entity);
-        } else if (type == EntityTypes.ITEM_FRAME) {
+        }
+        else if (type == EntityTypes.ITEM_FRAME) {
             return new SpongeItemFrame((org.spongepowered.api.entity.hanging.ItemFrame) entity);
-        } else {
+        }
+        else if (type == EntityTypes.PLAYER) {
+            return new SpongePlayer(entity.getUniqueId(), ((org.spongepowered.api.entity.living.player.Player) entity).getName());
+        }
+        else {
             return new SpongeGenericEntity(entity);
         }
     }
@@ -823,5 +831,27 @@ public enum SpongeConversionUtil {
             default:
                 return org.spongepowered.api.util.Tristate.UNDEFINED;
         }
+    }
+
+    public static SpawnSource fromSponge(SpawnType spawnType) {
+        if (spawnType == SpawnTypes.BLOCK_SPAWNING) return SpawnSource.BLOCK;
+        else if (spawnType == SpawnTypes.BREEDING) return SpawnSource.BREEDING;
+        else if (spawnType == SpawnTypes.CHUNK_LOAD) return SpawnSource.CHUNK;
+        else if (spawnType == SpawnTypes.CUSTOM) return SpawnSource.PLACEMENT;
+        else if (spawnType == SpawnTypes.DISPENSE) return SpawnSource.DISPENSE;
+        else if (spawnType == SpawnTypes.DROPPED_ITEM) return SpawnSource.DROP;
+        else if (spawnType == SpawnTypes.EXPERIENCE) return SpawnSource.EXPERIENCE;
+        else if (spawnType == SpawnTypes.FALLING_BLOCK) return SpawnSource.FALLING_BLOCK;
+        else if (spawnType == SpawnTypes.MOB_SPAWNER) return SpawnSource.SPAWNER;
+        else if (spawnType == SpawnTypes.PASSIVE) return SpawnSource.PLACEMENT;
+        else if (spawnType == SpawnTypes.PLACEMENT) return SpawnSource.PLACEMENT;
+        else if (spawnType == SpawnTypes.PLUGIN) return SpawnSource.PLACEMENT;
+        else if (spawnType == SpawnTypes.PROJECTILE) return SpawnSource.PROJECTILE;
+        else if (spawnType == SpawnTypes.SPAWN_EGG) return SpawnSource.SPAWN_EGG;
+        else if (spawnType == SpawnTypes.STRUCTURE) return SpawnSource.STRUCTURE;
+        else if (spawnType == SpawnTypes.TNT_IGNITE) return SpawnSource.TNT;
+        else if (spawnType == SpawnTypes.WEATHER) return SpawnSource.WEATHER;
+        else if (spawnType == SpawnTypes.WORLD_SPAWNER) return SpawnSource.WORLD;
+        else return SpawnSource.PLACEMENT;
     }
 }
