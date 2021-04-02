@@ -60,7 +60,7 @@ public class NMSChangeGameStatePacket extends ChangeGameStatePacket implements N
 
     @Override
     public void stateEnabling(InjectorProperty<?>... injectorProperties) {
-        this.nativePacket = Keys.getPropertyValue(NativePacketProperty.KEY, SPacketChangeGameState.class, injectorProperties)
+        this.nativePacket = Keys.value(NativePacketProperty.KEY, SPacketChangeGameState.class, injectorProperties)
                 .get(SPacketChangeGameState::new);
     }
 }

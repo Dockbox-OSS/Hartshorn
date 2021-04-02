@@ -67,7 +67,7 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Keys.getPropertyValue(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
+        Keys.value(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
                 .present(layout -> {
                     this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
                     this.layout(layout);

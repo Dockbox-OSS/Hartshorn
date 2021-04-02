@@ -71,8 +71,8 @@ public final class Keys {
      *
      * @return The property value, wrapped in a {@link Exceptional}
      */
-    public static <T> Exceptional<T> getPropertyValue(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
-        InjectorProperty<T> property = Keys.getProperty(key, expectedType, properties);
+    public static <T> Exceptional<T> value(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
+        InjectorProperty<T> property = Keys.property(key, expectedType, properties);
         // As the object is provided by a supplier this cannot currently be simplified to #of
         if (null != property) {
             return Exceptional.of(property::getObject);
@@ -95,14 +95,14 @@ public final class Keys {
      * @return the property
      */
     @Nullable
-    public static <T> InjectorProperty<T> getProperty(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
-        List<InjectorProperty<T>> matchingProperties = Keys.getProperties(key, expectedType, properties);
+    public static <T> InjectorProperty<T> property(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
+        List<InjectorProperty<T>> matchingProperties = Keys.properties(key, expectedType, properties);
         if (matchingProperties.isEmpty()) return null;
         else return matchingProperties.get(0);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> List<InjectorProperty<T>> getProperties(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
+    public static <T> List<InjectorProperty<T>> properties(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
         List<InjectorProperty<T>> matchingProperties = SeleneUtils.emptyList();
         for (InjectorProperty<?> property : properties) {
             if (property.getKey().equals(key)
@@ -112,15 +112,6 @@ public final class Keys {
             }
         }
         return matchingProperties;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T extends InjectorProperty<?>> List<T> getAllPropertiesOf(Class<T> type, InjectorProperty<?>... properties) {
-        List<T> matches = SeleneUtils.emptyList();
-        for (InjectorProperty<?> property : properties) {
-            if (null != property && type.isAssignableFrom(property.getClass())) matches.add((T) property);
-        }
-        return matches;
     }
 
     /**
@@ -136,7 +127,7 @@ public final class Keys {
      * @return the sub properties
      */
     @SuppressWarnings("unchecked")
-    public static <T extends InjectorProperty<?>> List<T> getSubProperties(Class<T> propertyFilter, InjectorProperty<?>... properties) {
+    public static <T extends InjectorProperty<?>> List<T> valuesOfType(Class<T> propertyFilter, InjectorProperty<?>... properties) {
         List<T> values = SeleneUtils.emptyList();
         for (InjectorProperty<?> property : properties) {
             if (Reflect.isAssignableFrom(propertyFilter, property.getClass())) values.add((T) property);
@@ -144,44 +135,6 @@ public final class Keys {
         return values;
     }
 
-    /**
-     * Persistent key of persistent data key.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param type
-     *         the type
-     * @param name
-     *         the name
-     * @param owningClass
-     *         the owning class
-     *
-     * @return the persistent data key
-     */
-    public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, Class<?> owningClass) {
-        return Keys.persistentKeyOf(type, name, Reflect.getModule(owningClass));
-    }
-
-    /**
-     * Persistent key of persistent data key.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param type
-     *         the type
-     * @param name
-     *         the name
-     * @param module
-     *         the module
-     *
-     * @return the persistent data key
-     */
-    public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, ModuleContainer module) {
-        if (!Keys.isNbtSupportedType(type))
-            throw new UncheckedSeleneException("Unsupported data type for persistent key: " + type.getCanonicalName());
-
-        return new TypedPersistentDataKey<>(name, Keys.convertToModuleIdString(name, module), module, type);
-    }
 
     /**
      * Is nbt supported type boolean.
@@ -191,7 +144,7 @@ public final class Keys {
      *
      * @return the boolean
      */
-    public static boolean isNbtSupportedType(Class<?> type) {
+    public static boolean supportsNbt(Class<?> type) {
         boolean supportedType = false;
         for (Class<?> nbtSupportedType : nbtSupportedTypes) {
             if (nbtSupportedType.isAssignableFrom(type)) {
@@ -212,9 +165,48 @@ public final class Keys {
      *
      * @return the string
      */
-    public static String convertToModuleIdString(String name, ModuleContainer module) {
+    public static String convertId(String name, ModuleContainer module) {
         name = name.toLowerCase(Locale.ROOT).replaceAll("[ .]", "").replaceAll("-", "_");
         return module.id() + ':' + name;
+    }
+
+    /**
+     * Persistent key of persistent data key.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param type
+     *         the type
+     * @param name
+     *         the name
+     * @param owningClass
+     *         the owning class
+     *
+     * @return the persistent data key
+     */
+    public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, Class<?> owningClass) {
+        return Keys.persistent(type, name, Reflect.getModule(owningClass));
+    }
+
+    /**
+     * Persistent key of persistent data key.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param type
+     *         the type
+     * @param name
+     *         the name
+     * @param module
+     *         the module
+     *
+     * @return the persistent data key
+     */
+    public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, ModuleContainer module) {
+        if (!Keys.supportsNbt(type))
+            throw new UncheckedSeleneException("Unsupported data type for persistent key: " + type.getCanonicalName());
+
+        return new TypedPersistentDataKey<>(name, Keys.convertId(name, module), module, type);
     }
 
     /**
@@ -231,7 +223,7 @@ public final class Keys {
      *
      * @return the key
      */
-    public static <K, A> Key<K, A> checkedDynamicKeyOf(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
+    public static <K, A> Key<K, A> removable(BiFunction<K, A, TransactionResult> setter, Function<K, Exceptional<A>> getter) {
         return new Key<K, A>(setter, getter) {
         };
     }
@@ -250,9 +242,9 @@ public final class Keys {
      *
      * @return the key
      */
-    public static <K, A> Key<K, A> unsafeDynamicKeyOf(BiConsumer<K, A> setter, CheckedFunction<K, A> getter) {
+    public static <K, A> Key<K, A> wrapRemovable(BiConsumer<K, A> setter, CheckedFunction<K, A> getter) {
         return new Key<K, A>(
-                Keys.transactSetter(setter), k -> Exceptional.of(() -> getter.apply(k))) {
+                Keys.wrapSetter(setter), k -> Exceptional.of(() -> getter.apply(k))) {
         };
     }
 
@@ -268,8 +260,8 @@ public final class Keys {
      *
      * @return the bi function
      */
-    public static <K, A> BiFunction<K, A, TransactionResult> transactSetter(BiConsumer<K, A> setter) {
-        return Keys.transactSetter(setter, TransactionResult.success());
+    public static <K, A> BiFunction<K, A, TransactionResult> wrapSetter(BiConsumer<K, A> setter) {
+        return Keys.wrapSetter(setter, TransactionResult.success());
     }
 
     /**
@@ -286,7 +278,7 @@ public final class Keys {
      *
      * @return the bi function
      */
-    public static <K, A> BiFunction<K, A, TransactionResult> transactSetter(BiConsumer<K, A> setter, TransactionResult defaultResult) {
+    public static <K, A> BiFunction<K, A, TransactionResult> wrapSetter(BiConsumer<K, A> setter, TransactionResult defaultResult) {
         return (t, u) -> {
             setter.accept(t, u);
             return defaultResult;
@@ -307,7 +299,7 @@ public final class Keys {
      *
      * @return the key
      */
-    public static <K, A> Key<K, A> unsafeCheckedDynamicKeyOf(BiFunction<K, A, TransactionResult> setter, CheckedFunction<K, A> getter) {
+    public static <K, A> Key<K, A> wrapGetter(BiFunction<K, A, TransactionResult> setter, CheckedFunction<K, A> getter) {
         return new Key<K, A>(setter, k -> Exceptional.of(() -> getter.apply(k))) {
         };
     }
@@ -328,8 +320,8 @@ public final class Keys {
      *
      * @return the removable key
      */
-    public static <K, A> RemovableKey<K, A> dynamicKeyOf(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
-        return new RemovableKey<K, A>(Keys.transactSetter(setter), getter, remover) {
+    public static <K, A> RemovableKey<K, A> of(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter, Consumer<K> remover) {
+        return new RemovableKey<K, A>(Keys.wrapSetter(setter), getter, remover) {
         };
     }
 
@@ -349,7 +341,7 @@ public final class Keys {
      *
      * @return the removable key
      */
-    public static <K, A> RemovableKey<K, A> checkedDynamicKeyOf(
+    public static <K, A> RemovableKey<K, A> removable(
             BiFunction<K, A, TransactionResult> setter,
             Function<K, Exceptional<A>> getter,
             Consumer<K> remover
@@ -374,39 +366,14 @@ public final class Keys {
      *
      * @return the removable key
      */
-    public static <K, A> RemovableKey<K, A> unsafeDynamicKeyOf(BiConsumer<K, A> setter, CheckedFunction<K, A> getter, Consumer<K> remover) {
+    public static <K, A> RemovableKey<K, A> wrapRemovable(BiConsumer<K, A> setter, CheckedFunction<K, A> getter, Consumer<K> remover) {
         return new RemovableKey<K, A>(
-                Keys.transactSetter(setter), k -> Exceptional.of(() -> getter.apply(k)), remover) {
+                Keys.wrapSetter(setter), k -> Exceptional.of(() -> getter.apply(k)), remover) {
         };
     }
 
-    /**
-     * Unsafe checked dynamic key of removable key.
-     *
-     * @param <K>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param setter
-     *         the setter
-     * @param getter
-     *         the getter
-     * @param remover
-     *         the remover
-     *
-     * @return the removable key
-     */
-    public static <K, A> RemovableKey<K, A> unsafeCheckedDynamicKeyOf(
-            BiFunction<K, A, TransactionResult> setter,
-            CheckedFunction<K, A> getter,
-            Consumer<K> remover
-    ) {
-        return new RemovableKey<K, A>(setter, k -> Exceptional.of(() -> getter.apply(k)), remover) {
-        };
-    }
-
-    public static <K, A> Key<K, A> getterKey(Function<K, Exceptional<A>> getter) {
-        return dynamicKeyOf((k, a) -> {
+    public static <K, A> Key<K, A> ofGetter(Function<K, Exceptional<A>> getter) {
+        return of((k, a) -> {
             throw new UnsupportedOperationException("Cannot set the value of this key");
         }, getter);
     }
@@ -425,12 +392,12 @@ public final class Keys {
      *
      * @return the key
      */
-    public static <K, A> Key<K, A> dynamicKeyOf(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter) {
-        return new Key<K, A>(Keys.transactSetter(setter), getter) {
+    public static <K, A> Key<K, A> of(BiConsumer<K, A> setter, Function<K, Exceptional<A>> getter) {
+        return new Key<K, A>(Keys.wrapSetter(setter), getter) {
         };
     }
 
-    public static <K, A> Key<K, A> setterKey(BiConsumer<K, A> setter) {
-        return dynamicKeyOf(setter, in -> Exceptional.none());
+    public static <K, A> Key<K, A> ofSetter(BiConsumer<K, A> setter) {
+        return of(setter, in -> Exceptional.none());
     }
 }

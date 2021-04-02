@@ -26,12 +26,12 @@ import org.dockbox.selene.worldedit.region.Region;
 
 public final class WorldEditKeys {
 
-    public static final Key<Player, Region> SELECTION = Keys.dynamicKeyOf(
+    public static final Key<Player, Region> SELECTION = Keys.of(
             (player, region) -> Selene.provide(WorldEditService.class).setPlayerSelection(player, region),
             player -> Selene.provide(WorldEditService.class).getPlayerSelection(player)
     );
 
-    public static final Key<Player, Clipboard> CLIPBOARD = Keys.dynamicKeyOf(
+    public static final Key<Player, Clipboard> CLIPBOARD = Keys.of(
             (player, clipboard) -> Selene.provide(WorldEditService.class).setPlayerClipboard(player, clipboard),
             player -> Selene.provide(WorldEditService.class).getPlayerClipboard(player));
 

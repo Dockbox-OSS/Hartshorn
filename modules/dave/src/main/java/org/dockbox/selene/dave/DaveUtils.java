@@ -46,7 +46,7 @@ import java.util.Random;
 
 public final class DaveUtils {
 
-    public static final PersistentDataKey<Integer> mutedKey = Keys.persistentKeyOf(Integer.class, "dave_muting", DaveModule.class);
+    public static final PersistentDataKey<Integer> mutedKey = Keys.persistent(Integer.class, "dave_muting", DaveModule.class);
     private static final Map<DaveTrigger, LocalDateTime> timeSinceTrigger = SeleneUtils.emptyConcurrentMap();
 
     private DaveUtils() {}

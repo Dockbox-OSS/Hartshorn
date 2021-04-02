@@ -81,7 +81,7 @@ public abstract class InjectableBootstrap {
 
     private static <T> T getInjectedInstance(Injector injector, Class<T> type, InjectorProperty<?>... additionalProperties) {
         @SuppressWarnings("rawtypes")
-        Exceptional<Class> annotation = Keys.getPropertyValue(AnnotationProperty.KEY, Class.class, additionalProperties);
+        Exceptional<Class> annotation = Keys.value(AnnotationProperty.KEY, Class.class, additionalProperties);
         if (annotation.present() && annotation.get().isAnnotation()) {
             //noinspection unchecked
             return (T) injector.getInstance(Key.get(type, annotation.get()));

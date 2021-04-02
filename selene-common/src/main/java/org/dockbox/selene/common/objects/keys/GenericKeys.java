@@ -32,15 +32,15 @@ import java.util.UUID;
 @SuppressWarnings("rawtypes")
 public final class GenericKeys {
 
-    public static final Key<AbstractIdentifiable, UUID> UNIQUE_ID = Keys.unsafeDynamicKeyOf((k, s) -> {}, AbstractIdentifiable::getUniqueId);
-    public static final Key<AbstractIdentifiable, String> NAME = Keys.unsafeDynamicKeyOf((k, s) -> {}, AbstractIdentifiable::getName);
+    public static final Key<AbstractIdentifiable, UUID> UNIQUE_ID = Keys.wrapRemovable((k, s) -> {}, AbstractIdentifiable::getUniqueId);
+    public static final Key<AbstractIdentifiable, String> NAME = Keys.wrapRemovable((k, s) -> {}, AbstractIdentifiable::getName);
 
-    public static final Key<Player, Gamemode> GAMEMODE = Keys.unsafeDynamicKeyOf(Player::setGamemode, Player::getGamemode);
-    public static final Key<Player, Language> LANGUAGE = Keys.unsafeDynamicKeyOf(Player::setLanguage, Player::getLanguage);
+    public static final Key<Player, Gamemode> GAMEMODE = Keys.wrapRemovable(Player::setGamemode, Player::getGamemode);
+    public static final Key<Player, Language> LANGUAGE = Keys.wrapRemovable(Player::setLanguage, Player::getLanguage);
 
-    public static final Key<Item, Text> DISPLAY_NAME = Keys.unsafeDynamicKeyOf(Item::setDisplayName, Item::getDisplayName, Item::removeDisplayName);
-    public static final Key<Item, Integer> AMOUNT = Keys.unsafeDynamicKeyOf(Item::setAmount, Item::getAmount);
-    public static final Key<Item, List<Text>> LORE = Keys.unsafeDynamicKeyOf(Item::setLore, Item::getLore, Item::removeLore);
+    public static final Key<Item, Text> DISPLAY_NAME = Keys.wrapRemovable(Item::setDisplayName, Item::getDisplayName, Item::removeDisplayName);
+    public static final Key<Item, Integer> AMOUNT = Keys.wrapRemovable(Item::setAmount, Item::getAmount);
+    public static final Key<Item, List<Text>> LORE = Keys.wrapRemovable(Item::setLore, Item::getLore, Item::removeLore);
 
     private GenericKeys() {}
 }

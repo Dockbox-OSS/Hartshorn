@@ -332,11 +332,11 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Keys.getSubProperties(SQLColumnProperty.class, properties).forEach(property -> {
+        Keys.valuesOfType(SQLColumnProperty.class, properties).forEach(property -> {
             Tuple<String, ColumnIdentifier<?>> identifier = property.getObject();
             this.identifiers.put(identifier.getKey(), identifier.getValue());
         });
 
-        this.resetOnStore = Keys.getPropertyValue(SQLResetBehaviorProperty.KEY, Boolean.class, properties).or(true);
+        this.resetOnStore = Keys.value(SQLResetBehaviorProperty.KEY, Boolean.class, properties).or(true);
     }
 }

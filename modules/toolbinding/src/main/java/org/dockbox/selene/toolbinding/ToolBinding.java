@@ -46,14 +46,14 @@ public class ToolBinding {
 
     // TODO: Continue
 
-    private static final PersistentDataKey<String> PERSISTENT_TOOL = Keys.persistentKeyOf(String.class, "Tool Binding", ToolBinding.class);
+    private static final PersistentDataKey<String> PERSISTENT_TOOL = Keys.persistent(String.class, "Tool Binding", ToolBinding.class);
     private static final ResourceEntry TOOL_ERROR_BLOCK = new Resource("Tool cannot be bound to blocks", "toolbinding.caught.block");
     private static final ResourceEntry TOOL_ERROR_HAND = new Resource("Tool cannot be bound to hand", "toolbinding.caught.hand");
     private static final ResourceEntry TOOL_ERROR_DUPLICATE = new Resource("There is already a tool bound to this item", "toolbinding.caught.duplicate");
 
     private static ToolBinding instance;
 
-    public static final RemovableKey<Item, ItemTool> TOOL = Keys.checkedDynamicKeyOf(
+    public static final RemovableKey<Item, ItemTool> TOOL = Keys.removable(
             // Not possible to use method references here due to instance being initialized later
             (item, tool) -> instance.setTool(item, tool),
             item -> instance.getTool(item),
