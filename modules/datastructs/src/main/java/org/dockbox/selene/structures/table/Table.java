@@ -542,7 +542,7 @@ public class Table {
             throw new IllegalArgumentException(
                     "Table does not contains column named : " + column.getColumnName());
 
-        if (!Reflect.isAssignableFrom(Comparable.class, column.getType()))
+        if (!Reflect.assignableFrom(Comparable.class, column.getType()))
             throw new IllegalArgumentException(
                     "Column does not contain a comparable data type : " + column.getColumnName());
 
@@ -585,24 +585,17 @@ public class Table {
 
     public <T> List<Exceptional<T>> getRowsAs(Class<T> type) {
         return this.getRows().stream()
-                .map(row -> this.convertRowTo(type, row, false))
+                .map(row -> this.convertRowTo(type, row))
                 .collect(Collectors.toList());
     }
 
-    private <T> Exceptional<T> convertRowTo(Class<T> type, TableRow row, boolean injectable) {
-        return Reflect.tryCreateFromProcessed(
+    private <T> Exceptional<T> convertRowTo(Class<T> type, TableRow row) {
+        return Reflect.create(
                 type,
                 fieldName -> {
                     ColumnIdentifier<?> identifier = this.getIdentifier(fieldName);
                     return row.getValue(identifier).orNull();
-                },
-                injectable);
-    }
-
-    public <T> List<Exceptional<T>> getRowAsInjectable(Class<T> type) {
-        return this.getRows().stream()
-                .map(row -> this.convertRowTo(type, row, true))
-                .collect(Collectors.toList());
+                });
     }
 
     @Override

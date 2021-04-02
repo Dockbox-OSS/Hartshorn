@@ -85,9 +85,9 @@ public class MethodCommandContext extends AbstractRegistrationContext {
         for (Parameter parameter : this.getMethod().getParameters()) {
             Class<?> parameterType = parameter.getType();
 
-            if (Reflect.isEitherAssignableFrom(CommandSource.class, parameterType))
+            if (Reflect.eitherAssignsFrom(CommandSource.class, parameterType))
                 finalArgs.add(lookupCommandSource(parameterType, source));
-            else if (Reflect.isEitherAssignableFrom(CommandContext.class, parameterType))
+            else if (Reflect.eitherAssignsFrom(CommandContext.class, parameterType))
                 finalArgs.add(context);
 
             else if (MethodCommandContext.processFromSourceParameters(parameter, context, finalArgs)) continue;
@@ -101,7 +101,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
 
     private Object prepareInstance() {
         Object instance;
-        if (this.getDeclaringClass().equals(Selene.class) || Reflect.isAssignableFrom(Selene.class, this.getDeclaringClass())) {
+        if (this.getDeclaringClass().equals(Selene.class) || Reflect.assignableFrom(Selene.class, this.getDeclaringClass())) {
             instance = Selene.getServer();
         }
         else {
@@ -125,16 +125,16 @@ public class MethodCommandContext extends AbstractRegistrationContext {
     private static boolean processFromSourceParameters(Parameter parameter, CommandContext context, Collection<Object> finalArgs) {
         if (parameter.isAnnotationPresent(FromSource.class)) {
             Class<?> parameterType = parameter.getType();
-            if (Reflect.isAssignableFrom(Player.class, parameterType)) {
+            if (Reflect.assignableFrom(Player.class, parameterType)) {
                 if (context.sender() instanceof Player) finalArgs.add(context.sender());
             }
-            else if (Reflect.isAssignableFrom(World.class, parameterType)) {
+            else if (Reflect.assignableFrom(World.class, parameterType)) {
                 if (context.sender() instanceof Locatable) finalArgs.add(context.world());
             }
-            else if (Reflect.isAssignableFrom(Location.class, parameterType)) {
+            else if (Reflect.assignableFrom(Location.class, parameterType)) {
                 if (context.sender() instanceof Locatable) finalArgs.add(context.location());
             }
-            else if (Reflect.isAssignableFrom(CommandSource.class, parameterType)) {
+            else if (Reflect.assignableFrom(CommandSource.class, parameterType)) {
                 finalArgs.add(context.sender());
             }
             else {

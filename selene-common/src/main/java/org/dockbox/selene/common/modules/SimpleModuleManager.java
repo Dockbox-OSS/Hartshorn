@@ -114,7 +114,7 @@ public class SimpleModuleManager implements ModuleManager {
     @Override
     public List<ModuleContainer> initialiseModules() {
         Collection<Class<?>> annotatedTypes =
-                Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Module.class);
+                Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Module.class);
         Selene.log().info("Found '" + annotatedTypes.size() + "' integrated annotated types.");
         return annotatedTypes.stream()
                 .filter(type -> !type.isAnnotationPresent(Disabled.class))

@@ -48,7 +48,6 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.tuple.Triad;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.text.Text;
-import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -164,7 +163,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @Override
     public void registerCommandListener(@NotNull Object instance) {
         Object obj = instance;
-        if (instance instanceof Class) obj = Reflect.getInstance((Class<?>) instance);
+        if (instance instanceof Class) obj = Selene.provide((Class<?>) instance);
 
         Arrays.stream(obj.getClass().getDeclaredMethods())
                 .filter(m -> m.isAnnotationPresent(DiscordCommand.class))

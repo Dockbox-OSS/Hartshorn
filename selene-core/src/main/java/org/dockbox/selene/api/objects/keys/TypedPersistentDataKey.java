@@ -75,7 +75,7 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
         TypedPersistentDataKey<?> that = (TypedPersistentDataKey<?>) o;
 
         if (!this.id.equals(that.id)) return false;
-        if (!this.module.equals(that.module) && !this.module.equals(Reflect.getModule(Selene.class))) return false;
+        if (!this.module.equals(that.module) && !this.module.equals(Reflect.module(Selene.class))) return false;
         return this.type.equals(that.type);
     }
 }

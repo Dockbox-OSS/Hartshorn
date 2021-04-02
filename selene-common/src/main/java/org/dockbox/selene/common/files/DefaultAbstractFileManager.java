@@ -51,7 +51,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     }
 
     public Path getDataFile(Class<?> module) {
-        return this.getDataFile(Reflect.getModule(module));
+        return this.getDataFile(Reflect.module(module));
     }
 
     @NotNull
@@ -126,7 +126,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
 
     @SuppressWarnings("unchecked")
     protected <T> Exceptional<T> correctPersistentCapable(Path file, Class<T> type) {
-        if (Reflect.isAssignableFrom(PersistentCapable.class, type)) {
+        if (Reflect.assignableFrom(PersistentCapable.class, type)) {
             // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
             // regular instance is created (either through available constructors or Unsafe instantiation).
             Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Selene.provide(type)).getModelClass();

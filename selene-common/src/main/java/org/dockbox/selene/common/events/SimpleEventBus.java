@@ -155,8 +155,8 @@ public class SimpleEventBus implements EventBus {
      */
     protected static Set<EventWrapper> getInvokers(Object object) {
         Set<EventWrapper> result = SeleneUtils.emptySet();
-        for (Method method : Reflect.getMethodsRecursively(object.getClass())) {
-            Listener annotation = Reflect.getAnnotationRecursively(method, Listener.class);
+        for (Method method : Reflect.methods(object.getClass())) {
+            Listener annotation = Reflect.annotation(method, Listener.class);
             if (null != annotation) {
                 checkListenerMethod(method);
                 result.addAll(SimpleEventWrapper.create(object, method, annotation.value().getPriority()));
@@ -182,7 +182,7 @@ public class SimpleEventBus implements EventBus {
      *         the illegal argument exception
      */
     protected static void checkListenerMethod(Method method) throws IllegalArgumentException {
-        if (!Reflect.isAnnotationPresentRecursively(method, Listener.class)) {
+        if (!Reflect.hasAnnotation(method, Listener.class)) {
             throw new IllegalArgumentException("Needs @Listener annotation: " + method.toGenericString());
         }
 
@@ -196,8 +196,8 @@ public class SimpleEventBus implements EventBus {
         }
 
         for (Class<?> param : method.getParameterTypes()) {
-            if (Reflect.isAssignableFrom(Event.class, param)) {
-                if (Reflect.isAssignableFrom(PacketEvent.class, param)
+            if (Reflect.assignableFrom(Event.class, param)) {
+                if (Reflect.assignableFrom(PacketEvent.class, param)
                         && !method.isAnnotationPresent(Packet.class)) {
                     throw new IllegalArgumentException("Needs @Packet annotation: " + method.toGenericString());
                 }

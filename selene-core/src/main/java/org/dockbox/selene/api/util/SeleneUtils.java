@@ -1003,11 +1003,11 @@ public final class SeleneUtils {
      */
     public static <T> void shallowCopy(T from, T to) {
         if (to == null || from == null) return;
-        Collection<Field> fields = Reflect.getAccessibleFields(from.getClass());
+        Collection<Field> fields = Reflect.accessibleFields(from.getClass());
         for (Field field : fields) {
             field.setAccessible(true);
-            Object value = Reflect.getFieldValue(field, from).orNull();
-            Reflect.setFieldValue(field, to, value);
+            Object value = Reflect.fieldValue(field, from).orNull();
+            Reflect.set(field, to, value);
         }
     }
 
@@ -1022,7 +1022,7 @@ public final class SeleneUtils {
         else if (object instanceof Collection) return ((Collection<?>) object).isEmpty();
         else if (object instanceof Map) return ((Map<?, ?>) object).isEmpty();
         else if (Reflect.hasMethod(object, "isEmpty"))
-            return Reflect.getMethodValue(object, "isEmpty", Boolean.class).or(false);
+            return Reflect.runMethod(object, "isEmpty", Boolean.class).or(false);
         else return false;
     }
 
@@ -1170,7 +1170,7 @@ public final class SeleneUtils {
             return false;
         }
         catch (Throwable t) {
-            return Reflect.isAssignableFrom(exception, t.getClass());
+            return Reflect.assignableFrom(exception, t.getClass());
         }
     }
 

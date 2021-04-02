@@ -186,11 +186,11 @@ public abstract class InjectableBootstrap {
     private <T> void enableInjectionPoints(T typeInstance) {
         if (typeInstance == null) return;
         SeleneUtils.merge(
-                Reflect.getAnnotatedFields(Inject.class, typeInstance.getClass()),
-                Reflect.getAnnotatedFields(javax.inject.Inject.class, typeInstance.getClass())
+                Reflect.annotatedFields(Inject.class, typeInstance.getClass()),
+                Reflect.annotatedFields(javax.inject.Inject.class, typeInstance.getClass())
         ).stream()
                 .filter(field -> field.isAnnotationPresent(DoNotEnable.class))
-                .filter(field -> Reflect.isAssignableFrom(InjectableType.class, field.getType()))
+                .filter(field -> Reflect.assignableFrom(InjectableType.class, field.getType()))
                 .map(field -> Selene.handle(() -> field.get(typeInstance)))
                 .filter(Objects::nonNull)
                 .map(fieldInstance -> (InjectableType) fieldInstance)

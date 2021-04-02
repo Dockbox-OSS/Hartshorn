@@ -61,7 +61,7 @@ public enum DefaultParamProcessors {
                 if (null != object && !annotation.overrideExisting()) return object;
 
                 AtomicReference<Object> arg = new AtomicReference<>(null);
-                Reflect.getMethodValue(event, annotation.value(), parameter.getType()).present(arg::set);
+                Reflect.runMethod(event, annotation.value(), parameter.getType()).present(arg::set);
                 return arg.get();
             }),
 
@@ -124,7 +124,7 @@ public enum DefaultParamProcessors {
      */
     WRAP_SAFE(WrapSafe.class, EventStage.FILTER,
             (object, annotation, event, parameter, wrapper) -> {
-                if (Reflect.isAssignableFrom(parameter.getType(), event.getClass())) {
+                if (Reflect.assignableFrom(parameter.getType(), event.getClass())) {
                     Selene.log().warn("Event parameter cannot be wrapped");
                     return object;
                 }

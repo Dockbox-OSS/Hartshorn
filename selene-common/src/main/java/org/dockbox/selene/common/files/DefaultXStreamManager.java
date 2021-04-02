@@ -77,15 +77,15 @@ public abstract class DefaultXStreamManager extends DefaultAbstractFileManager {
     }
 
     private static void omitIgnoredFields(Class<?> type, XStreamBuilder builder) {
-        Reflect.forEachFieldIn(type, (declaringType, field) -> {
+        Reflect.fields(type, (declaringType, field) -> {
             if (field.isAnnotationPresent(Ignore.class))
                 builder.omitField(declaringType, field.getName());
         });
     }
 
     private static void aliasPropertyFields(Class<?> type, XStreamBuilder builder) {
-        Reflect.forEachFieldIn(type, (declaringType, field) -> {
-            @NonNls String alias = Reflect.getFieldPropertyName(field);
+        Reflect.fields(type, (declaringType, field) -> {
+            @NonNls String alias = Reflect.fieldName(field);
             if (!field.getName().equals(alias))
                 builder.aliasField(alias, declaringType, field.getName());
         });

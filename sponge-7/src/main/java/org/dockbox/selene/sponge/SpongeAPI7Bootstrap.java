@@ -184,7 +184,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
         Set<Class<? extends Packet>> adaptedPackets = SeleneUtils.emptySet();
         bus.getListenersToInvokers().forEach((k, v) -> v.forEach(
                 eventWrapper -> {
-                    if (Reflect.isAssignableFrom(
+                    if (Reflect.assignableFrom(
                             PacketEvent.class, eventWrapper.getEventType())) {
                         Class<? extends Packet> packet = eventWrapper.getMethod()
                                 .getAnnotation(org.dockbox.selene.api.annotations.event.filter.Packet.class)

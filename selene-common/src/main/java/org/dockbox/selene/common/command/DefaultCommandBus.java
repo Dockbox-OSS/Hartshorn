@@ -222,7 +222,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
 
         @NotNull
         @Unmodifiable
-        Collection<Method> nonInheritedMethods = Reflect.getAnnotedMethods(parent, Command.class, c -> !c.inherit() || !isParentRegistration);
+        Collection<Method> nonInheritedMethods = Reflect.annotatedMethods(parent, Command.class, c -> !c.inherit() || !isParentRegistration);
 
         nonInheritedMethods.forEach(method -> {
             MethodCommandContext context = DefaultCommandBus.extractNonInheritedContext(method);
@@ -273,7 +273,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         */
         @NotNull
         @Unmodifiable
-        Collection<Method> inheritedMethods = Reflect.getAnnotedMethods(parent, Command.class, Command::inherit);
+        Collection<Method> inheritedMethods = Reflect.annotatedMethods(parent, Command.class, Command::inherit);
         inheritedMethods.forEach(method -> context.addInheritedCommand(
                 DefaultCommandBus.extractInheritedContext(method, context))
         );

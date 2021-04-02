@@ -29,28 +29,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public final class Keys {
-
-    private static final List<Class<?>> nbtSupportedTypes = SeleneUtils.asList(
-            boolean.class,
-            byte.class,
-            short.class,
-            int.class,
-            long.class,
-            float.class,
-            double.class,
-            byte[].class,
-            int[].class,
-            long[].class,
-            String.class,
-            List.class,
-            Map.class);
 
     private Keys() {}
 
@@ -107,7 +91,7 @@ public final class Keys {
         for (InjectorProperty<?> property : properties) {
             if (property.getKey().equals(key)
                     && null != property.getObject()
-                    && Reflect.isAssignableFrom(expectedType, property.getObject().getClass())) {
+                    && Reflect.assignableFrom(expectedType, property.getObject().getClass())) {
                 matchingProperties.add((InjectorProperty<T>) property);
             }
         }
@@ -130,29 +114,9 @@ public final class Keys {
     public static <T extends InjectorProperty<?>> List<T> valuesOfType(Class<T> propertyFilter, InjectorProperty<?>... properties) {
         List<T> values = SeleneUtils.emptyList();
         for (InjectorProperty<?> property : properties) {
-            if (Reflect.isAssignableFrom(propertyFilter, property.getClass())) values.add((T) property);
+            if (Reflect.assignableFrom(propertyFilter, property.getClass())) values.add((T) property);
         }
         return values;
-    }
-
-
-    /**
-     * Is nbt supported type boolean.
-     *
-     * @param type
-     *         the type
-     *
-     * @return the boolean
-     */
-    public static boolean supportsNbt(Class<?> type) {
-        boolean supportedType = false;
-        for (Class<?> nbtSupportedType : nbtSupportedTypes) {
-            if (nbtSupportedType.isAssignableFrom(type)) {
-                supportedType = true;
-                break;
-            }
-        }
-        return supportedType;
     }
 
     /**
@@ -185,7 +149,7 @@ public final class Keys {
      * @return the persistent data key
      */
     public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, Class<?> owningClass) {
-        return Keys.persistent(type, name, Reflect.getModule(owningClass));
+        return Keys.persistent(type, name, Reflect.module(owningClass));
     }
 
     /**
@@ -203,7 +167,7 @@ public final class Keys {
      * @return the persistent data key
      */
     public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, ModuleContainer module) {
-        if (!Keys.supportsNbt(type))
+        if (!Reflect.isNative(type))
             throw new UncheckedSeleneException("Unsupported data type for persistent key: " + type.getCanonicalName());
 
         return new TypedPersistentDataKey<>(name, Keys.convertId(name, module), module, type);

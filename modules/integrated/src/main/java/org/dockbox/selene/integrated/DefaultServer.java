@@ -61,7 +61,7 @@ public class DefaultServer implements Server {
     // Parent command
     @Command(aliases = "", usage = "")
     public static void debugModules(MessageReceiver source) {
-        Reflect.runWithInstance(ModuleManager.class, em -> {
+        Reflect.with(ModuleManager.class, em -> {
             PaginationBuilder pb = Selene.provide(PaginationBuilder.class);
 
             List<Text> content = SeleneUtils.emptyList();
