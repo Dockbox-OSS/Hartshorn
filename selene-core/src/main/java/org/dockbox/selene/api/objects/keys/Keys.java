@@ -20,10 +20,6 @@ package org.dockbox.selene.api.objects.keys;
 import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
 import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.keys.data.DoublePersistentDataKey;
-import org.dockbox.selene.api.objects.keys.data.IntegerPersistentDataKey;
-import org.dockbox.selene.api.objects.keys.data.StringPersistentDataKey;
-import org.dockbox.selene.api.objects.keys.data.TypedPersistentDataKey;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.api.tasks.CheckedFunction;
 import org.dockbox.selene.api.util.Reflect;
@@ -180,19 +176,9 @@ public final class Keys {
      *
      * @return the persistent data key
      */
-    @SuppressWarnings("unchecked")
     public static <T> PersistentDataKey<T> persistentKeyOf(Class<T> type, String name, ModuleContainer module) {
         if (!Keys.isNbtSupportedType(type))
             throw new UncheckedSeleneException("Unsupported data type for persistent key: " + type.getCanonicalName());
-
-        if (type.equals(String.class))
-            return (PersistentDataKey<T>) StringPersistentDataKey.of(name, module);
-        else if (Reflect.isAssignableFrom(Integer.class, type)) {
-            return (PersistentDataKey<T>) IntegerPersistentDataKey.of(name, module);
-        }
-        else if (Reflect.isAssignableFrom(Double.class, type)) {
-            return (PersistentDataKey<T>) DoublePersistentDataKey.of(name, module);
-        }
 
         return new TypedPersistentDataKey<>(name, Keys.convertToModuleIdString(name, module), module, type);
     }

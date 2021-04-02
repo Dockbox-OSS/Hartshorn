@@ -29,7 +29,6 @@ import org.dockbox.selene.api.objects.keys.Keys;
 import org.dockbox.selene.api.objects.keys.PersistentDataKey;
 import org.dockbox.selene.api.objects.keys.RemovableKey;
 import org.dockbox.selene.api.objects.keys.TransactionResult;
-import org.dockbox.selene.api.objects.keys.data.StringPersistentDataKey;
 import org.dockbox.selene.api.objects.player.Sneaking;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.SeleneUtils;
@@ -47,7 +46,7 @@ public class ToolBinding {
 
     // TODO: Continue
 
-    private static final PersistentDataKey<String> PERSISTENT_TOOL = StringPersistentDataKey.of("Tool Binding", ToolBinding.class);
+    private static final PersistentDataKey<String> PERSISTENT_TOOL = Keys.persistentKeyOf(String.class, "Tool Binding", ToolBinding.class);
     private static final ResourceEntry TOOL_ERROR_BLOCK = new Resource("Tool cannot be bound to blocks", "toolbinding.caught.block");
     private static final ResourceEntry TOOL_ERROR_HAND = new Resource("Tool cannot be bound to hand", "toolbinding.caught.hand");
     private static final ResourceEntry TOOL_ERROR_DUPLICATE = new Resource("There is already a tool bound to this item", "toolbinding.caught.duplicate");

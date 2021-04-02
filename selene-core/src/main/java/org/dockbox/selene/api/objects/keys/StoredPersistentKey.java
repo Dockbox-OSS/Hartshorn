@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.api.objects.keys;
 
-import org.dockbox.selene.api.objects.keys.data.TypedPersistentDataKey;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.Reflect;
 
