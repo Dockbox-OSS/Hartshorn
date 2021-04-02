@@ -22,8 +22,8 @@ import com.google.inject.Singleton;
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.CommandBus;
-import org.dockbox.selene.api.command.context.CommandArgument;
 import org.dockbox.selene.api.command.context.CommandContext;
+import org.dockbox.selene.api.command.context.CommandParameter;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.server.ServerReloadEvent;
 import org.dockbox.selene.api.i18n.common.Language;
@@ -176,7 +176,7 @@ public class DefaultServer implements Server {
             src.send(DefaultServerResources.CONFIRM_WRONG_SOURCE);
             return;
         }
-        Exceptional<CommandArgument<String>> optionalCooldownId = ctx.argument("cooldownId");
+        Exceptional<CommandParameter<String>> optionalCooldownId = ctx.argument("cooldownId");
 
         // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
         // argument here is just a confirmation that the source is correct.

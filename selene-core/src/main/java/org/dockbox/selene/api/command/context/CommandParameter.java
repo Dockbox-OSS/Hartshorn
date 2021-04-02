@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.api.command.context;
 
-public abstract class CommandParameter<T> {
+public class CommandParameter<T> {
 
     private final String key;
     private final T value;
 
-    protected CommandParameter(T value, String key) {
+    public CommandParameter(T value, String key) {
         this.key = key;
         this.value = value;
     }

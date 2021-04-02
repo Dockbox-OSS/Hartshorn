@@ -18,8 +18,7 @@
 package org.dockbox.selene.common.command.context;
 
 import org.dockbox.selene.api.command.context.CommandContext;
-import org.dockbox.selene.api.command.context.CommandArgument;
-import org.dockbox.selene.api.command.context.CommandFlag;
+import org.dockbox.selene.api.command.context.CommandParameter;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.position.Location;
@@ -35,16 +34,16 @@ public class SimpleCommandContext implements CommandContext {
 
     public static final SimpleCommandContext EMPTY = new SimpleCommandContext(
             "",
-            new CommandArgument[0],
-            new CommandFlag[0],
+            new CommandParameter[0],
+            new CommandParameter[0],
             null,
             Exceptional.none(),
             Exceptional.none(),
             new String[0]);
 
     private final String usage;
-    private final CommandArgument<?>[] args;
-    private final CommandFlag<?>[] flags;
+    private final CommandParameter<?>[] args;
+    private final CommandParameter<?>[] flags;
     private final String[] permissions;
 
     // Location and world are snapshots of the location of our CommandSource at the time the command
@@ -57,8 +56,8 @@ public class SimpleCommandContext implements CommandContext {
 
     public SimpleCommandContext(
             String usage,
-            CommandArgument<?>[] args,
-            CommandFlag<?>[] flags,
+            CommandParameter<?>[] args,
+            CommandParameter<?>[] flags,
             CommandSource sender,
             Exceptional<Location> location,
             Exceptional<World> world,
@@ -91,11 +90,11 @@ public class SimpleCommandContext implements CommandContext {
 
     @NotNull
     @Override
-    public <T> Exceptional<CommandArgument<T>> argument(@NonNls @NotNull String key) {
+    public <T> Exceptional<CommandParameter<T>> argument(@NonNls @NotNull String key) {
         return Exceptional.of(Arrays.stream(this.args)
                 .filter(arg -> arg.getKey().equals(key))
                 .findFirst()
-        ).map(arg -> (CommandArgument<T>) arg);
+        ).map(arg -> (CommandParameter<T>) arg);
     }
 
     @Override
@@ -114,11 +113,11 @@ public class SimpleCommandContext implements CommandContext {
 
     @NotNull
     @Override
-    public <T> Exceptional<CommandFlag<T>> flag(@NonNls @NotNull String key) {
+    public <T> Exceptional<CommandParameter<T>> flag(@NonNls @NotNull String key) {
         return Exceptional.of(Arrays.stream(this.flags)
                 .filter(flag -> flag.getKey().equals(key))
                 .findFirst()
-        ).map(flag -> (CommandFlag<T>) flag);
+        ).map(flag -> (CommandParameter<T>) flag);
     }
 
     @Override

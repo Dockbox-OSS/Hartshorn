@@ -24,6 +24,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.persistence.PersistentCapable;
 import org.dockbox.selene.api.objects.persistence.PersistentModel;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -133,5 +134,14 @@ public abstract class DefaultAbstractFileManager implements FileManager {
             return model.map(PersistentModel::toPersistentCapable).map(content -> (T) content);
         }
         return Exceptional.none();
+    }
+
+    @Override
+    public void stateEnabling(InjectorProperty<?>... properties) {
+        for (InjectorProperty<?> property : properties)
+            if (property instanceof FileTypeProperty) {
+                this.requestFileType(((FileTypeProperty<?>) property).getFileType());
+                break;
+            }
     }
 }

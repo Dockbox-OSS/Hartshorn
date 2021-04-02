@@ -27,7 +27,7 @@ import org.dockbox.selene.api.events.server.ServerReloadEvent;
 import org.dockbox.selene.api.events.server.ServerStartedEvent;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.files.FileType;
-import org.dockbox.selene.api.files.FileTypeProperty;
+import org.dockbox.selene.common.files.FileTypeProperty;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.player.Player;

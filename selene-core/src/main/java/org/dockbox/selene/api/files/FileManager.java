@@ -21,7 +21,6 @@ import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.server.properties.InjectableType;
-import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.api.util.Reflect;
 
 import java.nio.file.Path;
@@ -298,15 +297,6 @@ public interface FileManager extends InjectableType {
      * @return true if the file was copied, otherwise false
      */
     boolean copyDefaultFile(String defaultFileName, Path targetFile);
-
-    @Override
-    default void stateEnabling(InjectorProperty<?>... properties) {
-        for (InjectorProperty<?> property : properties)
-            if (property instanceof FileTypeProperty) {
-                this.requestFileType(((FileTypeProperty<?>) property).getFileType());
-                break;
-            }
-    }
 
     void requestFileType(FileType fileType);
 }

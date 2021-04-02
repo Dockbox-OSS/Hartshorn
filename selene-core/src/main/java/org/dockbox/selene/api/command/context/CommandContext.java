@@ -30,13 +30,13 @@ public interface CommandContext {
 
     int flags();
 
-    <T> Exceptional<CommandArgument<T>> argument(String key);
+    <T> Exceptional<CommandParameter<T>> argument(String key);
 
     <T> T get(String key);
 
     <T> Exceptional<T> optional(String key);
 
-    <T> Exceptional<CommandFlag<T>> flag(String key);
+    <T> Exceptional<CommandParameter<T>> flag(String key);
 
     boolean has(String key);
 

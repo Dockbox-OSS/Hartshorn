@@ -38,6 +38,7 @@ public abstract class SpongeCloneableEntity<T extends net.minecraft.entity.Entit
 
     @Override
     public E copy() {
+        // TODO: S192, entities cannot currently copy correctly
         return SpongeConversionUtil.toSponge(this.getLocation()).map(spongeLocation -> {
             try (StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
                 frame.addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLUGIN);

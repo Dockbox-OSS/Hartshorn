@@ -23,7 +23,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Item;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.palswap.BlockRegistryExtension;
+import org.dockbox.selene.palswap.BlockRegistryModule;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -100,14 +100,14 @@ public abstract class BlockRegistryParser {
 
     public void SaveItemData(String filename) {
         FileManager fm = Selene.provide(FileManager.class);
-        Path file = fm.getDataFile(BlockRegistryExtension.class, filename);
+        Path file = fm.getDataFile(BlockRegistryModule.class, filename);
         fm.write(file, ItemData.of(this.itemRegistry, this.blockIdentifierIDs));
     }
 
     public void LoadItemData(String filename) {
         if (null == this.itemRegistry || null == this.blockIdentifierIDs) {
             FileManager fm = Selene.provide(FileManager.class);
-            Path file = fm.getDataFile(BlockRegistryExtension.class, filename);
+            Path file = fm.getDataFile(BlockRegistryModule.class, filename);
 
             ItemData itemData = fm.read(file, ItemData.class).or(new ItemData());
             this.itemRegistry = itemData.getItemRegistry();
