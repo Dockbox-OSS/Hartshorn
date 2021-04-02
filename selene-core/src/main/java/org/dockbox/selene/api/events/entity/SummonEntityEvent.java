@@ -20,17 +20,17 @@ package org.dockbox.selene.api.events.entity;
 import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.events.AbstractCancellableEvent;
 
-public class SummonEntityEvent<E extends Entity<?>> extends AbstractCancellableEvent {
+public class SummonEntityEvent extends AbstractCancellableEvent {
 
-    private final E entity;
+    private final Entity entity;
     private final SpawnSource source;
 
-    public SummonEntityEvent(E entity, SpawnSource source) {
+    public SummonEntityEvent(Entity entity, SpawnSource source) {
         this.entity = entity;
         this.source = source;
     }
 
-    public Entity<?> getEntity() {
+    public Entity getEntity() {
         return this.entity;
     }
 

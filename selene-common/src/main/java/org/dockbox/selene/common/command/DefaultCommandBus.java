@@ -144,7 +144,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         //noinspection ConstantConditions
         if (registrationContext.getCommand().confirm() && sender instanceof AbstractIdentifiable && !(sender instanceof Console)) {
             String registrationId = AbstractRegistrationContext.getRegistrationId((Identifiable) sender, ctx);
-            ConfirmableQueueItem queueItem = new ConfirmableQueueItem((AbstractIdentifiable<?>) sender, ctx, registrationContext);
+            ConfirmableQueueItem queueItem = new ConfirmableQueueItem((AbstractIdentifiable) sender, ctx, registrationContext);
             DefaultCommandBus.queueConfirmable(registrationId, queueItem);
 
             Text confirmText = DefaultResource.CONFIRM_COMMAND_MESSAGE.asText();

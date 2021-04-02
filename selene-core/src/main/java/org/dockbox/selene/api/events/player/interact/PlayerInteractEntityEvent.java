@@ -23,12 +23,12 @@ import org.dockbox.selene.api.objects.player.Hand;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.objects.tuple.Vector3N;
 
-public final class PlayerInteractEntityEvent<T extends Entity<?>> extends PlayerInteractEvent {
+public final class PlayerInteractEntityEvent extends PlayerInteractEvent {
 
-    private final T entity;
+    private final Entity entity;
     private final Vector3N interactionPoint;
 
-    public PlayerInteractEntityEvent(Player player, T entity, Vector3N interactionPoint) {
+    public PlayerInteractEntityEvent(Player player, Entity entity, Vector3N interactionPoint) {
         super(player, Hand.EITHER, ClickType.SECONDARY);
         this.entity = entity;
         this.interactionPoint = interactionPoint;
@@ -38,7 +38,7 @@ public final class PlayerInteractEntityEvent<T extends Entity<?>> extends Player
         return this.interactionPoint;
     }
 
-    public T getEntity() {
+    public Entity getEntity() {
         return this.entity;
     }
 }

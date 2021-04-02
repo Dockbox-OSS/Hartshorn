@@ -24,7 +24,7 @@ import org.dockbox.selene.api.objects.tuple.Vector3N;
  * Represents an Armor Stand. See <a href="https://minecraft.gamepedia.com/Armor_Stand">Armor Stand
  * on the Minecraft Wiki</a>.
  */
-public interface ArmorStand extends Entity<ArmorStand>, InventoryHolder {
+public interface ArmorStand extends CloneableEntity<ArmorStand>, InventoryHolder {
 
     /**
      * Gets the rotation of the given {@link Limbs limb}, represented in a {@link Vector3N},

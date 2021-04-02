@@ -22,11 +22,11 @@ import org.dockbox.selene.api.events.entity.SpawnSource;
 import org.dockbox.selene.api.events.entity.SummonEntityEvent;
 import org.dockbox.selene.api.objects.player.Player;
 
-public class PlayerSummonEntityEvent<E extends Entity<?>> extends SummonEntityEvent<E> {
+public class PlayerSummonEntityEvent extends SummonEntityEvent {
 
     private final Player player;
 
-    public PlayerSummonEntityEvent(E entity, SpawnSource source, Player player) {
+    public PlayerSummonEntityEvent(Entity entity, SpawnSource source, Player player) {
         super(entity, source);
         this.player = player;
     }

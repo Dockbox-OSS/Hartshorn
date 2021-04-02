@@ -23,17 +23,17 @@ import org.dockbox.selene.common.command.registration.AbstractRegistrationContex
 
 public class ConfirmableQueueItem {
 
-    private final AbstractIdentifiable<?> source;
+    private final AbstractIdentifiable source;
     private final CommandContext context;
     private final AbstractRegistrationContext command;
 
-    public ConfirmableQueueItem(AbstractIdentifiable<?> source, CommandContext context, AbstractRegistrationContext command) {
+    public ConfirmableQueueItem(AbstractIdentifiable source, CommandContext context, AbstractRegistrationContext command) {
         this.source = source;
         this.context = context;
         this.command = command;
     }
 
-    public AbstractIdentifiable<?> getSource() {
+    public AbstractIdentifiable getSource() {
         return this.source;
     }
 

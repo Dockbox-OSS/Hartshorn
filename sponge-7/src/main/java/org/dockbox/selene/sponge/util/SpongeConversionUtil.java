@@ -781,7 +781,7 @@ public enum SpongeConversionUtil {
         return Exceptional.of(new PlotBlock((short) id, (byte) meta));
     }
 
-    public static org.dockbox.selene.api.entities.Entity<?> fromSponge(Entity entity) {
+    public static org.dockbox.selene.api.entities.Entity fromSponge(Entity entity) {
         EntityType type = entity.getType();
         if (type == EntityTypes.ARMOR_STAND) {
             return new SpongeArmorStand((ArmorStand) entity);

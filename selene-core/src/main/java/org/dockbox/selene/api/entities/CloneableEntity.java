@@ -15,17 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.objects.location.dimensions;
+package org.dockbox.selene.api.entities;
 
-import org.dockbox.selene.api.entities.Entity;
+public interface CloneableEntity<T extends CloneableEntity<T>> extends Entity {
 
-import java.util.Collection;
-import java.util.function.Predicate;
-
-public interface EntityHolding {
-
-    Collection<Entity> getEntities();
-
-    Collection<Entity> getEntities(Predicate<Entity> predicate);
+    /**
+     * Creates a copy of the entity, copying its default and custom data provided by {@link
+     * org.dockbox.selene.api.objects.keys.Key}s and {@link
+     * org.dockbox.selene.api.objects.keys.PersistentDataKey}s.
+     *
+     * @return The copy of the current entity.
+     */
+    T copy();
 
 }

@@ -72,14 +72,14 @@ public class PlayerActions {
     }
 
     @Listener
-    public void onEntityInteract(PlayerInteractEntityEvent<?> event) {
+    public void onEntityInteract(PlayerInteractEntityEvent event) {
         if (event.getEntity() instanceof Player) return; // Allowed
         Player player = event.getTarget();
         event.setCancelled(this.cancelEvent(player, event.getEntity()));
     }
 
     @Listener
-    public void onEntitySummon(PlayerSummonEntityEvent<?> event) {
+    public void onEntitySummon(PlayerSummonEntityEvent event) {
         Player player = event.getPlayer();
         SpawnSource source = event.getSource();
         if (SpawnSource.PLACEMENT.equals(source) || SpawnSource.SPAWN_EGG.equals(source)) {
@@ -87,7 +87,7 @@ public class PlayerActions {
         }
     }
 
-    private boolean cancelEvent(Player player, Entity<?> entity) {
+    private boolean cancelEvent(Player player, Entity entity) {
         Exceptional<Plot> targetPlot = entity.getLocation().get(PlotKeys.PLOT);
         if (targetPlot.absent()) {
             player.sendWithPrefix(PlayerActionResources.OUTSIDE_PLOT);

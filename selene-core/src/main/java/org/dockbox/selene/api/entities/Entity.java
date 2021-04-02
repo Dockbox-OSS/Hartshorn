@@ -44,7 +44,7 @@ import org.dockbox.selene.api.text.Text;
  * @param <T>
  *         The type of {@link Entity}
  */
-public interface Entity<T extends Entity<T>> extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<T> {
+public interface Entity extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<Entity> {
 
     @SuppressWarnings("ConstantDeclaredInInterface")
     double DEFAULT_MAX_HEALTH = 20D;
@@ -166,12 +166,4 @@ public interface Entity<T extends Entity<T>> extends Identifiable, Locatable, Pe
      */
     boolean destroy();
 
-    /**
-     * Creates a copy of the entity, copying its default and custom data provided by {@link
-     * org.dockbox.selene.api.objects.keys.Key}s and {@link
-     * org.dockbox.selene.api.objects.keys.PersistentDataKey}s.
-     *
-     * @return The copy of the current entity.
-     */
-    T copy();
 }

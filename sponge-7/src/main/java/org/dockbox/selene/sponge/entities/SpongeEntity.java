@@ -18,28 +18,17 @@
 package org.dockbox.selene.sponge.entities;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
 
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.location.dimensions.World;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.nms.entities.NMSEntity;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.entity.EntityArchetype;
-import org.spongepowered.api.entity.EntitySnapshot;
 import org.spongepowered.api.entity.EntityType;
-import org.spongepowered.api.event.CauseStackManager.StackFrame;
-import org.spongepowered.api.event.cause.EventContextKeys;
-import org.spongepowered.api.event.cause.entity.spawn.SpawnTypes;
-import org.spongepowered.common.bridge.world.WorldInfoBridge;
-import org.spongepowered.common.data.AbstractArchetype;
-import org.spongepowered.common.entity.SpongeEntitySnapshotBuilder;
-import org.spongepowered.common.util.Constants;
 
 import java.util.UUID;
 
@@ -51,7 +40,7 @@ import java.util.UUID;
  * @param <E>
  *         The internal Selene {@link org.dockbox.selene.api.entities.Entity} type to represent
  */
-public abstract class SpongeEntity<T extends Entity, E extends org.dockbox.selene.api.entities.Entity<E>> extends NMSEntity<T> implements org.dockbox.selene.api.entities.Entity<E>, SpongeComposite {
+public abstract class SpongeEntity<T extends Entity, E extends org.dockbox.selene.api.entities.Entity> extends NMSEntity<T> implements org.dockbox.selene.api.entities.Entity, SpongeComposite {
 
     @SuppressWarnings("unchecked")
     protected <C extends org.spongepowered.api.entity.Entity> C create(Location location) {
@@ -150,24 +139,6 @@ public abstract class SpongeEntity<T extends Entity, E extends org.dockbox.selen
     }
 
     @Override
-    public E copy() {
-        return SpongeConversionUtil.toSponge(this.getLocation()).map(spongeLocation -> {
-            try (StackFrame frame = Sponge.getCauseStackManager().pushCauseFrame()) {
-                frame.addContext(EventContextKeys.SPAWN_TYPE, SpawnTypes.PLUGIN);
-                EntityArchetype archetype = this.getRepresentation().createArchetype();
-
-                @SuppressWarnings("unchecked")
-                org.spongepowered.api.entity.Entity clone = this.createSnapshot(
-                        (AbstractArchetype<EntityType, EntitySnapshot, org.spongepowered.api.entity.Entity>) archetype,
-                        spongeLocation
-                ).restore().orElse(null);
-
-                return this.from(clone);
-            }
-        }).rethrow().orNull();
-    }
-
-    @Override
     public Location getLocation() {
         return SpongeConversionUtil.fromSponge(this.getRepresentation().getLocation());
     }
@@ -180,41 +151,6 @@ public abstract class SpongeEntity<T extends Entity, E extends org.dockbox.selen
     @Override
     public World getWorld() {
         return SpongeConversionUtil.fromSponge(this.getRepresentation().getWorld());
-    }
-
-    /**
-     * Custom implementation of {@link
-     * org.spongepowered.common.entity.SpongeEntityArchetype#toSnapshot(org.spongepowered.api.world.Location)},
-     * fixing the incompatibility with non-rotated entities. The original method did not include the
-     * rotation, scale, and type in the snapshot.
-     *
-     * @param archetype
-     *         The entity archetype to use when creating the snapshot.
-     * @param location
-     *         The base location of the entity snapshot
-     *
-     * @return The new {@link EntitySnapshot}
-     */
-    private EntitySnapshot createSnapshot(
-            AbstractArchetype<EntityType, EntitySnapshot, org.spongepowered.api.entity.Entity> archetype,
-            org.spongepowered.api.world.Location<org.spongepowered.api.world.World> location
-    ) {
-        final SpongeEntitySnapshotBuilder builder = new SpongeEntitySnapshotBuilder();
-        builder.type(this.getEntityType());
-        NBTTagCompound newCompound = archetype.getCompound().copy();
-        newCompound.setTag("Pos", Constants.NBT.newDoubleNBTList(
-                location.getPosition().getX(),
-                location.getPosition().getY(),
-                location.getPosition().getZ()));
-        //noinspection ConstantConditions
-        newCompound.setInteger("Dimension", ((WorldInfoBridge) location.getExtent().getProperties()).bridge$getDimensionId());
-        builder.unsafeCompound(newCompound);
-        builder.worldId(location.getExtent().getUniqueId());
-        builder.position(location.getPosition());
-        builder.rotation(this.getRepresentation().getRotation());
-        builder.scale(this.getRepresentation().getScale());
-        builder.type(this.getEntityType());
-        return builder.build();
     }
 
     /**

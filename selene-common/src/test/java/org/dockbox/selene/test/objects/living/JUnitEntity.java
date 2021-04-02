@@ -26,7 +26,7 @@ import org.dockbox.selene.test.objects.JUnitWorld;
 
 import java.util.UUID;
 
-public abstract class JUnitEntity<T extends Entity<T>> implements Entity<T>, PersistentDataHolder {
+public abstract class JUnitEntity<T extends Entity> implements Entity, PersistentDataHolder {
 
     private Text displayName;
     private double health = 20;

@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public abstract class Player extends AbstractIdentifiable<Player> implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder, Entity<Player> {
+public abstract class Player extends AbstractIdentifiable implements CommandSource, PermissionHolder, Locatable, InventoryHolder, PacketReceiver, PersistentDataHolder, Entity {
 
     // An empty context targets only global permissions
     private static final PermissionContext GLOBAL = PermissionContext.builder().build();
@@ -121,11 +121,6 @@ public abstract class Player extends AbstractIdentifiable<Player> implements Com
     @Override
     public boolean destroy() {
         throw new UnsupportedOperationException("Cannot destroy players");
-    }
-
-    @Override
-    public Player copy() {
-        throw new UnsupportedOperationException("Cannot copy players");
     }
 
     @Override

@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public class JUnitWorld extends World {
 
     private final Map<Vector3N, Item> blocks = SeleneUtils.emptyMap();
-    private final Map<UUID, Entity<?>> entities = SeleneUtils.emptyMap();
+    private final Map<UUID, Entity> entities = SeleneUtils.emptyMap();
     private final Map<String, String> gamerules = SeleneUtils.emptyMap();
     private boolean isLoaded;
 
@@ -96,12 +96,12 @@ public class JUnitWorld extends World {
     }
 
     @Override
-    public Collection<Entity<?>> getEntities() {
+    public Collection<Entity> getEntities() {
         return this.entities.values();
     }
 
     @Override
-    public Collection<Entity<?>> getEntities(Predicate<Entity<?>> predicate) {
+    public Collection<Entity> getEntities(Predicate<Entity> predicate) {
         return this.getEntities().stream().filter(predicate).collect(Collectors.toList());
     }
 
@@ -137,7 +137,7 @@ public class JUnitWorld extends World {
         return this.gamerules;
     }
 
-    public void addEntity(Entity<?> entity) {
+    public void addEntity(Entity entity) {
         this.entities.put(entity.getUniqueId(), entity);
     }
 

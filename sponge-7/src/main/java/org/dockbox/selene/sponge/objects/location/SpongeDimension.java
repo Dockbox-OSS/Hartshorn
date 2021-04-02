@@ -92,14 +92,14 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
     }
 
     @Override
-    default Collection<Entity<?>> getEntities() {
+    default Collection<Entity> getEntities() {
         return this.getExtent().getEntities().stream().map(SpongeConversionUtil::fromSponge).collect(Collectors.toList());
     }
 
     @Override
-    default Collection<Entity<?>> getEntities(Predicate<Entity<?>> predicate) {
+    default Collection<Entity> getEntities(Predicate<Entity> predicate) {
         return this.getExtent().getEntities(entity -> {
-            Entity<?> seleneEntity = SpongeConversionUtil.fromSponge(entity);
+            Entity seleneEntity = SpongeConversionUtil.fromSponge(entity);
             return predicate.test(seleneEntity);
         }).stream().map(SpongeConversionUtil::fromSponge).collect(Collectors.toList());
     }
