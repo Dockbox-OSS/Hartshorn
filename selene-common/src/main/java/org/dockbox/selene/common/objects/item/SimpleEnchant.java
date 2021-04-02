@@ -15,19 +15,31 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.objects.location;
+package org.dockbox.selene.common.objects.item;
 
-import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.location.position.Location;
+import org.dockbox.selene.api.objects.item.Enchant;
+import org.dockbox.selene.api.objects.item.Enchantment;
 
-/** Represents a warp, a virtual location inside a world, with descriptive properties. */
-public interface Warp {
+public class SimpleEnchant implements Enchant {
 
-    Exceptional<String> getDescription();
+    private final Enchantment enchantment;
+    private int level;
 
-    Exceptional<String> getCategory();
+    public SimpleEnchant(Enchantment enchantment, int level) {
+        this.enchantment = enchantment;
+        this.level = level;
+    }
 
-    Location getLocation();
+    public Enchantment getEnchantment() {
+        return this.enchantment;
+    }
 
-    String getName();
+    public int getLevel() {
+        return this.level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
 }
