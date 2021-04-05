@@ -38,7 +38,6 @@ import org.dockbox.selene.api.server.properties.InjectableType;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.api.text.Text;
 import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.common.command.convert.impl.CommandValueConverter;
 import org.jetbrains.annotations.NonNls;
 
 import java.time.Duration;
