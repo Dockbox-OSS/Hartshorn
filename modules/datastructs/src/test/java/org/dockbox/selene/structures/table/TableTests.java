@@ -27,11 +27,15 @@ import org.dockbox.selene.structures.table.identifiers.TestColumnIdentifiers;
 import org.dockbox.selene.structures.table.objects.IdentifiedUser;
 import org.dockbox.selene.structures.table.objects.User;
 import org.dockbox.selene.structures.table.objects.WronglyIdentifiedUser;
+import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.io.IOException;
 import java.util.UUID;
 
+@ExtendWith(SeleneJUnit5Runner.class)
 public class TableTests {
 
     @Test
@@ -228,7 +232,7 @@ public class TableTests {
     }
 
     @Test
-    public void testRowCanConvertToValidType() {
+    public void testRowCanConvertToValidType() throws IOException {
         Assertions.assertDoesNotThrow(() -> {
             Table table = this.createTestTable();
             table.addRow(1, "coulis");

@@ -40,7 +40,7 @@ public class JUnit5Bootstrap extends SeleneBootstrap {
         super(new JUnitInjector());
         this.information = new JUnitInformation();
     }
-    
+
     public static void prepareBootstrap() throws IOException {
         if (getInstance() == null) new JUnit5Bootstrap();
     }
