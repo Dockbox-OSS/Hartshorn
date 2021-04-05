@@ -53,17 +53,17 @@ public class WorldManagement {
 
     @Listener
     public void onPortalUse(PlayerPortalEvent event) {
-        if (event.usesPortal() && event.getNewLocation().getWorld().getName().equals(config.getPortalWorldTarget())) {
+        if (event.usesPortal() && event.getNewLocation().getWorld().getName().equals(this.config.getPortalWorldTarget())) {
             event.setUsePortal(false);
-            event.setNewLocation(new Location(config.getPortalPosition(), event.getNewLocation().getWorld()));
+            event.setNewLocation(new Location(this.config.getPortalPosition(), event.getNewLocation().getWorld()));
         }
     }
 
     @Command(aliases = "blacklist", usage = "blacklist <world{String}>")
     public void blacklist(CommandSource src, String world) {
         if (Selene.provide(Worlds.class).hasWorld(world)) {
-            config.getUnloadBlacklist().add(world);
-            config.save();
+            this.config.getUnloadBlacklist().add(world);
+            this.config.save();
             src.send(WorldManagementResources.WORLD_BLACKLIST_ADDED.format(world));
         } else {
             src.send(WorldManagementResources.WORLD_BLACKLIST_FAILED.format(world));
@@ -74,9 +74,9 @@ public class WorldManagement {
         Selene.provide(Worlds.class).getLoadedWorlds()
                 .stream()
                 .filter(world -> world.getPlayerCount() == 0)
-                .filter(world -> config.getUnloadBlacklist().contains(world.getName()))
-                .limit(config.getMaximumWorldsToUnload())
+                .filter(world -> this.config.getUnloadBlacklist().contains(world.getName()))
+                .limit(this.config.getMaximumWorldsToUnload())
                 .forEach(World::unload);
-        Selene.provide(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, config.getUnloadDelay(), TimeUnit.MINUTES);
+        Selene.provide(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, this.config.getUnloadDelay(), TimeUnit.MINUTES);
     }
 }
