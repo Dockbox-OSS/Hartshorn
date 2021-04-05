@@ -22,7 +22,6 @@ import org.dockbox.selene.api.annotations.entity.Accessor;
 import org.dockbox.selene.api.annotations.entity.Extract;
 import org.dockbox.selene.api.annotations.entity.Extract.Behavior;
 import org.dockbox.selene.api.annotations.entity.Ignore;
-import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.annotations.entity.Property;
 import org.dockbox.selene.api.annotations.module.OwnedBy;
 import org.dockbox.selene.api.exceptions.TypeRejectedException;
@@ -71,14 +70,20 @@ public final class Reflect {
             SeleneUtils.entry(long.class, Long.class),
             SeleneUtils.entry(short.class, Short.class));
 
+    private static final List<Class<?>> nativeSupportedTypes = SeleneUtils.asList(
+            boolean.class, byte.class, short.class,
+            int.class, long.class, float.class, double.class,
+            byte[].class, int[].class, long[].class,
+            String.class, List.class, Map.class);
+
     private Reflect() {}
 
     @SuppressWarnings("unchecked")
-    public static <T> Exceptional<T> getFieldValue(Class<?> fieldHolder, Object instance, String field, Class<T> expectedType) {
+    public static <T> Exceptional<T> fieldValue(Class<?> fieldHolder, Object instance, String field, Class<T> expectedType) {
         try {
             Field declaredField = fieldHolder.getDeclaredField(field);
             declaredField.setAccessible(true);
-            T value = (T) getFieldValue(declaredField, instance);
+            T value = (T) fieldValue(declaredField, instance);
             return Exceptional.of(value);
         }
         catch (ClassCastException | ReflectiveOperationException e) {
@@ -86,11 +91,11 @@ public final class Reflect {
         }
     }
 
-    public static Exceptional<?> getFieldValue(Field field, Object instance) {
+    public static Exceptional<?> fieldValue(Field field, Object instance) {
         if (field.isAnnotationPresent(Accessor.class)) {
             Accessor accessor = field.getAnnotation(Accessor.class);
             if (!accessor.getter().equals("")) {
-                return getMethodValue(instance, accessor.getter(), field.getType());
+                return runMethod(instance, accessor.getter(), field.getType());
             }
         }
         try {
@@ -120,12 +125,12 @@ public final class Reflect {
      *
      * @return The result of the method call, wrapped in {@link Exceptional}
      */
-    public static <T> Exceptional<T> getMethodValue(Object instance, String method, Class<T> expectedType, Object... args) {
+    public static <T> Exceptional<T> runMethod(Object instance, String method, Class<T> expectedType, Object... args) {
         Class<?>[] argTypes = new Class<?>[args.length];
         for (int i = 0; i < args.length; i++) {
             argTypes[i] = args[i].getClass();
         }
-        return Reflect.getMethodValue(
+        return Reflect.runMethod(
                 instance.getClass(), instance, method, expectedType, argTypes, args);
     }
 
@@ -153,7 +158,7 @@ public final class Reflect {
      * @return The result of the method call, wrapped in {@link Exceptional}
      */
     @SuppressWarnings("unchecked")
-    public static <T> Exceptional<T> getMethodValue(
+    public static <T> Exceptional<T> runMethod(
             Class<?> methodHolder,
             Object instance,
             String method,
@@ -177,7 +182,7 @@ public final class Reflect {
 
     @Contract("null, _ -> false; !null, null -> false")
     public static <T> boolean isGenericInstanceOf(T instance, Class<?> type) {
-        return null != instance && Reflect.isAssignableFrom(type, instance.getClass());
+        return null != instance && Reflect.assignableFrom(type, instance.getClass());
     }
 
     /**
@@ -188,10 +193,10 @@ public final class Reflect {
      * all of the following assignabilities return true:
      *
      * <pre>{@code
-     * SeleneUtils.isAssignableFrom(int.class, Integer.class);
-     * SeleneUtils.isAssignableFrom(Integer.class, int.class);
-     * SeleneUtils.isAssignableFrom(int.class, int.class);
-     * SeleneUtils.isAssignableFrom(Number.class, Integer.class);
+     * SeleneUtils.assignableFrom(int.class, Integer.class);
+     * SeleneUtils.assignableFrom(Integer.class, int.class);
+     * SeleneUtils.assignableFrom(int.class, int.class);
+     * SeleneUtils.assignableFrom(Number.class, Integer.class);
      *
      * }</pre>
      *
@@ -202,9 +207,9 @@ public final class Reflect {
      *
      * @return true if {@code to} is equal to-, a super type of, or a primitive wrapper of {@code
      *         from}
-     * @see Reflect#isPrimitiveWrapperOf(Class, Class)
+     * @see Reflect#isPrimitiveWrapper(Class, Class)
      */
-    public static boolean isAssignableFrom(Class<?> to, Class<?> from) {
+    public static boolean assignableFrom(Class<?> to, Class<?> from) {
         if (null == to || null == from) return false;
         //noinspection ConstantConditions
         if (to == from || to.equals(from)) return true;
@@ -213,10 +218,10 @@ public final class Reflect {
             return true;
         }
         if (from.isPrimitive()) {
-            return Reflect.isPrimitiveWrapperOf(to, from);
+            return Reflect.isPrimitiveWrapper(to, from);
         }
         if (to.isPrimitive()) {
-            return Reflect.isPrimitiveWrapperOf(from, to);
+            return Reflect.isPrimitiveWrapper(from, to);
         }
         return false;
     }
@@ -231,7 +236,7 @@ public final class Reflect {
      *
      * @return true if {@code targetClass} is a primitive wrapper of {@code primitive}.
      */
-    public static boolean isPrimitiveWrapperOf(Class<?> targetClass, Class<?> primitive) {
+    public static boolean isPrimitiveWrapper(Class<?> targetClass, Class<?> primitive) {
         if (!primitive.isPrimitive()) {
             throw new IllegalArgumentException("First argument has to be primitive type");
         }
@@ -256,8 +261,8 @@ public final class Reflect {
      */
     @NotNull
     @Unmodifiable
-    public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule) {
-        return Reflect.getAnnotedMethods(clazz, annotation, rule, false);
+    public static <A extends Annotation> Collection<Method> annotatedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule) {
+        return Reflect.annotatedMethods(clazz, annotation, rule, false);
     }
 
     /**
@@ -281,7 +286,7 @@ public final class Reflect {
      */
     @NotNull
     @Unmodifiable
-    public static <A extends Annotation> Collection<Method> getAnnotedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule, boolean skipParents) {
+    public static <A extends Annotation> Collection<Method> annotatedMethods(Class<?> clazz, Class<A> annotation, Predicate<A> rule, boolean skipParents) {
         List<Method> annotatedMethods = SeleneUtils.emptyList();
         for (Method method : SeleneUtils.asList(skipParents ? clazz.getMethods() : clazz.getDeclaredMethods())) {
             if (!method.isAccessible()) method.setAccessible(true);
@@ -306,8 +311,8 @@ public final class Reflect {
      *
      * @return The annotated types
      */
-    public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation) {
-        return Reflect.getAnnotatedTypes(prefix, annotation, false);
+    public static <A extends Annotation> Collection<Class<?>> annotatedTypes(String prefix, Class<A> annotation) {
+        return Reflect.annotatedTypes(prefix, annotation, false);
     }
 
     /**
@@ -326,13 +331,13 @@ public final class Reflect {
      *
      * @return The annotated types
      */
-    public static <A extends Annotation> Collection<Class<?>> getAnnotatedTypes(String prefix, Class<A> annotation, boolean skipParents) {
-        Reflections reflections = getReflectedPrefix(prefix);
+    public static <A extends Annotation> Collection<Class<?>> annotatedTypes(String prefix, Class<A> annotation, boolean skipParents) {
+        Reflections reflections = reflectionsFromPrefix(prefix);
         Set<Class<?>> types = reflections.getTypesAnnotatedWith(annotation, !skipParents);
         return SeleneUtils.asList(types);
     }
 
-    private static Reflections getReflectedPrefix(String prefix) {
+    private static Reflections reflectionsFromPrefix(String prefix) {
         if (!reflectedPrefixes.containsKey(prefix)) {
             reflectedPrefixes.put(prefix, new Reflections(prefix));
         }
@@ -352,8 +357,8 @@ public final class Reflect {
      *
      * @return The list of sub-types, or a empty list
      */
-    public static <T> Collection<Class<? extends T>> getSubTypes(String prefix, Class<T> parent) {
-        Reflections reflections = getReflectedPrefix(prefix);
+    public static <T> Collection<Class<? extends T>> subTypes(String prefix, Class<T> parent) {
+        Reflections reflections = reflectionsFromPrefix(prefix);
         Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(parent);
         return SeleneUtils.asList(subTypes);
     }
@@ -368,8 +373,8 @@ public final class Reflect {
      *
      * @return the boolean
      */
-    public static boolean isEitherAssignableFrom(Class<?> to, Class<?> from) {
-        return Reflect.isAssignableFrom(from, to) || Reflect.isAssignableFrom(to, from);
+    public static boolean eitherAssignsFrom(Class<?> to, Class<?> from) {
+        return Reflect.assignableFrom(from, to) || Reflect.assignableFrom(to, from);
     }
 
     /**
@@ -380,7 +385,7 @@ public final class Reflect {
      *
      * @return the static fields
      */
-    public static Collection<Field> getStaticFields(Class<?> type) {
+    public static Collection<Field> staticFields(Class<?> type) {
         Field[] declaredFields = type.getDeclaredFields();
         Collection<Field> staticFields = SeleneUtils.emptyList();
         for (Field field : declaredFields) {
@@ -399,7 +404,7 @@ public final class Reflect {
      *
      * @return the enum values
      */
-    public static Collection<? extends Enum<?>> getEnumValues(Class<?> type) {
+    public static Collection<? extends Enum<?>> enumValues(Class<?> type) {
         if (!type.isEnum()) return SeleneUtils.emptyList();
         Collection<Enum<?>> constants = SeleneUtils.emptyList();
         try {
@@ -429,8 +434,8 @@ public final class Reflect {
      * @throws SecurityException
      *         the security exception
      */
-    public static <T extends Annotation> boolean isAnnotationPresentRecursively(Method method, Class<T> annotationClass) throws SecurityException {
-        return null != Reflect.getAnnotationRecursively(method, annotationClass);
+    public static <T extends Annotation> boolean hasAnnotation(Method method, Class<T> annotationClass) throws SecurityException {
+        return null != Reflect.annotation(method, annotationClass);
     }
 
     /**
@@ -447,14 +452,14 @@ public final class Reflect {
      * @throws SecurityException
      *         the security exception
      */
-    public static <T extends Annotation> T getAnnotationRecursively(Method method, Class<T> annotationClass) throws SecurityException {
+    public static <T extends Annotation> T annotation(Method method, Class<T> annotationClass) throws SecurityException {
         T result;
         if (null == (result = method.getAnnotation(annotationClass))) {
             final String name = method.getName();
             final Class<?>[] params = method.getParameterTypes();
 
             Class<?> declaringClass = method.getDeclaringClass();
-            for (Class<?> supertype : Reflect.getSupertypes(declaringClass)) {
+            for (Class<?> supertype : Reflect.superTypes(declaringClass)) {
                 try {
                     Method m = supertype.getDeclaredMethod(name, params);
 
@@ -479,7 +484,7 @@ public final class Reflect {
      *
      * @return the supertypes
      */
-    public static Collection<Class<?>> getSupertypes(Class<?> current) {
+    public static Collection<Class<?>> superTypes(Class<?> current) {
         Set<Class<?>> supertypes = SeleneUtils.emptySet();
         Set<Class<?>> next = SeleneUtils.emptySet();
         Class<?> superclass = current.getSuperclass();
@@ -495,7 +500,7 @@ public final class Reflect {
         }
 
         for (Class<?> cls : next) {
-            supertypes.addAll(Reflect.getSupertypes(cls));
+            supertypes.addAll(Reflect.superTypes(cls));
         }
 
         return supertypes;
@@ -511,7 +516,7 @@ public final class Reflect {
      * @throws SecurityException
      *         the security exception
      */
-    public static List<Method> getMethodsRecursively(Class<?> cls) throws SecurityException {
+    public static List<Method> methods(Class<?> cls) throws SecurityException {
         try {
             Set<InternalMethodWrapper> set = SeleneUtils.emptySet();
             Class<?> current = cls;
@@ -545,52 +550,20 @@ public final class Reflect {
      * @return the module
      */
     @Nullable
-    public static ModuleContainer getModule(Class<?> type) {
+    public static ModuleContainer module(Class<?> type) {
         if (null == type) return null;
         if (type.equals(Selene.class))
-            return Reflect.getModule(Selene.provide(Server.class).getClass());
+            return Reflect.module(Selene.provide(Server.class).getClass());
 
         if (type.isAnnotationPresent(OwnedBy.class)) {
             OwnedBy owner = type.getAnnotation(OwnedBy.class);
-            return Reflect.getModule(owner.value());
+            return Reflect.module(owner.value());
         }
 
         return Selene.getServer()
-                    .getInstanceSafe(ModuleManager.class)
-                    .map(em -> em.getContainer(type).orNull())
-                    .orNull();
-    }
-
-    /**
-     * Run with module t.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param type
-     *         the type
-     * @param function
-     *         the function
-     *
-     * @return the t
-     */
-    @Nullable
-    public static <T> T runWithModule(Class<?> type, Function<ModuleContainer, T> function) {
-        ModuleContainer module = Reflect.getModule(type);
-        if (null != module) return function.apply(module);
-        return null;
-    }
-
-    /**
-     * Run with module.
-     *
-     * @param type
-     *         the type
-     * @param consumer
-     *         the consumer
-     */
-    public static void runWithModule(Class<?> type, Consumer<ModuleContainer> consumer) {
-        ModuleContainer module = Reflect.getModule(type);
-        if (null != module) consumer.accept(module);
+                .getInstanceSafe(ModuleManager.class)
+                .map(em -> em.getContainer(type).orNull())
+                .orNull();
     }
 
     /**
@@ -603,33 +576,9 @@ public final class Reflect {
      * @param consumer
      *         the consumer
      */
-    public static <T> void runWithInstance(Class<T> type, Consumer<T> consumer) {
+    public static <T> void with(Class<T> type, Consumer<T> consumer) {
         T instance = Selene.provide(type);
         if (null != instance) consumer.accept(instance);
-    }
-
-    @Nullable
-    public static String getClassAlias(Class<?> type) {
-        String className = null;
-        if (type.isAnnotationPresent(Metadata.class))
-            className = type.getAnnotation(Metadata.class).alias();
-        return className;
-    }
-
-    /**
-     * Try create from map exceptional.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param type
-     *         the type
-     * @param map
-     *         the map
-     *
-     * @return the exceptional
-     */
-    public static <T> Exceptional<T> tryCreateFromMap(Class<T> type, Map<String, Object> map) {
-        return Reflect.tryCreateFromProcessed(type, key -> map.getOrDefault(key, null), true);
     }
 
     /**
@@ -646,9 +595,9 @@ public final class Reflect {
      *
      * @return the exceptional
      */
-    public static <T> Exceptional<T> tryCreateFromProcessed(
-            Class<T> type, Function<String, Object> valueCollector, boolean inject) {
-        return Reflect.tryCreate(type, valueCollector, inject, Provision.FIELD_NAME);
+    public static <T> Exceptional<T> create(
+            Class<T> type, Function<String, Object> valueCollector) {
+        return Reflect.tryCreate(type, valueCollector, Provision.FIELD_NAME);
     }
 
     /**
@@ -669,20 +618,20 @@ public final class Reflect {
      *
      * @return the exceptional
      */
-    public static <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, boolean inject, Provision provision) {
-        T instance = inject ? Selene.provide(type) : Reflect.getInstance(type);
+    public static <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, Provision provision) {
+        T instance = Selene.provide(type);
         if (null != instance)
             try {
                 for (Field field : type.getDeclaredFields()) {
                     if (!field.isAccessible()) field.setAccessible(true);
                     if (field.isAnnotationPresent(Ignore.class)) continue;
 
-                    Object value = extractFieldValue(field, provision, valueCollector);
+                    Object value = createField(field, provision, valueCollector);
                     if (null == value) continue;
 
                     boolean usedSetter = canUseSetter(type, instance, field, value);
 
-                    if (!usedSetter && Reflect.isAssignableFrom(field.getType(), value.getClass()))
+                    if (!usedSetter && Reflect.assignableFrom(field.getType(), value.getClass()))
                         field.set(instance, value);
                 }
             }
@@ -695,34 +644,11 @@ public final class Reflect {
         return Exceptional.of(instance);
     }
 
-    /**
-     * Gets instance.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param clazz
-     *         the clazz
-     *
-     * @return the instance
-     */
-    public static <T> T getInstance(Class<T> clazz) {
-        try {
-            Constructor<T> ctor = clazz.getConstructor();
-            return ctor.newInstance();
-        }
-        catch (NoSuchMethodException
-                | IllegalAccessException
-                | InstantiationException
-                | InvocationTargetException e) {
-            return Selene.provide(clazz);
-        }
-    }
-
     @SuppressWarnings("unchecked")
-    private static <A> Object extractFieldValue(Field field, Provision provision, Function<A, Object> valueCollector) {
+    private static <A> Object createField(Field field, Provision provision, Function<A, Object> valueCollector) {
         if (Provision.FIELD == provision) return valueCollector.apply((A) field);
         else {
-            String fieldName = Reflect.getFieldPropertyName(field);
+            String fieldName = Reflect.fieldName(field);
             return valueCollector.apply((A) fieldName);
         }
     }
@@ -752,7 +678,7 @@ public final class Reflect {
      *
      * @return the field property name
      */
-    public static String getFieldPropertyName(Field field) {
+    public static String fieldName(Field field) {
         return field.isAnnotationPresent(Property.class)
                 ? field.getAnnotation(Property.class).value()
                 : field.getName();
@@ -789,24 +715,6 @@ public final class Reflect {
     }
 
     /**
-     * Try create from raw exceptional.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param type
-     *         the type
-     * @param valueCollector
-     *         the value collector
-     * @param inject
-     *         the inject
-     *
-     * @return the exceptional
-     */
-    public static <T> Exceptional<T> tryCreateFromRaw(Class<T> type, Function<Field, Object> valueCollector, boolean inject) {
-        return Reflect.tryCreate(type, valueCollector, inject, Provision.FIELD);
-    }
-
-    /**
      * Returns true if a instance has a declared method of which the name equals the value of {@code
      * method} and has no parameters.
      *
@@ -821,7 +729,7 @@ public final class Reflect {
         return Reflect.hasMethod(instance.getClass(), method);
     }
 
-    public static boolean hasFieldRecursive(Class<?> type, String field) {
+    public static boolean hasField(Class<?> type, String field) {
         Class<?> original = type;
         while (null != type) {
             try {
@@ -855,27 +763,27 @@ public final class Reflect {
         return false;
     }
 
-    public static void forEachFieldIn(Class<?> type, BiConsumer<Class<?>, Field> consumer) {
+    public static void fields(Class<?> type, BiConsumer<Class<?>, Field> consumer) {
         for (Field declaredField : type.getDeclaredFields()) {
             consumer.accept(type, declaredField);
         }
-        if (null != type.getSuperclass()) Reflect.forEachFieldIn(type.getSuperclass(), consumer);
+        if (null != type.getSuperclass()) Reflect.fields(type.getSuperclass(), consumer);
     }
 
-    public static Collection<Field> getAccessibleFields(Class<?> type) {
+    public static Collection<Field> accessibleFields(Class<?> type) {
         if (type.isAnnotationPresent(Extract.class)) {
             Extract extract = type.getAnnotation(Extract.class);
             Behavior behavior = extract.value();
             if (behavior == Behavior.KEEP) {
-                return getAllNonSkippedFields(type);
+                return nonSkippedFields(type);
             }
-            else if (behavior == Behavior.SKIP) return getAllKeptFields(type);
+            else if (behavior == Behavior.SKIP) return keptFields(type);
             else throw new IllegalArgumentException("Unsupported behavior " + behavior);
         }
-        else return getAllKeptFields(type);
+        else return keptFields(type);
     }
 
-    private static Collection<Field> getAllNonSkippedFields(Class<?> type) {
+    private static Collection<Field> nonSkippedFields(Class<?> type) {
         Collection<Field> fields = SeleneUtils.emptySet();
         for (Field field : type.getDeclaredFields()) {
             if (field.isAnnotationPresent(Extract.class)) {
@@ -889,14 +797,14 @@ public final class Reflect {
         return fields;
     }
 
-    private static Collection<Field> getAllKeptFields(Class<?> type) {
+    private static Collection<Field> keptFields(Class<?> type) {
         return Arrays.stream(type.getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(Extract.class))
                 .filter(field -> field.getAnnotation(Extract.class).value() == Behavior.KEEP)
                 .collect(Collectors.toSet());
     }
 
-    public static void setFieldValue(Field field, Object to, Object value) {
+    public static void set(Field field, Object to, Object value) {
         try {
             if (field.isAnnotationPresent(Accessor.class)) {
                 Accessor accessor = field.getAnnotation(Accessor.class);
@@ -912,21 +820,32 @@ public final class Reflect {
         }
     }
 
-    public static Collection<Field> getAnnotatedFields(Class<? extends Annotation> annotation, Class<?> type) {
+    public static Collection<Field> annotatedFields(Class<? extends Annotation> annotation, Class<?> type) {
         Collection<Field> fields = new ArrayList<>();
         for (Field declaredField : type.getDeclaredFields()) {
             if (declaredField.isAnnotationPresent(annotation)) fields.add(declaredField);
         }
-        if (type.getSuperclass() != null) fields.addAll(getAnnotatedFields(annotation, type.getSuperclass()));
+        if (type.getSuperclass() != null) fields.addAll(annotatedFields(annotation, type.getSuperclass()));
         return fields;
     }
 
-    public static <T> Collection<Constructor<T>> getAnnotatedConstructors(Class<? extends Annotation> annotation, Class<T> type) {
+    public static <T> Collection<Constructor<T>> annotatedConstructors(Class<? extends Annotation> annotation, Class<T> type) {
         Collection<Constructor<T>> constructors = SeleneUtils.emptyList();
         //noinspection unchecked
         for (Constructor<T> constructor : (Constructor<T>[]) type.getDeclaredConstructors()) {
             if (constructor.isAnnotationPresent(annotation)) constructors.add(constructor);
         }
         return constructors;
+    }
+
+    public static boolean isNative(Class<?> type) {
+        boolean supportedType = false;
+        for (Class<?> nbtSupportedType : nativeSupportedTypes) {
+            if (nbtSupportedType.isAssignableFrom(type)) {
+                supportedType = true;
+                break;
+            }
+        }
+        return supportedType;
     }
 }

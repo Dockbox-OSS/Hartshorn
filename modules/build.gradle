@@ -34,6 +34,8 @@ subprojects { Project subProject ->
             exclude group: "org.spongepowered", module: "configurate**"
         }
 
+
+        testCompile(testFixtures(project(":selene-common")))
     }
 
 }

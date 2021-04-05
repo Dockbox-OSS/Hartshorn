@@ -74,8 +74,8 @@ public interface KeyHolder<T extends KeyHolder> {
      *         ClassCastException} if <em>this</em> does not match the constraint of the given {@link
      *         Key}.
      */
-    default <A> Exceptional<A> get(Key<T, A> key) {
-        return key.get((T) this);
+    default <A, K extends T> Exceptional<A> get(Key<K, A> key) {
+        return key.get((K) this);
     }
 
     default <A> void remove(RemovableKey<T, A> key) {

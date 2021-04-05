@@ -24,6 +24,7 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.persistence.PersistentCapable;
 import org.dockbox.selene.api.objects.persistence.PersistentModel;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +51,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     }
 
     public Path getDataFile(Class<?> module) {
-        return this.getDataFile(Reflect.getModule(module));
+        return this.getDataFile(Reflect.module(module));
     }
 
     @NotNull
@@ -125,7 +126,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
 
     @SuppressWarnings("unchecked")
     protected <T> Exceptional<T> correctPersistentCapable(Path file, Class<T> type) {
-        if (Reflect.isAssignableFrom(PersistentCapable.class, type)) {
+        if (Reflect.assignableFrom(PersistentCapable.class, type)) {
             // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
             // regular instance is created (either through available constructors or Unsafe instantiation).
             Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Selene.provide(type)).getModelClass();
@@ -133,5 +134,14 @@ public abstract class DefaultAbstractFileManager implements FileManager {
             return model.map(PersistentModel::toPersistentCapable).map(content -> (T) content);
         }
         return Exceptional.none();
+    }
+
+    @Override
+    public void stateEnabling(InjectorProperty<?>... properties) {
+        for (InjectorProperty<?> property : properties)
+            if (property instanceof FileTypeProperty) {
+                this.requestFileType(((FileTypeProperty<?>) property).getFileType());
+                break;
+            }
     }
 }

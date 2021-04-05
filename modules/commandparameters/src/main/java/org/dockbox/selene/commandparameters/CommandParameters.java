@@ -33,7 +33,7 @@ public class CommandParameters implements Preloadable {
 
     @Override
     public void preload() {
-        Collection<Class<?>> customParameters = Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, CustomParameter.class);
+        Collection<Class<?>> customParameters = Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, CustomParameter.class);
         for (Class<?> customParameter : customParameters) {
             CustomParameter meta = customParameter.getAnnotation(CustomParameter.class);
             CustomParameterPattern pattern = Selene.provide(meta.pattern());

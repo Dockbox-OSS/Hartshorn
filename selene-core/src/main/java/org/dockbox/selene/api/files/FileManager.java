@@ -21,7 +21,6 @@ import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.server.properties.InjectableType;
-import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.api.util.Reflect;
 
 import java.nio.file.Path;
@@ -45,7 +44,7 @@ public interface FileManager extends InjectableType {
     Path getDataFile(ModuleContainer module);
 
     default Path getConfigFile(Class<?> module) {
-        return this.getConfigFile(Reflect.getModule(module));
+        return this.getConfigFile(Reflect.module(module));
     }
 
     /**
@@ -60,7 +59,7 @@ public interface FileManager extends InjectableType {
     Path getConfigFile(ModuleContainer module);
 
     default Path getDataFile(Class<?> module, String file) {
-        return this.getDataFile(Reflect.getModule(module), file);
+        return this.getDataFile(Reflect.module(module), file);
     }
 
     /**
@@ -77,7 +76,7 @@ public interface FileManager extends InjectableType {
     Path getDataFile(ModuleContainer module, String file);
 
     default Path getConfigFile(Class<?> module, String file) {
-        return this.getConfigFile(Reflect.getModule(module), file);
+        return this.getConfigFile(Reflect.module(module), file);
     }
 
     /**
@@ -129,7 +128,7 @@ public interface FileManager extends InjectableType {
     <T> Exceptional<Boolean> write(Path file, T content);
 
     default Path getDataDir(Class<?> module) {
-        return this.getDataDir(Reflect.getModule(module));
+        return this.getDataDir(Reflect.module(module));
     }
 
     /**
@@ -197,7 +196,7 @@ public interface FileManager extends InjectableType {
     Path getPluginDir();
 
     default Path getModuleConfigDir(Class<?> module) {
-        return this.getModuleConfigDir(Reflect.getModule(module));
+        return this.getModuleConfigDir(Reflect.module(module));
     }
 
     /**
@@ -298,15 +297,6 @@ public interface FileManager extends InjectableType {
      * @return true if the file was copied, otherwise false
      */
     boolean copyDefaultFile(String defaultFileName, Path targetFile);
-
-    @Override
-    default void stateEnabling(InjectorProperty<?>... properties) {
-        for (InjectorProperty<?> property : properties)
-            if (property instanceof FileTypeProperty) {
-                this.requestFileType(((FileTypeProperty<?>) property).getFileType());
-                break;
-            }
-    }
 
     void requestFileType(FileType fileType);
 }

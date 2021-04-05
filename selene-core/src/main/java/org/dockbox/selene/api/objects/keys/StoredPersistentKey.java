@@ -17,14 +17,13 @@
 
 package org.dockbox.selene.api.objects.keys;
 
-import org.dockbox.selene.api.objects.keys.data.TypedPersistentDataKey;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.Reflect;
 
 public class StoredPersistentKey extends TypedPersistentDataKey<Object> {
 
     private StoredPersistentKey(String id) {
-        super(id, id, Reflect.getModule(Selene.class), Object.class);
+        super(id, id, Reflect.module(Selene.class), Object.class);
     }
 
     public static StoredPersistentKey of(String name) {

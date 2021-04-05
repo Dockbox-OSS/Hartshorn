@@ -154,12 +154,12 @@ public abstract class World extends WorldProperties implements BlockDimension, E
         }
 
         @Override
-        public Collection<Entity<?>> getEntities() {
+        public Collection<Entity> getEntities() {
             return SeleneUtils.emptyList();
         }
 
         @Override
-        public Collection<Entity<?>> getEntities(Predicate<Entity<?>> predicate) {
+        public Collection<Entity> getEntities(Predicate<Entity> predicate) {
             return SeleneUtils.emptyList();
         }
 

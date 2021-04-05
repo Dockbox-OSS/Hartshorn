@@ -48,19 +48,19 @@ public class SimpleResourceService implements ResourceService {
 
     @Override
     public void init() {
-        Collection<Class<?>> resourceProviders = Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Resources.class);
+        Collection<Class<?>> resourceProviders = Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Resources.class);
         resourceProviders.forEach(provider -> {
             if (provider.isEnum()) {
-                for (Enum<?> e : Reflect.getEnumValues(provider)) {
-                    if (Reflect.isAssignableFrom(ResourceEntry.class, e.getClass())) {
+                for (Enum<?> e : Reflect.enumValues(provider)) {
+                    if (Reflect.assignableFrom(ResourceEntry.class, e.getClass())) {
                         ResourceEntry resource = (ResourceEntry) e;
                         this.knownEntries.add(resource);
                     }
                 }
             }
             else {
-                for (Field field : Reflect.getStaticFields(provider)) {
-                    if (Reflect.isAssignableFrom(ResourceEntry.class, field.getType())) {
+                for (Field field : Reflect.staticFields(provider)) {
+                    if (Reflect.assignableFrom(ResourceEntry.class, field.getType())) {
                         try {
                             if (!field.isAccessible()) field.setAccessible(true);
                             ResourceEntry resource = (ResourceEntry) field.get(null);
@@ -82,7 +82,7 @@ public class SimpleResourceService implements ResourceService {
         if (this.resourceMaps.containsKey(lang)) return this.resourceMaps.get(lang);
 
         FileManager cm = Selene.provide(FileManager.class);
-        Path languageConfigFile = cm.getConfigFile(Reflect.getModule(Selene.class), lang.getCode());
+        Path languageConfigFile = cm.getConfigFile(Reflect.module(Selene.class), lang.getCode());
         Map<String, String> resources;
         if (languageConfigFile.toFile().exists() && !SeleneUtils.isFileEmpty(languageConfigFile)) {
             resources = SimpleResourceService.getResourcesForFile(languageConfigFile, cm);

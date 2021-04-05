@@ -432,9 +432,9 @@ public class SpongePlayerListener {
             @Getter("getSource") Player player,
             @Getter("getTargetEntity") Entity entity
     ) {
-        org.dockbox.selene.api.entities.Entity<?> targetEntity = SpongeConversionUtil.fromSponge(entity);
+        org.dockbox.selene.api.entities.Entity targetEntity = SpongeConversionUtil.fromSponge(entity);
 
-        Cancellable cancellable = new PlayerInteractEntityEvent<>(
+        Cancellable cancellable = new PlayerInteractEntityEvent(
                 SpongeConversionUtil.fromSponge(player),
                 targetEntity,
                 SpongeConversionUtil.fromSponge(event.getInteractionPoint().orElse(Vector3d.ZERO))

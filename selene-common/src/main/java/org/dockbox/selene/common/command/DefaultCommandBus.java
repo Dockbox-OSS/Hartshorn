@@ -19,9 +19,8 @@ package org.dockbox.selene.common.command;
 
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.command.CommandBus;
-import org.dockbox.selene.api.command.context.CommandArgument;
 import org.dockbox.selene.api.command.context.CommandContext;
-import org.dockbox.selene.api.command.context.CommandFlag;
+import org.dockbox.selene.api.command.context.CommandParameter;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.events.chat.CommandEvent;
 import org.dockbox.selene.api.events.parents.Cancellable;
@@ -144,7 +143,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         //noinspection ConstantConditions
         if (registrationContext.getCommand().confirm() && sender instanceof AbstractIdentifiable && !(sender instanceof Console)) {
             String registrationId = AbstractRegistrationContext.getRegistrationId((Identifiable) sender, ctx);
-            ConfirmableQueueItem queueItem = new ConfirmableQueueItem((AbstractIdentifiable<?>) sender, ctx, registrationContext);
+            ConfirmableQueueItem queueItem = new ConfirmableQueueItem((AbstractIdentifiable) sender, ctx, registrationContext);
             DefaultCommandBus.queueConfirmable(registrationId, queueItem);
 
             Text confirmText = DefaultResource.CONFIRM_COMMAND_MESSAGE.asText();
@@ -223,7 +222,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
 
         @NotNull
         @Unmodifiable
-        Collection<Method> nonInheritedMethods = Reflect.getAnnotedMethods(parent, Command.class, c -> !c.inherit() || !isParentRegistration);
+        Collection<Method> nonInheritedMethods = Reflect.annotatedMethods(parent, Command.class, c -> !c.inherit() || !isParentRegistration);
 
         nonInheritedMethods.forEach(method -> {
             MethodCommandContext context = DefaultCommandBus.extractNonInheritedContext(method);
@@ -274,7 +273,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         */
         @NotNull
         @Unmodifiable
-        Collection<Method> inheritedMethods = Reflect.getAnnotedMethods(parent, Command.class, Command::inherit);
+        Collection<Method> inheritedMethods = Reflect.annotatedMethods(parent, Command.class, Command::inherit);
         inheritedMethods.forEach(method -> context.addInheritedCommand(
                 DefaultCommandBus.extractInheritedContext(method, context))
         );
@@ -520,8 +519,8 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
     }
 
     protected SimpleCommandContext createCommandContext(String command, CommandSource sender, Map<String, Collection<Object>> args) {
-        List<CommandArgument<?>> arguments = SeleneUtils.emptyList();
-        List<CommandFlag<?>> flags = SeleneUtils.emptyList();
+        List<CommandParameter<?>> arguments = SeleneUtils.emptyList();
+        List<CommandParameter<?>> flags = SeleneUtils.emptyList();
 
         assert null != command : "Context carrier command was null";
         args.forEach((key, parsedArguments) ->
@@ -531,9 +530,9 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
                     does not have to check for anything but the flag prefix (-f or --flag).
                     */
                     if (Pattern.compile("-(-?" + key + ")").matcher(command).find())
-                        flags.add(new CommandFlag<>(this.tryConvertObject(obj), key));
+                        flags.add(new CommandParameter<>(this.tryConvertObject(obj), key));
                     else
-                        arguments.add(new CommandArgument<>(this.tryConvertObject(obj), key));
+                        arguments.add(new CommandParameter<>(this.tryConvertObject(obj), key));
                 }));
 
         Exceptional<Location> location = sender instanceof Locatable
@@ -542,8 +541,8 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
 
         return new SimpleCommandContext(
                 command,
-                arguments.toArray(new CommandArgument<?>[0]),
-                flags.toArray(new CommandFlag<?>[0]),
+                arguments.toArray(new CommandParameter<?>[0]),
+                flags.toArray(new CommandParameter<?>[0]),
                 sender,
                 location,
                 location.map(Location::getWorld),

@@ -25,7 +25,7 @@ import org.dockbox.selene.api.util.Reflect;
 /**
  * Low-level interface, used by the default integrated server module as indicated by the mappings
  * provided by the platform implementation. Used to access the module when {@link Selene} is used in
- * a {@link Reflect#getModule(Class)} method call.
+ * a {@link Reflect#module(Class)} method call.
  */
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
 public interface Server {

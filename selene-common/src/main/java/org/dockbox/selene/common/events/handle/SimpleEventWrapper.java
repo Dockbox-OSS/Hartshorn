@@ -92,7 +92,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
     public static List<SimpleEventWrapper> create(Object instance, Method method, int priority) {
         List<SimpleEventWrapper> invokeWrappers = SeleneUtils.emptyConcurrentList();
         for (Class<?> param : method.getParameterTypes()) {
-            if (Reflect.isAssignableFrom(Event.class, param)) {
+            if (Reflect.assignableFrom(Event.class, param)) {
                 @SuppressWarnings("unchecked")
                 Class<? extends Event> eventType = (Class<? extends Event>) param;
                 invokeWrappers.add(new SimpleEventWrapper(instance, eventType, method, priority));
@@ -155,7 +155,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
             populated by annotation processors.
             */
             Object argument = null;
-            if (Reflect.isAssignableFrom(parameter.getType(), event.getClass())) argument = event;
+            if (Reflect.assignableFrom(parameter.getType(), event.getClass())) argument = event;
 
             /*
             To allow for the addition of future stages, we only use the enum values provided directly. This way we can

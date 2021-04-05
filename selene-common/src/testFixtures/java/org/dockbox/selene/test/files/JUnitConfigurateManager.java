@@ -15,10 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.command.context;
+package org.dockbox.selene.test.files;
 
-public class CommandArgument<T> extends CommandParameter<T> {
-    public CommandArgument(T value, String key) {
-        super(value, key);
+import org.dockbox.selene.api.files.FileType;
+import org.dockbox.selene.common.files.DefaultConfigurateManager;
+
+import javax.inject.Inject;
+
+public class JUnitConfigurateManager extends DefaultConfigurateManager implements JUnitFileManager {
+
+    @Inject
+    private JUnitConfigurateManager() {
+        super(FileType.YAML);
     }
 }

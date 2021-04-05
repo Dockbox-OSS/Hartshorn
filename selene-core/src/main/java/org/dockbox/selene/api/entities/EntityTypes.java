@@ -44,7 +44,7 @@ public final class EntityTypes {
      * @param <T>
      *         The {@link Entity} to represent.
      */
-    public static final class EntityType<T extends Entity<T>> {
+    public static final class EntityType<T extends Entity> {
 
         private final BiFunction<SeleneFactory, Location, T> provider;
 

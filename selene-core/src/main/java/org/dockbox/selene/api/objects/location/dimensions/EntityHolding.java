@@ -24,8 +24,8 @@ import java.util.function.Predicate;
 
 public interface EntityHolding {
 
-    Collection<Entity<?>> getEntities();
+    Collection<Entity> getEntities();
 
-    Collection<Entity<?>> getEntities(Predicate<Entity<?>> predicate);
+    Collection<Entity> getEntities(Predicate<Entity> predicate);
 
 }

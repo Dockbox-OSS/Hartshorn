@@ -61,7 +61,7 @@ public class SQLiteMan extends SQLMan<Path> {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Keys.getPropertyValue(PATH_KEY, Path.class, properties)
+        Keys.value(PATH_KEY, Path.class, properties)
                 .present(path -> this.filePath = path)
                 .cause(() -> new IllegalArgumentException("Missing value for '" + PATH_KEY + "'"));
 

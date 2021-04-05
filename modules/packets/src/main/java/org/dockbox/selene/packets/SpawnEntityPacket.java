@@ -23,15 +23,15 @@ import org.dockbox.selene.api.objects.Packet;
 
 @SuppressWarnings("AbstractClassWithoutAbstractMethods")
 @RequiresBinding
-public abstract class SpawnEntityPacket<T extends Entity<?>> extends Packet {
+public abstract class SpawnEntityPacket extends Packet {
 
-    private T entity;
+    private Entity entity;
 
-    public T getEntity() {
+    public Entity getEntity() {
         return this.entity;
     }
 
-    public void setEntity(T entity) {
+    public void setEntity(Entity entity) {
         this.entity = entity;
     }
 

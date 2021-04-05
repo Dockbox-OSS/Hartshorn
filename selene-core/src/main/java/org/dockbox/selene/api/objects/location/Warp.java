@@ -21,37 +21,13 @@ import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.location.position.Location;
 
 /** Represents a warp, a virtual location inside a world, with descriptive properties. */
-public class Warp {
+public interface Warp {
 
-    private final Exceptional<String> description;
-    private final Exceptional<String> category;
-    private final Location location;
-    private final String name;
+    Exceptional<String> getDescription();
 
-    public Warp(
-            Exceptional<String> description,
-            Exceptional<String> category,
-            Location location,
-            String name) {
-        this.description = description;
-        this.category = category;
-        this.location = location;
-        this.name = name;
-    }
+    Exceptional<String> getCategory();
 
-    public Exceptional<String> getDescription() {
-        return this.description;
-    }
+    Location getLocation();
 
-    public Exceptional<String> getCategory() {
-        return this.category;
-    }
-
-    public Location getLocation() {
-        return this.location;
-    }
-
-    public String getName() {
-        return this.name;
-    }
+    String getName();
 }

@@ -18,14 +18,14 @@
 package org.dockbox.selene.test.util;
 
 import org.dockbox.selene.api.command.CommandBus;
-import org.dockbox.selene.api.command.context.CommandArgument;
 import org.dockbox.selene.api.command.context.CommandContext;
+import org.dockbox.selene.api.command.context.CommandParameter;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.api.objects.targets.MessageReceiver;
-import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.test.TestResources;
 
 public class JUnitServer implements Server {
@@ -36,7 +36,7 @@ public class JUnitServer implements Server {
             src.send(DefaultResource.CONFIRM_WRONG_SOURCE);
             return;
         }
-        Exceptional<CommandArgument<String>> optionalCooldownId = ctx.argument("cooldownId");
+        Exceptional<CommandParameter<String>> optionalCooldownId = ctx.argument("cooldownId");
 
         // UUID is stored by the command executor to ensure runnables are not called by other sources. The uuid
         // argument here is just a confirmation that the source is correct.

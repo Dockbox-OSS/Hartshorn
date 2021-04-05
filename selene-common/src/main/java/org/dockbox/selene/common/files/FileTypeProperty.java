@@ -15,8 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.files;
+package org.dockbox.selene.common.files;
 
+import org.dockbox.selene.api.files.FileType;
 import org.dockbox.selene.api.server.properties.AnnotationProperty;
 
 import java.lang.annotation.Annotation;

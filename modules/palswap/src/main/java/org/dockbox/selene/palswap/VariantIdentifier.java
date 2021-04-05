@@ -90,7 +90,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
             if (!SeleneBootstrap.isConstructed()) return (overridenBlockNames = new ItemData());
 
             FileManager fm = Selene.provide(FileManager.class);
-            Path file = fm.getDataFile(BlockRegistryExtension.class, "overridenblocknames");
+            Path file = fm.getDataFile(BlockRegistryModule.class, "overridenblocknames");
 
             Exceptional<ItemData> mappings = fm.read(file, ItemData.class);
             mappings.present(m -> overridenBlockNames = m)

@@ -26,7 +26,7 @@ import org.dockbox.selene.api.objects.location.position.BlockFace;
  * Represents an Item Frame. See <a href="https://minecraft.gamepedia.com/Item_Frame">Item Frame on
  * the Minecraft Wiki</a>.
  */
-public interface ItemFrame extends Entity<ItemFrame> {
+public interface ItemFrame extends CloneableEntity<ItemFrame> {
 
     /**
      * Returns the current {@link Item} displayed in the item frame, wrapped in a {@link Exceptional}.

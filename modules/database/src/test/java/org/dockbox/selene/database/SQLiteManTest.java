@@ -22,16 +22,20 @@ import org.dockbox.selene.database.dialects.sqlite.SQLiteMan;
 import org.dockbox.selene.database.dialects.sqlite.SQLitePathProperty;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.structures.table.Table;
+import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.jooq.SQLDialect;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.ThrowingSupplier;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
 
+@ExtendWith(SeleneJUnit5Runner.class)
 class SQLiteManTest {
 
     private static final String MAIN_TABLE = "developers";
@@ -110,7 +114,7 @@ class SQLiteManTest {
     }
 
     @Test
-    public void testTableConversion() throws InvalidConnectionException {
+    public void testTableConversion() throws InvalidConnectionException, IOException {
         ISQLMan<?> man = SQLiteManTest.writeToFile();
         Table table = man.getTable(MAIN_TABLE);
 

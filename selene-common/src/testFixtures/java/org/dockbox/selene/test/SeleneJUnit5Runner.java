@@ -15,14 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.test.files;
+package org.dockbox.selene.test;
 
-import org.dockbox.selene.api.files.FileType;
-import org.dockbox.selene.common.files.DefaultConfigurateManager;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class JUnitConfigurateManager extends DefaultConfigurateManager implements JUnitFileManager {
+public class SeleneJUnit5Runner implements BeforeAllCallback{
 
-    private JUnitConfigurateManager() {
-        super(FileType.YAML);
+    @Override
+    public void beforeAll(ExtensionContext context) throws Exception {
+        JUnit5Bootstrap.prepareBootstrap();
     }
 }

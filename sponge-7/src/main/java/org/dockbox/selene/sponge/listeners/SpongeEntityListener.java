@@ -41,7 +41,7 @@ public class SpongeEntityListener {
             org.dockbox.selene.api.objects.player.Player selenePlayer = SpongeConversionUtil.fromSponge(player);
 
             for (Entity entity : event.getEntities()) {
-                Cancellable summonEntityEvent = new PlayerSummonEntityEvent<>(
+                Cancellable summonEntityEvent = new PlayerSummonEntityEvent(
                         SpongeConversionUtil.fromSponge(entity),
                         source,
                         selenePlayer
@@ -58,7 +58,7 @@ public class SpongeEntityListener {
         SpawnSource source = SpongeConversionUtil.fromSponge(spawnType);
 
         for (Entity entity : event.getEntities()) {
-            Cancellable summonEntityEvent = new SummonEntityEvent<>(
+            Cancellable summonEntityEvent = new SummonEntityEvent(
                     SpongeConversionUtil.fromSponge(entity),
                     source
             );

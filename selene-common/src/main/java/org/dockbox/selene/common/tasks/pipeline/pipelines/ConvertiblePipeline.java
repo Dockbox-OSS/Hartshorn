@@ -270,7 +270,7 @@ public class ConvertiblePipeline<P, I> extends AbstractPipeline<P, I> {
             return (ConvertiblePipeline<P, K>) this;
         }
         else {
-            if (Reflect.isAssignableFrom(previousClass, this.getPreviousPipeline().getInputClass())) {
+            if (Reflect.assignableFrom(previousClass, this.getPreviousPipeline().getInputClass())) {
                 ConvertiblePipeline<P, K> previousPipeline =
                         (ConvertiblePipeline<P, K>) this.getPreviousPipeline();
                 this.clearPipelineConnections();

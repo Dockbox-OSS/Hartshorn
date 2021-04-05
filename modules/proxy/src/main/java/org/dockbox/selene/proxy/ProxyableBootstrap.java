@@ -43,7 +43,7 @@ public final class ProxyableBootstrap {
 
     static void boostrapDelegates() {
         Selene.log().info("Scanning for proxy types in " + SeleneInformation.PACKAGE_PREFIX);
-        Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Proxy.class).forEach(proxy -> {
+        Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Proxy.class).forEach(proxy -> {
             Selene.log().info("Processing [" + proxy.getCanonicalName() + "]");
             if (Modifier.isAbstract(proxy.getModifiers())) {
                 Selene.log().warn("Proxy source cannot be abstract [" + proxy.getCanonicalName() + "]");
@@ -63,7 +63,7 @@ public final class ProxyableBootstrap {
     private static void delegateMethods(Class<?> proxyClass) {
         @NotNull
         @Unmodifiable
-        Collection<Method> targets = Reflect.getAnnotedMethods(proxyClass, Target.class, i -> true, false);
+        Collection<Method> targets = Reflect.annotatedMethods(proxyClass, Target.class, i -> true, false);
 
         Proxy proxy = proxyClass.getAnnotation(Proxy.class);
         targets.forEach(target -> ProxyableBootstrap.delegateMethod(proxyClass, proxy.value(), target));
@@ -102,7 +102,7 @@ public final class ProxyableBootstrap {
             // type of the
             // target.
             if (!source.getReturnType().equals(Void.TYPE) && target.overwrite()) {
-                if (!Reflect.isAssignableFrom(source.getReturnType(), targetMethod.getReturnType())) {
+                if (!Reflect.assignableFrom(source.getReturnType(), targetMethod.getReturnType())) {
                     Selene.log().warn("Return type for '" + source.getName() + "' is not assignable from '" + targetMethod
                             .getReturnType() + "' [" + proxyClass.getCanonicalName() + "]");
                     return;

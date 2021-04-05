@@ -20,7 +20,7 @@ package org.dockbox.selene.sponge.objects.item.maps;
 import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.files.FileType;
-import org.dockbox.selene.api.files.FileTypeProperty;
+import org.dockbox.selene.common.files.FileTypeProperty;
 import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.item.Item;

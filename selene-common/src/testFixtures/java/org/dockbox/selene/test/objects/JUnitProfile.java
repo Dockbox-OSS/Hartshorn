@@ -22,6 +22,7 @@ import com.google.inject.assistedinject.AssistedInject;
 
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.objects.tuple.Tuple;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.util.SeleneUtils;
 
 import java.util.Collection;
@@ -40,9 +41,10 @@ public class JUnitProfile implements Profile {
     }
 
     @AssistedInject
-    public JUnitProfile(@Assisted JUnitProfile profile) {
+    public JUnitProfile(@Assisted Profile profile) {
         this(profile.getUuid());
-        this.properties = new HashMap<>(profile.properties);
+        if (profile instanceof JUnitProfile) this.properties = new HashMap<>(((JUnitProfile) profile).properties);
+        else Selene.log().warn("Could not copy profile properties as the provided profile is not an instance of JUnitProfile");
     }
 
     @Override

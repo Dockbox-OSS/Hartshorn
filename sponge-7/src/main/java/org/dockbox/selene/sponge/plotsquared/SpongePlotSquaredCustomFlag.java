@@ -34,7 +34,7 @@ public class SpongePlotSquaredCustomFlag<V> extends Flag<V> {
     @Override
     public String valueToString(Object o) {
         if (o == null) return "null";
-        if (Reflect.isAssignableFrom(flag.getType(), o.getClass())) {
+        if (Reflect.assignableFrom(flag.getType(), o.getClass())) {
             //noinspection unchecked
             return flag.serialize((V) o);
         }

@@ -28,7 +28,7 @@ import org.dockbox.selene.api.events.server.ServerStartedEvent;
 import org.dockbox.selene.api.events.server.ServerStoppingEvent;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.files.FileType;
-import org.dockbox.selene.api.files.FileTypeProperty;
+import org.dockbox.selene.common.files.FileTypeProperty;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.objects.Exceptional;
 import org.dockbox.selene.api.objects.inventory.Slot;
@@ -48,7 +48,7 @@ import java.nio.file.Path;
 @Module(id = "blockregistrygenerator", name = "Block Registry Generator",
         description = "Generates the block identifiers and a registry of all the blocks",
         authors = "pumbas600")
-public class BlockRegistryExtension {
+public class BlockRegistryModule {
 
     private static Registry<Registry<Item>> blockRegistry = new Registry<>();
     private final String itemRegistryFile = "itemdata";
@@ -73,7 +73,7 @@ public class BlockRegistryExtension {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static @Nullable Registry<Registry<Item>> loadBlockRegistry() {
         FileManager fm = Selene.provide(FileManager.class, FileTypeProperty.of(FileType.XML));
-        Path path = fm.getDataFile(BlockRegistryExtension.class, "blockregistry");
+        Path path = fm.getDataFile(BlockRegistryModule.class, "blockregistry");
 
         Exceptional<Registry> eRegistry = fm.read(path, Registry.class);
         return (Registry<Registry<Item>>) eRegistry.or(new Registry<Registry<Item>>());
@@ -89,7 +89,7 @@ public class BlockRegistryExtension {
         if (null == blockRegistry) return;
 
         FileManager fm = Selene.provide(FileManager.class, FileTypeProperty.of(FileType.XML));
-        Path path = fm.getDataFile(BlockRegistryExtension.class, "blockregistry");
+        Path path = fm.getDataFile(BlockRegistryModule.class, "blockregistry");
         fm.write(path, blockRegistry);
     }
 
@@ -97,7 +97,7 @@ public class BlockRegistryExtension {
     public void generateBlockIdentifiers(CommandSource src) {
         try {
             FileManager fileManager = Selene.provide(FileManager.class);
-            Path path = fileManager.getDataFile(BlockRegistryExtension.class, "blockidentifiers");
+            Path path = fileManager.getDataFile(BlockRegistryModule.class, "blockidentifiers");
             FileWriter writer = new FileWriter(path.toFile());
 
             writer.write(this.blockRegistryParser.generateBlockIdentifierEnumFile(
@@ -167,7 +167,7 @@ public class BlockRegistryExtension {
         //Unless the item already exists, write the item name to 'unaddedblocks.yml' so it can be added at a later point.
         try {
             FileManager fm = Selene.provide(FileManager.class);
-            Path path = fm.getDataFile(BlockRegistryExtension.class, "unaddedblocks");
+            Path path = fm.getDataFile(BlockRegistryModule.class, "unaddedblocks");
             FileWriter writer = new FileWriter(path.toFile());
 
             writer.append("Name: ")

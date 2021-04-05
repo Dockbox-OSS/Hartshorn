@@ -17,6 +17,7 @@
 
 plugins {
     id 'java'
+    id 'java-test-fixtures'
 }
 
 group = 'org.dockbox.selene.common'
@@ -53,5 +54,21 @@ dependencies {
 
         testImplementation "org.spongepowered:configurate-core:$configurateVersion"
         testImplementation project(':selene-core')
+
+
+        testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+        testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+        testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+        testCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
+
+        testCompile "org.mockito:mockito-all:$mockitoVersion"
+
+
+        testFixturesCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+        testFixturesCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+        testFixturesRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+        testFixturesCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
+
+        testFixturesCompile "org.mockito:mockito-all:$mockitoVersion"
     }
 }

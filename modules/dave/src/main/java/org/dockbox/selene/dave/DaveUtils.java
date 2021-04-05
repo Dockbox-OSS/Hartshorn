@@ -24,7 +24,8 @@ import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.api.objects.keys.data.IntegerPersistentDataKey;
+import org.dockbox.selene.api.objects.keys.Keys;
+import org.dockbox.selene.api.objects.keys.PersistentDataKey;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.objects.targets.PermissionHolder;
 import org.dockbox.selene.api.server.Selene;
@@ -45,7 +46,7 @@ import java.util.Random;
 
 public final class DaveUtils {
 
-    public static final IntegerPersistentDataKey mutedKey = IntegerPersistentDataKey.of("dave_muting", DaveModule.class);
+    public static final PersistentDataKey<Integer> mutedKey = Keys.persistent(Integer.class, "dave_muting", DaveModule.class);
     private static final Map<DaveTrigger, LocalDateTime> timeSinceTrigger = SeleneUtils.emptyConcurrentMap();
 
     private DaveUtils() {}

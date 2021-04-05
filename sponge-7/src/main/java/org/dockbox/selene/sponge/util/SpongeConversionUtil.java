@@ -67,6 +67,8 @@ import org.dockbox.selene.api.text.pagination.Pagination;
 import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.common.inventory.SimpleElement;
 import org.dockbox.selene.common.objects.item.ReferencedItem;
+import org.dockbox.selene.common.objects.item.SimpleEnchant;
+import org.dockbox.selene.common.objects.location.SimpleWarp;
 import org.dockbox.selene.sponge.entities.SpongeArmorStand;
 import org.dockbox.selene.sponge.entities.SpongeGenericEntity;
 import org.dockbox.selene.sponge.entities.SpongeItemFrame;
@@ -357,7 +359,7 @@ public enum SpongeConversionUtil {
         try {
             String id = enchantment.getType().getId();
             int level = enchantment.getLevel();
-            Enchant enchant = new Enchant(org.dockbox.selene.api.objects.item.Enchantment.valueOf(id.toUpperCase()), level);
+            Enchant enchant = new SimpleEnchant(org.dockbox.selene.api.objects.item.Enchantment.valueOf(id.toUpperCase()), level);
             return Exceptional.of(enchant);
         }
         catch (IllegalArgumentException | NullPointerException e) {
@@ -510,7 +512,7 @@ public enum SpongeConversionUtil {
                 .map(SpongeConversionUtil::fromSponge)
                 .orElse(org.dockbox.selene.api.objects.location.position.Location.empty());
 
-        return new Warp(
+        return new SimpleWarp(
                 Exceptional.of(warp.getDescription().map(Text::toString)),
                 Exceptional.of(warp.getCategory()),
                 location,
@@ -781,7 +783,7 @@ public enum SpongeConversionUtil {
         return Exceptional.of(new PlotBlock((short) id, (byte) meta));
     }
 
-    public static org.dockbox.selene.api.entities.Entity<?> fromSponge(Entity entity) {
+    public static org.dockbox.selene.api.entities.Entity fromSponge(Entity entity) {
         EntityType type = entity.getType();
         if (type == EntityTypes.ARMOR_STAND) {
             return new SpongeArmorStand((ArmorStand) entity);

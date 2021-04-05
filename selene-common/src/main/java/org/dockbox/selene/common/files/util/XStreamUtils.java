@@ -121,7 +121,7 @@ public final class XStreamUtils {
     private static void configureXStream(XStream xstream) {
         if (null == aliasedTypes) {
             aliasedTypes = SeleneUtils.emptyConcurrentMap();
-            Collection<Class<?>> annotatedTypes = Reflect.getAnnotatedTypes(SeleneInformation.PACKAGE_PREFIX, Metadata.class);
+            Collection<Class<?>> annotatedTypes = Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Metadata.class);
             annotatedTypes.forEach(type -> {
                 Metadata metadata = type.getAnnotation(Metadata.class);
                 if (aliasedTypes.containsKey(metadata.alias()))
@@ -302,7 +302,7 @@ public final class XStreamUtils {
 
         /** @see XStream#aliasField(String, Class, String) */
         public XStreamBuilder aliasField(String alias, Class<?> definedIn, String fieldName) {
-            if (Reflect.hasFieldRecursive(definedIn, fieldName))
+            if (Reflect.hasField(definedIn, fieldName))
                 this.stream.aliasField(alias, definedIn, fieldName);
             return this;
         }
@@ -315,7 +315,7 @@ public final class XStreamUtils {
 
         /** @see XStream#aliasAttribute(Class, String, String) */
         public XStreamBuilder aliasAttribute(Class<?> definedIn, String attributeName, String alias) {
-            if (Reflect.hasFieldRecursive(definedIn, attributeName))
+            if (Reflect.hasField(definedIn, attributeName))
                 this.stream.aliasAttribute(definedIn, attributeName, alias);
             return this;
         }
@@ -417,7 +417,7 @@ public final class XStreamUtils {
 
         /** @see XStream#omitField(Class, String) */
         public XStreamBuilder omitField(Class<?> type, String field) {
-            if (Reflect.hasFieldRecursive(type, field))
+            if (Reflect.hasField(type, field))
                 this.stream.omitField(type, field);
             return this;
         }
@@ -461,7 +461,7 @@ public final class XStreamUtils {
         /** @see XStream#registerLocalConverter(Class, String, Converter) */
         public XStreamBuilder registerLocalConverter(
                 Class<?> definedIn, String fieldName, Converter converter) {
-            if (Reflect.hasFieldRecursive(definedIn, fieldName))
+            if (Reflect.hasField(definedIn, fieldName))
                 this.stream.registerLocalConverter(definedIn, fieldName, converter);
             return this;
         }
@@ -469,7 +469,7 @@ public final class XStreamUtils {
         /** @see XStream#registerLocalConverter(Class, String, SingleValueConverter) */
         public XStreamBuilder registerLocalConverter(
                 Class<?> definedIn, String fieldName, SingleValueConverter converter) {
-            if (Reflect.hasFieldRecursive(definedIn, fieldName))
+            if (Reflect.hasField(definedIn, fieldName))
                 this.stream.registerLocalConverter(definedIn, fieldName, converter);
             return this;
         }

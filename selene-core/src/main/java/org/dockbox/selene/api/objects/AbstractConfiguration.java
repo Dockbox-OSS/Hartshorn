@@ -49,7 +49,7 @@ public abstract class AbstractConfiguration<C extends AbstractConfiguration<C>> 
     }
 
     protected void transferOrReuse() {
-        ModuleContainer module = Reflect.getModule(this.getModuleClass());
+        ModuleContainer module = Reflect.module(this.getModuleClass());
         if (null == module) {
             throw new IllegalArgumentException("Provided module not annotated as such.");
         }
