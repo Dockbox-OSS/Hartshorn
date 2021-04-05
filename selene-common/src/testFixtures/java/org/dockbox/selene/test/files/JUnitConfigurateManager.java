@@ -20,8 +20,11 @@ package org.dockbox.selene.test.files;
 import org.dockbox.selene.api.files.FileType;
 import org.dockbox.selene.common.files.DefaultConfigurateManager;
 
+import javax.inject.Inject;
+
 public class JUnitConfigurateManager extends DefaultConfigurateManager implements JUnitFileManager {
 
+    @Inject
     private JUnitConfigurateManager() {
         super(FileType.YAML);
     }

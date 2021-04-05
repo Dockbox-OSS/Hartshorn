@@ -18,8 +18,8 @@
 package org.dockbox.selene.test;
 
 import org.dockbox.selene.api.MinecraftVersion;
-import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.InjectConfiguration;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.ServerType;
 import org.dockbox.selene.api.server.bootstrap.SeleneBootstrap;
 import org.dockbox.selene.test.util.JUnitInjector;
@@ -40,6 +40,14 @@ public class JUnit5Bootstrap extends SeleneBootstrap {
         super(new JUnitInjector());
         this.information = new JUnitInformation();
     }
+    
+    public static void prepareBootstrap() throws IOException {
+        if (getInstance() == null) new JUnit5Bootstrap();
+    }
+
+    public static JUnit5Bootstrap getInstance() {
+        return (JUnit5Bootstrap) SeleneBootstrap.getInstance();
+    }
 
     @Override
     public @NotNull ServerType getServerType() {
@@ -54,10 +62,6 @@ public class JUnit5Bootstrap extends SeleneBootstrap {
     @Override
     public MinecraftVersion getMinecraftVersion() {
         return MinecraftVersion.INDEV;
-    }
-
-    public static JUnit5Bootstrap getInstance() {
-        return (JUnit5Bootstrap) SeleneBootstrap.getInstance();
     }
 
     public JUnitInformation getInformation() {

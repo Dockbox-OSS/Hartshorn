@@ -42,6 +42,7 @@ import org.dockbox.selene.api.objects.item.maps.CustomMapService;
 import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.server.InjectConfiguration;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.SeleneFactory;
 import org.dockbox.selene.api.server.Server;
 import org.dockbox.selene.api.server.config.GlobalConfig;
 import org.dockbox.selene.api.tasks.TaskRunner;
@@ -117,7 +118,7 @@ public class JUnitInjector extends InjectConfiguration {
                 .implement(ItemFrame.class, JUnitItemFrame.class)
                 .implement(ArmorStand.class, JUnitArmorStand.class);
 
-        this.install(this.verify(factory));
+        this.install(factory.build(SeleneFactory.class));
 
         // Globally accessible
         // Config can be recreated, so no external tracking is required (contents obtained from file, no
@@ -128,7 +129,7 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(Logger.class).toInstance(Selene.log());
 
         // Console is a constant singleton, to avoid
-        this.bind(Console.class).toInstance(JUnitConsole.getInstance());
+        this.bind(Console.class).toInstance(new JUnitConsole());
 
         // Discord
         this.bind(DiscordPagination.class).to(SimpleDiscordPagination.class);
