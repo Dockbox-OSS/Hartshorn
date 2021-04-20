@@ -23,10 +23,12 @@ import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.source.CommandSource;
 import org.dockbox.selene.api.events.chat.SendChatEvent;
+import org.dockbox.selene.api.events.discord.DiscordChatReceivedEvent;
 import org.dockbox.selene.api.events.server.ServerReloadEvent;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.objects.player.Player;
 import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.server.SeleneFactory;
 import org.dockbox.selene.api.server.properties.InjectableType;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.api.tasks.TaskRunner;
@@ -44,6 +46,7 @@ import java.util.stream.Collectors;
 @Module(id = "dave", name = "Dave", description = "", authors = "GuusLieben")
 public class DaveModule implements InjectableType {
 
+    private static final int msTick = 20;
     private DaveTriggers triggers = new DaveTriggers();
     private DaveConfig config = new DaveConfig();
 
@@ -121,15 +124,25 @@ public class DaveModule implements InjectableType {
     @Listener
     public void onChat(SendChatEvent sendChatEvent) {
         Player player = (Player) sendChatEvent.getTarget();
-        DaveUtils.findMatching(this.triggers, sendChatEvent.getMessage().toPlain())
-                .present(trigger -> Selene.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
-                        player,
-                        player.getName(),
-                        trigger,
-                        sendChatEvent.getMessage().toPlain(),
-                        this.config),
-                        10,
-                        TimeUnit.MILLISECONDS)
-                );
+        DaveUtils.findMatching(this.triggers, sendChatEvent.getMessage().toPlain()).present(trigger -> Selene.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+                player,
+                player.getName(),
+                trigger,
+                sendChatEvent.getMessage().toPlain(),
+                this.config),
+                5 * msTick, TimeUnit.MILLISECONDS)
+        );
+    }
+
+    @Listener
+    public void on(DiscordChatReceivedEvent chatEvent) {
+        DaveUtils.findMatching(this.triggers, chatEvent.getMessage().getContentRaw()).present(trigger -> Selene.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+                Selene.provide(SeleneFactory.class).discordSource(chatEvent.getChannel()),
+                chatEvent.getAuthor().getName(),
+                trigger,
+                chatEvent.getMessage().getContentRaw(),
+                this.config),
+                5 * msTick, TimeUnit.MILLISECONDS)
+        );
     }
 }
