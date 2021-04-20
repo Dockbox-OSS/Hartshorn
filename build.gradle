@@ -68,6 +68,7 @@ subprojects { Project subProject ->
     shadowJar {
         relocate 'com.fasterxml.jackson', 'org.dockbox.selene.internal.jackson'
         relocate 'org.apache.commons', 'org.dockbox.selene.internal.apache.commons'
+        relocate 'org.spongepowered.configurate', 'org.dockbox.selene.internal.configurate'
         relocate 'org.yaml.snakeyaml', 'org.dockbox.selene.internal.snakeyaml'
     }
 
