@@ -73,7 +73,7 @@ public class PlotSquaredEventListener {
     private Worlds worlds;
 
     @Listener
-    public void onPlotClaimed(PlayerClaimPlotEvent event) {
+    public void on(PlayerClaimPlotEvent event) {
         Cancellable cancellable = new ClaimPlotEvent(
                 new SpongePlot(event.getPlot()),
                 SpongeConversionUtil.fromSponge(event.getPlayer()),
@@ -83,17 +83,17 @@ public class PlotSquaredEventListener {
     }
 
     @Listener
-    public void onPlotEnter(PlayerEnterPlotEvent event) {
+    public void on(PlayerEnterPlotEvent event) {
         new EnterPlotEvent(new SpongePlot(event.getPlot()), SpongeConversionUtil.fromSponge(event.getPlayer())).post();
     }
 
     @Listener
-    public void onPlotLeave(PlayerLeavePlotEvent event) {
+    public void on(PlayerLeavePlotEvent event) {
         new LeavePlotEvent(new SpongePlot(event.getPlot()), SpongeConversionUtil.fromSponge(event.getPlayer())).post();
     }
 
     @Listener
-    public void onPlotDenied(PlayerPlotDeniedEvent event) {
+    public void on(PlayerPlotDeniedEvent event) {
         new PlotMembershipChangedEvent(
                 new SpongePlot(event.getPlot()),
                 players.getPlayer(event.getPlayer()).orNull(),
@@ -103,7 +103,7 @@ public class PlotSquaredEventListener {
     }
 
     @Listener
-    public void onPlotHelper(PlayerPlotHelperEvent event) {
+    public void on(PlayerPlotHelperEvent event) {
         new PlotMembershipChangedEvent(
                 new SpongePlot(event.getPlot()),
                 players.getPlayer(event.getPlayer()).orNull(),
@@ -113,7 +113,7 @@ public class PlotSquaredEventListener {
     }
 
     @Listener
-    public void onPlotTrusted(PlayerPlotTrustedEvent event) {
+    public void on(PlayerPlotTrustedEvent event) {
         new PlotMembershipChangedEvent(
                 new SpongePlot(event.getPlot()),
                 players.getPlayer(event.getPlayer()).orNull(),
@@ -123,7 +123,7 @@ public class PlotSquaredEventListener {
     }
 
     @Listener
-    public void onTeleportToPlot(PlayerTeleportToPlotEvent event) {
+    public void on(PlayerTeleportToPlotEvent event) {
         new TeleportToPlotEvent(
                 new SpongePlot(event.getPlot()),
                 SpongeConversionUtil.fromSponge(event.getPlayer()),
@@ -133,7 +133,7 @@ public class PlotSquaredEventListener {
     }
 
     @Listener
-    public void onPlotChangeOwner(PlotChangeOwnerEvent event) {
+    public void on(PlotChangeOwnerEvent event) {
         new PlotMembershipChangedEvent(
                 new SpongePlot(event.getPlot()),
                 players.getPlayer(event.getNewOwner()).orNull(),
@@ -143,7 +143,7 @@ public class PlotSquaredEventListener {
     }
 
     @Listener
-    public void onPlotClear(PlotClearEvent event) {
+    public void on(PlotClearEvent event) {
         worlds.getWorld(event.getWorld()).present(world -> {
             Cancellable cancellable = new ClearPlotEvent(world, event.getPlotId().x, event.getPlotId().y);
             event.setCancelled(cancellable.isCancelled());
@@ -152,7 +152,7 @@ public class PlotSquaredEventListener {
 
     // E.g. plot wall, floor, border, etc
     @Listener
-    public void onPlotComponentChange(PlotComponentSetEvent event) {
+    public void on(PlotComponentSetEvent event) {
         PlotProperties property = null;
         switch (event.getComponent()) {
             case "main":
@@ -188,7 +188,7 @@ public class PlotSquaredEventListener {
     }
 
     @Listener
-    public void onPlotDelete(PlotDeleteEvent event) {
+    public void on(PlotDeleteEvent event) {
         worlds.getWorld(event.getWorld()).present(world -> {
             Cancellable cancellable = new DeletePlotEvent(world, event.getPlotId().x, event.getPlotId().y);
             event.setCancelled(cancellable.isCancelled());
@@ -196,7 +196,7 @@ public class PlotSquaredEventListener {
     }
 
     @Listener
-    public void onPlotFlagAdd(PlotFlagAddEvent event) {
+    public void on(PlotFlagAddEvent event) {
         Cancellable cancellable = new PlotFlagAddedEvent(
                 new SpongePlot(event.getPlot()),
                 new SpongeFlagWrapper<>(event.getFlag())
@@ -205,7 +205,7 @@ public class PlotSquaredEventListener {
     }
 
     @Listener
-    public void onPlotFlagRemove(PlotFlagRemoveEvent event) {
+    public void on(PlotFlagRemoveEvent event) {
         Cancellable cancellable = new PlotFlagRemovedEvent(
                 new SpongePlot(event.getPlot()),
                 new SpongeFlagWrapper<>(event.getFlag())
@@ -214,7 +214,7 @@ public class PlotSquaredEventListener {
     }
 
     @Listener
-    public void onPlotMerge(com.plotsquared.sponge.events.PlotMergeEvent event) {
+    public void on(com.plotsquared.sponge.events.PlotMergeEvent event) {
         Cancellable cancellable = new PlotMergeEvent(
                 new SpongePlot(event.getPlot()),
                 Direction.getInstance(event.getDir())
@@ -223,7 +223,7 @@ public class PlotSquaredEventListener {
     }
 
     @Listener
-    public void onPlotAutoMerge(PlotAutoMergeEvent event) {
+    public void on(PlotAutoMergeEvent event) {
         Collection<Plot> plots = getPlots(event.getWorld().getUniqueId(), event.getPlots());
         Cancellable cancellable = new org.dockbox.selene.plots.events.merge.PlotAutoMergeEvent(
                 new SpongePlot(event.getPlot()),
@@ -234,7 +234,7 @@ public class PlotSquaredEventListener {
     }
 
     @Listener
-    public void onPlotUnlink(PlotUnlinkEvent event) {
+    public void on(PlotUnlinkEvent event) {
         Collection<Plot> plots = getPlots(event.getWorld().getUniqueId(), event.getPlots());
         Cancellable cancellable = new org.dockbox.selene.plots.events.merge.PlotUnlinkEvent(plots).post();
         event.setCancelled(cancellable.isCancelled());

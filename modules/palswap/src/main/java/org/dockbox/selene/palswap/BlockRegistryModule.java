@@ -59,7 +59,7 @@ public class BlockRegistryModule {
     private BlockRegistryParser blockRegistryParser;
 
     @Listener
-    public void OnServerStartedEvent(ServerStartedEvent event) {
+    public void on(ServerStartedEvent event) {
         Selene.getServer().bind(
                 BlockRegistryParser.class, BlockRegistryUtil.getBlockRegistryParserClass());
 
@@ -82,7 +82,7 @@ public class BlockRegistryModule {
     }
 
     @Listener
-    public void OnServerStoppingEvent(ServerStoppingEvent event) {
+    public void on(ServerStoppingEvent event) {
         this.blockRegistryParser.SaveItemData(this.itemRegistryFile);
         saveBlockRegistry();
     }

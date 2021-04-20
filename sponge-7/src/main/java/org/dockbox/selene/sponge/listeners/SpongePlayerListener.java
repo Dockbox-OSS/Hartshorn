@@ -94,29 +94,29 @@ import io.github.nucleuspowered.nucleus.api.events.NucleusWarpEvent;
 public class SpongePlayerListener {
 
     @Listener
-    public void onPlayerConnected(ClientConnectionEvent.Join joinEvent, @First Player sp) {
+    public void on(ClientConnectionEvent.Join joinEvent, @First Player sp) {
         new PlayerJoinEvent(SpongeConversionUtil.fromSponge(sp)).post();
     }
 
     @Listener
-    public void onPlayerDisconnected(ClientConnectionEvent.Disconnect disconnectEvent, @First Player sp) {
+    public void on(ClientConnectionEvent.Disconnect disconnectEvent, @First Player sp) {
         new PlayerLeaveEvent(SpongeConversionUtil.fromSponge(sp)).post();
     }
 
     @Listener
-    public void onPlayerAuthenticating(ClientConnectionEvent.Auth authEvent, @Getter("getConnection") RemoteConnection connection) {
+    public void on(ClientConnectionEvent.Auth authEvent, @Getter("getConnection") RemoteConnection connection) {
         new PlayerAuthEvent(connection.getAddress(), connection.getVirtualHost()).post();
     }
 
     @Listener
-    public void onPlayerWarp(NucleusWarpEvent.Use warpEvent, @Getter("getTargetUser") User user) {
+    public void on(NucleusWarpEvent.Use warpEvent, @Getter("getTargetUser") User user) {
         Warp warp = SpongeConversionUtil.fromSponge(warpEvent.getWarp());
         Cancellable event = new PlayerWarpEvent(SpongeConversionUtil.fromSponge(user), warp).post();
         warpEvent.setCancelled(event.isCancelled());
     }
 
     @Listener
-    public void onPlayerTeleport(
+    public void on(
             MoveEntityEvent.Teleport teleportEvent,
             @First Player player,
             @Getter("getFromTransform") Transform<World> from,
@@ -147,7 +147,7 @@ public class SpongePlayerListener {
 
     @Listener(order = Order.EARLY, beforeModifications = true)
     @IsCancelled(Tristate.UNDEFINED)
-    public void onPlayerPortalUse(MoveEntityEvent.Teleport.Portal portalEvent,
+    public void on(MoveEntityEvent.Teleport.Portal portalEvent,
                                   @First Player player,
                                   @Getter("getUsePortalAgent") boolean usePortalAgent,
                                   @Getter("getFromTransform") Transform<World> from,
@@ -189,7 +189,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerChat(
+    public void on(
             MessageChannelEvent.Chat chatEvent,
             @First Player player,
             @Getter("getMessage") Text message
@@ -199,7 +199,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerBanned(
+    public void on(
             BanUserEvent banEvent,
             @First Player player,
             @Getter("getBan") Ban.Profile profile,
@@ -228,7 +228,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onIPBanned(BanIpEvent banEvent, @Getter("getBan") Ban.Ip profile, @Getter("getSource") Object source) {
+    public void on(BanIpEvent banEvent, @Getter("getBan") Ban.Ip profile, @Getter("getSource") Object source) {
         SpongePlayerListener.postIfCommandSource(source, convertedSource -> {
             Cancellable event = new IpBannedEvent(
                     profile.getAddress(),
@@ -242,7 +242,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onNameBanned(
+    public void on(
             NucleusNameBanEvent.Banned banEvent,
             @Getter("getEntry") String name,
             @Getter("getReason") String reason,
@@ -261,7 +261,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerWarned(
+    public void on(
             NucleusWarnEvent.Warned warnEvent,
             @Getter("getTargetUser") User user,
             @NonNls @Getter("getReason") String reason,
@@ -285,7 +285,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerNoted(
+    public void on(
             NucleusNoteEvent.Created event,
             @Getter("getTargetUser") User user,
             @Getter("getNote") String note,
@@ -297,7 +297,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerMuted(
+    public void on(
             NucleusMuteEvent.Muted event,
             @Getter("getTargetUser") User user,
             @Getter("getReason") Text reason,
@@ -307,7 +307,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerUnbanned(
+    public void on(
             PardonUserEvent pardonEvent,
             @First Player player,
             @Getter("getBan") Ban.Profile profile,
@@ -325,7 +325,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onIPUnbanned(
+    public void on(
             PardonIpEvent pardonEvent,
             @Getter("getBan") Ban.Ip profile,
             @Getter("getSource") Object source
@@ -342,7 +342,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onNameUnbanned(
+    public void on(
             NucleusNameBanEvent.Unbanned pardonEvent,
             @Getter("getEntry") String name,
             @Getter("getReason") String reason,
@@ -357,7 +357,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onWarnExpired(
+    public void on(
             NucleusWarnEvent.Expired warnEvent,
             @Getter("getTargetUser") User user,
             @Getter("getReason") String reason,
@@ -369,7 +369,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onMuteExpired(
+    public void on(
             NucleusMuteEvent.Unmuted event,
             @Getter("getTargetUser") User user,
             @Getter("getSource") Object source
@@ -378,7 +378,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerKicked(
+    public void on(
             KickPlayerEvent event,
             @Getter("getTargetEntity") Player player,
             @Getter("getSource") Object source
@@ -389,7 +389,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerInteractedWithBlock(InteractBlockEvent event, @Getter("getSource") Player player) {
+    public void on(InteractBlockEvent event, @Getter("getSource") Player player) {
         Exceptional<Location> location = Exceptional.of(event.getTargetBlock().getLocation().map(SpongeConversionUtil::fromSponge));
         if (location.absent()) return;
         Location blockLocation = location.get();
@@ -410,7 +410,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerInteractedAir(HandInteractEvent event, @Getter("getSource") Player player) {
+    public void on(HandInteractEvent event, @Getter("getSource") Player player) {
         if (event instanceof InteractBlockEvent || event instanceof InteractEntityEvent) return;
         if (event.getInteractionPoint().isPresent()) return;
 
@@ -427,7 +427,7 @@ public class SpongePlayerListener {
     }
 
     @Listener
-    public void onPlayerInteractedEntity(
+    public void on(
             InteractEntityEvent event,
             @Getter("getSource") Player player,
             @Getter("getTargetEntity") Entity entity

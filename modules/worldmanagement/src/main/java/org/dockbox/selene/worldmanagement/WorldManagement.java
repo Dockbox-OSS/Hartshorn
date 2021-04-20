@@ -42,17 +42,17 @@ public class WorldManagement {
     private WorldManagementConfig config;
 
     @Listener
-    public void onServerReload(ServerReloadEvent event) {
+    public void on(ServerReloadEvent event) {
         this.config = Selene.provide(WorldManagementConfig.class); // Reload from file, clean instance
     }
 
     @Listener
-    public void onServerStarted(ServerStartedEvent event) {
+    public void on(ServerStartedEvent event) {
         Selene.provide(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, 5, TimeUnit.MINUTES);
     }
 
     @Listener
-    public void onPortalUse(PlayerPortalEvent event) {
+    public void on(PlayerPortalEvent event) {
         if (event.usesPortal() && event.getNewLocation().getWorld().getName().equals(this.config.getPortalWorldTarget())) {
             event.setUsePortal(false);
             event.setNewLocation(new Location(this.config.getPortalPosition(), event.getNewLocation().getWorld()));

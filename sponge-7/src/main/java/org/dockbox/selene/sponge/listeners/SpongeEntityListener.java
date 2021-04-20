@@ -34,7 +34,7 @@ import org.spongepowered.api.event.filter.cause.First;
 public class SpongeEntityListener {
 
     @Listener
-    public void onEntitySpawnByPlayer(SpawnEntityEvent event, @First Player player) {
+    public void on(SpawnEntityEvent event, @First Player player) {
         SpawnType spawnType = event.getCause().getContext().get(EventContextKeys.SPAWN_TYPE).orElse(null);
         if (SpawnTypes.PLACEMENT.equals(spawnType) || SpawnTypes.SPAWN_EGG.equals(spawnType)) {
             SpawnSource source = SpongeConversionUtil.fromSponge(spawnType);
@@ -53,7 +53,7 @@ public class SpongeEntityListener {
     }
 
     @Listener
-    public void onEntitySpawn(SpawnEntityEvent event) {
+    public void on(SpawnEntityEvent event) {
         SpawnType spawnType = event.getCause().getContext().get(EventContextKeys.SPAWN_TYPE).orElse(null);
         SpawnSource source = SpongeConversionUtil.fromSponge(spawnType);
 

@@ -32,27 +32,27 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 public class SpongeServerListener {
 
     @Listener
-    public void onServerStarting(GameStartingServerEvent event) {
+    public void on(GameStartingServerEvent event) {
         new ServerStartingEvent().post();
     }
 
     @Listener
-    public void onServerStarted(GameStartedServerEvent event) {
+    public void on(GameStartedServerEvent event) {
         new ServerStartedEvent().post();
     }
 
     @Listener
-    public void onServerReload(GameReloadEvent event) {
+    public void on(GameReloadEvent event) {
         new ServerReloadEvent().post();
     }
 
     @Listener
-    public void onServerStopping(GameStoppingServerEvent event) {
+    public void on(GameStoppingServerEvent event) {
         new ServerStoppingEvent().post();
     }
 
     @Listener
-    public void onServerPostInit(GameLoadCompleteEvent event) {
+    public void on(GameLoadCompleteEvent event) {
         new ServerPostInitEvent().post();
     }
 }
