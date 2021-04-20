@@ -99,7 +99,10 @@ public class DaveModule implements InjectableType {
         if (SeleneUtils.isFileEmpty(triggerFile)) this.restoreTriggerFile(fm, triggerFile);
 
         fm.read(triggerFile, DaveTriggers.class)
-                .present(triggers -> this.triggers = triggers)
+                .present(triggers -> {
+                    Selene.log().info("Found " + triggers.getTriggers().size() + " triggers");
+                    this.triggers = triggers;
+                })
                 .absent(() -> Selene.log().warn("Could not load triggers for Dave"));
 
         Path configFile = fm.getConfigFile(DaveModule.class);
