@@ -109,6 +109,7 @@ public class PlayerActions {
 
         if (event.getTarget().getWorld().getWorldUniqueId().equals(this.worlds.getRootWorldId())) {
             event.setCancelled(true);
+            event.getTarget().send(PlayerActionResources.CANNOT_MOVE_HERE);
         }
     }
 
