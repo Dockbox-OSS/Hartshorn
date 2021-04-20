@@ -19,7 +19,6 @@ package org.dockbox.selene.structures;
 
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.objects.Exceptional;
-import org.dockbox.selene.common.files.serialize.SeleneTypeSerializers;
 import org.dockbox.selene.structures.registry.Registry;
 import org.dockbox.selene.structures.registry.RegistryColumn;
 import org.dockbox.selene.structures.registry.TestIdentifier;
@@ -31,12 +30,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class DataStructuresSerializersTests {
-
-    private TestConfigurationLoader getTestLoader() {
-        TestConfigurationLoader.Builder tlb = TestConfigurationLoader.builder();
-        tlb.defaultOptions(build -> build.serializers(SeleneTypeSerializers.collection()));
-        return tlb.build();
-    }
 
     @Test
     public void testThatRegistryCanBeSerialised() {
