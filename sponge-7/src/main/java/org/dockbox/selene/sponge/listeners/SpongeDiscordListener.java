@@ -139,7 +139,7 @@ public class SpongeDiscordListener extends ListenerAdapter {
         event.getTextChannel()
                 .retrieveMessageById(event.getMessageId())
                 .queue(message -> {
-                    User user = event.getJDA().getUserById(event.getUserId());
+                    User user = event.getUser();
                     if (null != user) {
                         new DiscordReactionAddedEvent(user, message, event.getReaction()).post();
                     }

@@ -207,12 +207,10 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
     private static PacketListenerAdapter getPacketGateAdapter(Class<? extends Packet> packet) {
         return new PacketListenerAdapter() {
             @Override
-            public void onPacketWrite(
-                    eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent, PacketConnection connection) {
+            public void onPacketWrite(eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent, PacketConnection connection) {
                 Selene.provide(Players.class)
                         .getPlayer(connection.getPlayerUUID())
                         .present(player -> {
-                            // Shadowed NMS type
                             net.minecraft.network.Packet<?> nativePacket = packetEvent.getPacket();
                             Packet internalPacket = Selene.provide(packet, new NativePacketProperty<>(nativePacket));
 
