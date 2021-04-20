@@ -18,18 +18,25 @@
 package org.dockbox.selene.api.events.player;
 
 import org.dockbox.selene.api.objects.location.dimensions.World;
+import org.dockbox.selene.api.objects.location.position.Location;
 import org.dockbox.selene.api.objects.targets.Target;
 
 /**
  * The event fired when a player switches to another world. Typically this is fired after {@link
  * PlayerTeleportEvent}.
  */
-public class PlayerSwitchWorldEvent extends PlayerMoveEvent {
+public class PlayerSwitchWorldEvent extends PlayerTeleportEvent {
     private final World oldWorld;
     private final World newWorld;
 
+    public PlayerSwitchWorldEvent(Target target, Location oldLocation, Location newLocation) {
+        super(target, oldLocation, newLocation);
+        this.oldWorld = oldLocation.getWorld();
+        this.newWorld = newLocation.getWorld();
+    }
+
     public PlayerSwitchWorldEvent(Target target, World oldWorld, World newWorld) {
-        super(target);
+        super(target, Location.of(oldWorld), Location.of(newWorld));
         this.oldWorld = oldWorld;
         this.newWorld = newWorld;
     }

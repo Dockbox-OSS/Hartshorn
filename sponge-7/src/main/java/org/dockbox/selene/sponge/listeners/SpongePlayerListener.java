@@ -132,8 +132,8 @@ public class SpongePlayerListener {
         if (!fromLocation.getWorld().equals(toLocation.getWorld()) && !event.isCancelled()) {
             Cancellable worldEvent = new PlayerSwitchWorldEvent(
                     SpongeConversionUtil.fromSponge(player),
-                    fromLocation.getWorld(),
-                    toLocation.getWorld()
+                    fromLocation,
+                    toLocation
             ).post();
 
             teleportEvent.setCancelled(worldEvent.isCancelled());
