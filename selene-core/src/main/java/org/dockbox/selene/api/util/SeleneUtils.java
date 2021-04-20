@@ -1262,7 +1262,7 @@ public final class SeleneUtils {
         StringBuilder result = new StringBuilder();
         for (List<String> row : rows)
         {
-            result.append(String.format(format, row.toArray(new String[0]))).append("\n");
+            result.append(String.format(format, row.toArray(new Object[0]))).append("\n");
         }
         return result.toString();
     }
