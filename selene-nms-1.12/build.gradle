@@ -38,7 +38,7 @@ minecraft {
 }
 
 repositories {
-    maven { url 'http://repo.drnaylor.co.uk/artifactory/list/minecraft' }
+    maven { url 'https://repo.drnaylor.co.uk/artifactory/list/minecraft' }
     maven { url 'https://jitpack.io' }
 }
 

@@ -21,6 +21,7 @@ import com.google.inject.Inject;
 
 import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.event.Listener;
+import org.dockbox.selene.api.annotations.module.Disabled;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.source.CommandSource;
@@ -44,6 +45,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 
+@Disabled(reason = "Under development")
 @Command(aliases = "registry", usage = "registry")
 @Module(id = "blockregistrygenerator", name = "Block Registry Generator",
         description = "Generates the block identifiers and a registry of all the blocks",
@@ -57,7 +59,7 @@ public class BlockRegistryModule {
     private BlockRegistryParser blockRegistryParser;
 
     @Listener
-    public void OnServerStartedEvent(ServerStartedEvent event) {
+    public void on(ServerStartedEvent event) {
         Selene.getServer().bind(
                 BlockRegistryParser.class, BlockRegistryUtil.getBlockRegistryParserClass());
 
@@ -80,7 +82,7 @@ public class BlockRegistryModule {
     }
 
     @Listener
-    public void OnServerStoppingEvent(ServerStoppingEvent event) {
+    public void on(ServerStoppingEvent event) {
         this.blockRegistryParser.SaveItemData(this.itemRegistryFile);
         saveBlockRegistry();
     }

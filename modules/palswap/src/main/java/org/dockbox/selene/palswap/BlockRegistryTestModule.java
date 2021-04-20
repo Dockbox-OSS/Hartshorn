@@ -20,6 +20,7 @@ package org.dockbox.selene.palswap;
 import com.google.inject.Inject;
 
 import org.dockbox.selene.api.annotations.command.Command;
+import org.dockbox.selene.api.annotations.module.Disabled;
 import org.dockbox.selene.api.annotations.module.Module;
 import org.dockbox.selene.api.command.context.CommandContext;
 import org.dockbox.selene.api.command.context.CommandParameter;
@@ -30,17 +31,18 @@ import org.dockbox.selene.api.objects.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
+@Disabled(reason = "Demo module")
 @Module(id = "blockregistry", name = "Block Registry",
         description = "Block Registry Testing",
         authors = "pumbas600")
-public class BlockRegistryTestExtension {
+public class BlockRegistryTestModule {
 
-    private static BlockRegistryTestExtension instance;
+    private static BlockRegistryTestModule instance;
 
     @Inject
     public Logger logger;
 
-    public BlockRegistryTestExtension() {
+    public BlockRegistryTestModule() {
         instance = this;
     }
 

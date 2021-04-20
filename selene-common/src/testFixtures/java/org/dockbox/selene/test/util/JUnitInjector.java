@@ -24,6 +24,7 @@ import org.dockbox.selene.api.ExceptionHelper;
 import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.ThreadUtils;
 import org.dockbox.selene.api.Worlds;
+import org.dockbox.selene.api.command.source.DiscordCommandSource;
 import org.dockbox.selene.api.discord.DiscordPagination;
 import org.dockbox.selene.api.discord.templates.MessageTemplate;
 import org.dockbox.selene.api.entities.ArmorStand;
@@ -63,6 +64,7 @@ import org.dockbox.selene.test.files.JUnitConfigurateManager;
 import org.dockbox.selene.test.files.JUnitXStreamManager;
 import org.dockbox.selene.test.objects.JUnitBossbar;
 import org.dockbox.selene.test.objects.JUnitConsole;
+import org.dockbox.selene.test.objects.JUnitDiscordCommandSource;
 import org.dockbox.selene.test.objects.JUnitItem;
 import org.dockbox.selene.test.objects.JUnitProfile;
 import org.dockbox.selene.test.objects.living.JUnitArmorStand;
@@ -116,7 +118,8 @@ public class JUnitInjector extends InjectConfiguration {
                 .implement(Profile.class, JUnitProfile.class)
                 .implement(Permission.class, SimplePermission.class)
                 .implement(ItemFrame.class, JUnitItemFrame.class)
-                .implement(ArmorStand.class, JUnitArmorStand.class);
+                .implement(ArmorStand.class, JUnitArmorStand.class)
+                .implement(DiscordCommandSource.class, JUnitDiscordCommandSource.class);
 
         this.install(factory.build(SeleneFactory.class));
 

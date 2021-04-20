@@ -124,7 +124,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
 
     @SuppressWarnings({ "AnonymousInnerClassMayBeStatic", "UnstableApiUsage" })
     @Listener
-    public void onGamePreInit(GamePreInitializationEvent event) {
+    public void on(GamePreInitializationEvent event) {
         Composite.ITEM_KEY = Key.builder()
                 .type(new TypeToken<MapValue<String, Object>>() {
                 })
@@ -150,7 +150,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
      *         Sponge's initialization event
      */
     @Listener
-    public void onServerInit(GameInitializationEvent event) {
+    public void on(GameInitializationEvent event) {
         this.registerSpongeListeners(
                 Selene.provide(SpongeCommandListener.class),
                 Selene.provide(SpongeServerListener.class),
@@ -207,12 +207,10 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
     private static PacketListenerAdapter getPacketGateAdapter(Class<? extends Packet> packet) {
         return new PacketListenerAdapter() {
             @Override
-            public void onPacketWrite(
-                    eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent, PacketConnection connection) {
+            public void onPacketWrite(eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent, PacketConnection connection) {
                 Selene.provide(Players.class)
                         .getPlayer(connection.getPlayerUUID())
                         .present(player -> {
-                            // Shadowed NMS type
                             net.minecraft.network.Packet<?> nativePacket = packetEvent.getPacket();
                             Packet internalPacket = Selene.provide(packet, new NativePacketProperty<>(nativePacket));
 
@@ -255,7 +253,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
      *         The event
      */
     @Listener
-    public void onServerStartedLate(GameStartedServerEvent event) {
+    public void on(GameStartedServerEvent event) {
         Exceptional<JDA> oj = Selene.provide(DiscordUtils.class).getJDA();
         if (oj.present()) {
             JDA jda = oj.get();
@@ -270,7 +268,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
         }
         else {
             // Attempt to get the JDA once every 10 seconds until successful
-            new SpongeTaskRunner().acceptDelayed(() -> this.onServerStartedLate(event), 10, TimeUnit.SECONDS);
+            new SpongeTaskRunner().acceptDelayed(() -> this.on(event), 10, TimeUnit.SECONDS);
         }
     }
 }

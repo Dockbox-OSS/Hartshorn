@@ -559,7 +559,7 @@ public enum SpongeConversionUtil {
 
     public static Element toSponge(org.dockbox.selene.api.inventory.Element element) {
         if (element instanceof SimpleElement) {
-            return Element.of(toSponge(element.getItem()),
+            return Element.of(toSponge(element.item()),
                     a -> ((SimpleElement) element).perform(fromSponge(a.getPlayer()))
             );
         }

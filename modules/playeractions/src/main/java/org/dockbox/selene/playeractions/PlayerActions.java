@@ -47,7 +47,12 @@ public class PlayerActions {
     private Worlds worlds;
 
     @Listener
-    public void onSpectatorTeleport(PlayerTeleportEvent event) {
+    public void on(PlayerTeleportEvent event) {
+        this.verifySpectatorTeleportation(event);
+        this.verifyPlotAccess(event);
+    }
+
+    private void verifySpectatorTeleportation(PlayerTeleportEvent event) {
         if (event.getTarget().getGamemode() == Gamemode.SPECTATOR) {
             if (event.getTarget().hasPermission(PlayerActionPermissions.SPECTATOR_BYPASS)) return;
             if (this.configuration.getTeleportWhitelist().contains(event.getOldLocation().getWorld().getName())) return;
@@ -57,8 +62,7 @@ public class PlayerActions {
         }
     }
 
-    @Listener
-    public void onTeleportToPlot(PlayerTeleportEvent event) {
+    private void verifyPlotAccess(PlayerTeleportEvent event) {
         Player player = event.getTarget();
         Location target = event.getNewLocation();
         Exceptional<Plot> plotTarget = target.get(PlotKeys.PLOT);
@@ -72,14 +76,14 @@ public class PlayerActions {
     }
 
     @Listener
-    public void onEntityInteract(PlayerInteractEntityEvent event) {
+    public void on(PlayerInteractEntityEvent event) {
         if (event.getEntity() instanceof Player) return; // Allowed
         Player player = event.getTarget();
         event.setCancelled(this.cancelEvent(player, event.getEntity()));
     }
 
     @Listener
-    public void onEntitySummon(PlayerSummonEntityEvent event) {
+    public void on(PlayerSummonEntityEvent event) {
         Player player = event.getPlayer();
         SpawnSource source = event.getSource();
         if (SpawnSource.PLACEMENT.equals(source) || SpawnSource.SPAWN_EGG.equals(source)) {
@@ -103,12 +107,13 @@ public class PlayerActions {
     }
 
     @Listener
-    public void onPlayerMove(PlayerMoveEvent event) {
+    public void on(PlayerMoveEvent event) {
         if (event instanceof PlayerTeleportEvent) return; // Allow players to teleport out of the world
         if (event.getTarget().hasPermission(PlayerActionPermissions.NAVIGATE_DEFAULT_WORLD)) return;
 
         if (event.getTarget().getWorld().getWorldUniqueId().equals(this.worlds.getRootWorldId())) {
             event.setCancelled(true);
+            event.getTarget().send(PlayerActionResources.CANNOT_MOVE_HERE);
         }
     }
 

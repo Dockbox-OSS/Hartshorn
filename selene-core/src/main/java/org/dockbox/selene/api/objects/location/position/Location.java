@@ -43,6 +43,10 @@ public class Location implements KeyHolder<Location> {
         return new Location(0, 0, 0, World.empty());
     }
 
+    public static Location of(World world) {
+        return new Location(world.getSpawnPosition(), world);
+    }
+
     public double getX() {
         return this.vectorLoc.getXd();
     }

@@ -56,7 +56,7 @@ public class LogArchival {
     private FileManager fileManager;
 
     @Listener
-    public void onLoad(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent) {
+    public void on(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent) {
         this.logPath = this.fileManager.getLogsDir();
         try {
             Selene.log().info("Checking for logs to archive in {}", this.logPath);

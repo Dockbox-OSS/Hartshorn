@@ -38,7 +38,7 @@ public class SimpleElement implements Element {
     }
 
     @Override
-    public Item getItem() {
+    public Item item() {
         return this.item;
     }
 

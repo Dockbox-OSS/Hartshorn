@@ -841,7 +841,7 @@ public final class Reflect {
     public static boolean isNative(Class<?> type) {
         boolean supportedType = false;
         for (Class<?> nbtSupportedType : nativeSupportedTypes) {
-            if (nbtSupportedType.isAssignableFrom(type)) {
+            if (assignableFrom(nbtSupportedType, type)) {
                 supportedType = true;
                 break;
             }

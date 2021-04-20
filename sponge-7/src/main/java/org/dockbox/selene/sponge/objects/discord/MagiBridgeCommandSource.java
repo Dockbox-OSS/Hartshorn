@@ -17,7 +17,11 @@
 
 package org.dockbox.selene.sponge.objects.discord;
 
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 import com.magitechserver.magibridge.util.BridgeCommandSource;
+
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import org.dockbox.selene.api.command.source.DiscordCommandSource;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
@@ -27,9 +31,14 @@ import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 
-public class MagiBridgeCommandSource extends DiscordCommandSource {
+public class MagiBridgeCommandSource implements DiscordCommandSource {
 
     private final BridgeCommandSource bridge;
+
+    @AssistedInject
+    public MagiBridgeCommandSource(@Assisted TextChannel channel) {
+        this.bridge = new BridgeCommandSource(channel.getId(), Sponge.getServer().getConsole());
+    }
 
     public MagiBridgeCommandSource(BridgeCommandSource bridge) {
         this.bridge = bridge;

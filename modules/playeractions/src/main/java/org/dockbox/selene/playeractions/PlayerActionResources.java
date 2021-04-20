@@ -28,4 +28,6 @@ public class PlayerActionResources {
     public static final ResourceEntry DENIED_FROM_TARGET_PLOT = new Resource("$4You are denied from the plot you are teleporting to", "playeractions.plot.denied");
     public static final ResourceEntry OUTSIDE_PLOT = new Resource("$4You are outside a plot", "playeractions.plot.outside");
     public static final ResourceEntry CANNOT_INTERACT = new Resource("$4You do not have permission to interact with entities here", "playeractions.plot.interact");
+    public static final ResourceEntry CANNOT_MOVE_HERE = new Resource("$4You are not permitted to move in this world", "playeractions.rootworld");
+
 }

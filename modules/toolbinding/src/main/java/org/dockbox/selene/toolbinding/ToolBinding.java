@@ -104,7 +104,7 @@ public class ToolBinding {
     }
 
     @Listener
-    public void onPlayerInteracted(PlayerInteractEvent event) {
+    public void on(PlayerInteractEvent event) {
         Item itemInHand = event.getTarget().getItemInHand(event.getHand());
         if (itemInHand.equals(Selene.getItems().getAir()) || itemInHand.isBlock()) return;
 

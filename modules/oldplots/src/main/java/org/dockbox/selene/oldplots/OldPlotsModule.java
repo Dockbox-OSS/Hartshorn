@@ -63,7 +63,7 @@ public class OldPlotsModule {
     private PlotWorldModelList modelList = new PlotWorldModelList();
 
     @Listener
-    public void onLoad(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent) {
+    public void on(ServerStartedEvent serverStartedEvent, ServerReloadEvent reloadEvent) {
         Path worldConfig = this.fileManager.getConfigFile(OldPlotsModule.class, "worlds");
         this.fileManager.copyDefaultFile("oldplots_worlds.yml", worldConfig);
         Exceptional<PlotWorldModelList> exceptionalList = this.fileManager.read(worldConfig, PlotWorldModelList.class);

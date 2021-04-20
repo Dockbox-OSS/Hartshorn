@@ -24,11 +24,11 @@ public abstract class AbstractTask implements Task {
 
     public abstract void cancel();
 
-    public void onTaskInit() {
+    public void init() {
         // Reserved for implementation
     }
 
-    public void onTaskComplete() {
+    public void complete() {
         // Reserved for implementation
     }
 }

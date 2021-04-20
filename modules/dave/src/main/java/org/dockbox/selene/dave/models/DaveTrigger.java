@@ -21,7 +21,7 @@ import org.dockbox.selene.api.annotations.entity.Metadata;
 
 import java.util.List;
 
-@Metadata(alias = "dave-trigger")
+@Metadata(alias = "trigger")
 public class DaveTrigger {
 
     private String id;

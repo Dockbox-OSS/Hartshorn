@@ -57,24 +57,24 @@ public class WorldManagementConfig extends AbstractConfiguration<WorldManagement
     private int unloadDelay = 2;
 
     public Vector3N getPortalPosition() {
-        return portalPosition;
+        return this.portalPosition;
     }
 
     public String getPortalWorldTarget() {
-        return portalWorldTarget;
+        return this.portalWorldTarget;
     }
 
     public int getMaximumWorldsToUnload() {
-        return maximumWorldsToUnload;
+        return this.maximumWorldsToUnload;
     }
 
     public List<String> getUnloadBlacklist() {
-        return unloadBlacklist;
+        return this.unloadBlacklist;
     }
 
 
     public int getUnloadDelay() {
-        return unloadDelay;
+        return this.unloadDelay;
     }
 
     @Override

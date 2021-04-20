@@ -27,7 +27,7 @@ import org.spongepowered.api.event.command.SendCommandEvent;
 public class SpongeCommandListener {
 
     @Listener
-    public void onNativeCommand(SendCommandEvent commandEvent) {
+    public void on(SendCommandEvent commandEvent) {
         if (commandEvent.getSource() instanceof CommandSource) {
             String command = commandEvent.getCommand();
             String argsJoined = commandEvent.getArguments();

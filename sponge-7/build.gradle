@@ -47,15 +47,19 @@ minecraft {
 repositories {
     maven {
         name 'Nucleus'
-        url 'http://repo.drnaylor.co.uk/artifactory/list/minecraft'
+        url 'https://repo.drnaylor.co.uk/artifactory/list/minecraft'
     }
     maven {
         name 'fawe'
-        url 'http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/'
+        url 'https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/'
     }
     maven {
         name 'sk89q'
         url 'https://maven.enginehub.org/repo/'
+    }
+    maven {
+        name 'jitpack'
+        url 'https://jitpack.io'
     }
 }
 

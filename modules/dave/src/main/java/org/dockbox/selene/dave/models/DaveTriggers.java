@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NonNls;
 
 import java.util.List;
 
-@Metadata(alias = "dave-triggers")
+@Metadata(alias = "triggers")
 public class DaveTriggers {
 
     private final List<DaveTrigger> triggers = SeleneUtils.emptyList();

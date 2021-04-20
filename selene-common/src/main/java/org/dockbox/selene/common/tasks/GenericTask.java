@@ -28,9 +28,9 @@ public abstract class GenericTask extends AbstractTask {
 
     protected GenericTask() {
         this.pipeline = new Pipeline<>();
-        this.pipeline.addPipe((EqualPipe<Void>) this::onTaskInit);
+        this.pipeline.addPipe((EqualPipe<Void>) this::init);
         this.pipeline.addPipe((EqualPipe<Void>) GenericTask.this::perform);
-        this.pipeline.addPipe((EqualPipe<Void>) this::onTaskComplete);
+        this.pipeline.addPipe((EqualPipe<Void>) this::complete);
     }
 
     @Override
