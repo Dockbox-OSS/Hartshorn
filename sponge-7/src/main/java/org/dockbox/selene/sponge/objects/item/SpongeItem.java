@@ -189,26 +189,23 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
     @Override
     public Item setProfile(Profile profile) {
         if (this.isHead() && profile instanceof SpongeProfile) {
-            this.getReference().present(
-                    itemStack -> {
-                        SkullData skullData =
-                                Sponge.getGame()
-                                        .getDataManager()
-                                        .getManipulatorBuilder(SkullData.class)
-                                        .get()
-                                        .create()
-                                        .set(Keys.SKULL_TYPE, SkullTypes.PLAYER);
-                        itemStack.offer(skullData);
+            this.getReference().present(itemStack -> {
+                SkullData skullData =
+                        Sponge.getGame().getDataManager()
+                                .getManipulatorBuilder(SkullData.class)
+                                .get()
+                                .create()
+                                .set(Keys.SKULL_TYPE, SkullTypes.PLAYER);
+                itemStack.offer(skullData);
 
-                        RepresentedPlayerData representedPlayerData =
-                                Sponge.getGame()
-                                        .getDataManager()
-                                        .getManipulatorBuilder(RepresentedPlayerData.class)
-                                        .get()
-                                        .create()
-                                        .set(Keys.REPRESENTED_PLAYER, ((SpongeProfile) profile).getGameProfile());
-                        itemStack.offer(representedPlayerData);
-                    });
+                RepresentedPlayerData representedPlayerData =
+                        Sponge.getGame().getDataManager()
+                                .getManipulatorBuilder(RepresentedPlayerData.class)
+                                .get()
+                                .create()
+                                .set(Keys.REPRESENTED_PLAYER, ((SpongeProfile) profile).getGameProfile());
+                itemStack.offer(representedPlayerData);
+            });
         }
         return this;
     }
