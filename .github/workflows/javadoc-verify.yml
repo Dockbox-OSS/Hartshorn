@@ -6,10 +6,8 @@ name: JavaDocs
 on: [pull_request]
 
 jobs:
-  build:
-
+  javadoc:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 1.8
