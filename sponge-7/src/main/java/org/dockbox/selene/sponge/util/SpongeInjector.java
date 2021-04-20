@@ -25,6 +25,7 @@ import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.ThreadUtils;
 import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.command.CommandBus;
+import org.dockbox.selene.api.command.source.DiscordCommandSource;
 import org.dockbox.selene.api.discord.DiscordPagination;
 import org.dockbox.selene.api.discord.DiscordUtils;
 import org.dockbox.selene.api.discord.templates.MessageTemplate;
@@ -81,6 +82,7 @@ import org.dockbox.selene.sponge.inventory.builder.SpongePaginatedPaneBuilder;
 import org.dockbox.selene.sponge.inventory.builder.SpongeStaticPaneBuilder;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.bossbar.SpongeBossbar;
+import org.dockbox.selene.sponge.objects.discord.MagiBridgeCommandSource;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.dockbox.selene.sponge.objects.item.maps.SpongeCustomMapService;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
@@ -149,7 +151,8 @@ public class SpongeInjector extends InjectConfiguration {
                 .implement(Profile.class, SpongeProfile.class)
                 .implement(Permission.class, SimplePermission.class)
                 .implement(ItemFrame.class, SpongeItemFrame.class)
-                .implement(ArmorStand.class, SpongeArmorStand.class);
+                .implement(ArmorStand.class, SpongeArmorStand.class)
+                .implement(DiscordCommandSource.class, MagiBridgeCommandSource.class);
 
         this.install(factory.build(SeleneFactory.class));
 

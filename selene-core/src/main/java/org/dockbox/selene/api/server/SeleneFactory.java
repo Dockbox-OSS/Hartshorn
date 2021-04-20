@@ -17,6 +17,9 @@
 
 package org.dockbox.selene.api.server;
 
+import net.dv8tion.jda.api.entities.TextChannel;
+
+import org.dockbox.selene.api.command.source.DiscordCommandSource;
 import org.dockbox.selene.api.entities.ArmorStand;
 import org.dockbox.selene.api.entities.ItemFrame;
 import org.dockbox.selene.api.i18n.permissions.Permission;
@@ -53,5 +56,7 @@ public interface SeleneFactory {
     ArmorStand armorStand(Location location);
 
     ItemFrame itemFrame(Location location);
+
+    DiscordCommandSource discordSource(TextChannel channel);
 
 }
