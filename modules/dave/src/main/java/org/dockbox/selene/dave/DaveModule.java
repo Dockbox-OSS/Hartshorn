@@ -92,10 +92,18 @@ public class DaveModule implements InjectableType {
         fm.read(triggerFile, DaveTriggers.class).present(triggers -> {
             Selene.log().info("Found " + triggers.getTriggers().size() + " triggers");
             this.triggers = triggers;
-        }).absent(() -> Selene.log().warn("Could not load triggers for Dave"));
+        }).caught(e -> {
+            Selene.log().warn("Could not load triggers for Dave");
+            Selene.handle(e);
+        });
 
         Path configFile = fm.getConfigFile(DaveModule.class);
-        fm.read(configFile, DaveConfig.class).present(config -> this.config = config);
+        fm.read(configFile, DaveConfig.class)
+                .present(config -> this.config = config)
+                .caught(e -> {
+                    Selene.log().warn("Could not load config for Dave");
+                    Selene.handle(e);
+                });
     }
 
     private void restoreTriggerFile(FileManager fm, Path triggerFile) {
