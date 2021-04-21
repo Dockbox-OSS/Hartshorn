@@ -23,6 +23,7 @@ import org.dockbox.selene.api.annotations.entity.Extract;
 import org.dockbox.selene.api.annotations.entity.Extract.Behavior;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.module.ModuleContainer;
+import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.server.properties.InjectableType;
 import org.dockbox.selene.api.server.properties.InjectorProperty;
 import org.dockbox.selene.api.util.Reflect;
@@ -58,6 +59,7 @@ public abstract class AbstractConfiguration<C extends AbstractConfiguration<C>> 
         @SuppressWarnings("unchecked") C config = (C) this.fileManager.read(configPath, this.getClass()).orNull();
         SeleneUtils.shallowCopy(config, this);
         this.isConstructed = true;
+        Selene.log().info("Transferred configuration for type " + this.getClass().getSimpleName());
     }
 
     protected Path getConfigFile() {
