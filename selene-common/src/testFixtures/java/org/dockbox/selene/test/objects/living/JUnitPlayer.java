@@ -244,7 +244,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     }
 
     @Override
-    public void sendPagination(Pagination pagination) {
+    public void send(Pagination pagination) {
         // TODO: Test implementation, mocking client?
     }
 
