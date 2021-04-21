@@ -42,7 +42,7 @@ import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@Command(aliases = "dave", usage = "dave")
+@Command(aliases = "dave", usage = "dave", permission = "dave")
 @Module(id = "dave", name = "Dave", description = "", authors = "GuusLieben")
 public class DaveModule implements InjectableType {
 
@@ -50,12 +50,12 @@ public class DaveModule implements InjectableType {
     private DaveTriggers triggers = new DaveTriggers();
     private DaveConfig config = new DaveConfig();
 
-    @Command(aliases = "mute", usage = "mute")
+    @Command(aliases = "mute", usage = "mute", permission = DaveResources.DAVE_MUTE)
     public void mute(Player player) {
         DaveUtils.toggleMute(player);
     }
 
-    @Command(aliases = "triggers", usage = "triggers")
+    @Command(aliases = "triggers", usage = "triggers", permission = DaveResources.DAVE_TRIGGERS)
     public void triggers(CommandSource source) {
         Selene.provide(PaginationBuilder.class)
                 .title(DaveResources.DAVE_TRIGGER_HEADER.asText())
@@ -69,7 +69,7 @@ public class DaveModule implements InjectableType {
                 .send(source);
     }
 
-    @Command(aliases = "run", usage = "run <trigger{String}>")
+    @Command(aliases = "run", usage = "run <trigger{String}>", permission = DaveResources.DAVE_TRIGGER_RUN)
     public void run(Player source, CommandContext context) {
         String triggerId = context.get("trigger");
         this.triggers.findById(triggerId)
@@ -77,7 +77,7 @@ public class DaveModule implements InjectableType {
                 .absent(() -> source.send(DaveResources.NO_MATCHING_TRIGGER.format(triggerId)));
     }
 
-    @Command(aliases = "refresh", usage = "refresh")
+    @Command(aliases = "refresh", usage = "refresh", permission = DaveResources.DAVE_REFRESH)
     public void refresh(CommandSource source) {
         this.stateEnabling();
         source.sendWithPrefix(DaveResources.DAVE_RELOADED_USER);

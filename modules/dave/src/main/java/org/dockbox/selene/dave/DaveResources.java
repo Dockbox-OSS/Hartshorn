@@ -34,5 +34,10 @@ public final class DaveResources {
     public static final Resource DAVE_TRIGGER_HEADER = new Resource("$1Triggers", "dave.trigger.header");
     public static final Resource NO_MATCHING_TRIGGER = new Resource("$4No trigger with id '{0}' exists.", "dave.trigger.notfound");
 
+    public static final String DAVE_MUTE = "dave.mute";
+    public static final String DAVE_REFRESH = "dave.refresh";
+    public static final String DAVE_TRIGGERS = "dave.triggers.list";
+    public static final String DAVE_TRIGGER_RUN = "dave.triggers.run";
+
     private DaveResources() {}
 }

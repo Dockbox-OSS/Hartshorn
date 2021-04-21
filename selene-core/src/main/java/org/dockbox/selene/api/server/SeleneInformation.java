@@ -25,6 +25,7 @@ import java.util.UUID;
 public final class SeleneInformation {
 
     public static final String GLOBAL_BYPASS = "selene.admin.bypass-all";
+    public static final String GLOBAL_PERMITTED = "selene.global.permitted";
     public static final String PACKAGE_PREFIX = "org.dockbox.selene";
     public static final List<UUID> GLOBALLY_PERMITTED = SeleneUtils.asList(
             UUID.fromString("6047d264-7769-4e50-a11e-c8b83f65ccc4"),

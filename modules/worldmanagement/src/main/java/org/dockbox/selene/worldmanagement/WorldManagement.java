@@ -34,7 +34,7 @@ import org.dockbox.selene.api.tasks.TaskRunner;
 
 import java.util.concurrent.TimeUnit;
 
-@Command(aliases = {"unloader", "wu"}, usage = "unloader")
+@Command(aliases = {"unloader", "wu"}, usage = "unloader", permission = WorldManagementResources.WORLD_MANAGER)
 @Module(id = "worldmanagement", name = "World Management", description = "Manages several aspects of the various worlds on a server", authors = "GuusLieben")
 public class WorldManagement {
 
@@ -59,7 +59,7 @@ public class WorldManagement {
         }
     }
 
-    @Command(aliases = "blacklist", usage = "blacklist <world{String}>")
+    @Command(aliases = "blacklist", usage = "blacklist <world{String}>", permission = WorldManagementResources.WORLD_MANAGER)
     public void blacklist(CommandSource src, String world) {
         if (Selene.provide(Worlds.class).hasWorld(world)) {
             this.config.getUnloadBlacklist().add(world);
