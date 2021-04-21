@@ -569,6 +569,10 @@ public final class Exceptional<T> {
         return this.present() ? this.value.getClass() : null;
     }
 
+    public boolean equal(Object other) {
+        return this.present() && this.get().equals(other);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(this.value, this.throwable);

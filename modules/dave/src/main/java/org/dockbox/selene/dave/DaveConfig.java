@@ -27,7 +27,7 @@ import org.dockbox.selene.api.text.Text;
 @Metadata(alias = "dave-config")
 public class DaveConfig {
 
-    private String channelId = "622795938699673600";
+    private String channelId = "424884086230876161";
     private Text prefix = Text.of("&6Dave&e: &f");
 
     public DaveConfig() {}

@@ -124,7 +124,7 @@ public class OldPlotsModule {
                 new SQLColumnProperty("world", OldPlotsIdentifiers.WORLD));
     }
 
-    @Command(aliases = "optp", usage = "teleport <id{Int}>", permission = "selene.oldplots.teleport")
+    @Command(aliases = "optp", usage = "optp <id{Int}>", permission = "selene.oldplots.teleport")
     public void teleportCommand(Player source, CommandContext context)
             throws InvalidConnectionException {
         Integer id = context.get("id");

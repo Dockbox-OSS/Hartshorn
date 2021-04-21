@@ -438,7 +438,7 @@ public class SpongePlayerListener {
                 SpongeConversionUtil.fromSponge(player),
                 targetEntity,
                 SpongeConversionUtil.fromSponge(event.getInteractionPoint().orElse(Vector3d.ZERO))
-        );
+        ).post();
         event.setCancelled(cancellable.isCancelled());
     }
 }

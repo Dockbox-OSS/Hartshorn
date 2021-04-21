@@ -151,15 +151,14 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
             default:
                 throw new UnsupportedFileException(this.getFileType().getExtension());
         }
-        return builder
-                .path(file).defaultOptions(opts ->
-                        opts.serializers(build -> build
-                                .registerAll(SeleneTypeSerializers.collection())
-                                .register(type -> {
-                                    AnnotatedType annotatedType = GenericTypeReflector.annotate(type);
-                                    return annotatedType.isAnnotationPresent(Metadata.class)
-                                            && annotatedType.getAnnotation(Metadata.class).serializable();
-                                }, ObjectMapper.factory().asTypeSerializer()))
+        return builder.path(file)
+                .defaultOptions(opts -> opts.serializers(build -> build
+                        .registerAll(SeleneTypeSerializers.collection())
+                        .register(type -> {
+                            AnnotatedType annotatedType = GenericTypeReflector.annotate(type);
+                            return annotatedType.isAnnotationPresent(Metadata.class)
+                                    && annotatedType.getAnnotation(Metadata.class).serializable();
+                        }, ObjectMapper.factory().asTypeSerializer()))
                 ).build();
     }
 }

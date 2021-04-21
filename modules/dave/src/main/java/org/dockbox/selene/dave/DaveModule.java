@@ -92,10 +92,18 @@ public class DaveModule implements InjectableType {
         fm.read(triggerFile, DaveTriggers.class).present(triggers -> {
             Selene.log().info("Found " + triggers.getTriggers().size() + " triggers");
             this.triggers = triggers;
-        }).absent(() -> Selene.log().warn("Could not load triggers for Dave"));
+        }).caught(e -> {
+            Selene.log().warn("Could not load triggers for Dave");
+            Selene.handle(e);
+        });
 
         Path configFile = fm.getConfigFile(DaveModule.class);
-        fm.read(configFile, DaveConfig.class).present(config -> this.config = config);
+        fm.read(configFile, DaveConfig.class)
+                .present(config -> this.config = config)
+                .caught(e -> {
+                    Selene.log().warn("Could not load config for Dave");
+                    Selene.handle(e);
+                });
     }
 
     private void restoreTriggerFile(FileManager fm, Path triggerFile) {
@@ -122,13 +130,15 @@ public class DaveModule implements InjectableType {
 
     @Listener
     public void on(DiscordChatReceivedEvent chatEvent) {
-        DaveUtils.findMatching(this.triggers, chatEvent.getMessage().getContentRaw()).present(trigger -> Selene.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
-                Selene.provide(SeleneFactory.class).discordSource(chatEvent.getChannel()),
-                chatEvent.getAuthor().getName(),
-                trigger,
-                chatEvent.getMessage().getContentRaw(),
-                this.config),
-                5 * msTick, TimeUnit.MILLISECONDS)
-        );
+        if (chatEvent.getChannel().getId().equals(this.config.getChannel().getId())) {
+            DaveUtils.findMatching(this.triggers, chatEvent.getMessage().getContentRaw()).present(trigger -> Selene.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+                    Selene.provide(SeleneFactory.class).discordSource(chatEvent.getChannel()),
+                    chatEvent.getAuthor().getName(),
+                    trigger,
+                    chatEvent.getMessage().getContentRaw(),
+                    this.config),
+                    5 * msTick, TimeUnit.MILLISECONDS)
+            );
+        }
     }
 }
