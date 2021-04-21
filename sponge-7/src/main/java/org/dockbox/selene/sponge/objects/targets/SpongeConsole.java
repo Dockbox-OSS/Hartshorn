@@ -51,7 +51,7 @@ public final class SpongeConsole extends Console {
     }
 
     @Override
-    public void sendPagination(@NotNull Pagination pagination) {
+    public void send(@NotNull Pagination pagination) {
         SpongeConversionUtil.toSponge(pagination).sendTo(Sponge.getServer().getConsole());
     }
 }

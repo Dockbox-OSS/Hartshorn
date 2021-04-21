@@ -39,7 +39,7 @@ public class JUnitConsole extends Console {
     }
 
     @Override
-    public void sendPagination(Pagination pagination) {
+    public void send(Pagination pagination) {
         // TODO: Test implementation, mocking client?
     }
 }

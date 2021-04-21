@@ -241,7 +241,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     }
 
     @Override
-    public void sendPagination(@NotNull Pagination pagination) {
+    public void send(@NotNull Pagination pagination) {
         if (this.referenceExists()) {
             SpongeConversionUtil.toSponge(pagination).sendTo(this.getReference().get());
         }

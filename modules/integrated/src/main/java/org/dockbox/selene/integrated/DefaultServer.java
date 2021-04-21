@@ -86,7 +86,7 @@ public class DefaultServer implements Server {
             pb.title(DefaultServerResources.PAGINATION_TITLE.translate(source).asText());
             pb.content(content);
 
-            source.sendPagination(pb.build());
+            source.send(pb.build());
         });
     }
 

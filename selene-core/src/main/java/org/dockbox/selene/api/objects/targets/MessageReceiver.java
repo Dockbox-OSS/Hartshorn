@@ -31,5 +31,5 @@ public interface MessageReceiver extends Target {
 
     void sendWithPrefix(Text text);
 
-    void sendPagination(Pagination pagination);
+    void send(Pagination pagination);
 }

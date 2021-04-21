@@ -45,7 +45,7 @@ public class SpongePagination implements Pagination {
 
     @Override
     public void send(@NotNull MessageReceiver receiver) {
-        receiver.sendPagination(this);
+        receiver.send(this);
     }
 
     @NotNull

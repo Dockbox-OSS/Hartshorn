@@ -62,7 +62,7 @@ public class JUnitDiscordCommandSource implements DiscordCommandSource {
     }
 
     @Override
-    public void sendPagination(Pagination pagination) {
+    public void send(Pagination pagination) {
         // TODO: Test implementation, mocking client?
     }
 }
