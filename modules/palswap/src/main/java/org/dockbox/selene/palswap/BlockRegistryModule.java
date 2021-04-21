@@ -29,6 +29,7 @@ import org.dockbox.selene.api.events.server.ServerStartedEvent;
 import org.dockbox.selene.api.events.server.ServerStoppingEvent;
 import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.files.FileType;
+import org.dockbox.selene.api.server.SeleneInformation;
 import org.dockbox.selene.common.files.FileTypeProperty;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.objects.Exceptional;
@@ -46,7 +47,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 @Disabled(reason = "Under development")
-@Command(aliases = "registry", usage = "registry")
+@Command(aliases = "registry", usage = "registry", permission = SeleneInformation.GLOBAL_BYPASS)
 @Module(id = "blockregistrygenerator", name = "Block Registry Generator",
         description = "Generates the block identifiers and a registry of all the blocks",
         authors = "pumbas600")
@@ -95,7 +96,7 @@ public class BlockRegistryModule {
         fm.write(path, blockRegistry);
     }
 
-    @Command(aliases = "generateblockidentifiers", usage = "generateblockidentifiers")
+    @Command(aliases = "generateblockidentifiers", usage = "generateblockidentifiers", permission = SeleneInformation.GLOBAL_BYPASS)
     public void generateBlockIdentifiers(CommandSource src) {
         try {
             FileManager fileManager = Selene.provide(FileManager.class);
@@ -113,7 +114,7 @@ public class BlockRegistryModule {
         }
     }
 
-    @Command(aliases = "generate", usage = "generate")
+    @Command(aliases = "generate", usage = "generate", permission = SeleneInformation.GLOBAL_BYPASS)
     public void generateBlockRegistry(CommandSource src) {
         for (BlockIdentifier blockIdentifier : BlockIdentifier.values()) {
             blockRegistry.addColumn(blockIdentifier, new Registry<>());
@@ -134,17 +135,17 @@ public class BlockRegistryModule {
         this.logger.info(blockRegistry.toString());
     }
 
-    @Command(aliases = "save", usage = "save")
+    @Command(aliases = "save", usage = "save", permission = SeleneInformation.GLOBAL_BYPASS)
     public void serializeBlockRegistry(CommandSource src) {
         saveBlockRegistry();
     }
 
-    @Command(aliases = "load", usage = "load")
+    @Command(aliases = "load", usage = "load", permission = SeleneInformation.GLOBAL_BYPASS)
     public void deserializeBlockRegistry(CommandSource src) {
         blockRegistry = loadBlockRegistry();
     }
 
-    @Command(aliases = "add", usage = "add <item>")
+    @Command(aliases = "add", usage = "add <item>", permission = SeleneInformation.GLOBAL_BYPASS)
     public void addItem(CommandSource src, CommandContext context) {
         String baseBlock = context.get("item");
         addItem(Item.of(baseBlock));
@@ -183,7 +184,7 @@ public class BlockRegistryModule {
         }
     }
 
-    @Command(aliases = "add", usage = "add")
+    @Command(aliases = "add", usage = "add", permission = SeleneInformation.GLOBAL_BYPASS)
     public void addItemInHand(Player src, CommandSource context) {
         addItem(src.getInventory().getSlot(Slot.MAIN_HAND));
     }

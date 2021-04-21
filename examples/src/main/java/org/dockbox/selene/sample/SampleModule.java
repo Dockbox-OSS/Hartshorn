@@ -47,7 +47,7 @@ public final class SampleModule {
     }
 
     // Uses the Custom Parameter from the Cuboid class, with a nested Shape parameter
-    @Command(aliases = "demo", usage = "demo <cuboid{Cuboid}>")
+    @Command(aliases = "demo", usage = "demo <cuboid{Cuboid}>", permission = "selene.demo")
     public void buildCuboid(Cuboid cuboid) {
         Selene.log().info("Cuboid: " + cuboid);
     }

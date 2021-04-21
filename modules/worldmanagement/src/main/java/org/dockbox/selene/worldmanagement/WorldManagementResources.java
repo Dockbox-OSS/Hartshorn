@@ -27,4 +27,6 @@ public class WorldManagementResources {
     public static final ResourceEntry WORLD_BLACKLIST_ADDED = new Resource("$2{0} $1was added to the blacklist and will not be unloaded", "worldmanagement.unloader.blacklist.added");
     public static final ResourceEntry WORLD_BLACKLIST_FAILED = new Resource("$2{0} $1could not be blacklisted, are you sure it exists?", "worldmanagement.unloader.blacklist.failed");
 
+    public static final String WORLD_MANAGER = "selene.worlds";
+
 }

@@ -54,12 +54,12 @@ import java.util.List;
         description = "Integrated features of Selene",
         authors = "GuusLieben"
 )
-@Command(aliases = SeleneInformation.PROJECT_ID, usage = SeleneInformation.PROJECT_ID)
+@Command(aliases = SeleneInformation.PROJECT_ID, usage = SeleneInformation.PROJECT_ID, permission = DefaultServerResources.SELENE_ADMIN)
 @Singleton
 public class DefaultServer implements Server {
 
     // Parent command
-    @Command(aliases = "", usage = "")
+    @Command(aliases = "", usage = "", permission = DefaultServerResources.SELENE_ADMIN)
     public static void debugModules(MessageReceiver source) {
         Reflect.with(ModuleManager.class, em -> {
             PaginationBuilder pb = Selene.provide(PaginationBuilder.class);
@@ -104,7 +104,7 @@ public class DefaultServer implements Server {
         return line;
     }
 
-    @Command(aliases = "module", usage = "module <id{Module}>")
+    @Command(aliases = "module", usage = "module <id{Module}>", permission = DefaultServerResources.SELENE_ADMIN)
     public static void debugModule(MessageReceiver src, CommandContext ctx) {
         ModuleContainer container = ctx.get("id");
 
@@ -115,7 +115,7 @@ public class DefaultServer implements Server {
         ));
     }
 
-    @Command(aliases = "reload", usage = "reload [id{Module}]", confirm = true)
+    @Command(aliases = "reload", usage = "reload [id{Module}]", confirm = true, permission = DefaultServerResources.SELENE_ADMIN)
     public static void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = Selene.provide(EventBus.class);
         if (ctx.has("id")) {
@@ -134,7 +134,7 @@ public class DefaultServer implements Server {
         }
     }
 
-    @Command(aliases = { "lang", "language" }, usage = "language <language{Language}> [player{Player}]", inherit = false)
+    @Command(aliases = { "lang", "language" }, usage = "language <language{Language}> [player{Player}]", inherit = false, permission = SeleneInformation.GLOBAL_PERMITTED)
     public static void switchLang(MessageReceiver src, CommandContext ctx, Language language, Player player) {
         if (null == player) {
             if (src instanceof Player) {
@@ -154,7 +154,7 @@ public class DefaultServer implements Server {
         player.sendWithPrefix(DefaultServerResources.LANG_SWITCHED.format(languageLocalized));
     }
 
-    @Command(aliases = "platform", usage = "platform")
+    @Command(aliases = "platform", usage = "platform", permission = DefaultServerResources.SELENE_ADMIN)
     public static void platform(MessageReceiver src) {
         ServerType st = Selene.getServer().getServerType();
         String platformVersion = Selene.getServer().getPlatformVersion();
@@ -170,7 +170,7 @@ public class DefaultServer implements Server {
     }
 
     @Override
-    @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>")
+    @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>", permission = SeleneInformation.GLOBAL_PERMITTED)
     public void confirm(MessageReceiver src, CommandContext ctx) {
         if (!(src instanceof AbstractIdentifiable)) {
             src.send(DefaultServerResources.CONFIRM_WRONG_SOURCE);

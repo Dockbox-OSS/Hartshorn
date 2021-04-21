@@ -85,23 +85,23 @@ class DefaultCommandBusTests {
 
     @Command(
             aliases = { "example", "sample" },
-            usage = "example")
+            usage = "example", permission = "example")
     private static class ExampleCommandClass {
 
-        @Command(aliases = "", usage = "")
+        @Command(aliases = "", usage = "", permission = "example")
         public void mainCommand() {}
 
-        @Command(aliases = "child", usage = "child")
+        @Command(aliases = "child", usage = "child", permission = "example")
         public void subCommand() {}
 
-        @Command(aliases = "noninherit", usage = "noninherit", inherit = false)
+        @Command(aliases = "noninherit", usage = "noninherit", inherit = false, permission = "example")
         public void nonInheritedChild() {}
     }
 
-    @Command(aliases = "sample", usage = "sample", extend = true)
+    @Command(aliases = "sample", usage = "sample", extend = true, permission = "example")
     private static class ExampleExtendingCommandClass {
 
-        @Command(aliases = "extended", usage = "extended")
+        @Command(aliases = "extended", usage = "extended", permission = "example")
         public void extendedCommand() {}
     }
 }

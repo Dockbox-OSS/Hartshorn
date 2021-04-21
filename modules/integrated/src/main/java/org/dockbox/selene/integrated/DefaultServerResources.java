@@ -21,6 +21,7 @@ import org.dockbox.selene.api.annotations.i18n.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.entry.Resource;
+import org.dockbox.selene.api.server.SeleneInformation;
 import org.dockbox.selene.api.util.SeleneUtils;
 
 @SuppressWarnings({ "StaticMethodOnlyUsedInOneClass", "ClassWithTooManyFields" })
@@ -74,4 +75,6 @@ enum DefaultServerResources {
                     + "$2JVM: $1{5} $3(version: {6}, vendor: {7})\n"
                     + "$2Runtime: $1{8} $3(class version: {9})",
             "selene.info.platform");
+
+    static final String SELENE_ADMIN = SeleneInformation.PROJECT_ID + ".admin";
 }
