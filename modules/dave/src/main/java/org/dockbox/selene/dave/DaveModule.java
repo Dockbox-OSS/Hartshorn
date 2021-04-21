@@ -130,13 +130,15 @@ public class DaveModule implements InjectableType {
 
     @Listener
     public void on(DiscordChatReceivedEvent chatEvent) {
-        DaveUtils.findMatching(this.triggers, chatEvent.getMessage().getContentRaw()).present(trigger -> Selene.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
-                Selene.provide(SeleneFactory.class).discordSource(chatEvent.getChannel()),
-                chatEvent.getAuthor().getName(),
-                trigger,
-                chatEvent.getMessage().getContentRaw(),
-                this.config),
-                5 * msTick, TimeUnit.MILLISECONDS)
-        );
+        if (chatEvent.getChannel().getId().equals(this.config.getChannel().getId())) {
+            DaveUtils.findMatching(this.triggers, chatEvent.getMessage().getContentRaw()).present(trigger -> Selene.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+                    Selene.provide(SeleneFactory.class).discordSource(chatEvent.getChannel()),
+                    chatEvent.getAuthor().getName(),
+                    trigger,
+                    chatEvent.getMessage().getContentRaw(),
+                    this.config),
+                    5 * msTick, TimeUnit.MILLISECONDS)
+            );
+        }
     }
 }
