@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -350,5 +351,15 @@ public abstract class InjectableBootstrap {
             }
         }
         return this.unsafe;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T, I extends T> Class<I> getBinding(Class<T> type) {
+        for (Entry<Key<?>, Binding<?>> binding : this.getAllBindings().entrySet()) {
+            if (binding.getKey().getTypeLiteral().getRawType().equals(type)) {
+                return (Class<I>) binding.getValue().getKey().getTypeLiteral().getRawType();
+            }
+        }
+        return null;
     }
 }

@@ -19,26 +19,6 @@ package org.dockbox.selene.di;
 
 public interface SeleneFactory {
 
-//    Item item(String id, int meta);
-//
-//    Element element(Item item, Consumer<Player> onClick);
-//
-//    Bossbar bossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle style);
-//
-//    Profile profile(UUID uuid);
-//
-//    Profile profile(Profile profile);
-//
-//    Permission permission(String key, PermissionContext context);
-//
-//    Permission permission(String key);
-//
-//    ArmorStand armorStand(Location location);
-//
-//    ItemFrame itemFrame(Location location);
-//
-//    DiscordCommandSource discordSource(TextChannel channel);
-
     <T> T create(Class<T> type, Object... arguments);
 
 }
