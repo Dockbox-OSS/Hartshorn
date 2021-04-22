@@ -21,7 +21,7 @@ import org.dockbox.selene.api.annotations.command.Command;
 import org.dockbox.selene.api.annotations.event.Listener;
 import org.dockbox.selene.api.annotations.event.filter.Packet;
 import org.dockbox.selene.api.annotations.module.Module;
-import org.dockbox.selene.api.events.packet.PacketEvent;
+import org.dockbox.selene.server.minecraft.events.packet.PacketEvent;
 import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.packets.ChangeGameStatePacket;
 

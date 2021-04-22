@@ -17,14 +17,32 @@
 
 rootProject.name = 'Selene'
 
-include 'selene-core'
-include 'selene-common'
-include 'selene-nms-1.12'
-include 'sponge-7'
-include 'modules'
-include 'examples'
-new File(rootDir, 'modules').listFiles().each {
-    if (it.directory && new File(it, 'build.gradle').exists()) {
-        include(":modules:${it.name}")
+gradle.startParameter.continueOnFailure = true
+
+rootDir.listFiles().each {
+    if (it.directory && it.name.startsWith('selene-') && new File(it, 'build.gradle').exists()) {
+        include(":${it.name}")
     }
 }
+
+new File(rootDir, 'selene-modules').listFiles().each {
+    if (it.directory && new File(it, 'build.gradle').exists()) {
+        include(":selene-modules:${it.name}")
+    }
+}
+
+new File(rootDir, 'selene-minecraft-modules').listFiles().each {
+    if (it.directory && new File(it, 'build.gradle').exists()) {
+        include(":selene-minecraft-modules:${it.name}")
+    }
+}
+
+new File(rootDir, 'selene-minecraft-server').listFiles().each {
+    if (it.directory && new File(it, 'build.gradle').exists()) {
+        include(":selene-minecraft-server:${it.name}")
+    }
+}
+
+include 'selene-sponge-7'
+include 'modules'
+include 'examples'

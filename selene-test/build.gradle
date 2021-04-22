@@ -1,0 +1,55 @@
+/*
+ *  Copyright (C) 2020 Guus Lieben
+ *
+ *  This framework is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as
+ *  published by the Free Software Foundation, either version 2.1 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ *  the GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
+plugins {
+    id 'java'
+    id 'java-test-fixtures'
+}
+
+group = 'org.dockbox.selene.common'
+description 'Default implementations for Selene'
+
+repositories {
+    maven { // Only used for Configurate, not for platform implementations
+        name 'Sponge maven repo'
+        url 'https://repo.spongepowered.org/maven'
+    }
+}
+
+dependencies {
+    compile project(':selene-old')
+
+    dependencies {
+        testImplementation project(':selene-old')
+
+
+        testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+        testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+        testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+        testCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
+
+        testCompile "org.mockito:mockito-all:$mockitoVersion"
+
+
+        testFixturesCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+        testFixturesCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+        testFixturesRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+        testFixturesCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
+
+        testFixturesCompile "org.mockito:mockito-all:$mockitoVersion"
+    }
+}

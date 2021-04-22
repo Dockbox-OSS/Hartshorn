@@ -94,10 +94,6 @@ allprojects {
         }
 
         dependencies {
-            compile("net.dv8tion:JDA:$jdaVersion") {
-                exclude module: 'opus-java'
-            }
-
             compile group: 'com.mortennobel', name: 'java-image-scaling', version: '0.8.6'
             compile group: 'com.jhlabs', name: 'filters', version: '2.0.235-1'
 

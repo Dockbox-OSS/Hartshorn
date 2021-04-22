@@ -20,13 +20,14 @@ package org.dockbox.selene.nms.packets;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 
-import org.dockbox.selene.api.server.properties.InjectableType;
+import org.dockbox.selene.di.properties.InjectableType;
+import org.dockbox.selene.minecraft.packets.PacketReceiver;
 
 import io.netty.channel.Channel;
 
 /**
  * Represents a native {@link Packet} instance. This is used primarily as a wrapper type for
- * implementations of {@link org.dockbox.selene.api.objects.Packet}.
+ * implementations of {@link org.dockbox.selene.minecraft.packets.Packet}.
  *
  * @param <T>
  *         The type of the native packet.
@@ -39,7 +40,7 @@ public interface NMSPacket<T extends Packet<? extends INetHandler>> extends Inje
      *
      * @param channel
      *         The channel to send to, typically bound to a specific {@link
-     *         org.dockbox.selene.api.objects.targets.PacketReceiver}.
+     *         PacketReceiver}.
      */
     default void write(Channel channel) {
         channel.write(this.getPacket());

@@ -1,0 +1,43 @@
+/*
+ * Copyright (C) 2020 Guus Lieben
+ *
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
+// All dependencies are compiled so this project can be used as parent for sub projects and modules
+dependencies {
+    compile(project(':selene-module-parent'))
+
+    compile(project(':selene-keys'))
+    compile(project(':selene-server'))
+    compile(project(':selene-modules'))
+    compile(project(':selene-commands'))
+
+    // Access to MinecraftItems (storage) through MinecraftVersion
+    compile(project(':selene-minecraft-server:minecraft-items'))
+    // Access to players through BroadcastService
+    compile(project(':selene-minecraft-server:minecraft-players'))
+    // Access to various resources for events
+    compile(project(':selene-minecraft-server:minecraft-dimensions'))
+    compile(project(':selene-minecraft-server:minecraft-inventory'))
+    compile(project(':selene-minecraft-server:minecraft-entities'))
+    compile(project(':selene-minecraft-server:minecraft-packets'))
+}
+
+subprojects { Project subProject ->
+    dependencies {
+        compileOnly project(':selene-minecraft-server')
+    }
+
+}

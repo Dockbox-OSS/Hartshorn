@@ -18,7 +18,7 @@
     <option name="EXCLUDE_ANNOS">
       <value>
         <list size="1">
-          <item index="0" class="java.lang.String" itemvalue="org.dockbox.selene.api.annotations.entity.Accessor" />
+          <item index="0" class="java.lang.String" itemvalue="org.dockbox.selene.api.entity.annotations.Accessor" />
         </list>
       </value>
     </option>
