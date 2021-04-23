@@ -18,8 +18,8 @@
 package org.dockbox.selene.sample;
 
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.packets.data.Weather;
 import org.dockbox.selene.plots.flags.AbstractPlotFlag;
+import org.dockbox.selene.server.minecraft.packets.data.Weather;
 
 public class WeatherFlag extends AbstractPlotFlag<Weather> {
 

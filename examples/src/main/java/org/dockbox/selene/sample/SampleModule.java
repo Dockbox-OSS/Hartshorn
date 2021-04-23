@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.sample;
 
-import org.dockbox.selene.api.annotations.command.Command;
-import org.dockbox.selene.api.annotations.event.Listener;
-import org.dockbox.selene.api.annotations.event.filter.Packet;
-import org.dockbox.selene.api.annotations.module.Module;
+import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.events.annotations.Listener;
+import org.dockbox.selene.api.module.annotations.Module;
+import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.server.minecraft.events.packet.PacketEvent;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.packets.ChangeGameStatePacket;
+import org.dockbox.selene.server.minecraft.packets.annotations.Packet;
+import org.dockbox.selene.server.minecraft.packets.real.ChangeGameStatePacket;
 
 @Module(
         id = "sample",
