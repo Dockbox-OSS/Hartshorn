@@ -17,11 +17,11 @@
 
 subprojects { Project subProject ->
     dependencies {
-        compileOnly(project(':selene-module-parent'))
-        compileOnly(project(':selene-minecraft-server'))
+        compileOnly project(':selene-module-parent')
+        compileOnly project(':selene-minecraft-server')
 
-        testCompile(project(':selene-module-parent'))
-        testCompile(project(':selene-test'))
-        testCompile(testFixtures(project(":selene-test")))
+        testCompile project(':selene-module-parent')
+        testCompile project(':selene-test')
+        testCompile testFixtures(project(":selene-test"))
     }
 }

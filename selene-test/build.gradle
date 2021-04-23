@@ -36,20 +36,20 @@ dependencies {
     rootDir.listFiles().each {
         if (it.directory && it.name.startsWith('selene-') && new File(it, 'build.gradle').exists()) {
             if (!depBlacklist.contains(it.name)) {
-                testFixturesCompile(project(":${it.name}"))
+                testFixturesCompile project(":${it.name}")
             }
         }
     }
 
     new File(rootDir, 'selene-modules').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            testFixturesCompile(project(":selene-modules:${it.name}"))
+            testFixturesCompile project(":selene-modules:${it.name}")
         }
     }
 
     new File(rootDir, 'selene-minecraft-modules').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            testFixturesCompile(project(":selene-minecraft-modules:${it.name}"))
+            testFixturesCompile project(":selene-minecraft-modules:${it.name}")
         }
     }
 

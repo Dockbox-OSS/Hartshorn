@@ -67,24 +67,24 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraftForge112}"
     new File(parent.rootDir, 'selene-modules').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            shadow(project(":selene-modules:${it.name}"))
-            testImplementation(project(":selene-modules:${it.name}"))
+            shadow project(":selene-modules:${it.name}")
+            testImplementation project(":selene-modules:${it.name}")
         }
     }
     new File(parent.rootDir, 'selene-minecraft-modules').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            shadow(project(":selene-minecraft-modules:${it.name}"))
-            testImplementation(project(":selene-minecraft-modules:${it.name}"))
+            shadow project(":selene-minecraft-modules:${it.name}")
+            testImplementation project(":selene-minecraft-modules:${it.name}")
         }
     }
 
-    shadow(project(':selene-parent'))
-    shadow(project(':selene-tasks'))
-    shadow(project(':selene-web'))
-    shadow(project(':selene-discord'))
-    shadow(project(':selene-persistence-configurate'))
-    shadow(project(':selene-persistence-xstream'))
-    shadow(project(':selene-minecraft-server'))
+    shadow project(':selene-parent')
+    shadow project(':selene-tasks')
+    shadow project(':selene-web')
+    shadow project(':selene-discord')
+    shadow project(':selene-persistence-configurate')
+    shadow project(':selene-persistence-xstream')
+    shadow project(':selene-minecraft-server')
 
     shadow(project(':selene-nms-1.12')) {
         exclude group: 'net.minecraftforge', module: 'forge'
@@ -105,7 +105,7 @@ dependencies {
 
     compileOnly 'io.netty:netty-all:4.1.24.Final'
 
-    testImplementation(project(':selene-test'))
+    testImplementation project(':selene-test')
     testImplementation project(':selene-modules')
     testImplementation(project(':selene-nms-1.12')) {
         exclude group: 'net.minecraftforge', module: 'forge'

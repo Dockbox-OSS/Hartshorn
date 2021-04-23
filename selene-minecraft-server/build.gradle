@@ -17,17 +17,17 @@
 
 // All dependencies are compiled so this project can be used as parent for sub projects and modules
 dependencies {
-    compile(project(':selene-module-parent'))
+    compile project(':selene-module-parent')
 
-    compile(project(':selene-keys'))
-    compile(project(':selene-server'))
-    compile(project(':selene-modules'))
-    compile(project(':selene-commands'))
+    compile project(':selene-keys')
+    compile project(':selene-server')
+    compile project(':selene-modules')
+    compile project(':selene-commands')
 
     new File(parent.rootDir, 'selene-minecraft-server').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            compile(project(":selene-minecraft-server:${it.name}"))
-            testImplementation(project(":selene-minecraft-server:${it.name}"))
+            compile project(":selene-minecraft-server:${it.name}")
+            testImplementation project(":selene-minecraft-server:${it.name}")
         }
     }
 }

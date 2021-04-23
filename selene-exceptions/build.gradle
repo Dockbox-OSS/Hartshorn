@@ -16,6 +16,6 @@
  */
 
 dependencies {
-    compileOnly(project(':selene-core'))
-    compileOnly(project(':selene-di'))
+    compileOnly project(':selene-core')
+    compileOnly project(':selene-di')
 }

@@ -16,11 +16,11 @@
  */
 
 dependencies {
-    compileOnly(project(':selene-parent'))
+    compileOnly project(':selene-parent')
 
-    compileOnly(project(':selene-events'))
-    compileOnly(project(':selene-modules'))
-    compileOnly(project(':selene-persistence'))
+    compileOnly project(':selene-events')
+    compileOnly project(':selene-modules')
+    compileOnly project(':selene-persistence')
 
     compile "com.thoughtworks.xstream:xstream:$xstreamVersion"
     compile "xpp3:xpp3:$xmlPullParserVersion"

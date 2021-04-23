@@ -16,6 +16,6 @@
  */
 
 dependencies {
-    compileOnly(project(':selene-parent'))
-    testImplementation(project(':selene-parent'))
+    compileOnly project(':selene-parent')
+    testImplementation project(':selene-parent')
 }

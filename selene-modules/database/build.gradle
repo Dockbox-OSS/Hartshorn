@@ -1,6 +1,6 @@
 dependencies {
-    compileOnly(project(':selene-keys'))
-    compileOnly(project(':selene-modules:structures'))
+    compileOnly project(':selene-keys')
+    compileOnly project(':selene-modules:structures')
 
     // SQL Extension dependencies
     compile "org.jooq:jooq:$jooqVersion"

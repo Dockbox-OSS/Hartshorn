@@ -16,8 +16,8 @@
  */
 
 dependencies {
-    compileOnly(project(':selene-parent'))
+    compileOnly project(':selene-parent')
 
-    compileOnly(project(':selene-modules'))
-    compileOnly(project(':selene-persistence'))
+    compileOnly project(':selene-modules')
+    compileOnly project(':selene-persistence')
 }

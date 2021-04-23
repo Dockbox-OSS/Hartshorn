@@ -16,5 +16,5 @@
  */
 
 dependencies {
-    compileOnly(project(':selene-tasks'))
+    compileOnly project(':selene-tasks')
 }

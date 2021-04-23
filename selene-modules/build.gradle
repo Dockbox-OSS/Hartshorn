@@ -16,16 +16,16 @@
  */
 
 dependencies {
-    compileOnly(project(':selene-parent'))
+    compileOnly project(':selene-parent')
     compile project(':selene-bootstrap')
 }
 
 subprojects { Project subProject ->
     dependencies {
-        compileOnly(project(':selene-module-parent'))
+        compileOnly project(':selene-module-parent')
 
-        testCompile(project(':selene-module-parent'))
-        testCompile(project(':selene-test'))
-        testCompile(testFixtures(project(":selene-test")))
+        testCompile project(':selene-module-parent')
+        testCompile project(':selene-test')
+        testCompile testFixtures(project(":selene-test"))
     }
 }

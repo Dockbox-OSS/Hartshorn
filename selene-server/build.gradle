@@ -16,10 +16,10 @@
  */
 
 dependencies {
-    compileOnly(project(':selene-parent'))
+    compileOnly project(':selene-parent')
 
-    compileOnly(project(':selene-events'))
-    compileOnly(project(':selene-i18n'))
-    compileOnly(project(':selene-commands'))
-    compileOnly(project(':selene-modules'))
+    compileOnly project(':selene-events')
+    compileOnly project(':selene-i18n')
+    compileOnly project(':selene-commands')
+    compileOnly project(':selene-modules')
 }

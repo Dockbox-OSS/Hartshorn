@@ -86,7 +86,7 @@ allprojects {
         }
 
         configurations {
-            all*.exclude group: 'junit', module:'junit'
+            all*.exclude group: 'junit', module: 'junit'
         }
 
         compileJava {

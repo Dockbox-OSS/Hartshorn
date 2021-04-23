@@ -23,15 +23,15 @@ group = 'org.dockbox.selene.sample'
 description 'Sample modules for Selene'
 
 dependencies {
-    compileOnly(project(':selene-module-parent'))
-    compileOnly(project(':selene-minecraft-server'))
-    compileOnly(project(':selene-minecraft-modules:plots'))
+    compileOnly project(':selene-module-parent')
+    compileOnly project(':selene-minecraft-server')
+    compileOnly project(':selene-minecraft-modules:plots')
 
-    testImplementation(project(":selene-test"))
+    testImplementation project(":selene-test")
     new File(parent.rootDir, 'selene-modules').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            compileOnly(project(":selene-modules:${it.name}"))
-            testImplementation(project(":selene-modules:${it.name}"))
+            compileOnly project(":selene-modules:${it.name}")
+            testImplementation project(":selene-modules:${it.name}")
         }
     }
 }
