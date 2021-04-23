@@ -19,15 +19,10 @@ package org.dockbox.selene.api.keys;
 
 import org.dockbox.selene.api.CheckedFunction;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.exceptions.UncheckedSeleneException;
 import org.dockbox.selene.api.module.ModuleContainer;
-import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.api.module.Modules;
 import org.dockbox.selene.util.Reflect;
-import org.dockbox.selene.util.SeleneUtils;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -37,87 +32,6 @@ import java.util.function.Function;
 public final class Keys {
 
     private Keys() {}
-
-    /**
-     * Looks up a {@link InjectorProperty} based on a given {@code key}. If a property with that key
-     * is present, and matches the expected type it is returned wrapped in a {@link Exceptional}. If
-     * no property is present, or the type of the object does not match the expected type,
-     * {@link Exceptional#none()} is returned.
-     *
-     * @param <T>
-     *         The expected type of the property
-     * @param key
-     *         The key of the property to look up
-     * @param expectedType
-     *         The {@link Class} of the expected property type
-     * @param properties
-     *         The properties to perform a lookup on
-     *
-     * @return The property value, wrapped in a {@link Exceptional}
-     */
-    public static <T> Exceptional<T> value(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
-        InjectorProperty<T> property = Keys.property(key, expectedType, properties);
-        // As the object is provided by a supplier this cannot currently be simplified to #of
-        if (null != property) {
-            return Exceptional.of(property::getObject);
-        }
-        return Exceptional.none();
-    }
-
-    /**
-     * Gets property.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param key
-     *         the key
-     * @param expectedType
-     *         the expected type
-     * @param properties
-     *         the properties
-     *
-     * @return the property
-     */
-    @Nullable
-    public static <T> InjectorProperty<T> property(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
-        List<InjectorProperty<T>> matchingProperties = Keys.properties(key, expectedType, properties);
-        if (matchingProperties.isEmpty()) return null;
-        else return matchingProperties.get(0);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T> List<InjectorProperty<T>> properties(@NonNls String key, Class<T> expectedType, InjectorProperty<?>... properties) {
-        List<InjectorProperty<T>> matchingProperties = SeleneUtils.emptyList();
-        for (InjectorProperty<?> property : properties) {
-            if (property.getKey().equals(key)
-                    && null != property.getObject()
-                    && Reflect.assignableFrom(expectedType, property.getObject().getClass())) {
-                matchingProperties.add((InjectorProperty<T>) property);
-            }
-        }
-        return matchingProperties;
-    }
-
-    /**
-     * Gets sub properties.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param propertyFilter
-     *         the property filter
-     * @param properties
-     *         the properties
-     *
-     * @return the sub properties
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends InjectorProperty<?>> List<T> valuesOfType(Class<T> propertyFilter, InjectorProperty<?>... properties) {
-        List<T> values = SeleneUtils.emptyList();
-        for (InjectorProperty<?> property : properties) {
-            if (Reflect.assignableFrom(propertyFilter, property.getClass())) values.add((T) property);
-        }
-        return values;
-    }
 
     /**
      * Convert to module id.
@@ -149,7 +63,7 @@ public final class Keys {
      * @return the persistent data key
      */
     public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, Class<?> owningClass) {
-        return Keys.persistent(type, name, Reflect.module(owningClass));
+        return Keys.persistent(type, name, Modules.module(owningClass));
     }
 
     /**
@@ -168,7 +82,7 @@ public final class Keys {
      */
     public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, ModuleContainer module) {
         if (!Reflect.isNative(type))
-            throw new UncheckedSeleneException("Unsupported data type for persistent key: " + type.getCanonicalName());
+            throw new RuntimeException("Unsupported data type for persistent key: " + type.getCanonicalName());
 
         return new TypedPersistentDataKey<>(name, Keys.convertId(name, module), module, type);
     }
