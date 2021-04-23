@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.api.i18n.text;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.text.actions.ClickAction;
@@ -163,7 +163,7 @@ public class Text implements PersistentCapable<PersistentTextModel> {
             return Exceptional.of(DatatypeConverter.printHexBinary(md.digest()).toUpperCase());
         }
         catch (NoSuchAlgorithmException e) {
-            Selene.handle("No algorithm implementation present for " + method + ". " + "This algorithm should be implemented by every implementation of the Java platform! " + "See https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html", e);
+            Except.handle("No algorithm implementation present for " + method + ". " + "This algorithm should be implemented by every implementation of the Java platform! " + "See https://docs.oracle.com/javase/7/docs/api/java/security/MessageDigest.html", e);
         }
         return Exceptional.none();
     }

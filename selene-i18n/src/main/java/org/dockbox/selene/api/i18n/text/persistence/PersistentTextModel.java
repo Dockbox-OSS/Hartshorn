@@ -23,9 +23,13 @@ import org.dockbox.selene.api.entity.annotations.Extract.Behavior;
 import org.dockbox.selene.api.entity.annotations.Metadata;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.actions.ClickAction;
+import org.dockbox.selene.api.i18n.text.actions.CommandAction;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
 import org.dockbox.selene.api.i18n.text.actions.ShiftClickAction;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.persistence.PersistentModel;
+import org.dockbox.selene.util.Reflect;
 
 @SuppressWarnings("FieldMayBeFinal")
 @Extract(Behavior.KEEP)
@@ -55,7 +59,7 @@ public class PersistentTextModel implements PersistentModel<Text> {
         ClickAction<?> clickAction = text.getClickAction();
         this.clickActionResult = String.valueOf(clickAction.getResult());
         if (clickAction instanceof ClickAction.ChangePage) this.clickAction = ActionTypes.CHANGE_PAGE;
-        else if (clickAction instanceof ClickAction.RunCommand) this.clickAction = ActionTypes.RUN_COMMAND;
+        else if (Reflect.lookup("org.dockbox.selene.commands.CommandAction").isInstance(clickAction)) this.clickAction = ActionTypes.RUN_COMMAND;
         else if (clickAction instanceof ClickAction.OpenUrl) this.clickAction = ActionTypes.OPEN_URL;
         else if (clickAction instanceof ClickAction.SuggestCommand) this.clickAction = ActionTypes.SUGGEST_COMMAND;
         else if (clickAction instanceof ClickAction.ExecuteCallback) {
@@ -122,7 +126,8 @@ public class PersistentTextModel implements PersistentModel<Text> {
                 Selene.log().warn("Attempted to deserialize callback for Text object. This is currently not supported.");
                 break;
             case RUN_COMMAND:
-                text.onClick(ClickAction.runCommand(this.clickActionResult));
+                // Commands are optional actions if the Command module is present
+                text.onClick(Provider.provide(SeleneFactory.class).create(CommandAction.class, this.clickActionResult));
                 break;
             case OPEN_URL:
                 text.onClick(ClickAction.openUrl(this.clickActionResult));

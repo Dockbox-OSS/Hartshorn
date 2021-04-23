@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.api.i18n.common;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.text.Text;
@@ -45,7 +44,7 @@ public interface ResourceEntry extends Formattable {
     ResourceEntry translate(Language lang);
 
     default ResourceEntry translate() {
-        return this.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage());
+        return this.translate(Language.EN_US);
     }
 
     default String parseColors(String m) {

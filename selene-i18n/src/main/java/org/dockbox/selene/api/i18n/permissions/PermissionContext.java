@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.api.i18n.permissions;
 
-import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.SeleneFactory;
 
 import java.util.Objects;
@@ -43,7 +43,7 @@ public class PermissionContext {
     }
 
     public Permission toPermission(String key) {
-        return Selene.provide(SeleneFactory.class).create(Permission.class, key, this);
+        return Provider.provide(SeleneFactory.class).create(Permission.class, key, this);
     }
 
     @Override

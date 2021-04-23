@@ -18,12 +18,17 @@
 package org.dockbox.selene.api.i18n.permissions;
 
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.di.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 
 public class SimplePermission implements Permission {
 
     private final String key;
     private final PermissionContext context;
+
+    SimplePermission() {
+        throw Bindings.requireAutowiring();
+    }
 
     @AutoWired
     public SimplePermission(String key, PermissionContext context) {

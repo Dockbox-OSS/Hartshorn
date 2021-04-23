@@ -15,9 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly(project(':selene-parent'))
+package org.dockbox.selene.api.i18n;
 
-    compileOnly(project(':selene-modules'))
-    compileOnly(project(':selene-persistence'))
+import org.dockbox.selene.api.module.SeleneModuleBootstrap;
+import org.dockbox.selene.di.Preloadable;
+import org.dockbox.selene.di.Provider;
+
+public class I18NPreload implements Preloadable {
+    @Override
+    public void preload() {
+        SeleneModuleBootstrap.getInstance().registerPostInit(Provider.provide(ResourceService.class)::init);
+    }
 }

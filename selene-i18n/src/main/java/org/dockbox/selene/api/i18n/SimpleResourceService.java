@@ -21,10 +21,13 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.Resource;
+import org.dockbox.selene.api.module.Modules;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
@@ -66,13 +69,13 @@ public class SimpleResourceService implements ResourceService {
                             this.knownEntries.add(resource);
                         }
                         catch (IllegalAccessException e) {
-                            Selene.handle("Could not access static resource", e);
+                            Except.handle("Could not access static resource", e);
                         }
                     }
                 }
             }
         });
-        this.getResourceMap(Selene.getServer().getGlobalConfig().getDefaultLanguage());
+        this.getResourceMap(Language.EN_US);
     }
 
     @NotNull
@@ -80,8 +83,8 @@ public class SimpleResourceService implements ResourceService {
     public Map<String, String> getResourceMap(@NotNull Language lang) {
         if (this.resourceMaps.containsKey(lang)) return this.resourceMaps.get(lang);
 
-        FileManager cm = Selene.provide(FileManager.class);
-        Path languageConfigFile = cm.getConfigFile(Reflect.module(Selene.class), lang.getCode());
+        FileManager cm = Provider.provide(FileManager.class);
+        Path languageConfigFile = cm.getConfigFile(Modules.module(Selene.class), lang.getCode());
         Map<String, String> resources;
         if (languageConfigFile.toFile().exists() && !SeleneUtils.isFileEmpty(languageConfigFile)) {
             resources = SimpleResourceService.getResourcesForFile(languageConfigFile, cm);

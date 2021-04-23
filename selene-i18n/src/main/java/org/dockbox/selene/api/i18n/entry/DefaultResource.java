@@ -147,6 +147,6 @@ public enum DefaultResource implements ResourceEntry {
 
     public void setLanguageValue(Language lang, String value) {
         this.translations.put(lang, value);
-        if (lang == Selene.getServer().getGlobalConfig().getDefaultLanguage()) this.value = value;
+        if (lang == Language.EN_US) this.value = value;
     }
 }
