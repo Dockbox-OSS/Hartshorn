@@ -17,13 +17,12 @@
 
 package org.dockbox.selene.test;
 
+import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
-import org.dockbox.selene.minecraft.players.Player;
-import org.dockbox.selene.api.objects.targets.MessageReceiver;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 
@@ -82,6 +81,6 @@ public enum TestResources implements ResourceEntry {
 
     public void setLanguageValue(Language lang, String value) {
         this.translations.put(lang, value);
-        if (lang == Selene.getServer().getGlobalConfig().getDefaultLanguage()) this.value = value;
+        if (lang == Language.EN_US) this.value = value;
     }
 }

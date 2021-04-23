@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.test.util;
 
-import org.dockbox.selene.api.i18n.permissions.Permission;
-import org.dockbox.selene.api.objects.targets.PermissionHolder;
 import org.dockbox.selene.api.domain.tuple.Tristate;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.api.i18n.PermissionHolder;
+import org.dockbox.selene.api.i18n.permissions.Permission;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Collection;
 import java.util.Map;

@@ -17,16 +17,16 @@
 
 package org.dockbox.selene.test.objects;
 
-import org.dockbox.selene.minecraft.item.maps.CustomMap;
-import org.dockbox.selene.api.objects.targets.Identifiable;
-import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.domain.Identifiable;
+import org.dockbox.selene.server.minecraft.item.maps.CustomMap;
+import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
 
 public class JUnitCustomMap extends JUnitItem implements CustomMap {
 
     private final Identifiable owner;
 
     public JUnitCustomMap(Identifiable owner, int id) {
-        super(Selene.getItems().getFilledMap().getId(), id);
+        super(MinecraftItems.getInstance().getFilledMap().getId(), id);
         this.owner = owner;
     }
 

@@ -19,13 +19,15 @@ package org.dockbox.selene.test.objects;
 
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.api.objects.profile.Profile;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.minecraft.item.persistence.PersistentItemModel;
+import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.server.minecraft.item.Enchant;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.item.SimplePersistentItemModel;
+import org.dockbox.selene.server.minecraft.item.persistence.PersistentItemModel;
+import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.selene.server.minecraft.players.Profile;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -44,6 +46,10 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
     private Text displayName;
     private boolean treatAsBlock = false;
 
+    JUnitItem() {
+        throw Bindings.requireAutowiring();
+    }
+
     @AutoWired
     public JUnitItem(String id, int meta) {
         this.id = id;
@@ -53,7 +59,7 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
 
     @Override
     public boolean isAir() {
-        return this.equals(Selene.getItems().getAir());
+        return this.equals(MinecraftItems.getInstance().getAir());
     }
 
     @Override
@@ -137,7 +143,7 @@ public class JUnitItem implements Item, JUnitPersistentDataHolder {
 
     @Override
     public boolean isHead() {
-        return Selene.getItems().getSkeletonSkull().getId().equals(this.getId());
+        return MinecraftItems.getInstance().getSkeletonSkull().getId().equals(this.getId());
     }
 
     @Override

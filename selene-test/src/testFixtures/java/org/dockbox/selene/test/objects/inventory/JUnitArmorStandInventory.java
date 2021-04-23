@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.test.objects.inventory;
 
-import org.dockbox.selene.api.entities.ArmorStandInventory;
-import org.dockbox.selene.api.objects.inventory.Slot;
+import org.dockbox.selene.server.minecraft.entities.ArmorStandInventory;
+import org.dockbox.selene.server.minecraft.inventory.Slot;
 import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Collection;
 import java.util.Map;
@@ -48,7 +48,7 @@ public class JUnitArmorStandInventory extends ArmorStandInventory {
 
     @Override
     public Item getSlot(Slot slot) {
-        return this.items.getOrDefault(slot, Selene.getItems().getAir());
+        return this.items.getOrDefault(slot, MinecraftItems.getInstance().getAir());
     }
 
     @Override

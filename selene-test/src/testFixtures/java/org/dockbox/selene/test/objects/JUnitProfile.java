@@ -17,10 +17,12 @@
 
 package org.dockbox.selene.test.objects;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.tuple.Tuple;
-import org.dockbox.selene.api.objects.profile.Profile;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.server.minecraft.players.Profile;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +33,10 @@ public class JUnitProfile implements Profile {
 
     private UUID uuid;
     private Map<String, Collection<Tuple<String, String>>> properties = SeleneUtils.emptyMap();
+
+    JUnitProfile() {
+        throw Bindings.requireAutowiring();
+    }
 
     @AutoWired
     public JUnitProfile(UUID uuid) {

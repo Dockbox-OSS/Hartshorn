@@ -17,13 +17,15 @@
 
 package org.dockbox.selene.test.objects.living;
 
-import org.dockbox.selene.api.entities.ArmorStand;
-import org.dockbox.selene.api.entities.ArmorStandInventory;
-import org.dockbox.selene.api.objects.inventory.Inventory;
-import org.dockbox.selene.minecraft.dimension.position.Location;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.entities.ArmorStand;
+import org.dockbox.selene.server.minecraft.entities.ArmorStandInventory;
+import org.dockbox.selene.server.minecraft.inventory.Inventory;
 import org.dockbox.selene.test.objects.inventory.JUnitArmorStandInventory;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 import java.util.UUID;
@@ -35,6 +37,11 @@ public class JUnitArmorStand extends JUnitEntity<ArmorStand> implements ArmorSta
     private boolean small = false;
     private final ArmorStandInventory inventory = new JUnitArmorStandInventory();
     private final Map<Limbs, Vector3N> limbs = SeleneUtils.emptyMap();
+
+    JUnitArmorStand() {
+        super(null);
+        throw Bindings.requireAutowiring();
+    }
 
     public JUnitArmorStand(UUID uuid) {
         super(uuid);

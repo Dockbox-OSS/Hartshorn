@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.test.files;
 
-import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.test.JUnit5Bootstrap;
 import org.jetbrains.annotations.NotNull;
 

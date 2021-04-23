@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.test.objects;
 
-import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
+import org.dockbox.selene.server.minecraft.Console;
 
 public class JUnitConsole extends Console {
 

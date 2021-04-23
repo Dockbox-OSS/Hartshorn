@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.test.util;
 
-import org.dockbox.selene.api.tasks.Task;
-import org.dockbox.selene.api.tasks.TaskRunner;
+import org.dockbox.selene.api.task.Task;
+import org.dockbox.selene.api.task.TaskRunner;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

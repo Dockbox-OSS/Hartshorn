@@ -17,15 +17,15 @@
 
 package org.dockbox.selene.test.util;
 
-import org.dockbox.selene.api.command.CommandBus;
+import org.dockbox.selene.api.domain.AbstractIdentifiable;
+import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.i18n.MessageReceiver;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.commands.CommandBus;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.context.CommandParameter;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
-import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.targets.AbstractIdentifiable;
-import org.dockbox.selene.api.objects.targets.MessageReceiver;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.Server;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.server.Server;
 import org.dockbox.selene.test.TestResources;
 
 public class JUnitServer implements Server {
@@ -42,7 +42,7 @@ public class JUnitServer implements Server {
         // argument here is just a confirmation that the source is correct.
         optionalCooldownId.present(cooldownId -> {
             String cid = cooldownId.getValue();
-            Selene.provide(CommandBus.class).confirmCommand(cid).absent(() ->
+            Provider.provide(CommandBus.class).confirmCommand(cid).absent(() ->
                     src.send(TestResources.SERVER$CONFIRMED));
         }).absent(() -> src.send(TestResources.SERVER$NOT_CONFIRMED));
     }

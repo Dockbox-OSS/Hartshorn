@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.test.files;
 
-import org.dockbox.selene.common.files.DefaultXStreamManager;
+import org.dockbox.selene.persistence.xstream.DefaultXStreamManager;
 
 public class JUnitXStreamManager extends DefaultXStreamManager implements JUnitFileManager {
 }

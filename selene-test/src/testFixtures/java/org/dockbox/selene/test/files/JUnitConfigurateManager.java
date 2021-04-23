@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.test.files;
 
-import org.dockbox.selene.api.files.FileType;
-import org.dockbox.selene.common.files.DefaultConfigurateManager;
+import org.dockbox.selene.persistence.FileType;
+import org.dockbox.selene.persistence.configurate.DefaultConfigurateManager;
 
 import javax.inject.Inject;
 

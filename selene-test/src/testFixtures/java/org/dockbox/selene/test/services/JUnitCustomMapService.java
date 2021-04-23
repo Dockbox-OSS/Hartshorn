@@ -17,14 +17,14 @@
 
 package org.dockbox.selene.test.services;
 
-import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.minecraft.item.maps.CustomMap;
-import org.dockbox.selene.api.objects.targets.Identifiable;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.api.domain.Identifiable;
+import org.dockbox.selene.server.minecraft.Console;
 import org.dockbox.selene.server.minecraft.item.DefaultCustomMapService;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.item.maps.CustomMap;
 import org.dockbox.selene.test.objects.JUnitCustomMap;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.Collection;

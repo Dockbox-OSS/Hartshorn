@@ -17,47 +17,44 @@
 
 package org.dockbox.selene.test.util;
 
-import org.dockbox.selene.api.BroadcastService;
-import org.dockbox.selene.api.ExceptionHelper;
-import org.dockbox.selene.api.Players;
-import org.dockbox.selene.api.ThreadUtils;
-import org.dockbox.selene.api.Worlds;
-import org.dockbox.selene.commands.source.DiscordCommandSource;
-import org.dockbox.selene.api.discord.DiscordPagination;
-import org.dockbox.selene.discord.templates.MessageTemplate;
-import org.dockbox.selene.api.entities.ArmorStand;
-import org.dockbox.selene.api.entities.ItemFrame;
+import org.dockbox.selene.api.GlobalConfig;
+import org.dockbox.selene.api.PropertiesGlobalConfig;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.events.EventBus;
-import org.dockbox.selene.api.files.FileManager;
-import org.dockbox.selene.api.files.FileType;
-import org.dockbox.selene.api.i18n.common.ResourceService;
+import org.dockbox.selene.api.events.SimpleEventBus;
+import org.dockbox.selene.api.exceptions.ExceptionHelper;
+import org.dockbox.selene.api.exceptions.SimpleExceptionHelper;
+import org.dockbox.selene.api.i18n.ResourceService;
+import org.dockbox.selene.api.i18n.SimpleResourceService;
 import org.dockbox.selene.api.i18n.permissions.Permission;
-import org.dockbox.selene.api.inventory.Element;
+import org.dockbox.selene.api.i18n.permissions.SimplePermission;
 import org.dockbox.selene.api.module.ModuleManager;
-import org.dockbox.selene.api.objects.Console;
-import org.dockbox.selene.api.objects.bossbar.Bossbar;
+import org.dockbox.selene.api.module.SimpleModuleManager;
+import org.dockbox.selene.api.task.TaskRunner;
+import org.dockbox.selene.api.task.ThreadUtils;
+import org.dockbox.selene.commands.source.DiscordCommandSource;
+import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.discord.DiscordPagination;
+import org.dockbox.selene.discord.SimpleDiscordPagination;
+import org.dockbox.selene.discord.SimpleMessageTemplate;
+import org.dockbox.selene.discord.templates.MessageTemplate;
+import org.dockbox.selene.persistence.FileManager;
+import org.dockbox.selene.persistence.FileTypes;
+import org.dockbox.selene.server.Server;
+import org.dockbox.selene.server.minecraft.Console;
+import org.dockbox.selene.server.minecraft.bossbar.Bossbar;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.entities.ArmorStand;
+import org.dockbox.selene.server.minecraft.entities.ItemFrame;
+import org.dockbox.selene.server.minecraft.inventory.Element;
+import org.dockbox.selene.server.minecraft.inventory.SimpleElement;
 import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.minecraft.item.maps.CustomMapService;
-import org.dockbox.selene.api.objects.profile.Profile;
-import org.dockbox.selene.api.server.InjectConfiguration;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.SeleneFactory;
-import org.dockbox.selene.api.server.Server;
-import org.dockbox.selene.api.config.GlobalConfig;
-import org.dockbox.selene.api.tasks.TaskRunner;
-import org.dockbox.selene.util.web.WebUtil;
-import org.dockbox.selene.api.SimpleBroadcastService;
-import org.dockbox.selene.common.SimpleExceptionHelper;
-import org.dockbox.selene.api.SimpleResourceService;
-import org.dockbox.selene.common.discord.SimpleDiscordPagination;
-import org.dockbox.selene.common.discord.SimpleMessageTemplate;
-import org.dockbox.selene.common.events.SimpleEventBus;
-import org.dockbox.selene.common.i18n.SimplePermission;
-import org.dockbox.selene.api.inventory.SimpleElement;
-import org.dockbox.selene.common.modules.SimpleModuleManager;
-import org.dockbox.selene.api.server.config.SimpleGlobalConfig;
-import org.dockbox.selene.api.web.GsonWebUtil;
-import org.dockbox.selene.api.web.GsonXmlWebUtil;
+import org.dockbox.selene.server.minecraft.item.maps.CustomMapService;
+import org.dockbox.selene.server.minecraft.players.Players;
+import org.dockbox.selene.server.minecraft.players.Profile;
+import org.dockbox.selene.server.minecraft.service.BroadcastService;
+import org.dockbox.selene.server.minecraft.service.SimpleBroadcastService;
 import org.dockbox.selene.test.files.JUnitConfigurateManager;
 import org.dockbox.selene.test.files.JUnitXStreamManager;
 import org.dockbox.selene.test.objects.JUnitBossbar;
@@ -70,6 +67,9 @@ import org.dockbox.selene.test.objects.living.JUnitItemFrame;
 import org.dockbox.selene.test.services.JUnitCustomMapService;
 import org.dockbox.selene.test.services.JUnitPlayers;
 import org.dockbox.selene.test.services.JUnitWorlds;
+import org.dockbox.selene.web.GsonWebUtil;
+import org.dockbox.selene.web.GsonXmlWebUtil;
+import org.dockbox.selene.web.WebUtil;
 import org.slf4j.Logger;
 
 public class JUnitInjector extends InjectConfiguration {
@@ -88,13 +88,13 @@ public class JUnitInjector extends InjectConfiguration {
         // Utility types
         this.bind(ThreadUtils.class).to(JUnitThreadUtils.class);
         this.bind(WebUtil.class).to(GsonWebUtil.class);
-        this.bind(WebUtil.class).annotatedWith(FileType.JSON.getFormat()).to(GsonWebUtil.class);
-        this.bind(WebUtil.class).annotatedWith(FileType.XML.getFormat()).to(GsonXmlWebUtil.class);
+        this.bind(WebUtil.class).annotatedWith(Bindings.meta(FileTypes.YAML)).to(GsonWebUtil.class);
+        this.bind(WebUtil.class).annotatedWith(Bindings.meta(FileTypes.XML)).to(GsonXmlWebUtil.class);
 
         // File management
         this.bind(FileManager.class).to(JUnitConfigurateManager.class);
-        this.bind(FileManager.class).annotatedWith(FileType.YAML.getFormat()).to(JUnitConfigurateManager.class);
-        this.bind(FileManager.class).annotatedWith(FileType.XML.getFormat()).to(JUnitXStreamManager.class);
+        this.bind(FileManager.class).annotatedWith(Bindings.meta(FileTypes.YAML)).to(JUnitConfigurateManager.class);
+        this.bind(FileManager.class).annotatedWith(Bindings.meta(FileTypes.XML)).to(JUnitXStreamManager.class);
 
         // Services
         this.bind(Players.class).to(JUnitPlayers.class);
@@ -109,22 +109,19 @@ public class JUnitInjector extends InjectConfiguration {
         this.bind(EventBus.class).toInstance(new SimpleEventBus());
 
         // Factory types
-        FactoryModuleBuilder factory = new FactoryModuleBuilder()
-                .implement(Element.class, SimpleElement.class)
-                .implement(Item.class, JUnitItem.class)
-                .implement(Bossbar.class, JUnitBossbar.class)
-                .implement(Profile.class, JUnitProfile.class)
-                .implement(Permission.class, SimplePermission.class)
-                .implement(ItemFrame.class, JUnitItemFrame.class)
-                .implement(ArmorStand.class, JUnitArmorStand.class)
-                .implement(DiscordCommandSource.class, JUnitDiscordCommandSource.class);
-
-        this.install(factory.build(SeleneFactory.class));
+        this.bind(Element.class).to(SimpleElement.class);
+        this.bind(Item.class).to(JUnitItem.class);
+        this.bind(Bossbar.class).to(JUnitBossbar.class);
+        this.bind(Profile.class).to(JUnitProfile.class);
+        this.bind(Permission.class).to(SimplePermission.class);
+        this.bind(ItemFrame.class).to(JUnitItemFrame.class);
+        this.bind(ArmorStand.class).to(JUnitArmorStand.class);
+        this.bind(DiscordCommandSource.class).to(JUnitDiscordCommandSource.class);
 
         // Globally accessible
         // Config can be recreated, so no external tracking is required (contents obtained from file, no
         // cache writes)
-        this.bind(GlobalConfig.class).toInstance(new SimpleGlobalConfig());
+        this.bind(GlobalConfig.class).toInstance(new PropertiesGlobalConfig());
 
         // Log is created from LoggerFactory externally
         this.bind(Logger.class).toInstance(Selene.log());

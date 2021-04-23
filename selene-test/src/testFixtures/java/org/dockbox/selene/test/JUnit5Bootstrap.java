@@ -17,17 +17,18 @@
 
 package org.dockbox.selene.test;
 
-import org.dockbox.selene.api.MinecraftVersion;
-import org.dockbox.selene.api.server.InjectConfiguration;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.ServerType;
-import org.dockbox.selene.api.server.bootstrap.SeleneBootstrap;
+import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.SeleneBootstrap;
+import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.server.minecraft.MinecraftServerBootstrap;
+import org.dockbox.selene.server.minecraft.MinecraftServerType;
+import org.dockbox.selene.server.minecraft.MinecraftVersion;
 import org.dockbox.selene.test.util.JUnitInjector;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class JUnit5Bootstrap extends SeleneBootstrap {
+public class JUnit5Bootstrap extends MinecraftServerBootstrap {
 
     private final JUnitInformation information;
 
@@ -50,8 +51,8 @@ public class JUnit5Bootstrap extends SeleneBootstrap {
     }
 
     @Override
-    public @NotNull ServerType getServerType() {
-        return ServerType.JUNIT;
+    public @NotNull MinecraftServerType getServerType() {
+        return MinecraftServerType.JUNIT;
     }
 
     @Override

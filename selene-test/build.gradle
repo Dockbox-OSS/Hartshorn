@@ -30,26 +30,33 @@ repositories {
     }
 }
 
+def depBlacklist = ['selene-sponge-7', 'selene-nms-1.12', 'selene-test', 'examples']
+
 dependencies {
-    compile project(':selene-old')
-
-    dependencies {
-        testImplementation project(':selene-old')
-
-
-        testCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-        testCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
-        testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-        testCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
-
-        testCompile "org.mockito:mockito-all:$mockitoVersion"
-
-
-        testFixturesCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-        testFixturesCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
-        testFixturesRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-        testFixturesCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
-
-        testFixturesCompile "org.mockito:mockito-all:$mockitoVersion"
+    rootDir.listFiles().each {
+        if (it.directory && it.name.startsWith('selene-') && new File(it, 'build.gradle').exists()) {
+            if (!depBlacklist.contains(it.name)) {
+                testFixturesCompile(project(":${it.name}"))
+            }
+        }
     }
+
+    new File(rootDir, 'selene-modules').listFiles().each {
+        if (it.directory && new File(it, 'build.gradle').exists()) {
+            testFixturesCompile(project(":selene-modules:${it.name}"))
+        }
+    }
+
+    new File(rootDir, 'selene-minecraft-modules').listFiles().each {
+        if (it.directory && new File(it, 'build.gradle').exists()) {
+            testFixturesCompile(project(":selene-minecraft-modules:${it.name}"))
+        }
+    }
+
+    testFixturesCompile "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testFixturesCompile "org.junit.jupiter:junit-jupiter-params:$junitVersion"
+    testFixturesRuntime "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+    testFixturesCompile "org.hamcrest:java-hamcrest:$hamcrestVersion"
+
+    testFixturesCompile "org.mockito:mockito-all:$mockitoVersion"
 }

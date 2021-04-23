@@ -19,16 +19,23 @@ package org.dockbox.selene.test.objects;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.api.objects.bossbar.BossbarColor;
-import org.dockbox.selene.api.objects.bossbar.BossbarStyle;
-import org.dockbox.selene.api.objects.bossbar.DefaultTickableBossbar;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.server.minecraft.bossbar.BossbarColor;
+import org.dockbox.selene.server.minecraft.bossbar.BossbarStyle;
+import org.dockbox.selene.server.minecraft.bossbar.DefaultTickableBossbar;
+import org.dockbox.selene.server.minecraft.players.Player;
 
 import java.time.Duration;
 import java.util.Collection;
 import java.util.UUID;
 
 public class JUnitBossbar extends DefaultTickableBossbar<Void> {
+
+    JUnitBossbar() {
+        super("", -1, null, null, null);
+        throw Bindings.requireAutowiring();
+    }
 
     @AutoWired
     public JUnitBossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle style) {

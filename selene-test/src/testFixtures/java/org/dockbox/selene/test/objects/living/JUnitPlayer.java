@@ -17,29 +17,29 @@
 
 package org.dockbox.selene.test.objects.living;
 
-import org.dockbox.selene.api.Worlds;
+import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.domain.tuple.Tristate;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.permissions.Permission;
-import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.Packet;
-import org.dockbox.selene.api.objects.inventory.PlayerInventory;
-import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.minecraft.dimension.world.World;
-import org.dockbox.selene.minecraft.dimension.position.Location;
-import org.dockbox.selene.api.objects.player.Gamemode;
-import org.dockbox.selene.api.objects.player.Hand;
-import org.dockbox.selene.minecraft.players.Player;
-import org.dockbox.selene.api.objects.profile.Profile;
-import org.dockbox.selene.server.minecraft.enums.Sounds;
-import org.dockbox.selene.api.domain.tuple.Tristate;
-import org.dockbox.selene.api.server.Selene;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
-import org.dockbox.selene.test.objects.inventory.JUnitInventory;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.packets.Packet;
+import org.dockbox.selene.server.minecraft.players.Gamemode;
+import org.dockbox.selene.server.minecraft.players.Hand;
+import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Profile;
+import org.dockbox.selene.server.minecraft.players.Sounds;
+import org.dockbox.selene.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.selene.test.objects.JUnitPersistentDataHolder;
 import org.dockbox.selene.test.objects.JUnitProfile;
 import org.dockbox.selene.test.objects.JUnitWorld;
+import org.dockbox.selene.test.objects.inventory.JUnitInventory;
 import org.dockbox.selene.test.util.JUnitPermissionRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +50,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     private final PlayerInventory inventory = new JUnitInventory();
     private boolean online = true;
     private Gamemode gamemode = Gamemode.CREATIVE;
-    private Language language = Selene.getServer().getGlobalConfig().getDefaultLanguage();
+    private Language language = Language.EN_US;
     private boolean sneaking = false;
     private Location lookingAt = null;
     private Text displayName;
@@ -63,7 +63,7 @@ public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
     public JUnitPlayer(@NotNull UUID uniqueId, @NotNull String name) {
         super(uniqueId, name);
         this.setDisplayName(Text.of(name));
-        Worlds worlds = Selene.provide(Worlds.class);
+        Worlds worlds = Provider.provide(Worlds.class);
         this.setLocation(new Location(0, 0, 0, worlds.getWorld(worlds.getRootWorldId()).orNull()));
         ((JUnitWorld) this.getWorld()).addEntity(this);
     }

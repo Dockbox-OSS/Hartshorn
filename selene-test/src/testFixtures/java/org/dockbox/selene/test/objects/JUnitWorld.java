@@ -17,18 +17,18 @@
 
 package org.dockbox.selene.test.objects;
 
-import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.minecraft.dimension.world.Chunk;
-import org.dockbox.selene.minecraft.dimension.world.World;
-import org.dockbox.selene.minecraft.dimension.position.BlockFace;
-import org.dockbox.selene.minecraft.dimension.position.Location;
-import org.dockbox.selene.api.objects.player.Gamemode;
-import org.dockbox.selene.minecraft.players.Player;
-import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.server.minecraft.dimension.Chunk;
+import org.dockbox.selene.server.minecraft.dimension.position.BlockFace;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.entities.Entity;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.players.Gamemode;
+import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Profile;
+import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

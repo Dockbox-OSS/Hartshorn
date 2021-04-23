@@ -17,13 +17,13 @@
 
 package org.dockbox.selene.test.services;
 
-import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.minecraft.dimension.world.World;
-import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.players.Gamemode;
 import org.dockbox.selene.test.objects.JUnitWorld;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.List;
 import java.util.UUID;

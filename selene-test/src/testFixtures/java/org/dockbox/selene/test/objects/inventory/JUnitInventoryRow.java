@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.test.objects.inventory;
 
-import org.dockbox.selene.api.objects.inventory.PlayerInventory;
 import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.api.objects.inventory.AbstractInventoryRow;
+import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.selene.server.minecraft.players.inventory.AbstractInventoryRow;
+import org.dockbox.selene.server.minecraft.players.inventory.PlayerInventory;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Collection;
 import java.util.Map;
@@ -57,6 +57,6 @@ public class JUnitInventoryRow extends AbstractInventoryRow {
 
     @Override
     public Item getSlot(int index) {
-        return this.slots.getOrDefault(index, Selene.getItems().getAir());
+        return this.slots.getOrDefault(index, MinecraftItems.getInstance().getAir());
     }
 }

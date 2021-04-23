@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.test.util;
 
-import org.dockbox.selene.api.ThreadUtils;
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.task.ThreadUtils;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;

@@ -17,13 +17,14 @@
 
 package org.dockbox.selene.test.objects.inventory;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.inventory.InventoryRow;
-import org.dockbox.selene.api.objects.inventory.PlayerInventory;
-import org.dockbox.selene.api.objects.inventory.Slot;
+import org.dockbox.selene.server.minecraft.inventory.Slot;
 import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.selene.server.minecraft.players.inventory.InventoryRow;
+import org.dockbox.selene.server.minecraft.players.inventory.PlayerInventory;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,7 +45,7 @@ public class JUnitInventory extends PlayerInventory {
 
     @Override
     public Item getSlot(Slot slot) {
-        return this.specialSlots.getOrDefault(slot, Selene.getItems().getAir());
+        return this.specialSlots.getOrDefault(slot, MinecraftItems.getInstance().getAir());
     }
 
     @Override
