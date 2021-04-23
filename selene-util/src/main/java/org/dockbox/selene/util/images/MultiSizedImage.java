@@ -28,7 +28,7 @@ public class MultiSizedImage {
     private final BufferedImage image;
     private final int xSize;
     private final int ySize;
-    private Map<Integer[], BufferedImage> imageMap = SeleneUtils.emptyMap();
+    private final Map<Integer[], BufferedImage> imageMap = SeleneUtils.emptyMap();
 
     public MultiSizedImage(BufferedImage image, int xSize, int ySize) {
         this.image = image;
@@ -38,24 +38,24 @@ public class MultiSizedImage {
     }
 
     private void genSubImages() {
-        for (int i = 0; i < xSize; i++) {
-            for (int j = 0; j < ySize; j++) {
+        for (int i = 0; i < this.xSize; i++) {
+            for (int j = 0; j < this.ySize; j++) {
                 BufferedImage sub = this.getResizedImage().getSubimage(i * 128, j * 128, 128, 128);
                 Integer[] pos = new Integer[]{ i, j };
-                imageMap.put(pos, sub);
+                this.imageMap.put(pos, sub);
             }
         }
     }
 
     private BufferedImage getResizedImage() {
-        BufferedImage bufferedImage = new BufferedImage(xSize * 128, ySize * 128, BufferedImage.TRANSLUCENT);
+        BufferedImage bufferedImage = new BufferedImage(this.xSize * 128, this.ySize * 128, BufferedImage.TRANSLUCENT);
         Graphics2D graphics2D = bufferedImage.createGraphics();
-        graphics2D.drawImage(image, 0, 0, xSize * 128, ySize * 128, null);
+        graphics2D.drawImage(this.image, 0, 0, this.xSize * 128, this.ySize * 128, null);
         graphics2D.dispose();
         return bufferedImage;
     }
 
     public Map<Integer[], BufferedImage> getImageMap() {
-        return imageMap;
+        return this.imageMap;
     }
 }

@@ -15,9 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly(project(':selene-core'))
-    compile "org.reflections:reflections:$reflectionsVersion"
+package org.dockbox.selene.util.exceptions;
 
-    testImplementation(project(':selene-core'))
+import java.nio.file.Path;
+
+public class ImpossibleFileException extends RuntimeException{
+    public ImpossibleFileException(Path file, Throwable cause) {
+        super("Could not create file '" + file.getFileName() + "'", cause);
+    }
 }

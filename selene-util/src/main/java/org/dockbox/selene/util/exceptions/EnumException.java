@@ -15,9 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly(project(':selene-core'))
-    compile "org.reflections:reflections:$reflectionsVersion"
+package org.dockbox.selene.util.exceptions;
 
-    testImplementation(project(':selene-core'))
+public class EnumException extends RuntimeException {
+    public EnumException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

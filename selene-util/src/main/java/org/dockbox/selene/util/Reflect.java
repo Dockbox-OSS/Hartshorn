@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.util;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.TypeRejectedException;
 import org.dockbox.selene.api.entity.annotations.Accessor;
@@ -26,14 +25,12 @@ import org.dockbox.selene.api.entity.annotations.Extract.Behavior;
 import org.dockbox.selene.api.entity.annotations.Ignore;
 import org.dockbox.selene.api.entity.annotations.Property;
 import org.dockbox.selene.api.entity.annotations.Rejects;
-import org.dockbox.selene.api.module.ModuleContainer;
-import org.dockbox.selene.api.module.ModuleManager;
-import org.dockbox.selene.api.module.annotations.OwnedBy;
 import org.dockbox.selene.util.SeleneUtils.Provision;
+import org.dockbox.selene.util.exceptions.EnumException;
+import org.dockbox.selene.util.exceptions.FieldAccessException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.reflections.Reflections;
 
@@ -50,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -416,7 +412,7 @@ public final class Reflect {
             constants.addAll(Arrays.asList(e));
         }
         catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | SecurityException | ClassCastException e) {
-            Selene.log().warn("Error obtaining enum constants in " + type.getCanonicalName(), e);
+            throw new EnumException("Cannot access enum " + type.getCanonicalName(), e);
         }
         return constants;
     }
@@ -542,34 +538,7 @@ public final class Reflect {
         }
     }
 
-    /**
-     * Gets module.
-     *
-     * @param type
-     *         the type
-     *
-     * @return the module
-     */
-    @Nullable
-    public static ModuleContainer module(Class<?> type) {
-        if (null == type) return null;
-        if (type.equals(Selene.class)) {
-            if (serverAvailable()) {
-                return Reflect.module(Selene.provide(lookup(serverClassName)).getClass());
-            }
-        }
-
-        if (type.isAnnotationPresent(OwnedBy.class)) {
-            OwnedBy owner = type.getAnnotation(OwnedBy.class);
-            return Reflect.module(owner.value());
-        }
-
-        return Selene.provideSafe(ModuleManager.class)
-                .map(em -> em.getContainer(type).orNull())
-                .orNull();
-    }
-
-    private static Class<?> lookup(String className) {
+    public static Class<?> lookup(String className) {
         try {
             return Class.forName(className);
         }
@@ -580,80 +549,6 @@ public final class Reflect {
 
     public static boolean serverAvailable() {
         return lookup(serverClassName) != null;
-    }
-
-    /**
-     * Run with module.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param type
-     *         the type
-     * @param consumer
-     *         the consumer
-     */
-    public static <T> void with(Class<T> type, Consumer<T> consumer) {
-        T instance = Selene.provide(type);
-        if (null != instance) consumer.accept(instance);
-    }
-
-    /**
-     * Try create from processed exceptional.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param type
-     *         the type
-     * @param valueCollector
-     *         the value collector
-     *
-     * @return the exceptional
-     */
-    public static <T> Exceptional<T> create(
-            Class<T> type, Function<String, Object> valueCollector) {
-        return Reflect.tryCreate(type, valueCollector, Provision.FIELD_NAME);
-    }
-
-    /**
-     * Try create exceptional.
-     *
-     * @param <T>
-     *         the type parameter
-     * @param <A>
-     *         the type parameter
-     * @param type
-     *         the type
-     * @param valueCollector
-     *         the value collector
-     * @param provision
-     *         the provision
-     *
-     * @return the exceptional
-     */
-    public static <T, A> Exceptional<T> tryCreate(Class<T> type, Function<A, Object> valueCollector, Provision provision) {
-        T instance = Selene.provide(type);
-        if (null != instance)
-            try {
-                for (Field field : type.getDeclaredFields()) {
-                    if (!field.isAccessible()) field.setAccessible(true);
-                    if (field.isAnnotationPresent(Ignore.class)) continue;
-
-                    Object value = createField(field, provision, valueCollector);
-                    if (null == value) continue;
-
-                    boolean usedSetter = canUseSetter(type, instance, field, value);
-
-                    if (!usedSetter && Reflect.assignableFrom(field.getType(), value.getClass()))
-                        field.set(instance, value);
-                }
-            }
-            catch (IllegalAccessException
-                    | NoSuchMethodException
-                    | InvocationTargetException
-                    | ClassCastException e) {
-                return Exceptional.of(e);
-            }
-        return Exceptional.of(instance);
     }
 
     @SuppressWarnings("unchecked")
@@ -828,7 +723,7 @@ public final class Reflect {
             field.set(to, value);
         }
         catch (IllegalArgumentException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            Selene.handle(e);
+            throw new FieldAccessException("Cannot access field " + field.getName(), e);
         }
     }
 
@@ -859,5 +754,9 @@ public final class Reflect {
             }
         }
         return supportedType;
+    }
+
+    public static Class<?> getServerClass() {
+        return lookup(serverClassName);
     }
 }

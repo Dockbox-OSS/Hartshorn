@@ -17,16 +17,15 @@
 
 package org.dockbox.selene.util;
 
-import org.dockbox.selene.api.annotations.entity.Accessor;
-import org.dockbox.selene.api.annotations.entity.Extract;
-import org.dockbox.selene.api.events.parents.Event;
+import org.dockbox.selene.api.CheckedRunnable;
+import org.dockbox.selene.api.domain.AbstractIdentifiable;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.targets.AbstractIdentifiable;
 import org.dockbox.selene.api.domain.tuple.Triad;
 import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.tasks.CheckedRunnable;
+import org.dockbox.selene.api.entity.annotations.Accessor;
+import org.dockbox.selene.api.entity.annotations.Extract;
+import org.dockbox.selene.util.exceptions.ImpossibleFileException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +55,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -69,7 +67,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -77,7 +74,7 @@ import java.util.stream.StreamSupport;
  * Wraps all utility classes to a common accessor. This way all {@code final} utility classes can be
  * accessed at once and indexed more easily.
  */
-@SuppressWarnings({ "unused", "OverlyComplexClass" })
+@SuppressWarnings({ "unused", "OverlyComplexClass", "ResultOfMethodCallIgnored" })
 public final class SeleneUtils {
 
     /**
@@ -273,7 +270,6 @@ public final class SeleneUtils {
         return Collections.unmodifiableMap(map);
     }
 
-    @SuppressWarnings("RedundantUnmodifiable")
     @UnmodifiableView
     @NotNull
     @Contract(value = "_ -> new", pure = true)
@@ -281,7 +277,6 @@ public final class SeleneUtils {
         return Collections.unmodifiableSet(new HashSet<>(objects));
     }
 
-    @SuppressWarnings("RedundantUnmodifiable")
     @UnmodifiableView
     @NotNull
     @Contract(value = "_ -> new", pure = true)
@@ -344,38 +339,6 @@ public final class SeleneUtils {
 
         }
         else return false;
-    }
-
-    /**
-     * Returns a {@link List} of non-null events based on the provided {@link Event events}. This
-     * should typically be used for event listeners with multiple event parameters.
-     *
-     * @param events
-     *         The events
-     *
-     * @return The fired (non-null) events
-     */
-    public static List<Event> getFiredEvents(Event... events) {
-        return Arrays.stream(events).filter(Objects::nonNull).collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the first fired event based on the provided {@link Event events}.
-     *
-     * @param events
-     *         The events
-     *
-     * @return The first fired (non-null) event
-     */
-    @Contract(pure = true)
-    @Nullable
-    public static Event getFirstFiredEvent(Event... events) {
-        for (Event event : events) {
-            if (null != event) {
-                return event;
-            }
-        }
-        return null;
     }
 
     public static String capitalize(String value) {
@@ -809,8 +772,8 @@ public final class SeleneUtils {
                 Files.createDirectories(file.getParent());
                 Files.createFile(file);
             }
-            catch (IOException ex) {
-                Selene.handle("Could not create file '" + file.getFileName() + "'", ex);
+            catch (IOException e) {
+                throw new ImpossibleFileException(file, e);
             }
         }
         return file;
@@ -939,9 +902,8 @@ public final class SeleneUtils {
             return (T[]) SeleneUtils.addAll(finalArray, array);
         }
         catch (ClassCastException e) {
-            Selene.log().error("Attempted to convert generic array not matching generic type T", e);
+            return (T[]) new Object[0];
         }
-        return (T[]) new Object[0];
     }
 
     /**
@@ -1204,17 +1166,6 @@ public final class SeleneUtils {
         return 0;
     }
 
-    public static String getFirstCauseMessage(Throwable throwable) {
-        final String noCause = "No message provided";
-        if (null == throwable) return noCause;
-        while (true) {
-            if (null != throwable.getMessage()) break;
-            else if (null != throwable.getCause()) throwable = throwable.getCause();
-            else break;
-        }
-        return null == throwable.getMessage() ? noCause : throwable.getMessage();
-    }
-
     @SafeVarargs
     public static <T> Collection<T> merge(Collection<T>... collections) {
         Collection<T> merged = new ArrayList<>();
@@ -1267,10 +1218,6 @@ public final class SeleneUtils {
         return result.toString();
     }
 
-    /**
-     * Common enumeration of processed field information in {@link
-     * Reflect#tryCreateFromProcessed(Class, Function, boolean) tryCreate}.
-     */
     public enum Provision {
         /** Uses the field name to process field information. */
         FIELD,
