@@ -18,8 +18,8 @@
 package org.dockbox.selene.sponge.util;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.minecraft.players.Player;
-import org.dockbox.selene.api.DefaultPlayers;
+import org.dockbox.selene.server.minecraft.players.DefaultPlayers;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;

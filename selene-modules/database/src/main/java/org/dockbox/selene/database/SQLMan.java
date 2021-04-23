@@ -18,18 +18,18 @@
 package org.dockbox.selene.database;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.domain.table.Table;
-import org.dockbox.selene.api.domain.table.TableRow;
-import org.dockbox.selene.api.domain.table.column.ColumnIdentifier;
-import org.dockbox.selene.api.domain.table.column.SimpleColumnIdentifier;
-import org.dockbox.selene.api.domain.table.exceptions.IdentifierMismatchException;
 import org.dockbox.selene.api.domain.tuple.Tuple;
-import org.dockbox.selene.api.keys.Keys;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.database.exceptions.NoSuchTableException;
 import org.dockbox.selene.database.properties.SQLColumnProperty;
 import org.dockbox.selene.database.properties.SQLResetBehaviorProperty;
+import org.dockbox.selene.di.Bindings;
 import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.domain.table.Table;
+import org.dockbox.selene.domain.table.TableRow;
+import org.dockbox.selene.domain.table.column.ColumnIdentifier;
+import org.dockbox.selene.domain.table.column.SimpleColumnIdentifier;
+import org.dockbox.selene.domain.table.exceptions.IdentifierMismatchException;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -332,11 +332,11 @@ public abstract class SQLMan<T> implements ISQLMan<T> {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Keys.valuesOfType(SQLColumnProperty.class, properties).forEach(property -> {
+        Bindings.valuesOfType(SQLColumnProperty.class, properties).forEach(property -> {
             Tuple<String, ColumnIdentifier<?>> identifier = property.getObject();
             this.identifiers.put(identifier.getKey(), identifier.getValue());
         });
 
-        this.resetOnStore = Keys.value(SQLResetBehaviorProperty.KEY, Boolean.class, properties).or(true);
+        this.resetOnStore = Bindings.value(SQLResetBehaviorProperty.KEY, Boolean.class, properties).or(true);
     }
 }

@@ -27,9 +27,9 @@ import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.api.keys.RemovableKey;
 import org.dockbox.selene.api.keys.TransactionResult;
 import org.dockbox.selene.api.module.annotations.Module;
-import org.dockbox.selene.minecraft.item.Item;
-import org.dockbox.selene.minecraft.item.storage.MinecraftItems;
-import org.dockbox.selene.minecraft.players.Sneaking;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.selene.server.minecraft.players.Sneaking;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteractEvent;
 import org.dockbox.selene.util.SeleneUtils;
 

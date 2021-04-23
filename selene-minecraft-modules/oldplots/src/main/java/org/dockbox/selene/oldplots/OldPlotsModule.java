@@ -17,28 +17,28 @@
 
 package org.dockbox.selene.oldplots;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.domain.table.Table;
 import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.api.i18n.text.actions.ClickAction;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
 import org.dockbox.selene.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.selene.api.module.annotations.Module;
+import org.dockbox.selene.commands.RunCommandAction;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.dialects.sqlite.SQLitePathProperty;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.database.properties.SQLColumnProperty;
-import org.dockbox.selene.minecraft.dimension.position.Location;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.domain.table.Table;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileType;
 import org.dockbox.selene.persistence.FileTypeProperty;
 import org.dockbox.selene.server.events.ServerReloadEvent;
 import org.dockbox.selene.server.events.ServerStartedEvent;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -94,7 +94,7 @@ public class OldPlotsModule {
             if (this.modelList.getWorld(world).present()) {
                 Text plotLine =
                         Text.of(OldPlotsResources.SINGLE_PLOT.format(world, idX, idZ).translate(player));
-                plotLine.onClick(ClickAction.runCommand("/optp " + id));
+                plotLine.onClick(RunCommandAction.runCommand("/optp " + id));
                 plotLine.onHover(
                         HoverAction.showText(
                                 Text.of(
@@ -103,7 +103,7 @@ public class OldPlotsModule {
             }
         });
 
-        Selene.provide(PaginationBuilder.class)
+        Provider.provide(PaginationBuilder.class)
                 .content(plotContent)
                 .title(Text.of(OldPlotsResources.LIST_TITLE.format(player.getName()).translate(player)))
                 .build()
@@ -111,10 +111,10 @@ public class OldPlotsModule {
     }
 
     private static SQLMan<?> getSQLMan() {
-        Path dataDirectory = Selene.provide(FileManager.class).getDataDir(OldPlotsModule.class);
+        Path dataDirectory = Provider.provide(FileManager.class).getDataDir(OldPlotsModule.class);
         Path path = dataDirectory.resolve("oldplots.db");
 
-        return Selene.provide(SQLMan.class,
+        return Provider.provide(SQLMan.class,
                 FileTypeProperty.of(FileType.SQLITE),
                 new SQLitePathProperty(path),
                 new SQLColumnProperty("id", OldPlotsIdentifiers.PLOT_ID),

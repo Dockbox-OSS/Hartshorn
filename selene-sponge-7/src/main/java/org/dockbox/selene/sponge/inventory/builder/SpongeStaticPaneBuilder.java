@@ -17,14 +17,14 @@
 
 package org.dockbox.selene.sponge.inventory.builder;
 
-import org.dockbox.selene.api.inventory.InventoryLayout;
-import org.dockbox.selene.minecraft.inventory.builder.StaticPaneBuilder;
-import org.dockbox.selene.minecraft.inventory.pane.StaticPane;
-import org.dockbox.selene.minecraft.inventory.properties.InventoryTypeProperty;
-import org.dockbox.selene.api.objects.keys.Keys;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.text.Text;
+import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.server.minecraft.inventory.InventoryLayout;
+import org.dockbox.selene.server.minecraft.inventory.builder.StaticPaneBuilder;
+import org.dockbox.selene.server.minecraft.inventory.pane.StaticPane;
+import org.dockbox.selene.server.minecraft.inventory.properties.InventoryTypeProperty;
 import org.dockbox.selene.sponge.SpongeAPI7Bootstrap;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.inventory.pane.SpongeStaticPane;
@@ -53,7 +53,7 @@ public class SpongeStaticPaneBuilder extends StaticPaneBuilder {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Keys.value(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
+        Bindings.value(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
                 .present(layout -> {
                     this.builder = View.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
                     this.layout(layout);

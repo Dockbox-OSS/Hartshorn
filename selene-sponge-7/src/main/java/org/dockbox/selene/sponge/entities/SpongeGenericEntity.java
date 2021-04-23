@@ -21,7 +21,7 @@ import net.minecraft.entity.Entity;
 
 import org.spongepowered.api.entity.EntityType;
 
-public class SpongeGenericEntity extends SpongeEntity<Entity, SpongeGenericEntity> implements org.dockbox.selene.api.entities.Entity {
+public class SpongeGenericEntity extends SpongeEntity<Entity, SpongeGenericEntity> implements org.dockbox.selene.server.minecraft.entities.Entity {
 
     private final org.spongepowered.api.entity.Entity representation;
 

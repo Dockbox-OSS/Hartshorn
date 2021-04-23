@@ -22,8 +22,8 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.text.Text;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.discord.templates.MessageTemplate;
 
 import java.util.Collection;
@@ -31,7 +31,7 @@ import java.util.Collection;
 public interface DiscordPagination {
 
     static DiscordPagination create() {
-        return Selene.provide(DiscordPagination.class);
+        return Provider.provide(DiscordPagination.class);
     }
 
     void sendTo(MessageChannel channel);

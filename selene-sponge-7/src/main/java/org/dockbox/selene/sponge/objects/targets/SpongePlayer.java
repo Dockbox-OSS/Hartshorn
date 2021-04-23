@@ -19,36 +19,38 @@ package org.dockbox.selene.sponge.objects.targets;
 
 import com.flowpowered.math.vector.Vector3d;
 
-import org.dockbox.selene.api.Players;
+import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.SeleneInformation;
+import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.EventBus;
-import org.dockbox.selene.server.minecraft.events.chat.SendMessageEvent;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
-import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.Packet;
-import org.dockbox.selene.api.objects.Wrapper;
-import org.dockbox.selene.api.objects.inventory.PlayerInventory;
-import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.api.objects.keys.PersistentDataKey;
-import org.dockbox.selene.api.objects.keys.TransactionResult;
-import org.dockbox.selene.minecraft.dimension.position.Location;
-import org.dockbox.selene.api.objects.player.Gamemode;
-import org.dockbox.selene.api.objects.player.Hand;
-import org.dockbox.selene.minecraft.players.Player;
-import org.dockbox.selene.api.objects.profile.Profile;
-import org.dockbox.selene.server.minecraft.enums.Sounds;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.SeleneInformation;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
+import org.dockbox.selene.api.keys.PersistentDataKey;
+import org.dockbox.selene.api.keys.TransactionResult;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.selene.server.minecraft.packets.Packet;
+import org.dockbox.selene.server.minecraft.players.Gamemode;
+import org.dockbox.selene.server.minecraft.players.Hand;
+import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Players;
+import org.dockbox.selene.server.minecraft.players.Profile;
+import org.dockbox.selene.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.selene.nms.packets.NMSPacket;
+import org.dockbox.selene.server.minecraft.players.Sounds;
+import org.dockbox.selene.server.minecraft.events.chat.SendMessageEvent;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.objects.inventory.SpongePlayerInventory;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.dockbox.selene.util.Wrapper;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataHolder;
@@ -109,12 +111,12 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
     @NotNull
     @Override
     public Language getLanguage() {
-        return Selene.provide(Players.class).getLanguagePreference(this.getUniqueId());
+        return Provider.provide(Players.class).getLanguagePreference(this.getUniqueId());
     }
 
     @Override
     public void setLanguage(@NotNull Language lang) {
-        Selene.provide(Players.class).setLanguagePreference(this.getUniqueId(), lang);
+        Provider.provide(Players.class).setLanguagePreference(this.getUniqueId(), lang);
     }
 
     @Override
@@ -126,7 +128,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
                     ItemStack stack = p.getItemInHand(SpongeConversionUtil.toSponge(hand))
                             .orElse(ItemStack.of(ItemTypes.AIR));
                     return SpongeConversionUtil.fromSponge(stack);
-                }).map(Item.class::cast).or(Selene.getItems().getAir());
+                }).map(Item.class::cast).or(MinecraftItems.getInstance().getAir());
             default:
                 throw new IllegalArgumentException("Unsupported type: " + hand);
         }
@@ -249,7 +251,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     private Exceptional<Text> postEventPre(Text text) {
         SendMessageEvent event = new SendMessageEvent(this, text);
-        Selene.provide(EventBus.class).post(event);
+        Provider.provide(EventBus.class).post(event);
         text = event.getMessage();
         if (event.isCancelled()) return Exceptional.none();
         else return Exceptional.of(text);

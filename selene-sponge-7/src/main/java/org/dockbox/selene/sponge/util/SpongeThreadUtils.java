@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.api.ThreadUtils;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.task.ThreadUtils;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.SpongeExecutorService;
 

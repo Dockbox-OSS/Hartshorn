@@ -24,19 +24,20 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.api.objects.keys.PersistentDataKey;
-import org.dockbox.selene.api.objects.keys.TransactionResult;
-import org.dockbox.selene.api.objects.profile.Profile;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.api.keys.PersistentDataKey;
+import org.dockbox.selene.api.keys.TransactionResult;
+import org.dockbox.selene.di.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.server.minecraft.item.Enchant;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.item.ReferencedItem;
+import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.selene.server.minecraft.players.Profile;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.sponge.util.SpongeWorldEditService;
+import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataHolder;
@@ -66,6 +67,11 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         super(initialValue);
     }
 
+    SpongeItem() {
+        super(null);
+        throw Bindings.requireAutowiring();
+    }
+
     @AutoWired
     public SpongeItem(String id, int meta) {
         super(id, meta);
@@ -73,7 +79,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
 
     @Override
     public boolean isAir() {
-        if (this.equals(Selene.getItems().getAir())) return true;
+        if (this.equals(MinecraftItems.getInstance().getAir())) return true;
         else {
             return this.getReference()
                     .map(itemStack -> itemStack.isEmpty() || itemStack.getType().getType() == ItemTypes.AIR)

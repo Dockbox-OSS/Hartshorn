@@ -35,9 +35,9 @@ import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.session.ClipboardHolder;
 
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.minecraft.players.Player;
-import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.sponge.external.WrappedMask;
 import org.dockbox.selene.sponge.external.WrappedPattern;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
@@ -225,7 +225,7 @@ public class SpongeWorldEditService extends MethodCommands implements WorldEditS
             session.flushQueue();
         }
         catch (CommandException | WorldEditException e) {
-            Selene.handle(e);
+            Except.handle(e);
         }
     }
 

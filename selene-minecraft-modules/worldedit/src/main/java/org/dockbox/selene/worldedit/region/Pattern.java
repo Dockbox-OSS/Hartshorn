@@ -17,18 +17,18 @@
 
 package org.dockbox.selene.worldedit.region;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.worldedit.WorldEditService;
 
 public interface Pattern {
 
     static Exceptional<Pattern> parse(String pattern) {
-        return Selene.provide(WorldEditService.class).parsePattern(pattern, null);
+        return Provider.provide(WorldEditService.class).parsePattern(pattern, null);
     }
 
     static Exceptional<Pattern> parse(String pattern, Player cause) {
-        return Selene.provide(WorldEditService.class).parsePattern(pattern, cause);
+        return Provider.provide(WorldEditService.class).parsePattern(pattern, cause);
     }
 }

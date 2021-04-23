@@ -20,8 +20,8 @@ package org.dockbox.selene.database;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
-import org.dockbox.selene.api.domain.table.Table;
-import org.dockbox.selene.api.domain.table.column.ColumnIdentifier;
+import org.dockbox.selene.domain.table.Table;
+import org.dockbox.selene.domain.table.column.ColumnIdentifier;
 
 /**
  * Low-level interface for communicating with SQL databases.

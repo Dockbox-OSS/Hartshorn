@@ -21,8 +21,10 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Tuple;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.module.annotations.Disabled;
 import org.dockbox.selene.api.module.annotations.Module;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
@@ -163,7 +165,7 @@ public class SimpleModuleManager implements ModuleManager {
                 }
             }
             catch (Throwable e) {
-                Selene.handle("Failed to obtain package [" + dependency + "].", e);
+                Except.handle("Failed to obtain package [" + dependency + "].", e);
             }
         }
 
@@ -171,7 +173,7 @@ public class SimpleModuleManager implements ModuleManager {
         moduleContainers.add(container);
 
         T instance;
-        instance = Selene.provide(entry);
+        instance = Provider.provide(entry);
 
         if (null == instance) {
             try {
@@ -222,6 +224,5 @@ public class SimpleModuleManager implements ModuleManager {
 
     private static <T> void injectMembers(T instance, ModuleContainer container) {
         Selene.getServer().injectMembers(instance);
-        Selene.getServer().createModuleInjector(instance, container).injectMembers(instance);
     }
 }

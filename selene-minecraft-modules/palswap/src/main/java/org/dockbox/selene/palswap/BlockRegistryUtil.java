@@ -18,7 +18,7 @@
 package org.dockbox.selene.palswap;
 
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.palswap.fileparsers.BlockRegistryParser;
 import org.dockbox.selene.palswap.fileparsers.MC1_12BlockRegistryParser;
 import org.dockbox.selene.server.minecraft.MinecraftServerBootstrap;

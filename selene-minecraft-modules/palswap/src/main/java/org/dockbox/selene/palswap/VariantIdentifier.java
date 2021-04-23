@@ -17,15 +17,15 @@
 
 package org.dockbox.selene.palswap;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.domain.registry.RegistryIdentifier;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.minecraft.item.Item;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.domain.registry.RegistryIdentifier;
 import org.dockbox.selene.palswap.fileparsers.BlockRegistryParser;
 import org.dockbox.selene.palswap.fileparsers.ItemData;
 import org.dockbox.selene.persistence.FileManager;
+import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.nio.file.Path;
@@ -81,7 +81,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
             }
         }
         if (SeleneBootstrap.isConstructed()) {
-            blockRegistryParser = Selene.provide(BlockRegistryParser.class);
+            blockRegistryParser = Provider.provide(BlockRegistryParser.class);
         }
     }
 
@@ -89,7 +89,7 @@ public enum VariantIdentifier implements RegistryIdentifier {
         if (null == overridenBlockNames) {
             if (!SeleneBootstrap.isConstructed()) return (overridenBlockNames = new ItemData());
 
-            FileManager fm = Selene.provide(FileManager.class);
+            FileManager fm = Provider.provide(FileManager.class);
             Path file = fm.getDataFile(BlockRegistryModule.class, "overridenblocknames");
 
             Exceptional<ItemData> mappings = fm.read(file, ItemData.class);

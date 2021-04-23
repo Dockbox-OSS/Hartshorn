@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.web;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.exceptions.Except;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -38,7 +38,7 @@ public abstract class DefaultWebUtil implements WebUtil {
             return this.getContent(type, new URL(url));
         }
         catch (MalformedURLException e) {
-            Selene.handle("Invalid URL", e);
+            Except.handle("Invalid URL", e);
             return Exceptional.of(e);
         }
     }
@@ -54,7 +54,7 @@ public abstract class DefaultWebUtil implements WebUtil {
             return builder.toString();
         }
         catch (IOException e) {
-            Selene.handle("Could not read content from '" + url.toExternalForm() + "'", e);
+            Except.handle("Could not read content from '" + url.toExternalForm() + "'", e);
             return "";
         }
     }
@@ -65,7 +65,7 @@ public abstract class DefaultWebUtil implements WebUtil {
             return this.getContent(new URL(url));
         }
         catch (MalformedURLException e) {
-            Selene.handle("Invalid URL", e);
+            Except.handle("Invalid URL", e);
             return "";
         }
     }
@@ -91,7 +91,7 @@ public abstract class DefaultWebUtil implements WebUtil {
             return this.getImage(new URL(url));
         }
         catch (MalformedURLException e) {
-            Selene.handle("Invalid URL", e);
+            Except.handle("Invalid URL", e);
             throw new FileFormatNotSupportedException("Unknown", e);
         }
     }

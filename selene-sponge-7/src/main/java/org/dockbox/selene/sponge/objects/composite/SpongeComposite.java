@@ -17,14 +17,14 @@
 
 package org.dockbox.selene.sponge.objects.composite;
 
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.keys.PersistentDataHolder;
-import org.dockbox.selene.api.objects.keys.PersistentDataKey;
-import org.dockbox.selene.api.objects.keys.StoredPersistentKey;
-import org.dockbox.selene.api.objects.keys.TransactionResult;
-import org.dockbox.selene.api.util.Reflect;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.keys.PersistentDataHolder;
+import org.dockbox.selene.api.keys.PersistentDataKey;
+import org.dockbox.selene.api.keys.StoredPersistentKey;
+import org.dockbox.selene.api.keys.TransactionResult;
+import org.dockbox.selene.util.Reflect;
+import org.dockbox.selene.util.SeleneUtils;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;

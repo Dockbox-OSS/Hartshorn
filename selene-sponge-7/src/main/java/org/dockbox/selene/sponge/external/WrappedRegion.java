@@ -18,10 +18,10 @@
 package org.dockbox.selene.sponge.external;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.Wrapper;
-import org.dockbox.selene.minecraft.dimension.world.World;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.dockbox.selene.util.Wrapper;
 import org.dockbox.selene.worldedit.region.Region;
 import org.jetbrains.annotations.NotNull;
 

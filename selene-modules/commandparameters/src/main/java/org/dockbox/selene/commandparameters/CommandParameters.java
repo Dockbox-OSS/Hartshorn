@@ -18,12 +18,12 @@
 package org.dockbox.selene.commandparameters;
 
 import org.dockbox.selene.annotations.command.CustomParameter;
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.command.convert.DynamicPatternConverter;
 import org.dockbox.selene.command.parameter.CustomParameterPattern;
 import org.dockbox.selene.di.Preloadable;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 
 import java.util.Collection;
@@ -36,7 +36,7 @@ public class CommandParameters implements Preloadable {
         Collection<Class<?>> customParameters = Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, CustomParameter.class);
         for (Class<?> customParameter : customParameters) {
             CustomParameter meta = customParameter.getAnnotation(CustomParameter.class);
-            CustomParameterPattern pattern = Selene.provide(meta.pattern());
+            CustomParameterPattern pattern = Provider.provide(meta.pattern());
             String key = meta.value();
             // Automatically registers to the ArgumentConverterRegistry
             new DynamicPatternConverter<>(customParameter, pattern, key);

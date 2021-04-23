@@ -19,7 +19,9 @@ package org.dockbox.selene.proxy;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.InjectionPoint;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.proxy.annotations.Instance;
 import org.dockbox.selene.proxy.annotations.Proxy;
 import org.dockbox.selene.proxy.annotations.Proxy.Target;
@@ -112,13 +114,13 @@ public final class ProxyableBootstrap {
             ProxyProperty<C, ?> property = ProxyProperty.of(proxyTargetClass, targetMethod, (instance, args, holder) -> {
                 Object[] invokingArgs = ProxyableBootstrap.prepareArguments(source, args, instance);
                 try {
-                    return source.invoke(Selene.provide(proxyClass), invokingArgs);
+                    return source.invoke(Provider.provide(proxyClass), invokingArgs);
                 }
                 catch (CancelProxyException e) {
                     holder.setCancelled(true);
                 }
                 catch (Throwable e) {
-                    Selene.handle(e);
+                    Except.handle(e);
                 }
                 //noinspection ReturnOfNull
                 return null;
@@ -133,7 +135,7 @@ public final class ProxyableBootstrap {
                     return handler.proxy();
                 }
                 catch (Throwable t) {
-                    Selene.handle(t);
+                    Except.handle(t);
                 }
                 return instance;
             });

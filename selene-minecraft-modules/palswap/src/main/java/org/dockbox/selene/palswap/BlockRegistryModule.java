@@ -20,23 +20,25 @@ package org.dockbox.selene.palswap;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.domain.registry.Registry;
 import org.dockbox.selene.api.events.annotations.Listener;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.module.annotations.Disabled;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.source.CommandSource;
-import org.dockbox.selene.minecraft.inventory.Slot;
-import org.dockbox.selene.minecraft.item.Item;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.domain.registry.Registry;
 import org.dockbox.selene.palswap.fileparsers.BlockRegistryParser;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileType;
 import org.dockbox.selene.persistence.FileTypeProperty;
 import org.dockbox.selene.server.events.ServerStartedEvent;
 import org.dockbox.selene.server.events.ServerStoppingEvent;
+import org.dockbox.selene.server.minecraft.inventory.Slot;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
@@ -64,7 +66,7 @@ public class BlockRegistryModule {
         Selene.getServer().bind(
                 BlockRegistryParser.class, BlockRegistryUtil.getBlockRegistryParserClass());
 
-        this.blockRegistryParser = Selene.provide(BlockRegistryParser.class);
+        this.blockRegistryParser = Provider.provide(BlockRegistryParser.class);
         this.blockRegistryParser.LoadItemData(this.itemRegistryFile);
 
         blockRegistry = loadBlockRegistry();
@@ -75,7 +77,7 @@ public class BlockRegistryModule {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static @Nullable Registry<Registry<Item>> loadBlockRegistry() {
-        FileManager fm = Selene.provide(FileManager.class, FileTypeProperty.of(FileType.XML));
+        FileManager fm = Provider.provide(FileManager.class, FileTypeProperty.of(FileType.XML));
         Path path = fm.getDataFile(BlockRegistryModule.class, "blockregistry");
 
         Exceptional<Registry> eRegistry = fm.read(path, Registry.class);
@@ -91,7 +93,7 @@ public class BlockRegistryModule {
     public static void saveBlockRegistry() {
         if (null == blockRegistry) return;
 
-        FileManager fm = Selene.provide(FileManager.class, FileTypeProperty.of(FileType.XML));
+        FileManager fm = Provider.provide(FileManager.class, FileTypeProperty.of(FileType.XML));
         Path path = fm.getDataFile(BlockRegistryModule.class, "blockregistry");
         fm.write(path, blockRegistry);
     }
@@ -99,7 +101,7 @@ public class BlockRegistryModule {
     @Command(aliases = "generateblockidentifiers", usage = "generateblockidentifiers", permission = SeleneInformation.GLOBAL_BYPASS)
     public void generateBlockIdentifiers(CommandSource src) {
         try {
-            FileManager fileManager = Selene.provide(FileManager.class);
+            FileManager fileManager = Provider.provide(FileManager.class);
             Path path = fileManager.getDataFile(BlockRegistryModule.class, "blockidentifiers");
             FileWriter writer = new FileWriter(path.toFile());
 
@@ -110,7 +112,7 @@ public class BlockRegistryModule {
             writer.close();
         }
         catch (IOException e) {
-            Selene.handle(e);
+            Except.handle(e);
         }
     }
 
@@ -169,7 +171,7 @@ public class BlockRegistryModule {
 
         //Unless the item already exists, write the item name to 'unaddedblocks.yml' so it can be added at a later point.
         try {
-            FileManager fm = Selene.provide(FileManager.class);
+            FileManager fm = Provider.provide(FileManager.class);
             Path path = fm.getDataFile(BlockRegistryModule.class, "unaddedblocks");
             FileWriter writer = new FileWriter(path.toFile());
 
@@ -180,7 +182,7 @@ public class BlockRegistryModule {
             writer.close();
         }
         catch (IOException e) {
-            Selene.handle(e);
+            Except.handle(e);
         }
     }
 

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.plots.events.merge;
 
-import org.dockbox.selene.minecraft.dimension.position.Direction;
+import org.dockbox.selene.server.minecraft.dimension.position.Direction;
 import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.events.CancellablePlotEvent;
 

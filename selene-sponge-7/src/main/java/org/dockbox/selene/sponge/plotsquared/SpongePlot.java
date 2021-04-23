@@ -20,17 +20,17 @@ package org.dockbox.selene.sponge.plotsquared;
 import com.intellectualcrafters.plot.flag.Flag;
 import com.intellectualcrafters.plot.object.Plot;
 
-import org.dockbox.selene.api.Players;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.ReferencedWrapper;
-import org.dockbox.selene.minecraft.dimension.position.Direction;
-import org.dockbox.selene.minecraft.dimension.position.Location;
-import org.dockbox.selene.minecraft.players.Player;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.plots.PlotMembership;
 import org.dockbox.selene.plots.flags.PlotFlag;
+import org.dockbox.selene.server.minecraft.dimension.position.Direction;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Players;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.dockbox.selene.util.ReferencedWrapper;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -60,14 +60,14 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
             Plot plot = this.getReference().get();
             if (plot.getOwners().isEmpty()) return Exceptional.none();
             UUID ownerUuid = plot.getOwners().iterator().next();
-            return Selene.provide(Players.class).getPlayer(ownerUuid);
+            return Provider.provide(Players.class).getPlayer(ownerUuid);
         }
         throw new IllegalStateException("Reference plot at " + this.center.getWorld().getName() + ";" + this.x + "," + this.y + " could not be found");
     }
 
     @Override
     public Collection<Player> getPlayers(PlotMembership membership) {
-        Players service = Selene.provide(Players.class);
+        Players service = Provider.provide(Players.class);
         return this.getUUIDs(membership).stream()
                 .map(service::getPlayer)
                 .filter(Exceptional::present)
@@ -114,7 +114,7 @@ public class SpongePlot extends ReferencedWrapper<Plot> implements org.dockbox.s
             Flag<?> plotFlag = SpongePlotSquaredService.getPlotSquaredFlag(flag.getId()).orNull();
             if (plotFlag == null) return Exceptional.none();
             //noinspection unchecked
-            return Exceptional.of(this.getReference().get().getFlag(plotFlag).transform(value -> (T) value));
+            return Exceptional.of(this.getReference().get().getFlag(plotFlag).transform(value -> (T) value).orNull());
         }
         return Exceptional.none();
     }

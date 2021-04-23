@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.sponge.inventory;
 
-import org.dockbox.selene.api.inventory.Element;
-import org.dockbox.selene.api.inventory.InventoryLayout;
-import org.dockbox.selene.api.inventory.InventoryType;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.server.minecraft.inventory.Element;
+import org.dockbox.selene.server.minecraft.inventory.InventoryLayout;
+import org.dockbox.selene.server.minecraft.inventory.InventoryType;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 

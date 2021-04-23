@@ -18,7 +18,7 @@
 package org.dockbox.selene.sponge.objects.inventory;
 
 import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.api.objects.inventory.AbstractInventoryRow;
+import org.dockbox.selene.server.minecraft.players.inventory.AbstractInventoryRow;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.Slot;

@@ -29,6 +29,7 @@ import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.entity.annotations.Metadata;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.Nullable;
@@ -241,7 +242,7 @@ public final class XStreamUtils {
             }
         }
         catch (Exception e) {
-            Selene.handle(e);
+            Except.handle(e);
             return null != fallback ? fallback.get() : null;
         }
     }
@@ -260,7 +261,7 @@ public final class XStreamUtils {
             stream.toXML(object, writer);
         }
         catch (IOException e) {
-            Selene.handle(e);
+            Except.handle(e);
         }
     }
 

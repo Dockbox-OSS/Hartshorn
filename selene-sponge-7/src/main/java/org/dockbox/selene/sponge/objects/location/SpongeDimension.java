@@ -20,15 +20,15 @@ package org.dockbox.selene.sponge.objects.location;
 import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 
-import org.dockbox.selene.api.entities.Entity;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.minecraft.dimension.world.BlockDimension;
-import org.dockbox.selene.minecraft.dimension.world.EntityHolding;
-import org.dockbox.selene.minecraft.dimension.position.BlockFace;
-import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.server.minecraft.dimension.BlockDimension;
+import org.dockbox.selene.server.minecraft.dimension.EntityHolding;
+import org.dockbox.selene.server.minecraft.dimension.position.BlockFace;
+import org.dockbox.selene.server.minecraft.entities.Entity;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
+import org.dockbox.selene.server.minecraft.players.Profile;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.block.BlockState;
@@ -72,7 +72,7 @@ public interface SpongeDimension extends BlockDimension, EntityHolding {
     default Exceptional<Item> getBlock(Vector3N position) {
         Vector3d loc = SpongeConversionUtil.toSponge(position);
         BlockState blockState = this.getExtent().getBlock(loc.toInt());
-        if (blockState.getType() == BlockTypes.AIR) return Exceptional.of(Selene.getItems().getAir());
+        if (blockState.getType() == BlockTypes.AIR) return Exceptional.of(MinecraftItems.getInstance().getAir());
         ItemStack stack = ItemStack.builder().fromBlockState(blockState).build();
         return Exceptional.of(SpongeConversionUtil.fromSponge(stack));
     }

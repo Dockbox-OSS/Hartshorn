@@ -20,6 +20,7 @@ package org.dockbox.selene.archiving;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.annotations.Listener;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.server.events.ServerReloadEvent;
@@ -65,7 +66,7 @@ public class LogArchival {
                     .forEach(this::archive);
         }
         catch (IOException e) {
-            Selene.handle(e);
+            Except.handle(e);
         }
     }
 

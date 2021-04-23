@@ -15,14 +15,30 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.module.annotations;
+package org.dockbox.selene.api.module;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dockbox.selene.di.properties.InjectorProperty;
 
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.FIELD)
-public @interface Specific {
+public class ModuleProperty implements InjectorProperty<Boolean> {
+
+    public static final String KEY = "SeleneInternalModuleKey";
+    private final Class<?> type;
+
+    private ModuleProperty(Class<?> type) {
+        this.type = type;
+    }
+
+    public static ModuleProperty create() {
+        return null;
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
+    }
+
+    @Override
+    public Boolean getObject() {
+        return true;
+    }
 }

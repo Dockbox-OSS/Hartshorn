@@ -19,15 +19,16 @@ package org.dockbox.selene.sponge.util.command;
 
 import com.google.common.collect.Multimap;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.exceptions.Except;
+import org.dockbox.selene.commands.DefaultCommandBus;
 import org.dockbox.selene.commands.context.SimpleCommandContext;
 import org.dockbox.selene.commands.registration.AbstractRegistrationContext;
 import org.dockbox.selene.commands.registration.CommandInheritanceContext;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.commands.values.AbstractArgumentElement;
 import org.dockbox.selene.commands.values.ArgumentValue;
-import org.dockbox.selene.common.command.DefaultCommandBus;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentElement;
 import org.dockbox.selene.sponge.util.command.values.SpongeArgumentValue;
@@ -48,7 +49,7 @@ import java.util.stream.Collectors;
 import javax.inject.Singleton;
 
 @Singleton
-public class SpongeCommandBus extends DefaultCommandBus<CommandSpec.Builder> {
+public class SpongeCommandBus extends DefaultCommandBus<Builder> {
 
     private final Field parsedArgsF;
 
@@ -88,7 +89,7 @@ public class SpongeCommandBus extends DefaultCommandBus<CommandSpec.Builder> {
             return super.createCommandContext(command, sender, parsedArgs.asMap());
         }
         catch (IllegalAccessException | ClassCastException e) {
-            Selene.handle("Could not load parsed arguments from Sponge command context", e);
+            Except.handle("Could not load parsed arguments from Sponge command context", e);
             return SimpleCommandContext.EMPTY;
         }
     }

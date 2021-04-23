@@ -22,7 +22,7 @@ import org.dockbox.selene.server.minecraft.events.world.WorldCreatingEvent;
 import org.dockbox.selene.server.minecraft.events.world.WorldLoadEvent;
 import org.dockbox.selene.server.minecraft.events.world.WorldSaveEvent;
 import org.dockbox.selene.server.minecraft.events.world.WorldUnloadEvent;
-import org.dockbox.selene.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.world.ConstructWorldPropertiesEvent;

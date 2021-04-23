@@ -37,12 +37,6 @@ new File(rootDir, 'selene-minecraft-modules').listFiles().each {
     }
 }
 
-new File(rootDir, 'selene-minecraft-server').listFiles().each {
-    if (it.directory && new File(it, 'build.gradle').exists()) {
-        include(":selene-minecraft-server:${it.name}")
-    }
-}
-
 include 'selene-sponge-7'
 include 'modules'
 include 'examples'

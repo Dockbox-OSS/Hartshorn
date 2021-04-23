@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.minecraft.dimension.world.World;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
+import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.storage.WorldProperties;

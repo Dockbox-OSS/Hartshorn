@@ -17,14 +17,14 @@
 
 package org.dockbox.selene.discord;
 
-import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.SeleneBootstrap;
+import org.dockbox.selene.api.module.SeleneModuleBootstrap;
 import org.dockbox.selene.di.Preloadable;
+import org.dockbox.selene.di.Provider;
 
 class DiscordPreload implements Preloadable {
     @Override
     public void preload() {
-        DiscordUtils du = Selene.provide(DiscordUtils.class);
-        SeleneBootstrap.getInstance().registerInitBus(du::registerCommandListener);
+        DiscordUtils du = Provider.provide(DiscordUtils.class);
+        SeleneModuleBootstrap.getInstance().registerInitBus(du::registerCommandListener);
     }
 }

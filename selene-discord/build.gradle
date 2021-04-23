@@ -3,6 +3,7 @@ dependencies {
     compileOnly(project(':selene-i18n'))
     compileOnly(project(':selene-persistence'))
     compileOnly(project(':selene-events'))
+    compileOnly(project(':selene-modules'))
 
     compile 'com.github.ygimenez:Pagination-Utils:2.1.1'
     compile("net.dv8tion:JDA:$jdaVersion") {

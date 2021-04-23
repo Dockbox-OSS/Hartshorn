@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.objects.item.maps;
 
-import org.dockbox.selene.minecraft.item.maps.CustomMap;
-import org.dockbox.selene.minecraft.item.persistence.PersistentItemModel;
-import org.dockbox.selene.api.objects.targets.Identifiable;
+import org.dockbox.selene.api.domain.Identifiable;
 import org.dockbox.selene.server.minecraft.item.SimplePersistentCustomMapModel;
+import org.dockbox.selene.server.minecraft.item.maps.CustomMap;
+import org.dockbox.selene.server.minecraft.item.persistence.PersistentItemModel;
 import org.dockbox.selene.sponge.objects.item.SpongeItem;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.item.inventory.ItemStack;

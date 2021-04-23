@@ -17,14 +17,14 @@
 
 package org.dockbox.selene.sponge.inventory.builder;
 
-import org.dockbox.selene.api.inventory.Element;
-import org.dockbox.selene.api.inventory.InventoryLayout;
-import org.dockbox.selene.api.inventory.InventoryType;
-import org.dockbox.selene.minecraft.inventory.builder.LayoutBuilder;
-import org.dockbox.selene.minecraft.inventory.properties.InventoryTypeProperty;
-import org.dockbox.selene.api.objects.keys.Keys;
-import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.di.Bindings;
 import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.server.minecraft.inventory.Element;
+import org.dockbox.selene.server.minecraft.inventory.InventoryLayout;
+import org.dockbox.selene.server.minecraft.inventory.InventoryType;
+import org.dockbox.selene.server.minecraft.inventory.builder.LayoutBuilder;
+import org.dockbox.selene.server.minecraft.inventory.properties.InventoryTypeProperty;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
@@ -72,7 +72,7 @@ public class SpongeLayoutBuilder extends LayoutBuilder {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Keys.value(InventoryTypeProperty.KEY, InventoryType.class, properties)
+        Bindings.value(InventoryTypeProperty.KEY, InventoryType.class, properties)
                 .present(inventoryType -> this.inventoryType = inventoryType)
                 .absent(() -> {
                     Selene.log().warn("Missing inventory type argument, using default setting 'CHEST'");

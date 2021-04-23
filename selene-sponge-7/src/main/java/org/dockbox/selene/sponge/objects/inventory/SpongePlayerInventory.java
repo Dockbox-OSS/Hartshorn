@@ -18,14 +18,14 @@
 package org.dockbox.selene.sponge.objects.inventory;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.inventory.InventoryRow;
-import org.dockbox.selene.api.objects.inventory.PlayerInventory;
-import org.dockbox.selene.api.objects.inventory.Slot;
+import org.dockbox.selene.server.minecraft.inventory.Slot;
 import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.api.objects.inventory.AbstractInventoryRow;
+import org.dockbox.selene.server.minecraft.players.inventory.AbstractInventoryRow;
+import org.dockbox.selene.server.minecraft.players.inventory.InventoryRow;
+import org.dockbox.selene.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.dockbox.selene.util.SeleneUtils;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.entity.Hotbar;
 import org.spongepowered.api.item.inventory.entity.MainPlayerInventory;

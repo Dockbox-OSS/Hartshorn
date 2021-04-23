@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.compiler;
 
-import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.test.SeleneJUnit5Runner;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -39,8 +39,8 @@ public class CompilerTests {
 
     @Test
     public void surfaceTest() throws NoSuchMethodException {
-        Class<?> flying = Selene.provide(CompilerModule.class).compile(SURFACE_JAVA).rethrow().get();
-        Object flyingInstance = Selene.provide(flying);
+        Class<?> flying = Provider.provide(CompilerModule.class).compile(SURFACE_JAVA).rethrow().get();
+        Object flyingInstance = Provider.provide(flying);
 
         Assertions.assertEquals("FlyingClass", flying.getSimpleName());
         Assertions.assertNotNull(flying.getMethod("isDirty"));

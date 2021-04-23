@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
-import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.commands.values.AbstractArgumentElement;
 import org.dockbox.selene.commands.values.AbstractFlagCollection;
 import org.dockbox.selene.commands.values.ArgumentValue;
+import org.dockbox.selene.util.SeleneUtils;
 import org.spongepowered.api.command.args.CommandElement;
 import org.spongepowered.api.command.args.CommandFlags;
 import org.spongepowered.api.command.args.CommandFlags.Builder;

@@ -19,10 +19,11 @@ package org.dockbox.selene.sponge.objects;
 
 import com.google.common.collect.Multimap;
 
-import org.dockbox.selene.api.objects.profile.Profile;
 import org.dockbox.selene.api.domain.tuple.Tuple;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.di.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.server.minecraft.players.Profile;
+import org.dockbox.selene.util.SeleneUtils;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.profile.property.ProfileProperty;
 
@@ -35,6 +36,10 @@ import java.util.stream.Collectors;
 public class SpongeProfile implements Profile {
 
     private GameProfile gameProfile;
+
+    SpongeProfile() {
+        throw Bindings.requireAutowiring();
+    }
 
     @AutoWired
     public SpongeProfile(UUID uuid) {

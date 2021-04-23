@@ -19,8 +19,8 @@ package org.dockbox.selene.sponge.plotsquared;
 
 import com.intellectualcrafters.plot.flag.Flag;
 
-import org.dockbox.selene.api.util.Reflect;
 import org.dockbox.selene.plots.flags.PlotFlag;
+import org.dockbox.selene.util.Reflect;
 
 public class SpongePlotSquaredCustomFlag<V> extends Flag<V> {
 
@@ -34,20 +34,20 @@ public class SpongePlotSquaredCustomFlag<V> extends Flag<V> {
     @Override
     public String valueToString(Object o) {
         if (o == null) return "null";
-        if (Reflect.assignableFrom(flag.getType(), o.getClass())) {
+        if (Reflect.assignableFrom(this.flag.getType(), o.getClass())) {
             //noinspection unchecked
-            return flag.serialize((V) o);
+            return this.flag.serialize((V) o);
         }
         return "INVALID:" + o;
     }
 
     @Override
     public V parseValue(String s) {
-        return flag.parse(s);
+        return this.flag.parse(s);
     }
 
     @Override
     public String getValueDescription() {
-        return flag.getDescription().asString();
+        return this.flag.getDescription().asString();
     }
 }

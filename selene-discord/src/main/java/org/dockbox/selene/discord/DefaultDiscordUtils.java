@@ -38,9 +38,11 @@ import net.dv8tion.jda.api.entities.User;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Triad;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.text.Text;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.discord.annotations.DiscordCommand;
 import org.dockbox.selene.discord.annotations.DiscordCommand.ListeningLevel;
 import org.dockbox.selene.discord.templates.MessageTemplate;
@@ -123,7 +125,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                 channel.sendMessage((Message) pages.get(0).getContent()).queue(success -> Pages.paginate(success, pages));
             }
             catch (InvalidHandlerException e) {
-                Selene.handle(e);
+                Except.handle(e);
             }
         });
     }
@@ -160,7 +162,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @Override
     public void registerCommandListener(@NotNull Object instance) {
         Object obj = instance;
-        if (instance instanceof Class) obj = Selene.provide((Class<?>) instance);
+        if (instance instanceof Class) obj = Provider.provide((Class<?>) instance);
 
         Arrays.stream(obj.getClass().getDeclaredMethods())
                 .filter(m -> m.isAnnotationPresent(DiscordCommand.class))
@@ -224,7 +226,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
             }
             catch (IllegalAccessException | InvocationTargetException e) {
                 context.sendToChannel(DefaultResource.DISCORD_COMMAND_ERRORED);
-                Selene.handle("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass()
+                Except.handle("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass()
                         .getCanonicalName() + "]");
             }
         }

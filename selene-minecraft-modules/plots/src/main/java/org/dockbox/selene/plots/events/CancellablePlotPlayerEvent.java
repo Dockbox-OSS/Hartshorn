@@ -18,7 +18,7 @@
 package org.dockbox.selene.plots.events;
 
 import org.dockbox.selene.api.events.parents.Cancellable;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.plots.Plot;
 import org.jetbrains.annotations.NotNull;
 

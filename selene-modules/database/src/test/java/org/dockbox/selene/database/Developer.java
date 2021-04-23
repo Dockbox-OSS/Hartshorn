@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.database;
 
-import org.dockbox.selene.api.annotations.entity.Property;
+import org.dockbox.selene.api.entity.annotations.Property;
 
 public class Developer {
 

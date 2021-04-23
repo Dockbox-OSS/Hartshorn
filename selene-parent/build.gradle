@@ -22,4 +22,5 @@ dependencies {
         exclude module: 'guice'
         exclude module: 'guice-assistedinject'
     }
+    compile project(':selene-exceptions')
 }

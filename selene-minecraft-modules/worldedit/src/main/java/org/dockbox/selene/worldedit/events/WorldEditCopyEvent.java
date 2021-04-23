@@ -19,7 +19,7 @@ package org.dockbox.selene.worldedit.events;
 
 import org.dockbox.selene.api.events.AbstractCancellableEvent;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.worldedit.WorldEditKeys;
 import org.dockbox.selene.worldedit.region.Region;
 

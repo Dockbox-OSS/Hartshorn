@@ -25,18 +25,18 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.api.i18n.text.actions.ClickAction;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
 import org.dockbox.selene.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.commands.CommandBus;
+import org.dockbox.selene.commands.RunCommandAction;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.context.CommandParameter;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.events.ServerReloadEvent;
-import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.List;
@@ -53,8 +53,8 @@ public class DefaultServer implements Server {
     // Parent command
     @Command(aliases = "", usage = "", permission = DefaultServerResources.SELENE_ADMIN)
     public static void debugModules(MessageReceiver source) {
-        Reflect.with(ModuleManager.class, em -> {
-            PaginationBuilder pb = Selene.provide(PaginationBuilder.class);
+        Provider.with(ModuleManager.class, em -> {
+            PaginationBuilder pb = Provider.provide(PaginationBuilder.class);
 
             List<Text> content = SeleneUtils.emptyList();
             content.add(DefaultServerResources.SERVER_HEADER
@@ -87,7 +87,7 @@ public class DefaultServer implements Server {
                 .format(e.name(), e.id())
                 .translate(source)
                 .asText();
-        line.onClick(ClickAction.runCommand("/" + SeleneInformation.PROJECT_ID + " module " + e.id()));
+        line.onClick(RunCommandAction.runCommand("/" + SeleneInformation.PROJECT_ID + " module " + e.id()));
         line.onHover(HoverAction.showText(DefaultServerResources.MODULE_ROW_HOVER
                 .format(e.name())
                 .translate(source)
@@ -109,10 +109,10 @@ public class DefaultServer implements Server {
 
     @Command(aliases = "reload", usage = "reload [id{Module}]", confirm = true, permission = DefaultServerResources.SELENE_ADMIN)
     public static void reload(MessageReceiver src, CommandContext ctx) {
-        EventBus eb = Selene.provide(EventBus.class);
+        EventBus eb = Provider.provide(EventBus.class);
         if (ctx.has("id")) {
             ModuleContainer container = ctx.get("id");
-            Exceptional<?> oi = Selene.provide(ModuleManager.class).getInstance(container.id());
+            Exceptional<?> oi = Provider.provide(ModuleManager.class).getInstance(container.id());
 
             oi.present(o -> {
                 eb.post(new ServerReloadEvent(), o.getClass());
@@ -140,7 +140,7 @@ public class DefaultServer implements Server {
         optionalCooldownId
                 .present(cooldownId -> {
                     String cid = cooldownId.getValue();
-                    Selene.provide(CommandBus.class).confirmCommand(cid).absent(() ->
+                    Provider.provide(CommandBus.class).confirmCommand(cid).absent(() ->
                             src.send(DefaultServerResources.CONFIRM_FAILED));
                 })
                 .absent(() -> src.send(DefaultServerResources.CONFIRM_INVALID_ID));

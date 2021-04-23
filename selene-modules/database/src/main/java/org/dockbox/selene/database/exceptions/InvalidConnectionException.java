@@ -17,9 +17,7 @@
 
 package org.dockbox.selene.database.exceptions;
 
-import org.dockbox.selene.api.exceptions.CheckedSeleneException;
-
-public class InvalidConnectionException extends CheckedSeleneException {
+public class InvalidConnectionException extends Exception {
     public InvalidConnectionException(String message, Throwable cause) {
         super(message, cause);
     }

@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.plots.flags;
 
-import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 
 public class IntegerFlag extends AbstractPlotFlag<Integer> {
@@ -36,7 +36,7 @@ public class IntegerFlag extends AbstractPlotFlag<Integer> {
         try {
             return Integer.parseInt(raw);
         } catch (NumberFormatException e) {
-            Selene.handle("Could not parse number flag: " + this.getId(), e);
+            Except.handle("Could not parse number flag: " + this.getId(), e);
             return -1;
         }
     }

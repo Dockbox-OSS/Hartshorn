@@ -18,9 +18,9 @@
 package org.dockbox.selene.palswap;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.domain.registry.RegistryIdentifier;
+import org.dockbox.selene.domain.registry.RegistryIdentifier;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;

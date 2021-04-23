@@ -18,9 +18,9 @@
 package org.dockbox.selene.sponge.objects.targets;
 
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
-import org.dockbox.selene.api.objects.Console;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
+import org.dockbox.selene.server.minecraft.Console;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;

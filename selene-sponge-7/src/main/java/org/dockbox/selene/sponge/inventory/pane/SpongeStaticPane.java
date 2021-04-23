@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.sponge.inventory.pane;
 
-import org.dockbox.selene.api.inventory.Element;
-import org.dockbox.selene.api.inventory.InventoryLayout;
-import org.dockbox.selene.minecraft.inventory.pane.StaticPane;
+import org.dockbox.selene.server.minecraft.inventory.Element;
+import org.dockbox.selene.server.minecraft.inventory.InventoryLayout;
+import org.dockbox.selene.server.minecraft.inventory.pane.StaticPane;
 import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 

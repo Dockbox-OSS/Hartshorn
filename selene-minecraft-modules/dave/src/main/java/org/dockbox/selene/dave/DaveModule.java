@@ -19,24 +19,26 @@ package org.dockbox.selene.dave;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.events.annotations.Listener;
-import org.dockbox.selene.api.i18n.text.actions.ClickAction;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
 import org.dockbox.selene.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.api.task.TaskRunner;
+import org.dockbox.selene.commands.RunCommandAction;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.dave.models.DaveTriggers;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.SeleneFactory;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.discord.events.DiscordChatReceivedEvent;
-import org.dockbox.selene.minecraft.players.Player;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.server.events.ServerReloadEvent;
 import org.dockbox.selene.server.minecraft.events.chat.SendChatEvent;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.nio.file.Path;
@@ -58,13 +60,13 @@ public class DaveModule implements InjectableType {
 
     @Command(aliases = "triggers", usage = "triggers", permission = DaveResources.DAVE_TRIGGERS)
     public void triggers(CommandSource source) {
-        Selene.provide(PaginationBuilder.class)
+        Provider.provide(PaginationBuilder.class)
                 .title(DaveResources.DAVE_TRIGGER_HEADER.asText())
                 .content(this.triggers.getTriggers().stream().map(trigger -> DaveResources.DAVE_TRIGGER_LIST_ITEM
                         .format(SeleneUtils.shorten(trigger.getResponses().get(0).getMessage(), 75) + " ...")
                         .asText()
                         .onHover(HoverAction.showText(DaveResources.DAVE_TRIGGER_HOVER.asText()))
-                        .onClick(ClickAction.runCommand("/dave run " + trigger.getId())))
+                        .onClick(RunCommandAction.runCommand("/dave run " + trigger.getId())))
                         .collect(Collectors.toList()))
                 .build()
                 .send(source);
@@ -86,7 +88,7 @@ public class DaveModule implements InjectableType {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        FileManager fm = Selene.provide(FileManager.class);
+        FileManager fm = Provider.provide(FileManager.class);
         Path triggerFile = fm.getDataFile(DaveModule.class, "triggers");
         if (SeleneUtils.isFileEmpty(triggerFile)) this.restoreTriggerFile(fm, triggerFile);
 
@@ -95,7 +97,7 @@ public class DaveModule implements InjectableType {
             this.triggers = triggers;
         }).caught(e -> {
             Selene.log().warn("Could not load triggers for Dave");
-            Selene.handle(e);
+            Except.handle(e);
         });
 
         Path configFile = fm.getConfigFile(DaveModule.class);
@@ -103,7 +105,7 @@ public class DaveModule implements InjectableType {
                 .present(config -> this.config = config)
                 .caught(e -> {
                     Selene.log().warn("Could not load config for Dave");
-                    Selene.handle(e);
+                    Except.handle(e);
                 });
     }
 
@@ -119,7 +121,7 @@ public class DaveModule implements InjectableType {
     @Listener
     public void on(SendChatEvent sendChatEvent) {
         Player player = (Player) sendChatEvent.getTarget();
-        DaveUtils.findMatching(this.triggers, sendChatEvent.getMessage().toPlain()).present(trigger -> Selene.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+        DaveUtils.findMatching(this.triggers, sendChatEvent.getMessage().toPlain()).present(trigger -> Provider.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
                 player,
                 player.getName(),
                 trigger,
@@ -132,8 +134,8 @@ public class DaveModule implements InjectableType {
     @Listener
     public void on(DiscordChatReceivedEvent chatEvent) {
         if (chatEvent.getChannel().getId().equals(this.config.getChannel().getId())) {
-            DaveUtils.findMatching(this.triggers, chatEvent.getMessage().getContentRaw()).present(trigger -> Selene.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
-                    Selene.provide(SeleneFactory.class).create(DiscordCommandSource.class, chatEvent.getChannel()),
+            DaveUtils.findMatching(this.triggers, chatEvent.getMessage().getContentRaw()).present(trigger -> Provider.provide(TaskRunner.class).acceptDelayed(() -> DaveUtils.performTrigger(
+                    Provider.provide(SeleneFactory.class).create(DiscordCommandSource.class, chatEvent.getChannel()),
                     chatEvent.getAuthor().getName(),
                     trigger,
                     chatEvent.getMessage().getContentRaw(),

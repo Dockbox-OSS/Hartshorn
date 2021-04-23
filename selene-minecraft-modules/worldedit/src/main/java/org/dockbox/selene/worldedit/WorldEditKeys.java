@@ -17,23 +17,23 @@
 
 package org.dockbox.selene.worldedit;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.keys.Key;
 import org.dockbox.selene.api.keys.Keys;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.worldedit.region.Clipboard;
 import org.dockbox.selene.worldedit.region.Region;
 
 public final class WorldEditKeys {
 
     public static final Key<Player, Region> SELECTION = Keys.of(
-            (player, region) -> Selene.provide(WorldEditService.class).setPlayerSelection(player, region),
-            player -> Selene.provide(WorldEditService.class).getPlayerSelection(player)
+            (player, region) -> Provider.provide(WorldEditService.class).setPlayerSelection(player, region),
+            player -> Provider.provide(WorldEditService.class).getPlayerSelection(player)
     );
 
     public static final Key<Player, Clipboard> CLIPBOARD = Keys.of(
-            (player, clipboard) -> Selene.provide(WorldEditService.class).setPlayerClipboard(player, clipboard),
-            player -> Selene.provide(WorldEditService.class).getPlayerClipboard(player));
+            (player, clipboard) -> Provider.provide(WorldEditService.class).setPlayerClipboard(player, clipboard),
+            player -> Provider.provide(WorldEditService.class).getPlayerClipboard(player));
 
     private WorldEditKeys() {}
 }

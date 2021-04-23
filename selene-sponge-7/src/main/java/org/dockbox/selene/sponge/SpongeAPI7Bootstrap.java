@@ -22,20 +22,19 @@ import com.google.common.reflect.TypeToken;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
-import org.dockbox.selene.api.MinecraftVersion;
-import org.dockbox.selene.api.Players;
-import org.dockbox.selene.api.discord.DiscordUtils;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.EventBus;
-import org.dockbox.selene.api.objects.Packet;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.server.ServerType;
-import org.dockbox.selene.api.server.bootstrap.SeleneBootstrap;
-import org.dockbox.selene.api.util.Reflect;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
+import org.dockbox.selene.server.minecraft.MinecraftServerBootstrap;
+import org.dockbox.selene.server.minecraft.MinecraftServerType;
+import org.dockbox.selene.server.minecraft.MinecraftVersion;
 import org.dockbox.selene.server.minecraft.events.packet.PacketEvent;
+import org.dockbox.selene.server.minecraft.packets.Packet;
+import org.dockbox.selene.server.minecraft.players.Players;
 import org.dockbox.selene.sponge.listeners.SpongeCommandListener;
 import org.dockbox.selene.sponge.listeners.SpongeDiscordListener;
 import org.dockbox.selene.sponge.listeners.SpongeEntityListener;
@@ -48,6 +47,8 @@ import org.dockbox.selene.sponge.objects.composite.MutableCompositeData;
 import org.dockbox.selene.sponge.plotsquared.PlotSquaredEventListener;
 import org.dockbox.selene.sponge.util.SpongeInjector;
 import org.dockbox.selene.sponge.util.SpongeTaskRunner;
+import org.dockbox.selene.util.Reflect;
+import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Platform.Component;
 import org.spongepowered.api.Sponge;
@@ -86,7 +87,7 @@ import eu.crushedpixel.sponge.packetgate.api.registry.PacketGate;
                 @Dependency(id = "nucleus"),
                 @Dependency(id = "luckperms")
         })
-public class SpongeAPI7Bootstrap extends SeleneBootstrap {
+public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
 
     private final SpongeDiscordListener discordListener = new SpongeDiscordListener();
     @Inject
@@ -153,12 +154,12 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
     @Listener
     public void on(GameInitializationEvent event) {
         this.registerSpongeListeners(
-                Selene.provide(SpongeCommandListener.class),
-                Selene.provide(SpongeServerListener.class),
-                Selene.provide(SpongeDiscordListener.class),
-                Selene.provide(SpongePlayerListener.class),
-                Selene.provide(SpongeEntityListener.class),
-                Selene.provide(PlotSquaredEventListener.class)
+                Provider.provide(SpongeCommandListener.class),
+                Provider.provide(SpongeServerListener.class),
+                Provider.provide(SpongeDiscordListener.class),
+                Provider.provide(SpongePlayerListener.class),
+                Provider.provide(SpongeEntityListener.class),
+                Provider.provide(PlotSquaredEventListener.class)
         );
 
         super.init();
@@ -181,20 +182,20 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
     }
 
     private static void preparePacketGateListeners(PacketGate packetGate) {
-        EventBus bus = Selene.provide(EventBus.class);
+        EventBus bus = Provider.provide(EventBus.class);
         Set<Class<? extends Packet>> adaptedPackets = SeleneUtils.emptySet();
         bus.getListenersToInvokers().forEach((k, v) -> v.forEach(
                 eventWrapper -> {
                     if (Reflect.assignableFrom(
                             PacketEvent.class, eventWrapper.getEventType())) {
                         Class<? extends Packet> packet = eventWrapper.getMethod()
-                                .getAnnotation(org.dockbox.selene.api.annotations.event.filter.Packet.class)
+                                .getAnnotation(org.dockbox.selene.server.minecraft.packets.annotations.Packet.class)
                                 .value();
 
                         // Adapters post the event globally, so we only need to register it once.
                         // This also avoids double-posting of the same event.
                         if (!adaptedPackets.contains(packet)) {
-                            Packet emptyPacket = Selene.provide(packet);
+                            Packet emptyPacket = Provider.provide(packet);
                             packetGate.registerListener(
                                     SpongeAPI7Bootstrap.getPacketGateAdapter(packet),
                                     ListenerPriority.DEFAULT,
@@ -209,11 +210,11 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
         return new PacketListenerAdapter() {
             @Override
             public void onPacketWrite(eu.crushedpixel.sponge.packetgate.api.event.PacketEvent packetEvent, PacketConnection connection) {
-                Selene.provide(Players.class)
+                Provider.provide(Players.class)
                         .getPlayer(connection.getPlayerUUID())
                         .present(player -> {
                             net.minecraft.network.Packet<?> nativePacket = packetEvent.getPacket();
-                            Packet internalPacket = Selene.provide(packet, new NativePacketProperty<>(nativePacket));
+                            Packet internalPacket = Provider.provide(packet, new NativePacketProperty<>(nativePacket));
 
                             PacketEvent<? extends Packet> event =
                                     new PacketEvent<>(internalPacket, player).post();
@@ -227,8 +228,8 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
 
     @NotNull
     @Override
-    public ServerType getServerType() {
-        return ServerType.SPONGE;
+    public MinecraftServerType getServerType() {
+        return MinecraftServerType.SPONGE;
     }
 
     @Override
@@ -255,7 +256,7 @@ public class SpongeAPI7Bootstrap extends SeleneBootstrap {
      */
     @Listener
     public void on(GameStartedServerEvent event) {
-        Exceptional<JDA> oj = Selene.provide(DiscordUtils.class).getJDA();
+        Exceptional<JDA> oj = Provider.provide(DiscordUtils.class).getJDA();
         if (oj.present()) {
             JDA jda = oj.get();
             // Avoid registering it twice if the scheduler outside this condition is executing this twice.

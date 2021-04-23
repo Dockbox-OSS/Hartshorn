@@ -19,7 +19,7 @@ package org.dockbox.selene.sponge.entities;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import org.dockbox.selene.api.entities.CloneableEntity;
+import org.dockbox.selene.server.minecraft.entities.CloneableEntity;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.Entity;

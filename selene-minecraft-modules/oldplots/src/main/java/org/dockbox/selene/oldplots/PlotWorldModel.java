@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.oldplots;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.annotations.Metadata;
-import org.dockbox.selene.minecraft.dimension.Worlds;
-import org.dockbox.selene.minecraft.dimension.position.Location;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
 
 @Metadata(alias = "plot-world-model")
 public class PlotWorldModel {
@@ -45,7 +45,7 @@ public class PlotWorldModel {
     }
 
     public Exceptional<Location> getLocation(int plotX, int plotZ) {
-        return Selene.provide(Worlds.class)
+        return Provider.provide(Worlds.class)
                 .getWorld(this.getName())
                 .map(world -> new Location(this.getHomeX(plotX), this.getHeight(), this.getHomeZ(plotZ), world));
     }

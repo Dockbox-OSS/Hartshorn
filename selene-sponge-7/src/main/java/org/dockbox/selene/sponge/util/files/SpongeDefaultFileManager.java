@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.sponge.util.files;
 
-import org.dockbox.selene.api.files.FileManager;
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.persistence.FileManager;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 

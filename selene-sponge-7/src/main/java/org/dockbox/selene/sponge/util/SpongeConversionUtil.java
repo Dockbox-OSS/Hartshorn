@@ -32,42 +32,43 @@ import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.sponge.SpongeWorldEdit;
 
-import org.dockbox.selene.api.Worlds;
-import org.dockbox.selene.commands.source.CommandSource;
-import org.dockbox.selene.api.entities.ItemFrame;
-import org.dockbox.selene.server.minecraft.events.entity.SpawnSource;
-import org.dockbox.selene.server.minecraft.events.world.WorldCreatingProperties;
-import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
-import org.dockbox.selene.api.i18n.permissions.PermissionContext;
-import org.dockbox.selene.api.inventory.InventoryType;
-import org.dockbox.selene.api.objects.Console;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.bossbar.BossbarColor;
-import org.dockbox.selene.api.objects.bossbar.BossbarStyle;
-import org.dockbox.selene.api.objects.inventory.Slot;
-import org.dockbox.selene.server.minecraft.item.Enchant;
-import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.api.objects.location.Warp;
-import org.dockbox.selene.minecraft.dimension.world.Chunk;
-import org.dockbox.selene.minecraft.dimension.position.BlockFace;
-import org.dockbox.selene.api.objects.player.Gamemode;
-import org.dockbox.selene.api.objects.player.Hand;
-import org.dockbox.selene.minecraft.players.Player;
-import org.dockbox.selene.server.minecraft.enums.Sounds;
-import org.dockbox.selene.api.objects.targets.Identifiable;
+import org.dockbox.selene.api.domain.Identifiable;
+import org.dockbox.selene.api.domain.Target;
 import org.dockbox.selene.api.domain.tuple.Tristate;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.server.Selene;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.i18n.text.actions.ClickAction;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
 import org.dockbox.selene.api.i18n.text.actions.ShiftClickAction;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
-import org.dockbox.selene.api.util.SeleneUtils;
-import org.dockbox.selene.api.inventory.SimpleElement;
+import org.dockbox.selene.commands.RunCommandAction;
+import org.dockbox.selene.commands.source.CommandSource;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.server.minecraft.Console;
+import org.dockbox.selene.server.minecraft.bossbar.BossbarColor;
+import org.dockbox.selene.server.minecraft.bossbar.BossbarStyle;
+import org.dockbox.selene.server.minecraft.dimension.Chunk;
+import org.dockbox.selene.server.minecraft.dimension.SimpleWarp;
+import org.dockbox.selene.server.minecraft.dimension.Warp;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.dimension.position.BlockFace;
+import org.dockbox.selene.server.minecraft.entities.ItemFrame;
+import org.dockbox.selene.server.minecraft.events.entity.SpawnSource;
+import org.dockbox.selene.server.minecraft.events.world.WorldCreatingProperties;
+import org.dockbox.selene.server.minecraft.inventory.InventoryType;
+import org.dockbox.selene.server.minecraft.inventory.SimpleElement;
+import org.dockbox.selene.server.minecraft.inventory.Slot;
+import org.dockbox.selene.server.minecraft.item.Enchant;
+import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.item.ReferencedItem;
 import org.dockbox.selene.server.minecraft.item.SimpleEnchant;
-import org.dockbox.selene.api.objects.location.SimpleWarp;
+import org.dockbox.selene.server.minecraft.players.Gamemode;
+import org.dockbox.selene.server.minecraft.players.Hand;
+import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Sounds;
 import org.dockbox.selene.sponge.entities.SpongeArmorStand;
 import org.dockbox.selene.sponge.entities.SpongeGenericEntity;
 import org.dockbox.selene.sponge.entities.SpongeItemFrame;
@@ -80,6 +81,7 @@ import org.dockbox.selene.sponge.objects.location.SpongeChunk;
 import org.dockbox.selene.sponge.objects.location.SpongeWorld;
 import org.dockbox.selene.sponge.objects.targets.SpongeConsole;
 import org.dockbox.selene.sponge.objects.targets.SpongePlayer;
+import org.dockbox.selene.util.SeleneUtils;
 import org.dockbox.selene.worldedit.region.Clipboard;
 import org.dockbox.selene.worldedit.region.Region;
 import org.jetbrains.annotations.NotNull;
@@ -225,6 +227,12 @@ public enum SpongeConversionUtil {
         return Exceptional.of(Sponge.getRegistry().getType(SoundType.class, sound.name()));
     }
 
+    public static Exceptional<? extends org.spongepowered.api.command.CommandSource> toSponge(Target target) {
+        if (target instanceof CommandSource) {
+            return toSponge((CommandSource) target);
+        } else return Exceptional.none();
+    }
+
     @NotNull
     public static Exceptional<? extends org.spongepowered.api.command.CommandSource> toSponge(CommandSource src) {
         if (src instanceof Console) return Exceptional.of(Sponge.getServer().getConsole());
@@ -304,7 +312,7 @@ public enum SpongeConversionUtil {
         if (action instanceof ClickAction.OpenUrl) {
             return Exceptional.of(TextActions.openUrl((URL) result));
         }
-        else if (action instanceof ClickAction.RunCommand) {
+        else if (action instanceof RunCommandAction.RunCommand) {
             return Exceptional.of(TextActions.runCommand((String) result));
         }
         else if (action instanceof ClickAction.ChangePage) {
@@ -315,11 +323,11 @@ public enum SpongeConversionUtil {
         }
         else if (action instanceof ClickAction.ExecuteCallback) {
             return Exceptional.of(TextActions.executeCallback(commandSource -> {
-                Consumer<CommandSource> consumer = ((ClickAction.ExecuteCallback) action).getResult();
+                Consumer<Target> consumer = ((ClickAction.ExecuteCallback) action).getResult();
                 try {
                     fromSponge(commandSource).present(consumer).rethrow();
                 }
-                catch (UncheckedSeleneException throwable) {
+                catch (Throwable throwable) {
                     commandSource.sendMessage(Text.of(DefaultResource.UNKNOWN_ERROR.format(throwable.getMessage())));
                 }
             }));
@@ -328,7 +336,7 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    public static Exceptional<Location<World>> toSponge(org.dockbox.selene.minecraft.dimension.position.Location location) {
+    public static Exceptional<Location<World>> toSponge(org.dockbox.selene.server.minecraft.dimension.position.Location location) {
         Exceptional<World> world = toSponge(location.getWorld());
         if (world.caught()) return Exceptional.of(world.error());
         if (!world.present()) return Exceptional.none();
@@ -341,7 +349,7 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    public static Exceptional<World> toSponge(org.dockbox.selene.minecraft.dimension.world.World world) {
+    public static Exceptional<World> toSponge(org.dockbox.selene.server.minecraft.dimension.world.World world) {
         if (world instanceof SpongeWorld) {
             World wref = ((SpongeWorld) world).getReferenceWorld();
             if (null != wref) return Exceptional.of(wref);
@@ -386,7 +394,7 @@ public enum SpongeConversionUtil {
     public static HandType toSponge(Hand hand) {
         if (Hand.MAIN_HAND == hand) return HandTypes.MAIN_HAND;
         if (Hand.OFF_HAND == hand) return HandTypes.OFF_HAND;
-        throw new UncheckedSeleneException("Invalid value in context '" + hand + "'");
+        throw new RuntimeException("Invalid value in context '" + hand + "'");
     }
 
     @NotNull
@@ -431,7 +439,7 @@ public enum SpongeConversionUtil {
             return Exceptional.of(ClickAction.openUrl(((OpenUrl) clickAction).getResult()));
         }
         else if (clickAction instanceof RunCommand) {
-            return Exceptional.of(ClickAction.runCommand((((RunCommand) clickAction).getResult())));
+            return Exceptional.of(RunCommandAction.runCommand((((RunCommand) clickAction).getResult())));
         }
         else if (clickAction instanceof ChangePage) {
             return Exceptional.of(ClickAction.changePage((((ChangePage) clickAction).getResult())));
@@ -507,9 +515,9 @@ public enum SpongeConversionUtil {
     }
 
     public static Warp fromSponge(io.github.nucleuspowered.nucleus.api.nucleusdata.Warp warp) {
-        org.dockbox.selene.minecraft.dimension.position.Location location = warp.getLocation()
+        org.dockbox.selene.server.minecraft.dimension.position.Location location = warp.getLocation()
                 .map(SpongeConversionUtil::fromSponge)
-                .orElse(org.dockbox.selene.minecraft.dimension.position.Location.empty());
+                .orElse(org.dockbox.selene.server.minecraft.dimension.position.Location.empty());
 
         return new SimpleWarp(
                 Exceptional.of(warp.getDescription().map(Text::toString)),
@@ -520,21 +528,21 @@ public enum SpongeConversionUtil {
     }
 
     @NotNull
-    public static org.dockbox.selene.minecraft.dimension.position.Location fromSponge(Location<World> location) {
-        org.dockbox.selene.minecraft.dimension.world.World world = fromSponge(location.getExtent());
+    public static org.dockbox.selene.server.minecraft.dimension.position.Location fromSponge(Location<World> location) {
+        org.dockbox.selene.server.minecraft.dimension.world.World world = fromSponge(location.getExtent());
         Vector3N vector3N = Vector3N.of(location.getX(), location.getY(), location.getZ());
-        return new org.dockbox.selene.minecraft.dimension.position.Location(vector3N, world);
+        return new org.dockbox.selene.server.minecraft.dimension.position.Location(vector3N, world);
     }
 
     @NotNull
-    public static org.dockbox.selene.minecraft.dimension.world.World fromSponge(World world) {
+    public static org.dockbox.selene.server.minecraft.dimension.world.World fromSponge(World world) {
         return fromSponge(world.getProperties());
     }
 
-    public static org.dockbox.selene.minecraft.dimension.world.World fromSponge(WorldProperties properties) {
+    public static org.dockbox.selene.server.minecraft.dimension.world.World fromSponge(WorldProperties properties) {
         Vector3i vector3i = properties.getSpawnPosition();
         Vector3N spawnLocation = Vector3N.of(vector3i.getX(), vector3i.getY(), vector3i.getZ());
-        org.dockbox.selene.minecraft.dimension.world.World spongeWorld = new SpongeWorld(
+        org.dockbox.selene.server.minecraft.dimension.world.World spongeWorld = new SpongeWorld(
                 properties.getUniqueId(),
                 properties.getWorldName(),
                 properties.loadOnStartup(),
@@ -553,10 +561,10 @@ public enum SpongeConversionUtil {
     public static Hand fromSponge(HandType handType) {
         if (handType == HandTypes.MAIN_HAND) return Hand.MAIN_HAND;
         else if (handType == HandTypes.OFF_HAND) return Hand.OFF_HAND;
-        throw new UncheckedSeleneException("Invalid value in context '" + handType + "'");
+        throw new RuntimeException("Invalid value in context '" + handType + "'");
     }
 
-    public static Element toSponge(org.dockbox.selene.api.inventory.Element element) {
+    public static Element toSponge(org.dockbox.selene.server.minecraft.inventory.Element element) {
         if (element instanceof SimpleElement) {
             return Element.of(toSponge(element.item()),
                     a -> ((SimpleElement) element).perform(fromSponge(a.getPlayer()))
@@ -583,9 +591,9 @@ public enum SpongeConversionUtil {
         return new SpongePlayer(player.getUniqueId(), player.getName());
     }
 
-    public static org.dockbox.selene.api.inventory.Element fromSponge(Element element) {
+    public static org.dockbox.selene.server.minecraft.inventory.Element fromSponge(Element element) {
         Item item = fromSponge(element.getItem().createStack());
-        return org.dockbox.selene.api.inventory.Element.of(item); // Action is skipped here
+        return org.dockbox.selene.server.minecraft.inventory.Element.of(item); // Action is skipped here
     }
 
     @NotNull
@@ -629,7 +637,7 @@ public enum SpongeConversionUtil {
         }
     }
 
-    public static com.sk89q.worldedit.world.World toWorldEdit(org.dockbox.selene.minecraft.dimension.world.World world) {
+    public static com.sk89q.worldedit.world.World toWorldEdit(org.dockbox.selene.server.minecraft.dimension.world.World world) {
         return SpongeWorldEdit.inst().getAdapter().getWorld(toSponge(world).orNull());
     }
 
@@ -648,8 +656,8 @@ public enum SpongeConversionUtil {
         return Vector3N.of(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public static org.dockbox.selene.minecraft.dimension.world.World fromWorldEdit(com.sk89q.worldedit.world.World world) {
-        return Selene.provide(Worlds.class).getWorld(world.getName()).orNull();
+    public static org.dockbox.selene.server.minecraft.dimension.world.World fromWorldEdit(com.sk89q.worldedit.world.World world) {
+        return Provider.provide(Worlds.class).getWorld(world.getName()).orNull();
     }
 
     public static Exceptional<BaseBlock> toWorldEdit(Item item, ParserContext context) {
@@ -746,7 +754,7 @@ public enum SpongeConversionUtil {
         }
     }
 
-    public static com.intellectualcrafters.plot.object.Location toPlotSquared(org.dockbox.selene.minecraft.dimension.position.Location location) {
+    public static com.intellectualcrafters.plot.object.Location toPlotSquared(org.dockbox.selene.server.minecraft.dimension.position.Location location) {
         return new com.intellectualcrafters.plot.object.Location(
                 location.getWorld().getName(),
                 (int) location.getX(),
@@ -756,9 +764,9 @@ public enum SpongeConversionUtil {
         );
     }
 
-    public static org.dockbox.selene.minecraft.dimension.position.Location fromPlotSquared(com.intellectualcrafters.plot.object.Location location) {
-        org.dockbox.selene.minecraft.dimension.world.World world = Selene.provide(Worlds.class).getWorld(location.getWorld()).orNull();
-        return new org.dockbox.selene.minecraft.dimension.position.Location(
+    public static org.dockbox.selene.server.minecraft.dimension.position.Location fromPlotSquared(com.intellectualcrafters.plot.object.Location location) {
+        org.dockbox.selene.server.minecraft.dimension.world.World world = Provider.provide(Worlds.class).getWorld(location.getWorld()).orNull();
+        return new org.dockbox.selene.server.minecraft.dimension.position.Location(
                 location.getX(), location.getY(), location.getZ(), world
         );
     }
@@ -782,7 +790,7 @@ public enum SpongeConversionUtil {
         return Exceptional.of(new PlotBlock((short) id, (byte) meta));
     }
 
-    public static org.dockbox.selene.api.entities.Entity fromSponge(Entity entity) {
+    public static org.dockbox.selene.server.minecraft.entities.Entity fromSponge(Entity entity) {
         EntityType type = entity.getType();
         if (type == EntityTypes.ARMOR_STAND) {
             return new SpongeArmorStand((ArmorStand) entity);

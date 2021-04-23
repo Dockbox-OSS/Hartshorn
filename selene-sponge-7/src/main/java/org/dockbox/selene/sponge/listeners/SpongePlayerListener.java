@@ -19,6 +19,15 @@ package org.dockbox.selene.sponge.listeners;
 
 import com.flowpowered.math.vector.Vector3d;
 
+import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.events.parents.Cancellable;
+import org.dockbox.selene.api.events.parents.Event;
+import org.dockbox.selene.server.minecraft.dimension.Warp;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.players.ClickType;
+import org.dockbox.selene.server.minecraft.players.Hand;
+import org.dockbox.selene.server.minecraft.enums.PortalType;
 import org.dockbox.selene.server.minecraft.events.chat.SendChatEvent;
 import org.dockbox.selene.server.minecraft.events.moderation.IpBannedEvent;
 import org.dockbox.selene.server.minecraft.events.moderation.IpUnbannedEvent;
@@ -30,8 +39,6 @@ import org.dockbox.selene.server.minecraft.events.moderation.PlayerNotedEvent;
 import org.dockbox.selene.server.minecraft.events.moderation.PlayerUnbannedEvent;
 import org.dockbox.selene.server.minecraft.events.moderation.PlayerWarnedEvent;
 import org.dockbox.selene.server.minecraft.events.moderation.PlayerWarningExpired;
-import org.dockbox.selene.api.events.parents.Cancellable;
-import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.server.minecraft.events.player.PlayerAuthEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerJoinEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerLeaveEvent;
@@ -42,15 +49,8 @@ import org.dockbox.selene.server.minecraft.events.player.PlayerWarpEvent;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteractAirEvent;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteractBlockEvent;
 import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteractEntityEvent;
-import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.location.Warp;
-import org.dockbox.selene.minecraft.dimension.position.Location;
-import org.dockbox.selene.api.objects.player.ClickType;
-import org.dockbox.selene.api.objects.player.Hand;
-import org.dockbox.selene.server.minecraft.enums.PortalType;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.block.BlockTypes;
@@ -432,7 +432,7 @@ public class SpongePlayerListener {
             @Getter("getSource") Player player,
             @Getter("getTargetEntity") Entity entity
     ) {
-        org.dockbox.selene.api.entities.Entity targetEntity = SpongeConversionUtil.fromSponge(entity);
+        org.dockbox.selene.server.minecraft.entities.Entity targetEntity = SpongeConversionUtil.fromSponge(entity);
 
         Cancellable cancellable = new PlayerInteractEntityEvent(
                 SpongeConversionUtil.fromSponge(player),

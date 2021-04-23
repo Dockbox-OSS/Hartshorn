@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.sponge.util.command.values;
 
-import org.dockbox.selene.commands.context.ArgumentConverter;
+import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
-import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.command.CommandSource;

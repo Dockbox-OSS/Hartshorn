@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.database;
 
-import org.dockbox.selene.api.domain.table.column.ColumnIdentifier;
-import org.dockbox.selene.api.domain.table.column.SimpleColumnIdentifier;
+import org.dockbox.selene.domain.table.column.ColumnIdentifier;
+import org.dockbox.selene.domain.table.column.SimpleColumnIdentifier;
 
 import java.util.UUID;
 

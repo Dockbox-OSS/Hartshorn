@@ -22,18 +22,21 @@ import com.flowpowered.math.vector.Vector3d;
 import net.minecraft.entity.item.EntityArmorStand;
 
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.entities.ArmorStand;
-import org.dockbox.selene.api.objects.inventory.Inventory;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.di.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
-import org.dockbox.selene.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.entities.ArmorStand;
+import org.dockbox.selene.server.minecraft.inventory.Inventory;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.dockbox.selene.util.SeleneUtils;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
+
+import java.util.Map;
 
 public class SpongeArmorStand extends SpongeCloneableEntity<EntityArmorStand, ArmorStand> implements ArmorStand {
 
@@ -46,6 +49,10 @@ public class SpongeArmorStand extends SpongeCloneableEntity<EntityArmorStand, Ar
             SeleneUtils.entry(Limbs.RIGHT_LEG, Keys.RIGHT_LEG_ROTATION));
 
     private final org.spongepowered.api.entity.living.ArmorStand representation;
+
+    SpongeArmorStand() {
+        throw Bindings.requireAutowiring();
+    }
 
     public SpongeArmorStand(org.spongepowered.api.entity.living.ArmorStand representation) {
         this.representation = representation;

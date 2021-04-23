@@ -35,18 +35,18 @@ public class SpongeFlagWrapper<T> extends AbstractPlotFlag<T> {
 
     @Override
     public String serialize(T object) {
-        return flag.valueToString(object);
+        return this.flag.valueToString(object);
     }
 
     @Override
     public T parse(String raw) {
-        return flag.parseValue(raw);
+        return this.flag.parseValue(raw);
     }
 
     @Override
     public Class<T> getType() {
         //noinspection unchecked
-        return (Class<T>) ((ParameterizedType) flag.getClass()
+        return (Class<T>) ((ParameterizedType) this.flag.getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0];
     }
 }

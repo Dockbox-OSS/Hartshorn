@@ -17,20 +17,20 @@
 
 package org.dockbox.selene.sponge.inventory.builder;
 
-import org.dockbox.selene.api.inventory.Element;
-import org.dockbox.selene.api.inventory.InventoryLayout;
-import org.dockbox.selene.minecraft.inventory.builder.PaginatedPaneBuilder;
-import org.dockbox.selene.minecraft.inventory.pane.PaginatedPane;
-import org.dockbox.selene.minecraft.inventory.properties.InventoryTypeProperty;
-import org.dockbox.selene.api.objects.keys.Keys;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.properties.InjectorProperty;
+import org.dockbox.selene.server.minecraft.inventory.Element;
+import org.dockbox.selene.server.minecraft.inventory.InventoryLayout;
+import org.dockbox.selene.server.minecraft.inventory.builder.PaginatedPaneBuilder;
+import org.dockbox.selene.server.minecraft.inventory.pane.PaginatedPane;
+import org.dockbox.selene.server.minecraft.inventory.properties.InventoryTypeProperty;
 import org.dockbox.selene.sponge.SpongeAPI7Bootstrap;
 import org.dockbox.selene.sponge.inventory.SpongeInventoryLayout;
 import org.dockbox.selene.sponge.inventory.pane.SpongePaginatedPane;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.dockbox.selene.util.SeleneUtils;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
 
 import java.util.Collection;
@@ -67,7 +67,7 @@ public class SpongePaginatedPaneBuilder extends PaginatedPaneBuilder {
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
-        Keys.value(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
+        Bindings.value(InventoryTypeProperty.KEY, InventoryLayout.class, properties)
                 .present(layout -> {
                     this.builder = Page.builder(SpongeConversionUtil.toSponge(layout.getIventoryType()));
                     this.layout(layout);

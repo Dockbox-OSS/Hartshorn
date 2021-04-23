@@ -1,3 +1,4 @@
 dependencies {
     compileOnly(project(':selene-modules:database'))
+    compileOnly(project(':selene-modules:structures'))
 }

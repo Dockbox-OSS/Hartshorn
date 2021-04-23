@@ -17,9 +17,7 @@
 
 package org.dockbox.selene.web;
 
-import org.dockbox.selene.api.exceptions.CheckedSeleneException;
-
-public class FileFormatNotSupportedException extends CheckedSeleneException {
+public class FileFormatNotSupportedException extends Exception {
     private final String format;
 
     public FileFormatNotSupportedException(String format) {

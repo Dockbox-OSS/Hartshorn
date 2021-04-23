@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.dave.models;
 
-import org.dockbox.selene.api.annotations.entity.Metadata;
+import org.dockbox.selene.api.entity.annotations.Metadata;
 
 import java.util.List;
 

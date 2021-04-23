@@ -18,11 +18,11 @@
 package org.dockbox.selene.toolbinding;
 
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.minecraft.item.Item;
-import org.dockbox.selene.minecraft.players.ClickType;
-import org.dockbox.selene.minecraft.players.Hand;
-import org.dockbox.selene.minecraft.players.Player;
-import org.dockbox.selene.minecraft.players.Sneaking;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.players.ClickType;
+import org.dockbox.selene.server.minecraft.players.Hand;
+import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Sneaking;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 

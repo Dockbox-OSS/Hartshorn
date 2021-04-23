@@ -24,13 +24,15 @@ import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
+import org.dockbox.selene.api.module.SeleneModuleBootstrap;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.events.ServerStartedEvent;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class ServerBootstrap extends SeleneBootstrap {
+public abstract class ServerBootstrap extends SeleneModuleBootstrap {
 
     /**
      * Instantiates {@link Selene}, creating a local injector based on the provided {@link
@@ -55,22 +57,23 @@ public abstract class ServerBootstrap extends SeleneBootstrap {
     protected void debugRegisteredInstances(ServerStartedEvent event) {
         Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
         AtomicInteger unprovisionedTypes = new AtomicInteger();
-        super.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
-            try {
-                Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
-                Class<?> providerType = binding.getProvider().get().getClass();
-
-                if (!keyType.equals(providerType) && null != providerType)
-                    Selene.log().info("  - \u00A77" + keyType.getSimpleName() + ": \u00A78" + providerType.getCanonicalName());
-            }
-            catch (ProvisionException | AssertionError e) {
-                unprovisionedTypes.getAndIncrement();
-            }
-        });
-        Selene.log().info("  \u00A77.. and " + unprovisionedTypes.get() + " unprovisioned types.");
+        // TODO: Migrate to native
+//        super.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
+//            try {
+//                Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
+//                Class<?> providerType = binding.getProvider().get().getClass();
+//
+//                if (!keyType.equals(providerType) && null != providerType)
+//                    Selene.log().info("  - \u00A77" + keyType.getSimpleName() + ": \u00A78" + providerType.getCanonicalName());
+//            }
+//            catch (ProvisionException | AssertionError e) {
+//                unprovisionedTypes.getAndIncrement();
+//            }
+//        });
+//        Selene.log().info("  \u00A77.. and " + unprovisionedTypes.get() + " unprovisioned types.");
 
         Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded modules: ");
-        ModuleManager em = Selene.provide(ModuleManager.class);
+        ModuleManager em = Provider.provide(ModuleManager.class);
         em.getRegisteredModuleIds().forEach(ext -> {
             Exceptional<ModuleContainer> header = em.getContainer(ext);
             if (header.present()) {
@@ -86,7 +89,7 @@ public abstract class ServerBootstrap extends SeleneBootstrap {
         });
 
         Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded event handlers: ");
-        Selene.provide(EventBus.class).getListenersToInvokers().forEach((listener, invokers) -> {
+        Provider.provide(EventBus.class).getListenersToInvokers().forEach((listener, invokers) -> {
             Class<?> type;
             if (listener instanceof Class) type = (Class<?>) listener;
             else type = listener.getClass();

@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.inventory.pane;
 
-import org.dockbox.selene.api.inventory.Element;
-import org.dockbox.selene.minecraft.inventory.pane.PaginatedPane;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.inventory.Element;
+import org.dockbox.selene.server.minecraft.inventory.pane.PaginatedPane;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 
 import java.util.Collection;

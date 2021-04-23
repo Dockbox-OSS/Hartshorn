@@ -19,11 +19,13 @@ package org.dockbox.selene.palswap.fileparsers;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.minecraft.item.Item;
-import org.dockbox.selene.minecraft.item.storage.MinecraftItems;
+import org.dockbox.selene.api.exceptions.Except;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.palswap.BlockRegistryModule;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.server.minecraft.MinecraftVersion;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +53,7 @@ public abstract class BlockRegistryParser {
                 return Files.lines(ePath.get()).collect(Collectors.toList());
             }
         } catch (IOException e) {
-            Selene.handle(e);
+            Except.handle(e);
         }
         return new ArrayList<>();
     }
@@ -100,14 +102,14 @@ public abstract class BlockRegistryParser {
     }
 
     public void SaveItemData(String filename) {
-        FileManager fm = Selene.provide(FileManager.class);
+        FileManager fm = Provider.provide(FileManager.class);
         Path file = fm.getDataFile(BlockRegistryModule.class, filename);
         fm.write(file, ItemData.of(this.itemRegistry, this.blockIdentifierIDs));
     }
 
     public void LoadItemData(String filename) {
         if (null == this.itemRegistry || null == this.blockIdentifierIDs) {
-            FileManager fm = Selene.provide(FileManager.class);
+            FileManager fm = Provider.provide(FileManager.class);
             Path file = fm.getDataFile(BlockRegistryModule.class, filename);
 
             ItemData itemData = fm.read(file, ItemData.class).or(new ItemData());

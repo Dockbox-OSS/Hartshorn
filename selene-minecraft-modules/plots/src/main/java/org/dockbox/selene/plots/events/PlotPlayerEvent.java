@@ -19,7 +19,7 @@ package org.dockbox.selene.plots.events;
 
 import org.dockbox.selene.api.domain.Target;
 import org.dockbox.selene.api.events.parents.Targetable;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.plots.Plot;
 
 public abstract class PlotPlayerEvent extends PlotEvent implements Targetable {

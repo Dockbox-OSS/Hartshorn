@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.plots.events.membership;
 
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.events.CancellablePlotEvent;
 

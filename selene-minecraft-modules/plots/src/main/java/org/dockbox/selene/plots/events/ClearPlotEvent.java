@@ -18,7 +18,7 @@
 package org.dockbox.selene.plots.events;
 
 import org.dockbox.selene.api.events.AbstractCancellableEvent;
-import org.dockbox.selene.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
 
 public class ClearPlotEvent extends AbstractCancellableEvent {
 

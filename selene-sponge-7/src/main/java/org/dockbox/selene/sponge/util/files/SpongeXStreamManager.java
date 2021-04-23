@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.util.files;
 
-import org.dockbox.selene.common.files.DefaultXStreamManager;
+import org.dockbox.selene.persistence.xstream.DefaultXStreamManager;
 
 public class SpongeXStreamManager extends DefaultXStreamManager implements SpongeDefaultFileManager {
 }

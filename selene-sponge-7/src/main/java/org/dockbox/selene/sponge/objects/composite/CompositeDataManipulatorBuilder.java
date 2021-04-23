@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.composite;
 
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataView;

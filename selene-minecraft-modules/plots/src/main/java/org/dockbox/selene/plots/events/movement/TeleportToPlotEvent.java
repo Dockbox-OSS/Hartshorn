@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.plots.events.movement;
 
-import org.dockbox.selene.minecraft.dimension.position.Location;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.events.CancellablePlotPlayerEvent;
 

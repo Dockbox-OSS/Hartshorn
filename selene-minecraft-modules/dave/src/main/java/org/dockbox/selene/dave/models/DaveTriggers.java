@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.dave.models;
 
-import org.dockbox.selene.api.annotations.entity.Metadata;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.api.entity.annotations.Metadata;
 import org.dockbox.selene.dave.DaveUtils;
+import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.List;

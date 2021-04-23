@@ -19,8 +19,8 @@ package org.dockbox.selene.worldedit;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.annotations.RequiresBinding;
-import org.dockbox.selene.minecraft.item.Item;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.worldedit.region.Clipboard;
 import org.dockbox.selene.worldedit.region.Mask;
 import org.dockbox.selene.worldedit.region.Pattern;

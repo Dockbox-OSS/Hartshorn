@@ -17,60 +17,59 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.api.BroadcastService;
-import org.dockbox.selene.api.ExceptionHelper;
-import org.dockbox.selene.api.Players;
+import org.dockbox.selene.api.GlobalConfig;
+import org.dockbox.selene.api.PropertiesGlobalConfig;
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.SimpleBroadcastService;
-import org.dockbox.selene.api.SimpleResourceService;
-import org.dockbox.selene.api.ThreadUtils;
-import org.dockbox.selene.api.Worlds;
-import org.dockbox.selene.api.command.CommandBus;
-import org.dockbox.selene.api.config.GlobalConfig;
-import org.dockbox.selene.api.discord.DiscordPagination;
-import org.dockbox.selene.api.discord.DiscordUtils;
-import org.dockbox.selene.api.entities.ArmorStand;
-import org.dockbox.selene.api.entities.ItemFrame;
 import org.dockbox.selene.api.events.EventBus;
-import org.dockbox.selene.api.files.FileManager;
-import org.dockbox.selene.api.files.FileType;
-import org.dockbox.selene.api.i18n.common.ResourceService;
+import org.dockbox.selene.api.events.SimpleEventBus;
+import org.dockbox.selene.api.exceptions.ExceptionHelper;
+import org.dockbox.selene.api.exceptions.SimpleExceptionHelper;
+import org.dockbox.selene.api.i18n.ResourceService;
+import org.dockbox.selene.api.i18n.SimpleResourceService;
 import org.dockbox.selene.api.i18n.permissions.Permission;
+import org.dockbox.selene.api.i18n.permissions.SimplePermission;
 import org.dockbox.selene.api.i18n.text.pagination.PaginationBuilder;
-import org.dockbox.selene.api.inventory.Element;
-import org.dockbox.selene.api.inventory.SimpleElement;
 import org.dockbox.selene.api.module.ModuleManager;
-import org.dockbox.selene.api.objects.Console;
-import org.dockbox.selene.api.objects.bossbar.Bossbar;
-import org.dockbox.selene.api.objects.profile.Profile;
-import org.dockbox.selene.api.server.Server;
-import org.dockbox.selene.api.server.config.SimpleGlobalConfig;
-import org.dockbox.selene.api.tasks.TaskRunner;
-import org.dockbox.selene.api.web.GsonWebUtil;
-import org.dockbox.selene.api.web.GsonXmlWebUtil;
+import org.dockbox.selene.api.module.SimpleModuleManager;
+import org.dockbox.selene.api.task.TaskRunner;
+import org.dockbox.selene.api.task.ThreadUtils;
+import org.dockbox.selene.commands.CommandBus;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.commands.values.AbstractFlagCollection;
-import org.dockbox.selene.common.SimpleExceptionHelper;
-import org.dockbox.selene.common.discord.SimpleDiscordPagination;
-import org.dockbox.selene.common.discord.SimpleMessageTemplate;
-import org.dockbox.selene.common.events.SimpleEventBus;
-import org.dockbox.selene.common.i18n.SimplePermission;
-import org.dockbox.selene.common.modules.SimpleModuleManager;
 import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.dialects.sqlite.SQLiteMan;
+import org.dockbox.selene.di.Bindings;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.discord.DiscordPagination;
+import org.dockbox.selene.discord.DiscordUtils;
+import org.dockbox.selene.discord.SimpleDiscordPagination;
+import org.dockbox.selene.discord.SimpleMessageTemplate;
 import org.dockbox.selene.discord.templates.MessageTemplate;
-import org.dockbox.selene.integrated.DefaultServer;
-import org.dockbox.selene.minecraft.inventory.builder.LayoutBuilder;
-import org.dockbox.selene.minecraft.inventory.builder.PaginatedPaneBuilder;
-import org.dockbox.selene.minecraft.inventory.builder.StaticPaneBuilder;
-import org.dockbox.selene.minecraft.item.maps.CustomMapService;
 import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
 import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
-import org.dockbox.selene.packets.ChangeGameStatePacket;
-import org.dockbox.selene.packets.SpawnEntityPacket;
+import org.dockbox.selene.persistence.FileManager;
+import org.dockbox.selene.persistence.FileTypes;
 import org.dockbox.selene.plots.PlotService;
+import org.dockbox.selene.server.DefaultServer;
+import org.dockbox.selene.server.Server;
+import org.dockbox.selene.server.minecraft.Console;
+import org.dockbox.selene.server.minecraft.bossbar.Bossbar;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.entities.ArmorStand;
+import org.dockbox.selene.server.minecraft.entities.ItemFrame;
+import org.dockbox.selene.server.minecraft.inventory.Element;
+import org.dockbox.selene.server.minecraft.inventory.SimpleElement;
+import org.dockbox.selene.server.minecraft.inventory.builder.LayoutBuilder;
+import org.dockbox.selene.server.minecraft.inventory.builder.PaginatedPaneBuilder;
+import org.dockbox.selene.server.minecraft.inventory.builder.StaticPaneBuilder;
 import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.item.maps.CustomMapService;
+import org.dockbox.selene.server.minecraft.packets.real.ChangeGameStatePacket;
+import org.dockbox.selene.server.minecraft.packets.real.SpawnEntityPacket;
+import org.dockbox.selene.server.minecraft.players.Players;
+import org.dockbox.selene.server.minecraft.players.Profile;
+import org.dockbox.selene.server.minecraft.service.BroadcastService;
+import org.dockbox.selene.server.minecraft.service.SimpleBroadcastService;
 import org.dockbox.selene.sponge.entities.SpongeArmorStand;
 import org.dockbox.selene.sponge.entities.SpongeItemFrame;
 import org.dockbox.selene.sponge.inventory.builder.SpongeLayoutBuilder;
@@ -88,7 +87,9 @@ import org.dockbox.selene.sponge.util.command.SpongeCommandBus;
 import org.dockbox.selene.sponge.util.command.values.SpongeFlagCollection;
 import org.dockbox.selene.sponge.util.files.SpongeConfigurateManager;
 import org.dockbox.selene.sponge.util.files.SpongeXStreamManager;
-import org.dockbox.selene.util.web.WebUtil;
+import org.dockbox.selene.web.GsonWebUtil;
+import org.dockbox.selene.web.GsonXmlWebUtil;
+import org.dockbox.selene.web.WebUtil;
 import org.dockbox.selene.worldedit.WorldEditService;
 import org.slf4j.Logger;
 
@@ -110,14 +111,14 @@ public class SpongeInjector extends InjectConfiguration {
         this.bind(DiscordUtils.class).to(SpongeDiscordUtils.class);
         this.bind(ThreadUtils.class).to(SpongeThreadUtils.class);
         this.bind(WebUtil.class).to(GsonWebUtil.class);
-        this.bind(WebUtil.class).annotatedWith(FileType.JSON.getFormat()).to(GsonWebUtil.class);
-        this.bind(WebUtil.class).annotatedWith(FileType.XML.getFormat()).to(GsonXmlWebUtil.class);
+        this.bind(WebUtil.class).annotatedWith(Bindings.meta(FileTypes.JSON)).to(GsonWebUtil.class);
+        this.bind(WebUtil.class).annotatedWith(Bindings.meta(FileTypes.XML)).to(GsonXmlWebUtil.class);
 
         // File management
         this.bind(FileManager.class).to(SpongeConfigurateManager.class);
-        this.bind(FileManager.class).annotatedWith(FileType.YAML.getFormat()).to(SpongeConfigurateManager.class);
-        this.bind(FileManager.class).annotatedWith(FileType.XML.getFormat()).to(SpongeXStreamManager.class);
-        this.bind(SQLMan.class).annotatedWith(FileType.SQLITE.getFormat()).to(SQLiteMan.class);
+        this.bind(FileManager.class).annotatedWith(Bindings.meta(FileTypes.YAML)).to(SpongeConfigurateManager.class);
+        this.bind(FileManager.class).annotatedWith(Bindings.meta(FileTypes.XML)).to(SpongeXStreamManager.class);
+        this.bind(SQLMan.class).annotatedWith(Bindings.meta(FileTypes.SQLITE)).to(SQLiteMan.class);
 
         // Services
         this.bind(Players.class).to(SpongePlayers.class);
@@ -153,7 +154,7 @@ public class SpongeInjector extends InjectConfiguration {
         // Globally accessible
         // Config can be recreated, so no external tracking is required (contents obtained from file, no
         // cache writes)
-        this.bind(GlobalConfig.class).toInstance(new SimpleGlobalConfig());
+        this.bind(GlobalConfig.class).toInstance(new PropertiesGlobalConfig());
 
         // Log is created from LoggerFactory externally
         this.bind(Logger.class).toInstance(Selene.log());

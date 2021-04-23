@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.sponge.entities;
 
-import org.dockbox.selene.api.entities.ArmorStandInventory;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.inventory.Slot;
+import org.dockbox.selene.server.minecraft.entities.ArmorStandInventory;
+import org.dockbox.selene.server.minecraft.inventory.Slot;
 import org.dockbox.selene.server.minecraft.item.Item;
-import org.dockbox.selene.api.objects.inventory.AbstractInventoryRow;
+import org.dockbox.selene.server.minecraft.players.inventory.AbstractInventoryRow;
 import org.dockbox.selene.sponge.objects.inventory.SpongeInventory;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
 import org.spongepowered.api.item.inventory.equipment.EquipmentInventory;

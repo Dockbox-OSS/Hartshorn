@@ -18,11 +18,11 @@
 package org.dockbox.selene.sponge.objects.location;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.objects.ReferencedWrapper;
-import org.dockbox.selene.minecraft.dimension.world.Chunk;
-import org.dockbox.selene.minecraft.dimension.world.World;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
+import org.dockbox.selene.server.minecraft.dimension.Chunk;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.dockbox.selene.util.ReferencedWrapper;
 import org.spongepowered.api.world.extent.Extent;
 
 public class SpongeChunk extends ReferencedWrapper<org.spongepowered.api.world.Chunk> implements Chunk, SpongeDimension {

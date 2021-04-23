@@ -34,11 +34,11 @@ import com.plotsquared.sponge.events.PlotFlagAddEvent;
 import com.plotsquared.sponge.events.PlotFlagRemoveEvent;
 import com.plotsquared.sponge.events.PlotUnlinkEvent;
 
-import org.dockbox.selene.api.Players;
-import org.dockbox.selene.api.Worlds;
 import org.dockbox.selene.api.events.parents.Cancellable;
-import org.dockbox.selene.minecraft.dimension.position.Direction;
-import org.dockbox.selene.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.dimension.position.Direction;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.players.Players;
 import org.dockbox.selene.plots.Plot;
 import org.dockbox.selene.plots.PlotMembership;
 import org.dockbox.selene.plots.PlotProperties;
@@ -96,7 +96,7 @@ public class PlotSquaredEventListener {
     public void on(PlayerPlotDeniedEvent event) {
         new PlotMembershipChangedEvent(
                 new SpongePlot(event.getPlot()),
-                players.getPlayer(event.getPlayer()).orNull(),
+                this.players.getPlayer(event.getPlayer()).orNull(),
                 SpongeConversionUtil.fromSponge(event.getInitiator()),
                 PlotMembership.DENIED
         ).post();
@@ -106,7 +106,7 @@ public class PlotSquaredEventListener {
     public void on(PlayerPlotHelperEvent event) {
         new PlotMembershipChangedEvent(
                 new SpongePlot(event.getPlot()),
-                players.getPlayer(event.getPlayer()).orNull(),
+                this.players.getPlayer(event.getPlayer()).orNull(),
                 SpongeConversionUtil.fromSponge(event.getInitiator()),
                 PlotMembership.MEMBER
         ).post();
@@ -116,7 +116,7 @@ public class PlotSquaredEventListener {
     public void on(PlayerPlotTrustedEvent event) {
         new PlotMembershipChangedEvent(
                 new SpongePlot(event.getPlot()),
-                players.getPlayer(event.getPlayer()).orNull(),
+                this.players.getPlayer(event.getPlayer()).orNull(),
                 SpongeConversionUtil.fromSponge(event.getInitiator()),
                 PlotMembership.TRUSTED
         ).post();
@@ -136,7 +136,7 @@ public class PlotSquaredEventListener {
     public void on(PlotChangeOwnerEvent event) {
         new PlotMembershipChangedEvent(
                 new SpongePlot(event.getPlot()),
-                players.getPlayer(event.getNewOwner()).orNull(),
+                this.players.getPlayer(event.getNewOwner()).orNull(),
                 SpongeConversionUtil.fromSponge(event.getInitiator()),
                 PlotMembership.OWNER
         ).post();
@@ -144,7 +144,7 @@ public class PlotSquaredEventListener {
 
     @Listener
     public void on(PlotClearEvent event) {
-        worlds.getWorld(event.getWorld()).present(world -> {
+        this.worlds.getWorld(event.getWorld()).present(world -> {
             Cancellable cancellable = new ClearPlotEvent(world, event.getPlotId().x, event.getPlotId().y);
             event.setCancelled(cancellable.isCancelled());
         });
@@ -179,7 +179,7 @@ public class PlotSquaredEventListener {
                 break;
         }
         PlotProperties finalProperty = property;
-        worlds.getWorld(event.getWorld()).present(world -> {
+        this.worlds.getWorld(event.getWorld()).present(world -> {
             new PlotChangePropertyEvent(
                     Plot.getById(world, event.getPlotId().x, event.getPlotId().y).orNull(),
                     finalProperty
@@ -189,7 +189,7 @@ public class PlotSquaredEventListener {
 
     @Listener
     public void on(PlotDeleteEvent event) {
-        worlds.getWorld(event.getWorld()).present(world -> {
+        this.worlds.getWorld(event.getWorld()).present(world -> {
             Cancellable cancellable = new DeletePlotEvent(world, event.getPlotId().x, event.getPlotId().y);
             event.setCancelled(cancellable.isCancelled());
         });
@@ -224,7 +224,7 @@ public class PlotSquaredEventListener {
 
     @Listener
     public void on(PlotAutoMergeEvent event) {
-        Collection<Plot> plots = getPlots(event.getWorld().getUniqueId(), event.getPlots());
+        Collection<Plot> plots = this.getPlots(event.getWorld().getUniqueId(), event.getPlots());
         Cancellable cancellable = new org.dockbox.selene.plots.events.merge.PlotAutoMergeEvent(
                 new SpongePlot(event.getPlot()),
                 plots
@@ -235,13 +235,13 @@ public class PlotSquaredEventListener {
 
     @Listener
     public void on(PlotUnlinkEvent event) {
-        Collection<Plot> plots = getPlots(event.getWorld().getUniqueId(), event.getPlots());
+        Collection<Plot> plots = this.getPlots(event.getWorld().getUniqueId(), event.getPlots());
         Cancellable cancellable = new org.dockbox.selene.plots.events.merge.PlotUnlinkEvent(plots).post();
         event.setCancelled(cancellable.isCancelled());
     }
 
     private Collection<Plot> getPlots(UUID worldId, Collection<PlotId> plotIds) {
-        World world = worlds.getWorld(worldId).orNull();
+        World world = this.worlds.getWorld(worldId).orNull();
         return plotIds.stream()
                 .map(plotId -> Plot.getById(world, plotId.x, plotId.y).orNull())
                 .filter(Objects::nonNull)

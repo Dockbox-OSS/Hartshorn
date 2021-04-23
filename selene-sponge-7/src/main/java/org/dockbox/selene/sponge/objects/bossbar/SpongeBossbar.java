@@ -17,18 +17,18 @@
 
 package org.dockbox.selene.sponge.objects.bossbar;
 
+import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.api.objects.bossbar.Bossbar;
-import org.dockbox.selene.api.objects.bossbar.BossbarColor;
-import org.dockbox.selene.api.objects.bossbar.BossbarStyle;
-import org.dockbox.selene.api.objects.bossbar.DefaultTickableBossbar;
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.tasks.TaskRunner;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.di.annotations.AutoWired;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.bossbar.Bossbar;
+import org.dockbox.selene.server.minecraft.bossbar.BossbarColor;
+import org.dockbox.selene.server.minecraft.bossbar.BossbarStyle;
+import org.dockbox.selene.server.minecraft.bossbar.DefaultTickableBossbar;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.sponge.util.SpongeConversionUtil;
+import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NonNls;
 import org.spongepowered.api.boss.ServerBossBar;
 
@@ -40,6 +40,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class SpongeBossbar extends DefaultTickableBossbar<ServerBossBar> {
+
+    public SpongeBossbar() {
+        super("", -1, null, null, null);
+        throw new IllegalArgumentException("This type should be instantiated through autowiring only!");
+    }
 
     @AutoWired
     public SpongeBossbar(String id, float percent, Text text, BossbarColor color, BossbarStyle style) {

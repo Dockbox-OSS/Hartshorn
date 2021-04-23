@@ -23,8 +23,8 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.text.Text;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.discord.templates.MessageTemplate;
 import org.dockbox.selene.util.SeleneUtils;
 
@@ -39,12 +39,12 @@ public class SimpleDiscordPagination implements DiscordPagination {
 
     @Override
     public void sendTo(MessageChannel channel) {
-        Selene.provide(DiscordUtils.class).sendToTextChannel(this, channel);
+        Provider.provide(DiscordUtils.class).sendToTextChannel(this, channel);
     }
 
     @Override
     public void sendTo(User user) {
-        Selene.provide(DiscordUtils.class).sendToUser(this, user);
+        Provider.provide(DiscordUtils.class).sendToUser(this, user);
     }
 
     @Override

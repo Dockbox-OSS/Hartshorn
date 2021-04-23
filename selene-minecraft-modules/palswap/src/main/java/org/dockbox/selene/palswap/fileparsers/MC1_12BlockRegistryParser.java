@@ -19,8 +19,8 @@ package org.dockbox.selene.palswap.fileparsers;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.minecraft.item.Item;
-import org.dockbox.selene.minecraft.item.storage.MinecraftItems;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.selene.palswap.BlockIdentifier;
 import org.dockbox.selene.palswap.BlockRegistryUtil;
 import org.dockbox.selene.palswap.VariantIdentifier;

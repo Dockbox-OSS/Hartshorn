@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.text.navigation;
 
-import org.dockbox.selene.api.objects.targets.MessageReceiver;
+import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
 import org.jetbrains.annotations.NotNull;

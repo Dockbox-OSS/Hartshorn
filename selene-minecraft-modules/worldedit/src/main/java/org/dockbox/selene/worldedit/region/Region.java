@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.worldedit.region;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.minecraft.dimension.world.World;
-import org.dockbox.selene.minecraft.item.Item;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;
 import org.dockbox.selene.worldedit.WorldEditService;
 
@@ -46,11 +46,11 @@ public interface Region {
     World getWorld();
 
     default void replace(Mask mask, Pattern pattern, Player cause) {
-        Selene.provide(WorldEditService.class).replace(this, mask, pattern, cause);
+        Provider.provide(WorldEditService.class).replace(this, mask, pattern, cause);
     }
 
     default void set(Pattern pattern, Player cause) {
-        Selene.provide(WorldEditService.class).set(this, pattern, cause);
+        Provider.provide(WorldEditService.class).set(this, pattern, cause);
     }
 
     default void replace(Item mask, Item pattern, Player cause) {
@@ -58,7 +58,7 @@ public interface Region {
     }
 
     default void replace(Collection<Item> mask, Collection<Item> pattern, Player cause) {
-        Selene.provide(WorldEditService.class).replace(this, mask, pattern, cause);
+        Provider.provide(WorldEditService.class).replace(this, mask, pattern, cause);
     }
 
     default void set(Item pattern, Player cause) {
@@ -66,6 +66,6 @@ public interface Region {
     }
 
     default void set(Collection<Item> pattern, Player cause) {
-        Selene.provide(WorldEditService.class).set(this, pattern, cause);
+        Provider.provide(WorldEditService.class).set(this, pattern, cause);
     }
 }

@@ -38,7 +38,7 @@ public class SpongeEntityListener {
         SpawnType spawnType = event.getCause().getContext().get(EventContextKeys.SPAWN_TYPE).orElse(null);
         if (SpawnTypes.PLACEMENT.equals(spawnType) || SpawnTypes.SPAWN_EGG.equals(spawnType)) {
             SpawnSource source = SpongeConversionUtil.fromSponge(spawnType);
-            org.dockbox.selene.api.objects.player.Player selenePlayer = SpongeConversionUtil.fromSponge(player);
+            org.dockbox.selene.server.minecraft.players.Player selenePlayer = SpongeConversionUtil.fromSponge(player);
 
             for (Entity entity : event.getEntities()) {
                 Cancellable summonEntityEvent = new PlayerSummonEntityEvent(

@@ -18,7 +18,7 @@
 package org.dockbox.selene.worldedit.region;
 
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
 import org.dockbox.selene.util.SeleneUtils;
 
 public class CuboidRegion implements Region {

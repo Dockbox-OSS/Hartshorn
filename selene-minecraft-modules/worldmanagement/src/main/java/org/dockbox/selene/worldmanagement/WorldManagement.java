@@ -17,15 +17,15 @@
 
 package org.dockbox.selene.worldmanagement;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.source.CommandSource;
-import org.dockbox.selene.minecraft.dimension.Worlds;
-import org.dockbox.selene.minecraft.dimension.position.Location;
-import org.dockbox.selene.minecraft.dimension.world.World;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
 import org.dockbox.selene.server.events.ServerReloadEvent;
 import org.dockbox.selene.server.events.ServerStartedEvent;
 import org.dockbox.selene.server.minecraft.events.player.PlayerPortalEvent;
@@ -43,12 +43,12 @@ public class WorldManagement {
 
     @Listener
     public void on(ServerReloadEvent event) {
-        this.config = Selene.provide(WorldManagementConfig.class); // Reload from file, clean instance
+        this.config = Provider.provide(WorldManagementConfig.class); // Reload from file, clean instance
     }
 
     @Listener
     public void on(ServerStartedEvent event) {
-        Selene.provide(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, 5, TimeUnit.MINUTES);
+        Provider.provide(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, 5, TimeUnit.MINUTES);
     }
 
     @Listener
@@ -61,7 +61,7 @@ public class WorldManagement {
 
     @Command(aliases = "blacklist", usage = "blacklist <world{String}>", permission = WorldManagementResources.WORLD_MANAGER)
     public void blacklist(CommandSource src, String world) {
-        if (Selene.provide(Worlds.class).hasWorld(world)) {
+        if (Provider.provide(Worlds.class).hasWorld(world)) {
             this.config.getUnloadBlacklist().add(world);
             this.config.save();
             src.send(WorldManagementResources.WORLD_BLACKLIST_ADDED.format(world));
@@ -71,12 +71,12 @@ public class WorldManagement {
     }
 
     private void unloadEmptyWorlds() {
-        Selene.provide(Worlds.class).getLoadedWorlds()
+        Provider.provide(Worlds.class).getLoadedWorlds()
                 .stream()
                 .filter(world -> world.getPlayerCount() == 0)
                 .filter(world -> this.config.getUnloadBlacklist().contains(world.getName()))
                 .limit(this.config.getMaximumWorldsToUnload())
                 .forEach(World::unload);
-        Selene.provide(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, this.config.getUnloadDelay(), TimeUnit.MINUTES);
+        Provider.provide(TaskRunner.class).acceptDelayed(this::unloadEmptyWorlds, this.config.getUnloadDelay(), TimeUnit.MINUTES);
     }
 }

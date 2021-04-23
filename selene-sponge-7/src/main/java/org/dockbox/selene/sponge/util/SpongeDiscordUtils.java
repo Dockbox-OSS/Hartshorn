@@ -23,7 +23,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.TextChannel;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.common.discord.DefaultDiscordUtils;
+import org.dockbox.selene.discord.DefaultDiscordUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class SpongeDiscordUtils extends DefaultDiscordUtils {

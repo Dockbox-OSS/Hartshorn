@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.sponge.util;
 
-import org.dockbox.selene.api.server.Selene;
-import org.dockbox.selene.api.tasks.Task;
-import org.dockbox.selene.api.tasks.TaskRunner;
+import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.task.Task;
+import org.dockbox.selene.api.task.TaskRunner;
 import org.spongepowered.api.Sponge;
 
 import java.util.concurrent.TimeUnit;
