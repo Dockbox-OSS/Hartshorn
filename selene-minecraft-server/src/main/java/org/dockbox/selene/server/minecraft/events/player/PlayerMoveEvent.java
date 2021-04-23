@@ -19,7 +19,7 @@ package org.dockbox.selene.server.minecraft.events.player;
 
 import org.dockbox.selene.api.domain.Target;
 import org.dockbox.selene.api.events.AbstractTargetCancellableEvent;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Player;
 
 /** The abstract type which can be used to listen to all player movement related events. */
 public abstract class PlayerMoveEvent extends AbstractTargetCancellableEvent {

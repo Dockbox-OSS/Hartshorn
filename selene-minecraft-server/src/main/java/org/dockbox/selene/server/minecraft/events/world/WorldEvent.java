@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.server.minecraft.events.world;
 
+import org.dockbox.selene.api.events.AbstractCancellableEvent;
+
 /** The abstract type which can be used to listen to all world related events. */
 public abstract class WorldEvent extends AbstractCancellableEvent {
 

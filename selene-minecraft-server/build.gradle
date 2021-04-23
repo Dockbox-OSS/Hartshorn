@@ -24,20 +24,10 @@ dependencies {
     compile(project(':selene-modules'))
     compile(project(':selene-commands'))
 
-    // Access to MinecraftItems (storage) through MinecraftVersion
-    compile(project(':selene-minecraft-server:minecraft-items'))
-    // Access to players through BroadcastService
-    compile(project(':selene-minecraft-server:minecraft-players'))
-    // Access to various resources for events
-    compile(project(':selene-minecraft-server:minecraft-dimensions'))
-    compile(project(':selene-minecraft-server:minecraft-inventory'))
-    compile(project(':selene-minecraft-server:minecraft-entities'))
-    compile(project(':selene-minecraft-server:minecraft-packets'))
-}
-
-subprojects { Project subProject ->
-    dependencies {
-        compileOnly project(':selene-minecraft-server')
+    new File(parent.rootDir, 'selene-minecraft-server').listFiles().each {
+        if (it.directory && new File(it, 'build.gradle').exists()) {
+            compile(project(":selene-minecraft-server:${it.name}"))
+            testImplementation(project(":selene-minecraft-server:${it.name}"))
+        }
     }
-
 }

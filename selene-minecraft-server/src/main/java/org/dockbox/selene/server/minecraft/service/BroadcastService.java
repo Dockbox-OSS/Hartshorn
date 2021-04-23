@@ -19,7 +19,7 @@ package org.dockbox.selene.server.minecraft.service;
 
 import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Player;
 
 import java.util.function.Predicate;
 

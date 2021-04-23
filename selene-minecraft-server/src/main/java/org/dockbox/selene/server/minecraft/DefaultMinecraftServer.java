@@ -24,7 +24,7 @@ import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.server.DefaultServerResources;
 import org.dockbox.selene.util.SeleneUtils;
 

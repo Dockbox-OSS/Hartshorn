@@ -18,7 +18,7 @@
 package org.dockbox.selene.server.minecraft.events.entity;
 
 import org.dockbox.selene.api.events.AbstractCancellableEvent;
-import org.dockbox.selene.minecraft.entities.Entity;
+import org.dockbox.selene.server.minecraft.entities.Entity;
 
 public class SummonEntityEvent extends AbstractCancellableEvent {
 

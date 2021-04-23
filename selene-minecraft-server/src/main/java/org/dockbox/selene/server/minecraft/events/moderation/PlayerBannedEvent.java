@@ -20,7 +20,7 @@ package org.dockbox.selene.server.minecraft.events.moderation;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.Target;
 import org.dockbox.selene.commands.source.CommandSource;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Player;
 
 import java.time.LocalDateTime;
 

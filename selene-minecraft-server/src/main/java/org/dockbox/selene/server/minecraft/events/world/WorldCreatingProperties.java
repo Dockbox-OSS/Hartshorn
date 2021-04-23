@@ -17,10 +17,10 @@
 
 package org.dockbox.selene.server.minecraft.events.world;
 
-import org.dockbox.selene.minecraft.dimension.world.WorldProperties;
-import org.dockbox.selene.api.objects.player.Gamemode;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.util.SeleneUtils;
+import org.dockbox.selene.server.minecraft.dimension.world.WorldProperties;
+import org.dockbox.selene.server.minecraft.players.Gamemode;
+import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 import java.util.UUID;

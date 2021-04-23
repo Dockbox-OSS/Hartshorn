@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.server.minecraft.events.world;
 
-import org.dockbox.selene.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
 
 /** The event fired when a world is loaded. */
 public class WorldLoadEvent extends WorldHoldingEvent {

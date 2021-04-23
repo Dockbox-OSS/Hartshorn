@@ -19,7 +19,7 @@ package org.dockbox.selene.server.minecraft.events.moderation;
 
 import org.dockbox.selene.api.events.AbstractTargetEvent;
 import org.dockbox.selene.commands.source.CommandSource;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Player;
 
 public abstract class ModerationEvent extends AbstractTargetEvent {
 

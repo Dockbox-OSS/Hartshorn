@@ -17,16 +17,17 @@
 
 package org.dockbox.selene.server.minecraft;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Identifiable;
 import org.dockbox.selene.api.domain.tuple.Tristate;
 import org.dockbox.selene.api.i18n.PermissionHolder;
+import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.commands.CommandInterface;
 import org.dockbox.selene.commands.source.CommandSource;
+import org.dockbox.selene.di.Provider;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -43,8 +44,18 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
     }
 
     public static Console getInstance() {
-        if (null == instance) return Selene.provide(Console.class);
+        if (null == instance) return Provider.provide(Console.class);
         return instance;
+    }
+
+    @Override
+    public Language getLanguage() {
+        return Language.EN_US;
+    }
+
+    @Override
+    public void setLanguage(Language language) {
+        // Nothing happens
     }
 
     @Override
@@ -91,13 +102,13 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
 
     @Override
     public void send(@NotNull ResourceEntry text) {
-        Text formattedValue = text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
+        Text formattedValue = text.translate().asText();
         this.send(formattedValue);
     }
 
     @Override
     public void sendWithPrefix(@NotNull ResourceEntry text) {
-        Text formattedValue = text.translate(Selene.getServer().getGlobalConfig().getDefaultLanguage()).asText();
+        Text formattedValue = text.translate().asText();
         this.sendWithPrefix(formattedValue);
     }
 

@@ -18,7 +18,7 @@
 package org.dockbox.selene.server.minecraft.events.moderation;
 
 import org.dockbox.selene.commands.source.CommandSource;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Player;
 
 public abstract class NoteEvent extends ModerationEvent {
 

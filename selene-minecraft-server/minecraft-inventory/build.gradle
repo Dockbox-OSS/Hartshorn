@@ -1,4 +1,0 @@
-dependencies {
-    compileOnly(project(':selene-minecraft-server:minecraft-items'))
-    compileOnly(project(':selene-minecraft-server:minecraft-players'))
-}

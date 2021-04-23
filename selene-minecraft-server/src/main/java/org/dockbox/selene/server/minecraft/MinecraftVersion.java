@@ -17,9 +17,9 @@
 
 package org.dockbox.selene.server.minecraft;
 
-import org.dockbox.selene.minecraft.item.storage.Minecraft112Items;
-import org.dockbox.selene.minecraft.item.storage.Minecraft116Items;
-import org.dockbox.selene.minecraft.item.storage.MinecraftItems;
+import org.dockbox.selene.server.minecraft.item.storage.Minecraft112Items;
+import org.dockbox.selene.server.minecraft.item.storage.Minecraft116Items;
+import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
 
 /**
  * Enum type providing the supported Minecraft versions for Selene. Typically this is used when

@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.server.minecraft.events.player.interact;
 
-import org.dockbox.selene.minecraft.entities.Entity;
-import org.dockbox.selene.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.entities.Entity;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.server.minecraft.events.entity.SpawnSource;
 import org.dockbox.selene.server.minecraft.events.entity.SummonEntityEvent;
 

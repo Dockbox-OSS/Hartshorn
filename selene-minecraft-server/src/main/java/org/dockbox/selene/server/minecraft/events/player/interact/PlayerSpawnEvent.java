@@ -18,7 +18,7 @@
 package org.dockbox.selene.server.minecraft.events.player.interact;
 
 import org.dockbox.selene.api.domain.Target;
-import org.dockbox.selene.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.events.player.PlayerMoveEvent;
 
 /** The event fired when a player is teleported to the spawn location. */

@@ -15,29 +15,24 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.commands.convert;
+package org.dockbox.selene.server.minecraft;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.api.i18n.ResourceService;
-import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
-import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.api.module.ModuleContainer;
-import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.commands.annotations.ArgumentProvider;
 import org.dockbox.selene.commands.context.ArgumentConverter;
+import org.dockbox.selene.commands.convert.CommandValueConverter;
+import org.dockbox.selene.commands.convert.DefaultArgumentConverters;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
-import org.dockbox.selene.minecraft.dimension.Worlds;
-import org.dockbox.selene.minecraft.dimension.position.Location;
-import org.dockbox.selene.minecraft.dimension.world.World;
-import org.dockbox.selene.minecraft.players.Player;
-import org.dockbox.selene.minecraft.players.Players;
-import org.dockbox.selene.util.SeleneUtils;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Players;
 
-import java.time.Duration;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -46,7 +41,7 @@ import java.util.stream.Collectors;
 public final class MinecraftArgumentConverters implements InjectableType {
 
     public static final ArgumentConverter<World> WORLD = new CommandValueConverter<>(World.class, in -> {
-        Worlds wss = Selene.provide(Worlds.class);
+        Worlds wss = Provider.provide(Worlds.class);
         Exceptional<World> world = wss.getWorld(in);
         return world.then(
                 () -> {
@@ -64,19 +59,8 @@ public final class MinecraftArgumentConverters implements InjectableType {
         return Exceptional.of(new Location(vec, world));
     }, "location", "position", "pos");
 
-    public static final ArgumentConverter<ResourceEntry> RESOURCE = new CommandValueConverter<>(ResourceEntry.class, in -> {
-        ResourceService rs = Selene.provide(ResourceService.class);
-        in = rs.createValidKey(in);
-
-        Exceptional<? extends ResourceEntry> or = rs.getExternalResource(in);
-        if (or.present()) return or.map(ResourceEntry.class::cast);
-
-        String finalValue = in;
-        return Exceptional.of(() -> DefaultResource.valueOf(finalValue));
-    }, "resource", "i18n", "translation");
-
     public static final ArgumentConverter<Player> PLAYER = new CommandValueConverter<>(Player.class, in -> {
-        Players pss = Selene.provide(Players.class);
+        Players pss = Provider.provide(Players.class);
         Exceptional<Player> player = pss.getPlayer(in);
         return player.then(() -> {
             try {
@@ -88,22 +72,11 @@ public final class MinecraftArgumentConverters implements InjectableType {
                 return null;
             }
         });
-    }, in -> Selene.provide(Players.class).getOnlinePlayers().stream()
+    }, in -> Provider.provide(Players.class).getOnlinePlayers().stream()
             .map(Player::getName)
             .filter(n -> n.startsWith(in))
             .collect(Collectors.toList()),
             "player", "user");
-
-    public static final ArgumentConverter<Duration> DURATION = new CommandValueConverter<>(Duration.class, SeleneUtils::durationOf, "duration");
-
-    public static final ArgumentConverter<ModuleContainer> MODULE = new CommandValueConverter<>(ModuleContainer.class, in -> Selene.provide(ModuleManager.class)
-            .getContainer(in), in ->
-            Selene.provide(ModuleManager.class).getRegisteredModuleIds().stream()
-                    .filter(id -> id.toLowerCase().contains(in.toLowerCase()))
-                    .collect(Collectors.toList()),
-            "module");
-
-    public static final ArgumentConverter<Text> TEXT = new CommandValueConverter<>(Text.class, in -> Exceptional.of(Text.of(in)), "text");
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
