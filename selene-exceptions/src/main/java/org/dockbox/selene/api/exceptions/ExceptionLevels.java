@@ -17,21 +17,24 @@
 
 package org.dockbox.selene.api.exceptions;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.TriConsumer;
+import org.dockbox.selene.di.Provider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
 public enum ExceptionLevels {
     FRIENDLY((message, exception, stacktrace) -> {
-        Selene.provide(ExceptionHelper.class).printFriendly(message, exception, stacktrace);
+        Provider.provide(ExceptionHelper.class).printFriendly(message, exception, stacktrace);
     }),
     MINIMAL((message, exception, stacktrace) -> {
-        Selene.provide(ExceptionHelper.class).printMinimal(message, exception, stacktrace);
+        Provider.provide(ExceptionHelper.class).printMinimal(message, exception, stacktrace);
     }),
     NATIVE((message, exception, stacktrace) -> {
-        Selene.log().error(message);
-        Selene.log().error(Arrays.toString(exception.getStackTrace()));
+        final Logger log = LoggerFactory.getLogger("Selene::native");
+        log.error(message);
+        log.error(Arrays.toString(exception.getStackTrace()));
     });
 
     private final TriConsumer<String, Throwable, Boolean> consumer;

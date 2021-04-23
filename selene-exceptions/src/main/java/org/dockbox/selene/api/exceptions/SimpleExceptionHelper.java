@@ -17,11 +17,12 @@
 
 package org.dockbox.selene.api.exceptions;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.function.Consumer;
@@ -43,30 +44,31 @@ import java.util.function.Function;
  */
 public class SimpleExceptionHelper implements ExceptionHelper {
 
+    private static final Logger log = LoggerFactory.getLogger("Selene::Exception caught |");
     private static final String separator = "========================================";
 
     @Override
     public void printFriendly(@NonNls @Nullable String message, @Nullable Throwable exception, boolean stacktrace) {
-        Selene.log().error(SimpleExceptionHelper.separator);
+        log.error(SimpleExceptionHelper.separator);
         if (null != exception) {
-            Selene.log().error("Exception: " + exception.getClass().getCanonicalName());
-            if (null != message && !message.isEmpty()) Selene.log().error("Message: " + message);
+            log.error("Exception: " + exception.getClass().getCanonicalName());
+            if (null != message && !message.isEmpty()) log.error("Message: " + message);
 
             if (0 < exception.getStackTrace().length) {
                 StackTraceElement root = exception.getStackTrace()[0];
                 String line = 0 < root.getLineNumber() ? ":" + root.getLineNumber() : "(internal call)";
-                Selene.log().error("Location: " + root.getFileName() + line);
+                log.error("Location: " + root.getFileName() + line);
 
                 if (stacktrace) {
                     Throwable nextException = exception;
 
                     while (null != nextException) {
                         StackTraceElement[] trace = nextException.getStackTrace();
-                        Selene.log().error(nextException.getClass().getCanonicalName() + ": " + nextException.getMessage());
+                        log.error(nextException.getClass().getCanonicalName() + ": " + nextException.getMessage());
 
                         for (StackTraceElement element : trace) {
                             String elLine = 0 < element.getLineNumber() ? ":" + element.getLineNumber() : "(internal call)";
-                            Selene.log().error("  at " + element.getClassName() + "." + element.getMethodName() + elLine);
+                            log.error("  at " + element.getClassName() + "." + element.getMethodName() + elLine);
                         }
                         nextException = nextException.getCause();
                     }
@@ -77,27 +79,27 @@ public class SimpleExceptionHelper implements ExceptionHelper {
 
     @Override
     public void printMinimal(@NonNls @Nullable String message, @Nullable Throwable exception, boolean stacktrace) {
-        Selene.log().error(SimpleExceptionHelper.separator);
+        log.error(SimpleExceptionHelper.separator);
         if (null != exception && null != message && !message.isEmpty()) {
-            Selene.log().error(exception.getClass().getSimpleName() + ": " + message);
-            if (stacktrace) Selene.log().error(Arrays.toString(exception.getStackTrace()));
+            log.error(exception.getClass().getSimpleName() + ": " + message);
+            if (stacktrace) log.error(Arrays.toString(exception.getStackTrace()));
         }
     }
 
     @Override
     public void handleSafe(@NotNull Runnable runnable) {
-        this.handleSafe(runnable, Selene::handle);
+        this.handleSafe(runnable, Except::handle);
     }
 
     @Override
     public <T> void handleSafe(@NotNull Consumer<T> consumer, T value) {
-        this.handleSafe(consumer, value, Selene::handle);
+        this.handleSafe(consumer, value, Except::handle);
     }
 
     @Override
     @NotNull
     public <T, R> Exceptional<R> handleSafe(@NotNull Function<T, R> function, T value) {
-        return this.handleSafe(function, value, Selene::handle);
+        return this.handleSafe(function, value, Except::handle);
     }
 
     @Override

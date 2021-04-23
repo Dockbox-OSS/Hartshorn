@@ -24,7 +24,7 @@ import java.util.function.Function;
 
 /**
  * A low-level interface for easy exception handling. For all cases this should only be accessed
- * through {@link org.dockbox.selene.api.server.Selene}.
+ * through {@link Except}.
  */
 public interface ExceptionHelper {
 
