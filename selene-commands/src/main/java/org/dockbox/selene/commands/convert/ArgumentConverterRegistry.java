@@ -18,7 +18,6 @@
 package org.dockbox.selene.commands.convert;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.exceptions.UncheckedSeleneException;
 import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.commands.exceptions.ConstraintException;
 import org.dockbox.selene.util.Reflect;
@@ -48,7 +47,7 @@ public final class ArgumentConverterRegistry {
                                 .contains(key.toLowerCase())
                 ).findFirst();
         if (optional.isPresent()) return Exceptional.of(optional);
-        else return Exceptional.of(new UncheckedSeleneException("No converter present"));
+        else return Exceptional.of(new RuntimeException("No converter present"));
     }
 
     public static boolean hasConverter(Class<?> type) {

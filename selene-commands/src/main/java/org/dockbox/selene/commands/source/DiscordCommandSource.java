@@ -17,6 +17,18 @@
 
 package org.dockbox.selene.commands.source;
 
+import org.dockbox.selene.api.i18n.common.Language;
+
 public interface DiscordCommandSource extends CommandSource {
+
+    @Override
+    default Language getLanguage() {
+        return Language.EN_US;
+    }
+
+    @Override
+    default void setLanguage(Language language) {
+        // Nothing happens
+    }
 
 }

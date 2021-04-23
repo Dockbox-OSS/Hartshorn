@@ -17,9 +17,7 @@
 
 package org.dockbox.selene.commands.exceptions;
 
-import org.dockbox.selene.api.exceptions.UncheckedSeleneException;
-
-public class IllegalSourceException extends UncheckedSeleneException {
+public class IllegalSourceException extends RuntimeException {
     public IllegalSourceException(String message) {
         super(message);
     }

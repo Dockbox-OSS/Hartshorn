@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.commands.values;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.commands.convert.ArgumentConverterRegistry;
 
@@ -47,7 +47,7 @@ public abstract class AbstractArgumentValue<T> implements ArgumentValue<T> {
                     throw new IllegalArgumentException("Type '" + type.toLowerCase() + "' is not supported");
             }
             catch (Exception e) {
-                Selene.handle("No argument of type `" + type + "` can be read", e);
+                Except.handle("No argument of type `" + type + "` can be read", e);
             }
         }
     }

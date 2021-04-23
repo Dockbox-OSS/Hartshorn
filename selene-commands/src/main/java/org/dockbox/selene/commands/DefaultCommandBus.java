@@ -22,9 +22,9 @@ import org.dockbox.selene.api.domain.AbstractIdentifiable;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.Identifiable;
 import org.dockbox.selene.api.events.parents.Cancellable;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.text.Text;
-import org.dockbox.selene.api.i18n.text.actions.ClickAction;
 import org.dockbox.selene.api.i18n.text.actions.HoverAction;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
@@ -38,6 +38,7 @@ import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.commands.values.AbstractArgumentElement;
 import org.dockbox.selene.commands.values.AbstractFlagCollection;
 import org.dockbox.selene.commands.values.ArgumentValue;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -146,7 +147,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
 
             Text confirmText = DefaultResource.CONFIRM_COMMAND_MESSAGE.asText();
             confirmText.onHover(HoverAction.showText(DefaultResource.CONFIRM_COMMAND_MESSAGE_HOVER.asText()));
-            confirmText.onClick(ClickAction.runCommand("/selene confirm " + registrationId));
+            confirmText.onClick(RunCommandAction.runCommand("/selene confirm " + registrationId));
 
             sender.sendWithPrefix(confirmText);
 
@@ -394,7 +395,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         String permission = defaultPermission;
         Matcher elementValue = DefaultCommandBus.ELEMENT_VALUE.matcher(argumentDefinition);
         if (!elementValue.matches() || 0 == elementValue.groupCount())
-            Selene.handle("Unknown argument specification " + argumentDefinition + ", use Type or Name{Type} or Name{Type:Permission}");
+            Except.handle("Unknown argument specification " + argumentDefinition + ", use Type or Name{Type} or Name{Type:Permission}");
 
         /*
         Group one specifies either the name of the value (if two or more groups are matched), or the type if only one
@@ -463,7 +464,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
             String defaultPermission
     ) {
         if (flagMatcher.matches()) {
-            if (null == flagCollection) flagCollection = Selene.provide(AbstractFlagCollection.class);
+            if (null == flagCollection) flagCollection = Provider.provide(AbstractFlagCollection.class);
             this.parseFlag(flagCollection, flagMatcher.group(1), flagMatcher.group(2), defaultPermission);
         }
         return flagCollection;
@@ -510,7 +511,7 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         else {
             ArgumentValue<?> argumentValue = this.generateArgumentValue(value, defaultPermission);
             if (0 <= name.indexOf(':')) {
-                Selene.handle("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
+                Except.handle("Flag values do not support permissions at flag `" + name + "`. Permit the value instead");
             }
             flags.addValueBasedFlag(name, argumentValue);
         }

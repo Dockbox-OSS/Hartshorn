@@ -20,6 +20,7 @@ package org.dockbox.selene.commands.registration;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.Identifiable;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.commands.CommandInterface;
 import org.dockbox.selene.commands.CommandUser;
@@ -28,6 +29,7 @@ import org.dockbox.selene.commands.annotations.FromSource;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.commands.exceptions.IllegalSourceException;
 import org.dockbox.selene.commands.source.CommandSource;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 
@@ -65,11 +67,11 @@ public class MethodCommandContext extends AbstractRegistrationContext {
             return Exceptional.of(e);
         }
         catch (IllegalAccessException | InvocationTargetException e) {
-            Selene.handle("Failed to invoke command", e.getCause());
+            Except.handle("Failed to invoke command", e.getCause());
             return Exceptional.of(e);
         }
         catch (Throwable e) {
-            Selene.handle("Failed to invoke command", e);
+            Except.handle("Failed to invoke command", e);
             return Exceptional.of(e);
         }
     }
@@ -101,7 +103,7 @@ public class MethodCommandContext extends AbstractRegistrationContext {
             instance = Selene.getServer();
         }
         else {
-            instance = Selene.provide(this.getDeclaringClass());
+            instance = Provider.provide(this.getDeclaringClass());
         }
         return instance;
     }

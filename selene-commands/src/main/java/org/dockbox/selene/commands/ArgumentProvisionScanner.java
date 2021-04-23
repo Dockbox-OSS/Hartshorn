@@ -17,11 +17,11 @@
 
 package org.dockbox.selene.commands;
 
-import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.api.SeleneInformation;
+import org.dockbox.selene.api.module.SeleneModuleBootstrap;
 import org.dockbox.selene.commands.annotations.ArgumentProvider;
 import org.dockbox.selene.di.Preloadable;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 
 class ArgumentProvisionScanner implements Preloadable {
@@ -30,10 +30,10 @@ class ArgumentProvisionScanner implements Preloadable {
     public void preload() {
         // Register additional argument types early on, before modules are constructed
         Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, ArgumentProvider.class)
-                .forEach(Selene::provide);
+                .forEach(Provider::provide);
 
-        CommandBus bus = Selene.provide(CommandBus.class);
-        SeleneBootstrap.getInstance().registerInitBus(bus::register);
-        SeleneBootstrap.getInstance().registerPostInit(bus::apply);
+        CommandBus bus = Provider.provide(CommandBus.class);
+        SeleneModuleBootstrap.getInstance().registerInitBus(bus::register);
+        SeleneModuleBootstrap.getInstance().registerPostInit(bus::apply);
     }
 }
