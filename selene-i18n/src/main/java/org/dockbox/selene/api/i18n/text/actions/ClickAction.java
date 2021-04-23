@@ -17,8 +17,8 @@
 
 package org.dockbox.selene.api.i18n.text.actions;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Target;
+import org.dockbox.selene.api.exceptions.Except;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 @SuppressWarnings("ClassReferencesSubclass")
 public class ClickAction<R> extends TextAction<R> {
 
-    private ClickAction(R result) {
+    protected ClickAction(R result) {
         super(result);
     }
 
@@ -37,17 +37,13 @@ public class ClickAction<R> extends TextAction<R> {
             return openUrl(url);
         }
         catch (MalformedURLException e) {
-            Selene.handle(e);
+            Except.handle(e);
             return new OpenUrl(null);
         }
     }
 
     public static OpenUrl openUrl(URL url) {
         return new OpenUrl(url);
-    }
-
-    public static RunCommand runCommand(String command) {
-        return new RunCommand(command);
     }
 
     public static ChangePage changePage(int page) {
@@ -64,12 +60,6 @@ public class ClickAction<R> extends TextAction<R> {
 
     public static final class OpenUrl extends ClickAction<URL> {
         private OpenUrl(URL result) {
-            super(result);
-        }
-    }
-
-    public static final class RunCommand extends ClickAction<String> {
-        private RunCommand(String result) {
             super(result);
         }
     }
