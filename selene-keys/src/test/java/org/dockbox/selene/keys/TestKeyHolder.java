@@ -15,14 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly(project(':selene-parent'))
-    compileOnly(project(':selene-i18n'))
-    compileOnly(project(':selene-modules'))
-    compileOnly(project(':selene-exceptions'))
+package org.dockbox.selene.keys;
 
-    testImplementation(project(':selene-parent'))
-    testImplementation(project(':selene-i18n'))
-    testImplementation(project(':selene-modules'))
-    testImplementation(project(':selene-exceptions'))
+import org.dockbox.selene.api.keys.KeyHolder;
+
+public class TestKeyHolder implements KeyHolder<TestKeyHolder> {
+
+    // Nothing needs to be done here
+
 }

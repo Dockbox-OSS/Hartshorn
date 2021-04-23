@@ -19,7 +19,7 @@ package org.dockbox.selene.api.keys;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.module.ModuleContainer;
-import org.dockbox.selene.util.Reflect;
+import org.dockbox.selene.api.module.Modules;
 import org.jetbrains.annotations.NonNls;
 
 public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
@@ -75,7 +75,7 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
         TypedPersistentDataKey<?> that = (TypedPersistentDataKey<?>) o;
 
         if (!this.id.equals(that.id)) return false;
-        if (!this.module.equals(that.module) && !this.module.equals(Reflect.module(Selene.class))) return false;
+        if (!this.module.equals(that.module) && !this.module.equals(Modules.module(Selene.class))) return false;
         return this.type.equals(that.type);
     }
 }
