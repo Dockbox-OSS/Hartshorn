@@ -17,14 +17,12 @@
 
 package org.dockbox.selene.api.events;
 
-import org.dockbox.selene.api.exceptions.CheckedSeleneException;
-
 /**
  * Checked exception which indicates if a event method or listener should be skipped. If the
  * exception is thrown, the method should not be invoked. This is to be respected by the underlying
  * {@link org.dockbox.selene.api.events.EventBus}.
  */
-public class SkipEventException extends CheckedSeleneException {
+public class SkipEventException extends Exception {
     public SkipEventException() {
         super("Skipping event");
     }

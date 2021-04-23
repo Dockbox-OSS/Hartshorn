@@ -18,7 +18,6 @@
 dependencies {
     compileOnly(project(':selene-parent'))
 
-    compileOnly(project(':selene-exceptions'))
     compileOnly(project(':selene-modules'))
     compileOnly(project(':selene-tasks'))
 }

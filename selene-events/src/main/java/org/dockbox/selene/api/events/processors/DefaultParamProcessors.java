@@ -29,8 +29,10 @@ import org.dockbox.selene.api.events.annotations.processing.UnwrapOrSkip;
 import org.dockbox.selene.api.events.annotations.processing.WrapSafe;
 import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.events.processing.AbstractEventParamProcessor;
+import org.dockbox.selene.api.module.ModuleProperty;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.di.InjectableBootstrap;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
@@ -87,7 +89,7 @@ public enum DefaultParamProcessors {
                 else if (wrapper.getListener().getClass().isAnnotationPresent(Module.class)) {
                     moduleType = wrapper.getListener().getClass();
                 }
-                return Selene.provide(parameter.getType(), moduleType);
+                return Provider.provide(moduleType, ModuleProperty.create());
             }),
 
     /**

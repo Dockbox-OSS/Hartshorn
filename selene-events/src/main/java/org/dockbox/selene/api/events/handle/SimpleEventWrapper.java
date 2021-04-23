@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.api.events.handle;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.events.EventStage;
 import org.dockbox.selene.api.events.EventWrapper;
@@ -30,7 +29,9 @@ import org.dockbox.selene.api.events.parents.Cancellable;
 import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.events.parents.Filterable;
 import org.dockbox.selene.api.events.processing.AbstractEventParamProcessor;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.task.ThreadUtils;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -123,11 +124,11 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
                         the arguments provided to Method#invoke are incorrect, depending on external annotation
                         processors.
                         */
-                        Selene.handle("Could not finish event runner", e);
+                        Except.handle("Could not finish event runner", e);
                     }
                 };
 
-                ThreadUtils tu = Selene.provide(ThreadUtils.class);
+                ThreadUtils tu = Provider.provide(ThreadUtils.class);
                 if (this.method.isAnnotationPresent(Async.class)) {
                     tu.performAsync(eventRunner);
                 }
@@ -146,7 +147,7 @@ public final class SimpleEventWrapper implements Comparable<SimpleEventWrapper>,
 
     @NotNull
     private Collection<Object> getEventArgs(Event event) throws SkipEventException {
-        EventBus bus = Selene.provide(EventBus.class);
+        EventBus bus = Provider.provide(EventBus.class);
 
         Collection<Object> args = SeleneUtils.emptyList();
         for (Parameter parameter : this.method.getParameters()) {

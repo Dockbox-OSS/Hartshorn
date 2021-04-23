@@ -17,14 +17,14 @@
 
 package org.dockbox.selene.api.events;
 
-import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.SeleneBootstrap;
+import org.dockbox.selene.api.module.SeleneModuleBootstrap;
 import org.dockbox.selene.di.Preloadable;
+import org.dockbox.selene.di.Provider;
 
 class EventPreload implements Preloadable {
     @Override
     public void preload() {
-        EventBus bus = Selene.provide(EventBus.class);
-        SeleneBootstrap.getInstance().registerInitBus(bus::subscribe);
+        EventBus bus = Provider.provide(EventBus.class);
+        SeleneModuleBootstrap.getInstance().registerInitBus(bus::subscribe);
     }
 }
