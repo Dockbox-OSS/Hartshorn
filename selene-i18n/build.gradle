@@ -21,5 +21,4 @@ dependencies {
     compileOnly(project(':selene-modules'))
     compileOnly(project(':selene-persistence'))
     compileOnly(project(':selene-entities'))
-    compileOnly(project(':selene-commands'))
 }

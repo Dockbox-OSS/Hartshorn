@@ -18,12 +18,16 @@
 package org.dockbox.selene.commands.convert;
 
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.config.GlobalConfig;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Vector3N;
+import org.dockbox.selene.api.i18n.ResourceService;
 import org.dockbox.selene.api.i18n.common.Language;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.commands.annotations.ArgumentProvider;
 import org.dockbox.selene.commands.context.ArgumentConverter;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.SeleneUtils;
@@ -85,7 +89,7 @@ public final class DefaultArgumentConverters implements InjectableType {
                     Arrays.stream(Language.values())
                             .filter(l -> l.getNameEnglish().equals(in) || l.getNameLocalized().equals(in))
                             .findFirst()
-                            .orElse(Selene.provide(GlobalConfig.class).getDefaultLanguage());
+                            .orElse(Language.EN_US);
         }
         return Exceptional.of(lang);
     }, in -> {
@@ -118,6 +122,18 @@ public final class DefaultArgumentConverters implements InjectableType {
     );
 
     public static final ArgumentConverter<Duration> DURATION = new CommandValueConverter<>(Duration.class, SeleneUtils::durationOf, "duration");
+
+    public static final ArgumentConverter<ResourceEntry> RESOURCE = new CommandValueConverter<>(ResourceEntry.class, in -> {
+        ResourceService rs = Provider.provide(ResourceService.class);
+        String validKey = rs.createValidKey(in);
+
+        Exceptional<? extends ResourceEntry> or = rs.getExternalResource(validKey);
+        if (or.present()) return or.map(ResourceEntry.class::cast);
+
+        return Exceptional.of(() -> DefaultResource.valueOf(validKey));
+    }, "resource", "i18n", "translation");
+
+    public static final ArgumentConverter<Text> TEXT = new CommandValueConverter<>(Text.class, in -> Exceptional.of(Text.of(in)), "text");
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {
