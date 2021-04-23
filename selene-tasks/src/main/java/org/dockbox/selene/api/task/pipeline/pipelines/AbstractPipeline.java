@@ -18,14 +18,14 @@
 package org.dockbox.selene.api.task.pipeline.pipelines;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.util.Reflect;
-import org.dockbox.selene.api.util.SeleneUtils;
 import org.dockbox.selene.api.task.pipeline.CancelBehaviour;
 import org.dockbox.selene.api.task.pipeline.exceptions.IllegalPipeException;
 import org.dockbox.selene.api.task.pipeline.pipes.CancellablePipe;
 import org.dockbox.selene.api.task.pipeline.pipes.ComplexPipe;
 import org.dockbox.selene.api.task.pipeline.pipes.IPipe;
 import org.dockbox.selene.api.task.pipeline.pipes.StandardPipe;
+import org.dockbox.selene.util.Reflect;
+import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -15,9 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.task.pipeline;
+package org.dockbox.selene.api.task;
 
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.task.pipeline.CancelBehaviour;
 import org.dockbox.selene.api.task.pipeline.exceptions.IllegalPipeException;
 import org.dockbox.selene.api.task.pipeline.pipelines.AbstractPipeline;
 import org.dockbox.selene.api.task.pipeline.pipelines.Pipeline;

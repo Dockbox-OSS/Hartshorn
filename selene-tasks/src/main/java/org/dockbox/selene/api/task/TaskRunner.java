@@ -17,14 +17,14 @@
 
 package org.dockbox.selene.api.task;
 
-import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.di.Provider;
 
 import java.util.concurrent.TimeUnit;
 
 public abstract class TaskRunner {
 
     public static TaskRunner create() {
-        return Selene.provide(TaskRunner.class);
+        return Provider.provide(TaskRunner.class);
     }
 
     public abstract void accept(Task task);

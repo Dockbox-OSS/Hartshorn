@@ -17,9 +17,7 @@
 
 package org.dockbox.selene.api.task.pipeline.exceptions;
 
-import org.dockbox.selene.api.exceptions.global.UncheckedSeleneException;
-
-public class IllegalPipeException extends UncheckedSeleneException {
+public class IllegalPipeException extends RuntimeException {
 
     public IllegalPipeException(String errorMessage, Throwable throwable) {
         super(errorMessage, throwable);
