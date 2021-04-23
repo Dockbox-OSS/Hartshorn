@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.persistence.configurate.serialize;
 
-import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.persistence.configurate.DefaultConfigurateManager;
 import org.dockbox.selene.util.SeleneUtils;
@@ -54,7 +54,7 @@ public final class SeleneTypeSerializers {
             new SerializerInformation<>(Pattern.class, PatternTypeSerializer::new);
         }
         catch (Exception e) {
-            Selene.handle("Failed to initialize serializer information", e);
+            Except.handle("Failed to initialize serializer information", e);
         }
     }
 
