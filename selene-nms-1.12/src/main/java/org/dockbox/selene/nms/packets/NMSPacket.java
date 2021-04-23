@@ -21,13 +21,13 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 
 import org.dockbox.selene.di.properties.InjectableType;
-import org.dockbox.selene.minecraft.packets.PacketReceiver;
+import org.dockbox.selene.server.minecraft.packets.PacketReceiver;
 
 import io.netty.channel.Channel;
 
 /**
  * Represents a native {@link Packet} instance. This is used primarily as a wrapper type for
- * implementations of {@link org.dockbox.selene.minecraft.packets.Packet}.
+ * implementations of {@link org.dockbox.selene.server.minecraft.packets.Packet}.
  *
  * @param <T>
  *         The type of the native packet.

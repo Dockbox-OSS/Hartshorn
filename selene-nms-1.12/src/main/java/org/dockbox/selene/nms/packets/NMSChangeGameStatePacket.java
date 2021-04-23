@@ -19,11 +19,11 @@ package org.dockbox.selene.nms.packets;
 
 import net.minecraft.network.play.server.SPacketChangeGameState;
 
-import org.dockbox.selene.api.keys.Keys;
+import org.dockbox.selene.di.Bindings;
 import org.dockbox.selene.di.properties.InjectorProperty;
-import org.dockbox.selene.minecraft.packets.data.Weather;
-import org.dockbox.selene.minecraft.packets.real.ChangeGameStatePacket;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
+import org.dockbox.selene.server.minecraft.packets.data.Weather;
+import org.dockbox.selene.server.minecraft.packets.real.ChangeGameStatePacket;
 import org.dockbox.selene.util.Reflect;
 
 /**
@@ -60,7 +60,7 @@ public class NMSChangeGameStatePacket extends ChangeGameStatePacket implements N
 
     @Override
     public void stateEnabling(InjectorProperty<?>... injectorProperties) {
-        this.nativePacket = Keys.value(NativePacketProperty.KEY, SPacketChangeGameState.class, injectorProperties)
+        this.nativePacket = Bindings.value(NativePacketProperty.KEY, SPacketChangeGameState.class, injectorProperties)
                 .get(SPacketChangeGameState::new);
     }
 }

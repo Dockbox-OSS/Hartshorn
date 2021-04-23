@@ -22,6 +22,7 @@ import net.minecraft.world.storage.MapData;
 import net.minecraftforge.fml.server.FMLServerHandler;
 
 import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.awt.Color;
@@ -132,7 +133,7 @@ public final class NMSMapUtils {
                 }
             }
             catch (IOException | NumberFormatException e) {
-                Selene.handle("Colormap could not be read", e);
+                Except.handle("Colormap could not be read", e);
                 COLORS.clear();
             }
         }
