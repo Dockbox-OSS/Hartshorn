@@ -15,7 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly(project(':selene-parent'))
-    compileOnly(project(':selene-modules'))
+package org.dockbox.selene.persistence;
+
+public class FileTypes {
+
+    public static final String CLASS = "class";
+    public static final String JAR = "jar";
+    public static final String SQLITE = "sqlite";
+    public static final String YAML = "yml";
+    public static final String JSON = "json";
+    public static final String XML = "xml";
+    public static final String MOD_CONFIG = "cfg";
+    public static final String CONFIG = "conf";
+
 }

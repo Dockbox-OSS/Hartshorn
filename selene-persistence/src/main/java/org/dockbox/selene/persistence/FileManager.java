@@ -19,9 +19,9 @@ package org.dockbox.selene.persistence;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.module.ModuleContainer;
+import org.dockbox.selene.api.module.Modules;
 import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.di.properties.InjectableType;
-import org.dockbox.selene.util.Reflect;
 
 import java.nio.file.Path;
 
@@ -44,7 +44,7 @@ public interface FileManager extends InjectableType {
     Path getDataFile(ModuleContainer module);
 
     default Path getConfigFile(Class<?> module) {
-        return this.getConfigFile(Reflect.module(module));
+        return this.getConfigFile(Modules.module(module));
     }
 
     /**
@@ -59,7 +59,7 @@ public interface FileManager extends InjectableType {
     Path getConfigFile(ModuleContainer module);
 
     default Path getDataFile(Class<?> module, String file) {
-        return this.getDataFile(Reflect.module(module), file);
+        return this.getDataFile(Modules.module(module), file);
     }
 
     /**
@@ -76,7 +76,7 @@ public interface FileManager extends InjectableType {
     Path getDataFile(ModuleContainer module, String file);
 
     default Path getConfigFile(Class<?> module, String file) {
-        return this.getConfigFile(Reflect.module(module), file);
+        return this.getConfigFile(Modules.module(module), file);
     }
 
     /**
@@ -128,7 +128,7 @@ public interface FileManager extends InjectableType {
     <T> Exceptional<Boolean> write(Path file, T content);
 
     default Path getDataDir(Class<?> module) {
-        return this.getDataDir(Reflect.module(module));
+        return this.getDataDir(Modules.module(module));
     }
 
     /**
@@ -196,7 +196,7 @@ public interface FileManager extends InjectableType {
     Path getPluginDir();
 
     default Path getModuleConfigDir(Class<?> module) {
-        return this.getModuleConfigDir(Reflect.module(module));
+        return this.getModuleConfigDir(Modules.module(module));
     }
 
     /**

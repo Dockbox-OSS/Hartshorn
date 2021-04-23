@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.persistence;
 
-import org.dockbox.selene.persistence.annotations.Format;
+import org.dockbox.selene.di.annotations.BindingMeta;
 
 import java.lang.annotation.Annotation;
 import java.nio.file.Path;
@@ -25,16 +25,16 @@ import java.nio.file.Path;
 /** Enumerated values containing the file extensions for several commonly used file types. */
 public enum FileType {
     // Compiled Java formats
-    CLASS("class"),
-    JAR("jar"),
+    CLASS(FileTypes.CLASS),
+    JAR(FileTypes.JAR),
 
     // Formats with file/web utilities
-    SQLITE("sqlite", Format.SQLite.class),
-    YAML("yml", Format.YAML.class),
-    JSON("json", Format.Json.class),
-    XML("xml", Format.XML.class),
-    MOD_CONFIG("cfg", Format.HOCON.class),
-    CONFIG("conf", Format.HOCON.class)
+    SQLITE(FileTypes.SQLITE),
+    YAML(FileTypes.YAML),
+    JSON(FileTypes.JSON),
+    XML(FileTypes.XML),
+    MOD_CONFIG(FileTypes.MOD_CONFIG),
+    CONFIG(FileTypes.CONFIG)
     ;
 
     private final String extension;
@@ -86,6 +86,6 @@ public enum FileType {
     }
 
     public Class<? extends Annotation> getFormat() {
-        return this.format;
+        return BindingMeta.class;
     }
 }

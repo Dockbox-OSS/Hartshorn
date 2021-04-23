@@ -20,6 +20,8 @@ package org.dockbox.selene.persistence;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.module.ModuleContainer;
+import org.dockbox.selene.api.module.Modules;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
@@ -47,7 +49,7 @@ public abstract class DefaultAbstractFileManager implements FileManager {
     }
 
     public Path getDataFile(Class<?> module) {
-        return this.getDataFile(Reflect.module(module));
+        return this.getDataFile(Modules.module(module));
     }
 
     @NotNull
@@ -125,8 +127,8 @@ public abstract class DefaultAbstractFileManager implements FileManager {
         if (Reflect.assignableFrom(PersistentCapable.class, type)) {
             // Provision basis is required here, as injected types will typically pass in a interface type. If no injection point is available a
             // regular instance is created (either through available constructors or Unsafe instantiation).
-            Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Selene.provide(type)).getModelClass();
-            @NotNull Exceptional<? extends PersistentModel<?>> model = read(file, modelType);
+            Class<? extends PersistentModel<?>> modelType = ((PersistentCapable<?>) Provider.provide(type)).getModelClass();
+            @NotNull Exceptional<? extends PersistentModel<?>> model = this.read(file, modelType);
             return model.map(PersistentModel::toPersistentCapable).map(content -> (T) content);
         }
         return Exceptional.none();

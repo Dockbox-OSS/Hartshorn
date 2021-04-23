@@ -22,6 +22,7 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.annotations.Extract;
 import org.dockbox.selene.api.entity.annotations.Extract.Behavior;
 import org.dockbox.selene.api.module.ModuleContainer;
+import org.dockbox.selene.api.module.Modules;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.Reflect;
@@ -50,7 +51,7 @@ public abstract class AbstractConfiguration<C extends AbstractConfiguration<C>> 
     }
 
     protected void transferOrReuse() {
-        ModuleContainer module = Reflect.module(this.getModuleClass());
+        ModuleContainer module = Modules.module(this.getModuleClass());
         if (null == module) {
             throw new IllegalArgumentException("Provided module not annotated as such.");
         }
