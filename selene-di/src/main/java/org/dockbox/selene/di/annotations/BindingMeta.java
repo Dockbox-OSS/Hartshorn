@@ -15,11 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly(project(':selene-core'))
-    compileOnly(project(':selene-util'))
-    // Ensure both Guice and AssistedInject are on equal versions, mismatches will cause issues
-    compile "com.google.inject:guice:$guiceVersion"
-    compile "com.google.inject.extensions:guice-assistedinject:$guiceVersion"
-    compile 'javax.inject:javax.inject:1'
+package org.dockbox.selene.di.annotations;
+
+import com.google.inject.BindingAnnotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@BindingAnnotation
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+public @interface BindingMeta {
+    String value();
 }

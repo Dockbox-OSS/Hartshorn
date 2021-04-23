@@ -15,11 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly(project(':selene-core'))
-    compileOnly(project(':selene-util'))
-    // Ensure both Guice and AssistedInject are on equal versions, mismatches will cause issues
-    compile "com.google.inject:guice:$guiceVersion"
-    compile "com.google.inject.extensions:guice-assistedinject:$guiceVersion"
-    compile 'javax.inject:javax.inject:1'
+package org.dockbox.selene.di;
+
+public class ProvisionFailure extends RuntimeException {
+    public ProvisionFailure(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

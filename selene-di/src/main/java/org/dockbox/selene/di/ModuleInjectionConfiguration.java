@@ -19,7 +19,7 @@ package org.dockbox.selene.di;
 
 import com.google.inject.AbstractModule;
 
-import org.dockbox.selene.api.module.annotations.Specific;
+import org.dockbox.selene.di.annotations.Specific;
 import org.dockbox.selene.util.SeleneUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

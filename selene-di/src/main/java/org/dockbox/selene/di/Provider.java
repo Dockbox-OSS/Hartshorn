@@ -15,11 +15,31 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly(project(':selene-core'))
-    compileOnly(project(':selene-util'))
-    // Ensure both Guice and AssistedInject are on equal versions, mismatches will cause issues
-    compile "com.google.inject:guice:$guiceVersion"
-    compile "com.google.inject.extensions:guice-assistedinject:$guiceVersion"
-    compile 'javax.inject:javax.inject:1'
+package org.dockbox.selene.di;
+
+import org.dockbox.selene.di.properties.InjectorProperty;
+
+import java.util.function.Consumer;
+
+public class Provider {
+
+    public static <T> T provide(Class<T> type, InjectorProperty<?>... additionalProperties) {
+        return InjectableBootstrap.getInstance().getInstance(type, additionalProperties);
+    }
+
+    /**
+     * Run with module.
+     *
+     * @param <T>
+     *         the type parameter
+     * @param type
+     *         the type
+     * @param consumer
+     *         the consumer
+     */
+    public static <T> void with(Class<T> type, Consumer<T> consumer) {
+        T instance = Provider.provide(type);
+        if (null != instance) consumer.accept(instance);
+    }
+    
 }

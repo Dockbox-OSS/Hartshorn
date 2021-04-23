@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.di;
 
-import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.di.annotations.AutoWired;
 
 import java.lang.reflect.Constructor;
@@ -31,7 +30,7 @@ public class SimpleSeleneFactory implements SeleneFactory {
 
     @Override
     public <T> T create(Class<T> type, Object... arguments) {
-        Class<T> binding = SeleneBootstrap.getInstance().getBinding(type);
+        Class<T> binding = InjectableBootstrap.getInstance().getBinding(type);
         if (binding == null) throw new IllegalStateException("Could not autowire " + type.getCanonicalName() + " as there is no active binding for it");
 
         Class<?>[] argumentTypes = Arrays.stream(arguments).map(Object::getClass).toArray(Class<?>[]::new);

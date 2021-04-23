@@ -15,11 +15,27 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly(project(':selene-core'))
-    compileOnly(project(':selene-util'))
-    // Ensure both Guice and AssistedInject are on equal versions, mismatches will cause issues
-    compile "com.google.inject:guice:$guiceVersion"
-    compile "com.google.inject.extensions:guice-assistedinject:$guiceVersion"
-    compile 'javax.inject:javax.inject:1'
+package org.dockbox.selene.di.properties;
+
+import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.annotations.BindingMeta;
+
+public class BindingMetaProperty implements InjectorProperty<BindingMeta> {
+
+    public static final String KEY = "SeleneInternalBindingMetaProperty";
+    private final String value;
+
+    public BindingMetaProperty(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String getKey() {
+        return KEY;
+    }
+
+    @Override
+    public BindingMeta getObject() {
+        return Bindings.meta(this.value);
+    }
 }
