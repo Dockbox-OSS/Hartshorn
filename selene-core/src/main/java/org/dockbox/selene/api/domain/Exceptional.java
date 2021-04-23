@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.api.domain;
 
-import org.dockbox.selene.api.exceptions.UncheckedSeleneException;
-
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,8 +26,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
 
 /**
  * A container object which may or may not contain a non-null value. If a value is present, {@code
@@ -90,11 +86,6 @@ public final class Exceptional<T> {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public static <T> Exceptional<T> of(Optional<T> optional) {
         return optional.map(Exceptional::of).orElseGet(Exceptional::none);
-    }
-
-    @SuppressWarnings({ "OptionalUsedAsFieldOrParameterType", "Guava" })
-    public static <T> Exceptional<T> of(com.google.common.base.Optional<T> optional) {
-        return of(optional.orNull());
     }
 
     /**
@@ -524,17 +515,17 @@ public final class Exceptional<T> {
     }
 
     /**
-     * If a throwable is present, wrap it in a new {@link UncheckedSeleneException} and throw the
+     * If a throwable is present, wrap it in a new {@link RuntimeException} and throw the
      * wrapped exception, otherwise do nothing.
      *
      * @return The {@code Exceptional}, for chaining
-     * @throws UncheckedSeleneException
+     * @throws RuntimeException
      *         If {@code throwable} is not null and is rethrown
      */
     public Exceptional<T> rethrow() {
         if (null != this.throwable) {
             if (this.throwable instanceof RuntimeException) throw (RuntimeException) this.throwable;
-            else throw new UncheckedSeleneException(this.throwable);
+            else throw new RuntimeException(this.throwable);
         }
         return this;
     }
@@ -564,7 +555,6 @@ public final class Exceptional<T> {
      *
      * @return The type of the value, or {@code null}
      */
-    @Nullable
     public Class<?> type() {
         return this.present() ? this.value.getClass() : null;
     }

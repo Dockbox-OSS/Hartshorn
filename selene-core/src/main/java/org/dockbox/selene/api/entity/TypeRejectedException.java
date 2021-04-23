@@ -15,3 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
+package org.dockbox.selene.api.entity;
+
+public class TypeRejectedException extends RuntimeException {
+
+    public TypeRejectedException(Class<?> rejectedType, Class<?> rejectedBy) {
+        super("Type '" + rejectedType.getSimpleName() + "' was rejected by '" + rejectedBy.getSimpleName() + "'");
+    }
+}

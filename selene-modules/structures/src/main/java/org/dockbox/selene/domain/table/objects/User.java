@@ -15,3 +15,15 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
+package org.dockbox.selene.domain.table.objects;
+
+public class User {
+
+    public int numeralId;
+    public String name;
+
+    public User(int numeralId, String name) {
+        this.numeralId = numeralId;
+        this.name = name;
+    }
+}

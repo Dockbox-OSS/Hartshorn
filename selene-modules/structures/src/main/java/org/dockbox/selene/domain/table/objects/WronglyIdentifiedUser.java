@@ -15,3 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
+package org.dockbox.selene.domain.table.objects;
+
+import org.dockbox.selene.api.entity.annotations.Property;
+
+public class WronglyIdentifiedUser {
+
+    public int Id;
+
+    @Property("name")
+    public String displayedName;
+
+    public WronglyIdentifiedUser(int id, String name) {
+        this.Id = id;
+        this.displayedName = name;
+    }
+}

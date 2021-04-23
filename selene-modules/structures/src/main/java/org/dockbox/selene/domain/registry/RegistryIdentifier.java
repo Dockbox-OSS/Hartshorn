@@ -15,3 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
+package org.dockbox.selene.domain.registry;
+
+import org.dockbox.selene.api.entity.annotations.Rejects;
+import org.dockbox.selene.persistence.configurate.DefaultConfigurateManager;
+
+@Rejects(DefaultConfigurateManager.class)
+public interface RegistryIdentifier {
+}

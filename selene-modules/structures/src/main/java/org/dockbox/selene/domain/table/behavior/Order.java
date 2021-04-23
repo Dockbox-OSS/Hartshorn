@@ -15,3 +15,19 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
+package org.dockbox.selene.domain.table.behavior;
+
+public enum Order {
+    ASC(1),
+    DESC(-1);
+
+    private final int order;
+
+    Order(int order) {
+        this.order = order;
+    }
+
+    public int getOrder() {
+        return this.order;
+    }
+}

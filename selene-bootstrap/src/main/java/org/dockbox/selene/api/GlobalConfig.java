@@ -15,3 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
+package org.dockbox.selene.api;
+
+import org.dockbox.selene.api.config.Environment;
+import org.dockbox.selene.api.exceptions.ExceptionLevels;
+
+public interface GlobalConfig {
+
+    boolean getStacktracesAllowed();
+
+    ExceptionLevels getExceptionLevel();
+
+    Environment getEnvironment();
+
+    String getDiscordLoggingCategoryId();
+}

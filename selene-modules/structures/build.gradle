@@ -15,3 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
+dependencies {
+    compileOnly(project(':selene-parent'))
+    compileOnly(project(':selene-persistence-configurate'))
+
+    testCompile(project(':selene-parent'))
+    testCompile(project(':selene-persistence'))
+    testCompile(project(':selene-persistence-configurate'))
+    testCompile(project(':selene-persistence-xstream'))
+}
