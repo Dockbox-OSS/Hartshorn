@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.api.events;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.events.handle.EventHandlerRegistry;
@@ -107,7 +106,6 @@ public class SimpleEventBus implements EventBus {
         if (invokers.isEmpty()) {
             return; // Doesn't contain any listener methods
         }
-        Selene.log().info("Registered {} as event listener", object.getClass().toGenericString());
         listenerToInvokers.put(object, invokers);
         for (EventWrapper invoker : invokers) {
             handlerRegistry.getHandler(invoker.getEventType()).subscribe(invoker);

@@ -17,7 +17,6 @@
 
 dependencies {
     compileOnly project(':selene-parent')
-
-    compileOnly project(':selene-modules')
+    compileOnly project(':selene-bootstrap')
     compileOnly project(':selene-tasks')
 }

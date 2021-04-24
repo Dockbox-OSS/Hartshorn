@@ -17,7 +17,6 @@
 
 package org.dockbox.selene.api.events.processors;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.EventStage;
 import org.dockbox.selene.api.events.EventWrapper;
@@ -29,8 +28,6 @@ import org.dockbox.selene.api.events.annotations.processing.UnwrapOrSkip;
 import org.dockbox.selene.api.events.annotations.processing.WrapSafe;
 import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.events.processing.AbstractEventParamProcessor;
-import org.dockbox.selene.api.module.ModuleProperty;
-import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.di.InjectableBootstrap;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.properties.InjectorProperty;
@@ -80,16 +77,8 @@ public enum DefaultParamProcessors {
     PROVIDED(Provided.class, EventStage.POPULATE,
             (object, annotation, event, parameter, wrapper) -> {
                 if (null != object && !annotation.overrideExisting()) return object;
-
-                Class<?> moduleType = parameter.getType();
-                if (Reflect.isNotVoid(annotation.value())
-                        && annotation.value().isAnnotationPresent(Module.class)) {
-                    moduleType = annotation.value();
-                }
-                else if (wrapper.getListener().getClass().isAnnotationPresent(Module.class)) {
-                    moduleType = wrapper.getListener().getClass();
-                }
-                return Provider.provide(moduleType, ModuleProperty.create());
+                Class<?> type = parameter.getType();
+                return Provider.provide(type);
             }),
 
     /**
@@ -128,8 +117,7 @@ public enum DefaultParamProcessors {
     WRAP_SAFE(WrapSafe.class, EventStage.FILTER,
             (object, annotation, event, parameter, wrapper) -> {
                 if (Reflect.assignableFrom(parameter.getType(), event.getClass())) {
-                    Selene.log().warn("Event parameter cannot be wrapped");
-                    return object;
+                    throw new IllegalArgumentException("Event parameter cannot be wrapped");
                 }
                 if (object instanceof Exceptional<?>) return object;
                 if (object instanceof Optional<?>) return Exceptional.of((Optional<?>) object);
