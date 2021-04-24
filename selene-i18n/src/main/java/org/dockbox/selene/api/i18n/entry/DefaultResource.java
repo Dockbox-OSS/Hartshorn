@@ -50,12 +50,6 @@ public enum DefaultResource implements ResourceEntry {
     KEY_BINDING_FAILED("$4Key cannot be applied to this type", "caught.keys.failedbinding"),
     LOST_REFERENCE("$4Reference to object lost", "caught.reference.lost"),
 
-    // Discord
-    DISCORD_COMMAND_UNKNOWN("Sorry, I don't know what to do with that command!", "discord.command.unknown"),
-    DISCORD_COMMAND_NOT_PERMITTED("You are not permitted to use that command!", "discord.command.notpermitted"),
-    DISCORD_COMMAND_ERRORED("Sorry, I could not start that command. Please report this in our support channel.",
-            "discord.command.caught"),
-
     // CommandBus
     CONFIRM_COMMAND_MESSAGE("$1This command requires confirmation, click $2[here] $1to confirm", "confirm.message"),
     CONFIRM_COMMAND_MESSAGE_HOVER("$1Confirm running command", "confirm.message.hover"),

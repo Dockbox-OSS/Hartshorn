@@ -40,7 +40,6 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.domain.tuple.Triad;
 import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.discord.annotations.DiscordCommand;
@@ -148,7 +147,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
     @Override
     public void sendToUser(DiscordPagination pagination, User user) {
-        user.openPrivateChannel().queue(privateChannel -> sendToTextChannel(pagination, privateChannel));
+        user.openPrivateChannel().queue(privateChannel -> this.sendToTextChannel(pagination, privateChannel));
     }
 
     @Override
@@ -214,7 +213,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
             }
 
             if (!userPermitted) {
-                context.sendToChannel(DefaultResource.DISCORD_COMMAND_NOT_PERMITTED);
+                context.sendToChannel(DiscordResources.DISCORD_COMMAND_NOT_PERMITTED);
                 return;
             }
 
@@ -225,12 +224,12 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                 method.invoke(instance, context);
             }
             catch (IllegalAccessException | InvocationTargetException e) {
-                context.sendToChannel(DefaultResource.DISCORD_COMMAND_ERRORED);
+                context.sendToChannel(DiscordResources.DISCORD_COMMAND_ERRORED);
                 Except.handle("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass()
                         .getCanonicalName() + "]");
             }
         }
-        else context.sendToChannel(DefaultResource.DISCORD_COMMAND_UNKNOWN);
+        else context.sendToChannel(DiscordResources.DISCORD_COMMAND_UNKNOWN);
     }
 
     private static boolean isValidChannel(@NotNull DiscordCommandContext context, ListeningLevel level) {
