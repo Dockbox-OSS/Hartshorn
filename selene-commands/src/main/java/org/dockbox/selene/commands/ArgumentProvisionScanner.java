@@ -18,22 +18,28 @@
 package org.dockbox.selene.commands;
 
 import org.dockbox.selene.api.SeleneInformation;
-import org.dockbox.selene.api.module.SeleneModuleBootstrap;
 import org.dockbox.selene.commands.annotations.ArgumentProvider;
 import org.dockbox.selene.di.Preloadable;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 
+import java.util.function.Consumer;
+
 class ArgumentProvisionScanner implements Preloadable {
 
     @Override
     public void preload() {
-        // Register additional argument types early on, before modules are constructed
-        Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, ArgumentProvider.class)
-                .forEach(Provider::provide);
+        Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.value.SeleneModuleBootstrap");
+        if (moduleBootstrap != null) {
+            // Register additional argument types early on, before modules are constructed
+            Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, ArgumentProvider.class)
+                    .forEach(Provider::provide);
 
-        CommandBus bus = Provider.provide(CommandBus.class);
-        SeleneModuleBootstrap.getInstance().registerInitBus(bus::register);
-        SeleneModuleBootstrap.getInstance().registerPostInit(bus::apply);
+            CommandBus bus = Provider.provide(CommandBus.class);
+            Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap).present(bootstrap -> {
+                Reflect.runMethod(bootstrap, "registerInitBus", null, (Consumer<Object>) bus::register);
+                Reflect.runMethod(bootstrap, "registerPostInit", null, (Runnable) bus::apply);
+            });
+        }
     }
 }

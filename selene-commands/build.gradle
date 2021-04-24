@@ -19,10 +19,6 @@ dependencies {
     compileOnly project(':selene-parent')
     compileOnly project(':selene-bootstrap')
 
-    compile project(':selene-keys')
-    compile project(':selene-persistence')
-
-    compileOnly project(':selene-modules')
     compileOnly project(':selene-i18n')
     compileOnly project(':selene-events')
 

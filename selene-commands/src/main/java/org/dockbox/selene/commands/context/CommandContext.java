@@ -18,10 +18,9 @@
 package org.dockbox.selene.commands.context;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.keys.KeyHolder;
 import org.dockbox.selene.commands.source.CommandSource;
 
-public interface CommandContext extends KeyHolder<CommandContext> {
+public interface CommandContext {
 
     String alias();
 
