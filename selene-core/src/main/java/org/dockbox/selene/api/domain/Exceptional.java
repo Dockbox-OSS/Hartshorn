@@ -171,8 +171,8 @@ public final class Exceptional<T> {
      */
     public static <T> Exceptional<T> of(T value, Throwable throwable) {
         if (null == value && null == throwable) return none();
-        if (null == value) return of(throwable);
-        if (null == throwable) return of(value);
+        else if (null == value) return of(throwable);
+        else if (null == throwable) return of(value);
         else return new Exceptional<>(value, throwable);
     }
 
