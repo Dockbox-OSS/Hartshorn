@@ -30,7 +30,7 @@ import org.dockbox.selene.di.properties.InjectorProperty;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({ "unused", "ClassWithTooManyFields" })
-@ArgumentProvider(module = Selene.class)
+@ArgumentProvider
 public class ServerArgumentConverters  implements InjectableType {
 
     public static final ArgumentConverter<ModuleContainer> MODULE = new CommandValueConverter<>(ModuleContainer.class, in -> Provider.provide(ModuleManager.class)

@@ -37,7 +37,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({ "unused", "ClassWithTooManyFields" })
-@ArgumentProvider(module = Selene.class)
+@ArgumentProvider
 public final class MinecraftArgumentConverters implements InjectableType {
 
     public static final ArgumentConverter<World> WORLD = new CommandValueConverter<>(World.class, in -> {
