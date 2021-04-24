@@ -19,6 +19,7 @@ package org.dockbox.selene.persistence;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.Reflect;
@@ -52,25 +53,25 @@ public abstract class DefaultAbstractFileManager implements FileManager {
 
     @NotNull
     @Override
-    public Path getDataFile(@NotNull PersistentOwner owner) {
+    public Path getDataFile(@NotNull TypedOwner owner) {
         return this.getDataFile(owner, owner.id());
     }
 
     @NotNull
     @Override
-    public Path getConfigFile(@NotNull PersistentOwner owner) {
+    public Path getConfigFile(@NotNull TypedOwner owner) {
         return this.getConfigFile(owner, owner.id());
     }
 
     @NotNull
     @Override
-    public Path getDataFile(@NotNull PersistentOwner owner, @NotNull String file) {
+    public Path getDataFile(@NotNull TypedOwner owner, @NotNull String file) {
         return this.createFileIfNotExists(this.getFileType().asPath(this.getDataDir().resolve(owner.id()), file));
     }
 
     @NotNull
     @Override
-    public Path getConfigFile(@NotNull PersistentOwner owner, @NotNull String file) {
+    public Path getConfigFile(@NotNull TypedOwner owner, @NotNull String file) {
         return this.createFileIfNotExists(this.getFileType().asPath(this.getModuleConfigsDir().resolve(owner.id()), file));
     }
 

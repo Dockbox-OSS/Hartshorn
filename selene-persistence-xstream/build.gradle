@@ -17,6 +17,7 @@
 
 dependencies {
     compileOnly project(':selene-parent')
+    compileOnly project(':selene-bootstrap')
     compileOnly project(':selene-persistence')
 
     compile "com.thoughtworks.xstream:xstream:$xstreamVersion"

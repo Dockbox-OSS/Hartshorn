@@ -18,6 +18,8 @@
 package org.dockbox.selene.persistence;
 
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.domain.OwnerLookup;
+import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.properties.InjectableType;
 
@@ -31,64 +33,64 @@ import java.nio.file.Path;
 public interface FileManager extends InjectableType {
 
     /**
-     * Gets the default data file for a given {@link PersistentOwner}. The exact location is decided by the
+     * Gets the default data file for a given {@link TypedOwner}. The exact location is decided by the
      * top-level implementation of this type.
      *
      * @param owner
-     *         The {@link PersistentOwner} providing identification
+     *         The {@link TypedOwner} providing identification
      *
      * @return A {@link Path} reference to a file
      */
-    Path getDataFile(PersistentOwner owner);
+    Path getDataFile(TypedOwner owner);
 
     default Path getConfigFile(Class<?> owner) {
         return this.getConfigFile(this.owner(owner));
     }
 
     /**
-     * Gets the default config file for a given {@link PersistentOwner}. The exact location is decided by the
+     * Gets the default config file for a given {@link TypedOwner}. The exact location is decided by the
      * top-level implementation of this type.
      *
      * @param owner
-     *         The {@link PersistentOwner} providing identification
+     *         The {@link TypedOwner} providing identification
      *
      * @return A {@link Path} reference to a file
      */
-    Path getConfigFile(PersistentOwner owner);
+    Path getConfigFile(TypedOwner owner);
 
     default Path getDataFile(Class<?> owner, String file) {
         return this.getDataFile(this.owner(owner), file);
     }
 
     /**
-     * Gets a specific data file for a given {@link PersistentOwner}. The exact location is decided by the
+     * Gets a specific data file for a given {@link TypedOwner}. The exact location is decided by the
      * top-level implementation of this type.
      *
      * @param owner
-     *         The {@link PersistentOwner} providing identification
+     *         The {@link TypedOwner} providing identification
      * @param file
      *         The name of the lookup file
      *
      * @return A {@link Path} reference to a file
      */
-    Path getDataFile(PersistentOwner owner, String file);
+    Path getDataFile(TypedOwner owner, String file);
 
     default Path getConfigFile(Class<?> owner, String file) {
         return this.getConfigFile(this.owner(owner), file);
     }
 
     /**
-     * Gets a specific config file for a given {@link PersistentOwner}. The exact location is decided by the
+     * Gets a specific config file for a given {@link TypedOwner}. The exact location is decided by the
      * top-level implementation of this type.
      *
      * @param owner
-     *         The {@link PersistentOwner} providing identification
+     *         The {@link TypedOwner} providing identification
      * @param file
      *         The name of the lookup file
      *
      * @return A {@link Path} reference to a file
      */
-    Path getConfigFile(PersistentOwner owner, String file);
+    Path getConfigFile(TypedOwner owner, String file);
 
     /**
      * Get the content of a file, and map the given values to a generic type {@code T}. The exact file
@@ -130,15 +132,15 @@ public interface FileManager extends InjectableType {
     }
 
     /**
-     * Get the data directory for a given {@link PersistentOwner}. The exact location is decided by the
+     * Get the data directory for a given {@link TypedOwner}. The exact location is decided by the
      * top-level implementation of this type.
      *
      * @param owner
-     *         The {@link PersistentOwner} providing identification
+     *         The {@link TypedOwner} providing identification
      *
      * @return A {@link Path} reference to the data directory
      */
-    default Path getDataDir(PersistentOwner owner) {
+    default Path getDataDir(TypedOwner owner) {
         return this.getDataDir().resolve(owner.id());
     }
 
@@ -198,15 +200,15 @@ public interface FileManager extends InjectableType {
     }
 
     /**
-     * Get the configuration directory for a given {@link PersistentOwner}. The exact location is decided by
+     * Get the configuration directory for a given {@link TypedOwner}. The exact location is decided by
      * the top-level implementation of this type.
      *
      * @param owner
-     *         The {@link PersistentOwner} providing identification
+     *         The {@link TypedOwner} providing identification
      *
      * @return A {@link Path} reference to the configuration directory
      */
-    default Path getModuleConfigDir(PersistentOwner owner) {
+    default Path getModuleConfigDir(TypedOwner owner) {
         return this.getModuleConfigsDir().resolve(owner.id());
     }
 
@@ -298,7 +300,7 @@ public interface FileManager extends InjectableType {
 
     void requestFileType(FileType fileType);
 
-    default PersistentOwner owner(Class<?> type) {
+    default TypedOwner owner(Class<?> type) {
         return Provider.provide(OwnerLookup.class).lookup(type);
     }
 }

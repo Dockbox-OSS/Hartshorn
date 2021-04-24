@@ -19,6 +19,8 @@ package org.dockbox.selene.persistence;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.domain.OwnerLookup;
+import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.api.entity.annotations.Extract;
 import org.dockbox.selene.api.entity.annotations.Extract.Behavior;
 import org.dockbox.selene.di.Provider;
@@ -49,7 +51,7 @@ public abstract class AbstractConfiguration<C extends AbstractConfiguration<C>> 
     }
 
     protected void transferOrReuse() {
-        PersistentOwner owner = Provider.provide(OwnerLookup.class).lookup(this.getOwnerType());
+        TypedOwner owner = Provider.provide(OwnerLookup.class).lookup(this.getOwnerType());
         if (null == owner) {
             throw new IllegalArgumentException("Provided owner could not be located.");
         }

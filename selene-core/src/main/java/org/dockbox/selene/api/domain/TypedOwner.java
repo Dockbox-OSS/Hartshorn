@@ -15,10 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.persistence;
+package org.dockbox.selene.api.domain;
 
-public interface OwnerLookup {
+public interface TypedOwner {
 
-    PersistentOwner lookup(Class<?> type);
+    String id();
 
 }

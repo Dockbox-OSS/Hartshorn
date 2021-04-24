@@ -42,7 +42,7 @@ import org.dockbox.selene.discord.SimpleMessageTemplate;
 import org.dockbox.selene.discord.templates.MessageTemplate;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileTypes;
-import org.dockbox.selene.persistence.OwnerLookup;
+import org.dockbox.selene.api.domain.OwnerLookup;
 import org.dockbox.selene.server.Server;
 import org.dockbox.selene.server.minecraft.Console;
 import org.dockbox.selene.server.minecraft.bossbar.Bossbar;

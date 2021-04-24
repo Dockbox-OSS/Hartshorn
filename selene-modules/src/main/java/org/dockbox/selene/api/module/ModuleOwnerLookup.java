@@ -17,12 +17,12 @@
 
 package org.dockbox.selene.api.module;
 
-import org.dockbox.selene.persistence.OwnerLookup;
-import org.dockbox.selene.persistence.PersistentOwner;
+import org.dockbox.selene.api.domain.OwnerLookup;
+import org.dockbox.selene.api.domain.TypedOwner;
 
 public class ModuleOwnerLookup implements OwnerLookup {
     @Override
-    public PersistentOwner lookup(Class<?> type) {
+    public TypedOwner lookup(Class<?> type) {
         return Modules.module(type);
     }
 }

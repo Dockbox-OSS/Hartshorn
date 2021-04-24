@@ -50,7 +50,7 @@ import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
 import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileTypes;
-import org.dockbox.selene.persistence.OwnerLookup;
+import org.dockbox.selene.api.domain.OwnerLookup;
 import org.dockbox.selene.plots.PlotService;
 import org.dockbox.selene.server.DefaultServer;
 import org.dockbox.selene.server.Server;

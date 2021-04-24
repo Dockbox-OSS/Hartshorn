@@ -18,6 +18,7 @@
 package org.dockbox.selene.persistence.configurate;
 
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.domain.TypedOwner;
 import org.dockbox.selene.api.entity.annotations.Metadata;
 import org.dockbox.selene.persistence.DefaultAbstractFileManager;
 import org.dockbox.selene.persistence.FileManager;
@@ -51,7 +52,7 @@ import io.leangen.geantyref.GenericTypeReflector;
  * FileType#MOD_CONFIG}, and {@link FileType#CONFIG} file types.
  *
  * <p>Automatically generates, and checks the presence of, files in their directories. For both
- * custom file locations and {@link org.dockbox.selene.persistence.PersistentOwner#id()} based.
+ * custom file locations and {@link TypedOwner#id()} based.
  */
 public abstract class DefaultConfigurateManager extends DefaultAbstractFileManager {
 

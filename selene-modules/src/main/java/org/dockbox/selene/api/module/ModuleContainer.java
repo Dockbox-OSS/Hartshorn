@@ -18,9 +18,9 @@
 package org.dockbox.selene.api.module;
 
 import org.dockbox.selene.api.module.annotations.Module;
-import org.dockbox.selene.persistence.PersistentOwner;
+import org.dockbox.selene.api.domain.TypedOwner;
 
-public class ModuleContainer implements PersistentOwner {
+public class ModuleContainer implements TypedOwner {
 
     private final ModuleContext context;
 
