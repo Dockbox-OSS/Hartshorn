@@ -78,7 +78,7 @@ public class WorldManagementConfig extends AbstractConfiguration<WorldManagement
     }
 
     @Override
-    protected Class<?> getModuleClass() {
+    protected Class<?> getOwnerType() {
         return WorldManagement.class;
     }
 }

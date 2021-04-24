@@ -64,10 +64,10 @@ public abstract class AbstractConfiguration<C extends AbstractConfiguration<C>> 
     }
 
     protected Path getConfigFile() {
-        return this.fileManager.getConfigFile(this.getModuleClass());
+        return this.fileManager.getConfigFile(this.getOwnerType());
     }
 
-    protected abstract Class<?> getModuleClass();
+    protected abstract Class<?> getOwnerType();
 
     @Override
     public void stateEnabling(InjectorProperty<?>... properties) {

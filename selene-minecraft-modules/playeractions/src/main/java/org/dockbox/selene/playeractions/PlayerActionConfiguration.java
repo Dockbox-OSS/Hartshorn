@@ -40,7 +40,7 @@ public class PlayerActionConfiguration extends AbstractConfiguration<PlayerActio
     }
 
     @Override
-    protected Class<?> getModuleClass() {
+    protected Class<?> getOwnerType() {
         return PlayerActions.class;
     }
 }
