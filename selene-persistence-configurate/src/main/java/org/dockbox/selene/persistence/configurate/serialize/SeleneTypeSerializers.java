@@ -18,7 +18,6 @@
 package org.dockbox.selene.persistence.configurate.serialize;
 
 import org.dockbox.selene.api.exceptions.Except;
-import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.persistence.configurate.DefaultConfigurateManager;
 import org.dockbox.selene.util.SeleneUtils;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -47,7 +46,6 @@ public final class SeleneTypeSerializers {
 
     static {
         try {
-            new SerializerInformation<>(Language.class, LanguageTypeSerializer::new);
             new SerializerInformation<>(byte[].class, ByteArrayTypeSerializer::new);
             new SerializerInformation<>(int[].class, IntArrayTypeSerializer::new);
             new SerializerInformation<>(short[].class, ShortArrayTypeSerializer::new);

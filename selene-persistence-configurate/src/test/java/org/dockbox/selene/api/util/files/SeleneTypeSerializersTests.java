@@ -22,7 +22,6 @@ package org.dockbox.selene.api.util.files;
 
 import com.google.common.collect.Lists;
 
-import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.persistence.configurate.serialize.SeleneTypeSerializers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -122,27 +121,5 @@ public class SeleneTypeSerializersTests {
 
         Assertions.assertEquals(4, ls[0]);
         Assertions.assertEquals(ls[1], -2);
-    }
-
-    @Test
-    public void testThatLanguagesCanBeSerialised() throws SerializationException {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createNode().set(new TypeToken<Language>() {
-        }, Language.NL_NL);
-
-        Language ls = cn.get(TypeToken.get(Language.class));
-        Assertions.assertEquals(ls.getCode(), Language.NL_NL.getCode());
-        Assertions.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
-    }
-
-    @Test
-    public void testThatLanguagesCanBeDeserialised() throws SerializationException {
-        TestConfigurationLoader tl = this.getTestLoader();
-        ConfigurationNode cn = tl.createNode().set(new TypeToken<Language>() {
-        }, Language.NL_NL);
-
-        Language ls = cn.get(TypeToken.get(Language.class));
-        Assertions.assertEquals(ls.getCode(), Language.NL_NL.getCode());
-        Assertions.assertEquals(ls.getNameLocalized(), Language.NL_NL.getNameLocalized());
     }
 }

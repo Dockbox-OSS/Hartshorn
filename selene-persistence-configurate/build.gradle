@@ -17,10 +17,7 @@
 
 dependencies {
     compileOnly project(':selene-parent')
-
-    compileOnly project(':selene-modules')
     compileOnly project(':selene-persistence')
-    compileOnly project(':selene-i18n')
 
     compile "org.spongepowered:configurate-core:$configurateVersion"
     compile "org.spongepowered:configurate-hocon:$configurateVersion"
@@ -30,6 +27,5 @@ dependencies {
     compile "org.spongepowered:configurate-xml:$configurateVersion"
 
     testImplementation project(':selene-parent')
-    testImplementation project(':selene-i18n')
     testImplementation "org.spongepowered:configurate-core:$configurateVersion"
 }

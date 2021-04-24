@@ -51,7 +51,7 @@ import io.leangen.geantyref.GenericTypeReflector;
  * FileType#MOD_CONFIG}, and {@link FileType#CONFIG} file types.
  *
  * <p>Automatically generates, and checks the presence of, files in their directories. For both
- * custom file locations and {@link Module#id()} based.
+ * custom file locations and {@link org.dockbox.selene.persistence.PersistentOwner#id()} based.
  */
 public abstract class DefaultConfigurateManager extends DefaultAbstractFileManager {
 
