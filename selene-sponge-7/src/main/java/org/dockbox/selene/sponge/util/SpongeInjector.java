@@ -30,6 +30,7 @@ import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.permissions.SimplePermission;
 import org.dockbox.selene.api.i18n.text.pagination.PaginationBuilder;
 import org.dockbox.selene.api.module.ModuleManager;
+import org.dockbox.selene.api.module.ModuleOwnerLookup;
 import org.dockbox.selene.api.module.SimpleModuleManager;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.api.task.ThreadUtils;
@@ -49,6 +50,7 @@ import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
 import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileTypes;
+import org.dockbox.selene.persistence.OwnerLookup;
 import org.dockbox.selene.plots.PlotService;
 import org.dockbox.selene.server.DefaultServer;
 import org.dockbox.selene.server.Server;
@@ -106,6 +108,7 @@ public class SpongeInjector extends InjectConfiguration {
         // Module manager keeps static references, and can thus be recreated
         this.bind(ModuleManager.class).toInstance(new SimpleModuleManager());
         this.bind(Server.class).to(DefaultServer.class);
+        this.bind(OwnerLookup.class).to(ModuleOwnerLookup.class);
 
         // Utility types
         this.bind(DiscordUtils.class).to(SpongeDiscordUtils.class);

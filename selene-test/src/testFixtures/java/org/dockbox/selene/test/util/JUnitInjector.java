@@ -29,6 +29,7 @@ import org.dockbox.selene.api.i18n.SimpleResourceService;
 import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.permissions.SimplePermission;
 import org.dockbox.selene.api.module.ModuleManager;
+import org.dockbox.selene.api.module.ModuleOwnerLookup;
 import org.dockbox.selene.api.module.SimpleModuleManager;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.api.task.ThreadUtils;
@@ -41,6 +42,7 @@ import org.dockbox.selene.discord.SimpleMessageTemplate;
 import org.dockbox.selene.discord.templates.MessageTemplate;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.persistence.FileTypes;
+import org.dockbox.selene.persistence.OwnerLookup;
 import org.dockbox.selene.server.Server;
 import org.dockbox.selene.server.minecraft.Console;
 import org.dockbox.selene.server.minecraft.bossbar.Bossbar;
@@ -84,6 +86,7 @@ public class JUnitInjector extends InjectConfiguration {
         // Module manager keeps static references, and can thus be recreated
         this.bind(ModuleManager.class).toInstance(new SimpleModuleManager());
         this.bind(Server.class).to(JUnitServer.class);
+        this.bind(OwnerLookup.class).to(ModuleOwnerLookup.class);
 
         // Utility types
         this.bind(ThreadUtils.class).to(JUnitThreadUtils.class);

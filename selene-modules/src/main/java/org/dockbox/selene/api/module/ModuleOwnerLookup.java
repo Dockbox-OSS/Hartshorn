@@ -15,5 +15,14 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.module;public class ModuleOwnerLookup {
+package org.dockbox.selene.api.module;
+
+import org.dockbox.selene.persistence.OwnerLookup;
+import org.dockbox.selene.persistence.PersistentOwner;
+
+public class ModuleOwnerLookup implements OwnerLookup {
+    @Override
+    public PersistentOwner lookup(Class<?> type) {
+        return Modules.module(type);
+    }
 }
