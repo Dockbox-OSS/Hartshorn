@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -778,5 +779,22 @@ public final class Reflect {
 
     public static Class<?> getServerClass() {
         return lookup(serverClassName);
+    }
+
+    public static void registerModuleInitBus(Consumer<Object> consumer) {
+        Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.value.SeleneModuleBootstrap");
+        if (moduleBootstrap != null) {
+            Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap)
+                    .present(bootstrap -> Reflect.runMethod(bootstrap, "registerInitBus", null, consumer));
+        }
+    }
+
+    public static void registerModulePostInit(Runnable runnable) {
+        Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.value.SeleneModuleBootstrap");
+        if (moduleBootstrap != null) {
+            Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap).present(bootstrap -> {
+                Reflect.runMethod(bootstrap, "registerPostInit", null, runnable);
+            });
+        }
     }
 }

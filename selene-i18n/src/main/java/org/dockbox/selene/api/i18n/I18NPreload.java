@@ -24,11 +24,6 @@ import org.dockbox.selene.util.Reflect;
 public class I18NPreload implements Preloadable {
     @Override
     public void preload() {
-        Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.value.SeleneModuleBootstrap");
-        if (moduleBootstrap != null) {
-            Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap).present(bootstrap -> {
-                Reflect.runMethod(bootstrap, "registerPostInit", null, (Runnable) Provider.provide(ResourceService.class)::init);
-            });
-        }
+        Reflect.registerModulePostInit(Provider.provide(ResourceService.class)::init);
     }
 }

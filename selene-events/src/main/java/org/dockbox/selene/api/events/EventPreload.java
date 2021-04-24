@@ -21,17 +21,10 @@ import org.dockbox.selene.di.Preloadable;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 
-import java.util.function.Consumer;
-
 class EventPreload implements Preloadable {
     @Override
     public void preload() {
-        Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.value.SeleneModuleBootstrap");
-        if (moduleBootstrap != null) {
-            EventBus bus = Provider.provide(EventBus.class);
-            Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap).present(bootstrap -> {
-                Reflect.runMethod(bootstrap, "registerInitBus", null, (Consumer<Object>) bus::subscribe);
-            });
-        }
+        EventBus bus = Provider.provide(EventBus.class);
+        Reflect.registerModuleInitBus(bus::subscribe);
     }
 }
