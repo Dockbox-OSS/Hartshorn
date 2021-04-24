@@ -21,7 +21,7 @@ public interface PersistentDataKey<T> {
 
     Class<T> getDataType();
 
-    String getRegisteringModuleId();
+    String getOwnerId();
 
     String getDataKeyId();
 

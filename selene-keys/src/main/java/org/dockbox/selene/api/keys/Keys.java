@@ -19,8 +19,9 @@ package org.dockbox.selene.api.keys;
 
 import org.dockbox.selene.api.CheckedFunction;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.module.ModuleContainer;
-import org.dockbox.selene.api.module.Modules;
+import org.dockbox.selene.api.domain.OwnerLookup;
+import org.dockbox.selene.api.domain.TypedOwner;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;
 
 import java.util.Locale;
@@ -34,18 +35,21 @@ public final class Keys {
     private Keys() {}
 
     /**
-     * Convert to module id.
+     * Convert the given name to a valid ID, merging its owner ID and the name in the following format:
+     * <pre>{@code
+     * Sample Item -> $ownerId:sample_item
+     * }</pre>
      *
      * @param name
      *         the name
-     * @param module
-     *         the module
+     * @param owner
+     *         the owner
      *
      * @return the string
      */
-    public static String convertId(String name, ModuleContainer module) {
+    public static String convertId(String name, TypedOwner owner) {
         name = name.toLowerCase(Locale.ROOT).replaceAll("[ .]", "").replaceAll("-", "_");
-        return module.id() + ':' + name;
+        return owner.id() + ':' + name;
     }
 
     /**
@@ -63,7 +67,7 @@ public final class Keys {
      * @return the persistent data key
      */
     public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, Class<?> owningClass) {
-        return Keys.persistent(type, name, Modules.module(owningClass));
+        return Keys.persistent(type, name, Provider.provide(OwnerLookup.class).lookup(owningClass));
     }
 
     /**
@@ -75,16 +79,16 @@ public final class Keys {
      *         the type
      * @param name
      *         the name
-     * @param module
-     *         the module
+     * @param owner
+     *         the owner
      *
      * @return the persistent data key
      */
-    public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, ModuleContainer module) {
+    public static <T> PersistentDataKey<T> persistent(Class<T> type, String name, TypedOwner owner) {
         if (!Reflect.isNative(type))
             throw new RuntimeException("Unsupported data type for persistent key: " + type.getCanonicalName());
 
-        return new TypedPersistentDataKey<>(name, Keys.convertId(name, module), module, type);
+        return new TypedPersistentDataKey<>(name, Keys.convertId(name, owner), owner, type);
     }
 
     /**

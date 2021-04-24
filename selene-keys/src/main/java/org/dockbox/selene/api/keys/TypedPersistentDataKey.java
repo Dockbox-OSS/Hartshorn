@@ -18,9 +18,12 @@
 package org.dockbox.selene.api.keys;
 
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.module.ModuleContainer;
-import org.dockbox.selene.api.module.Modules;
+import org.dockbox.selene.api.domain.OwnerLookup;
+import org.dockbox.selene.api.domain.TypedOwner;
+import org.dockbox.selene.di.Provider;
 import org.jetbrains.annotations.NonNls;
+
+import java.util.Objects;
 
 public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
 
@@ -28,13 +31,13 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     private final String name;
     @NonNls
     private final String id;
-    private final ModuleContainer module;
+    private final TypedOwner owner;
     private final Class<T> type;
 
-    public TypedPersistentDataKey(String name, String id, ModuleContainer module, Class<T> type) {
+    public TypedPersistentDataKey(String name, String id, TypedOwner owner, Class<T> type) {
         this.name = name;
         this.id = id;
-        this.module = module;
+        this.owner = owner;
         this.type = type;
     }
 
@@ -44,8 +47,8 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
     }
 
     @Override
-    public String getRegisteringModuleId() {
-        return this.module.id();
+    public String getOwnerId() {
+        return this.owner.id();
     }
 
     @Override
@@ -60,11 +63,7 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
 
     @Override
     public int hashCode() {
-        // Does not include the responsible module, as comparisons may be made against the StoredPersistentKey type
-        // which uses the IntegratedModule.
-        int result = this.id.hashCode();
-        result = 31 * result + this.type.hashCode();
-        return result;
+        return Objects.hash(this.name, this.id, this.owner, this.type);
     }
 
     @Override
@@ -75,7 +74,9 @@ public class TypedPersistentDataKey<T> implements PersistentDataKey<T> {
         TypedPersistentDataKey<?> that = (TypedPersistentDataKey<?>) o;
 
         if (!this.id.equals(that.id)) return false;
-        if (!this.module.equals(that.module) && !this.module.equals(Modules.module(Selene.class))) return false;
+        if (!this.owner.equals(that.owner) &&
+                !this.owner.equals(Provider.provide(OwnerLookup.class).lookup(Selene.class)))
+            return false;
         return this.type.equals(that.type);
     }
 }

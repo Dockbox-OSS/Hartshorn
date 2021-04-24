@@ -17,12 +17,11 @@
 
 dependencies {
     compileOnly project(':selene-parent')
+    compileOnly project(':selene-bootstrap')
     compileOnly project(':selene-i18n')
-    compileOnly project(':selene-modules')
     compileOnly project(':selene-exceptions')
 
     testImplementation project(':selene-parent')
     testImplementation project(':selene-i18n')
-    testImplementation project(':selene-modules')
     testImplementation project(':selene-exceptions')
 }

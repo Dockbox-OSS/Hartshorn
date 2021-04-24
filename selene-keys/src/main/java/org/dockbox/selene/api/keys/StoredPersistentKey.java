@@ -18,12 +18,13 @@
 package org.dockbox.selene.api.keys;
 
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.api.module.Modules;
+import org.dockbox.selene.api.domain.OwnerLookup;
+import org.dockbox.selene.di.Provider;
 
 public class StoredPersistentKey extends TypedPersistentDataKey<Object> {
 
     private StoredPersistentKey(String id) {
-        super(id, id, Modules.module(Selene.class), Object.class);
+        super(id, id, Provider.provide(OwnerLookup.class).lookup(Selene.class), Object.class);
     }
 
     public static StoredPersistentKey of(String name) {
