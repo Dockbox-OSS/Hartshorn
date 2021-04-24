@@ -177,6 +177,26 @@ public final class Reflect {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> Exceptional<T> runMethod(
+            Class<?> methodHolder,
+            Object instance,
+            String method,
+            Class<T> expectedType) {
+        try {
+            Method m = methodHolder.getDeclaredMethod(method);
+            if (!m.isAccessible()) m.setAccessible(true);
+            T value = (T) m.invoke(instance);
+            return Exceptional.of(value);
+        }
+        catch (ClassCastException
+                | NoSuchMethodException
+                | InvocationTargetException
+                | IllegalAccessException e) {
+            return Exceptional.of(e);
+        }
+    }
+
     @Contract("null, _ -> false; !null, null -> false")
     public static <T> boolean isGenericInstanceOf(T instance, Class<?> type) {
         return null != instance && Reflect.assignableFrom(type, instance.getClass());
