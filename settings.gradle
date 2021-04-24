@@ -23,10 +23,6 @@ includeAll(rootDir, '')
 includeAll(new File(rootDir, 'selene-modules'), ':selene-modules')
 includeAll(new File(rootDir, 'selene-minecraft-modules'), ':selene-minecraft-modules')
 
-include 'selene-sponge-7'
-include 'modules'
-include 'examples'
-
 def includeAll(File dir, String prefix) {
     dir.listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
