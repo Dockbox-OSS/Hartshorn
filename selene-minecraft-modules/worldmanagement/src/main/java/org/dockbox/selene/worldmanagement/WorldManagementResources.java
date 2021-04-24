@@ -21,7 +21,7 @@ import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.Resource;
 
-@Resources(module = WorldManagement.class)
+@Resources(WorldManagement.class)
 public class WorldManagementResources {
 
     public static final ResourceEntry WORLD_BLACKLIST_ADDED = new Resource("$2{0} $1was added to the blacklist and will not be unloaded", "worldmanagement.unloader.blacklist.added");

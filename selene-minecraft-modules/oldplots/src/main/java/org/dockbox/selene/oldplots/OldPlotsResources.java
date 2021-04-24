@@ -20,7 +20,7 @@ package org.dockbox.selene.oldplots;
 import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.entry.Resource;
 
-@Resources(module = OldPlotsModule.class)
+@Resources(OldPlotsModule.class)
 public final class OldPlotsResources {
 
     public static final Resource SINGLE_PLOT = new Resource("$3 - $1{0}$2, $1{1}, {2}", "oldplots.list.single");

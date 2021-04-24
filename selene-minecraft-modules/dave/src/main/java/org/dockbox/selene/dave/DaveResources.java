@@ -20,7 +20,7 @@ package org.dockbox.selene.dave;
 import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.entry.Resource;
 
-@Resources(module = DaveModule.class)
+@Resources(DaveModule.class)
 public final class DaveResources {
 
     public static final Resource DAVE_LINK_SUGGESTION = new Resource("Here's a useful link, $1{0}", "dave.suggestion.link");

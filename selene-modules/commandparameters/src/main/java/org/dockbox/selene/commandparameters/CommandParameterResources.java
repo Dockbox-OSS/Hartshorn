@@ -21,7 +21,7 @@ import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.Resource;
 
-@Resources(module = CommandParameters.class)
+@Resources(CommandParameters.class)
 public class CommandParameterResources {
 
     public static final ResourceEntry NOT_ENOUGH_ARGUMENTS = new Resource("Not enough arguments.", "selene.command.missing_args");

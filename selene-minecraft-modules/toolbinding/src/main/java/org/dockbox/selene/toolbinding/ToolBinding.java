@@ -41,7 +41,7 @@ import java.util.UUID;
         name = "Tool Binding",
         description = "Adds the ability to bind commands to tools and items",
         authors = "GuusLieben")
-@Resources(module = ToolBinding.class)
+@Resources(ToolBinding.class)
 public class ToolBinding {
 
     private static final PersistentDataKey<String> PERSISTENT_TOOL = Keys.persistent(String.class, "Tool Binding", ToolBinding.class);

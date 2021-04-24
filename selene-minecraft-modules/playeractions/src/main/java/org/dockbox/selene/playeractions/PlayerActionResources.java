@@ -21,7 +21,7 @@ import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.Resource;
 
-@Resources(module = PlayerActions.class)
+@Resources(PlayerActions.class)
 public class PlayerActionResources {
 
     public static final ResourceEntry SPECTATOR_TELEPORT_NOT_ALLOWED = new Resource("$4You are not allowed to teleport while in spectator mode", "playeractions.spectator.notallowed");
