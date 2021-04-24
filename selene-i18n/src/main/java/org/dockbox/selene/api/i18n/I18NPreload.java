@@ -17,13 +17,18 @@
 
 package org.dockbox.selene.api.i18n;
 
-import org.dockbox.selene.api.module.SeleneModuleBootstrap;
 import org.dockbox.selene.di.Preloadable;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.util.Reflect;
 
 public class I18NPreload implements Preloadable {
     @Override
     public void preload() {
-        SeleneModuleBootstrap.getInstance().registerPostInit(Provider.provide(ResourceService.class)::init);
+        Class<?> moduleBootstrap = Reflect.lookup("org.dockbox.selene.api.value.SeleneModuleBootstrap");
+        if (moduleBootstrap != null) {
+            Reflect.runMethod(moduleBootstrap, null, "getInstance", moduleBootstrap).present(bootstrap -> {
+                Reflect.runMethod(bootstrap, "registerPostInit", null, (Runnable) Provider.provide(ResourceService.class)::init);
+            });
+        }
     }
 }

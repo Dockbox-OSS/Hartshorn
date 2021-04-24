@@ -26,7 +26,6 @@ import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.Resource;
-import org.dockbox.selene.api.module.Modules;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.util.Reflect;
@@ -84,7 +83,7 @@ public class SimpleResourceService implements ResourceService {
         if (this.resourceMaps.containsKey(lang)) return this.resourceMaps.get(lang);
 
         FileManager cm = Provider.provide(FileManager.class);
-        Path languageConfigFile = cm.getConfigFile(Modules.module(Selene.class), lang.getCode());
+        Path languageConfigFile = cm.getConfigFile(Selene.class, lang.getCode());
         Map<String, String> resources;
         if (languageConfigFile.toFile().exists() && !SeleneUtils.isFileEmpty(languageConfigFile)) {
             resources = SimpleResourceService.getResourcesForFile(languageConfigFile, cm);
