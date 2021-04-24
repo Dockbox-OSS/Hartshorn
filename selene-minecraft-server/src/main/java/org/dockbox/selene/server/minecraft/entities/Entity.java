@@ -40,9 +40,6 @@ import org.dockbox.selene.server.minecraft.dimension.world.World;
  * </ul>
  *
  * <p>Blocks and items (when they are in inventories) are not entities.
- *
- * @param <T>
- *         The type of {@link Entity}
  */
 public interface Entity extends Identifiable, Locatable, PersistentDataHolder, KeyHolder<Entity> {
 
