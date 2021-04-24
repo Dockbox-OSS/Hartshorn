@@ -77,10 +77,10 @@ public interface ExceptionHelper {
     <T> void handleSafe(Consumer<T> consumer, T value);
 
     /**
-     * Runs a given function accepting a given value, returning a potential result wrapped in a {@link
-     * org.dockbox.selene.api.objects.Exceptional}. The exceptional should wrap the exception if
-     * present. Handles any possible exceptions using default behavior for the implementation. Usually
-     * this will be logging to a console or file.
+     * Runs a given function accepting a given value, returning a potential result wrapped in
+     * a {@link Exceptional}. The exceptional should wrap the exception if present. Handles any
+     * possible exceptions using default behavior for the implementation. Usually this will be
+     * logging to a console or file.
      *
      * @param <T>
      *         The type of the value to be consumed
@@ -121,9 +121,9 @@ public interface ExceptionHelper {
     <T> void handleSafe(Consumer<T> consumer, T value, Consumer<Throwable> errorConsumer);
 
     /**
-     * Runs a given function accepting a given value, returning a potential result wrapped in a {@link
-     * org.dockbox.selene.api.objects.Exceptional}. The exceptional should wrap the exception if
-     * present. Handles any possible exceptions using a given consumer.
+     * Runs a given function accepting a given value, returning a potential result wrapped in
+     * a {@link Exceptional}. The exceptional should wrap the exception if present. Handles
+     * any possible exceptions using a given consumer.
      *
      * @param <T>
      *         The type of the value to be consumed
