@@ -21,11 +21,9 @@ import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.entity.annotations.Extract;
 import org.dockbox.selene.api.entity.annotations.Extract.Behavior;
-import org.dockbox.selene.api.module.ModuleContainer;
-import org.dockbox.selene.api.module.Modules;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.properties.InjectableType;
 import org.dockbox.selene.di.properties.InjectorProperty;
-import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.nio.file.Path;
@@ -51,9 +49,9 @@ public abstract class AbstractConfiguration<C extends AbstractConfiguration<C>> 
     }
 
     protected void transferOrReuse() {
-        ModuleContainer module = Modules.module(this.getModuleClass());
-        if (null == module) {
-            throw new IllegalArgumentException("Provided module not annotated as such.");
+        PersistentOwner owner = Provider.provide(OwnerLookup.class).lookup(this.getOwnerType());
+        if (null == owner) {
+            throw new IllegalArgumentException("Provided owner could not be located.");
         }
 
         Path configPath = this.getConfigFile();

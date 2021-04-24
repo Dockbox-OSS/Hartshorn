@@ -15,7 +15,5 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly project(':selene-parent')
-    compileOnly project(':selene-bootstrap')
+package org.dockbox.selene.api.module;public class ModuleOwnerLookup {
 }

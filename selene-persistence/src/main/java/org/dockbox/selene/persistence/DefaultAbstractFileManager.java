@@ -19,8 +19,6 @@ package org.dockbox.selene.persistence;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.module.ModuleContainer;
-import org.dockbox.selene.api.module.Modules;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.Reflect;
@@ -48,32 +46,32 @@ public abstract class DefaultAbstractFileManager implements FileManager {
         this.fileType = fileType;
     }
 
-    public Path getDataFile(Class<?> module) {
-        return this.getDataFile(Modules.module(module));
+    public Path getDataFile(Class<?> owner) {
+        return this.getDataFile(this.owner(owner));
     }
 
     @NotNull
     @Override
-    public Path getDataFile(@NotNull ModuleContainer module) {
-        return this.getDataFile(module, module.id());
+    public Path getDataFile(@NotNull PersistentOwner owner) {
+        return this.getDataFile(owner, owner.id());
     }
 
     @NotNull
     @Override
-    public Path getConfigFile(@NotNull ModuleContainer module) {
-        return this.getConfigFile(module, module.id());
+    public Path getConfigFile(@NotNull PersistentOwner owner) {
+        return this.getConfigFile(owner, owner.id());
     }
 
     @NotNull
     @Override
-    public Path getDataFile(@NotNull ModuleContainer module, @NotNull String file) {
-        return this.createFileIfNotExists(this.getFileType().asPath(this.getDataDir().resolve(module.id()), file));
+    public Path getDataFile(@NotNull PersistentOwner owner, @NotNull String file) {
+        return this.createFileIfNotExists(this.getFileType().asPath(this.getDataDir().resolve(owner.id()), file));
     }
 
     @NotNull
     @Override
-    public Path getConfigFile(@NotNull ModuleContainer module, @NotNull String file) {
-        return this.createFileIfNotExists(this.getFileType().asPath(this.getModuleConfigsDir().resolve(module.id()), file));
+    public Path getConfigFile(@NotNull PersistentOwner owner, @NotNull String file) {
+        return this.createFileIfNotExists(this.getFileType().asPath(this.getModuleConfigsDir().resolve(owner.id()), file));
     }
 
     @NotNull

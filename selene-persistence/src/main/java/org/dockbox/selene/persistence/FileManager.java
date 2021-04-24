@@ -18,9 +18,7 @@
 package org.dockbox.selene.persistence;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.module.ModuleContainer;
-import org.dockbox.selene.api.module.Modules;
-import org.dockbox.selene.api.module.annotations.Module;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.di.properties.InjectableType;
 
 import java.nio.file.Path;
@@ -33,64 +31,64 @@ import java.nio.file.Path;
 public interface FileManager extends InjectableType {
 
     /**
-     * Gets the default data file for a given {@link Module}. The exact location is decided by the
+     * Gets the default data file for a given {@link PersistentOwner}. The exact location is decided by the
      * top-level implementation of this type.
      *
-     * @param module
-     *         The {@link Module} providing identification
+     * @param owner
+     *         The {@link PersistentOwner} providing identification
      *
      * @return A {@link Path} reference to a file
      */
-    Path getDataFile(ModuleContainer module);
+    Path getDataFile(PersistentOwner owner);
 
-    default Path getConfigFile(Class<?> module) {
-        return this.getConfigFile(Modules.module(module));
+    default Path getConfigFile(Class<?> owner) {
+        return this.getConfigFile(this.owner(owner));
     }
 
     /**
-     * Gets the default config file for a given {@link Module}. The exact location is decided by the
+     * Gets the default config file for a given {@link PersistentOwner}. The exact location is decided by the
      * top-level implementation of this type.
      *
-     * @param module
-     *         The {@link Module} providing identification
+     * @param owner
+     *         The {@link PersistentOwner} providing identification
      *
      * @return A {@link Path} reference to a file
      */
-    Path getConfigFile(ModuleContainer module);
+    Path getConfigFile(PersistentOwner owner);
 
-    default Path getDataFile(Class<?> module, String file) {
-        return this.getDataFile(Modules.module(module), file);
+    default Path getDataFile(Class<?> owner, String file) {
+        return this.getDataFile(this.owner(owner), file);
     }
 
     /**
-     * Gets a specific data file for a given {@link Module}. The exact location is decided by the
+     * Gets a specific data file for a given {@link PersistentOwner}. The exact location is decided by the
      * top-level implementation of this type.
      *
-     * @param module
-     *         The {@link Module} providing identification
+     * @param owner
+     *         The {@link PersistentOwner} providing identification
      * @param file
      *         The name of the lookup file
      *
      * @return A {@link Path} reference to a file
      */
-    Path getDataFile(ModuleContainer module, String file);
+    Path getDataFile(PersistentOwner owner, String file);
 
-    default Path getConfigFile(Class<?> module, String file) {
-        return this.getConfigFile(Modules.module(module), file);
+    default Path getConfigFile(Class<?> owner, String file) {
+        return this.getConfigFile(this.owner(owner), file);
     }
 
     /**
-     * Gets a specific config file for a given {@link Module}. The exact location is decided by the
+     * Gets a specific config file for a given {@link PersistentOwner}. The exact location is decided by the
      * top-level implementation of this type.
      *
-     * @param module
-     *         The {@link Module} providing identification
+     * @param owner
+     *         The {@link PersistentOwner} providing identification
      * @param file
      *         The name of the lookup file
      *
      * @return A {@link Path} reference to a file
      */
-    Path getConfigFile(ModuleContainer module, String file);
+    Path getConfigFile(PersistentOwner owner, String file);
 
     /**
      * Get the content of a file, and map the given values to a generic type {@code T}. The exact file
@@ -127,21 +125,21 @@ public interface FileManager extends InjectableType {
      */
     <T> Exceptional<Boolean> write(Path file, T content);
 
-    default Path getDataDir(Class<?> module) {
-        return this.getDataDir(Modules.module(module));
+    default Path getDataDir(Class<?> owner) {
+        return this.getDataDir(this.owner(owner));
     }
 
     /**
-     * Get the data directory for a given {@link Module}. The exact location is decided by the
+     * Get the data directory for a given {@link PersistentOwner}. The exact location is decided by the
      * top-level implementation of this type.
      *
-     * @param module
-     *         The {@link Module} providing identification
+     * @param owner
+     *         The {@link PersistentOwner} providing identification
      *
      * @return A {@link Path} reference to the data directory
      */
-    default Path getDataDir(ModuleContainer module) {
-        return this.getDataDir().resolve(module.id());
+    default Path getDataDir(PersistentOwner owner) {
+        return this.getDataDir().resolve(owner.id());
     }
 
     /**
@@ -169,7 +167,7 @@ public interface FileManager extends InjectableType {
     Path getServerRoot();
 
     /**
-     * Get the base modules directory of a platform file system. The exact location is decided by the
+     * Get the base owners directory of a platform file system. The exact location is decided by the
      * top-level implementation of this type.
      *
      * @return A {@link Path} reference to a directory
@@ -195,25 +193,25 @@ public interface FileManager extends InjectableType {
      */
     Path getPluginDir();
 
-    default Path getModuleConfigDir(Class<?> module) {
-        return this.getModuleConfigDir(Modules.module(module));
+    default Path getModuleConfigDir(Class<?> owner) {
+        return this.getModuleConfigDir(this.owner(owner));
     }
 
     /**
-     * Get the configuration directory for a given {@link Module}. The exact location is decided by
+     * Get the configuration directory for a given {@link PersistentOwner}. The exact location is decided by
      * the top-level implementation of this type.
      *
-     * @param module
-     *         The {@link Module} providing identification
+     * @param owner
+     *         The {@link PersistentOwner} providing identification
      *
      * @return A {@link Path} reference to the configuration directory
      */
-    default Path getModuleConfigDir(ModuleContainer module) {
-        return this.getModuleConfigsDir().resolve(module.id());
+    default Path getModuleConfigDir(PersistentOwner owner) {
+        return this.getModuleConfigsDir().resolve(owner.id());
     }
 
     /**
-     * Get the configuration folder for modules directory of a platform file system. The exact
+     * Get the configuration folder for owners directory of a platform file system. The exact
      * location is decided by the top-level implementation of this type.
      *
      * @return A {@link Path} reference to a directory
@@ -221,7 +219,7 @@ public interface FileManager extends InjectableType {
     Path getModuleConfigsDir();
 
     /**
-     * Get the configuration folder for modules directory of a platform file system. The exact
+     * Get the configuration folder for owners directory of a platform file system. The exact
      * location is decided by the top-level implementation of this type.
      *
      * <p>Depending on the platform this directory may not be present.
@@ -232,7 +230,7 @@ public interface FileManager extends InjectableType {
     Exceptional<Path> getModdedPlatformModsConfigDir();
 
     /**
-     * Get the configuration folder for modules directory of a platform file system. The exact
+     * Get the configuration folder for owners directory of a platform file system. The exact
      * location is decided by the top-level implementation of this type.
      *
      * @return A {@link Path} reference to a directory
@@ -299,4 +297,8 @@ public interface FileManager extends InjectableType {
     boolean copyDefaultFile(String defaultFileName, Path targetFile);
 
     void requestFileType(FileType fileType);
+
+    default PersistentOwner owner(Class<?> type) {
+        return Provider.provide(OwnerLookup.class).lookup(type);
+    }
 }

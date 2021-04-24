@@ -18,8 +18,9 @@
 package org.dockbox.selene.api.module;
 
 import org.dockbox.selene.api.module.annotations.Module;
+import org.dockbox.selene.persistence.PersistentOwner;
 
-public class ModuleContainer {
+public class ModuleContainer implements PersistentOwner {
 
     private final ModuleContext context;
 
@@ -27,6 +28,7 @@ public class ModuleContainer {
         this.context = context;
     }
 
+    @Override
     public String id() {
         return this.module().id();
     }

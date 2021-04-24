@@ -15,7 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-dependencies {
-    compileOnly project(':selene-parent')
-    compileOnly project(':selene-bootstrap')
+package org.dockbox.selene.persistence;
+
+public interface OwnerLookup {
+
+    PersistentOwner lookup(Class<?> type);
+
 }

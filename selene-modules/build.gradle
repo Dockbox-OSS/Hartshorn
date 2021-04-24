@@ -18,6 +18,7 @@
 dependencies {
     compileOnly project(':selene-parent')
     compile project(':selene-bootstrap')
+    compile project(':selene-persistence')
 }
 
 subprojects { Project subProject ->
