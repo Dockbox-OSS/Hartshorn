@@ -106,16 +106,16 @@ public class Registry<V> {
      *
      * @param identifier
      *         The {@link RegistryIdentifier} of the {@link RegistryColumn} to retrieve
-     * @param defaultvalues
-     *         A varargs of {@link V values} to add create the column with, if it doesn't
+     * @param defaultValues
+     *         A varargs of {@code values} to add create the column with, if it doesn't
      *         exist
      *
      * @return The {@link RegistryColumn}
      */
     @SafeVarargs
-    public final RegistryColumn<V> getColumnOrCreate(RegistryIdentifier identifier, V... defaultvalues) {
+    public final RegistryColumn<V> getColumnOrCreate(RegistryIdentifier identifier, V... defaultValues) {
         if (!this.containsColumns(identifier)) {
-            this.addColumn(identifier, defaultvalues);
+            this.addColumn(identifier, defaultValues);
         }
         return this.getMatchingColumns(identifier);
     }

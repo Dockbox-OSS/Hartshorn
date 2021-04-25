@@ -165,7 +165,7 @@ public final class SeleneUtils {
      *         The value
      *
      * @return The entry
-     * @see SeleneUtils#ofEntries(Entry...)
+     * @see SeleneUtils#ofEntries(Entry[])
      */
     public static <K, V> Entry<K, V> entry(K k, V v) {
         return new Tuple<>(k, v);
