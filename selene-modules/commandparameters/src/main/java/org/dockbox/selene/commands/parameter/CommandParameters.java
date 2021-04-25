@@ -15,13 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.commandparameters;
+package org.dockbox.selene.commands.parameter;
 
-import org.dockbox.selene.annotations.command.CustomParameter;
 import org.dockbox.selene.api.SeleneInformation;
 import org.dockbox.selene.api.module.annotations.Module;
-import org.dockbox.selene.command.convert.DynamicPatternConverter;
-import org.dockbox.selene.command.parameter.CustomParameterPattern;
+import org.dockbox.selene.commands.annotations.CustomParameter;
+import org.dockbox.selene.commands.convert.DynamicPatternConverter;
 import org.dockbox.selene.di.Preloadable;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.Reflect;

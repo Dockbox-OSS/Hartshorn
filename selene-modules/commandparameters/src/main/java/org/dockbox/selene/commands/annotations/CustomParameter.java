@@ -15,10 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.annotations.command;
+package org.dockbox.selene.commands.annotations;
 
-import org.dockbox.selene.command.parameter.CustomParameterPattern;
-import org.dockbox.selene.command.parameter.HashtagParameterPattern;
+import org.dockbox.selene.commands.parameter.CustomParameterPattern;
+import org.dockbox.selene.commands.parameter.HashtagParameterPattern;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

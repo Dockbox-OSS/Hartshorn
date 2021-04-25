@@ -15,10 +15,9 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.command.parameter;
+package org.dockbox.selene.commands.parameter;
 
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.commandparameters.CommandParameterResources;
 
 /**
  * Converts Hashtag-patterns into type instances used by command executors. The pattern follows the HashtagPatternParser from WorldEdit.

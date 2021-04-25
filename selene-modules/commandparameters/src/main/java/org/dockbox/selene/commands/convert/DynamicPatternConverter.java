@@ -15,12 +15,12 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.command.convert;
+package org.dockbox.selene.commands.convert;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.command.parameter.CustomParameterPattern;
+import org.dockbox.selene.commands.annotations.CustomParameter;
+import org.dockbox.selene.commands.parameter.CustomParameterPattern;
 import org.dockbox.selene.commands.context.CommandParameter;
-import org.dockbox.selene.commands.convert.AbstractArgumentConverter;
 import org.dockbox.selene.commands.source.CommandSource;
 import org.dockbox.selene.util.SeleneUtils;
 
@@ -28,7 +28,7 @@ import java.util.Collection;
 
 /**
  * The default converter for any type which can be constructed with a {@link CustomParameterPattern}. Typically
- * this only applies to types annotated with {@link org.dockbox.selene.annotations.command.CustomParameter},
+ * this only applies to types annotated with {@link CustomParameter},
  * however this is not a requirement.
  *
  * @param <T> The generic type

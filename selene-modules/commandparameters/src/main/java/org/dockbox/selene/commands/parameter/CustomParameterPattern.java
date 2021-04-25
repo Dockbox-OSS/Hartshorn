@@ -15,11 +15,10 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.command.parameter;
+package org.dockbox.selene.commands.parameter;
 
-import org.dockbox.selene.annotations.command.CustomParameter;
+import org.dockbox.selene.commands.annotations.CustomParameter;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.commandparameters.CommandParameterResources;
 import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.commands.convert.ArgumentConverterRegistry;
 import org.dockbox.selene.commands.source.CommandSource;
@@ -31,7 +30,7 @@ import java.util.List;
 
 /**
  * The type used to provide a argument pattern which can be used to construct types annotated with {@link CustomParameter}, typically done
- * through the {@link org.dockbox.selene.command.convert.DynamicPatternConverter}, though this is not a requirement.
+ * through the {@link org.dockbox.selene.commands.convert.DynamicPatternConverter}, though this is not a requirement.
  */
 public interface CustomParameterPattern {
 
