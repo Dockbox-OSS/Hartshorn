@@ -1,0 +1,11 @@
+dependencies {
+    compileOnly project(':selene-parent')
+    compileOnly project(':selene-bootstrap')
+    compileOnly project(':selene-i18n')
+    compileOnly project(':selene-events')
+
+    compile 'com.github.ygimenez:Pagination-Utils:2.1.1'
+    compile("net.dv8tion:JDA:$jdaVersion") {
+        exclude module: 'opus-java'
+    }
+}

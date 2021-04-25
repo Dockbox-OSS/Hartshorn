@@ -1,4 +1,0 @@
-dependencies {
-    compileOnly(project(':modules:datastructs'))
-    compileOnly(project(':modules:database'))
-}

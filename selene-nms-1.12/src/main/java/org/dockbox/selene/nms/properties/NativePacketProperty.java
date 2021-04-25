@@ -19,7 +19,7 @@ package org.dockbox.selene.nms.properties;
 
 import net.minecraft.network.Packet;
 
-import org.dockbox.selene.api.server.properties.InjectorProperty;
+import org.dockbox.selene.di.properties.InjectorProperty;
 
 /**
  * Provides a native {@link Packet} to a property holder, typically this is only used for {@link

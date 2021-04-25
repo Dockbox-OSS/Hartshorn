@@ -44,11 +44,9 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraftForge112}"
-    compileOnly project(':selene-core')
-    compileOnly(project(':selene-common')) {
-        exclude group: "org.spongepowered", module: "configurate**"
-    }
-    compileOnly project(':modules:packets')
+    compileOnly project(':selene-parent')
+    compileOnly project(':selene-keys')
+    compileOnly project(':selene-minecraft-server')
 }
 
 shadowJar {

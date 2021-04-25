@@ -1,0 +1,275 @@
+/*
+ * Copyright (C) 2020 Guus Lieben
+ *
+ * This framework is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1 of the
+ * License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
+package org.dockbox.selene.test.objects.living;
+
+import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.domain.tuple.Tristate;
+import org.dockbox.selene.api.i18n.common.Language;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.i18n.permissions.Permission;
+import org.dockbox.selene.api.i18n.text.Text;
+import org.dockbox.selene.api.i18n.text.pagination.Pagination;
+import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.server.minecraft.dimension.Worlds;
+import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.dimension.world.World;
+import org.dockbox.selene.server.minecraft.item.Item;
+import org.dockbox.selene.server.minecraft.packets.Packet;
+import org.dockbox.selene.server.minecraft.players.Gamemode;
+import org.dockbox.selene.server.minecraft.players.Hand;
+import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.server.minecraft.players.Profile;
+import org.dockbox.selene.server.minecraft.players.Sounds;
+import org.dockbox.selene.server.minecraft.players.inventory.PlayerInventory;
+import org.dockbox.selene.test.objects.JUnitPersistentDataHolder;
+import org.dockbox.selene.test.objects.JUnitProfile;
+import org.dockbox.selene.test.objects.JUnitWorld;
+import org.dockbox.selene.test.objects.inventory.JUnitInventory;
+import org.dockbox.selene.test.util.JUnitPermissionRegistry;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
+
+public class JUnitPlayer extends Player implements JUnitPersistentDataHolder {
+
+    private final PlayerInventory inventory = new JUnitInventory();
+    private boolean online = true;
+    private Gamemode gamemode = Gamemode.CREATIVE;
+    private Language language = Language.EN_US;
+    private boolean sneaking = false;
+    private Location lookingAt = null;
+    private Text displayName;
+    private double health = 20;
+    private Location location;
+    private boolean invisible = false;
+    private boolean invulnerable = false;
+    private boolean gravity = true;
+
+    public JUnitPlayer(@NotNull UUID uniqueId, @NotNull String name) {
+        super(uniqueId, name);
+        this.setDisplayName(Text.of(name));
+        Worlds worlds = Provider.provide(Worlds.class);
+        this.setLocation(new Location(0, 0, 0, worlds.getWorld(worlds.getRootWorldId()).orNull()));
+        ((JUnitWorld) this.getWorld()).addEntity(this);
+    }
+
+    @Override
+    public Text getDisplayName() {
+        return this.displayName;
+    }
+
+    @Override
+    public void setDisplayName(Text displayName) {
+        this.displayName = displayName;
+    }
+
+    @Override
+    public double getHealth() {
+        return this.health;
+    }
+
+    @Override
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
+    @Override
+    public boolean isAlive() {
+        return this.getHealth() > 0;
+    }
+
+    @Override
+    public boolean isInvisible() {
+        return this.invisible;
+    }
+
+    @Override
+    public void setInvisible(boolean invisible) {
+        this.invisible = invisible;
+    }
+
+    @Override
+    public boolean isInvulnerable() {
+        return this.invulnerable;
+    }
+
+    @Override
+    public void setInvulnerable(boolean invulnerable) {
+        this.invulnerable = invulnerable;
+    }
+
+    @Override
+    public boolean hasGravity() {
+        return this.gravity;
+    }
+
+    @Override
+    public void setGravity(boolean gravity) {
+        this.gravity = gravity;
+    }
+
+    @Override
+    public Location getLocation() {
+        return this.location;
+    }
+
+    @Override
+    public void setLocation(Location location) {
+        ((JUnitWorld) this.getWorld()).destroyEntity(this.getUniqueId());
+        this.location = location;
+        ((JUnitWorld) this.getWorld()).addEntity(this);
+    }
+
+    @Override
+    public World getWorld() {
+        return this.getLocation().getWorld();
+    }
+
+    @Override
+    public void execute(String command) {
+        // TODO: CommandBus implementation
+    }
+
+    @Override
+    public boolean isOnline() {
+        return this.online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
+    @Override
+    public void kick(Text reason) {
+        this.online = false;
+    }
+
+    @Override
+    public Gamemode getGamemode() {
+        return this.gamemode;
+    }
+
+    @Override
+    public void setGamemode(Gamemode gamemode) {
+        this.gamemode = gamemode;
+    }
+
+    @Override
+    public Language getLanguage() {
+        return this.language;
+    }
+
+    @Override
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    @Override
+    public Item getItemInHand(Hand hand) {
+        return this.getInventory().getSlot(hand.getSlot());
+    }
+
+    @Override
+    public void setItemInHand(Hand hand, Item item) {
+        this.getInventory().setSlot(item, hand.getSlot());
+    }
+
+    @Override
+    public void play(Sounds sound) {
+        // TODO: Test implementation, mocking client?
+    }
+
+    @Override
+    public boolean isSneaking() {
+        return this.sneaking;
+    }
+
+    public void setSneaking(boolean sneaking) {
+        this.sneaking = sneaking;
+    }
+
+    @Override
+    public Profile getProfile() {
+        return new JUnitProfile(this.getUniqueId());
+    }
+
+    @Override
+    public Exceptional<Location> getLookingAtBlockPos() {
+        return Exceptional.of(this.lookingAt);
+    }
+
+    @Override
+    public PlayerInventory getInventory() {
+        return this.inventory;
+    }
+
+    public void setLookingAt(Location lookingAt) {
+        this.lookingAt = lookingAt;
+    }
+
+
+    @Override
+    public void send(ResourceEntry text) {
+        // TODO: Test implementation, mocking client?
+    }
+
+    @Override
+    public void send(Text text) {
+        // TODO: Test implementation, mocking client?
+    }
+
+    @Override
+    public void sendWithPrefix(ResourceEntry text) {
+        // TODO: Test implementation, mocking client?
+    }
+
+    @Override
+    public void sendWithPrefix(Text text) {
+        // TODO: Test implementation, mocking client?
+    }
+
+    @Override
+    public void send(Pagination pagination) {
+        // TODO: Test implementation, mocking client?
+    }
+
+    @Override
+    public void send(Packet packet) {
+        // TODO: Test implementation, mocking client?
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return JUnitPermissionRegistry.hasPermission(this, permission);
+    }
+
+    @Override
+    public boolean hasPermission(Permission permission) {
+        return JUnitPermissionRegistry.hasPermission(this, permission);
+    }
+
+    @Override
+    public void setPermission(String permission, Tristate state) {
+        JUnitPermissionRegistry.setPermission(this, permission, state);
+    }
+
+    @Override
+    public void setPermission(Permission permission, Tristate state) {
+        JUnitPermissionRegistry.setPermission(this, permission, state);
+    }
+}

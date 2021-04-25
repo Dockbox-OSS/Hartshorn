@@ -23,20 +23,15 @@ group = 'org.dockbox.selene.sample'
 description 'Sample modules for Selene'
 
 dependencies {
-    compileOnly project(':selene-core')
-    compileOnly(project(':selene-common')) {
-        exclude group: "org.spongepowered", module: "configurate**"
-    }
+    compileOnly project(':selene-module-parent')
+    compileOnly project(':selene-minecraft-server')
+    compileOnly project(':selene-minecraft-modules:plots')
 
-    testCompile project(':selene-core')
-    testCompile(project(':selene-common')) {
-        exclude group: "org.spongepowered", module: "configurate**"
-    }
-
-    new File(parent.rootDir, 'modules').listFiles().each {
+    testImplementation project(":selene-test")
+    new File(parent.rootDir, 'selene-modules').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
-            compileOnly(project(":modules:${it.name}"))
-            testCompileOnly(project(":modules:${it.name}"))
+            compileOnly project(":selene-modules:${it.name}")
+            testImplementation project(":selene-modules:${it.name}")
         }
     }
 }

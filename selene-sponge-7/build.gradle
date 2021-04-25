@@ -1,0 +1,246 @@
+import java.time.LocalDate
+
+/*
+ *  Copyright (C) 2020 Guus Lieben
+ *
+ *  This framework is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as
+ *  published by the Free Software Foundation, either version 2.1 of the
+ *  License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ *  the GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
+ */
+
+buildscript {
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.spongepowered.plugin' version '0.9.0'
+    id 'de.undercouch.download' version '4.1.1'
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+
+archivesBaseName = 'selene-sponge-api7'
+group project.pluginGroup
+description 'Sponge API7.x implementation for Selene'
+sponge.plugin.id = pluginId
+def date = LocalDate.now().toString()
+
+minecraft {
+    mappings channel: 'snapshot', version: "${minecraftMappings112}"
+}
+
+repositories {
+    maven {
+        name 'Nucleus'
+        url 'https://repo.drnaylor.co.uk/artifactory/list/minecraft'
+    }
+    maven {
+        name 'fawe'
+        url 'https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/'
+    }
+    maven {
+        name 'sk89q'
+        url 'https://maven.enginehub.org/repo/'
+    }
+    maven {
+        name 'jitpack'
+        url 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraftForge112}"
+    new File(parent.rootDir, 'selene-modules').listFiles().each {
+        if (it.directory && new File(it, 'build.gradle').exists()) {
+            shadow project(":selene-modules:${it.name}")
+            testImplementation project(":selene-modules:${it.name}")
+        }
+    }
+    new File(parent.rootDir, 'selene-minecraft-modules').listFiles().each {
+        if (it.directory && new File(it, 'build.gradle').exists()) {
+            shadow project(":selene-minecraft-modules:${it.name}")
+            testImplementation project(":selene-minecraft-modules:${it.name}")
+        }
+    }
+
+    shadow project(':selene-parent')
+    shadow project(':selene-tasks')
+    shadow project(':selene-web')
+    shadow project(':selene-discord')
+    shadow project(':selene-persistence-configurate')
+    shadow project(':selene-persistence-xstream')
+    shadow project(':selene-minecraft-server')
+
+    shadow(project(':selene-nms-1.12')) {
+        exclude group: 'net.minecraftforge', module: 'forge'
+    }
+
+    compileOnly "me.lucko.luckperms:luckperms-api:$luckPermsVersion"
+    compileOnly("org.spongepowered:spongeapi:$spongeApi7Version") {
+        exclude group: "org.spongepowered", module: "configurate**"
+    }
+    compileOnly("org.spongepowered:spongecommon:$spongeCommon7Version") {
+        exclude group: "org.spongepowered", module: "configurate**"
+    }
+    compileOnly "com.github.Eufranio:MagiBridge:$magiBridgeVersion"
+    compileOnly "com.github.MultiChat:Development:$multiChatVersion"
+    compileOnly "com.github.flash-labs:FlashLibs:$flashLibsVersion"
+    compileOnly "com.sk89q.worldedit:worldedit-sponge:$worldEditSpongeVersion"
+    compileOnly "io.github.NucleusPowered:Nucleus:$nucleusApiVersion"
+
+    compileOnly 'io.netty:netty-all:4.1.24.Final'
+
+    testImplementation project(':selene-test')
+    testImplementation project(':selene-modules')
+    testImplementation(project(':selene-nms-1.12')) {
+        exclude group: 'net.minecraftforge', module: 'forge'
+    }
+
+    if (findProject(':darwin') != null) {
+        compile project(':darwin')
+        testImplementation project(':darwin')
+    }
+
+    compileOnly files('libs/PacketGate-0.1.2.jar')
+    compileOnly files('libs/PlotSquared-modified-latest.jar')
+
+    // Required plugins for all platforms
+    compileOnly "com.boydti:fawe-api:$faweVersion"
+    compileOnly "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
+
+    testImplementation "com.boydti:fawe-api:$faweVersion"
+    testImplementation "com.sk89q.worldedit:worldedit-core:$worldEditCoreVersion"
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+}
+
+task downloadServerCustom(type: Download) {
+    src([
+            'http://dockbox.org/selene/sponge-112-custom.zip',
+            'http://dockbox.org/selene/sponge-112-libraries.zip',
+            'https://files.minecraftforge.net/maven/net/minecraftforge/forge/1.12.2-14.23.5.2847/forge-1.12.2-14.23.5.2847-universal.jar',
+            'https://launcher.mojang.com/mc/game/1.12.2/server/886945bfb2b978778c3a0288fd7fab09d315b25f/server.jar'
+    ])
+    dest "${rootDir}/servers/sponge-112"
+}
+
+task downloadServerMods(type: Download) {
+    src([
+            'https://media.forgecdn.net/files/2565/963/ConquestReforged-3.0.2-mc1.12.2.jar',
+            'https://media.forgecdn.net/files/2897/804/FantasticLib-1.12.2.034.jar',
+            'https://media.forgecdn.net/files/2654/852/GlobalGameRules-1.12.2-2.2.7.jar',
+            'https://media.forgecdn.net/files/2853/556/NoAdvancements-1.12.2.002.jar',
+            'https://repo.spongepowered.org/maven/org/spongepowered/spongeforge/1.12.2-2838-7.3.0/spongeforge-1.12.2-2838-7.3.0.jar'
+    ])
+    dest "${rootDir}/servers/sponge-112/mods"
+}
+
+task downloadDevServer(type: Copy) {
+    def serverDir = new File("${rootDir}/servers/sponge-112")
+
+    println("Creating directory $serverDir")
+    mkdir serverDir
+
+    dependsOn 'downloadServerMods'
+    dependsOn 'downloadServerCustom'
+
+    def customZip = new File(serverDir, 'sponge-112-custom.zip')
+    println('Unzipping Selene-specific server plugins and configurations')
+    from zipTree(customZip)
+    into serverDir
+
+    def libZip = new File(serverDir, 'sponge-112-libraries.zip')
+    println('Unzipping server libraries')
+    from zipTree(libZip)
+    into serverDir
+
+    doLast {
+        def serverJar = new File(serverDir, 'server.jar')
+
+        println('Moving Minecraft 1.12.2 server')
+        copy {
+            from serverJar
+            into serverDir
+            rename('server.jar', 'minecraft_server.1.12.2.jar')
+        }
+
+        println('Cleaning up')
+        delete fileTree(serverDir).matching {
+            include 'server.jar'
+            include 'sponge-112-custom.zip'
+            include 'sponge-112-libraries.zip'
+        }
+    }
+}
+
+task relocateSeleneDistribution(dependsOn: build) {
+    doLast {
+        def version = getVersionName()
+        def DIST_DIR = "${rootDir}/dist/${date}/${version}"
+        def PLUGIN_DIR = "${rootDir}/servers/sponge-112/plugins"
+
+        delete fileTree(PLUGIN_DIR).matching {
+            include '**/*selene*.jar'
+        }
+
+        println("Relocating $DIST_DIR/$archivesBaseName-$version-${date}.jar to $PLUGIN_DIR")
+        ant.copy(todir: PLUGIN_DIR) {
+            fileset dir: DIST_DIR,
+                    includes: "$archivesBaseName-$version-${date}.jar"
+        }
+    }
+}
+
+task runDevServer(dependsOn: relocateSeleneDistribution) {
+    doLast {
+        javaexec {
+            workingDir = "${project.rootDir}/servers/sponge-112"
+            main = '-jar'
+            args = [
+                    '-Xmx6G',
+                    '-Dsponge.debugcauseframes=true',
+                    '-Xdebug',
+                    '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005',
+                    "${project.rootDir}/servers/sponge-112/forge-1.12.2-14.23.5.2847-universal.jar"
+            ]
+        }
+    }
+}
+
+task copyArtifacts {
+    doLast {
+        def version = getVersionName()
+        def DIST_DEST_DIR = "${rootDir}/dist/${date}/${version}"
+        def DIRT_SRC_DIR = "${buildDir}/libs"
+
+        ant.mkdir(dir: DIST_DEST_DIR)
+        println("Copying all built files to $DIST_DEST_DIR")
+        ant.copy(todir: DIST_DEST_DIR) {
+            fileset dir: DIRT_SRC_DIR,
+                    includes: "*${version}-${date}*.jar"
+        }
+
+    }
+}
+
+jar.finalizedBy('reobfJar')
+build.finalizedBy copyArtifacts
+relocateSeleneDistribution.dependsOn build
+runDevServer.dependsOn relocateSeleneDistribution

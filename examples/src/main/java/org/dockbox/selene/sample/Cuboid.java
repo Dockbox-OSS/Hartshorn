@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sample;
 
-import org.dockbox.selene.annotations.command.CustomParameter;
+import org.dockbox.selene.commands.annotations.CustomParameter;
 
 @CustomParameter("cuboid")
 public class Cuboid {
