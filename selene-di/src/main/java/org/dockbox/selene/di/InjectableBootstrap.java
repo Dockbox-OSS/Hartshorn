@@ -24,10 +24,14 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
+import com.google.inject.internal.LinkedBindingImpl;
 
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.domain.tuple.Tuple;
 import org.dockbox.selene.api.entity.annotations.DoNotEnable;
 import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Binds;
+import org.dockbox.selene.di.annotations.MultiBinds;
 import org.dockbox.selene.di.modules.SingleAnnotatedImplementationModule;
 import org.dockbox.selene.di.modules.SingleImplementationModule;
 import org.dockbox.selene.di.modules.SingleInstanceModule;
@@ -47,6 +51,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -54,6 +60,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import sun.misc.Unsafe;
 
@@ -284,7 +291,7 @@ public abstract class InjectableBootstrap {
         this.injector = null; // Reset injector so it regenerates later
     }
 
-    public void bind(InjectConfiguration moduleConfiguration) {
+    public void bind(String prefix, InjectConfiguration moduleConfiguration) {
         this.injectorModules.add(moduleConfiguration);
     }
 
@@ -316,7 +323,7 @@ public abstract class InjectableBootstrap {
         return null;
     }
 
-    public Map<Key<?>, Binding<?>> getAllBindings() {
+    private Map<Key<?>, Binding<?>> getAllBindings() {
         Map<Key<?>, Binding<?>> bindings = SeleneUtils.emptyConcurrentMap();
         this.rebuildInjector().getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
             try {
@@ -330,5 +337,33 @@ public abstract class InjectableBootstrap {
             }
         });
         return bindings;
+    }
+
+    protected List<BindingData> getBindingData() {
+        List<BindingData> data = SeleneUtils.emptyList();
+        for (Entry<Key<?>, Binding<?>> entry : this.getAllBindings().entrySet()) {
+            Key<?> key = entry.getKey();
+            Binding<?> binding = entry.getValue();
+            Key<?> bindingKey = binding.getKey();
+            if (binding instanceof LinkedBindingImpl) {
+                bindingKey = ((LinkedBindingImpl<?>) binding).getLinkedKey();
+            }
+
+            Class<?> rawKey = key.getTypeLiteral().getRawType();
+            Annotation annotation = key.getAnnotation();
+            Class<?> rawBinding = bindingKey.getTypeLiteral().getRawType();
+
+            if (annotation instanceof BindingMeta) {
+                data.add(new BindingData(rawKey, rawBinding, (BindingMeta) annotation));
+            } else if (annotation instanceof Named) {
+                data.add(new BindingData(rawKey, rawBinding, Bindings.meta(((Named) annotation).value())));
+            } else if (annotation instanceof com.google.inject.name.Named) {
+                data.add(new BindingData(rawKey, rawBinding, Bindings.meta(((com.google.inject.name.Named) annotation).value())));
+            } else {
+                data.add(new BindingData(rawKey, rawBinding));
+            }
+        }
+        data.sort(Comparator.comparing(d -> d.getSource().getSimpleName()));
+        return data;
     }
 }
