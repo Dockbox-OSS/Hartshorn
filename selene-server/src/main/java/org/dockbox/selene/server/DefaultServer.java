@@ -61,10 +61,6 @@ public class DefaultServer implements Server {
                     .format(Selene.getServer().getVersion())
                     .translate(source).asText()
             );
-            content.add(DefaultServerResources.SERVER_UPDATE
-                    .format(Selene.getServer().getLastUpdate())
-                    .translate(source).asText()
-            );
             content.add(DefaultServerResources.SERVER_AUTHORS
                     .format(String.join(",", SeleneBootstrap.getAuthors()))
                     .translate(source).asText());

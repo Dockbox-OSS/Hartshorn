@@ -30,7 +30,6 @@ public enum DefaultServerResources {
     ;
     public static final ResourceEntry PAGINATION_TITLE = new Resource("$1Selene Server Info", "selene.pagination.title");
     public static final ResourceEntry SERVER_HEADER = new Resource("$2Selene $3($1Version$3: $1{0}$3)", "selene.info.header");
-    public static final ResourceEntry SERVER_UPDATE = new Resource("$2Last updated$3: $1{0}", "selene.info.updated");
     public static final ResourceEntry SERVER_AUTHORS = new Resource("$2Authors$3: $1{0}", "selene.info.authors");
     public static final ResourceEntry SERVER_MODULES = new Resource("$2Modules$3:", "selene.info.modules");
     public static final ResourceEntry MODULE_ROW = new Resource("$3 - $1{0} $3- $2{1}", "selene.info.module.row");
