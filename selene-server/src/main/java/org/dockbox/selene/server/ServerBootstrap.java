@@ -25,11 +25,11 @@ import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.module.SeleneModuleBootstrap;
+import org.dockbox.selene.di.BindingData;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.events.ServerStartedEvent;
 
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class ServerBootstrap extends SeleneModuleBootstrap {
@@ -57,20 +57,11 @@ public abstract class ServerBootstrap extends SeleneModuleBootstrap {
     protected void debugRegisteredInstances(ServerStartedEvent event) {
         Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
         AtomicInteger unprovisionedTypes = new AtomicInteger();
-        // TODO: Migrate to native
-//        super.getAllBindings().forEach((Key<?> key, Binding<?> binding) -> {
-//            try {
-//                Class<?> keyType = binding.getKey().getTypeLiteral().getRawType();
-//                Class<?> providerType = binding.getProvider().get().getClass();
-//
-//                if (!keyType.equals(providerType) && null != providerType)
-//                    Selene.log().info("  - \u00A77" + keyType.getSimpleName() + ": \u00A78" + providerType.getCanonicalName());
-//            }
-//            catch (ProvisionException | AssertionError e) {
-//                unprovisionedTypes.getAndIncrement();
-//            }
-//        });
-//        Selene.log().info("  \u00A77.. and " + unprovisionedTypes.get() + " unprovisioned types.");
+
+        for (BindingData binding : this.getBindingData()) {
+            String meta = binding.getMeta().present() ? " (meta: " + binding.getMeta().get().value() + ")" : "";
+            Selene.log().info("  - \u00A77" + binding.getSource().getSimpleName() + meta + ": \u00A78" + binding.getTarget().getSimpleName());
+        }
 
         Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded modules: ");
         ModuleManager em = Provider.provide(ModuleManager.class);
@@ -78,13 +69,11 @@ public abstract class ServerBootstrap extends SeleneModuleBootstrap {
             Exceptional<ModuleContainer> header = em.getContainer(ext);
             if (header.present()) {
                 ModuleContainer ex = header.get();
-                Selene.log().info("  - \u00A77" + ex.name());
-                Selene.log().info("  | - \u00A77ID: \u00A78" + ex.id());
-                Selene.log().info("  | - \u00A77Authors: \u00A78" + Arrays.toString(ex.authors()));
-                Selene.log().info("  | - \u00A77Dependencies: \u00A78" + Arrays.toString(ex.dependencies()));
+                String module = "  - \u00A77" + ex.name() + " \u00A78(" + ex.id() + ")";
+                Selene.log().info(module);
             }
             else {
-                Selene.log().info("  - \u00A77" + ext + " \u00A78(No header)");
+                Selene.log().info("  - \u00A77" + ext + " \u00A78(Missing header)");
             }
         });
 
@@ -94,9 +83,11 @@ public abstract class ServerBootstrap extends SeleneModuleBootstrap {
             if (listener instanceof Class) type = (Class<?>) listener;
             else type = listener.getClass();
 
-            Selene.log().info("  - \u00A77" + type.getCanonicalName());
-            invokers.forEach(invoker ->
-                    Selene.log().info("  | - \u00A77" + invoker.getEventType().getSimpleName() + ": \u00A78" + invoker.getMethod().getName()));
+            String entry = "  - \u00A77" + type.getSimpleName();
+
+            String[] objects = invokers.stream().map(invoker -> "\u00A77" + invoker.getEventType().getSimpleName()).toArray(String[]::new);
+            String events = String.join(", ", objects);
+            Selene.log().info(entry + " (" + events + "\u00A77)");
         });
     }
 
