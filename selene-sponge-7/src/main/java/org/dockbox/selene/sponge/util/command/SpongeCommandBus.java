@@ -120,7 +120,6 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
 
     protected CommandSpec.Builder buildInheritedContextExecutor(CommandInheritanceContext context, String alias) {
         CommandSpec.Builder builder = this.buildContextExecutor(context, alias);
-        Selene.log().info("Children for /" + alias);
         context.getInheritedCommands().forEach(inheritedContext ->
                 inheritedContext.getAliases().forEach(inheritedAlias ->
                         builder.child(
@@ -148,8 +147,6 @@ public class SpongeCommandBus extends DefaultCommandBus<Builder> {
 
         builder.permission(context.getCommand().permission());
         builder.executor(this.buildExecutor(context, alias));
-
-        Selene.log().info("- " + alias);
 
         return builder;
     }

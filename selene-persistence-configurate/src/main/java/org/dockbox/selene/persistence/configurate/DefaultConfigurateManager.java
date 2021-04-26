@@ -69,7 +69,7 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
     @NotNull
     @Override
     public <T> Exceptional<T> read(@NotNull Path file, @NotNull Class<T> type) {
-        Exceptional<T> persistentCapableContent = correctPersistentCapable(file, type);
+        Exceptional<T> persistentCapableContent = this.correctPersistentCapable(file, type);
         if (persistentCapableContent.present()) return persistentCapableContent;
 
         Reflect.rejects(type, DefaultConfigurateManager.class, true);
@@ -97,7 +97,7 @@ public abstract class DefaultConfigurateManager extends DefaultAbstractFileManag
     @NotNull
     @Override
     public <T> Exceptional<Boolean> write(@NotNull Path file, @NotNull T content) {
-        if (content instanceof PersistentCapable) return write(file, ((PersistentCapable<?>) content).toPersistentModel());
+        if (content instanceof PersistentCapable) return this.write(file, ((PersistentCapable<?>) content).toPersistentModel());
 
         Reflect.rejects(content.getClass(), DefaultConfigurateManager.class, true);
 

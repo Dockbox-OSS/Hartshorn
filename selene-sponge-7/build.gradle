@@ -193,7 +193,7 @@ task downloadDevServer(type: Copy) {
 task relocateSeleneDistribution(dependsOn: build) {
     doLast {
         def version = getVersionName()
-        def DIST_DIR = "${rootDir}/dist/${date}/${version}"
+        def DIST_DIR = "${rootDir}/selene-assembly/distributions"
         def PLUGIN_DIR = "${rootDir}/servers/sponge-112/plugins"
 
         delete fileTree(PLUGIN_DIR).matching {
@@ -227,7 +227,7 @@ task runDevServer(dependsOn: relocateSeleneDistribution) {
 task copyArtifacts {
     doLast {
         def version = getVersionName()
-        def DIST_DEST_DIR = "${rootDir}/dist/${date}/${version}"
+        def DIST_DEST_DIR = "${rootDir}/selene-assembly/distributions"
         def DIRT_SRC_DIR = "${buildDir}/libs"
 
         ant.mkdir(dir: DIST_DEST_DIR)

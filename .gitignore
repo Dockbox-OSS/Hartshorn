@@ -9,3 +9,4 @@ dependency-reduced-pom.xml
 module/src/test/resources/storage.db-journal
 servers
 /logs
+selene-assembly
