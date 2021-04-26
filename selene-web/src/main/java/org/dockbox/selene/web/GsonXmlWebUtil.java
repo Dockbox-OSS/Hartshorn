@@ -24,6 +24,9 @@ import com.stanfy.gsonxml.GsonXmlBuilder;
 import com.stanfy.gsonxml.XmlParserCreator;
 
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.domain.FileTypes;
+import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Binds;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.BufferedReader;
@@ -31,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 
+@Binds(value = WebUtil.class, meta = @BindingMeta(FileTypes.XML))
 public class GsonXmlWebUtil extends DefaultWebUtil {
 
     @Override

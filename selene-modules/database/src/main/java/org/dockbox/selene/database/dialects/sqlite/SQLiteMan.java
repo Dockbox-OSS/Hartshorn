@@ -17,9 +17,12 @@
 
 package org.dockbox.selene.database.dialects.sqlite;
 
+import org.dockbox.selene.api.domain.FileTypes;
 import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.jooq.SQLDialect;
 
@@ -28,6 +31,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@Binds(value = SQLMan.class, meta = @BindingMeta(FileTypes.SQLITE))
 public class SQLiteMan extends SQLMan<Path> {
 
     public static final String PATH_KEY = "sqliteFilePath";

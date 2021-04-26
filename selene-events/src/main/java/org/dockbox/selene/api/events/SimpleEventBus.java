@@ -24,6 +24,7 @@ import org.dockbox.selene.api.events.handle.SimpleEventWrapper;
 import org.dockbox.selene.api.events.parents.Event;
 import org.dockbox.selene.api.events.processing.AbstractEventParamProcessor;
 import org.dockbox.selene.api.events.processors.DefaultParamProcessors;
+import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,7 @@ import java.util.function.Function;
  * handling.
  */
 @SuppressWarnings({ "EqualsWithItself", "unchecked" })
+@Binds(EventBus.class)
 public class SimpleEventBus implements EventBus {
 
     protected static final Set<Function<Method, Exceptional<Boolean>>> validators = SeleneUtils.emptySet();
