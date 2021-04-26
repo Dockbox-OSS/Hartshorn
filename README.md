@@ -17,12 +17,30 @@ _Note: To use Selene, your project must be configured to use Java 8 or higher._
 See [About](https://github.com/GuusLieben/Selene/wiki) and [Gradle](https://github.com/GuusLieben/Selene/wiki/Gradle) on the wiki
 for additional information about the topics below.
 
-### Build distribution
+## Building
+All platforms require a Java installation, with JDK 1.8 or more recent version.
+
+Set the JAVA\_HOME environment variable. For example:
+
+| Platform | Command |
+| :---: | --- |
+|  Unix    | ``export JAVA_HOME=/usr/java/jdk1.8.0_121``            |
+|  OSX     | ``export JAVA_HOME=`/usr/libexec/java_home -v 1.8` ``  |
+|  Windows | ``set JAVA_HOME="C:\Program Files\Java\jdk1.8.0_121"`` |
+
 Selene uses a custom Gradle wrapper to automate builds, performing several steps before and after a build has completed.  
 Depending on your IDE the Gradle wrapper may be automatically used. If you encounter any issues, use `./gradlew` for Unix systems or Git Bash and `gradlew.bat` for Windows systems in place of any 'gradle' command.  
 
-Use `gradle build` to build all Selene modules, build artifacts can then be found under `/dist/` in the base directory 
-where you cloned Selene. Builds are versioned by date and by commit hash, with the artifact following the format `$archivesBaseName-$commitHash-$date.jar`.
+Within the directory containing the unpacked source code, run the gradle build:
+```bash
+./gradlew build
+```
+
+Once the build completes, the project distribution archives will be installed at `/selene-assembly/distributions` in the base directory. 
+Builds are versioned by date and by commit hash, with the artifact following the format `$archivesBaseName-$commitHash-$date.jar`.
+
+## Contributing
+See [CONTRIBUTING.md](https://github.com/GuusLieben/Selene/blob/selene-main/CONTRIBUTING.md) for instructions on how to contribute to the project.
 
 ### Aggregated documentation
 Documentation is typically pre-built in `/docs/` in this repository, and is available at 
@@ -31,10 +49,16 @@ all sources within Selene. To generate these JavaDocs yourself, use `gradle aggr
 
 ### Development Server
 Selene contains pre-made servers for its supported platforms, with automatic build distributions towards those platforms. 
-These servers can be generated using the appropriate `downloadDevServer` task for each relevant platform module. 
+These servers can be generated using the appropriate download task for each relevant platform module.
+```bash
+./gradlew downloadDevServer
+```
 This automatically downloads the appropriate server files from their respective authors/approved CDNs, see [this PR](https://github.com/GuusLieben/Selene/pull/214) for more details.
 
 To run the server, we recommend using [IntelliJ IDEA](https://www.jetbrains.com/idea/). 
-Each relevant platform module will have a `runDevServer` task which prepares and executes the development server for that platform.
-The `runDevServer` exposes a debugging socket on port 5005. Using IntelliJ IDEA you can manually attach your debugger once the task starts
+Each relevant platform module will have a server run task which prepares and executes the development server for that platform.
+The server run task exposes a debugging socket on port 5005. Using IntelliJ IDEA you can manually attach your debugger once the task starts
 (the IDE will notify you of this). To attach automatically, we recommend the use of [AttachMe](https://plugins.jetbrains.com/plugin/13263-attachme).
+```bash
+./gradlew runDevServer
+```
