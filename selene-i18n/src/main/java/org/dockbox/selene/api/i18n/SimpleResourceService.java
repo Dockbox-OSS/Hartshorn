@@ -27,6 +27,7 @@ import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.api.i18n.entry.Resource;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
@@ -42,6 +43,7 @@ import java.util.Map;
 import javax.inject.Singleton;
 
 @Singleton
+@Binds(ResourceService.class)
 public class SimpleResourceService implements ResourceService {
 
     private final Map<Language, Map<String, String>> resourceMaps = SeleneUtils.emptyConcurrentMap();

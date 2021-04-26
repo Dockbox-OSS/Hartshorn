@@ -21,11 +21,13 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 
 import org.dockbox.selene.api.i18n.text.Text;
+import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.discord.templates.MessageTemplate;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 
+@Binds(MessageTemplate.class)
 public class SimpleMessageTemplate implements MessageTemplate {
 
     private final Map<String, String> filledPlaceholders = SeleneUtils.emptyMap();

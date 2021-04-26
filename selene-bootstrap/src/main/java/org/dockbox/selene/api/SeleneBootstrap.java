@@ -27,8 +27,6 @@ import org.dockbox.selene.util.Reflect;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -42,7 +40,6 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
 
     private static SeleneBootstrap instance;
     private String version;
-    private LocalDateTime lastUpdate;
 
     /**
      * Instantiates {@link Selene}, creating a local injector based on the provided {@link
@@ -53,7 +50,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      *         the injector provided by the Selene implementation
      */
     protected SeleneBootstrap(InjectConfiguration moduleConfiguration) {
-        super.bind(moduleConfiguration);
+        super.bind(SeleneInformation.PACKAGE_PREFIX, moduleConfiguration);
         this.construct();
     }
 
@@ -62,8 +59,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * done sets the static instance equal to this instance.
      */
     protected void construct() {
-        String tVer = "dev";
-        LocalDateTime tLU = LocalDateTime.now();
+        String version = "dev";
 
         try {
             Properties properties = new Properties();
@@ -73,18 +69,13 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
                     .withLocale(Locale.getDefault())
                     .withZone(ZoneId.systemDefault());
 
-            tLU = LocalDateTime.parse(
-                    properties.getOrDefault("last_update", formatter.format(Instant.now())).toString(),
-                    formatter
-            );
-            tVer = properties.getOrDefault("version", "dev").toString();
+            version = properties.getOrDefault("version", "dev").toString();
         }
         catch (IOException e) {
             Except.handle("Failed to convert resource file", e);
         }
 
-        this.version = tVer;
-        this.lastUpdate = tLU;
+        this.version = version;
 
         InjectableBootstrap.setInstance(this);
     }
@@ -112,11 +103,13 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * appropriate instances where required.
      */
     protected void init() {
-        Selene.log().info("\u00A7e ,-,");
-        Selene.log().info("\u00A7e/.(");
-        Selene.log().info("\u00A7e\\ {");
-        Selene.log().info("\u00A7e `-`");
-        Selene.log().info("     \u00A77Initiating \u00A7bSelene " + this.getVersion());
+        Selene.log().info("\u00A7b.------.)");
+        Selene.log().info("\u00A7b|S.--. |");
+        Selene.log().info("\u00A7b| :/\\: |");
+        Selene.log().info("\u00A7b| :\\/: |");
+        Selene.log().info("\u00A7b| '--'S|");
+        Selene.log().info("\u00A7b`------'");
+        Selene.log().info("\u00A77Initiating \u00A7bSelene " + this.getVersion());
 
         // Register pre-loadable types early on, these typically modify initialisation logic
         Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, Preloadable.class)
@@ -124,7 +117,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         // Ensure all services requiring a platform implementation have one present
         Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, RequiresBinding.class).forEach(type -> {
             if (Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, type).isEmpty()) {
-                Selene.log().error("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
+                throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
             }
         });
     }
@@ -137,16 +130,6 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
     @NotNull
     public String getVersion() {
         return this.version;
-    }
-
-    /**
-     * Gets the last update of {@link Selene}, based on the injected value in {@link #construct()}
-     *
-     * @return The last update
-     */
-    @NotNull
-    public LocalDateTime getLastUpdate() {
-        return this.lastUpdate;
     }
 
     /**

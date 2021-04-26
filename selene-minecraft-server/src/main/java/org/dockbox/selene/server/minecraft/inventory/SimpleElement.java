@@ -19,11 +19,13 @@ package org.dockbox.selene.server.minecraft.inventory;
 
 import org.dockbox.selene.di.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.players.Player;
 
 import java.util.function.Consumer;
 
+@Binds(Element.class)
 public class SimpleElement implements Element {
 
     private final Item item;

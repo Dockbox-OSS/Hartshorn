@@ -15,17 +15,26 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.persistence;
+package org.dockbox.selene.di;
 
-public class FileTypes {
+import com.google.inject.Key;
 
-    public static final String CLASS = "class";
-    public static final String JAR = "jar";
-    public static final String SQLITE = "sqlite";
-    public static final String YAML = "yml";
-    public static final String JSON = "json";
-    public static final String XML = "xml";
-    public static final String MOD_CONFIG = "cfg";
-    public static final String CONFIG = "conf";
+import java.util.Map;
+import java.util.Map.Entry;
 
+public class ScannedInjectionConfiguration extends InjectConfiguration {
+
+    private final Map<Key<?>, Class<?>> bindings;
+
+    public ScannedInjectionConfiguration(Map<Key<?>, Class<?>> bindings) {
+        this.bindings = bindings;
+    }
+
+    @Override
+    protected void configure() {
+        for (Entry<Key<?>, Class<?>> entry : this.bindings.entrySet()) {
+            //noinspection unchecked
+            this.bind((Key<Object>) entry.getKey()).to(entry.getValue());
+        }
+    }
 }

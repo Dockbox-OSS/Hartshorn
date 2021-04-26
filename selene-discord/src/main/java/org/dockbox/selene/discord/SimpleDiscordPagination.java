@@ -25,6 +25,7 @@ import net.dv8tion.jda.api.entities.User;
 
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.discord.templates.MessageTemplate;
 import org.dockbox.selene.util.SeleneUtils;
 
@@ -33,6 +34,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Binds(DiscordPagination.class)
 public class SimpleDiscordPagination implements DiscordPagination {
 
     private final List<Object> pages = SeleneUtils.emptyList();

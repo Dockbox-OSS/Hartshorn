@@ -15,16 +15,17 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.module;
+package org.dockbox.selene.api.domain;
 
-import org.dockbox.selene.api.domain.OwnerLookup;
-import org.dockbox.selene.api.domain.TypedOwner;
-import org.dockbox.selene.di.annotations.Binds;
+public class FileTypes {
 
-@Binds(OwnerLookup.class)
-public class ModuleOwnerLookup implements OwnerLookup {
-    @Override
-    public TypedOwner lookup(Class<?> type) {
-        return Modules.module(type);
-    }
+    public static final String CLASS = "class";
+    public static final String JAR = "jar";
+    public static final String SQLITE = "sqlite";
+    public static final String YAML = "yml";
+    public static final String JSON = "json";
+    public static final String XML = "xml";
+    public static final String MOD_CONFIG = "cfg";
+    public static final String CONFIG = "conf";
+
 }

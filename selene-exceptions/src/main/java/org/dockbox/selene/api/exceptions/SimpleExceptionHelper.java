@@ -18,6 +18,7 @@
 package org.dockbox.selene.api.exceptions;
 
 import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.di.annotations.Binds;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,9 +43,10 @@ import java.util.function.Function;
  * NullPointerException: Foo bar
  * Stack: [...] * }</pre>
  */
+@Binds(ExceptionHelper.class)
 public class SimpleExceptionHelper implements ExceptionHelper {
 
-    private static final Logger log = LoggerFactory.getLogger("Selene::Exception caught |");
+    private static final Logger log = LoggerFactory.getLogger("Selene");
     private static final String separator = "========================================";
 
     @Override
