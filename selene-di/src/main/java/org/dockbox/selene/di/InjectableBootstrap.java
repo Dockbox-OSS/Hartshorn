@@ -292,6 +292,8 @@ public abstract class InjectableBootstrap {
     }
 
     public void bind(String prefix, InjectConfiguration moduleConfiguration) {
+        Map<Key<?>, Class<?>> scannedBinders = this.scan(prefix);
+        this.injectorModules.add(new ScannedInjectionConfiguration(scannedBinders));
         this.injectorModules.add(moduleConfiguration);
     }
 
@@ -365,5 +367,39 @@ public abstract class InjectableBootstrap {
         }
         data.sort(Comparator.comparing(d -> d.getSource().getSimpleName()));
         return data;
+    }
+
+    private Map<Key<?>, Class<?>> scan(String prefix) {
+        Map<Key<?>, Class<?>> bindings = SeleneUtils.emptyMap();
+
+        Collection<Class<?>> binders = Reflect.annotatedTypes(prefix, Binds.class);
+        for (Class<?> binder : binders) {
+            Binds bindAnnotation = binder.getAnnotation(Binds.class);
+            Class<?> binds = bindAnnotation.value();
+            Entry<Key<?>, Class<?>> entry = this.handleScanned(binder, binds, bindAnnotation);
+            bindings.put(entry.getKey(), entry.getValue());
+        }
+
+        Collection<Class<?>> multiBinders = Reflect.annotatedTypes(prefix, MultiBinds.class);
+        for (Class<?> binder : multiBinders) {
+            MultiBinds bindAnnotation = binder.getAnnotation(MultiBinds.class);
+            for (Binds annotation : bindAnnotation.value()) {
+                Class<?> binds = annotation.value();
+                Entry<Key<?>, Class<?>> entry = this.handleScanned(binder, binds, annotation);
+                bindings.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return bindings;
+    }
+
+    private Map.Entry<Key<?>, Class<?>> handleScanned(Class<?> binder, Class<?> binds, Binds bindAnnotation) {
+        BindingMeta meta = bindAnnotation.meta();
+        Key<?> key;
+        if (!"".equals(meta.value())) {
+            key = Key.get(binds, meta);
+        } else {
+            key = Key.get(binds);
+        }
+        return Tuple.of(key, binder);
     }
 }
