@@ -17,6 +17,7 @@
 
 dependencies {
     compileOnly project(':selene-core')
+    compileOnly project(':selene-di')
     compileOnly project(':selene-exceptions')
 
     compile "com.stanfy:gson-xml-java:$gsonXmlVersion"
