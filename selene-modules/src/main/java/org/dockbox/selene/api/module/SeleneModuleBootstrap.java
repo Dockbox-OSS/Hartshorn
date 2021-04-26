@@ -40,6 +40,10 @@ public abstract class SeleneModuleBootstrap extends SeleneBootstrap {
         super(moduleConfiguration);
     }
 
+    public static SeleneModuleBootstrap getInstance() {
+        return (SeleneModuleBootstrap) SeleneBootstrap.getInstance();
+    }
+
     @Override
     protected void init() {
         super.registerSupplier(new ProvisionSupplier((type, properties) -> this.getInstance(ModuleManager.class).getInstance(type), (type, properties) -> {
@@ -67,18 +71,11 @@ public abstract class SeleneModuleBootstrap extends SeleneBootstrap {
             Exceptional<?> oi = Exceptional.of(super.getInstance(type));
 
             oi.present(i -> {
-                Package pkg = i.getClass().getPackage();
-                if (null != pkg) {
-                    for (Consumer<Object> instanceConsumer : this.instanceConsumers) {
-                        instanceConsumer.accept(i);
-                    }
+                for (Consumer<Object> instanceConsumer : this.instanceConsumers) {
+                    instanceConsumer.accept(i);
                 }
             });
         };
-    }
-
-    public static SeleneModuleBootstrap getInstance() {
-        return (SeleneModuleBootstrap) SeleneBootstrap.getInstance();
     }
 
     public void registerPostInit(Runnable runnable) {
