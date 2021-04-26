@@ -103,11 +103,13 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
      * appropriate instances where required.
      */
     protected void init() {
-        Selene.log().info("\u00A7e ,-,");
-        Selene.log().info("\u00A7e/.(");
-        Selene.log().info("\u00A7e\\ {");
-        Selene.log().info("\u00A7e `-`");
-        Selene.log().info("     \u00A77Initiating \u00A7bSelene " + this.getVersion());
+        Selene.log().info("\u00A7b.------.)");
+        Selene.log().info("\u00A7b|S.--. |");
+        Selene.log().info("\u00A7b| :/\\: |");
+        Selene.log().info("\u00A7b| :\\/: |");
+        Selene.log().info("\u00A7b| '--'S|");
+        Selene.log().info("\u00A7b`------'");
+        Selene.log().info("\u00A77Initiating \u00A7bSelene " + this.getVersion());
 
         // Register pre-loadable types early on, these typically modify initialisation logic
         Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, Preloadable.class)
@@ -115,7 +117,7 @@ public abstract class SeleneBootstrap extends InjectableBootstrap {
         // Ensure all services requiring a platform implementation have one present
         Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, RequiresBinding.class).forEach(type -> {
             if (Reflect.subTypes(SeleneInformation.PACKAGE_PREFIX, type).isEmpty()) {
-                Selene.log().error("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
+                throw new IllegalStateException("No implementation exists for [" + type.getCanonicalName() + "], this will cause functionality to misbehave or not function!");
             }
         });
     }
