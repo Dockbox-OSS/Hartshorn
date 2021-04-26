@@ -29,7 +29,7 @@ import org.dockbox.selene.discord.DiscordUtils;
 public class DaveConfig {
 
     private String channelId = "424884086230876161";
-    private Text prefix = Text.of("&6Dave&e: &f");
+    private String prefix = "&6Dave&e: &f";
 
     public DaveConfig() {}
 
@@ -39,6 +39,6 @@ public class DaveConfig {
     }
 
     public Text getPrefix() {
-        return this.prefix;
+        return Text.of(this.prefix);
     }
 }
