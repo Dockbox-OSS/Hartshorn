@@ -329,7 +329,6 @@ public abstract class DefaultCommandBus<E> implements CommandBus {
         to be aware of the used alias.
         */
         DefaultCommandBus.getRegistrations().forEach((alias, abstractCommand) -> {
-            Selene.log().info("Attempting to register /" + alias);
             E spec = null;
             if (abstractCommand instanceof MethodCommandContext) {
                 MethodCommandContext methodContext = (MethodCommandContext) abstractCommand;
