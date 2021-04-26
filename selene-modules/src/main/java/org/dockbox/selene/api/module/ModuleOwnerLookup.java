@@ -19,7 +19,9 @@ package org.dockbox.selene.api.module;
 
 import org.dockbox.selene.api.domain.OwnerLookup;
 import org.dockbox.selene.api.domain.TypedOwner;
+import org.dockbox.selene.di.annotations.Binds;
 
+@Binds(OwnerLookup.class)
 public class ModuleOwnerLookup implements OwnerLookup {
     @Override
     public TypedOwner lookup(Class<?> type) {
