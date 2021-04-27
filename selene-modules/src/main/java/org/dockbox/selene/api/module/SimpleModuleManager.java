@@ -180,10 +180,10 @@ public class SimpleModuleManager implements ModuleManager {
                     Constructor<T> defaultConstructor = entry.getConstructor();
                     defaultConstructor.setAccessible(true);
                     instance = defaultConstructor.newInstance();
-                    SimpleModuleManager.injectMembers(instance, container);
+                    SimpleModuleManager.populate(instance, container);
 
                     container.status(entry, ModuleStatus.LOADED);
-                    Selene.getServer().bind(entry, instance);
+                    Selene.getServer().getInjector().bind(entry, instance);
                 }
                 catch (NoSuchMethodException | IllegalAccessException e) {
                     container.status(entry, ModuleStatus.FAILED);
@@ -226,7 +226,7 @@ public class SimpleModuleManager implements ModuleManager {
         return dependency;
     }
 
-    private static <T> void injectMembers(T instance, ModuleContainer container) {
-        Selene.getServer().injectMembers(instance);
+    private static <T> void populate(T instance, ModuleContainer container) {
+        Selene.getServer().getInjector().populate(instance);
     }
 }

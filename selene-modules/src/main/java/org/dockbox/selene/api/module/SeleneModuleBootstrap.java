@@ -19,14 +19,9 @@ package org.dockbox.selene.api.module;
 
 import org.dockbox.selene.api.SeleneBootstrap;
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.api.module.annotations.Module;
-import org.dockbox.selene.di.Bindings;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.Provider;
-import org.dockbox.selene.di.ProvisionSupplier;
-import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.util.SeleneUtils;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 import java.util.function.Consumer;
@@ -46,10 +41,6 @@ public abstract class SeleneModuleBootstrap extends SeleneBootstrap {
 
     @Override
     protected void init() {
-        super.registerSupplier(new ProvisionSupplier((type, properties) -> this.getInstance(ModuleManager.class).getInstance(type), (type, properties) -> {
-            @Nullable InjectorProperty<Boolean> useModule = Bindings.property(ModuleProperty.KEY, Boolean.class, properties);
-            return useModule != null && type.isAnnotationPresent(Module.class);
-        }));
         super.init();
         SeleneModuleBootstrap.initialiseModules(this.getModuleConsumer());
         this.postInitRunners.forEach(Runnable::run);
@@ -72,6 +63,8 @@ public abstract class SeleneModuleBootstrap extends SeleneBootstrap {
 
             oi.present(i -> {
                 for (Consumer<Object> instanceConsumer : this.instanceConsumers) {
+                    //noinspection unchecked
+                    super.getInjector().bind((Class<? super Object>) type, i);
                     instanceConsumer.accept(i);
                 }
             });

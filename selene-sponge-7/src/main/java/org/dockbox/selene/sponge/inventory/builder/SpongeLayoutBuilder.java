@@ -18,7 +18,7 @@
 package org.dockbox.selene.sponge.inventory.builder;
 
 import org.dockbox.selene.api.Selene;
-import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.server.minecraft.inventory.Element;
 import org.dockbox.selene.server.minecraft.inventory.InventoryLayout;

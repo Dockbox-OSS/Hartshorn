@@ -17,14 +17,13 @@
 
 package org.dockbox.selene.test.util;
 
-import com.google.inject.name.Names;
-
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.FileTypes;
 import org.dockbox.selene.api.task.TaskRunner;
 import org.dockbox.selene.api.task.ThreadUtils;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.persistence.FileManager;
 import org.dockbox.selene.server.Server;
 import org.dockbox.selene.server.minecraft.Console;
@@ -53,35 +52,35 @@ import org.slf4j.Logger;
 public class JUnitInjector extends InjectConfiguration {
 
     @Override
-    protected void configure() {
-        this.bind(Server.class).to(JUnitServer.class);
+    public void collect() {
+        this.bind(Server.class, JUnitServer.class);
 
         // Tasks
-        this.bind(TaskRunner.class).to(JUnitTaskRunner.class);
-        this.bind(ThreadUtils.class).to(JUnitThreadUtils.class);
+        this.bind(TaskRunner.class, JUnitTaskRunner.class);
+        this.bind(ThreadUtils.class, JUnitThreadUtils.class);
 
         // Persistence
-        this.bind(FileManager.class).to(JUnitConfigurateManager.class);
-        this.bind(FileManager.class).annotatedWith(Names.named(FileTypes.YAML)).to(JUnitConfigurateManager.class);
-        this.bind(FileManager.class).annotatedWith(Names.named(FileTypes.XML)).to(JUnitXStreamManager.class);
+        this.bind(FileManager.class, JUnitConfigurateManager.class);
+        this.bind(FileManager.class, JUnitConfigurateManager.class, Bindings.meta(FileTypes.YAML));
+        this.bind(FileManager.class, JUnitXStreamManager.class, Bindings.meta(FileTypes.XML));
 
         // Services
-        this.bind(Players.class).to(JUnitPlayers.class);
-        this.bind(Worlds.class).to(JUnitWorlds.class);
-        this.bind(CustomMapService.class).to(JUnitCustomMapService.class);
+        this.bind(Players.class, JUnitPlayers.class);
+        this.bind(Worlds.class, JUnitWorlds.class);
+        this.bind(CustomMapService.class, JUnitCustomMapService.class);
 
         // Wired types - do NOT call directly!
-        this.bind(Item.class).to(JUnitItem.class);
-        this.bind(Bossbar.class).to(JUnitBossbar.class);
-        this.bind(Profile.class).to(JUnitProfile.class);
-        this.bind(ItemFrame.class).to(JUnitItemFrame.class);
-        this.bind(ArmorStand.class).to(JUnitArmorStand.class);
-        this.bind(DiscordCommandSource.class).to(JUnitDiscordCommandSource.class);
+        this.bind(Item.class, JUnitItem.class);
+        this.bind(Bossbar.class, JUnitBossbar.class);
+        this.bind(Profile.class, JUnitProfile.class);
+        this.bind(ItemFrame.class, JUnitItemFrame.class);
+        this.bind(ArmorStand.class, JUnitArmorStand.class);
+        this.bind(DiscordCommandSource.class, JUnitDiscordCommandSource.class);
 
         // Log is created from LoggerFactory externally
-        this.bind(Logger.class).toInstance(Selene.log());
+        this.bind(Logger.class, Selene.log());
 
         // Console is a constant singleton, to avoid recreation
-        this.bind(Console.class).toInstance(new JUnitConsole());
+        this.bind(Console.class, new JUnitConsole());
     }
 }

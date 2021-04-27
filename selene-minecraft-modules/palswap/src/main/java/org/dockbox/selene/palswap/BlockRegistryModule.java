@@ -63,8 +63,7 @@ public class BlockRegistryModule {
 
     @Listener
     public void on(ServerStartedEvent event) {
-        Selene.getServer().bind(
-                BlockRegistryParser.class, BlockRegistryUtil.getBlockRegistryParserClass());
+        Selene.getServer().getInjector().bind(BlockRegistryParser.class, BlockRegistryUtil.getBlockRegistryParserClass());
 
         this.blockRegistryParser = Provider.provide(BlockRegistryParser.class);
         this.blockRegistryParser.LoadItemData(this.itemRegistryFile);

@@ -19,7 +19,7 @@ package org.dockbox.selene.test.objects;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.tuple.Tuple;
-import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.server.minecraft.players.Profile;
 import org.dockbox.selene.util.SeleneUtils;

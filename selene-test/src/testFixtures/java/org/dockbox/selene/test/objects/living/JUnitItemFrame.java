@@ -18,7 +18,7 @@
 package org.dockbox.selene.test.objects.living;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.server.minecraft.dimension.position.BlockFace;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;

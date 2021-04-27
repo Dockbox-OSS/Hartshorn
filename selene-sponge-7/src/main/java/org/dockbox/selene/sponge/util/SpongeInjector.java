@@ -17,8 +17,6 @@
 
 package org.dockbox.selene.sponge.util;
 
-import com.google.inject.name.Names;
-
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.FileTypes;
 import org.dockbox.selene.api.i18n.text.pagination.PaginationBuilder;
@@ -28,6 +26,7 @@ import org.dockbox.selene.commands.CommandBus;
 import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.commands.values.AbstractFlagCollection;
 import org.dockbox.selene.di.InjectConfiguration;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.nms.packets.NMSChangeGameStatePacket;
 import org.dockbox.selene.nms.packets.NMSSpawnEntityPacket;
@@ -73,55 +72,55 @@ public class SpongeInjector extends InjectConfiguration {
 
     @SuppressWarnings("OverlyCoupledMethod")
     @Override
-    protected final void configure() {
-        this.bind(Server.class).to(DefaultServer.class);
+    public final void collect() {
+        this.bind(Server.class, DefaultServer.class);
 
         // Tasks
-        this.bind(TaskRunner.class).to(SpongeTaskRunner.class);
-        this.bind(ThreadUtils.class).to(SpongeThreadUtils.class);
+        this.bind(TaskRunner.class, SpongeTaskRunner.class);
+        this.bind(ThreadUtils.class, SpongeThreadUtils.class);
 
         // Persistence
-        this.bind(FileManager.class).to(SpongeConfigurateManager.class);
-        this.bind(FileManager.class).annotatedWith(Names.named(FileTypes.YAML)).to(SpongeConfigurateManager.class);
-        this.bind(FileManager.class).annotatedWith(Names.named(FileTypes.XML)).to(SpongeXStreamManager.class);
+        this.bind(FileManager.class, SpongeConfigurateManager.class);
+        this.bind(FileManager.class, SpongeConfigurateManager.class, Bindings.meta(FileTypes.YAML));
+        this.bind(FileManager.class, SpongeXStreamManager.class, Bindings.meta(FileTypes.XML));
 
         // Services
-        this.bind(Players.class).to(SpongePlayers.class);
-        this.bind(Worlds.class).to(SpongeWorlds.class);
-        this.bind(WorldEditService.class).to(SpongeWorldEditService.class);
-        this.bind(CustomMapService.class).to(SpongeCustomMapService.class);
-        this.bind(PlotService.class).to(SpongePlotSquaredService.class);
+        this.bind(Players.class, SpongePlayers.class);
+        this.bind(Worlds.class, SpongeWorlds.class);
+        this.bind(WorldEditService.class, SpongeWorldEditService.class);
+        this.bind(CustomMapService.class, SpongeCustomMapService.class);
+        this.bind(PlotService.class, SpongePlotSquaredService.class);
 
         // Internal services
         // Event- and command bus keep static references, and can thus be recreated
-        this.bind(CommandBus.class).toInstance(new SpongeCommandBus());
-        this.bind(AbstractFlagCollection.class).to(SpongeFlagCollection.class);
+        this.bind(CommandBus.class, new SpongeCommandBus());
+        this.bind(AbstractFlagCollection.class, SpongeFlagCollection.class);
 
         // Builder types
-        this.bind(PaginationBuilder.class).to(SpongePaginationBuilder.class);
-        this.bind(LayoutBuilder.class).to(SpongeLayoutBuilder.class);
-        this.bind(PaginatedPaneBuilder.class).to(SpongePaginatedPaneBuilder.class);
-        this.bind(StaticPaneBuilder.class).to(SpongeStaticPaneBuilder.class);
+        this.bind(PaginationBuilder.class, SpongePaginationBuilder.class);
+        this.bind(LayoutBuilder.class, SpongeLayoutBuilder.class);
+        this.bind(PaginatedPaneBuilder.class, SpongePaginatedPaneBuilder.class);
+        this.bind(StaticPaneBuilder.class, SpongeStaticPaneBuilder.class);
 
         // Wired types - do NOT call directly!
-        this.bind(Item.class).to(SpongeItem.class);
-        this.bind(Bossbar.class).to(SpongeBossbar.class);
-        this.bind(Profile.class).to(SpongeProfile.class);
-        this.bind(ItemFrame.class).to(SpongeItemFrame.class);
-        this.bind(ArmorStand.class).to(SpongeArmorStand.class);
-        this.bind(DiscordCommandSource.class).to(MagiBridgeCommandSource.class);
+        this.bind(Item.class, SpongeItem.class);
+        this.bind(Bossbar.class, SpongeBossbar.class);
+        this.bind(Profile.class, SpongeProfile.class);
+        this.bind(ItemFrame.class, SpongeItemFrame.class);
+        this.bind(ArmorStand.class, SpongeArmorStand.class);
+        this.bind(DiscordCommandSource.class, MagiBridgeCommandSource.class);
 
         // Log is created from LoggerFactory externally
-        this.bind(Logger.class).toInstance(Selene.log());
+        this.bind(Logger.class, Selene.log());
 
         // Console is a constant singleton, to avoid recreation
-        this.bind(Console.class).toInstance(SpongeConsole.getInstance());
+        this.bind(Console.class, SpongeConsole.getInstance());
 
         // Packets
-        this.bind(ChangeGameStatePacket.class).to(NMSChangeGameStatePacket.class);
-        this.bind(SpawnEntityPacket.class).to(NMSSpawnEntityPacket.class);
+        this.bind(ChangeGameStatePacket.class, NMSChangeGameStatePacket.class);
+        this.bind(SpawnEntityPacket.class, NMSSpawnEntityPacket.class);
 
         // Discord
-        this.bind(DiscordUtils.class).to(SpongeDiscordUtils.class);
+        this.bind(DiscordUtils.class, SpongeDiscordUtils.class);
     }
 }

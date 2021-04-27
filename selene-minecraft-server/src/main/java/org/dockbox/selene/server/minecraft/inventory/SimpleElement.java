@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.server.minecraft.inventory;
 
-import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.server.minecraft.item.Item;
