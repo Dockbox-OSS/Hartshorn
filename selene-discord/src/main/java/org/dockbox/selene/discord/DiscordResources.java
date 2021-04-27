@@ -17,18 +17,20 @@
 
 package org.dockbox.selene.discord;
 
+import org.dockbox.selene.api.i18n.annotations.Resource;
 import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.Resource;
 
 @Resources(DiscordUtils.class)
-public class DiscordResources {
+public interface DiscordResources {
 
-    public static final ResourceEntry DISCORD_COMMAND_UNKNOWN =
-            new Resource("Sorry, I don't know what to do with that command!", "discord.command.unknown");
-    public static final ResourceEntry DISCORD_COMMAND_NOT_PERMITTED =
-            new Resource("You are not permitted to use that command!", "discord.command.notpermitted");
-    public static final ResourceEntry DISCORD_COMMAND_ERRORED =
-            new Resource("Sorry, I could not start that command. Please report this in our support channel.", "discord.command.caught");
+    @Resource("Sorry, I don't know what to do with that command!")
+    ResourceEntry getCommandUnknown();
+
+    @Resource("You are not permitted to use that command!")
+    ResourceEntry getCommandNotPermitted();
+
+    @Resource("Sorry, I could not start that command. Please report this in our support channel.")
+    ResourceEntry getCommandCaught();
 
 }
