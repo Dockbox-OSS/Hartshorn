@@ -18,7 +18,7 @@
 dependencies {
     compileOnly project(':selene-parent')
     compileOnly project(':selene-bootstrap')
-    compileOnly project(':proxy')
+    compileOnly project(':selene-proxy')
     // Compile as Text extends PersistentCapable
     compile project(':selene-persistence')
 }
