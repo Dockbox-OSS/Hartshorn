@@ -18,7 +18,7 @@
 package org.dockbox.selene.api.i18n.permissions;
 
 import org.dockbox.selene.api.domain.Exceptional;
-import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.di.annotations.Binds;
 

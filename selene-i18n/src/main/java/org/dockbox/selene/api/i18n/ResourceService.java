@@ -34,5 +34,5 @@ public interface ResourceService {
 
     String createValidKey(String raw);
 
-    Exceptional<ResourceEntry> getExternalResource(String key);
+    Exceptional<ResourceEntry> getResource(String key);
 }

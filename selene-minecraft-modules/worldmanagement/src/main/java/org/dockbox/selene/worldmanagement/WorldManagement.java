@@ -34,12 +34,16 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-@Command(aliases = {"unloader", "wu"}, usage = "unloader", permission = WorldManagementResources.WORLD_MANAGER)
+@Command(aliases = {"unloader", "wu"}, usage = "unloader", permission = WorldManagement.WORLD_MANAGER)
 @Module(id = "worldmanagement", name = "World Management", description = "Manages several aspects of the various worlds on a server", authors = "GuusLieben")
 public class WorldManagement {
 
     @Inject
     private WorldManagementConfig config;
+    @Inject
+    private WorldManagementResources resources;
+
+    protected static final String WORLD_MANAGER = "selene.worlds";
 
     @Listener
     public void on(ServerReloadEvent event) {
@@ -59,14 +63,14 @@ public class WorldManagement {
         }
     }
 
-    @Command(aliases = "blacklist", usage = "blacklist <world{String}>", permission = WorldManagementResources.WORLD_MANAGER)
+    @Command(aliases = "blacklist", usage = "blacklist <world{String}>", permission = WorldManagement.WORLD_MANAGER)
     public void blacklist(CommandSource src, String world) {
         if (Provider.provide(Worlds.class).hasWorld(world)) {
             this.config.getUnloadBlacklist().add(world);
             this.config.save();
-            src.send(WorldManagementResources.WORLD_BLACKLIST_ADDED.format(world));
+            src.send(this.resources.getBlacklistAdded(world));
         } else {
-            src.send(WorldManagementResources.WORLD_BLACKLIST_FAILED.format(world));
+            src.send(this.resources.getBlacklistFailure(world));
         }
     }
 

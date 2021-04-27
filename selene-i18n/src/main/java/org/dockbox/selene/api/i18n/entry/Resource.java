@@ -27,12 +27,13 @@ import java.util.Map;
 public class Resource implements ResourceEntry {
 
     private final String key;
-    private final Map<Language, String> resourceMap = Provider.provide(ResourceService.class).getTranslations(this);
+    private final Map<Language, String> resourceMap;
     private final String value;
 
     public Resource(String value, String key) {
         this.value = value;
         this.key = key;
+        this.resourceMap = Provider.provide(ResourceService.class).getTranslations(this);
     }
 
     @Override

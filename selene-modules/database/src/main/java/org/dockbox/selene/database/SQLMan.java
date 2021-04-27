@@ -23,7 +23,7 @@ import org.dockbox.selene.database.exceptions.InvalidConnectionException;
 import org.dockbox.selene.database.exceptions.NoSuchTableException;
 import org.dockbox.selene.database.properties.SQLColumnProperty;
 import org.dockbox.selene.database.properties.SQLResetBehaviorProperty;
-import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.properties.InjectorProperty;
 import org.dockbox.selene.domain.table.Table;
 import org.dockbox.selene.domain.table.TableRow;

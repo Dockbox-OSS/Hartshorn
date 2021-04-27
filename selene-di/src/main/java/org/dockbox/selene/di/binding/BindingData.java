@@ -15,7 +15,7 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di;
+package org.dockbox.selene.di.binding;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.di.annotations.BindingMeta;

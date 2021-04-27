@@ -22,6 +22,7 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.commands.context.ArgumentConverter;
 import org.dockbox.selene.commands.convert.ArgumentConverterRegistry;
 import org.dockbox.selene.commands.source.CommandSource;
+import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.lang.reflect.Constructor;
@@ -68,7 +69,7 @@ public interface CustomParameterPattern {
 
             ArgumentConverter<?> converter = ArgumentConverterRegistry.getConverter(typeIdentifier);
             if (converter == null) return Exceptional
-                    .of(new IllegalArgumentException(CommandParameterResources.MISSING_CONVERTER.format(type.getCanonicalName()).asString()));
+                    .of(new IllegalArgumentException(Provider.provide(CommandParameterResources.class).getMissingConverter(type.getCanonicalName()).asString()));
 
             argumentTypes.add(converter.getType());
             arguments.add(converter.convert(source, rawArgument).orNull());
@@ -116,6 +117,6 @@ public interface CustomParameterPattern {
             }
             if (passed) return Exceptional.of(declaredConstructor);
         }
-        return Exceptional.of(new IllegalArgumentException(CommandParameterResources.NOT_ENOUGH_ARGUMENTS.asString()));
+        return Exceptional.of(new IllegalArgumentException(Provider.provide(CommandParameterResources.class).getNotEnoughArgs().asString()));
     }
 }

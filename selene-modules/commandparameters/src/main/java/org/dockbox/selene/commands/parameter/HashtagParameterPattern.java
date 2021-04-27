@@ -19,6 +19,8 @@ package org.dockbox.selene.commands.parameter;
 
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 
+import javax.inject.Inject;
+
 /**
  * Converts Hashtag-patterns into type instances used by command executors. The pattern follows the HashtagPatternParser from WorldEdit.
  * Patterns are expected to start with a hashtag (#) followed by the alias of the type which is ignored while parsing (due to the
@@ -31,6 +33,9 @@ import org.dockbox.selene.api.i18n.common.ResourceEntry;
  * The pattern for this type is expected to be <pre>#shape[square][4]</pre>
  */
 public class HashtagParameterPattern extends PrefixedParameterPattern {
+
+    @Inject
+    private CommandParameterResources resources;
 
     @Override
     protected char getOpening() {
@@ -54,6 +59,6 @@ public class HashtagParameterPattern extends PrefixedParameterPattern {
 
     @Override
     protected ResourceEntry getWrongFormatResource() {
-        return CommandParameterResources.HASHTAG_PATTERN_WRONG_FORMAT;
+        return this.resources.getWrongHashtagPatternFormat();
     }
 }

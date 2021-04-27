@@ -19,36 +19,33 @@ package org.dockbox.selene.toolbinding;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.annotations.Listener;
-import org.dockbox.selene.api.i18n.annotations.Resources;
-import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.Resource;
 import org.dockbox.selene.api.keys.Keys;
 import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.api.keys.RemovableKey;
 import org.dockbox.selene.api.keys.TransactionResult;
 import org.dockbox.selene.api.module.annotations.Module;
+import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteractEvent;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.selene.server.minecraft.players.Sneaking;
-import org.dockbox.selene.server.minecraft.events.player.interact.PlayerInteractEvent;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 @Module(
         id = "toolbinding",
         name = "Tool Binding",
-        description = "Adds the ability to bind commands to tools and items",
+        description = "Adds the ability to provide commands to tools and items",
         authors = "GuusLieben")
-@Resources(ToolBinding.class)
 public class ToolBinding {
 
-    private static final PersistentDataKey<String> PERSISTENT_TOOL = Keys.persistent(String.class, "Tool Binding", ToolBinding.class);
-    private static final ResourceEntry TOOL_ERROR_BLOCK = new Resource("Tool cannot be bound to blocks", "toolbinding.caught.block");
-    private static final ResourceEntry TOOL_ERROR_HAND = new Resource("Tool cannot be bound to hand", "toolbinding.caught.hand");
-    private static final ResourceEntry TOOL_ERROR_DUPLICATE = new Resource("There is already a tool bound to this item", "toolbinding.caught.duplicate");
+    @Inject
+    private ToolBindingResources resources;
 
+    static final PersistentDataKey<String> PERSISTENT_TOOL = Keys.persistent(String.class, "Tool Binding", ToolBinding.class);
     private static ToolBinding instance;
 
     public static final RemovableKey<Item, ItemTool> TOOL = Keys.removable(
@@ -63,9 +60,9 @@ public class ToolBinding {
     }
 
     private TransactionResult setTool(Item item, ItemTool tool) {
-        if (item.isBlock()) return TransactionResult.fail(TOOL_ERROR_BLOCK);
-        if (item == MinecraftItems.getInstance().getAir()) return TransactionResult.fail(TOOL_ERROR_HAND);
-        if (item.get(PERSISTENT_TOOL).present()) return TransactionResult.fail(TOOL_ERROR_DUPLICATE);
+        if (item.isBlock()) return TransactionResult.fail(this.resources.getBlockError());
+        if (item == MinecraftItems.getInstance().getAir()) return TransactionResult.fail(this.resources.getHandError());
+        if (item.get(PERSISTENT_TOOL).present()) return TransactionResult.fail(this.resources.getDuplicateError());
 
         String bindingId = UUID.randomUUID().toString();
 

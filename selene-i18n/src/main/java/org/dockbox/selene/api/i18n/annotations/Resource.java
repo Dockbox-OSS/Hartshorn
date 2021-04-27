@@ -15,20 +15,16 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.proxy;
+package org.dockbox.selene.api.i18n.annotations;
 
-import org.dockbox.selene.api.module.annotations.Module;
-import org.dockbox.selene.di.Preloadable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@Module(
-        id = "proxies",
-        name = "Proxies",
-        description = "Adds global and dynamic proxy handling",
-        authors = "GuusLieben")
-public class ProxyModule implements Preloadable {
-
-    @Override
-    public void preload() {
-        ProxyableBootstrap.boostrapDelegates();
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Resource {
+    String value();
+    String key() default "";
 }

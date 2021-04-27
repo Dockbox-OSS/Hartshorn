@@ -18,7 +18,7 @@
 package org.dockbox.selene.test.objects.living;
 
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.entities.ArmorStand;

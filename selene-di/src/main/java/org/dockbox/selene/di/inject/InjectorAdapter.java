@@ -15,23 +15,18 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.modules;
+package org.dockbox.selene.di.inject;
 
-import com.google.inject.AbstractModule;
+public final class InjectorAdapter {
 
-public class SingleImplementationModule<T> extends AbstractModule {
+    private final Injector injector;
 
-    private final Class<T> target;
-    private final Class<? extends T> implementation;
-
-    public SingleImplementationModule(Class<T> target, Class<? extends T> implementation) {
-        this.target = target;
-        this.implementation = implementation;
+    public InjectorAdapter(InjectSource source) {
+        this.injector = source.create();
     }
 
-    @Override
-    protected void configure() {
-        super.configure();
-        this.bind(this.target).to(this.implementation);
+    public Injector get() {
+        return this.injector;
     }
+
 }

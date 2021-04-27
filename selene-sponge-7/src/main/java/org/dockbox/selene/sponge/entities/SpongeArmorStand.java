@@ -22,7 +22,7 @@ import com.flowpowered.math.vector.Vector3d;
 import net.minecraft.entity.item.EntityArmorStand;
 
 import org.dockbox.selene.api.domain.tuple.Vector3N;
-import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
 import org.dockbox.selene.server.minecraft.entities.ArmorStand;

@@ -17,13 +17,68 @@
 
 package org.dockbox.selene.api.i18n;
 
+import org.dockbox.selene.api.Selene;
+import org.dockbox.selene.api.SeleneInformation;
+import org.dockbox.selene.api.domain.Exceptional;
+import org.dockbox.selene.api.domain.OwnerLookup;
+import org.dockbox.selene.api.domain.TypedOwner;
+import org.dockbox.selene.api.i18n.annotations.Resource;
+import org.dockbox.selene.api.i18n.annotations.Resources;
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.di.Preloadable;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.proxy.ProxyProperty;
+import org.dockbox.selene.proxy.handle.ProxyHandler;
 import org.dockbox.selene.util.Reflect;
 
+import java.lang.reflect.Method;
+
 public class I18NPreload implements Preloadable {
+
+    @SuppressWarnings("unchecked")
     @Override
     public void preload() {
+        for (Class<?> annotatedType : Reflect.annotatedTypes(SeleneInformation.PACKAGE_PREFIX, Resources.class)) {
+            Selene.getServer().getInjector().provide((Class<Object>) annotatedType, () -> this.createResourceProxy(annotatedType));
+        }
         Reflect.registerModulePostInit(Provider.provide(ResourceService.class)::init);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T, C extends T> C createResourceProxy(Class<T> type) {
+        ProxyHandler<Object> handler = new ProxyHandler<>(null, (Class<Object>) type);
+
+        String prefix = "";
+        if (type.isAnnotationPresent(Resources.class)) {
+            Class<?> responsibleClass = type.getAnnotation(Resources.class).value();
+            TypedOwner lookup = Provider.provide(OwnerLookup.class).lookup(responsibleClass);
+            if (lookup != null) prefix = lookup.id() + '.';
+        }
+
+        for (Method annotatedMethod : Reflect.annotatedMethods(type, Resource.class)) {
+            String key = prefix + this.extractKey(annotatedMethod);
+
+            ProxyProperty<?, ResourceEntry> property = ProxyProperty.of(type, annotatedMethod, (instance, args) -> {
+                Exceptional<ResourceEntry> entryExceptional = Provider.provide(ResourceService.class).getResource(key);
+                return entryExceptional.map(resource -> (ResourceEntry) resource.format(args)).then(() -> {
+                    Resource annotation = annotatedMethod.getAnnotation(Resource.class);
+                    return new org.dockbox.selene.api.i18n.entry.Resource(annotation.value(), annotation.key()).format(args);
+                }).orNull();
+            });
+
+            handler.delegate((ProxyProperty<Object, ?>) property);
+        }
+        return Exceptional.of(handler::proxy).map(p -> (C) p).orNull();
+    }
+
+    private String extractKey(Method method) {
+        if (method.isAnnotationPresent(Resource.class)) {
+            String key = method.getAnnotation(Resource.class).key();
+            if (!"".equals(key)) return key;
+        }
+        String keyJoined = method.getName();
+        if (keyJoined.startsWith("get")) keyJoined = keyJoined.substring(3);
+        String[] r = keyJoined.split("(?=\\p{Lu})");
+        return String.join(".", r).toLowerCase();
     }
 }

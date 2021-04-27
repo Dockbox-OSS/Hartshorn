@@ -17,28 +17,40 @@
 
 package org.dockbox.selene.dave;
 
+import org.dockbox.selene.api.i18n.annotations.Resource;
 import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.Resource;
 
 @Resources(DaveModule.class)
-public final class DaveResources {
+public interface DaveResources {
 
-    public static final ResourceEntry DAVE_LINK_SUGGESTION = new Resource("Here's a useful link, $1{0}", "dave.suggestion.link");
-    public static final ResourceEntry DAVE_LINK_SUGGESTION_HOVER = new Resource("$2Click to open $1{0}", "dave.suggestion.link.hover");
-    public static final ResourceEntry DAVE_DISCORD_FORMAT = new Resource("**Dave** ≫ {0}", "dave.format.discord");
-    public static final ResourceEntry DAVE_MUTED = new Resource("$4Muted Dave, note that important triggers will always show", "dave.mute");
-    public static final ResourceEntry DAVE_UNMUTED = new Resource("$1Unmuted Dave", "dave.unmute");
-    public static final ResourceEntry DAVE_RELOADED_USER = new Resource("$1Reloaded Dave without breaking stuff, whoo!", "dave.reload");
-    public static final ResourceEntry DAVE_TRIGGER_LIST_ITEM = new Resource("$3 - $1{0}", "dave.trigger.single");
-    public static final ResourceEntry DAVE_TRIGGER_HOVER = new Resource("$1Click to perform trigger", "dave.trigger.single.hover");
-    public static final ResourceEntry DAVE_TRIGGER_HEADER = new Resource("$1Triggers", "dave.trigger.header");
-    public static final ResourceEntry NO_MATCHING_TRIGGER = new Resource("$4No trigger with id '{0}' exists.", "dave.trigger.notfound");
+    @Resource("Here's a useful link, $1{0}")
+    ResourceEntry getSuggestionLink(String link);
 
-    public static final String DAVE_MUTE = "dave.mute";
-    public static final String DAVE_REFRESH = "dave.refresh";
-    public static final String DAVE_TRIGGERS = "dave.triggers.list";
-    public static final String DAVE_TRIGGER_RUN = "dave.triggers.run";
+    @Resource("$2Click to open $1{0}")
+    ResourceEntry getSuggestionLinkHover(String link);
 
-    private DaveResources() {}
+    @Resource("**Dave** ≫ {0}")
+    ResourceEntry getDiscordFormat(String message);
+
+    @Resource("$4Muted Dave, note that important triggers will always show")
+    ResourceEntry getMute();
+
+    @Resource("$1Unmuted Dave")
+    ResourceEntry getUnmute();
+
+    @Resource("$1Reloaded Dave without breaking stuff, whoo!")
+    ResourceEntry getReload();
+
+    @Resource("$3 - $1{0}")
+    ResourceEntry getTriggerSingle(String item);
+
+    @Resource("$1Click to perform trigger")
+    ResourceEntry getTriggerSingleHover();
+
+    @Resource("$1Triggers")
+    ResourceEntry getTriggerHeader();
+
+    @Resource("$4No trigger with id '{0}' exists.")
+    ResourceEntry getTriggerNotfound(String trigger);
 }

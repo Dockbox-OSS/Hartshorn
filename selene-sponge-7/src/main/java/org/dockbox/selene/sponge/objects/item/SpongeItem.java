@@ -26,7 +26,7 @@ import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.api.keys.TransactionResult;
-import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
 import org.dockbox.selene.server.minecraft.item.Enchant;
 import org.dockbox.selene.server.minecraft.item.Item;

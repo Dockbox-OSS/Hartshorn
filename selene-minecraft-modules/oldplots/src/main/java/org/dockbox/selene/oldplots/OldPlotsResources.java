@@ -17,21 +17,35 @@
 
 package org.dockbox.selene.oldplots;
 
+import org.dockbox.selene.api.i18n.annotations.Resource;
 import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.Resource;
+import org.jetbrains.annotations.NotNull;
 
 @Resources(OldPlotsModule.class)
-public final class OldPlotsResources {
+public interface OldPlotsResources {
 
-    public static final ResourceEntry SINGLE_PLOT = new Resource("$3 - $1{0}$2, $1{1}, {2}", "oldplots.list.single");
-    public static final ResourceEntry PLOT_HOVER = new Resource("$2Teleport to $1{0}$2, $1{1}, {2}", "oldplots.list.hover");
-    public static final ResourceEntry LIST_TITLE = new Resource("$1OldPlots for $2{0}", "oldplots.list.title");
-    public static final ResourceEntry ERROR_WORLDS = new Resource("$4Worlds are not stored as OldPlots", "oldplots.caught.worlds");
-    public static final ResourceEntry ERROR_CALCULATION = new Resource("$4Could not calculate plot location", "oldplots.caught.calculation");
-    public static final ResourceEntry ERROR_NO_LOCATION = new Resource("$4No world location configured for '{0}'", "oldplots.caught.location");
-    public static final ResourceEntry ERROR_NO_PLOT = new Resource("$4No plot with that ID found", "oldplots.caught.plot");
-    public static final ResourceEntry ERROR_NO_PLAYER = new Resource("$4No valid player provided", "oldplots.caught.player");
+    @Resource(value = "$3 - $1{0}$2, $1{1}, {2}", key = "oldplots.list.single")
+    ResourceEntry getSinglePlotListItem(@NotNull String world, @NotNull Integer idX, @NotNull Integer idZ);
 
-    private OldPlotsResources() {}
+    @Resource(value = "$2Teleport to $1{0}$2, $1{1}, {2}", key = "oldplots.list.hover")
+    ResourceEntry getSinglePlotListItemHover(@NotNull String world, @NotNull Integer idX, @NotNull Integer idZ);
+
+    @Resource(value = "$1OldPlots for $2{0}", key = "oldplots.list.title")
+    ResourceEntry getListTitle(String name);
+
+    @Resource(value = "$4Worlds are not stored as OldPlots", key = "oldplots.caught.worlds")
+    ResourceEntry getCaughtError();
+
+    @Resource(value = "$4Could not calculate plot location", key = "oldplots.caught.calculation")
+    ResourceEntry getCalculationError();
+
+    @Resource(value = "$4No world location configured for '{0}'", key = "oldplots.caught.location")
+    ResourceEntry getLocationError(@NotNull String world);
+
+    @Resource(value = "$4No plot with that ID found", key = "oldplots.caught.plot")
+    ResourceEntry getPlotError();
+
+    @Resource(value = "$4No valid player provided", key = "oldplots.caught.player")
+    ResourceEntry getPlayerError();
 }

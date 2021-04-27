@@ -42,9 +42,10 @@ public class PlayerActions {
 
     @Inject
     private PlayerActionConfiguration configuration;
-
     @Inject
     private Worlds worlds;
+    @Inject
+    private PlayerActionResources resources;
 
     @Listener
     public void on(PlayerTeleportEvent event) {
@@ -58,7 +59,7 @@ public class PlayerActions {
             if (this.configuration.getTeleportWhitelist().contains(event.getOldLocation().getWorld().getName())) return;
 
             event.setCancelled(true);
-            event.getTarget().sendWithPrefix(PlayerActionResources.SPECTATOR_TELEPORT_NOT_ALLOWED);
+            event.getTarget().sendWithPrefix(this.resources.getSpectatorNotAllowed());
         }
     }
 
@@ -71,7 +72,7 @@ public class PlayerActions {
         Plot plot = plotTarget.get();
         if (plot.hasMembership(player, PlotMembership.DENIED)) {
             event.setCancelled(true);
-            player.sendWithPrefix(PlayerActionResources.DENIED_FROM_TARGET_PLOT);
+            player.sendWithPrefix(this.resources.getDeniedFromPlot());
         }
     }
 
@@ -94,12 +95,12 @@ public class PlayerActions {
     private boolean cancelEvent(Player player, Entity entity) {
         Exceptional<Plot> targetPlot = entity.getLocation().get(PlotKeys.PLOT);
         if (targetPlot.absent()) {
-            player.sendWithPrefix(PlayerActionResources.OUTSIDE_PLOT);
+            player.sendWithPrefix(this.resources.getOutsidePlot());
             return true;
         } else {
             Plot plot = targetPlot.get();
             if (!plot.hasAnyMembership(player, PlotMembership.MEMBER, PlotMembership.TRUSTED, PlotMembership.OWNER)) {
-                player.sendWithPrefix(PlayerActionResources.CANNOT_INTERACT);
+                player.sendWithPrefix(this.resources.getInteractionError());
                 return true;
             }
         }
@@ -113,7 +114,7 @@ public class PlayerActions {
 
         if (event.getTarget().getWorld().getWorldUniqueId().equals(this.worlds.getRootWorldId())) {
             event.setCancelled(true);
-            event.getTarget().send(PlayerActionResources.CANNOT_MOVE_HERE);
+            event.getTarget().send(this.resources.getMoveError());
         }
     }
 

@@ -20,7 +20,7 @@ package org.dockbox.selene.database.dialects.sqlite;
 import org.dockbox.selene.api.domain.FileTypes;
 import org.dockbox.selene.database.SQLMan;
 import org.dockbox.selene.database.exceptions.InvalidConnectionException;
-import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.BindingMeta;
 import org.dockbox.selene.di.annotations.Binds;
 import org.dockbox.selene.di.properties.InjectorProperty;

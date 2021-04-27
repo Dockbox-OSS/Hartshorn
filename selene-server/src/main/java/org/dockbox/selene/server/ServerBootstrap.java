@@ -25,7 +25,7 @@ import org.dockbox.selene.api.events.annotations.Listener;
 import org.dockbox.selene.api.module.ModuleContainer;
 import org.dockbox.selene.api.module.ModuleManager;
 import org.dockbox.selene.api.module.SeleneModuleBootstrap;
-import org.dockbox.selene.di.BindingData;
+import org.dockbox.selene.di.binding.BindingData;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.server.events.ServerStartedEvent;
@@ -58,7 +58,7 @@ public abstract class ServerBootstrap extends SeleneModuleBootstrap {
         Selene.log().info("\u00A77(\u00A7bSelene\u00A77) \u00A7fLoaded bindings: ");
         AtomicInteger unprovisionedTypes = new AtomicInteger();
 
-        for (BindingData binding : this.getBindingData()) {
+        for (BindingData binding : this.getInjector().getBindingData()) {
             String meta = binding.getMeta().present() ? " (meta: " + binding.getMeta().get().value() + ")" : "";
             Selene.log().info("  - \u00A77" + binding.getSource().getSimpleName() + meta + ": \u00A78" + binding.getTarget().getSimpleName());
         }

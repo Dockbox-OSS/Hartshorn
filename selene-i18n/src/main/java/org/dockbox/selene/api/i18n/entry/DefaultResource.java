@@ -17,16 +17,13 @@
 
 package org.dockbox.selene.api.i18n.entry;
 
-import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.i18n.MessageReceiver;
-import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
 import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.Map;
 
-@Resources(Selene.class)
 public enum DefaultResource implements ResourceEntry {
     // Color formats
     COLOR_PRIMARY("b", "color.primary"),

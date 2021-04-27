@@ -41,70 +41,73 @@ import org.dockbox.selene.util.SeleneUtils;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 @Module(
         id = SeleneInformation.PROJECT_ID,
         name = SeleneInformation.PROJECT_NAME,
         description = "Integrated features of Selene",
         authors = "GuusLieben"
 )
-@Command(aliases = SeleneInformation.PROJECT_ID, usage = SeleneInformation.PROJECT_ID, permission = DefaultServerResources.SELENE_ADMIN)
+@Command(aliases = SeleneInformation.PROJECT_ID, usage = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN)
 public class DefaultServer implements Server {
 
+    public static final String SELENE_ADMIN = SeleneInformation.PROJECT_ID + ".admin";
+
+    @Inject
+    private DefaultServerResources resources;
+
     // Parent command
-    @Command(aliases = "", usage = "", permission = DefaultServerResources.SELENE_ADMIN)
-    public static void debugModules(MessageReceiver source) {
+    @Command(aliases = "", usage = "", permission = DefaultServer.SELENE_ADMIN)
+    public void debugModules(MessageReceiver source) {
         Provider.with(ModuleManager.class, em -> {
             PaginationBuilder pb = Provider.provide(PaginationBuilder.class);
 
             List<Text> content = SeleneUtils.emptyList();
-            content.add(DefaultServerResources.SERVER_HEADER
-                    .format(Selene.getServer().getVersion())
+            content.add(this.resources.getInfoHeader(Selene.getServer().getVersion())
                     .translate(source).asText()
             );
-            content.add(DefaultServerResources.SERVER_AUTHORS
-                    .format(String.join(",", SeleneBootstrap.getAuthors()))
+            content.add(this.resources.getAuthors(String.join(",", SeleneBootstrap.getAuthors()))
                     .translate(source).asText());
-            content.add(DefaultServerResources.SERVER_MODULES.translate(source).asText());
+            content.add(this.resources.getModules().translate(source).asText());
 
             em.getRegisteredModuleIds().forEach(id -> em.getContainer(id)
-                    .map(e -> DefaultServer.generateText(e, source))
+                    .map(e -> this.generateText(e, source))
                     .present(content::add)
             );
 
-            pb.title(DefaultServerResources.PAGINATION_TITLE.translate(source).asText());
+            pb.title(this.resources.getPaginationTitle().translate(source).asText());
             pb.content(content);
 
             source.send(pb.build());
         });
     }
 
-    private static Text generateText(ModuleContainer e, MessageReceiver source) {
-        Text line = DefaultServerResources.MODULE_ROW
-                .format(e.name(), e.id())
+    private Text generateText(ModuleContainer e, MessageReceiver source) {
+        Text line = this.resources.getModuleRow(e.name(), e.id())
                 .translate(source)
                 .asText();
         line.onClick(RunCommandAction.runCommand("/" + SeleneInformation.PROJECT_ID + " module " + e.id()));
-        line.onHover(HoverAction.showText(DefaultServerResources.MODULE_ROW_HOVER
-                .format(e.name())
+        line.onHover(HoverAction.showText(this.resources.getModuleRowHover(e.name())
                 .translate(source)
                 .asText()
         ));
         return line;
     }
 
-    @Command(aliases = "module", usage = "module <id{Module}>", permission = DefaultServerResources.SELENE_ADMIN)
-    public static void debugModule(MessageReceiver src, CommandContext ctx) {
+    @Command(aliases = "module", usage = "module <id{Module}>", permission = DefaultServer.SELENE_ADMIN)
+    public void debugModule(MessageReceiver src, CommandContext ctx) {
         ModuleContainer container = ctx.get("id");
 
-        src.send(DefaultServerResources.MODULE_INFO_BLOCK.format(
+        src.send(this.resources.getInfoModuleBlock(
                 container.name(), container.id(), container.description(),
                 0 == container.dependencies().length ? "None" : String.join("$3, $1", container.dependencies()),
                 String.join("$3, $1", container.authors()), container.source()
         ));
     }
 
-    @Command(aliases = "reload", usage = "reload [id{Module}]", confirm = true, permission = DefaultServerResources.SELENE_ADMIN)
-    public static void reload(MessageReceiver src, CommandContext ctx) {
+    @Command(aliases = "reload", usage = "reload [id{Module}]", confirm = true, permission = DefaultServer.SELENE_ADMIN)
+    public void reload(MessageReceiver src, CommandContext ctx) {
         EventBus eb = Provider.provide(EventBus.class);
         if (ctx.has("id")) {
             ModuleContainer container = ctx.get("id");
@@ -112,13 +115,13 @@ public class DefaultServer implements Server {
 
             oi.present(o -> {
                 eb.post(new ServerReloadEvent(), o.getClass());
-                src.send(DefaultServerResources.MODULE_RELOAD_SUCCESSFUL.format(container.name()));
+                src.send(this.resources.getReloadSuccessful(container.name()));
             }).absent(() ->
-                    src.send(DefaultServerResources.NODULE_RELOAD_FAILED.format(container.name())));
+                    src.send(this.resources.getReloadFailed(container.name())));
         }
         else {
             eb.post(new ServerReloadEvent());
-            src.send(DefaultServerResources.FULL_RELOAD_SUCCESSFUL);
+            src.send(this.resources.getReloadAll());
         }
     }
 
@@ -126,7 +129,7 @@ public class DefaultServer implements Server {
     @Command(aliases = "confirm", usage = "confirm <cooldownId{String}>", permission = SeleneInformation.GLOBAL_PERMITTED)
     public void confirm(MessageReceiver src, CommandContext ctx) {
         if (!(src instanceof AbstractIdentifiable)) {
-            src.send(DefaultServerResources.CONFIRM_WRONG_SOURCE);
+            src.send(this.resources.getConfirmInvalidSource());
             return;
         }
         Exceptional<CommandParameter<String>> optionalCooldownId = ctx.argument("cooldownId");
@@ -137,9 +140,9 @@ public class DefaultServer implements Server {
                 .present(cooldownId -> {
                     String cid = cooldownId.getValue();
                     Provider.provide(CommandBus.class).confirmCommand(cid).absent(() ->
-                            src.send(DefaultServerResources.CONFIRM_FAILED));
+                            src.send(this.resources.getConfirmInvalidOther()));
                 })
-                .absent(() -> src.send(DefaultServerResources.CONFIRM_INVALID_ID));
+                .absent(() -> src.send(this.resources.getConfirmInvalidId()));
     }
 
 }

@@ -119,7 +119,7 @@ public class SimpleResourceService implements ResourceService {
 
     @NotNull
     @Override
-    public Exceptional<ResourceEntry> getExternalResource(@NotNull String key) {
+    public Exceptional<ResourceEntry> getResource(@NotNull String key) {
         @NonNls
         @NotNull
         String finalKey = this.createValidKey(key);

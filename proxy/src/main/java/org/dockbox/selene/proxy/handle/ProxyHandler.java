@@ -37,9 +37,17 @@ public class ProxyHandler<T> implements MethodHandler {
 
     private final Multimap<Method, ProxyProperty<T, ?>> handlers = ArrayListMultimap.create();
     private final T instance;
+    private final Class<T> type;
 
     public ProxyHandler(T instance) {
         this.instance = instance;
+        //noinspection unchecked
+        this.type = (Class<T>) instance.getClass();
+    }
+
+    public ProxyHandler(T instance, Class<T> type) {
+        this.instance = instance;
+        this.type = type;
     }
 
     @SafeVarargs
@@ -112,9 +120,17 @@ public class ProxyHandler<T> implements MethodHandler {
     }
 
     public T proxy() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        if (this.type().isInterface()) {
+            return new ProxyInterfaceHandler<>(this).proxy();
+        }
         ProxyFactory factory = new ProxyFactory();
-        factory.setSuperclass(this.instance.getClass());
+        factory.setSuperclass(this.type());
         //noinspection unchecked
+
         return (T) factory.create(new Class<?>[0], new Object[0], this);
+    }
+
+    protected Class<T> type() {
+        return this.type;
     }
 }

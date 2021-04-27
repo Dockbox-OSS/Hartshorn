@@ -61,7 +61,6 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
 
     @SuppressWarnings("ConstantDeclaredInAbstractClass")
     public static final String WILDCARD = "*";
-
     private static final Map<String, Triad<DiscordCommand, Method, Object>> commandMethods = SeleneUtils.emptyConcurrentMap();
 
     @Override
@@ -184,6 +183,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
     @Override
     @SuppressWarnings("CallToSuspiciousStringMethod")
     public void post(@NotNull String command, @NotNull DiscordCommandContext context) {
+        DiscordResources resources = Provider.provide(DiscordResources.class);
         if (commandMethods.containsKey(command)) {
             Triad<DiscordCommand, Method, Object> information = commandMethods.get(command);
             DiscordCommand annotation = information.getFirst();
@@ -213,7 +213,7 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
             }
 
             if (!userPermitted) {
-                context.sendToChannel(DiscordResources.DISCORD_COMMAND_NOT_PERMITTED);
+                context.sendToChannel(resources.getCommandNotPermitted());
                 return;
             }
 
@@ -224,12 +224,12 @@ public abstract class DefaultDiscordUtils implements DiscordUtils {
                 method.invoke(instance, context);
             }
             catch (IllegalAccessException | InvocationTargetException e) {
-                context.sendToChannel(DiscordResources.DISCORD_COMMAND_ERRORED);
+                context.sendToChannel(resources.getCommandCaught());
                 Except.handle("Failed to invoke previously checked method [" + method.getName() + "] in [" + instance.getClass()
                         .getCanonicalName() + "]");
             }
         }
-        else context.sendToChannel(DiscordResources.DISCORD_COMMAND_UNKNOWN);
+        else context.sendToChannel(resources.getCommandUnknown());
     }
 
     private static boolean isValidChannel(@NotNull DiscordCommandContext context, ListeningLevel level) {

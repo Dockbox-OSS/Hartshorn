@@ -127,7 +127,7 @@ public final class DefaultArgumentConverters implements InjectableType {
         ResourceService rs = Provider.provide(ResourceService.class);
         String validKey = rs.createValidKey(in);
 
-        Exceptional<? extends ResourceEntry> or = rs.getExternalResource(validKey);
+        Exceptional<? extends ResourceEntry> or = rs.getResource(validKey);
         if (or.present()) return or.map(ResourceEntry.class::cast);
 
         return Exceptional.of(() -> DefaultResource.valueOf(validKey));
