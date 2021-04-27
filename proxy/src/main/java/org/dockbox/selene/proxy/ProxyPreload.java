@@ -17,15 +17,9 @@
 
 package org.dockbox.selene.proxy;
 
-import org.dockbox.selene.api.module.annotations.Module;
 import org.dockbox.selene.di.Preloadable;
 
-@Module(
-        id = "proxies",
-        name = "Proxies",
-        description = "Adds global and dynamic proxy handling",
-        authors = "GuusLieben")
-public class ProxyModule implements Preloadable {
+public class ProxyPreload implements Preloadable {
 
     @Override
     public void preload() {
