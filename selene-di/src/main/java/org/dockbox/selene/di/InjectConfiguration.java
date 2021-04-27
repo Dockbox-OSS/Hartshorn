@@ -17,10 +17,54 @@
 
 package org.dockbox.selene.di;
 
-import com.google.inject.AbstractModule;
+import org.dockbox.selene.di.annotations.BindingMeta;
+import org.dockbox.selene.di.inject.Binder;
 
-public abstract class InjectConfiguration extends AbstractModule {
+import java.lang.annotation.Annotation;
+import java.util.function.Supplier;
 
-    // Reserved for future expansion
+public abstract class InjectConfiguration implements Binder {
 
+    private Binder binder;
+
+    public final void setBinder(Binder binder) {
+        this.binder = binder;
+    }
+
+    public abstract void collect();
+
+    public final Binder getBinder() {
+        if (this.binder == null) throw new IllegalStateException("No binder provided!");
+        return this.binder;
+    }
+
+    @Override
+    public final <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier) {
+        this.getBinder().provide(contract, supplier);
+    }
+
+    @Override
+    public final <C, T extends C, A extends Annotation> void provide(Class<C> contract, Supplier<? extends T> supplier, BindingMeta meta) {
+        this.getBinder().provide(contract, supplier, meta);
+    }
+
+    @Override
+    public final <C, T extends C> void bind(Class<C> contract, Class<? extends T> implementation) {
+        this.getBinder().bind(contract, implementation);
+    }
+
+    @Override
+    public final <C, T extends C, A extends Annotation> void bind(Class<C> contract, Class<? extends T> implementation, BindingMeta meta) {
+        this.getBinder().bind(contract, implementation, meta);
+    }
+
+    @Override
+    public final <C, T extends C> void bind(Class<C> contract, T instance) {
+        this.getBinder().bind(contract, instance);
+    }
+
+    @Override
+    public final <C, T extends C> void bind(Class<C> contract, T instance, BindingMeta meta) {
+        this.getBinder().bind(contract, instance, meta);
+    }
 }
