@@ -17,15 +17,20 @@
 
 package org.dockbox.selene.commands.parameter;
 
+import org.dockbox.selene.api.i18n.annotations.Resource;
 import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.Resource;
 
 @Resources(CommandParameters.class)
-public class CommandParameterResources {
+public interface CommandParameterResources {
 
-    public static final ResourceEntry NOT_ENOUGH_ARGUMENTS = new Resource("Not enough arguments.", "selene.command.missing_args");
-    public static final ResourceEntry HASHTAG_PATTERN_WRONG_FORMAT = new Resource("Pattern has to be formatted as #type[arg1][arg2][etc.]", "selene.command.hashtag.wrong_format");
-    public static final ResourceEntry MISSING_CONVERTER = new Resource("Parameter of type {0} has no register converter", "selene.command.missing_converter");
+    @Resource(value = "Not enough arguments.", key = "selene.command.missing_args")
+    ResourceEntry getNotEnoughArgs();
+
+    @Resource(value = "Pattern has to be formatted as #type[arg1][arg2][etc.]", key = "selene.command.hashtag.wrong_format")
+    ResourceEntry getWrongHashtagPatternFormat();
+
+    @Resource(value = "Parameter of type {0} has no register converter", key = "selene.command.missing_converter")
+    ResourceEntry getMissingConverter(String type);
 
 }
