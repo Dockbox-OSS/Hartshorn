@@ -15,23 +15,24 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.modules;
+package org.dockbox.selene.di.inject.modules;
 
 import com.google.inject.AbstractModule;
 
-public class SingleImplementationModule<T> extends AbstractModule {
+import java.util.function.Supplier;
+
+public class ProvisionModule<T> extends AbstractModule {
 
     private final Class<T> target;
-    private final Class<? extends T> implementation;
+    private final Supplier<? extends T> supplier;
 
-    public SingleImplementationModule(Class<T> target, Class<? extends T> implementation) {
+    public ProvisionModule(Class<T> target, Supplier<? extends T> supplier) {
         this.target = target;
-        this.implementation = implementation;
+        this.supplier = supplier;
     }
 
     @Override
     protected void configure() {
-        super.configure();
-        this.bind(this.target).to(this.implementation);
+        this.bind(this.target).toProvider(ProvisionModule.this.supplier::get);
     }
 }

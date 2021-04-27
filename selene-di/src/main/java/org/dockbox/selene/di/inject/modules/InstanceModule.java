@@ -15,27 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.modules;
+package org.dockbox.selene.di.inject.modules;
 
 import com.google.inject.AbstractModule;
 
-import java.lang.annotation.Annotation;
-
-public class SingleAnnotatedImplementationModule<T> extends AbstractModule {
+public class InstanceModule<T> extends AbstractModule {
 
     private final Class<T> target;
-    private final Class<? extends T> implementation;
-    private final Class<? extends Annotation> annotation;
+    private final T instance;
 
-    public SingleAnnotatedImplementationModule(Class<T> target, Class<? extends T> implementation, Class<? extends Annotation> annotation) {
+    public InstanceModule(Class<T> target, T instance) {
         this.target = target;
-        this.implementation = implementation;
-        this.annotation = annotation;
+        this.instance = instance;
     }
 
     @Override
     protected void configure() {
         super.configure();
-        this.bind(this.target).annotatedWith(this.annotation).to(this.implementation);
+        this.bind(this.target).toInstance(this.instance);
     }
 }

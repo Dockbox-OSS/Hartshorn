@@ -15,26 +15,23 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di;
+package org.dockbox.selene.di.inject.modules;
 
-import com.google.inject.Key;
+import com.google.inject.AbstractModule;
 
-import java.util.Map;
-import java.util.Map.Entry;
+public class StaticModule<T> extends AbstractModule {
 
-public class ScannedInjectionConfiguration extends InjectConfiguration {
+    private final Class<T> target;
+    private final Class<? extends T> implementation;
 
-    private final Map<Key<?>, Class<?>> bindings;
-
-    public ScannedInjectionConfiguration(Map<Key<?>, Class<?>> bindings) {
-        this.bindings = bindings;
+    public StaticModule(Class<T> target, Class<? extends T> implementation) {
+        this.target = target;
+        this.implementation = implementation;
     }
 
     @Override
     protected void configure() {
-        for (Entry<Key<?>, Class<?>> entry : this.bindings.entrySet()) {
-            //noinspection unchecked
-            this.bind((Key<Object>) entry.getKey()).to(entry.getValue());
-        }
+        super.configure();
+        this.bind(this.target).to(this.implementation);
     }
 }

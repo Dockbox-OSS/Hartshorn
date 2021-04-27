@@ -15,23 +15,27 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.di.modules;
+package org.dockbox.selene.di.inject.modules;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Key;
 
-public class SingleInstanceModule<T> extends AbstractModule {
+import java.util.Map;
+import java.util.Map.Entry;
 
-    private final Class<T> target;
-    private final T instance;
+public class GuicePrefixScannerModule extends AbstractModule {
 
-    public SingleInstanceModule(Class<T> target, T instance) {
-        this.target = target;
-        this.instance = instance;
+    private final Map<Key<?>, Class<?>> bindings;
+
+    public GuicePrefixScannerModule(Map<Key<?>, Class<?>> bindings) {
+        this.bindings = bindings;
     }
 
     @Override
     protected void configure() {
-        super.configure();
-        this.bind(this.target).toInstance(this.instance);
+        for (Entry<Key<?>, Class<?>> entry : this.bindings.entrySet()) {
+            //noinspection unchecked
+            this.bind((Key<Object>) entry.getKey()).to(entry.getValue());
+        }
     }
 }
