@@ -283,6 +283,12 @@ public final class Reflect {
         return Reflect.annotatedMethods(clazz, annotation, rule, false);
     }
 
+    @NotNull
+    @Unmodifiable
+    public static <A extends Annotation> Collection<Method> annotatedMethods(Class<?> clazz, Class<A> annotation) {
+        return Reflect.annotatedMethods(clazz, annotation, t -> true);
+    }
+
     /**
      * Gets all methods annotated by a given annotation, which match the given rule, inside a class.
      * If the method is not annotated with the given annotation, or does not match the given rule, it
