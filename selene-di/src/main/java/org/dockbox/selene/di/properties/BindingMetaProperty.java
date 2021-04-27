@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.di.properties;
 
-import org.dockbox.selene.di.Bindings;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.BindingMeta;
 
 public class BindingMetaProperty implements InjectorProperty<BindingMeta> {
