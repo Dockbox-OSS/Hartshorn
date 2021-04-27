@@ -58,6 +58,8 @@ public class OldPlotsModule {
 
     @Inject
     private FileManager fileManager;
+    @Inject
+    private OldPlotsResources resources;
 
     // Avoid null
     private PlotWorldModelList modelList = new PlotWorldModelList();
@@ -73,7 +75,7 @@ public class OldPlotsModule {
     @Command(aliases = "oldplots", usage = "oldplots <player{Player}>", permission = "selene.oldplots.list")
     public void oldPlotsCommand(Player source, CommandContext ctx) throws InvalidConnectionException {
         if (!ctx.has("player")) {
-            source.sendWithPrefix(OldPlotsResources.ERROR_NO_PLAYER);
+            source.sendWithPrefix(this.resources.getPlayerError());
         }
         Player player = ctx.get("player");
 
@@ -93,19 +95,19 @@ public class OldPlotsModule {
             // Only show worlds we can access
             if (this.modelList.getWorld(world).present()) {
                 Text plotLine =
-                        Text.of(OldPlotsResources.SINGLE_PLOT.format(world, idX, idZ).translate(player));
+                        Text.of(this.resources.getSinglePlotListItem(world, idX, idZ).translate(player));
                 plotLine.onClick(RunCommandAction.runCommand("/optp " + id));
                 plotLine.onHover(
                         HoverAction.showText(
                                 Text.of(
-                                        OldPlotsResources.PLOT_HOVER.format(world, idX, idZ).translate(player))));
+                                        this.resources.getSinglePlotListItemHover(world, idX, idZ).translate(player))));
                 plotContent.add(plotLine);
             }
         });
 
         Provider.provide(PaginationBuilder.class)
                 .content(plotContent)
-                .title(Text.of(OldPlotsResources.LIST_TITLE.format(player.getName()).translate(player)))
+                .title(Text.of(this.resources.getListTitle(player.getName()).translate(player)))
                 .build()
                 .send(source);
     }
@@ -138,15 +140,15 @@ public class OldPlotsModule {
             @NotNull
             String world = plot.getValue(OldPlotsIdentifiers.WORLD).get();
 
-            if ("*".equals(world)) source.send(OldPlotsResources.ERROR_WORLDS);
+            if ("*".equals(world)) source.send(this.resources.getCaughtError());
             else {
                 Exceptional<PlotWorldModel> model = this.modelList.getWorld(world);
                 model.present(worldModel -> {
                     Exceptional<Location> location = worldModel.getLocation(idX, idZ);
                     location.present(source::setLocation)
-                            .absent(() -> source.send(OldPlotsResources.ERROR_CALCULATION));
-                }).absent(() -> source.send(OldPlotsResources.ERROR_NO_LOCATION.format(world)));
+                            .absent(() -> source.send(this.resources.getCalculationError()));
+                }).absent(() -> source.send(this.resources.getLocationError(world)));
             }
-        }).absent(() -> source.send(OldPlotsResources.ERROR_NO_PLOT));
+        }).absent(() -> source.send(this.resources.getPlotError()));
     }
 }
