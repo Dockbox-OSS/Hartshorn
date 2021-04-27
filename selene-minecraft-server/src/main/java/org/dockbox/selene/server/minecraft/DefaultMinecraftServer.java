@@ -24,15 +24,21 @@ import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
-import org.dockbox.selene.server.minecraft.players.Player;
+import org.dockbox.selene.server.DefaultServer;
 import org.dockbox.selene.server.DefaultServerResources;
+import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.util.SeleneUtils;
 
-@Command(aliases = SeleneInformation.PROJECT_ID, usage = SeleneInformation.PROJECT_ID, permission = DefaultServerResources.SELENE_ADMIN, extend = true)
+import javax.inject.Inject;
+
+@Command(aliases = SeleneInformation.PROJECT_ID, usage = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN, extend = true)
 public class DefaultMinecraftServer {
 
+    @Inject
+    private DefaultServerResources resources;
+
     @Command(aliases = { "lang", "language" }, usage = "language <language{Language}> [player{Player}]", inherit = false, permission = SeleneInformation.GLOBAL_PERMITTED)
-    public static void switchLang(MessageReceiver src, CommandContext ctx, Language language, Player player) {
+    public void switchLang(MessageReceiver src, CommandContext ctx, Language language, Player player) {
         if (null == player) {
             if (src instanceof Player) {
                 player = (Player) src;
@@ -47,12 +53,12 @@ public class DefaultMinecraftServer {
 
         String languageLocalized = language.getNameLocalized() + " (" + language.getNameEnglish() + ")";
         if (player != src)
-            src.sendWithPrefix(DefaultServerResources.LANG_SWITCHED_OTHER.format(player.getName(), languageLocalized));
-        player.sendWithPrefix(DefaultServerResources.LANG_SWITCHED.format(languageLocalized));
+            src.sendWithPrefix(resources.getOtherLanguageUpdated(player.getName(), languageLocalized));
+        player.sendWithPrefix(resources.getLanguageUpdated(languageLocalized));
     }
 
-    @Command(aliases = "platform", usage = "platform", permission = DefaultServerResources.SELENE_ADMIN)
-    public static void platform(MessageReceiver src) {
+    @Command(aliases = "platform", usage = "platform", permission = DefaultServer.SELENE_ADMIN)
+    public void platform(MessageReceiver src) {
         MinecraftServerType st = MinecraftServerBootstrap.getInstance().getServerType();
         String platformVersion = Selene.getServer().getPlatformVersion();
 
@@ -61,8 +67,8 @@ public class DefaultMinecraftServer {
         Object[] system = SeleneUtils.getAll(System::getProperty,
                 "java.version", "java.vendor", "java.vm.version", "java.vm.name", "java.vm.vendor", "java.runtime.version", "java.class.version");
 
-        src.send(DefaultServerResources.PLATFORM_INFORMATION.format(
-                st.getDisplayName(), platformVersion, mcVersion, system[0], system[1], system[2], system[2], system[3], system[4], system[5])
+        src.send(resources.getPlatformInformation(st.getDisplayName(), platformVersion, mcVersion,
+                system[0], system[1], system[2], system[2], system[3], system[4], system[5])
         );
     }
 }
