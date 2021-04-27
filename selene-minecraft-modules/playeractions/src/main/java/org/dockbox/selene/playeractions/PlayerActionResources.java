@@ -17,17 +17,26 @@
 
 package org.dockbox.selene.playeractions;
 
+import org.dockbox.selene.api.i18n.annotations.Resource;
 import org.dockbox.selene.api.i18n.annotations.Resources;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.Resource;
 
 @Resources(PlayerActions.class)
-public class PlayerActionResources {
+public interface PlayerActionResources {
+    
+    @Resource(value = "$4You are not allowed to teleport while in spectator mode", key = "playeractions.spectator.notallowed")
+    ResourceEntry getSpectatorNotAllowed();
 
-    public static final ResourceEntry SPECTATOR_TELEPORT_NOT_ALLOWED = new Resource("$4You are not allowed to teleport while in spectator mode", "playeractions.spectator.notallowed");
-    public static final ResourceEntry DENIED_FROM_TARGET_PLOT = new Resource("$4You are denied from the plot you are teleporting to", "playeractions.plot.denied");
-    public static final ResourceEntry OUTSIDE_PLOT = new Resource("$4You are outside a plot", "playeractions.plot.outside");
-    public static final ResourceEntry CANNOT_INTERACT = new Resource("$4You do not have permission to interact with entities here", "playeractions.plot.interact");
-    public static final ResourceEntry CANNOT_MOVE_HERE = new Resource("$4You are not permitted to move in this world", "playeractions.rootworld");
+    @Resource(value = "$4You are denied from the plot you are teleporting to", key = "playeractions.plot.denied")
+    ResourceEntry getDeniedFromPlot();
+
+    @Resource(value = "$4You are outside a plot", key = "playeractions.plot.outside")
+    ResourceEntry getOutsidePlot();
+
+    @Resource(value = "$4You do not have permission to interact with entities here", key = "playeractions.plot.interact")
+    ResourceEntry getInteractionError();
+
+    @Resource(value = "$4You are not permitted to move in this world", key = "playeractions.rootworld")
+    ResourceEntry getMoveError();
 
 }
