@@ -45,6 +45,8 @@ import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 @Command(aliases = "dave", usage = "dave", permission = "dave")
 @Module(id = "dave", name = "Dave", description = "", authors = "GuusLieben")
 public class DaveModule implements InjectableType {
@@ -53,37 +55,45 @@ public class DaveModule implements InjectableType {
     private DaveTriggers triggers = new DaveTriggers();
     private DaveConfig config = new DaveConfig();
 
-    @Command(aliases = "mute", usage = "mute", permission = DaveResources.DAVE_MUTE)
+    public static final String DAVE_MUTE = "dave.mute";
+    public static final String DAVE_REFRESH = "dave.refresh";
+    public static final String DAVE_TRIGGERS = "dave.triggers.list";
+    public static final String DAVE_TRIGGER_RUN = "dave.triggers.run";
+
+    @Inject
+    private DaveResources resources;
+
+    @Command(aliases = "mute", usage = "mute", permission = DaveModule.DAVE_MUTE)
     public void mute(Player player) {
         DaveUtils.toggleMute(player);
     }
 
-    @Command(aliases = "triggers", usage = "triggers", permission = DaveResources.DAVE_TRIGGERS)
+    @Command(aliases = "triggers", usage = "triggers", permission = DaveModule.DAVE_TRIGGERS)
     public void triggers(CommandSource source) {
         Provider.provide(PaginationBuilder.class)
-                .title(DaveResources.DAVE_TRIGGER_HEADER.asText())
-                .content(this.triggers.getTriggers().stream().map(trigger -> DaveResources.DAVE_TRIGGER_LIST_ITEM
-                        .format(SeleneUtils.shorten(trigger.getResponses().get(0).getMessage(), 75) + " ...")
+                .title(this.resources.getTriggerHeader().asText())
+                .content(this.triggers.getTriggers().stream()
+                        .map(trigger -> this.resources.getTriggerSingle(SeleneUtils.shorten(trigger.getResponses().get(0).getMessage(), 75) + " ...")
                         .asText()
-                        .onHover(HoverAction.showText(DaveResources.DAVE_TRIGGER_HOVER.asText()))
+                        .onHover(HoverAction.showText(this.resources.getTriggerSingleHover().asText()))
                         .onClick(RunCommandAction.runCommand("/dave run " + trigger.getId())))
                         .collect(Collectors.toList()))
                 .build()
                 .send(source);
     }
 
-    @Command(aliases = "run", usage = "run <trigger{String}>", permission = DaveResources.DAVE_TRIGGER_RUN)
+    @Command(aliases = "run", usage = "run <trigger{String}>", permission = DaveModule.DAVE_TRIGGER_RUN)
     public void run(Player source, CommandContext context) {
         String triggerId = context.get("trigger");
         this.triggers.findById(triggerId)
                 .present(trigger -> DaveUtils.performTrigger(source, source.getName(), trigger, "", this.config))
-                .absent(() -> source.send(DaveResources.NO_MATCHING_TRIGGER.format(triggerId)));
+                .absent(() -> source.send(this.resources.getTriggerNotfound(triggerId)));
     }
 
-    @Command(aliases = "refresh", usage = "refresh", permission = DaveResources.DAVE_REFRESH)
+    @Command(aliases = "refresh", usage = "refresh", permission = DaveModule.DAVE_REFRESH)
     public void refresh(CommandSource source) {
         this.stateEnabling();
-        source.sendWithPrefix(DaveResources.DAVE_RELOADED_USER);
+        source.sendWithPrefix(this.resources.getReload());
     }
 
     @Override

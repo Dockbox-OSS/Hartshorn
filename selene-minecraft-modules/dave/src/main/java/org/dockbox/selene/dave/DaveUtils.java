@@ -52,10 +52,11 @@ public final class DaveUtils {
     private DaveUtils() {}
 
     public static void toggleMute(Player player) {
+        DaveResources resources = Provider.provide(DaveResources.class);
         player.get(mutedKey).present(state -> {
             if (1 == state) {
                 player.remove(mutedKey);
-                player.sendWithPrefix(DaveResources.DAVE_UNMUTED);
+                player.sendWithPrefix(resources.getUnmute());
 
             }
             else {
@@ -64,7 +65,7 @@ public final class DaveUtils {
             }
         }).absent(() -> {
             player.set(mutedKey, 1);
-            player.sendWithPrefix(DaveResources.DAVE_MUTED);
+            player.sendWithPrefix(resources.getMute());
         });
     }
 
@@ -148,13 +149,14 @@ public final class DaveUtils {
 
     private static void printResponse(
             String response, boolean link, boolean important, DaveConfig config) {
+        DaveResources resources = Provider.provide(DaveResources.class);
         Text message = Text.of(config.getPrefix());
 
         if (link) {
-            Text linkText = Text.of(DaveResources.DAVE_LINK_SUGGESTION.format(response));
+            Text linkText = Text.of(resources.getSuggestionLink(response));
             linkText.onClick(ClickAction.openUrl(response));
             linkText.onHover(
-                    HoverAction.showText(DaveResources.DAVE_LINK_SUGGESTION_HOVER.format(response).asText()));
+                    HoverAction.showText(resources.getSuggestionLinkHover(response).asText()));
             message.append(linkText);
 
         }
@@ -172,9 +174,7 @@ public final class DaveUtils {
         for (String regex : new String[]{ "(&)([a-f])+", "(&)([0-9])+", "&l", "&n", "&o", "&k", "&m", "&r" })
             discordMessage = discordMessage.replaceAll(regex, "");
 
-        Provider.provide(DiscordUtils.class)
-                .sendToTextChannel(
-                        DaveResources.DAVE_DISCORD_FORMAT.format(discordMessage), discordChannel);
+        Provider.provide(DiscordUtils.class).sendToTextChannel(resources.getDiscordFormat(discordMessage), discordChannel);
     }
 
     public static String parseWebsiteLink(String unparsedLink) {
