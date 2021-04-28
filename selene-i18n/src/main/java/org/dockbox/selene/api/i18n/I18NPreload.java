@@ -56,7 +56,7 @@ public class I18NPreload implements Preloadable {
         }
 
         for (Method annotatedMethod : Reflect.annotatedMethods(type, Resource.class)) {
-            String key = prefix + this.extractKey(annotatedMethod);
+            String key = this.extractKey(annotatedMethod, prefix);
             Resource annotation = annotatedMethod.getAnnotation(Resource.class);
 
             ProxyProperty<?, ResourceEntry> property = ProxyProperty.of(type, annotatedMethod, (instance, args) -> {
@@ -68,7 +68,7 @@ public class I18NPreload implements Preloadable {
         return Exceptional.of(handler::proxy).map(p -> (C) p).orNull();
     }
 
-    private String extractKey(Method method) {
+    private String extractKey(Method method, String prefix) {
         if (method.isAnnotationPresent(Resource.class)) {
             String key = method.getAnnotation(Resource.class).key();
             if (!"".equals(key)) return key;
@@ -76,6 +76,6 @@ public class I18NPreload implements Preloadable {
         String keyJoined = method.getName();
         if (keyJoined.startsWith("get")) keyJoined = keyJoined.substring(3);
         String[] r = keyJoined.split("(?=\\p{Lu})");
-        return String.join(".", r).toLowerCase();
+        return prefix + String.join(".", r).toLowerCase();
     }
 }
