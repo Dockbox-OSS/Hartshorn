@@ -26,18 +26,6 @@ import org.dockbox.selene.di.Provider;
 @Resources(Selene.class)
 public interface DefaultResources {
 
-    @Resource(value = "b", key = "color.primary")
-    ResourceEntry getColorPrimary();
-
-    @Resource(value = "3", key = "color.secondary")
-    ResourceEntry getColorSecondary();
-
-    @Resource(value = "7", key = "color.minor")
-    ResourceEntry getColorMinor();
-
-    @Resource(value = "c", key = "color.caught")
-    ResourceEntry getColorError();
-
     @Resource(value = "$3[] $1", key = "prefix")
     ResourceEntry getPrefix();
 
