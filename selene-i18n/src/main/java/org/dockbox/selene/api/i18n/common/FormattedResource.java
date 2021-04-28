@@ -38,12 +38,12 @@ public class FormattedResource implements ResourceEntry {
 
     @Override
     public String asString() {
-        return this.formatCustom(this.entry.asString(), this.formattingArgs);
+        return this.formatCustom(this.formattingArgs);
     }
 
     @Override
     public String plain() {
-        return ResourceEntry.plain(this.formatCustom(this.entry.asString(), this.formattingArgs));
+        return ResourceEntry.plain(this.formatCustom(this.formattingArgs));
     }
 
     @Override
@@ -52,8 +52,8 @@ public class FormattedResource implements ResourceEntry {
     }
 
     // Format value placeholders and colors
-    public String formatCustom(String m, Object... args) {
-        String temp = m;
+    public String formatCustom(Object... args) {
+        String temp = this.entry.asString();
         if (0 == args.length) return temp;
         Map<String, String> map = SeleneUtils.emptyMap();
 
