@@ -68,6 +68,12 @@ public class JUnit5Bootstrap extends MinecraftServerBootstrap {
         return MinecraftVersion.INDEV;
     }
 
+    @Override
+    protected void init() {
+        super.init();
+        this.getInjector().bind(Server.class, JUnitServer.class);
+    }
+    
     public JUnitInformation getInformation() {
         return this.information;
     }
