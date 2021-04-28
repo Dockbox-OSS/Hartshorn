@@ -136,4 +136,16 @@ public class SeleneTypeSerializersTests {
         PersistentCapableType ct = cn.get(TypeToken.get(PersistentCapableType.class));
         Assertions.assertEquals("model:test", ct.getCapable());
     }
+
+    @Test
+    public void testThatPersistentCapableScalarIsModel() throws SerializationException {
+        PersistentCapableType type = new PersistentCapableType("test");
+
+        TestConfigurationLoader tl = this.getTestLoader();
+        ConfigurationNode cn = tl.createNode().set(TypeToken.get(PersistentCapableType.class), type);
+
+        @Nullable Object o = cn.rawScalar();
+        Assertions.assertTrue(o instanceof PersistentModelType);
+    }
+
 }
