@@ -22,12 +22,12 @@ import com.sk89q.worldedit.extension.input.ParserContext;
 
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResources;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.api.keys.TransactionResult;
-import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.di.annotations.AutoWired;
+import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.server.minecraft.item.Enchant;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.item.ReferencedItem;
@@ -103,7 +103,7 @@ public class SpongeItem extends ReferencedItem<ItemStack> implements SpongeCompo
         if (translatedName.present()) return Text.of(translatedName.get());
 
         return Text.of(ref.map(i -> i.getType().getId())
-                .or(DefaultResource.UNKNOWN.translate(language).asString()));
+                .or(DefaultResources.instance().getUnknown().translate(language).asString()));
     }
 
     @Override

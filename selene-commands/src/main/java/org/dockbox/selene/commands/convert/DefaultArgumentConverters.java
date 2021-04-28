@@ -23,7 +23,6 @@ import org.dockbox.selene.api.domain.tuple.Vector3N;
 import org.dockbox.selene.api.i18n.ResourceService;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.commands.annotations.ArgumentProvider;
 import org.dockbox.selene.commands.context.ArgumentConverter;
@@ -127,10 +126,10 @@ public final class DefaultArgumentConverters implements InjectableType {
         ResourceService rs = Provider.provide(ResourceService.class);
         String validKey = rs.createValidKey(in);
 
-        Exceptional<? extends ResourceEntry> or = rs.getResource(validKey);
+        Exceptional<? extends ResourceEntry> or = rs.get(validKey);
         if (or.present()) return or.map(ResourceEntry.class::cast);
 
-        return Exceptional.of(() -> DefaultResource.valueOf(validKey));
+        return Provider.provide(ResourceService.class).get(validKey);
     }, "resource", "i18n", "translation");
 
     public static final ArgumentConverter<Text> TEXT = new CommandValueConverter<>(Text.class, in -> Exceptional.of(Text.of(in)), "text");

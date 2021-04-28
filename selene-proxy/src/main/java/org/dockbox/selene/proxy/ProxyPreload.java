@@ -17,8 +17,11 @@
 
 package org.dockbox.selene.proxy;
 
-import org.dockbox.selene.di.Preloadable;
+import org.dockbox.selene.api.BootstrapPhase;
+import org.dockbox.selene.api.Phase;
+import org.dockbox.selene.di.preload.Preloadable;
 
+@Phase(BootstrapPhase.PRE_CONSTRUCT)
 public class ProxyPreload implements Preloadable {
 
     @Override

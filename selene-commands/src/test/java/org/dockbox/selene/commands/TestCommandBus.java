@@ -17,6 +17,8 @@
 
 package org.dockbox.selene.commands;
 
+import org.dockbox.selene.api.i18n.common.ResourceEntry;
+import org.dockbox.selene.api.i18n.entry.FakeResource;
 import org.dockbox.selene.commands.registration.AbstractRegistrationContext;
 import org.dockbox.selene.commands.registration.CommandInheritanceContext;
 import org.dockbox.selene.commands.values.AbstractArgumentElement;
@@ -25,6 +27,25 @@ import org.dockbox.selene.commands.values.ArgumentValue;
 import java.util.List;
 
 public class TestCommandBus extends DefaultCommandBus<Void> {
+
+    {
+        super.resources = new CommandResources() {
+            @Override
+            public ResourceEntry getConfirmCommand() {
+                return new FakeResource("");
+            }
+
+            @Override
+            public ResourceEntry getConfirmCommandHover() {
+                return new FakeResource("");
+            }
+
+            @Override
+            public ResourceEntry getMissingArguments() {
+                return new FakeResource("");
+            }
+        };
+    }
 
     @Override
     protected Void buildContextExecutor(AbstractRegistrationContext context, String alias) {

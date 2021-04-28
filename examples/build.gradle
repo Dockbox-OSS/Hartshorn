@@ -27,7 +27,6 @@ dependencies {
     compileOnly project(':selene-minecraft-server')
     compileOnly project(':selene-minecraft-modules:plots')
 
-    testImplementation project(":selene-test")
     new File(parent.rootDir, 'selene-modules').listFiles().each {
         if (it.directory && new File(it, 'build.gradle').exists()) {
             compileOnly project(":selene-modules:${it.name}")

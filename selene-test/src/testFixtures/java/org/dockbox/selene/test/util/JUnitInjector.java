@@ -25,7 +25,6 @@ import org.dockbox.selene.commands.source.DiscordCommandSource;
 import org.dockbox.selene.di.InjectConfiguration;
 import org.dockbox.selene.di.binding.Bindings;
 import org.dockbox.selene.persistence.FileManager;
-import org.dockbox.selene.server.Server;
 import org.dockbox.selene.server.minecraft.Console;
 import org.dockbox.selene.server.minecraft.bossbar.Bossbar;
 import org.dockbox.selene.server.minecraft.dimension.Worlds;
@@ -53,8 +52,6 @@ public class JUnitInjector extends InjectConfiguration {
 
     @Override
     public void collect() {
-        this.bind(Server.class, JUnitServer.class);
-
         // Tasks
         this.bind(TaskRunner.class, JUnitTaskRunner.class);
         this.bind(ThreadUtils.class, JUnitThreadUtils.class);

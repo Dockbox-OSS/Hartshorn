@@ -17,7 +17,7 @@
 
 package org.dockbox.selene.sponge.objects.targets;
 
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResources;
 import org.dockbox.selene.api.i18n.text.Text;
 import org.dockbox.selene.api.i18n.text.pagination.Pagination;
 import org.dockbox.selene.server.minecraft.Console;
@@ -45,7 +45,7 @@ public final class SpongeConsole extends Console {
     @Override
     public void sendWithPrefix(@NotNull Text text) {
         Sponge.getServer().getConsole().sendMessage(org.spongepowered.api.text.Text.of(
-                SpongeConversionUtil.toSponge(DefaultResource.PREFIX.asText()),
+                SpongeConversionUtil.toSponge(DefaultResources.instance().getPrefix().asText()),
                 SpongeConversionUtil.toSponge(text)
         ));
     }

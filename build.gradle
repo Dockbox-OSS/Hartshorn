@@ -111,8 +111,11 @@ allprojects {
 
             testCompile "org.mockito:mockito-all:$mockitoVersion"
 
+            testCompile testFixtures(project(":selene-test"))
+
             testImplementation "com.google.inject:guice:$guiceVersion"
             testImplementation "com.google.guava:guava:$guavaVersion"
+            testImplementation "org.slf4j:slf4j-api:$slf4jVersion"
         }
 
         test {

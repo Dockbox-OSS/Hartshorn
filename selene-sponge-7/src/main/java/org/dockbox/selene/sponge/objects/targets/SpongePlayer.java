@@ -25,7 +25,7 @@ import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.EventBus;
 import org.dockbox.selene.api.i18n.common.Language;
 import org.dockbox.selene.api.i18n.common.ResourceEntry;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
+import org.dockbox.selene.api.i18n.entry.DefaultResources;
 import org.dockbox.selene.api.i18n.permissions.Permission;
 import org.dockbox.selene.api.i18n.permissions.PermissionContext;
 import org.dockbox.selene.api.i18n.text.Text;
@@ -33,7 +33,9 @@ import org.dockbox.selene.api.i18n.text.pagination.Pagination;
 import org.dockbox.selene.api.keys.PersistentDataKey;
 import org.dockbox.selene.api.keys.TransactionResult;
 import org.dockbox.selene.di.Provider;
+import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.server.minecraft.dimension.position.Location;
+import org.dockbox.selene.server.minecraft.events.chat.SendMessageEvent;
 import org.dockbox.selene.server.minecraft.item.Item;
 import org.dockbox.selene.server.minecraft.item.storage.MinecraftItems;
 import org.dockbox.selene.server.minecraft.packets.Packet;
@@ -42,10 +44,8 @@ import org.dockbox.selene.server.minecraft.players.Hand;
 import org.dockbox.selene.server.minecraft.players.Player;
 import org.dockbox.selene.server.minecraft.players.Players;
 import org.dockbox.selene.server.minecraft.players.Profile;
-import org.dockbox.selene.server.minecraft.players.inventory.PlayerInventory;
-import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.server.minecraft.players.Sounds;
-import org.dockbox.selene.server.minecraft.events.chat.SendMessageEvent;
+import org.dockbox.selene.server.minecraft.players.inventory.PlayerInventory;
 import org.dockbox.selene.sponge.objects.SpongeProfile;
 import org.dockbox.selene.sponge.objects.composite.SpongeComposite;
 import org.dockbox.selene.sponge.objects.inventory.SpongePlayerInventory;
@@ -211,7 +211,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     @Override
     public void send(@NotNull ResourceEntry text) {
-        String formattedValue = DefaultResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
+        String formattedValue = DefaultResources.instance().getNone().parseColors(text.translate(this.getLanguage()).asString());
         this.send(Text.of(formattedValue));
     }
 
@@ -226,7 +226,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
 
     @Override
     public void sendWithPrefix(@NotNull ResourceEntry text) {
-        String formattedValue = DefaultResource.NONE.parseColors(text.translate(this.getLanguage()).asString());
+        String formattedValue = DefaultResources.instance().getNone().parseColors(text.translate(this.getLanguage()).asString());
         this.sendWithPrefix(Text.of(formattedValue));
     }
 
@@ -235,7 +235,7 @@ public class SpongePlayer extends Player implements SpongeComposite, Wrapper<org
         if (this.referenceExists()) {
             this.postEventPre(text).present(msg -> {
                 this.getReference().get().sendMessage(org.spongepowered.api.text.Text.of(
-                        SpongeConversionUtil.toSponge(DefaultResource.PREFIX.asText()),
+                        SpongeConversionUtil.toSponge(DefaultResources.instance().getPrefix().asText()),
                         SpongeConversionUtil.toSponge(msg))
                 );
             });

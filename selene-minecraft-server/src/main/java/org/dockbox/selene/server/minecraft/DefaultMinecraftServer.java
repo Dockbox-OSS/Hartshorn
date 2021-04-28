@@ -19,9 +19,9 @@ package org.dockbox.selene.server.minecraft;
 
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.SeleneInformation;
+import org.dockbox.selene.api.entity.annotations.Metadata;
 import org.dockbox.selene.api.i18n.MessageReceiver;
 import org.dockbox.selene.api.i18n.common.Language;
-import org.dockbox.selene.api.i18n.entry.DefaultResource;
 import org.dockbox.selene.commands.annotations.Command;
 import org.dockbox.selene.commands.context.CommandContext;
 import org.dockbox.selene.server.DefaultServer;
@@ -31,6 +31,7 @@ import org.dockbox.selene.util.SeleneUtils;
 
 import javax.inject.Inject;
 
+@Metadata(alias = "minecraft", serializable = false)
 @Command(aliases = SeleneInformation.PROJECT_ID, usage = SeleneInformation.PROJECT_ID, permission = DefaultServer.SELENE_ADMIN, extend = true)
 public class DefaultMinecraftServer {
 
@@ -44,7 +45,7 @@ public class DefaultMinecraftServer {
                 player = (Player) src;
             }
             else {
-                src.send(DefaultResource.CONFIRM_WRONG_SOURCE);
+                src.send(this.resources.getWrongSource());
                 return;
             }
         }
@@ -53,8 +54,8 @@ public class DefaultMinecraftServer {
 
         String languageLocalized = language.getNameLocalized() + " (" + language.getNameEnglish() + ")";
         if (player != src)
-            src.sendWithPrefix(resources.getOtherLanguageUpdated(player.getName(), languageLocalized));
-        player.sendWithPrefix(resources.getLanguageUpdated(languageLocalized));
+            src.sendWithPrefix(this.resources.getOtherLanguageUpdated(player.getName(), languageLocalized));
+        player.sendWithPrefix(this.resources.getLanguageUpdated(languageLocalized));
     }
 
     @Command(aliases = "platform", usage = "platform", permission = DefaultServer.SELENE_ADMIN)
@@ -67,7 +68,7 @@ public class DefaultMinecraftServer {
         Object[] system = SeleneUtils.getAll(System::getProperty,
                 "java.version", "java.vendor", "java.vm.version", "java.vm.name", "java.vm.vendor", "java.runtime.version", "java.class.version");
 
-        src.send(resources.getPlatformInformation(st.getDisplayName(), platformVersion, mcVersion,
+        src.send(this.resources.getPlatformInformation(st.getDisplayName(), platformVersion, mcVersion,
                 system[0], system[1], system[2], system[2], system[3], system[4], system[5])
         );
     }

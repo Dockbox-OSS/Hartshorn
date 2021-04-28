@@ -22,13 +22,17 @@ import com.google.common.reflect.TypeToken;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
 
+import org.dockbox.selene.api.BootstrapPhase;
 import org.dockbox.selene.api.Selene;
 import org.dockbox.selene.api.domain.Exceptional;
 import org.dockbox.selene.api.events.EventBus;
+import org.dockbox.selene.api.exceptions.Except;
 import org.dockbox.selene.di.Provider;
 import org.dockbox.selene.discord.DiscordUtils;
 import org.dockbox.selene.nms.packets.NMSPacket;
 import org.dockbox.selene.nms.properties.NativePacketProperty;
+import org.dockbox.selene.server.DefaultServer;
+import org.dockbox.selene.server.Server;
 import org.dockbox.selene.server.minecraft.MinecraftServerBootstrap;
 import org.dockbox.selene.server.minecraft.MinecraftServerType;
 import org.dockbox.selene.server.minecraft.MinecraftVersion;
@@ -45,8 +49,9 @@ import org.dockbox.selene.sponge.objects.composite.CompositeDataManipulatorBuild
 import org.dockbox.selene.sponge.objects.composite.ImmutableCompositeData;
 import org.dockbox.selene.sponge.objects.composite.MutableCompositeData;
 import org.dockbox.selene.sponge.plotsquared.PlotSquaredEventListener;
-import org.dockbox.selene.sponge.util.SpongeInjector;
+import org.dockbox.selene.sponge.util.inject.SpongeEarlyInjector;
 import org.dockbox.selene.sponge.util.SpongeTaskRunner;
+import org.dockbox.selene.sponge.util.inject.SpongeLateInjector;
 import org.dockbox.selene.util.Reflect;
 import org.dockbox.selene.util.SeleneUtils;
 import org.jetbrains.annotations.NotNull;
@@ -94,11 +99,11 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
     private PluginContainer container;
 
     /**
-     * Creates a new Selene instance using the {@link org.dockbox.selene.sponge.util.SpongeInjector}
+     * Creates a new Selene instance using the {@link SpongeEarlyInjector}
      * bindings providing utilities.
      */
     public SpongeAPI7Bootstrap() {
-        super(new SpongeInjector());
+        super(new SpongeEarlyInjector(), new SpongeLateInjector());
     }
 
     /**
@@ -153,24 +158,34 @@ public class SpongeAPI7Bootstrap extends MinecraftServerBootstrap {
      */
     @Listener
     public void on(GameInitializationEvent event) {
-        this.registerSpongeListeners(
-                Provider.provide(SpongeCommandListener.class),
-                Provider.provide(SpongeServerListener.class),
-                Provider.provide(SpongeDiscordListener.class),
-                Provider.provide(SpongePlayerListener.class),
-                Provider.provide(SpongeEntityListener.class),
-                Provider.provide(PlotSquaredEventListener.class)
-        );
+        try {
+            super.enter(BootstrapPhase.PRE_INIT);
+            super.init();
 
-        super.init();
+            super.enter(BootstrapPhase.INIT);
+            this.getInjector().bind(Server.class, DefaultServer.class);
 
-        Optional<PacketGate> packetGate = Sponge.getServiceManager().provide(PacketGate.class);
-        if (packetGate.isPresent()) {
-            SpongeAPI7Bootstrap.preparePacketGateListeners(packetGate.get());
-            Selene.log().info("Successfully hooked into PacketGate");
-        }
-        else {
-            Selene.log().warn("Missing PacketGate, packet events will not be fired!");
+            this.registerSpongeListeners(
+                    Provider.provide(SpongeCommandListener.class),
+                    Provider.provide(SpongeServerListener.class),
+                    Provider.provide(SpongeDiscordListener.class),
+                    Provider.provide(SpongePlayerListener.class),
+                    Provider.provide(SpongeEntityListener.class),
+                    Provider.provide(PlotSquaredEventListener.class)
+            );
+
+            Optional<PacketGate> packetGate = Sponge.getServiceManager().provide(PacketGate.class);
+            if (packetGate.isPresent()) {
+                SpongeAPI7Bootstrap.preparePacketGateListeners(packetGate.get());
+                Selene.log().info("Successfully hooked into PacketGate");
+            }
+            else {
+                Selene.log().warn("Missing PacketGate, packet events will not be fired!");
+            }
+
+            this.enter(BootstrapPhase.POST);
+        } catch (Throwable e) {
+            Except.handle(e);
         }
     }
 

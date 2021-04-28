@@ -49,6 +49,7 @@ public abstract class InjectableBootstrap {
 
     protected InjectableBootstrap() {
         this.adapter = new InjectorAdapter(InjectSource.GUICE);
+        setInstance(this);
     }
 
     public static InjectableBootstrap getInstance() {

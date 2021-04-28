@@ -39,7 +39,7 @@ public abstract class Console implements CommandSource, PermissionHolder, Identi
     protected static Console instance;
 
     protected Console() {
-        if (null != instance) throw new IllegalStateException("Console has already been initialized!");
+        if (null != instance) return;
         instance = this;
     }
 

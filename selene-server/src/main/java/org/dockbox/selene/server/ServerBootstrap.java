@@ -39,11 +39,13 @@ public abstract class ServerBootstrap extends SeleneModuleBootstrap {
      * InjectConfiguration}. Also verifies dependency artifacts and injector bindings. Proceeds
      * to {@link SeleneBootstrap#construct()} once verified.
      *
-     * @param moduleConfiguration
-     *         the injector provided by the Selene implementation
+     * @param early
+     *         the injector provided by the Selene implementation to create in pre-construct phase
+     * @param late
+     *         the injector provided by the Selene implementation to create in construct phase
      */
-    protected ServerBootstrap(InjectConfiguration moduleConfiguration) {
-        super(moduleConfiguration);
+    protected ServerBootstrap(InjectConfiguration early, InjectConfiguration late) {
+        super(early, late);
     }
 
     /**

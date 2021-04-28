@@ -15,16 +15,11 @@
  * along with this library. If not, see {@literal<http://www.gnu.org/licenses/>}.
  */
 
-package org.dockbox.selene.api.module;
+package org.dockbox.selene.di.preload;
 
-import org.dockbox.selene.api.domain.OwnerLookup;
-import org.dockbox.selene.api.domain.TypedOwner;
-import org.dockbox.selene.di.annotations.Binds;
+@FunctionalInterface
+public interface Preloadable {
 
-@Binds(OwnerLookup.class)
-public class ModuleOwnerLookup implements OwnerLookup {
-    @Override
-    public TypedOwner lookup(Class<?> type) {
-        return Modules.module(type);
-    }
+    void preload();
+
 }

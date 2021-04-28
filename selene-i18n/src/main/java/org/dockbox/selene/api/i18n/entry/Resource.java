@@ -33,7 +33,7 @@ public class Resource implements ResourceEntry {
     public Resource(String value, String key) {
         this.value = value;
         this.key = key;
-        this.resourceMap = Provider.provide(ResourceService.class).getTranslations(this);
+        this.resourceMap = Provider.provide(ResourceService.class).translations(this);
     }
 
     @Override
