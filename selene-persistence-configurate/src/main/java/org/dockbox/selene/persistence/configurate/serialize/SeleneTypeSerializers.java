@@ -18,6 +18,7 @@
 package org.dockbox.selene.persistence.configurate.serialize;
 
 import org.dockbox.selene.api.exceptions.Except;
+import org.dockbox.selene.persistence.PersistentCapable;
 import org.dockbox.selene.persistence.configurate.DefaultConfigurateManager;
 import org.dockbox.selene.util.SeleneUtils;
 import org.spongepowered.configurate.serialize.TypeSerializer;
@@ -50,6 +51,7 @@ public final class SeleneTypeSerializers {
             new SerializerInformation<>(int[].class, IntArrayTypeSerializer::new);
             new SerializerInformation<>(short[].class, ShortArrayTypeSerializer::new);
             new SerializerInformation<>(Pattern.class, PatternTypeSerializer::new);
+            new SerializerInformation<>(PersistentCapable.class, PersistentCapableTypeSerializer::new);
         }
         catch (Exception e) {
             Except.handle("Failed to initialize serializer information", e);
